@@ -1,0 +1,58 @@
+
+body {
+	margin: 0px;
+	padding: 0px;	
+	background-color: #bbb;
+	font-family: Helvetica, Arial;
+}
+
+ul {
+	overflow: hidden;
+	margin-top: 5px;
+	padding-left: 25px;
+}
+
+.OuterContainer {
+	width: 1000px;
+	min-height: 500px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: white;
+	bottom: 0px;
+}
+
+.TopNavigationBar {
+	margin-bottom: 10px;
+	border-bottom: 1px solid #8080ff;
+	background-color: #c0c0ff;
+}
+
+.TopNavigationBar a {
+	display: block;
+	padding: 5px;
+	width: 100px;
+	text-decoration: none;
+	color: blue;
+	text-align: center;
+}
+
+.LeftNavigationBar {
+	float: left;
+	margin: 5px;
+	padding: 5px;
+	width: 200px;
+	border: 1px solid #8080ff;
+	background-color: #c0c0ff;
+}
+
+.DataGrid {
+	border-collapse: collapse;
+	background-color: #e0e0ff;
+}
+
+.DataGrid tr {
+}
+
+.DataGrid td {
+	border: 1px solid #aaa;
+}

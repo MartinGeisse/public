@@ -1,0 +1,38 @@
+
+Application Schema
+---------------------------------------------------------------
+
+entity perspective: admin, developer, ...
+	evtl auch nur ein flag
+	mir fällt gerade nicht mehr als die beiden ein -> erst mal nur ein flag
+
+global entity presenters ("perspective" fall o.g. nur ein flag):
+	urlId
+	-> "perspectives"
+	ShopOrder: status, items, zahlungen, ...
+	allg. Eigenschaften: Title
+	alles andere aus Subtypen von IEntityPresenter
+	aus der Liste von Presenters wird ein TabPanel für "die" Seite der Entity erzeugt,
+		z.B. Ansicht einer einzigen Bestellung
+
+global table views:
+	urlId
+	Title
+	IFilter[] filters;
+	ICellPopulatorFactory[] cpFactories;
+	-> warum factories? warum nicht gleich CP? Die sind auch an sich stateless!
+
+global Navigation
+	???
+	Klasse NavigationNode
+		children
+		
+---------------------------------------------------------------
+Perspective-Klassen:
+
+---------------------------------------------------------------
+Filter-Klassen:
+
+---------------------------------------------------------------
+CellPopulator-Klassen:
+
