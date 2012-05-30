@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
+import name.martingeisse.admin.schema.DatabaseDescriptor;
 import name.martingeisse.admin.util.ScoreComparator;
 
 /**
@@ -26,6 +27,11 @@ public class ApplicationConfiguration {
 	 * the sealed
 	 */
 	private static boolean sealed = false;
+	
+	/**
+	 * the databases
+	 */
+	private static List<DatabaseDescriptor> databases = new ArrayList<DatabaseDescriptor>();
 	
 	/**
 	 * the plugins
@@ -50,6 +56,15 @@ public class ApplicationConfiguration {
 		if (sealed) {
 			throw new IllegalStateException("Application configuration has been sealed");
 		}
+	}
+	
+	/**
+	 * Adds a database.
+	 * @param database the database to add
+	 */
+	public static void addDatabase(DatabaseDescriptor database) {
+		checkChangesAllowed();
+		databases.add(database);
 	}
 	
 	/**
@@ -83,6 +98,14 @@ public class ApplicationConfiguration {
 		// sort property read-only renderer contributors by score
 		Collections.sort(capabilities.getPropertyReadOnlyRendererContributors(), ScoreComparator.DESCENDING_INSTANCE);
 		
+	}
+	
+	/**
+	 * Returns an iterable for all databases
+	 * @return the database iterable
+	 */
+	public static Iterable<DatabaseDescriptor> getDatabases() {
+		return databases;
 	}
 	
 	/**

@@ -1,0 +1,22 @@
+
+Es gibt einen Konflikt zwischen Capabilities und Schema -- welche Aufgabe soll von wem
+übernommen werden?
+
+Grundidee:
+- Benutzer definiert Plugin-Liste und Modifier-Liste
+- Aus den Plugins ergeben sich die Capabilities (automatisches Verhalten)
+- Aus Capabilities und Modifiers wird das Schema erstellt
+- Der Admin-App-Architekt hat keinen direkten Einfluss auf das Schema, nur
+  indirekt über Plugins/Capabilities und Modifiers
+
+Beispiel für Capability: Entity Reference Detector
+
+Beispiel für Modifier: Sichtbare Properties für Entity X
+
+Caps vs. Modifiers:
+- Capabilities werden nur global hinzugefügt (indirekt über Plugins) und definieren
+  ihr genaues Verhalten selbst
+- Modifier werden direkt vom Architekten definiert, um das Verhalten in Spezialfällen
+  festzulegen
+
+Das Schema ist die interne Datenstruktur, die sich daraus ergibt.

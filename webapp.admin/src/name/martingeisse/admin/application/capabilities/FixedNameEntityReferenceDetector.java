@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.application.capabilities;
 
-import name.martingeisse.admin.schema.AbstractApplicationSchema;
+import name.martingeisse.admin.schema.ApplicationSchema;
 
 /**
  * Detects an entity reference whenever a property name matches a fixed
@@ -54,7 +54,7 @@ public class FixedNameEntityReferenceDetector implements IEntityReferenceDetecto
 	 * @see name.martingeisse.admin.schema.IEntityReferenceDetector#detectEntityReference(name.martingeisse.admin.schema.AbstractApplicationSchema, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String detectEntityReference(AbstractApplicationSchema schema, String entityName, String propertyName) {
+	public String detectEntityReference(ApplicationSchema schema, String entityName, String propertyName) {
 		if (propertyName.equals(knownPropertyName)) {
 			return destinationEntityName;
 		} else {

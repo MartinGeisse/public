@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.application.capabilities;
 
-import name.martingeisse.admin.schema.AbstractApplicationSchema;
+import name.martingeisse.admin.schema.ApplicationSchema;
 
 /**
  * Implementations are contributed by plugins and are able to
@@ -30,6 +30,6 @@ public interface IEntityReferenceDetector {
 	 * @return the name of the referenced entity, or null if the property
 	 * was not recognized as a reference
 	 */
-	public String detectEntityReference(AbstractApplicationSchema schema, String entityName, String propertyName);
+	public String detectEntityReference(ApplicationSchema schema, String entityName, String propertyName);
 	
 }
