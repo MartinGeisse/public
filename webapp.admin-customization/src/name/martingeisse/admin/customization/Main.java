@@ -12,6 +12,7 @@ import name.martingeisse.admin.application.Launcher;
 import name.martingeisse.admin.application.capabilities.SingleEntityPropertyFilter;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.admin.schema.DatabaseDescriptor;
+import name.martingeisse.admin.single.SingleEntityOverviewPresenter;
 
 
 /**
@@ -37,7 +38,7 @@ public class Main {
 		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, null, "modificationTimestamp", false));
 		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, null, "modificationUser_id", false));
 		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, "User", "lastLoginAttemptTimestamp", false));
-		ApplicationConfiguration.addPlugin(new OverviewPresenter());
+		ApplicationConfiguration.addPlugin(new SingleEntityOverviewPresenter(OverviewPanel.class, 1));
 		
 		Launcher.launch();
 		

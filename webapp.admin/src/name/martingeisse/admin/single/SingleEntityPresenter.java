@@ -8,6 +8,11 @@ package name.martingeisse.admin.single;
 
 import java.lang.reflect.Constructor;
 
+import name.martingeisse.admin.application.IPlugin;
+import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
+import name.martingeisse.admin.application.capabilities.IEntityPresentationContributor;
+import name.martingeisse.admin.schema.EntityDescriptor;
+
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
@@ -17,7 +22,7 @@ import org.apache.wicket.model.IModel;
  * The panel class is instantiated using the two-argument constructor which
  * takes the Wicket id and the model for the {@link EntityInstance}.
  */
-public class SingleEntityPresenter implements ISingleEntityPresenter {
+public class SingleEntityPresenter implements ISingleEntityPresenter, IEntityPresentationContributor, IPlugin {
 
 	/**
 	 * the urlId
@@ -66,6 +71,22 @@ public class SingleEntityPresenter implements ISingleEntityPresenter {
 	@Override
 	public String getTitle() {
 		return title;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.application.IPlugin#contribute(name.martingeisse.admin.application.capabilities.ApplicationCapabilities)
+	 */
+	@Override
+	public void contribute(ApplicationCapabilities applicationCapabilities) {
+		applicationCapabilities.getEntityPresentationContributors().add(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.application.capabilities.IEntityPresentationContributor#contributeEntityPresenters(name.martingeisse.admin.schema.EntityDescriptor)
+	 */
+	@Override
+	public void contributeEntityPresenters(EntityDescriptor entity) {
+		entity.getSinglePresenters().add(this);
 	}
 
 	/* (non-Javadoc)
