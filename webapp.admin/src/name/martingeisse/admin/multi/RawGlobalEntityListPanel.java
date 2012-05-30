@@ -19,6 +19,7 @@ import name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer;
 import name.martingeisse.admin.readonly.IPropertyReadOnlyRendererContributor;
 import name.martingeisse.admin.schema.DatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityDescriptor;
+import name.martingeisse.admin.schema.EntityPropertyDescriptor;
 
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.Loop;
@@ -176,28 +177,49 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 			int rowCount = fetchTableSize(statement, entity.getTableName());
 			pageCount = (rowCount + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE;
 			
-			// fetch all values
+			// send the query to the database and analyze result meta-data
 			final ResultSet resultSet = statement.executeQuery("SELECT * FROM \"" + entity.getTableName() + "\" ORDER BY id LIMIT " + ROWS_PER_PAGE + " OFFSET " + (ROWS_PER_PAGE * currentPage));
 			idColumnIndex = findIdColumnIndex(resultSet);
-			width = resultSet.getMetaData().getColumnCount();
+			int fetchWidth = resultSet.getMetaData().getColumnCount();
+			boolean[] columnVisible = new boolean[fetchWidth];
+			width = 0;
+			for (int i=0; i<fetchWidth; i++) {
+				String columnName = resultSet.getMetaData().getColumnName(1 + i);
+				EntityPropertyDescriptor propertyDescriptor = entity.getProperties().get(columnName);
+				boolean visible = (propertyDescriptor != null && propertyDescriptor.isVisible());
+				columnVisible[i] = visible;
+				if (visible) {
+					width++;
+				}
+			}
+			
+			// fetch data and fill the rows array
 			rows = new Object[ROWS_PER_PAGE][width];
 			visibleRows = 0;
 			while (resultSet.next()) {
-				for (int i = 0; i < width; i++) {
-					rows[visibleRows][i] = resultSet.getObject(1 + i);
+				int position = 0;
+				for (int i = 0; i < fetchWidth; i++) {
+					if (columnVisible[i]) {
+						rows[visibleRows][position] = resultSet.getObject(1 + i);
+						position++;
+					}
 				}
 				visibleRows++;
 			}
 			
 			// determine the renderers
 			renderers = new IPropertyReadOnlyRenderer[width];
-			for (int i=0; i<width; i++) {
-				int type = resultSet.getMetaData().getColumnType(1 + i);
-				IPropertyReadOnlyRenderer renderer = determineRenderer(type);
-				if (renderer == null) {
-					throw new RuntimeException("no renderer");
+			int position = 0;
+			for (int i=0; i<fetchWidth; i++) {
+				if (columnVisible[i]) {
+					int type = resultSet.getMetaData().getColumnType(1 + i);
+					IPropertyReadOnlyRenderer renderer = determineRenderer(type);
+					if (renderer == null) {
+						throw new RuntimeException("no renderer");
+					}
+					renderers[position] = renderer;
+					position++;
 				}
-				renderers[i] = renderer;
 			}
 
 			// clean up

@@ -145,7 +145,7 @@ public class ApplicationSchema {
 	 */
 	private void detectEntityReferences() {
 		for (EntityDescriptor entity : entityDescriptors) {
-			for (EntityPropertyDescriptor property : entity.getProperties()) {
+			for (EntityPropertyDescriptor property : entity.getProperties().values()) {
 				String propertyName = property.getName();
 				for (IEntityReferenceDetector detector : ApplicationConfiguration.getCapabilities().getEntityReferenceDetectors()) {
 					String destinationName = detector.detectEntityReference(this, entity.getTableName(), propertyName);

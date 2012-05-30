@@ -23,6 +23,11 @@ public class EntityPropertyDescriptor implements Serializable {
 	private String name;
 
 	/**
+	 * the visible
+	 */
+	private boolean visible;
+
+	/**
 	 * Constructor.
 	 */
 	public EntityPropertyDescriptor() {
@@ -42,6 +47,22 @@ public class EntityPropertyDescriptor implements Serializable {
 	 */
 	public void setName(final String name) {
 		this.name = name;
+	}
+
+	/**
+	 * Getter method for the visible.
+	 * @return the visible
+	 */
+	public boolean isVisible() {
+		return visible;
+	}
+
+	/**
+	 * Setter method for the visible.
+	 * @param visible the visible to set
+	 */
+	public void setVisible(final boolean visible) {
+		this.visible = visible;
 	}
 
 }

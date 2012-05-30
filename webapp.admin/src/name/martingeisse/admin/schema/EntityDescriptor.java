@@ -8,7 +8,9 @@ package name.martingeisse.admin.schema;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import name.martingeisse.admin.multi.IGlobalEntityListPresenter;
 import name.martingeisse.admin.multi.RawGlobalEntityListPresenter;
@@ -42,7 +44,7 @@ public class EntityDescriptor implements Serializable {
 	/**
 	 * the properties
 	 */
-	private List<EntityPropertyDescriptor> properties;
+	private Map<String, EntityPropertyDescriptor> properties;
 
 	/**
 	 * the incomingReferences
@@ -68,7 +70,7 @@ public class EntityDescriptor implements Serializable {
 	 * Constructor.
 	 */
 	public EntityDescriptor() {
-		this.properties = new ArrayList<EntityPropertyDescriptor>();
+		this.properties = new HashMap<String, EntityPropertyDescriptor>();
 		this.incomingReferences = new ArrayList<EntityReferenceInfo>();
 		this.outgoingReferences = new ArrayList<EntityReferenceInfo>();
 		this.singlePresenters = new ArrayList<ISingleEntityPresenter>();
@@ -112,7 +114,7 @@ public class EntityDescriptor implements Serializable {
 	 * Getter method for the properties.
 	 * @return the properties
 	 */
-	public List<EntityPropertyDescriptor> getProperties() {
+	public Map<String, EntityPropertyDescriptor> getProperties() {
 		return properties;
 	}
 
@@ -120,7 +122,7 @@ public class EntityDescriptor implements Serializable {
 	 * Setter method for the properties.
 	 * @param properties the properties to set
 	 */
-	public void setProperties(final List<EntityPropertyDescriptor> properties) {
+	public void setProperties(final Map<String, EntityPropertyDescriptor> properties) {
 		this.properties = properties;
 	}
 
@@ -228,20 +230,6 @@ public class EntityDescriptor implements Serializable {
 		return action.execute();
 	}
 
-	/**
-	 * Looks for a property with the specified name.
-	 * @param name the property name
-	 * @return the property, or null if none was found
-	 */
-	public EntityPropertyDescriptor findProperty(final String name) {
-		for (final EntityPropertyDescriptor property : properties) {
-			if (property.getName().equals(name)) {
-				return property;
-			}
-		}
-		return null;
-	}
-	
 	/**
 	 * Looks for an outgoing reference with the specified field name.
 	 * @param fieldName the field name

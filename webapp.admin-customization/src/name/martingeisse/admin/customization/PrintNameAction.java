@@ -31,7 +31,7 @@ public class PrintNameAction implements IEntityInstanceAction, IEntityInstanceAc
 	 */
 	@Override
 	public IEntityInstanceAction[] contributeGlobalActions(EntityDescriptor entityDescriptor) {
-		if (entityDescriptor.findProperty("name") != null) {
+		if (entityDescriptor.getProperties().get("name") != null) {
 			return new IEntityInstanceAction[] {this};
 		} else {
 			return null;

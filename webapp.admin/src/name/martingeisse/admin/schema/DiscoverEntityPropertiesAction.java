@@ -9,15 +9,17 @@ package name.martingeisse.admin.schema;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
+import name.martingeisse.admin.application.ApplicationConfiguration;
+import name.martingeisse.admin.application.capabilities.IEntityPropertyDisplayFilter;
 import name.martingeisse.admin.common.IAction;
 
 /**
  * This action discovers the entity properties for a single entity.
  */
-public class DiscoverEntityPropertiesAction implements IAction<List<EntityPropertyDescriptor>> {
+public class DiscoverEntityPropertiesAction implements IAction<Map<String, EntityPropertyDescriptor>> {
 
 	/**
 	 * the connection
@@ -71,14 +73,16 @@ public class DiscoverEntityPropertiesAction implements IAction<List<EntityProper
 	 * @see name.martingeisse.admin.common.IAction#execute()
 	 */
 	@Override
-	public List<EntityPropertyDescriptor> execute() {
+	public Map<String, EntityPropertyDescriptor> execute() {
 		try {
-			final List<EntityPropertyDescriptor> result = new ArrayList<EntityPropertyDescriptor>();
+			final Map<String, EntityPropertyDescriptor> result = new HashMap<String, EntityPropertyDescriptor>();
 			ResultSet resultSet = connection.getMetaData().getColumns(null, null, entity.getTableName(), null);
 			while (resultSet.next()) {
 				final EntityPropertyDescriptor propertyDescriptor = new EntityPropertyDescriptor();
+				propertyDescriptor.setVisible(true);
 				propertyDescriptor.setName(resultSet.getString("COLUMN_NAME"));
-				result.add(propertyDescriptor);
+				propertyDescriptor.setVisible(isPropertyVisible(propertyDescriptor));
+				result.put(propertyDescriptor.getName(), propertyDescriptor);
 			}
 			resultSet.close();
 			return result;
@@ -87,4 +91,23 @@ public class DiscoverEntityPropertiesAction implements IAction<List<EntityProper
 		}
 	}
 
+	/**
+	 * @param propertyDescriptor
+	 * @return
+	 */
+	private boolean isPropertyVisible(EntityPropertyDescriptor propertyDescriptor) {
+		int score = Integer.MIN_VALUE;
+		boolean visible = true;
+		for (IEntityPropertyDisplayFilter filter : ApplicationConfiguration.getCapabilities().getEntityPropertyDisplayFilters()) {
+			if (filter.getScore() >= score) {
+				Boolean filterResult = filter.isPropertyVisible(entity, propertyDescriptor);
+				if (filterResult != null) {
+					score = filter.getScore();
+					visible = filterResult;
+				}
+			}
+		}
+		return visible;
+	}
+	
 }

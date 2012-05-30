@@ -20,3 +20,9 @@ Caps vs. Modifiers:
   festzulegen
 
 Das Schema ist die interne Datenstruktur, die sich daraus ergibt.
+
+Die Trennlinie zwischen Plugin und Modifier ist schwammig. Zum Beispiel werden Entity Reference
+Detectory durch Plugins beigesteuert, aber ein Detector kann auch für genau eine Anwendung,
+genau eine Entity, genau eine Property sinnvoll sein. Damit hier keine Funktionalität
+dupliziert wird: Erst mal zusammenlegen, nur trennen wenn das aus irgendwelchen Gründen
+nötig ist.

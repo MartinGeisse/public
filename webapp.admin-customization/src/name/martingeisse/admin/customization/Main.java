@@ -9,6 +9,7 @@ package name.martingeisse.admin.customization;
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
+import name.martingeisse.admin.application.capabilities.SingleEntityPropertyFilter;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.admin.schema.DatabaseDescriptor;
 
@@ -33,6 +34,7 @@ public class Main {
 		ApplicationConfiguration.addPlugin(new CustomizationPlugin());
 		ApplicationConfiguration.addPlugin(new BaselineReadOnlyRendererContributor());
 		ApplicationConfiguration.addPlugin(new PrintNameAction());
+		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, "User", "lastLoginAttemptTimestamp", false));
 		
 		Launcher.launch();
 		
