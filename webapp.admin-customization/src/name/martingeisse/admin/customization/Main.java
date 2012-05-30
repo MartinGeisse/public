@@ -37,6 +37,7 @@ public class Main {
 		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, null, "modificationTimestamp", false));
 		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, null, "modificationUser_id", false));
 		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, "User", "lastLoginAttemptTimestamp", false));
+		ApplicationConfiguration.addPlugin(new OverviewPresenter());
 		
 		Launcher.launch();
 		

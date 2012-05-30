@@ -8,7 +8,7 @@ package name.martingeisse.admin.application;
 
 import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
 import name.martingeisse.admin.application.capabilities.DefaultEntityReferenceDetector;
-import name.martingeisse.admin.application.capabilities.SharedSingleEntityPresenterContributor;
+import name.martingeisse.admin.application.capabilities.SharedEntityPresentationContributor;
 import name.martingeisse.admin.single.RawEntityPresentationPanel;
 import name.martingeisse.admin.single.SingleEntityPresenter;
 
@@ -23,7 +23,7 @@ public class DefaultPlugin implements IPlugin {
 	@Override
 	public void contribute(ApplicationCapabilities applicationCapabilities) {
 		applicationCapabilities.getEntityReferenceDetectors().add(new DefaultEntityReferenceDetector());
-		applicationCapabilities.getEntityPresentationContributors().add(new SharedSingleEntityPresenterContributor(null, new SingleEntityPresenter("default", "Default", RawEntityPresentationPanel.class)));
+		applicationCapabilities.getEntityPresentationContributors().add(new SharedEntityPresentationContributor(null, new SingleEntityPresenter("default", "Default", RawEntityPresentationPanel.class)));
 	}
 
 }

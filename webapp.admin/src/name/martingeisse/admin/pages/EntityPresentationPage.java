@@ -14,6 +14,7 @@ import name.martingeisse.admin.application.capabilities.IEntityInstanceAction;
 import name.martingeisse.admin.application.capabilities.IEntityInstanceActionContributor;
 import name.martingeisse.admin.schema.EntityDescriptor;
 import name.martingeisse.admin.single.EntityInstance;
+import name.martingeisse.admin.single.ISingleEntityOverviewPresenter;
 import name.martingeisse.admin.single.ISingleEntityPresenter;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -67,12 +68,18 @@ public class EntityPresentationPage extends AbstractAdminPage {
 		// this model will return the entity instance
 		IModel<EntityInstance> instanceModel = new PropertyModel<EntityInstance>(this, "instance");
 		
+		// find the overview presenter
+		final ISingleEntityOverviewPresenter overviewPresenter = entity.getOverviewPresenter();
+		
 		// find the presenter
 		final ISingleEntityPresenter presenter = entity.getSinglePresenter(presenterName);
 		if (presenter == null) {
 			throw new RuntimeException("unknown presenter: " + presenterName);
 		}
 
+		// create the overview
+		add(overviewPresenter.createPanel("overview", instanceModel));
+		
 		// create the presentation title label and panel
 		add(new Label("presenterTitle", presenter.getTitle()));
 		add(presenter.createPanel("presentationPanel", instanceModel));

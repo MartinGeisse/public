@@ -8,12 +8,14 @@ package name.martingeisse.admin.application.capabilities;
 
 import name.martingeisse.admin.multi.IGlobalEntityListPresenter;
 import name.martingeisse.admin.schema.EntityDescriptor;
+import name.martingeisse.admin.single.ISingleEntityOverviewPresenter;
 import name.martingeisse.admin.single.ISingleEntityPresenter;
 
 /**
  * Implementations are added by plugins. They contribute
- * {@link ISingleEntityPresenter} and {@link IGlobalEntityListPresenter}
- * objects for a given {@link EntityDescriptor}.
+ * {@link ISingleEntityOverviewPresenter}, {@link ISingleEntityPresenter}
+ * and {@link IGlobalEntityListPresenter} objects for a given
+ * {@link EntityDescriptor}.
  */
 public interface IEntityPresentationContributor {
 

@@ -16,7 +16,9 @@ import name.martingeisse.admin.multi.IGlobalEntityListPresenter;
 import name.martingeisse.admin.multi.RawGlobalEntityListPresenter;
 import name.martingeisse.admin.single.EntityInstance;
 import name.martingeisse.admin.single.FetchEntityInstanceAction;
+import name.martingeisse.admin.single.ISingleEntityOverviewPresenter;
 import name.martingeisse.admin.single.ISingleEntityPresenter;
+import name.martingeisse.admin.single.NullOverviewPresenter;
 
 /**
  * This class captures a descriptor for a database entity (table).
@@ -57,6 +59,16 @@ public class EntityDescriptor implements Serializable {
 	private List<EntityReferenceInfo> outgoingReferences;
 
 	/**
+	 * the overviewPresenter
+	 */
+	private ISingleEntityOverviewPresenter overviewPresenter;
+	
+	/**
+	 * the overviewPresenterScore
+	 */
+	private int overviewPresenterScore;
+	
+	/**
 	 * the singlePresenters
 	 */
 	private List<ISingleEntityPresenter> singlePresenters;
@@ -73,6 +85,8 @@ public class EntityDescriptor implements Serializable {
 		this.properties = new HashMap<String, EntityPropertyDescriptor>();
 		this.incomingReferences = new ArrayList<EntityReferenceInfo>();
 		this.outgoingReferences = new ArrayList<EntityReferenceInfo>();
+		this.overviewPresenter = NullOverviewPresenter.instance;
+		this.overviewPresenterScore = Integer.MIN_VALUE;
 		this.singlePresenters = new ArrayList<ISingleEntityPresenter>();
 		this.globalListPresenters = new ArrayList<IGlobalEntityListPresenter>();
 		globalListPresenters.add(new RawGlobalEntityListPresenter()); // TODO: remove
@@ -189,7 +203,31 @@ public class EntityDescriptor implements Serializable {
 	public void setGlobalListPresenters(final List<IGlobalEntityListPresenter> globalListPresenters) {
 		this.globalListPresenters = globalListPresenters;
 	}
+	
+	/**
+	 * Contributes the specified overview presenter. This entity will use the specified presenter
+	 * if its score is at least as high as the score of the currently used presenter.
+	 * @param presenter the presenter to contribute
+	 * @param score the score of the presenter being contributed
+	 */
+	public void contibuteOverviewPresenter(ISingleEntityOverviewPresenter presenter, int score) {
+		if (presenter == null) {
+			throw new IllegalArgumentException("presenter argument is null");
+		}
+		if (score >= this.overviewPresenterScore) {
+			this.overviewPresenter = presenter;
+			this.overviewPresenterScore = score;
+		}
+	}
 
+	/**
+	 * Getter method for the overviewPresenter.
+	 * @return the overviewPresenter
+	 */
+	public ISingleEntityOverviewPresenter getOverviewPresenter() {
+		return overviewPresenter;
+	}
+	
 	/**
 	 * Returns the single-instance presenter with the specified URL ID.
 	 * @param urlId the URL ID

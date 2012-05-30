@@ -16,7 +16,7 @@ import name.martingeisse.common.terms.IPredicate;
 
 /**
  * Simple implementation of {@link IEntityPresentationContributor}.
- * This implementation uses an {@link IPredicate} to detect
+ * This implementation uses a {@link IPredicate} to detect
  * entities it applies to, and adds a set of shared
  * {@link ISingleEntityPresenter} instances to all matched entities.
  * 
@@ -26,7 +26,7 @@ import name.martingeisse.common.terms.IPredicate;
  * This class also implements {@link IPlugin} to allow convenient usage
  * outside any other plugin.
  */
-public class SharedSingleEntityPresenterContributor implements IEntityPresentationContributor, IPlugin {
+public class SharedEntityPresentationContributor implements IEntityPresentationContributor, IPlugin {
 
 	/**
 	 * the entityPredicate
@@ -46,7 +46,7 @@ public class SharedSingleEntityPresenterContributor implements IEntityPresentati
 	/**
 	 * Constructor.
 	 */
-	public SharedSingleEntityPresenterContributor() {
+	public SharedEntityPresentationContributor() {
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class SharedSingleEntityPresenterContributor implements IEntityPresentati
 	 * @param entityPredicate the predicate that determines to which entities this contributor applies
 	 * @param presenters the presenters to return
 	 */
-	public SharedSingleEntityPresenterContributor(final IPredicate<EntityDescriptor> entityPredicate, final ISingleEntityPresenter... presenters) {
+	public SharedEntityPresentationContributor(final IPredicate<EntityDescriptor> entityPredicate, final ISingleEntityPresenter... presenters) {
 		this.entityPredicate = entityPredicate;
 		this.singlePresenters = presenters;
 		this.listPresenters = null;
@@ -65,7 +65,7 @@ public class SharedSingleEntityPresenterContributor implements IEntityPresentati
 	 * @param entityPredicate the predicate that determines to which entities this contributor applies
 	 * @param presenters the presenters to return
 	 */
-	public SharedSingleEntityPresenterContributor(final IPredicate<EntityDescriptor> entityPredicate, final IGlobalEntityListPresenter... presenters) {
+	public SharedEntityPresentationContributor(final IPredicate<EntityDescriptor> entityPredicate, final IGlobalEntityListPresenter... presenters) {
 		this.entityPredicate = entityPredicate;
 		this.singlePresenters = null;
 		this.listPresenters = presenters;
@@ -77,7 +77,7 @@ public class SharedSingleEntityPresenterContributor implements IEntityPresentati
 	 * @param singlePresenters the single-instance presenters
 	 * @param listPresenters the list presenters
 	 */
-	public SharedSingleEntityPresenterContributor(final IPredicate<EntityDescriptor> entityPredicate, final ISingleEntityPresenter[] singlePresenters, final IGlobalEntityListPresenter[] listPresenters) {
+	public SharedEntityPresentationContributor(final IPredicate<EntityDescriptor> entityPredicate, final ISingleEntityPresenter[] singlePresenters, final IGlobalEntityListPresenter[] listPresenters) {
 		this.entityPredicate = entityPredicate;
 		this.singlePresenters = singlePresenters;
 		this.listPresenters = listPresenters;
