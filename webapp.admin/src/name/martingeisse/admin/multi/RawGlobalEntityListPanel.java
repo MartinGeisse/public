@@ -21,6 +21,7 @@ import name.martingeisse.admin.schema.DatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.Loop;
 import org.apache.wicket.markup.html.list.LoopItem;
@@ -59,6 +60,11 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 	 * the idColumnIndex
 	 */
 	private transient int idColumnIndex;
+	
+	/**
+	 * the columnNames
+	 */
+	private transient String[] columnNames;
 	
 	/**
 	 * the renderers
@@ -141,6 +147,12 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
+		add(new Loop("headers", new PropertyModel<Integer>(RawGlobalEntityListPanel.this, "width")) {
+			@Override
+			protected void populateItem(LoopItem item) {
+				item.add(new Label("name", columnNames[item.getIndex()]));
+			}
+		});
 		add(new Loop("rows", new PropertyModel<Integer>(RawGlobalEntityListPanel.this, "visibleRows")) {
 			@Override
 			protected void populateItem(final LoopItem rowItem) {
@@ -207,7 +219,8 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 				visibleRows++;
 			}
 			
-			// determine the renderers
+			// determine the column names and renderers
+			columnNames = new String[width];
 			renderers = new IPropertyReadOnlyRenderer[width];
 			int position = 0;
 			for (int i=0; i<fetchWidth; i++) {
@@ -217,6 +230,7 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 					if (renderer == null) {
 						throw new RuntimeException("no renderer");
 					}
+					columnNames[position] = resultSet.getMetaData().getColumnName(1 + i);
 					renderers[position] = renderer;
 					position++;
 				}

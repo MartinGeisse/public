@@ -11,7 +11,8 @@ import name.martingeisse.admin.schema.EntityDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
 
 /**
- * This filter shows or hides a single entity property.
+ * This filter shows or hides a single entity property. The entity name
+ * can be null to apply the filter to all entities.
  */
 public class SingleEntityPropertyFilter implements IEntityPropertyDisplayFilter, IPlugin {
 
@@ -55,10 +56,10 @@ public class SingleEntityPropertyFilter implements IEntityPropertyDisplayFilter,
 		this.visible = visible;
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.application.capabilities.IEntityPropertyDisplayFilter#getScore()
+	/**
+	 * Getter method for the score.
+	 * @return the score
 	 */
-	@Override
 	public int getScore() {
 		return score;
 	}
@@ -126,17 +127,27 @@ public class SingleEntityPropertyFilter implements IEntityPropertyDisplayFilter,
 	public void contribute(final ApplicationCapabilities applicationCapabilities) {
 		applicationCapabilities.getEntityPropertyDisplayFilters().add(this);
 	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.application.capabilities.IEntityPropertyDisplayFilter#getScore(name.martingeisse.admin.schema.EntityDescriptor, name.martingeisse.admin.schema.EntityPropertyDescriptor)
+	 */
+	@Override
+	public int getScore(EntityDescriptor entityDescriptor, EntityPropertyDescriptor propertyDescriptor) {
+		return score;
+	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.application.capabilities.IEntityPropertyDisplayFilter#isPropertyVisible(name.martingeisse.admin.schema.EntityDescriptor, name.martingeisse.admin.schema.EntityPropertyDescriptor)
 	 */
 	@Override
-	public Boolean isPropertyVisible(final EntityDescriptor entityDescriptor, final EntityPropertyDescriptor propertyDescriptor) {
-		if (entityDescriptor.getTableName().equals(entityName) && propertyDescriptor.getName().equals(propertyName)) {
-			return visible;
-		} else {
+	public Boolean isPropertyVisible(EntityDescriptor entityDescriptor, EntityPropertyDescriptor propertyDescriptor) {
+		if (this.entityName != null && !this.entityName.equals(entityDescriptor.getTableName())) {
 			return null;
 		}
+		if (!this.propertyName.equals(propertyDescriptor.getName())) {
+			return null;
+		}
+		return visible;
 	}
 
 }

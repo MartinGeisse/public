@@ -34,6 +34,8 @@ public class Main {
 		ApplicationConfiguration.addPlugin(new CustomizationPlugin());
 		ApplicationConfiguration.addPlugin(new BaselineReadOnlyRendererContributor());
 		ApplicationConfiguration.addPlugin(new PrintNameAction());
+		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, null, "modificationTimestamp", false));
+		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, null, "modificationUser_id", false));
 		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, "User", "lastLoginAttemptTimestamp", false));
 		
 		Launcher.launch();

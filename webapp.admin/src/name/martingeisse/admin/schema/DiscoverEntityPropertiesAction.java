@@ -99,10 +99,11 @@ public class DiscoverEntityPropertiesAction implements IAction<Map<String, Entit
 		int score = Integer.MIN_VALUE;
 		boolean visible = true;
 		for (IEntityPropertyDisplayFilter filter : ApplicationConfiguration.getCapabilities().getEntityPropertyDisplayFilters()) {
-			if (filter.getScore() >= score) {
+			int filterScore = filter.getScore(entity, propertyDescriptor);
+			if (filterScore >= score) {
 				Boolean filterResult = filter.isPropertyVisible(entity, propertyDescriptor);
 				if (filterResult != null) {
-					score = filter.getScore();
+					score = filterScore;
 					visible = filterResult;
 				}
 			}

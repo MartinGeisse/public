@@ -15,13 +15,17 @@ import name.martingeisse.admin.schema.EntityPropertyDescriptor;
  * score that defines visibility for that property wins.
  * Properties are visible by default, i.e. if no filter affects
  * a property, then it is visible.
+ * 
+ * 
  */
 public interface IEntityPropertyDisplayFilter {
 
 	/**
+	 * @param entityDescriptor the entity descriptor
+	 * @param propertyDescriptor the property descriptor
 	 * @return the score for this filter, used for priority
 	 */
-	public int getScore();
+	public int getScore(EntityDescriptor entityDescriptor, EntityPropertyDescriptor propertyDescriptor);
 
 	/**
 	 * Checks whether the specified property is visible
