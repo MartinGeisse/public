@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.multi.IGlobalEntityListPresenter;
 import name.martingeisse.admin.multi.RawGlobalEntityListPresenter;
 import name.martingeisse.admin.single.EntityInstance;
@@ -25,6 +26,11 @@ import name.martingeisse.admin.single.NullOverviewPresenter;
  * Instances are created either explicitly from code or implicitly
  * by fetching information from the database. Explicit and implicit
  * descriptors are then merged to build the final application schema.
+ * 
+ * List Presenters: Each entity keeps a set of named list presenters that are
+ * able to create a user interface for lists of this entity. If no presenter
+ * is registered, the default presenter from the {@link ApplicationConfiguration}
+ * is used instead.
  * 
  * TODO: this class should not be serializable. Instead, models should be able
  * to detach and re-attach from/to instances of this class.
@@ -62,12 +68,12 @@ public class EntityDescriptor implements Serializable {
 	 * the overviewPresenter
 	 */
 	private ISingleEntityOverviewPresenter overviewPresenter;
-	
+
 	/**
 	 * the overviewPresenterScore
 	 */
 	private int overviewPresenterScore;
-	
+
 	/**
 	 * the singlePresenters
 	 */
@@ -203,20 +209,33 @@ public class EntityDescriptor implements Serializable {
 	public void setGlobalListPresenters(final List<IGlobalEntityListPresenter> globalListPresenters) {
 		this.globalListPresenters = globalListPresenters;
 	}
-	
+
 	/**
 	 * Contributes the specified overview presenter. This entity will use the specified presenter
 	 * if its score is at least as high as the score of the currently used presenter.
 	 * @param presenter the presenter to contribute
 	 * @param score the score of the presenter being contributed
 	 */
-	public void contibuteOverviewPresenter(ISingleEntityOverviewPresenter presenter, int score) {
+	public void contibuteOverviewPresenter(final ISingleEntityOverviewPresenter presenter, final int score) {
 		if (presenter == null) {
 			throw new IllegalArgumentException("presenter argument is null");
 		}
 		if (score >= this.overviewPresenterScore) {
 			this.overviewPresenter = presenter;
 			this.overviewPresenterScore = score;
+		}
+	}
+	
+	/**
+	 * Adds the default list presenter as a list presenter to this entity 
+	 * if no other presenter is explicitly registered with this entity.
+	 */
+	public void addDefaultListPresenterIfNeeded() {
+		if (globalListPresenters.isEmpty()) {
+			IGlobalEntityListPresenter presenter = ApplicationConfiguration.getDefaultEntityListPresenter();
+			if (presenter != null) {
+				globalListPresenters.add(ApplicationConfiguration.getDefaultEntityListPresenter());
+			}
 		}
 	}
 
@@ -227,7 +246,7 @@ public class EntityDescriptor implements Serializable {
 	public ISingleEntityOverviewPresenter getOverviewPresenter() {
 		return overviewPresenter;
 	}
-	
+
 	/**
 	 * Returns the single-instance presenter with the specified URL ID.
 	 * @param urlId the URL ID

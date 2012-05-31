@@ -11,6 +11,9 @@ import name.martingeisse.admin.schema.EntityDescriptor;
 
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -48,7 +51,19 @@ public class EntityTablePage extends AbstractAdminPage {
 		}
 		
 		// create components
-		add(new Label("title", presenter.getTitle(entity)));
+		add(new Label("entityName", entity.getTableName()));
+		add(new ListView<IGlobalEntityListPresenter>("presenters", entity.getGlobalListPresenters()) {
+			@Override
+			protected void populateItem(ListItem<IGlobalEntityListPresenter> item) {
+				final PageParameters parameters = new PageParameters();
+				parameters.add("entity", EntityTablePage.this.entity.getTableName());
+				parameters.add("presenter", item.getModelObject().getUrlId());
+				final BookmarkablePageLink<Void> link = new BookmarkablePageLink<Void>("link", EntityTablePage.class, parameters);
+				link.add(new Label("title", item.getModelObject().getTitle(EntityTablePage.this.entity)));
+				item.add(link);
+			}
+		});
+		add(new Label("presenterTitle", presenter.getTitle(entity)));
 		Panel panel = presenter.createPanel("tablePresentation", entity, parameters);
 		add(panel);
 		IPageable pageable = presenter.getPageableForPanel(panel);

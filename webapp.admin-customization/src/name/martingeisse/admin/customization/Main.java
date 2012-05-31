@@ -10,6 +10,7 @@ import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
 import name.martingeisse.admin.application.capabilities.SingleEntityPropertyFilter;
+import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPresenter;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.admin.schema.DatabaseDescriptor;
 import name.martingeisse.admin.single.SingleEntityOverviewPresenter;
@@ -39,6 +40,7 @@ public class Main {
 		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, null, "modificationUser_id", false));
 		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, "User", "lastLoginAttemptTimestamp", false));
 		ApplicationConfiguration.addPlugin(new SingleEntityOverviewPresenter(OverviewPanel.class, 1));
+		ApplicationConfiguration.addPlugin(new IdOnlyGlobalEntityListPresenter());
 		
 		Launcher.launch();
 		

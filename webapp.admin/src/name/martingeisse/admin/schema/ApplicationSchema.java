@@ -182,6 +182,7 @@ public class ApplicationSchema {
 			for (IEntityPresentationContributor contributor : ApplicationConfiguration.getCapabilities().getEntityPresentationContributors()) {
 				contributor.contributeEntityPresenters(entity);
 			}
+			entity.addDefaultListPresenterIfNeeded();
 		}
 	}
 	

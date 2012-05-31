@@ -4,7 +4,15 @@
 	</head>
 	<body>
 		<wicket:extend>
-			<h1 wicket:id="title" />
+			<h1 wicket:id="entityName" />
+			<ul>
+				<li wicket:id="presenters">
+					<a wicket:id="link">
+						<span wicket:id="title" />
+					</a>
+				</li>
+			</ul>
+			<h1 wicket:id="presenterTitle" />
 			<div style="overflow: scroll; ">
 				<div wicket:id="tablePresentation" />
 				<div wicket:id="pagingNavigator" />
