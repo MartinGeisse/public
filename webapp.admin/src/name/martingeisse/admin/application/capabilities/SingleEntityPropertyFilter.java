@@ -14,7 +14,7 @@ import name.martingeisse.admin.schema.EntityPropertyDescriptor;
  * This filter shows or hides a single entity property. The entity name
  * can be null to apply the filter to all entities.
  */
-public class SingleEntityPropertyFilter implements IEntityPropertyDisplayFilter, IPlugin {
+public class SingleEntityPropertyFilter implements IRawEntityListPropertyDisplayFilter, IPlugin {
 
 	/**
 	 * the score
@@ -125,7 +125,7 @@ public class SingleEntityPropertyFilter implements IEntityPropertyDisplayFilter,
 	 */
 	@Override
 	public void contribute(final ApplicationCapabilities applicationCapabilities) {
-		applicationCapabilities.getEntityPropertyDisplayFilters().add(this);
+		applicationCapabilities.getRawEntityListPropertyDisplayFilters().add(this);
 	}
 	
 	/* (non-Javadoc)

@@ -29,7 +29,10 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		
 		DatabaseDescriptor mainDatabase = new DatabaseDescriptor();
-		mainDatabase.setDisplayName("leckerMittag");
+		mainDatabase.setDisplayName("main database");
+		mainDatabase.setUrl("jdbc:postgresql://localhost/admintest");
+		mainDatabase.setUsername("postgres");
+		mainDatabase.setPassword("postgres");
 		ApplicationConfiguration.addDatabase(mainDatabase);
 		
 		ApplicationConfiguration.addPlugin(new DefaultPlugin());

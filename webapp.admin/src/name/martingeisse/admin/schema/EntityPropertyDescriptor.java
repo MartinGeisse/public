@@ -23,9 +23,9 @@ public class EntityPropertyDescriptor implements Serializable {
 	private String name;
 
 	/**
-	 * the visible
+	 * the visibleInRawEntityList
 	 */
-	private boolean visible;
+	private boolean visibleInRawEntityList;
 
 	/**
 	 * Constructor.
@@ -50,19 +50,19 @@ public class EntityPropertyDescriptor implements Serializable {
 	}
 
 	/**
-	 * Getter method for the visible.
-	 * @return the visible
+	 * Getter method for the visibleInRawEntityList.
+	 * @return the visibleInRawEntityList
 	 */
-	public boolean isVisible() {
-		return visible;
+	public boolean isVisibleInRawEntityList() {
+		return visibleInRawEntityList;
 	}
 
 	/**
-	 * Setter method for the visible.
-	 * @param visible the visible to set
+	 * Setter method for the visibleInRawEntityList.
+	 * @param visibleInRawEntityList the visibleInRawEntityList to set
 	 */
-	public void setVisible(final boolean visible) {
-		this.visible = visible;
+	public void setVisibleInRawEntityList(final boolean visibleInRawEntityList) {
+		this.visibleInRawEntityList = visibleInRawEntityList;
 	}
 
 }

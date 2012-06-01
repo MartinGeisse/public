@@ -198,7 +198,7 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 			for (int i=0; i<fetchWidth; i++) {
 				String columnName = resultSet.getMetaData().getColumnName(1 + i);
 				EntityPropertyDescriptor propertyDescriptor = entity.getProperties().get(columnName);
-				boolean visible = (propertyDescriptor != null && propertyDescriptor.isVisible());
+				boolean visible = (propertyDescriptor != null && propertyDescriptor.isVisibleInRawEntityList());
 				columnVisible[i] = visible;
 				if (visible) {
 					width++;

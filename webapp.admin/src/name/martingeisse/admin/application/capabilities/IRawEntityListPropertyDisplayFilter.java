@@ -18,7 +18,7 @@ import name.martingeisse.admin.schema.EntityPropertyDescriptor;
  * 
  * 
  */
-public interface IEntityPropertyDisplayFilter {
+public interface IRawEntityListPropertyDisplayFilter {
 
 	/**
 	 * @param entityDescriptor the entity descriptor

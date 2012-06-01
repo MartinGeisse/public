@@ -1,5 +1,21 @@
 
-Property Filter kann bleiben, aber umbenennen in "default entity list presenter property filter"
+------------------------------------------------------------------------------------------------------------
+0.0.1 TODO
+------------------------------------------------------------------------------------------------------------
+
+Hochladen zu GitHub
+
+------------------------------------------------------------------------------------------------------------
+0.1.0 TODO
+------------------------------------------------------------------------------------------------------------
+
+MySQL
+
+Sollte phpBB-Datenbank öffnen und verstehen können
+
+------------------------------------------------------------------------------------------------------------
+??? TODO
+------------------------------------------------------------------------------------------------------------
 
 Weitere Filter-Impl, die für eine bestimmte Entity-Klasse direkt alle sichtbaren Felder angibt, alle anderen sind dann unsichtbar.
 
@@ -22,6 +38,4 @@ Zebra-Tabellen in Default List Presenter
 
 AbstractPagedEntityListPresentationPanel - ?
 Das sollte nicht in die Page ausgelagert werden sondern vom Presenter gemacht werden, weil auch Filter etc. vom Presenter gemacht werden
-
-DefaultPresenter -> AllPropertiesEntityListPresenter, für diesen gilt auch die PropertyFilter-konfig allgemein. Andere P. als der Default können dann Rows filtern sowie die Property-Filter zusätzlich beeinflussen. Sinn ist es, List Presenters rein auf der Basis von Row-Filtern und Property-Filtern aufzubauen, weil sich damit schon einiges erreichen lässt. Wenn da noch Property-Presenter dazukommen dann lassen sich viele Entities schon sehr brauchbar darstellen.
 

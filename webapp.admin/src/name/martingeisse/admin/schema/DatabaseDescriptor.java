@@ -25,6 +25,21 @@ public class DatabaseDescriptor implements Serializable {
 	private String displayName;
 
 	/**
+	 * the url
+	 */
+	private String url;
+
+	/**
+	 * the username
+	 */
+	private String username;
+
+	/**
+	 * the password
+	 */
+	private String password;
+
+	/**
 	 * Constructor.
 	 */
 	public DatabaseDescriptor() {
@@ -47,12 +62,60 @@ public class DatabaseDescriptor implements Serializable {
 	}
 
 	/**
+	 * Getter method for the url.
+	 * @return the url
+	 */
+	public String getUrl() {
+		return url;
+	}
+
+	/**
+	 * Setter method for the url.
+	 * @param url the url to set
+	 */
+	public void setUrl(final String url) {
+		this.url = url;
+	}
+
+	/**
+	 * Getter method for the username.
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
+
+	/**
+	 * Setter method for the username.
+	 * @param username the username to set
+	 */
+	public void setUsername(final String username) {
+		this.username = username;
+	}
+
+	/**
+	 * Getter method for the password.
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
+	}
+
+	/**
+	 * Setter method for the password.
+	 * @param password the password to set
+	 */
+	public void setPassword(final String password) {
+		this.password = password;
+	}
+
+	/**
 	 * Creates an SQL connection to this database
 	 * @return the connection
 	 * @throws SQLException on SQL errors
 	 */
 	public Connection createConnection() throws SQLException {
-		return DriverManager.getConnection("jdbc:postgresql://localhost/leckerMittag", "postgres", "postgres");
+		return DriverManager.getConnection(url, username, password);
 	}
-	
+
 }

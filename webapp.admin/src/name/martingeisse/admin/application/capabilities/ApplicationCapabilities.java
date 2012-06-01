@@ -18,9 +18,9 @@ import name.martingeisse.admin.readonly.IPropertyReadOnlyRendererContributor;
 public class ApplicationCapabilities {
 
 	/**
-	 * the entityPropertyDisplayFilters
+	 * the rawEntityListPropertyDisplayFilters
 	 */
-	private final List<IEntityPropertyDisplayFilter> entityPropertyDisplayFilters = new ArrayList<IEntityPropertyDisplayFilter>();
+	private final List<IRawEntityListPropertyDisplayFilter> rawEntityListPropertyDisplayFilters = new ArrayList<IRawEntityListPropertyDisplayFilter>();
 
 	/**
 	 * the entityReferenceDetectors
@@ -41,13 +41,13 @@ public class ApplicationCapabilities {
 	 * the entityInstanceActionContributors
 	 */
 	private final List<IEntityInstanceActionContributor> entityInstanceActionContributors = new ArrayList<IEntityInstanceActionContributor>();
-	
+
 	/**
-	 * Getter method for the entityPropertyDisplayFilters.
-	 * @return the entityPropertyDisplayFilters
+	 * Getter method for the rawEntityListPropertyDisplayFilters.
+	 * @return the rawEntityListPropertyDisplayFilters
 	 */
-	public List<IEntityPropertyDisplayFilter> getEntityPropertyDisplayFilters() {
-		return entityPropertyDisplayFilters;
+	public List<IRawEntityListPropertyDisplayFilter> getRawEntityListPropertyDisplayFilters() {
+		return rawEntityListPropertyDisplayFilters;
 	}
 	
 	/**

@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
-import name.martingeisse.admin.application.capabilities.IEntityPropertyDisplayFilter;
+import name.martingeisse.admin.application.capabilities.IRawEntityListPropertyDisplayFilter;
 import name.martingeisse.admin.common.IAction;
 
 /**
@@ -79,9 +79,9 @@ public class DiscoverEntityPropertiesAction implements IAction<Map<String, Entit
 			ResultSet resultSet = connection.getMetaData().getColumns(null, null, entity.getTableName(), null);
 			while (resultSet.next()) {
 				final EntityPropertyDescriptor propertyDescriptor = new EntityPropertyDescriptor();
-				propertyDescriptor.setVisible(true);
+				propertyDescriptor.setVisibleInRawEntityList(true);
 				propertyDescriptor.setName(resultSet.getString("COLUMN_NAME"));
-				propertyDescriptor.setVisible(isPropertyVisible(propertyDescriptor));
+				propertyDescriptor.setVisibleInRawEntityList(isPropertyVisibleInRawEntityList(propertyDescriptor));
 				result.put(propertyDescriptor.getName(), propertyDescriptor);
 			}
 			resultSet.close();
@@ -95,10 +95,10 @@ public class DiscoverEntityPropertiesAction implements IAction<Map<String, Entit
 	 * @param propertyDescriptor
 	 * @return
 	 */
-	private boolean isPropertyVisible(EntityPropertyDescriptor propertyDescriptor) {
+	private boolean isPropertyVisibleInRawEntityList(EntityPropertyDescriptor propertyDescriptor) {
 		int score = Integer.MIN_VALUE;
 		boolean visible = true;
-		for (IEntityPropertyDisplayFilter filter : ApplicationConfiguration.getCapabilities().getEntityPropertyDisplayFilters()) {
+		for (IRawEntityListPropertyDisplayFilter filter : ApplicationConfiguration.getCapabilities().getRawEntityListPropertyDisplayFilters()) {
 			int filterScore = filter.getScore(entity, propertyDescriptor);
 			if (filterScore >= score) {
 				Boolean filterResult = filter.isPropertyVisible(entity, propertyDescriptor);
