@@ -9,6 +9,7 @@ package name.martingeisse.admin.customization;
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
+import name.martingeisse.admin.application.capabilities.ExplicitEntityPropertyFilter;
 import name.martingeisse.admin.application.capabilities.SingleEntityPropertyFilter;
 import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPresenter;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
@@ -44,6 +45,11 @@ public class Main {
 		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, "User", "lastLoginAttemptTimestamp", false));
 		ApplicationConfiguration.addPlugin(new SingleEntityOverviewPresenter(OverviewPanel.class, 1));
 		ApplicationConfiguration.addPlugin(new IdOnlyGlobalEntityListPresenter());
+		
+		ExplicitEntityPropertyFilter userPropertyFilter = new ExplicitEntityPropertyFilter(2, "User");
+		userPropertyFilter.getVisiblePropertyNames().add("id");
+		userPropertyFilter.getVisiblePropertyNames().add("name");
+		ApplicationConfiguration.addPlugin(userPropertyFilter);
 		
 		Launcher.launch();
 		

@@ -1,11 +1,5 @@
 
 ------------------------------------------------------------------------------------------------------------
-0.0.1 TODO
-------------------------------------------------------------------------------------------------------------
-
-Hochladen zu GitHub
-
-------------------------------------------------------------------------------------------------------------
 0.1.0 TODO
 ------------------------------------------------------------------------------------------------------------
 
@@ -16,12 +10,6 @@ Sollte phpBB-Datenbank öffnen und verstehen können
 ------------------------------------------------------------------------------------------------------------
 ??? TODO
 ------------------------------------------------------------------------------------------------------------
-
-Weitere Filter-Impl, die für eine bestimmte Entity-Klasse direkt alle sichtbaren Felder angibt, alle anderen sind dann unsichtbar.
-
-Diese Filter sind eine einfache Methode, um Felder aus allen Entities auszublenden bzw. für eine Entity die Felder direkt anzugeben.
-
-Der Presenter kann sich (wenn mal impl.) auch an Type Converters usw. bedienen. Für alle komplexeren Aufgaben aber dann andere Presenter schreiben.
 
 - Paging -> Page Selector schöner machen, aus umrahmte Boxen mit fester Breite usw.
 - Result Set Reader -> Re-Ordering nach einem festen Satz von bekannten Feldern; später könnten hier auch Type Converter rein, auch custom Klassen statt EntityInstance:
