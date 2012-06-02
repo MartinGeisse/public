@@ -8,6 +8,8 @@ package name.martingeisse.admin.schema;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -301,4 +303,35 @@ public class EntityDescriptor implements Serializable {
 		return null;
 	}
 
+	/**
+	 * @return the names of the fields for raw lists of this entity type, in the order
+	 * they shall be displayed.
+	 */
+	public String[] getRawEntityListFieldOrder() {
+		
+		// determine the list of visible fields
+		List<EntityPropertyDescriptor> fieldOrder = new ArrayList<EntityPropertyDescriptor>();
+		for (EntityPropertyDescriptor property : properties.values()) {
+			if (property.isVisibleInRawEntityList()) {
+				fieldOrder.add(property);
+			}
+		}
+		
+		// determine their order
+		Comparator<EntityPropertyDescriptor> fieldComparator = ApplicationConfiguration.getRawEntityListFieldOrder();
+		if (fieldComparator != null) {
+			Collections.sort(fieldOrder, fieldComparator);
+		}
+		
+		// build an array of the field names
+		String[] fieldOrderArray = new String[fieldOrder.size()];
+		int position = 0;
+		for (EntityPropertyDescriptor property : fieldOrder) {
+			fieldOrderArray[position] = property.getName();
+			position++;
+		}
+		
+		return fieldOrderArray;
+	}
+	
 }

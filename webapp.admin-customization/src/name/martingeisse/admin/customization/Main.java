@@ -6,6 +6,8 @@
 
 package name.martingeisse.admin.customization;
 
+import java.util.Comparator;
+
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
@@ -14,6 +16,7 @@ import name.martingeisse.admin.application.capabilities.SingleEntityPropertyFilt
 import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPresenter;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.admin.schema.DatabaseDescriptor;
+import name.martingeisse.admin.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.single.SingleEntityOverviewPresenter;
 
 
@@ -50,6 +53,19 @@ public class Main {
 		userPropertyFilter.getVisiblePropertyNames().add("id");
 		userPropertyFilter.getVisiblePropertyNames().add("name");
 		ApplicationConfiguration.addPlugin(userPropertyFilter);
+		
+		ApplicationConfiguration.setRawEntityListFieldOrder(new Comparator<EntityPropertyDescriptor>() {
+			@Override
+			public int compare(EntityPropertyDescriptor o1, EntityPropertyDescriptor o2) {
+				if (o1.getName().equals("id")) {
+					return -1;
+				} else if (o2.getName().equals("id")) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+		});
 		
 		Launcher.launch();
 		
