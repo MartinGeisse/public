@@ -16,8 +16,9 @@ import name.martingeisse.admin.application.capabilities.PrefixEliminatingEntityD
 import name.martingeisse.admin.application.capabilities.SingleEntityPropertyFilter;
 import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPresenter;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
-import name.martingeisse.admin.schema.DatabaseDescriptor;
+import name.martingeisse.admin.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
+import name.martingeisse.admin.schema.MysqlDatabaseDescriptor;
 import name.martingeisse.admin.single.SingleEntityOverviewPresenter;
 
 
@@ -40,7 +41,7 @@ public class Main {
 //		mainDatabase.setPassword("postgres");
 //		ApplicationConfiguration.addDatabase(mainDatabase);
 		
-		DatabaseDescriptor phpbbDatabase = new DatabaseDescriptor();
+		AbstractDatabaseDescriptor phpbbDatabase = new MysqlDatabaseDescriptor();
 		phpbbDatabase.setDisplayName("phpBB database");
 		phpbbDatabase.setUrl("jdbc:mysql://localhost/phpbb");
 		phpbbDatabase.setUsername("root");

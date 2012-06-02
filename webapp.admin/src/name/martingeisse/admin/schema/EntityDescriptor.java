@@ -44,7 +44,7 @@ public class EntityDescriptor implements Serializable {
 	/**
 	 * the database
 	 */
-	private DatabaseDescriptor database;
+	private AbstractDatabaseDescriptor database;
 
 	/**
 	 * the tableName
@@ -104,7 +104,7 @@ public class EntityDescriptor implements Serializable {
 	 * Getter method for the database.
 	 * @return the database
 	 */
-	public DatabaseDescriptor getDatabase() {
+	public AbstractDatabaseDescriptor getDatabase() {
 		return database;
 	}
 
@@ -112,7 +112,7 @@ public class EntityDescriptor implements Serializable {
 	 * Setter method for the database.
 	 * @param database the database to set
 	 */
-	public void setDatabase(final DatabaseDescriptor database) {
+	public void setDatabase(final AbstractDatabaseDescriptor database) {
 		this.database = database;
 	}
 

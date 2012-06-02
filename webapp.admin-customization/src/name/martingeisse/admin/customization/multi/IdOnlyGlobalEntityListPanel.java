@@ -13,7 +13,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.admin.schema.DatabaseDescriptor;
+import name.martingeisse.admin.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityDescriptor;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -101,7 +101,7 @@ public class IdOnlyGlobalEntityListPanel extends Panel implements IPageable {
 		Connection connection = null;
 		try {
 			final EntityDescriptor entity = (EntityDescriptor)getDefaultModelObject();
-			final DatabaseDescriptor database = entity.getDatabase();
+			final AbstractDatabaseDescriptor database = entity.getDatabase();
 			connection = database.createConnection();
 			final Statement statement = connection.createStatement();
 

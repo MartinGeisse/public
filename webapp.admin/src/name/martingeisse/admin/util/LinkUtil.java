@@ -11,6 +11,7 @@ import name.martingeisse.admin.schema.EntityDescriptor;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
@@ -19,6 +20,17 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  */
 public class LinkUtil {
 
+	/**
+	 * Creates a link that is disabled and has "#" as its href.
+	 * @param wicketId the wicket id of the link to create
+	 * @return the link
+	 */
+	public static AbstractLink createDisabledLink(String wicketId) {
+		ExternalLink link = new ExternalLink(wicketId, "#");
+		link.setEnabled(false);
+		return link;
+	}
+	
 	/**
 	 * Creates a link to the single-instance entity presentation page of the specified entity instance. 
 	 * @param wicketId the wicket id of the link to create

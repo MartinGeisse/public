@@ -13,10 +13,9 @@ import java.sql.Statement;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer;
-import name.martingeisse.admin.schema.DatabaseDescriptor;
+import name.martingeisse.admin.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityDescriptor;
 import name.martingeisse.admin.util.LinkUtil;
-import name.martingeisse.common.jdbc.JdbcUtil;
 import name.martingeisse.common.jdbc.ResultSetReader;
 import name.martingeisse.wicket.util.ZebraLoop;
 
@@ -159,7 +158,13 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 					@Override
 					protected void populateItem(final LoopItem cellItem) {
 						EntityDescriptor entity = (EntityDescriptor)RawGlobalEntityListPanel.this.getDefaultModelObject();
-						AbstractLink link = LinkUtil.createSingleEntityLink("link", entity, rowIds[rowItem.getIndex()]);
+						Object entityId = rowIds[rowItem.getIndex()];
+						AbstractLink link;
+						if (entityId == null) {
+							link = LinkUtil.createDisabledLink("link");
+						} else {
+							link = LinkUtil.createSingleEntityLink("link", entity, entityId);
+						}
 						link.add(renderers[cellItem.getIndex()].createLabel("value", rows[rowItem.getIndex()][cellItem.getIndex()]));
 						cellItem.add(link);
 					}
@@ -178,16 +183,23 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 		Connection connection = null;
 		try {
 			final EntityDescriptor entity = (EntityDescriptor)getDefaultModelObject();
-			final DatabaseDescriptor database = entity.getDatabase();
+			final AbstractDatabaseDescriptor database = entity.getDatabase();
 			connection = database.createConnection();
 			final Statement statement = connection.createStatement();
 
 			// fetch table size for pagination
-			int rowCount = JdbcUtil.fetchTableSize(statement, entity.getTableName());
+			int rowCount = database.fetchTableSize(statement, entity.getTableName());
 			pageCount = (rowCount + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE;
 			
 			// send the query to the database and analyze result meta-data
-			final ResultSet resultSet = statement.executeQuery("SELECT * FROM \"" + entity.getTableName() + "\" ORDER BY id LIMIT " + ROWS_PER_PAGE + " OFFSET " + (ROWS_PER_PAGE * currentPage));
+			String query;
+			{
+				char b = database.getIdentifierBeginQuoteCharacter();
+				char e = database.getIdentifierEndQuoteCharacter();
+				String orderClause = database.getDefaultOrderClause();
+				query = "SELECT * FROM " + b + entity.getTableName() + e + orderClause + " LIMIT " + ROWS_PER_PAGE + " OFFSET " + (ROWS_PER_PAGE * currentPage);
+			}
+			final ResultSet resultSet = statement.executeQuery(query);
 			ResultSetReader reader = new ResultSetReader(resultSet, entity.getRawEntityListFieldOrder());
 			width = reader.getWidth();
 			

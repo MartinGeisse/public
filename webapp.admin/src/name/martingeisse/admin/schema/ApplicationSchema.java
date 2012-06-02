@@ -45,7 +45,7 @@ public class ApplicationSchema {
 	/**
 	 * the databaseDescriptors
 	 */
-	private final List<DatabaseDescriptor> databaseDescriptors;
+	private final List<AbstractDatabaseDescriptor> databaseDescriptors;
 
 	/**
 	 * the entityDescriptors
@@ -61,7 +61,7 @@ public class ApplicationSchema {
 	 * Constructor.
 	 */
 	public ApplicationSchema() {
-		this.databaseDescriptors = new ArrayList<DatabaseDescriptor>();
+		this.databaseDescriptors = new ArrayList<AbstractDatabaseDescriptor>();
 		this.entityDescriptors = new ArrayList<EntityDescriptor>();
 		this.entityReferences = new ArrayList<EntityReferenceInfo>();
 	}
@@ -70,7 +70,7 @@ public class ApplicationSchema {
 	 * Getter method for the databaseDescriptors.
 	 * @return the databaseDescriptors
 	 */
-	public List<DatabaseDescriptor> getDatabaseDescriptors() {
+	public List<AbstractDatabaseDescriptor> getDatabaseDescriptors() {
 		return databaseDescriptors;
 	}
 
@@ -121,7 +121,7 @@ public class ApplicationSchema {
 	 * Copies the list of databases from the {@link ApplicationConfiguration}.
 	 */
 	private void copyDatabaseList() {
-		for (DatabaseDescriptor database : ApplicationConfiguration.getDatabases()) {
+		for (AbstractDatabaseDescriptor database : ApplicationConfiguration.getDatabases()) {
 			databaseDescriptors.add(database);
 		}
 	}
@@ -130,7 +130,7 @@ public class ApplicationSchema {
 	 * Fetches implicit schema components from the database.
 	 */
 	private void buildEntityDescriptors() {
-		for (DatabaseDescriptor databaseDescriptor : databaseDescriptors) {
+		for (AbstractDatabaseDescriptor databaseDescriptor : databaseDescriptors) {
 			DiscoverEntitiesAction action = new DiscoverEntitiesAction();
 			action.setDatabase(databaseDescriptor);
 			for (EntityDescriptor entity : action.execute()) {

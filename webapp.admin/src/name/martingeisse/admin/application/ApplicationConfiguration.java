@@ -14,7 +14,7 @@ import java.util.List;
 import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
 import name.martingeisse.admin.application.capabilities.IEntityDisplayNameStrategy;
 import name.martingeisse.admin.multi.IGlobalEntityListPresenter;
-import name.martingeisse.admin.schema.DatabaseDescriptor;
+import name.martingeisse.admin.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.util.ScoreComparator;
@@ -36,7 +36,7 @@ public class ApplicationConfiguration {
 	/**
 	 * the databases
 	 */
-	private static List<DatabaseDescriptor> databases = new ArrayList<DatabaseDescriptor>();
+	private static List<AbstractDatabaseDescriptor> databases = new ArrayList<AbstractDatabaseDescriptor>();
 
 	/**
 	 * the plugins
@@ -82,7 +82,7 @@ public class ApplicationConfiguration {
 	 * Adds a database.
 	 * @param database the database to add
 	 */
-	public static void addDatabase(final DatabaseDescriptor database) {
+	public static void addDatabase(final AbstractDatabaseDescriptor database) {
 		checkChangesAllowed();
 		databases.add(database);
 	}
@@ -184,7 +184,7 @@ public class ApplicationConfiguration {
 	 * Returns an iterable for all databases
 	 * @return the database iterable
 	 */
-	public static Iterable<DatabaseDescriptor> getDatabases() {
+	public static Iterable<AbstractDatabaseDescriptor> getDatabases() {
 		return databases;
 	}
 

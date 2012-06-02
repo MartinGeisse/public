@@ -22,13 +22,13 @@ public class DiscoverEntitiesAction implements IAction<List<EntityDescriptor>> {
 	/**
 	 * the database
 	 */
-	private DatabaseDescriptor database;
+	private AbstractDatabaseDescriptor database;
 
 	/**
 	 * Getter method for the database.
 	 * @return the database
 	 */
-	public DatabaseDescriptor getDatabase() {
+	public AbstractDatabaseDescriptor getDatabase() {
 		return database;
 	}
 
@@ -36,7 +36,7 @@ public class DiscoverEntitiesAction implements IAction<List<EntityDescriptor>> {
 	 * Setter method for the database.
 	 * @param database the database to set
 	 */
-	public void setDatabase(final DatabaseDescriptor database) {
+	public void setDatabase(final AbstractDatabaseDescriptor database) {
 		this.database = database;
 	}
 

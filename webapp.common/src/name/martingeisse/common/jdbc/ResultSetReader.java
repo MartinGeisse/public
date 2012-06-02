@@ -73,9 +73,6 @@ public class ResultSetReader {
 				break;
 			}
 		}
-		if (idColumnIndex == 0) {
-			throw new IllegalArgumentException("id column not found in result set");
-		}
 		this.idColumnIndex = idColumnIndex;
 
 	}
@@ -126,12 +123,13 @@ public class ResultSetReader {
 	}
 
 	/**
-	 * Returns the ID of the current row.
-	 * @return the ID value
+	 * Returns the ID of the current row, or null if no field was recognized as
+	 * the id field.
+	 * @return the ID value or null
 	 * @throws SQLException on SQL errors
 	 */
 	public Object getId() throws SQLException {
-		return resultSet.getObject(idColumnIndex);
+		return (idColumnIndex == 0 ? null : resultSet.getObject(idColumnIndex));
 	}
 	
 	/**
