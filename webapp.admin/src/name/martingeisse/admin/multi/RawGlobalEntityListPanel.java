@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
@@ -189,17 +191,27 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 			int rowCount = JdbcUtil.fetchTableSize(statement, entity.getTableName());
 			pageCount = (rowCount + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE;
 			
-			// determine visible fields
-			List<String> fieldOrder = new ArrayList<String>();
+			// determine visible fields and their order
+			List<EntityPropertyDescriptor> fieldOrder = new ArrayList<EntityPropertyDescriptor>();
 			for (EntityPropertyDescriptor property : entity.getProperties().values()) {
 				if (property.isVisibleInRawEntityList()) {
-					fieldOrder.add(property.getName());
+					fieldOrder.add(property);
 				}
+			}
+			Comparator<EntityPropertyDescriptor> fieldComparator = ApplicationConfiguration.getRawEntityListFieldOrder();
+			if (fieldComparator != null) {
+				Collections.sort(fieldOrder, fieldComparator);
+			}
+			String[] fieldOrderArray = new String[fieldOrder.size()];
+			int position = 0;
+			for (EntityPropertyDescriptor property : fieldOrder) {
+				fieldOrderArray[position] = property.getName();
+				position++;
 			}
 			
 			// send the query to the database and analyze result meta-data
 			final ResultSet resultSet = statement.executeQuery("SELECT * FROM \"" + entity.getTableName() + "\" ORDER BY id LIMIT " + ROWS_PER_PAGE + " OFFSET " + (ROWS_PER_PAGE * currentPage));
-			ResultSetReader reader = new ResultSetReader(resultSet, fieldOrder.toArray(new String[fieldOrder.size()]));
+			ResultSetReader reader = new ResultSetReader(resultSet, fieldOrderArray);
 			width = reader.getWidth();
 			
 			// fetch data and fill the rows array

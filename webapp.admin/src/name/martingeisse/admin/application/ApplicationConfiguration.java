@@ -8,11 +8,13 @@ package name.martingeisse.admin.application;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
 import name.martingeisse.admin.multi.IGlobalEntityListPresenter;
 import name.martingeisse.admin.schema.DatabaseDescriptor;
+import name.martingeisse.admin.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.util.ScoreComparator;
 
 /**
@@ -43,6 +45,11 @@ public class ApplicationConfiguration {
 	 * the defaultEntityListPresenter
 	 */
 	private static IGlobalEntityListPresenter defaultEntityListPresenter;
+
+	/**
+	 * the rawEntityListFieldOrder
+	 */
+	private static Comparator<EntityPropertyDescriptor> rawEntityListFieldOrder;
 
 	/**
 	 * the capabilities
@@ -97,6 +104,23 @@ public class ApplicationConfiguration {
 	public static void setDefaultEntityListPresenter(final IGlobalEntityListPresenter defaultEntityListPresenter) {
 		checkChangesAllowed();
 		ApplicationConfiguration.defaultEntityListPresenter = defaultEntityListPresenter;
+	}
+
+	/**
+	 * Getter method for the rawEntityListFieldOrder.
+	 * @return the rawEntityListFieldOrder
+	 */
+	public static Comparator<EntityPropertyDescriptor> getRawEntityListFieldOrder() {
+		return rawEntityListFieldOrder;
+	}
+
+	/**
+	 * Setter method for the rawEntityListFieldOrder.
+	 * @param rawEntityListFieldOrder the rawEntityListFieldOrder to set
+	 */
+	public static void setRawEntityListFieldOrder(final Comparator<EntityPropertyDescriptor> rawEntityListFieldOrder) {
+		checkChangesAllowed();
+		ApplicationConfiguration.rawEntityListFieldOrder = rawEntityListFieldOrder;
 	}
 
 	/**
