@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.pages;
 
+import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.multi.IGlobalEntityListPresenter;
 import name.martingeisse.admin.schema.EntityDescriptor;
 
@@ -51,7 +52,7 @@ public class EntityTablePage extends AbstractAdminPage {
 		}
 		
 		// create components
-		add(new Label("entityName", entity.getTableName()));
+		add(new Label("entityName", ApplicationConfiguration.getEntityDisplayName(entity)));
 		add(new ListView<IGlobalEntityListPresenter>("presenters", entity.getGlobalListPresenters()) {
 			@Override
 			protected void populateItem(ListItem<IGlobalEntityListPresenter> item) {

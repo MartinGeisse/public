@@ -12,6 +12,7 @@ import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
 import name.martingeisse.admin.application.capabilities.ExplicitEntityPropertyFilter;
+import name.martingeisse.admin.application.capabilities.PrefixEliminatingEntityDisplayNameStrategy;
 import name.martingeisse.admin.application.capabilities.SingleEntityPropertyFilter;
 import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPresenter;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
@@ -32,12 +33,20 @@ public class Main {
 	 */
 	public static void main(String[] args) throws Exception {
 		
-		DatabaseDescriptor mainDatabase = new DatabaseDescriptor();
-		mainDatabase.setDisplayName("main database");
-		mainDatabase.setUrl("jdbc:postgresql://localhost/admintest");
-		mainDatabase.setUsername("postgres");
-		mainDatabase.setPassword("postgres");
-		ApplicationConfiguration.addDatabase(mainDatabase);
+//		DatabaseDescriptor mainDatabase = new DatabaseDescriptor();
+//		mainDatabase.setDisplayName("main database");
+//		mainDatabase.setUrl("jdbc:postgresql://localhost/admintest");
+//		mainDatabase.setUsername("postgres");
+//		mainDatabase.setPassword("postgres");
+//		ApplicationConfiguration.addDatabase(mainDatabase);
+		
+		DatabaseDescriptor phpbbDatabase = new DatabaseDescriptor();
+		phpbbDatabase.setDisplayName("phpBB database");
+		phpbbDatabase.setUrl("jdbc:mysql://localhost/phpbb");
+		phpbbDatabase.setUsername("root");
+		phpbbDatabase.setPassword("");
+		ApplicationConfiguration.addDatabase(phpbbDatabase);
+		ApplicationConfiguration.setEntityDisplayNameStrategy(new PrefixEliminatingEntityDisplayNameStrategy("phpbb_"));
 		
 		ApplicationConfiguration.addPlugin(new DefaultPlugin());
 		ApplicationConfiguration.addPlugin(new CustomizationPlugin());

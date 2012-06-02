@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.pages;
 
+import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.common.Dummy;
 import name.martingeisse.admin.schema.ApplicationSchema;
 import name.martingeisse.admin.schema.EntityDescriptor;
@@ -61,7 +62,7 @@ public class AbstractAdminPage extends WebPage {
 				PageParameters parameters = new PageParameters();
 				parameters.add("entity", item.getModelObject().getTableName());
 				BookmarkablePageLink<Void> link = new BookmarkablePageLink<Void>("link", EntityTablePage.class, parameters);
-				link.add(new Label("name", item.getModelObject().getTableName()));
+				link.add(new Label("name", ApplicationConfiguration.getEntityDisplayName(item.getModelObject())));
 				item.add(link);
 			}
 		});

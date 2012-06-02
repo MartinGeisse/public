@@ -12,8 +12,10 @@ import java.util.Comparator;
 import java.util.List;
 
 import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
+import name.martingeisse.admin.application.capabilities.IEntityDisplayNameStrategy;
 import name.martingeisse.admin.multi.IGlobalEntityListPresenter;
 import name.martingeisse.admin.schema.DatabaseDescriptor;
+import name.martingeisse.admin.schema.EntityDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.util.ScoreComparator;
 
@@ -50,6 +52,11 @@ public class ApplicationConfiguration {
 	 * the rawEntityListFieldOrder
 	 */
 	private static Comparator<EntityPropertyDescriptor> rawEntityListFieldOrder;
+
+	/**
+	 * the entityDisplayNameStrategy
+	 */
+	private static IEntityDisplayNameStrategy entityDisplayNameStrategy;
 
 	/**
 	 * the capabilities
@@ -123,6 +130,32 @@ public class ApplicationConfiguration {
 		ApplicationConfiguration.rawEntityListFieldOrder = rawEntityListFieldOrder;
 	}
 
+	/**
+	 * Getter method for the entityDisplayNameStrategy.
+	 * @return the entityDisplayNameStrategy
+	 */
+	public static IEntityDisplayNameStrategy getEntityDisplayNameStrategy() {
+		return entityDisplayNameStrategy;
+	}
+
+	/**
+	 * Setter method for the entityDisplayNameStrategy.
+	 * @param entityDisplayNameStrategy the entityDisplayNameStrategy to set
+	 */
+	public static void setEntityDisplayNameStrategy(final IEntityDisplayNameStrategy entityDisplayNameStrategy) {
+		checkChangesAllowed();
+		ApplicationConfiguration.entityDisplayNameStrategy = entityDisplayNameStrategy;
+	}
+
+	/**
+	 * Returns the name to display for the specified entity.
+	 * @param entity the entity
+	 * @return the name to display
+	 */
+	public static String getEntityDisplayName(EntityDescriptor entity) {
+		return (entityDisplayNameStrategy == null ? entity.getTableName() : entityDisplayNameStrategy.getDisplayName(entity));
+	}
+	
 	/**
 	 * Seals this configuration to disallow further changes.
 	 */
