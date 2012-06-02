@@ -33,6 +33,11 @@ public class ResultSetReader {
 	 * the fieldIndexToColumnIndexMapping
 	 */
 	private final int[] fieldIndexToColumnIndexMapping;
+	
+	/**
+	 * the idColumnIndex
+	 */
+	private final int idColumnIndex;
 
 	/**
 	 * Constructor.
@@ -60,6 +65,19 @@ public class ResultSetReader {
 			throw new IllegalArgumentException("column not found in result set: " + fieldName);
 		}
 		
+		// find the id column
+		int idColumnIndex = 0;
+		for (int columnIndex=1; columnIndex<=meta.getColumnCount(); columnIndex++) {
+			if (meta.getColumnName(columnIndex).equals("id")) {
+				idColumnIndex = columnIndex;
+				break;
+			}
+		}
+		if (idColumnIndex == 0) {
+			throw new IllegalArgumentException("id column not found in result set");
+		}
+		this.idColumnIndex = idColumnIndex;
+
 	}
 	
 	/**
@@ -77,6 +95,14 @@ public class ResultSetReader {
 	public String[] getFieldOrder() {
 		return fieldOrder;
 	}
+	
+	/**
+	 * Getter method for the width.
+	 * @return the width
+	 */
+	public int getWidth() {
+		return fieldOrder.length;
+	}
 
 	/**
 	 * Returns the SQL type for the field with the specified index. The index is the
@@ -89,16 +115,31 @@ public class ResultSetReader {
 	public int getSqlFieldType(int fieldIndex) throws SQLException {
 		return resultSet.getMetaData().getColumnType(fieldIndexToColumnIndexMapping[fieldIndex]);
 	}
-	
+
 	/**
-	 * Fetches the next row.
-	 * @return the row fields, or null if there is no next row
+	 * Fetches the next row. This works like the next() method from {@link ResultSet}.
+	 * @return true on success, false if there are no more rows
 	 * @throws SQLException on SQL errors
 	 */
-	public Object[] fetchRow() throws SQLException {
-		if (!resultSet.next()) {
-			return null;
-		}
+	public boolean next() throws SQLException {
+		return resultSet.next();
+	}
+
+	/**
+	 * Returns the ID of the current row.
+	 * @return the ID value
+	 * @throws SQLException on SQL errors
+	 */
+	public Object getId() throws SQLException {
+		return resultSet.getObject(idColumnIndex);
+	}
+	
+	/**
+	 * Returns the contents of the current row.
+	 * @return the row fields, as a newly created array
+	 * @throws SQLException on SQL errors
+	 */
+	public Object[] getRow() throws SQLException {
 		Object[] row = new Object[fieldOrder.length];
 		for (int i=0; i<row.length; i++) {
 			row[i] = resultSet.getObject(fieldIndexToColumnIndexMapping[i]);

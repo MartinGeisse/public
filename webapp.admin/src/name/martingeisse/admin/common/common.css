@@ -70,12 +70,15 @@ tr.odd {
 	margin: 5px;
 	border: 1px solid #8080ff;
 	padding: 2px;
-	width: 20px;
+	min-width: 20px;
 	text-align: center;
-	background-color: #c0c0ff;
 	text-decoration: none;
 }
 
-.PagingNavigator a:hover, .PagingNavigator em:hover {
-	background-color: #e0e0ff;
+.PagingNavigator a, .PagingNavigator em {
+	background-color: #c0c0ff;
+}
+
+.PagingNavigator .goto em {
+	background-color: #c0ffc0;
 }
