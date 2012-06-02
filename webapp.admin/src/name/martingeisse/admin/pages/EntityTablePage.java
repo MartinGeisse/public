@@ -68,9 +68,11 @@ public class EntityTablePage extends AbstractAdminPage {
 		add(panel);
 		IPageable pageable = presenter.getPageableForPanel(panel);
 		if (pageable == null) {
-			add(new WebComponent("tablePresentation"));
+			add(new WebComponent("topPagingNavigator"));
+			add(new WebComponent("bottomPagingNavigator"));
 		} else {
-			add(new PagingNavigator("pagingNavigator", pageable));
+			add(new PagingNavigator("topPagingNavigator", pageable));
+			add(new PagingNavigator("bottomPagingNavigator", pageable));
 		}
 		
 	}

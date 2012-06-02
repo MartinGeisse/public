@@ -11,7 +11,6 @@ Sollte phpBB-Datenbank öffnen und verstehen können
 ??? TODO
 ------------------------------------------------------------------------------------------------------------
 
-- Paging -> Page Selector schöner machen, aus umrahmte Boxen mit fester Breite usw.
 - Result Set Reader -> Re-Ordering nach einem festen Satz von bekannten Feldern; später könnten hier auch Type Converter rein, auch custom Klassen statt EntityInstance:
     getRawFields() -> EntityInstance, wie von der DB geliefert, also evtl. auch falsche Felder drin
     getOrderedFields() -> EntityInstance, reordered
@@ -19,7 +18,3 @@ Sollte phpBB-Datenbank öffnen und verstehen können
     getEntry() -> T
    
 erst mal nur getRow -> converted & reordered. getEntry noch zu vieles unklar; die anderen beiden unklar ob die gebraucht werden -> keep it simple, yagni
-
-AbstractPagedEntityListPresentationPanel - ?
-Das sollte nicht in die Page ausgelagert werden sondern vom Presenter gemacht werden, weil auch Filter etc. vom Presenter gemacht werden
-

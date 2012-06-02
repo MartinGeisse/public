@@ -30,7 +30,8 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * 
  * The framework will automatically provide paging support if the
  * implementation is able for return an {@link IPageable} from
- * the panel it created.
+ * the panel it created. Returning null disables framework paging
+ * support.
  */
 public interface IGlobalEntityListPresenter {
 

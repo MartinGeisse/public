@@ -13,10 +13,14 @@
 				</li>
 			</ul>
 			<h1 wicket:id="presenterTitle" />
-			<div style="overflow: scroll; ">
-				<div wicket:id="tablePresentation" />
-				<div wicket:id="pagingNavigator" />
+			<div style="overflow: auto; ">
+				<div wicket:id="topPagingNavigator" class="PagingNavigator" />
+				<div style="overflow: auto; ">
+					<div wicket:id="tablePresentation" />
+				</div>
+				<div wicket:id="bottomPagingNavigator" class="PagingNavigator" />
 			</div>
+			<br />
 		</wicket:extend>
 	</body>
 </html>

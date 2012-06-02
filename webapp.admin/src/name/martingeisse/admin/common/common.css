@@ -64,3 +64,18 @@ tr.odd {
 .DataGrid td {
 	border: 1px solid #aaa;
 }
+
+.PagingNavigator a, .PagingNavigator em {
+	display: inline-block;
+	margin: 5px;
+	border: 1px solid #8080ff;
+	padding: 2px;
+	width: 20px;
+	text-align: center;
+	background-color: #c0c0ff;
+	text-decoration: none;
+}
+
+.PagingNavigator a:hover, .PagingNavigator em:hover {
+	background-color: #e0e0ff;
+}
