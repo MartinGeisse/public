@@ -6,15 +6,3 @@
 MySQL
 
 Sollte phpBB-Datenbank öffnen und verstehen können
-
-------------------------------------------------------------------------------------------------------------
-??? TODO
-------------------------------------------------------------------------------------------------------------
-
-- Result Set Reader -> Re-Ordering nach einem festen Satz von bekannten Feldern; später könnten hier auch Type Converter rein, auch custom Klassen statt EntityInstance:
-    getRawFields() -> EntityInstance, wie von der DB geliefert, also evtl. auch falsche Felder drin
-    getOrderedFields() -> EntityInstance, reordered
-    getConvertedFields() -> EntityInstance, reordered & converted
-    getEntry() -> T
-   
-erst mal nur getRow -> converted & reordered. getEntry noch zu vieles unklar; die anderen beiden unklar ob die gebraucht werden -> keep it simple, yagni
