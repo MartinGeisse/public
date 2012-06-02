@@ -9,6 +9,9 @@ package name.martingeisse.admin.application.capabilities;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.martingeisse.admin.application.ApplicationConfiguration;
+import name.martingeisse.admin.readonly.FallbackRenderer;
+import name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer;
 import name.martingeisse.admin.readonly.IPropertyReadOnlyRendererContributor;
 
 
@@ -72,6 +75,25 @@ public class ApplicationCapabilities {
 	 */
 	public List<IPropertyReadOnlyRendererContributor> getPropertyReadOnlyRendererContributors() {
 		return propertyReadOnlyRendererContributors;
+	}
+	
+	/**
+	 * Returns an {@link IPropertyReadOnlyRenderer} instance to handle the specified SQL type.
+	 * The first contributed renderer will be wrapped in a {@link FallbackRenderer} and this
+	 * renderer is returned.
+	 * @param sqlType the SQL type to handle
+	 * @return the renderer
+	 */
+	public IPropertyReadOnlyRenderer createPropertyReadOnlyRenderer(int sqlType) {
+		FallbackRenderer fallbackRenderer = new FallbackRenderer();
+		for (IPropertyReadOnlyRendererContributor contributor : ApplicationConfiguration.getCapabilities().getPropertyReadOnlyRendererContributors()) {
+			IPropertyReadOnlyRenderer renderer = contributor.getRenderer(sqlType);
+			if (renderer != null) {
+				fallbackRenderer.setPrimaryRenderer(renderer);
+				break;
+			}
+		}
+		return fallbackRenderer;
 	}
 	
 	/**

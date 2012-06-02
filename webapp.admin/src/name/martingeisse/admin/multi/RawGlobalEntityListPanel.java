@@ -13,17 +13,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
-import name.martingeisse.admin.pages.EntityPresentationPage;
-import name.martingeisse.admin.readonly.FallbackRenderer;
 import name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer;
-import name.martingeisse.admin.readonly.IPropertyReadOnlyRendererContributor;
 import name.martingeisse.admin.schema.DatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
+import name.martingeisse.admin.util.LinkUtil;
+import name.martingeisse.common.jdbc.JdbcUtil;
+import name.martingeisse.wicket.util.ZebraLoop;
 
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.list.Loop;
 import org.apache.wicket.markup.html.list.LoopItem;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
@@ -154,37 +153,19 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 				item.add(new Label("name", columnNames[item.getIndex()]));
 			}
 		});
-		add(new Loop("rows", new PropertyModel<Integer>(RawGlobalEntityListPanel.this, "visibleRows")) {
-			
-			/* (non-Javadoc)
-			 * @see org.apache.wicket.markup.html.list.Loop#newItem(int)
-			 */
-			@Override
-			protected LoopItem newItem(final int iteration) {
-				return new LoopItem(iteration) {
-					@Override
-					protected void onComponentTag(ComponentTag tag) {
-						super.onComponentTag(tag);
-						tag.getAttributes().put("class", ((iteration & 1) == 0) ? "even" : "odd");
-					}
-				};
-			}
-			
+		add(new ZebraLoop("rows", new PropertyModel<Integer>(RawGlobalEntityListPanel.this, "visibleRows")) {
 			@Override
 			protected void populateItem(final LoopItem rowItem) {
 				rowItem.add(new Loop("cells", new PropertyModel<Integer>(RawGlobalEntityListPanel.this, "width")) {
 					@Override
 					protected void populateItem(final LoopItem cellItem) {
-						PageParameters parameters = new PageParameters();
-						parameters.add("entity", ((EntityDescriptor)RawGlobalEntityListPanel.this.getDefaultModelObject()).getTableName());
-						parameters.add("id", rows[rowItem.getIndex()][idColumnIndex]);
-						BookmarkablePageLink<Void> link = new BookmarkablePageLink<Void>("link", EntityPresentationPage.class, parameters);
+						EntityDescriptor entity = (EntityDescriptor)RawGlobalEntityListPanel.this.getDefaultModelObject();
+						AbstractLink link = LinkUtil.createSingleEntityLink("link", entity, rows[rowItem.getIndex()][idColumnIndex]);
 						link.add(renderers[cellItem.getIndex()].createLabel("value", rows[rowItem.getIndex()][cellItem.getIndex()]));
 						cellItem.add(link);
 					}
 				});
 			}
-			
 		});
 	}
 
@@ -203,7 +184,7 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 			final Statement statement = connection.createStatement();
 
 			// fetch table size for pagination
-			int rowCount = fetchTableSize(statement, entity.getTableName());
+			int rowCount = JdbcUtil.fetchTableSize(statement, entity.getTableName());
 			pageCount = (rowCount + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE;
 			
 			// send the query to the database and analyze result meta-data
@@ -243,7 +224,7 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 			for (int i=0; i<fetchWidth; i++) {
 				if (columnVisible[i]) {
 					int type = resultSet.getMetaData().getColumnType(1 + i);
-					IPropertyReadOnlyRenderer renderer = determineRenderer(type);
+					IPropertyReadOnlyRenderer renderer = ApplicationConfiguration.getCapabilities().createPropertyReadOnlyRenderer(type);
 					if (renderer == null) {
 						throw new RuntimeException("no renderer");
 					}
@@ -274,25 +255,6 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 	}
 	
 	/**
-	 * @return the table size
-	 */
-	private int fetchTableSize(Statement statement, String tableName) throws SQLException {
-		final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM \"" + tableName + "\"");
-		if (!resultSet.next()) {
-			throw new RuntimeException("unexpected result set layout for COUNT(*) (no row)");
-		}
-		if (resultSet.getMetaData().getColumnCount() != 1) {
-			throw new RuntimeException("unexpected result set layout for COUNT(*) (number of columns is " + resultSet.getMetaData().getColumnCount() + ")");
-		}
-		int count = resultSet.getInt(1);
-		if (resultSet.next()) {
-			throw new RuntimeException("unexpected result set layout for COUNT(*)");
-		}
-		resultSet.close();
-		return count;
-	}
-
-	/**
 	 * @param resultSet
 	 * @return
 	 */
@@ -306,18 +268,4 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 		throw new RuntimeException("no id column found!");
 	}
 
-	/**
-	 * @return
-	 */
-	private IPropertyReadOnlyRenderer determineRenderer(int type) {
-		FallbackRenderer fallbackRenderer = new FallbackRenderer();
-		for (IPropertyReadOnlyRendererContributor contributor : ApplicationConfiguration.getCapabilities().getPropertyReadOnlyRendererContributors()) {
-			IPropertyReadOnlyRenderer renderer = contributor.getRenderer(type);
-			if (renderer != null) {
-				fallbackRenderer.setPrimaryRenderer(renderer);
-			}
-		}
-		return fallbackRenderer;
-	}
-	
 }
