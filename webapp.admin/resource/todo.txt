@@ -20,10 +20,6 @@ Sollte phpBB-Datenbank öffnen und verstehen können
    
 erst mal nur getRow -> converted & reordered. getEntry noch zu vieles unklar; die anderen beiden unklar ob die gebraucht werden -> keep it simple, yagni
 
-idListPresenter für Entity List -> nur um einen alternativen Presenter zu haben und dadurch den Default Presenter kram zu testen
-
-Zebra-Tabellen in Default List Presenter
-
 AbstractPagedEntityListPresentationPanel - ?
 Das sollte nicht in die Page ausgelagert werden sondern vom Presenter gemacht werden, weil auch Filter etc. vom Presenter gemacht werden
 

@@ -21,6 +21,7 @@ import name.martingeisse.admin.schema.DatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
 
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.Loop;
@@ -154,6 +155,21 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 			}
 		});
 		add(new Loop("rows", new PropertyModel<Integer>(RawGlobalEntityListPanel.this, "visibleRows")) {
+			
+			/* (non-Javadoc)
+			 * @see org.apache.wicket.markup.html.list.Loop#newItem(int)
+			 */
+			@Override
+			protected LoopItem newItem(final int iteration) {
+				return new LoopItem(iteration) {
+					@Override
+					protected void onComponentTag(ComponentTag tag) {
+						super.onComponentTag(tag);
+						tag.getAttributes().put("class", ((iteration & 1) == 0) ? "even" : "odd");
+					}
+				};
+			}
+			
 			@Override
 			protected void populateItem(final LoopItem rowItem) {
 				rowItem.add(new Loop("cells", new PropertyModel<Integer>(RawGlobalEntityListPanel.this, "width")) {
@@ -168,6 +184,7 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 					}
 				});
 			}
+			
 		});
 	}
 

@@ -12,6 +12,14 @@ ul {
 	padding-left: 25px;
 }
 
+tr.even {
+	background-color: #fff;
+}
+
+tr.odd {
+	background-color: #ddd;
+}
+
 .OuterContainer {
 	width: 1000px;
 	min-height: 500px;
