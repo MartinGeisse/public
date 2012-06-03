@@ -21,7 +21,7 @@ public class MyWicketSession extends WebSession {
 	/**
 	 * the data
 	 */
-	private final ClassKeyedContainer data;
+	private final ClassKeyedContainer<Object> data;
 
 	/**
 	 * Constructor.
@@ -29,14 +29,14 @@ public class MyWicketSession extends WebSession {
 	 */
 	public MyWicketSession(Request request) {
 		super(request);
-		this.data = new ClassKeyedContainer();
+		this.data = new ClassKeyedContainer<Object>();
 	}
 	
 	/**
 	 * Getter method for the data.
 	 * @return the data
 	 */
-	public ClassKeyedContainer getData() {
+	public ClassKeyedContainer<Object> getData() {
 		return data;
 	}
 	
