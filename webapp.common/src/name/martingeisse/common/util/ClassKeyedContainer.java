@@ -24,35 +24,27 @@ import java.util.HashMap;
  * useful for modules that store data objects in the container whose outside
  * behavior is defined only by an interface.
  * 
- * The intention is that keys are very specific classes from application modules.
- * The above example of using the Class object of class {@link String}, or even
- * {@link Object}, is possible, but does not make very much sense in the way
- * this container is intended to be used.
+ * The intention is that keys are module-specific classes or interfaces from
+ * application modules. The above example of using the Class object of class
+ * {@link String}, or even {@link Object}, is possible, but does not make very
+ * much sense in the way this container is intended to be used.
+ * 
+ * The types of contained objects can be restricted by base type B.
+ * 
+ * @param <B> the base type of all contained objects
  */
-public final class ClassKeyedContainer implements Serializable {
+public final class ClassKeyedContainer<B> implements Serializable {
 
 	/**
 	 * the map
 	 */
-	private HashMap<Class<?>, Object> map;
+	private HashMap<Class<? extends B>, B> map;
 	
 	/**
 	 * Constructor.
 	 */
 	public ClassKeyedContainer() {
-		this.map = new HashMap<Class<?>, Object>();
-	}
-	
-	/**
-	 * Adds an object using its implementation class as the key.
-	 * @param value the object to add
-	 * @return the previously stored object for the key
-	 */
-	public Object add(Object value) {
-		if (value == null) {
-			throw new IllegalArgumentException("value is null");
-		}
-		return map.put(value.getClass(), value);
+		this.map = new HashMap<Class<? extends B>, B>();
 	}
 	
 	/**
@@ -62,7 +54,7 @@ public final class ClassKeyedContainer implements Serializable {
 	 * @param value the value to add
 	 * @return the previously stored value for that key
 	 */
-	public <T> T add(Class<T> key, T value) {
+	public <T extends B> T add(Class<T> key, T value) {
 		if (key == null) {
 			throw new IllegalArgumentException("key is null");
 		}
@@ -79,7 +71,7 @@ public final class ClassKeyedContainer implements Serializable {
 	 * @param key the key Class object
 	 * @return the value stored for that key
 	 */
-	public <T> T get(Class<T> key) {
+	public <T extends B> T get(Class<T> key) {
 		return key.cast(map.get(key));
 	}
 
@@ -90,7 +82,7 @@ public final class ClassKeyedContainer implements Serializable {
 	 * @param key the key Class object
 	 * @return the value that was stored for that key
 	 */
-	public <T> T remove(Class<T> key) {
+	public <T extends B> T remove(Class<T> key) {
 		return key.cast(map.remove(key));
 	}
 
