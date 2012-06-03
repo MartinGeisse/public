@@ -68,6 +68,14 @@ public class DiscoverEntitiesAction implements IAction<List<EntityDescriptor>> {
 				entityDescriptor.setProperties(subAction.execute());
 			}
 			
+			// fetch the primary key for each table
+			for (EntityDescriptor entityDescriptor : result) {
+				DiscoverEntityIdAction subAction = new DiscoverEntityIdAction();
+				subAction.setConnection(connection);
+				subAction.setEntity(entityDescriptor);
+				entityDescriptor.setIdColumnName(subAction.execute());
+			}
+			
 			return result;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

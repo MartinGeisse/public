@@ -200,7 +200,7 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 				query = "SELECT * FROM " + b + entity.getTableName() + e + orderClause + " LIMIT " + ROWS_PER_PAGE + " OFFSET " + (ROWS_PER_PAGE * currentPage);
 			}
 			final ResultSet resultSet = statement.executeQuery(query);
-			ResultSetReader reader = new ResultSetReader(resultSet, entity.getRawEntityListFieldOrder());
+			ResultSetReader reader = new ResultSetReader(resultSet, entity.getIdColumnName(), entity.getRawEntityListFieldOrder());
 			width = reader.getWidth();
 			
 			// fetch data and fill the rows array

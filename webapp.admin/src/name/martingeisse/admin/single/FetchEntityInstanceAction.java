@@ -67,11 +67,15 @@ public class FetchEntityInstanceAction implements IAction<EntityInstance> {
 	@Override
 	public EntityInstance execute() {
 
+		if (entity.getIdColumnName() == null) {
+			throw new RuntimeException("Cannot fetch entity instance for entity " + entity.getTableName() + ": ID column unknown");
+		}
+		
 		Connection connection = null;
 		try {
 			connection = entity.getDatabase().createConnection();
 			final Statement statement = connection.createStatement();
-			final ResultSet resultSet = statement.executeQuery("SELECT * FROM \"" + entity.getTableName() + "\" WHERE id = " + id + " LIMIT 1");
+			final ResultSet resultSet = entity.getDatabase().fetchRowById(statement, entity.getTableName(), entity.getIdColumnName(), id);
 			final EntityInstance entityInstance = new EntityInstance(entity, resultSet);
 			return (entityInstance.isEmpty() ? null : entityInstance);
 		} catch (final SQLException e) {

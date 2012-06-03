@@ -42,10 +42,11 @@ public class ResultSetReader {
 	/**
 	 * Constructor.
 	 * @param resultSet the result set to read from
+	 * @param idColumnName name of the ID column, or null for no id detection
 	 * @param fieldOrder the field order
 	 * @throws SQLException on SQL errors
 	 */
-	public ResultSetReader(final ResultSet resultSet, final String... fieldOrder) throws SQLException {
+	public ResultSetReader(final ResultSet resultSet, final String idColumnName, final String... fieldOrder) throws SQLException {
 		
 		// store arguments
 		this.resultSet = resultSet;
@@ -68,7 +69,7 @@ public class ResultSetReader {
 		// find the id column
 		int idColumnIndex = 0;
 		for (int columnIndex=1; columnIndex<=meta.getColumnCount(); columnIndex++) {
-			if (meta.getColumnName(columnIndex).equals("id")) {
+			if (meta.getColumnName(columnIndex).equals(idColumnName)) {
 				idColumnIndex = columnIndex;
 				break;
 			}

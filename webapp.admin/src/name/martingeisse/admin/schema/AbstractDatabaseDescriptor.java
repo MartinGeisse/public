@@ -177,4 +177,22 @@ public abstract class AbstractDatabaseDescriptor implements Serializable {
 	 */
 	public abstract String getDefaultOrderClause();
 	
+	/**
+	 * Fetches a row from the specified table by its ID. This fetches at most one row (using LIMIT),
+	 * but may return no rows at all if the ID was not found.
+	 * 
+	 * @param statement the JDBC statement object to use
+	 * @param tableName the name of the table from which to fetch
+	 * @param idColumnName the name of the ID column
+	 * @param id the ID of the row to fetch
+	 * @return the result set
+	 * @throws SQLException on SQL errors
+	 */
+	public ResultSet fetchRowById(Statement statement, String tableName, String idColumnName, Object id) throws SQLException {
+		char b = getIdentifierBeginQuoteCharacter();
+		char e = getIdentifierEndQuoteCharacter();
+		// TODO can currently only handle numeric IDs
+		return statement.executeQuery("SELECT * FROM " + b + tableName + e + " WHERE " + b + idColumnName + e + " = " + id + " LIMIT 1");
+	}
+	
 }

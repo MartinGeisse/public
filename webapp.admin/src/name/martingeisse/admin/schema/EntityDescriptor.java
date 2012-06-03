@@ -38,6 +38,9 @@ import name.martingeisse.admin.single.NullOverviewPresenter;
  * to detach and re-attach from/to instances of this class.
  * 
  * TODO: rename "tableName" to "name".
+ * 
+ * ID handling: This descriptor stores information about the entity ID (primary
+ * key). Currently only single-column IDs are supported.
  */
 public class EntityDescriptor implements Serializable {
 
@@ -50,6 +53,11 @@ public class EntityDescriptor implements Serializable {
 	 * the tableName
 	 */
 	private String tableName;
+
+	/**
+	 * the idColumnName
+	 */
+	private String idColumnName;
 
 	/**
 	 * the properties
@@ -130,6 +138,22 @@ public class EntityDescriptor implements Serializable {
 	 */
 	public void setTableName(final String tableName) {
 		this.tableName = tableName;
+	}
+
+	/**
+	 * Getter method for the idColumnName.
+	 * @return the idColumnName
+	 */
+	public String getIdColumnName() {
+		return idColumnName;
+	}
+
+	/**
+	 * Setter method for the idColumnName.
+	 * @param idColumnName the idColumnName to set
+	 */
+	public void setIdColumnName(final String idColumnName) {
+		this.idColumnName = idColumnName;
 	}
 
 	/**
@@ -227,14 +251,14 @@ public class EntityDescriptor implements Serializable {
 			this.overviewPresenterScore = score;
 		}
 	}
-	
+
 	/**
 	 * Adds the default list presenter as a list presenter to this entity 
 	 * if no other presenter is explicitly registered with this entity.
 	 */
 	public void addDefaultListPresenterIfNeeded() {
 		if (globalListPresenters.isEmpty()) {
-			IGlobalEntityListPresenter presenter = ApplicationConfiguration.getDefaultEntityListPresenter();
+			final IGlobalEntityListPresenter presenter = ApplicationConfiguration.getDefaultEntityListPresenter();
 			if (presenter != null) {
 				globalListPresenters.add(ApplicationConfiguration.getDefaultEntityListPresenter());
 			}
@@ -308,30 +332,30 @@ public class EntityDescriptor implements Serializable {
 	 * they shall be displayed.
 	 */
 	public String[] getRawEntityListFieldOrder() {
-		
+
 		// determine the list of visible fields
-		List<EntityPropertyDescriptor> fieldOrder = new ArrayList<EntityPropertyDescriptor>();
-		for (EntityPropertyDescriptor property : properties.values()) {
+		final List<EntityPropertyDescriptor> fieldOrder = new ArrayList<EntityPropertyDescriptor>();
+		for (final EntityPropertyDescriptor property : properties.values()) {
 			if (property.isVisibleInRawEntityList()) {
 				fieldOrder.add(property);
 			}
 		}
-		
+
 		// determine their order
-		Comparator<EntityPropertyDescriptor> fieldComparator = ApplicationConfiguration.getRawEntityListFieldOrder();
+		final Comparator<EntityPropertyDescriptor> fieldComparator = ApplicationConfiguration.getRawEntityListFieldOrder();
 		if (fieldComparator != null) {
 			Collections.sort(fieldOrder, fieldComparator);
 		}
-		
+
 		// build an array of the field names
-		String[] fieldOrderArray = new String[fieldOrder.size()];
+		final String[] fieldOrderArray = new String[fieldOrder.size()];
 		int position = 0;
-		for (EntityPropertyDescriptor property : fieldOrder) {
+		for (final EntityPropertyDescriptor property : fieldOrder) {
 			fieldOrderArray[position] = property.getName();
 			position++;
 		}
-		
+
 		return fieldOrderArray;
 	}
-	
+
 }
