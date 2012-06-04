@@ -114,7 +114,7 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 	 * @return the width
 	 */
 	public int getWidth() {
-		return renderers.length;
+		return getEntity().getRawEntityListFieldOrder().length;
 	}
 	
 	/**
