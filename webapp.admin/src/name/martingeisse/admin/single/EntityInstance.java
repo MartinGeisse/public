@@ -30,6 +30,11 @@ public class EntityInstance {
 	private EntityDescriptor entity;
 
 	/**
+	 * the id
+	 */
+	private Object id;
+	
+	/**
 	 * the fieldNames
 	 */
 	private String[] fieldNames;
@@ -48,11 +53,13 @@ public class EntityInstance {
 	/**
 	 * Constructor.
 	 * @param entity the entity
+	 * @param id the ID of the entity instance
 	 * @param fieldNames the field names
 	 * @param fieldValues the field values
 	 */
-	public EntityInstance(final EntityDescriptor entity, final String[] fieldNames, final Object[] fieldValues) {
+	public EntityInstance(final EntityDescriptor entity, final Object id, final String[] fieldNames, final Object[] fieldValues) {
 		this.entity = entity;
+		this.id = id;
 		this.fieldNames = fieldNames;
 		this.fieldValues = fieldValues;
 	}
@@ -67,6 +74,7 @@ public class EntityInstance {
 	 */
 	public EntityInstance(final EntityDescriptor entity, final ResultSet resultSet) throws SQLException {
 		this.entity = entity;
+		this.id = null;
 		this.fieldNames = getFieldNames(entity, resultSet);
 		if (resultSet.next()) {
 			final ResultSetMetaData metaData = resultSet.getMetaData();
@@ -74,6 +82,9 @@ public class EntityInstance {
 			fieldValues = new Object[width];
 			for (int i = 0; i < width; i++) {
 				fieldValues[i] = resultSet.getObject(1 + i);
+				if (entity.getIdColumnName() != null && entity.getIdColumnName().equals(fieldNames[i])) {
+					this.id = fieldValues[i];
+				}
 			}
 		}
 	}
@@ -114,6 +125,14 @@ public class EntityInstance {
 		return entity;
 	}
 
+	/**
+	 * Getter method for the id.
+	 * @return the id
+	 */
+	public Object getId() {
+		return id;
+	}
+	
 	/**
 	 * Setter method for the entity.
 	 * @param entity the entity to set

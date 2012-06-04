@@ -51,19 +51,14 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 	private transient int pageCount;
 	
 	/**
-	 * the renderers
-	 */
-	private transient IPropertyReadOnlyRenderer[] renderers;
-
-	/**
-	 * the rowIds
-	 */
-	private transient Object[] rowIds;
-	
-	/**
 	 * the rows
 	 */
 	private transient EntityInstance[] rows;
+	
+	/**
+	 * the renderers
+	 */
+	private transient IPropertyReadOnlyRenderer[] renderers;
 	
 	/**
 	 * the visibleRows
@@ -105,14 +100,6 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 	public int getPageCount() {
 		return pageCount;
 	}
-	
-	/**
-	 * Getter method for the width.
-	 * @return the width
-	 */
-	public int getWidth() {
-		return renderers.length;
-	}
 
 	/**
 	 * Getter method for the rows.
@@ -120,6 +107,14 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 	 */
 	public EntityInstance[] getRows() {
 		return rows;
+	}
+	
+	/**
+	 * Getter method for the width.
+	 * @return the width
+	 */
+	public int getWidth() {
+		return renderers.length;
 	}
 	
 	/**
@@ -157,14 +152,14 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 					@Override
 					protected void populateItem(final LoopItem cellItem) {
 						EntityDescriptor entity = (EntityDescriptor)RawGlobalEntityListPanel.this.getDefaultModelObject();
-						Object entityId = rowIds[rowItem.getIndex()];
+						EntityInstance instance = rows[rowItem.getIndex()];
 						AbstractLink link;
-						if (entityId == null) {
+						if (instance.getId() == null) {
 							link = LinkUtil.createDisabledLink("link");
 						} else {
-							link = LinkUtil.createSingleEntityLink("link", entity, entityId);
+							link = LinkUtil.createSingleEntityLink("link", entity, instance.getId());
 						}
-						link.add(renderers[cellItem.getIndex()].createLabel("value", rows[rowItem.getIndex()].getFieldValues()[cellItem.getIndex()]));
+						link.add(renderers[cellItem.getIndex()].createLabel("value", instance.getFieldValues()[cellItem.getIndex()]));
 						cellItem.add(link);
 					}
 				});
@@ -203,13 +198,11 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 			int width = reader.getWidth();
 			
 			// fetch data and fill the rows array
-			rowIds = new Object[ROWS_PER_PAGE];
 			rows = new EntityInstance[ROWS_PER_PAGE];
 			visibleRows = 0;
 			String[] fieldNames = EntityInstance.getFieldNames(entity, resultSet);
 			while (reader.next()) {
-				rowIds[visibleRows] = reader.getId();
-				rows[visibleRows] = new EntityInstance(entity, fieldNames, reader.getRow());
+				rows[visibleRows] = new EntityInstance(entity, reader.getId(), fieldNames, reader.getRow());
 				visibleRows++;
 			}
 			
