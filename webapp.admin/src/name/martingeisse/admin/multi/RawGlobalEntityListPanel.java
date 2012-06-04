@@ -30,7 +30,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
- * Raw presentation of entities. TODO: This panel will supersede {@link RawGlobalEntityListPanel}.
+ * Raw presentation of entities.
  */
 public class RawGlobalEntityListPanel extends Panel implements IPageable {
 
@@ -48,11 +48,6 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 	 * the pageCount
 	 */
 	private transient int pageCount;
-	
-	/**
-	 * the width
-	 */
-	private transient int width;
 	
 	/**
 	 * the renderers
@@ -115,7 +110,7 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 	 * @return the width
 	 */
 	public int getWidth() {
-		return width;
+		return renderers.length;
 	}
 
 	/**
@@ -204,7 +199,7 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 			}
 			final ResultSet resultSet = statement.executeQuery(query);
 			ResultSetReader reader = new ResultSetReader(resultSet, entity.getIdColumnName(), entity.getRawEntityListFieldOrder());
-			width = reader.getWidth();
+			int width = reader.getWidth();
 			
 			// fetch data and fill the rows array
 			rowIds = new Object[ROWS_PER_PAGE];
