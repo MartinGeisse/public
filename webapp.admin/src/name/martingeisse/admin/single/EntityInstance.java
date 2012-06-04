@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.single;
 
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -22,7 +23,7 @@ import name.martingeisse.admin.schema.EntityDescriptor;
  * happens, for example, when an instance is created from a {@link ResultSet}
  * without rows.
  */
-public class EntityInstance {
+public class EntityInstance implements Serializable {
 
 	/**
 	 * the entity

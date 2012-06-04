@@ -46,7 +46,7 @@ public class RawGlobalEntityListPresenter implements IGlobalEntityListPresenter 
 	 */
 	@Override
 	public IPageable getPageableForPanel(Panel panel) {
-		return (RawGlobalEntityListPanel)panel;
+		return ((RawGlobalEntityListPanel)panel).getPageable();
 	}
 
 }
