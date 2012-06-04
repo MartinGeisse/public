@@ -67,17 +67,35 @@ public class EntityInstance {
 	 */
 	public EntityInstance(final EntityDescriptor entity, final ResultSet resultSet) throws SQLException {
 		this.entity = entity;
+		this.fieldNames = getFieldNames(entity, resultSet);
 		if (resultSet.next()) {
 			final ResultSetMetaData metaData = resultSet.getMetaData();
 			final int width = metaData.getColumnCount();
-			fieldNames = new String[width];
 			fieldValues = new Object[width];
 			for (int i = 0; i < width; i++) {
-				fieldNames[i] = metaData.getColumnLabel(1 + i);
 				fieldValues[i] = resultSet.getObject(1 + i);
 			}
 		}
 	}
+	
+	/**
+	 * Returns an array containing the field names from the result set's meta-data.
+	 * @param entity the entity to which the fields belong
+	 * @param resultSet the result set whose meta-data to use.
+	 * @return the field names
+	 * @throws SQLException on SQL errors
+	 */
+	public static String[] getFieldNames(final EntityDescriptor entity, final ResultSet resultSet) throws SQLException {
+		final ResultSetMetaData metaData = resultSet.getMetaData();
+		final int width = metaData.getColumnCount();
+		String[] fieldNames = new String[width];
+		for (int i = 0; i < width; i++) {
+			fieldNames[i] = metaData.getColumnLabel(1 + i);
+		}
+		return fieldNames;
+	}
+	
+	
 
 	/**
 	 * Checks if this instance is empty. This is the case if either

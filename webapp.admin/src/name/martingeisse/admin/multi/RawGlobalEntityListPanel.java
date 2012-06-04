@@ -15,6 +15,7 @@ import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer;
 import name.martingeisse.admin.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityDescriptor;
+import name.martingeisse.admin.single.EntityInstance;
 import name.martingeisse.admin.util.LinkUtil;
 import name.martingeisse.common.jdbc.ResultSetReader;
 import name.martingeisse.wicket.util.ZebraLoop;
@@ -62,7 +63,7 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 	/**
 	 * the rows
 	 */
-	private transient Object[][] rows;
+	private transient EntityInstance[] rows;
 	
 	/**
 	 * the visibleRows
@@ -117,7 +118,7 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 	 * Getter method for the rows.
 	 * @return the rows
 	 */
-	public Object[][] getRows() {
+	public EntityInstance[] getRows() {
 		return rows;
 	}
 	
@@ -163,7 +164,7 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 						} else {
 							link = LinkUtil.createSingleEntityLink("link", entity, entityId);
 						}
-						link.add(renderers[cellItem.getIndex()].createLabel("value", rows[rowItem.getIndex()][cellItem.getIndex()]));
+						link.add(renderers[cellItem.getIndex()].createLabel("value", rows[rowItem.getIndex()].getFieldValues()[cellItem.getIndex()]));
 						cellItem.add(link);
 					}
 				});
@@ -203,11 +204,12 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 			
 			// fetch data and fill the rows array
 			rowIds = new Object[ROWS_PER_PAGE];
-			rows = new Object[ROWS_PER_PAGE][];
+			rows = new EntityInstance[ROWS_PER_PAGE];
 			visibleRows = 0;
+			String[] fieldNames = EntityInstance.getFieldNames(entity, resultSet);
 			while (reader.next()) {
 				rowIds[visibleRows] = reader.getId();
-				rows[visibleRows] = reader.getRow();
+				rows[visibleRows] = new EntityInstance(entity, fieldNames, reader.getRow());
 				visibleRows++;
 			}
 			
