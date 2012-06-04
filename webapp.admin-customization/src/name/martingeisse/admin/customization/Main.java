@@ -19,7 +19,6 @@ import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.admin.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.schema.MysqlDatabaseDescriptor;
-import name.martingeisse.admin.single.SingleEntityOverviewPresenter;
 
 
 /**
