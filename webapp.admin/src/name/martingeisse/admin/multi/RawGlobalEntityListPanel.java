@@ -55,11 +55,6 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 	private transient int width;
 	
 	/**
-	 * the columnNames
-	 */
-	private transient String[] columnNames;
-	
-	/**
 	 * the renderers
 	 */
 	private transient IPropertyReadOnlyRenderer[] renderers;
@@ -138,6 +133,14 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 	public int getVisibleRows() {
 		return visibleRows;
 	}
+	
+	/**
+	 * Getter method for the entity.
+	 * @return the entity
+	 */
+	public EntityDescriptor getEntity() {
+		return (EntityDescriptor)getDefaultModelObject();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Component#onInitialize()
@@ -148,7 +151,7 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 		add(new Loop("headers", new PropertyModel<Integer>(RawGlobalEntityListPanel.this, "width")) {
 			@Override
 			protected void populateItem(LoopItem item) {
-				item.add(new Label("name", columnNames[item.getIndex()]));
+				item.add(new Label("name", getEntity().getRawEntityListFieldOrder()[item.getIndex()]));
 			}
 		});
 		add(new ZebraLoop("rows", new PropertyModel<Integer>(RawGlobalEntityListPanel.this, "visibleRows")) {
@@ -214,10 +217,8 @@ public class RawGlobalEntityListPanel extends Panel implements IPageable {
 			}
 			
 			// determine the column names and renderers
-			columnNames = new String[width];
 			renderers = new IPropertyReadOnlyRenderer[width];
 			for (int i=0; i<width; i++) {
-				columnNames[i] = reader.getFieldOrder()[i];
 				renderers[i] = ApplicationConfiguration.getCapabilities().createPropertyReadOnlyRenderer(reader.getSqlFieldType(i));
 				if (renderers[i] == null) {
 					throw new RuntimeException("no renderer");
