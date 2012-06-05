@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.customization;
 
+import java.util.Arrays;
 import java.util.Comparator;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
@@ -15,6 +16,9 @@ import name.martingeisse.admin.application.capabilities.ExplicitEntityPropertyFi
 import name.martingeisse.admin.application.capabilities.PrefixEliminatingEntityDisplayNameStrategy;
 import name.martingeisse.admin.application.capabilities.SingleEntityPropertyFilter;
 import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPresenter;
+import name.martingeisse.admin.multi.populator.EntityFieldPopulator;
+import name.martingeisse.admin.multi.populator.IEntityCellPopulator;
+import name.martingeisse.admin.multi.populator.PopulatorBasedGlobalEntityListPresenter;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.admin.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
@@ -57,6 +61,10 @@ public class Main {
 		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, "User", "lastLoginAttemptTimestamp", false));
 //		ApplicationConfiguration.addPlugin(new SingleEntityOverviewPresenter(OverviewPanel.class, 1));
 		ApplicationConfiguration.addPlugin(new IdOnlyGlobalEntityListPresenter());
+		ApplicationConfiguration.addPlugin(new PopulatorBasedGlobalEntityListPresenter("pop", "Populator-Based", Arrays.<IEntityCellPopulator>asList(
+			new EntityFieldPopulator("Role Description", "role_description"),
+			new EntityFieldPopulator("Role Order", "role_order")
+		)));
 		
 		ExplicitEntityPropertyFilter userPropertyFilter = new ExplicitEntityPropertyFilter(2, "User");
 		userPropertyFilter.getVisiblePropertyNames().add("id");

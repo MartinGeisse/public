@@ -6,3 +6,12 @@
 MySQL
 
 Sollte phpBB-Datenbank öffnen und verstehen können
+
+------------------------------------------------------------------------------------------------------------
+OTHER TODO
+------------------------------------------------------------------------------------------------------------
+
+- Cell Populator / similar based entity table presenter
+
+- investigate in JS / Lua scripting -- is it possible to (make it possible to) write major features
+in scripting languages without touching Java code? Makes it easier for newbs to contribute.

@@ -13,26 +13,17 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
- * Raw presentation of entities. TODO: This presenter will supersede {@link RawGlobalEntityListPanel}.
+ * Raw presentation of entities.
  */
-public class RawGlobalEntityListPresenter implements IGlobalEntityListPresenter {
+public class RawGlobalEntityListPresenter extends AbstractGlobalEntityListPresenter {
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.multi.IGlobalEntityListPresenter#getUrlId()
+	/**
+	 * Constructor.
 	 */
-	@Override
-	public String getUrlId() {
-		return "default";
+	public RawGlobalEntityListPresenter() {
+		super("default", "Default");
 	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.multi.IGlobalEntityListPresenter#getTitle(name.martingeisse.admin.schema.EntityDescriptor)
-	 */
-	@Override
-	public String getTitle(EntityDescriptor entity) {
-		return "Default";
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.multi.IGlobalEntityListPresenter#createPanel(java.lang.String, name.martingeisse.admin.schema.EntityDescriptor, org.apache.wicket.request.mapper.parameter.PageParameters)
 	 */

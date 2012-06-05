@@ -36,3 +36,13 @@ Filter-Klassen:
 ---------------------------------------------------------------
 CellPopulator-Klassen:
 
+---------------------------------------------------------------
+
+Warum generisches Datensammeln? Warum nicht Basisklassen für eine spezifische Admin-Oberfläche?
+-> Weil das generische Datensammeln die Grundlage für super-schnell-und-einfach zu verwendende
+Basisklassen liefert! Zum Beispiel liefern "bekannte" Datentypen der Entity-Properties, im
+Gegensatz zu den Typen die SQL liefert, gleich die Darstellung, die man haben will, ohne dass
+man diese immer explizit angeben muss.
+
+Sieht erst mal so aus, als stünde das in Konkurrenz zum Scripting (XML oder JS). Besser aber
+man benutzt beides in Kombination! 

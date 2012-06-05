@@ -15,8 +15,7 @@ import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
- * TODO: document me
- *
+ * This class contains utility methods to deal with HTML links.
  */
 public class LinkUtil {
 
