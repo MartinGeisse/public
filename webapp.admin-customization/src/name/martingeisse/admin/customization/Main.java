@@ -18,6 +18,7 @@ import name.martingeisse.admin.application.capabilities.SingleEntityPropertyFilt
 import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPresenter;
 import name.martingeisse.admin.multi.populator.EntityFieldPopulator;
 import name.martingeisse.admin.multi.populator.IEntityCellPopulator;
+import name.martingeisse.admin.multi.populator.MultiCellPopulator;
 import name.martingeisse.admin.multi.populator.PopulatorBasedGlobalEntityListPresenter;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.admin.schema.AbstractDatabaseDescriptor;
@@ -35,6 +36,7 @@ public class Main {
 	 * @param args command-line arguments (ignored)
 	 * @throws Exception on errors
 	 */
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws Exception {
 		
 //		DatabaseDescriptor mainDatabase = new DatabaseDescriptor();
@@ -63,7 +65,11 @@ public class Main {
 		ApplicationConfiguration.addPlugin(new IdOnlyGlobalEntityListPresenter());
 		ApplicationConfiguration.addPlugin(new PopulatorBasedGlobalEntityListPresenter("pop", "Populator-Based", Arrays.<IEntityCellPopulator>asList(
 			new EntityFieldPopulator("Role Description", "role_description"),
-			new EntityFieldPopulator("Role Order", "role_order")
+			new EntityFieldPopulator("Role Order", "role_order"),
+			new MultiCellPopulator("Test",
+				new EntityFieldPopulator(null, "role_description"),
+				new EntityFieldPopulator(null, "role_order")
+			)
 		)));
 		
 		ExplicitEntityPropertyFilter userPropertyFilter = new ExplicitEntityPropertyFilter(2, "User");

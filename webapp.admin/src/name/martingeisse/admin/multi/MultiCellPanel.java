@@ -32,7 +32,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 /**
  * Raw presentation of entities.
  */
-public class RawGlobalEntityListPanel extends Panel {
+public class MultiCellPanel extends Panel {
 
 	/**
 	 * the renderers
@@ -45,7 +45,7 @@ public class RawGlobalEntityListPanel extends Panel {
 	 * @param entity the entity
 	 * @param parameters the page parameters
 	 */
-	public RawGlobalEntityListPanel(final String id, final EntityDescriptor entity, final PageParameters parameters) {
+	public MultiCellPanel(final String id, final EntityDescriptor entity, final PageParameters parameters) {
 		super(id);
 		setDefaultModel(Model.of(entity));
 	}
@@ -90,7 +90,7 @@ public class RawGlobalEntityListPanel extends Panel {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		add(new Loop("headers", new PropertyModel<Integer>(RawGlobalEntityListPanel.this, "width")) {
+		add(new Loop("headers", new PropertyModel<Integer>(MultiCellPanel.this, "width")) {
 			@Override
 			protected void populateItem(LoopItem item) {
 				item.add(new Label("name", getEntity().getRawEntityListFieldOrder()[item.getIndex()]));
@@ -99,10 +99,10 @@ public class RawGlobalEntityListPanel extends Panel {
 		add(new DataView<EntityInstance>("rows", new MyDataProvider(), 30) {
 			@Override
 			protected void populateItem(final Item<EntityInstance> rowItem) {
-				rowItem.add(new Loop("cells", new PropertyModel<Integer>(RawGlobalEntityListPanel.this, "width")) {
+				rowItem.add(new Loop("cells", new PropertyModel<Integer>(MultiCellPanel.this, "width")) {
 					@Override
 					protected void populateItem(final LoopItem cellItem) {
-						EntityDescriptor entity = (EntityDescriptor)RawGlobalEntityListPanel.this.getDefaultModelObject();
+						EntityDescriptor entity = (EntityDescriptor)MultiCellPanel.this.getDefaultModelObject();
 						EntityInstance instance = rowItem.getModelObject();
 						AbstractLink link;
 						if (instance.getId() == null) {
@@ -120,7 +120,7 @@ public class RawGlobalEntityListPanel extends Panel {
 
 	/**
 	 * Custom {@link IDataProvider} implementation -- cannot be implemented by
-	 * {@link RawGlobalEntityListPanel} since that would cause an infinite
+	 * {@link MultiCellPanel} since that would cause an infinite
 	 * loop on detach(). We also need the common logic from {@link EntityInstanceDataProvider}.
 	 */
 	private class MyDataProvider extends EntityInstanceDataProvider {
@@ -129,7 +129,7 @@ public class RawGlobalEntityListPanel extends Panel {
 		 * Constructor.
 		 */
 		public MyDataProvider() {
-			super(RawGlobalEntityListPanel.this.getEntityDescriptorModel());
+			super(MultiCellPanel.this.getEntityDescriptorModel());
 		}
 
 		/* (non-Javadoc)
