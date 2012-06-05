@@ -29,7 +29,7 @@ public class RawGlobalEntityListPresenter extends AbstractGlobalEntityListPresen
 	 */
 	@Override
 	public Panel createPanel(String id, EntityDescriptor entity, PageParameters parameters) {
-		return new MultiCellPanel(id, entity, parameters);
+		return new RawEntityListPanel(id, entity, parameters);
 	}
 
 	/* (non-Javadoc)
@@ -37,7 +37,7 @@ public class RawGlobalEntityListPresenter extends AbstractGlobalEntityListPresen
 	 */
 	@Override
 	public IPageable getPageableForPanel(Panel panel) {
-		return ((MultiCellPanel)panel).getPageable();
+		return ((RawEntityListPanel)panel).getPageable();
 	}
 
 }
