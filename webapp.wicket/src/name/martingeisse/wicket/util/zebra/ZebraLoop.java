@@ -4,9 +4,8 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.wicket.util;
+package name.martingeisse.wicket.util.zebra;
 
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.list.Loop;
 import org.apache.wicket.markup.html.list.LoopItem;
 import org.apache.wicket.model.IModel;
@@ -25,7 +24,6 @@ public abstract class ZebraLoop extends Loop {
 	 */
 	public ZebraLoop(String id, int iterations) {
 		super(id, iterations);
-		
 	}
 
 	/**
@@ -35,21 +33,14 @@ public abstract class ZebraLoop extends Loop {
 	 */
 	public ZebraLoop(String id, IModel<Integer> model) {
 		super(id, model);
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.markup.html.list.Loop#newItem(int)
 	 */
 	@Override
-	protected LoopItem newItem(final int iteration) {
-		return new LoopItem(iteration) {
-			@Override
-			protected void onComponentTag(ComponentTag tag) {
-				super.onComponentTag(tag);
-				tag.getAttributes().put("class", ((iteration & 1) == 0) ? "even" : "odd");
-			}
-		};
+	protected LoopItem newItem(int iteration) {
+		return new ZebraLoopItem(iteration);
 	}
 
 }

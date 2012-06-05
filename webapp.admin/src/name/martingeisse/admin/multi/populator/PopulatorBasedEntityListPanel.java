@@ -11,8 +11,8 @@ import java.util.List;
 import name.martingeisse.admin.multi.EntityInstanceDataProvider;
 import name.martingeisse.admin.schema.EntityDescriptor;
 import name.martingeisse.admin.single.EntityInstance;
+import name.martingeisse.wicket.util.zebra.ZebraDataGridView;
 
-import org.apache.wicket.extensions.markup.html.repeater.data.grid.DataGridView;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -88,7 +88,7 @@ public class PopulatorBasedEntityListPanel extends Panel {
 				item.add(new Label("name", item.getModelObject().getTitle()));
 			}
 		});
-		add(new DataGridView<EntityInstance>("rows", cellPopulators, new EntityInstanceDataProvider(getEntityDescriptorModel())));
+		add(new ZebraDataGridView<EntityInstance>("rows", cellPopulators, new EntityInstanceDataProvider(getEntityDescriptorModel())));
 	}
 
 }

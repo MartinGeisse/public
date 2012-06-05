@@ -14,6 +14,7 @@ import name.martingeisse.admin.schema.EntityDescriptor;
 import name.martingeisse.admin.single.EntityInstance;
 import name.martingeisse.admin.util.LinkUtil;
 import name.martingeisse.common.jdbc.ResultSetReader;
+import name.martingeisse.wicket.util.zebra.ZebraDataView;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.AbstractLink;
@@ -22,7 +23,6 @@ import org.apache.wicket.markup.html.list.LoopItem;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -96,7 +96,7 @@ public class RawEntityListPanel extends Panel {
 				item.add(new Label("name", getEntity().getRawEntityListFieldOrder()[item.getIndex()]));
 			}
 		});
-		add(new DataView<EntityInstance>("rows", new MyDataProvider(), 30) {
+		add(new ZebraDataView<EntityInstance>("rows", new MyDataProvider(), 30) {
 			@Override
 			protected void populateItem(final Item<EntityInstance> rowItem) {
 				rowItem.add(new Loop("cells", new PropertyModel<Integer>(RawEntityListPanel.this, "width")) {
