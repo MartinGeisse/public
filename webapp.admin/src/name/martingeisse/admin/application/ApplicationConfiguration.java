@@ -11,8 +11,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.wicket.markup.html.WebMarkupContainer;
+
 import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
 import name.martingeisse.admin.application.capabilities.IEntityDisplayNameStrategy;
+import name.martingeisse.admin.application.capabilities.IPageBorderFactory;
 import name.martingeisse.admin.multi.IGlobalEntityListPresenter;
 import name.martingeisse.admin.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityDescriptor;
@@ -57,6 +60,11 @@ public class ApplicationConfiguration {
 	 * the entityDisplayNameStrategy
 	 */
 	private static IEntityDisplayNameStrategy entityDisplayNameStrategy;
+
+	/**
+	 * the pageBorderFactory
+	 */
+	private static IPageBorderFactory pageBorderFactory;
 
 	/**
 	 * the capabilities
@@ -152,10 +160,37 @@ public class ApplicationConfiguration {
 	 * @param entity the entity
 	 * @return the name to display
 	 */
-	public static String getEntityDisplayName(EntityDescriptor entity) {
+	public static String getEntityDisplayName(final EntityDescriptor entity) {
 		return (entityDisplayNameStrategy == null ? entity.getTableName() : entityDisplayNameStrategy.getDisplayName(entity));
 	}
+
+	/**
+	 * Getter method for the pageBorderFactory.
+	 * @return the pageBorderFactory
+	 */
+	public static IPageBorderFactory getPageBorderFactory() {
+		return pageBorderFactory;
+	}
+
+	/**
+	 * Setter method for the pageBorderFactory.
+	 * @param pageBorderFactory the pageBorderFactory to set
+	 */
+	public static void setPageBorderFactory(final IPageBorderFactory pageBorderFactory) {
+		checkChangesAllowed();
+		ApplicationConfiguration.pageBorderFactory = pageBorderFactory;
+	}
 	
+	/**
+	 * Creates either a page border (if a page border factory is set) or a 
+	 * simple {@link WebMarkupContainer}.
+	 * @param id the wicket id of the container to create
+	 * @return the page border or other container
+	 */
+	public static WebMarkupContainer createPageBorder(String id) {
+		return (pageBorderFactory == null ? new WebMarkupContainer(id) : pageBorderFactory.createPageBorder(id));
+	}
+
 	/**
 	 * Seals this configuration to disallow further changes.
 	 */

@@ -89,6 +89,8 @@ public class Main {
 				}
 			}
 		});
+
+		ApplicationConfiguration.setPageBorderFactory(new PageBorderFactory());
 		
 		Launcher.launch();
 		

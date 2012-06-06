@@ -78,14 +78,14 @@ public class EntityPresentationPage extends AbstractAdminPage {
 		}
 
 		// create the overview
-		add(overviewPresenter.createPanel("overview", instanceModel));
+		getMainContainer().add(overviewPresenter.createPanel("overview", instanceModel));
 		
 		// create the presentation title label and panel
-		add(new Label("presenterTitle", presenter.getTitle()));
-		add(presenter.createPanel("presentationPanel", instanceModel));
+		getMainContainer().add(new Label("presenterTitle", presenter.getTitle()));
+		getMainContainer().add(presenter.createPanel("presentationPanel", instanceModel));
 
 		// create the presenter navigation
-		add(new ListView<ISingleEntityPresenter>("presenters", entity.getSinglePresenters()) {
+		getMainContainer().add(new ListView<ISingleEntityPresenter>("presenters", entity.getSinglePresenters()) {
 			@Override
 			protected void populateItem(final ListItem<ISingleEntityPresenter> item) {
 				final PageParameters parameters = new PageParameters();
@@ -99,7 +99,7 @@ public class EntityPresentationPage extends AbstractAdminPage {
 		});
 
 		// create action links
-		add(new ListView<IEntityInstanceAction>("actions", new PropertyModel<List<IEntityInstanceAction>>(this, "actions")) {
+		getMainContainer().add(new ListView<IEntityInstanceAction>("actions", new PropertyModel<List<IEntityInstanceAction>>(this, "actions")) {
 			@Override
 			protected void populateItem(final ListItem<IEntityInstanceAction> item) {
 				final Link<Void> link = new Link<Void>("link") {

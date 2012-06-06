@@ -1,0 +1,31 @@
+
+Scripting mit LUA oder JS: (Erst mal nur JS, ist einfacher und Web-Entwickler kennen sich i.d.R.
+besser damit aus)
+
+Anwendungsgebiete:
+- generische Plugins schreiben
+- spezifische Plugins schreiben
+- Admin-App zusammenbinden ("Main-Methode schreiben")
+
+Überlegungen:
+- Spezifische Plugins lassen sich bei solchen Sprachen git in die Main integrieren, gerade mit Closures
+- Intuitiv ist bei generischen Plugins das schnelle Scripting weniger wichtig, daher würde ich die
+  eher in Java schreiben. Das erspart es auch, die Plugin-API in der Scriptsprache zur Verfügung
+  zu stellen.
+
+Daraus ergibt sich: Es wird "nur" die Main-Methode gescripted. Man kann natürlich Funktionen
+definieren, aber man tut das dann um sie in der Main oder in spezifischen Plugins zu benutzen.
+Man schreibt keine Funktionen, die "magisch" von außen aufgerufen werden; sie werden nur
+aufgerufen, wenn die Main sie als Callbacks registriert.
+
+Templates: Evtl macht es Sinn, wie in PHP Scriptcode und HTML zu mischen. Das ist aber
+noch nicht gesichert. Unklar ist auch das Grundkonzept der Templates. Ideen:
+- Text-Templates wie bei PHP ohne Wicket-Verhalten -> wenn es nicht besser geht.
+- Text-Templates wie bei PHP, welche das Wicket-Markup erzeugen -> das wird ziemlich
+  unübersichtlich.
+- Wicket-Markup mit embedded Server-Side-JS. Das JS erzeugt nicht das Wicket Markup sondern
+  wird im Kontext des Markup ausgeführt, z.B. per neu definiertem <wicket:script>-Element.
+  -> das klingt schon cooler.
+
+
+

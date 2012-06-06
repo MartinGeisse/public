@@ -12,6 +12,7 @@ import name.martingeisse.admin.schema.ApplicationSchema;
 import name.martingeisse.admin.schema.EntityDescriptor;
 
 import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -32,6 +33,7 @@ public class AbstractAdminPage extends WebPage {
 	 */
 	public AbstractAdminPage() {
 		super();
+		addPageBorder();
 	}
 
 	/**
@@ -40,6 +42,7 @@ public class AbstractAdminPage extends WebPage {
 	 */
 	public AbstractAdminPage(IModel<?> model) {
 		super(model);
+		addPageBorder();
 	}
 
 	/**
@@ -48,6 +51,23 @@ public class AbstractAdminPage extends WebPage {
 	 */
 	public AbstractAdminPage(PageParameters parameters) {
 		super(parameters);
+		addPageBorder();
+	}
+
+	/**
+	 * 
+	 */
+	private void addPageBorder() {
+		add(ApplicationConfiguration.createPageBorder("pageBorder"));
+	}
+	
+	/**
+	 * Returns the main container that contains the page contents. Subclasses must
+	 * add child components to this container.
+	 * @return the main container
+	 */
+	public WebMarkupContainer getMainContainer() {
+		return (WebMarkupContainer)get("pageBorder");
 	}
 
 	/* (non-Javadoc)
@@ -56,7 +76,7 @@ public class AbstractAdminPage extends WebPage {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		add(new ListView<EntityDescriptor>("entities", ApplicationSchema.instance.getEntityDescriptors()) {
+		getMainContainer().add(new ListView<EntityDescriptor>("entities", ApplicationSchema.instance.getEntityDescriptors()) {
 			@Override
 			protected void populateItem(ListItem<EntityDescriptor> item) {
 				PageParameters parameters = new PageParameters();

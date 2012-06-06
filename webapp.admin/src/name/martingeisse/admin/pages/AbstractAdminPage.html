@@ -4,20 +4,22 @@
 	</head>
 	<body>
 		<div class="OuterContainer">
-			<div class="TopNavigationBar">
-				<a href="/">Home</a>
+			<div wicket:id="pageBorder">
+				<div class="TopNavigationBar">
+					<a href="/">Home</a>
+				</div>
+				<div class="LeftNavigationBar">
+					<h3>Entities</h3>
+					<ul>
+						<li wicket:id="entities">
+							<a wicket:id="link">
+								<span wicket:id="name" />
+							</a>
+						</li>
+					</ul>
+				</div>
+				<wicket:child />
 			</div>
-			<div class="LeftNavigationBar">
-				<h3>Entities</h3>
-				<ul>
-					<li wicket:id="entities">
-						<a wicket:id="link">
-							<span wicket:id="name" />
-						</a>
-					</li>
-				</ul>
-			</div>
-			<wicket:child />
 		</div>
 	</body>
 </html>

@@ -52,8 +52,8 @@ public class EntityTablePage extends AbstractAdminPage {
 		}
 		
 		// create components
-		add(new Label("entityName", ApplicationConfiguration.getEntityDisplayName(entity)));
-		add(new ListView<IGlobalEntityListPresenter>("presenters", entity.getGlobalListPresenters()) {
+		getMainContainer().add(new Label("entityName", ApplicationConfiguration.getEntityDisplayName(entity)));
+		getMainContainer().add(new ListView<IGlobalEntityListPresenter>("presenters", entity.getGlobalListPresenters()) {
 			@Override
 			protected void populateItem(ListItem<IGlobalEntityListPresenter> item) {
 				final PageParameters parameters = new PageParameters();
@@ -64,16 +64,16 @@ public class EntityTablePage extends AbstractAdminPage {
 				item.add(link);
 			}
 		});
-		add(new Label("presenterTitle", presenter.getTitle(entity)));
+		getMainContainer().add(new Label("presenterTitle", presenter.getTitle(entity)));
 		Panel panel = presenter.createPanel("tablePresentation", entity, parameters);
-		add(panel);
+		getMainContainer().add(panel);
 		IPageable pageable = presenter.getPageableForPanel(panel);
 		if (pageable == null) {
-			add(new WebComponent("topPagingNavigator"));
-			add(new WebComponent("bottomPagingNavigator"));
+			getMainContainer().add(new WebComponent("topPagingNavigator"));
+			getMainContainer().add(new WebComponent("bottomPagingNavigator"));
 		} else {
-			add(new PagingNavigator("topPagingNavigator", pageable));
-			add(new PagingNavigator("bottomPagingNavigator", pageable));
+			getMainContainer().add(new PagingNavigator("topPagingNavigator", pageable));
+			getMainContainer().add(new PagingNavigator("bottomPagingNavigator", pageable));
 		}
 		
 	}
