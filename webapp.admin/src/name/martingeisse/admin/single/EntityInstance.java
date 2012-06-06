@@ -114,7 +114,7 @@ public class EntityInstance implements Serializable {
 	 * the field names or values are null.
 	 * @return true if empty
 	 */
-	public boolean isEmpty() {
+	public final boolean isEmpty() {
 		return (fieldNames == null || fieldValues == null);
 	}
 
@@ -122,7 +122,7 @@ public class EntityInstance implements Serializable {
 	 * Getter method for the entity.
 	 * @return the entity
 	 */
-	public EntityDescriptor getEntity() {
+	public final EntityDescriptor getEntity() {
 		return entity;
 	}
 
@@ -130,7 +130,7 @@ public class EntityInstance implements Serializable {
 	 * Getter method for the id.
 	 * @return the id
 	 */
-	public Object getId() {
+	public final Object getId() {
 		return id;
 	}
 	
@@ -138,7 +138,7 @@ public class EntityInstance implements Serializable {
 	 * Setter method for the entity.
 	 * @param entity the entity to set
 	 */
-	public void setEntity(final EntityDescriptor entity) {
+	public final void setEntity(final EntityDescriptor entity) {
 		this.entity = entity;
 	}
 
@@ -146,7 +146,7 @@ public class EntityInstance implements Serializable {
 	 * Getter method for the fieldNames.
 	 * @return the fieldNames
 	 */
-	public String[] getFieldNames() {
+	public final String[] getFieldNames() {
 		return fieldNames;
 	}
 
@@ -162,7 +162,7 @@ public class EntityInstance implements Serializable {
 	 * Getter method for the fieldValues.
 	 * @return the fieldValues
 	 */
-	public Object[] getFieldValues() {
+	public final Object[] getFieldValues() {
 		return fieldValues;
 	}
 
@@ -170,8 +170,37 @@ public class EntityInstance implements Serializable {
 	 * Setter method for the fieldValues.
 	 * @param fieldValues the fieldValues to set
 	 */
-	public void setFieldValues(final Object[] fieldValues) {
+	public final void setFieldValues(final Object[] fieldValues) {
 		this.fieldValues = fieldValues;
 	}
 
+	/**
+	 * Returns the value of the specified field.
+	 * @param fieldName the name of the field whose value to return
+	 * @return the field value
+	 */
+	public final Object getFieldValue(String fieldName) {
+		for (int i = 0; i < fieldNames.length; i++) {
+			if (fieldNames[i].equals(fieldName)) {
+				return fieldValues[i];
+			}
+		}
+		throw new IllegalArgumentException("unknown entity instance field: " + fieldName);
+	}
+
+	/**
+	 * Sets the value of the specified field.
+	 * @param fieldName the name of the field whose value to set
+	 * @param fieldValue the value to set
+	 */
+	public final void setFieldValue(String fieldName, Object fieldValue) {
+		for (int i = 0; i < fieldNames.length; i++) {
+			if (fieldNames[i].equals(fieldName)) {
+				fieldValues[i] = fieldValue;
+				return;
+			}
+		}
+		throw new IllegalArgumentException("unknown entity instance field: " + fieldName);
+	}
+	
 }

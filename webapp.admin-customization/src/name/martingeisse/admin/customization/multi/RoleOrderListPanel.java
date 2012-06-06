@@ -48,7 +48,7 @@ public class RoleOrderListPanel extends AbstractEntityDataViewPanel {
 	 */
 	@Override
 	protected void populateRowItem(Item<EntityInstance> rowItem) {
-//		rowItem.add(new Label("roleOrder", rowItem.getModelObject().g);
+		rowItem.add(new Label("roleOrder", "" + rowItem.getModelObject().getFieldValue("role_order")));
 	}
 
 }

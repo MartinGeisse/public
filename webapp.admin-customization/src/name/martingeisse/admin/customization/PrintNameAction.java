@@ -68,11 +68,7 @@ public class PrintNameAction implements IEntityInstanceAction, IEntityInstanceAc
 	@Override
 	public void execute(Object entityInstance, EntityDescriptor entityDescriptor) {
 		EntityInstance instance = (EntityInstance)entityInstance;
-		for (int i=0; i<instance.getFieldNames().length; i++) {
-			if (instance.getFieldNames()[i].equals("name")) {
-				System.out.println("* " + instance.getFieldValues()[i]);
-			}
-		}
+		System.out.println("* " + instance.getFieldValue("name"));
 	}
 
 }

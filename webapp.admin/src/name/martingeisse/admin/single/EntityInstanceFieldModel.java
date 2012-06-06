@@ -93,13 +93,7 @@ public class EntityInstanceFieldModel<T> implements IModel<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public T getObject() {
-		final EntityInstance instance = resolveInstance();
-		for (int i = 0; i < instance.getFieldNames().length; i++) {
-			if (instance.getFieldNames()[i].equals(fieldName)) {
-				return (T)instance.getFieldValues()[i];
-			}
-		}
-		throw new IllegalStateException("unknown entity instance field: " + fieldName);
+		return (T)resolveInstance().getFieldValue(fieldName);
 	}
 
 	/* (non-Javadoc)
@@ -107,14 +101,7 @@ public class EntityInstanceFieldModel<T> implements IModel<T> {
 	 */
 	@Override
 	public void setObject(final T object) {
-		final EntityInstance instance = resolveInstance();
-		for (int i = 0; i < instance.getFieldNames().length; i++) {
-			if (instance.getFieldNames()[i].equals(fieldName)) {
-				instance.getFieldValues()[i] = object;
-				return;
-			}
-		}
-		throw new IllegalStateException("unknown entity instance field: " + fieldName);
+		resolveInstance().setFieldValue(fieldName, object);
 	}
 
 	/**
