@@ -16,6 +16,7 @@ import name.martingeisse.admin.application.capabilities.ExplicitEntityPropertyFi
 import name.martingeisse.admin.application.capabilities.PrefixEliminatingEntityDisplayNameStrategy;
 import name.martingeisse.admin.application.capabilities.SingleEntityPropertyFilter;
 import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPresenter;
+import name.martingeisse.admin.customization.multi.RoleOrderListPresenter;
 import name.martingeisse.admin.multi.populator.EntityFieldPopulator;
 import name.martingeisse.admin.multi.populator.IEntityCellPopulator;
 import name.martingeisse.admin.multi.populator.MultiCellPopulator;
@@ -63,6 +64,7 @@ public class Main {
 		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, "User", "lastLoginAttemptTimestamp", false));
 //		ApplicationConfiguration.addPlugin(new SingleEntityOverviewPresenter(OverviewPanel.class, 1));
 		ApplicationConfiguration.addPlugin(new IdOnlyGlobalEntityListPresenter());
+		ApplicationConfiguration.addPlugin(new RoleOrderListPresenter());
 		ApplicationConfiguration.addPlugin(new PopulatorBasedGlobalEntityListPresenter("pop", "Populator-Based", Arrays.<IEntityCellPopulator>asList(
 			new EntityFieldPopulator("Role Description", "role_description"),
 			new EntityFieldPopulator("Role Order", "role_order"),
