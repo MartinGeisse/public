@@ -11,6 +11,7 @@ import java.util.List;
 import name.martingeisse.admin.multi.EntityInstanceDataProvider;
 import name.martingeisse.admin.schema.EntityDescriptor;
 import name.martingeisse.admin.single.EntityInstance;
+import name.martingeisse.admin.util.IGetPageable;
 import name.martingeisse.wicket.util.zebra.ZebraDataGridView;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -24,7 +25,7 @@ import org.apache.wicket.model.Model;
 /**
  * Raw presentation of entities.
  */
-public class PopulatorBasedEntityListPanel extends Panel {
+public class PopulatorBasedEntityListPanel extends Panel implements IGetPageable {
 
 	/**
 	 * the cellPopulators
@@ -67,11 +68,11 @@ public class PopulatorBasedEntityListPanel extends Panel {
 	public EntityDescriptor getEntity() {
 		return (EntityDescriptor)getDefaultModelObject();
 	}
-	
-	/**
-	 * Getter method for the pageable.
-	 * @return the pageable
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.util.IGetPageable#getPageable()
 	 */
+	@Override
 	public IPageable getPageable() {
 		return (IPageable)get("rows");
 	}

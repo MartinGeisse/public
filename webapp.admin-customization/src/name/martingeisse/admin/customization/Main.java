@@ -15,8 +15,9 @@ import name.martingeisse.admin.application.Launcher;
 import name.martingeisse.admin.application.capabilities.ExplicitEntityPropertyFilter;
 import name.martingeisse.admin.application.capabilities.PrefixEliminatingEntityDisplayNameStrategy;
 import name.martingeisse.admin.application.capabilities.SingleEntityPropertyFilter;
-import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPresenter;
-import name.martingeisse.admin.customization.multi.RoleOrderListPresenter;
+import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPanel;
+import name.martingeisse.admin.customization.multi.RoleOrderListPanel;
+import name.martingeisse.admin.multi.GlobalEntityListPresenter;
 import name.martingeisse.admin.multi.populator.EntityFieldPopulator;
 import name.martingeisse.admin.multi.populator.IEntityCellPopulator;
 import name.martingeisse.admin.multi.populator.MultiCellPopulator;
@@ -62,9 +63,8 @@ public class Main {
 		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, null, "modificationTimestamp", false));
 		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, null, "modificationUser_id", false));
 		ApplicationConfiguration.addPlugin(new SingleEntityPropertyFilter(1, "User", "lastLoginAttemptTimestamp", false));
-//		ApplicationConfiguration.addPlugin(new SingleEntityOverviewPresenter(OverviewPanel.class, 1));
-		ApplicationConfiguration.addPlugin(new IdOnlyGlobalEntityListPresenter());
-		ApplicationConfiguration.addPlugin(new RoleOrderListPresenter());
+		ApplicationConfiguration.addPlugin(new GlobalEntityListPresenter("ids", "IDs only", IdOnlyGlobalEntityListPanel.class));
+		ApplicationConfiguration.addPlugin(new GlobalEntityListPresenter("roleList", "Role List", RoleOrderListPanel.class));
 		ApplicationConfiguration.addPlugin(new PopulatorBasedGlobalEntityListPresenter("pop", "Populator-Based", Arrays.<IEntityCellPopulator>asList(
 			new EntityFieldPopulator("Role Description", "role_description"),
 			new EntityFieldPopulator("Role Order", "role_order"),

@@ -9,13 +9,11 @@ package name.martingeisse.admin.multi.populator;
 import java.util.List;
 
 import name.martingeisse.admin.application.IPlugin;
-import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
 import name.martingeisse.admin.application.capabilities.IEntityPresentationContributor;
 import name.martingeisse.admin.multi.AbstractGlobalEntityListPresenter;
 import name.martingeisse.admin.schema.EntityDescriptor;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
-import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
@@ -70,31 +68,6 @@ public class PopulatorBasedGlobalEntityListPresenter extends AbstractGlobalEntit
 	@Override
 	public Panel createPanel(final String id, final EntityDescriptor entity, final PageParameters parameters) {
 		return new PopulatorBasedEntityListPanel(id, entity, cellPopulators);
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.multi.IGlobalEntityListPresenter#getPageableForPanel(org.apache.wicket.markup.html.panel.Panel)
-	 */
-	@Override
-	public IPageable getPageableForPanel(final Panel panel) {
-		return ((PopulatorBasedEntityListPanel)panel).getPageable();
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.application.IPlugin#contribute(name.martingeisse.admin.application.capabilities.ApplicationCapabilities)
-	 */
-	@Override
-	public void contribute(ApplicationCapabilities applicationCapabilities) {
-		applicationCapabilities.getEntityPresentationContributors().add(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.application.capabilities.IEntityPresentationContributor#contributeEntityPresenters(name.martingeisse.admin.schema.EntityDescriptor)
-	 */
-	@Override
-	public void contributeEntityPresenters(EntityDescriptor entity) {
-		// TODO: define a filter
-		entity.getGlobalListPresenters().add(this);
 	}
 
 }

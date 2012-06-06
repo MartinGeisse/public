@@ -12,6 +12,7 @@ import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer;
 import name.martingeisse.admin.schema.EntityDescriptor;
 import name.martingeisse.admin.single.EntityInstance;
+import name.martingeisse.admin.util.IGetPageable;
 import name.martingeisse.admin.util.LinkUtil;
 import name.martingeisse.common.jdbc.ResultSetReader;
 import name.martingeisse.wicket.util.zebra.ZebraDataView;
@@ -32,7 +33,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 /**
  * Raw presentation of entities.
  */
-public class RawEntityListPanel extends Panel {
+public class RawEntityListPanel extends Panel implements IGetPageable {
 
 	/**
 	 * the renderers
@@ -75,11 +76,11 @@ public class RawEntityListPanel extends Panel {
 	public EntityDescriptor getEntity() {
 		return (EntityDescriptor)getDefaultModelObject();
 	}
-	
-	/**
-	 * Getter method for the pageable.
-	 * @return the pageable
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.util.IGetPageable#getPageable()
 	 */
+	@Override
 	public IPageable getPageable() {
 		return (IPageable)get("rows");
 	}

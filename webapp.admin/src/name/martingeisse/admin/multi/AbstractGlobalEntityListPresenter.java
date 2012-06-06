@@ -6,13 +6,20 @@
 
 package name.martingeisse.admin.multi;
 
+import org.apache.wicket.markup.html.navigation.paging.IPageable;
+import org.apache.wicket.markup.html.panel.Panel;
+
+import name.martingeisse.admin.application.IPlugin;
+import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
+import name.martingeisse.admin.application.capabilities.IEntityPresentationContributor;
 import name.martingeisse.admin.schema.EntityDescriptor;
+import name.martingeisse.admin.util.IGetPageable;
 
 /**
  * Base implementation of {@link IGlobalEntityListPresenter} that
  * stores the URL ID and the title in fields.
  */
-public abstract class AbstractGlobalEntityListPresenter implements IGlobalEntityListPresenter {
+public abstract class AbstractGlobalEntityListPresenter implements IGlobalEntityListPresenter, IEntityPresentationContributor, IPlugin {
 
 	/**
 	 * the urlId
@@ -78,6 +85,37 @@ public abstract class AbstractGlobalEntityListPresenter implements IGlobalEntity
 	@Override
 	public String getTitle(EntityDescriptor entity) {
 		return title;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.multi.IGlobalEntityListPresenter#getPageableForPanel(org.apache.wicket.markup.html.panel.Panel)
+	 */
+	@Override
+	public IPageable getPageableForPanel(Panel panel) {
+		if (panel instanceof IGetPageable) {
+			return ((IGetPageable)panel).getPageable();
+		} else if (panel instanceof IPageable) {
+			return (IPageable)panel;
+		} else {
+			return null;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.application.IPlugin#contribute(name.martingeisse.admin.application.capabilities.ApplicationCapabilities)
+	 */
+	@Override
+	public void contribute(ApplicationCapabilities applicationCapabilities) {
+		applicationCapabilities.getEntityPresentationContributors().add(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.application.capabilities.IEntityPresentationContributor#contributeEntityPresenters(name.martingeisse.admin.schema.EntityDescriptor)
+	 */
+	@Override
+	public void contributeEntityPresenters(EntityDescriptor entity) {
+		// TODO: define a filter
+		entity.getGlobalListPresenters().add(this);
 	}
 
 }

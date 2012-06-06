@@ -6,38 +6,17 @@
 
 package name.martingeisse.admin.multi;
 
-import name.martingeisse.admin.schema.EntityDescriptor;
-
-import org.apache.wicket.markup.html.navigation.paging.IPageable;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
  * Raw presentation of entities.
  */
-public class RawGlobalEntityListPresenter extends AbstractGlobalEntityListPresenter {
+public class RawGlobalEntityListPresenter extends GlobalEntityListPresenter {
 
 	/**
 	 * Constructor.
 	 */
 	public RawGlobalEntityListPresenter() {
-		super("default", "Default");
-	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.multi.IGlobalEntityListPresenter#createPanel(java.lang.String, name.martingeisse.admin.schema.EntityDescriptor, org.apache.wicket.request.mapper.parameter.PageParameters)
-	 */
-	@Override
-	public Panel createPanel(String id, EntityDescriptor entity, PageParameters parameters) {
-		return new RawEntityListPanel(id, entity, parameters);
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.multi.IGlobalEntityListPresenter#getPageableForPanel(org.apache.wicket.markup.html.panel.Panel)
-	 */
-	@Override
-	public IPageable getPageableForPanel(Panel panel) {
-		return ((RawEntityListPanel)panel).getPageable();
+		super("default", "Default", RawEntityListPanel.class);
 	}
 
 }
