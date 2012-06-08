@@ -6,6 +6,8 @@
 
 package name.martingeisse.admin.single;
 
+import java.io.Serializable;
+
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
@@ -21,7 +23,7 @@ import org.apache.wicket.model.IModel;
  * classes, table names, or similar. That is, it is entirely possible
  * to create a presenter that can present any instance of any entity.
  */
-public interface ISingleEntityOverviewPresenter {
+public interface ISingleEntityOverviewPresenter extends Serializable {
 
 	/**
 	 * Creates a Wicket panel for overview presentation of an entity instance.

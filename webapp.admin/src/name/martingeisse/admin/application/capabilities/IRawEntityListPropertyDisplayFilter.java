@@ -6,6 +6,8 @@
 
 package name.martingeisse.admin.application.capabilities;
 
+import java.io.Serializable;
+
 import name.martingeisse.admin.schema.EntityDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
 
@@ -15,10 +17,8 @@ import name.martingeisse.admin.schema.EntityPropertyDescriptor;
  * score that defines visibility for that property wins.
  * Properties are visible by default, i.e. if no filter affects
  * a property, then it is visible.
- * 
- * 
  */
-public interface IRawEntityListPropertyDisplayFilter {
+public interface IRawEntityListPropertyDisplayFilter extends Serializable {
 
 	/**
 	 * @param entityDescriptor the entity descriptor

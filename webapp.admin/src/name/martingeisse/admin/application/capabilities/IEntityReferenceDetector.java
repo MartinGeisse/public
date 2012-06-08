@@ -6,13 +6,15 @@
 
 package name.martingeisse.admin.application.capabilities;
 
+import java.io.Serializable;
+
 import name.martingeisse.admin.schema.ApplicationSchema;
 
 /**
  * Implementations are contributed by plugins and are able to
  * recognize entity fields as references to other entities.
  */
-public interface IEntityReferenceDetector {
+public interface IEntityReferenceDetector extends Serializable {
 
 	/**
 	 * Checks if the specified property of the specified entity is a

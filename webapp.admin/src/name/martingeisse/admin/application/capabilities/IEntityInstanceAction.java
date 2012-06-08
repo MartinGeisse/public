@@ -6,6 +6,8 @@
 
 package name.martingeisse.admin.application.capabilities;
 
+import java.io.Serializable;
+
 import name.martingeisse.admin.schema.EntityDescriptor;
 
 /**
@@ -14,7 +16,7 @@ import name.martingeisse.admin.schema.EntityDescriptor;
  * which case they must not be executed on other instances. See
  * {@link IEntityInstanceActionContributor} for the idea behind this.
  */
-public interface IEntityInstanceAction {
+public interface IEntityInstanceAction extends Serializable {
 
 	/**
 	 * @return the name of this action

@@ -6,6 +6,8 @@
 
 package name.martingeisse.admin.application.capabilities;
 
+import java.io.Serializable;
+
 import name.martingeisse.admin.schema.EntityDescriptor;
 
 /**
@@ -28,7 +30,7 @@ import name.martingeisse.admin.schema.EntityDescriptor;
  *   entity instances
  * - per-instance selection of one of a set of singleton actions
  */
-public interface IEntityInstanceActionContributor {
+public interface IEntityInstanceActionContributor extends Serializable {
 
 	/**
 	 * Contributes global actions that can be executed on all instances

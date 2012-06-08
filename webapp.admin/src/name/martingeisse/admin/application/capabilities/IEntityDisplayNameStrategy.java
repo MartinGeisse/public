@@ -6,12 +6,14 @@
 
 package name.martingeisse.admin.application.capabilities;
 
+import java.io.Serializable;
+
 import name.martingeisse.admin.schema.EntityDescriptor;
 
 /**
  * This strategy returns the displayed name for each entity.
  */
-public interface IEntityDisplayNameStrategy {
+public interface IEntityDisplayNameStrategy extends Serializable {
 
 	/**
 	 * Returns the displayed name for the specified entity.

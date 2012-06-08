@@ -9,6 +9,7 @@ package name.martingeisse.admin.customization;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import name.martingeisse.admin.application.AdminWicketApplication;
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
@@ -22,6 +23,9 @@ import name.martingeisse.admin.multi.populator.EntityFieldPopulator;
 import name.martingeisse.admin.multi.populator.IEntityCellPopulator;
 import name.martingeisse.admin.multi.populator.MultiCellPopulator;
 import name.martingeisse.admin.multi.populator.PopulatorBasedGlobalEntityListPresenter;
+import name.martingeisse.admin.navigation.GlobalEntityListNavigationLeaf;
+import name.martingeisse.admin.navigation.NavigationFolder;
+import name.martingeisse.admin.pages.NavigationFolderPage;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.admin.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
@@ -94,8 +98,49 @@ public class Main {
 
 		ApplicationConfiguration.setPageBorderFactory(new PageBorderFactory());
 		
+		ApplicationConfiguration.setOnAfterApplicationInitializedCallback(new Runnable() {
+			@Override
+			public void run() {
+				buildNavigation();
+			}
+		});
+		
 		Launcher.launch();
 		
 	}
+
+	private static NavigationFolder root;
 	
+	/**
+	 * 
+	 */
+	private static void buildNavigation() {
+		
+		root = new NavigationFolder();
+		root.setTitle("Root");
+		NavigationFolder sub1 = root.addNewSubfolder("Sub One");
+		NavigationFolder sub1sub1 = sub1.addNewSubfolder("s1 Sub One");
+		sub1sub1.initChild(new GlobalEntityListNavigationLeaf("phpbb_acl_roles"), "ACL: Roles");
+		sub1.initChild(new GlobalEntityListNavigationLeaf("phpbb_acl_users"), "ACL: Users");
+		root.addNewSubfolder("Sub Two");
+		root.addNewSubfolder("Sub Three");
+		
+		AdminWicketApplication app = AdminWicketApplication.get();
+		app.mountPage("nav", NavigationStartPage.class);
+		
+	}
+
+	/**
+	 * TODO: document me
+	 */
+	public static class NavigationStartPage extends NavigationFolderPage {
+
+		/**
+		 * Constructor.
+		 */
+		public NavigationStartPage() {
+			super(root);
+		}
+		
+	}
 }

@@ -11,8 +11,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.wicket.markup.html.WebMarkupContainer;
-
 import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
 import name.martingeisse.admin.application.capabilities.IEntityDisplayNameStrategy;
 import name.martingeisse.admin.application.capabilities.IPageBorderFactory;
@@ -21,6 +19,8 @@ import name.martingeisse.admin.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.util.ScoreComparator;
+
+import org.apache.wicket.markup.html.WebMarkupContainer;
 
 /**
  * This class can be used to configure the administration application
@@ -65,6 +65,11 @@ public class ApplicationConfiguration {
 	 * the pageBorderFactory
 	 */
 	private static IPageBorderFactory pageBorderFactory;
+
+	/**
+	 * the onAfterApplicationInitializedCallback
+	 */
+	private static Runnable onAfterApplicationInitializedCallback;
 
 	/**
 	 * the capabilities
@@ -180,15 +185,42 @@ public class ApplicationConfiguration {
 		checkChangesAllowed();
 		ApplicationConfiguration.pageBorderFactory = pageBorderFactory;
 	}
-	
+
 	/**
 	 * Creates either a page border (if a page border factory is set) or a 
 	 * simple {@link WebMarkupContainer}.
 	 * @param id the wicket id of the container to create
 	 * @return the page border or other container
 	 */
-	public static WebMarkupContainer createPageBorder(String id) {
+	public static WebMarkupContainer createPageBorder(final String id) {
 		return (pageBorderFactory == null ? new WebMarkupContainer(id) : pageBorderFactory.createPageBorder(id));
+	}
+
+	/**
+	 * Getter method for the onAfterApplicationInitializedCallback.
+	 * @return the onAfterApplicationInitializedCallback
+	 */
+	public static Runnable getOnAfterApplicationInitializedCallback() {
+		return onAfterApplicationInitializedCallback;
+	}
+
+	/**
+	 * Setter method for the onAfterApplicationInitializedCallback.
+	 * @param onAfterApplicationInitializedCallback the onAfterApplicationInitializedCallback to set
+	 */
+	public static void setOnAfterApplicationInitializedCallback(final Runnable onAfterApplicationInitializedCallback) {
+		checkChangesAllowed();
+		ApplicationConfiguration.onAfterApplicationInitializedCallback = onAfterApplicationInitializedCallback;
+	}
+	
+	/**
+	 * This method is invoked by the Wicket application object after initialization. App customization
+	 * can use this for example to mount custom pages.
+	 */
+	public static void fireOnAfterApplicationInitialized() {
+		if (onAfterApplicationInitializedCallback != null) {
+			onAfterApplicationInitializedCallback.run();
+		}
 	}
 
 	/**

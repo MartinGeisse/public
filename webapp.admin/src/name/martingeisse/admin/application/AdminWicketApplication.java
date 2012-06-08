@@ -50,6 +50,9 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 //		getResourceSettings().getStringResourceLoaders().add(new ClassStringResourceLoader(Market.class));
 //		getResourceSettings().getStringResourceLoaders().add(new ClassStringResourceLoader(Language.class));
 		
+		// run application-specific code
+		ApplicationConfiguration.fireOnAfterApplicationInitialized();
+		
 	}
 
 	/**

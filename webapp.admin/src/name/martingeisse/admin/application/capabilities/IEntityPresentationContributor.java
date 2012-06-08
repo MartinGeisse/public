@@ -6,6 +6,8 @@
 
 package name.martingeisse.admin.application.capabilities;
 
+import java.io.Serializable;
+
 import name.martingeisse.admin.multi.IGlobalEntityListPresenter;
 import name.martingeisse.admin.schema.EntityDescriptor;
 import name.martingeisse.admin.single.ISingleEntityOverviewPresenter;
@@ -17,7 +19,7 @@ import name.martingeisse.admin.single.ISingleEntityPresenter;
  * and {@link IGlobalEntityListPresenter} objects for a given
  * {@link EntityDescriptor}.
  */
-public interface IEntityPresentationContributor {
+public interface IEntityPresentationContributor extends Serializable {
 
 	/**
 	 * Contributes entity presenters to the specified entity. Presenters
