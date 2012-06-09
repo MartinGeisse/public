@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.navigation;
 
+
 /**
  * The base class for all leaf nodes of the navigation tree.
  * 
@@ -15,4 +16,13 @@ package name.martingeisse.admin.navigation;
  * a link, for which it may still be used). 
  */
 public abstract class AbstractNavigationLeaf extends AbstractNavigationNode {
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.AbstractNavigationNode#visitLeafNodes(name.martingeisse.admin.navigation.INavigationLeafVisitor)
+	 */
+	@Override
+	public void visitLeafNodes(INavigationLeafVisitor visitor) {
+		visitor.visit(this);
+	}
+	
 }

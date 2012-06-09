@@ -103,4 +103,14 @@ public class NavigationFolder extends AbstractNavigationNode {
 		return subfolder;
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.AbstractNavigationNode#visitLeafNodes(name.martingeisse.admin.navigation.INavigationLeafVisitor)
+	 */
+	@Override
+	public void visitLeafNodes(INavigationLeafVisitor visitor) {
+		for (AbstractNavigationNode child : children) {
+			child.visitLeafNodes(visitor);
+		}
+	}
+	
 }

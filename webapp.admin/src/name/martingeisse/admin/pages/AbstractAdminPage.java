@@ -78,6 +78,7 @@ public class AbstractAdminPage extends WebPage {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
+		final AbstractNavigationNode currentPageNavigationNode = ApplicationConfiguration.getCapabilities().mapPageToNavigationNode(this);
 		getMainContainer().add(new ListView<AbstractNavigationNode>("nodes", ApplicationConfiguration.getNavigationTree().getRoot().getChildren()) {
 			@Override
 			protected void populateItem(ListItem<AbstractNavigationNode> item) {
@@ -85,6 +86,10 @@ public class AbstractAdminPage extends WebPage {
 				AbstractLink link = node.createLink("link");
 				link.add(new Label("title", node.getTitle()));
 				item.add(link);
+				// TODO: don't disable ancestor nodes, but mark them visually
+				if (currentPageNavigationNode != null && currentPageNavigationNode.isEqualOrDescendantOf(node)) {
+					link.setEnabled(false);
+				}
 			}
 		});
 		getMainContainer().add(new ListView<EntityDescriptor>("entities", ApplicationSchema.instance.getEntityDescriptors()) {

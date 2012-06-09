@@ -22,6 +22,7 @@ import name.martingeisse.admin.multi.populator.EntityFieldPopulator;
 import name.martingeisse.admin.multi.populator.IEntityCellPopulator;
 import name.martingeisse.admin.multi.populator.MultiCellPopulator;
 import name.martingeisse.admin.multi.populator.PopulatorBasedGlobalEntityListPresenter;
+import name.martingeisse.admin.navigation.EntityListPageNavigationBackMapper;
 import name.martingeisse.admin.navigation.GlobalEntityListNavigationLeaf;
 import name.martingeisse.admin.navigation.NavigationFolder;
 import name.martingeisse.admin.navigation.UrlNavigationLeaf;
@@ -76,6 +77,7 @@ public class Main {
 				new EntityFieldPopulator(null, "role_order")
 			)
 		)));
+		ApplicationConfiguration.addPlugin(new EntityListPageNavigationBackMapper());
 		
 		ExplicitEntityPropertyFilter userPropertyFilter = new ExplicitEntityPropertyFilter(2, "User");
 		userPropertyFilter.getVisiblePropertyNames().add("id");

@@ -1,0 +1,15 @@
+
+multiple trees: Multiple navigation trees can be expressed by using an additional node
+as the root and putting all trees as children to that root. This only needs special
+code to deal with pages that appear in more than one tree, i.e. multiple "current
+locations". Everything else is just showing navigation panels from the right nodes.
+
+back-mapping: Given a page, find the navigation node it belongs to. This is needed
+by the navigation panels to the user where he is. Multiple page types may belong to
+a node. Let the user add back-mappers to the ApplicationConfiguration and provide
+standard back-mappers, for example to map EntityTablePage instances to 
+GlobalEntityListNavigationLeaf nodes. Use interfaces for the nodes if more than
+one node type may map to a page. If multiple nodes are mapped, then
+
+- if one node is an ancestor of another node, the decendant wins
+- if, after that, multiple unrelated nodes "win", log an error and choose one randomly

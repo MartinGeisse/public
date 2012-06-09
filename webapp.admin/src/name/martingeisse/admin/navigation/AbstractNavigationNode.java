@@ -70,6 +70,63 @@ public abstract class AbstractNavigationNode implements Serializable {
 	}
 
 	/**
+	 * Checks if this node is a descendant of the specified other node.
+	 * This is a strict-descendant check, i.e. returns false if the other
+	 * node is the same as this node. 
+	 * @param other the other node
+	 * @return true if this node is a descendant of the other node, false if not
+	 */
+	public final boolean isDescendantOf(AbstractNavigationNode other) {
+		if (other == null) {
+			throw new IllegalArgumentException("'other' argument is null");
+		}
+		if (parent == null) {
+			return false;
+		}
+		return parent.isEqualOrDescendantOf(other);
+	}
+
+	/**
+	 * Checks if this node is the same as the specified other node or is a
+	 * descendant of it. 
+	 * @param other the other node
+	 * @return true if this node is equal to or a descendant of the other node, false if not
+	 */
+	public final boolean isEqualOrDescendantOf(AbstractNavigationNode other) {
+		if (other == null) {
+			throw new IllegalArgumentException("'other' argument is null");
+		}
+		return (this == other || isDescendantOf(other));
+	}
+
+	/**
+	 * Checks if this node is an ancestor of the specified other node.
+	 * This is a strict-ancestor check, i.e. returns false if the other
+	 * node is the same as this node. 
+	 * @param other the other node
+	 * @return true if this node is a ancestor of the other node, false if not
+	 */
+	public final boolean isAncestorOf(AbstractNavigationNode other) {
+		if (other == null) {
+			throw new IllegalArgumentException("'other' argument is null");
+		}
+		return other.isDescendantOf(this);
+	}
+
+	/**
+	 * Checks if this node is the same as the specified other node or is a
+	 * ancestor of it. 
+	 * @param other the other node
+	 * @return true if this node is equal to or a ancestor of the other node, false if not
+	 */
+	public final boolean isEqualOrAncestorOf(AbstractNavigationNode other) {
+		if (other == null) {
+			throw new IllegalArgumentException("'other' argument is null");
+		}
+		return other.isEqualOrDescendantOf(this);
+	}
+	
+	/**
 	 * Creates a Wicket {@link Link} for this node. The link will
 	 * refer to the correct URL for this node, but has no child
 	 * components or associated markup. That is, the appearance of
@@ -85,4 +142,11 @@ public abstract class AbstractNavigationNode implements Serializable {
 	 */
 	public abstract AbstractLink createLink(String id);
 
+	/**
+	 * Loops through all nodes and applies the specified visitor to
+	 * all leaf nodes.
+	 * @param visitor the visitor to apply
+	 */
+	public abstract void visitLeafNodes(INavigationLeafVisitor visitor);
+	
 }

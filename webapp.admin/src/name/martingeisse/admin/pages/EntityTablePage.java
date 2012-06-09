@@ -78,4 +78,12 @@ public class EntityTablePage extends AbstractAdminPage {
 		
 	}
 
+	/**
+	 * Getter method for the entity.
+	 * @return the entity
+	 */
+	public EntityDescriptor getEntity() {
+		return entity;
+	}
+	
 }

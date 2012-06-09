@@ -53,6 +53,9 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		// run application-specific code
 		ApplicationConfiguration.fireOnAfterApplicationInitialized();
 		
+		// some further initialization needed after custom code
+		ApplicationConfiguration.getCapabilities().initializeNavigationBackMappers();
+		
 	}
 
 	/**
