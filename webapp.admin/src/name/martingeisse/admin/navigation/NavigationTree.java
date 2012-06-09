@@ -19,6 +19,14 @@ public final class NavigationTree {
 	private NavigationFolder root;
 
 	/**
+	 * Constructor.
+	 */
+	public NavigationTree() {
+		root = new NavigationFolder();
+		root.setTitle("Navigation");
+	}
+	
+	/**
 	 * Getter method for the root.
 	 * @return the root
 	 */

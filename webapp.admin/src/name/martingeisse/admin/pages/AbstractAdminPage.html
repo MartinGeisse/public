@@ -6,7 +6,11 @@
 		<div class="OuterContainer">
 			<div wicket:id="pageBorder">
 				<div class="TopNavigationBar">
-					<a href="/">Home</a>
+					<wicket:container wicket:id="nodes">
+						<a wicket:id="link">
+							<wicket:container wicket:id="title" />
+						</a>
+					</wicket:container>
 				</div>
 				<div class="LeftNavigationBar">
 					<h3>Entities</h3>

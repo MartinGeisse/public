@@ -15,6 +15,7 @@ import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
 import name.martingeisse.admin.application.capabilities.IEntityDisplayNameStrategy;
 import name.martingeisse.admin.application.capabilities.IPageBorderFactory;
 import name.martingeisse.admin.multi.IGlobalEntityListPresenter;
+import name.martingeisse.admin.navigation.NavigationTree;
 import name.martingeisse.admin.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
@@ -70,6 +71,11 @@ public class ApplicationConfiguration {
 	 * the onAfterApplicationInitializedCallback
 	 */
 	private static Runnable onAfterApplicationInitializedCallback;
+
+	/**
+	 * the navigationTree
+	 */
+	private static NavigationTree navigationTree = new NavigationTree();
 
 	/**
 	 * the capabilities
@@ -212,7 +218,7 @@ public class ApplicationConfiguration {
 		checkChangesAllowed();
 		ApplicationConfiguration.onAfterApplicationInitializedCallback = onAfterApplicationInitializedCallback;
 	}
-	
+
 	/**
 	 * This method is invoked by the Wicket application object after initialization. App customization
 	 * can use this for example to mount custom pages.
@@ -221,6 +227,23 @@ public class ApplicationConfiguration {
 		if (onAfterApplicationInitializedCallback != null) {
 			onAfterApplicationInitializedCallback.run();
 		}
+	}
+
+	/**
+	 * Getter method for the navigationTree.
+	 * @return the navigationTree
+	 */
+	public static NavigationTree getNavigationTree() {
+		return navigationTree;
+	}
+
+	/**
+	 * Setter method for the navigationTree.
+	 * @param navigationTree the navigationTree to set
+	 */
+	public static void setNavigationTree(final NavigationTree navigationTree) {
+		checkChangesAllowed();
+		ApplicationConfiguration.navigationTree = navigationTree;
 	}
 
 	/**

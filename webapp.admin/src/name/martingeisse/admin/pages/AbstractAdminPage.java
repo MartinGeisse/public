@@ -8,6 +8,7 @@ package name.martingeisse.admin.pages;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.common.Dummy;
+import name.martingeisse.admin.navigation.AbstractNavigationNode;
 import name.martingeisse.admin.schema.ApplicationSchema;
 import name.martingeisse.admin.schema.EntityDescriptor;
 
@@ -15,6 +16,7 @@ import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -76,6 +78,15 @@ public class AbstractAdminPage extends WebPage {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
+		getMainContainer().add(new ListView<AbstractNavigationNode>("nodes", ApplicationConfiguration.getNavigationTree().getRoot().getChildren()) {
+			@Override
+			protected void populateItem(ListItem<AbstractNavigationNode> item) {
+				AbstractNavigationNode node = item.getModelObject();
+				AbstractLink link = node.createLink("link");
+				link.add(new Label("title", node.getTitle()));
+				item.add(link);
+			}
+		});
 		getMainContainer().add(new ListView<EntityDescriptor>("entities", ApplicationSchema.instance.getEntityDescriptors()) {
 			@Override
 			protected void populateItem(ListItem<EntityDescriptor> item) {
