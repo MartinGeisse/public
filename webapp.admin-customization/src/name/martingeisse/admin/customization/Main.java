@@ -99,13 +99,7 @@ public class Main {
 
 		ApplicationConfiguration.setPageBorderFactory(new PageBorderFactory());
 		
-		ApplicationConfiguration.setOnAfterApplicationInitializedCallback(new Runnable() {
-			@Override
-			public void run() {
-				buildNavigation();
-			}
-		});
-		
+		buildNavigation();
 		Launcher.launch();
 		
 	}

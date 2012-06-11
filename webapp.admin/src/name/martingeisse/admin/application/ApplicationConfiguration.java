@@ -13,6 +13,7 @@ import java.util.List;
 
 import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
 import name.martingeisse.admin.application.capabilities.IEntityDisplayNameStrategy;
+import name.martingeisse.admin.application.capabilities.INavigationBackMapper;
 import name.martingeisse.admin.application.capabilities.IPageBorderFactory;
 import name.martingeisse.admin.multi.IGlobalEntityListPresenter;
 import name.martingeisse.admin.navigation.NavigationTree;
@@ -66,11 +67,6 @@ public class ApplicationConfiguration {
 	 * the pageBorderFactory
 	 */
 	private static IPageBorderFactory pageBorderFactory;
-
-	/**
-	 * the onAfterApplicationInitializedCallback
-	 */
-	private static Runnable onAfterApplicationInitializedCallback;
 
 	/**
 	 * the navigationTree
@@ -203,33 +199,6 @@ public class ApplicationConfiguration {
 	}
 
 	/**
-	 * Getter method for the onAfterApplicationInitializedCallback.
-	 * @return the onAfterApplicationInitializedCallback
-	 */
-	public static Runnable getOnAfterApplicationInitializedCallback() {
-		return onAfterApplicationInitializedCallback;
-	}
-
-	/**
-	 * Setter method for the onAfterApplicationInitializedCallback.
-	 * @param onAfterApplicationInitializedCallback the onAfterApplicationInitializedCallback to set
-	 */
-	public static void setOnAfterApplicationInitializedCallback(final Runnable onAfterApplicationInitializedCallback) {
-		checkChangesAllowed();
-		ApplicationConfiguration.onAfterApplicationInitializedCallback = onAfterApplicationInitializedCallback;
-	}
-
-	/**
-	 * This method is invoked by the Wicket application object after initialization. App customization
-	 * can use this for example to mount custom pages.
-	 */
-	public static void fireOnAfterApplicationInitialized() {
-		if (onAfterApplicationInitializedCallback != null) {
-			onAfterApplicationInitializedCallback.run();
-		}
-	}
-
-	/**
 	 * Getter method for the navigationTree.
 	 * @return the navigationTree
 	 */
@@ -267,6 +236,11 @@ public class ApplicationConfiguration {
 
 		// sort property read-only renderer contributors by score
 		Collections.sort(capabilities.getPropertyReadOnlyRendererContributors(), ScoreComparator.DESCENDING_INSTANCE);
+		
+		// initialize navigation back-mappers (page-to-navigation node)
+		for (INavigationBackMapper navigationBackMapper : capabilities.getNavigationBackMappers()) {
+			navigationBackMapper.initialize(ApplicationConfiguration.getNavigationTree());
+		}
 
 	}
 

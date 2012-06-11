@@ -120,17 +120,6 @@ public class ApplicationCapabilities {
 	}
 	
 	/**
-	 * Prepares internal data structures for the navigation back-mappers.
-	 * This method must be invoked after building the navigation tree but
-	 * before using back-mappers.
-	 */
-	public void initializeNavigationBackMappers() {
-		for (INavigationBackMapper navigationBackMapper : navigationBackMappers) {
-			navigationBackMapper.initialize(ApplicationConfiguration.getNavigationTree());
-		}
-	}
-	
-	/**
 	 * Given a page, returns the navigation node to which the page belongs.
 	 * Returns null if no appropriate navigation node was found.
 	 * @param page the page
