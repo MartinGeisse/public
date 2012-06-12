@@ -38,9 +38,25 @@ public class PopulatorBasedEntityListPanel extends Panel implements IGetPageable
 	 * @param entity the entity
 	 * @param cellPopulators the cell populators that do the actual presentation
 	 */
-	public PopulatorBasedEntityListPanel(final String id, final EntityDescriptor entity, List<IEntityCellPopulator> cellPopulators) {
+	public PopulatorBasedEntityListPanel(final String id, final EntityDescriptor entity, final List<IEntityCellPopulator> cellPopulators) {
 		super(id);
 		setDefaultModel(Model.of(entity));
+		this.cellPopulators = cellPopulators;
+	}
+
+	/**
+	 * Getter method for the cellPopulators.
+	 * @return the cellPopulators
+	 */
+	public List<IEntityCellPopulator> getCellPopulators() {
+		return cellPopulators;
+	}
+
+	/**
+	 * Setter method for the cellPopulators.
+	 * @param cellPopulators the cellPopulators to set
+	 */
+	public void setCellPopulators(final List<IEntityCellPopulator> cellPopulators) {
 		this.cellPopulators = cellPopulators;
 	}
 
@@ -51,7 +67,7 @@ public class PopulatorBasedEntityListPanel extends Panel implements IGetPageable
 	public int getWidth() {
 		return cellPopulators.size();
 	}
-	
+
 	/**
 	 * Getter method for the entityDescriptorModel.
 	 * @return the entityDescriptorModel
@@ -60,7 +76,7 @@ public class PopulatorBasedEntityListPanel extends Panel implements IGetPageable
 	public IModel<EntityDescriptor> getEntityDescriptorModel() {
 		return (IModel<EntityDescriptor>)getDefaultModel();
 	}
-	
+
 	/**
 	 * Getter method for the entity.
 	 * @return the entity
@@ -85,7 +101,7 @@ public class PopulatorBasedEntityListPanel extends Panel implements IGetPageable
 		super.onInitialize();
 		add(new ListView<IEntityCellPopulator>("headers", cellPopulators) {
 			@Override
-			protected void populateItem(ListItem<IEntityCellPopulator> item) {
+			protected void populateItem(final ListItem<IEntityCellPopulator> item) {
 				item.add(new Label("name", item.getModelObject().getTitle()));
 			}
 		});

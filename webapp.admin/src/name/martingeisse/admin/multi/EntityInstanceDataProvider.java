@@ -124,7 +124,7 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 			
 			// fetch data and fill the rows array
 			List<EntityInstance> rows = new ArrayList<EntityInstance>();
-			String[] fieldNames = EntityInstance.getFieldNames(entity, resultSet);
+			String[] fieldNames = reader.getFieldOrder(); // EntityInstance.getFieldNames(entity, resultSet);
 			while (reader.next()) {
 				rows.add(new EntityInstance(entity, reader.getId(), fieldNames, reader.getRow()));
 			}

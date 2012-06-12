@@ -16,6 +16,7 @@ import name.martingeisse.admin.application.capabilities.ExplicitEntityPropertyFi
 import name.martingeisse.admin.application.capabilities.PrefixEliminatingEntityDisplayNameStrategy;
 import name.martingeisse.admin.application.capabilities.SingleEntityPropertyFilter;
 import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPanel;
+import name.martingeisse.admin.customization.multi.PopulatorDataViewPanel;
 import name.martingeisse.admin.customization.multi.RoleOrderListPanel;
 import name.martingeisse.admin.multi.GlobalEntityListPresenter;
 import name.martingeisse.admin.multi.populator.EntityFieldPopulator;
@@ -77,6 +78,7 @@ public class Main {
 				new EntityFieldPopulator(null, "role_order")
 			)
 		)));
+		ApplicationConfiguration.addPlugin(new GlobalEntityListPresenter("popdata", "Populator / DataView", PopulatorDataViewPanel.class));
 		ApplicationConfiguration.addPlugin(new EntityListPageNavigationBackMapper());
 		
 		ExplicitEntityPropertyFilter userPropertyFilter = new ExplicitEntityPropertyFilter(2, "User");
