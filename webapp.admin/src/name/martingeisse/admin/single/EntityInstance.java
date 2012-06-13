@@ -63,11 +63,6 @@ public class EntityInstance implements Serializable {
 		this.id = id;
 		this.fieldNames = fieldNames;
 		this.fieldValues = fieldValues;
-		
-		for (int i=0; i<fieldNames.length; i++) {
-			System.out.println("--- entity instance ---");
-			System.out.println("* " + fieldNames[i] + " = " + fieldValues[i]);
-		}
 	}
 
 	/**

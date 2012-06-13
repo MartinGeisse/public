@@ -1,0 +1,45 @@
+
+Verschiedene Möglichkeiten. Evtl. Sinnvoll mehrere davon zu übernehmen:
+
+1. wie in "Terra" -- kann einfach so übernommen werden.  Rein durch
+   Annotations gesteuert.
+   
+2. Markup ist User-defined, Komponenten werden automatisch erzeugt. Entweder
+   anhand der Markup IDs oder anhand von Annotated Getters. Die sollten eh
+   zusammenpassen, der Unterschied liegt also nur in der Fehlerbehandlung.
+   Mehr Handarbeit (Markup) aber das Aussehen ist besser kontrollierbar.
+
+Wenn sich Markup on-the-fly erzeugen lässt dann ist (1) eine spezialisierte
+Variante von (2) mit on-the-fly-Markup, ansonsten muss der Panel-Salat
+aus Terra her. Markup müsste 1x pro Bean-Klasse (eigentlich pro Bean-Descriptor)
+erzeugt werden, wobei sich das biegen lässt. Die Markup-Erzeugung könnte
+wieder eine Strategy aus dem App-Code (mit Default-Impl. und Helperklassen)
+erledigen.
+
+Anforderung ist aber: Stufenloser Übergang vom vollautomatisch erzeugten
+Formular zum manuell geschriebenen Markup (besser noch zum vollkommen
+manuell erzeugten Formular). Das ist aber bei Populator-Tabellen auch
+nicht so! Wäre aber cool. Oft hat man ja 99% automatisch und dann eine
+Anforderung die da nicht reinpasst.
+
+-----------------------------------
+
+On-the-fly Markup: Grundidee wäre ein Panel für das gesamte Autoform (für
+Autoforms mit custom Markup wäre WebMarkupContainer-Verhalten möglich, dazu
+müsste ein Factory-Methode für die Autoform-Komponente selbst her). Das Panel
+benutzt eine PanelMarkupSourcingStrategy um auf eigenes Markup statt
+dem vom Parent Component umzuschalten -- hier wäre zu klären ob man hier
+schon eingreift -- und greift dann auf custom Markup Factory, Markup Resource Stream und
+Markup Loader zu -- evtl. muss hier ein Fake-Stream her und ein Loader,
+der die Tags on-the-fly erzeugt. Hier ist aber noch vieles unklar.
+
+Evtl reicht es auch eine Methode des Panels, z.B. renderAssociatedMarkup(),
+getAssociatedMarkup() oder getMarkup(), zu überschreiben.
+
+Ablauf:
+
+C.getMarkup() -> MarkupSourcingStrategy -> MSS.getMarkup() -> C.getAssociatedMarkup() -> MarkupFactory
+MarkupFactory -> MF.getMarkupResourceStream() -> MF.loadMarkup()
+
+Angriffspunkt wäre demnach C.getAssociatedMarkup() oder MF.getMarkup()
+
