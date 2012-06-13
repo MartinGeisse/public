@@ -8,7 +8,9 @@ package name.martingeisse.wicket.autoform;
 
 import java.io.Serializable;
 
-import org.apache.wicket.markup.html.panel.Panel;
+import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription;
+
+import org.apache.wicket.Component;
 
 /**
  * Implementations are able to create Wicket components for autoform properties.
@@ -23,6 +25,6 @@ public interface IAutoformPropertyComponentFactory extends Serializable {
 	 * @param propertyDescriptor the property descriptor of the property
 	 * @return the component
 	 */
-	public Panel createPropertyComponent(String id, IAutoformPropertyDescriptor propertyDescriptor);
+	public Component createPropertyComponent(String id, IAutoformPropertyDescription propertyDescriptor);
 	
 }

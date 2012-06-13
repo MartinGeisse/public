@@ -8,6 +8,12 @@ package name.martingeisse.wicket.autoform;
 
 import java.lang.reflect.AnnotatedElement;
 
+import name.martingeisse.wicket.autoform.annotation.AutoformRequiredProperty;
+import name.martingeisse.wicket.autoform.annotation.AutoformStringLengthValidation;
+import name.martingeisse.wicket.autoform.describe.IAutoformBeanDescription;
+import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription;
+
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 
@@ -21,7 +27,7 @@ public abstract class AbstractAutoformPanelBase extends Panel {
 	/**
 	 * the mainBeanDescriptor
 	 */
-	private final IAutoformBeanDescriptor mainBeanDescriptor;
+	private final IAutoformBeanDescription mainBeanDescriptor;
 
 	/**
 	 * the validationReport
@@ -33,7 +39,7 @@ public abstract class AbstractAutoformPanelBase extends Panel {
 	 * @param id the wicket id
 	 * @param mainBeanDescriptor the main bean descriptor
 	 */
-	public AbstractAutoformPanelBase(String id, IAutoformBeanDescriptor mainBeanDescriptor) {
+	public AbstractAutoformPanelBase(String id, IAutoformBeanDescription mainBeanDescriptor) {
 		super(id);
 		this.mainBeanDescriptor = mainBeanDescriptor;
 		this.validationReport = new ValidationReport();
@@ -43,7 +49,7 @@ public abstract class AbstractAutoformPanelBase extends Panel {
 	 * Getter method for the mainBeanDescriptor.
 	 * @return the mainBeanDescriptor
 	 */
-	public IAutoformBeanDescriptor getMainBeanDescriptor() {
+	public IAutoformBeanDescription getMainBeanDescriptor() {
 		return mainBeanDescriptor;
 	}
 
@@ -82,12 +88,12 @@ public abstract class AbstractAutoformPanelBase extends Panel {
 	 * @param componentFactory the value component factory
 	 * @param validationReport the validation report that contains the error messages, or null to show now error messages.
 	 */
-	protected KeyValueLayout createKeyComponentsLayout(String id, IAutoformBeanDescriptor beanDescriptor, IAutoformPropertyComponentFactory componentFactory, ValidationReport validationReport) {
+	protected KeyValueLayout createKeyComponentsLayout(String id, IAutoformBeanDescription beanDescriptor, IAutoformPropertyComponentFactory componentFactory, ValidationReport validationReport) {
 		
 		/** create the layout **/
 		final KeyValueLayout leftLayout = new KeyValueLayout(id);
-		for (final IAutoformPropertyDescriptor propertyDescriptor : beanDescriptor.getPropertyDescriptors()) {
-			final Panel component = componentFactory.createPropertyComponent(KeyValueLayout.getValueComponentId(), propertyDescriptor);
+		for (final IAutoformPropertyDescription propertyDescriptor : beanDescriptor.getPropertyDescriptors()) {
+			final Component component = componentFactory.createPropertyComponent(KeyValueLayout.getValueComponentId(), propertyDescriptor);
 			final String displayName = propertyDescriptor.getDisplayName();
 			if (validationReport == null) {
 				leftLayout.addItem(propertyDescriptor.getName(), displayName, component);
@@ -98,18 +104,6 @@ public abstract class AbstractAutoformPanelBase extends Panel {
 			propertyDescriptor.setAssignedComponent(component);
 		}
 		
-		/** invoke the post-processor, if any **/
-		AutoformComponentBuildPostProcessor postProcessorAnnotation = beanDescriptor.getBean().getClass().getAnnotation(AutoformComponentBuildPostProcessor.class);
-		if (postProcessorAnnotation != null) {
-			IAutoformComponentBuildPostProcessor postProcessor;
-			try {
-				postProcessor = postProcessorAnnotation.value().newInstance();
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-			postProcessor.process(beanDescriptor);
-		}
-		
 		return leftLayout;
 	}
 
@@ -117,33 +111,34 @@ public abstract class AbstractAutoformPanelBase extends Panel {
 	 * This method checks the simplified validation defined for autoforms, and if successful, invokes onSuccessfulSubmit().
 	 */
 	protected void onSubmitAttempt() {
-		getValidationReport().clear();
-		for (final IAutoformPropertyDescriptor propertyDescriptor : getMainBeanDescriptor().getPropertyDescriptors()) {
-			final AnnotatedElement annotationProvider = propertyDescriptor.getAnnotationProvider();
-
-			if (annotationProvider.getAnnotation(AutoformRequiredProperty.class) != null) {
-				if (propertyDescriptor.getModel().getObject() == null) {
-					setErrorMessage(propertyDescriptor.getName(), "Bitte füllen Sie dieses Feld aus.");
-				}
-			}
-
-			if (annotationProvider.getAnnotation(AutoformStringLengthValidation.class) != null) {
-				if (propertyDescriptor.getType() != String.class) {
-					throw new IllegalStateException("@AutoformStringLengthValidation cannot be attached to other property types than String.");
-				}
-				final String value = (String)propertyDescriptor.getModel().getObject();
-				if (value != null) {
-					final int maxLength = annotationProvider.getAnnotation(AutoformStringLengthValidation.class).value();
-					if (value.length() > maxLength) {
-						setErrorMessage(propertyDescriptor.getName(), "Der eingegebene Wert ist zu lang.");
-					}
-				}
-			}
-
-		}
-		if (getValidationReport().isEmpty()) {
-			onSuccessfulSubmit();
-		}
+		onSuccessfulSubmit();
+//		getValidationReport().clear();
+//		for (final IAutoformPropertyDescription propertyDescriptor : getMainBeanDescriptor().getPropertyDescriptors()) {
+//			final AnnotatedElement annotationProvider = propertyDescriptor.getAnnotationProvider();
+//
+//			if (annotationProvider.getAnnotation(AutoformRequiredProperty.class) != null) {
+//				if (propertyDescriptor.getModel().getObject() == null) {
+//					setErrorMessage(propertyDescriptor.getName(), "Bitte füllen Sie dieses Feld aus.");
+//				}
+//			}
+//
+//			if (annotationProvider.getAnnotation(AutoformStringLengthValidation.class) != null) {
+//				if (propertyDescriptor.getType() != String.class) {
+//					throw new IllegalStateException("@AutoformStringLengthValidation cannot be attached to other property types than String.");
+//				}
+//				final String value = (String)propertyDescriptor.getModel().getObject();
+//				if (value != null) {
+//					final int maxLength = annotationProvider.getAnnotation(AutoformStringLengthValidation.class).value();
+//					if (value.length() > maxLength) {
+//						setErrorMessage(propertyDescriptor.getName(), "Der eingegebene Wert ist zu lang.");
+//					}
+//				}
+//			}
+//
+//		}
+//		if (getValidationReport().isEmpty()) {
+//			onSuccessfulSubmit();
+//		}
 	}
 
 	/**

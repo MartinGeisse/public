@@ -4,12 +4,12 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.wicket.autoform;
+package name.martingeisse.wicket.autoform.describe;
 
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.AnnotatedElement;
+import java.lang.annotation.Annotation;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -17,7 +17,7 @@ import org.apache.commons.beanutils.PropertyUtils;
  * This class contains the information about a single property
  * in an autoform, using a Java Beans {@link PropertyDescriptor}.
  */
-public final class DefaultAutoformPropertyDescriptor extends AbstractAutoformPropertyDescriptor {
+public final class DefaultAutoformPropertyDescription extends AbstractAutoformPropertyDescription {
 
 	/**
 	 * the bean
@@ -38,7 +38,7 @@ public final class DefaultAutoformPropertyDescriptor extends AbstractAutoformPro
 	 * @param bean the bean that contains the property
 	 * @param propertyDescriptor the property descriptor for the bean property
 	 */
-	public DefaultAutoformPropertyDescriptor(Serializable bean, PropertyDescriptor propertyDescriptor) {
+	public DefaultAutoformPropertyDescription(Serializable bean, PropertyDescriptor propertyDescriptor) {
 		super(bean, propertyDescriptor);
 		this.bean = bean;
 		this.propertyDescriptor = propertyDescriptor;
@@ -57,21 +57,21 @@ public final class DefaultAutoformPropertyDescriptor extends AbstractAutoformPro
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.terra.wicket.autoform.AbstractAutoformPropertyDescriptor#isReadOnlyByDefault()
+	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription#getAnnotation(java.lang.Class)
 	 */
 	@Override
-	protected boolean isReadOnlyByDefault() {
-		return (propertyDescriptor.getWriteMethod() == null) || (getAnnotationProvider().getAnnotation(AutoformReadOnly.class) != null);
+	public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+		return propertyDescriptor.getReadMethod().getAnnotation(annotationClass);
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.terra.wicket.autoform.AbstractAutoformPropertyDescriptor#getAnnotationProvider()
+	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformPropertyDescription#isReadOnly()
 	 */
 	@Override
-	public AnnotatedElement getAnnotationProvider() {
-		return propertyDescriptor.getReadMethod();
+	public boolean isReadOnly() {
+		return (propertyDescriptor.getWriteMethod() == null) && super.isReadOnly();
 	}
 
 }

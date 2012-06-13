@@ -6,6 +6,10 @@
 
 package name.martingeisse.wicket.autoform;
 
+import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
+import name.martingeisse.wicket.autoform.describe.IAutoformBeanDescriber;
+import name.martingeisse.wicket.autoform.describe.IAutoformBeanDescription;
+
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.form.Form;
@@ -75,7 +79,7 @@ public class AutoformPanel extends AbstractAutoformPanelBase {
 	 * @param id the wicket id
 	 * @param beanDescriptor the bean descriptor
 	 */
-	public AutoformPanel(final String id, final IAutoformBeanDescriptor beanDescriptor) {
+	public AutoformPanel(final String id, final IAutoformBeanDescription beanDescriptor) {
 		this(id, beanDescriptor, DefaultAutoformPropertyComponentFactory.instance);
 	}
 
@@ -85,7 +89,7 @@ public class AutoformPanel extends AbstractAutoformPanelBase {
 	 * @param beanDescriptor the bean descriptor
 	 * @param propertyComponentFactory the factory used to create components for the bean properties
 	 */
-	public AutoformPanel(final String id, final IAutoformBeanDescriptor beanDescriptor, final IAutoformPropertyComponentFactory propertyComponentFactory) {
+	public AutoformPanel(final String id, final IAutoformBeanDescription beanDescriptor, final IAutoformPropertyComponentFactory propertyComponentFactory) {
 		super(id, beanDescriptor);
 
 		this.keyValueLayout = createKeyComponentsLayout("layout", getMainBeanDescriptor(), propertyComponentFactory, getValidationReport());

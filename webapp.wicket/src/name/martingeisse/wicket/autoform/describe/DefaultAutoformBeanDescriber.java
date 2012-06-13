@@ -4,19 +4,23 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.wicket.autoform;
+package name.martingeisse.wicket.autoform.describe;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.martingeisse.wicket.autoform.annotation.AutoformIgnoreProperty;
+import name.martingeisse.wicket.autoform.annotation.AutoformProperties;
+
 import org.apache.commons.beanutils.PropertyUtils;
 
 /**
- * This describer starts with a base property list. If an AutoformFields annotation exists
- * at the bean class, then the list from that annotation is used. Otherwise, reflection
- * is used to obtain a list of all bean properties.
+ * This describer starts with a base property list: If an AutoformFields annotation exists
+ * at the bean class, then the list from that annotation is used as the base property
+ * list. Otherwise, reflection is used to obtain a list of all bean properties and this
+ * is used as the base property list.
  * 
  * Properties that are annotated with AutoformIgnoreProperty are ignored without any
  * further handling.
@@ -24,7 +28,7 @@ import org.apache.commons.beanutils.PropertyUtils;
  * Properties are then handed to the acceptProperty() method. The default implementation
  * filters out the "class" property. Subclasses can customize this behavior.
  * 
- * For all remaining properties, a property descriptor is generated.
+ * For all remaining properties, a property description is generated.
  */
 public class DefaultAutoformBeanDescriber implements IAutoformBeanDescriber {
 
@@ -55,18 +59,18 @@ public class DefaultAutoformBeanDescriber implements IAutoformBeanDescriber {
 	 * @see name.martingeisse.terra.wicket.autoform.IAutoformBeanDescriber#describe(java.lang.Object)
 	 */
 	@Override
-	public DefaultAutoformBeanDescriptor describe(Object bean) {
+	public DefaultAutoformBeanDescription describe(Object bean) {
 		Serializable serializableBean = enforceSerializableBean(bean);
 		List<PropertyDescriptor> beanPropertyDescriptors = createBasePropertyList(bean);
-		List<IAutoformPropertyDescriptor> propertyDescriptors = new ArrayList<IAutoformPropertyDescriptor>();
+		List<IAutoformPropertyDescription> propertyDescriptions = new ArrayList<IAutoformPropertyDescription>();
 		for (PropertyDescriptor beanPropertyDescriptor : beanPropertyDescriptors) {
 			if (beanPropertyDescriptor.getReadMethod().getAnnotation(AutoformIgnoreProperty.class) == null) {
 				if (acceptProperty(beanPropertyDescriptor)) {
-					propertyDescriptors.add(new DefaultAutoformPropertyDescriptor(serializableBean, beanPropertyDescriptor));
+					propertyDescriptions.add(new DefaultAutoformPropertyDescription(serializableBean, beanPropertyDescriptor));
 				}
 			}
 		}
-		return new DefaultAutoformBeanDescriptor(bean, propertyDescriptors);
+		return new DefaultAutoformBeanDescription(bean, propertyDescriptions);
 	}
 
 	/**
@@ -102,20 +106,20 @@ public class DefaultAutoformBeanDescriber implements IAutoformBeanDescriber {
 	}
 	
 	/**
-	 * Adds a property descriptor to the specified bean descriptor and places it either directly
+	 * Adds a property description to the specified bean description and places it either directly
 	 * before or directly after the indicator property. It is an error if the indicator property
-	 * does not occur in the bean descriptor.
+	 * does not occur in the bean description.
 	 * 
-	 * @param beanDescriptor the bean descriptor to which the property shall be added
+	 * @param beanDescription the bean description to which the property shall be added
 	 * @param indicatorPropertyName the indicator property that determines the index where the property is added
 	 * @param propertyToAdd the property to add
 	 * @param after whether the property shall be added after (true) or before (false) the indicator
 	 */
-	protected static void addProperty(DefaultAutoformBeanDescriptor beanDescriptor, String indicatorPropertyName, IAutoformPropertyDescriptor propertyToAdd, boolean after) {
+	protected static void addProperty(DefaultAutoformBeanDescription beanDescription, String indicatorPropertyName, IAutoformPropertyDescription propertyToAdd, boolean after) {
 		int index = 0;
-		for (IAutoformPropertyDescriptor existingProperty : beanDescriptor.getPropertyDescriptors()) {
+		for (IAutoformPropertyDescription existingProperty : beanDescription.getPropertyDescriptions()) {
 			if (existingProperty.getName().equals(indicatorPropertyName)) {
-				beanDescriptor.getPropertyDescriptors().add(after ? (index + 1) : index, propertyToAdd);
+				beanDescription.getPropertyDescriptions().add(after ? (index + 1) : index, propertyToAdd);
 				return;
 			}
 			index++;

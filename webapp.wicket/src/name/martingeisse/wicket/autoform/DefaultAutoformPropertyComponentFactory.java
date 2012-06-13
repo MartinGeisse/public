@@ -11,6 +11,10 @@ import java.math.BigDecimal;
 
 import name.martingeisse.common.terms.IGetDisplayNameAware;
 import name.martingeisse.common.terms.IReadOnlyAware;
+import name.martingeisse.wicket.autoform.annotation.AutoformComponent;
+import name.martingeisse.wicket.autoform.annotation.AutoformComponentAdditionalConstructorArgument;
+import name.martingeisse.wicket.autoform.annotation.AutoformTextSuggestions;
+import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription;
 import name.martingeisse.wicket.model.conversion.LiberalBigDecimalConversionModel;
 import name.martingeisse.wicket.model.conversion.LiberalIntegerConversionModel;
 import name.martingeisse.wicket.panel.simple.CheckBoxPanel;
@@ -18,6 +22,7 @@ import name.martingeisse.wicket.panel.simple.DropDownChoicePanel;
 import name.martingeisse.wicket.panel.simple.TextFieldPanel;
 import name.martingeisse.wicket.panel.simple.TextFieldWithSuggestionsPanel;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
@@ -39,10 +44,10 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 	 * @see name.martingeisse.terra.wicket.autoform.IAutoformPropertyComponentFactory#createPropertyComponent(java.lang.String, name.martingeisse.terra.wicket.autoform.AutoformPropertyDescriptor)
 	 */
 	@Override
-	public final Panel createPropertyComponent(String id, IAutoformPropertyDescriptor propertyDescriptor) {
+	public final Component createPropertyComponent(String id, IAutoformPropertyDescription propertyDescriptor) {
 
-		final AutoformComponent annotation = propertyDescriptor.getAnnotationProvider().getAnnotation(AutoformComponent.class);
-		if (annotation == null) {
+		Class<? extends Component> componentClassOverride = propertyDescriptor.getComponentClassOverride();
+		if (componentClassOverride == null) {
 			return createPropertyComponentNoOverride(id, propertyDescriptor);
 		}
 		
@@ -52,8 +57,8 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 		try {
 			
 			// create the component
-			final Constructor<? extends Panel> constructor = findPropertyComponentConstructor(annotation.value(), additionalArgument);
-			Panel panel;
+			final Constructor<? extends Component> constructor = findPropertyComponentConstructor(componentClassOverride, additionalArgument);
+			Component panel;
 			if (additionalArgument == null) {
 				if (constructor.getParameterTypes().length == 2) {
 					panel = constructor.newInstance(id, propertyDescriptor.getModel());
@@ -110,7 +115,7 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 	 * @param propertyDescriptor the property descriptor of the property
 	 * @return the component
 	 */
-	protected Panel createPropertyComponentNoOverride(String id, IAutoformPropertyDescriptor propertyDescriptor) {
+	protected Panel createPropertyComponentNoOverride(String id, IAutoformPropertyDescription propertyDescriptor) {
 
 		final Class<?> type = propertyDescriptor.getType();
 		final IModel<?> model = propertyDescriptor.getModel();
