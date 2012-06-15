@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 
 import name.martingeisse.common.terms.DisplayName;
+import name.martingeisse.wicket.autoform.annotation.ConstructorArgumentName;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
@@ -27,6 +28,7 @@ public interface IAutoformPropertyDescription extends Serializable {
 	public String getName();
 
 	/**
+	 * Getter method for the display name.
 	 * @return the user-visible name of the property, respecting any {@link DisplayName} annotation if present
 	 */
 	public String getDisplayName();
@@ -56,6 +58,18 @@ public interface IAutoformPropertyDescription extends Serializable {
 	 * @return the component class or null
 	 */
 	public Class<? extends Component> getComponentClassOverride();
+	
+	/**
+	 * Obtains an additional argument for the component constructor that is
+	 * specified via {@link ConstructorArgumentName}, or null if that
+	 * annotation cannot be found. Throws an exception if
+	 * {@link ConstructorArgumentName} is present but
+	 * - no class with that name exists, or
+	 * - the class with that name is not an annotation class, or
+	 * - no matching annotation can be found
+	 * @return the constructor argument or null
+	 */
+	public Annotation getComponentConstructorArgument();
 	
 	/**
 	 * Returns an annotation for this property. This is used to find further

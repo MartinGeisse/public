@@ -17,7 +17,8 @@ import name.martingeisse.wicket.panel.simple.TextFieldWithSuggestionsPanel;
 /**
  * This annotation provides suggestions for a string-typed autoform
  * property and causes it to use a {@link TextFieldWithSuggestionsPanel}
- * instead of a {@link TextFieldPanel} by default.
+ * instead of a {@link TextFieldPanel} by default. The values are
+ * only suggestions, so other input values are permitted.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

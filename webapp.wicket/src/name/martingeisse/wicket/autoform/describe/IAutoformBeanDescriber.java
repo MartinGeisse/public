@@ -14,7 +14,7 @@ import java.io.Serializable;
  * bean properties and annotations.
  * 
  * Naming convention: This interface is called "describer", referring to the fact
- * that it actively creates a description from a bean to decsribe. The "description"
+ * that it actively creates a description from a bean to describe. The "description"
  * is a passive object that contains the results from this describer.
  * 
  * {@link DefaultAutoformBeanDescriber} is the default implementation and
@@ -23,8 +23,8 @@ import java.io.Serializable;
  * 
  * Note that other customization of autoforms, such as custom-tailored
  * components, validations or triggered effects should be considered orthogonal
- * to bean describers and should be expressed through annotations (for the default
- * bean describer) or equivalent means (for other bean describers).
+ * to bean describers and should be expressed through annotations (when the default
+ * bean describer is used) or equivalent means (for other bean describers).
  */
 public interface IAutoformBeanDescriber extends Serializable {
 

@@ -8,10 +8,12 @@ package name.martingeisse.wicket.autoform.describe;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 
 import name.martingeisse.common.terms.DisplayName;
 import name.martingeisse.wicket.autoform.annotation.AutoformComponent;
 import name.martingeisse.wicket.autoform.annotation.AutoformReadOnly;
+import name.martingeisse.wicket.autoform.annotation.ConstructorArgumentName;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
@@ -110,4 +112,27 @@ public abstract class AbstractAutoformPropertyDescription implements IAutoformPr
 		return (annotation == null) ? null : annotation.value();
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription#getComponentConstructorArgument()
+	 */
+	@Override
+	public Annotation getComponentConstructorArgument() {
+		ConstructorArgumentName nameAnnotation = getAnnotation(ConstructorArgumentName.class);
+		if (nameAnnotation == null) {
+			return null;
+		}
+		Class<?> untypedConstructorArgumentClass;
+		try {
+			untypedConstructorArgumentClass = Class.forName(nameAnnotation.value());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		Class<? extends Annotation> typedConstructorArgumentClass = untypedConstructorArgumentClass.asSubclass(Annotation.class);
+		Annotation constructorArgument = getAnnotation(typedConstructorArgumentClass);
+		if (constructorArgument == null) {
+			throw new RuntimeException("Could not find annotation specified by @ConstructorArgumentName: " + nameAnnotation.value());
+		}
+		return constructorArgument;
+	}
+	
 }

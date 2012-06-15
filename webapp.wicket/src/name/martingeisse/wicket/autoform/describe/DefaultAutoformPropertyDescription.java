@@ -73,5 +73,5 @@ public final class DefaultAutoformPropertyDescription extends AbstractAutoformPr
 	public boolean isReadOnly() {
 		return (propertyDescriptor.getWriteMethod() == null) && super.isReadOnly();
 	}
-
+	
 }

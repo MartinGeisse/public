@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import name.martingeisse.common.terms.IGetDisplayNameAware;
 import name.martingeisse.common.terms.IReadOnlyAware;
 import name.martingeisse.wicket.autoform.annotation.AutoformComponent;
-import name.martingeisse.wicket.autoform.annotation.AutoformComponentAdditionalConstructorArgument;
+import name.martingeisse.wicket.autoform.annotation.ConstructorArgumentName;
 import name.martingeisse.wicket.autoform.annotation.AutoformTextSuggestions;
 import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription;
 import name.martingeisse.wicket.model.conversion.LiberalBigDecimalConversionModel;
@@ -51,7 +51,7 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 			return createPropertyComponentNoOverride(id, propertyDescriptor);
 		}
 		
-		final AutoformComponentAdditionalConstructorArgument additionalArgumentAnnotation = propertyDescriptor.getAnnotationProvider().getAnnotation(AutoformComponentAdditionalConstructorArgument.class);
+		final ConstructorArgumentName additionalArgumentAnnotation = propertyDescriptor.getAnnotationProvider().getAnnotation(ConstructorArgumentName.class);
 		String additionalArgument = (additionalArgumentAnnotation != null ? additionalArgumentAnnotation.value() : null);
 
 		try {
