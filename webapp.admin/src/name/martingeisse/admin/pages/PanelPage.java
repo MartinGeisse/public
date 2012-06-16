@@ -78,21 +78,24 @@ public class PanelPage extends AbstractAdminPage {
 			// try one-arg before two-arg?
 			if (useOneArgument && useOneArgumentFirst) {
 				try {
-					panelClass.getConstructor(String.class).newInstance(WICKET_ID);
+					getMainContainer().add(panelClass.getConstructor(String.class).newInstance(WICKET_ID));
+					return;
 				} catch (NoSuchMethodException e) {
 				}
 			}
 			
 			// try two-arg
 			try {
-				panelClass.getConstructor(String.class, IModel.class).newInstance(WICKET_ID, model);
+				getMainContainer().add(panelClass.getConstructor(String.class, IModel.class).newInstance(WICKET_ID, model));
+				return;
 			} catch (NoSuchMethodException e) {
 			}
 			
 			// try one-arg after two-arg?
 			if (useOneArgument && !useOneArgumentFirst) {
 				try {
-					panelClass.getConstructor(String.class).newInstance(WICKET_ID);
+					getMainContainer().add(panelClass.getConstructor(String.class).newInstance(WICKET_ID));
+					return;
 				} catch (NoSuchMethodException e) {
 				}
 			}

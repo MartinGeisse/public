@@ -3,7 +3,7 @@
 	<head>
 	</head>
 	<body>
-		<div class="OuterContainer">
+		<div class="OuterPageContainer">
 			<div wicket:id="pageBorder">
 				<div class="TopNavigationBar">
 					<wicket:container wicket:id="nodes">
@@ -22,7 +22,9 @@
 						</li>
 					</ul>
 				</div>
-				<wicket:child />
+				<div class="InnerPageContainer">
+					<wicket:child />
+				</div>
 			</div>
 		</div>
 	</body>

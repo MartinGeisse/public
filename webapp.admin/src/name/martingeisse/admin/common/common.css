@@ -20,7 +20,7 @@ tr.odd {
 	background-color: #ddd;
 }
 
-.OuterContainer {
+.OuterPageContainer {
 	width: 1000px;
 	min-height: 500px;
 	margin-left: auto;
@@ -51,6 +51,13 @@ tr.odd {
 	width: 200px;
 	border: 1px solid #8080ff;
 	background-color: #c0c0ff;
+}
+
+.InnerPageContainer {
+	margin-top: 20px;
+	margin-left: 230px;
+	margin-right: 10px;
+	background-color:green; /* TODO */
 }
 
 .DataGrid {
