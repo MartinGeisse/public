@@ -12,14 +12,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation can be used to specify the displayed properties and their order
- * for an autoform bean. Without this annotation, all properties with visible
- * getter methods (except those with {@link AutoformIgnoreProperty}) will be
- * used in an unspecified order.
+ * This annotation can be used to specify the order of the displayed properties
+ * for an autoform bean.
+ * 
+ * Without this annotation, all properties with visible getter methods (except
+ * those with {@link AutoformIgnoreProperty}) will be used in an unspecified order.
+ * 
+ * When this annotation is present, it must list exactly those properties that
+ * are not annotated with {@link AutoformIgnoreProperty}.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AutoformProperties {
+public @interface AutoformPropertyOrder {
 
 	/**
 	 * @return the property names

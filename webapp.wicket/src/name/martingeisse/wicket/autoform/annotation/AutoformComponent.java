@@ -16,6 +16,7 @@ import name.martingeisse.wicket.panel.simple.LabelPanel;
 import name.martingeisse.wicket.panel.simple.TextFieldPanel;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.model.IModel;
 
 /**
  * This annotation specifies the Wicket component to use for an autoform property.
@@ -28,13 +29,13 @@ import org.apache.wicket.Component;
  * bean properties as text, using toString(). Another example is to enforce a
  * text area instead of a text field.
  * 
- * The component must have either a three-argument constructor that takes the Wicket
- * id, the IModel for the property and the IModel for the bean being edited, or a
- * two-argument constructor that takes the Wicket id and the IModel for the property.
- * If {@link ConstructorArgumentName} is present, then the corresponding annotation
- * instance is passed as an additional argument and a corresponding four-argument
- * or three-argument constructor is expected instead that takes either the type
- * of the annotation or {@link Annotation} as an additional parameter type.
+ * If no {@link AutoformComponentConstructorArgumentName} is present for the property,
+ * then the component constructor is expected to have two arguments of type {@link String}
+ * and {@link IModel} that take the wicket id and the model for the property, respectively.
+ * If {@link AutoformComponentConstructorArgumentName} is present, then the corresponding
+ * annotation instance is passed as an additional constructor argument and the constructor
+ * is expected to accept either the corresponding annotation interface or {@link Annotation}
+ * as its third parameter type.
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

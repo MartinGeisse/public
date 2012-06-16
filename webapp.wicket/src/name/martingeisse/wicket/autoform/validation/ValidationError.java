@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.wicket.autoform;
+package name.martingeisse.wicket.autoform.validation;
 
 import java.io.Serializable;
 import java.util.Arrays;

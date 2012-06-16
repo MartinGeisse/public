@@ -1,12 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <html>
+	<wicket:head>
+		<style type="text/css">
+			
+			.Autoform .KeyCell {
+				white-space: nowrap;
+			}
+			
+		</style>
+	</wicket:head>
 	<body>
 		<wicket:panel>
-			<form wicket:id="form">
-				<div wicket:id="layout">...</div>
-				<div><input type="submit" value="Absenden" wicket:id="submitButton"></input></div>
+			<form wicket:id="form" class="Autoform">
+				<table style="width: 100%; ">
+					<wicket:container wicket:id="rows">
+						<wicket:enclosure>
+							<tr class="ErrorMessageRow">
+								<td colspan="2" class="ErrorMessageCell">
+									<div wicket:id="errorMessage" style="color: red; ">... insert error message here...</div>
+								</td>
+							</tr>
+						</wicket:enclosure>
+						<tr class="PropertyRow">
+							<td class="KeyCell">
+								<span wicket:id="keyLabel">... insert key label here ...</span>
+							</td>
+							<td class="ValueCell">
+								<div wicket:id="valueComponent" />
+							</td>
+						</tr>
+					</wicket:container>
+				</table>
+				<div>
+					<input type="submit" value="Absenden" />
+				</div>
 			</form>
-		<wicket:child />
 		</wicket:panel>
 	</body>
 </html>

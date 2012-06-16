@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.customization;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -26,11 +27,15 @@ import name.martingeisse.admin.multi.populator.PopulatorBasedGlobalEntityListPre
 import name.martingeisse.admin.navigation.EntityListPageNavigationBackMapper;
 import name.martingeisse.admin.navigation.GlobalEntityListNavigationLeaf;
 import name.martingeisse.admin.navigation.NavigationFolder;
+import name.martingeisse.admin.navigation.PanelPageNavigationLeaf;
 import name.martingeisse.admin.navigation.UrlNavigationLeaf;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.admin.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.schema.MysqlDatabaseDescriptor;
+import name.martingeisse.wicket.autoform.AutoformPanel;
+import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
+import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
 
 
 /**
@@ -118,6 +123,32 @@ public class Main {
 		sub1.initChild(new GlobalEntityListNavigationLeaf("phpbb_acl_users"), "ACL: Users");
 		root.addNewSubfolder("Sub Two");
 		root.addNewSubfolder("Sub Three");
+		
+		root.initChild(new PanelPageNavigationLeaf(MyAutoformPanel.class, null, true), "Test");
+	}
+
+	/**
+	 * TODO: document me
+	 *
+	 */
+	public static class MyAutoformBean implements Serializable {
+		
+	}
+	
+	/**
+	 * TODO: document me
+	 *
+	 */
+	public static class MyAutoformPanel extends AutoformPanel {
+		
+		/**
+		 * Constructor.
+		 * @param id the wicket id
+		 */
+		public MyAutoformPanel(String id) {
+			super(id, new MyAutoformBean(), DefaultAutoformBeanDescriber.instance, DefaultAutoformPropertyComponentFactory.instance);
+		}
+		
 	}
 	
 }

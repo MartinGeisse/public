@@ -21,23 +21,10 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
 
 /**
- * This container uses a table that contains keys in the left columns,
- * values in the right. It does not dictate what makes a "value";
- * an arbitrary Wicket component can be used (its Wicket id must be
- * obtained from this layout though). Keys are constrained to be labels.
- * 
- * If a markup ID prefix is specified, then each table row gets a
- * markup ID of the kind "prefix_itemId".
  */
 public class KeyValueLayout extends Panel {
-
-	/**
-	 * the markupIdPrefix
-	 */
-	private String markupIdPrefix;
 
 	/**
 	 * the layoutItems
@@ -51,7 +38,7 @@ public class KeyValueLayout extends Panel {
 	public KeyValueLayout(final String id) {
 		super(id);
 		this.layoutItems = new ArrayList<KeyValueLayout.LayoutItem>();
-		add(new MyListView("rows", layoutItems, new PropertyModel<String>(this, "markupIdPrefix")));
+		add(new MyListView("rows", layoutItems));
 	}
 
 	/**
@@ -60,22 +47,6 @@ public class KeyValueLayout extends Panel {
 	 */
 	public static String getValueComponentId() {
 		return "valueComponent";
-	}
-
-	/**
-	 * Getter method for the markupIdPrefix.
-	 * @return the markupIdPrefix
-	 */
-	public String getMarkupIdPrefix() {
-		return markupIdPrefix;
-	}
-
-	/**
-	 * Setter method for the markupIdPrefix.
-	 * @param markupIdPrefix the markupIdPrefix to set
-	 */
-	public void setMarkupIdPrefix(final String markupIdPrefix) {
-		this.markupIdPrefix = markupIdPrefix;
 	}
 
 	/**
@@ -192,19 +163,12 @@ public class KeyValueLayout extends Panel {
 	private static class MyListView extends ListView<LayoutItem> {
 
 		/**
-		 * the markupIdPrefixModel
-		 */
-		private final IModel<String> markupIdPrefixModel;
-
-		/**
 		 * Constructor.
 		 * @param id the wicket id
 		 * @param items the list of items to show
-		 * @param markupIdPrefixModel the model for the markup ID prefix
 		 */
-		public MyListView(final String id, final List<LayoutItem> items, final IModel<String> markupIdPrefixModel) {
+		public MyListView(final String id, final List<LayoutItem> items) {
 			super(id, items);
-			this.markupIdPrefixModel = markupIdPrefixModel;
 		}
 
 		/* (non-Javadoc)
@@ -214,13 +178,7 @@ public class KeyValueLayout extends Panel {
 		protected void populateItem(final ListItem<LayoutItem> item) {
 			final LayoutItem layoutItem = item.getModelObject();
 
-			final String markupIdPrefix = markupIdPrefixModel.getObject();
-			if (markupIdPrefix != null) {
-				item.setOutputMarkupId(true);
-				item.setMarkupId(markupIdPrefix + "_" + layoutItem.itemId);
-			} else {
-				item.setOutputMarkupId(false);
-			}
+			item.setOutputMarkupId(false);
 
 			final WebMarkupContainer keyCell = new WebMarkupContainer("keyCell");
 			item.add(keyCell);

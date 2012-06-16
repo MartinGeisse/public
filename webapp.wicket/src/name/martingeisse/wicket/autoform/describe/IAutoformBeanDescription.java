@@ -31,7 +31,7 @@ public interface IAutoformBeanDescription extends Serializable {
 	 * Getter method for the propertyDescriptions.
 	 * @return the propertyDescriptions
 	 */
-	public List<? extends IAutoformPropertyDescription> getPropertyDescriptions();
+	public List<IAutoformPropertyDescription> getPropertyDescriptions();
 
 	/**
 	 * Returns the property description for the specified property.

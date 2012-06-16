@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import name.martingeisse.wicket.autoform.annotation.AutoformIgnoreProperty;
-import name.martingeisse.wicket.autoform.annotation.AutoformProperties;
+import name.martingeisse.wicket.autoform.annotation.AutoformPropertyOrder;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -77,8 +77,10 @@ public class DefaultAutoformBeanDescriber implements IAutoformBeanDescriber {
 	 * @return
 	 */
 	private List<PropertyDescriptor> createBasePropertyList(Object bean) {
+		// TODO: if AutoformPropertyOrder then check that it lists exactly those properties
+		// not tagged with AutoformIgnoreProperty
 		List<PropertyDescriptor> result = new ArrayList<PropertyDescriptor>();
-		AutoformProperties annotation = bean.getClass().getAnnotation(AutoformProperties.class);
+		AutoformPropertyOrder annotation = bean.getClass().getAnnotation(AutoformPropertyOrder.class);
 		if (annotation == null) {
 			for (PropertyDescriptor beanPropertyDescriptor : PropertyUtils.getPropertyDescriptors(bean)) {
 				result.add(beanPropertyDescriptor);

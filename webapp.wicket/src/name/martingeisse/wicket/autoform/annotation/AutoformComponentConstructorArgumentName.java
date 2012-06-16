@@ -24,17 +24,18 @@ import java.lang.annotation.Target;
  * property are attached to the getter method. To pass an additional
  * constructor argument of annotation type \@MyAnnotation, you must
  * add that annotation to the getter method, as well as
- * \@ConstructorArgumentName("MyAnnotation").
+ * \@AutoformComponentConstructorArgumentName("MyAnnotation").
  * 
- * The component class must obviously be tailored for use with autoforms.
- * However, this allows to customize components without also customizing
- * the component factory (which would otherwise be needed to interpret
- * component customization annotations), which is primarily useful in
- * combination with {@link AutoformComponent}.
+ * The component class must obviously be tailored for use with autoforms
+ * for this feature to make sense. However, this allows to customize
+ * components without also customizing the component factory (which
+ * would otherwise be needed to interpret component customization
+ * annotations), so this is primarily useful in combination with
+ * {@link AutoformComponent}.
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ConstructorArgumentName {
+public @interface AutoformComponentConstructorArgumentName {
 
 	/**
 	 * @return the name of the annotation type whose instance to pass
