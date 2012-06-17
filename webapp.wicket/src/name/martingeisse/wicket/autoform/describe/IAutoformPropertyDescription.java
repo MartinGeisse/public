@@ -73,7 +73,8 @@ public interface IAutoformPropertyDescription extends Serializable {
 	
 	/**
 	 * Returns an annotation for this property. This is used to find further
-	 * information about the property, especially details about the components to use.
+	 * information about the property, especially details about the components
+	 * and validations to use.
 	 * 
 	 * @param <T> the static type of the annotation
 	 * @param annotationClass the annotation class
@@ -81,4 +82,12 @@ public interface IAutoformPropertyDescription extends Serializable {
 	 */
 	public <T extends Annotation> T getAnnotation(Class<T> annotationClass);
 
+	/**
+	 * Returns all annotations for this property. This is used to find further
+	 * information about the property, especially details about the components
+	 * and validations to use.
+	 * @return the annotations
+	 */
+	public Annotation[] getAnnotations();
+	
 }

@@ -65,6 +65,14 @@ public final class DefaultAutoformPropertyDescription extends AbstractAutoformPr
 	public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
 		return propertyDescriptor.getReadMethod().getAnnotation(annotationClass);
 	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription#getAnnotations()
+	 */
+	@Override
+	public Annotation[] getAnnotations() {
+		return propertyDescriptor.getReadMethod().getAnnotations();
+	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformPropertyDescription#isReadOnly()

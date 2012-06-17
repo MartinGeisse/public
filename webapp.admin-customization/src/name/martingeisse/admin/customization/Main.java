@@ -7,6 +7,10 @@
 package name.martingeisse.admin.customization;
 
 import java.io.Serializable;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -34,8 +38,14 @@ import name.martingeisse.admin.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.schema.MysqlDatabaseDescriptor;
 import name.martingeisse.wicket.autoform.AutoformPanel;
+import name.martingeisse.wicket.autoform.annotation.AutoformAssociatedValidator;
+import name.martingeisse.wicket.autoform.annotation.AutoformValidator;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
+
+import org.apache.wicket.validation.IValidatable;
+import org.apache.wicket.validation.IValidator;
+import org.apache.wicket.validation.ValidationError;
 
 /**
  * The main class.
@@ -144,6 +154,7 @@ public class Main {
 		 * Getter method for the name1.
 		 * @return the name1
 		 */
+		@MyMaxLength(4)
 		public String getName1() {
 			return name1;
 		}
@@ -160,6 +171,7 @@ public class Main {
 		 * Getter method for the name2.
 		 * @return the name2
 		 */
+		@AutoformValidator(MyValidator.class)
 		public String getName2() {
 			return name2;
 		}
@@ -205,4 +217,67 @@ public class Main {
 
 	}
 
+	/**
+	 *
+	 */
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	@AutoformAssociatedValidator(MyValidator.class)
+	public static @interface MyMaxLength {
+
+		/**
+		 * @return the max length
+		 */
+		public int value();
+		
+	}
+	
+	/**
+	 *
+	 */
+	public static class MyValidator implements IValidator<String> {
+
+		/**
+		 * the maxLength
+		 */
+		private int maxLength;
+		
+		/**
+		 * Constructor.
+		 */
+		public MyValidator() {
+			this(5);
+		}
+		
+		/**
+		 * Constructor.
+		 * @param a the annotation
+		 */
+		public MyValidator(MyMaxLength a) {
+			this(a.value());
+		}
+		
+		/**
+		 * Constructor.
+		 * @param maxLength ...
+		 */
+		public MyValidator(int maxLength) {
+			this.maxLength = maxLength;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.apache.wicket.validation.IValidator#validate(org.apache.wicket.validation.IValidatable)
+		 */
+		@Override
+		public void validate(IValidatable<String> validatable) {
+			String value = validatable.getValue();
+			if (value.length() > maxLength) {
+				ValidationError error = new ValidationError();
+				error.addMessageKey("max.length");
+				validatable.error(error);
+			}
+		}
+		
+	}
+	
 }
