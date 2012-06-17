@@ -38,6 +38,9 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		ApplicationConfiguration.seal();
 		ApplicationConfiguration.initializeCapabilities();
 		ApplicationSchema.initialize();
+
+		// some more Wicket configuration
+		getApplicationSettings().setPageExpiredErrorPage(HomePage.class);
 		
 		// mount page URLs
 //		mountPage("user_settings", UserSettingsPage.class);
@@ -49,6 +52,8 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		// register string resource loaders
 //		getResourceSettings().getStringResourceLoaders().add(new ClassStringResourceLoader(Market.class));
 //		getResourceSettings().getStringResourceLoaders().add(new ClassStringResourceLoader(Language.class));
+
+		
 		
 	}
 

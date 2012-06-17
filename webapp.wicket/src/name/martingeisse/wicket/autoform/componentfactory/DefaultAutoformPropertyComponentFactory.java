@@ -7,12 +7,22 @@
 package name.martingeisse.wicket.autoform.componentfactory;
 
 import java.lang.annotation.Annotation;
+import java.math.BigDecimal;
 
+import name.martingeisse.common.terms.IGetDisplayNameAware;
 import name.martingeisse.common.terms.IReadOnlyAware;
 import name.martingeisse.wicket.autoform.annotation.AutoformComponent;
+import name.martingeisse.wicket.autoform.annotation.AutoformTextSuggestions;
 import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription;
+import name.martingeisse.wicket.model.conversion.LiberalBigDecimalConversionModel;
+import name.martingeisse.wicket.model.conversion.LiberalIntegerConversionModel;
+import name.martingeisse.wicket.panel.simple.CheckBoxPanel;
+import name.martingeisse.wicket.panel.simple.DropDownChoicePanel;
+import name.martingeisse.wicket.panel.simple.TextFieldPanel;
+import name.martingeisse.wicket.panel.simple.TextFieldWithSuggestionsPanel;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 /**
@@ -36,8 +46,7 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 	public final Component createPropertyComponent(String id, IAutoformPropertyDescription propertyDescription) {
 		Class<? extends Component> componentClassOverride = propertyDescription.getComponentClassOverride();
 		if (componentClassOverride == null) {
-			throw new RuntimeException();
-//			return createPropertyComponentNoOverride(id, propertyDescription);
+			return createPropertyComponentNoOverride(id, propertyDescription);
 		} else {
 			return createPropertyComponent(id, propertyDescription, componentClassOverride);
 		}
@@ -93,93 +102,98 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 		throw new RuntimeException("no suitable autoform component constructor found in class " + componentClass);
 	}
 	
-//	/**
-//	 * This method is used to create the component if no {@link AutoformComponent} annotation is present.
-//	 * @param id the wicket id
-//	 * @param propertyDescriptor the property descriptor of the property
-//	 * @return the component
-//	 */
-//	protected Panel createPropertyComponentNoOverride(String id, IAutoformPropertyDescription propertyDescriptor) {
-//
-//		final Class<?> type = propertyDescriptor.getType();
-//		final IModel<?> model = propertyDescriptor.getModel();
-//
-//		if (type == String.class) {
-//
-//			AutoformTextSuggestions suggestionsAnnotation = propertyDescriptor.getAnnotationProvider().getAnnotation(AutoformTextSuggestions.class);
-//			String[] suggestions = (suggestionsAnnotation == null) ? null : suggestionsAnnotation.value();
-//			if (suggestions != null && !propertyDescriptor.isReadOnly()) {
-//				final TextFieldWithSuggestionsPanel panel = new TextFieldWithSuggestionsPanel(id, this.<String> castModelUnsafe(model));
-//				panel.setSuggestions(suggestions);
-//				return panel;
-//			} else {
-//				final TextFieldPanel<String> panel = new TextFieldPanel<String>(id, this.<String> castModelUnsafe(model));
-//				if (propertyDescriptor.isReadOnly()) {
-//					panel.getTextField().setEnabled(false);
-//				}
-//				return panel;
-//			}
-//			
-//		} else if (type == Integer.class || type == Integer.TYPE) {
-//			final IModel<String> wrapperModel = new LiberalIntegerConversionModel(this.<Integer> castModelUnsafe(model));
-//			final TextFieldPanel<String> panel = new TextFieldPanel<String>(id, wrapperModel);
-//			if (propertyDescriptor.isReadOnly()) {
-//				panel.getTextField().setEnabled(false);
-//			}
-//			return panel;
-//			
-//		} else if (type == BigDecimal.class) {
-//			final IModel<String> wrapperModel = new LiberalBigDecimalConversionModel(this.<BigDecimal> castModelUnsafe(model));
-//			final TextFieldPanel<String> panel = new TextFieldPanel<String>(id, wrapperModel);
-//			if (propertyDescriptor.isReadOnly()) {
-//				panel.getTextField().setEnabled(false);
-//			}
-//			return panel;
-//			
-//		} else if (type == Boolean.class || type == Boolean.TYPE) {
-//			final CheckBoxPanel panel = new CheckBoxPanel(id, this.<Boolean> castModelUnsafe(model));
-//			if (propertyDescriptor.isReadOnly()) {
-//				panel.getCheckBox().setEnabled(false);
-//			}
-//			return panel;
-//			
-//		} else if (Enum.class.isAssignableFrom(type)) {
-//			return dropDownChoiceHelper(id, model, type);
-//			
-//		} else {
-//			throw new RuntimeException("cannot create autoform property component for type: " + type.getCanonicalName());
-//		}
-//
-//	}
-//	
-//
-//	
-//	/**
-//	 * Returns the specified model, cast to type IModel<T> without runtime checking.
-//	 * @param <T> the target model type
-//	 * @param model the model to cast
-//	 * @return returns the argument
-//	 */
-//	@SuppressWarnings("unchecked")
-//	protected final <T> IModel<T> castModelUnsafe(IModel<?> model) {
-//		return (IModel<T>)model;
-//	}
-//	
-//	/**
-//	 * This helper exists to sidestep issues with generics. It assumes that the model and enumClass
-//	 * are compatible and creates a {@link DropDownChoicePanel}.
-//	 * @param id the wicket id
-//	 * @param model the model
-//	 * @param enumClass the enum class
-//	 * @return the drop-down choice panel
-//	 */
-//	@SuppressWarnings({"rawtypes", "unchecked"})
-//	private final DropDownChoicePanel dropDownChoiceHelper(String id, IModel model, Class enumClass) {
-//		if (IGetDisplayNameAware.class.isAssignableFrom(enumClass)) {
-//			return DropDownChoicePanel.createForDisplayNameEnum(id, model, enumClass);
-//		} else {
-//			return DropDownChoicePanel.createForRawEnum(id, model, enumClass);
-//		}
-//	}
+	/**
+	 * This method is used to create the component if no {@link AutoformComponent} annotation is present.
+	 * @param id the wicket id
+	 * @param propertyDescriptor the property descriptor of the property
+	 * @return the component
+	 */
+	protected Panel createPropertyComponentNoOverride(String id, IAutoformPropertyDescription propertyDescriptor) {
+
+		// TODO: Do not use liberal conversion models. Instead, properly use Wicket's conversion/validation mechanism.
+		
+		final Class<?> type = propertyDescriptor.getType();
+		final IModel<?> model = propertyDescriptor.getModel();
+
+		if (type == String.class) {
+
+			AutoformTextSuggestions suggestionsAnnotation = propertyDescriptor.getAnnotation(AutoformTextSuggestions.class);
+			String[] suggestions = (suggestionsAnnotation == null) ? null : suggestionsAnnotation.value();
+			if (suggestions != null && !propertyDescriptor.isReadOnly()) {
+				final TextFieldWithSuggestionsPanel panel = new TextFieldWithSuggestionsPanel(id, this.<String> castModelUnsafe(model));
+				panel.setSuggestions(suggestions);
+				return panel;
+			} else {
+				final TextFieldPanel<String> panel = new TextFieldPanel<String>(id, this.<String> castModelUnsafe(model));
+				if (propertyDescriptor.isReadOnly()) {
+					panel.getTextField().setEnabled(false);
+				}
+				return panel;
+			}
+			
+		} else if (type == Integer.class || type == Integer.TYPE) {
+			final IModel<String> wrapperModel = new LiberalIntegerConversionModel(this.<Integer> castModelUnsafe(model));
+			final TextFieldPanel<String> panel = new TextFieldPanel<String>(id, wrapperModel);
+			if (propertyDescriptor.isReadOnly()) {
+				panel.getTextField().setEnabled(false);
+			}
+			return panel;
+			
+		} else if (type == BigDecimal.class) {
+			final IModel<String> wrapperModel = new LiberalBigDecimalConversionModel(this.<BigDecimal> castModelUnsafe(model));
+			final TextFieldPanel<String> panel = new TextFieldPanel<String>(id, wrapperModel);
+			if (propertyDescriptor.isReadOnly()) {
+				panel.getTextField().setEnabled(false);
+			}
+			return panel;
+			
+		} else if (type == Boolean.class || type == Boolean.TYPE) {
+			final CheckBoxPanel panel = new CheckBoxPanel(id, this.<Boolean> castModelUnsafe(model));
+			if (propertyDescriptor.isReadOnly()) {
+				panel.getCheckBox().setEnabled(false);
+			}
+			return panel;
+			
+		} else if (Enum.class.isAssignableFrom(type)) {
+			return dropDownChoiceHelper(id, model, type);
+			
+		} else {
+			throw new RuntimeException("cannot create autoform property component for type: " + type.getCanonicalName());
+		}
+
+	}
+	
+
+	
+	/**
+	 * Returns the specified model, cast to type IModel<T> without runtime checking.
+	 * @param <T> the target model type
+	 * @param model the model to cast
+	 * @return returns the argument
+	 */
+	@SuppressWarnings("unchecked")
+	protected final <T> IModel<T> castModelUnsafe(IModel<?> model) {
+		return (IModel<T>)model;
+	}
+	
+	/**
+	 * This helper exists to sidestep issues with generics. It assumes that the model and enumClass
+	 * are compatible and creates a {@link DropDownChoicePanel}. Will use the enum constant name
+	 * for the id, and either the display name from {@link IGetDisplayNameAware} (if the enum type
+	 * supports it) or the enum constant name for displaying.
+	 * 
+	 * @param id the wicket id
+	 * @param model the model
+	 * @param enumClass the enum class
+	 * @return the drop-down choice panel
+	 */
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	private final DropDownChoicePanel dropDownChoiceHelper(String id, IModel model, Class enumClass) {
+		if (IGetDisplayNameAware.class.isAssignableFrom(enumClass)) {
+			return DropDownChoicePanel.createForDisplayNameEnum(id, model, enumClass);
+		} else {
+			return DropDownChoicePanel.createForRawEnum(id, model, enumClass);
+		}
+	}
 
 }

@@ -112,33 +112,6 @@ public class AutoformPanel extends Panel {
 //	}	
 	
 	/**
-	 * Creates a key/value layout whose keys are the property names and whose values are components
-	 * created by the component factory.
-	 * @param id the wicket id
-	 * @param beanDescriptor the bean that contains the properties
-	 * @param componentFactory the value component factory
-	 * @param validationReport the validation report that contains the error messages, or null to show now error messages.
-	 */
-//	protected KeyValueLayout createKeyComponentsLayout(String id, IAutoformBeanDescription beanDescriptor, IAutoformPropertyComponentFactory componentFactory, ValidationReport validationReport) {
-//		
-//		/** create the layout **/
-//		final KeyValueLayout leftLayout = new KeyValueLayout(id);
-//		for (final IAutoformPropertyDescription propertyDescriptor : beanDescriptor.getPropertyDescriptors()) {
-//			final Component component = componentFactory.createPropertyComponent(KeyValueLayout.getValueComponentId(), propertyDescriptor);
-//			final String displayName = propertyDescriptor.getDisplayName();
-//			if (validationReport == null) {
-//				leftLayout.addItem(propertyDescriptor.getName(), displayName, component);
-//			} else {
-//				// TODO: use a proper validation report entry model
-//				leftLayout.addItem(propertyDescriptor.getName(), displayName, component, new PropertyModel<String>(validationReport, "validationErrors." + propertyDescriptor.getName() + ".messageKey"));
-//			}
-//			propertyDescriptor.setAssignedComponent(component);
-//		}
-//		
-//		return leftLayout;
-//	}
-
-	/**
 	 * This method checks the simplified validation defined for autoforms, and if successful, invokes onSuccessfulSubmit().
 	 */
 	protected void onSubmitAttempt() {
