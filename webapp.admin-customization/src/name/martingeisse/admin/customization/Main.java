@@ -33,12 +33,9 @@ import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.admin.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.schema.MysqlDatabaseDescriptor;
-import name.martingeisse.common.terms.DisplayName;
 import name.martingeisse.wicket.autoform.AutoformPanel;
-import name.martingeisse.wicket.autoform.annotation.AutoformComponent;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
-import name.martingeisse.wicket.panel.simple.TextFieldPanel;
 
 /**
  * The main class.
@@ -129,53 +126,71 @@ public class Main {
 	public static class MyAutoformBean implements Serializable {
 
 		/**
-		 * the name
+		 * the name1
 		 */
-		private String name;
+		private String name1;
 
 		/**
-		 * the ok
+		 * the name2
 		 */
-		private boolean ok;
+		private String name2;
 
 		/**
-		 * Getter method for the name.
-		 * @return the name
+		 * the name3
 		 */
-		@AutoformComponent(TextFieldPanel.class)
-		public String getName() {
-			return name;
+		private String name3;
+
+		/**
+		 * Getter method for the name1.
+		 * @return the name1
+		 */
+		public String getName1() {
+			return name1;
 		}
 
 		/**
-		 * Setter method for the name.
-		 * @param name the name to set
+		 * Setter method for the name1.
+		 * @param name1 the name1 to set
 		 */
-		public void setName(final String name) {
-			this.name = name;
+		public void setName1(final String name1) {
+			this.name1 = name1;
 		}
 
 		/**
-		 * Getter method for the ok.
-		 * @return the ok
+		 * Getter method for the name2.
+		 * @return the name2
 		 */
-		@DisplayName("mal ein Flag")
-		public boolean isOk() {
-			return ok;
+		public String getName2() {
+			return name2;
 		}
 
 		/**
-		 * Setter method for the ok.
-		 * @param ok the ok to set
+		 * Setter method for the name2.
+		 * @param name2 the name2 to set
 		 */
-		public void setOk(final boolean ok) {
-			this.ok = ok;
+		public void setName2(final String name2) {
+			this.name2 = name2;
+		}
+
+		/**
+		 * Getter method for the name3.
+		 * @return the name3
+		 */
+		public String getName3() {
+			return name3;
+		}
+
+		/**
+		 * Setter method for the name3.
+		 * @param name3 the name3 to set
+		 */
+		public void setName3(final String name3) {
+			this.name3 = name3;
 		}
 
 	}
 
 	/**
-	 * TODO: document me
 	 *
 	 */
 	public static class MyAutoformPanel extends AutoformPanel {

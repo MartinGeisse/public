@@ -40,7 +40,7 @@ public class FirstLineResourceVersion implements IResourceVersion {
 			final IResourceStream stream = resource.getCacheableResourceStream();
 			final String contentType = stream.getContentType();
 			if (!contentType.startsWith("text/") && !contentType.equals("application/x-javascript")) {
-				// System.out.println("Cannot determine first-line version for resource of type " + contentType);
+				System.out.println("Cannot determine first-line version for resource of type " + contentType);
 				stream.close();
 				return null;
 			}

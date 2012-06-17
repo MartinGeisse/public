@@ -12,13 +12,18 @@ import name.martingeisse.wicket.autoform.componentfactory.IAutoformPropertyCompo
 import name.martingeisse.wicket.autoform.describe.IAutoformBeanDescriber;
 import name.martingeisse.wicket.autoform.describe.IAutoformBeanDescription;
 import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription;
+import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.ComponentFeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.validation.IValidator;
+import org.apache.wicket.validation.validator.StringValidator;
 
 /**
  * Default autoform panel.
@@ -65,16 +70,62 @@ public class AutoformPanel extends Panel {
 
 		// create the property repeater
 		ListView<IAutoformPropertyDescription> rows = new ListView<IAutoformPropertyDescription>("rows", beanDescription.getPropertyDescriptions()) {
+			
+			/* (non-Javadoc)
+			 * @see org.apache.wicket.markup.html.list.ListView#populateItem(org.apache.wicket.markup.html.list.ListItem)
+			 */
 			@Override
 			protected void populateItem(ListItem<IAutoformPropertyDescription> item) {
 				IAutoformPropertyDescription propertyDescription = item.getModelObject();
-				item.add(new Label("errorMessage", "*** DUMMY ERROR MESSAGE ***"));
 				item.add(new Label("keyLabel", propertyDescription.getDisplayName()));
-				item.add(propertyComponentFactory.createPropertyComponent("valueComponent", propertyDescription));
+				item.add(propertyComponentFactory.createPropertyComponent("valueComponent", propertyDescription, createValidators(propertyDescription), new ValidationErrorAcceptor(item)));
 			}
+			
 		};
+		rows.setReuseItems(true);
 		form.add(rows);
 		
+	}
+	
+	/**
+	 *
+	 */
+	private static class ValidationErrorAcceptor implements IValidationErrorAcceptor {
+
+		/**
+		 * the item
+		 */
+		private ListItem<IAutoformPropertyDescription> item;
+		
+		/**
+		 * Constructor.
+		 */
+		ValidationErrorAcceptor(ListItem<IAutoformPropertyDescription> item) {
+			this.item = item;
+		}
+
+		/* (non-Javadoc)
+		 * @see name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor#acceptValidationErrorsFrom(org.apache.wicket.Component)
+		 */
+		@Override
+		public void acceptValidationErrorsFrom(Component component) {
+			item.add(new ComponentFeedbackPanel("errorMessage", component));
+		}
+		
+	}
+	
+	/**
+	 * @param property
+	 * @return
+	 */
+	private IValidator<?>[] createValidators(IAutoformPropertyDescription property) {
+		if (property.getType() == String.class) {
+			return new IValidator<?>[] {
+				new StringValidator.MaximumLengthValidator(3)
+			};
+		} else {
+			return new IValidator<?>[0];
+		}
 	}
 	
 	/**

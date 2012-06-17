@@ -1,0 +1,15 @@
+
+Es ist immer noch ein ungeklärter Punkt, warum Wicket die Validation Errors direkt in der
+Session speichert (in einem FeedbackMessages-Container-Objekt). Dabei geht es jetzt nur
+darum, *wo* die VEs liegen, nicht um deren Aufbau (der wird schon am Wicket-i18n-Konzept
+ausgerichtet sein). Die Alternative wären:
+
+- VEs direkt in der jeweiligen FormComponent speichern
+- VEs in einem ValidationReport o.ä. für das ganze Form speichern
+
+Ich werde jetzt erst mal Wicket "wie gedacht" benutzen, evtl. ergeben sich dabei neue
+Erkenntnisse. Interessant wäre auch, ob sich in den neuen Wicket-Versionen da was
+ändert. -> JA!!! Wicket 6 hat genau da grundlegendes geändert! Das ist aber in der
+Benutzung ähnlich wie das jetzige, also erst mal einfach das von Wicket benutzen
+und dann -> Wicket 6 umsteigen.
+

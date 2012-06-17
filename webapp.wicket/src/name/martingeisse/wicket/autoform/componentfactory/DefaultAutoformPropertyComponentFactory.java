@@ -14,6 +14,8 @@ import name.martingeisse.common.terms.IReadOnlyAware;
 import name.martingeisse.wicket.autoform.annotation.AutoformComponent;
 import name.martingeisse.wicket.autoform.annotation.AutoformTextSuggestions;
 import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription;
+import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
+import name.martingeisse.wicket.autoform.validation.IValidatorAcceptor;
 import name.martingeisse.wicket.model.conversion.LiberalBigDecimalConversionModel;
 import name.martingeisse.wicket.model.conversion.LiberalIntegerConversionModel;
 import name.martingeisse.wicket.panel.simple.CheckBoxPanel;
@@ -22,8 +24,10 @@ import name.martingeisse.wicket.panel.simple.TextFieldPanel;
 import name.martingeisse.wicket.panel.simple.TextFieldWithSuggestionsPanel;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.validation.IValidator;
 
 /**
  * This factory chooses an appropriate property component based on the property
@@ -40,15 +44,15 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 	public static final DefaultAutoformPropertyComponentFactory instance = new DefaultAutoformPropertyComponentFactory();
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.componentfactory.IAutoformPropertyComponentFactory#createPropertyComponent(java.lang.String, name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription)
+	 * @see name.martingeisse.wicket.autoform.componentfactory.IAutoformPropertyComponentFactory#createPropertyComponent(java.lang.String, name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription, org.apache.wicket.validation.IValidator<?>[], name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor)
 	 */
 	@Override
-	public final Component createPropertyComponent(String id, IAutoformPropertyDescription propertyDescription) {
+	public final Component createPropertyComponent(String id, IAutoformPropertyDescription propertyDescription, IValidator<?>[] validators, IValidationErrorAcceptor validationErrorAcceptor) {
 		Class<? extends Component> componentClassOverride = propertyDescription.getComponentClassOverride();
 		if (componentClassOverride == null) {
-			return createPropertyComponentNoOverride(id, propertyDescription);
+			return createPropertyComponentNoOverride(id, propertyDescription, validators, validationErrorAcceptor);
 		} else {
-			return createPropertyComponent(id, propertyDescription, componentClassOverride);
+			return createPropertyComponent(id, propertyDescription, componentClassOverride, validators, validationErrorAcceptor);
 		}
 	}
 	
@@ -58,14 +62,25 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 	 * @param id the wicket id of the component to create
 	 * @param propertyDescription the property description
 	 * @param componentClassOverride the component class to use
+	 * @param validators the validators to add to the component
+	 * @param validationErrorAcceptor the acceptor for validation errors
 	 * @return the component
 	 */
-	protected final Component createPropertyComponent(String id, IAutoformPropertyDescription propertyDescription, Class<? extends Component> componentClassOverride) {
+	protected final Component createPropertyComponent(String id, IAutoformPropertyDescription propertyDescription, Class<? extends Component> componentClassOverride, IValidator<?>[] validators, IValidationErrorAcceptor validationErrorAcceptor) {
 		try {
 			Component component = findAndInvokePropertyComponentConstructor(id, propertyDescription, componentClassOverride);
 			if (component instanceof IReadOnlyAware) {
 				IReadOnlyAware readOnlyAware = (IReadOnlyAware)component;
 				readOnlyAware.setReadOnly(propertyDescription.isReadOnly());
+			} else if (propertyDescription.isReadOnly()) {
+				throw new RuntimeException("property " + propertyDescription.getName() + " is marked as read-only but component class " + component.getClass() + " does not implement IReadOnlyAware");
+			}
+			if (validators.length > 0) {
+				if (!(component instanceof IValidatorAcceptor)) {
+					throw new RuntimeException("property " + propertyDescription.getName() + " has validation annotations but component class " + component.getClass() + " does not implement IValidatorAcceptor");
+				}
+				IValidatorAcceptor acceptor = (IValidatorAcceptor)component;
+				acceptor.acceptValidators(validators, validationErrorAcceptor);
 			}
 			return component;
 		} catch (final Exception e) {
@@ -106,9 +121,11 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 	 * This method is used to create the component if no {@link AutoformComponent} annotation is present.
 	 * @param id the wicket id
 	 * @param propertyDescriptor the property descriptor of the property
+	 * @param validators the validators to add to the component
+	 * @param validationErrorAcceptor the acceptor for validation errors
 	 * @return the component
 	 */
-	protected Panel createPropertyComponentNoOverride(String id, IAutoformPropertyDescription propertyDescriptor) {
+	protected Panel createPropertyComponentNoOverride(String id, IAutoformPropertyDescription propertyDescriptor, IValidator<?>[] validators, IValidationErrorAcceptor validationErrorAcceptor) {
 
 		// TODO: Do not use liberal conversion models. Instead, properly use Wicket's conversion/validation mechanism.
 		
@@ -116,18 +133,21 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 		final IModel<?> model = propertyDescriptor.getModel();
 
 		if (type == String.class) {
-
 			AutoformTextSuggestions suggestionsAnnotation = propertyDescriptor.getAnnotation(AutoformTextSuggestions.class);
 			String[] suggestions = (suggestionsAnnotation == null) ? null : suggestionsAnnotation.value();
 			if (suggestions != null && !propertyDescriptor.isReadOnly()) {
 				final TextFieldWithSuggestionsPanel panel = new TextFieldWithSuggestionsPanel(id, this.<String> castModelUnsafe(model));
 				panel.setSuggestions(suggestions);
+				addValidatorsUnsafe(panel.getTextField(), validators);
+				validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
 				return panel;
 			} else {
 				final TextFieldPanel<String> panel = new TextFieldPanel<String>(id, this.<String> castModelUnsafe(model));
 				if (propertyDescriptor.isReadOnly()) {
 					panel.getTextField().setEnabled(false);
 				}
+				addValidatorsUnsafe(panel.getTextField(), validators);
+				validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
 				return panel;
 			}
 			
@@ -137,6 +157,8 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 			if (propertyDescriptor.isReadOnly()) {
 				panel.getTextField().setEnabled(false);
 			}
+			addValidatorsUnsafe(panel.getTextField(), validators);
+			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
 			return panel;
 			
 		} else if (type == BigDecimal.class) {
@@ -145,6 +167,8 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 			if (propertyDescriptor.isReadOnly()) {
 				panel.getTextField().setEnabled(false);
 			}
+			addValidatorsUnsafe(panel.getTextField(), validators);
+			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
 			return panel;
 			
 		} else if (type == Boolean.class || type == Boolean.TYPE) {
@@ -152,18 +176,21 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 			if (propertyDescriptor.isReadOnly()) {
 				panel.getCheckBox().setEnabled(false);
 			}
+			addValidatorsUnsafe(panel.getCheckBox(), validators);
+			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getCheckBox());
 			return panel;
 			
 		} else if (Enum.class.isAssignableFrom(type)) {
-			return dropDownChoiceHelper(id, model, type);
+			DropDownChoicePanel<?> panel = dropDownChoiceHelper(id, model, type);
+			addValidatorsUnsafe(panel.getDropDownChoice(), validators);
+			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getDropDownChoice());
+			return panel;
 			
 		} else {
 			throw new RuntimeException("cannot create autoform property component for type: " + type.getCanonicalName());
 		}
 
 	}
-	
-
 	
 	/**
 	 * Returns the specified model, cast to type IModel<T> without runtime checking.
@@ -196,4 +223,14 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 		}
 	}
 
+	/**
+	 * Adds the validators to the component, bypassing generic type safety.
+	 * @param component the component to add the validators to
+	 * @param validators the validators to add to the component
+	 */
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	protected final void addValidatorsUnsafe(FormComponent component, IValidator[] validators) {
+		component.add(validators);
+	}
+	
 }

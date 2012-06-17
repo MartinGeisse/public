@@ -2,8 +2,25 @@
 <html>
 	<wicket:head>
 		<style type="text/css">
+
+			.Autoform .ErrorMessageCell {
+			}
+
+			.Autoform .ErrorMessageCell ul {
+				margin-top: 10px;
+				margin-bottom: 0px;
+				padding: 1px 5px;
+				background-color: red;
+				color: white;
+			}
+			
+			.Autoform .ErrorMessageCell li {
+				list-style: none;
+			}
 			
 			.Autoform .KeyCell {
+				width: 1px;
+				padding-right: 10px;
 				white-space: nowrap;
 			}
 			
@@ -16,8 +33,7 @@
 					<wicket:container wicket:id="rows">
 						<wicket:enclosure>
 							<tr class="ErrorMessageRow">
-								<td colspan="2" class="ErrorMessageCell">
-									<div wicket:id="errorMessage" style="color: red; ">... insert error message here...</div>
+								<td colspan="2" class="ErrorMessageCell" wicket:id="errorMessage">
 								</td>
 							</tr>
 						</wicket:enclosure>
