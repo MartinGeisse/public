@@ -4,12 +4,13 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.wicket.autoform.annotation;
+package name.martingeisse.wicket.autoform.annotation.structure;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
 
 /**
  * This annotation can be used to specify the order of the displayed properties

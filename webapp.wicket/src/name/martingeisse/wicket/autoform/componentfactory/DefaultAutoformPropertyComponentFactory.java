@@ -11,8 +11,8 @@ import java.math.BigDecimal;
 
 import name.martingeisse.common.terms.IGetDisplayNameAware;
 import name.martingeisse.common.terms.IReadOnlyAware;
-import name.martingeisse.wicket.autoform.annotation.AutoformComponent;
-import name.martingeisse.wicket.autoform.annotation.AutoformTextSuggestions;
+import name.martingeisse.wicket.autoform.annotation.components.AutoformComponent;
+import name.martingeisse.wicket.autoform.annotation.components.AutoformTextSuggestions;
 import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription;
 import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
 import name.martingeisse.wicket.autoform.validation.IValidatorAcceptor;

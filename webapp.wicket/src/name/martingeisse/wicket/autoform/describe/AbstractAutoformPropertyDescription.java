@@ -11,9 +11,9 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 
 import name.martingeisse.common.terms.DisplayName;
-import name.martingeisse.wicket.autoform.annotation.AutoformComponent;
-import name.martingeisse.wicket.autoform.annotation.AutoformReadOnly;
-import name.martingeisse.wicket.autoform.annotation.AutoformComponentConstructorArgumentName;
+import name.martingeisse.wicket.autoform.annotation.components.AutoformComponent;
+import name.martingeisse.wicket.autoform.annotation.components.AutoformComponentConstructorArgumentName;
+import name.martingeisse.wicket.autoform.annotation.structure.AutoformReadOnly;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;

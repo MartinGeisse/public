@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.wicket.autoform.annotation;
+package name.martingeisse.wicket.autoform.annotation.components;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -12,6 +12,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import name.martingeisse.wicket.autoform.annotation.structure.AutoformReadOnly;
 import name.martingeisse.wicket.panel.simple.LabelPanel;
 import name.martingeisse.wicket.panel.simple.TextFieldPanel;
 

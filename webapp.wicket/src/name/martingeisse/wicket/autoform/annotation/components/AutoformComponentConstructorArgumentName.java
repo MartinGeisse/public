@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.wicket.autoform.annotation;
+package name.martingeisse.wicket.autoform.annotation.components;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

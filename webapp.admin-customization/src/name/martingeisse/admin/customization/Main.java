@@ -38,8 +38,8 @@ import name.martingeisse.admin.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.schema.MysqlDatabaseDescriptor;
 import name.martingeisse.wicket.autoform.AutoformPanel;
-import name.martingeisse.wicket.autoform.annotation.AutoformAssociatedValidator;
-import name.martingeisse.wicket.autoform.annotation.AutoformValidator;
+import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociatedValidator;
+import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
 

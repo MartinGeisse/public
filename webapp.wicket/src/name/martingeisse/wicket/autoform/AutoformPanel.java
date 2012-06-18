@@ -12,8 +12,8 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.wicket.autoform.annotation.AutoformAssociatedValidator;
-import name.martingeisse.wicket.autoform.annotation.AutoformValidator;
+import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociatedValidator;
+import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
 import name.martingeisse.wicket.autoform.componentfactory.IAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.IAutoformBeanDescriber;
 import name.martingeisse.wicket.autoform.describe.IAutoformBeanDescription;

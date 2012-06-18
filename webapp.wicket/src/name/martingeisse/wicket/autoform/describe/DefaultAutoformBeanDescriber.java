@@ -11,8 +11,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.wicket.autoform.annotation.AutoformIgnoreProperty;
-import name.martingeisse.wicket.autoform.annotation.AutoformPropertyOrder;
+import name.martingeisse.wicket.autoform.annotation.structure.AutoformIgnoreProperty;
+import name.martingeisse.wicket.autoform.annotation.structure.AutoformPropertyOrder;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
