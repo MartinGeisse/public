@@ -54,7 +54,7 @@ public class Main {
 		Paragraph section2Paragraph = new Paragraph(new TextInlineItem("This is section 2 content"));
 		section2.getDirectContents().getSubItems().add(section2Paragraph);
 		
-		UnboundTable unboundTable = new UnboundTable(new SqlQuery("default", "SELECT * FROM phpbb_acl_roles LIMIT 10"));
+		UnboundTable unboundTable = new UnboundTable(new SqlQuery("default", "SELECT * FROM phpbb_acl_roles LIMIT 10"), "This is a table.");
 		section2.getDirectContents().getSubItems().add(unboundTable);
 
 		Section section2sub1 = new Section();

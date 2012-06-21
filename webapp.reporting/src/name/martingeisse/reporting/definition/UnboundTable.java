@@ -25,6 +25,11 @@ public class UnboundTable implements IBlockItem {
 	private ITabularQuery query;
 
 	/**
+	 * the caption
+	 */
+	private String caption;
+
+	/**
 	 * Constructor.
 	 */
 	public UnboundTable() {
@@ -36,6 +41,16 @@ public class UnboundTable implements IBlockItem {
 	 */
 	public UnboundTable(final ITabularQuery query) {
 		this.query = query;
+	}
+
+	/**
+	 * Constructor.
+	 * @param query the query that is used to fill this table with data
+	 * @param caption the table caption
+	 */
+	public UnboundTable(final ITabularQuery query, final String caption) {
+		this.query = query;
+		this.caption = caption;
 	}
 
 	/**
@@ -54,41 +69,57 @@ public class UnboundTable implements IBlockItem {
 		this.query = query;
 	}
 
+	/**
+	 * Getter method for the caption.
+	 * @return the caption
+	 */
+	public String getCaption() {
+		return caption;
+	}
+
+	/**
+	 * Setter method for the caption.
+	 * @param caption the caption to set
+	 */
+	public void setCaption(final String caption) {
+		this.caption = caption;
+	}
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.reporting.document.IDataBindable#bindToData(name.martingeisse.reporting.datasource.DataSources)
 	 */
 	@Override
-	public Table bindToData(DataSources dataSources) {
+	public Table bindToData(final DataSources dataSources) {
 		try {
 
 			// perform the query
-			ResultSet resultSet = query.bindToData(dataSources);
-			ResultSetMetaData meta = resultSet.getMetaData();
-			int width = meta.getColumnCount();
-			
+			final ResultSet resultSet = query.bindToData(dataSources);
+			final ResultSetMetaData meta = resultSet.getMetaData();
+			final int width = meta.getColumnCount();
+
 			// generate headers
-			String[] fieldNames = new String[width];
-			for (int i=0; i<width; i++) {
+			final String[] fieldNames = new String[width];
+			for (int i = 0; i < width; i++) {
 				fieldNames[i] = meta.getColumnLabel(1 + i);
 			}
-			
+
 			// fill the result table
-			Table result = new Table();
+			final Table result = new Table();
+			result.setCaption(caption);
 			result.setFieldNames(fieldNames);
 			while (resultSet.next()) {
-				String[] values = new String[width];
-				for (int i=0; i<width; i++) {
+				final String[] values = new String[width];
+				for (int i = 0; i < width; i++) {
 					values[i] = resultSet.getString(1 + i);
 				}
 				result.getRows().add(values);
 			}
 			resultSet.close();
 			return result;
-			
-		} catch (Exception e) {
+
+		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	
 }

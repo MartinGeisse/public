@@ -204,6 +204,11 @@ public class HtmlRenderer {
 	 */
 	private void render(Table table) {
 		out.print("<table>");
+		if (table.getCaption() != null) {
+			out.print("<caption align=\"bottom\">");
+			printEscaped(table.getCaption());
+			out.print("</caption>");
+		}
 		out.print("<tr>");
 		for (String fieldName : table.getFieldNames()) {
 			out.print("<th>");

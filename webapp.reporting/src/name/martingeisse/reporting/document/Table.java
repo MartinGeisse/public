@@ -27,6 +27,11 @@ public class Table implements IBlockItem {
 	private List<String[]> rows;
 
 	/**
+	 * the caption
+	 */
+	private String caption;
+
+	/**
 	 * Constructor.
 	 */
 	public Table() {
@@ -65,12 +70,28 @@ public class Table implements IBlockItem {
 		this.rows = rows;
 	}
 
+	/**
+	 * Getter method for the caption.
+	 * @return the caption
+	 */
+	public String getCaption() {
+		return caption;
+	}
+
+	/**
+	 * Setter method for the caption.
+	 * @param caption the caption to set
+	 */
+	public void setCaption(final String caption) {
+		this.caption = caption;
+	}
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.reporting.document.IDataBindable#bindToData(name.martingeisse.reporting.datasource.DataSources)
 	 */
 	@Override
-	public Table bindToData(DataSources dataSources) {
+	public Table bindToData(final DataSources dataSources) {
 		return this;
 	}
-	
+
 }
