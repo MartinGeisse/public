@@ -6,6 +6,8 @@
 
 package name.martingeisse.reporting.document;
 
+import name.martingeisse.reporting.datasource.DataSources;
+
 /**
  * TODO: document me
  *
@@ -49,11 +51,11 @@ public final class Document implements IDataBindable {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.reporting.document.IDataBindable#bindToData()
+	 * @see name.martingeisse.reporting.document.IDataBindable#bindToData(name.martingeisse.reporting.datasource.DataSources)
 	 */
 	@Override
-	public Document bindToData() {
-		return new Document((Section)rootSection.bindToData());
+	public Document bindToData(DataSources dataSources) {
+		return new Document((Section)rootSection.bindToData(dataSources));
 	}
 
 }

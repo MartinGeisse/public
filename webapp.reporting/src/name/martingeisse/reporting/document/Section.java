@@ -9,6 +9,8 @@ package name.martingeisse.reporting.document;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.martingeisse.reporting.datasource.DataSources;
+
 /**
  * A section in the document.
  */
@@ -85,16 +87,16 @@ public final class Section implements IDataBindable {
 	public void setSubsections(final List<Section> subsections) {
 		this.subsections = subsections;
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.reporting.document.IDataBindable#bindToData()
+	 * @see name.martingeisse.reporting.document.IDataBindable#bindToData(name.martingeisse.reporting.datasource.DataSources)
 	 */
 	@Override
-	public Object bindToData() {
+	public Object bindToData(DataSources dataSources) {
 		Section result = new Section();
 		result.setTitle(title);
-		result.setDirectContents(directContents.bindToData());
-		result.setSubsections(DocumentUtil.bindToData(Section.class, subsections, true));
+		result.setDirectContents(directContents.bindToData(dataSources));
+		result.setSubsections(DocumentUtil.bindToData(dataSources, Section.class, subsections, true));
 		return result;
 	}
 

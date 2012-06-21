@@ -6,6 +6,8 @@
 
 package name.martingeisse.reporting.document;
 
+import name.martingeisse.reporting.datasource.DataSources;
+
 /**
  * This item contains plain text.
  */
@@ -47,10 +49,10 @@ public class TextInlineItem implements IInlineItem {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.reporting.document.IDataBindable#bindToData()
+	 * @see name.martingeisse.reporting.document.IDataBindable#bindToData(name.martingeisse.reporting.datasource.DataSources)
 	 */
 	@Override
-	public TextInlineItem bindToData() {
+	public TextInlineItem bindToData(DataSources dataSources) {
 		return this;
 	}
 	

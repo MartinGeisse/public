@@ -6,6 +6,8 @@
 
 package name.martingeisse.reporting.document;
 
+import name.martingeisse.reporting.datasource.DataSources;
+
 /**
  * Generic interface that is implemented by all document items. This interface
  * allows to "bind" items to data, which is the main point of generating
@@ -17,8 +19,9 @@ public interface IDataBindable {
 
 	/**
 	 * Binds this object to the specified data sources.
+	 * @param dataSources the data sources
 	 * @return the bound object
 	 */
-	public Object bindToData();
+	public Object bindToData(DataSources dataSources);
 	
 }

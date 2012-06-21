@@ -7,7 +7,10 @@
 package name.martingeisse.reporting.document;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import name.martingeisse.reporting.datasource.DataSources;
 
 /**
  * This item contains other inline items as well as an inline
@@ -52,6 +55,16 @@ public class FormattedCompoundInlineItem implements IInlineItem {
 	}
 
 	/**
+	 * Constructor.
+	 * @param formattingInstruction the formatting instruction to apply to the sub-items
+	 * @param subItems the sub-item list to use
+	 */
+	public FormattedCompoundInlineItem(final InlineFormattingInstruction formattingInstruction, IInlineItem... subItems) {
+		this.formattingInstruction = formattingInstruction;
+		this.subItems = Arrays.asList(subItems);
+	}
+
+	/**
 	 * Getter method for the formattingInstruction.
 	 * @return the formattingInstruction
 	 */
@@ -84,11 +97,11 @@ public class FormattedCompoundInlineItem implements IInlineItem {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.reporting.document.IDataBindable#bindToData()
+	 * @see name.martingeisse.reporting.document.IDataBindable#bindToData(name.martingeisse.reporting.datasource.DataSources)
 	 */
 	@Override
-	public FormattedCompoundInlineItem bindToData() {
-		final List<IInlineItem> boundSubItems = DocumentUtil.bindToData(IInlineItem.class, subItems, true);
+	public FormattedCompoundInlineItem bindToData(DataSources dataSources) {
+		final List<IInlineItem> boundSubItems = DocumentUtil.bindToData(dataSources, IInlineItem.class, subItems, true);
 		return (boundSubItems == subItems ? this : new FormattedCompoundInlineItem(formattingInstruction, boundSubItems));
 	}
 

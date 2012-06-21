@@ -9,6 +9,8 @@ package name.martingeisse.reporting.document;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.martingeisse.reporting.datasource.DataSources;
+
 /**
  * Utility methods to deal with documents.
  */
@@ -24,16 +26,17 @@ public class DocumentUtil {
 	 * "plain" way itself.
 	 * 
 	 * @param <T> the type of objects to bind
+	 * @param dataSources the data sources
 	 * @param expectedReturnType the class object used to cast returned objects
 	 * @param bindables the items to bind
 	 * @param tryPlain whether to return the input list if all items are plain
 	 * @return the bound items
 	 */
-	public static <T extends IDataBindable> List<T> bindToData(Class<T> expectedReturnType, final List<T> bindables, final boolean tryPlain) {
+	public static <T extends IDataBindable> List<T> bindToData(DataSources dataSources, Class<T> expectedReturnType, final List<T> bindables, final boolean tryPlain) {
 		final List<T> result = new ArrayList<T>();
 		boolean plain = tryPlain;
 		for (final IDataBindable bindable : bindables) {
-			final T bound = expectedReturnType.cast(bindable.bindToData());
+			final T bound = expectedReturnType.cast(bindable.bindToData(dataSources));
 			result.add(bound);
 			if (bound != bindable) {
 				plain = false;
