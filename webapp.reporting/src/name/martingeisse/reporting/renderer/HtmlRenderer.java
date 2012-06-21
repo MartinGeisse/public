@@ -24,12 +24,7 @@ import name.martingeisse.reporting.document.Table;
 import name.martingeisse.reporting.document.TextInlineItem;
 
 import org.apache.commons.io.IOUtils;
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PiePlot3D;
-import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.util.Rotation;
 
 /**
  * TODO: document me
@@ -255,28 +250,13 @@ public class HtmlRenderer {
 	 * @param chartBlock
 	 */
 	private void render(ChartBlock chartBlock) {
-		
-		// generate an IMG element
 		File imageFile = allocateResource("chart-$.png");
 		out.print("<div><img src=\"" + imageFile.getName() + "\" /></div>");
-		
-		// render the chart
-		DefaultPieDataset dataset = new DefaultPieDataset();
-		dataset.setValue("Linux", 29);
-		dataset.setValue("Mac", 20);
-		dataset.setValue("Windows", 151);
-        JFreeChart chart = ChartFactory.createPieChart3D("My Title", dataset, true, true, false);
-        PiePlot3D plot = (PiePlot3D) chart.getPlot();
-        plot.setDepthFactor(0.05);
-        plot.setStartAngle(290);
-        plot.setDirection(Rotation.CLOCKWISE);
-        plot.setForegroundAlpha(0.5f);
         try {
-            ChartUtilities.saveChartAsPNG(imageFile, chart, 500, 300);
+            ChartUtilities.saveChartAsPNG(imageFile, chartBlock.getChart(), 1000, 600);
         } catch (IOException e) {
         	throw new RuntimeException(e);
         }
-		
 	}
 	
 	/**
