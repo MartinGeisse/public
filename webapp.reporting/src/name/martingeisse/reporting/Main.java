@@ -15,6 +15,7 @@ import name.martingeisse.reporting.document.FormattedCompoundInlineItem;
 import name.martingeisse.reporting.document.InlineFormattingInstruction;
 import name.martingeisse.reporting.document.Paragraph;
 import name.martingeisse.reporting.document.Section;
+import name.martingeisse.reporting.document.Table;
 import name.martingeisse.reporting.document.TextInlineItem;
 import name.martingeisse.reporting.renderer.HtmlRenderer;
 
@@ -26,6 +27,7 @@ public class Main {
 
 	/**
 	 * @param args ...
+	 * @throws Exception ...
 	 */
 	public static void main(String[] args) throws Exception {
 		
@@ -37,6 +39,12 @@ public class Main {
 		section1.setTitle("Section One");
 		Paragraph section1Paragraph = new Paragraph(new TextInlineItem("This is section 1 content"));
 		section1.getDirectContents().getSubItems().add(section1Paragraph);
+		
+		Table table = new Table();
+		table.setFieldNames(new String[] {"foo", "bar", "fupp"});
+		table.getRows().add(new String[] {"23", "Blarp", "1.0"});
+		table.getRows().add(new String[] {"42", "Blubber", "5.3"});
+		section1.getDirectContents().getSubItems().add(table);
 
 		Section section2 = new Section();
 		rootSection.getSubsections().add(section2);

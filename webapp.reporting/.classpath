@@ -3,5 +3,11 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="lib/java/mysql-connector-java-5.1.20-bin.jar"/>
+	<classpathentry kind="lib" path="lib/java/commons-beanutils-1.8.3.jar"/>
+	<classpathentry kind="lib" path="lib/java/commons-codec-1.5.jar"/>
+	<classpathentry kind="lib" path="lib/java/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/java/commons-io-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/java/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/java/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

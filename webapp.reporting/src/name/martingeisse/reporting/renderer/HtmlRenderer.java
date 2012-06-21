@@ -8,9 +8,12 @@ package name.martingeisse.reporting.renderer;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Stack;
+
+import org.apache.commons.io.IOUtils;
 
 import name.martingeisse.reporting.document.Document;
 import name.martingeisse.reporting.document.FormattedCompoundInlineItem;
@@ -18,6 +21,7 @@ import name.martingeisse.reporting.document.IBlockItem;
 import name.martingeisse.reporting.document.IInlineItem;
 import name.martingeisse.reporting.document.Paragraph;
 import name.martingeisse.reporting.document.Section;
+import name.martingeisse.reporting.document.Table;
 import name.martingeisse.reporting.document.TextInlineItem;
 
 /**
@@ -49,7 +53,7 @@ public class HtmlRenderer {
 	 */
 	public void render(Document document, File outputFile) {
 		try {
-			this.out = new PrintWriter(outputFile);
+			this.out = new PrintWriter(outputFile, "utf-8");
 			this.sectionStack = new Stack<Section>();
 			render(document);
 			this.out.flush();
@@ -65,11 +69,29 @@ public class HtmlRenderer {
 	 * @param document
 	 */
 	private void render(Document document) {
-		out.println("<html><body>");
+		out.println("<html><head>");
+		out.println("  <style type=\"text/css\">");
+		printFromClasspathResource(HtmlRenderer.class, "style.css");
+		out.println("  </style>");
+		out.println("</head><body>");
 		render(document.getRootSection());
 		out.println("</body></html>");
 	}
 
+	/**
+	 * @param c
+	 * @param name
+	 */
+	private void printFromClasspathResource(Class<?> c, String name) {
+		try {
+			InputStream s = c.getResourceAsStream(name);
+			IOUtils.copy(s, out, "utf-8");
+			s.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	/**
 	 * @param section
 	 */
@@ -143,6 +165,9 @@ public class HtmlRenderer {
 		if (blockItem instanceof Paragraph) {
 			Paragraph paragraph = (Paragraph)blockItem;
 			renderInlineItem(paragraph.getContents());
+		} else if (blockItem instanceof Table) {
+			Table table = (Table)blockItem;
+			render(table);
 		} else {
 			throw new RuntimeException("cannot render block item: " + blockItem);
 		}
@@ -172,6 +197,30 @@ public class HtmlRenderer {
 		} else {
 			throw new RuntimeException("cannot render inline item: " + item);
 		}
+	}
+	
+	/**
+	 * @param table
+	 */
+	private void render(Table table) {
+		out.print("<table>");
+		out.print("<tr>");
+		for (String fieldName : table.getFieldNames()) {
+			out.print("<th>");
+			printEscaped(fieldName);
+			out.print("</th>");
+		}
+		out.print("</tr>");
+		for (String[] row : table.getRows()) {
+			out.print("<tr>");
+			for (String value : row) {
+				out.print("<td>");
+				printEscaped(value);
+				out.print("</td>");
+			}
+			out.print("</tr>");
+		}
+		out.print("</table>");
 	}
 	
 }
