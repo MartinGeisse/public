@@ -8,6 +8,7 @@ package name.martingeisse.reporting.datasource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +51,15 @@ public class DataSources extends HashMap<String, JdbcDataSource> {
 	 */
 	public Connection getConnection(String key) {
 		return get(key).getConnection();
+	}
+
+	/**
+	 * Returns the statement for the specified key.
+	 * @param key the key
+	 * @return the statement
+	 */
+	public Statement getStatement(String key) {
+		return get(key).getStatement();
 	}
 	
 }

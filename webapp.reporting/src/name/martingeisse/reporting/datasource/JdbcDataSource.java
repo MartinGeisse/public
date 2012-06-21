@@ -9,6 +9,7 @@ package name.martingeisse.reporting.datasource;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * This class connects to a JDBC database.
@@ -35,6 +36,11 @@ public class JdbcDataSource {
 	 */
 	private Connection connection;
 
+	/**
+	 * the statement
+	 */
+	private Statement statement;
+	
 	/**
 	 * Constructor.
 	 * @param url the database URL
@@ -80,11 +86,20 @@ public class JdbcDataSource {
 	}
 
 	/**
+	 * Getter method for the statement.
+	 * @return the statement
+	 */
+	public Statement getStatement() {
+		return statement;
+	}
+	
+	/**
 	 * Connects to the database.
 	 * @throws SQLException on SQL errors
 	 */
 	public void connect() throws SQLException {
 		this.connection = DriverManager.getConnection(url, username, password);
+		this.statement = connection.createStatement();
 	}
 
 	/**
@@ -92,6 +107,7 @@ public class JdbcDataSource {
 	 * @throws SQLException on SQL errors
 	 */
 	public void disconnect() throws SQLException {
+		this.statement = null;
 		this.connection.close();
 		this.connection = null;
 	}

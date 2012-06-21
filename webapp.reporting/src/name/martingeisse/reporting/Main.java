@@ -10,6 +10,8 @@ import java.io.File;
 
 import name.martingeisse.reporting.datasource.DataSources;
 import name.martingeisse.reporting.datasource.JdbcDataSource;
+import name.martingeisse.reporting.definition.SqlQuery;
+import name.martingeisse.reporting.definition.UnboundTable;
 import name.martingeisse.reporting.document.Document;
 import name.martingeisse.reporting.document.FormattedCompoundInlineItem;
 import name.martingeisse.reporting.document.InlineFormattingInstruction;
@@ -51,6 +53,9 @@ public class Main {
 		section2.setTitle("Section Two");
 		Paragraph section2Paragraph = new Paragraph(new TextInlineItem("This is section 2 content"));
 		section2.getDirectContents().getSubItems().add(section2Paragraph);
+		
+		UnboundTable unboundTable = new UnboundTable(new SqlQuery("default", "SELECT * FROM phpbb_acl_roles LIMIT 10"));
+		section2.getDirectContents().getSubItems().add(unboundTable);
 
 		Section section2sub1 = new Section();
 		section2.getSubsections().add(section2sub1);
