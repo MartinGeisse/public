@@ -9,8 +9,7 @@ package name.martingeisse.reporting.document;
 import name.martingeisse.reporting.datasource.DataSources;
 
 /**
- * TODO: document me
- *
+ * This class encapsulates a whole report document.
  */
 public final class Document implements IDataBindable {
 
