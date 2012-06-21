@@ -14,6 +14,7 @@ import name.martingeisse.reporting.definition.SqlQuery;
 import name.martingeisse.reporting.definition.UnboundTable;
 import name.martingeisse.reporting.definition.keycount.KeyCountTestTable;
 import name.martingeisse.reporting.definition.keycount.SimpleTabularKeyCountQueryAdapter;
+import name.martingeisse.reporting.document.ChartBlock;
 import name.martingeisse.reporting.document.Document;
 import name.martingeisse.reporting.document.FormattedCompoundInlineItem;
 import name.martingeisse.reporting.document.InlineFormattingInstruction;
@@ -59,6 +60,9 @@ public class Main {
 		UnboundTable unboundTable = new UnboundTable(new SqlQuery("default", "SELECT * FROM phpbb_acl_roles LIMIT 10"), "This is a table.");
 		section2.getDirectContents().getSubItems().add(unboundTable);
 		
+		ChartBlock chartBlock = new ChartBlock();
+		section2.getDirectContents().getSubItems().add(chartBlock);
+		
 		String testQuery1 = "SELECT role_description, role_order FROM phpbb_acl_roles LIMIT 10";
 		KeyCountTestTable testTable1 = new KeyCountTestTable(new SimpleTabularKeyCountQueryAdapter(new SqlQuery("default", testQuery1)));
 		section2.getDirectContents().getSubItems().add(testTable1);
@@ -96,6 +100,7 @@ public class Main {
 		
 		HtmlRenderer renderer = new HtmlRenderer();
 		renderer.render(boundDocument, new File("test.html"));
+		
 	}
 	
 }

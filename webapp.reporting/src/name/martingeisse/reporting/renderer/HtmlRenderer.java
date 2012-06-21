@@ -13,8 +13,7 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Stack;
 
-import org.apache.commons.io.IOUtils;
-
+import name.martingeisse.reporting.document.ChartBlock;
 import name.martingeisse.reporting.document.Document;
 import name.martingeisse.reporting.document.FormattedCompoundInlineItem;
 import name.martingeisse.reporting.document.IBlockItem;
@@ -24,12 +23,25 @@ import name.martingeisse.reporting.document.Section;
 import name.martingeisse.reporting.document.Table;
 import name.martingeisse.reporting.document.TextInlineItem;
 
+import org.apache.commons.io.IOUtils;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot3D;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.util.Rotation;
+
 /**
  * TODO: document me
  *
  */
 public class HtmlRenderer {
 
+	/**
+	 * the outputFile
+	 */
+	private File outputFile;
+	
 	/**
 	 * the out
 	 */
@@ -39,6 +51,11 @@ public class HtmlRenderer {
 	 * the sectionStack
 	 */
 	private Stack<Section> sectionStack;
+	
+	/**
+	 * the resourceCounter
+	 */
+	private int resourceCounter;
 	
 	/**
 	 * Constructor.
@@ -53,12 +70,15 @@ public class HtmlRenderer {
 	 */
 	public void render(Document document, File outputFile) {
 		try {
+			this.outputFile = outputFile;
 			this.out = new PrintWriter(outputFile, "utf-8");
 			this.sectionStack = new Stack<Section>();
+			this.resourceCounter = 0;
 			render(document);
 			this.out.flush();
 			this.out.close();
 			this.out = null;
+			this.outputFile = outputFile;
 			this.sectionStack = null;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -168,6 +188,9 @@ public class HtmlRenderer {
 		} else if (blockItem instanceof Table) {
 			Table table = (Table)blockItem;
 			render(table);
+		} else if (blockItem instanceof ChartBlock) {
+			ChartBlock chartBlock = (ChartBlock)blockItem;
+			render(chartBlock);
 		} else {
 			throw new RuntimeException("cannot render block item: " + blockItem);
 		}
@@ -226,6 +249,44 @@ public class HtmlRenderer {
 			out.print("</tr>");
 		}
 		out.print("</table>");
+	}
+
+	/**
+	 * @param chartBlock
+	 */
+	private void render(ChartBlock chartBlock) {
+		
+		// generate an IMG element
+		File imageFile = allocateResource("chart-$.png");
+		out.print("<div><img src=\"" + imageFile.getName() + "\" /></div>");
+		
+		// render the chart
+		DefaultPieDataset dataset = new DefaultPieDataset();
+		dataset.setValue("Linux", 29);
+		dataset.setValue("Mac", 20);
+		dataset.setValue("Windows", 151);
+        JFreeChart chart = ChartFactory.createPieChart3D("My Title", dataset, true, true, false);
+        PiePlot3D plot = (PiePlot3D) chart.getPlot();
+        plot.setDepthFactor(0.05);
+        plot.setStartAngle(290);
+        plot.setDirection(Rotation.CLOCKWISE);
+        plot.setForegroundAlpha(0.5f);
+        try {
+            ChartUtilities.saveChartAsPNG(imageFile, chart, 500, 300);
+        } catch (IOException e) {
+        	throw new RuntimeException(e);
+        }
+		
+	}
+	
+	/**
+	 * @param nameTemplate
+	 * @return
+	 */
+	private File allocateResource(String nameTemplate) {
+		int id = resourceCounter;
+		resourceCounter++;
+		return new File(outputFile.getParent(), nameTemplate.replace("$", "" + id));
 	}
 	
 }
