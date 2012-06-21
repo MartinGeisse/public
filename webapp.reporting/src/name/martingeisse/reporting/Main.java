@@ -21,6 +21,7 @@ import name.martingeisse.reporting.document.Paragraph;
 import name.martingeisse.reporting.document.Section;
 import name.martingeisse.reporting.document.Table;
 import name.martingeisse.reporting.document.TextInlineItem;
+import name.martingeisse.reporting.parser.ReportDefinitionParser;
 import name.martingeisse.reporting.renderer.HtmlRenderer;
 
 /**
@@ -34,6 +35,8 @@ public class Main {
 	 * @throws Exception ...
 	 */
 	public static void main(String[] args) throws Exception {
+		
+		Document document = ReportDefinitionParser.parse(new File("report.xml"));
 		
 		Section rootSection = new Section();
 		rootSection.setTitle("The Document");
@@ -88,7 +91,7 @@ public class Main {
 		Paragraph section3Paragraph = new Paragraph(new TextInlineItem("This is section 3 content"));
 		section3.getDirectContents().getSubItems().add(section3Paragraph);
 		
-		Document document = new Document(rootSection);
+		document.setRootSection(rootSection);
 		
 		DataSources dataSources = new DataSources();
 		dataSources.put("default", new JdbcDataSource("jdbc:mysql://localhost/phpbb", "root", ""));
