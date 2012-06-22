@@ -36,7 +36,7 @@ public class ReportDefinitionParser {
 			final FileInputStream fileInputStream = new FileInputStream(definitionFile);
 			final InputSource inputSource = new InputSource(fileInputStream);
 			final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-			xmlReader.setContentHandler(new MainHandler());
+			xmlReader.setContentHandler(new ParserStateContext());
 			xmlReader.parse(inputSource);
 			fileInputStream.close();
 			return new Document();
