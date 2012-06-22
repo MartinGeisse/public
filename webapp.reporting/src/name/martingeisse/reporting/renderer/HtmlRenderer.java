@@ -227,21 +227,23 @@ public class HtmlRenderer {
 			printEscaped(table.getCaption());
 			out.print("</caption>");
 		}
-		out.print("<tr>");
+		out.print("<tr class=\"odd\">");
 		for (String fieldName : table.getFieldNames()) {
 			out.print("<th>");
 			printEscaped(fieldName);
 			out.print("</th>");
 		}
 		out.print("</tr>");
+		boolean even = true;
 		for (String[] row : table.getRows()) {
-			out.print("<tr>");
+			out.print("<tr class=\"" + (even ? "even" : "odd") + "\">");
 			for (String value : row) {
 				out.print("<td>");
 				printEscaped(value);
 				out.print("</td>");
 			}
 			out.print("</tr>");
+			even = !even;
 		}
 		out.print("</table>");
 	}

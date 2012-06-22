@@ -10,24 +10,19 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
 import name.martingeisse.reporting.datasource.DataSources;
-import name.martingeisse.reporting.document.IBlockItem;
+import name.martingeisse.reporting.document.AbstractTable;
 import name.martingeisse.reporting.document.Table;
 
 /**
  * This item is similar to a {@link Table} but does not yet contain its
  * data. Instead, it is fileld with data from an {@link ITabularQuery}.
  */
-public class UnboundTable implements IBlockItem {
+public class UnboundTable extends AbstractTable {
 
 	/**
 	 * the query
 	 */
 	private ITabularQuery query;
-
-	/**
-	 * the caption
-	 */
-	private String caption;
 
 	/**
 	 * Constructor.
@@ -50,7 +45,7 @@ public class UnboundTable implements IBlockItem {
 	 */
 	public UnboundTable(final ITabularQuery query, final String caption) {
 		this.query = query;
-		this.caption = caption;
+		setCaption(caption);
 	}
 
 	/**
@@ -67,22 +62,6 @@ public class UnboundTable implements IBlockItem {
 	 */
 	public void setQuery(final ITabularQuery query) {
 		this.query = query;
-	}
-
-	/**
-	 * Getter method for the caption.
-	 * @return the caption
-	 */
-	public String getCaption() {
-		return caption;
-	}
-
-	/**
-	 * Setter method for the caption.
-	 * @param caption the caption to set
-	 */
-	public void setCaption(final String caption) {
-		this.caption = caption;
 	}
 
 	/* (non-Javadoc)
@@ -105,7 +84,7 @@ public class UnboundTable implements IBlockItem {
 
 			// fill the result table
 			final Table result = new Table();
-			result.setCaption(caption);
+			result.setCaption(getCaption());
 			result.setFieldNames(fieldNames);
 			while (resultSet.next()) {
 				final String[] values = new String[width];

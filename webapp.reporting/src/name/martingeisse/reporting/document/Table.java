@@ -14,7 +14,7 @@ import name.martingeisse.reporting.datasource.DataSources;
 /**
  * A renderable table.
  */
-public class Table implements IBlockItem {
+public class Table extends AbstractTable {
 
 	/**
 	 * the fieldNames
@@ -25,11 +25,6 @@ public class Table implements IBlockItem {
 	 * the rows
 	 */
 	private List<String[]> rows;
-
-	/**
-	 * the caption
-	 */
-	private String caption;
 
 	/**
 	 * Constructor.
@@ -68,22 +63,6 @@ public class Table implements IBlockItem {
 	 */
 	public void setRows(final List<String[]> rows) {
 		this.rows = rows;
-	}
-
-	/**
-	 * Getter method for the caption.
-	 * @return the caption
-	 */
-	public String getCaption() {
-		return caption;
-	}
-
-	/**
-	 * Setter method for the caption.
-	 * @param caption the caption to set
-	 */
-	public void setCaption(final String caption) {
-		this.caption = caption;
 	}
 
 	/* (non-Javadoc)
