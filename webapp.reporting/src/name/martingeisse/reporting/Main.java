@@ -23,6 +23,7 @@ import name.martingeisse.reporting.document.Table;
 import name.martingeisse.reporting.document.TextInlineItem;
 import name.martingeisse.reporting.parser.ReportDefinitionParser;
 import name.martingeisse.reporting.renderer.HtmlRenderer;
+import name.martingeisse.reporting.util.ToStringUtil;
 
 /**
  * TODO: document me
@@ -37,6 +38,7 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		
 		Document document = ReportDefinitionParser.parse(new File("report.xml"));
+		System.out.println(ToStringUtil.concatArray(document));
 		
 //		Section rootSection = new Section();
 //		rootSection.setTitle("The Document");

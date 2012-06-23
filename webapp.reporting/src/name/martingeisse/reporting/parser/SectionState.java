@@ -6,13 +6,10 @@
 
 package name.martingeisse.reporting.parser;
 
-import org.xml.sax.Attributes;
-
 import name.martingeisse.reporting.document.IBlockItem;
-import name.martingeisse.reporting.document.IInlineItem;
-import name.martingeisse.reporting.document.Paragraph;
 import name.martingeisse.reporting.document.Section;
-import name.martingeisse.reporting.util.ToStringUtil;
+
+import org.xml.sax.Attributes;
 
 /**
  * This class handles section contents.
@@ -63,10 +60,8 @@ public class SectionState extends AbstractParserState {
 			section.getSubsections().add((Section)data);
 		} else if (data instanceof IBlockItem) {
 			section.getDirectContents().getSubItems().add((IBlockItem)data);
-		} else if (data instanceof IInlineItem) {
-			section.getDirectContents().getSubItems().add(new Paragraph((IInlineItem)data));
 		} else {
-			throw new UnexpectedReturnDataException(data, "expected Section, IBlockItem or IInlineItem");
+			throw new UnexpectedReturnDataException(data, "expected Section or IBlockItem");
 		}
 	}
 
@@ -78,7 +73,7 @@ public class SectionState extends AbstractParserState {
 		if (ParserUtil.isCoreElement(namespaceUri, name, "section")) {
 			throw new RuntimeException("NOT YET IMPLEMENTED"); // TODO
 		} else if (section.getSubsections().isEmpty() && ParserUtil.isCoreElement(namespaceUri, name, "p")) {
-			context.pushState(new InlineContentState(), IInlineItem.class);
+			context.pushState(new InlineContentState(), IBlockItem.class);
 		} else {
 			String info = (section.getSubsections().isEmpty() ? "expected <core:p> or <core:section>" : "expected <core:section>");
 			throw new UnexpectedElementException(namespaceUri, name, info);

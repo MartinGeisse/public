@@ -55,5 +55,19 @@ public enum InlineFormattingInstruction {
 	public String getHtmlElement() {
 		return htmlElement;
 	}
+
+	/**
+	 * Finds the enum constant with the specified HTML element.
+	 * @param htmlElement the HTML element to look for
+	 * @return the enum constant, or null if none matches
+	 */
+	public static InlineFormattingInstruction findByHtmlElement(String htmlElement) {
+		for (InlineFormattingInstruction element : values()) {
+			if (element.getHtmlElement().equals(htmlElement)) {
+				return element;
+			}
+		}
+		return null;
+	}
 	
 }

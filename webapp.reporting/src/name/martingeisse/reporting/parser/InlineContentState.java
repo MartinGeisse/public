@@ -9,8 +9,10 @@ package name.martingeisse.reporting.parser;
 import org.xml.sax.Attributes;
 
 import name.martingeisse.reporting.document.FormattedCompoundInlineItem;
+import name.martingeisse.reporting.document.IBlockItem;
 import name.martingeisse.reporting.document.IInlineItem;
 import name.martingeisse.reporting.document.InlineFormattingInstruction;
+import name.martingeisse.reporting.document.Paragraph;
 import name.martingeisse.reporting.document.TextInlineItem;
 
 /**
@@ -43,7 +45,16 @@ public class InlineContentState extends AbstractParserState {
 	 */
 	@Override
 	public void startState(IParserStateContext context, Class<?> expectedReturnType) {
-		checkOnlyPossibleReturnType(IInlineItem.class, expectedReturnType);
+		System.out.println("* " + expectedReturnType);
+		initializeReturnType(expectedReturnType, IInlineItem.class, IBlockItem.class);
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.reporting.parser.AbstractParserState#consumeReturnData(name.martingeisse.reporting.parser.IParserStateContext, java.lang.Object)
+	 */
+	@Override
+	public void consumeReturnData(IParserStateContext context, Object data) {
+		result.getSubItems().add((IInlineItem)data);
 	}
 	
 	/* (non-Javadoc)
@@ -51,6 +62,14 @@ public class InlineContentState extends AbstractParserState {
 	 */
 	@Override
 	public void startElement(IParserStateContext context, String namespaceUri, String name, Attributes attributes) {
+		if (ParserConstants.CORE_NAMESPACE.equals(namespaceUri)) {
+			InlineFormattingInstruction formattingInstruction = InlineFormattingInstruction.findByHtmlElement(name);
+			if (formattingInstruction != null) {
+				context.pushState(new InlineContentState(formattingInstruction), IInlineItem.class);
+				return;
+			}
+		}
+		throw new UnexpectedElementException(namespaceUri, name, "expected formatted inline content");
 	}
 	
 	/* (non-Javadoc)
@@ -58,9 +77,7 @@ public class InlineContentState extends AbstractParserState {
 	 */
 	@Override
 	public void endElement(IParserStateContext context, String namespaceUri, String name) {
-		if (ParserUtil.isCoreElement(namespaceUri, name, "p")) { // TODO only needed for now because formatting tags aren't recognized
-			context.popState(result);
-		}
+		context.popState(getExpectedReturnType() == IBlockItem.class ? new Paragraph(result) : result);
 	}
 
 	/* (non-Javadoc)
