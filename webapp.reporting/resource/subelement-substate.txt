@@ -1,0 +1,13 @@
+
+When a state encounters a sub-element, it typically pushes a sub-state. In the general
+case, this sub-state is not directly specified by the pushing state. Instead, the
+pushing state says what it expects, then asks the state factory registry to create
+the state.
+
+The element *name* tells the state factory registry what state class is expected. It does
+not tell the parent state which role the element plays ("role element names" are often
+used in XML, but not here). We are using "type element names", i.e. the element
+name says what the element *is*, not *how it is used*.
+
+Content is passed to the sub-state. Attributes can be considered content, thus
+attributes should be passed to startState() of the sub-state.

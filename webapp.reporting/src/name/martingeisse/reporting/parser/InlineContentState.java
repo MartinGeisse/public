@@ -39,13 +39,12 @@ public class InlineContentState extends AbstractParserState {
 	public InlineContentState(InlineFormattingInstruction formattingInstruction) {
 		this.result = new FormattedCompoundInlineItem(formattingInstruction);
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see name.martingeisse.reporting.parser.AbstractParserState#startState(name.martingeisse.reporting.parser.IParserStateContext, java.lang.Class)
+	 * @see name.martingeisse.reporting.parser.AbstractParserState#startState(name.martingeisse.reporting.parser.IParserStateContext, java.lang.Class, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
 	@Override
-	public void startState(IParserStateContext context, Class<?> expectedReturnType) {
-		System.out.println("* " + expectedReturnType);
+	public void startState(IParserStateContext context, Class<?> expectedReturnType, String namespaceUri, String name, Attributes attributes) {
 		initializeReturnType(expectedReturnType, IInlineItem.class, IBlockItem.class);
 	}
 	
@@ -65,7 +64,7 @@ public class InlineContentState extends AbstractParserState {
 		if (ParserConstants.CORE_NAMESPACE.equals(namespaceUri)) {
 			InlineFormattingInstruction formattingInstruction = InlineFormattingInstruction.findByHtmlElement(name);
 			if (formattingInstruction != null) {
-				context.pushState(new InlineContentState(formattingInstruction), IInlineItem.class);
+				context.pushState(new InlineContentState(formattingInstruction), IInlineItem.class, namespaceUri, name, attributes);
 				return;
 			}
 		}

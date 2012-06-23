@@ -45,10 +45,12 @@ public class SectionState extends AbstractParserState {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.reporting.parser.AbstractParserState#startState(name.martingeisse.reporting.parser.IParserStateContext, java.lang.Class)
+	 * @see name.martingeisse.reporting.parser.AbstractParserState#startState(name.martingeisse.reporting.parser.IParserStateContext, java.lang.Class, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
 	@Override
-	public void startState(IParserStateContext context, Class<?> expectedReturnType) {
+	public void startState(IParserStateContext context, Class<?> expectedReturnType, String namespaceUri, String name, Attributes attributes) {
+		initializeReturnType(expectedReturnType, Section.class);
+		section.setTitle(attributes.getValue("", "title"));
 	}
 
 	/* (non-Javadoc)
@@ -71,9 +73,9 @@ public class SectionState extends AbstractParserState {
 	@Override
 	public void startElement(IParserStateContext context, String namespaceUri, String name, Attributes attributes) {
 		if (ParserUtil.isCoreElement(namespaceUri, name, "section")) {
-			throw new RuntimeException("NOT YET IMPLEMENTED"); // TODO
+			context.pushState(new SectionState(), Section.class, namespaceUri, name, attributes);
 		} else if (section.getSubsections().isEmpty() && ParserUtil.isCoreElement(namespaceUri, name, "p")) {
-			context.pushState(new InlineContentState(), IBlockItem.class);
+			context.pushState(new InlineContentState(), IBlockItem.class, namespaceUri, name, attributes);
 		} else {
 			String info = (section.getSubsections().isEmpty() ? "expected <core:p> or <core:section>" : "expected <core:section>");
 			throw new UnexpectedElementException(namespaceUri, name, info);
@@ -85,6 +87,7 @@ public class SectionState extends AbstractParserState {
 	 */
 	@Override
 	public void endElement(IParserStateContext context, String namespaceUri, String name) {
+		context.popState(section);
 	}
 
 	/* (non-Javadoc)

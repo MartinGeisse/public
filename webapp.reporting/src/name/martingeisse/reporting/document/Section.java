@@ -18,6 +18,11 @@ import name.martingeisse.reporting.util.ToStringUtil;
 public final class Section implements IDataBindable {
 
 	/**
+	 * the DEFAULT_TITLE
+	 */
+	public static final String DEFAULT_TITLE = "<unnamed>";
+	
+	/**
 	 * the title
 	 */
 	private String title;
@@ -36,7 +41,7 @@ public final class Section implements IDataBindable {
 	 * Constructor.
 	 */
 	public Section() {
-		this.title = "<unnamed>";
+		this.title = DEFAULT_TITLE;
 		this.directContents = new BlockSequenceItem();
 		this.subsections = new ArrayList<Section>();
 	}
@@ -54,7 +59,7 @@ public final class Section implements IDataBindable {
 	 * @param title the title to set
 	 */
 	public void setTitle(final String title) {
-		this.title = title;
+		this.title = (title == null ? DEFAULT_TITLE : title);
 	}
 
 	/**

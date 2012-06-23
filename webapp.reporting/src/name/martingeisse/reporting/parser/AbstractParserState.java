@@ -56,10 +56,10 @@ public class AbstractParserState implements IParserState {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.reporting.parser.IParserState#startState(name.martingeisse.reporting.parser.IParserStateContext, java.lang.Class)
+	 * @see name.martingeisse.reporting.parser.IParserState#startState(name.martingeisse.reporting.parser.IParserStateContext, java.lang.Class, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
 	@Override
-	public void startState(final IParserStateContext context, final Class<?> expectedReturnType) {
+	public void startState(IParserStateContext context, Class<?> expectedReturnType, String namespaceUri, String name, Attributes attributes) {
 	}
 
 	/* (non-Javadoc)
@@ -96,12 +96,26 @@ public class AbstractParserState implements IParserState {
 	 * type that is statically assignable to the expected return type (throwing an exception
 	 * if no such type can be found). Both the expected and supported type are stored
 	 * and can later be obtained via getter methods.
+	 * 
+	 * The parent state may pass null to indicate that it accepts any return value,
+	 * no matter its type. In this case, the expected return type field of this state is
+	 * set to null, and the supported type chosen is set to the first supported type
+	 * (unless no types are supported by this state at all, in which case this field
+	 * is also set to null).
+	 * 
 	 * @param expectedReturnTypeByParent the return type expected by the parent state,
 	 * i.e. the "actually expected return type".
 	 * @param supportedReturnTypes the return types supported by this class, i.e. the
 	 * "expected expected return types".
 	 */
 	protected void initializeReturnType(final Class<?> expectedReturnTypeByParent, final Class<?>... supportedReturnTypes) {
+
+		// if the parent state doesn't care about the return type, we just choose the first supported type
+		if (expectedReturnTypeByParent == null) {
+			this.expectedReturnType = null;
+			this.supportedReturnType = (supportedReturnTypes.length == 0 ? null : supportedReturnTypes[0]);
+			return;
+		}
 		
 		// look for a matching type
 		for (Class<?> supportedType : supportedReturnTypes) {

@@ -61,7 +61,7 @@ class ParserStateContext extends DefaultHandler2 implements IParserStateContext 
 		RootState state = new RootState();
 		this.document = state.getDocument();
 		stateStack.clear();
-		pushState(state, null);
+		pushState(state, null, null, null, null);
 	}
 	
 	/* (non-Javadoc)
@@ -73,15 +73,12 @@ class ParserStateContext extends DefaultHandler2 implements IParserStateContext 
 	} 
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.reporting.parser.IParserStateContext#pushState(name.martingeisse.reporting.parser.IParserState, java.lang.Class)
+	 * @see name.martingeisse.reporting.parser.IParserStateContext#pushState(name.martingeisse.reporting.parser.IParserState, java.lang.Class, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
 	@Override
-	public void pushState(IParserState state, Class<?> expectedReturnType) {
-		if (expectedReturnType == null) {
-			expectedReturnType = Void.TYPE;
-		}
+	public void pushState(IParserState state, Class<?> expectedReturnType, String namespaceUri, String name, Attributes attributes) {
 		stateStack.push(state);
-		state.startState(this, expectedReturnType);
+		state.startState(this, expectedReturnType, namespaceUri, name, attributes);
 	}
 
 	/* (non-Javadoc)

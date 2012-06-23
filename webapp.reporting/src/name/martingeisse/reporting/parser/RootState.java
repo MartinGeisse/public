@@ -42,7 +42,7 @@ public class RootState extends AbstractParserState {
 	@Override
 	public void startElement(IParserStateContext context, String namespaceUri, String name, Attributes attributes) {
 		if (ParserUtil.isCoreElement(namespaceUri, name, "report")) {
-			context.pushState(new DocumentState(document), null);
+			context.pushState(new DocumentState(document), null, namespaceUri, name, attributes);
 		} else {
 			throw new UnexpectedElementException(namespaceUri, name, "expected <core:report>");
 		}
