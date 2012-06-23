@@ -57,4 +57,12 @@ public final class Document implements IDataBindable {
 		return new Document((Section)rootSection.bindToData(dataSources));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "[document]" + rootSection + "[/document]";
+	}
+	
 }

@@ -14,7 +14,7 @@ import org.xml.sax.Attributes;
  * This state is the first state on the state stack of a report
  * definition parser.
  */
-public class RootState implements IParserState {
+public class RootState extends AbstractParserState {
 
 	/**
 	 * the document
@@ -37,43 +37,15 @@ public class RootState implements IParserState {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.reporting.parser.IParserState#startState(name.martingeisse.reporting.parser.IParserStateContext)
-	 */
-	@Override
-	public void startState(IParserStateContext context) {
-	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.reporting.parser.IParserState#consumeReturnData(name.martingeisse.reporting.parser.IParserStateContext, java.lang.Object)
-	 */
-	@Override
-	public void consumeReturnData(IParserStateContext context, Object data) {
-	}
-
-	/* (non-Javadoc)
 	 * @see name.martingeisse.reporting.parser.IParserState#startElement(name.martingeisse.reporting.parser.IParserStateContext, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
 	@Override
 	public void startElement(IParserStateContext context, String namespaceUri, String name, Attributes attributes) {
 		if (ParserUtil.isCoreElement(namespaceUri, name, "report")) {
-			context.pushState(new DocumentState(document));
+			context.pushState(new DocumentState(document), null);
 		} else {
-			throw new ParserException("unexpected root element, expected 'core:report', found [" + namespaceUri + "]:" + name);
+			throw new UnexpectedElementException(namespaceUri, name, "expected <core:report>");
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.reporting.parser.IParserState#endElement(name.martingeisse.reporting.parser.IParserStateContext, java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void endElement(IParserStateContext context, String namespaceUri, String name) {
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.reporting.parser.IParserState#consumeText(name.martingeisse.reporting.parser.IParserStateContext, java.lang.String)
-	 */
-	@Override
-	public void consumeText(IParserStateContext context, String text) {
 	}
 
 }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import name.martingeisse.reporting.datasource.DataSources;
+import name.martingeisse.reporting.util.ToStringUtil;
 
 /**
  * A section in the document.
@@ -100,4 +101,12 @@ public final class Section implements IDataBindable {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return ToStringUtil.concatArray("<section title=\"", title, "\">", directContents, subsections, "</section>");
+	}
+	
 }

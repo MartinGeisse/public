@@ -18,8 +18,14 @@ public interface IParserStateContext {
 	 * to be routed to this new state. This method also invokes the startState()
 	 * method of the state (after pushing) to allow initialization.
 	 * @param state the state to push
+	 * @param expectedReturnType the return type expected by the parent state.
+	 * Passing null indicates that the caller does not care about the return
+	 * type. Pass Void.TYPE to indicate that no return value is expected.
+	 * 
+	 * TODO: the framework does not yet check that the sub-state actually
+	 * passes the expected return type
 	 */
-	public void pushState(IParserState state);
+	public void pushState(IParserState state, Class<?> expectedReturnType);
 
 	/**
 	 * Pops the top-of-stack state from the state stack, causing further SAX

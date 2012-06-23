@@ -18,8 +18,11 @@ public interface IParserState {
 	/**
 	 * This method is invoked when this state is pushed on the context stack.
 	 * @param context the context
+	 * @param expectedReturnType the return type expected by the parent state. The framework
+	 * will not pass null for this parameter; if no return value is expected then the
+	 * framework passes the class object for the primitive pseudo-type "void".
 	 */
-	public void startState(IParserStateContext context);
+	public void startState(IParserStateContext context, Class<?> expectedReturnType);
 
 	/**
 	 * This method is invoked when this state becomes top-of-stack due to the

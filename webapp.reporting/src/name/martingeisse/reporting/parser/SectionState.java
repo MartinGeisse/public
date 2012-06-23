@@ -8,12 +8,16 @@ package name.martingeisse.reporting.parser;
 
 import org.xml.sax.Attributes;
 
+import name.martingeisse.reporting.document.IBlockItem;
+import name.martingeisse.reporting.document.IInlineItem;
+import name.martingeisse.reporting.document.Paragraph;
 import name.martingeisse.reporting.document.Section;
+import name.martingeisse.reporting.util.ToStringUtil;
 
 /**
  * This class handles section contents.
  */
-public class SectionState implements IParserState {
+public class SectionState extends AbstractParserState {
 
 	/**
 	 * the section
@@ -44,11 +48,10 @@ public class SectionState implements IParserState {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.reporting.parser.IParserState#startState(name.martingeisse.reporting.parser.IParserStateContext)
+	 * @see name.martingeisse.reporting.parser.AbstractParserState#startState(name.martingeisse.reporting.parser.IParserStateContext, java.lang.Class)
 	 */
 	@Override
-	public void startState(IParserStateContext context) {
-		System.out.println("* start state");
+	public void startState(IParserStateContext context, Class<?> expectedReturnType) {
 	}
 
 	/* (non-Javadoc)
@@ -56,7 +59,15 @@ public class SectionState implements IParserState {
 	 */
 	@Override
 	public void consumeReturnData(IParserStateContext context, Object data) {
-		System.out.println("* consume return data: " + data);
+		if (data instanceof Section) {
+			section.getSubsections().add((Section)data);
+		} else if (data instanceof IBlockItem) {
+			section.getDirectContents().getSubItems().add((IBlockItem)data);
+		} else if (data instanceof IInlineItem) {
+			section.getDirectContents().getSubItems().add(new Paragraph((IInlineItem)data));
+		} else {
+			throw new UnexpectedReturnDataException(data, "expected Section, IBlockItem or IInlineItem");
+		}
 	}
 
 	/* (non-Javadoc)
@@ -64,7 +75,14 @@ public class SectionState implements IParserState {
 	 */
 	@Override
 	public void startElement(IParserStateContext context, String namespaceUri, String name, Attributes attributes) {
-		System.out.println("* start element: " + namespaceUri + " -- " + name);
+		if (ParserUtil.isCoreElement(namespaceUri, name, "section")) {
+			throw new RuntimeException("NOT YET IMPLEMENTED"); // TODO
+		} else if (section.getSubsections().isEmpty() && ParserUtil.isCoreElement(namespaceUri, name, "p")) {
+			context.pushState(new InlineContentState(), IInlineItem.class);
+		} else {
+			String info = (section.getSubsections().isEmpty() ? "expected <core:p> or <core:section>" : "expected <core:section>");
+			throw new UnexpectedElementException(namespaceUri, name, info);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -72,7 +90,6 @@ public class SectionState implements IParserState {
 	 */
 	@Override
 	public void endElement(IParserStateContext context, String namespaceUri, String name) {
-		System.out.println("* end element: " + namespaceUri + " -- " + name);
 	}
 
 	/* (non-Javadoc)
@@ -80,7 +97,7 @@ public class SectionState implements IParserState {
 	 */
 	@Override
 	public void consumeText(IParserStateContext context, String text) {
-		System.out.println("* text: " + text);
+		noTextExpected(text, "expected sub-sections or block content");
 	}
 
 }

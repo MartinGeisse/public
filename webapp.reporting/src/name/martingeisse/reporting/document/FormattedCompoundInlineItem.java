@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import name.martingeisse.reporting.datasource.DataSources;
+import name.martingeisse.reporting.util.ToStringUtil;
 
 /**
  * This item contains other inline items as well as an inline
@@ -105,4 +106,12 @@ public class FormattedCompoundInlineItem implements IInlineItem {
 		return (boundSubItems == subItems ? this : new FormattedCompoundInlineItem(formattingInstruction, boundSubItems));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return ToStringUtil.concatArray("<", formattingInstruction.getHtmlElement(), ">", subItems, "</", formattingInstruction.getHtmlElement(), ">");
+	}
+	
 }

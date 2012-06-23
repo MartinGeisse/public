@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import name.martingeisse.reporting.datasource.DataSources;
+import name.martingeisse.reporting.util.ToStringUtil;
 
 /**
  * This is a block item that simply contains other block items.
@@ -61,4 +62,12 @@ public class BlockSequenceItem implements IBlockItem {
 		return (boundSubItems == subItems ? this : new BlockSequenceItem(boundSubItems));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return ToStringUtil.concatElements(subItems);
+	}
+	
 }

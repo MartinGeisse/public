@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://martingeisse.name/report/0.1/core">
+
+	<p>
+		bla <b>foo</b> bar
+	</p>
+
+
+
+<!-- 
 	<section title="one">
 		foo bar fupp
 	</section>
 	<section title="two">
 		blubber di flubber
 	</section>
+ -->
+
 </report>

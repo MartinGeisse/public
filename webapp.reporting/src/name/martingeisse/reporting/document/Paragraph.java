@@ -7,6 +7,7 @@
 package name.martingeisse.reporting.document;
 
 import name.martingeisse.reporting.datasource.DataSources;
+import name.martingeisse.reporting.util.ToStringUtil;
 
 /**
  * Adapter between inline items and block items.
@@ -57,4 +58,12 @@ public class Paragraph implements IBlockItem {
 		return (boundContents == contents ? this : new Paragraph(boundContents));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return ToStringUtil.concatArray("<p>", contents, "</p>");
+	}
+	
 }
