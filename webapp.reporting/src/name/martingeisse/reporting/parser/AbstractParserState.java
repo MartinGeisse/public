@@ -43,7 +43,7 @@ public class AbstractParserState implements IParserState {
 	 * Getter method for the supportedReturnType.
 	 * @return the supportedReturnType
 	 */
-	public Class<?> getSupportedReturnType() {
+	public final Class<?> getSupportedReturnType() {
 		return supportedReturnType;
 	}
 
@@ -51,7 +51,7 @@ public class AbstractParserState implements IParserState {
 	 * Setter method for the supportedReturnType.
 	 * @param supportedReturnType the supportedReturnType to set
 	 */
-	public void setSupportedReturnType(final Class<?> supportedReturnType) {
+	public final void setSupportedReturnType(final Class<?> supportedReturnType) {
 		this.supportedReturnType = supportedReturnType;
 	}
 
@@ -108,7 +108,7 @@ public class AbstractParserState implements IParserState {
 	 * @param supportedReturnTypes the return types supported by this class, i.e. the
 	 * "expected expected return types".
 	 */
-	protected void initializeReturnType(final Class<?> expectedReturnTypeByParent, final Class<?>... supportedReturnTypes) {
+	protected final void initializeReturnType(final Class<?> expectedReturnTypeByParent, final Class<?>... supportedReturnTypes) {
 
 		// if the parent state doesn't care about the return type, we just choose the first supported type
 		if (expectedReturnTypeByParent == null) {
@@ -146,7 +146,7 @@ public class AbstractParserState implements IParserState {
 	 * @param text the characters passed to consumeText()
 	 * @param info the info string to pass to the exception constructor in case of errors
 	 */
-	protected void noTextExpected(String text, final String info) {
+	protected final void noTextExpected(String text, final String info) {
 		text = text.trim();
 		if (!text.isEmpty()) {
 			throw new UnexpectedTextException(text, info);

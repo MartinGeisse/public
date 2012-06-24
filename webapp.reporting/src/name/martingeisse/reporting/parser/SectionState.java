@@ -20,22 +20,22 @@ public class SectionState extends AbstractParserState {
 	 * the section
 	 */
 	private final Section section;
-	
+
 	/**
 	 * Constructor.
 	 */
 	public SectionState() {
 		this.section = new Section();
 	}
-	
+
 	/**
 	 * Constructor.
 	 * @param section the section to fill with contents
 	 */
-	public SectionState(Section section) {
+	public SectionState(final Section section) {
 		this.section = section;
 	}
-	
+
 	/**
 	 * Getter method for the section.
 	 * @return the section
@@ -48,7 +48,7 @@ public class SectionState extends AbstractParserState {
 	 * @see name.martingeisse.reporting.parser.AbstractParserState#startState(name.martingeisse.reporting.parser.IParserStateContext, java.lang.Class, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
 	@Override
-	public void startState(IParserStateContext context, Class<?> expectedReturnType, String namespaceUri, String name, Attributes attributes) {
+	public void startState(final IParserStateContext context, final Class<?> expectedReturnType, final String namespaceUri, final String name, final Attributes attributes) {
 		initializeReturnType(expectedReturnType, Section.class);
 		section.setTitle(attributes.getValue("", "title"));
 	}
@@ -57,7 +57,7 @@ public class SectionState extends AbstractParserState {
 	 * @see name.martingeisse.reporting.parser.IParserState#consumeReturnData(name.martingeisse.reporting.parser.IParserStateContext, java.lang.Object)
 	 */
 	@Override
-	public void consumeReturnData(IParserStateContext context, Object data) {
+	public void consumeReturnData(final IParserStateContext context, final Object data) {
 		if (data instanceof Section) {
 			section.getSubsections().add((Section)data);
 		} else if (data instanceof IBlockItem) {
@@ -71,22 +71,33 @@ public class SectionState extends AbstractParserState {
 	 * @see name.martingeisse.reporting.parser.IParserState#startElement(name.martingeisse.reporting.parser.IParserStateContext, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
 	@Override
-	public void startElement(IParserStateContext context, String namespaceUri, String name, Attributes attributes) {
+	public void startElement(final IParserStateContext context, final String namespaceUri, final String name, final Attributes attributes) {
+
 		if (ParserUtil.isCoreElement(namespaceUri, name, "section")) {
 			context.pushState(new SectionState(), Section.class, namespaceUri, name, attributes);
-		} else if (section.getSubsections().isEmpty() && ParserUtil.isCoreElement(namespaceUri, name, "p")) {
-			context.pushState(new InlineContentState(), IBlockItem.class, namespaceUri, name, attributes);
-		} else {
-			String info = (section.getSubsections().isEmpty() ? "expected <core:p> or <core:section>" : "expected <core:section>");
-			throw new UnexpectedElementException(namespaceUri, name, info);
+			return;
+		} else if (section.getSubsections().isEmpty()) {
+			if (ParserUtil.isCoreElement(namespaceUri, name, "p")) {
+				context.pushState(new InlineContentState(), IBlockItem.class, namespaceUri, name, attributes);
+				return;
+			} else if (ParserUtil.isCoreElement(namespaceUri, name, "table")) {
+				context.pushState(new TableState(), IBlockItem.class, namespaceUri, name, attributes);
+				return;
+			} else if (ParserUtil.isCoreElement(namespaceUri, name, "pie")) {
+				context.pushState(new PieChartState(), IBlockItem.class, namespaceUri, name, attributes);
+				return;
+			}
 		}
+
+		final String info = (section.getSubsections().isEmpty() ? "expected <core:p> or <core:section>" : "expected <core:section>");
+		throw new UnexpectedElementException(namespaceUri, name, info);
 	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.reporting.parser.IParserState#endElement(name.martingeisse.reporting.parser.IParserStateContext, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void endElement(IParserStateContext context, String namespaceUri, String name) {
+	public void endElement(final IParserStateContext context, final String namespaceUri, final String name) {
 		context.popState(section);
 	}
 
@@ -94,7 +105,7 @@ public class SectionState extends AbstractParserState {
 	 * @see name.martingeisse.reporting.parser.IParserState#consumeText(name.martingeisse.reporting.parser.IParserStateContext, java.lang.String)
 	 */
 	@Override
-	public void consumeText(IParserStateContext context, String text) {
+	public void consumeText(final IParserStateContext context, final String text) {
 		noTextExpected(text, "expected sub-sections or block content");
 	}
 
