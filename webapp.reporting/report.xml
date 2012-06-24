@@ -1,18 +1,3 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<report xmlns="http://martingeisse.name/report/0.1/core" title="This is another document.">
-
-	<p>
-		bla <b>foo</b> bar
-	</p>
-
-	<section title="one">
-		<p>foo bar fupp</p>
-		<section title="sub">
-			<p>iubgiuwhiuhewugiewi</p>
-		</section>
-	</section>
-	<section title="two">
-		<p>blubber di flubber</p>
-	</section>
-
+<report xmlns="http://martingeisse.name/report/0.1/core" title="The document.">
 </report>
