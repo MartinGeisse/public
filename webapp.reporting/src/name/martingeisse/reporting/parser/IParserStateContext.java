@@ -47,4 +47,12 @@ public interface IParserStateContext {
 	 */
 	public void popState(Object returnData);
 	
+	/**
+	 * Returns the type adapter provider that can be used to obtain a type adapter factory
+	 * which in turn adapts the original return type from this state to the type expected
+	 * by the parent state.
+	 * @return the type adapter factory
+	 */
+	public IParserReturnTypeAdapterProvider getTypeAdapterProvider();
+	
 }

@@ -4,28 +4,34 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.reporting.parser;
+package name.martingeisse.reporting.parser.states;
+
+import name.martingeisse.reporting.definition.keycount.IKeyCountQuery;
+import name.martingeisse.reporting.definition.keycount.UnboundChartBlock;
+import name.martingeisse.reporting.parser.IParserStateContext;
+import name.martingeisse.reporting.parser.ParserUtil;
+import name.martingeisse.reporting.parser.UnexpectedElementException;
+import name.martingeisse.reporting.parser.UnexpectedReturnDataException;
 
 import org.xml.sax.Attributes;
 
-import name.martingeisse.reporting.definition.ITabularQuery;
-import name.martingeisse.reporting.definition.UnboundTable;
-
 /**
- * This state is active inside an unbound table and expects a single query element.
+ * This state is active inside an unbound pie chart and expects a
+ * single query element. The expected type is a key/count query
+ * ({@link IKeyCountQuery}).
  */
-public class TableState extends AbstractParserState {
+public class PieChartState extends AbstractParserState {
 
 	/**
-	 * the table
+	 * the chartBlock
 	 */
-	private UnboundTable table;
+	private UnboundChartBlock chartBlock;
 
 	/**
 	 * Constructor.
 	 */
-	public TableState() {
-		this.table = new UnboundTable();
+	public PieChartState() {
+		this.chartBlock = new UnboundChartBlock();
 	}
 	
 	/* (non-Javadoc)
@@ -33,7 +39,7 @@ public class TableState extends AbstractParserState {
 	 */
 	@Override
 	public void startState(IParserStateContext context, Class<?> expectedReturnType, String namespaceUri, String name, Attributes attributes) {
-		initializeReturnType(expectedReturnType, UnboundTable.class);
+		initializeReturnType(context, expectedReturnType, UnboundChartBlock.class);
 	}
 	
 	/* (non-Javadoc)
@@ -41,7 +47,11 @@ public class TableState extends AbstractParserState {
 	 */
 	@Override
 	public void consumeReturnData(IParserStateContext context, Object data) {
-		table.setQuery((ITabularQuery)data);
+		if (data instanceof IKeyCountQuery) {
+			chartBlock.setQuery((IKeyCountQuery)data);
+		} else {
+			throw new UnexpectedReturnDataException(data, "expected IKeyCountQuery");
+		}
 	}
 
 	/* (non-Javadoc)
@@ -50,7 +60,7 @@ public class TableState extends AbstractParserState {
 	@Override
 	public void startElement(IParserStateContext context, String namespaceUri, String name, Attributes attributes) {
 		if (ParserUtil.isCoreElement(namespaceUri, name, "sql")) {
-			context.pushState(new SqlState(), ITabularQuery.class, namespaceUri, name, attributes);
+			context.pushState(new SqlState(), IKeyCountQuery.class, namespaceUri, name, attributes);
 		} else {
 			throw new UnexpectedElementException(namespaceUri, name, "expected table query");
 		}
@@ -61,7 +71,7 @@ public class TableState extends AbstractParserState {
 	 */
 	@Override
 	public void endElement(IParserStateContext context, String namespaceUri, String name) {
-		context.popState(table);
+		context.popState(chartBlock);
 	}
 	
 	/* (non-Javadoc)

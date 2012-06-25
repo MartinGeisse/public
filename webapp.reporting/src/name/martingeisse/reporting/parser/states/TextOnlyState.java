@@ -4,27 +4,30 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.reporting.parser;
+package name.martingeisse.reporting.parser.states;
+
+import name.martingeisse.reporting.parser.IParserStateContext;
 
 import org.xml.sax.Attributes;
 
-import name.martingeisse.reporting.definition.ITabularQuery;
-import name.martingeisse.reporting.definition.SqlQuery;
-
 /**
- * This class expects text content and wraps it in an {@link SqlQuery}
- * (a kind of {@link ITabularQuery}, used to fill tables).
- * 
- * TODO: support different data sources than "default".
+ * This state can be used in elements for which only text content is allowed.
+ * The only supported return type is {@link String}.
  */
-public class SqlState extends AbstractTextOnlyState {
+public class TextOnlyState extends AbstractTextOnlyState {
+
+	/**
+	 * Constructor.
+	 */
+	public TextOnlyState() {
+	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.reporting.parser.AbstractTextOnlyState#startState(name.martingeisse.reporting.parser.IParserStateContext, java.lang.Class, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
 	@Override
 	public void startState(IParserStateContext context, Class<?> expectedReturnType, String namespaceUri, String name, Attributes attributes) {
-		initializeReturnType(expectedReturnType, SqlQuery.class);
+		initializeReturnType(context, expectedReturnType, String.class);
 	}
 
 	/* (non-Javadoc)
@@ -32,7 +35,7 @@ public class SqlState extends AbstractTextOnlyState {
 	 */
 	@Override
 	protected Object createReturnData(String text) {
-		return new SqlQuery("default", text);
+		return text;
 	}
 
 }

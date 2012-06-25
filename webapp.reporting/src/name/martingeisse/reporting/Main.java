@@ -28,11 +28,6 @@ public class Main {
 		// read the report definition
 		Document document = ReportDefinitionParser.parse(new File("report.xml"));
 		
-		// TODO: unbound pie charts not implemented
-//		String testQuery1 = "SELECT role_description, role_order FROM phpbb_acl_roles LIMIT 10";
-//		UnboundChartBlock chartBlock = new UnboundChartBlock(new SimpleTabularKeyCountQueryAdapter(new SqlQuery("default", testQuery1)));
-//		document.getRootSection().getDirectContents().getSubItems().add(chartBlock);
-		
 		// bind to the data sources
 		DataSources dataSources = new DataSources();
 		dataSources.put("default", new JdbcDataSource("jdbc:mysql://localhost/phpbb", "root", ""));

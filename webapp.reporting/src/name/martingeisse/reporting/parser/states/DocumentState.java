@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.reporting.parser;
+package name.martingeisse.reporting.parser.states;
 
 import name.martingeisse.reporting.document.Document;
 

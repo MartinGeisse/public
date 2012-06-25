@@ -9,6 +9,7 @@ package name.martingeisse.reporting.parser;
 import java.util.Stack;
 
 import name.martingeisse.reporting.document.Document;
+import name.martingeisse.reporting.parser.states.RootState;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -19,6 +20,11 @@ import org.xml.sax.ext.DefaultHandler2;
  */
 class ParserStateContext extends DefaultHandler2 implements IParserStateContext {
 
+	/**
+	 * the stateFactoryRegistry
+	 */
+	private final StateFactoryRegistry stateFactoryRegistry;
+	
 	/**
 	 * the stateStack
 	 */
@@ -33,6 +39,7 @@ class ParserStateContext extends DefaultHandler2 implements IParserStateContext 
 	 * Constructor.
 	 */
 	public ParserStateContext() {
+		this.stateFactoryRegistry = new StateFactoryRegistry();
 		this.stateStack = new Stack<IParserState>();
 		this.document = null;
 	}
@@ -73,24 +80,6 @@ class ParserStateContext extends DefaultHandler2 implements IParserStateContext 
 	} 
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.reporting.parser.IParserStateContext#pushState(name.martingeisse.reporting.parser.IParserState, java.lang.Class, java.lang.String, java.lang.String, org.xml.sax.Attributes)
-	 */
-	@Override
-	public void pushState(IParserState state, Class<?> expectedReturnType, String namespaceUri, String name, Attributes attributes) {
-		stateStack.push(state);
-		state.startState(this, expectedReturnType, namespaceUri, name, attributes);
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.reporting.parser.IParserStateContext#popState(java.lang.Object)
-	 */
-	@Override
-	public void popState(Object returnData) {
-		stateStack.pop();
-		stateStack.peek().consumeReturnData(this, returnData);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
 	@Override
@@ -113,5 +102,31 @@ class ParserStateContext extends DefaultHandler2 implements IParserStateContext 
 	public void characters(char[] buffer, int start, int length) throws SAXException {
 		stateStack.peek().consumeText(this, new String(buffer, start, length));
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.reporting.parser.IParserStateContext#pushState(name.martingeisse.reporting.parser.IParserState, java.lang.Class, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+	 */
+	@Override
+	public void pushState(IParserState state, Class<?> expectedReturnType, String namespaceUri, String name, Attributes attributes) {
+		stateStack.push(state);
+		state.startState(this, expectedReturnType, namespaceUri, name, attributes);
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.reporting.parser.IParserStateContext#popState(java.lang.Object)
+	 */
+	@Override
+	public void popState(Object returnData) {
+		stateStack.pop();
+		stateStack.peek().consumeReturnData(this, returnData);
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.reporting.parser.IParserStateContext#getTypeAdapterProvider()
+	 */
+	@Override
+	public IParserReturnTypeAdapterProvider getTypeAdapterProvider() {
+		return stateFactoryRegistry;
+	}
+
 }

@@ -4,10 +4,14 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.reporting.parser;
+package name.martingeisse.reporting.parser.states;
 
 import name.martingeisse.reporting.document.IBlockItem;
 import name.martingeisse.reporting.document.Section;
+import name.martingeisse.reporting.parser.IParserStateContext;
+import name.martingeisse.reporting.parser.ParserUtil;
+import name.martingeisse.reporting.parser.UnexpectedElementException;
+import name.martingeisse.reporting.parser.UnexpectedReturnDataException;
 
 import org.xml.sax.Attributes;
 
@@ -49,7 +53,7 @@ public class SectionState extends AbstractParserState {
 	 */
 	@Override
 	public void startState(final IParserStateContext context, final Class<?> expectedReturnType, final String namespaceUri, final String name, final Attributes attributes) {
-		initializeReturnType(expectedReturnType, Section.class);
+		initializeReturnType(context, expectedReturnType, Section.class);
 		section.setTitle(attributes.getValue("", "title"));
 	}
 
@@ -89,7 +93,7 @@ public class SectionState extends AbstractParserState {
 			}
 		}
 
-		final String info = (section.getSubsections().isEmpty() ? "expected <core:p> or <core:section>" : "expected <core:section>");
+		final String info = (section.getSubsections().isEmpty() ? "expected block content or <core:section>" : "expected <core:section>");
 		throw new UnexpectedElementException(namespaceUri, name, info);
 	}
 
