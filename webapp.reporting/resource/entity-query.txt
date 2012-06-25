@@ -1,0 +1,61 @@
+
+Entity query: Hat das Problem, dass evtl. mehrere joined Rows existieren, z.B. zu
+einer Bestellungen mehrere Items. Entweder werden die zusammengefasst, oder es
+ist keine tabular query mehr, oder die Tabelle wird "aufgefüllt".
+
+Wenn eine Tabelle direkt dargestellt wird, ist "auffüllen" bzw. "mehr als
+tabular" sicher das beste. Dabei ist "auffüllen" nur eine Möglichkeit, eine
+mehr-als-Tabelle in einer Tabellenform darzustellen, also ist hier mehr-als-Tabelle
+der Ausgangspunkt. Für andere Verwendung, z.B. für Key/Count, ist Zusammenfassen das Beste. 
+
+Eine Zusammenfassung kann von mehr-als-Tabelle ausgehen. Für die Performance ist
+dabei evtl. nötig, dass der consumer einer Query diese beeinflusst, aber das ist
+ja eh langfristig geplant. Ansonsten nimmt eine Zusammenfassung die Daten aus
+mehr-als-Tabelle und macht daraus eine Tabelle.
+
+Das <table> Widget sollte mehr-als-Tabelle direkt darstellen können, dann mit
+Auffüllen. Evtl. ist "Auffüllen" auch ein Return Type Adapter. Der Benutzer soll
+sich damit nicht rumschlagen.
+
+Daten laden: Es wird davon Ausgegangen, dass in N Tabellen alle Datensätze geladen
+werden, die zu einer Zeile in der Basis-Tabelle der Entity gehören. Je nach
+abgefragten Feldern sind dann welche davon nicht nötig und werden nicht mit
+abgefragt. (Später: je nach abgefragten Feldern sind bei einigen nur
+Zusammenfassungen nötig und können direkt als solche per SQL abgefragt werden).
+Danach werden je nach abgefragten Feldern die Zeilen weiter zusammengefasst
+und daraus das Ergebnis gebildet. 
+
+Erweiterbarkeit: Erweiterungen sollten Mechanismen zur Verfügung stellen, die
+XML-Beschreibung die Policy dazu! Dann sind die Mechanismen wiederverwendbar
+und man muss nicht für jeden Report Java-Code schreiben.
+
+<properties>...</properties> -- comma-separated simple expressions
+<property>...</property> -- single property -> complex expression, Zusammenfassungen
+
+
+----
+
+Erste Überlegung zu Zusammenfassungen:
+
+order.item:sum(order.item.price * order.item.quantity)
+	erzeugt eine Zeile pro Item (der Teil vor dem Doppelpunkt), wie folgt berechnet
+	
+order.item:sum(order.factor * order.item.price * order.item.quantity)
+	Präfix vor den Properties ist nötig weil immer noch alle Felder beteiligt sind
+
+order.item:sum(order.factor * (order.item.price + order.item.extra:sum(order.item.extra.price)) * order.item.quantity)
+	Schachtelung von Zusammenfassungen
+
+Von Schachtelung abgesehen darf der Body einer Zusammenfassung alle Felder aller Tabellen benutzen,
+die "auf dem Weg von der Root-Tabelle der Entity bis zur Zusammenfassungstabelle" liegen
+*oder* auf "eindeutigem Weg" davon abzweigen.
+Also z.B. bei "order.item:..." die Felder aus order (auf dem Weg) und order.item (auf dem Weg)
+und order.user (eindeutige Abzweigung, es gibt zu jeder Order nur einen User)
+aber nicht aus order.item.extra, das liegt nicht "auf dem Weg" und ist mehrdeutig (i.A. mehrere Extras zu einem Item)
+
+Eindeutig/mehrdeutig muss so erst zur Laufzeit stimmen und kann z.B. is_deleted mit einbeziehen
+("es gibt max. 1 row wo is_deleted=0"). Führt halt evtl. zu einem Laufzeitfehler, aber der bedeutet
+dann ja auch, dass die Daten inkonsistent in Bezug auf die Eindeutigkeitsregeln sind.
+
+
+

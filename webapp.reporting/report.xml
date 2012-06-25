@@ -2,6 +2,11 @@
 <report xmlns="http://martingeisse.name/report/0.1/core" title="The document.">
 
 	<table caption="This is still a table.">
+		<entity name="phpbb_acl_roles">
+		</entity>
+	</table>
+
+	<table caption="This is still a table.">
 		<sql>SELECT * FROM phpbb_acl_roles LIMIT 5</sql>
 	</table>
 

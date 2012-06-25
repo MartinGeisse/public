@@ -39,7 +39,7 @@ public class AbstractParserState implements IParserState {
 	 * Getter method for the expectedReturnTypeByParent.
 	 * @return the expectedReturnTypeByParent
 	 */
-	public Class<?> getExpectedReturnTypeByParent() {
+	public final Class<?> getExpectedReturnTypeByParent() {
 		return expectedReturnTypeByParent;
 	}
 
@@ -55,7 +55,7 @@ public class AbstractParserState implements IParserState {
 	 * Getter method for the returnTypeAdapterFactory.
 	 * @return the returnTypeAdapterFactory
 	 */
-	public IParserReturnTypeAdapterFactory getReturnTypeAdapterFactory() {
+	public final IParserReturnTypeAdapterFactory getReturnTypeAdapterFactory() {
 		return returnTypeAdapterFactory;
 	}
 

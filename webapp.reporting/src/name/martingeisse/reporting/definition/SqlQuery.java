@@ -86,4 +86,12 @@ public class SqlQuery implements ITabularQuery {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.reporting.definition.ITabularQuery#isStatementMustBeClosed()
+	 */
+	@Override
+	public boolean isStatementMustBeClosed() {
+		return false;
+	}
+	
 }

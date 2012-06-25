@@ -93,7 +93,11 @@ public class UnboundTable extends AbstractTable {
 				}
 				result.getRows().add(values);
 			}
-			resultSet.close();
+			if (query.isStatementMustBeClosed()) {
+				resultSet.getStatement().close();
+			} else {
+				resultSet.close();
+			}
 			return result;
 
 		} catch (final Exception e) {

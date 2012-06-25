@@ -54,6 +54,8 @@ public class TableState extends AbstractParserState {
 	public void startElement(IParserStateContext context, String namespaceUri, String name, Attributes attributes) {
 		if (ParserUtil.isCoreElement(namespaceUri, name, "sql")) {
 			context.pushState(new SqlState(), ITabularQuery.class, namespaceUri, name, attributes);
+		} else if (ParserUtil.isCoreElement(namespaceUri, name, "entity")) {
+			context.pushState(new EntityState(), ITabularQuery.class, namespaceUri, name, attributes);
 		} else {
 			throw new UnexpectedElementException(namespaceUri, name, "expected table query");
 		}
