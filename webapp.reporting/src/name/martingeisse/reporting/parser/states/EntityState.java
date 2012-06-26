@@ -6,7 +6,7 @@
 
 package name.martingeisse.reporting.parser.states;
 
-import name.martingeisse.reporting.definition.entity.EntityQuery;
+import name.martingeisse.reporting.definition.entity.EntityQueryOld;
 import name.martingeisse.reporting.parser.IParserStateContext;
 import name.martingeisse.reporting.parser.MissingAttributeException;
 import name.martingeisse.reporting.parser.UnexpectedElementException;
@@ -21,20 +21,20 @@ public class EntityState extends AbstractParserState {
 	/**
 	 * the query
 	 */
-	private final EntityQuery query;
+	private final EntityQueryOld query;
 
 	/**
 	 * Constructor.
 	 */
 	public EntityState() {
-		this.query = new EntityQuery();
+		this.query = new EntityQueryOld();
 	}
 
 	/**
 	 * Getter method for the query.
 	 * @return the query
 	 */
-	public EntityQuery getQuery() {
+	public EntityQueryOld getQuery() {
 		return query;
 	}
 
@@ -43,7 +43,7 @@ public class EntityState extends AbstractParserState {
 	 */
 	@Override
 	public void startState(final IParserStateContext context, final Class<?> expectedReturnType, final String namespaceUri, final String name, final Attributes attributes) {
-		initializeReturnType(context, expectedReturnType, EntityQuery.class);
+		initializeReturnType(context, expectedReturnType, EntityQueryOld.class);
 		
 		query.setEntityName(attributes.getValue("", "name"));
 		if (query.getEntityName() == null) {

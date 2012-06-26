@@ -9,21 +9,21 @@ package name.martingeisse.reporting.definition.entity;
 import java.util.ArrayList;
 
 /**
- * This class keeps a list of {@link EntityProperty} objects and stores
+ * This class keeps a list of {@link EntityPropertyOld} objects and stores
  * the properly list specification from the report definition.
  */
-public final class EntityPropertyList extends ArrayList<EntityProperty> {
+public final class EntityPropertyListOld extends ArrayList<EntityPropertyOld> {
 
 	/**
 	 * the query
 	 */
-	private final EntityQuery query;
+	private final EntityQueryOld query;
 	
 	/**
 	 * Constructor.
 	 * @param query the query
 	 */
-	EntityPropertyList(EntityQuery query) {
+	EntityPropertyListOld(EntityQueryOld query) {
 		this.query = query;
 	}
 
@@ -31,7 +31,7 @@ public final class EntityPropertyList extends ArrayList<EntityProperty> {
 	 * Getter method for the query.
 	 * @return the query
 	 */
-	public EntityQuery getQuery() {
+	public EntityQueryOld getQuery() {
 		return query;
 	}
 
@@ -48,7 +48,7 @@ public final class EntityPropertyList extends ArrayList<EntityProperty> {
 		// handle the normal case
 		StringBuilder builder = new StringBuilder();
 		boolean first = true;
-		for (EntityProperty property : this) {
+		for (EntityPropertyOld property : this) {
 			if (first) {
 				first = false;
 			} else {

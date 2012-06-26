@@ -11,7 +11,7 @@ package name.martingeisse.reporting.definition.entity;
  * entity or in a joined table, or a virtual property derived from
  * other results (e.g. a count query).
  */
-public final class EntityProperty {
+public final class EntityPropertyOld {
 
 	/**
 	 * the pathText
@@ -22,7 +22,7 @@ public final class EntityProperty {
 	 * Constructor.
 	 * @param pathText the textual specification of the property path
 	 */
-	public EntityProperty(String pathText) {
+	public EntityPropertyOld(String pathText) {
 		this.pathText = pathText;
 	}
 	
