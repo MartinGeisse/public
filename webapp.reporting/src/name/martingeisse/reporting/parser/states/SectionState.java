@@ -87,6 +87,10 @@ public class SectionState extends AbstractParserState {
 			} else if (ParserUtil.isCoreElement(namespaceUri, name, "table")) {
 				context.pushState(new TableState(), IBlockItem.class, namespaceUri, name, attributes);
 				return;
+			} else if (ParserUtil.isCoreElement(namespaceUri, name, "nested-table")) {
+				// TODO: nested-table should be "table" and adapt non-nested table queries. "table" should disappear from definitions.
+				context.pushState(new NestedTableState(), IBlockItem.class, namespaceUri, name, attributes);
+				return;
 			} else if (ParserUtil.isCoreElement(namespaceUri, name, "pie")) {
 				context.pushState(new PieChartState(), IBlockItem.class, namespaceUri, name, attributes);
 				return;

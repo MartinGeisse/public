@@ -10,9 +10,7 @@ import java.io.File;
 
 import name.martingeisse.reporting.datasource.DataSources;
 import name.martingeisse.reporting.datasource.JdbcDataSource;
-import name.martingeisse.reporting.definition.entity.EntityQuery;
 import name.martingeisse.reporting.document.Document;
-import name.martingeisse.reporting.document.NestedTable;
 import name.martingeisse.reporting.parser.ReportDefinitionParser;
 import name.martingeisse.reporting.renderer.HtmlRenderer;
 
@@ -35,7 +33,6 @@ public class Main {
 		dataSources.put("default", new JdbcDataSource("jdbc:mysql://localhost/phpbb", "root", ""));
 		dataSources.connect();
 		Document boundDocument = document.bindToData(dataSources);
-		boundDocument.getRootSection().getDirectContents().getSubItems().add(new NestedTable(new EntityQuery().bindToData(dataSources).makeExplicitOnDemand())); // TODO
 		dataSources.disconnect();
 		
 		// render as HTML

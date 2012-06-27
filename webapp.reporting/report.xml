@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://martingeisse.name/report/0.1/core" title="The document.">
 
+	<nested-table caption="This is a nested-table.">
+	</nested-table>
+
 	<table caption="This is still a table.">
 		<entity name="phpbb_acl_roles">
 		</entity>

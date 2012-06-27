@@ -66,6 +66,7 @@ public class EntityQuery implements INestedTableQuery {
 			
 			// create the table object
 			NestedTableTable table = new NestedTableTable();
+			table.setTitle(tableName);
 			
 			// build the query text
 			String queryText = "SELECT * FROM " + tableName;
@@ -147,6 +148,7 @@ public class EntityQuery implements INestedTableQuery {
 					
 					// create a child table for this row
 					NestedTableTable childTable = new NestedTableTable();
+					childTable.setTitle(childDatabaseTable);
 					childTable.setColumnNames(columnNames);
 					childTables.add(childTable);
 					parentRow.getSubtables().add(childTable);
