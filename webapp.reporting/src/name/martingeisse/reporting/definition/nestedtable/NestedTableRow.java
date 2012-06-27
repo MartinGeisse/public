@@ -22,14 +22,14 @@ public class NestedTableRow {
 	/**
 	 * the subtables
 	 */
-	private List<NestedTable> subtables;
+	private List<NestedTableTable> subtables;
 
 	/**
 	 * Constructor.
 	 */
 	public NestedTableRow() {
 		this.values = new ArrayList<String>();
-		this.subtables = new ArrayList<NestedTable>();
+		this.subtables = new ArrayList<NestedTableTable>();
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class NestedTableRow {
 	 * Getter method for the subtables.
 	 * @return the subtables
 	 */
-	public List<NestedTable> getSubtables() {
+	public List<NestedTableTable> getSubtables() {
 		return subtables;
 	}
 
@@ -60,7 +60,7 @@ public class NestedTableRow {
 	 * Setter method for the subtables.
 	 * @param subtables the subtables to set
 	 */
-	public void setSubtables(final List<NestedTable> subtables) {
+	public void setSubtables(final List<NestedTableTable> subtables) {
 		this.subtables = subtables;
 	}
 
@@ -74,7 +74,7 @@ public class NestedTableRow {
 			System.out.print(", ");
 		}
 		System.out.println();
-		for (final NestedTable subtable : subtables) {
+		for (final NestedTableTable subtable : subtables) {
 			subtable.dump();
 		}
 		System.out.println("- end NestedTableRow");

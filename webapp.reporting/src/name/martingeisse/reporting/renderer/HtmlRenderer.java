@@ -13,11 +13,14 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Stack;
 
+import name.martingeisse.reporting.definition.nestedtable.NestedTableRow;
+import name.martingeisse.reporting.definition.nestedtable.NestedTableTable;
 import name.martingeisse.reporting.document.ChartBlock;
 import name.martingeisse.reporting.document.Document;
 import name.martingeisse.reporting.document.FormattedCompoundInlineItem;
 import name.martingeisse.reporting.document.IBlockItem;
 import name.martingeisse.reporting.document.IInlineItem;
+import name.martingeisse.reporting.document.NestedTable;
 import name.martingeisse.reporting.document.Paragraph;
 import name.martingeisse.reporting.document.Section;
 import name.martingeisse.reporting.document.Table;
@@ -183,6 +186,9 @@ public class HtmlRenderer {
 		} else if (blockItem instanceof Table) {
 			Table table = (Table)blockItem;
 			render(table);
+		} else if (blockItem instanceof NestedTable) {
+			NestedTable nestedTable = (NestedTable)blockItem;
+			render(nestedTable);
 		} else if (blockItem instanceof ChartBlock) {
 			ChartBlock chartBlock = (ChartBlock)blockItem;
 			render(chartBlock);
@@ -269,6 +275,58 @@ public class HtmlRenderer {
 		int id = resourceCounter;
 		resourceCounter++;
 		return new File(outputFile.getParent(), nameTemplate.replace("$", "" + id));
+	}
+
+	/**
+	 * @param table
+	 */
+	private void render(NestedTable table) {
+		renderNestedTable(table.getData().getRootTable(), table.getCaption());
+	}
+
+	private void renderNestedTable(NestedTableTable table, String caption) {
+		int colspan = table.getColumnNames().size();
+		out.print("<table>");
+		if (caption != null) {
+			out.print("<caption align=\"bottom\">");
+			printEscaped(caption);
+			out.print("</caption>");
+		}
+		if (table.getTitle() != null) {
+			out.print("<tr class=\"header\">");
+			out.print("<th colspan=\"" + colspan + "\">");
+			printEscaped(table.getTitle());
+			out.print("</th>");
+			out.print("</tr>");
+		}
+		out.print("<tr class=\"header\">");
+		for (String fieldName : table.getColumnNames()) {
+			out.print("<th>");
+			printEscaped(fieldName);
+			out.print("</th>");
+		}
+		out.print("</tr>");
+		boolean even = true;
+		for (NestedTableRow row : table.getRows()) {
+			out.print("<tr class=\"" + (even ? "even" : "odd") + "\">");
+			for (String value : row.getValues()) {
+				out.print("<td>");
+				printEscaped(value);
+				out.print("</td>");
+			}
+			out.print("</tr>");
+			for (NestedTableTable subtable : row.getSubtables()) {
+				if (!subtable.getRows().isEmpty()) {
+					out.print("<tr class=\"" + (even ? "even" : "odd") + "\">");
+					out.print("<td colspan=\"" + colspan + "\" class=\"subtableCell\">");
+					renderNestedTable(subtable, null);
+					out.print("</td>");
+					out.print("</tr>");
+				}
+			}
+			even = !even;
+		}
+		out.print("</table>");		
 	}
 	
 }

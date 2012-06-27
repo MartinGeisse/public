@@ -12,6 +12,7 @@ import name.martingeisse.reporting.datasource.DataSources;
 import name.martingeisse.reporting.datasource.JdbcDataSource;
 import name.martingeisse.reporting.definition.entity.EntityQuery;
 import name.martingeisse.reporting.document.Document;
+import name.martingeisse.reporting.document.NestedTable;
 import name.martingeisse.reporting.parser.ReportDefinitionParser;
 import name.martingeisse.reporting.renderer.HtmlRenderer;
 
@@ -27,22 +28,19 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		
 		// read the report definition
-//		Document document = ReportDefinitionParser.parse(new File("report.xml"));
+		Document document = ReportDefinitionParser.parse(new File("report.xml"));
 		
 		// bind to the data sources
 		DataSources dataSources = new DataSources();
 		dataSources.put("default", new JdbcDataSource("jdbc:mysql://localhost/phpbb", "root", ""));
 		dataSources.connect();
-//		Document boundDocument = document.bindToData(dataSources);
-//		dataSources.disconnect();
-
-		// test
-		EntityQuery query = new EntityQuery();
-		query.bindToData(dataSources).dump();
+		Document boundDocument = document.bindToData(dataSources);
+		boundDocument.getRootSection().getDirectContents().getSubItems().add(new NestedTable(new EntityQuery().bindToData(dataSources).makeExplicitOnDemand())); // TODO
+		dataSources.disconnect();
 		
 		// render as HTML
-//		HtmlRenderer renderer = new HtmlRenderer();
-//		renderer.render(boundDocument, new File("test.html"));
+		HtmlRenderer renderer = new HtmlRenderer();
+		renderer.render(boundDocument, new File("test.html"));
 		
 	}
 	

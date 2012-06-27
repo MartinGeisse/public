@@ -3,6 +3,10 @@ table {
 	border-collapse: collapse;
 }
 
+tr.header {
+	background-color: #ddf;
+}
+
 tr.even {
 	background-color: #fff;
 }
@@ -11,7 +15,16 @@ tr.odd {
 	background-color: #ddd;
 }
 
+th {
+	padding-left: 5px;
+	text-align: left;
+}
+
 th, td {
 	border: 1px solid #aaa;
 	padding: 3px;
+}
+
+.subtableCell {
+	padding: 20px;
 }

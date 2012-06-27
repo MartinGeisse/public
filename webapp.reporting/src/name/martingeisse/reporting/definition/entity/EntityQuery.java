@@ -18,14 +18,16 @@ import java.util.List;
 import java.util.Set;
 
 import name.martingeisse.reporting.datasource.DataSources;
-import name.martingeisse.reporting.definition.nestedtable.NestedTable;
+import name.martingeisse.reporting.definition.nestedtable.INestedTableQuery;
+import name.martingeisse.reporting.definition.nestedtable.INestedTableResult;
+import name.martingeisse.reporting.definition.nestedtable.NestedTableTable;
 import name.martingeisse.reporting.definition.nestedtable.NestedTableResult;
 import name.martingeisse.reporting.definition.nestedtable.NestedTableRow;
 
 /**
  * This query represents a high-level way to express an SQL query.
  */
-public class EntityQuery {
+public class EntityQuery implements INestedTableQuery {
 
 	/**
 	 * Constructor.
@@ -33,16 +35,16 @@ public class EntityQuery {
 	public EntityQuery() {
 	}
 	
-	/**
-	 * @param dataSources ...
-	 * @return ...
+	/* (non-Javadoc)
+	 * @see name.martingeisse.reporting.definition.nestedtable.INestedTableQuery#bindToData(name.martingeisse.reporting.datasource.DataSources)
 	 */
-	public NestedTableResult bindToData(DataSources dataSources) {
+	@Override
+	public INestedTableResult bindToData(DataSources dataSources) {
 
 		// fetch the root table
 		Connection connection = dataSources.getConnection("default");
-		NestedTable rootTable = fetchRootTable(connection, "phpbb_forums");
-		List<NestedTable> rootTables = Arrays.asList(rootTable);
+		NestedTableTable rootTable = fetchRootTable(connection, "phpbb_forums");
+		List<NestedTableTable> rootTables = Arrays.asList(rootTable);
 		
 		// fetch subtables
 		fetchSimilarSubtables(connection, rootTables, "forum_id", "phpbb_forums", "parent_id");
@@ -59,11 +61,11 @@ public class EntityQuery {
 	 * @param tableName
 	 * @return
 	 */
-	private NestedTable fetchRootTable(Connection connection, String tableName) {
+	private NestedTableTable fetchRootTable(Connection connection, String tableName) {
 		try {
 			
 			// create the table object
-			NestedTable table = new NestedTable();
+			NestedTableTable table = new NestedTableTable();
 			
 			// build the query text
 			String queryText = "SELECT * FROM " + tableName;
@@ -110,7 +112,7 @@ public class EntityQuery {
 	 * @param childTableKeyName the name of the key column in the child tables
 	 * @return all child tables
 	 */
-	private List<NestedTable> fetchSimilarSubtables(Connection connection, List<NestedTable> parentTables, String parentTableKeyName, String childDatabaseTable, String childTableKeyName) {
+	private List<NestedTableTable> fetchSimilarSubtables(Connection connection, List<NestedTableTable> parentTables, String parentTableKeyName, String childDatabaseTable, String childTableKeyName) {
 		try {
 			
 			// build the query text
@@ -138,13 +140,13 @@ public class EntityQuery {
 			}
 			
 			// create a subtable for each row of each parent table and associate nested rows with them
-			List<NestedTable> childTables = new ArrayList<NestedTable>();
-			for (NestedTable parentTable : parentTables) {
+			List<NestedTableTable> childTables = new ArrayList<NestedTableTable>();
+			for (NestedTableTable parentTable : parentTables) {
 				int parentKeyColumnIndex = forceFindColumn(parentTable, parentTableKeyName);
 				for (NestedTableRow parentRow : parentTable.getRows()) {
 					
 					// create a child table for this row
-					NestedTable childTable = new NestedTable();
+					NestedTableTable childTable = new NestedTableTable();
 					childTable.setColumnNames(columnNames);
 					childTables.add(childTable);
 					parentRow.getSubtables().add(childTable);
@@ -174,9 +176,9 @@ public class EntityQuery {
 	 * @param keyName
 	 * @return
 	 */
-	private Set<Object> collectKeys(List<NestedTable> tables, String keyName) {
+	private Set<Object> collectKeys(List<NestedTableTable> tables, String keyName) {
 		Set<Object> result = new HashSet<Object>();
-		for (NestedTable table : tables) {
+		for (NestedTableTable table : tables) {
 			int index = forceFindColumn(table, keyName);
 			for (NestedTableRow row : table.getRows()) {
 				result.add(row.getValues().get(index));
@@ -245,7 +247,7 @@ public class EntityQuery {
 	 * @param columnName
 	 * @return
 	 */
-	private int forceFindColumn(NestedTable table, String columnName) {
+	private int forceFindColumn(NestedTableTable table, String columnName) {
 		int index = table.findColumn(columnName);
 		if (index == -1) {
 			throw new RuntimeException("column " + columnName + " not found in table " + table.getTitle());

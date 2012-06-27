@@ -8,9 +8,9 @@ package name.martingeisse.reporting.document;
 
 
 /**
- * Common handling for bound and unbound tables.
+ * Common handling for bound and unbound tables, charts, nested tables, and so on.
  */
-public abstract class AbstractTable implements IBlockItem {
+public abstract class AbstractFigureItem implements IBlockItem {
 
 	/**
 	 * the caption
@@ -20,7 +20,7 @@ public abstract class AbstractTable implements IBlockItem {
 	/**
 	 * Constructor.
 	 */
-	public AbstractTable() {
+	public AbstractFigureItem() {
 	}
 
 	/**

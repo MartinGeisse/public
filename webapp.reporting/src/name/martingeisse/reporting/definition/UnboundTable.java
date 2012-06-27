@@ -10,14 +10,14 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
 import name.martingeisse.reporting.datasource.DataSources;
-import name.martingeisse.reporting.document.AbstractTable;
+import name.martingeisse.reporting.document.AbstractFigureItem;
 import name.martingeisse.reporting.document.Table;
 
 /**
  * This item is similar to a {@link Table} but does not yet contain its
  * data. Instead, it is fileld with data from an {@link ITabularQuery}.
  */
-public class UnboundTable extends AbstractTable {
+public class UnboundTable extends AbstractFigureItem {
 
 	/**
 	 * the query

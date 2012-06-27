@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * This class represents a table node in a {@link NestedTableResult}.
  */
-public class NestedTable {
+public class NestedTableTable {
 
 	/**
 	 * the title
@@ -32,8 +32,8 @@ public class NestedTable {
 	/**
 	 * Constructor.
 	 */
-	public NestedTable() {
-		this.title = "<unnamed>";
+	public NestedTableTable() {
+		this.title = null;
 		this.columnNames = new ArrayList<String>();
 		this.rows = new ArrayList<NestedTableRow>();
 	}

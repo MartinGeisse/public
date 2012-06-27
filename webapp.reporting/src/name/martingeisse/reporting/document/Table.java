@@ -14,7 +14,7 @@ import name.martingeisse.reporting.datasource.DataSources;
 /**
  * A renderable table.
  */
-public class Table extends AbstractTable {
+public class Table extends AbstractFigureItem {
 
 	/**
 	 * the fieldNames
