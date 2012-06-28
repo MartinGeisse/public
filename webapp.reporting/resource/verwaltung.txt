@@ -1,0 +1,22 @@
+
+Dem Reporting-System wird ein Verwaltungs-Ordner zugewiesen (z.B. Command-Line Parameter).
+Dieser enthält sämtliche Konfig sowie einen Unterordner, in dem die Report-Definition-XMLs
+liegen, nochmals nach Gruppen eingeordnet (erst mal eine Ebene, später Gruppen, evtl
+Hierarchisch). Zugriffsrechte auf die Reports können dann Ordnerweise vergeben werden.
+Das System sucht sich in den Ordnern alle Report-Definitionen heraus und bietet diese
+an, ggf. auch im Web (Jetty, evtl. Wicket), Webservice (Jetty), Queue-Service (SQS) usw.  
+Es soll keine Config pro Report nötig sein, nur zentrale Config. Alle nötigen Infos
+sollen aus den Report-XMLs kommen, und es sollen nicht viele Infos nötig sein.
+
+Trigger (z.B. Cron) sollen nicht vom Reporting-System sondern von außen kommen (separation
+of concerns). Sie werden z.B. per HTTP-Call oder Queue-Message übertragen. Evtl. auch
+Queue-Message plus Wakeup-HTTP-Call, dann kann der Server "schlafen" um wenig Rechenpower
+zu brauchen.
+
+Der Verwaltungs-Ordner liegt dann außerhalb des Code-Ordners und ist z.B. ein separat
+ausgecheckter anderer SVN-Ordner, z.B. aus dem Projektordner. Dadurch können die
+beiden getrennt entwickelt und geupdated werden. 
+
+Änderungen an den Definitionen sollten kein Redeploy brauchen; Änderungen an der
+Config nach Möglichkeit nicht; bei Änderungen am Code vorerst einfacher mit
+Redeploys -- Ziel wäre es dann, am Code nur wenig Änderungen zu brauchen.

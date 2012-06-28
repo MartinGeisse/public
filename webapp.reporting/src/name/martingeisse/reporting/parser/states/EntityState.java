@@ -6,9 +6,8 @@
 
 package name.martingeisse.reporting.parser.states;
 
-import name.martingeisse.reporting.definition.entity.EntityQueryOld;
+import name.martingeisse.reporting.definition.entity.EntityQuery;
 import name.martingeisse.reporting.parser.IParserStateContext;
-import name.martingeisse.reporting.parser.MissingAttributeException;
 import name.martingeisse.reporting.parser.UnexpectedElementException;
 
 import org.xml.sax.Attributes;
@@ -21,20 +20,20 @@ public class EntityState extends AbstractParserState {
 	/**
 	 * the query
 	 */
-	private final EntityQueryOld query;
+	private final EntityQuery query;
 
 	/**
 	 * Constructor.
 	 */
 	public EntityState() {
-		this.query = new EntityQueryOld();
+		this.query = new EntityQuery();
 	}
 
 	/**
 	 * Getter method for the query.
 	 * @return the query
 	 */
-	public EntityQueryOld getQuery() {
+	public EntityQuery getQuery() {
 		return query;
 	}
 
@@ -43,12 +42,12 @@ public class EntityState extends AbstractParserState {
 	 */
 	@Override
 	public void startState(final IParserStateContext context, final Class<?> expectedReturnType, final String namespaceUri, final String name, final Attributes attributes) {
-		initializeReturnType(context, expectedReturnType, EntityQueryOld.class);
-		
-		query.setEntityName(attributes.getValue("", "name"));
-		if (query.getEntityName() == null) {
-			throw new MissingAttributeException(namespaceUri, name, "name");
-		}
+		initializeReturnType(context, expectedReturnType, EntityQuery.class);
+//		
+//		query.setEntityName(attributes.getValue("", "name"));
+//		if (query.getEntityName() == null) {
+//			throw new MissingAttributeException(namespaceUri, name, "name");
+//		}
 		
 	}
 

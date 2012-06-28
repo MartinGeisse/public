@@ -1,0 +1,38 @@
+
+Eine EQ kann so betrachtet werden: Es gibt bestimmte Daten die abgerufen werden können; diese
+werden zentral definiert (Entity-Definitionen, liegen außerhalb der Report-Definitionen, vorerst
+im Code). Eine EQ ruft alle oder einen Teil dieser Daten ab, evtl. mehrfach, Transformiert die
+Ergebnisse. Objekt aller Betrachtungen ist immer die Nested-Table-Struktur.
+
+Was kann Teil dieser Struktur sein?
+- die Entity-Root-Tabelle. Wobei diese nicht immer die direkt durch Eingabewerte selektierte ist,
+	z.B. "gib mir alle Bestelldaten zum Item #123", dann ist die Root-Entity z.B. die Bestellung.
+- (rekursiv) verknüpfte Tabellen: to-one (foward), to-one (backward), to-many.
+- gefilterte Tabellen (es fehlen Zeilen)
+- implizit selektierte verknüpfte Tabellen (unterscheiden sich nur darin, dass sie drin sind,
+  ohne dass die Report-Definition sie explizit erwähnen muss, d.h. die Entity-Definition hält
+  "Sets" von selektierbaren Daten bereit, wo man dann nicht die Tabellen einzeln aufzählen muss).
+- Parent-Tabellen, wenn z.B. ein Enkelknoten des Root-Knotens selektiert wird, dann sind die
+  Zwischenknoten auch mit dabei.
+- "flattened" Tabellen: Die zwischen-Tabellen verschwinden wieder, so dass die Enkelknoten zu
+  Kindknoten werden
+- mehrfache Ergebnisse: Zu einer Tabellenzeile kann dieselbe DB-Tabelle als verschiedne
+  Subtabelle erscheinen, z.B. mit verschiedenen Filtern. Insbesondere ist hier eine
+  switch-by-enum, switch-by-bool Aufteilung möglich.
+- Tabellen mit ausgewählen Feldern, wobei bei der DB-Abfrage trotzdem andere Felder (id sowie
+  Keys für Kind-Tabellen) mit dabei sein müssen. Im Zweifel alles abfragen und dann
+  ausgewählte Daten anzeigen. 
+- row-subset-reduction: Aus Rows werden weniger Rows, indem jeweils Rows zu einer Row
+  zusammengefasst werden. Dabei werden die Tabellenspalten in drei Sets geteilt: "gleiche"
+  Spalten, "verschiedene" Spalten und "weggelassene" Spalten. Die Tabelle wird vom Sinn her
+  so behandelt, dass zuerst die "weggelassenen" Spalten entfernt werden, dann jeweils die
+  Rows gruppiert werden, bei denen alle "gleichen" Spalten identische Werte haben (nach
+  einem bestimmten Equality-Comparator); dann werden Reduction-Spalten aus den Feldwerten
+  der "verschiedenen" Spalten gebildet und eine Ergebnistabelle aus "gleichen" Spalten und
+  Reduction-Spalten erstellt.
+- whole-table-reduction: Die Menge der "gleichen" Spalten ist leer, also gibt es nur ein
+  Row-Set und damit nur eine Ergebniszeile. Statt einer Sub-Tabelle werden die Zellen aus
+  dieser einen Zeile in die Parent-Zeile eingefügt. Das geht, weil sich alle "ähnlichen" 
+  Tabellen genauso verhalten (genauso viele Zellen und gleicher Zellen-Name).
+
+

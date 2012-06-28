@@ -4,11 +4,7 @@
 	<nested-table caption="This is a nested-table.">
 	</nested-table>
 
-	<table caption="This is still a table.">
-		<entity name="phpbb_acl_roles">
-		</entity>
-	</table>
-
+<!-- 
 	<table caption="This is still a table.">
 		<sql>SELECT * FROM phpbb_acl_roles LIMIT 5</sql>
 	</table>
@@ -16,5 +12,6 @@
 	<pie>
 		<sql>SELECT role_description, role_order FROM phpbb_acl_roles LIMIT 10</sql>
 	</pie>
-	
+ -->
+
 </report>

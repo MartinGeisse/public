@@ -7,7 +7,11 @@
 package name.martingeisse.reporting.definition.nestedtable;
 
 import name.martingeisse.reporting.datasource.DataSources;
+import name.martingeisse.reporting.definition.entity.EntityDefinition;
+import name.martingeisse.reporting.definition.entity.EntityDefinitionLink;
+import name.martingeisse.reporting.definition.entity.EntityDefinitionTable;
 import name.martingeisse.reporting.definition.entity.EntityQuery;
+import name.martingeisse.reporting.definition.entity.EntityQueryFetchClause;
 import name.martingeisse.reporting.document.AbstractFigureItem;
 import name.martingeisse.reporting.document.NestedTable;
 
@@ -56,8 +60,26 @@ public class UnboundNestedTable extends AbstractFigureItem {
 	 */
 	@Override
 	public NestedTable bindToData(final DataSources dataSources) {
-		query = new EntityQuery(); // TODO
-		return new NestedTable(query.bindToData(dataSources).makeExplicitOnDemand());
+		
+		EntityDefinitionTable rootTable = new EntityDefinitionTable();
+		rootTable.setDatabaseTableName("phpbb_forums");
+
+		EntityDefinitionTable subForumTable = new EntityDefinitionTable();
+		subForumTable.setDatabaseTableName("phpbb_forums");
+		rootTable.getLinks().put("Child", new EntityDefinitionLink(subForumTable, "forum_id", "parent_id"));
+
+		EntityDefinitionTable trackTable = new EntityDefinitionTable();
+		trackTable.setDatabaseTableName("phpbb_forums_track");
+		rootTable.getLinks().put("Track", new EntityDefinitionLink(trackTable, "forum_id", "forum_id"));
+		
+		EntityDefinition entityDefinition = new EntityDefinition();
+		entityDefinition.setName("Forum");
+		entityDefinition.setTable(rootTable);
+		
+		EntityQuery q = new EntityQuery(); // TODO
+		q.setEntityDefinition(entityDefinition);
+		q.getFetchClauses().add(new EntityQueryFetchClause("Child"));
+		return new NestedTable(q.bindToData(dataSources).makeExplicitOnDemand());
 	}
 
 }

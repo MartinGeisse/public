@@ -7,22 +7,15 @@
 package name.martingeisse.reporting.definition.entity;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import name.martingeisse.reporting.datasource.DataSources;
 import name.martingeisse.reporting.definition.nestedtable.INestedTableQuery;
 import name.martingeisse.reporting.definition.nestedtable.INestedTableResult;
-import name.martingeisse.reporting.definition.nestedtable.NestedTableTable;
 import name.martingeisse.reporting.definition.nestedtable.NestedTableResult;
-import name.martingeisse.reporting.definition.nestedtable.NestedTableRow;
+import name.martingeisse.reporting.definition.nestedtable.NestedTableTable;
 
 /**
  * This query represents a high-level way to express an SQL query.
@@ -30,231 +23,103 @@ import name.martingeisse.reporting.definition.nestedtable.NestedTableRow;
 public class EntityQuery implements INestedTableQuery {
 
 	/**
+	 * the entityDefinition
+	 */
+	private EntityDefinition entityDefinition;
+
+	/**
+	 * the fetchClauses
+	 */
+	private List<EntityQueryFetchClause> fetchClauses;
+
+	/**
 	 * Constructor.
 	 */
 	public EntityQuery() {
+		this.fetchClauses = new ArrayList<EntityQueryFetchClause>();
 	}
-	
+
+	/**
+	 * Getter method for the entityDefinition.
+	 * @return the entityDefinition
+	 */
+	public EntityDefinition getEntityDefinition() {
+		return entityDefinition;
+	}
+
+	/**
+	 * Setter method for the entityDefinition.
+	 * @param entityDefinition the entityDefinition to set
+	 */
+	public void setEntityDefinition(final EntityDefinition entityDefinition) {
+		this.entityDefinition = entityDefinition;
+	}
+
+	/**
+	 * Getter method for the fetchClauses.
+	 * @return the fetchClauses
+	 */
+	public List<EntityQueryFetchClause> getFetchClauses() {
+		return fetchClauses;
+	}
+
+	/**
+	 * Setter method for the fetchClauses.
+	 * @param fetchClauses the fetchClauses to set
+	 */
+	public void setFetchClauses(final List<EntityQueryFetchClause> fetchClauses) {
+		this.fetchClauses = fetchClauses;
+	}
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.reporting.definition.nestedtable.INestedTableQuery#bindToData(name.martingeisse.reporting.datasource.DataSources)
 	 */
 	@Override
-	public INestedTableResult bindToData(DataSources dataSources) {
+	public INestedTableResult bindToData(final DataSources dataSources) {
 
 		// fetch the root table
-		Connection connection = dataSources.getConnection("default");
-		NestedTableTable rootTable = fetchRootTable(connection, "phpbb_forums");
-		List<NestedTableTable> rootTables = Arrays.asList(rootTable);
-		
-		// fetch subtables
-		fetchSimilarSubtables(connection, rootTables, "forum_id", "phpbb_forums", "parent_id");
-		fetchSimilarSubtables(connection, rootTables, "forum_id", "phpbb_forums_track", "forum_id");
-		
-		// build the result
-		NestedTableResult result = new NestedTableResult(rootTable);
-		return result;
-		
-	}
+		final Connection connection = dataSources.getConnection("default");
+		final NestedTableTable rootTable = EntityQueryInternalUtil.fetchRootTable(connection, entityDefinition.getTable().getDatabaseTableName());
+		final List<NestedTableTable> rootTables = Arrays.asList(rootTable);
 
+		// fetch subtables
+		for (EntityQueryFetchClause fetchClause : fetchClauses) {
+			fetchSubtables(connection, rootTables, entityDefinition.getTable(), fetchClause.getPath(), 0);
+		}
+
+		// build the result
+		final NestedTableResult result = new NestedTableResult(rootTable);
+		return result;
+
+	}
+	
 	/**
 	 * @param connection
-	 * @param tableName
-	 * @return
+	 * @param rootTables
+	 * @param tableDefinition
 	 */
-	private NestedTableTable fetchRootTable(Connection connection, String tableName) {
-		try {
-			
-			// create the table object
-			NestedTableTable table = new NestedTableTable();
-			table.setTitle(tableName);
-			
-			// build the query text
-			String queryText = "SELECT * FROM " + tableName;
-			System.out.println("executing: " + queryText);
-			
-			// execute the query and add the resulting rows to the table
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery(queryText);
-			table.setColumnNames(getColumnNames(resultSet));
-			while (resultSet.next()) {
-				NestedTableRow row = new NestedTableRow();
-				row.setValues(getRowValues(resultSet));
-				table.getRows().add(row);
-			}
-			resultSet.close();
-			statement.close();
-			
-			return table;
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}		
-	}
-	
-	/**
-	 * Fetches a set of "similar" subtables, i.e. one subtable for each row of a set of
-	 * similar tables. Similar tables have the same structure and can be fetched in a single
-	 * SQL query; they behave much like a single table except that the rows are associated
-	 * with different parent tables (and possibly repeated for multiple parent tables).
-	 * 
-	 * This method fetches all relevant child rows using key equality: The key column from
-	 * the subtables specified by childTableKeyName must be equal to any parent key (see
-	 * below) for a child row to be included, and such a child row is associated with any
-	 * parent which it matches. Note that for consistency a child table is created for all
-	 * parent rows, leaving the child table empty if no child row matches.
-	 * 
-	 * The set of parent keys is determined by taking all values of the column specified
-	 * by parentTableKeyName from all rows of all parent tables.
-	 * 
-	 * The list of child tables created is also returned.
-	 * 
-	 * @param connection the SQL connection
-	 * @param parentTables the parent tables
-	 * @param parentTableKeyName the name of the key column in the parent tables
-	 * @param childTableKeyName the name of the key column in the child tables
-	 * @return all child tables
-	 */
-	private List<NestedTableTable> fetchSimilarSubtables(Connection connection, List<NestedTableTable> parentTables, String parentTableKeyName, String childDatabaseTable, String childTableKeyName) {
-		try {
-			
-			// build the query text
-			Set<Object> keys = collectKeys(parentTables, parentTableKeyName);
-			String queryText = "SELECT * FROM " + childDatabaseTable + " WHERE " + childTableKeyName + " IN (" + createInClauseList(keys) + ")";
-			System.out.println("executing: " + queryText);
-			
-			// execute the query and collect the resulting rows 
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery(queryText);
-			List<String> columnNames = getColumnNames(resultSet);
-			List<NestedTableRow> rows = new ArrayList<NestedTableRow>();
-			while (resultSet.next()) {
-				NestedTableRow row = new NestedTableRow();
-				row.setValues(getRowValues(resultSet));
-				rows.add(row);
-			}
-			resultSet.close();
-			statement.close();
-			
-			// the key column of the child table must have been fetched, otherwise we cannot associate them with parent tables
-			int childKeyColumnIndex = columnNames.indexOf(childTableKeyName);
-			if (childKeyColumnIndex == -1) {
-				throw new RuntimeException("subtable query did not fetch the key column -- cannot associate rows");
-			}
-			
-			// create a subtable for each row of each parent table and associate nested rows with them
-			List<NestedTableTable> childTables = new ArrayList<NestedTableTable>();
-			for (NestedTableTable parentTable : parentTables) {
-				int parentKeyColumnIndex = forceFindColumn(parentTable, parentTableKeyName);
-				for (NestedTableRow parentRow : parentTable.getRows()) {
-					
-					// create a child table for this row
-					NestedTableTable childTable = new NestedTableTable();
-					childTable.setTitle(childDatabaseTable);
-					childTable.setColumnNames(columnNames);
-					childTables.add(childTable);
-					parentRow.getSubtables().add(childTable);
-					
-					// associate all matching rows
-					String parentKey = parentRow.getValues().get(parentKeyColumnIndex);
-					for (NestedTableRow childRow : rows) {
-						String childKey = childRow.getValues().get(childKeyColumnIndex);
-//						System.out.println("* " + childKey + " / " + childKey.getClass() + " / " + parentKey + " / " + parentKey.getClass());
-						if (childKey.equals(parentKey)) {
-//							System.out.println("+++");
-							childTable.getRows().add(childRow);
-						}
-					}
-					
-				}
-			}
-			
-			return childTables;
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	/**
-	 * @param tables
-	 * @param keyName
-	 * @return
-	 */
-	private Set<Object> collectKeys(List<NestedTableTable> tables, String keyName) {
-		Set<Object> result = new HashSet<Object>();
-		for (NestedTableTable table : tables) {
-			int index = forceFindColumn(table, keyName);
-			for (NestedTableRow row : table.getRows()) {
-				result.add(row.getValues().get(index));
-			}
-		}
-		return result;
-	}
-	
-	/**
-	 * @param values
-	 * @return
-	 */
-	private String createInClauseList(Set<Object> values) {
-		if (values.size() == 0) {
-			throw new RuntimeException("cannot create an IN clause list from an empty set");
-		}
-		StringBuilder builder = new StringBuilder();
-		boolean first = true;
-		for (Object value : values) {
-			if (first) {
-				first = false;
-			} else {
-				builder.append(", ");
-			}
-			if (value instanceof String) {
-				// TODO: escaping
-				builder.append("'").append(value).append("'");
-			} else if (value instanceof Integer) {
-				builder.append(value);
-			} else {
-				throw new RuntimeException("cannot handle IN clause value type: " + value.getClass().getCanonicalName());
-			}
-		}
-		return builder.toString();
-	}
-	
-	/**
-	 * @param resultSet
-	 * @return
-	 */
-	private List<String> getColumnNames(ResultSet resultSet) throws SQLException {
-		ResultSetMetaData meta = resultSet.getMetaData();
-		List<String> result = new ArrayList<String>();
-		for (int i=0; i<meta.getColumnCount(); i++) {
-			result.add(meta.getColumnName(1 + i));
-		}
-		return result;
-	}
+	private void fetchSubtables(Connection connection, List<NestedTableTable> tables, EntityDefinitionTable tableDefinition, EntityPath path, int pathIndex) {
 
-	/**
-	 * @param resultSet
-	 * @return
-	 * @throws SQLException
-	 */
-	private List<String> getRowValues(ResultSet resultSet) throws SQLException {
-		ResultSetMetaData meta = resultSet.getMetaData();
-		List<String> result = new ArrayList<String>();
-		for (int i=0; i<meta.getColumnCount(); i++) {
-			result.add(resultSet.getString(1 + i));
+		// stop if the path is finished
+		if (pathIndex == path.getSegmentCount()) {
+			return;
 		}
-		return result;
-	}
 
-	/**
-	 * @param table
-	 * @param columnName
-	 * @return
-	 */
-	private int forceFindColumn(NestedTableTable table, String columnName) {
-		int index = table.findColumn(columnName);
-		if (index == -1) {
-			throw new RuntimeException("column " + columnName + " not found in table " + table.getTitle());
+		// determine where to move next
+		String pathSegment = path.getSegment(pathIndex);
+		EntityDefinitionLink link = tableDefinition.getLinks().get(pathSegment);
+		if (link == null) {
+			throw new RuntimeException("unknown entity link: " + pathSegment);
 		}
-		return index;
+		EntityDefinitionTable subtableDefinition = link.getDestinationTable();
+		
+		// fetch one level of tables
+		List<NestedTableTable> subtables = EntityQueryInternalUtil.fetchSimilarSubtables(connection, tables,
+			link.getSourceTableKeyColumnName(), subtableDefinition.getDatabaseTableName(), link.getDestinationTableKeyColumnName());
+		
+		// recursively fetch subtables
+		fetchSubtables(connection, subtables, subtableDefinition, path, pathIndex + 1);
+		
 	}
 	
 }
