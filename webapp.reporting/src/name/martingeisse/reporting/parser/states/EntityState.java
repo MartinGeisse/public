@@ -6,8 +6,14 @@
 
 package name.martingeisse.reporting.parser.states;
 
+import name.martingeisse.reporting.definition.entity.EntityDefinition;
+import name.martingeisse.reporting.definition.entity.EntityDefinitionLink;
+import name.martingeisse.reporting.definition.entity.EntityDefinitionTable;
 import name.martingeisse.reporting.definition.entity.EntityQuery;
+import name.martingeisse.reporting.definition.entity.EntityQueryFetchClause;
 import name.martingeisse.reporting.parser.IParserStateContext;
+import name.martingeisse.reporting.parser.MissingAttributeException;
+import name.martingeisse.reporting.parser.ParserUtil;
 import name.martingeisse.reporting.parser.UnexpectedElementException;
 
 import org.xml.sax.Attributes;
@@ -43,11 +49,27 @@ public class EntityState extends AbstractParserState {
 	@Override
 	public void startState(final IParserStateContext context, final Class<?> expectedReturnType, final String namespaceUri, final String name, final Attributes attributes) {
 		initializeReturnType(context, expectedReturnType, EntityQuery.class);
-//		
-//		query.setEntityName(attributes.getValue("", "name"));
-//		if (query.getEntityName() == null) {
-//			throw new MissingAttributeException(namespaceUri, name, "name");
-//		}
+		
+		// --- TODO ---------------------------------
+		
+		EntityDefinitionTable rootTable = new EntityDefinitionTable();
+		rootTable.setDatabaseTableName("phpbb_forums");
+
+		EntityDefinitionTable subForumTable = new EntityDefinitionTable();
+		subForumTable.setDatabaseTableName("phpbb_forums");
+		rootTable.getLinks().put("Child", new EntityDefinitionLink(subForumTable, "forum_id", "parent_id"));
+
+		EntityDefinitionTable trackTable = new EntityDefinitionTable();
+		trackTable.setDatabaseTableName("phpbb_forums_track");
+		rootTable.getLinks().put("Track", new EntityDefinitionLink(trackTable, "forum_id", "forum_id"));
+		
+		EntityDefinition entityDefinition = new EntityDefinition();
+		entityDefinition.setName("Forum");
+		entityDefinition.setTable(rootTable);
+		
+		query.setEntityDefinition(entityDefinition);
+		
+		// --- TODO ---------------------------------
 		
 	}
 
@@ -63,7 +85,17 @@ public class EntityState extends AbstractParserState {
 	 */
 	@Override
 	public void startElement(final IParserStateContext context, final String namespaceUri, final String name, final Attributes attributes) {
-		throw new UnexpectedElementException(namespaceUri, namespaceUri, "... TODO ...");
+		if (ParserUtil.isCoreElement(namespaceUri, name, "fetch")) {
+			String path = attributes.getValue("", "path");
+			if (path == null) {
+				throw new MissingAttributeException(namespaceUri, name, "path");
+			}
+			EntityQueryFetchClause fetchClause = new EntityQueryFetchClause(path);
+			query.getFetchClauses().add(fetchClause);
+			context.pushState(new EmptyState(), null, namespaceUri, name, attributes);
+		} else {
+			throw new UnexpectedElementException(namespaceUri, namespaceUri, "expected <fetch> clauses");
+		}
 	}
 
 	/* (non-Javadoc)
@@ -79,7 +111,7 @@ public class EntityState extends AbstractParserState {
 	 */
 	@Override
 	public void consumeText(final IParserStateContext context, final String text) {
-		noTextExpected(text, "... TODO ...");
+		noTextExpected(text, "expected <fetch> clauses");
 	}
 
 }

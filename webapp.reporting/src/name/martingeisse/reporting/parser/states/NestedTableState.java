@@ -6,9 +6,12 @@
 
 package name.martingeisse.reporting.parser.states;
 
+import name.martingeisse.reporting.definition.ITabularQuery;
 import name.martingeisse.reporting.definition.UnboundTable;
+import name.martingeisse.reporting.definition.nestedtable.INestedTableQuery;
 import name.martingeisse.reporting.definition.nestedtable.UnboundNestedTable;
 import name.martingeisse.reporting.parser.IParserStateContext;
+import name.martingeisse.reporting.parser.ParserUtil;
 import name.martingeisse.reporting.parser.UnexpectedElementException;
 
 import org.xml.sax.Attributes;
@@ -43,6 +46,7 @@ public class NestedTableState extends AbstractParserState {
 	 */
 	@Override
 	public void consumeReturnData(IParserStateContext context, Object data) {
+		table.setQuery((INestedTableQuery)data);
 	}
 
 	/* (non-Javadoc)
@@ -50,7 +54,11 @@ public class NestedTableState extends AbstractParserState {
 	 */
 	@Override
 	public void startElement(IParserStateContext context, String namespaceUri, String name, Attributes attributes) {
-		throw new UnexpectedElementException(namespaceUri, name, "* TODO *");
+		if (ParserUtil.isCoreElement(namespaceUri, name, "entity")) {
+			context.pushState(new EntityState(), INestedTableQuery.class, namespaceUri, name, attributes);
+		} else {
+			throw new UnexpectedElementException(namespaceUri, name, "expected nested-table query");
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -66,7 +74,7 @@ public class NestedTableState extends AbstractParserState {
 	 */
 	@Override
 	public void consumeText(IParserStateContext context, String text) {
-		noTextExpected(text, "* TODO *");
+		noTextExpected(text, "expected nested-table query");
 	}
 
 }

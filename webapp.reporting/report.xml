@@ -2,6 +2,10 @@
 <report xmlns="http://martingeisse.name/report/0.1/core" title="The document.">
 
 	<nested-table caption="This is a nested-table.">
+		<entity>
+			<fetch path="Child" />
+			<fetch path="Track" />
+		</entity>
 	</nested-table>
 
 <!-- 
