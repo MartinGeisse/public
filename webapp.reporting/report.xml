@@ -3,8 +3,37 @@
 
 	<nested-table caption="This is a nested-table.">
 		<entity>
-			<fetch path="Child" />
-			<fetch path="Track" />
+			<fetch path="Child">
+				<fields>foo, bar, #fupp</fields>
+			</fetch>
+			
+			<!--
+				"path" in fetch clause in cumbersome: need to know nesting levels in between.
+				same applies to "path" in <fields>. But: may be ambiguous -- only needed
+				if ambiguous? Alt: "default" path to use if only last path segment specified.
+				Or precedence order.
+				Alt: "routing" system: a routes d to b, b routes d to c, c knows d
+					("entity resolution routes")
+				Dann wäre es sogar möglich, als einzigen Baustein ein <fetch> mit Entity-Selektor
+				(einzelnes Segment) zu nehmen. Dieses wird nach den Routes aufgelöst;
+				geschachtelte <fetch> Clauses falls
+				- eine andere Route genommen werden soll
+				- Property Sets angegeben werden sollen
+				- Row filter angegeben werden sollen
+				- (... ?)
+				Allerdings kann <fetch> mit einem multi-Segment-Pfad interpretiert werden als
+				Parent-Fetch-Clauses "ohne Extras" -- was nur für den Anwendungsfall
+				"andere Route" was bringt. Wenn Extras gewünscht sind -> nested
+				<fetch>. Dann werden Filter, Property Sets usw. einfach, da sie immer
+				auf dem aktuellen Level arbeiten und keinen eigenen Pfad brauchen.
+				 
+			
+			 -->
+			<fetch path="Track">
+				<fields>blupp, #baz, blarp</fields>
+				<filter>...</filter>
+				<fetch path="SubTrack" />
+			</fetch>
 		</entity>
 	</nested-table>
 

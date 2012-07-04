@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.reporting.definition.entity;
+package name.martingeisse.reporting.definition.entity.query;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -22,7 +22,7 @@ import name.martingeisse.reporting.definition.nestedtable.NestedTableTable;
 /**
  * Utility methods for the implementation of entity queries.
  */
-class EntityQueryInternalUtil {
+final class EntityQueryInternalUtil {
 
 	/**
 	 * @param connection

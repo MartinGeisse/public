@@ -1,0 +1,14 @@
+
+Entity Paths = kein gutes Konzept, da man fast immer Property Sets für die
+Zwischenstufen angeben will, oft auch Filter. Wobei es sinnvoll ist, dass
+Default-Filter direkt durch die Links ausgewählt werden. Dann aber keine
+Resolution Rules mehr.
+
+Stattdessen:
+- ein Link geht nur über einen Join und kann Filter angeben
+- eine Fetch Clause wählt entweder einen Link, oder eine Tabelle und
+  key Properties (Zukunft: eine Tabelle und eine Join-Condition).
+  Fetch Clauses können zusätzliche Bedingungen enthalten, die mit
+  denen des Links ANDed werden.
+
+

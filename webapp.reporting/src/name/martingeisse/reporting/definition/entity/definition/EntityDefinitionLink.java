@@ -4,13 +4,13 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.reporting.definition.entity;
+package name.martingeisse.reporting.definition.entity.definition;
 
 /**
  * This class represents a link from one table to another in an
  * entity definition.
  */
-public class EntityDefinitionLink {
+public final class EntityDefinitionLink {
 
 	/**
 	 * the destinationTable

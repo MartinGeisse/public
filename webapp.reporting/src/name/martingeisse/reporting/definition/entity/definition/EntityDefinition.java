@@ -4,13 +4,13 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.reporting.definition.entity;
+package name.martingeisse.reporting.definition.entity.definition;
 
 /**
  * This class represents the definition of an entity that can be used
  * in report definitions.
  */
-public class EntityDefinition {
+public final class EntityDefinition {
 
 	/**
 	 * the name

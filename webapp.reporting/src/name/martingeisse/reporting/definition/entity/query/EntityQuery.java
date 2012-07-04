@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.reporting.definition.entity;
+package name.martingeisse.reporting.definition.entity.query;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -12,6 +12,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import name.martingeisse.reporting.datasource.DataSources;
+import name.martingeisse.reporting.definition.entity.EntityPath;
+import name.martingeisse.reporting.definition.entity.definition.EntityDefinition;
+import name.martingeisse.reporting.definition.entity.definition.EntityDefinitionLink;
+import name.martingeisse.reporting.definition.entity.definition.EntityDefinitionTable;
 import name.martingeisse.reporting.definition.nestedtable.INestedTableQuery;
 import name.martingeisse.reporting.definition.nestedtable.INestedTableResult;
 import name.martingeisse.reporting.definition.nestedtable.NestedTableResult;
@@ -20,7 +24,7 @@ import name.martingeisse.reporting.definition.nestedtable.NestedTableTable;
 /**
  * This query represents a high-level way to express an SQL query.
  */
-public class EntityQuery implements INestedTableQuery {
+public final class EntityQuery implements INestedTableQuery {
 
 	/**
 	 * the entityDefinition
