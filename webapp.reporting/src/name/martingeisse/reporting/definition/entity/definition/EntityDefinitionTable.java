@@ -6,9 +6,7 @@
 
 package name.martingeisse.reporting.definition.entity.definition;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,18 +30,12 @@ public final class EntityDefinitionTable {
 	private Map<String, String[]> propertySets;
 
 	/**
-	 * the entitySelectorResolutionRules
-	 */
-	private List<IEntitySelectorResolutionRule> entitySelectorResolutionRules;
-
-	/**
 	 * Constructor.
 	 */
 	public EntityDefinitionTable() {
 		this.databaseTableName = null;
 		this.links = new HashMap<String, EntityDefinitionLink>();
 		this.propertySets = new HashMap<String, String[]>();
-		this.entitySelectorResolutionRules = new ArrayList<IEntitySelectorResolutionRule>();
 	}
 
 	/**
@@ -94,58 +86,4 @@ public final class EntityDefinitionTable {
 		this.propertySets = propertySets;
 	}
 
-	/**
-	 * Getter method for the entitySelectorResolutionRules.
-	 * @return the entitySelectorResolutionRules
-	 */
-	public List<IEntitySelectorResolutionRule> getEntitySelectorResolutionRules() {
-		return entitySelectorResolutionRules;
-	}
-
-	/**
-	 * Setter method for the entitySelectorResolutionRules.
-	 * @param entitySelectorResolutionRules the entitySelectorResolutionRules to set
-	 */
-	public void setEntitySelectorResolutionRules(final List<IEntitySelectorResolutionRule> entitySelectorResolutionRules) {
-		this.entitySelectorResolutionRules = entitySelectorResolutionRules;
-	}
-
-	/**
-	 * Resolves the given entity selector. This method first checks all entity resolution rules,
-	 * throwing an exception if more than one rule matches. If no rule matches, this method checks
-	 * link names as a fallback (i.e., each link name is an implicitly recognized entity selector).
-	 * Returns null if this fails too.
-	 * 
-	 * @param entitySelector the selector to resolve
-	 * @return the resolution result, or null if no rule recognizes the selector and the
-	 * selector does not match any link name.
-	 */
-	public EntitySelectorResolutionRuleResult resolveEntitySelector(String entitySelector) {
-		
-		// check rules
-		EntitySelectorResolutionRuleResult firstResult = null;
-		for (IEntitySelectorResolutionRule rule : entitySelectorResolutionRules) {
-			EntitySelectorResolutionRuleResult result = rule.resolveEntitySelector(this, entitySelector);
-			if (result != null) {
-				if (firstResult != null) {
-					throw new IllegalStateException("more than one entity resolution rule for table " + databaseTableName + " matches selector " + entitySelector);
-				} else {
-					firstResult = result;
-				}
-			}
-		}
-		if (firstResult != null) {
-			return firstResult;
-		}
-		
-		// check link names
-		if (links.containsKey(entitySelector)) {
-			return new EntitySelectorResolutionRuleResult(entitySelector, true);
-		}
-
-		// selector not found
-		return null;
-		
-	}
-	
 }

@@ -11,4 +11,37 @@ Stattdessen:
   Fetch Clauses können zusätzliche Bedingungen enthalten, die mit
   denen des Links ANDed werden.
 
+Es ist auch schwer, wiederverwendbare Table-Filter oder Link-Filter
+Kombinationen zu schreiben. Besser wären evtl. wiederverwendbare
+kobinierbare Filter. Bsp:
 
+<fetch>ShopOrdersGroup[visible].ShopOrder[visible][unpaid][minAge: 20d]</fetch>
+
+bzw.
+
+<fetch entity="ShopOrdersGroup" as="group">
+	<filter type="visible" />
+	<filter type="expression">group.x = 23</filter>
+	<properties>id, total</properties>
+	<fetch entity="ShopOrder">								// implicit join condition
+		<filter type="visible" />
+		<filter type="unpaid" />
+		<filter type="minAge">20d</filter>
+		<properties>id, total, #consumer</properties>
+	</fetch>
+</fetch>
+
+- Das äußerste Fetch benutzt einen Entity-Namen, die inneren einen Link-Namen (vereinheitlichen?)
+- es kann jeweils ein Alias per as="" angegeben werden
+- Properties und Property Sets sind auf jeder Ebene Möglich
+- Filter sind auf jeder Ebene möglich und benutzen einen type="" der Code selektiert sowie einen
+	specificationText als Element-Inhalt, der von diesem Code interpretiert wird.
+	
+Explizite Filter und as="" später. as="" ist eh nur nötig wenn dieselbe Entity
+in mehreren Ancestor Nodes vorkommt.
+
+Allerdings können die Filter-Definitionen vom Kontext abhängig sein und auf die Felder
+der äußeren Entities zugreifen. -> passiert das wirklich bzw. lohnt es den Aufwand?
+Vor allem wäre die Frage, ob solche Filter aus "Links" kommen oder von Contributors.
+
+"
