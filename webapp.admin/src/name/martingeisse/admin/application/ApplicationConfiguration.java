@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
-import name.martingeisse.admin.application.capabilities.IEntityDisplayNameStrategy;
+import name.martingeisse.admin.application.capabilities.IEntityNameMappingStrategy;
 import name.martingeisse.admin.application.capabilities.INavigationBackMapper;
 import name.martingeisse.admin.application.capabilities.IPageBorderFactory;
 import name.martingeisse.admin.multi.IGlobalEntityListPresenter;
@@ -31,7 +31,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
  * 
  * All access to this class is through static methods.
  */
-public class ApplicationConfiguration {
+public final class ApplicationConfiguration {
 
 	/**
 	 * the sealed
@@ -59,9 +59,9 @@ public class ApplicationConfiguration {
 	private static Comparator<EntityPropertyDescriptor> rawEntityListFieldOrder;
 
 	/**
-	 * the entityDisplayNameStrategy
+	 * the entityNameMappingStrategy
 	 */
-	private static IEntityDisplayNameStrategy entityDisplayNameStrategy;
+	private static IEntityNameMappingStrategy entityNameMappingStrategy;
 
 	/**
 	 * the pageBorderFactory
@@ -146,29 +146,29 @@ public class ApplicationConfiguration {
 	}
 
 	/**
-	 * Getter method for the entityDisplayNameStrategy.
-	 * @return the entityDisplayNameStrategy
+	 * Getter method for the entityNameMappingStrategy.
+	 * @return the entityNameMappingStrategy
 	 */
-	public static IEntityDisplayNameStrategy getEntityDisplayNameStrategy() {
-		return entityDisplayNameStrategy;
+	public static IEntityNameMappingStrategy getEntityNameMappingStrategy() {
+		return entityNameMappingStrategy;
 	}
 
 	/**
-	 * Setter method for the entityDisplayNameStrategy.
-	 * @param entityDisplayNameStrategy the entityDisplayNameStrategy to set
+	 * Setter method for the entityNameMappingStrategy.
+	 * @param entityNameMappingStrategy the entityNameMappingStrategy to set
 	 */
-	public static void setEntityDisplayNameStrategy(final IEntityDisplayNameStrategy entityDisplayNameStrategy) {
+	public static void setEntityNameMappingStrategy(final IEntityNameMappingStrategy entityNameMappingStrategy) {
 		checkChangesAllowed();
-		ApplicationConfiguration.entityDisplayNameStrategy = entityDisplayNameStrategy;
+		ApplicationConfiguration.entityNameMappingStrategy = entityNameMappingStrategy;
 	}
 
 	/**
-	 * Returns the name to display for the specified entity.
+	 * Returns the entity name for the specified entity.
 	 * @param entity the entity
 	 * @return the name to display
 	 */
-	public static String getEntityDisplayName(final EntityDescriptor entity) {
-		return (entityDisplayNameStrategy == null ? entity.getTableName() : entityDisplayNameStrategy.getDisplayName(entity));
+	public static String getEntityName(final EntityDescriptor entity) {
+		return (entityNameMappingStrategy == null ? entity.getTableName() : entityNameMappingStrategy.getEntityName(entity));
 	}
 
 	/**
@@ -236,9 +236,9 @@ public class ApplicationConfiguration {
 
 		// sort property read-only renderer contributors by score
 		Collections.sort(capabilities.getPropertyReadOnlyRendererContributors(), ScoreComparator.DESCENDING_INSTANCE);
-		
+
 		// initialize navigation back-mappers (page-to-navigation node)
-		for (INavigationBackMapper navigationBackMapper : capabilities.getNavigationBackMappers()) {
+		for (final INavigationBackMapper navigationBackMapper : capabilities.getNavigationBackMappers()) {
 			navigationBackMapper.initialize(ApplicationConfiguration.getNavigationTree());
 		}
 

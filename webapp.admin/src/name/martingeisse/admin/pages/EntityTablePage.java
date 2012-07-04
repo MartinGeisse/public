@@ -18,6 +18,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
@@ -52,7 +53,9 @@ public class EntityTablePage extends AbstractAdminPage {
 		}
 		
 		// create components
-		getMainContainer().add(new Label("entityName", ApplicationConfiguration.getEntityDisplayName(entity)));
+		String entityNameKey = ("schema.entity." + ApplicationConfiguration.getEntityName(entity));
+		StringResourceModel entityDisplayNameModel = new StringResourceModel(entityNameKey, this, null);
+		getMainContainer().add(new Label("entityName", entityDisplayNameModel));
 		getMainContainer().add(new ListView<IGlobalEntityListPresenter>("presenters", entity.getGlobalListPresenters()) {
 			@Override
 			protected void populateItem(ListItem<IGlobalEntityListPresenter> item) {

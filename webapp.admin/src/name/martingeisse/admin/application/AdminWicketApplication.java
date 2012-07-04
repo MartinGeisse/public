@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.application;
 
+import name.martingeisse.admin.application.capabilities.wicket.IWebApplicationInitializationContributor;
 import name.martingeisse.admin.common.Dummy;
 import name.martingeisse.admin.pages.HomePage;
 import name.martingeisse.admin.schema.ApplicationSchema;
@@ -43,17 +44,15 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		getApplicationSettings().setPageExpiredErrorPage(HomePage.class);
 		
 		// mount page URLs
-//		mountPage("user_settings", UserSettingsPage.class);
 		mountPage("test", HomePage.class);
 
 		// mount resource URLs
 		mountResource("common.css", new PackageResourceReference(Dummy.class, "common.css"));
 		
-		// register string resource loaders
-//		getResourceSettings().getStringResourceLoaders().add(new ClassStringResourceLoader(Market.class));
-//		getResourceSettings().getStringResourceLoaders().add(new ClassStringResourceLoader(Language.class));
-
-		
+		// let plugins contribute
+		for (IWebApplicationInitializationContributor contributor : ApplicationConfiguration.getCapabilities().getWebApplicationInitializationContributors()) {
+			contributor.onInitializeWebApplication(this);
+		}
 		
 	}
 

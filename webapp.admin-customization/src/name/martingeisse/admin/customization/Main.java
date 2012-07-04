@@ -18,7 +18,7 @@ import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
 import name.martingeisse.admin.application.capabilities.ExplicitEntityPropertyFilter;
-import name.martingeisse.admin.application.capabilities.PrefixEliminatingEntityDisplayNameStrategy;
+import name.martingeisse.admin.application.capabilities.PrefixEliminatingEntityNameMappingStrategy;
 import name.martingeisse.admin.application.capabilities.SingleEntityPropertyFilter;
 import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPanel;
 import name.martingeisse.admin.customization.multi.PopulatorDataViewPanel;
@@ -43,9 +43,6 @@ import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
 
-import org.apache.wicket.validation.IValidatable;
-import org.apache.wicket.validation.IValidator;
-import org.apache.wicket.validation.ValidationError;
 
 /**
  * The main class.
@@ -73,7 +70,7 @@ public class Main {
 		phpbbDatabase.setUsername("root");
 		phpbbDatabase.setPassword("");
 		ApplicationConfiguration.addDatabase(phpbbDatabase);
-		ApplicationConfiguration.setEntityDisplayNameStrategy(new PrefixEliminatingEntityDisplayNameStrategy("phpbb_"));
+		ApplicationConfiguration.setEntityNameMappingStrategy(new PrefixEliminatingEntityNameMappingStrategy("phpbb_"));
 
 		ApplicationConfiguration.addPlugin(new DefaultPlugin());
 		ApplicationConfiguration.addPlugin(new CustomizationPlugin());
@@ -87,6 +84,9 @@ public class Main {
 		ApplicationConfiguration.addPlugin(new PopulatorBasedGlobalEntityListPresenter("pop", "Populator-Based", Arrays.<IEntityCellPopulator> asList(new EntityFieldPopulator("Role Description", "role_description"), new EntityFieldPopulator("Role Order", "role_order"), new MultiCellPopulator("Test", new EntityFieldPopulator(null, "role_description"), new EntityFieldPopulator(null, "role_order")))));
 		ApplicationConfiguration.addPlugin(new GlobalEntityListPresenter("popdata", "Populator / DataView", PopulatorDataViewPanel.class));
 		ApplicationConfiguration.addPlugin(new EntityListPageNavigationBackMapper());
+		ApplicationConfiguration.addPlugin(new MySchemaStringResourceContributor());
+		
+		
 
 		final ExplicitEntityPropertyFilter userPropertyFilter = new ExplicitEntityPropertyFilter(2, "User");
 		userPropertyFilter.getVisiblePropertyNames().add("id");
@@ -229,54 +229,6 @@ public class Main {
 		 * @return the max length
 		 */
 		public int value();
-		
-	}
-	
-	/**
-	 *
-	 */
-	public static class MyValidator implements IValidator<String> {
-
-		/**
-		 * the maxLength
-		 */
-		private int maxLength;
-		
-		/**
-		 * Constructor.
-		 */
-		public MyValidator() {
-			this(5);
-		}
-		
-		/**
-		 * Constructor.
-		 * @param a the annotation
-		 */
-		public MyValidator(MyMaxLength a) {
-			this(a.value());
-		}
-		
-		/**
-		 * Constructor.
-		 * @param maxLength ...
-		 */
-		public MyValidator(int maxLength) {
-			this.maxLength = maxLength;
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.apache.wicket.validation.IValidator#validate(org.apache.wicket.validation.IValidatable)
-		 */
-		@Override
-		public void validate(IValidatable<String> validatable) {
-			String value = validatable.getValue();
-			if (value.length() > maxLength) {
-				ValidationError error = new ValidationError();
-				error.addMessageKey("max.length");
-				validatable.error(error);
-			}
-		}
 		
 	}
 	

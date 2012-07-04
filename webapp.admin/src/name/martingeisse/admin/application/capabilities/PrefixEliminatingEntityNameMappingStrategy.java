@@ -9,10 +9,10 @@ package name.martingeisse.admin.application.capabilities;
 import name.martingeisse.admin.schema.EntityDescriptor;
 
 /**
- * This display name strategy checks if the name begins with
+ * This name mapping strategy checks if the name begins with
  * the specified prefix and if so, removes that prefix.
  */
-public class PrefixEliminatingEntityDisplayNameStrategy implements IEntityDisplayNameStrategy {
+public class PrefixEliminatingEntityNameMappingStrategy implements IEntityNameMappingStrategy {
 
 	/**
 	 * the prefix
@@ -22,14 +22,14 @@ public class PrefixEliminatingEntityDisplayNameStrategy implements IEntityDispla
 	/**
 	 * Constructor.
 	 */
-	public PrefixEliminatingEntityDisplayNameStrategy() {
+	public PrefixEliminatingEntityNameMappingStrategy() {
 	}
 
 	/**
 	 * Constructor.
 	 * @param prefix the prefix to eliminate
 	 */
-	public PrefixEliminatingEntityDisplayNameStrategy(final String prefix) {
+	public PrefixEliminatingEntityNameMappingStrategy(final String prefix) {
 		this.prefix = prefix;
 	}
 
@@ -50,10 +50,10 @@ public class PrefixEliminatingEntityDisplayNameStrategy implements IEntityDispla
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.application.capabilities.IEntityDisplayNameStrategy#getDisplayName(name.martingeisse.admin.schema.EntityDescriptor)
+	 * @see name.martingeisse.admin.application.capabilities.IEntityNameMappingStrategy#getEntityName(name.martingeisse.admin.schema.EntityDescriptor)
 	 */
 	@Override
-	public String getDisplayName(final EntityDescriptor entity) {
+	public String getEntityName(EntityDescriptor entity) {
 		String name = entity.getTableName();
 		if (name.startsWith(prefix)) {
 			return name.substring(prefix.length());

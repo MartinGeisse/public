@@ -12,6 +12,7 @@ import java.util.List;
 import org.apache.wicket.Page;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
+import name.martingeisse.admin.application.capabilities.wicket.IWebApplicationInitializationContributor;
 import name.martingeisse.admin.navigation.AbstractNavigationNode;
 import name.martingeisse.admin.readonly.FallbackRenderer;
 import name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer;
@@ -19,8 +20,15 @@ import name.martingeisse.admin.readonly.IPropertyReadOnlyRendererContributor;
 
 /**
  * This class encapsulates all capabilities contributed by plugins.
+ * 
+ * TODO make "entity display name from properties" optional; should use table name as default
  */
 public class ApplicationCapabilities {
+
+	/**
+	 * the webApplicationInitializationContributors
+	 */
+	private final List<IWebApplicationInitializationContributor> webApplicationInitializationContributors = new ArrayList<IWebApplicationInitializationContributor>();
 
 	/**
 	 * the rawEntityListPropertyDisplayFilters
@@ -52,6 +60,14 @@ public class ApplicationCapabilities {
 	 */
 	private final List<INavigationBackMapper> navigationBackMappers = new ArrayList<INavigationBackMapper>();
 
+	/**
+	 * Getter method for the webApplicationInitializationContributors.
+	 * @return the webApplicationInitializationContributors
+	 */
+	public List<IWebApplicationInitializationContributor> getWebApplicationInitializationContributors() {
+		return webApplicationInitializationContributors;
+	}
+	
 	/**
 	 * Getter method for the rawEntityListPropertyDisplayFilters.
 	 * @return the rawEntityListPropertyDisplayFilters
