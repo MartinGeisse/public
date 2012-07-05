@@ -7,7 +7,6 @@
 package name.martingeisse.admin.pages;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
-import name.martingeisse.admin.navigation.NavigationTree;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 
@@ -20,11 +19,6 @@ public final class PagesConfigurationUtil {
 	 * The parameter key for the page border factory.
 	 */
 	public static final Class<IPageBorderFactory> PAGE_BORDER_FACTORY_PARAMETER_KEY = IPageBorderFactory.class;
-	
-	/**
-	 * The parameter key for the navigation tree.
-	 */
-	public static final Class<NavigationTree> NAVIGATION_TREE_PARAMETER_KEY = NavigationTree.class;
 
 	/**
 	 * Prevent instantiation.
@@ -57,22 +51,6 @@ public final class PagesConfigurationUtil {
 	public static WebMarkupContainer createPageBorder(final String id) {
 		IPageBorderFactory pageBorderFactory = getPageBorderFactory();
 		return (pageBorderFactory == null ? new WebMarkupContainer(id) : pageBorderFactory.createPageBorder(id));
-	}
-
-	/**
-	 * Getter method for the navigation tree.
-	 * @return the navigation tree
-	 */
-	public static NavigationTree getNavigationTree() {
-		return ApplicationConfiguration.get().getParameters().get(NAVIGATION_TREE_PARAMETER_KEY);
-	}
-
-	/**
-	 * Setter method for the navigation tree.
-	 * @param navigationTree the navigation tree to set
-	 */
-	public static void setNavigationTree(final NavigationTree navigationTree) {
-		ApplicationConfiguration.get().getParameters().set(NAVIGATION_TREE_PARAMETER_KEY, navigationTree);
 	}
 	
 }

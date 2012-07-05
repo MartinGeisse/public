@@ -70,6 +70,13 @@ public final class ApplicationConfiguration {
 	private final ClassKeyedListContainer<Object> capabilities = new ClassKeyedListContainer<Object>();
 	
 	/**
+	 * Constructor.
+	 */
+	private ApplicationConfiguration() {
+		
+	}
+	
+	/**
 	 * Checks whether this class is sealed, and if so, throws an {@link IllegalStateException}.
 	 */
 	private void checkChangesAllowed() {
