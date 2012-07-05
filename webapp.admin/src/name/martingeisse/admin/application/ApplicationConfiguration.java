@@ -11,6 +11,7 @@ import java.util.List;
 
 import name.martingeisse.admin.entity.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
+import name.martingeisse.admin.navigation.NavigationTree;
 import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
 import name.martingeisse.common.util.ClassKeyedContainer;
 import name.martingeisse.common.util.ClassKeyedListContainer;
@@ -73,7 +74,7 @@ public final class ApplicationConfiguration {
 	 * Constructor.
 	 */
 	private ApplicationConfiguration() {
-		
+		parameters.set(NavigationConfigurationUtil.NAVIGATION_TREE_PARAMETER_KEY, new NavigationTree());
 	}
 	
 	/**

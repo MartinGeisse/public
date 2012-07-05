@@ -53,6 +53,9 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		// let plugins contribute
 		WicketConfigurationUtil.invokeWebApplicationInitializationContributors(this);
 		
+		// add fallback string loaders
+		getResourceSettings().getStringResourceLoaders().add(new FallbackStringResourceLoader("schema.entity."));
+		
 	}
 
 	/**
