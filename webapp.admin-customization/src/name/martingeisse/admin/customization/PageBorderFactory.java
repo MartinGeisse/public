@@ -8,7 +8,7 @@ package name.martingeisse.admin.customization;
 
 import org.apache.wicket.markup.html.border.Border;
 
-import name.martingeisse.admin.application.capabilities.IPageBorderFactory;
+import name.martingeisse.admin.pages.IPageBorderFactory;
 
 /**
  * TODO: document me

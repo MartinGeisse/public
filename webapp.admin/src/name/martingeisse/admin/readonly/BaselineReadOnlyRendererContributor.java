@@ -9,7 +9,6 @@ package name.martingeisse.admin.readonly;
 import java.sql.Types;
 
 import name.martingeisse.admin.application.IPlugin;
-import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
 
 /**
  * This contributor provides basic rendering of entity properties.
@@ -27,8 +26,8 @@ public class BaselineReadOnlyRendererContributor implements IPropertyReadOnlyRen
 	 * @see name.martingeisse.admin.application.IPlugin#contribute(name.martingeisse.admin.application.capabilities.ApplicationCapabilities)
 	 */
 	@Override
-	public void contribute(ApplicationCapabilities applicationCapabilities) {
-		applicationCapabilities.getPropertyReadOnlyRendererContributors().add(this);
+	public void contribute() {
+		ReadOnlyRenderingConfigurationUtil.addPropertyReadOnlyRendererContributor(this);
 	}
 
 	/* (non-Javadoc)

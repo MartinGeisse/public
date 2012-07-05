@@ -7,8 +7,8 @@
 package name.martingeisse.admin.customization;
 
 import name.martingeisse.admin.application.IPlugin;
-import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
-import name.martingeisse.admin.application.capabilities.FixedNameEntityReferenceDetector;
+import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.FixedNameEntityReferenceDetector;
 
 /**
  * This plugin adds all customization code.
@@ -19,8 +19,8 @@ public class CustomizationPlugin implements IPlugin {
 	 * @see name.martingeisse.admin.application.IPlugin#contribute(name.martingeisse.admin.application.capabilities.ApplicationCapabilities)
 	 */
 	@Override
-	public void contribute(ApplicationCapabilities applicationCapabilities) {
-		applicationCapabilities.getEntityReferenceDetectors().add(new FixedNameEntityReferenceDetector("modificationUser_id", "User"));
+	public void contribute() {
+		EntityConfigurationUtil.addEntityReferenceDetector(new FixedNameEntityReferenceDetector("modificationUser_id", "User"));
 	}
 
 }

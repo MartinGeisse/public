@@ -9,13 +9,13 @@ package name.martingeisse.admin.pages;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.admin.application.ApplicationConfiguration;
-import name.martingeisse.admin.application.capabilities.IEntityInstanceAction;
-import name.martingeisse.admin.application.capabilities.IEntityInstanceActionContributor;
-import name.martingeisse.admin.schema.EntityDescriptor;
-import name.martingeisse.admin.single.EntityInstance;
-import name.martingeisse.admin.single.ISingleEntityOverviewPresenter;
-import name.martingeisse.admin.single.ISingleEntityPresenter;
+import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.IEntityInstanceAction;
+import name.martingeisse.admin.entity.IEntityInstanceActionContributor;
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.admin.entity.single.EntityInstance;
+import name.martingeisse.admin.entity.single.ISingleEntityOverviewPresenter;
+import name.martingeisse.admin.entity.single.ISingleEntityPresenter;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -153,7 +153,7 @@ public class EntityPresentationPage extends AbstractAdminPage {
 	 * @param actions
 	 */
 	private void collectActions() {
-		for (final IEntityInstanceActionContributor contributor : ApplicationConfiguration.getCapabilities().getEntityInstanceActionContributors()) {
+		for (final IEntityInstanceActionContributor contributor : EntityConfigurationUtil.getEntityInstanceActionContributors()) {
 			collectActions(contributor.contributeGlobalActions(entity));
 			collectActions(contributor.contributeInstanceActions(instance, entity));
 		}

@@ -6,7 +6,8 @@
 
 package name.martingeisse.admin.application.capabilities;
 
-import name.martingeisse.admin.schema.EntityDescriptor;
+import name.martingeisse.admin.entity.IEntityNameMappingStrategy;
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 /**
  * This name mapping strategy checks if the name begins with

@@ -7,11 +7,11 @@
 package name.martingeisse.admin.customization;
 
 import name.martingeisse.admin.application.IPlugin;
-import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
-import name.martingeisse.admin.application.capabilities.IEntityInstanceAction;
-import name.martingeisse.admin.application.capabilities.IEntityInstanceActionContributor;
-import name.martingeisse.admin.schema.EntityDescriptor;
-import name.martingeisse.admin.single.EntityInstance;
+import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.IEntityInstanceAction;
+import name.martingeisse.admin.entity.IEntityInstanceActionContributor;
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.admin.entity.single.EntityInstance;
 
 /**
  * Test for entity instance actions.
@@ -22,8 +22,8 @@ public class PrintNameAction implements IEntityInstanceAction, IEntityInstanceAc
 	 * @see name.martingeisse.admin.application.IPlugin#contribute(name.martingeisse.admin.application.capabilities.ApplicationCapabilities)
 	 */
 	@Override
-	public void contribute(ApplicationCapabilities applicationCapabilities) {
-		applicationCapabilities.getEntityInstanceActionContributors().add(this);
+	public void contribute() {
+		EntityConfigurationUtil.addEntityInstanceActionContributor(this);
 	}
 
 	/* (non-Javadoc)

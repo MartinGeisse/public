@@ -44,4 +44,25 @@ Allerdings können die Filter-Definitionen vom Kontext abhängig sein und auf di
 der äußeren Entities zugreifen. -> passiert das wirklich bzw. lohnt es den Aufwand?
 Vor allem wäre die Frage, ob solche Filter aus "Links" kommen oder von Contributors.
 
-"
+KISS-Prinzip:
+- keine Resolution, nur Links
+- Filter werden nicht von der Source-Entity eines Links definiert. Das macht die Sache
+	kompliziert und unleserlich.
+- Filter werden nicht durch einen Link definiert, nur Join-Conditions werden das.
+	Filter können in der Query definiert werden und es gibt wiederverwendbare FilterSets
+	analog zu PropertySets, sowie wiederverwendbare Filter-Konstruktoren (der Unterschied
+	zwischen Filter-Set und Filter-Konstruktor ist wie "Element vs. Helper" in Cake)
+- äußeres Element heißt <fetch>
+- inneres Element <join> erzeugt nur ein DB-join ohne Join Conditions; die muss man selbst hinschreiben
+- inneres Element <bind> erzeugt DB-join inkl- Join Conditions
+- as="" erzeugt ein DB-"AS" sowie einen internen Namen für Conditions. Default ist der Entity-Name
+	(ohne as="" wird ein implizites as="EntityName" erzeugt)
+- Attribut flatten="true" an einem <fetch>, <join> oder <bind> lässt diese Ebene später verschwinden.
+	Regel: Dann dürfen keine Properties und PropertySet angegeben werden. Bei mehreren Subtabellen
+	wird je Subtabellen-Typ gemerged. Im Falle von <fetch> muss genau eine Subtabelle da sein, da
+	die Baumstruktur sonst mehrere Root-Knoten bekommen würde. (Wäre trotzdem möglich, indem
+	eine Fake-Ebene mit einer einzelnen Fake-Row eingefügt wird. Oder indem einfach mehrere Roots
+	möglich sind -> später).
+
+
+

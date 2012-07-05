@@ -9,13 +9,13 @@ package name.martingeisse.admin.customization.multi;
 import java.util.Arrays;
 import java.util.List;
 
-import name.martingeisse.admin.multi.populator.EntityFieldPopulator;
-import name.martingeisse.admin.multi.populator.FragmentPopulator;
-import name.martingeisse.admin.multi.populator.IEntityCellPopulator;
-import name.martingeisse.admin.multi.populator.PopulatorBasedEntityListPanel;
-import name.martingeisse.admin.schema.EntityDescriptor;
-import name.martingeisse.admin.single.EntityInstance;
-import name.martingeisse.admin.single.EntityInstanceFieldModel;
+import name.martingeisse.admin.entity.multi.populator.EntityFieldPopulator;
+import name.martingeisse.admin.entity.multi.populator.FragmentPopulator;
+import name.martingeisse.admin.entity.multi.populator.IEntityCellPopulator;
+import name.martingeisse.admin.entity.multi.populator.PopulatorBasedEntityListPanel;
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.admin.entity.single.EntityInstance;
+import name.martingeisse.admin.entity.single.EntityInstanceFieldModel;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;

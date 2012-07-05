@@ -7,8 +7,6 @@
 package name.martingeisse.admin.navigation;
 
 import name.martingeisse.admin.application.IPlugin;
-import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
-import name.martingeisse.admin.application.capabilities.INavigationBackMapper;
 
 /**
  * This class provides an empty initialize() method and the ability to add
@@ -20,8 +18,8 @@ public abstract class AbstractNavigationBackMapper implements INavigationBackMap
 	 * @see name.martingeisse.admin.application.IPlugin#contribute(name.martingeisse.admin.application.capabilities.ApplicationCapabilities)
 	 */
 	@Override
-	public void contribute(ApplicationCapabilities applicationCapabilities) {
-		applicationCapabilities.getNavigationBackMappers().add(this);
+	public void contribute() {
+		NavigationConfigurationUtil.addNavigationBackMapper(this);
 	}
 	
 	/* (non-Javadoc)

@@ -6,9 +6,9 @@
 
 package name.martingeisse.admin.pages;
 
-import name.martingeisse.admin.application.ApplicationConfiguration;
-import name.martingeisse.admin.multi.IGlobalEntityListPresenter;
-import name.martingeisse.admin.schema.EntityDescriptor;
+import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.multi.IGlobalEntityListPresenter;
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.basic.Label;
@@ -53,7 +53,7 @@ public class EntityTablePage extends AbstractAdminPage {
 		}
 		
 		// create components
-		String entityNameKey = ("schema.entity." + ApplicationConfiguration.getEntityName(entity));
+		String entityNameKey = ("schema.entity." + EntityConfigurationUtil.getEntityName(entity));
 		StringResourceModel entityDisplayNameModel = new StringResourceModel(entityNameKey, this, null);
 		getMainContainer().add(new Label("entityName", entityDisplayNameModel));
 		getMainContainer().add(new ListView<IGlobalEntityListPresenter>("presenters", entity.getGlobalListPresenters()) {

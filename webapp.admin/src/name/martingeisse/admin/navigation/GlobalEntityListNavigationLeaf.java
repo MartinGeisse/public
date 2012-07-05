@@ -6,8 +6,8 @@
 
 package name.martingeisse.admin.navigation;
 
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.pages.EntityTablePage;
-import name.martingeisse.admin.schema.EntityDescriptor;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;

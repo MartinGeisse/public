@@ -6,11 +6,12 @@
 
 package name.martingeisse.admin.pages;
 
-import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.common.Dummy;
+import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.schema.ApplicationSchema;
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.AbstractNavigationNode;
-import name.martingeisse.admin.schema.ApplicationSchema;
-import name.martingeisse.admin.schema.EntityDescriptor;
+import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -60,7 +61,7 @@ public class AbstractAdminPage extends WebPage {
 	 * 
 	 */
 	private void addPageBorder() {
-		add(ApplicationConfiguration.createPageBorder("pageBorder"));
+		add(PagesConfigurationUtil.createPageBorder("pageBorder"));
 	}
 	
 	/**
@@ -78,8 +79,8 @@ public class AbstractAdminPage extends WebPage {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		final AbstractNavigationNode currentPageNavigationNode = ApplicationConfiguration.getCapabilities().mapPageToNavigationNode(this);
-		getMainContainer().add(new ListView<AbstractNavigationNode>("nodes", ApplicationConfiguration.getNavigationTree().getRoot().getChildren()) {
+		final AbstractNavigationNode currentPageNavigationNode = NavigationConfigurationUtil.mapPageToNavigationNode(this);
+		getMainContainer().add(new ListView<AbstractNavigationNode>("nodes", NavigationConfigurationUtil.getNavigationTree().getRoot().getChildren()) {
 			@Override
 			protected void populateItem(ListItem<AbstractNavigationNode> item) {
 				AbstractNavigationNode node = item.getModelObject();
@@ -98,7 +99,7 @@ public class AbstractAdminPage extends WebPage {
 				PageParameters parameters = new PageParameters();
 				parameters.add("entity", item.getModelObject().getTableName());
 				BookmarkablePageLink<Void> link = new BookmarkablePageLink<Void>("link", EntityTablePage.class, parameters);
-				link.add(new Label("name", ApplicationConfiguration.getEntityName(item.getModelObject()))); // TODO display name
+				link.add(new Label("name", EntityConfigurationUtil.getEntityName(item.getModelObject()))); // TODO display name
 				item.add(link);
 			}
 		});

@@ -6,9 +6,9 @@
 
 package name.martingeisse.admin.customization.multi;
 
-import name.martingeisse.admin.multi.AbstractEntityDataViewPanel;
-import name.martingeisse.admin.schema.EntityDescriptor;
-import name.martingeisse.admin.single.EntityInstance;
+import name.martingeisse.admin.entity.multi.AbstractEntityDataViewPanel;
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.admin.entity.single.EntityInstance;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.AbstractRepeater;

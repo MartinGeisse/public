@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.application;
 
-import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
 
 /**
  * All administration application plugins must implement this interface
@@ -20,10 +19,8 @@ import name.martingeisse.admin.application.capabilities.ApplicationCapabilities;
 public interface IPlugin {
 
 	/**
-	 * Contributes this plugin's capabilities to the application capabilities
-	 * by adding them to the argument.
-	 * @param applicationCapabilities the capability set to contribute to
+	 * Contributes this plugin's capabilities to the application capabilities.
 	 */
-	public void contribute(ApplicationCapabilities applicationCapabilities);
+	public void contribute();
 	
 }

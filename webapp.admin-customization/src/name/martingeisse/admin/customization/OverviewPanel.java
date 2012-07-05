@@ -6,8 +6,8 @@
 
 package name.martingeisse.admin.customization;
 
-import name.martingeisse.admin.single.EntityInstance;
-import name.martingeisse.admin.single.EntityInstanceFieldModel;
+import name.martingeisse.admin.entity.single.EntityInstance;
+import name.martingeisse.admin.entity.single.EntityInstanceFieldModel;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;

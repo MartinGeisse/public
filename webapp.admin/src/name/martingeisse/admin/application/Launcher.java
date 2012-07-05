@@ -11,6 +11,7 @@ import java.util.EnumSet;
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 
+import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.common.servlet.GlobalServletContext;
 
 import org.apache.wicket.protocol.http.WicketFilter;

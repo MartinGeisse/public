@@ -48,13 +48,13 @@ public final class ClassKeyedContainer<B> implements Serializable {
 	}
 	
 	/**
-	 * Adds a value using the specified key.
+	 * Sets a value using the specified key.
 	 * @param <T> the static key type
 	 * @param key the key Class object
-	 * @param value the value to add
+	 * @param value the value to set
 	 * @return the previously stored value for that key
 	 */
-	public <T extends B> T add(Class<T> key, T value) {
+	public <T extends B> T set(Class<T> key, T value) {
 		if (key == null) {
 			throw new IllegalArgumentException("key is null");
 		}

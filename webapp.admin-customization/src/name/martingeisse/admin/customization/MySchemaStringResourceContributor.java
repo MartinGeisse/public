@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.customization;
 
-import name.martingeisse.admin.application.capabilities.wicket.StringResourceContributor;
+import name.martingeisse.admin.application.wicket.StringResourceContributor;
 
 /**
  *
