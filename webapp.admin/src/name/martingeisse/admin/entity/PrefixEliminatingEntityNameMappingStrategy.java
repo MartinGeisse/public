@@ -4,9 +4,8 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.application.capabilities;
+package name.martingeisse.admin.entity;
 
-import name.martingeisse.admin.entity.IEntityNameMappingStrategy;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 /**
