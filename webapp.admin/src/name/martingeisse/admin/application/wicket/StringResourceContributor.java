@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.application.wicket;
 
+import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.resource.loader.ClassStringResourceLoader;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
@@ -18,6 +19,11 @@ import org.apache.wicket.resource.loader.IStringResourceLoader;
  */
 public class StringResourceContributor extends AbstractWebApplicationInitializationContributor {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(StringResourceContributor.class);
+	
 	/**
 	 * the origin
 	 */
@@ -59,7 +65,7 @@ public class StringResourceContributor extends AbstractWebApplicationInitializat
 	 */
 	@Override
 	public void onInitializeWebApplication(WebApplication webApplication) {
-		// TODO: proper logging, e.g. the fact that this contributor is active should be logged!
+		logger.debug("Adding StringResourceLoader for class: " + origin);
 		webApplication.getResourceSettings().getStringResourceLoaders().add(new ClassStringResourceLoader(origin));
 	}
 

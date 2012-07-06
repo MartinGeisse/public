@@ -6,11 +6,11 @@
 
 package name.martingeisse.reporting.parser.states;
 
-import name.martingeisse.reporting.definition.entity.definition.EntityDefinition;
-import name.martingeisse.reporting.definition.entity.definition.EntityDefinitionLink;
-import name.martingeisse.reporting.definition.entity.definition.EntityDefinitionTable;
-import name.martingeisse.reporting.definition.entity.query.EntityQuery;
-import name.martingeisse.reporting.definition.entity.query.EntityQueryFetchClause;
+import name.martingeisse.reporting.definition.entity.EntityDefinition;
+import name.martingeisse.reporting.definition.entity.EntityDefinitionLink;
+import name.martingeisse.reporting.definition.entity.EntityDefinitionTable;
+import name.martingeisse.reporting.definition.entity.EntityQuery;
+import name.martingeisse.reporting.definition.entity.EntityQueryFetchClause;
 import name.martingeisse.reporting.parser.IParserStateContext;
 import name.martingeisse.reporting.parser.MissingAttributeException;
 import name.martingeisse.reporting.parser.ParserUtil;

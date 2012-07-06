@@ -20,6 +20,12 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 public class LinkUtil {
 
 	/**
+	 * Prevent instantiation.
+	 */
+	private LinkUtil() {
+	}
+	
+	/**
 	 * Creates a link that is disabled and has "#" as its href.
 	 * @param wicketId the wicket id of the link to create
 	 * @return the link

@@ -13,7 +13,7 @@ import name.martingeisse.admin.entity.single.RawEntityPresentationPanel;
 import name.martingeisse.admin.entity.single.SingleEntityPresenter;
 
 /**
- * This plugin contributes all default behavior.
+ * This plugin contributes all default capabilities.
  */
 public class DefaultPlugin implements IPlugin {
 

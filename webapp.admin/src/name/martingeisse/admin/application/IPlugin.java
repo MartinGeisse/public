@@ -20,6 +20,8 @@ public interface IPlugin {
 
 	/**
 	 * Contributes this plugin's capabilities to the application capabilities.
+	 * This method accesses the singelton {@link ApplicationConfiguration}
+	 * instance to add capabilities.
 	 */
 	public void contribute();
 	

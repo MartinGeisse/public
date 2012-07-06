@@ -19,12 +19,12 @@ public class ScoreComparator implements Comparator<IGetScore> {
 	/**
 	 * The shared instance of this class used for ascending-score ordering.
 	 */
-	public static final ScoreComparator ASCENDING_INSTANCE = new ScoreComparator(false);
+	public static final ScoreComparator ASCENDING = new ScoreComparator(false);
 
 	/**
 	 * The shared instance of this class used for descending-score ordering.
 	 */
-	public static final ScoreComparator DESCENDING_INSTANCE = new ScoreComparator(true);
+	public static final ScoreComparator DESCENDING = new ScoreComparator(true);
 	
 	/**
 	 * the reversed

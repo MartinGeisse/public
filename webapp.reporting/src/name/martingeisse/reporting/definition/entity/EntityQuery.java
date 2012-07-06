@@ -4,18 +4,13 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.reporting.definition.entity.query;
+package name.martingeisse.reporting.definition.entity;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import name.martingeisse.reporting.datasource.DataSources;
-import name.martingeisse.reporting.definition.entity.EntityPath;
-import name.martingeisse.reporting.definition.entity.definition.EntityDefinition;
-import name.martingeisse.reporting.definition.entity.definition.EntityDefinitionLink;
-import name.martingeisse.reporting.definition.entity.definition.EntityDefinitionTable;
 import name.martingeisse.reporting.definition.nestedtable.INestedTableQuery;
 import name.martingeisse.reporting.definition.nestedtable.INestedTableResult;
 import name.martingeisse.reporting.definition.nestedtable.NestedTableResult;
@@ -27,54 +22,32 @@ import name.martingeisse.reporting.definition.nestedtable.NestedTableTable;
 public final class EntityQuery implements INestedTableQuery {
 
 	/**
-	 * the entityDefinition
+	 * the rootNode
 	 */
-	private EntityDefinition entityDefinition;
-
-	/**
-	 * the fetchClauses
-	 */
-	private List<EntityQueryFetchClause> fetchClauses;
-
+	private EntityQueryRootNode rootNode;
+	
 	/**
 	 * Constructor.
 	 */
 	public EntityQuery() {
-		this.fetchClauses = new ArrayList<EntityQueryFetchClause>();
 	}
 
 	/**
-	 * Getter method for the entityDefinition.
-	 * @return the entityDefinition
+	 * Getter method for the rootNode.
+	 * @return the rootNode
 	 */
-	public EntityDefinition getEntityDefinition() {
-		return entityDefinition;
+	public EntityQueryRootNode getRootNode() {
+		return rootNode;
 	}
-
+	
 	/**
-	 * Setter method for the entityDefinition.
-	 * @param entityDefinition the entityDefinition to set
+	 * Setter method for the rootNode.
+	 * @param rootNode the rootNode to set
 	 */
-	public void setEntityDefinition(final EntityDefinition entityDefinition) {
-		this.entityDefinition = entityDefinition;
+	public void setRootNode(EntityQueryRootNode rootNode) {
+		this.rootNode = rootNode;
 	}
-
-	/**
-	 * Getter method for the fetchClauses.
-	 * @return the fetchClauses
-	 */
-	public List<EntityQueryFetchClause> getFetchClauses() {
-		return fetchClauses;
-	}
-
-	/**
-	 * Setter method for the fetchClauses.
-	 * @param fetchClauses the fetchClauses to set
-	 */
-	public void setFetchClauses(final List<EntityQueryFetchClause> fetchClauses) {
-		this.fetchClauses = fetchClauses;
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.reporting.definition.nestedtable.INestedTableQuery#bindToData(name.martingeisse.reporting.datasource.DataSources)
 	 */

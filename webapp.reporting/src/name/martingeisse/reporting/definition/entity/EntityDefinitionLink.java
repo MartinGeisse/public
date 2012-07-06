@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.reporting.definition.entity.definition;
+package name.martingeisse.reporting.definition.entity;
 
 /**
  * This class represents a link from one table to another in an
@@ -13,9 +13,9 @@ package name.martingeisse.reporting.definition.entity.definition;
 public final class EntityDefinitionLink {
 
 	/**
-	 * the destinationTable
+	 * the destination
 	 */
-	private EntityDefinitionTable destinationTable;
+	private EntityDefinition destination;
 
 	/**
 	 * the sourceTableKeyColumnName
@@ -35,30 +35,30 @@ public final class EntityDefinitionLink {
 
 	/**
 	 * Constructor.
-	 * @param destinationTable the table to link to
+	 * @param destination the entity to link to
 	 * @param sourceTableKeyColumnName the name of the key column in the source table
 	 * @param destinationTableKeyColumnName the name of the key column in the destination table
 	 */
-	public EntityDefinitionLink(final EntityDefinitionTable destinationTable, final String sourceTableKeyColumnName, final String destinationTableKeyColumnName) {
-		this.destinationTable = destinationTable;
+	public EntityDefinitionLink(final EntityDefinition destination, final String sourceTableKeyColumnName, final String destinationTableKeyColumnName) {
+		this.destination = destination;
 		this.sourceTableKeyColumnName = sourceTableKeyColumnName;
 		this.destinationTableKeyColumnName = destinationTableKeyColumnName;
 	}
 
 	/**
-	 * Getter method for the destinationTable.
-	 * @return the destinationTable
+	 * Getter method for the destination.
+	 * @return the destination
 	 */
-	public final EntityDefinitionTable getDestinationTable() {
-		return destinationTable;
+	public EntityDefinition getDestination() {
+		return destination;
 	}
 
 	/**
-	 * Setter method for the destinationTable.
-	 * @param destinationTable the destinationTable to set
+	 * Setter method for the destination.
+	 * @param destination the destination to set
 	 */
-	public final void setDestinationTable(final EntityDefinitionTable destinationTable) {
-		this.destinationTable = destinationTable;
+	public void setDestination(final EntityDefinition destination) {
+		this.destination = destination;
 	}
 
 	/**

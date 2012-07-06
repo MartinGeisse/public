@@ -45,7 +45,7 @@ public final class WicketConfigurationUtil {
 	 * Invokes all web application initialization contributors for the specified application.
 	 * @param webApplication the Wicket web application
 	 */
-	public static void invokeWebApplicationInitializationContributors(WebApplication webApplication) {
+	static void invokeWebApplicationInitializationContributors(WebApplication webApplication) {
 		for (IWebApplicationInitializationContributor contributor : getWebApplicationInitializationContributors()) {
 			contributor.onInitializeWebApplication(webApplication);
 		}

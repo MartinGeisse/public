@@ -13,8 +13,11 @@ import name.martingeisse.admin.entity.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationTree;
 import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
+import name.martingeisse.admin.util.ParameterUtil;
 import name.martingeisse.common.util.ClassKeyedContainer;
 import name.martingeisse.common.util.ClassKeyedListContainer;
+
+import org.apache.log4j.Logger;
 
 /**
  * This class acts as a singleton to group all objects related to
@@ -25,14 +28,17 @@ import name.martingeisse.common.util.ClassKeyedListContainer;
  * no modification is possible. Application modules can later
  * read information from this class and behave accordingly.
  * 
- * The application sets plugins, databases and configuration in this
+ * The application sets databases, plugins and parameters in this
  * class. Capabilities are not set by the application but contributed
  * by plugins.
- * 
- * TODO make "entity display name from properties" optional; should use table name as default
  */
 public final class ApplicationConfiguration {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(ApplicationConfiguration.class);
+	
 	/**
 	 * the instance
 	 */
@@ -82,6 +88,7 @@ public final class ApplicationConfiguration {
 	 */
 	private void checkChangesAllowed() {
 		if (sealed) {
+			logger.error("Trying to modify ApplicationConfiguration after it has been sealed.");
 			throw new IllegalStateException("Application configuration has been sealed");
 		}
 	}
@@ -91,7 +98,9 @@ public final class ApplicationConfiguration {
 	 * @param database the database to add
 	 */
 	public void addDatabase(final AbstractDatabaseDescriptor database) {
+		ParameterUtil.ensureNotNull(database, "database");
 		checkChangesAllowed();
+		logger.info("Adding database to the ApplicationConfiguration: " + database.getDisplayName());
 		databases.add(database);
 	}
 
@@ -108,7 +117,9 @@ public final class ApplicationConfiguration {
 	 * @param plugin the plugin to add
 	 */
 	public void addPlugin(final IPlugin plugin) {
+		ParameterUtil.ensureNotNull(plugin, "plugin");
 		checkChangesAllowed();
+		logger.info("Adding plugin to the ApplicationConfiguration: " + plugin);
 		plugins.add(plugin);
 	}
 
@@ -146,6 +157,7 @@ public final class ApplicationConfiguration {
 	 * seals the configuration.
 	 */
 	public void initialize() {
+		logger.debug("ApplicationConfiguration.initialize(): begin");
 
 		// this seals the configuration
 		checkChangesAllowed();
@@ -153,14 +165,17 @@ public final class ApplicationConfiguration {
 		
 		// gather all capabilities
 		for (final IPlugin plugin : plugins) {
+			logger.trace("adding contributions from plugin: " + plugin);
 			plugin.contribute();
 		}
 
 		// initialize module-specific data
 		// TODO: move the code below to a module (instead of centralized) location
+		logger.trace("ApplicationConfiguration: running post-plugin initialization");
 		ReadOnlyRenderingConfigurationUtil.prepareConfiguration();
 		NavigationConfigurationUtil.prepareConfiguration();
 
+		logger.debug("ApplicationConfiguration.initialize(): end");
 	}
 	
 }

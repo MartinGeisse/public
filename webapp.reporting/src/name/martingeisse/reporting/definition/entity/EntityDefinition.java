@@ -4,15 +4,21 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.reporting.definition.entity.definition;
+package name.martingeisse.reporting.definition.entity;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class represents a database table in an entity definition.
+ * This class represents the definition of an entity that can be used
+ * in report definitions.
  */
-public final class EntityDefinitionTable {
+public final class EntityDefinition {
+
+	/**
+	 * the name
+	 */
+	private String name;
 
 	/**
 	 * the databaseTableName
@@ -32,17 +38,34 @@ public final class EntityDefinitionTable {
 	/**
 	 * Constructor.
 	 */
-	public EntityDefinitionTable() {
+	public EntityDefinition() {
+		this.name = null;
 		this.databaseTableName = null;
 		this.links = new HashMap<String, EntityDefinitionLink>();
 		this.propertySets = new HashMap<String, String[]>();
 	}
 
 	/**
+	 * Getter method for the name.
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Setter method for the name.
+	 * @param name the name to set
+	 */
+	public void setName(final String name) {
+		this.name = name;
+	}
+
+	/**
 	 * Getter method for the databaseTableName.
 	 * @return the databaseTableName
 	 */
-	public final String getDatabaseTableName() {
+	public String getDatabaseTableName() {
 		return databaseTableName;
 	}
 
@@ -50,7 +73,7 @@ public final class EntityDefinitionTable {
 	 * Setter method for the databaseTableName.
 	 * @param databaseTableName the databaseTableName to set
 	 */
-	public final void setDatabaseTableName(final String databaseTableName) {
+	public void setDatabaseTableName(final String databaseTableName) {
 		this.databaseTableName = databaseTableName;
 	}
 
@@ -58,7 +81,7 @@ public final class EntityDefinitionTable {
 	 * Getter method for the links.
 	 * @return the links
 	 */
-	public final Map<String, EntityDefinitionLink> getLinks() {
+	public Map<String, EntityDefinitionLink> getLinks() {
 		return links;
 	}
 
@@ -66,7 +89,7 @@ public final class EntityDefinitionTable {
 	 * Setter method for the links.
 	 * @param links the links to set
 	 */
-	public final void setLinks(final Map<String, EntityDefinitionLink> links) {
+	public void setLinks(final Map<String, EntityDefinitionLink> links) {
 		this.links = links;
 	}
 

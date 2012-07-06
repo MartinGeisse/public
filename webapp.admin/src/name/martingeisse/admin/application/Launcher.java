@@ -14,6 +14,7 @@ import javax.servlet.Filter;
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.common.servlet.GlobalServletContext;
 
+import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.WicketFilter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
@@ -22,15 +23,22 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 
 
 /**
- * The main class.
+ * This class starts the admin system and is typically invoked by the
+ * main method.
  */
 public class Launcher {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(Launcher.class);
+	
 	/**
 	 * Launches the server.
 	 * @throws Exception on errors
 	 */
 	public static void launch() throws Exception {
+		logger.debug("Launcher.launch(): begin");
 		
 		final EnumSet<DispatcherType> allDispatcherTypes = EnumSet.allOf(DispatcherType.class);
 		
@@ -68,6 +76,7 @@ public class Launcher {
 		server.start();
 		server.join();
 		
+		logger.debug("Launcher.launch(): end");
 	}
 	
 }

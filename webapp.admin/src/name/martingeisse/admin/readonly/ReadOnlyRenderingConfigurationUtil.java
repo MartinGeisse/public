@@ -68,7 +68,7 @@ public final class ReadOnlyRenderingConfigurationUtil {
 	public static void prepareConfiguration() {
 		List<IPropertyReadOnlyRendererContributor> contributors = ApplicationConfiguration.get().getCapabilities().getCachedList(PROPERTY_READ_ONLY_RENDERER_CONTRIBUTOR_CAPABILITY_KEY);
 		if (contributors != null) {
-			Collections.sort(contributors, ScoreComparator.DESCENDING_INSTANCE);
+			Collections.sort(contributors, ScoreComparator.DESCENDING);
 		}
 	}
 	

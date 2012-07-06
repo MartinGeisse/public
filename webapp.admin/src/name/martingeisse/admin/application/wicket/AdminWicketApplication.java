@@ -33,29 +33,38 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 	 */
 	@Override
 	protected void init() {
+		logger.debug("AdminWicketApplication.init(): begin");
+		
+		// superclass initialization
+		logger.trace("initializing base application class...");
 		super.init();
+		logger.trace("base application class initialized");
 
 		// initialize plugins and capabilities
+		logger.trace("initializing ApplicationConfiguration...");
 		ApplicationConfiguration.get().initialize();
+		logger.trace("ApplicationConfiguration initialized");
 		
 		// initialize the application schema from the database
+		logger.trace("initializing ApplicationSchema...");
 		ApplicationSchema.initialize();
+		logger.trace("ApplicationSchema initialized");
 
 		// some more Wicket configuration
 		getApplicationSettings().setPageExpiredErrorPage(HomePage.class);
 		
-		// mount page URLs
-		mountPage("test", HomePage.class);
-
 		// mount resource URLs
 		mountResource("common.css", new PackageResourceReference(Dummy.class, "common.css"));
 		
 		// let plugins contribute
+		logger.trace("invoking web application initialization contributors...");
 		WicketConfigurationUtil.invokeWebApplicationInitializationContributors(this);
+		logger.trace("application initialization contributors invoked");
 		
 		// add fallback string loaders
 		getResourceSettings().getStringResourceLoaders().add(new FallbackStringResourceLoader("schema.entity."));
 		
+		logger.debug("AdminWicketApplication.init(): end");
 	}
 
 	/**
