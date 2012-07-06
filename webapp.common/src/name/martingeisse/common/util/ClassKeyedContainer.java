@@ -33,12 +33,12 @@ import java.util.HashMap;
  * 
  * @param <B> the base type of all contained objects
  */
-public final class ClassKeyedContainer<B> implements Serializable {
+public class ClassKeyedContainer<B> implements Serializable {
 
 	/**
 	 * the map
 	 */
-	private HashMap<Class<? extends B>, B> map;
+	private final HashMap<Class<? extends B>, B> map;
 	
 	/**
 	 * Constructor.

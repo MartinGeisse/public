@@ -14,6 +14,8 @@ import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationTree;
 import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
 import name.martingeisse.admin.util.ParameterUtil;
+import name.martingeisse.admin.util.SealableClassKeyedContainer;
+import name.martingeisse.admin.util.SealableClassKeyedListContainer;
 import name.martingeisse.common.util.ClassKeyedContainer;
 import name.martingeisse.common.util.ClassKeyedListContainer;
 
@@ -69,12 +71,12 @@ public final class ApplicationConfiguration {
 	/**
 	 * the parameters
 	 */
-	private final ClassKeyedContainer<Object> parameters = new ClassKeyedContainer<Object>();
+	private final SealableClassKeyedContainer<Object> parameters = new SealableClassKeyedContainer<Object>();
 	
 	/**
 	 * the capabilities
 	 */
-	private final ClassKeyedListContainer<Object> capabilities = new ClassKeyedListContainer<Object>();
+	private final SealableClassKeyedListContainer<Object> capabilities = new SealableClassKeyedListContainer<Object>();
 	
 	/**
 	 * Constructor.
@@ -162,12 +164,14 @@ public final class ApplicationConfiguration {
 		// this seals the configuration
 		checkChangesAllowed();
 		sealed = true;
+		parameters.seal();
 		
 		// gather all capabilities
 		for (final IPlugin plugin : plugins) {
 			logger.trace("adding contributions from plugin: " + plugin);
 			plugin.contribute();
 		}
+		capabilities.seal();
 
 		// initialize module-specific data
 		// TODO: move the code below to a module (instead of centralized) location

@@ -9,6 +9,8 @@ package name.martingeisse.admin.application.wicket;
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.common.Dummy;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
+import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
+import name.martingeisse.admin.navigation.NavigationTree;
 import name.martingeisse.admin.pages.HomePage;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
 

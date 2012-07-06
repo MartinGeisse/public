@@ -43,7 +43,7 @@ import name.martingeisse.common.util.string.EmptyIterator;
  * 
  * @param <B> the base type of all contained objects
  */
-public final class ClassKeyedListContainer<B> implements Serializable {
+public class ClassKeyedListContainer<B> implements Serializable {
 
 	/**
 	 * the map
