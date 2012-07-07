@@ -4,11 +4,16 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.navigation;
+package name.martingeisse.admin.navigation.backmapper;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import name.martingeisse.admin.navigation.AbstractNavigationNode;
+import name.martingeisse.admin.navigation.NavigationTree;
+import name.martingeisse.admin.navigation.leaf.AbstractNavigationLeaf;
+import name.martingeisse.admin.navigation.leaf.GlobalEntityListNavigationLeaf;
+import name.martingeisse.admin.navigation.leaf.INavigationLeafVisitor;
 import name.martingeisse.admin.pages.EntityTablePage;
 
 import org.apache.wicket.Page;
@@ -17,7 +22,7 @@ import org.apache.wicket.Page;
  * Maps {@link EntityTablePage} instances to {@link GlobalEntityListNavigationLeaf}
  * nodes.
  */
-public class EntityListPageNavigationBackMapper extends AbstractNavigationBackMapper {
+public final class EntityListPageNavigationBackMapper extends AbstractNavigationBackMapper {
 
 	/**
 	 * the map

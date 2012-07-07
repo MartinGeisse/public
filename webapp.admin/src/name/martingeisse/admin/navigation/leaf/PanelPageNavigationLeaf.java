@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.navigation;
+package name.martingeisse.admin.navigation.leaf;
 
 import name.martingeisse.admin.pages.PanelPage;
 
@@ -19,7 +19,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
  * panel on-the-fly, not re-using an existing panel (that would be
  * pointless for a navigation node).
  */
-public class PanelPageNavigationLeaf extends AbstractBookmarkablePageNavigationLeaf {
+public final class PanelPageNavigationLeaf extends AbstractBookmarkablePageNavigationLeaf {
 
 	/**
 	 * the panelClass

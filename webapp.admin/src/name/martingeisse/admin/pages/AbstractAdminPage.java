@@ -10,7 +10,7 @@ import name.martingeisse.admin.common.Dummy;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.navigation.AbstractNavigationNode;
+import name.martingeisse.admin.navigation.INavigationNode;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -79,11 +79,12 @@ public class AbstractAdminPage extends WebPage {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		final AbstractNavigationNode currentPageNavigationNode = NavigationConfigurationUtil.mapPageToNavigationNode(this);
-		getMainContainer().add(new ListView<AbstractNavigationNode>("nodes", NavigationConfigurationUtil.getNavigationTree().getRoot().getChildren()) {
+		// TODO: use not only back-mappers, but also ask the navigation node AND the page whether they match!
+		final INavigationNode currentPageNavigationNode = NavigationConfigurationUtil.mapPageToNavigationNode(this);
+		getMainContainer().add(new ListView<INavigationNode>("nodes", NavigationConfigurationUtil.getNavigationTree().getRoot().getChildren()) {
 			@Override
-			protected void populateItem(ListItem<AbstractNavigationNode> item) {
-				AbstractNavigationNode node = item.getModelObject();
+			protected void populateItem(ListItem<INavigationNode> item) {
+				INavigationNode node = item.getModelObject();
 				AbstractLink link = node.createLink("link");
 				link.add(new Label("title", node.getTitle()));
 				item.add(link);
@@ -133,6 +134,11 @@ public class AbstractAdminPage extends WebPage {
 			throw new RuntimeException("missing mounted-only parameter '" + name + "' in page class: " + getClass());
 		} else {
 			// TODO: show a proper error page instead of throwing an exception
+			// TODO: make general "message page" / "error page" (message page with different
+			// message types -> styles) for cases when no continuation is needed
+			// or possible: unexpected exception, missing parameter, (NOT page expired
+			// -- log out in this case; message page needs to be logged in)
+			// 2nd page for "logged out messages" -> "logged out", "page expired", ...
 			throw new RuntimeException("missing parameter: " + name);
 		}
 	}

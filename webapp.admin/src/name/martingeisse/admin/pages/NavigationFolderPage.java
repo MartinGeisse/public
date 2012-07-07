@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.pages;
 
-import name.martingeisse.admin.navigation.AbstractNavigationNode;
+import name.martingeisse.admin.navigation.INavigationNode;
 import name.martingeisse.admin.navigation.NavigationFolder;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -25,10 +25,10 @@ public class NavigationFolderPage extends AbstractAdminPage {
 	 */
 	public NavigationFolderPage(NavigationFolder folder) {
 		getMainContainer().add(new Label("folderTitle", folder.getTitle()));
-		getMainContainer().add(new ListView<AbstractNavigationNode>("children", folder.getChildren()) {
+		getMainContainer().add(new ListView<INavigationNode>("children", folder.getChildren()) {
 			@Override
-			protected void populateItem(ListItem<AbstractNavigationNode> item) {
-				AbstractNavigationNode child = item.getModelObject();
+			protected void populateItem(ListItem<INavigationNode> item) {
+				INavigationNode child = item.getModelObject();
 				AbstractLink childLink = child.createLink("link");
 				childLink.add(new Label("title", child.getTitle()));
 				item.add(childLink);

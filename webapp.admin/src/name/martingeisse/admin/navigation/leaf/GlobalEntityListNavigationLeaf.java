@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.navigation;
+package name.martingeisse.admin.navigation.leaf;
 
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.pages.EntityTablePage;
@@ -16,7 +16,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 /**
  * This class links to an entity list presentation page.
  */
-public class GlobalEntityListNavigationLeaf extends AbstractBookmarkablePageNavigationLeaf {
+public final class GlobalEntityListNavigationLeaf extends AbstractBookmarkablePageNavigationLeaf {
 
 	/**
 	 * the entityName

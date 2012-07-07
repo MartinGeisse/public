@@ -4,9 +4,11 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.navigation;
+package name.martingeisse.admin.navigation.backmapper;
 
 import name.martingeisse.admin.application.IPlugin;
+import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
+import name.martingeisse.admin.navigation.NavigationTree;
 
 /**
  * This class provides an empty initialize() method and the ability to add

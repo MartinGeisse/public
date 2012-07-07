@@ -4,7 +4,10 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.navigation;
+package name.martingeisse.admin.navigation.backmapper;
+
+import name.martingeisse.admin.navigation.INavigationNode;
+import name.martingeisse.admin.navigation.NavigationTree;
 
 import org.apache.wicket.Page;
 
@@ -29,6 +32,6 @@ public interface INavigationBackMapper {
 	 * @param page the page
 	 * @return the navigation node or null
 	 */
-	public AbstractNavigationNode mapPageToNavigationNode(Page page);
+	public INavigationNode mapPageToNavigationNode(Page page);
 	
 }

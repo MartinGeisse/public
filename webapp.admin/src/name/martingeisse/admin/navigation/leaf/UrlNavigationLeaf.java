@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.navigation;
+package name.martingeisse.admin.navigation.leaf;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.ExternalLink;
@@ -14,7 +14,7 @@ import org.apache.wicket.markup.html.link.ExternalLink;
  * pages from the navigation menu. See {@link AbstractBookmarkablePageNavigationLeaf}
  * for a navigation leaf that refers to a bookmarkable page instead.
  */
-public class UrlNavigationLeaf extends AbstractNavigationLeaf {
+public final class UrlNavigationLeaf extends AbstractNavigationLeaf {
 
 	/**
 	 * the url

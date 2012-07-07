@@ -4,7 +4,9 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.navigation;
+package name.martingeisse.admin.navigation.leaf;
+
+import name.martingeisse.admin.navigation.AbstractNavigationNode;
 
 
 /**
@@ -21,7 +23,7 @@ public abstract class AbstractNavigationLeaf extends AbstractNavigationNode {
 	 * @see name.martingeisse.admin.navigation.AbstractNavigationNode#visitLeafNodes(name.martingeisse.admin.navigation.INavigationLeafVisitor)
 	 */
 	@Override
-	public void visitLeafNodes(INavigationLeafVisitor visitor) {
+	public final void visitLeafNodes(INavigationLeafVisitor visitor) {
 		visitor.visit(this);
 	}
 	

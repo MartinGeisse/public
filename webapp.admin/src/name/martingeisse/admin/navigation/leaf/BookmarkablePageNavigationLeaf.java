@@ -4,7 +4,8 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.navigation;
+package name.martingeisse.admin.navigation.leaf;
+
 
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.AbstractLink;
@@ -15,7 +16,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * This navigation leaf implementation stores the linked page class and
  * page parameters directly.
  */
-public class BookmarkablePageNavigationLeaf extends AbstractBookmarkablePageNavigationLeaf {
+public final class BookmarkablePageNavigationLeaf extends AbstractBookmarkablePageNavigationLeaf {
 
 	/**
 	 * the pageClass

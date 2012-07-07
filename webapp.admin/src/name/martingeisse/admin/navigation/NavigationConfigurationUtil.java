@@ -7,6 +7,7 @@
 package name.martingeisse.admin.navigation;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
+import name.martingeisse.admin.navigation.backmapper.INavigationBackMapper;
 
 import org.apache.wicket.Page;
 
@@ -68,10 +69,14 @@ public final class NavigationConfigurationUtil {
 	 * @param page the page
 	 * @return the navigation node or null
 	 */
-	public static AbstractNavigationNode mapPageToNavigationNode(final Page page) {
+	public static INavigationNode mapPageToNavigationNode(final Page page) {
 		// TODO: handle conflicts by returning the most specific node
+		// TODO: for this, implement a set of global debugging flags to enable
+		// debugging like this at runtime and just for some users; disable
+		// for others to prevent excessive logging and increase performance
+		// TODO: allow pages and/or navigation nodes to do back-mapping for convenience
 		for (final INavigationBackMapper navigationBackMapper : getNavigationBackMappers()) {
-			final AbstractNavigationNode node = navigationBackMapper.mapPageToNavigationNode(page);
+			final INavigationNode node = navigationBackMapper.mapPageToNavigationNode(page);
 			if (node != null) {
 				return node;
 			}
