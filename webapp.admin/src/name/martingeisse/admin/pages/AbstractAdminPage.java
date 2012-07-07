@@ -13,6 +13,7 @@ import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.INavigationNode;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
@@ -79,7 +80,6 @@ public class AbstractAdminPage extends WebPage {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		// TODO: use not only back-mappers, but also ask the navigation node AND the page whether they match!
 		final INavigationNode currentPageNavigationNode = NavigationConfigurationUtil.mapPageToNavigationNode(this);
 		getMainContainer().add(new ListView<INavigationNode>("nodes", NavigationConfigurationUtil.getNavigationTree().getRoot().getChildren()) {
 			@Override
@@ -88,9 +88,12 @@ public class AbstractAdminPage extends WebPage {
 				AbstractLink link = node.createLink("link");
 				link.add(new Label("title", node.getTitle()));
 				item.add(link);
-				// TODO: don't disable ancestor nodes, but mark them visually
-				if (currentPageNavigationNode != null && currentPageNavigationNode.isEqualOrDescendantOf(node)) {
-					link.setEnabled(false);
+				if (currentPageNavigationNode != null) {
+					if (currentPageNavigationNode == node) {
+						link.setEnabled(false);
+					} else if (currentPageNavigationNode.isStrictDescendantOf(node)) {
+						link.add(new AttributeAppender("style", "color: red"));
+					}
 				}
 			}
 		});

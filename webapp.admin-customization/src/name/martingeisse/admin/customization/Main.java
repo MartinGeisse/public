@@ -35,6 +35,7 @@ import name.martingeisse.admin.entity.schema.MysqlDatabaseDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationFolder;
 import name.martingeisse.admin.navigation.backmapper.EntityListPageNavigationBackMapper;
+import name.martingeisse.admin.navigation.backmapper.NavigationFolderPageBackMapper;
 import name.martingeisse.admin.navigation.leaf.GlobalEntityListNavigationLeaf;
 import name.martingeisse.admin.navigation.leaf.PanelPageNavigationLeaf;
 import name.martingeisse.admin.navigation.leaf.UrlNavigationLeaf;
@@ -87,6 +88,7 @@ public class Main {
 		ApplicationConfiguration.get().addPlugin(new GlobalEntityListPresenter("roleList", "Role List", RoleOrderListPanel.class));
 		ApplicationConfiguration.get().addPlugin(new PopulatorBasedGlobalEntityListPresenter("pop", "Populator-Based", Arrays.<IEntityCellPopulator> asList(new EntityFieldPopulator("Role Description", "role_description"), new EntityFieldPopulator("Role Order", "role_order"), new MultiCellPopulator("Test", new EntityFieldPopulator(null, "role_description"), new EntityFieldPopulator(null, "role_order")))));
 		ApplicationConfiguration.get().addPlugin(new GlobalEntityListPresenter("popdata", "Populator / DataView", PopulatorDataViewPanel.class));
+		ApplicationConfiguration.get().addPlugin(new NavigationFolderPageBackMapper());
 		ApplicationConfiguration.get().addPlugin(new EntityListPageNavigationBackMapper());
 		ApplicationConfiguration.get().addPlugin(new MySchemaStringResourceContributor());
 

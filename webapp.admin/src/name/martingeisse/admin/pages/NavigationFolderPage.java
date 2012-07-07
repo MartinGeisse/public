@@ -20,10 +20,16 @@ import org.apache.wicket.markup.html.list.ListView;
 public class NavigationFolderPage extends AbstractAdminPage {
 
 	/**
+	 * the folder
+	 */
+	private final NavigationFolder folder;
+	
+	/**
 	 * Constructor.
 	 * @param folder the navigation folder
 	 */
 	public NavigationFolderPage(NavigationFolder folder) {
+		this.folder = folder;
 		getMainContainer().add(new Label("folderTitle", folder.getTitle()));
 		getMainContainer().add(new ListView<INavigationNode>("children", folder.getChildren()) {
 			@Override
@@ -34,6 +40,14 @@ public class NavigationFolderPage extends AbstractAdminPage {
 				item.add(childLink);
 			}
 		});
+	}
+
+	/**
+	 * Getter method for the folder.
+	 * @return the folder
+	 */
+	public NavigationFolder getFolder() {
+		return folder;
 	}
 	
 }

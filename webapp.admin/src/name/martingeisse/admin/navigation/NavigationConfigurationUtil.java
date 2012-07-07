@@ -74,7 +74,6 @@ public final class NavigationConfigurationUtil {
 		// TODO: for this, implement a set of global debugging flags to enable
 		// debugging like this at runtime and just for some users; disable
 		// for others to prevent excessive logging and increase performance
-		// TODO: allow pages and/or navigation nodes to do back-mapping for convenience
 		for (final INavigationBackMapper navigationBackMapper : getNavigationBackMappers()) {
 			final INavigationNode node = navigationBackMapper.mapPageToNavigationNode(page);
 			if (node != null) {
