@@ -16,6 +16,8 @@ import java.util.Arrays;
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
+import name.martingeisse.admin.application.wicket.AbstractWebApplicationInitializationContributor;
+import name.martingeisse.admin.customization.mount.MountTestPage;
 import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPanel;
 import name.martingeisse.admin.customization.multi.PopulatorDataViewPanel;
 import name.martingeisse.admin.customization.multi.RoleOrderListPanel;
@@ -46,6 +48,13 @@ import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociate
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
+
+import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.Url;
+import org.apache.wicket.request.mapper.MountedMapper;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParametersEncoder;
 
 
 /**
@@ -113,6 +122,47 @@ public class Main {
 			}
 		});
 
+		// test
+		ApplicationConfiguration.get().addPlugin(new AbstractWebApplicationInitializationContributor() {
+
+			/* (non-Javadoc)
+			 * @see name.martingeisse.admin.application.wicket.IWebApplicationInitializationContributor#onInitializeWebApplication(org.apache.wicket.protocol.http.WebApplication)
+			 */
+			@Override
+			public void onInitializeWebApplication(WebApplication webApplication) {
+				
+				PageParametersEncoder encoder = new PageParametersEncoder() {
+
+					/* (non-Javadoc)
+					 * @see org.apache.wicket.request.mapper.parameter.PageParametersEncoder#decodePageParameters(org.apache.wicket.request.Request)
+					 */
+					@Override
+					public PageParameters decodePageParameters(Request request) {
+						PageParameters parameters = super.decodePageParameters(request);
+						if (parameters == null) {
+							parameters = new PageParameters();
+						}
+						parameters.add("bar", "BARRRARRRARRR");
+						return parameters;
+					}
+					
+					/* (non-Javadoc)
+					 * @see org.apache.wicket.request.mapper.parameter.PageParametersEncoder#encodePageParameters(org.apache.wicket.request.mapper.parameter.PageParameters)
+					 */
+					@Override
+					public Url encodePageParameters(PageParameters pageParameters) {
+						PageParameters copy = new PageParameters(pageParameters);
+						copy.remove("bar");
+						return super.encodePageParameters(copy);
+					}
+					
+				};
+				
+				webApplication.mount(new MountedMapper("/mount/${foo}", MountTestPage.class, encoder));
+			}
+			
+		});
+		
 		// run
 		buildNavigation();
 		Launcher.launch();

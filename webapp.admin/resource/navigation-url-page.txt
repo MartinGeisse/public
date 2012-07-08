@@ -1,0 +1,239 @@
+
+Ausgangspunkt: Navigation Back Mappers, also Mapping Page->Navigation
+
+Navigation Tree: Navigation -> Page
+Request Coding Strategy: URL <-> Page
+
+Gesucht: ? -> Navigation
+
+Ansatz:
+- Page -> Navigation (Back Mapper)
+- URL -> Navigation (siehe SG Tab Panels)
+
+Letzteres kommt mir aber unsauber vor, weil es die beiden Mappings aneinander koppelt.
+Es setzt zum Beispiel voraus, dass auch Stateful Pages sich anhand der URL Back-Mappen
+lassen. Das sind hohe Ansprüche an die Request Coding Strategy.
+
+Page Back Mapper haben aber das Problem, dass man für alle möglichen Seiten welche
+schreiben muss. (Das gilt aber auch für URL-Back-Mapper -- man muss dafür sorgen,
+dass alle möglichen Seiten die richtige URL haben, nur ist es noch weniger 
+offensichtlich und z.B. bei Wizards auch noch schwerer umzusetzen). Cooler wäre
+es, wenn man keine zentralen Back-Mapper registrieren muss, sondern die Pages
+entsprechende Hint-Objekte liefern könnten. Das wären z.B.:
+
+- Page-Klasse: Wenn nur ein NaviNode zu einer bestimmten Page-Klasse verweist,
+  kann man diese problemlos back-mappen
+- Entity Type: Damit wird der NaviNode zur Entity-Liste markiert
+- Entity Instance
+- *mehrere* Entity Types / Instances, die dem Weg zum Root entsprechen! Achtung:
+  Nicht nur der Most Specific Entity Type ist wichtig!!! Wenn dieser nämlich keinen
+  zugehörigen NaviNode hat, muss auf die anderen zurückgegangen werden.
+
+Idee: Page gibt ein Array von Hints, nach Wichtigkeit sortiert. Diese werden der
+Reihe nach an die Backmapper gegeben, bis einer einen NaviNode dafür findet.
+Ist is so immer möglich, den "richtigen" NaviNode zu finden? Das kommt vermutlich
+darauf an, welche Backmapper und welche NaviNodes registriert sind.
+
+Parent Nodes werden automatisch mit markiert (aber noch klickbar)
+
+Idee auch: Wenn die Backmapper versagen -> Log Warnings! Dann ist das Problem
+besser nachvollziehbar. Das sollte dann auch bei mehreren möglichen Hints
+immer ein Warning liefern, wenn was schiefgeht! 
+
+Multi Nodes (z.B. Entity-List-Nodes) haben einen Child Node, oft ein Folder Node.
+Sub-Nodes wieder ein Tree, z.B. als Tabs dargestellt. *Alle* Ancestors werden
+markiert bis zum Root Node (z.B. Entity-List, der wieder im globalen Navi Menü ist).
+Es kann mehrere Ancestor Multi-Nodes geben, z.B. eine Seite zu einem Item (Multinode)
+zu einer Bestellung (Multinode).
+
+Nicht alle Pages haben Navi-Nodes. Die die keine haben werden trotzdem manchmal
+einem anderen Node zugeordnet, z.B. eine Wizard-Seite, mit der man eine
+Entity Instance bearbeiten, wird dem NaviNode dieser Instance zugeordnet.
+
+-----
+
+Idee: Die Pages haben Annotations die Ihre Position im NaviTree angeben. Zentral
+werden nur noch Pages registriert, aber die Annotations geben an *wo*.
+
+Die Idee ist so nicht wirklich cool, aber evtl. kann man da noch was cooles
+draus machen.
+
+Problem ist einfach, dass man je Page *zwei* Sachen einrichten muss, die Seite
+und die NaviNodes. Jetzt kommen noch Backmappers dazu. Nach möglichkeit sollte
+wenigstens das über Hints vermieden werden.
+
+Idee: Hints können über Getter-Methoden oder über annotations kommen. Getter
+haben den Vorteil, dass auf einfache Art durch eine Runtime Subclass die
+Hints überschrieben werden können. Annotations haben den Vorteil, dass man
+nur das Class-Objekt braucht, was für Backmappers interessant ist,
+da die NaviNodes i.a. keine Page-Instanz haben. Denkfehler! NaviNodes haben
+keine Instanz, aber die können nur durch Annotations keinen Unterschied
+zwischen zwei NaviNodes mit derselben PAge-Class finden (da selbe Klasse).
+
+Woher kommt eigentlich die Unterscheidung zwischen zwei Seiten mit derselben
+Page-Klasse?
+
+- Page Parameters: Die NaviNodes für Bookmarkable Pages haben vorgegebene
+  PPs und können im Back Mapping darauf prüfen. Die Page müss die PP
+  so lange aufheben (passiert das jetzt schon?)
+  
+  Hier wäre es so:
+  - die Page-Klasse ist ein Hint
+  - die PP-Werte sind Hints
+  - Die Page wertet PPs aus und findet dadurch z.B. eine Entity Instance oder
+    einen Entity Type. Diese sind Hints. Es können durchaus nötige Hints
+    sein, z.B. kann es einen NaviNode mit derselben Page-Klasse aber zu
+    einem anderen Entity Type / Entity Instance geben und der Backmapper
+    darf diesen nicht "finden"!
+  
+- Stateful Pages
+  - die Page-Klasse ist ein Hint
+  - der Page State liefert andere Hints, z.B. Entity Type & Instance
+  
+Die Page liefert i.A. mehrere Hints, die von Ancestor Nodes akzeptiert werden
+müssen und das sogar in der richtigen Reihenfolge!
+
+Idee: Man geht vom Root Node aus alle möglichen Wege und "sieht wie weit man
+kommt". Manche Nodes (z.B. Entity Multinodes) brauchen bestimmte Hints.
+Andere Nodes (z.B. Folder Nodes) brauchen zum passieren keine Hints, aber sie
+akzeptieren nur bestimmte Pages als Ziel (tun das andere Nodes auch?)
+
+Andere Idee: es gibt ein paar klare Einschränkungen, was erlaubt ist. Wie würde
+das helfen?
+
+-----
+
+Welche Nodes gibt es überhaupt?
+
+UrlNavigationLeaf: Muss nur die URL, nicht die Page prüfen
+PanelPageNavigationLeaf: Ist Stateful - das ist noch mal ein eigenes Problem
+GlobalEntityListNavigationLeaf: Benutzt Entity Type als Hint. Ist "Global", also nicht Subnode eines anderen Multinode.
+BookmarkablePageNavigationLeaf: Benutzt Page-Klasse und PP als Hint. Kann aber einer Entity zugeordnet sein,
+	was sich aus den PP ergibt.
+Folder Node: Die Page kennt "ihren" Node
+Entity Multinode: muss evtl mit GlobalEntityListNavigationLeaf gemerged werden
+
+
+-----
+
+Denkbeispiel: Es existieren *mehrere* NaviNodes zu einem Entity Type. Das ist sogar
+realistisch (verschiedene Filter).
+
+-----
+
+Der Grund, warum ich überhaupt erst auf URLs gekommen bin: Die Pages sollten selbst mehr
+darüber wissen, wie die Web Application als ganzes aufgebaut ist. Statt eines NaviTree
+sollte der Anwendungs-Entwickler einen SiteTree bauen: Nicht nur eine Beschreibung
+der Navigation, sondern der ganzen Website. Dann kann eine Page im Constructor einen
+SiteNode bekommen und z.B. wissen, welche IDs sie den PPs entnehmen muss. Sie kann auch
+direkt den SiteNode zurückgeben und dadurch in der Navigation erscheinen. Pages, die
+nicht nach diesem Prinzip aufgebaut sind, können immer noch manuell einen SiteNode
+bestimmen, den sie markieren (auch wenn sie da nicht auftauchen) oder einfach null
+liefern und dadurch im Navi nichts markieren. Alles, was statisch ist, bekommen "echte"
+SiteTree-Pages durch den SiteNode übergeben. 
+
+Der Witz am SiteTree ist, dass durch eine einzige statische Datenstruktur viele
+Dinge automatisiert werden können (indem (Basis-)Pageklassen zu den bekannten
+SiteNodes bereitgestellt werden):
+
+- Folder-Navigation, hin-Navigation und Backmapping
+- Analyse der Kontext-bestimmenden Page Parameters
+- Bereitstellung von Standardseiten allein durch Definition des SiteTree. Hier ist es
+  wichtig, dass man das, was die Standarseiten bieten als auch das, was das Admin-Framework
+  sonst bietet, auch als non-Page-Komponenten zur Verfügung hat; man muss es beliebig
+  kombinieren können!
+- "schöne" URLs
+- Erzeugung einer Sitemap, Suchfunktion für Anwendungsseiten
+- Basis-Pageklassen, die die Navigation integriert haben und man allein anhand eines
+  Style-Selektors zwischen Baum, Dropdown, TabPanels usw. wählen kann
+- bei alledem: Behandlung von Multinodes
+- Integration des Reporting-Frameworks z.B. als Standardseiten
+
+Der SiteTree definiert die Struktur der Oberfläche, nicht die Struktur der Daten!
+
+Der Haken: werden dadurch nicht alle Pages stateful? Standardseiten haben Standardklassen
+(man will ja nicht ständig Subklassen erzeugen); Unterscheidung nicht mit "fester URL
+plus ein paar PageParameter"; also Unterscheidung per URL. Kann man beim mounten
+"fixe" PP angeben? Dann könnte man dieselbe Standard-Pageklasse für verschiedene SiteNodes
+unter verschiedenen URLs mit abweichenden fixen PP mounten und diese abweichenden PP müssten
+nicht direkt, sondern über den SiteTree-Pfad, in der URL erscheinen. Evtl geht das mit
+einem abgewandelten MountedMapper (Wicket-Klasse, von der man eine Subklasse erstellen
+müsste). Dieser würde einen SiteNode haben. Beim Page->URL würde er nur matchen, wenn der
+SiteNode stimmt. Beim URL->Page würde er z.B. die SiteNode-ID als PageParameter setzen.
+(Falls die Page den SiteNode "vergessen muss", reicht da auch die SiteNode-ID).
+
+Vorgehensweise:
+- altes Navi-System erst mal unangetastet lassen; Git-Tag setzen
+- Klassen für den SiteTree bauen (Funktionalität in den Nodes oder ausgelagert?)
+- Navi-Komponenten kopieren und für SiteTree umbauen (Tree-Panel, FolderPage usw.).
+  Erst mal kein Backmapping.
+- Seiten bauen, die durch SiteNodes definiert werden (z.B. einfache Message-Page als Beispiel,
+  wo die Message aus dem SiteNode kommt).
+- Pages anhand der SiteNodes mounten
+- Multi-Node (aus Entity) und entsprechende Seite. Das wird der Test, ob das System was taugt.
+  Da wird dann beim Mounten die ID als URL-Segment-Parameter gemountet.
+
+------------
+
+Neue Überlegung:
+
+Eine Schachtelung von MultiNodes ist im Grunde nicht nötig, zumindest für die angepeilte
+Admin-App. Stattdessen würden Seiten einer Entity-Instance (d.h. innerhalb eines MultiNode)
+auf Seiten einer anderen Instanz (derselben oder einer anderen Entity) verlinken und man
+wäre dadurch wieder nur innerhalb *eines* MultiNodes. Die Instanz wird dann jeweils per
+ID ausgewählt und man msus auch nicht mehr als einen PP auswerten (sondern eben nur den
+PP für die Entity-ID). Dadurch ist es auch nicht mehr nötig, von SiteNodes zu sprechen,
+da die Pages kaum noch betroffen sind. Es geht nur noch um NaviNodes.
+
+Es gibt dann folgende Navi-Bereiche:
+- root: /
+- global navi: /foo/bar
+	- global entity list: /orders
+	- filtered entity list: /orders/shipped
+- entity instance: /orders/42
+- instance-local navi: /orders/42/edit
+
+Es gibt dann folgende Pages:
+- unbeteiligte Pages: Liefern keinen Navi-Node und markieren deshalb auch keine Navi. Root gehört dazu. 
+- globale Pages, die manuell-programmiert einen NaviNode bzw. dessen ID liefern
+- globale Pages, die "automatisch" einen NaviNode liefern. Zum Beispiel könnte der RequestMapper
+  einen küntlichen PP "navigationNodeId" hinzufügen und die Page liefert diesen PP. (Dieser PP
+  müsste beim zurückmappen zur URL wieder verschwinden! Wäre sonst sau häßlich wenn der plötzlich
+  clientseitig in der URL auftaucht!)
+- Entity Instance Pages -- diese müssten global den NaviNode der entsprechenden Entity-Liste liefern.
+  (Dazu müsste evtl. ein solcher Node "unsichtbar" eingefügt werden, falls es ihn noch nicht gibt).
+
+Entity-Seiten hätten aber noch ihr lokales Navi-Menü. Nach obiger Überlegung kann es aber nur
+eine solche "Schachtelung" geben; soll heißen, es kann nie mehr als diese beiden NaviTrees geben
+(per gut überlegter Definition). Es würde zum beispiel reichen, einen NaviTree innerhalb jeder
+Entity anzulegen und lokale Seiten müssen ein zweites Interface implementieren, um den aktuellen
+NaviNode innerhalb der lokalen Navi zu liefern. 
+
+Damit reduziert sich das Problem darauf, zu einer Page (und deren jeweiliges Interface, global
+oder lokal) jeweils den passenden NaviNode in beiden NaviTrees zu finden:
+
+- manuell
+- per PP
+- zu Entity-Instance-Seiten:
+	1. explizit von der Page gelieferter NaviPath
+	2. explizit von der Entity gelieferter NaviPath		
+	3. ungefilterte Entity-Liste zu dieser Entity im NaviTree gefunden
+	4. Delegate Entity von der Page geliefert: Abfrage für diese Wiederholen (inkl. Schritt 5)
+	5. Delegate Entity von der Entity geliefert: Abfrage für diese Wiederholen
+
+IGetNavigationDelegateEntity liefert eine Delegate-Entity und mit dieser wird gesucht.
+Man kann zum Beispiel die Entity "Order" als Delegate zur Entity "OrderItem" einstellen. Dann wird
+für Instance-lokale Seiten für OrderItem-Instanzen vorzugsweise die ungefilterte Liste zu "OrderItem"
+genommen, aber falls es die nicht gibt, die ungefilterte Liste zu "Order".
+
+Je NaviTree: Returnwerte und Vergleiche arbeiten mit NaviNode-IDs und NaviNode-Pfaden. Eine IDs ist eindeutig
+innerhalb des Parent Folders. Der Pfad ist die Verkettung aller IDs vom Root Node:
+
+	Parent Node Path: /foo/bar
+	ID: fupp
+	This Node Path: /foo/bar/fupp
+  
+Node Paths sind die Werte die vom RequestMapper als PP übergeben werden.
+
+
+
