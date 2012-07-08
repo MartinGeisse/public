@@ -36,8 +36,6 @@ import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.entity.schema.MysqlDatabaseDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationFolder;
-import name.martingeisse.admin.navigation.backmapper.EntityListPageNavigationBackMapper;
-import name.martingeisse.admin.navigation.backmapper.NavigationFolderPageBackMapper;
 import name.martingeisse.admin.navigation.leaf.GlobalEntityListNavigationLeaf;
 import name.martingeisse.admin.navigation.leaf.PanelPageNavigationLeaf;
 import name.martingeisse.admin.navigation.leaf.UrlNavigationLeaf;
@@ -97,8 +95,6 @@ public class Main {
 		ApplicationConfiguration.get().addPlugin(new GlobalEntityListPresenter("roleList", "Role List", RoleOrderListPanel.class));
 		ApplicationConfiguration.get().addPlugin(new PopulatorBasedGlobalEntityListPresenter("pop", "Populator-Based", Arrays.<IEntityCellPopulator> asList(new EntityFieldPopulator("Role Description", "role_description"), new EntityFieldPopulator("Role Order", "role_order"), new MultiCellPopulator("Test", new EntityFieldPopulator(null, "role_description"), new EntityFieldPopulator(null, "role_order")))));
 		ApplicationConfiguration.get().addPlugin(new GlobalEntityListPresenter("popdata", "Populator / DataView", PopulatorDataViewPanel.class));
-		ApplicationConfiguration.get().addPlugin(new NavigationFolderPageBackMapper());
-		ApplicationConfiguration.get().addPlugin(new EntityListPageNavigationBackMapper());
 		ApplicationConfiguration.get().addPlugin(new MySchemaStringResourceContributor());
 
 		final ExplicitEntityPropertyFilter userPropertyFilter = new ExplicitEntityPropertyFilter(2, "User");
@@ -174,19 +170,25 @@ public class Main {
 	 */
 	private static void buildNavigation() {
 		final NavigationFolder root = NavigationConfigurationUtil.getNavigationTree().getRoot();
-		root.initChild(new UrlNavigationLeaf("/"), "Home");
-		final NavigationFolder sub1 = root.addNewSubfolder("Sub One");
-		final NavigationFolder sub1sub1 = sub1.addNewSubfolder("s1 Sub One");
-		sub1sub1.initChild(new GlobalEntityListNavigationLeaf("phpbb_acl_roles"), "ACL: Roles");
-		sub1.initChild(new GlobalEntityListNavigationLeaf("phpbb_acl_users"), "ACL: Users");
-		root.addNewSubfolder("Sub Two");
-		root.addNewSubfolder("Sub Three");
+		root.initChild(new UrlNavigationLeaf("/"), "", "Home");
+		final NavigationFolder sub1 = root.addNewSubfolder("sub-one", "Sub One");
+		final NavigationFolder sub1sub1 = sub1.addNewSubfolder("s1-sub-one", "s1 Sub One");
+		sub1sub1.initChild(new GlobalEntityListNavigationLeaf("phpbb_acl_roles"), "roles", "ACL: Roles");
+		sub1.initChild(new GlobalEntityListNavigationLeaf("phpbb_acl_users"), "users", "ACL: Users");
+		root.addNewSubfolder("sub-two", "Sub Two");
+		root.addNewSubfolder("sub-three", "Sub Three");
 
-		root.initChild(new PanelPageNavigationLeaf(MyAutoformPanel.class, null, true), "Test");
+		root.initChild(new PanelPageNavigationLeaf(MyAutoformPanel.class, null, true), "test", "Test");
+		
+//		System.out.println("* " + NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode("/").getPath());
+//		System.out.println("* " + NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode("sub-one").getPath());
+//		System.out.println("* " + NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode("/bla").getPath());
+//		System.out.println("* " + NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode("/sub-one").getPath());
+//		System.out.println("* " + NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode("/sub-one/s1-sub-one").getPath());
+//		System.out.println("* " + NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode("/sub-two/foo").getPath());
 	}
 
 	/**
-	 * TODO: document me
 	 *
 	 */
 	public static class MyAutoformBean implements Serializable {

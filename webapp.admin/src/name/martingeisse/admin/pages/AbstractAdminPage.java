@@ -10,8 +10,10 @@ import name.martingeisse.admin.common.Dummy;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.admin.navigation.INavigationLocator;
 import name.martingeisse.admin.navigation.INavigationNode;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
+import name.martingeisse.admin.navigation.NavigationTreeSelector;
 
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -80,7 +82,23 @@ public class AbstractAdminPage extends WebPage {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		final INavigationNode currentPageNavigationNode = NavigationConfigurationUtil.mapPageToNavigationNode(this);
+
+		// determine the current navigation path
+		String currentNavigationPath = null;
+		if (this instanceof INavigationLocator) {
+			INavigationLocator locator = (INavigationLocator)this;
+			currentNavigationPath = locator.getCurrentNavigationPath(NavigationTreeSelector.GLOBAL);
+		}
+		if (currentNavigationPath == null) {
+			currentNavigationPath = getPageParameters().get("currentNavigationPath").toString();
+		}
+		if (currentNavigationPath == null) {
+			currentNavigationPath = "";
+		}
+		final INavigationNode currentNavigationNode = NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode(currentNavigationPath);
+		final boolean currentNavigationNodeIsExact = currentNavigationPath.equals(currentNavigationNode.getPath());
+		
+		// navigation
 		getMainContainer().add(new ListView<INavigationNode>("nodes", NavigationConfigurationUtil.getNavigationTree().getRoot().getChildren()) {
 			@Override
 			protected void populateItem(ListItem<INavigationNode> item) {
@@ -88,15 +106,16 @@ public class AbstractAdminPage extends WebPage {
 				AbstractLink link = node.createLink("link");
 				link.add(new Label("title", node.getTitle()));
 				item.add(link);
-				if (currentPageNavigationNode != null) {
-					if (currentPageNavigationNode == node) {
-						link.setEnabled(false);
-					} else if (currentPageNavigationNode.isStrictDescendantOf(node)) {
-						link.add(new AttributeAppender("style", "color: red"));
-					}
+				
+				if (currentNavigationNode == node && currentNavigationNodeIsExact) {
+					link.setEnabled(false);
+				} else if (currentNavigationNode.isStrictDescendantOf(node)) {
+					link.add(new AttributeAppender("style", "color: red"));
 				}
 			}
 		});
+		
+		// entity menu
 		getMainContainer().add(new ListView<EntityDescriptor>("entities", ApplicationSchema.instance.getEntityDescriptors()) {
 			@Override
 			protected void populateItem(ListItem<EntityDescriptor> item) {
@@ -107,6 +126,7 @@ public class AbstractAdminPage extends WebPage {
 				item.add(link);
 			}
 		});
+		
 	}
 	
 	/* (non-Javadoc)

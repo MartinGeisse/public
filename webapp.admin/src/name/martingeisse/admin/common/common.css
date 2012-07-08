@@ -35,13 +35,16 @@ tr.odd {
 	background-color: #c0c0ff;
 }
 
-.TopNavigationBar a {
+.TopNavigationBar > * {
 	display: inline-block;
 	padding: 5px;
 	width: 100px;
+	text-align: center;
+}
+
+.TopNavigationBar a {
 	text-decoration: none;
 	color: blue;
-	text-align: center;
 }
 
 .LeftNavigationBar {

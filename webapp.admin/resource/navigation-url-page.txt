@@ -235,5 +235,9 @@ innerhalb des Parent Folders. Der Pfad ist die Verkettung aller IDs vom Root Nod
   
 Node Paths sind die Werte die vom RequestMapper als PP übergeben werden.
 
+Nächste Frage wäre, ob die lokale Navi mehreren Pages oder Komponenten innerhalb einer einzigen EntityInstancePage
+entspricht. Dazu gehört auch, wie diese URLs (de-)codiert werden (also wie die RequestMapper dazu aussehen).
+
+
 
 

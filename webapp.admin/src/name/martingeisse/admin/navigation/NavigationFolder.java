@@ -70,11 +70,13 @@ public final class NavigationFolder extends AbstractNavigationNode implements IN
 	 * child's parent. Also sets the child's title to the specified title. Returns the child.
 	 * @param <T> the type of the child
 	 * @param child the child to add
+	 * @param id the id to set for the child
 	 * @param title the title to set for the child
 	 * @return the child
 	 */
-	public <T extends AbstractNavigationNode> T initChild(final T child, final String title) {
+	public <T extends AbstractNavigationNode> T initChild(final T child, final String id, final String title) {
 		children.add(child);
+		child.setId(id);
 		child.setTitle(title);
 		return child;
 	}
@@ -82,11 +84,12 @@ public final class NavigationFolder extends AbstractNavigationNode implements IN
 	/**
 	 * Creates a new {@link NavigationFolder} with the specified title, then adds
 	 * the new folder to this folder and sets the new folder's parent to this.
+	 * @param id the id to set for the child
 	 * @param title the title of the new subfolder
 	 * @return the new folder
 	 */
-	public NavigationFolder addNewSubfolder(final String title) {
-		return initChild(new NavigationFolder(), title);
+	public NavigationFolder addNewSubfolder(final String id, final String title) {
+		return initChild(new NavigationFolder(), id, title);
 	}
 
 	/* (non-Javadoc)
@@ -99,6 +102,25 @@ public final class NavigationFolder extends AbstractNavigationNode implements IN
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.INavigationNode#findMostSpecificNode(java.lang.String)
+	 */
+	@Override
+	public INavigationNode findMostSpecificNode(String path) {
+		if (path == null || path.isEmpty() || path.charAt(0) != '/') {
+			return this;
+		}
+		int index = path.indexOf('/', 1);
+		index = (index == -1 ? path.length() : index);
+		String segment = path.substring(1, index);
+		for (final INavigationNode child : children) {
+			if (segment.equals(child.getId())) {
+				return child.findMostSpecificNode(path.substring(index));
+			}
+		}
+		return this;
+	}
+	
 	/**
 	 * Specialized list implementation that sets the parent node of sub-nodes.
 	 */

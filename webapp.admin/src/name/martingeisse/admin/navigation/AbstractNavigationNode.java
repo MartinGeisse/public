@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.navigation;
 
-
 /**
  * The base class for all nodes of the navigation tree.
  */
@@ -18,6 +17,11 @@ public abstract class AbstractNavigationNode implements INavigationNode {
 	private INavigationParentNode parent;
 
 	/**
+	 * the id
+	 */
+	private String id;
+
+	/**
 	 * the title
 	 */
 	private String title;
@@ -26,6 +30,36 @@ public abstract class AbstractNavigationNode implements INavigationNode {
 	 * Constructor.
 	 */
 	public AbstractNavigationNode() {
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.INavigationNode#getId()
+	 */
+	@Override
+	public final String getId() {
+		return id;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.INavigationNode#setId(java.lang.String)
+	 */
+	@Override
+	public final void setId(final String id) {
+		this.id = id;
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.INavigationNode#getPath()
+	 */
+	@Override
+	public final String getPath() {
+		if (parent == null) {
+			return "/";
+		} else if (parent.getParent() == null) {
+			return "/" + id;
+		} else {
+			return parent.getPath() + "/" + id;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -64,7 +98,7 @@ public abstract class AbstractNavigationNode implements INavigationNode {
 	 * @see name.martingeisse.admin.navigation.INavigationNode#isStrictDescendantOf(name.martingeisse.admin.navigation.INavigationNode)
 	 */
 	@Override
-	public final boolean isStrictDescendantOf(INavigationNode other) {
+	public final boolean isStrictDescendantOf(final INavigationNode other) {
 		if (other == null) {
 			throw new IllegalArgumentException("'other' argument is null");
 		}
@@ -78,7 +112,7 @@ public abstract class AbstractNavigationNode implements INavigationNode {
 	 * @see name.martingeisse.admin.navigation.INavigationNode#isEqualOrDescendantOf(name.martingeisse.admin.navigation.INavigationNode)
 	 */
 	@Override
-	public final boolean isEqualOrDescendantOf(INavigationNode other) {
+	public final boolean isEqualOrDescendantOf(final INavigationNode other) {
 		if (other == null) {
 			throw new IllegalArgumentException("'other' argument is null");
 		}
@@ -89,7 +123,7 @@ public abstract class AbstractNavigationNode implements INavigationNode {
 	 * @see name.martingeisse.admin.navigation.INavigationNode#isStrictAncestorOf(name.martingeisse.admin.navigation.INavigationNode)
 	 */
 	@Override
-	public final boolean isStrictAncestorOf(INavigationNode other) {
+	public final boolean isStrictAncestorOf(final INavigationNode other) {
 		if (other == null) {
 			throw new IllegalArgumentException("'other' argument is null");
 		}
@@ -100,11 +134,11 @@ public abstract class AbstractNavigationNode implements INavigationNode {
 	 * @see name.martingeisse.admin.navigation.INavigationNode#isEqualOrAncestorOf(name.martingeisse.admin.navigation.INavigationNode)
 	 */
 	@Override
-	public final boolean isEqualOrAncestorOf(INavigationNode other) {
+	public final boolean isEqualOrAncestorOf(final INavigationNode other) {
 		if (other == null) {
 			throw new IllegalArgumentException("'other' argument is null");
 		}
 		return other.isEqualOrDescendantOf(this);
 	}
-	
+
 }

@@ -16,6 +16,16 @@ import org.apache.wicket.markup.html.link.Link;
 /**
  * Base interface for all navigation nodes.
  * 
+ * Navigation nodes have a parent node that is set automatically when
+ * the node is added to a parent node.
+ * 
+ * Navigation nodes also have an ID that must be unique among its
+ * siblings and must not contain slashes. A node has an implicit
+ * path that is constructed from its ID and the IDs of its ancestors
+ * like this:
+ * 
+ * 		/grandparentId/parentId/myId
+ * 
  * TODO: This class should not implement {@link Serializable}. Instead,
  * the {@link NavigationTree} should keep an index of all nodes and
  * pages containing links generated from nodes should refer to the
@@ -36,6 +46,38 @@ public interface INavigationNode extends Serializable {
 	 */
 	public void setParent(final INavigationParentNode parent);
 
+	/**
+	 * Getter method for the id.
+	 * @return the id
+	 */
+	public String getId();
+
+	/**
+	 * Setter method for the id.
+	 * @param id the id to set
+	 */
+	public void setId(final String id);
+	
+	/**
+	 * Obtains the path of this node. The path is determined from the ID of this
+	 * node and the IDs of its ancestors. This requires the node to be placed
+	 * in the hierarchy before the path can be obtained. This method assumes
+	 * this to be the case and assumes the ancestor without a parent to be
+	 * the root, so for disconnected subtrees it will return the path as if
+	 * that subtree was a proper tree.
+	 * @return the path
+	 */
+	public String getPath();
+	
+	/**
+	 * Returns the most specific node for the specified path.
+	 * This follows the path into descendant nodes until the
+	 * path is completed or a path segment cannot be found.
+	 * @param path the path to follow
+	 * @return the most specific node
+	 */
+	public INavigationNode findMostSpecificNode(String path);
+	
 	/**
 	 * Getter method for the title.
 	 * @return the title

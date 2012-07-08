@@ -7,6 +7,7 @@
 package name.martingeisse.admin.navigation.leaf;
 
 import name.martingeisse.admin.navigation.AbstractNavigationNode;
+import name.martingeisse.admin.navigation.INavigationNode;
 
 
 /**
@@ -25,6 +26,14 @@ public abstract class AbstractNavigationLeaf extends AbstractNavigationNode {
 	@Override
 	public final void visitLeafNodes(INavigationLeafVisitor visitor) {
 		visitor.visit(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.INavigationNode#findMostSpecificNode(java.lang.String)
+	 */
+	@Override
+	public INavigationNode findMostSpecificNode(String path) {
+		return this;
 	}
 	
 }
