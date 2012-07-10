@@ -194,6 +194,8 @@ public class ApplicationSchema {
 		AdminWicketApplication application = AdminWicketApplication.get();
 		application.mountPage("/${entity}/list/#{presenter}", EntityTablePage.class);
 		application.mountPage("/${entity}/show/${id}/#{presenter}", EntityPresentationPage.class);
+//		application.mountNonNavigationPage("/${entity}/list/#{presenter}", EntityTablePage.class);
+//		application.mountNonNavigationPage("/${entity}/show/${id}/#{presenter}", EntityPresentationPage.class);
 	}
 	
 }

@@ -4,8 +4,10 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.navigation.leaf;
+package name.martingeisse.admin.navigation.handler;
 
+
+import name.martingeisse.admin.navigation.NavigationNode;
 
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.AbstractLink;
@@ -13,10 +15,10 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
- * This navigation leaf implementation stores the linked page class and
+ * This handler implementation stores the linked page class and
  * page parameters directly.
  */
-public final class BookmarkablePageNavigationLeaf extends AbstractBookmarkablePageNavigationLeaf {
+public final class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHandler {
 
 	/**
 	 * the pageClass
@@ -31,7 +33,7 @@ public final class BookmarkablePageNavigationLeaf extends AbstractBookmarkablePa
 	/**
 	 * Constructor.
 	 */
-	public BookmarkablePageNavigationLeaf() {
+	public BookmarkablePageNavigationHandler() {
 		this.pageClass = null;
 		this.pageParameters = null;
 	}
@@ -40,7 +42,7 @@ public final class BookmarkablePageNavigationLeaf extends AbstractBookmarkablePa
 	 * Constructor.
 	 * @param pageClass the page class to link to
 	 */
-	public BookmarkablePageNavigationLeaf(final Class<? extends WebPage> pageClass) {
+	public BookmarkablePageNavigationHandler(final Class<? extends WebPage> pageClass) {
 		this.pageClass = pageClass;
 		this.pageParameters = null;
 	}
@@ -50,7 +52,7 @@ public final class BookmarkablePageNavigationLeaf extends AbstractBookmarkablePa
 	 * @param pageClass the page class to link to
 	 * @param pageParameters the page parameters to use in the link
 	 */
-	public BookmarkablePageNavigationLeaf(final Class<? extends WebPage> pageClass, final PageParameters pageParameters) {
+	public BookmarkablePageNavigationHandler(final Class<? extends WebPage> pageClass, final PageParameters pageParameters) {
 		this.pageClass = pageClass;
 		this.pageParameters = pageParameters;
 	}
@@ -88,10 +90,10 @@ public final class BookmarkablePageNavigationLeaf extends AbstractBookmarkablePa
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.navigation.AbstractNavigationNode#createLink(java.lang.String)
+	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#createLink(java.lang.String, name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	public AbstractLink createLink(String id) {
+	public AbstractLink createLink(String id, NavigationNode node) {
 		return new BookmarkablePageLink<Void>(id, pageClass, pageParameters);
 	}
 

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
+import name.martingeisse.admin.navigation.handler.NavigationFolderHandler;
 
 /**
  * This class wraps a tree of navigation nodes. It always contains
@@ -21,26 +22,26 @@ public final class NavigationTree {
 	/**
 	 * the root
 	 */
-	private NavigationFolder root;
+	private NavigationNode root;
 	
 	/**
 	 * the nodesByPath
 	 */
-	private Map<String, INavigationNode> nodesByPath;
+	private Map<String, NavigationNode> nodesByPath;
 
 	/**
 	 * Constructor.
 	 */
 	public NavigationTree() {
-		root = new NavigationFolder();
-		root.setTitle("Navigation");
+		root = new NavigationNode();
+		root.setHandler(new NavigationFolderHandler().setId("dummy").setTitle("Dummy"));
 	}
 	
 	/**
 	 * Getter method for the root.
 	 * @return the root
 	 */
-	public NavigationFolder getRoot() {
+	public NavigationNode getRoot() {
 		return root;
 	}
 
@@ -48,7 +49,7 @@ public final class NavigationTree {
 	 * Setter method for the root.
 	 * @param root the root to set
 	 */
-	public void setRoot(final NavigationFolder root) {
+	public void setRoot(final NavigationNode root) {
 		this.root = root;
 	}
 	
@@ -56,29 +57,19 @@ public final class NavigationTree {
 	 * Initializes the path-to-node mapping.
 	 */
 	public void initializeNodesByPath() {
-		this.nodesByPath = new HashMap<String, INavigationNode>();
+		this.nodesByPath = new HashMap<String, NavigationNode>();
 		nodesByPath.put("/", root);
-		initializeNodesByPath(root.getChildren(), "/");
+		initializeNodesByPath(root, "/");
 	}
 	
 	/**
 	 * 
 	 */
-	private void initializeNodesByPath(Iterable<INavigationNode> nodes, String prefix) {
-		for (INavigationNode node : nodes) {
-			initializeNodeByPath(node, prefix);
-		}
-	}
-
-	/**
-	 * 
-	 */
-	private void initializeNodeByPath(INavigationNode node, String prefix) {
-		String path = prefix + node.getId();
-		nodesByPath.put(path, node);
-		if (node instanceof INavigationParentNode) {
-			INavigationParentNode nodeAsParent = (INavigationParentNode)node;
-			initializeNodesByPath(nodeAsParent, path + "/");
+	private void initializeNodesByPath(Iterable<NavigationNode> nodes, String prefix) {
+		for (NavigationNode node : nodes) {
+			String path = prefix + node.getId();
+			nodesByPath.put(path, node);
+			initializeNodesByPath(node, path + "/");
 		}
 	}
 	
@@ -86,7 +77,7 @@ public final class NavigationTree {
 	 * Getter method for the nodesByPath.
 	 * @return the nodesByPath
 	 */
-	public Map<String, INavigationNode> getNodesByPath() {
+	public Map<String, NavigationNode> getNodesByPath() {
 		return nodesByPath;
 	}
 	

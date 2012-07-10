@@ -16,8 +16,6 @@ import java.util.Arrays;
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
-import name.martingeisse.admin.application.wicket.AbstractWebApplicationInitializationContributor;
-import name.martingeisse.admin.customization.mount.MountTestPage;
 import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPanel;
 import name.martingeisse.admin.customization.multi.PopulatorDataViewPanel;
 import name.martingeisse.admin.customization.multi.RoleOrderListPanel;
@@ -35,10 +33,10 @@ import name.martingeisse.admin.entity.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.entity.schema.MysqlDatabaseDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
-import name.martingeisse.admin.navigation.NavigationFolder;
-import name.martingeisse.admin.navigation.leaf.GlobalEntityListNavigationLeaf;
-import name.martingeisse.admin.navigation.leaf.PanelPageNavigationLeaf;
-import name.martingeisse.admin.navigation.leaf.UrlNavigationLeaf;
+import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.admin.navigation.handler.GlobalEntityListNavigationHandler;
+import name.martingeisse.admin.navigation.handler.PanelPageNavigationHandler;
+import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.pages.PagesConfigurationUtil;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.wicket.autoform.AutoformPanel;
@@ -46,13 +44,6 @@ import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociate
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
-
-import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.request.Request;
-import org.apache.wicket.request.Url;
-import org.apache.wicket.request.mapper.MountedMapper;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.request.mapper.parameter.PageParametersEncoder;
 
 
 /**
@@ -117,47 +108,6 @@ public class Main {
 				}
 			}
 		});
-
-		// test
-		ApplicationConfiguration.get().addPlugin(new AbstractWebApplicationInitializationContributor() {
-
-			/* (non-Javadoc)
-			 * @see name.martingeisse.admin.application.wicket.IWebApplicationInitializationContributor#onInitializeWebApplication(org.apache.wicket.protocol.http.WebApplication)
-			 */
-			@Override
-			public void onInitializeWebApplication(WebApplication webApplication) {
-				
-				PageParametersEncoder encoder = new PageParametersEncoder() {
-
-					/* (non-Javadoc)
-					 * @see org.apache.wicket.request.mapper.parameter.PageParametersEncoder#decodePageParameters(org.apache.wicket.request.Request)
-					 */
-					@Override
-					public PageParameters decodePageParameters(Request request) {
-						PageParameters parameters = super.decodePageParameters(request);
-						if (parameters == null) {
-							parameters = new PageParameters();
-						}
-						parameters.add("bar", "BARRRARRRARRR");
-						return parameters;
-					}
-					
-					/* (non-Javadoc)
-					 * @see org.apache.wicket.request.mapper.parameter.PageParametersEncoder#encodePageParameters(org.apache.wicket.request.mapper.parameter.PageParameters)
-					 */
-					@Override
-					public Url encodePageParameters(PageParameters pageParameters) {
-						PageParameters copy = new PageParameters(pageParameters);
-						copy.remove("bar");
-						return super.encodePageParameters(copy);
-					}
-					
-				};
-				
-				webApplication.mount(new MountedMapper("/mount/${foo}", MountTestPage.class, encoder));
-			}
-			
-		});
 		
 		// run
 		buildNavigation();
@@ -169,23 +119,19 @@ public class Main {
 	 * 
 	 */
 	private static void buildNavigation() {
-		final NavigationFolder root = NavigationConfigurationUtil.getNavigationTree().getRoot();
-//		root.initChild(new UrlNavigationLeaf("/"), "", "Home");
-		final NavigationFolder sub1 = root.addNewSubfolder("sub-one", "Sub One");
-		final NavigationFolder sub1sub1 = sub1.addNewSubfolder("s1-sub-one", "s1 Sub One");
-		sub1sub1.initChild(new GlobalEntityListNavigationLeaf("phpbb_acl_roles"), "roles", "ACL: Roles");
-		sub1.initChild(new GlobalEntityListNavigationLeaf("phpbb_acl_users"), "users", "ACL: Users");
-		root.addNewSubfolder("sub-two", "Sub Two");
-		root.addNewSubfolder("sub-three", "Sub Three");
-
-		root.initChild(new PanelPageNavigationLeaf(MyAutoformPanel.class, null, true), "test", "Test");
+		final NavigationNode root = NavigationConfigurationUtil.getNavigationTree().getRoot();
+		root.createChild(new UrlNavigationHandler("/").setId("home-dummy").setTitle("Home"));
+		final NavigationNode sub1 = root.createFolderChild("sub-one", "Sub One");
+		final NavigationNode sub1sub1 = sub1.createFolderChild("s1-sub-one", "s1 Sub One");
+		sub1sub1.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_roles").setId("roles").setTitle("ACL: Roles"));
+		sub1.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_users").setId("users").setTitle("ACL: Users"));
+//		root.createFolderChild("sub-two", "Sub Two");
+//		root.createFolderChild("sub-three", "Sub Three");
+		root.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_users").setId("users1").setTitle("Users-1"));
+		root.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_users").setId("users2").setTitle("Users-2"));
+		root.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_users").setId("users3").setTitle("Users-3"));
 		
-//		System.out.println("* " + NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode("/").getPath());
-//		System.out.println("* " + NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode("sub-one").getPath());
-//		System.out.println("* " + NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode("/bla").getPath());
-//		System.out.println("* " + NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode("/sub-one").getPath());
-//		System.out.println("* " + NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode("/sub-one/s1-sub-one").getPath());
-//		System.out.println("* " + NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode("/sub-two/foo").getPath());
+		root.createChild(new PanelPageNavigationHandler(MyAutoformPanel.class, null, true).setId("test").setTitle("Test"));
 	}
 
 	/**

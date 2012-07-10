@@ -27,6 +27,11 @@ import org.apache.wicket.util.string.StringValue;
  * page class to URL is ambiguous and you cannot be sure that the link uses
  * the URL for this request mapper; other URLs will pass through other
  * request mappers and thus not include the fake page parameter.
+ * 
+ * Note that this mapper does not work for the root URL. To mount an
+ * arbitrary page at the root URL and still have it return the root
+ * navigation path, subclass that page and implement {@link INavigationLocator}
+ * manually.
  */
 public class NavigationMountedRequestMapper extends MountedMapper {
 
@@ -66,12 +71,16 @@ public class NavigationMountedRequestMapper extends MountedMapper {
 	 */
 	@Override
 	protected Url buildUrl(UrlInfo info) {
+		System.out.println("buildUrl(): " + info.getPageClass() + " / " + info.getPageParameters() + ", navigationPath: " + navigationPath);
 		// only map request handlers with our navigation path back to URLs
 		final PageParameters parameters = info.getPageParameters();
 		final StringValue navigationPath = (parameters == null ? null : parameters.get(PAGE_PARAMETER_NAME));
-		if (navigationPath != null && navigationPath.toString().equals(this.navigationPath)) {
-			return super.buildUrl(info);
+		if (navigationPath != null && navigationPath.toString() != null && navigationPath.toString().equals(this.navigationPath)) {
+			Url url =  super.buildUrl(info);
+			System.out.println("success -> " + url);
+			return url;
 		} else {
+			System.out.println("failure");
 			return null;
 		}
 	}
@@ -83,7 +92,7 @@ public class NavigationMountedRequestMapper extends MountedMapper {
 	 * @return the current node, or null if no node was found and required is false
 	 * @throws IllegalArgumentException if no node was found and required is true
 	 */
-	public static INavigationNode getCurrentNode(final PageParameters parameters, final boolean required) throws IllegalArgumentException {
+	public static NavigationNode getCurrentNode(final PageParameters parameters, final boolean required) throws IllegalArgumentException {
 
 		// obtain the navigation path
 		final String navigationPath = parameters.get(PAGE_PARAMETER_NAME).toString();
@@ -96,7 +105,7 @@ public class NavigationMountedRequestMapper extends MountedMapper {
 		}
 
 		// obtain the resulting node
-		final INavigationNode node = NavigationConfigurationUtil.getNavigationTree().getNodesByPath().get(navigationPath);
+		final NavigationNode node = NavigationConfigurationUtil.getNavigationTree().getNodesByPath().get(navigationPath);
 		if (node == null) {
 			if (required) {
 				throw new IllegalArgumentException("page parameter for the navigation path does not match any known path: " + navigationPath);
@@ -106,28 +115,6 @@ public class NavigationMountedRequestMapper extends MountedMapper {
 		}
 
 		return node;
-	}
-
-	/**
-	 * Obtains the current navigation node from the page parameters and casts it to the specified
-	 * expected node class.
-	 * @param <T> the expected node type
-	 * @param parameters the page parameters
-	 * @param required whether the parameter for the current node is required
-	 * @param expectedNodeClass the expected node class
-	 * @return the current node, or null if no node was found and required is false
-	 * @throws IllegalArgumentException if no node was found and required is true
-	 */
-	public static <T extends INavigationNode> T getCurrentNode(final PageParameters parameters, final boolean required, final Class<T> expectedNodeClass) throws IllegalArgumentException {
-		final INavigationNode node = getCurrentNode(parameters, required);
-		if (node == null) {
-			return null;
-		}
-		try {
-			return expectedNodeClass.cast(node);
-		} catch (final ClassCastException e) {
-			throw new IllegalArgumentException("invalid node type for navigation path '" + node.getPath() + "'. Expected " + expectedNodeClass.getCanonicalName() + ", found " + node.getClass().getCanonicalName());
-		}
 	}
 
 	/**

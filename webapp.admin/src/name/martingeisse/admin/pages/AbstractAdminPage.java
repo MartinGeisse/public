@@ -11,8 +11,9 @@ import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.INavigationLocator;
-import name.martingeisse.admin.navigation.INavigationNode;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
+import name.martingeisse.admin.navigation.NavigationMountedRequestMapper;
+import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.NavigationTreeSelector;
 
 import org.apache.wicket.behavior.AttributeAppender;
@@ -90,19 +91,19 @@ public class AbstractAdminPage extends WebPage {
 			currentNavigationPath = locator.getCurrentNavigationPath(NavigationTreeSelector.GLOBAL);
 		}
 		if (currentNavigationPath == null) {
-			currentNavigationPath = getPageParameters().get("currentNavigationPath").toString();
+			currentNavigationPath = getPageParameters().get(NavigationMountedRequestMapper.PAGE_PARAMETER_NAME).toString();
 		}
 		if (currentNavigationPath == null) {
 			currentNavigationPath = "";
 		}
-		final INavigationNode currentNavigationNode = NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode(currentNavigationPath);
+		final NavigationNode currentNavigationNode = NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode(currentNavigationPath);
 		final boolean currentNavigationNodeIsExact = currentNavigationPath.equals(currentNavigationNode.getPath());
 		
 		// navigation
-		getMainContainer().add(new ListView<INavigationNode>("nodes", NavigationConfigurationUtil.getNavigationTree().getRoot().getChildren()) {
+		getMainContainer().add(new ListView<NavigationNode>("nodes", NavigationConfigurationUtil.getNavigationTree().getRoot().getChildren()) {
 			@Override
-			protected void populateItem(ListItem<INavigationNode> item) {
-				INavigationNode node = item.getModelObject();
+			protected void populateItem(ListItem<NavigationNode> item) {
+				NavigationNode node = item.getModelObject();
 				AbstractLink link = node.createLink("link");
 				link.add(new Label("title", node.getTitle()));
 				item.add(link);

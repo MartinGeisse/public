@@ -4,8 +4,9 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.navigation.leaf;
+package name.martingeisse.admin.navigation.handler;
 
+import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.pages.PanelPage;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
@@ -19,7 +20,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
  * panel on-the-fly, not re-using an existing panel (that would be
  * pointless for a navigation node).
  */
-public final class PanelPageNavigationLeaf extends AbstractNavigationLeaf {
+public final class PanelPageNavigationHandler extends AbstractNavigationNodeHandler {
 
 	/**
 	 * the panelClass
@@ -39,7 +40,7 @@ public final class PanelPageNavigationLeaf extends AbstractNavigationLeaf {
 	/**
 	 * Constructor.
 	 */
-	public PanelPageNavigationLeaf() {
+	public PanelPageNavigationHandler() {
 	}
 
 	/**
@@ -48,7 +49,7 @@ public final class PanelPageNavigationLeaf extends AbstractNavigationLeaf {
 	 * @param model see {@link PanelPage} for a description of this parameter
 	 * @param modelIsOptional see {@link PanelPage} for a description of this parameter
 	 */
-	public PanelPageNavigationLeaf(final Class<? extends Panel> panelClass, final IModel<?> model, final boolean modelIsOptional) {
+	public PanelPageNavigationHandler(final Class<? extends Panel> panelClass, final IModel<?> model, final boolean modelIsOptional) {
 		this.panelClass = panelClass;
 		this.model = model;
 		this.modelIsOptional = modelIsOptional;
@@ -103,10 +104,10 @@ public final class PanelPageNavigationLeaf extends AbstractNavigationLeaf {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.navigation.AbstractNavigationNode#createLink(java.lang.String)
+	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#createLink(java.lang.String, name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	public AbstractLink createLink(final String id) {
+	public AbstractLink createLink(final String id, NavigationNode node) {
 		return new Link<Void>(id) {
 			@Override
 			public void onClick() {
