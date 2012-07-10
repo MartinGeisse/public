@@ -8,6 +8,7 @@ package name.martingeisse.admin.navigation;
 
 import java.io.Serializable;
 
+import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.navigation.leaf.INavigationLeafVisitor;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
@@ -167,5 +168,12 @@ public interface INavigationNode extends Serializable {
 	 * @param visitor the visitor to apply
 	 */
 	public void visitLeafNodes(INavigationLeafVisitor visitor);
+
+	/**
+	 * Mounts the request mappers for this node and its descendants in the Wicket
+	 * Application. This method is called by the framework.
+	 * @param application the wicket application
+	 */
+	public void mountRequestMappers(AdminWicketApplication application);
 	
 }

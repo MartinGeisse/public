@@ -170,7 +170,7 @@ public class Main {
 	 */
 	private static void buildNavigation() {
 		final NavigationFolder root = NavigationConfigurationUtil.getNavigationTree().getRoot();
-		root.initChild(new UrlNavigationLeaf("/"), "", "Home");
+//		root.initChild(new UrlNavigationLeaf("/"), "", "Home");
 		final NavigationFolder sub1 = root.addNewSubfolder("sub-one", "Sub One");
 		final NavigationFolder sub1sub1 = sub1.addNewSubfolder("s1-sub-one", "s1 Sub One");
 		sub1sub1.initChild(new GlobalEntityListNavigationLeaf("phpbb_acl_roles"), "roles", "ACL: Roles");

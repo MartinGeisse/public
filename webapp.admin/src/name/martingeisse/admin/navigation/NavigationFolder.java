@@ -9,13 +9,13 @@ package name.martingeisse.admin.navigation;
 import java.util.Iterator;
 import java.util.List;
 
+import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.navigation.leaf.INavigationLeafVisitor;
 import name.martingeisse.admin.pages.NavigationFolderPage;
 import name.martingeisse.common.util.SpecialHandlingList;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.markup.html.link.ExternalLink;
 
 /**
  * This class represents a navigation node that just contains
@@ -57,12 +57,18 @@ public final class NavigationFolder extends AbstractNavigationNode implements IN
 	 */
 	@Override
 	public AbstractLink createLink(final String id) {
-		return new Link<Void>(id) {
-			@Override
-			public void onClick() {
-				RequestCycle.get().setResponsePage(new NavigationFolderPage(NavigationFolder.this));
-			}
-		};
+		
+//		return new Link<Void>(id) {
+//			@Override
+//			public void onClick() {
+//				RequestCycle.get().setResponsePage(new NavigationFolderPage(NavigationFolder.this));
+//			}
+//		};
+		
+		// TODO: This calls for a new type of bookmarkable link, not based
+		// on page class but on navigation path
+		return new ExternalLink(id, getPath());
+		
 	}
 
 	/**
@@ -119,6 +125,19 @@ public final class NavigationFolder extends AbstractNavigationNode implements IN
 			}
 		}
 		return this;
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.INavigationNode#mountRequestMappers(name.martingeisse.admin.application.wicket.AdminWicketApplication)
+	 */
+	@Override
+	public void mountRequestMappers(AdminWicketApplication application) {
+		if (getParent() != null) {
+			application.mount(new NavigationMountedRequestMapper(getPath(), NavigationFolderPage.class));
+		}
+		for (INavigationNode child : children) {
+			child.mountRequestMappers(application);
+		}
 	}
 	
 	/**

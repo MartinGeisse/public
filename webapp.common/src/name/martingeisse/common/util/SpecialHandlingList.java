@@ -6,6 +6,7 @@
 
 package name.martingeisse.common.util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -17,7 +18,7 @@ import java.util.ListIterator;
  * added or removed.
  * @param <T> the element type
  */
-public class SpecialHandlingList<T> implements List<T> {
+public class SpecialHandlingList<T> implements List<T>, Serializable {
 
 	/**
 	 * the list

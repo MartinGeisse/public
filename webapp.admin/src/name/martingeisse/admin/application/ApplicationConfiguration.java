@@ -177,6 +177,7 @@ public final class ApplicationConfiguration {
 		// TODO: move the code below to a module (instead of centralized) location
 		logger.trace("ApplicationConfiguration: running post-plugin initialization");
 		ReadOnlyRenderingConfigurationUtil.prepareConfiguration();
+		NavigationConfigurationUtil.getNavigationTree().initializeNodesByPath();
 
 		logger.debug("ApplicationConfiguration.initialize(): end");
 	}

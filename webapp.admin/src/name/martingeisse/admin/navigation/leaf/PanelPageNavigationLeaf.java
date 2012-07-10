@@ -19,7 +19,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
  * panel on-the-fly, not re-using an existing panel (that would be
  * pointless for a navigation node).
  */
-public final class PanelPageNavigationLeaf extends AbstractBookmarkablePageNavigationLeaf {
+public final class PanelPageNavigationLeaf extends AbstractNavigationLeaf {
 
 	/**
 	 * the panelClass

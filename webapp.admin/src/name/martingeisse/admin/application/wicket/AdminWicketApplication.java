@@ -9,6 +9,7 @@ package name.martingeisse.admin.application.wicket;
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.common.Dummy;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
+import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.pages.HomePage;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
 
@@ -55,6 +56,11 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		
 		// mount resource URLs
 		mountResource("common.css", new PackageResourceReference(Dummy.class, "common.css"));
+		
+		// mount navigation URLs
+		logger.trace("mounting navigation URLs...");
+		NavigationConfigurationUtil.getNavigationTree().mountRequestMappers(this);
+		logger.trace("navigation URLs mounted");
 		
 		// let plugins contribute
 		logger.trace("invoking web application initialization contributors...");

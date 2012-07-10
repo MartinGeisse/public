@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.navigation.leaf;
 
+import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.navigation.AbstractNavigationNode;
 import name.martingeisse.admin.navigation.INavigationNode;
 
@@ -34,6 +35,13 @@ public abstract class AbstractNavigationLeaf extends AbstractNavigationNode {
 	@Override
 	public INavigationNode findMostSpecificNode(String path) {
 		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.INavigationNode#mountRequestMappers(name.martingeisse.admin.application.wicket.AdminWicketApplication)
+	 */
+	@Override
+	public void mountRequestMappers(AdminWicketApplication application) {
 	}
 	
 }
