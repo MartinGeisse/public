@@ -10,6 +10,7 @@ import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.NavigationMountedRequestMapper;
 import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.admin.navigation.NavigationTreeSelector;
 import name.martingeisse.admin.pages.EntityTablePage;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
@@ -109,7 +110,7 @@ public final class GlobalEntityListNavigationHandler extends AbstractNavigationN
 	 */
 	@Override
 	public void mountRequestMappers(AdminWicketApplication application, NavigationNode node) {
-		application.mount(new NavigationMountedRequestMapper(node.getPath(), EntityTablePage.class));
+		application.mount(new NavigationMountedRequestMapper(node.getPath(), null, EntityTablePage.class));
 	}
 
 	/* (non-Javadoc)
@@ -117,8 +118,17 @@ public final class GlobalEntityListNavigationHandler extends AbstractNavigationN
 	 */
 	@Override
 	public AbstractLink createLink(final String id, NavigationNode node) {
+		
+		// TODO: the entity name and presenter name are not checked by the mount point!
+		// When more than one entity list page is navigation-mounted, the wrong request mapper
+		// will generate the URL. Either the entity name and presenter name stop being a
+		// parameter (not cool) or the mount system must be extended to accept arbitrary
+		// "fixed" parameters, not just the mount paths. -> base class for
+		// NaviationMountedRequestMapper that does the parameter juggling, and NMRM
+		// to handle navigation path parameters based on this.
+		
 		final PageParameters parameters = new PageParameters();
-		parameters.add(NavigationMountedRequestMapper.PAGE_PARAMETER_NAME, node.getPath());
+		parameters.add(NavigationTreeSelector.GLOBAL.getPageParameterName(), node.getPath());
 		parameters.add("entity", entityName);
 		if (presenterName != null) {
 			parameters.add("presenter", presenterName);

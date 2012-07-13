@@ -1,0 +1,51 @@
+Der Grund, warum ich überhaupt erst auf URLs gekommen bin: Die Pages sollten selbst mehr
+darüber wissen, wie die Web Application als ganzes aufgebaut ist. Statt eines NaviTree
+sollte der Anwendungs-Entwickler einen SiteTree bauen: Nicht nur eine Beschreibung
+der Navigation, sondern der ganzen Website. Dann kann eine Page im Constructor einen
+SiteNode bekommen und z.B. wissen, welche IDs sie den PPs entnehmen muss. Sie kann auch
+direkt den SiteNode zurückgeben und dadurch in der Navigation erscheinen. Pages, die
+nicht nach diesem Prinzip aufgebaut sind, können immer noch manuell einen SiteNode
+bestimmen, den sie markieren (auch wenn sie da nicht auftauchen) oder einfach null
+liefern und dadurch im Navi nichts markieren. Alles, was statisch ist, bekommen "echte"
+SiteTree-Pages durch den SiteNode übergeben. 
+
+Der Witz am SiteTree ist, dass durch eine einzige statische Datenstruktur viele
+Dinge automatisiert werden können (indem (Basis-)Pageklassen zu den bekannten
+SiteNodes bereitgestellt werden):
+
+- Folder-Navigation, hin-Navigation und Backmapping
+- Analyse der Kontext-bestimmenden Page Parameters
+- Bereitstellung von Standardseiten allein durch Definition des SiteTree. Hier ist es
+  wichtig, dass man das, was die Standarseiten bieten als auch das, was das Admin-Framework
+  sonst bietet, auch als non-Page-Komponenten zur Verfügung hat; man muss es beliebig
+  kombinieren können!
+- "schöne" URLs
+- Erzeugung einer Sitemap, Suchfunktion für Anwendungsseiten
+- Basis-Pageklassen, die die Navigation integriert haben und man allein anhand eines
+  Style-Selektors zwischen Baum, Dropdown, TabPanels usw. wählen kann
+- bei alledem: Behandlung von Multinodes
+- Integration des Reporting-Frameworks z.B. als Standardseiten
+
+Der SiteTree definiert die Struktur der Oberfläche, nicht die Struktur der Daten!
+
+Der Haken: werden dadurch nicht alle Pages stateful? Standardseiten haben Standardklassen
+(man will ja nicht ständig Subklassen erzeugen); Unterscheidung nicht mit "fester URL
+plus ein paar PageParameter"; also Unterscheidung per URL. Kann man beim mounten
+"fixe" PP angeben? Dann könnte man dieselbe Standard-Pageklasse für verschiedene SiteNodes
+unter verschiedenen URLs mit abweichenden fixen PP mounten und diese abweichenden PP müssten
+nicht direkt, sondern über den SiteTree-Pfad, in der URL erscheinen. Evtl geht das mit
+einem abgewandelten MountedMapper (Wicket-Klasse, von der man eine Subklasse erstellen
+müsste). Dieser würde einen SiteNode haben. Beim Page->URL würde er nur matchen, wenn der
+SiteNode stimmt. Beim URL->Page würde er z.B. die SiteNode-ID als PageParameter setzen.
+(Falls die Page den SiteNode "vergessen muss", reicht da auch die SiteNode-ID).
+
+Vorgehensweise:
+- altes Navi-System erst mal unangetastet lassen; Git-Tag setzen
+- Klassen für den SiteTree bauen (Funktionalität in den Nodes oder ausgelagert?)
+- Navi-Komponenten kopieren und für SiteTree umbauen (Tree-Panel, FolderPage usw.).
+  Erst mal kein Backmapping.
+- Seiten bauen, die durch SiteNodes definiert werden (z.B. einfache Message-Page als Beispiel,
+  wo die Message aus dem SiteNode kommt).
+- Pages anhand der SiteNodes mounten
+- Multi-Node (aus Entity) und entsprechende Seite. Das wird der Test, ob das System was taugt.
+  Da wird dann beim Mounten die ID als URL-Segment-Parameter gemountet.

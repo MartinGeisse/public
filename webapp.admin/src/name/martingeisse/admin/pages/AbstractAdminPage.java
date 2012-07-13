@@ -10,9 +10,7 @@ import name.martingeisse.admin.common.Dummy;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.navigation.INavigationLocator;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
-import name.martingeisse.admin.navigation.NavigationMountedRequestMapper;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.NavigationTreeSelector;
 
@@ -84,23 +82,14 @@ public class AbstractAdminPage extends WebPage {
 	protected void onInitialize() {
 		super.onInitialize();
 
-		// determine the current navigation path
-		String currentNavigationPath = null;
-		if (this instanceof INavigationLocator) {
-			INavigationLocator locator = (INavigationLocator)this;
-			currentNavigationPath = locator.getCurrentNavigationPath(NavigationTreeSelector.GLOBAL);
-		}
-		if (currentNavigationPath == null) {
-			currentNavigationPath = getPageParameters().get(NavigationMountedRequestMapper.PAGE_PARAMETER_NAME).toString();
-		}
-		if (currentNavigationPath == null) {
-			currentNavigationPath = "";
-		}
-		final NavigationNode currentNavigationNode = NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode(currentNavigationPath);
+		// determine the current navigation path and node
+		String currentNavigationPath = NavigationTreeSelector.GLOBAL.getNavigationPath(this);
+		currentNavigationPath = (currentNavigationPath == null ? "" : currentNavigationPath);
+		final NavigationNode currentNavigationNode = NavigationConfigurationUtil.getGlobalNavigationTree().getRoot().findMostSpecificNode(currentNavigationPath);
 		final boolean currentNavigationNodeIsExact = currentNavigationPath.equals(currentNavigationNode.getPath());
 		
 		// navigation
-		getMainContainer().add(new ListView<NavigationNode>("nodes", NavigationConfigurationUtil.getNavigationTree().getRoot().getChildren()) {
+		getMainContainer().add(new ListView<NavigationNode>("nodes", NavigationConfigurationUtil.getGlobalNavigationTree().getRoot().getChildren()) {
 			@Override
 			protected void populateItem(ListItem<NavigationNode> item) {
 				NavigationNode node = item.getModelObject();

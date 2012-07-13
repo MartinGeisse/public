@@ -82,7 +82,7 @@ public final class ApplicationConfiguration {
 	 * Constructor.
 	 */
 	private ApplicationConfiguration() {
-		parameters.set(NavigationConfigurationUtil.NAVIGATION_TREE_PARAMETER_KEY, new NavigationTree());
+		parameters.set(NavigationConfigurationUtil.GLOBAL_NAVIGATION_TREE_PARAMETER_KEY, new NavigationTree());
 	}
 	
 	/**
@@ -177,7 +177,7 @@ public final class ApplicationConfiguration {
 		// TODO: move the code below to a module (instead of centralized) location
 		logger.trace("ApplicationConfiguration: running post-plugin initialization");
 		ReadOnlyRenderingConfigurationUtil.prepareConfiguration();
-		NavigationConfigurationUtil.getNavigationTree().initializeNodesByPath();
+		NavigationConfigurationUtil.getGlobalNavigationTree().prepare();
 
 		logger.debug("ApplicationConfiguration.initialize(): end");
 	}

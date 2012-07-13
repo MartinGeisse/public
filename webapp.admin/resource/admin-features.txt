@@ -1,0 +1,9 @@
+
+Was hat das Admin-App-System als ganzes eigentlich zu bieten?
+- Plugins/Capabilities
+- Entity-Schema
+- Navigation
+- Autoforms
+- ...
+
+

@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
-import name.martingeisse.admin.navigation.handler.NavigationFolderHandler;
+import name.martingeisse.admin.navigation.handler.GlobalNavigationFolderHandler;
 import name.martingeisse.common.util.SpecialHandlingList;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
@@ -37,6 +37,11 @@ import org.apache.wicket.markup.html.link.AbstractLink;
 public final class NavigationNode implements Iterable<NavigationNode>, Serializable {
 
 	/**
+	 * the tree
+	 */
+	private NavigationTree tree;
+	
+	/**
 	 * the parent
 	 */
 	private NavigationNode parent;
@@ -55,6 +60,14 @@ public final class NavigationNode implements Iterable<NavigationNode>, Serializa
 	 * Constructor.
 	 */
 	public NavigationNode() {
+	}
+	
+	/**
+	 * Getter method for the tree.
+	 * @return the tree
+	 */
+	public NavigationTree getTree() {
+		return tree;
 	}
 	
 	/**
@@ -112,6 +125,16 @@ public final class NavigationNode implements Iterable<NavigationNode>, Serializa
 	 */
 	public String getTitle() {
 		return handler.getTitle(this);
+	}
+	
+	/**
+	 * 
+	 */
+	void initializeTree(NavigationTree tree) {
+		this.tree = tree;
+		for (NavigationNode child : children) {
+			child.initializeTree(tree);
+		}
 	}
 	
 	/**
@@ -320,13 +343,13 @@ public final class NavigationNode implements Iterable<NavigationNode>, Serializa
 
 	/**
 	 * Creates a new {@link NavigationNode} with the default 
-	 * {@link NavigationFolderHandler} and adds it as a child node.
+	 * {@link GlobalNavigationFolderHandler} and adds it as a child node.
 	 * @param id the node id of the child
 	 * @param title the title of the child
 	 * @return the new node
 	 */
-	public NavigationNode createFolderChild(String id, String title) {
-		return createChild(new NavigationFolderHandler().setId(id).setTitle(title));
+	public NavigationNode createGlobalNavigationFolderChild(String id, String title) {
+		return createChild(new GlobalNavigationFolderHandler().setId(id).setTitle(title));
 	}
 	
 	/**

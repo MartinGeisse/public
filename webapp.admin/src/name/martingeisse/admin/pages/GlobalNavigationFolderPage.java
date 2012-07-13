@@ -6,10 +6,9 @@
 
 package name.martingeisse.admin.pages;
 
-import name.martingeisse.admin.navigation.INavigationLocator;
+import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationMountedRequestMapper;
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.NavigationTreeSelector;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.AbstractLink;
@@ -22,7 +21,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * It is meant as a page for nodes that have no content other
  * than their children.
  */
-public class NavigationFolderPage extends AbstractAdminPage implements INavigationLocator {
+public class GlobalNavigationFolderPage extends AbstractAdminPage {
 
 	/**
 	 * the folder
@@ -33,9 +32,9 @@ public class NavigationFolderPage extends AbstractAdminPage implements INavigati
 	 * Constructor.
 	 * @param parameters the page parameters
 	 */
-	public NavigationFolderPage(PageParameters parameters) {
+	public GlobalNavigationFolderPage(PageParameters parameters) {
 		super(parameters);
-		this.folder = NavigationMountedRequestMapper.getCurrentNode(parameters, true);
+		this.folder = NavigationMountedRequestMapper.getCurrentNode(NavigationConfigurationUtil.getGlobalNavigationTree(), parameters, true);
 		initialize();
 	}
 
@@ -43,7 +42,7 @@ public class NavigationFolderPage extends AbstractAdminPage implements INavigati
 	 * Constructor.
 	 * @param folder the navigation folder
 	 */
-	public NavigationFolderPage(NavigationNode folder) {
+	public GlobalNavigationFolderPage(NavigationNode folder) {
 		this.folder = folder;
 		initialize();
 	}
@@ -70,14 +69,6 @@ public class NavigationFolderPage extends AbstractAdminPage implements INavigati
 	 */
 	public NavigationNode getFolder() {
 		return folder;
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.navigation.INavigationLocator#getCurrentNavigationPath(name.martingeisse.admin.navigation.NavigationTreeSelector)
-	 */
-	@Override
-	public String getCurrentNavigationPath(NavigationTreeSelector treeSelector) {
-		return folder.getPath();
 	}
 
 }
