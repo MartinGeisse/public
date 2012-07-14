@@ -36,7 +36,7 @@ public final class NavigationTree implements Serializable {
 	 */
 	public NavigationTree() {
 		root = new NavigationNode();
-		root.setHandler(new BookmarkablePageNavigationHandler(GlobalNavigationFolderPage.class).setId("dummy").setTitle("Dummy"));
+		root.setHandler(new BookmarkablePageNavigationHandler(GlobalNavigationFolderPage.class).setId(NavigationNode.ROOT_NODE_ID).setTitle("Home"));
 	}
 
 	/**
@@ -60,10 +60,18 @@ public final class NavigationTree implements Serializable {
 	 * framework after all nodes have been added but before the tree is used.
 	 */
 	public void prepare() {
+		
+		// initialize tree structure
 		root.initializeTree();
+		if (!NavigationNode.ROOT_NODE_ID.equals(root.getId())) {
+			throw new IllegalStateException("Navigation root node has invalid ID: " + root.getId());
+		}
+			
+		// cache nodes by full path for quick access
 		this.nodesByPath = new HashMap<String, NavigationNode>();
 		nodesByPath.put("/", root);
 		initializeNodesByPath(root, "/");
+		
 	}
 
 	/**

@@ -41,15 +41,9 @@ public interface INavigationNodeHandler extends Serializable {
 	 * components or associated markup. That is, the appearance of
 	 * the link is up to the caller.
 	 * 
-	 * This method may return null to indicate that a node cannot be
-	 * linked to. In this case the node should be presented as "disabled".
-	 * 
-	 * TODO: Refactor this so that non-linkable nodes return a
-	 * disabled link.
-	 * 
 	 * @param id the wicket id
 	 * @param node the handled node
-	 * @return the link or null
+	 * @return the link
 	 */
 	public AbstractLink createLink(String id, NavigationNode node);
 

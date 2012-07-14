@@ -102,10 +102,6 @@ public class NavigationPageParameterUtil {
 	 * Obtains the navigation path for the specified page. This tries to use the page
 	 * as an {@link INavigationLocator} and also attempts to find page parameters
 	 * set by a {@link NavigationMountedRequestMapper}.
-	 *  
-	 * TODO: The page is always the current page, at least as it works now -- is this generally the case?
-	 * If so, remove that parameter and make this function access the current
-	 * request cycle.
 	 * 
 	 * @param page the page to return the navigation path for 
 	 * @return the navigation path, or null if not found

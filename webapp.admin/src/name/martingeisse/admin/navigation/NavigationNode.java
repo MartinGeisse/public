@@ -36,9 +36,9 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * 
  * The node ID can be either:
  * - a string consisting of letters, digits, underscores and dashes.
- *   This generates a fixed segment in the URL.
+ *   This generates a fixed segment in the URL (regular node).
  * - a variable declaration like this: ${varname}
- *   This generates a variable segment in the URL.
+ *   This generates a variable segment in the URL (variable node).
  *   
  * Variable declarations in navigation paths intentionally look
  * like parameter declarations in Wicket mount paths since they are
@@ -52,6 +52,9 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * has the effect that the IDs of all its sibling nodes are
  * impossible variable values.
  * 
+ * The root node has a regular, fixed ID defined by the ROOT_NODE_ID
+ * constant. This ID is not intended to be visible anywhere.
+ * 
  * TODO: This class should not implement {@link Serializable}. Instead,
  * the {@link NavigationNode} should keep an index of all nodes and
  * pages containing links generated from nodes should refer to the
@@ -59,6 +62,11 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  */
 public final class NavigationNode implements Iterable<NavigationNode>, Serializable {
 
+	/**
+	 * The ID of the root node.
+	 */
+	public static final String ROOT_NODE_ID = "ROOT-NODE-ID";
+	
 	/**
 	 * the regularIdPattern
 	 */
@@ -239,9 +247,6 @@ public final class NavigationNode implements Iterable<NavigationNode>, Serializa
 	
 	/**
 	 * Returns true if this node or any of its ancestors is a variable node.
-	 * The check for the root node is omitted -- it is always considered
-	 * a regular node. (TODO: actually we should not implicitly assume that
-	 * the root is always regular, but rather *enforce* that it is).
 	 * 
 	 * The return value of this method has a simple meaning: Nodes without
 	 * a variable in their path are accessible using a single fixed URL
@@ -366,7 +371,7 @@ public final class NavigationNode implements Iterable<NavigationNode>, Serializa
 	/**
 	 * This method delegates to {@link INavigationNodeHandler#createLink(String, NavigationNode)}.
 	 * @param id the wicket id
-	 * @return the link or null
+	 * @return the link
 	 */
 	public AbstractLink createLink(String id) {
 		return handler.createLink(id, this);
