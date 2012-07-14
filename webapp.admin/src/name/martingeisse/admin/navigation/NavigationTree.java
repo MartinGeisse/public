@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
-import name.martingeisse.admin.navigation.handler.GlobalNavigationFolderHandler;
+import name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler;
+import name.martingeisse.admin.pages.GlobalNavigationFolderPage;
 
 /**
  * This class wraps a tree of navigation nodes. It always contains
@@ -35,7 +36,7 @@ public final class NavigationTree implements Serializable {
 	 */
 	public NavigationTree() {
 		root = new NavigationNode();
-		root.setHandler(new GlobalNavigationFolderHandler().setId("dummy").setTitle("Dummy"));
+		root.setHandler(new BookmarkablePageNavigationHandler(GlobalNavigationFolderPage.class).setId("dummy").setTitle("Dummy"));
 	}
 
 	/**
