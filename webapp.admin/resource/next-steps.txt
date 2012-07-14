@@ -1,0 +1,71 @@
+
+NavigationMountedRequestMapper:
+	+ extends FixedParametersMountedMapper
+	Grund: Eine Entity-List-Seite für Entity X soll Navi-mounted unter Pfad /X werden, die für
+	Y unter Pfad /Y. Es ist aber dieselbe Page-Klasse und diese erwartet den Entity-Namen
+	als Parameter, was aktuell zu einem häßlichen GET-Parameter führt. Es müsste also
+	mindestens ein fester Parameter gespeichert werden, der an die Page übergeben wird
+	und beim URL-erzeugen wieder herausgenommen wird.
+	
+	Offen ist noch, ob dieser Parameter auch geprüft werden muss, wenn ein passender
+	RequestMapper zum erzeugen der URL gesucht wird. Aktuell kann man das umgehen,
+	indem man den Navi-Pfad einfügt; dadurch ist nur der passende Mapper sichtbar.
+	Das ist sogar Pflicht, denn ohne den NaviPath ist der passende Mapper *nicht*
+	sichtbar und man bekommt einen Fallback-Mapper. Der Pfad wäre auch vorhanden,
+	wenn man den Link z.B. vom Entity-Type erzeugen ließe.
+	
+	Etwas unschön ist, dass man beim Link den NaviPath *und* die Entity angeben
+	muss, was redundant ist, aber schön verborgen bleibt, wenn der EntityType
+	das tut.
+
+	Mit einer gemeinsamen Basisklasse, die *alle* Parameter prüft, wäre das
+	aber nicht weg. Es würde nur geprüft und wenn man diese Parameter nicht
+	"passend" redundant angibt dann sieht der Mapper den Link nicht. Da ist
+	nicht viel gewonnen, da es keinen gut sichtbaren Fehler gibt, nur
+	häßliche URLs. Die Redundanz wäre nur weg, wenn der Mapper mehrere
+	Parameter-Kombinationen als gültig erkennt, z.B. NaviPath *oder* EntityName,
+	bzw. (GlobalNaviPath + LocalNaviPath) OR (EntityName + LocalNaviPath).
+	
+	Da ist es einfacher zu sagen:
+	- beim Mount werden zusätzliche Parameter angegeben
+	- Request -> Handler: alle Parameter werden hinzugefügt
+	entweder - Handler -> URL Sichtbarkeit: Wenn NaviPath stimmt
+	oder - Handler -> URL Sichtbarkeit: Wenn alle Parameter stimmen
+	- Handler -> URL: alle Parameter werden entfernt
+
+	Die häßlichen URLs bei "alle Parameter" sind trotzdem noch etwas besser zum
+	Fehler finden und vereinfachen das Prinzip auch. Fazit: Die sinds! Also:
+	Allgemeines Parameter-Set; alle hinzufügen; alle entfernen; alle prüfen.
+	
+Überlegung, welche NaviTrees noch kommen und ob MultiNodes nicht doch besser sind.
+	Da kommt die Frage nach der Klassenstruktur dazu: MultiNode vs. NormalNode,
+	wobei alle NormalNodes Children haben können, MultiNodes nicht. Evtl wäre
+	es sinnvoll, hier nur einen Node-Typ zu nehmen, der *immer*
+	- einen Handler hat
+	- eine feste Liste von Children hat
+	- ein MultiNode mit zur Laufzeit bestimmten Instance-Children ist
+	Das wäre ganz praktisch z.B. für die URLs:
+	/foo/nodes - ungefilterte Liste
+	/foo/nodes/active - gefilterte Liste
+	/foo/nodes/inactive - gefilterte Liste
+	/foo/nodes/42 - Instance Child
+	/foo/nodes/99 - Instance Child
+	/foo/nodes/99/bar/fupp - Instance Child -> lokaler NaviTree nachgebildet
+	
+	Dabei müsste beim Mounting klar sein, wann eine URL einem normalen Child
+	und wann einem Instance Child entspricht. Das ist bei URL->Handler aber
+	einfach: Der Instance Child Mapper erkennt beliebige Segmentwerte aber
+	hat einen niedrigeren Compatibility Score.
+	
+	Dann muss von NaviPaths und NaviPathTemplates gesprochen werden.
+	NaviPath: /foo/nodes/99/bar/fupp
+	MountPath: /foo/nodes/${id}/bar/fupp
+	NaviPathTemplate: /foo/nodes/*/bar/fupp
+	also NaviPathTemplate im Prinzip wie der MountPath mit einem Platzhalter, aber
+	mit neutraler Syntax und ohne Parametername (der ist eine interne Sache).
+	
+
+
+
+
+	
