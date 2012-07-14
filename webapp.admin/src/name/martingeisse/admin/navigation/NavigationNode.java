@@ -7,14 +7,18 @@
 package name.martingeisse.admin.navigation;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.navigation.handler.GlobalNavigationFolderHandler;
 import name.martingeisse.common.util.SpecialHandlingList;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
  * This class is used for the backbone of the navigation tree.
@@ -29,6 +33,24 @@ import org.apache.wicket.markup.html.link.AbstractLink;
  * 
  * 		/grandparentId/parentId/myId
  * 
+ * The node ID can be either:
+ * - a string consisting of letters, digits, underscores and dashes.
+ *   This generates a fixed segment in the URL.
+ * - a variable declaration like this: ${varname}
+ *   This generates a variable segment in the URL.
+ *   
+ * Variable declarations in navigation paths intentionally look
+ * like parameter declarations in Wicket mount paths since they are
+ * closely related. A variable node generates a mount path with
+ * a parameter declaration, thus the corresponding URL segment
+ * will be available in the {@link PageParameters}. Variable names
+ * can contain letters, digits and underscores.
+ * 
+ * Each node can have at most one child whose id is a variable declaration.
+ * This node has lowest precedence when resolving an URL, which
+ * has the effect that the IDs of all its sibling nodes are
+ * impossible variable values.
+ * 
  * TODO: This class should not implement {@link Serializable}. Instead,
  * the {@link NavigationNode} should keep an index of all nodes and
  * pages containing links generated from nodes should refer to the
@@ -37,9 +59,14 @@ import org.apache.wicket.markup.html.link.AbstractLink;
 public final class NavigationNode implements Iterable<NavigationNode>, Serializable {
 
 	/**
-	 * the tree
+	 * the regularIdPattern
 	 */
-	private NavigationTree tree;
+	private static Pattern regularIdPattern = Pattern.compile("[a-zA-Z0-9\\-\\_]+");
+
+	/**
+	 * the variableDeclarationPattern
+	 */
+	private static Pattern variableDeclarationPattern = Pattern.compile("\\$\\{[a-zA-Z0-9\\_]+\\}");
 	
 	/**
 	 * the parent
@@ -60,14 +87,6 @@ public final class NavigationNode implements Iterable<NavigationNode>, Serializa
 	 * Constructor.
 	 */
 	public NavigationNode() {
-	}
-	
-	/**
-	 * Getter method for the tree.
-	 * @return the tree
-	 */
-	public NavigationTree getTree() {
-		return tree;
 	}
 	
 	/**
@@ -128,12 +147,47 @@ public final class NavigationNode implements Iterable<NavigationNode>, Serializa
 	}
 	
 	/**
+	 * Checks whether this node is a regular node, i.e. not a variable declaration.
+	 * @return true if regular, false if variable declaration or invalid
+	 */
+	public boolean isRegularNode() {
+		return (getId() != null) && regularIdPattern.matcher(getId()).matches();
+	}
+
+	/**
+	 * Checks if this node is a variable declaration.
+	 * @return true if variable declaration, false if regular or invalid
+	 */
+	public boolean isVariableNode() {
+		return (getId() != null) && variableDeclarationPattern.matcher(getId()).matches();
+	}
+	
+	/**
 	 * 
 	 */
-	void initializeTree(NavigationTree tree) {
-		this.tree = tree;
+	void initializeTree() {
+		
+		Set<String> childIds = new HashSet<String>();
+		boolean hasVariableChild = false;
 		for (NavigationNode child : children) {
-			child.initializeTree(tree);
+			child.initializeTree();
+			
+			// ensure that the child is either regular or a variable declaration and that no two variables are declared
+			if (child.isVariableNode()) {
+				if (hasVariableChild) {
+					throw new IllegalStateException("navigation node " + getPath() + " has more than one variable child");
+				} else {
+					hasVariableChild = true;
+				}
+			} else if (!child.isRegularNode()) {
+				throw new IllegalStateException("navigation node ID " + child.getId() + " (parent: " + getPath() + ") is neither a regular nor a variable child (i.e. it has an invalid id)");
+			}
+			
+			// ensure that regular IDs aren't used twice
+			if (!childIds.add(child.getId())) {
+				throw new IllegalStateException("navigation path " + child.getPath() + " is used twice");
+			}
+			
 		}
 	}
 	
@@ -152,6 +206,17 @@ public final class NavigationNode implements Iterable<NavigationNode>, Serializa
 	}
 	
 	/**
+	 * Throws an {@link IllegalStateException} if no handler is set for this node.
+	 */
+	private void ensureHandlerPresent() {
+		if (handler == null) {
+			StringBuilder builder = new StringBuilder();
+			buildPathDescriptionForError(builder, this);
+			throw new IllegalStateException("no handler set; path = " + builder);
+		}
+	}
+	
+	/**
 	 * Obtains the path of this node. The path is determined from the ID of this
 	 * node and the IDs of its ancestors. This requires the node to be placed
 	 * in the hierarchy before the path can be obtained. This method assumes
@@ -161,11 +226,8 @@ public final class NavigationNode implements Iterable<NavigationNode>, Serializa
 	 * @return the path
 	 */
 	public final String getPath() {
-		if (handler == null) {
-			StringBuilder builder = new StringBuilder();
-			buildPathDescriptionForError(builder, this);
-			throw new IllegalStateException("no handler set; path = " + builder);
-		} else if (parent == null) {
+		ensureHandlerPresent();
+		if (parent == null) {
 			return "/";
 		} else if (parent.getParent() == null) {
 			return "/" + handler.getId(this);
@@ -175,9 +237,27 @@ public final class NavigationNode implements Iterable<NavigationNode>, Serializa
 	}
 	
 	/**
+	 * Returns true if this node or any of its ancestors is a variable node.
+	 * The check for the root node is omitted -- it is always considered
+	 * a regular node. (TODO: actually we should not implicitly assume that
+	 * the root is always regular, but rather *enforce* that it is).
+	 * 
+	 * The return value of this method has a simple meaning: Nodes without
+	 * a variable in their path are accessible using a single fixed URL
+	 * and are thus natural candidates for global navigation. 
+	 * 
+	 * @return true if there is a variable in the path, false if not
+	 */
+	public boolean hasVariablePath() {
+		ensureHandlerPresent();
+		return (parent != null && (isVariableNode() || parent.hasVariablePath()));
+	}
+	
+	/**
 	 * Returns the most specific node for the specified path.
 	 * This follows the path into descendant nodes until the
 	 * path is completed or a path segment cannot be found.
+	 * 
 	 * @param path the path to follow
 	 * @return the most specific node
 	 */

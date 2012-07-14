@@ -7,7 +7,6 @@
 package name.martingeisse.admin.pages;
 
 import name.martingeisse.admin.navigation.INavigationLocator;
-import name.martingeisse.admin.navigation.NavigationTreeSelector;
 
 /**
  * The "home" page.
@@ -21,10 +20,10 @@ public class HomePage extends AbstractAdminPage implements INavigationLocator {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.navigation.INavigationLocator#getCurrentNavigationPath(name.martingeisse.admin.navigation.NavigationTreeSelector)
+	 * @see name.martingeisse.admin.navigation.INavigationLocator#getCurrentNavigationPath()
 	 */
 	@Override
-	public String getCurrentNavigationPath(NavigationTreeSelector treeSelector) {
+	public String getCurrentNavigationPath() {
 		return "/";
 	}
 

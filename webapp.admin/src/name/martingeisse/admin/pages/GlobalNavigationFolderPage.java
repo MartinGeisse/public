@@ -6,9 +6,8 @@
 
 package name.martingeisse.admin.pages;
 
-import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
-import name.martingeisse.admin.navigation.NavigationMountedRequestMapper;
 import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.admin.navigation.NavigationPageParameterUtil;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.AbstractLink;
@@ -34,7 +33,7 @@ public class GlobalNavigationFolderPage extends AbstractAdminPage {
 	 */
 	public GlobalNavigationFolderPage(PageParameters parameters) {
 		super(parameters);
-		this.folder = NavigationMountedRequestMapper.getCurrentNode(NavigationConfigurationUtil.getGlobalNavigationTree(), parameters, true);
+		this.folder = NavigationPageParameterUtil.getNavigationNodeFromParameter(parameters, true);
 		initialize();
 	}
 

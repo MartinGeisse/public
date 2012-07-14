@@ -15,7 +15,6 @@ import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.IEntityPresentationContributor;
 import name.martingeisse.admin.entity.IEntityReferenceDetector;
 import name.martingeisse.admin.pages.EntityPresentationPage;
-import name.martingeisse.admin.pages.EntityTablePage;
 
 /**
  * This class holds global data generated from plugins / capabilities and modifiers.

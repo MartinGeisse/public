@@ -21,15 +21,9 @@ import org.apache.wicket.request.mapper.parameter.PageParametersEncoder;
  * back-mapping the page to the navigation tree to mark the "current
  * location" in navigation panels.
  * 
- * This class actually maps nodes in multiple navigation trees as defined
- * by {@link NavigationTreeSelector}, and uses multiple page parameters
- * for that. The global navigation path is mandatory for all
- * navigation-mounted pages, while the entity-instance navigation path
- * is optional since it only applies to entity-instance pages.
- * 
  * When bookmarkable page links generate their URL, this mapper senses
- * the fake page parameters and returns its mounted path only if those
- * parameters match. That is, a bookmarkable page link will use the
+ * the fake page parameter and returns its mounted path only if this
+ * parameter matches. That is, a bookmarkable page link will use the
  * mount point generated from a navigation node if that parameter is
  * included, and not use that mount point if the parameter is absent
  * (some other explicit mount point or the default mount point for
@@ -41,41 +35,43 @@ import org.apache.wicket.request.mapper.parameter.PageParametersEncoder;
  * manually.
  */
 public class NavigationMountedRequestMapper extends MountedMapper {
-	
+
 	/**
-	 * the globalNavigationPath
+	 * the parametersEncoder
 	 */
-	private String globalNavigationPath;
-	
-	/**
-	 * the entityInstanceNavigationPath
-	 */
-	private String entityInstanceNavigationPath;
+	private final MyParametersEncoder parametersEncoder;
 	
 	/**
 	 * Constructor.
-	 * @param globalNavigationPath the navigation path in the global navigation tree
-	 * @param entityInstanceNavigationPath the navigation path in the entity-instance navigation
-	 * tree, or null if this is not an entity-instance request mapper
+	 * @param navigationPath the navigation path, which is also the mount path
 	 * @param pageClass the page class to mount
 	 */
-	public NavigationMountedRequestMapper(final String globalNavigationPath, final String entityInstanceNavigationPath, final Class<? extends IRequestablePage> pageClass) {
-		super(createMountPath(globalNavigationPath, entityInstanceNavigationPath), pageClass, new MyParametersEncoder(globalNavigationPath, entityInstanceNavigationPath));
-		this.globalNavigationPath = globalNavigationPath;
-		this.entityInstanceNavigationPath = entityInstanceNavigationPath;
+	public NavigationMountedRequestMapper(final String navigationPath, final Class<? extends IRequestablePage> pageClass) {
+		this(navigationPath, pageClass, new MyParametersEncoder(navigationPath));
+	}
+
+	/**
+	 * Helper constructor to get access to the parameters encoder.
+	 */
+	private NavigationMountedRequestMapper(final String navigationPath, final Class<? extends IRequestablePage> pageClass, MyParametersEncoder parametersEncoder) {
+		super(navigationPath, pageClass, parametersEncoder);
+		this.parametersEncoder = parametersEncoder;
 	}
 	
 	/**
-	 * Creates the mount path for the parent MountedMapper.
+	 * Getter method for the navigationPath.
+	 * @return the navigationPath
 	 */
-	private static String createMountPath(final String globalNavigationPath, final String entityInstanceNavigationPath) {
-		if (entityInstanceNavigationPath == null) {
-			return globalNavigationPath;
-		} else if (entityInstanceNavigationPath.equals("/")) {
-			return globalNavigationPath + "/${id}";
-		} else {
-			return globalNavigationPath + "/${id}" + entityInstanceNavigationPath;
-		}
+	public String getNavigationPath() {
+		return parametersEncoder.getNavigationPath();
+	}
+	
+	/**
+	 * Getter method for the implicitParameters.
+	 * @return the implicitParameters
+	 */
+	public PageParameters getImplicitParameters() {
+		return parametersEncoder.getImplicitParameters();
 	}
 	
 	/* (non-Javadoc)
@@ -83,70 +79,15 @@ public class NavigationMountedRequestMapper extends MountedMapper {
 	 */
 	@Override
 	protected Url buildUrl(UrlInfo info) {
-		
-		// TODO: debugging
-		System.out.println("buildUrl(): " + info.getPageClass() + " / {" + info.getPageParameters() +
-			"}, globalNavigationPath: " + globalNavigationPath + ", entityInstanceNavigationPath: " + entityInstanceNavigationPath);
-		
-		// only map request handlers with our navigation path back to URLs
-		final PageParameters parameters = info.getPageParameters();
-		if (parameters == null) {
-			System.out.println("no parameters -> failure");
-			return null;
-		}
-		System.out.println("global path from parameters: " + NavigationTreeSelector.GLOBAL.getParameterValue(parameters));
-		final boolean globalMatch = StringUtils.equals(globalNavigationPath, NavigationTreeSelector.GLOBAL.getParameterValue(parameters));
-		System.out.println("entity instance path from parameters: " + NavigationTreeSelector.ENTITY_INSTANCE.getParameterValue(parameters));
-		final boolean entityInstanceMatch = StringUtils.equals(entityInstanceNavigationPath, NavigationTreeSelector.ENTITY_INSTANCE.getParameterValue(parameters));
-		if (globalMatch && entityInstanceMatch) {
-			Url url =  super.buildUrl(info);
-			System.out.println("success -> " + url);
-			return url;
-		} else {
-			System.out.println("mismatch -> failure");
-			return null;
-		}
-		
-	}
-
-	/**
-	 * Obtains the current navigation path from the page parameters.
-	 * @param treeSelector specifies the navigation tree to obtain the current node for
-	 * @param parameters the page parameters
-	 * @param required whether the parameter for the current node is required
-	 * @return the current path, or null if no path was found and required is false
-	 * @throws IllegalArgumentException if no path was found and required is true
-	 */
-	public static String getCurrentNavigationPath(final NavigationTreeSelector treeSelector, final PageParameters parameters, final boolean required) throws IllegalArgumentException {
-		final String navigationPath = treeSelector.getParameterValue(parameters);
-		if (navigationPath != null) {
-			return navigationPath;
-		} else if (required) {
-			throw new IllegalArgumentException("page parameter for the navigation path is missing, selector: " + treeSelector);
+		/* This methods performs an additional check so it only maps page/parameter combinations
+		 * back to URLs that have the implicit navigation path parameter set to the value
+		 * stored in this mapper.
+		 */
+		if (StringUtils.equals(getNavigationPath(), NavigationPageParameterUtil.getParameterValue(info.getPageParameters()))) {
+			return super.buildUrl(info);
 		} else {
 			return null;
 		}
-	}
-	
-	/**
-	 * Obtains the current navigation node from the page parameters.
-	 * @param tree the navigation tree to obtain the current node for
-	 * @param parameters the page parameters
-	 * @param required whether the parameter for the current node is required
-	 * @return the current node, or null if no node was found and required is false
-	 * @throws IllegalArgumentException if no node was found and required is true
-	 */
-	public static NavigationNode getCurrentNode(final NavigationTree tree, final PageParameters parameters, final boolean required) throws IllegalArgumentException {
-		final String navigationPath = getCurrentNavigationPath(tree.getSelector(), parameters, required);
-		final NavigationNode node = (navigationPath == null ? null : tree.getNodesByPath().get(navigationPath));
-		if (node == null) {
-			if (required) {
-				throw new IllegalArgumentException("page parameter for the navigation path does not match any known path in tree " + tree.getSelector() + ": " + navigationPath);
-			} else {
-				return null;
-			}
-		}
-		return node;
 	}
 
 	/**
@@ -155,21 +96,37 @@ public class NavigationMountedRequestMapper extends MountedMapper {
 	private static class MyParametersEncoder extends PageParametersEncoder {
 		
 		/**
-		 * the globalNavigationPath
+		 * the navigationPath
 		 */
-		private String globalNavigationPath;
-		
-		/**
-		 * the entityInstanceNavigationPath
-		 */
-		private String entityInstanceNavigationPath;
+		private final String navigationPath;
 
+		/**
+		 * the implicitParameters
+		 */
+		private final PageParameters implicitParameters;
+		
 		/**
 		 * Constructor.
 		 */
-		MyParametersEncoder(String globalNavigationPath, String entityInstanceNavigationPath) {
-			this.globalNavigationPath = globalNavigationPath;
-			this.entityInstanceNavigationPath = entityInstanceNavigationPath;
+		MyParametersEncoder(String navigationPath) {
+			this.navigationPath = navigationPath;
+			this.implicitParameters = new PageParameters();
+		}
+		
+		/**
+		 * Getter method for the navigationPath.
+		 * @return the navigationPath
+		 */
+		public String getNavigationPath() {
+			return navigationPath;
+		}
+		
+		/**
+		 * Getter method for the implicitParameters.
+		 * @return the implicitParameters
+		 */
+		public PageParameters getImplicitParameters() {
+			return implicitParameters;
 		}
 
 		/* (non-Javadoc)
@@ -181,8 +138,8 @@ public class NavigationMountedRequestMapper extends MountedMapper {
 			if (parameters == null) {
 				parameters = new PageParameters();
 			}
-			NavigationTreeSelector.GLOBAL.setParameterValue(parameters, globalNavigationPath);
-			NavigationTreeSelector.ENTITY_INSTANCE.setParameterValue(parameters, entityInstanceNavigationPath);
+			parameters.mergeWith(implicitParameters);
+			NavigationPageParameterUtil.setParameterValue(parameters, navigationPath);
 			return parameters;
 		}
 
@@ -192,8 +149,10 @@ public class NavigationMountedRequestMapper extends MountedMapper {
 		@Override
 		public Url encodePageParameters(final PageParameters pageParameters) {
 			final PageParameters copy = new PageParameters(pageParameters);
-			NavigationTreeSelector.GLOBAL.setParameterValue(copy, null);
-			NavigationTreeSelector.ENTITY_INSTANCE.setParameterValue(copy, null);
+			NavigationPageParameterUtil.setParameterValue(copy, null);
+			for (String key : implicitParameters.getNamedKeys()) {
+				copy.remove(key);
+			}
 			return super.encodePageParameters(copy);
 		}
 

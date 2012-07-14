@@ -12,7 +12,8 @@ import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.NavigationTreeSelector;
+import name.martingeisse.admin.navigation.NavigationPageParameterUtil;
+import name.martingeisse.admin.navigation.NavigationTree;
 
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -83,13 +84,15 @@ public class AbstractAdminPage extends WebPage {
 		super.onInitialize();
 
 		// determine the current navigation path and node
-		String currentNavigationPath = NavigationTreeSelector.GLOBAL.getNavigationPath(this);
+		final NavigationTree navigationTree = NavigationConfigurationUtil.getNavigationTree();
+		final NavigationNode navigationRoot = navigationTree.getRoot();
+		String currentNavigationPath = NavigationPageParameterUtil.getNavigationPathForPage(this);
 		currentNavigationPath = (currentNavigationPath == null ? "" : currentNavigationPath);
-		final NavigationNode currentNavigationNode = NavigationConfigurationUtil.getGlobalNavigationTree().getRoot().findMostSpecificNode(currentNavigationPath);
+		final NavigationNode currentNavigationNode = navigationRoot.findMostSpecificNode(currentNavigationPath);
 		final boolean currentNavigationNodeIsExact = currentNavigationPath.equals(currentNavigationNode.getPath());
 		
 		// navigation
-		getMainContainer().add(new ListView<NavigationNode>("nodes", NavigationConfigurationUtil.getGlobalNavigationTree().getRoot().getChildren()) {
+		getMainContainer().add(new ListView<NavigationNode>("nodes", navigationRoot.getChildren()) {
 			@Override
 			protected void populateItem(ListItem<NavigationNode> item) {
 				NavigationNode node = item.getModelObject();

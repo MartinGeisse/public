@@ -59,7 +59,7 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		
 		// mount navigation URLs
 		logger.trace("mounting navigation URLs...");
-		NavigationConfigurationUtil.getGlobalNavigationTree().mountRequestMappers(this);
+		NavigationConfigurationUtil.getNavigationTree().mountRequestMappers(this);
 		logger.trace("navigation URLs mounted");
 		
 		// let plugins contribute

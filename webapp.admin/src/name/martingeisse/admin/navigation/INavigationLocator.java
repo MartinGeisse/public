@@ -7,17 +7,16 @@
 package name.martingeisse.admin.navigation;
 
 /**
- * Finds the current location within navigation trees. This interface is
+ * Finds the current location within the navigation tree. This interface is
  * implemented by pages and entities to mark the current location of
  * the user (i.e. of the current page) in the navigation menu.
  */
 public interface INavigationLocator {
 
 	/**
-	 * Determines the current location in the specified navigation tree.
-	 * @param treeSelector the selector for the navigation tree to use
+	 * Determines the current location in the navigation tree.
 	 * @return the current location, or null if this locator doesn't know
 	 */
-	public String getCurrentNavigationPath(NavigationTreeSelector treeSelector);
+	public String getCurrentNavigationPath();
 	
 }

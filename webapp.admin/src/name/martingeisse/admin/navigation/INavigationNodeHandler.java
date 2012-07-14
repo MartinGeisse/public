@@ -42,9 +42,10 @@ public interface INavigationNodeHandler extends Serializable {
 	 * the link is up to the caller.
 	 * 
 	 * This method may return null to indicate that a node cannot be
-	 * linked to. This happens for folder nodes if the node presentation
-	 * does not support folder pages. It may happen for leaf nodes,
-	 * in which case the node should be presented as "disabled".
+	 * linked to. In this case the node should be presented as "disabled".
+	 * 
+	 * TODO: Refactor this so that non-linkable nodes return a
+	 * disabled link.
 	 * 
 	 * @param id the wicket id
 	 * @param node the handled node

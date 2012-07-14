@@ -19,10 +19,6 @@ import org.apache.wicket.markup.html.link.ExternalLink;
  * This is an implementation of {@link INavigationNodeHandler}
  * that just displays links to its children. It is typically used
  * for nodes that have no other content.
- * 
- * This class is intended for usein the global navigation tree.
- * See {@link EntityInstanceNavigationFolderHandler} for the
- * entity-instance counterpart.
  */
 public class GlobalNavigationFolderHandler extends AbstractNavigationNodeHandler {
 
@@ -31,7 +27,7 @@ public class GlobalNavigationFolderHandler extends AbstractNavigationNodeHandler
 	 */
 	@Override
 	public void mountRequestMappers(AdminWicketApplication application, NavigationNode node) {
-		application.mount(new NavigationMountedRequestMapper(node.getPath(), null, GlobalNavigationFolderPage.class));
+		application.mount(new NavigationMountedRequestMapper(node.getPath(), GlobalNavigationFolderPage.class));
 	}
 	
 	/* (non-Javadoc)

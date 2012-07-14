@@ -119,7 +119,7 @@ public class Main {
 	 * 
 	 */
 	private static void buildNavigation() {
-		final NavigationNode root = NavigationConfigurationUtil.getGlobalNavigationTree().getRoot();
+		final NavigationNode root = NavigationConfigurationUtil.getNavigationTree().getRoot();
 		root.createChild(new UrlNavigationHandler("/").setId("home-dummy").setTitle("Home"));
 		final NavigationNode sub1 = root.createGlobalNavigationFolderChild("sub-one", "Sub One");
 		final NavigationNode sub1sub1 = sub1.createGlobalNavigationFolderChild("s1-sub-one", "s1 Sub One");

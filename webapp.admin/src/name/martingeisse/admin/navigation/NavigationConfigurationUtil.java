@@ -18,9 +18,9 @@ import name.martingeisse.admin.application.ApplicationConfiguration;
 public final class NavigationConfigurationUtil {
 
 	/**
-	 * The parameter key for the global navigation tree.
+	 * The parameter key for the navigation tree.
 	 */
-	public static final Class<NavigationTree> GLOBAL_NAVIGATION_TREE_PARAMETER_KEY = NavigationTree.class;
+	public static final Class<NavigationTree> NAVIGATION_TREE_PARAMETER_KEY = NavigationTree.class;
 
 	/**
 	 * Prevent instantiation.
@@ -29,19 +29,19 @@ public final class NavigationConfigurationUtil {
 	}
 
 	/**
-	 * Getter method for the global navigation tree.
-	 * @return the global navigation tree
+	 * Getter method for the navigation tree.
+	 * @return the navigation tree
 	 */
-	public static NavigationTree getGlobalNavigationTree() {
-		return ApplicationConfiguration.get().getParameters().get(GLOBAL_NAVIGATION_TREE_PARAMETER_KEY);
+	public static NavigationTree getNavigationTree() {
+		return ApplicationConfiguration.get().getParameters().get(NAVIGATION_TREE_PARAMETER_KEY);
 	}
 
 	/**
-	 * Setter method for the global navigation tree.
-	 * @param globalNavigationTree the global navigation tree to set
+	 * Setter method for the navigation tree.
+	 * @param navigationTree the navigation tree to set
 	 */
-	public static void setGlobalNavigationTree(final NavigationTree globalNavigationTree) {
-		ApplicationConfiguration.get().getParameters().set(GLOBAL_NAVIGATION_TREE_PARAMETER_KEY, globalNavigationTree);
+	public static void setNavigationTree(final NavigationTree navigationTree) {
+		ApplicationConfiguration.get().getParameters().set(NAVIGATION_TREE_PARAMETER_KEY, navigationTree);
 	}
 	
 }

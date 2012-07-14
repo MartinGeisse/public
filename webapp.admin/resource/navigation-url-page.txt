@@ -163,6 +163,15 @@ wären vor allem die Entity-Nodes ohne Filter. Überlegungen dazu:
 	- evtl. Wicket-Komponenten, die darauf aufbauen: webapp.wicket
 	- Impl., die sich auf globale Admin-Daten beziehen: webapp.admin
 
+------
 
+Darstellung von Variablen als Namenloser Platzhalter:
+
+	/foo/${bar}/fupp
+	/foo/*/fupp
+	
+später. Ist zwar unschön, wenn ${bar} öffentlich zu sehen ist, aber nicht
+katastrophal (eigentlich sollen eh keine URLs öffentlich sichtbar sein,
+wo der Path-PP zu sehen ist). Erst mal alles zum Laufen bringen.
 
 
