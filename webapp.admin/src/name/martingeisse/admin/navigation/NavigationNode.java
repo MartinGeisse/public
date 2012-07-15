@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.navigation;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +17,7 @@ import name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHand
 import name.martingeisse.admin.pages.GlobalNavigationFolderPage;
 import name.martingeisse.common.util.SpecialHandlingList;
 
+import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
@@ -28,9 +28,8 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * the node is added to a parent node.
  * 
  * Navigation nodes also have an ID (returned from its handler) that
- * must be unique among its siblings and must not contain slashes. A
- * node has an implicit path that is constructed from its ID and the
- * IDs of its ancestors like this:
+ * must be unique among its siblings. A node has an implicit path that
+ * is constructed from its ID and the IDs of its ancestors like this:
  * 
  * 		/grandparentId/parentId/myId
  * 
@@ -54,13 +53,8 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * 
  * The root node has a regular, fixed ID defined by the ROOT_NODE_ID
  * constant. This ID is not intended to be visible anywhere.
- * 
- * TODO: This class should not implement {@link Serializable}. Instead,
- * the {@link NavigationNode} should keep an index of all nodes and
- * pages containing links generated from nodes should refer to the
- * nodes using an index number model.
  */
-public final class NavigationNode implements Iterable<NavigationNode>, Serializable {
+public final class NavigationNode implements Iterable<NavigationNode> {
 
 	/**
 	 * The ID of the root node.
@@ -283,13 +277,83 @@ public final class NavigationNode implements Iterable<NavigationNode>, Serializa
 	}
 
 	/**
+	 * Checks if one of the ancestors of this node (but not this node itself)
+	 * has the specified path.
+	 * 
+	 * @param path the path
+	 * @return true if one of the ancestors of this node has the specified path, false if not
+	 */
+	public final boolean isStrictDescendantOf(final String path) {
+		if (path == null) {
+			throw new IllegalArgumentException("'path' argument is null");
+		}
+		if (parent == null) {
+			return false;
+		}
+		return parent.isEqualOrDescendantOf(path);
+	}
+
+	/**
+	 * Checks if this node or one of its ancestors has the specified path
+	 * 
+	 * @param path the path
+	 * @return true if this node or one of its ancestors has the specified path, false if not
+	 */
+	public final boolean isEqualOrDescendantOf(final String path) {
+		if (path == null) {
+			throw new IllegalArgumentException("'path' argument is null");
+		}
+		return (getPath().equals(path) || isStrictDescendantOf(path));
+	}
+
+	/**
+	 * Checks if this node is a plausible ancestor of a node with the
+	 * specified path. This makes sure that the path of this node
+	 * is compatible with the specified path, but not whether such a
+	 * descendant node of this node actually exists.
+	 * 
+	 * This method does a strict ancestor check, i.e. it will return
+	 * false if the specified path is the path of this node.
+	 * 
+	 * @param path the path
+	 * @return true if this node is a plausible ancestor of the node with that path, false if not
+	 */
+	public final boolean isStrictPlausibleAncestorOf(final String path) {
+		if (path == null) {
+			throw new IllegalArgumentException("'path' argument is null");
+		} else if (getParent() == null) {
+			return true;
+		} else {
+			// note: the trailing slash avoids that "/foo/bar" is mistaken
+			// as a plausible ancestor of "/foo/barr", and also makes the
+			// comparison a strict one.
+			return path.startsWith(getPath() + "/");
+		}
+	}
+
+	/**
+	 * Checks if this node has the specified path or is a plausible
+	 * ancestor of a node with the specified path. This makes sure
+	 * that the path of this node is compatible with the specified
+	 * path, but (if the paths are not equal), not check whether
+	 * such a descendant node of this node actually exists.
+	 * 
+	 * @param path the path
+	 * @return true if this node has the specified path or is a
+	 * plausible ancestor of the node with that path, false if it
+	 * has an incompatible path
+	 */
+	public final boolean isEqualOrPlausibleAncestorOf(final String path) {
+		if (path == null) {
+			throw new IllegalArgumentException("'path' argument is null");
+		}
+		return (getPath().equals(path) || isStrictPlausibleAncestorOf(path));
+	}
+	
+	/**
 	 * Checks if this node is a descendant of the specified other node.
 	 * This is a strict-descendant check, i.e. returns false if the other
 	 * node is the same as this node.
-	 * 
-	 * Implementation note: This method must not invoke other.isEqualOrAncestorOf(this),
-	 * other.isStrictAncestorOf(this) nor this.isEqualOrDescendantOf(other) to avoid
-	 * infinite recursion.
 	 * 
 	 * @param other the other node
 	 * @return true if this node is a descendant of the other node, false if not
@@ -308,11 +372,6 @@ public final class NavigationNode implements Iterable<NavigationNode>, Serializa
 	 * Checks if this node is the same as the specified other node or is a
 	 * descendant of it. 
 	 * 
-	 * Implementation note: This method is allowed to invoke this.isStrictDescendantOf(other)
-	 * without causing infinite recursion. It must not invoke either
-	 * other.isEqualOrAncestorOf(this) nor other.isStrictAncestorOf(this)
-	 * to avoid infinite recursion.
-	 * 
 	 * @param other the other node
 	 * @return true if this node is equal to or a descendant of the other node, false if not
 	 */
@@ -328,10 +387,6 @@ public final class NavigationNode implements Iterable<NavigationNode>, Serializa
 	 * This is a strict-ancestor check, i.e. returns false if the other
 	 * node is the same as this node. 
 	 * 
-	 * Implementation note: This method is allowed to invoke other.isEqualOrDescendantOf(this)
-	 * and other.isStrictDescendantOf(this) without causing infinite recursion. It must
-	 * not invoke this.isEqualOrAncestorOf(other) to avoid infinite recursion.
-	 * 
 	 * @param other the other node
 	 * @return true if this node is a ancestor of the other node, false if not
 	 */
@@ -345,10 +400,6 @@ public final class NavigationNode implements Iterable<NavigationNode>, Serializa
 	/**
 	 * Checks if this node is the same as the specified other node or is an
 	 * ancestor of it. 
-	 * 
-	 * Implementation note: This method is allowed to invoke this.isStrictAncestorOf(other),
-	 * other.isEqualOrDescendantOf(this) and other.isStrictDescendantOf(this) without
-	 * causing infinite recursion.
 	 * 
 	 * @param other the other node
 	 * @return true if this node is equal to or a ancestor of the other node, false if not
@@ -436,6 +487,18 @@ public final class NavigationNode implements Iterable<NavigationNode>, Serializa
 	 */
 	public NavigationNode createGlobalNavigationFolderChild(String id, String title) {
 		return createChild(new BookmarkablePageNavigationHandler(GlobalNavigationFolderPage.class).setId(id).setTitle(title));
+	}
+
+	/**
+	 * Creates a new {@link NavigationNode} with a {@link BookmarkablePageNavigationHandler} handler
+	 * for the specified page and adds it as a child node. 
+	 * @param id the node id
+	 * @param title the node title
+	 * @param pageClass the page class
+	 * @return the new node
+	 */
+	public NavigationNode createPageChild(String id, String title, final Class<? extends WebPage> pageClass) {
+		return createChild(new BookmarkablePageNavigationHandler(pageClass).setId(id).setTitle(title));
 	}
 	
 	/**

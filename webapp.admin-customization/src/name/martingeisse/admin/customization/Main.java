@@ -19,6 +19,7 @@ import name.martingeisse.admin.application.Launcher;
 import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPanel;
 import name.martingeisse.admin.customization.multi.PopulatorDataViewPanel;
 import name.martingeisse.admin.customization.multi.RoleOrderListPanel;
+import name.martingeisse.admin.customization.navi.NaviTestPage;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.PrefixEliminatingEntityNameMappingStrategy;
 import name.martingeisse.admin.entity.multi.GlobalEntityListPresenter;
@@ -34,8 +35,8 @@ import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.entity.schema.MysqlDatabaseDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.admin.navigation.handler.EntityInstancePresentationNavigationHandler;
 import name.martingeisse.admin.navigation.handler.GlobalEntityListNavigationHandler;
-import name.martingeisse.admin.navigation.handler.PanelPageNavigationHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.pages.PagesConfigurationUtil;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
@@ -131,7 +132,10 @@ public class Main {
 		root.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_users").setId("users2").setTitle("Users-2"));
 		root.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_users").setId("users3").setTitle("Users-3"));
 		
-		root.createChild(new PanelPageNavigationHandler(MyAutoformPanel.class, null, true).setId("test").setTitle("Test"));
+		final NavigationNode roles = root.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_roles").setId("roles").setTitle("Roles"));
+		roles.createChild(new EntityInstancePresentationNavigationHandler("phpbb_acl_roles", "default").setId("${id}").setTitle("Instance"));
+		
+		root.createPageChild("naviTest", "Navi-Test", NaviTestPage.class);
 	}
 
 	/**

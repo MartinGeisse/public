@@ -22,11 +22,6 @@ global table views:
 	ICellPopulatorFactory[] cpFactories;
 	-> warum factories? warum nicht gleich CP? Die sind auch an sich stateless!
 
-global Navigation
-	???
-	Klasse NavigationNode
-		children
-		
 ---------------------------------------------------------------
 Perspective-Klassen:
 
@@ -43,6 +38,3 @@ Warum generisches Datensammeln? Warum nicht Basisklassen für eine spezifische A
 Basisklassen liefert! Zum Beispiel liefern "bekannte" Datentypen der Entity-Properties, im
 Gegensatz zu den Typen die SQL liefert, gleich die Darstellung, die man haben will, ohne dass
 man diese immer explizit angeben muss.
-
-Sieht erst mal so aus, als stünde das in Konkurrenz zum Scripting (XML oder JS). Besser aber
-man benutzt beides in Kombination! 

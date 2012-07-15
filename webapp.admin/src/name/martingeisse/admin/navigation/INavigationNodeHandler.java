@@ -6,8 +6,6 @@
 
 package name.martingeisse.admin.navigation;
 
-import java.io.Serializable;
-
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
@@ -15,13 +13,8 @@ import org.apache.wicket.markup.html.link.Link;
 
 /**
  * This interface is implemented to give navigation nodes their behavior.
- * 
- * TODO: This interface should not extend {@link Serializable}. Instead,
- * the {@link NavigationNode}s should keep an index of all nodes and
- * pages containing links generated from nodes should refer to the
- * nodes using an index number model.
  */
-public interface INavigationNodeHandler extends Serializable {
+public interface INavigationNodeHandler {
 
 	/**
 	 * @param node the handled node

@@ -10,7 +10,7 @@ import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.pages.PanelPage;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
-import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.link.StatelessLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -108,12 +108,46 @@ public final class PanelPageNavigationHandler extends AbstractNavigationNodeHand
 	 */
 	@Override
 	public AbstractLink createLink(final String id, NavigationNode node) {
-		return new Link<Void>(id) {
-			@Override
-			public void onClick() {
-				RequestCycle.get().setResponsePage(new PanelPage(panelClass, model, modelIsOptional));
-			}
-		};
+		return new MyLink(id, panelClass, model, modelIsOptional);
 	}
 
+	/**
+	 * Link implementation for nodes of this type.
+	 */
+	private static class MyLink extends StatelessLink<Void> {
+	
+		/**
+		 * the panelClass
+		 */
+		private Class<? extends Panel> panelClass;
+
+		/**
+		 * the model
+		 */
+		private IModel<?> model;
+
+		/**
+		 * the modelIsOptional
+		 */
+		private boolean modelIsOptional;
+
+		/**
+		 * Constructor.
+		 */
+		MyLink(String id, Class<? extends Panel> panelClass, IModel<?> model, boolean modelIsOptional) {
+			super(id);
+			this.panelClass = panelClass;
+			this.model = model;
+			this.modelIsOptional = modelIsOptional;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.apache.wicket.markup.html.link.Link#onClick()
+		 */
+		@Override
+		public void onClick() {
+			RequestCycle.get().setResponsePage(new PanelPage(panelClass, model, modelIsOptional));
+		}
+		
+	}
 }

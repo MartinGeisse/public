@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.navigation;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +18,7 @@ import name.martingeisse.admin.pages.GlobalNavigationFolderPage;
  * at least the root node of the tree, and the root node is always
  * a folder node.
  */
-public final class NavigationTree implements Serializable {
+public final class NavigationTree {
 
 	/**
 	 * the root

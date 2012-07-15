@@ -30,9 +30,9 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * This class stores two {@link PageParameters} objects that
  * represent the explicit and implicit page parameters to use
  * for the mounted page. Explicit parameters are visible to the
- * client as URL segments or in the query string. Implicit parameters
- * are not visible but determined by using the base URL of the
- * mount point.
+ * client as URL segments or in the query string. Implicit
+ * parameters are not visible but implied by the base URL
+ * of the mount point.
  * 
  * The mount path parameter is special: It must be specified
  * in the parameters when generating an URL (e.g. for

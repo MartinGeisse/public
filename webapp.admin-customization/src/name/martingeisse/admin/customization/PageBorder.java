@@ -9,7 +9,7 @@ package name.martingeisse.admin.customization;
 import org.apache.wicket.markup.html.border.Border;
 
 /**
- * The pge border.
+ * The page border.
  */
 public class PageBorder extends Border {
 

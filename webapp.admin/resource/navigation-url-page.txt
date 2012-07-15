@@ -1,55 +1,8 @@
-Denkbeispiel: Es existieren *mehrere* NaviNodes zu einem Entity Type. Das ist sogar
-realistisch (verschiedene Filter).
 
-Es gibt folgende Navi-Bereiche:
-- root: /
-- global navi: /foo/bar
-	- global entity list: /orders
-	- filtered entity list: /orders/shipped
-- entity instance: /orders/42
-- instance-local navi: /orders/42/edit
-
-Es gibt dann folgende Pages:
-- ...
-- Entity Instance Pages -- diese müssten global den NaviNode der entsprechenden Entity-Liste liefern.
-  (Dazu müsste evtl. ein solcher Node "unsichtbar" eingefügt werden, falls es ihn noch nicht gibt).
-
-Entity-Seiten hätten aber noch ihr lokales Navi-Menü. Nach obiger Überlegung kann es aber nur
-eine solche "Schachtelung" geben; soll heißen, es kann nie mehr als diese beiden NaviTrees geben
-(per gut überlegter Definition). Es würde zum beispiel reichen, einen NaviTree innerhalb jeder
-Entity anzulegen und lokale Seiten müssen ein zweites Interface implementieren, um den aktuellen
-NaviNode innerhalb der lokalen Navi zu liefern. 
-
-Damit reduziert sich das Problem darauf, zu einer Page (und deren jeweiliges Interface, global
-oder lokal) jeweils den passenden NaviNode in beiden NaviTrees zu finden:
-
-- manuell
-- per PP
-- zu Entity-Instance-Seiten:
-	1. explizit von der Page gelieferter NaviPath
-	2. explizit von der Entity gelieferter NaviPath		
-	3. ungefilterte Entity-Liste zu dieser Entity im NaviTree gefunden
-	4. Delegate Entity von der Page geliefert: Abfrage für diese Wiederholen (inkl. Schritt 5)
-	5. Delegate Entity von der Entity geliefert: Abfrage für diese Wiederholen
-
-IGetNavigationDelegateEntity liefert eine Delegate-Entity und mit dieser wird gesucht.
+Entity/NaviNode: IGetNavigationDelegateEntity liefert eine Delegate-Entity und mit dieser wird gesucht.
 Man kann zum Beispiel die Entity "Order" als Delegate zur Entity "OrderItem" einstellen. Dann wird
 für Instance-lokale Seiten für OrderItem-Instanzen vorzugsweise die ungefilterte Liste zu "OrderItem"
 genommen, aber falls es die nicht gibt, die ungefilterte Liste zu "Order".
-
-Je NaviTree: Returnwerte und Vergleiche arbeiten mit NaviNode-IDs und NaviNode-Pfaden. Eine IDs ist eindeutig
-innerhalb des Parent Folders. Der Pfad ist die Verkettung aller IDs vom Root Node:
-
-	Parent Node Path: /foo/bar
-	ID: fupp
-	This Node Path: /foo/bar/fupp
-  
-Node Paths sind die Werte die vom RequestMapper als PP übergeben werden.
-
-Nächste Frage wäre, ob die lokale Navi mehreren Pages oder Komponenten innerhalb einer einzigen EntityInstancePage
-entspricht. Dazu gehört auch, wie diese URLs (de-)codiert werden (also wie die RequestMapper dazu aussehen).
-
-----
 
 Aktuelles System hat noch den Nachteil, dass man, um zu einer Entity zu verweisen, deren Position im
 NaviTree kennen muss. Ansonsten erzeugt man einen Link ohne den Location-PP, der Navi-RequestMapper
@@ -60,76 +13,6 @@ Entity-Navi-Nodes (d.h. vor allem ohne Filter!) beim Init sich selbst in der Ent
 falls es mehrere gibt gewinnt einer per "Zufall" sofern der App-Init-Code nicht explizit einen
 als Default setzt.
 
-Zwar wäre es auch möglich, das Navi-Seitig zu lösen (der RequestMapper zum passenden Default
-akzeptiert auch Page/PP ohne "den" PP -- das müsste auch im Init geklärt werden welcher RequestMapper
-das so tut), aber ersteres löst gleich noch andere Probleme mit: z.B. dass eine Entity-Seite
-prinzipiell nicht *die* zentrale Page-Klasse für Entity-Seiten benutzen muss sondern für
-bestimmte Entities eine eigene benutzen muss. Das heißt, dass Links zu diesen Seiten nicht einfach
-feste BookmarkablePageLinks sein können sondern auf Anfrage vom EntityType erzeugt werden müssen
-(Link-Factory), und dann ist der vorige Ansatz geschenkt, während man bei letzerem aufwändigen
-init-Code braucht.
-
-Andererseits funktioniert der erste Ansatz nur bei Entity-Seiten, der zweite allgemein -- sofern
-sich allgemein ein Default finden lässt. Das ist ein komplexeres Problem und führt evtl. später
-sazu, dass beim Mounting *auch* noch eingegriffen werden kann, aber jetzt erst mal nicht.
-
------
-
-Wie funktioniert das Mounting beim "zweiten" NaviTree?
-
-Wenn es "MultiNodes" gibt, dann passiert das beim Mounting des "ersten" Trees gleich mit.
-
-Ansonsten müssten es die Handler der entsprechenden Nodes des "ersten" Trees tun. Angesichts
-der Probleme, die MultiNodes verursachen würden, ist das eine Überlegung wert. Kandidaten
-wären vor allem die Entity-Nodes ohne Filter. Überlegungen dazu:
-
-- Wenn es zu einer Entity mehr als einen Entity-Node ohne Filter gibt, dann reicht es
-  eigentlich, wenn einer davon URLs für sein Submenu mounted, vorausgesetzt man sorgt dafür,
-  dass alle Links dann auch dahin verweisen. Wenn Links anhand des EntityTypes erzeugt
-  werden (obige Link-Factory), dann wäre das derselbe Default-Node, zu dem Links sowieso
-  immer hingehen. Der nicht-Default-NaviNode zur Entity hätte mit Pages und URLs nichts
-  zu tun, er wäre nur ein Alias im NaviTree (der sich ohne custom NaviLocator auch noch
-  so "seltsam" verhält dass man draufklicken kann und auf die Entity-Seite kommt, aber
-  dann die Default-Location angezeigt bekommt... im Grunde ist das einfach "etwas was
-  man nicht tun sollte", ist ja auch nicht gerade ersichtlich für den Benutzer).
-
-- Es wird für den äußeren Tree nicht mehr die gesamte Request-URL benutzt sondern nur
-  ein Präfix. Gleichermaßen benutzt der innere Tree nur einen Suffix. Dazwischen liegt
-  (neben Trennzeichen) die Entity-Instance-ID. Letztendlich wird für jede Leaf-Seite
-  der kombinierten NaviTrees ein Mount erzeugt und anhand der Mounts kann jeder Request
-  zu einer Page geleitet werden. Voraussetzung ist ein lokaler NaviTree je EntityType,
-  was ja genau so gedacht ist (gesetzt dass es keine MultiNodes gibt). Interessant
-  wäre das Backmapping: Hier will man im Prinzip das gleiche Verhalten wie für den
-  globalen NaviTree auch für den lokalen NaviTree: Beliebige Seiten im Navi verankern
-  und diese sind entweder selbst Locator oder können anhand von PP backmapped werden,
-  welche vom Mount gesetzt werden. Hier ist meine erste Idee, dass der
-  NavigationMountedRequestMapper nicht einfach nur einen NaviPath speichern muss,
-  sondern einen NaviPath *pro NaviTree*, also aktuell einen für den globalen Tree
-  und einen für den lokalen Tree (allgemeiner: einen pro Enum-Konstante, die in
-  NavigationTreeSelector definiert ist). Wobei der Path für den lokalen Selector
-  null sein kann (für globale Pages) und dann auch nur backmapped, wenn kein
-  lokaler Selektor vorhanden ist (kann man das sicher feststellen?) -- dazu:
-  
-  Das Backmapping hat zwei Formen:
-  - Page -> Location im NaviTreePanel. Hier ist beim manuellen Locator schon alles
-    klar und beim PP-Locator müssen zwei PP gespeichert werden. also zum
-    beispiel MY_PP_NAME.ENUM_CONSTANT_NAME statt nur MY_PP_NAME wie jetzt.
-    Das Backmapping hat ja auch zwei Locations als Ergebnis und die PP-Werte
-    *sind* die Locations.
-  - Page -> URL im RequestMapper. Hier muss der richtige Mount (RequestMapper) die
-  	Page/PP erkennen. Lokale Mounts können das indem sie die Location wie in Punkt
-  	1 backmappen und prüfen, dass *beide* Teile stimmen. Globale Mounts im
-  	Grunde auch, aber sie *verlassen* sich dann darauf, dass die lokale Position
-  	richtig erkannt wird, wenn es eine gibt -- ansonsten wird eine URL zur
-  	lokalen Startseite erzeugt. Bei der Erzeugung von URLs aus Page/PP in
-  	Links ist das kein Problem, da werden alle PP gesetzt. Beim Backmapping
-  	der aktuellen Seite mit Locator geht es auch, man muss dann halt das
-  	Locator-Interface richtig implementieren. Beim BAckmapping per PP sind
-  	beide PP durch den Mount gesetzt worden. Fazit: Es geht. Das Mapping und
-  	Backmapping sollte außerdem in eine globale Util-Klasse ausgelagert werden;
-  	aktuell macht das die AbstractAdminPage und in Zukunft wird es an ein
-  	paar anderen Stellen auch gebraucht.
-  
 - Die lokalen NaviTrees je EntityType werden von Contributoren erzeugt. Lösungen:
 	- Contributoren können nur in der ersten Ebene einfügen. Einfach aber nicht cool.
 	- Contributoren liefern den Navi-Path, wo sie mounten wollen. Die Nodes dazu
@@ -166,12 +49,42 @@ wären vor allem die Entity-Nodes ohne Filter. Überlegungen dazu:
 ------
 
 Darstellung von Variablen als Namenloser Platzhalter:
-
 	/foo/${bar}/fupp
 	/foo/*/fupp
-	
 später. Ist zwar unschön, wenn ${bar} öffentlich zu sehen ist, aber nicht
 katastrophal (eigentlich sollen eh keine URLs öffentlich sichtbar sein,
 wo der Path-PP zu sehen ist). Erst mal alles zum Laufen bringen.
+
+--------
+
+	Dabei müsste beim Mounting klar sein, wann eine URL einem normalen Child
+	und wann einem Instance Child entspricht. Das ist bei URL->Handler aber
+	einfach: Der Instance Child Mapper erkennt beliebige Segmentwerte aber
+	hat einen niedrigeren Compatibility Score.
+	
+	Dann muss von NaviPaths und NaviPathTemplates gesprochen werden.
+	NaviPath: /foo/nodes/99/bar/fupp
+	MountPath: /foo/nodes/${id}/bar/fupp
+	NaviPathTemplate: /foo/nodes/*/bar/fupp
+	also NaviPathTemplate im Prinzip wie der MountPath mit einem Platzhalter, aber
+	mit neutraler Syntax und ohne Parametername (der ist eine interne Sache).
+
+
+--------
+
+Aktuell werden nach dem neuen NAvi System die Entity Presenter Pages gemountet.
+Das ist aber eine schlechte Idee, weil Presenter Pages ein häßlicher Fix
+für das schlechte alte Navi System waren. Entity-Lokale Navi ist das
+"neue Presenter-System". Statt PresentationContributor gibt es jetzt
+EntityNavigationContributor. Diese Pages müssen in der Lage sein, sich gegenseitig
+zu verlinken (unter Verwendung des Navi-Systems). -> wirklich? Nach dem
+alten System konnten Presenter das, aber es war nicht wichtig. Wichtig war
+vor allem das Instance-lokale Navi Menü, was es jetzt ja auch geben kann.
+
+1. Schritt: Navi-Menü in Komponente(n) auslagern.
+
+Danach muss ein neues Navi-Contributor-System her.
+
+
 
 

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+	<body>
+		<h1>Navi Test</h1>
+		<ul>
+			<li wicket:id="navi">
+				<div>
+					<a wicket:id="link"><span wicket:id="title">title</span></a>:
+					<ul>
+						<li wicket:id="children">
+							<div>
+								<a wicket:id="link"><span wicket:id="title">title</span></a>:
+								<ul>
+									<li wicket:id="children">
+										<div>
+											<a wicket:id="link"><span wicket:id="title">title</span></a>:
+										</div>
+									</li>
+								</ul>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</li>
+		</ul>
+		<hr />
+		<div wicket:id="naviPanel" />
+	</body>
+</html>

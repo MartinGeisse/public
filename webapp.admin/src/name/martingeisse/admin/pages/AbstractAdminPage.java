@@ -10,17 +10,13 @@ import name.martingeisse.admin.common.Dummy;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
-import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.NavigationPageParameterUtil;
-import name.martingeisse.admin.navigation.NavigationTree;
+import name.martingeisse.admin.navigation.component.NavigationMenuView;
+import name.martingeisse.admin.navigation.model.NavigationNodeChildrenModel;
 
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -83,30 +79,8 @@ public class AbstractAdminPage extends WebPage {
 	protected void onInitialize() {
 		super.onInitialize();
 
-		// determine the current navigation path and node
-		final NavigationTree navigationTree = NavigationConfigurationUtil.getNavigationTree();
-		final NavigationNode navigationRoot = navigationTree.getRoot();
-		String currentNavigationPath = NavigationPageParameterUtil.getNavigationPathForPage(this);
-		currentNavigationPath = (currentNavigationPath == null ? "" : currentNavigationPath);
-		final NavigationNode currentNavigationNode = navigationRoot.findMostSpecificNode(currentNavigationPath);
-		final boolean currentNavigationNodeIsExact = currentNavigationPath.equals(currentNavigationNode.getPath());
-		
 		// navigation
-		getMainContainer().add(new ListView<NavigationNode>("nodes", navigationRoot.getChildren()) {
-			@Override
-			protected void populateItem(ListItem<NavigationNode> item) {
-				NavigationNode node = item.getModelObject();
-				AbstractLink link = node.createLink("link");
-				link.add(new Label("title", node.getTitle()));
-				item.add(link);
-				
-				if (currentNavigationNode == node && currentNavigationNodeIsExact) {
-					link.setEnabled(false);
-				} else if (currentNavigationNode.isStrictDescendantOf(node)) {
-					link.add(new AttributeAppender("style", "color: red"));
-				}
-			}
-		});
+		getMainContainer().add(new NavigationMenuView("nodes", NavigationNodeChildrenModel.forParentPath("/"), 0));
 		
 		// entity menu
 		getMainContainer().add(new ListView<EntityDescriptor>("entities", ApplicationSchema.instance.getEntityDescriptors()) {

@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.navigation;
 
-import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.Page;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 
@@ -106,7 +106,7 @@ public class NavigationPageParameterUtil {
 	 * @param page the page to return the navigation path for 
 	 * @return the navigation path, or null if not found
 	 */
-	public static String getNavigationPathForPage(WebPage page) {
+	public static String getNavigationPathForPage(Page page) {
 		
 		// try INavigationLocator
 		if (page instanceof INavigationLocator) {

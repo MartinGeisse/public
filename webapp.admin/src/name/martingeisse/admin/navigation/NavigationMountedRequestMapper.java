@@ -33,6 +33,12 @@ import org.apache.wicket.request.mapper.parameter.PageParametersEncoder;
  * arbitrary page at the root URL and still have it return the root
  * navigation path, subclass that page and implement {@link INavigationLocator}
  * manually.
+ * 
+ * This mapper also allows to specify page parameters that are implicitly
+ * added when a request is mapped to a page, and removed when a page
+ * class / parameters pair is mapped to an URL. This allows a
+ * navigation path (and its URL) to represent parameter assignments
+ * not explicitly present in the URL.
  */
 public class NavigationMountedRequestMapper extends MountedMapper {
 
