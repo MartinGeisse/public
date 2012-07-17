@@ -260,9 +260,9 @@ public class EntityDescriptor implements Serializable {
 	public void addDefaultListPresenterIfNeeded() {
 		
 		if (globalListPresenters.isEmpty()) {
-			final IGlobalEntityListPresenter presenter = EntityConfigurationUtil.getDefaultEntityListPresenter();
+			final IGlobalEntityListPresenter presenter = EntityConfigurationUtil.getGeneralEntityConfiguration().getDefaultEntityListPresenter();
 			if (presenter != null) {
-				globalListPresenters.add(EntityConfigurationUtil.getDefaultEntityListPresenter());
+				globalListPresenters.add(EntityConfigurationUtil.getGeneralEntityConfiguration().getDefaultEntityListPresenter());
 			}
 		}
 	}
@@ -344,7 +344,7 @@ public class EntityDescriptor implements Serializable {
 		}
 
 		// determine their order
-		final Comparator<EntityPropertyDescriptor> fieldComparator = EntityConfigurationUtil.getEntityListFieldOrder();
+		final Comparator<EntityPropertyDescriptor> fieldComparator = EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityListFieldOrder();
 		if (fieldComparator != null) {
 			Collections.sort(fieldOrder, fieldComparator);
 		}

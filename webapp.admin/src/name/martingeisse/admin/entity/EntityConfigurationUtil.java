@@ -7,10 +7,7 @@
 package name.martingeisse.admin.entity;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
-import name.martingeisse.admin.entity.multi.IEntityListFieldOrder;
-import name.martingeisse.admin.entity.multi.IGlobalEntityListPresenter;
 import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilter;
-import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 /**
  * Utilities to access entity configuration in the {@link ApplicationConfiguration}.
@@ -18,19 +15,9 @@ import name.martingeisse.admin.entity.schema.EntityDescriptor;
 public final class EntityConfigurationUtil {
 
 	/**
-	 * The parameter key for the default global entity list presenter.
+	 * The parameter key for the general entity configuration.
 	 */
-	public static final Class<IGlobalEntityListPresenter> GLOBAL_ENTITY_LIST_PRESENTER_PARAMETER_KEY = IGlobalEntityListPresenter.class;
-
-	/**
-	 * The parameter key for the entity list field order
-	 */
-	public static final Class<IEntityListFieldOrder> ENTITY_LIST_FIELD_ORDER_PARAMETER_KEY = IEntityListFieldOrder.class;
-
-	/**
-	 * The parameter key for the entity name mapping strategy.
-	 */
-	public static final Class<IEntityNameMappingStrategy> ENTITY_NAME_MAPPING_STRATEGY_PARAMETER_KEY = IEntityNameMappingStrategy.class;
+	public static final Class<GeneralEntityConfiguration> GENERAL_ENTITY_CONFIGURATION_PARAMETER_KEY = GeneralEntityConfiguration.class;
 
 	/**
 	 * The capability key for entity presentation contributors.
@@ -59,61 +46,19 @@ public final class EntityConfigurationUtil {
 	}
 
 	/**
-	 * Getter method for the defaultEntityListPresenter.
-	 * @return the defaultEntityListPresenter
+	 * Getter method for the general entity configuration.
+	 * @return the general entity configuration
 	 */
-	public static IGlobalEntityListPresenter getDefaultEntityListPresenter() {
-		return ApplicationConfiguration.get().getParameters().get(GLOBAL_ENTITY_LIST_PRESENTER_PARAMETER_KEY);
+	public static GeneralEntityConfiguration getGeneralEntityConfiguration() {
+		return ApplicationConfiguration.get().getParameters().get(GENERAL_ENTITY_CONFIGURATION_PARAMETER_KEY);
 	}
 
 	/**
-	 * Setter method for the defaultEntityListPresenter.
-	 * @param defaultEntityListPresenter the defaultEntityListPresenter to set
+	 * Setter method for the general entity configuration.
+	 * @param generalEntityConfiguration the general entity configuration to set
 	 */
-	public static void setDefaultEntityListPresenter(final IGlobalEntityListPresenter defaultEntityListPresenter) {
-		ApplicationConfiguration.get().getParameters().set(GLOBAL_ENTITY_LIST_PRESENTER_PARAMETER_KEY, defaultEntityListPresenter);
-	}
-
-	/**
-	 * Getter method for the entityListFieldOrder.
-	 * @return the entityListFieldOrder
-	 */
-	public static IEntityListFieldOrder getEntityListFieldOrder() {
-		return ApplicationConfiguration.get().getParameters().get(ENTITY_LIST_FIELD_ORDER_PARAMETER_KEY);
-	}
-
-	/**
-	 * Setter method for the entityListFieldOrder.
-	 * @param entityListFieldOrder the entityListFieldOrder to set
-	 */
-	public static void setEntityListFieldOrder(final IEntityListFieldOrder entityListFieldOrder) {
-		ApplicationConfiguration.get().getParameters().set(ENTITY_LIST_FIELD_ORDER_PARAMETER_KEY, entityListFieldOrder);
-	}
-
-	/**
-	 * Getter method for the entity name mapping strategy.
-	 * @return the entity name mapping strategy
-	 */
-	public static IEntityNameMappingStrategy getEntityNameMappingStrategy() {
-		return ApplicationConfiguration.get().getParameters().get(ENTITY_NAME_MAPPING_STRATEGY_PARAMETER_KEY);
-	}
-
-	/**
-	 * Setter method for the entity name mapping strategy.
-	 * @param entityNameMappingStrategy the entity name mapping strategy to set
-	 */
-	public static void setEntityNameMappingStrategy(final IEntityNameMappingStrategy entityNameMappingStrategy) {
-		ApplicationConfiguration.get().getParameters().set(ENTITY_NAME_MAPPING_STRATEGY_PARAMETER_KEY, entityNameMappingStrategy);
-	}
-
-	/**
-	 * Returns the entity name for the specified entity.
-	 * @param entity the entity
-	 * @return the name to display
-	 */
-	public static String getEntityName(final EntityDescriptor entity) {
-		final IEntityNameMappingStrategy entityNameMappingStrategy = getEntityNameMappingStrategy();
-		return (entityNameMappingStrategy == null ? entity.getTableName() : entityNameMappingStrategy.getEntityName(entity));
+	public static void setGeneralEntityConfiguration(final GeneralEntityConfiguration generalEntityConfiguration) {
+		ApplicationConfiguration.get().getParameters().set(GENERAL_ENTITY_CONFIGURATION_PARAMETER_KEY, generalEntityConfiguration);
 	}
 
 	/**
@@ -175,5 +120,5 @@ public final class EntityConfigurationUtil {
 	public static Iterable<IEntityReferenceDetector> getEntityReferenceDetectors() {
 		return ApplicationConfiguration.get().getCapabilities().getIterable(ENTITY_REFERENCE_DETECTOR_CAPABILITY_KEY);
 	}
-	
+
 }

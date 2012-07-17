@@ -12,8 +12,17 @@ import java.util.List;
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.GeneralEntityConfiguration;
+import name.martingeisse.admin.entity.IEntityNameAware;
 import name.martingeisse.admin.entity.IEntityPresentationContributor;
 import name.martingeisse.admin.entity.IEntityReferenceDetector;
+import name.martingeisse.admin.navigation.DefaultNavigationNodeHandlerMergeStrategy;
+import name.martingeisse.admin.navigation.INavigationNodeHandler;
+import name.martingeisse.admin.navigation.INavigationNodeHandlerMergeStrategy;
+import name.martingeisse.admin.navigation.INavigationNodeVisitor;
+import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
+import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.admin.navigation.handler.GlobalEntityListNavigationHandler;
 import name.martingeisse.admin.pages.EntityPresentationPage;
 
 /**
@@ -115,6 +124,7 @@ public class ApplicationSchema {
 		detectEntityReferences();
 		registerEntityPresenters();
 		mountPages();
+		createNavigation();
 	}
 	
 	/**
@@ -195,6 +205,45 @@ public class ApplicationSchema {
 		application.mountPage("/${entity}/show/${id}/#{presenter}", EntityPresentationPage.class);
 //		application.mountNonNavigationPage("/${entity}/list/#{presenter}", EntityTablePage.class);
 //		application.mountNonNavigationPage("/${entity}/show/${id}/#{presenter}", EntityPresentationPage.class);
+	}
+
+	/**
+	 * Creates navigation nodes in the global navigation tree for each entity, based on the
+	 * globally defined template (in {@link GeneralEntityConfiguration}) and local navigation
+	 * trees defined in the {@link EntityDescriptor}s.
+	 * 
+	 * This method also looks for any navigation nodes in the local navigation tree that
+	 * implement {@link IEntityNameAware} and sets the entity name for them. This is a
+	 * central feature for building entity-instance navigation tree templates, since a
+	 * general template cannot be bound to a single entity type by definition.
+	 * 
+	 * TODO: This uses a fixed global mount point. I'm currently working on local navigation trees;
+	 * in the future we need a way to mount whole entity types in the navigation, automatically
+	 * mount local trees there, and use a fallback for entity types that have no such place to mount.
+	 * However, it's probably better to replace entity list presentation first, because entity
+	 * instance mounting is going to depend on that.
+	 */
+	private void createNavigation() {
+		NavigationNode root = NavigationConfigurationUtil.getNavigationTree().getRoot();
+		NavigationNode entitiesNode = root.createGlobalNavigationFolderChild("new-entities", "New Entities");
+		NavigationNode templateNode = EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityInstanceNavigationTemplate();
+		INavigationNodeHandlerMergeStrategy mergeStrategy = new DefaultNavigationNodeHandlerMergeStrategy();
+		for (EntityDescriptor entity : entityDescriptors) {
+			final String entityName = entity.getTableName();
+			NavigationNode entityListNode = entitiesNode.createChild(new GlobalEntityListNavigationHandler(entity, "default"));
+			NavigationNode entityInstanceNode = entityListNode.createGlobalNavigationFolderChild("${id}", "Entity Instance");
+			entityInstanceNode.merge(templateNode.cloneSubtree(), mergeStrategy);
+			entityInstanceNode.acceptVisitor(new INavigationNodeVisitor() {
+				@Override
+				public void visit(NavigationNode node) {
+					INavigationNodeHandler handler = node.getHandler();
+					if (handler instanceof IEntityNameAware) {
+						IEntityNameAware entityNameAware = (IEntityNameAware)handler;
+						entityNameAware.setEntityName(entityName);
+					}
+				}
+			});
+		}
 	}
 	
 }

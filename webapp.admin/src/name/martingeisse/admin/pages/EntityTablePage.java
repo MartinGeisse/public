@@ -53,7 +53,7 @@ public class EntityTablePage extends AbstractAdminPage {
 		}
 		
 		// create components
-		String entityNameKey = ("schema.entity." + EntityConfigurationUtil.getEntityName(entity));
+		String entityNameKey = ("schema.entity." + EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityName(entity));
 		StringResourceModel entityDisplayNameModel = new StringResourceModel(entityNameKey, this, null);
 		getMainContainer().add(new Label("entityName", entityDisplayNameModel));
 		getMainContainer().add(new ListView<IGlobalEntityListPresenter>("presenters", entity.getGlobalListPresenters()) {

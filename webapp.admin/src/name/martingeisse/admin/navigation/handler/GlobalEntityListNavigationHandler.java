@@ -46,6 +46,8 @@ public final class GlobalEntityListNavigationHandler extends BookmarkablePageNav
 	 */
 	public GlobalEntityListNavigationHandler(final String entityName, final String presenterName) {
 		super(EntityTablePage.class);
+		setId(entityName);
+		setTitle(entityName);
 		getImplicitPageParameters().add("entity", entityName);
 		if (presenterName != null) {
 			getImplicitPageParameters().add("presenter", presenterName);

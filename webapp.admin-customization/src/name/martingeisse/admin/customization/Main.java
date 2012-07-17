@@ -21,6 +21,7 @@ import name.martingeisse.admin.customization.multi.PopulatorDataViewPanel;
 import name.martingeisse.admin.customization.multi.RoleOrderListPanel;
 import name.martingeisse.admin.customization.navi.NaviTestPage;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.PrefixEliminatingEntityNameMappingStrategy;
 import name.martingeisse.admin.entity.multi.GlobalEntityListPresenter;
 import name.martingeisse.admin.entity.multi.IEntityListFieldOrder;
@@ -35,9 +36,11 @@ import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.entity.schema.MysqlDatabaseDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.admin.navigation.handler.BookmarkableEntityInstanceNavigationHandler;
 import name.martingeisse.admin.navigation.handler.EntityInstancePresentationNavigationHandler;
 import name.martingeisse.admin.navigation.handler.GlobalEntityListNavigationHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
+import name.martingeisse.admin.pages.EntityPresentationPage;
 import name.martingeisse.admin.pages.PagesConfigurationUtil;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.wicket.autoform.AutoformPanel;
@@ -94,10 +97,13 @@ public class Main {
 		userPropertyFilter.getVisiblePropertyNames().add("name");
 		ApplicationConfiguration.get().addPlugin(userPropertyFilter);
 		
-		// parameters
-		EntityConfigurationUtil.setEntityNameMappingStrategy(new PrefixEliminatingEntityNameMappingStrategy("phpbb_"));
+		// general parameters
 		PagesConfigurationUtil.setPageBorderFactory(new PageBorderFactory());
-		EntityConfigurationUtil.setEntityListFieldOrder(new IEntityListFieldOrder() {
+		
+		// entity parameters
+		GeneralEntityConfiguration generalEntityConfiguration = new GeneralEntityConfiguration();
+		generalEntityConfiguration.setEntityNameMappingStrategy(new PrefixEliminatingEntityNameMappingStrategy("phpbb_"));
+		generalEntityConfiguration.setEntityListFieldOrder(new IEntityListFieldOrder() {
 			@Override
 			public int compare(final EntityPropertyDescriptor o1, final EntityPropertyDescriptor o2) {
 				if (o1.getName().equals("id")) {
@@ -109,6 +115,12 @@ public class Main {
 				}
 			}
 		});
+		// doesn't work -- doesn't use the mounted URL but the normal one. Maybe stop using instance presenters right now.
+		BookmarkableEntityInstanceNavigationHandler handler = new BookmarkableEntityInstanceNavigationHandler(EntityPresentationPage.class);
+		handler.getImplicitPageParameters().add("presenter", "default");
+		generalEntityConfiguration.getEntityInstanceNavigationTemplate().createChild(handler.setId("default").setTitle("Default"));
+//		generalEntityConfiguration.getEntityInstanceNavigationTemplate().createChild(new EntityInstancePresentationNavigationHandler(null, "default").setId("default").setTitle("Default"));
+		EntityConfigurationUtil.setGeneralEntityConfiguration(generalEntityConfiguration);
 		
 		// run
 		buildNavigation();

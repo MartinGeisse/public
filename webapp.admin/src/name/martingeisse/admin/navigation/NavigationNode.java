@@ -511,6 +511,42 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 		}
 		System.out.println("--- end NavigationNode");
 	}
+
+	/**
+	 * Clones the subtree starting at this node. Node handlers may be cloned or
+	 * re-used by this method.
+	 * @return the cloned subtree
+	 */
+	public NavigationNode cloneSubtree() {
+		NavigationNode clone = new NavigationNode();
+		clone.setHandler(handler.createClone());
+		for (NavigationNode child : children) {
+			clone.getChildren().add(child.cloneSubtree());
+		}
+		return clone;
+	}
+	
+	/**
+	 * Merges the nodes from the specified other subtree into the subtree starting
+	 * at this node. The other subtree is destroyed by this operation -- some of
+	 * its nodes are detached and used for this tree, while other nodes are left
+	 * alone.
+	 * 
+	 * @param other the other tree to merge
+	 * @param mergeStrategy the merge strategy
+	 */
+	public void merge(NavigationNode other, INavigationNodeHandlerMergeStrategy mergeStrategy) {
+		setHandler(mergeStrategy.merge(handler, other.getHandler()));
+		outer: for (NavigationNode otherChild : other) {
+			for (NavigationNode thisChild : this) {
+				if (otherChild.getId().equals(thisChild.getId())) {
+					thisChild.merge(otherChild, mergeStrategy);
+					continue outer;
+				}
+			}
+			children.add(otherChild);
+		}
+	}
 	
 	/**
 	 * Specialized list implementation that sets the parent node of sub-nodes.

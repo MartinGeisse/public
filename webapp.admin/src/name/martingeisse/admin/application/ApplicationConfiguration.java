@@ -12,7 +12,6 @@ import java.util.List;
 import name.martingeisse.admin.entity.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationTree;
-import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
 import name.martingeisse.admin.util.ParameterUtil;
 import name.martingeisse.admin.util.SealableClassKeyedContainer;
 import name.martingeisse.admin.util.SealableClassKeyedListContainer;
@@ -172,12 +171,6 @@ public final class ApplicationConfiguration {
 			plugin.contribute();
 		}
 		capabilities.seal();
-
-		// initialize module-specific data
-		// TODO: move the code below to a module (instead of centralized) location
-		logger.trace("ApplicationConfiguration: running post-plugin initialization");
-		ReadOnlyRenderingConfigurationUtil.prepareConfiguration();
-		NavigationConfigurationUtil.getNavigationTree().prepare();
 
 		logger.debug("ApplicationConfiguration.initialize(): end");
 	}

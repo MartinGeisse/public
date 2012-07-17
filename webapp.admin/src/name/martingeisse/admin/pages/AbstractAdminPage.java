@@ -89,7 +89,7 @@ public class AbstractAdminPage extends WebPage {
 				PageParameters parameters = new PageParameters();
 				parameters.add("entity", item.getModelObject().getTableName());
 				BookmarkablePageLink<Void> link = new BookmarkablePageLink<Void>("link", EntityTablePage.class, parameters);
-				link.add(new Label("name", EntityConfigurationUtil.getEntityName(item.getModelObject()))); // TODO display name
+				link.add(new Label("name", EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityName(item.getModelObject()))); // TODO display name
 				item.add(link);
 			}
 		});

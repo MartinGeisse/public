@@ -6,6 +6,9 @@
 
 package name.martingeisse.admin.navigation.handler;
 
+import org.apache.wicket.util.string.StringValue;
+
+import name.martingeisse.admin.entity.IEntityNameAware;
 import name.martingeisse.admin.pages.EntityPresentationPage;
 
 /**
@@ -16,7 +19,7 @@ import name.martingeisse.admin.pages.EntityPresentationPage;
  * if and only if the navigation path to this handler does
  * not contain variable declarations for them.
  */
-public class EntityInstancePresentationNavigationHandler extends BookmarkablePageNavigationHandler {
+public class EntityInstancePresentationNavigationHandler extends BookmarkablePageNavigationHandler implements IEntityNameAware {
 
 	/**
 	 * Constructor.
@@ -33,5 +36,23 @@ public class EntityInstancePresentationNavigationHandler extends BookmarkablePag
 			getImplicitPageParameters().add("presenter", fixedPresenter);
 		}
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.IEntityNameAware#getEntityName()
+	 */
+	@Override
+	public String getEntityName() {
+		StringValue value = getImplicitPageParameters().get("entity");
+		return (value == null ? null : value.toString());
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.IEntityNameAware#setEntityName(java.lang.String)
+	 */
+	@Override
+	public void setEntityName(String entityName) {
+		getImplicitPageParameters().remove("entity");
+		getImplicitPageParameters().add("entity", entityName);
+	}
+
 }

@@ -11,6 +11,7 @@ import name.martingeisse.admin.common.Dummy;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.pages.HomePage;
+import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
 
 import org.apache.log4j.Logger;
@@ -51,6 +52,18 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		ApplicationSchema.initialize();
 		logger.trace("ApplicationSchema initialized");
 
+		// initialize module-specific data
+		// TODO: move the code below to a module (instead of centralized) location.
+		// We need a way to control the order in which initialization steps happen --
+		// maybe use an event broadcasting system for that: When a step is finished,
+		// it broadcasts an event; other steps that are now ready to run register
+		// themselves to run (or run immediately ?); steps with multiple dependencies
+		// set a flag on each event and (register to) run when all flags are set.
+		logger.trace("running post-schema initialization...");
+		ReadOnlyRenderingConfigurationUtil.prepareConfiguration();
+		NavigationConfigurationUtil.getNavigationTree().prepare();
+		logger.trace("post-schema initialization finished");
+		
 		// some more Wicket configuration
 		getApplicationSettings().setPageExpiredErrorPage(HomePage.class);
 		
