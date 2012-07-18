@@ -7,7 +7,9 @@
 package name.martingeisse.admin.navigation;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
+import name.martingeisse.admin.util.wicket.Constants;
 
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.Link;
 
@@ -47,5 +49,12 @@ public interface INavigationNodeHandler {
 	 * @param application the wicket application
 	 */
 	public void mountRequestMappers(AdminWicketApplication application, NavigationNode node);
+	
+	/**
+	 * Creates the page border for this node handler, or returns null if this node
+	 * does not provide a page border. The page border must use {@link Constants#PAGE_BORDER_ID}.
+	 * @return the border or null
+	 */
+	public WebMarkupContainer createPageBorder();
 	
 }

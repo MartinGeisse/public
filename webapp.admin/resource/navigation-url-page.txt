@@ -80,11 +80,19 @@ EntityNavigationContributor. Diese Pages müssen in der Lage sein, sich gegensei
 zu verlinken (unter Verwendung des Navi-Systems). -> wirklich? Nach dem
 alten System konnten Presenter das, aber es war nicht wichtig. Wichtig war
 vor allem das Instance-lokale Navi Menü, was es jetzt ja auch geben kann.
+-> die paar wenigen Crosslinks innerhalb einer Entity Instance können mit
+hardcoded local paths + zentral registriertem root path für die jeweilige
+Entity funktionieren.
 
-1. Schritt: Navi-Menü in Komponente(n) auslagern.
+Interne Verlinkung innerhalb einer Entity: Beim Aufbau des lokalen NaviTree
+werden in den NaviNodes Referenzen auf andere NaviNodes gespeichert. Die
+Pages haben Zugriff darauf bzw. auf deren Paths -> können direkt die
+Nodes Links erzeugen lassen. (URL zusammenbasteln reicht nicht, z.B. wegen
+externer Parameter).
 
-Danach muss ein neues Navi-Contributor-System her.
-
+Schritt: Root path pro Entity merken (?)
+Schritt: äußere NaviNodes sollten in der Lage sein, Borders zur Verfügung zu stellen.
+	Diese können z.B. Navi-Menus enthalten.
 
 
 

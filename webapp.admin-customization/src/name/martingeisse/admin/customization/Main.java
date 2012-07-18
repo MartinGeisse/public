@@ -13,6 +13,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
 
+import org.apache.wicket.markup.html.WebMarkupContainer;
+
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
@@ -45,6 +47,7 @@ import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.pages.EntityPresentationPage;
 import name.martingeisse.admin.pages.PagesConfigurationUtil;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
+import name.martingeisse.admin.util.wicket.Constants;
 import name.martingeisse.wicket.autoform.AutoformPanel;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociatedValidator;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
@@ -123,9 +126,20 @@ public class Main {
 		EntityConfigurationUtil.addEntityNavigationContributor(new IEntityNavigationContributor() {
 			@Override
 			public void contributeNavigationNodes(EntityDescriptor entity, NavigationNode mainEntityInstanceNode) {
-				BookmarkableEntityInstanceNavigationHandler handler = new BookmarkableEntityInstanceNavigationHandler(EntityPresentationPage.class);
+				
+				BookmarkableEntityInstanceNavigationHandler handler = new BookmarkableEntityInstanceNavigationHandler(EntityPresentationPage.class) {
+					@Override
+					public WebMarkupContainer createPageBorder() {
+						if (!getEntityName().equals("phpbb_acl_roles")) {
+							return null;
+						}
+						return new TestBorder(Constants.PAGE_BORDER_ID);
+					}
+				};
 				handler.getImplicitPageParameters().add("presenter", "default");
-				mainEntityInstanceNode.createChild(handler.setId("default").setTitle("Default"));
+				NavigationNode node = mainEntityInstanceNode.createChild(handler.setId("default").setTitle("Default"));
+				node.createChild(handler);
+				
 			}
 		});
 		

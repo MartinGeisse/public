@@ -37,7 +37,15 @@ public class GlobalNavigationFolderPage extends AbstractAdminPage {
 	public GlobalNavigationFolderPage(final PageParameters parameters) {
 		super(parameters);
 		this.navigationPath = NavigationPageParameterUtil.getNavigationNodeFromParameter(parameters, true).getPath();
+	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.pages.AbstractAdminPage#onInitialize()
+	 */
+	@Override
+	protected void onInitialize() {
+		super.onInitialize();
+	
 		getMainContainer().add(new Label("folderTitle", new PropertyModel<String>(this, "folderTitle")));
 		getMainContainer().add(new ListView<NavigationNode>("children", NavigationNodeChildrenModel.forParentPath(navigationPath)) {
 			@Override

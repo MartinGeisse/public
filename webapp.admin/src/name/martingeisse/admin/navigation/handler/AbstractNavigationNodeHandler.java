@@ -10,6 +10,8 @@ import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.navigation.INavigationNodeHandler;
 import name.martingeisse.admin.navigation.NavigationNode;
 
+import org.apache.wicket.markup.html.WebMarkupContainer;
+
 /**
  * Base implementation for {@link INavigationNodeHandler}.
  */
@@ -88,6 +90,14 @@ public abstract class AbstractNavigationNodeHandler implements INavigationNodeHa
 	 */
 	@Override
 	public void mountRequestMappers(AdminWicketApplication application, NavigationNode node) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#createPageBorder()
+	 */
+	@Override
+	public WebMarkupContainer createPageBorder() {
+		return null;
 	}
 	
 }

@@ -51,7 +51,15 @@ public class EntityTablePage extends AbstractAdminPage {
 		if (presenter == null) {
 			throw new RuntimeException("unknown presenter: " + presenterName);
 		}
-		
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.pages.AbstractAdminPage#onInitialize()
+	 */
+	@Override
+	protected void onInitialize() {
+		super.onInitialize();
+	
 		// create components
 		String entityNameKey = ("schema.entity." + EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityName(entity));
 		StringResourceModel entityDisplayNameModel = new StringResourceModel(entityNameKey, this, null);
@@ -68,7 +76,7 @@ public class EntityTablePage extends AbstractAdminPage {
 			}
 		});
 		getMainContainer().add(new Label("presenterTitle", presenter.getTitle(entity)));
-		Panel panel = presenter.createPanel("tablePresentation", entity, parameters);
+		Panel panel = presenter.createPanel("tablePresentation", entity, getPageParameters());
 		getMainContainer().add(panel);
 		IPageable pageable = presenter.getPageableForPanel(panel);
 		if (pageable == null) {

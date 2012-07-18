@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
-import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNameAware;
@@ -22,7 +21,6 @@ import name.martingeisse.admin.navigation.INavigationNodeVisitor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.handler.GlobalEntityListNavigationHandler;
-import name.martingeisse.admin.pages.EntityPresentationPage;
 
 /**
  * This class holds global data generated from plugins / capabilities and modifiers.
@@ -122,7 +120,6 @@ public class ApplicationSchema {
 		buildEntityDescriptors();
 		detectEntityReferences();
 		registerEntityPresenters();
-		mountPages();
 		createNavigation();
 	}
 	
@@ -195,17 +192,6 @@ public class ApplicationSchema {
 		}
 	}
 	
-	/**
-	 * Mounts pages for all entities and presenters.
-	 */
-	private void mountPages() {
-		AdminWicketApplication application = AdminWicketApplication.get();
-//		application.mountPage("/${entity}/list/#{presenter}", EntityTablePage.class);
-		application.mountPage("/${entity}/show/${id}/#{presenter}", EntityPresentationPage.class);
-//		application.mountNonNavigationPage("/${entity}/list/#{presenter}", EntityTablePage.class);
-//		application.mountNonNavigationPage("/${entity}/show/${id}/#{presenter}", EntityPresentationPage.class);
-	}
-
 	/**
 	 * Creates navigation nodes in the global navigation tree for each entity, based on the
 	 * globally defined template (in {@link GeneralEntityConfiguration}) and local navigation

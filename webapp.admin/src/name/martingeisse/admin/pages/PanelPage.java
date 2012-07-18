@@ -32,6 +32,21 @@ public class PanelPage extends AbstractAdminPage {
 	public static final String WICKET_ID = "panel";
 	
 	/**
+	 * the panelClass
+	 */
+	private Class<? extends Panel> panelClass;
+	
+	/**
+	 * the model
+	 */
+	private IModel<?> model;
+	
+	/**
+	 * the modelIsOptional
+	 */
+	private boolean modelIsOptional;
+	
+	/**
 	 * Constructor. First tries to invoke the one-argument constructor of
 	 * the panel class with the Wicket id. If that constructor cannot be
 	 * found, then tries the two-argument constructor (Wicket id and
@@ -66,9 +81,20 @@ public class PanelPage extends AbstractAdminPage {
 	 * @param modelIsOptional whether the one-argument constructor is used as a fallback
 	 */
 	public PanelPage(Class<? extends Panel> panelClass, IModel<?> model, boolean modelIsOptional) {
-		createPanel(panelClass, model, modelIsOptional, false);
+		this.panelClass = panelClass;
+		this.model = model;
+		this.modelIsOptional = modelIsOptional;
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.pages.AbstractAdminPage#onInitialize()
+	 */
+	@Override
+	protected void onInitialize() {
+		super.onInitialize();
+		createPanel(panelClass, model, modelIsOptional, false);
+	}
+	
 	/**
 	 * 
 	 */

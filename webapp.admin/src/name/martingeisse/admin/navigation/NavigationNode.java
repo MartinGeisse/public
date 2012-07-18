@@ -17,6 +17,7 @@ import name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHand
 import name.martingeisse.admin.pages.GlobalNavigationFolderPage;
 import name.martingeisse.common.util.SpecialHandlingList;
 
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -510,6 +511,21 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 			child.dumpTree();
 		}
 		System.out.println("--- end NavigationNode");
+	}
+	
+	/**
+	 * Creates page borders for this navigation nodes and adds them to the
+	 * specified list, starting with the outmost.
+	 * @param pageBorderList the list to add to
+	 */
+	public void createPageBorders(List<WebMarkupContainer> pageBorderList) {
+		if (parent != null) {
+			parent.createPageBorders(pageBorderList);
+		}
+		WebMarkupContainer border = handler.createPageBorder();
+		if (border != null) {
+			pageBorderList.add(border);
+		}
 	}
 
 	/**

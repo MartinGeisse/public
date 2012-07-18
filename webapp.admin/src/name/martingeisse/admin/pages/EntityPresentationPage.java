@@ -58,10 +58,19 @@ public class EntityPresentationPage extends AbstractAdminPage {
 	 */
 	public EntityPresentationPage(final PageParameters parameters) {
 		super(parameters);
-
-		// parse parameters
 		entity = determineEntity(parameters);
 		id = getRequiredStringParameter(parameters, "id", true).toInt(); // TODO error handling
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.pages.AbstractAdminPage#onInitialize()
+	 */
+	@Override
+	protected void onInitialize() {
+		super.onInitialize();
+		PageParameters parameters = getPageParameters();
+		
+		// parse parameters
 		String presenterName = parameters.get("presenter").toString("default");
 		presenterName = (presenterName.isEmpty() ? "default" : presenterName);
 

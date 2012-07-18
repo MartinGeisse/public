@@ -31,11 +31,15 @@ import org.apache.wicket.util.string.StringValue;
 public class AbstractAdminPage extends WebPage {
 
 	/**
+	 * the mainContainer
+	 */
+	private transient WebMarkupContainer mainContainer;
+	
+	/**
 	 * Constructor.
 	 */
 	public AbstractAdminPage() {
 		super();
-		addPageBorder();
 	}
 
 	/**
@@ -44,7 +48,6 @@ public class AbstractAdminPage extends WebPage {
 	 */
 	public AbstractAdminPage(IModel<?> model) {
 		super(model);
-		addPageBorder();
 	}
 
 	/**
@@ -53,14 +56,6 @@ public class AbstractAdminPage extends WebPage {
 	 */
 	public AbstractAdminPage(PageParameters parameters) {
 		super(parameters);
-		addPageBorder();
-	}
-
-	/**
-	 * 
-	 */
-	private void addPageBorder() {
-		add(PagesConfigurationUtil.createPageBorder("pageBorder"));
 	}
 	
 	/**
@@ -69,7 +64,7 @@ public class AbstractAdminPage extends WebPage {
 	 * @return the main container
 	 */
 	public WebMarkupContainer getMainContainer() {
-		return (WebMarkupContainer)get("pageBorder");
+		return mainContainer;
 	}
 
 	/* (non-Javadoc)
@@ -79,6 +74,10 @@ public class AbstractAdminPage extends WebPage {
 	protected void onInitialize() {
 		super.onInitialize();
 
+		// page borders
+		mainContainer = PagesConfigurationUtil.createAllPageBorders(this);
+		add(mainContainer);
+		
 		// navigation
 		getMainContainer().add(new NavigationMenuView("nodes", NavigationNodeChildrenModel.forParentPath("/"), 0));
 		

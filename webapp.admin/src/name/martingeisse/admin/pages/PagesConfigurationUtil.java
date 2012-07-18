@@ -6,8 +6,18 @@
 
 package name.martingeisse.admin.pages;
 
-import name.martingeisse.admin.application.ApplicationConfiguration;
+import java.util.ArrayList;
+import java.util.List;
 
+import name.martingeisse.admin.application.ApplicationConfiguration;
+import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
+import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.admin.navigation.NavigationPageParameterUtil;
+import name.martingeisse.admin.util.wicket.Constants;
+import name.martingeisse.admin.util.wicket.DoublePageBorder;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 
 /**
@@ -43,14 +53,34 @@ public final class PagesConfigurationUtil {
 	}
 	
 	/**
-	 * Creates either a page border (if a page border factory is set) or a 
-	 * simple {@link WebMarkupContainer}.
-	 * @param id the wicket id of the container to create
-	 * @return the page border or other container
+	 * Creates the main page border, i.e. the outmost one. Additional page borders can be contributed by
+	 * navigation nodes.
+	 * @return the page border
 	 */
-	public static WebMarkupContainer createPageBorder(final String id) {
+	public static WebMarkupContainer createMainPageBorder() {
 		IPageBorderFactory pageBorderFactory = getPageBorderFactory();
-		return (pageBorderFactory == null ? new WebMarkupContainer(id) : pageBorderFactory.createPageBorder(id));
+		return (pageBorderFactory == null ? new WebMarkupContainer(Constants.PAGE_BORDER_ID) : pageBorderFactory.createPageBorder(Constants.PAGE_BORDER_ID));
+	}
+	
+	/**
+	 * Creates all page borders and returns them as a combined border.
+	 * @param page the page to create the borders for
+	 * @return the combined page borders
+	 */
+	public static WebMarkupContainer createAllPageBorders(Page page) {
+
+		// determine the navigation location so navigation nodes can contribute page borders
+		String currentNavigationPath = StringUtils.defaultString(NavigationPageParameterUtil.getNavigationPathForPage(page));
+		NavigationNode currentNavigationNode = NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode(currentNavigationPath);
+
+		// create a list of all page borders
+		List<WebMarkupContainer> pageBorders = new ArrayList<WebMarkupContainer>();
+		pageBorders.add(createMainPageBorder());
+		currentNavigationNode.createPageBorders(pageBorders);
+		
+		// combine them into a single border
+		return DoublePageBorder.combineBorders(pageBorders.toArray(new WebMarkupContainer[pageBorders.size()]));
+		
 	}
 	
 }
