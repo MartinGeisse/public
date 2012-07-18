@@ -133,7 +133,7 @@ public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHan
 	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#createLink(java.lang.String, name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	public final AbstractLink createLink(String id, NavigationNode node) {
+	public AbstractLink createLink(String id, NavigationNode node) {
 		return new BookmarkablePageLink<Void>(id, pageClass, explicitPageParameters);
 	}
 

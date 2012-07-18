@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
+import name.martingeisse.admin.entity.IEntityNameAware;
 import name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler;
 import name.martingeisse.admin.pages.GlobalNavigationFolderPage;
 import name.martingeisse.common.util.SpecialHandlingList;
@@ -515,6 +516,17 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	/**
 	 * Clones the subtree starting at this node. Node handlers may be cloned or
 	 * re-used by this method.
+	 * 
+	 * TODO: Instead of clone() merge() to add a common navigation tree to each
+	 * entity, it is probably easier and more flexible just to use a local
+	 * tree plus contributors for everything -- that is, contributors instead
+	 * of a template tree. There won't be many generic nodes anyway, and little
+	 * is gained by moving code between a contributor and creation code for
+	 * a generic template tree. On the other hand, a generic template tree needs
+	 * a lot of support methods like this one, many of them with vaguely defined
+	 * behavior. NOTE: {@link IEntityNameAware} nodes can stay; they are useful
+	 * to simplify the creation code.
+	 * 
 	 * @return the cloned subtree
 	 */
 	public NavigationNode cloneSubtree() {
