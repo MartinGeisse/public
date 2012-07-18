@@ -8,7 +8,6 @@ package name.martingeisse.admin.navigation.handler;
 
 import name.martingeisse.admin.entity.IEntityNameAware;
 import name.martingeisse.admin.entity.IGetEntityId;
-import name.martingeisse.admin.navigation.INavigationNodeHandler;
 import name.martingeisse.admin.navigation.NavigationNode;
 
 import org.apache.wicket.Page;
@@ -57,16 +56,6 @@ public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePag
 	public void setEntityName(String entityName) {
 		getImplicitPageParameters().remove("entity");
 		getImplicitPageParameters().add("entity", entityName);
-	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler#createClone()
-	 */
-	@Override
-	public INavigationNodeHandler createClone() {
-		BookmarkableEntityInstanceNavigationHandler clone = new BookmarkableEntityInstanceNavigationHandler(getPageClass());
-		clone.mergeDataFrom(this);
-		return clone;
 	}
 	
 	/* (non-Javadoc)

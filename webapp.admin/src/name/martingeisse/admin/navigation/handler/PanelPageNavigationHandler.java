@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.navigation.handler;
 
-import name.martingeisse.admin.navigation.INavigationNodeHandler;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.pages.PanelPage;
 
@@ -102,14 +101,6 @@ public final class PanelPageNavigationHandler extends AbstractNavigationNodeHand
 	 */
 	public void setModelIsOptional(final boolean modelIsOptional) {
 		this.modelIsOptional = modelIsOptional;
-	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#createClone()
-	 */
-	@Override
-	public INavigationNodeHandler createClone() {
-		return new PanelPageNavigationHandler(panelClass, model, modelIsOptional);
 	}
 
 	/* (non-Javadoc)

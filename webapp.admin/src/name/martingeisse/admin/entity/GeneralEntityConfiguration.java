@@ -9,8 +9,6 @@ package name.martingeisse.admin.entity;
 import name.martingeisse.admin.entity.multi.IEntityListFieldOrder;
 import name.martingeisse.admin.entity.multi.IGlobalEntityListPresenter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.handler.DisabledNavigationNodeHandler;
 
 /**
  * This class contains general configuration that applies to all entities.
@@ -39,16 +37,9 @@ public final class GeneralEntityConfiguration {
 	private IEntityNameMappingStrategy entityNameMappingStrategy;
 
 	/**
-	 * the entityInstanceNavigationTemplate
-	 */
-	private NavigationNode entityInstanceNavigationTemplate;
-
-	/**
 	 * Constructor.
 	 */
 	public GeneralEntityConfiguration() {
-		this.entityInstanceNavigationTemplate = new NavigationNode();
-		this.entityInstanceNavigationTemplate.setHandler(new DisabledNavigationNodeHandler("DUMMY"));
 	}
 
 	/**
@@ -97,22 +88,6 @@ public final class GeneralEntityConfiguration {
 	 */
 	public void setEntityNameMappingStrategy(final IEntityNameMappingStrategy entityNameMappingStrategy) {
 		this.entityNameMappingStrategy = entityNameMappingStrategy;
-	}
-
-	/**
-	 * Getter method for the entityInstanceNavigationTemplate.
-	 * @return the entityInstanceNavigationTemplate
-	 */
-	public NavigationNode getEntityInstanceNavigationTemplate() {
-		return entityInstanceNavigationTemplate;
-	}
-
-	/**
-	 * Setter method for the entityInstanceNavigationTemplate.
-	 * @param entityInstanceNavigationTemplate the entityInstanceNavigationTemplate to set
-	 */
-	public void setEntityInstanceNavigationTemplate(final NavigationNode entityInstanceNavigationTemplate) {
-		this.entityInstanceNavigationTemplate = entityInstanceNavigationTemplate;
 	}
 
 	/**

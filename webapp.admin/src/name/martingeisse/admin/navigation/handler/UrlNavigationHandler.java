@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.navigation.handler;
 
-import name.martingeisse.admin.navigation.INavigationNodeHandler;
 import name.martingeisse.admin.navigation.NavigationNode;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
@@ -48,14 +47,6 @@ public final class UrlNavigationHandler extends AbstractNavigationNodeHandler {
 		this.url = url;
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#createClone()
-	 */
-	@Override
-	public INavigationNodeHandler createClone() {
-		return new UrlNavigationHandler(url);
-	}
-	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#createLink(java.lang.String, name.martingeisse.admin.navigation.NavigationNode)
 	 */

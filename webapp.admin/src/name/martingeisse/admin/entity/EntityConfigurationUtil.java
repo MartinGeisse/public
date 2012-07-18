@@ -40,6 +40,11 @@ public final class EntityConfigurationUtil {
 	public static final Class<IEntityReferenceDetector> ENTITY_REFERENCE_DETECTOR_CAPABILITY_KEY = IEntityReferenceDetector.class;
 
 	/**
+	 * The capability key for entity instance navigation contributors.
+	 */
+	public static final Class<IEntityNavigationContributor> ENTITY_NAVIGATION_CONTRIBUTOR_CAPABILITY_KEY = IEntityNavigationContributor.class;
+
+	/**
 	 * Prevent instantiation.
 	 */
 	private EntityConfigurationUtil() {
@@ -119,6 +124,21 @@ public final class EntityConfigurationUtil {
 	 */
 	public static Iterable<IEntityReferenceDetector> getEntityReferenceDetectors() {
 		return ApplicationConfiguration.get().getCapabilities().getIterable(ENTITY_REFERENCE_DETECTOR_CAPABILITY_KEY);
+	}
+
+	/**
+	 * Adds the specified entity instance navigation contributor.
+	 * @param entityNavigationContributor the entity instance navigation contributor to add
+	 */
+	public static void addEntityNavigationContributor(final IEntityNavigationContributor entityNavigationContributor) {
+		ApplicationConfiguration.get().getCapabilities().add(ENTITY_NAVIGATION_CONTRIBUTOR_CAPABILITY_KEY, entityNavigationContributor);
+	}
+
+	/**
+	 * @return an {@link Iterable} for all entity instance navigation contributors.
+	 */
+	public static Iterable<IEntityNavigationContributor> getEntityNavigationContributors() {
+		return ApplicationConfiguration.get().getCapabilities().getIterable(ENTITY_NAVIGATION_CONTRIBUTOR_CAPABILITY_KEY);
 	}
 
 }

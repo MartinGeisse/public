@@ -14,11 +14,10 @@ import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNameAware;
+import name.martingeisse.admin.entity.IEntityNavigationContributor;
 import name.martingeisse.admin.entity.IEntityPresentationContributor;
 import name.martingeisse.admin.entity.IEntityReferenceDetector;
-import name.martingeisse.admin.navigation.DefaultNavigationNodeHandlerMergeStrategy;
 import name.martingeisse.admin.navigation.INavigationNodeHandler;
-import name.martingeisse.admin.navigation.INavigationNodeHandlerMergeStrategy;
 import name.martingeisse.admin.navigation.INavigationNodeVisitor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
@@ -226,13 +225,14 @@ public class ApplicationSchema {
 	private void createNavigation() {
 		NavigationNode root = NavigationConfigurationUtil.getNavigationTree().getRoot();
 		NavigationNode entitiesNode = root.createGlobalNavigationFolderChild("new-entities", "New Entities");
-		NavigationNode templateNode = EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityInstanceNavigationTemplate();
-		INavigationNodeHandlerMergeStrategy mergeStrategy = new DefaultNavigationNodeHandlerMergeStrategy();
+		Iterable<IEntityNavigationContributor> entityNavigationContributors = EntityConfigurationUtil.getEntityNavigationContributors();
 		for (EntityDescriptor entity : entityDescriptors) {
 			final String entityName = entity.getTableName();
 			NavigationNode entityListNode = entitiesNode.createChild(new GlobalEntityListNavigationHandler(entity, "default"));
 			NavigationNode entityInstanceNode = entityListNode.createGlobalNavigationFolderChild("${id}", "Entity Instance");
-			entityInstanceNode.merge(templateNode.cloneSubtree(), mergeStrategy);
+			for (IEntityNavigationContributor contributor : entityNavigationContributors) {
+				contributor.contributeNavigationNodes(entity, entityInstanceNode);
+			}
 			entityInstanceNode.acceptVisitor(new INavigationNodeVisitor() {
 				@Override
 				public void visit(NavigationNode node) {

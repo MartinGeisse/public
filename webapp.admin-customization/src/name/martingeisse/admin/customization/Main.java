@@ -22,6 +22,7 @@ import name.martingeisse.admin.customization.multi.RoleOrderListPanel;
 import name.martingeisse.admin.customization.navi.NaviTestPage;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
+import name.martingeisse.admin.entity.IEntityNavigationContributor;
 import name.martingeisse.admin.entity.PrefixEliminatingEntityNameMappingStrategy;
 import name.martingeisse.admin.entity.multi.GlobalEntityListPresenter;
 import name.martingeisse.admin.entity.multi.IEntityListFieldOrder;
@@ -32,6 +33,7 @@ import name.martingeisse.admin.entity.multi.populator.PopulatorBasedGlobalEntity
 import name.martingeisse.admin.entity.property.ExplicitEntityPropertyFilter;
 import name.martingeisse.admin.entity.property.SingleEntityPropertyFilter;
 import name.martingeisse.admin.entity.schema.AbstractDatabaseDescriptor;
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.entity.schema.MysqlDatabaseDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
@@ -115,12 +117,17 @@ public class Main {
 				}
 			}
 		});
-		// doesn't work -- doesn't use the mounted URL but the normal one. Maybe stop using instance presenters right now.
-		BookmarkableEntityInstanceNavigationHandler handler = new BookmarkableEntityInstanceNavigationHandler(EntityPresentationPage.class);
-		handler.getImplicitPageParameters().add("presenter", "default");
-		generalEntityConfiguration.getEntityInstanceNavigationTemplate().createChild(handler.setId("default").setTitle("Default"));
-//		generalEntityConfiguration.getEntityInstanceNavigationTemplate().createChild(new EntityInstancePresentationNavigationHandler(null, "default").setId("default").setTitle("Default"));
 		EntityConfigurationUtil.setGeneralEntityConfiguration(generalEntityConfiguration);
+		
+		// entity navigation contributors
+		EntityConfigurationUtil.addEntityNavigationContributor(new IEntityNavigationContributor() {
+			@Override
+			public void contributeNavigationNodes(EntityDescriptor entity, NavigationNode mainEntityInstanceNode) {
+				BookmarkableEntityInstanceNavigationHandler handler = new BookmarkableEntityInstanceNavigationHandler(EntityPresentationPage.class);
+				handler.getImplicitPageParameters().add("presenter", "default");
+				mainEntityInstanceNode.createChild(handler.setId("default").setTitle("Default"));
+			}
+		});
 		
 		// run
 		buildNavigation();

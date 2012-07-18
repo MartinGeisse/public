@@ -9,7 +9,6 @@ package name.martingeisse.admin.navigation.handler;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.navigation.INavigationLocator;
-import name.martingeisse.admin.navigation.INavigationNodeHandler;
 import name.martingeisse.admin.navigation.NavigationMountedRequestMapper;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.NavigationPageParameterUtil;
@@ -95,28 +94,6 @@ public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHan
 		return implicitPageParameters;
 	}
 	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#createClone()
-	 */
-	@Override
-	public INavigationNodeHandler createClone() {
-		BookmarkablePageNavigationHandler clone = new BookmarkablePageNavigationHandler(pageClass);
-		clone.mergeDataFrom(this);
-		return clone;
-	}
-	
-	/**
-	 * Merges the implicit and explicit parameters, id and title from the specified other handler
-	 * into the this handler. This method must not be used after mounting. Used to
-	 * implement clone().
-	 */
-	protected final void mergeDataFrom(BookmarkablePageNavigationHandler other) {
-		setId(other.getId());
-		setTitle(other.getTitle());
-		getImplicitPageParameters().mergeWith(other.getImplicitPageParameters());
-		getExplicitPageParameters().mergeWith(other.getExplicitPageParameters());
-	}
-
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.navigation.handler.AbstractNavigationNodeHandler#mountRequestMappers(name.martingeisse.admin.application.wicket.AdminWicketApplication, name.martingeisse.admin.navigation.NavigationNode)
 	 */

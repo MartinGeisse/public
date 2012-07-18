@@ -48,11 +48,4 @@ public interface INavigationNodeHandler {
 	 */
 	public void mountRequestMappers(AdminWicketApplication application, NavigationNode node);
 	
-	/**
-	 * Creates a clone of this handler. May return this handler itself only if it
-	 * is immutable.
-	 * @return the clone
-	 */
-	public INavigationNodeHandler createClone();
-	
 }
