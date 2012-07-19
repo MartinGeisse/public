@@ -9,10 +9,7 @@ package name.martingeisse.admin.navigation.component;
 import java.util.List;
 
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.NavigationPageParameterUtil;
-import name.martingeisse.admin.navigation.model.CurrentNavigationNodeModel;
-import name.martingeisse.admin.navigation.model.NavigationNodeChildrenModel;
-import name.martingeisse.admin.navigation.model.NavigationNodeClosestVariableAncestorModel;
+import name.martingeisse.admin.navigation.NavigationUtil;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -22,6 +19,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 
 /**
  * This component uses a list model of element type {@link NavigationNode}
@@ -117,7 +115,7 @@ public final class NavigationMenuPanel extends Panel {
 	 */
 	@Override
 	protected void onBeforeRender() {
-		currentPagePath = StringUtils.defaultString(NavigationPageParameterUtil.getNavigationPathForPage(getPage()));
+		currentPagePath = StringUtils.defaultString(NavigationUtil.getNavigationPathForPage(getPage()));
 		super.onBeforeRender();
 	}
 	
@@ -142,7 +140,8 @@ public final class NavigationMenuPanel extends Panel {
 		}
 		
 		// create a panel for the children, but hide if the maximum nesting level is reached
-		NavigationMenuPanel childrenPanel = new NavigationMenuPanel("children", NavigationNodeChildrenModel.forParentPath(node.getPath()), maximumNestingDepth - 1);
+		IModel<List<NavigationNode>> childrenModel = new PropertyModel<List<NavigationNode>>(item.getModel(), "children");
+		NavigationMenuPanel childrenPanel = new NavigationMenuPanel("children", childrenModel, maximumNestingDepth - 1);
 		item.add(childrenPanel);
 		if (maximumNestingDepth == 0) {
 			childrenPanel.setVisible(false);
@@ -150,35 +149,4 @@ public final class NavigationMenuPanel extends Panel {
 		
 	}
 
-	/**
-	 * Returns an instance for the local navigation with e.g. an entity instance. That is,
-	 * the navigation menu panel shows the whole subtree, with the topmost level showing
-	 * the children of the closest variable ancestor node.
-	 * 
-	 * This method takes an arbitrary model for the current location.
-	 * 
-	 * @param id the wicket id
-	 * @param locationModel the model for the current location
-	 * @param maximumNestingDepth the maximum nesting depth
-	 * @return the local navigation menu panel
-	 */
-	public static NavigationMenuPanel createForLocalNavigation(String id, IModel<NavigationNode> locationModel, int maximumNestingDepth) {
-		return new NavigationMenuPanel(id, NavigationNodeChildrenModel.forParentModel(new NavigationNodeClosestVariableAncestorModel(locationModel)), maximumNestingDepth);
-	}
-
-	/**
-	 * Returns an instance for the local navigation with e.g. an entity instance. That is,
-	 * the navigation menu panel shows the whole subtree, with the topmost level showing
-	 * the children of the closest variable ancestor node.
-	 * 
-	 * This method uses a {@link CurrentNavigationNodeModel} for the current location.
-	 * 
-	 * @param id the wicket id
-	 * @param maximumNestingDepth the maximum nesting depth
-	 * @return the local navigation menu panel
-	 */
-	public static NavigationMenuPanel createForLocalNavigation(String id, int maximumNestingDepth) {
-		return createForLocalNavigation(id, new CurrentNavigationNodeModel(), maximumNestingDepth);
-	}
-	
 }

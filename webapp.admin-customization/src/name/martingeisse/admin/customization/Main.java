@@ -19,7 +19,6 @@ import name.martingeisse.admin.application.Launcher;
 import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPanel;
 import name.martingeisse.admin.customization.multi.PopulatorDataViewPanel;
 import name.martingeisse.admin.customization.multi.RoleOrderListPanel;
-import name.martingeisse.admin.customization.navi.NaviTestPage;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNavigationContributor;
@@ -50,7 +49,7 @@ import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociate
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
-
+import name.martingeisse.admin.util.wicket.PageBorderFactory;
 
 /**
  * The main class.
@@ -100,7 +99,7 @@ public class Main {
 		ApplicationConfiguration.get().addPlugin(userPropertyFilter);
 		
 		// general parameters
-		PagesConfigurationUtil.setPageBorderFactory(new PageBorderFactory());
+		PagesConfigurationUtil.setPageBorderFactory(new name.martingeisse.admin.customization.PageBorderFactory());
 		
 		// entity parameters
 		GeneralEntityConfiguration generalEntityConfiguration = new GeneralEntityConfiguration();
@@ -124,24 +123,21 @@ public class Main {
 			@Override
 			public void contributeNavigationNodes(EntityDescriptor entity, NavigationNode mainEntityInstanceNode) {
 				
-//				BookmarkableEntityInstanceNavigationHandler handler = new BookmarkableEntityInstanceNavigationHandler(EntityPresentationPage.class) {
-//					@Override
-//					public WebMarkupContainer createPageBorder() {
-//						if (!getEntityName().equals("phpbb_acl_roles")) {
-//							return null;
-//						}
-//						return new TestBorder(Constants.PAGE_BORDER_ID);
-//					}
-//				};
-				
-				mainEntityInstanceNode.setPageBorderFactory(new name.martingeisse.admin.util.wicket.PageBorderFactory(EntityInstancePageBorder.class));
+				// add entity-local navigation
+				mainEntityInstanceNode.setPageBorderFactory(new PageBorderFactory(EntityInstancePageBorder.class));
 
-				BookmarkableEntityInstanceNavigationHandler handler = new BookmarkableEntityInstanceNavigationHandler(EntityPresentationPage.class);				
+				// test
+				BookmarkableEntityInstanceNavigationHandler handler;
+				
+				handler = new BookmarkableEntityInstanceNavigationHandler(EntityPresentationPage.class);				
 				handler.getImplicitPageParameters().add("presenter", "default");
 				NavigationNode node = mainEntityInstanceNode.createChild(handler.setId("default").setTitle("Default"));
-				node.setPageBorderFactory(new name.martingeisse.admin.util.wicket.PageBorderFactory(TestBorder.class));
-				NavigationNode node2 = node.createChild(handler);
-				node2.setPageBorderFactory(new name.martingeisse.admin.util.wicket.PageBorderFactory(TestBorder.class));
+				node.setPageBorderFactory(new PageBorderFactory(TestBorder.class));
+				
+				handler = new BookmarkableEntityInstanceNavigationHandler(EntityPresentationPage.class);				
+				handler.getImplicitPageParameters().add("presenter", "default");
+				NavigationNode node2 = node.createChild(handler.setId("default").setTitle("Default"));
+				node2.setPageBorderFactory(new PageBorderFactory(TestBorder.class));
 				
 			}
 		});
@@ -170,8 +166,6 @@ public class Main {
 		
 		final NavigationNode roles = root.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_roles").setId("roles").setTitle("Roles"));
 		roles.createChild(new EntityInstancePresentationNavigationHandler("phpbb_acl_roles", "default").setId("${id}").setTitle("Instance"));
-		
-		root.createPageChild("naviTest", "Navi-Test", NaviTestPage.class);
 	}
 
 	/**

@@ -6,15 +6,18 @@
 
 package name.martingeisse.admin.pages;
 
+import java.util.List;
+
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.NavigationPageParameterUtil;
-import name.martingeisse.admin.navigation.model.NavigationNodeChildrenModel;
+import name.martingeisse.admin.navigation.NavigationUtil;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
@@ -36,7 +39,7 @@ public class GlobalNavigationFolderPage extends AbstractAdminPage {
 	 */
 	public GlobalNavigationFolderPage(final PageParameters parameters) {
 		super(parameters);
-		this.navigationPath = NavigationPageParameterUtil.getNavigationNodeFromParameter(parameters, true).getPath();
+		this.navigationPath = NavigationUtil.getNavigationNodeFromParameter(parameters, true).getPath();
 	}
 
 	/* (non-Javadoc)
@@ -45,9 +48,16 @@ public class GlobalNavigationFolderPage extends AbstractAdminPage {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-	
+
+		IModel<List<NavigationNode>> topNavigationNodeListModel = new LoadableDetachableModel<List<NavigationNode>>() {
+			@Override
+			protected List<NavigationNode> load() {
+				return NavigationConfigurationUtil.getNavigationTree().getNodesByPath().get(navigationPath).getChildren();
+			}
+		};
+		
 		getMainContainer().add(new Label("folderTitle", new PropertyModel<String>(this, "folderTitle")));
-		getMainContainer().add(new ListView<NavigationNode>("children", NavigationNodeChildrenModel.forParentPath(navigationPath)) {
+		getMainContainer().add(new ListView<NavigationNode>("children", topNavigationNodeListModel) {
 			@Override
 			protected void populateItem(final ListItem<NavigationNode> item) {
 				final NavigationNode child = item.getModelObject();

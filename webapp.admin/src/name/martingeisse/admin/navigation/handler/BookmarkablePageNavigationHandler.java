@@ -11,7 +11,7 @@ import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.navigation.INavigationLocator;
 import name.martingeisse.admin.navigation.NavigationMountedRequestMapper;
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.NavigationPageParameterUtil;
+import name.martingeisse.admin.navigation.NavigationUtil;
 
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.AbstractLink;
@@ -42,6 +42,10 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * stores this special parameter in the explicit parameter
  * set (in the mountRequestMappers() method); code using this
  * class should not change or remove that parameter.
+ * 
+ * TODO: prevent instances of this class from being used in
+ * more than one navigation node. Since it stores "the"
+ * navigation path, that cannot work.
  */
 public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHandler {
 
@@ -99,8 +103,8 @@ public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHan
 	 */
 	@Override
 	public final void mountRequestMappers(AdminWicketApplication application, NavigationNode node) {
-		explicitPageParameters.remove(NavigationPageParameterUtil.NAVIGATION_PATH_PAGE_PARAMETER_NAME);
-		explicitPageParameters.add(NavigationPageParameterUtil.NAVIGATION_PATH_PAGE_PARAMETER_NAME, node.getPath());
+		explicitPageParameters.remove(NavigationUtil.NAVIGATION_PATH_PAGE_PARAMETER_NAME);
+		explicitPageParameters.add(NavigationUtil.NAVIGATION_PATH_PAGE_PARAMETER_NAME, node.getPath());
 		NavigationMountedRequestMapper mapper = new NavigationMountedRequestMapper(node.getPath(), pageClass);
 		mapper.getImplicitParameters().mergeWith(implicitPageParameters);
 		application.mount(mapper);
@@ -111,6 +115,7 @@ public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHan
 	 */
 	@Override
 	public AbstractLink createLink(String id, NavigationNode node) {
+		System.out.println("createLink: pageClass = " + pageClass + ", explicitPageParameters = " + explicitPageParameters);
 		return new BookmarkablePageLink<Void>(id, pageClass, explicitPageParameters);
 	}
 

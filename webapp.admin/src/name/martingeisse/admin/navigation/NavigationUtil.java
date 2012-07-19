@@ -6,6 +6,8 @@
 
 package name.martingeisse.admin.navigation;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
@@ -14,7 +16,7 @@ import org.apache.wicket.util.string.StringValue;
  * Helper methods to deal with the implicit page parameter used
  * for navigation-mounted pages.
  */
-public class NavigationPageParameterUtil {
+public class NavigationUtil {
 	
 	/**
 	 * The name of the implicit page parameter.
@@ -24,7 +26,7 @@ public class NavigationPageParameterUtil {
 	/**
 	 * Prevent instantiation.
 	 */
-	private NavigationPageParameterUtil() {
+	private NavigationUtil() {
 	}
 	
 	/**
@@ -82,6 +84,25 @@ public class NavigationPageParameterUtil {
 	}
 
 	/**
+	 * Obtains the current navigation node for the specified path.
+	 * 
+	 * @param path the navigation path to obtain the node for (may be null)
+	 * @param required whether the node is required
+	 * @return the current node, or null if no node was found and required is false
+	 * @throws IllegalArgumentException if no node was found and required is true
+	 */
+	public static NavigationNode getNavigationNodeForPath(final String path, final boolean required) throws IllegalArgumentException {
+		final NavigationNode node = (path == null ? null : NavigationConfigurationUtil.getNavigationTree().getNodesByPath().get(path));
+		if (node != null) {
+			return node;
+		} else if (required) {
+			throw new IllegalArgumentException("page parameter for the navigation path does not match any known path: " + path);
+		} else {
+			return null;
+		}
+	}
+	
+	/**
 	 * Obtains the current navigation node from the page parameters.
 	 * 
 	 * @param parameters the page parameters (may be null)
@@ -90,12 +111,7 @@ public class NavigationPageParameterUtil {
 	 * @throws IllegalArgumentException if no node was found and required is true
 	 */
 	public static NavigationNode getNavigationNodeFromParameter(final PageParameters parameters, final boolean required) throws IllegalArgumentException {
-		final String navigationPath = getParameterValue(parameters, required);
-		final NavigationNode node = (navigationPath == null ? null : NavigationConfigurationUtil.getNavigationTree().getNodesByPath().get(navigationPath));
-		if (required && node == null) {
-			throw new IllegalArgumentException("page parameter for the navigation path does not match any known path: " + navigationPath + ", parameters: " + parameters);
-		}
-		return node;
+		return getNavigationNodeForPath(getParameterValue(parameters, required), required);
 	}
 	
 	/**
@@ -120,6 +136,25 @@ public class NavigationPageParameterUtil {
 		// try the implicit page parameter
 		return getParameterValue(page.getPageParameters());
 		
+	}
+	
+	/**
+	 * Returns the current navigation node for the specified component.
+	 * @param component the component
+	 * @return the navigation node
+	 */
+	public static NavigationNode getCurrentNavigationNode(Component component) {
+		return getCurrentNavigationNode(component.getPage());
+	}
+
+	/**
+	 * Returns the current navigation node for the specified page.
+	 * @param page the page
+	 * @return the navigation node
+	 */
+	public static NavigationNode getCurrentNavigationNode(Page page) {
+		String currentNavigationPath = StringUtils.defaultString(NavigationUtil.getNavigationPathForPage(page));
+		return NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode(currentNavigationPath);
 	}
 	
 }

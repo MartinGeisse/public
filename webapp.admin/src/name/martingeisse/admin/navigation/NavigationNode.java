@@ -278,6 +278,22 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 		ensureHandlerPresent();
 		return (parent != null && (isVariableNode() || parent.hasVariablePath()));
 	}
+	
+	/**
+	 * Returns the closest ancestor node that is a variable node, or null if no
+	 * such ancestor exists.
+	 * 
+	 * @return the closest variable ancestor or null
+	 */
+	public NavigationNode getClosestVariableAncestor() {
+		if (isVariableNode()) {
+			return this;
+		}
+		if (parent == null) {
+			return null;
+		}
+		return parent.getClosestVariableAncestor();
+	}
 
 	/**
 	 * Returns the most specific node for the specified path.

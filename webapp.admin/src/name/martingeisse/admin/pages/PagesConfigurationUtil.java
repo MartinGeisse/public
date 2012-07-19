@@ -12,7 +12,7 @@ import java.util.List;
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.NavigationPageParameterUtil;
+import name.martingeisse.admin.navigation.NavigationUtil;
 import name.martingeisse.admin.util.wicket.Constants;
 import name.martingeisse.admin.util.wicket.DoublePageBorder;
 import name.martingeisse.admin.util.wicket.IPageBorderFactory;
@@ -71,7 +71,7 @@ public final class PagesConfigurationUtil {
 	public static WebMarkupContainer createAllPageBorders(Page page) {
 
 		// determine the navigation location so navigation nodes can contribute page borders
-		String currentNavigationPath = StringUtils.defaultString(NavigationPageParameterUtil.getNavigationPathForPage(page));
+		String currentNavigationPath = StringUtils.defaultString(NavigationUtil.getNavigationPathForPage(page));
 		NavigationNode currentNavigationNode = NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode(currentNavigationPath);
 
 		// create a list of all page borders

@@ -89,7 +89,7 @@ public class NavigationMountedRequestMapper extends MountedMapper {
 		 * back to URLs that have the implicit navigation path parameter set to the value
 		 * stored in this mapper.
 		 */
-		if (StringUtils.equals(getNavigationPath(), NavigationPageParameterUtil.getParameterValue(info.getPageParameters()))) {
+		if (StringUtils.equals(getNavigationPath(), NavigationUtil.getParameterValue(info.getPageParameters()))) {
 			return super.buildUrl(info);
 		} else {
 			return null;
@@ -145,7 +145,7 @@ public class NavigationMountedRequestMapper extends MountedMapper {
 				parameters = new PageParameters();
 			}
 			parameters.mergeWith(implicitParameters);
-			NavigationPageParameterUtil.setParameterValue(parameters, navigationPath);
+			NavigationUtil.setParameterValue(parameters, navigationPath);
 			return parameters;
 		}
 
@@ -155,7 +155,7 @@ public class NavigationMountedRequestMapper extends MountedMapper {
 		@Override
 		public Url encodePageParameters(final PageParameters pageParameters) {
 			final PageParameters copy = new PageParameters(pageParameters);
-			NavigationPageParameterUtil.setParameterValue(copy, null);
+			NavigationUtil.setParameterValue(copy, null);
 			for (String key : implicitParameters.getNamedKeys()) {
 				copy.remove(key);
 			}

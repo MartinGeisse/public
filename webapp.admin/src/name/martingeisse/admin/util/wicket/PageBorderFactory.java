@@ -6,6 +6,8 @@
 
 package name.martingeisse.admin.util.wicket;
 
+import java.lang.reflect.Constructor;
+
 import org.apache.wicket.markup.html.WebMarkupContainer;
 
 /**
@@ -56,7 +58,16 @@ public class PageBorderFactory implements IPageBorderFactory {
 	@Override
 	public WebMarkupContainer createPageBorder() {
 		try {
-			return borderClass.getConstructor(String.class).newInstance(Constants.PAGE_BORDER_ID);
+			if (borderClass == null) {
+				throw new IllegalStateException("borderClass is null");
+			}
+			Constructor<? extends WebMarkupContainer> constructor = borderClass.getConstructor(String.class);
+			if (constructor == null) {
+				throw new IllegalStateException("no appropriate constructor");
+			}
+			return constructor.newInstance(Constants.PAGE_BORDER_ID);
+		} catch (RuntimeException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

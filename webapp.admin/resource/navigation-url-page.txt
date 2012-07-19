@@ -90,8 +90,6 @@ Pages haben Zugriff darauf bzw. auf deren Paths -> können direkt die
 Nodes Links erzeugen lassen. (URL zusammenbasteln reicht nicht, z.B. wegen
 externer Parameter).
 
-Schritt: An jeden Entity Instance Root NaviNode eine PageBorder mit Navi-Menü hängen.
-
 evtl. Schritt: Entity Node bzw. Root path pro Entity merken (?) -> Entity kann von
 überall her verlinkt werden.
 

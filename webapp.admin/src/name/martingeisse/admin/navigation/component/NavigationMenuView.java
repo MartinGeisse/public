@@ -9,8 +9,7 @@ package name.martingeisse.admin.navigation.component;
 import java.util.List;
 
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.NavigationPageParameterUtil;
-import name.martingeisse.admin.navigation.model.NavigationNodeChildrenModel;
+import name.martingeisse.admin.navigation.NavigationUtil;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -19,6 +18,7 @@ import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 
 /**
  * This component uses a list model of element type {@link NavigationNode}
@@ -77,7 +77,7 @@ public final class NavigationMenuView extends ListView<NavigationNode> {
 	 */
 	@Override
 	protected void onBeforeRender() {
-		currentPagePath = StringUtils.defaultString(NavigationPageParameterUtil.getNavigationPathForPage(getPage()));
+		currentPagePath = StringUtils.defaultString(NavigationUtil.getNavigationPathForPage(getPage()));
 		super.onBeforeRender();
 	}
 	
@@ -103,7 +103,8 @@ public final class NavigationMenuView extends ListView<NavigationNode> {
 		
 		// create sub-lists
 		if (maximumNestingDepth > 0) {
-			item.add(new NavigationMenuView("children", NavigationNodeChildrenModel.forParentPath(node.getPath()), maximumNestingDepth - 1));
+			IModel<List<NavigationNode>> childrenModel = new PropertyModel<List<NavigationNode>>(item.getModel(), "children");
+			item.add(new NavigationMenuView("children", childrenModel, maximumNestingDepth - 1));
 		}
 		
 	}
