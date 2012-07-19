@@ -6,10 +6,10 @@
 
 package name.martingeisse.admin.navigation.handler;
 
-import org.apache.wicket.util.string.StringValue;
-
 import name.martingeisse.admin.entity.IEntityNameAware;
 import name.martingeisse.admin.pages.EntityPresentationPage;
+
+import org.apache.wicket.util.string.StringValue;
 
 /**
  * This node handler represents the presentation page for

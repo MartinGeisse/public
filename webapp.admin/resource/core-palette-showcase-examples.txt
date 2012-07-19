@@ -1,0 +1,20 @@
+
+Idee, wie die Projekte aufgeteilt werden:
+
+- core: unbedingt nötig. Hier sind die ganzen wichtigen Klassen für das Admin-Basisprojekt drin.
+
+- palette: Viele "kleine" Klassen, die einerseits als Beispiel dienen, "wie man eine Admin-App
+  schreibt", aber auch als Starter benutzt bzw. danach rauskopiert werden können. Sollten selbst
+  nicht viel machen, aber können z.B. diverse Helper-Funktionen aus Core miteinander verketten.
+  
+  Beispiel: Core enthält Util-Methoden, um mit NAviNodes / NaviTrees umzugehen. Die Palette
+  enthält Beispiel-Models daraus -- solche Models lassen sich wegen IComponentAssignedModel
+  nicht beliebig verknüpfen.
+  
+- Showcase: Beispielanwendung. Soll in erster Linie Eindruck machen und muss nicht 100 pro
+  einfach aufgebaut sein. Soll aber auch nicht geschwindelt sein.
+  
+- Examples: Einfache Beispiele, um einzelne Aspekte zu erklären.
+  
+
+

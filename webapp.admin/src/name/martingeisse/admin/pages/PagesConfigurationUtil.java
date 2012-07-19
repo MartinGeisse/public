@@ -15,6 +15,7 @@ import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.NavigationPageParameterUtil;
 import name.martingeisse.admin.util.wicket.Constants;
 import name.martingeisse.admin.util.wicket.DoublePageBorder;
+import name.martingeisse.admin.util.wicket.IPageBorderFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Page;
@@ -59,7 +60,7 @@ public final class PagesConfigurationUtil {
 	 */
 	public static WebMarkupContainer createMainPageBorder() {
 		IPageBorderFactory pageBorderFactory = getPageBorderFactory();
-		return (pageBorderFactory == null ? new WebMarkupContainer(Constants.PAGE_BORDER_ID) : pageBorderFactory.createPageBorder(Constants.PAGE_BORDER_ID));
+		return (pageBorderFactory == null ? new WebMarkupContainer(Constants.PAGE_BORDER_ID) : pageBorderFactory.createPageBorder());
 	}
 	
 	/**

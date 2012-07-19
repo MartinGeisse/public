@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler;
 import name.martingeisse.admin.pages.GlobalNavigationFolderPage;
+import name.martingeisse.admin.util.wicket.IPageBorderFactory;
 import name.martingeisse.common.util.SpecialHandlingList;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -54,6 +55,9 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * 
  * The root node has a regular, fixed ID defined by the ROOT_NODE_ID
  * constant. This ID is not intended to be visible anywhere.
+ * 
+ * A node can hold additional data besides its handler. Currently, this
+ * includes a page border factory. 
  */
 public final class NavigationNode implements Iterable<NavigationNode> {
 
@@ -61,7 +65,7 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	 * The ID of the root node.
 	 */
 	public static final String ROOT_NODE_ID = "ROOT-NODE-ID";
-	
+
 	/**
 	 * the regularIdPattern
 	 */
@@ -71,7 +75,7 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	 * the variableDeclarationPattern
 	 */
 	private static Pattern variableDeclarationPattern = Pattern.compile("\\$\\{[a-zA-Z0-9\\_]+\\}");
-	
+
 	/**
 	 * the parent
 	 */
@@ -81,18 +85,23 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	 * the children
 	 */
 	private final List<NavigationNode> children = new SubNodeList();
-	
+
 	/**
 	 * the handler
 	 */
 	private INavigationNodeHandler handler;
 
 	/**
+	 * the pageBorderFactory
+	 */
+	private IPageBorderFactory pageBorderFactory;
+
+	/**
 	 * Constructor.
 	 */
 	public NavigationNode() {
 	}
-	
+
 	/**
 	 * Getter method for the parent.
 	 * @return the parent
@@ -100,16 +109,16 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	public NavigationNode getParent() {
 		return parent;
 	}
-	
+
 	/**
 	 * Setter method for the parent. This method is automatically invoked by
 	 * the parent when this node is added as a child.
 	 * @param parent the parent to set
 	 */
-	void setParent(NavigationNode parent) {
+	void setParent(final NavigationNode parent) {
 		this.parent = parent;
 	}
-	
+
 	/**
 	 * Getter method for the children.
 	 * @return the children
@@ -117,7 +126,7 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	public List<NavigationNode> getChildren() {
 		return children;
 	}
-	
+
 	/**
 	 * Getter method for the handler.
 	 * @return the handler
@@ -125,13 +134,29 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	public INavigationNodeHandler getHandler() {
 		return handler;
 	}
-	
+
 	/**
 	 * Setter method for the handler.
 	 * @param handler the handler to set
 	 */
-	public void setHandler(INavigationNodeHandler handler) {
+	public void setHandler(final INavigationNodeHandler handler) {
 		this.handler = handler;
+	}
+
+	/**
+	 * Getter method for the pageBorderFactory.
+	 * @return the pageBorderFactory
+	 */
+	public IPageBorderFactory getPageBorderFactory() {
+		return pageBorderFactory;
+	}
+
+	/**
+	 * Setter method for the pageBorderFactory.
+	 * @param pageBorderFactory the pageBorderFactory to set
+	 */
+	public void setPageBorderFactory(final IPageBorderFactory pageBorderFactory) {
+		this.pageBorderFactory = pageBorderFactory;
 	}
 
 	/**
@@ -141,7 +166,7 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	public String getId() {
 		return handler.getId(this);
 	}
-	
+
 	/**
 	 * Getter method for the title of the handler.
 	 * @return the title
@@ -149,7 +174,7 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	public String getTitle() {
 		return handler.getTitle(this);
 	}
-	
+
 	/**
 	 * Checks whether this node is a regular node, i.e. not a variable declaration.
 	 * @return true if regular, false if variable declaration or invalid
@@ -165,17 +190,17 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	public boolean isVariableNode() {
 		return (getId() != null) && variableDeclarationPattern.matcher(getId()).matches();
 	}
-	
+
 	/**
 	 * 
 	 */
 	void initializeTree() {
-		
-		Set<String> childIds = new HashSet<String>();
+
+		final Set<String> childIds = new HashSet<String>();
 		boolean hasVariableChild = false;
-		for (NavigationNode child : children) {
+		for (final NavigationNode child : children) {
 			child.initializeTree();
-			
+
 			// ensure that the child is either regular or a variable declaration and that no two variables are declared
 			if (child.isVariableNode()) {
 				if (hasVariableChild) {
@@ -186,40 +211,40 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 			} else if (!child.isRegularNode()) {
 				throw new IllegalStateException("navigation node ID " + child.getId() + " (parent: " + getPath() + ") is neither a regular nor a variable child (i.e. it has an invalid id)");
 			}
-			
+
 			// ensure that regular IDs aren't used twice
 			if (!childIds.add(child.getId())) {
 				throw new IllegalStateException("navigation path " + child.getPath() + " is used twice");
 			}
-			
+
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
-	private static void buildPathDescriptionForError(StringBuilder builder, NavigationNode node) {
+	private static void buildPathDescriptionForError(final StringBuilder builder, final NavigationNode node) {
 		if (node.getParent() == null) {
 			builder.append('/');
 		} else {
 			buildPathDescriptionForError(builder, node.getParent());
 			builder.append('/');
-			INavigationNodeHandler handler = node.getHandler();
+			final INavigationNodeHandler handler = node.getHandler();
 			builder.append(handler == null ? "???" : handler.getId(node));
 		}
 	}
-	
+
 	/**
 	 * Throws an {@link IllegalStateException} if no handler is set for this node.
 	 */
 	private void ensureHandlerPresent() {
 		if (handler == null) {
-			StringBuilder builder = new StringBuilder();
+			final StringBuilder builder = new StringBuilder();
 			buildPathDescriptionForError(builder, this);
 			throw new IllegalStateException("no handler set; path = " + builder);
 		}
 	}
-	
+
 	/**
 	 * Obtains the path of this node. The path is determined from the ID of this
 	 * node and the IDs of its ancestors. This requires the node to be placed
@@ -239,7 +264,7 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 			return parent.getPath() + "/" + handler.getId(this);
 		}
 	}
-	
+
 	/**
 	 * Returns true if this node or any of its ancestors is a variable node.
 	 * 
@@ -253,7 +278,7 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 		ensureHandlerPresent();
 		return (parent != null && (isVariableNode() || parent.hasVariablePath()));
 	}
-	
+
 	/**
 	 * Returns the most specific node for the specified path.
 	 * This follows the path into descendant nodes until the
@@ -262,13 +287,13 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	 * @param path the path to follow
 	 * @return the most specific node
 	 */
-	public NavigationNode findMostSpecificNode(String path) {
+	public NavigationNode findMostSpecificNode(final String path) {
 		if (path == null || path.isEmpty() || path.charAt(0) != '/') {
 			return this;
 		}
 		int index = path.indexOf('/', 1);
 		index = (index == -1 ? path.length() : index);
-		String segment = path.substring(1, index);
+		final String segment = path.substring(1, index);
 		for (final NavigationNode child : children) {
 			if (segment.equals(child.getId())) {
 				return child.findMostSpecificNode(path.substring(index));
@@ -350,7 +375,7 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 		}
 		return (getPath().equals(path) || isStrictPlausibleAncestorOf(path));
 	}
-	
+
 	/**
 	 * Checks if this node is a descendant of the specified other node.
 	 * This is a strict-descendant check, i.e. returns false if the other
@@ -425,18 +450,18 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	 * @param id the wicket id
 	 * @return the link
 	 */
-	public AbstractLink createLink(String id) {
+	public AbstractLink createLink(final String id) {
 		return handler.createLink(id, this);
 	}
-	
+
 	/**
 	 * Loops through all nodes and applies the specified visitor to
 	 * all leaf nodes.
 	 * @param visitor the visitor to apply
 	 */
-	public void acceptVisitor(INavigationNodeVisitor visitor) {
+	public void acceptVisitor(final INavigationNodeVisitor visitor) {
 		visitor.visit(this);
-		for (NavigationNode child : children) {
+		for (final NavigationNode child : children) {
 			child.acceptVisitor(visitor);
 		}
 	}
@@ -447,33 +472,33 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	 * no parent). This method is called by the framework.
 	 * @param application the wicket application
 	 */
-	public void mountRequestMappers(AdminWicketApplication application) {
+	public void mountRequestMappers(final AdminWicketApplication application) {
 		if (getParent() != null) {
 			handler.mountRequestMappers(application, this);
 		}
-		for (NavigationNode child : children) {
+		for (final NavigationNode child : children) {
 			child.mountRequestMappers(application);
 		}
 	}
-	
+
 	/**
 	 * Creates a new {@link NavigationNode} and adds it as a child node.
 	 * @return the new node
 	 */
 	public NavigationNode createChild() {
-		NavigationNode child = new NavigationNode();
+		final NavigationNode child = new NavigationNode();
 		getChildren().add(child);
 		return child;
 	}
-	
+
 	/**
 	 * Creates a new {@link NavigationNode} with the specified handler and adds
 	 * it as a child node.
 	 * @param handler the handler
 	 * @return the new node
 	 */
-	public NavigationNode createChild(INavigationNodeHandler handler) {
-		NavigationNode child = new NavigationNode();
+	public NavigationNode createChild(final INavigationNodeHandler handler) {
+		final NavigationNode child = new NavigationNode();
 		child.setHandler(handler);
 		getChildren().add(child);
 		return child;
@@ -486,7 +511,7 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	 * @param title the title of the child
 	 * @return the new node
 	 */
-	public NavigationNode createGlobalNavigationFolderChild(String id, String title) {
+	public NavigationNode createGlobalNavigationFolderChild(final String id, final String title) {
 		return createChild(new BookmarkablePageNavigationHandler(GlobalNavigationFolderPage.class).setId(id).setTitle(title));
 	}
 
@@ -498,33 +523,39 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	 * @param pageClass the page class
 	 * @return the new node
 	 */
-	public NavigationNode createPageChild(String id, String title, final Class<? extends WebPage> pageClass) {
+	public NavigationNode createPageChild(final String id, final String title, final Class<? extends WebPage> pageClass) {
 		return createChild(new BookmarkablePageNavigationHandler(pageClass).setId(id).setTitle(title));
 	}
-	
+
 	/**
 	 * 
 	 */
 	public void dumpTree() {
 		System.out.println("--- begin NavigationNode, id: " + getId() + ", title: " + getTitle() + ", handler: " + handler);
-		for (NavigationNode child : children) {
+		for (final NavigationNode child : children) {
 			child.dumpTree();
 		}
 		System.out.println("--- end NavigationNode");
 	}
-	
+
 	/**
 	 * Creates page borders for this navigation nodes and adds them to the
 	 * specified list, starting with the outmost.
 	 * @param pageBorderList the list to add to
 	 */
-	public void createPageBorders(List<WebMarkupContainer> pageBorderList) {
+	public void createPageBorders(final List<WebMarkupContainer> pageBorderList) {
 		if (parent != null) {
 			parent.createPageBorders(pageBorderList);
 		}
-		WebMarkupContainer border = handler.createPageBorder();
-		if (border != null) {
-			pageBorderList.add(border);
+		if (pageBorderFactory != null) {
+			final WebMarkupContainer border1 = pageBorderFactory.createPageBorder();
+			if (border1 != null) {
+				pageBorderList.add(border1);
+			}
+		}
+		final WebMarkupContainer border2 = handler.createPageBorder();
+		if (border2 != null) {
+			pageBorderList.add(border2);
 		}
 	}
 

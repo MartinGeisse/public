@@ -6,9 +6,10 @@
 
 package name.martingeisse.admin.customization;
 
-import org.apache.wicket.markup.html.border.Border;
+import name.martingeisse.admin.util.wicket.Constants;
+import name.martingeisse.admin.util.wicket.IPageBorderFactory;
 
-import name.martingeisse.admin.pages.IPageBorderFactory;
+import org.apache.wicket.markup.html.border.Border;
 
 /**
  * TODO: document me
@@ -20,8 +21,8 @@ public class PageBorderFactory implements IPageBorderFactory {
 	 * @see name.martingeisse.admin.application.capabilities.IPageBorderFactory#createPageBorder(java.lang.String)
 	 */
 	@Override
-	public Border createPageBorder(String id) {
-		return new PageBorder(id);
+	public Border createPageBorder() {
+		return new PageBorder(Constants.PAGE_BORDER_ID);
 	}
 
 }
