@@ -15,8 +15,11 @@ import org.apache.wicket.resource.loader.IStringResourceLoader;
  * This implementation of {@link IStringResourceLoader} uses a fixed
  * prefix. If any key string beings with that prefix, this loader
  * returns the remainder of the string as the value for that key.
+ * 
+ * This class is typically used to turn missing text properties
+ * into "soft" errors.
  */
-public class FallbackStringResourceLoader implements IStringResourceLoader {
+public class PrefixedIdentityStringResourceLoader implements IStringResourceLoader {
 
 	/**
 	 * the prefix
@@ -26,14 +29,14 @@ public class FallbackStringResourceLoader implements IStringResourceLoader {
 	/**
 	 * Constructor.
 	 */
-	public FallbackStringResourceLoader() {
+	public PrefixedIdentityStringResourceLoader() {
 	}
 
 	/**
 	 * Constructor.
 	 * @param prefix the prefix
 	 */
-	public FallbackStringResourceLoader(final String prefix) {
+	public PrefixedIdentityStringResourceLoader(final String prefix) {
 		this.prefix = prefix;
 	}
 

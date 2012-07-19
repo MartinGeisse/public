@@ -40,7 +40,7 @@ import org.apache.wicket.request.mapper.parameter.PageParametersEncoder;
  * navigation path (and its URL) to represent parameter assignments
  * not explicitly present in the URL.
  */
-public class NavigationMountedRequestMapper extends MountedMapper {
+public final class NavigationMountedRequestMapper extends MountedMapper {
 
 	/**
 	 * the parametersEncoder

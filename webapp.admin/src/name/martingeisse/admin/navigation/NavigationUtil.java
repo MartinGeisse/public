@@ -16,7 +16,7 @@ import org.apache.wicket.util.string.StringValue;
  * Helper methods to deal with the implicit page parameter used
  * for navigation-mounted pages.
  */
-public class NavigationUtil {
+public final class NavigationUtil {
 	
 	/**
 	 * The name of the implicit page parameter.

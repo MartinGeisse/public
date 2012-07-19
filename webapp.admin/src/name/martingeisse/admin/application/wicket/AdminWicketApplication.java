@@ -81,7 +81,7 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		logger.trace("application initialization contributors invoked");
 		
 		// add fallback string loaders
-		getResourceSettings().getStringResourceLoaders().add(new FallbackStringResourceLoader("schema.entity."));
+		getResourceSettings().getStringResourceLoaders().add(new PrefixedIdentityStringResourceLoader("schema.entity."));
 		
 		logger.debug("AdminWicketApplication.init(): end");
 	}
