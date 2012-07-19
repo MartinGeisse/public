@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.customization;
+package name.martingeisse.admin.customization.pageborder;
 
 import org.apache.wicket.markup.html.border.Border;
 

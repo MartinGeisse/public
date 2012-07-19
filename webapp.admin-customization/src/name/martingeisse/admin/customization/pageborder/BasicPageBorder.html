@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+	<body>
+		<wicket:border>
+			<div class="TopNavigationBar">
+				<wicket:container wicket:id="topNavigationNodes">
+					<a wicket:id="link">
+						<wicket:container wicket:id="title" />
+					</a>
+				</wicket:container>
+			</div>
+			<div class="LeftNavigationBar">
+				<h3>Entities</h3>
+				<ul>
+					<li wicket:id="entities">
+						<a wicket:id="link">
+							<span wicket:id="name" />
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="InnerPageContainer">
+				<wicket:body />
+			</div>
+			<div style="clear: both; margin: 20px 0px 50px; text-align: center; ">
+				<hr />
+				Copyright (c) 2012 Martin Geisse
+			</div>
+			<br />
+		</wicket:border>
+	</body>
+</html>

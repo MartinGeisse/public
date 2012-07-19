@@ -7,7 +7,7 @@
 package name.martingeisse.admin.navigation;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
-import name.martingeisse.admin.util.wicket.IPageBorderFactory;
+import name.martingeisse.admin.pages.border.IPageBorderFactory;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.Link;

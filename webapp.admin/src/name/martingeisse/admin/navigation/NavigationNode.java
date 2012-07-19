@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler;
 import name.martingeisse.admin.pages.GlobalNavigationFolderPage;
-import name.martingeisse.admin.util.wicket.IPageBorderFactory;
+import name.martingeisse.admin.pages.border.IPageBorderFactory;
 import name.martingeisse.common.util.SpecialHandlingList;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;

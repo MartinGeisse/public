@@ -6,25 +6,15 @@
 
 package name.martingeisse.admin.pages;
 
-import java.util.List;
-
 import name.martingeisse.admin.common.Dummy;
-import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
-import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.component.NavigationMenuView;
+import name.martingeisse.admin.pages.border.PageBorderUtil;
 
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.string.StringValue;
@@ -77,32 +67,8 @@ public class AbstractAdminPage extends WebPage {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-
-		// page borders
-		mainContainer = PagesConfigurationUtil.createAllPageBorders(this);
+		mainContainer = PageBorderUtil.createAllPageBorders(this);
 		add(mainContainer);
-		
-		// navigation
-		IModel<List<NavigationNode>> topNavigationNodeListModel = new LoadableDetachableModel<List<NavigationNode>>() {
-			@Override
-			protected List<NavigationNode> load() {
-				return NavigationConfigurationUtil.getNavigationTree().getRoot().getChildren();
-			}
-		};
-		getMainContainer().add(new NavigationMenuView("nodes", topNavigationNodeListModel, 0));
-		
-		// entity menu
-		getMainContainer().add(new ListView<EntityDescriptor>("entities", ApplicationSchema.instance.getEntityDescriptors()) {
-			@Override
-			protected void populateItem(ListItem<EntityDescriptor> item) {
-				PageParameters parameters = new PageParameters();
-				parameters.add("entity", item.getModelObject().getTableName());
-				BookmarkablePageLink<Void> link = new BookmarkablePageLink<Void>("link", EntityTablePage.class, parameters);
-				link.add(new Label("name", EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityName(item.getModelObject()))); // TODO display name
-				item.add(link);
-			}
-		});
-		
 	}
 	
 	/* (non-Javadoc)

@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.util.wicket;
+package name.martingeisse.admin.pages.border;
 
 import java.lang.reflect.Constructor;
 
@@ -65,7 +65,7 @@ public class PageBorderFactory implements IPageBorderFactory {
 			if (constructor == null) {
 				throw new IllegalStateException("no appropriate constructor");
 			}
-			return constructor.newInstance(Constants.PAGE_BORDER_ID);
+			return constructor.newInstance(PageBorderUtil.PAGE_BORDER_ID);
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {

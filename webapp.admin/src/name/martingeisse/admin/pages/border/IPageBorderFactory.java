@@ -4,7 +4,8 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.util.wicket;
+package name.martingeisse.admin.pages.border;
+
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 
@@ -17,7 +18,7 @@ public interface IPageBorderFactory {
 
 	/**
 	 * Creates the page border for this node handler, or returns null if this factory
-	 * does not provide a page border. The page border must use {@link Constants#PAGE_BORDER_ID}.
+	 * does not provide a page border. The page border must use {@link PageBorderUtil#PAGE_BORDER_ID}.
 	 * @return the border or null
 	 */
 	public WebMarkupContainer createPageBorder();

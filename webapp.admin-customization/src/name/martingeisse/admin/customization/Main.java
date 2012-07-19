@@ -19,6 +19,9 @@ import name.martingeisse.admin.application.Launcher;
 import name.martingeisse.admin.customization.multi.IdOnlyGlobalEntityListPanel;
 import name.martingeisse.admin.customization.multi.PopulatorDataViewPanel;
 import name.martingeisse.admin.customization.multi.RoleOrderListPanel;
+import name.martingeisse.admin.customization.pageborder.BasicPageBorder;
+import name.martingeisse.admin.customization.pageborder.EntityInstancePageBorder;
+import name.martingeisse.admin.customization.pageborder.TestBorder;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNavigationContributor;
@@ -42,14 +45,13 @@ import name.martingeisse.admin.navigation.handler.EntityInstancePresentationNavi
 import name.martingeisse.admin.navigation.handler.GlobalEntityListNavigationHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.pages.EntityPresentationPage;
-import name.martingeisse.admin.pages.PagesConfigurationUtil;
+import name.martingeisse.admin.pages.border.PageBorderFactory;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.wicket.autoform.AutoformPanel;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociatedValidator;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
-import name.martingeisse.admin.util.wicket.PageBorderFactory;
 
 /**
  * The main class.
@@ -99,7 +101,7 @@ public class Main {
 		ApplicationConfiguration.get().addPlugin(userPropertyFilter);
 		
 		// general parameters
-		PagesConfigurationUtil.setPageBorderFactory(new name.martingeisse.admin.customization.PageBorderFactory());
+//		PagesConfigurationUtil.setPageBorderFactory(new name.martingeisse.admin.customization.PageBorderFactory());
 		
 		// entity parameters
 		GeneralEntityConfiguration generalEntityConfiguration = new GeneralEntityConfiguration();
@@ -153,6 +155,7 @@ public class Main {
 	 */
 	private static void buildNavigation() {
 		final NavigationNode root = NavigationConfigurationUtil.getNavigationTree().getRoot();
+		root.setPageBorderFactory(new PageBorderFactory(BasicPageBorder.class));
 		root.createChild(new UrlNavigationHandler("/").setId("home-dummy").setTitle("Home"));
 		final NavigationNode sub1 = root.createGlobalNavigationFolderChild("sub-one", "Sub One");
 		final NavigationNode sub1sub1 = sub1.createGlobalNavigationFolderChild("s1-sub-one", "s1 Sub One");
