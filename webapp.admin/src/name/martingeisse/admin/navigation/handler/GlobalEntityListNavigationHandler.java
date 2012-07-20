@@ -15,6 +15,11 @@ import name.martingeisse.admin.pages.EntityTablePage;
 public final class GlobalEntityListNavigationHandler extends BookmarkablePageNavigationHandler {
 
 	/**
+	 * the canonicalEntityListNode
+	 */
+	private boolean canonicalEntityListNode;
+
+	/**
 	 * Constructor.
 	 * @param entity the entity type to link to
 	 */
@@ -52,6 +57,33 @@ public final class GlobalEntityListNavigationHandler extends BookmarkablePageNav
 		if (presenterName != null) {
 			getImplicitPageParameters().add("presenter", presenterName);
 		}
+		this.canonicalEntityListNode = false;
 	}
-	
+
+	/**
+	 * Getter method for the canonicalEntityListNode.
+	 * @return the canonicalEntityListNode
+	 */
+	public boolean isCanonicalEntityListNode() {
+		return canonicalEntityListNode;
+	}
+
+	/**
+	 * Setter method for the canonicalEntityListNode.
+	 * @param canonicalEntityListNode the canonicalEntityListNode to set
+	 * @return this for chaining
+	 */
+	public GlobalEntityListNavigationHandler setCanonicalEntityListNode(final boolean canonicalEntityListNode) {
+		this.canonicalEntityListNode = canonicalEntityListNode;
+		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.handler.AbstractNavigationNodeHandler#getEntityNameForCanonicalEntityListNode()
+	 */
+	@Override
+	public String getEntityNameForCanonicalEntityListNode() {
+		return (canonicalEntityListNode ? getImplicitPageParameters().get("entity").toString() : null);
+	}
+
 }

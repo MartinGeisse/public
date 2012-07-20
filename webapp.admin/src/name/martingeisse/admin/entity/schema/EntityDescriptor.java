@@ -23,6 +23,7 @@ import name.martingeisse.admin.entity.single.FetchEntityInstanceAction;
 import name.martingeisse.admin.entity.single.ISingleEntityOverviewPresenter;
 import name.martingeisse.admin.entity.single.ISingleEntityPresenter;
 import name.martingeisse.admin.entity.single.NullOverviewPresenter;
+import name.martingeisse.admin.navigation.NavigationNode;
 
 /**
  * This class captures a descriptor for a database entity (table).
@@ -94,6 +95,16 @@ public class EntityDescriptor implements Serializable {
 	 * the globalListPresenters
 	 */
 	private List<IGlobalEntityListPresenter> globalListPresenters;
+
+	/**
+	 * the canonicalListNavigationNode
+	 */
+	private NavigationNode canonicalListNavigationNode;
+
+	/**
+	 * the instanceNavigationRootNode
+	 */
+	private NavigationNode instanceNavigationRootNode;
 
 	/**
 	 * Constructor.
@@ -238,6 +249,38 @@ public class EntityDescriptor implements Serializable {
 	}
 
 	/**
+	 * Getter method for the canonicalListNavigationNode.
+	 * @return the canonicalListNavigationNode
+	 */
+	public NavigationNode getCanonicalListNavigationNode() {
+		return canonicalListNavigationNode;
+	}
+
+	/**
+	 * Setter method for the canonicalListNavigationNode.
+	 * @param canonicalListNavigationNode the canonicalListNavigationNode to set
+	 */
+	public void setCanonicalListNavigationNode(final NavigationNode canonicalListNavigationNode) {
+		this.canonicalListNavigationNode = canonicalListNavigationNode;
+	}
+
+	/**
+	 * Getter method for the instanceNavigationRootNode.
+	 * @return the instanceNavigationRootNode
+	 */
+	public NavigationNode getInstanceNavigationRootNode() {
+		return instanceNavigationRootNode;
+	}
+
+	/**
+	 * Setter method for the instanceNavigationRootNode.
+	 * @param instanceNavigationRootNode the instanceNavigationRootNode to set
+	 */
+	public void setInstanceNavigationRootNode(final NavigationNode instanceNavigationRootNode) {
+		this.instanceNavigationRootNode = instanceNavigationRootNode;
+	}
+
+	/**
 	 * Contributes the specified overview presenter. This entity will use the specified presenter
 	 * if its score is at least as high as the score of the currently used presenter.
 	 * @param presenter the presenter to contribute
@@ -258,7 +301,7 @@ public class EntityDescriptor implements Serializable {
 	 * if no other presenter is explicitly registered with this entity.
 	 */
 	public void addDefaultListPresenterIfNeeded() {
-		
+
 		if (globalListPresenters.isEmpty()) {
 			final IGlobalEntityListPresenter presenter = EntityConfigurationUtil.getGeneralEntityConfiguration().getDefaultEntityListPresenter();
 			if (presenter != null) {

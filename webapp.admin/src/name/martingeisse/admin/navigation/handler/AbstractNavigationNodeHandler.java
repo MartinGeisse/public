@@ -99,5 +99,13 @@ public abstract class AbstractNavigationNodeHandler implements INavigationNodeHa
 	public WebMarkupContainer createPageBorder() {
 		return null;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#getEntityNameForCanonicalEntityListNode()
+	 */
+	@Override
+	public String getEntityNameForCanonicalEntityListNode() {
+		return null;
+	}
+
 }

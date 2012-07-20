@@ -41,7 +41,6 @@ import name.martingeisse.admin.entity.schema.MysqlDatabaseDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.handler.BookmarkableEntityInstanceNavigationHandler;
-import name.martingeisse.admin.navigation.handler.EntityInstancePresentationNavigationHandler;
 import name.martingeisse.admin.navigation.handler.GlobalEntityListNavigationHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.pages.EntityPresentationPage;
@@ -167,8 +166,8 @@ public class Main {
 		root.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_users").setId("users2").setTitle("Users-2"));
 		root.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_users").setId("users3").setTitle("Users-3"));
 		
-		final NavigationNode roles = root.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_roles").setId("roles").setTitle("Roles"));
-		roles.createChild(new EntityInstancePresentationNavigationHandler("phpbb_acl_roles", "default").setId("${id}").setTitle("Instance"));
+//		final NavigationNode roles = root.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_roles").setId("roles").setTitle("Roles"));
+//		roles.createChild(new EntityInstancePresentationNavigationHandler("phpbb_acl_roles", "default").setId("${id}").setTitle("Instance"));
 	}
 
 	/**

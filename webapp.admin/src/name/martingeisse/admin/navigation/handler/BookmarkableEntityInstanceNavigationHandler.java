@@ -67,19 +67,27 @@ public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePag
 			@Override
 			protected void onInitialize() {
 				super.onInitialize();
-				Page page = getPage();
-				if (page instanceof IGetEntityId) {
-					getPageParameters().add("id", ((IGetEntityId)page).getEntityId()); 
-				} else {
-					StringValue parameter = page.getPageParameters().get("id");
-					if (parameter == null || parameter.toString() == null) {
-						throw new IllegalStateException(
-							"BookmarkableEntityInstanceNavigationHandler link: the Page doesn't implement IGetEntityId (page class " +
-							page.getClass().getCanonicalName() +
-							") and doesn't have an id page parameter either; pageParameters: " + page.getPageParameters());
+				
+				// Add the entity ID from the current page to the parameters if no "id" parameter exists yet.
+				// This allows to have instance-local links created from the navigation nodes (which are not
+				// actually instance-local objects) which automatically resolve their ID. At the same time,
+				// the calling code may use createLink() and add parameters manually to specify an explicit ID.
+				if (!getPageParameters().getNamedKeys().contains("id")) {
+					Page page = getPage();
+					if (page instanceof IGetEntityId) {
+						getPageParameters().add("id", ((IGetEntityId)page).getEntityId()); 
+					} else {
+						StringValue parameter = page.getPageParameters().get("id");
+						if (parameter == null || parameter.toString() == null) {
+							throw new IllegalStateException(
+								"BookmarkableEntityInstanceNavigationHandler link: the Page doesn't implement IGetEntityId (page class " +
+								page.getClass().getCanonicalName() +
+								") and doesn't have an id page parameter either; pageParameters: " + page.getPageParameters());
+						}
+						getPageParameters().add("id", parameter.toString());
 					}
-					getPageParameters().add("id", parameter.toString());
 				}
+				
 			}
 		};
 	}

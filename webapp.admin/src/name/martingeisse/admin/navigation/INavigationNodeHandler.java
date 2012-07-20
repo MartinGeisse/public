@@ -10,7 +10,9 @@ import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.pages.border.IPageBorderFactory;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
  * This interface is implemented to give navigation nodes their behavior.
@@ -35,6 +37,17 @@ public interface INavigationNodeHandler extends IPageBorderFactory {
 	 * components or associated markup. That is, the appearance of
 	 * the link is up to the caller.
 	 * 
+	 * Implementation note: Since callers might modify the returned
+	 * link, it must not share state with other objects. Links in
+	 * particular must not share state between each other. As an
+	 * example, if the returned links are {@link BookmarkablePageLink}s,
+	 * then each link must have its own {@link PageParameters},
+	 * since the caller might add or modify parameters.
+	 * (The fact that callers cannot replace the {@link PageParameters} of
+	 * such a link by a cloned {@link PageParameters} -- there is no
+	 * such setter method -- has driven the decision to shield callers
+	 * from shared state.) 
+	 * 
 	 * @param id the wicket id
 	 * @param node the handled node
 	 * @return the link
@@ -48,5 +61,14 @@ public interface INavigationNodeHandler extends IPageBorderFactory {
 	 * @param application the wicket application
 	 */
 	public void mountRequestMappers(AdminWicketApplication application, NavigationNode node);
+
+	/**
+	 * Checks whether this handler handles a canonical entity list node. Such a node
+	 * is typically the one and only unfiltered list node for that entity. If so,
+	 * returns the name of that entity. Otherwise returns null.
+	 * 
+	 * @return the entity name or null
+	 */
+	public String getEntityNameForCanonicalEntityListNode();
 	
 }

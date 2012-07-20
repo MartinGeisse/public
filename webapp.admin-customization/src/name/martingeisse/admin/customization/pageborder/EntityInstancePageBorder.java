@@ -40,7 +40,6 @@ public class EntityInstancePageBorder extends Border {
 		@Override
 		public List<NavigationNode> getObject() {
 			NavigationNode currentNode = NavigationUtil.getCurrentNavigationNode(EntityInstancePageBorder.this);
-			System.out.println("current: " + currentNode.getPath());
 			return currentNode.getClosestVariableAncestor().getChildren();
 		}
 		

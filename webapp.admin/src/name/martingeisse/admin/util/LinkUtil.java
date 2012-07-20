@@ -6,13 +6,12 @@
 
 package name.martingeisse.admin.util;
 
+import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.pages.EntityPresentationPage;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.ExternalLink;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
  * This class contains utility methods to deal with HTML links.
@@ -44,7 +43,9 @@ public class LinkUtil {
 	 * @return the link
 	 */
 	public static AbstractLink createSingleEntityLink(String wicketId, EntityDescriptor entity, Object entityId) {
-		return createSingleEntityLink(wicketId, entity.getTableName(), entityId);
+		BookmarkablePageLink<?> link = (BookmarkablePageLink<?>)entity.getInstanceNavigationRootNode().createLink(wicketId);
+		link.getPageParameters().add("id", entityId);
+		return link;
 	}
 	
 	/**
@@ -55,10 +56,7 @@ public class LinkUtil {
 	 * @return the link
 	 */
 	public static AbstractLink createSingleEntityLink(String wicketId, String entityName, Object entityId) {
-		PageParameters parameters = new PageParameters();
-		parameters.add("entity", entityName);
-		parameters.add("id", entityId);
-		return new BookmarkablePageLink<Void>(wicketId, EntityPresentationPage.class, parameters);
+		return createSingleEntityLink(wicketId, ApplicationSchema.instance.findEntity(entityName), entityId);
 	}
 	
 }

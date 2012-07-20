@@ -101,4 +101,25 @@ public final class NavigationTree {
 		root.mountRequestMappers(application);
 	}
 
+	/**
+	 * Searches navigation nodes for canonical entity list nodes.
+	 * @return a mapping of entity name to canonical entity list node.
+	 */
+	public Map<String, NavigationNode> findCanonicalEntityListNodes() {
+		final Map<String, NavigationNode> mapping = new HashMap<String, NavigationNode>();
+		root.acceptVisitor(new INavigationNodeVisitor() {
+			@Override
+			public void visit(NavigationNode node) {
+				String entityName = node.getHandler().getEntityNameForCanonicalEntityListNode();
+				if (entityName != null) {
+					NavigationNode old = mapping.put(entityName, node);
+					if (old != null) {
+						throw new IllegalStateException("found two 'canonical' entity list nodes for entity " + entityName + ": " + node.getPath() + " and " + old.getPath());
+					}
+				}
+			}
+		});
+		return mapping;
+	}
+	
 }

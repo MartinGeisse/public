@@ -8,6 +8,7 @@ package name.martingeisse.admin.entity.schema;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
@@ -209,17 +210,36 @@ public class ApplicationSchema {
 	 * instance mounting is going to depend on that.
 	 */
 	private void createNavigation() {
-		NavigationNode root = NavigationConfigurationUtil.getNavigationTree().getRoot();
-		NavigationNode entitiesNode = root.createGlobalNavigationFolderChild("new-entities", "New Entities");
+		
+		// determine the (declared) canonical entity list nodes
+		Map<String, NavigationNode> canonicalEntityListNodes = NavigationConfigurationUtil.getNavigationTree().findCanonicalEntityListNodes();
+
+		// create ad-hoc canonical list nodes for entities with no declared canonical list node
+		final NavigationNode globalRoot = NavigationConfigurationUtil.getNavigationTree().getRoot();
+		final NavigationNode allEntitiesNode = globalRoot.createGlobalNavigationFolderChild("all-entities", "All Entities");
+		for (EntityDescriptor entity : entityDescriptors) {
+			final String entityName = entity.getTableName();
+			final NavigationNode declaredCanonicalListNode = canonicalEntityListNodes.get(entityName);
+			if (declaredCanonicalListNode == null) {
+				NavigationNode adHocCanonicalListNode = allEntitiesNode.createChild(new GlobalEntityListNavigationHandler(entity, "default"));
+				canonicalEntityListNodes.put(entityName, adHocCanonicalListNode);
+				entity.setCanonicalListNavigationNode(adHocCanonicalListNode);
+			} else {
+				entity.setCanonicalListNavigationNode(declaredCanonicalListNode);
+			}
+		}
+		
+		// create and mount the local entity instance navigation tree for each entity
 		Iterable<IEntityNavigationContributor> entityNavigationContributors = EntityConfigurationUtil.getEntityNavigationContributors();
 		for (EntityDescriptor entity : entityDescriptors) {
 			final String entityName = entity.getTableName();
-			NavigationNode entityListNode = entitiesNode.createChild(new GlobalEntityListNavigationHandler(entity, "default"));
-			NavigationNode entityInstanceNode = entityListNode.createGlobalNavigationFolderChild("${id}", "Entity Instance");
+			NavigationNode canonicalEntityListNode = canonicalEntityListNodes.get(entityName);
+			NavigationNode entityInstanceRootNode = canonicalEntityListNode.createGlobalNavigationFolderChild("${id}", "Entity Instance");
+			entity.setInstanceNavigationRootNode(entityInstanceRootNode);
 			for (IEntityNavigationContributor contributor : entityNavigationContributors) {
-				contributor.contributeNavigationNodes(entity, entityInstanceNode);
+				contributor.contributeNavigationNodes(entity, entityInstanceRootNode);
 			}
-			entityInstanceNode.acceptVisitor(new INavigationNodeVisitor() {
+			entityInstanceRootNode.acceptVisitor(new INavigationNodeVisitor() {
 				@Override
 				public void visit(NavigationNode node) {
 					INavigationNodeHandler handler = node.getHandler();
@@ -230,6 +250,7 @@ public class ApplicationSchema {
 				}
 			});
 		}
+		
 	}
 	
 }

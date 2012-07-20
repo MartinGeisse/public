@@ -134,7 +134,6 @@ public final class ApplicationConfiguration {
 
 	/**
 	 * Getter method for the parameters.
-	 * TODO: make this seal-able
 	 * @return the parameters
 	 */
 	public ClassKeyedContainer<Object> getParameters() {
@@ -143,7 +142,6 @@ public final class ApplicationConfiguration {
 	
 	/**
 	 * Getter method for the capabilities.
-	 * TODO: make this seal-able
 	 * @return the capabilities
 	 */
 	public ClassKeyedListContainer<Object> getCapabilities() {

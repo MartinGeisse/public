@@ -115,8 +115,7 @@ public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHan
 	 */
 	@Override
 	public AbstractLink createLink(String id, NavigationNode node) {
-		System.out.println("createLink: pageClass = " + pageClass + ", explicitPageParameters = " + explicitPageParameters);
-		return new BookmarkablePageLink<Void>(id, pageClass, explicitPageParameters);
+		return new BookmarkablePageLink<Void>(id, pageClass, new PageParameters(explicitPageParameters));
 	}
 
 }
