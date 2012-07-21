@@ -27,7 +27,6 @@ import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNavigationContributor;
 import name.martingeisse.admin.entity.PrefixEliminatingEntityNameMappingStrategy;
-import name.martingeisse.admin.entity.component.EntityPresentationPage;
 import name.martingeisse.admin.entity.multi.GlobalEntityListPresenter;
 import name.martingeisse.admin.entity.multi.IEntityListFieldOrder;
 import name.martingeisse.admin.entity.multi.populator.EntityFieldPopulator;
@@ -40,9 +39,11 @@ import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.database.MysqlDatabaseDescriptor;
+import name.martingeisse.admin.entity.single.raw.RawEntityPresentationPanel;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.handler.BookmarkableEntityInstanceNavigationHandler;
+import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
 import name.martingeisse.admin.navigation.handler.GlobalEntityListNavigationHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
@@ -84,7 +85,6 @@ public class Main {
 		ApplicationConfiguration.get().addPlugin(new DefaultPlugin());
 		ApplicationConfiguration.get().addPlugin(new CustomizationPlugin());
 		ApplicationConfiguration.get().addPlugin(new BaselineReadOnlyRendererContributor());
-		ApplicationConfiguration.get().addPlugin(new PrintNameAction());
 		ApplicationConfiguration.get().addPlugin(new SingleEntityPropertyFilter(1, null, "modificationTimestamp", false));
 		ApplicationConfiguration.get().addPlugin(new SingleEntityPropertyFilter(1, null, "modificationUser_id", false));
 		ApplicationConfiguration.get().addPlugin(new SingleEntityPropertyFilter(1, "User", "lastLoginAttemptTimestamp", false));
@@ -130,12 +130,12 @@ public class Main {
 				// test
 				BookmarkableEntityInstanceNavigationHandler handler;
 				
-				handler = new BookmarkableEntityInstanceNavigationHandler(EntityPresentationPage.class);				
+				handler = new EntityInstancePanelHandler(RawEntityPresentationPanel.class);				
 				handler.getImplicitPageParameters().add("presenter", "default");
 				NavigationNode node = mainEntityInstanceNode.createChild(handler.setId("default").setTitle("Default"));
 				node.setPageBorderFactory(new PageBorderFactory(TestBorder.class));
 				
-				handler = new BookmarkableEntityInstanceNavigationHandler(EntityPresentationPage.class);				
+				handler = new EntityInstancePanelHandler(RawEntityPresentationPanel.class);				
 				handler.getImplicitPageParameters().add("presenter", "default");
 				NavigationNode node2 = node.createChild(handler.setId("default").setTitle("Default"));
 				node2.setPageBorderFactory(new PageBorderFactory(TestBorder.class));

@@ -22,7 +22,6 @@ import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 import name.martingeisse.admin.entity.single.EntityInstance;
 import name.martingeisse.admin.entity.single.FetchEntityInstanceAction;
-import name.martingeisse.admin.entity.single.ISingleEntityPresenter;
 import name.martingeisse.admin.navigation.NavigationNode;
 
 /**
@@ -77,11 +76,6 @@ public class EntityDescriptor implements Serializable {
 	private List<EntityReferenceInfo> outgoingReferences;
 
 	/**
-	 * the singlePresenters
-	 */
-	private List<ISingleEntityPresenter> singlePresenters;
-
-	/**
 	 * the globalListPresenters
 	 */
 	private List<IGlobalEntityListPresenter> globalListPresenters;
@@ -103,7 +97,6 @@ public class EntityDescriptor implements Serializable {
 		this.properties = new HashMap<String, EntityPropertyDescriptor>();
 		this.incomingReferences = new ArrayList<EntityReferenceInfo>();
 		this.outgoingReferences = new ArrayList<EntityReferenceInfo>();
-		this.singlePresenters = new ArrayList<ISingleEntityPresenter>();
 		this.globalListPresenters = new ArrayList<IGlobalEntityListPresenter>();
 		globalListPresenters.add(new RawGlobalEntityListPresenter()); // TODO: remove
 	}
@@ -205,22 +198,6 @@ public class EntityDescriptor implements Serializable {
 	}
 
 	/**
-	 * Getter method for the singlePresenters.
-	 * @return the singlePresenters
-	 */
-	public List<ISingleEntityPresenter> getSinglePresenters() {
-		return singlePresenters;
-	}
-
-	/**
-	 * Setter method for the singlePresenters.
-	 * @param singlePresenters the singlePresenters to set
-	 */
-	public void setSinglePresenters(final List<ISingleEntityPresenter> singlePresenters) {
-		this.singlePresenters = singlePresenters;
-	}
-
-	/**
 	 * Getter method for the globalListPresenters.
 	 * @return the globalListPresenters
 	 */
@@ -280,20 +257,6 @@ public class EntityDescriptor implements Serializable {
 				globalListPresenters.add(EntityConfigurationUtil.getGeneralEntityConfiguration().getDefaultEntityListPresenter());
 			}
 		}
-	}
-
-	/**
-	 * Returns the single-instance presenter with the specified URL ID.
-	 * @param urlId the URL ID
-	 * @return the presenter, or null if not found
-	 */
-	public ISingleEntityPresenter getSinglePresenter(final String urlId) {
-		for (final ISingleEntityPresenter presenter : getSinglePresenters()) {
-			if (presenter.getUrlId().equals(urlId)) {
-				return presenter;
-			}
-		}
-		return null;
 	}
 
 	/**

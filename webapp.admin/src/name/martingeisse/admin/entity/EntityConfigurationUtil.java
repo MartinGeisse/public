@@ -7,7 +7,6 @@
 package name.martingeisse.admin.entity;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
-import name.martingeisse.admin.entity.action.IEntityInstanceActionContributor;
 import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilter;
 import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
 
@@ -25,11 +24,6 @@ public final class EntityConfigurationUtil {
 	 * The capability key for entity presentation contributors.
 	 */
 	public static final Class<IEntityPresentationContributor> ENTITY_PRESENTATION_CONTRIBUTOR_CAPABILITY_KEY = IEntityPresentationContributor.class;
-
-	/**
-	 * The capability key for entity instance action contributors.
-	 */
-	public static final Class<IEntityInstanceActionContributor> ENTITY_INSTANCE_ACTION_CONTRIBUTOR_CAPABILITY_KEY = IEntityInstanceActionContributor.class;
 
 	/**
 	 * The capability key for raw entity list property display filters.
@@ -81,21 +75,6 @@ public final class EntityConfigurationUtil {
 	 */
 	public static Iterable<IEntityPresentationContributor> getEntityPresentationContributors() {
 		return ApplicationConfiguration.get().getCapabilities().getIterable(ENTITY_PRESENTATION_CONTRIBUTOR_CAPABILITY_KEY);
-	}
-
-	/**
-	 * Adds the specified entity instance action contributor.
-	 * @param contributor the contributor to add
-	 */
-	public static void addEntityInstanceActionContributor(final IEntityInstanceActionContributor contributor) {
-		ApplicationConfiguration.get().getCapabilities().add(ENTITY_INSTANCE_ACTION_CONTRIBUTOR_CAPABILITY_KEY, contributor);
-	}
-
-	/**
-	 * @return an {@link Iterable} for all entity instance action contributors.
-	 */
-	public static Iterable<IEntityInstanceActionContributor> getEntityInstanceActionContributors() {
-		return ApplicationConfiguration.get().getCapabilities().getIterable(ENTITY_INSTANCE_ACTION_CONTRIBUTOR_CAPABILITY_KEY);
 	}
 
 	/**

@@ -7,10 +7,7 @@
 package name.martingeisse.admin.application;
 
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
-import name.martingeisse.admin.entity.SharedEntityPresentationContributor;
 import name.martingeisse.admin.entity.schema.reference.DefaultEntityReferenceDetector;
-import name.martingeisse.admin.entity.single.RawEntityPresentationPanel;
-import name.martingeisse.admin.entity.single.SingleEntityPresenter;
 
 /**
  * This plugin contributes all default capabilities.
@@ -23,7 +20,6 @@ public class DefaultPlugin implements IPlugin {
 	@Override
 	public void contribute() {
 		EntityConfigurationUtil.addEntityReferenceDetector(new DefaultEntityReferenceDetector());
-		EntityConfigurationUtil.addEntityPresentationContributor(new SharedEntityPresentationContributor(null, new SingleEntityPresenter("default", "Default", RawEntityPresentationPanel.class)));
 	}
 
 }

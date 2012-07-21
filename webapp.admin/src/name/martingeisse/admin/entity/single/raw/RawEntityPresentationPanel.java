@@ -4,14 +4,13 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.single;
+package name.martingeisse.admin.entity.single.raw;
 
-import name.martingeisse.admin.entity.component.EntityPresentationPage;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
+import name.martingeisse.admin.entity.single.EntityInstance;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.Loop;
 import org.apache.wicket.markup.html.list.LoopItem;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -55,7 +54,7 @@ public class RawEntityPresentationPanel extends Panel {
 					PageParameters parameters = new PageParameters();
 					parameters.add("entity", reference.getDestination().getTableName());
 					parameters.add("id", fieldValue);
-					link = new BookmarkablePageLink<Void>("link", EntityPresentationPage.class, parameters);
+					link = null; //new BookmarkablePageLink<Void>("link", EntityPresentationPage.class, parameters);
 				}
 				link.add(new Label("value", "" + fieldValue));
 				item.add(link);

@@ -83,19 +83,19 @@ public class AbstractAdminPage extends WebPage {
 	 * go to an error page if this is not possible.
 	 * @param parameters the page parameters
 	 * @param name the name of the parameter to return
-	 * @param mountedOnly whether this parameter only appears as a mounted parameter. If so,
-	 * then the parameter not being passed indicates a bug in the application, not just an
-	 * invalid URL, since the page that requires the parameter should not have been used in
-	 * the first place if the parameter is missing. This triggers slightly different error
-	 * logging.
+	 * @param requiredFromMount whether this parameter must be present due to the way the page
+	 * was mounted, regardless of the URL sent by the client. If this flag is false, then a 
+	 * missing parameter indicates an incorrect URL from the client. If it is true, then it
+	 * indicates a bug in the application. This triggers slightly different error logging.
 	 * @return the parameter value
 	 */
-	protected StringValue getRequiredStringParameter(PageParameters parameters, String name, boolean mountedOnly) {
+	protected StringValue getRequiredStringParameter(PageParameters parameters, String name, boolean requiredFromMount) {
 		if (parameters.getNamedKeys().contains(name)) {
 			return parameters.get(name);
 		}
-		if (mountedOnly) {
-			throw new RuntimeException("missing mounted-only parameter '" + name + "' in page class: " + getClass());
+		if (requiredFromMount) {
+			throw new RuntimeException("missing parameter '" + name + "' in page class: " + getClass() +
+				". This error indicates that the page was incorrectly mounted, since the parameter should be present regardless of the request sent by the client.");
 		} else {
 			// TODO: show a proper error page instead of throwing an exception
 			// TODO: make general "message page" / "error page" (message page with different
@@ -103,7 +103,7 @@ public class AbstractAdminPage extends WebPage {
 			// or possible: unexpected exception, missing parameter, (NOT page expired
 			// -- log out in this case; message page needs to be logged in)
 			// 2nd page for "logged out messages" -> "logged out", "page expired", ...
-			throw new RuntimeException("missing parameter: " + name);
+			throw new RuntimeException("missing parameter: " + name + ". This error indicates an incorrect request from the client.");
 		}
 	}
 

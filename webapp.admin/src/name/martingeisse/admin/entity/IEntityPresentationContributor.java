@@ -10,11 +10,10 @@ import java.io.Serializable;
 
 import name.martingeisse.admin.entity.multi.IGlobalEntityListPresenter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.entity.single.ISingleEntityPresenter;
 
 /**
  * Implementations are added by plugins. They contribute
- * {@link ISingleEntityPresenter} and {@link IGlobalEntityListPresenter}
+ * {@link IGlobalEntityListPresenter}
  * objects for a given {@link EntityDescriptor}.
  */
 public interface IEntityPresentationContributor extends Serializable {
