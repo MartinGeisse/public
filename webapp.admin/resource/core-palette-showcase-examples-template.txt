@@ -15,6 +15,8 @@ Idee, wie die Projekte aufgeteilt werden:
   einfach aufgebaut sein. Soll aber auch nicht geschwindelt sein.
   
 - Examples: Einfache Beispiele, um einzelne Aspekte zu erklären.
-  
+ 
+- Template: Ausgangspunkt für ein eigenes Projekt. Bindet Core und Palette ein; Standard-CSS
+  usw.
 
 

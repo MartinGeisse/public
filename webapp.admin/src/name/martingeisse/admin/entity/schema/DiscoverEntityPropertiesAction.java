@@ -12,14 +12,13 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import name.martingeisse.admin.common.IAction;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilter;
 
 /**
  * This action discovers the entity properties for a single entity.
  */
-class DiscoverEntityPropertiesAction implements IAction<Map<String, EntityPropertyDescriptor>> {
+class DiscoverEntityPropertiesAction {
 
 	/**
 	 * the connection
@@ -69,10 +68,10 @@ class DiscoverEntityPropertiesAction implements IAction<Map<String, EntityProper
 		this.entity = entity;
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.common.IAction#execute()
+	/**
+	 * Executes this action.
+	 * @return the result
 	 */
-	@Override
 	public Map<String, EntityPropertyDescriptor> execute() {
 		try {
 			final Map<String, EntityPropertyDescriptor> result = new HashMap<String, EntityPropertyDescriptor>();

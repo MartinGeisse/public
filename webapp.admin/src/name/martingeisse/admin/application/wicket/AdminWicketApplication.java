@@ -7,7 +7,7 @@
 package name.martingeisse.admin.application.wicket;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
-import name.martingeisse.admin.common.Dummy;
+import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.component.page.HomePage;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
@@ -68,7 +68,7 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		getApplicationSettings().setPageExpiredErrorPage(HomePage.class);
 		
 		// mount resource URLs
-		mountResource("common.css", new PackageResourceReference(Dummy.class, "common.css"));
+		mountResource("common.css", new PackageResourceReference(AbstractAdminPage.class, "common.css"));
 		
 		// mount navigation URLs
 		logger.trace("mounting navigation URLs...");

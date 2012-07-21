@@ -11,13 +11,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import name.martingeisse.admin.common.IAction;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 /**
  * This action fetches a single entity instance.
  */
-public class FetchEntityInstanceAction implements IAction<EntityInstance> {
+public class FetchEntityInstanceAction {
 
 	/**
 	 * the entity
@@ -61,10 +60,10 @@ public class FetchEntityInstanceAction implements IAction<EntityInstance> {
 		this.id = id;
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.common.IAction#execute()
+	/**
+	 * Executes this action.
+	 * @return the result
 	 */
-	@Override
 	public EntityInstance execute() {
 
 		if (entity.getIdColumnName() == null) {

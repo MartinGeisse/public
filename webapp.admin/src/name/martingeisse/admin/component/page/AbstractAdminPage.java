@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.component.page;
 
-import name.martingeisse.admin.common.Dummy;
 import name.martingeisse.admin.component.pageborder.PageBorderUtil;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
@@ -76,7 +75,7 @@ public class AbstractAdminPage extends WebPage {
 	 */
 	@Override
 	public void renderHead(IHeaderResponse response) {
-		response.renderCSSReference(new CssResourceReference(Dummy.class, "common.css"));
+		response.renderCSSReference(new CssResourceReference(AbstractAdminPage.class, "common.css"));
 	}
 	
 	/**

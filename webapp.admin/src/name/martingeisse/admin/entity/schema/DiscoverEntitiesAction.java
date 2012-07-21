@@ -12,13 +12,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.admin.common.IAction;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 
 /**
  * This action asks the database for all stored entities.
  */
-class DiscoverEntitiesAction implements IAction<List<EntityDescriptor>> {
+class DiscoverEntitiesAction {
 
 	/**
 	 * the database
@@ -41,10 +40,10 @@ class DiscoverEntitiesAction implements IAction<List<EntityDescriptor>> {
 		this.database = database;
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.common.IAction#execute()
+	/**
+	 * Executes this action.
+	 * @return the result
 	 */
-	@Override
 	public List<EntityDescriptor> execute() {
 		Connection connection = null;
 		try {

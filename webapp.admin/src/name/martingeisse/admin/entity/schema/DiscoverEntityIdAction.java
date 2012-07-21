@@ -10,13 +10,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import name.martingeisse.admin.common.IAction;
-
 /**
  * This action discovers the ID column(s) (primary key) for a single entity.
  * Returns null if no (visible) primary key was found.
  */
-class DiscoverEntityIdAction implements IAction<String> {
+class DiscoverEntityIdAction {
 
 	/**
 	 * the connection
@@ -66,10 +64,10 @@ class DiscoverEntityIdAction implements IAction<String> {
 		this.entity = entity;
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.common.IAction#execute()
+	/**
+	 * Executes this action.
+	 * @return the result
 	 */
-	@Override
 	public String execute() {
 		try {
 			ResultSet resultSet = connection.getMetaData().getPrimaryKeys(null, null, entity.getTableName());
