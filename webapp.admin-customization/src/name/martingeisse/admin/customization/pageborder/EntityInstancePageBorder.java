@@ -39,7 +39,7 @@ public class EntityInstancePageBorder extends Border {
 		 */
 		@Override
 		public List<NavigationNode> getObject() {
-			NavigationNode currentNode = NavigationUtil.getCurrentNavigationNode(EntityInstancePageBorder.this);
+			NavigationNode currentNode = NavigationUtil.getNavigationNodeForComponent(EntityInstancePageBorder.this);
 			return currentNode.getClosestVariableAncestor().getChildren();
 		}
 		

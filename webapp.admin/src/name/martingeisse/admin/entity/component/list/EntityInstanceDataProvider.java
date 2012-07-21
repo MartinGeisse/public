@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.common.jdbc.ResultSetReader;
@@ -35,11 +36,27 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	private final IModel<EntityDescriptor> entityModel;
 	
 	/**
+	 * the filter
+	 */
+	private final IEntityListFilter filter;
+	
+	/**
 	 * Constructor.
 	 * @param entityModel the model that provides the entity descriptor
 	 */
 	public EntityInstanceDataProvider(IModel<EntityDescriptor> entityModel) {
 		this.entityModel = entityModel;
+		this.filter = null;
+	}
+	
+	/**
+	 * Constructor.
+	 * @param entityModel the model that provides the entity descriptor
+	 * @param filter the filter
+	 */
+	public EntityInstanceDataProvider(IModel<EntityDescriptor> entityModel, IEntityListFilter filter) {
+		this.entityModel = entityModel;
+		this.filter = filter;
 	}
 	
 	/**
@@ -56,6 +73,14 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	 */
 	public EntityDescriptor getEntity() {
 		return getEntityModel().getObject();
+	}
+	
+	/**
+	 * Getter method for the filter.
+	 * @return the filter
+	 */
+	public IEntityListFilter getFilter() {
+		return filter;
 	}
 	
 	/**
@@ -135,6 +160,19 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 			// clean up
 			resultSet.close();
 			statement.close();
+			
+			// filter the rows. TODO: this gives us "filter(rows LIMIT X)", not "filter(rows) LIMIT X".
+			if (filter != null) {
+				List<EntityInstance> allRows = rows;
+				rows = new ArrayList<EntityInstance>();
+				for (EntityInstance row : allRows) {
+					if (filter.evaluate(row)) {
+						rows.add(row);
+					}
+				}
+			}
+
+			// return the rows as an iterator
 			return rows.iterator();
 
 		} catch (final SQLException e) {

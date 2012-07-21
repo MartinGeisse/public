@@ -6,12 +6,12 @@
 
 package name.martingeisse.admin.component.page;
 
-import name.martingeisse.admin.navigation.INavigationLocator;
+import name.martingeisse.admin.navigation.INavigationLocationAware;
 
 /**
  * The "home" page.
  */
-public class HomePage extends AbstractAdminPage implements INavigationLocator {
+public class HomePage extends AbstractAdminPage implements INavigationLocationAware {
 
 	/**
 	 * Constructor.
@@ -20,10 +20,10 @@ public class HomePage extends AbstractAdminPage implements INavigationLocator {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.navigation.INavigationLocator#getCurrentNavigationPath()
+	 * @see name.martingeisse.admin.navigation.INavigationLocationAware#getNavigationPath()
 	 */
 	@Override
-	public String getCurrentNavigationPath() {
+	public String getNavigationPath() {
 		return "/";
 	}
 

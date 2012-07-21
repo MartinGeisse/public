@@ -8,8 +8,10 @@ package name.martingeisse.admin.navigation.handler;
 
 import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.entity.component.list.AbstractEntityListPage;
+import name.martingeisse.admin.entity.list.IEntityListFilter;
+import name.martingeisse.admin.entity.list.IEntityListFilterProvider;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.navigation.INavigationLocator;
+import name.martingeisse.admin.navigation.INavigationLocationAware;
 
 import org.apache.wicket.markup.html.WebPage;
 
@@ -23,7 +25,7 @@ import org.apache.wicket.markup.html.WebPage;
  * TODO: The functionality to obtain the navigation node for a page is already there.
  * Add a convenience function to {@link AbstractAdminPage}. Make it clear what the
  * convenience function does and how it differs from the page's implementation
- * of {@link INavigationLocator} and the PP itself.
+ * of {@link INavigationLocationAware} and the PP itself.
  * 
  * A node of this type can be the canonical list node of the respective entity. Only
  * one such node can exist for each entity. This causes the navigation system to mount
@@ -36,12 +38,17 @@ import org.apache.wicket.markup.html.WebPage;
  * TODO: add display name functionality to {@link EntityDescriptor} and use that
  * as the default for the node title.
  */
-public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNavigationHandler {
+public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNavigationHandler implements IEntityListFilterProvider {
 
 	/**
 	 * the canonicalEntityListNode
 	 */
 	private boolean canonicalEntityListNode;
+
+	/**
+	 * the filter
+	 */
+	private IEntityListFilter filter;
 
 	/**
 	 * Constructor.
@@ -86,12 +93,38 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 		return this;
 	}
 
+	/**
+	 * Getter method for the filter.
+	 * @return the filter
+	 */
+	public IEntityListFilter getFilter() {
+		return filter;
+	}
+
+	/**
+	 * Setter method for the filter.
+	 * @param filter the filter to set
+	 * @return this for chaining
+	 */
+	public BookmarkableEntityListNavigationHandler setFilter(final IEntityListFilter filter) {
+		this.filter = filter;
+		return this;
+	}
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.navigation.handler.AbstractNavigationNodeHandler#getEntityNameForCanonicalEntityListNode()
 	 */
 	@Override
 	public String getEntityNameForCanonicalEntityListNode() {
 		return (canonicalEntityListNode ? getImplicitPageParameters().get("entity").toString() : null);
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.list.IEntityListFilterProvider#getEntityListFilter()
+	 */
+	@Override
+	public IEntityListFilter getEntityListFilter() {
+		return filter;
 	}
 
 }

@@ -10,6 +10,8 @@ import java.sql.SQLException;
 
 import name.martingeisse.admin.entity.component.list.EntityInstanceDataProvider;
 import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.list.IEntityListFilter;
+import name.martingeisse.admin.entity.list.IEntityListFilterConsumer;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer;
 import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
@@ -32,13 +34,18 @@ import org.apache.wicket.model.PropertyModel;
 /**
  * Raw presentation of entities.
  */
-public class RawEntityListPanel extends Panel implements IGetPageable {
+public class RawEntityListPanel extends Panel implements IGetPageable, IEntityListFilterConsumer {
 
+	/**
+	 * the filter
+	 */
+	private IEntityListFilter filter;
+	
 	/**
 	 * the renderers
 	 */
 	private transient IPropertyReadOnlyRenderer[] renderers;
-
+	
 	/**
 	 * Constructor.
 	 * @param id the wicket id
@@ -84,6 +91,14 @@ public class RawEntityListPanel extends Panel implements IGetPageable {
 	}
 
 	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.list.IEntityListFilterConsumer#setEntityListFilter(name.martingeisse.admin.entity.list.IEntityListFilter)
+	 */
+	@Override
+	public void setEntityListFilter(IEntityListFilter filter) {
+		this.filter = filter;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.apache.wicket.Component#onInitialize()
 	 */
 	@Override
@@ -128,7 +143,7 @@ public class RawEntityListPanel extends Panel implements IGetPageable {
 		 * Constructor.
 		 */
 		public MyDataProvider() {
-			super(RawEntityListPanel.this.getEntityDescriptorModel());
+			super(RawEntityListPanel.this.getEntityDescriptorModel(), RawEntityListPanel.this.filter);
 		}
 
 		/* (non-Javadoc)

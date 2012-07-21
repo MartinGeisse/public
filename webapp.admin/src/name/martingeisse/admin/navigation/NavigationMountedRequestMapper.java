@@ -31,7 +31,7 @@ import org.apache.wicket.request.mapper.parameter.PageParametersEncoder;
  * 
  * Note that this mapper does not work for the root URL. To mount an
  * arbitrary page at the root URL and still have it return the root
- * navigation path, subclass that page and implement {@link INavigationLocator}
+ * navigation path, subclass that page and implement {@link INavigationLocationAware}
  * manually.
  * 
  * This mapper also allows to specify page parameters that are implicitly

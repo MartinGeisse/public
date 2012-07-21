@@ -8,7 +8,7 @@ package name.martingeisse.admin.navigation.handler;
 
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
-import name.martingeisse.admin.navigation.INavigationLocator;
+import name.martingeisse.admin.navigation.INavigationLocationAware;
 import name.martingeisse.admin.navigation.NavigationMountedRequestMapper;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.NavigationUtil;
@@ -25,7 +25,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * parameters. For navigation back-mapping, it is sufficient that
  * the page properly passes the page parameters to {@link WebPage}
  * in its constructor; if this is not possible, it must implement
- * {@link INavigationLocator}.
+ * {@link INavigationLocationAware}.
  * 
  * This class stores two {@link PageParameters} objects that
  * represent the explicit and implicit page parameters to use

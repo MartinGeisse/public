@@ -25,6 +25,9 @@ import name.martingeisse.admin.entity.IEntityListFieldOrder;
 import name.martingeisse.admin.entity.IEntityNavigationContributor;
 import name.martingeisse.admin.entity.PrefixEliminatingEntityNameMappingStrategy;
 import name.martingeisse.admin.entity.component.instance.RawEntityPresentationPanel;
+import name.martingeisse.admin.entity.component.list.raw.RawEntityListPanel;
+import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.property.ExplicitEntityPropertyFilter;
 import name.martingeisse.admin.entity.property.SingleEntityPropertyFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
@@ -161,7 +164,22 @@ public class Main {
 		
 //		root.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "phpbb_acl_roles").setCanonicalEntityListNode(true));
 
-		root.createChild(new EntityListPanelHandler(MyPopulatorListPanel.class, "phpbb_acl_roles").setTitle("Roles+"));
+		IEntityListFilter myFilter = new IEntityListFilter() {
+			@Override
+			public boolean evaluate(EntityInstance input) {
+				Object id = input.getId();
+				System.out.println("* " + id);
+				if (id instanceof Integer) {
+					int intId = (Integer)id;
+					return intId < 15;
+				}
+				return true;
+			}
+		};
+		
+		root.createChild(new EntityListPanelHandler(MyPopulatorListPanel.class, "phpbb_acl_roles").setTitle("Roles*"));
+		root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "phpbb_acl_roles").setId("A").setTitle("Roles+"));
+		root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "phpbb_acl_roles").setFilter(myFilter).setId("B").setTitle("Roles-"));
 	}
 
 	/**

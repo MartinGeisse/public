@@ -116,7 +116,7 @@ public final class NavigationUtil {
 	
 	/**
 	 * Obtains the navigation path for the specified page. This tries to use the page
-	 * as an {@link INavigationLocator} and also attempts to find page parameters
+	 * as an {@link INavigationLocationAware} and also attempts to find page parameters
 	 * set by a {@link NavigationMountedRequestMapper}.
 	 * 
 	 * @param page the page to return the navigation path for 
@@ -125,9 +125,9 @@ public final class NavigationUtil {
 	public static String getNavigationPathForPage(Page page) {
 		
 		// try INavigationLocator
-		if (page instanceof INavigationLocator) {
-			INavigationLocator locator = (INavigationLocator)page;
-			String result = locator.getCurrentNavigationPath();
+		if (page instanceof INavigationLocationAware) {
+			INavigationLocationAware aware = (INavigationLocationAware)page;
+			String result = aware.getNavigationPath();
 			if (result != null) {
 				return result;
 			}
@@ -143,8 +143,8 @@ public final class NavigationUtil {
 	 * @param component the component
 	 * @return the navigation node
 	 */
-	public static NavigationNode getCurrentNavigationNode(Component component) {
-		return getCurrentNavigationNode(component.getPage());
+	public static NavigationNode getNavigationNodeForComponent(Component component) {
+		return getNavigationNodeForPage(component.getPage());
 	}
 
 	/**
@@ -152,7 +152,7 @@ public final class NavigationUtil {
 	 * @param page the page
 	 * @return the navigation node
 	 */
-	public static NavigationNode getCurrentNavigationNode(Page page) {
+	public static NavigationNode getNavigationNodeForPage(Page page) {
 		String currentNavigationPath = StringUtils.defaultString(NavigationUtil.getNavigationPathForPage(page));
 		return NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode(currentNavigationPath);
 	}
