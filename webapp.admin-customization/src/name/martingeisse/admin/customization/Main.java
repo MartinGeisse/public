@@ -168,7 +168,6 @@ public class Main {
 			@Override
 			public boolean evaluate(EntityInstance input) {
 				Object id = input.getId();
-				System.out.println("* " + id);
 				if (id instanceof Integer) {
 					int intId = (Integer)id;
 					return intId < 15;

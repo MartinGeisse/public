@@ -17,6 +17,7 @@ public class HomePage extends AbstractAdminPage implements INavigationLocationAw
 	 * Constructor.
 	 */
 	public HomePage() {
+		getRequiredStringParameter(getPageParameters(), "wgerjoijegiowjo", false);
 	}
 
 	/* (non-Javadoc)

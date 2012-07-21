@@ -7,6 +7,7 @@
 package name.martingeisse.admin.entity.schema;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -190,17 +191,23 @@ public class ApplicationSchema {
 	 * implement {@link IEntityNameAware} and sets the entity name for them. This is a
 	 * central feature for building entity-instance navigation tree templates, since a
 	 * general template cannot be bound to a single entity type by definition.
-	 * 
-	 * TODO: This uses a fixed global mount point. I'm currently working on local navigation trees;
-	 * in the future we need a way to mount whole entity types in the navigation, automatically
-	 * mount local trees there, and use a fallback for entity types that have no such place to mount.
-	 * However, it's probably better to replace entity list presentation first, because entity
-	 * instance mounting is going to depend on that.
 	 */
 	private void createNavigation() {
 		
 		// determine the (declared) canonical entity list nodes
-		Map<String, NavigationNode> canonicalEntityListNodes = NavigationConfigurationUtil.getNavigationTree().findCanonicalEntityListNodes();
+		final Map<String, NavigationNode> canonicalEntityListNodes = new HashMap<String, NavigationNode>();
+		NavigationConfigurationUtil.getNavigationTree().acceptVisior(new INavigationNodeVisitor() {
+			@Override
+			public void visit(NavigationNode node) {
+				String entityName = node.getHandler().getEntityNameForCanonicalEntityListNode();
+				if (entityName != null) {
+					NavigationNode old = canonicalEntityListNodes.put(entityName, node);
+					if (old != null) {
+						throw new IllegalStateException("found two 'canonical' entity list nodes for entity " + entityName + ": " + node.getPath() + " and " + old.getPath());
+					}
+				}
+			}
+		});
 
 		// create ad-hoc canonical list nodes for entities with no declared canonical list node
 		final NavigationNode globalRoot = NavigationConfigurationUtil.getNavigationTree().getRoot();
@@ -245,5 +252,5 @@ public class ApplicationSchema {
 		}
 		
 	}
-	
+
 }

@@ -8,6 +8,7 @@ package name.martingeisse.admin.entity.component.list;
 
 import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.component.list.populator.PopulatorBasedEntityListPanel;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.list.IEntityListFilterProvider;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
@@ -91,6 +92,10 @@ public abstract class AbstractEntityListPage extends AbstractAdminPage {
 	 * 
 	 * The default implementation fetches the filter from the handler of the
 	 * navigation node used to reach this page (if any).
+	 * 
+	 * TODO: Allow {@link PopulatorBasedEntityListPanel} to obtain its populators
+	 * from the navigation node the same way as this method does. Goal: Panel
+	 * subclasses only needed for special cases and for fragment populators.
 	 * 
 	 * @return the filter or null
 	 */

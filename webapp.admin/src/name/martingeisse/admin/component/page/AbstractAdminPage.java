@@ -10,6 +10,7 @@ import name.martingeisse.admin.component.pageborder.PageBorderUtil;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
@@ -97,13 +98,7 @@ public class AbstractAdminPage extends WebPage {
 			throw new RuntimeException("missing parameter '" + name + "' in page class: " + getClass() +
 				". This error indicates that the page was incorrectly mounted, since the parameter should be present regardless of the request sent by the client.");
 		} else {
-			// TODO: show a proper error page instead of throwing an exception
-			// TODO: make general "message page" / "error page" (message page with different
-			// message types -> styles) for cases when no continuation is needed
-			// or possible: unexpected exception, missing parameter, (NOT page expired
-			// -- log out in this case; message page needs to be logged in)
-			// 2nd page for "logged out messages" -> "logged out", "page expired", ...
-			throw new RuntimeException("missing parameter: " + name + ". This error indicates an incorrect request from the client.");
+			throw new RestartResponseException(new ErrorPage("Missing request parameter '" + name + "'."));
 		}
 	}
 
