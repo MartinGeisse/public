@@ -18,6 +18,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 /**
  * Base implementation of {@link IGlobalEntityListPresenter} that
  * stores the URL ID and the title in fields.
+ * 
+ * REFACTOR: no significant code here
  */
 public abstract class AbstractGlobalEntityListPresenter implements IGlobalEntityListPresenter, IEntityPresentationContributor, IPlugin {
 

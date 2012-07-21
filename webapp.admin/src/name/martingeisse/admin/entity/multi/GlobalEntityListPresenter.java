@@ -20,6 +20,8 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * The panel may implement {@link IPageable} or {@link IGetPageable} to obtain the
  * pageable. If the panel does not implement either interface or returns null in
  * getPageable() then framework paging support is disabled.
+ * 
+ * REFACTOR: no significant code here
  */
 public class GlobalEntityListPresenter extends AbstractGlobalEntityListPresenter {
 

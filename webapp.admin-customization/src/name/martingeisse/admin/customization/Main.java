@@ -27,6 +27,7 @@ import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNavigationContributor;
 import name.martingeisse.admin.entity.PrefixEliminatingEntityNameMappingStrategy;
+import name.martingeisse.admin.entity.component.list.RawEntityListPage;
 import name.martingeisse.admin.entity.multi.GlobalEntityListPresenter;
 import name.martingeisse.admin.entity.multi.IEntityListFieldOrder;
 import name.martingeisse.admin.entity.multi.populator.EntityFieldPopulator;
@@ -39,12 +40,12 @@ import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.database.MysqlDatabaseDescriptor;
-import name.martingeisse.admin.entity.single.raw.RawEntityPresentationPanel;
+import name.martingeisse.admin.entity.single.RawEntityPresentationPanel;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.handler.BookmarkableEntityInstanceNavigationHandler;
+import name.martingeisse.admin.navigation.handler.BookmarkableEntityListNavigationHandler;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
-import name.martingeisse.admin.navigation.handler.GlobalEntityListNavigationHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.wicket.autoform.AutoformPanel;
@@ -158,16 +159,18 @@ public class Main {
 		root.createChild(new UrlNavigationHandler("/").setId("home-dummy").setTitle("Home"));
 		final NavigationNode sub1 = root.createGlobalNavigationFolderChild("sub-one", "Sub One");
 		final NavigationNode sub1sub1 = sub1.createGlobalNavigationFolderChild("s1-sub-one", "s1 Sub One");
-		sub1sub1.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_roles").setId("roles").setTitle("ACL: Roles"));
-		sub1.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_users").setId("users").setTitle("ACL: Users"));
+		sub1sub1.createChild(new BookmarkableEntityListNavigationHandler(RawEntityListPage.class, "phpbb_acl_roles").setId("roles").setTitle("ACL: Roles"));
+		sub1.createChild(new BookmarkableEntityListNavigationHandler(RawEntityListPage.class, "phpbb_acl_users").setId("users").setTitle("ACL: Users"));
 //		root.createFolderChild("sub-two", "Sub Two");
 //		root.createFolderChild("sub-three", "Sub Three");
-		root.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_users").setId("users1").setTitle("Users-1"));
-		root.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_users").setId("users2").setTitle("Users-2"));
-		root.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_users").setId("users3").setTitle("Users-3"));
+		root.createChild(new BookmarkableEntityListNavigationHandler(RawEntityListPage.class, "phpbb_acl_users").setId("users1").setTitle("Users-1"));
+		root.createChild(new BookmarkableEntityListNavigationHandler(RawEntityListPage.class, "phpbb_acl_users").setId("users2").setTitle("Users-2"));
+		root.createChild(new BookmarkableEntityListNavigationHandler(RawEntityListPage.class, "phpbb_acl_users").setId("users3").setTitle("Users-3"));
 		
 //		final NavigationNode roles = root.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_roles").setId("roles").setTitle("Roles"));
 //		roles.createChild(new EntityInstancePresentationNavigationHandler("phpbb_acl_roles", "default").setId("${id}").setTitle("Instance"));
+		
+		root.createChild(new BookmarkableEntityListNavigationHandler(RawEntityListPage.class, "phpbb_acl_roles").setCanonicalEntityListNode(true));
 	}
 
 	/**

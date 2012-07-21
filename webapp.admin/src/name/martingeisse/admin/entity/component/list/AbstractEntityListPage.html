@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+	<head>
+	</head>
+	<body>
+		<wicket:extend>
+			<h1 wicket:id="entityName" />
+			<div style="overflow: auto; ">
+				<div wicket:id="topPagingNavigator" class="PagingNavigator" />
+				<div style="overflow: auto; margin: 0px 10px; ">
+					<wicket:child />
+				</div>
+				<div wicket:id="bottomPagingNavigator" class="PagingNavigator" />
+			</div>
+			<br />
+		</wicket:extend>
+	</body>
+</html>

@@ -4,10 +4,9 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.single.raw;
+package name.martingeisse.admin.entity.single;
 
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
-import name.martingeisse.admin.entity.single.EntityInstance;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;

@@ -10,6 +10,7 @@ import org.apache.wicket.markup.html.navigation.paging.IPageable;
 
 /**
  * Getter method interface for {@link IPageable}.
+ * TODO: still used?
  */
 public interface IGetPageable {
 

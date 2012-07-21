@@ -16,6 +16,7 @@ import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNameAware;
 import name.martingeisse.admin.entity.IEntityNavigationContributor;
 import name.martingeisse.admin.entity.IEntityPresentationContributor;
+import name.martingeisse.admin.entity.component.list.RawEntityListPage;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
@@ -23,7 +24,7 @@ import name.martingeisse.admin.navigation.INavigationNodeHandler;
 import name.martingeisse.admin.navigation.INavigationNodeVisitor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.handler.GlobalEntityListNavigationHandler;
+import name.martingeisse.admin.navigation.handler.BookmarkableEntityListNavigationHandler;
 
 /**
  * This class holds global data generated from plugins / capabilities and modifiers.
@@ -220,12 +221,16 @@ public class ApplicationSchema {
 		final NavigationNode globalRoot = NavigationConfigurationUtil.getNavigationTree().getRoot();
 		final NavigationNode allEntitiesNode = globalRoot.createGlobalNavigationFolderChild("all-entities", "All Entities");
 		for (EntityDescriptor entity : entityDescriptors) {
+			
+			// create a child node of "All Entities" for this entity
+			NavigationNode adHocListNode = allEntitiesNode.createChild(new BookmarkableEntityListNavigationHandler(RawEntityListPage.class, entity));
+			
+			// use the declared canonical list node if any, or the ad-hoc node as a fallback
 			final String entityName = entity.getTableName();
 			final NavigationNode declaredCanonicalListNode = canonicalEntityListNodes.get(entityName);
 			if (declaredCanonicalListNode == null) {
-				NavigationNode adHocCanonicalListNode = allEntitiesNode.createChild(new GlobalEntityListNavigationHandler(entity, "default"));
-				canonicalEntityListNodes.put(entityName, adHocCanonicalListNode);
-				entity.setCanonicalListNavigationNode(adHocCanonicalListNode);
+				canonicalEntityListNodes.put(entityName, adHocListNode);
+				entity.setCanonicalListNavigationNode(adHocListNode);
 			} else {
 				entity.setCanonicalListNavigationNode(declaredCanonicalListNode);
 			}
