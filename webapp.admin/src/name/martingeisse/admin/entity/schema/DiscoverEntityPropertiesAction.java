@@ -19,7 +19,7 @@ import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilt
 /**
  * This action discovers the entity properties for a single entity.
  */
-public class DiscoverEntityPropertiesAction implements IAction<Map<String, EntityPropertyDescriptor>> {
+class DiscoverEntityPropertiesAction implements IAction<Map<String, EntityPropertyDescriptor>> {
 
 	/**
 	 * the connection

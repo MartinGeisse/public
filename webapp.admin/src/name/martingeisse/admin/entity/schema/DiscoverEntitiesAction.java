@@ -13,11 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import name.martingeisse.admin.common.IAction;
+import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 
 /**
  * This action asks the database for all stored entities.
  */
-public class DiscoverEntitiesAction implements IAction<List<EntityDescriptor>> {
+class DiscoverEntitiesAction implements IAction<List<EntityDescriptor>> {
 
 	/**
 	 * the database

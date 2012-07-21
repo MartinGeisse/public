@@ -8,8 +8,8 @@ package name.martingeisse.admin.customization;
 
 import name.martingeisse.admin.application.IPlugin;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
-import name.martingeisse.admin.entity.IEntityInstanceAction;
-import name.martingeisse.admin.entity.IEntityInstanceActionContributor;
+import name.martingeisse.admin.entity.action.IEntityInstanceAction;
+import name.martingeisse.admin.entity.action.IEntityInstanceActionContributor;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.single.EntityInstance;
 

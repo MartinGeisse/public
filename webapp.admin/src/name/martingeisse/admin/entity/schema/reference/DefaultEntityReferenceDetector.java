@@ -4,7 +4,8 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity;
+package name.martingeisse.admin.entity.schema.reference;
+
 
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 

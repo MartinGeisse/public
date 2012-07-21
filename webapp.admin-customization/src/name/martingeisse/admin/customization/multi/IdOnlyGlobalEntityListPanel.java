@@ -13,8 +13,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.admin.entity.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;

@@ -4,7 +4,9 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.schema;
+package name.martingeisse.admin.entity.schema.reference;
+
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 /**
  * Information about a reference between entities. For any property of an
@@ -14,8 +16,11 @@ package name.martingeisse.admin.entity.schema;
  * Each instance of this class describes a reference at entity descriptor
  * level, i.e. it is not tied to a specific entity instance, but applies
  * to all instances of the entity.
+ * 
+ * Instances are created by the framework for the references returned
+ * by reference detectors ({@link IEntityReferenceDetector}).
  */
-public class EntityReferenceInfo {
+public final class EntityReferenceInfo {
 
 	/**
 	 * the source

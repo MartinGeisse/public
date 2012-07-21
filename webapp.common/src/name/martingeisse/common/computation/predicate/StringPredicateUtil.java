@@ -4,9 +4,8 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.common.terms.simple;
+package name.martingeisse.common.computation.predicate;
 
-import name.martingeisse.common.terms.IPredicate;
 
 /**
  * This class contains utility methods to deal with {@link String}-typed

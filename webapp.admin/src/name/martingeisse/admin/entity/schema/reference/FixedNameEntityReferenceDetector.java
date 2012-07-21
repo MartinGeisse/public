@@ -4,15 +4,16 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity;
+package name.martingeisse.admin.entity.schema.reference;
 
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
+
 
 /**
  * Detects an entity reference whenever a property name matches a fixed
  * string, with a fixed destination entity.
  */
-public class FixedNameEntityReferenceDetector implements IEntityReferenceDetector {
+public final class FixedNameEntityReferenceDetector implements IEntityReferenceDetector {
 
 	/**
 	 * the name

@@ -9,7 +9,7 @@ package name.martingeisse.admin.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.admin.entity.schema.AbstractDatabaseDescriptor;
+import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationTree;
 import name.martingeisse.admin.util.ParameterUtil;

@@ -16,7 +16,7 @@ import name.martingeisse.admin.common.IAction;
  * This action discovers the ID column(s) (primary key) for a single entity.
  * Returns null if no (visible) primary key was found.
  */
-public class DiscoverEntityIdAction implements IAction<String> {
+class DiscoverEntityIdAction implements IAction<String> {
 
 	/**
 	 * the connection

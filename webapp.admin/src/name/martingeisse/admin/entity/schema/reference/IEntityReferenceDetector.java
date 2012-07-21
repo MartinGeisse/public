@@ -4,11 +4,12 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity;
+package name.martingeisse.admin.entity.schema.reference;
 
 import java.io.Serializable;
 
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
+
 
 /**
  * Implementations are contributed by plugins and are able to

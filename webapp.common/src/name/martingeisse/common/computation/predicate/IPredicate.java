@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.common.terms;
+package name.martingeisse.common.computation.predicate;
 
 /**
  * This interface accepts object of a specific type and returns a boolean

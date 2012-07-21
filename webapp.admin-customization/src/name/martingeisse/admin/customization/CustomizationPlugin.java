@@ -8,7 +8,7 @@ package name.martingeisse.admin.customization;
 
 import name.martingeisse.admin.application.IPlugin;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
-import name.martingeisse.admin.entity.FixedNameEntityReferenceDetector;
+import name.martingeisse.admin.entity.schema.reference.FixedNameEntityReferenceDetector;
 
 /**
  * This plugin adds all customization code.

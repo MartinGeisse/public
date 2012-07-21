@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.schema;
+package name.martingeisse.admin.entity.schema.database;
 
 /**
  * Concrete implementation of {@link AbstractDatabaseDescriptor} for

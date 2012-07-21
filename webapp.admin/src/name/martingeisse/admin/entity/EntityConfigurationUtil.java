@@ -7,7 +7,9 @@
 package name.martingeisse.admin.entity;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
+import name.martingeisse.admin.entity.action.IEntityInstanceActionContributor;
 import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilter;
+import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
 
 /**
  * Utilities to access entity configuration in the {@link ApplicationConfiguration}.

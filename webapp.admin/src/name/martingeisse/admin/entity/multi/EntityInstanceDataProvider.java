@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import name.martingeisse.admin.entity.schema.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.single.EntityInstance;
 import name.martingeisse.common.jdbc.ResultSetReader;
 

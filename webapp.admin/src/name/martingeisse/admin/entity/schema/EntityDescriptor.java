@@ -18,11 +18,11 @@ import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.multi.IGlobalEntityListPresenter;
 import name.martingeisse.admin.entity.multi.RawGlobalEntityListPresenter;
+import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
+import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 import name.martingeisse.admin.entity.single.EntityInstance;
 import name.martingeisse.admin.entity.single.FetchEntityInstanceAction;
-import name.martingeisse.admin.entity.single.ISingleEntityOverviewPresenter;
 import name.martingeisse.admin.entity.single.ISingleEntityPresenter;
-import name.martingeisse.admin.entity.single.NullOverviewPresenter;
 import name.martingeisse.admin.navigation.NavigationNode;
 
 /**
@@ -77,16 +77,6 @@ public class EntityDescriptor implements Serializable {
 	private List<EntityReferenceInfo> outgoingReferences;
 
 	/**
-	 * the overviewPresenter
-	 */
-	private ISingleEntityOverviewPresenter overviewPresenter;
-
-	/**
-	 * the overviewPresenterScore
-	 */
-	private int overviewPresenterScore;
-
-	/**
 	 * the singlePresenters
 	 */
 	private List<ISingleEntityPresenter> singlePresenters;
@@ -113,8 +103,6 @@ public class EntityDescriptor implements Serializable {
 		this.properties = new HashMap<String, EntityPropertyDescriptor>();
 		this.incomingReferences = new ArrayList<EntityReferenceInfo>();
 		this.outgoingReferences = new ArrayList<EntityReferenceInfo>();
-		this.overviewPresenter = NullOverviewPresenter.instance;
-		this.overviewPresenterScore = Integer.MIN_VALUE;
 		this.singlePresenters = new ArrayList<ISingleEntityPresenter>();
 		this.globalListPresenters = new ArrayList<IGlobalEntityListPresenter>();
 		globalListPresenters.add(new RawGlobalEntityListPresenter()); // TODO: remove
@@ -281,22 +269,6 @@ public class EntityDescriptor implements Serializable {
 	}
 
 	/**
-	 * Contributes the specified overview presenter. This entity will use the specified presenter
-	 * if its score is at least as high as the score of the currently used presenter.
-	 * @param presenter the presenter to contribute
-	 * @param score the score of the presenter being contributed
-	 */
-	public void contibuteOverviewPresenter(final ISingleEntityOverviewPresenter presenter, final int score) {
-		if (presenter == null) {
-			throw new IllegalArgumentException("presenter argument is null");
-		}
-		if (score >= this.overviewPresenterScore) {
-			this.overviewPresenter = presenter;
-			this.overviewPresenterScore = score;
-		}
-	}
-
-	/**
 	 * Adds the default list presenter as a list presenter to this entity 
 	 * if no other presenter is explicitly registered with this entity.
 	 */
@@ -308,14 +280,6 @@ public class EntityDescriptor implements Serializable {
 				globalListPresenters.add(EntityConfigurationUtil.getGeneralEntityConfiguration().getDefaultEntityListPresenter());
 			}
 		}
-	}
-
-	/**
-	 * Getter method for the overviewPresenter.
-	 * @return the overviewPresenter
-	 */
-	public ISingleEntityOverviewPresenter getOverviewPresenter() {
-		return overviewPresenter;
 	}
 
 	/**

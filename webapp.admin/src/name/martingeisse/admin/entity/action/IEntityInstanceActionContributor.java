@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity;
+package name.martingeisse.admin.entity.action;
 
 import java.io.Serializable;
 

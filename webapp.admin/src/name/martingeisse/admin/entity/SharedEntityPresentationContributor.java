@@ -12,7 +12,7 @@ import name.martingeisse.admin.application.IPlugin;
 import name.martingeisse.admin.entity.multi.IGlobalEntityListPresenter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.single.ISingleEntityPresenter;
-import name.martingeisse.common.terms.IPredicate;
+import name.martingeisse.common.computation.predicate.IPredicate;
 
 /**
  * Simple implementation of {@link IEntityPresentationContributor}.
