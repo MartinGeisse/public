@@ -4,11 +4,12 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.pages;
+package name.martingeisse.admin.entity.component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.action.IEntityInstanceAction;
 import name.martingeisse.admin.entity.action.IEntityInstanceActionContributor;

@@ -4,10 +4,11 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.pages;
+package name.martingeisse.admin.navigation.component;
 
 import java.util.List;
 
+import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.NavigationUtil;
@@ -26,7 +27,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * It is meant as a page for nodes that have no content other
  * than their children.
  */
-public class GlobalNavigationFolderPage extends AbstractAdminPage {
+public class NavigationFolderPage extends AbstractAdminPage {
 
 	/**
 	 * the navigationPath
@@ -37,7 +38,7 @@ public class GlobalNavigationFolderPage extends AbstractAdminPage {
 	 * Constructor.
 	 * @param parameters the page parameters
 	 */
-	public GlobalNavigationFolderPage(final PageParameters parameters) {
+	public NavigationFolderPage(final PageParameters parameters) {
 		super(parameters);
 		this.navigationPath = NavigationUtil.getNavigationNodeFromParameter(parameters, true).getPath();
 	}

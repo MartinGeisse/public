@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.pages;
+package name.martingeisse.admin.component.page;
 
 import name.martingeisse.admin.navigation.INavigationLocator;
 

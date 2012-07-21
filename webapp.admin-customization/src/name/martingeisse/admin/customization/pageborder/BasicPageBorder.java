@@ -9,12 +9,12 @@ package name.martingeisse.admin.customization.pageborder;
 import java.util.List;
 
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.component.EntityTablePage;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.component.NavigationMenuView;
-import name.martingeisse.admin.pages.EntityTablePage;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.border.Border;

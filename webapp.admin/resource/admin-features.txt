@@ -3,7 +3,9 @@ Was hat das Admin-App-System als ganzes eigentlich zu bieten?
 - Plugins/Capabilities
 - Entity-Schema
 - Navigation
+- Page Borders
+
+aus Wicket / Common
 - Autoforms
-- ...
-
-
+- Computation Framework (predicate, mapping, accumulator, operation)
+- Icons, Helper Components, Helper Servlet Filters, Utils

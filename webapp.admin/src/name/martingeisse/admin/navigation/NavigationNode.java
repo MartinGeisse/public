@@ -13,9 +13,9 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
+import name.martingeisse.admin.component.pageborder.IPageBorderFactory;
+import name.martingeisse.admin.navigation.component.NavigationFolderPage;
 import name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler;
-import name.martingeisse.admin.pages.GlobalNavigationFolderPage;
-import name.martingeisse.admin.pages.border.IPageBorderFactory;
 import name.martingeisse.common.util.SpecialHandlingList;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -522,13 +522,13 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 
 	/**
 	 * Creates a new {@link NavigationNode} for the default 
-	 * {@link GlobalNavigationFolderPage} and adds it as a child node.
+	 * {@link NavigationFolderPage} and adds it as a child node.
 	 * @param id the node id of the child
 	 * @param title the title of the child
 	 * @return the new node
 	 */
 	public NavigationNode createGlobalNavigationFolderChild(final String id, final String title) {
-		return createChild(new BookmarkablePageNavigationHandler(GlobalNavigationFolderPage.class).setId(id).setTitle(title));
+		return createChild(new BookmarkablePageNavigationHandler(NavigationFolderPage.class).setId(id).setTitle(title));
 	}
 
 	/**

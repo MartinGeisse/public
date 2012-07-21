@@ -6,8 +6,8 @@
 
 package name.martingeisse.admin.entity.single;
 
+import name.martingeisse.admin.entity.component.EntityPresentationPage;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
-import name.martingeisse.admin.pages.EntityPresentationPage;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;

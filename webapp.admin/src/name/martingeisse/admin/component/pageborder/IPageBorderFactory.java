@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.pages.border;
+package name.martingeisse.admin.component.pageborder;
 
 
 import org.apache.wicket.markup.html.WebMarkupContainer;

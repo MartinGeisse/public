@@ -4,12 +4,12 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.pages;
+package name.martingeisse.admin.component.page;
 
 import name.martingeisse.admin.common.Dummy;
+import name.martingeisse.admin.component.pageborder.PageBorderUtil;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.pages.border.PageBorderUtil;
 
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;

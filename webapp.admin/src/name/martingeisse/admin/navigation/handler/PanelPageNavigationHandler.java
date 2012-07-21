@@ -6,8 +6,8 @@
 
 package name.martingeisse.admin.navigation.handler;
 
+import name.martingeisse.admin.component.page.PanelPage;
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.pages.PanelPage;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.StatelessLink;

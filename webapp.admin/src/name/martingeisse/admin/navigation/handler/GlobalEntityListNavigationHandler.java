@@ -6,8 +6,8 @@
 
 package name.martingeisse.admin.navigation.handler;
 
+import name.martingeisse.admin.entity.component.EntityTablePage;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.pages.EntityTablePage;
 
 /**
  * This class links to an entity list presentation page.
