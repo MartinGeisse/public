@@ -4,12 +4,13 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.multi;
+package name.martingeisse.admin.entity.component.list.raw;
 
 import java.sql.SQLException;
 
+import name.martingeisse.admin.entity.component.list.EntityInstanceDataProvider;
+import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.entity.single.EntityInstance;
 import name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer;
 import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
 import name.martingeisse.admin.util.IGetPageable;
@@ -26,9 +27,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
  * Raw presentation of entities.
@@ -43,12 +42,11 @@ public class RawEntityListPanel extends Panel implements IGetPageable {
 	/**
 	 * Constructor.
 	 * @param id the wicket id
-	 * @param entity the entity
-	 * @param parameters the page parameters
+	 * @param entityModel the entity model
 	 */
-	public RawEntityListPanel(final String id, final EntityDescriptor entity, final PageParameters parameters) {
+	public RawEntityListPanel(final String id, final IModel<EntityDescriptor> entityModel) {
 		super(id);
-		setDefaultModel(Model.of(entity));
+		setDefaultModel(entityModel);
 	}
 
 	/**

@@ -4,10 +4,10 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.multi;
+package name.martingeisse.admin.entity.component.list;
 
+import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.entity.single.EntityInstance;
 import name.martingeisse.wicket.util.zebra.ZebraDataView;
 
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
@@ -17,8 +17,6 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
  * Base class that uses a {@link DataView} to show a list of entity instances.
@@ -29,12 +27,11 @@ public abstract class AbstractEntityDataViewPanel extends Panel {
 	/**
 	 * Constructor.
 	 * @param id the wicket id
-	 * @param entity the entity
-	 * @param parameters the page parameters
+	 * @param entityModel the entity model
 	 */
-	public AbstractEntityDataViewPanel(final String id, final EntityDescriptor entity, final PageParameters parameters) {
+	public AbstractEntityDataViewPanel(final String id, final IModel<EntityDescriptor> entityModel) {
 		super(id);
-		setDefaultModel(Model.of(entity));
+		setDefaultModel(entityModel);
 	}
 	
 	/**

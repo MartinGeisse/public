@@ -15,8 +15,7 @@ import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNameAware;
 import name.martingeisse.admin.entity.IEntityNavigationContributor;
-import name.martingeisse.admin.entity.IEntityPresentationContributor;
-import name.martingeisse.admin.entity.component.list.RawEntityListPage;
+import name.martingeisse.admin.entity.component.list.raw.RawEntityListPanel;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
@@ -24,7 +23,7 @@ import name.martingeisse.admin.navigation.INavigationNodeHandler;
 import name.martingeisse.admin.navigation.INavigationNodeVisitor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.handler.BookmarkableEntityListNavigationHandler;
+import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
 
 /**
  * This class holds global data generated from plugins / capabilities and modifiers.
@@ -123,7 +122,6 @@ public class ApplicationSchema {
 		copyDatabaseList();
 		buildEntityDescriptors();
 		detectEntityReferences();
-		registerEntityPresenters();
 		createNavigation();
 	}
 	
@@ -184,19 +182,6 @@ public class ApplicationSchema {
 	}
 	
 	/**
-	 * Loops through all entities and registers their presenters, which in turn are contributed
-	 * by plugins.
-	 */
-	private void registerEntityPresenters() {
-		for (EntityDescriptor entity : entityDescriptors) {
-			for (IEntityPresentationContributor contributor : EntityConfigurationUtil.getEntityPresentationContributors()) {
-				contributor.contributeEntityPresenters(entity);
-			}
-			entity.addDefaultListPresenterIfNeeded();
-		}
-	}
-	
-	/**
 	 * Creates navigation nodes in the global navigation tree for each entity, based on the
 	 * globally defined template (in {@link GeneralEntityConfiguration}) and local navigation
 	 * trees defined in the {@link EntityDescriptor}s.
@@ -223,7 +208,8 @@ public class ApplicationSchema {
 		for (EntityDescriptor entity : entityDescriptors) {
 			
 			// create a child node of "All Entities" for this entity
-			NavigationNode adHocListNode = allEntitiesNode.createChild(new BookmarkableEntityListNavigationHandler(RawEntityListPage.class, entity));
+			INavigationNodeHandler handler = new EntityListPanelHandler(RawEntityListPanel.class, entity);
+			NavigationNode adHocListNode = allEntitiesNode.createChild(handler);
 			
 			// use the declared canonical list node if any, or the ad-hoc node as a fallback
 			final String entityName = entity.getTableName();

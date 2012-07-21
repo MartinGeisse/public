@@ -4,13 +4,14 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.multi.populator;
+package name.martingeisse.admin.entity.component.list.populator;
 
 import java.util.List;
 
-import name.martingeisse.admin.entity.multi.EntityInstanceDataProvider;
+import name.martingeisse.admin.entity.component.list.EntityInstanceDataProvider;
+import name.martingeisse.admin.entity.component.list.EntityListPanelPage;
+import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.entity.single.EntityInstance;
 import name.martingeisse.admin.util.IGetPageable;
 import name.martingeisse.wicket.util.zebra.ZebraDataGridView;
 
@@ -20,10 +21,12 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 
 /**
- * Raw presentation of entities.
+ * Populator-based presentation of entities.
+ * 
+ * Note that this class cannot be directly used in combination with {@link EntityListPanelPage}.
+ * Instead, a subclass must be created that passes the populators to the constructor of this class. 
  */
 public class PopulatorBasedEntityListPanel extends Panel implements IGetPageable {
 
@@ -35,12 +38,12 @@ public class PopulatorBasedEntityListPanel extends Panel implements IGetPageable
 	/**
 	 * Constructor.
 	 * @param id the wicket id
-	 * @param entity the entity
+	 * @param entityModel the entity descriptor model
 	 * @param cellPopulators the cell populators that do the actual presentation
 	 */
-	public PopulatorBasedEntityListPanel(final String id, final EntityDescriptor entity, final List<IEntityCellPopulator> cellPopulators) {
+	public PopulatorBasedEntityListPanel(final String id, final IModel<EntityDescriptor> entityModel, final List<IEntityCellPopulator> cellPopulators) {
 		super(id);
-		setDefaultModel(Model.of(entity));
+		setDefaultModel(entityModel);
 		this.cellPopulators = cellPopulators;
 	}
 

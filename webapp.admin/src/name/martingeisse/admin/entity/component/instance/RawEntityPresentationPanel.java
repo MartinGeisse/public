@@ -4,8 +4,9 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.single;
+package name.martingeisse.admin.entity.component.instance;
 
+import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -53,7 +54,8 @@ public class RawEntityPresentationPanel extends Panel {
 					PageParameters parameters = new PageParameters();
 					parameters.add("entity", reference.getDestination().getTableName());
 					parameters.add("id", fieldValue);
-					link = null; //new BookmarkablePageLink<Void>("link", EntityPresentationPage.class, parameters);
+					link = null; // TODO new BookmarkablePageLink<Void>("link", EntityPresentationPage.class, parameters);
+					throw new RuntimeException("NOT YET IMPLEMENTED");
 				}
 				link.add(new Label("value", "" + fieldValue));
 				item.add(link);

@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.multi.populator;
+package name.martingeisse.admin.entity.component.list.populator;
 
 /**
  * Base implementation of {@link IEntityCellPopulator} that stores the title.

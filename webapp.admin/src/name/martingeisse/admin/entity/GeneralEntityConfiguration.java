@@ -6,8 +6,6 @@
 
 package name.martingeisse.admin.entity;
 
-import name.martingeisse.admin.entity.multi.IEntityListFieldOrder;
-import name.martingeisse.admin.entity.multi.IGlobalEntityListPresenter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 /**
@@ -20,11 +18,6 @@ import name.martingeisse.admin.entity.schema.EntityDescriptor;
  * a central point (here) and not scatter it across the whole code.
  */
 public final class GeneralEntityConfiguration {
-
-	/**
-	 * the defaultEntityListPresenter
-	 */
-	private IGlobalEntityListPresenter defaultEntityListPresenter;
 
 	/**
 	 * the entityListFieldOrder
@@ -40,22 +33,6 @@ public final class GeneralEntityConfiguration {
 	 * Constructor.
 	 */
 	public GeneralEntityConfiguration() {
-	}
-
-	/**
-	 * Getter method for the defaultEntityListPresenter.
-	 * @return the defaultEntityListPresenter
-	 */
-	public IGlobalEntityListPresenter getDefaultEntityListPresenter() {
-		return defaultEntityListPresenter;
-	}
-
-	/**
-	 * Setter method for the defaultEntityListPresenter.
-	 * @param defaultEntityListPresenter the defaultEntityListPresenter to set
-	 */
-	public void setDefaultEntityListPresenter(final IGlobalEntityListPresenter defaultEntityListPresenter) {
-		this.defaultEntityListPresenter = defaultEntityListPresenter;
 	}
 
 	/**

@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.multi;
+package name.martingeisse.admin.entity.component.list;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
-import name.martingeisse.admin.entity.single.EntityInstance;
 import name.martingeisse.common.jdbc.ResultSetReader;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;

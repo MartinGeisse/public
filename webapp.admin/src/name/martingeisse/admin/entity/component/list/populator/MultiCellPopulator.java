@@ -4,12 +4,12 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.multi.populator;
+package name.martingeisse.admin.entity.component.list.populator;
 
 import java.util.Arrays;
 import java.util.List;
 
-import name.martingeisse.admin.entity.single.EntityInstance;
+import name.martingeisse.admin.entity.instance.EntityInstance;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.markup.repeater.Item;

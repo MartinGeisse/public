@@ -21,11 +21,6 @@ public final class EntityConfigurationUtil {
 	public static final Class<GeneralEntityConfiguration> GENERAL_ENTITY_CONFIGURATION_PARAMETER_KEY = GeneralEntityConfiguration.class;
 
 	/**
-	 * The capability key for entity presentation contributors.
-	 */
-	public static final Class<IEntityPresentationContributor> ENTITY_PRESENTATION_CONTRIBUTOR_CAPABILITY_KEY = IEntityPresentationContributor.class;
-
-	/**
 	 * The capability key for raw entity list property display filters.
 	 */
 	public static final Class<IRawEntityListPropertyDisplayFilter> RAW_ENTITY_LIST_PROPERTY_DISPLAY_FILTER_CAPABILITY_KEY = IRawEntityListPropertyDisplayFilter.class;
@@ -60,21 +55,6 @@ public final class EntityConfigurationUtil {
 	 */
 	public static void setGeneralEntityConfiguration(final GeneralEntityConfiguration generalEntityConfiguration) {
 		ApplicationConfiguration.get().getParameters().set(GENERAL_ENTITY_CONFIGURATION_PARAMETER_KEY, generalEntityConfiguration);
-	}
-
-	/**
-	 * Adds the specified entity presentation contributor.
-	 * @param contributor the contributor to add
-	 */
-	public static void addEntityPresentationContributor(final IEntityPresentationContributor contributor) {
-		ApplicationConfiguration.get().getCapabilities().add(ENTITY_PRESENTATION_CONTRIBUTOR_CAPABILITY_KEY, contributor);
-	}
-
-	/**
-	 * @return an {@link Iterable} for all entity presentation contributors.
-	 */
-	public static Iterable<IEntityPresentationContributor> getEntityPresentationContributors() {
-		return ApplicationConfiguration.get().getCapabilities().getIterable(ENTITY_PRESENTATION_CONTRIBUTOR_CAPABILITY_KEY);
 	}
 
 	/**

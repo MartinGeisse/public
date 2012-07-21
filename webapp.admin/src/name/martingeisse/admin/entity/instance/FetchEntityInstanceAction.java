@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.single;
+package name.martingeisse.admin.entity.instance;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

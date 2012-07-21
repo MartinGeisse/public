@@ -9,13 +9,13 @@ package name.martingeisse.admin.customization.multi;
 import java.util.Arrays;
 import java.util.List;
 
-import name.martingeisse.admin.entity.multi.populator.EntityFieldPopulator;
-import name.martingeisse.admin.entity.multi.populator.FragmentPopulator;
-import name.martingeisse.admin.entity.multi.populator.IEntityCellPopulator;
-import name.martingeisse.admin.entity.multi.populator.PopulatorBasedEntityListPanel;
+import name.martingeisse.admin.entity.component.list.populator.EntityFieldPopulator;
+import name.martingeisse.admin.entity.component.list.populator.FragmentPopulator;
+import name.martingeisse.admin.entity.component.list.populator.IEntityCellPopulator;
+import name.martingeisse.admin.entity.component.list.populator.PopulatorBasedEntityListPanel;
+import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.EntityInstanceFieldModel;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.entity.single.EntityInstance;
-import name.martingeisse.admin.entity.single.EntityInstanceFieldModel;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;
@@ -30,11 +30,11 @@ public class PopulatorDataViewPanel extends PopulatorBasedEntityListPanel {
 	/**
 	 * Constructor.
 	 * @param id the wicket id
-	 * @param entity the entity
+	 * @param entityModel the entity model
 	 * @param parameters the page parameters
 	 */
-	public PopulatorDataViewPanel(String id, EntityDescriptor entity, PageParameters parameters) {
-		super(id, entity, null);
+	public PopulatorDataViewPanel(String id, IModel<EntityDescriptor> entityModel, PageParameters parameters) {
+		super(id, entityModel, null);
 		setCellPopulators(createPopulatorList());
 	}
 

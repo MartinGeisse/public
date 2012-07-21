@@ -16,12 +16,10 @@ import java.util.Map;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
-import name.martingeisse.admin.entity.multi.IGlobalEntityListPresenter;
-import name.martingeisse.admin.entity.multi.RawGlobalEntityListPresenter;
+import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.FetchEntityInstanceAction;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
-import name.martingeisse.admin.entity.single.EntityInstance;
-import name.martingeisse.admin.entity.single.FetchEntityInstanceAction;
 import name.martingeisse.admin.navigation.NavigationNode;
 
 /**
@@ -76,11 +74,6 @@ public class EntityDescriptor implements Serializable {
 	private List<EntityReferenceInfo> outgoingReferences;
 
 	/**
-	 * the globalListPresenters
-	 */
-	private List<IGlobalEntityListPresenter> globalListPresenters;
-
-	/**
 	 * the canonicalListNavigationNode
 	 */
 	private NavigationNode canonicalListNavigationNode;
@@ -97,8 +90,6 @@ public class EntityDescriptor implements Serializable {
 		this.properties = new HashMap<String, EntityPropertyDescriptor>();
 		this.incomingReferences = new ArrayList<EntityReferenceInfo>();
 		this.outgoingReferences = new ArrayList<EntityReferenceInfo>();
-		this.globalListPresenters = new ArrayList<IGlobalEntityListPresenter>();
-		globalListPresenters.add(new RawGlobalEntityListPresenter()); // TODO: remove
 	}
 
 	/**
@@ -198,22 +189,6 @@ public class EntityDescriptor implements Serializable {
 	}
 
 	/**
-	 * Getter method for the globalListPresenters.
-	 * @return the globalListPresenters
-	 */
-	public List<IGlobalEntityListPresenter> getGlobalListPresenters() {
-		return globalListPresenters;
-	}
-
-	/**
-	 * Setter method for the globalListPresenters.
-	 * @param globalListPresenters the globalListPresenters to set
-	 */
-	public void setGlobalListPresenters(final List<IGlobalEntityListPresenter> globalListPresenters) {
-		this.globalListPresenters = globalListPresenters;
-	}
-
-	/**
 	 * Getter method for the canonicalListNavigationNode.
 	 * @return the canonicalListNavigationNode
 	 */
@@ -243,34 +218,6 @@ public class EntityDescriptor implements Serializable {
 	 */
 	public void setInstanceNavigationRootNode(final NavigationNode instanceNavigationRootNode) {
 		this.instanceNavigationRootNode = instanceNavigationRootNode;
-	}
-
-	/**
-	 * Adds the default list presenter as a list presenter to this entity 
-	 * if no other presenter is explicitly registered with this entity.
-	 */
-	public void addDefaultListPresenterIfNeeded() {
-
-		if (globalListPresenters.isEmpty()) {
-			final IGlobalEntityListPresenter presenter = EntityConfigurationUtil.getGeneralEntityConfiguration().getDefaultEntityListPresenter();
-			if (presenter != null) {
-				globalListPresenters.add(EntityConfigurationUtil.getGeneralEntityConfiguration().getDefaultEntityListPresenter());
-			}
-		}
-	}
-
-	/**
-	 * Returns the global list presenter with the specified URL ID.
-	 * @param urlId the URL ID
-	 * @return the presenter, or null if not found
-	 */
-	public IGlobalEntityListPresenter getGlobalListPresenter(final String urlId) {
-		for (final IGlobalEntityListPresenter presenter : getGlobalListPresenters()) {
-			if (presenter.getUrlId().equals(urlId)) {
-				return presenter;
-			}
-		}
-		return null;
 	}
 
 	/**

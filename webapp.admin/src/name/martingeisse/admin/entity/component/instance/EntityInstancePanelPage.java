@@ -4,9 +4,10 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.single;
+package name.martingeisse.admin.entity.component.instance;
 
 import name.martingeisse.admin.component.page.AbstractAdminPage;
+import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
 
@@ -17,7 +18,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
  * This class allows to display an entity instance using an existing panel
- * class that takes a model of type {@link EntityInstance}. This class
+ * class that takes a model of type {@link EntityDescriptor}. This class
  * is primarily used in combination with {@link EntityInstancePanelHandler}
  * to mount entity instance panels in the navigation.
  */

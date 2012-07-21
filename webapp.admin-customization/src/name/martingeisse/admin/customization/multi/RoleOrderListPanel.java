@@ -6,15 +6,15 @@
 
 package name.martingeisse.admin.customization.multi;
 
-import name.martingeisse.admin.entity.multi.AbstractEntityDataViewPanel;
+import name.martingeisse.admin.entity.component.list.AbstractEntityDataViewPanel;
+import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.entity.single.EntityInstance;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.AbstractRepeater;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RepeatingView;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.model.IModel;
 
 /**
  * Id-only presentation of entities.
@@ -24,11 +24,10 @@ public class RoleOrderListPanel extends AbstractEntityDataViewPanel {
 	/**
 	 * Constructor.
 	 * @param id the wicket id
-	 * @param entity the entity
-	 * @param parameters the page parameters
+	 * @param entityModel the entity model
 	 */
-	public RoleOrderListPanel(final String id, final EntityDescriptor entity, final PageParameters parameters) {
-		super(id, entity, parameters);
+	public RoleOrderListPanel(final String id, final IModel<EntityDescriptor> entityModel) {
+		super(id, entityModel);
 	}
 
 	/* (non-Javadoc)

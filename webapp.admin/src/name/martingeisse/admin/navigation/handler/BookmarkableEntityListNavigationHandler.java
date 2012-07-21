@@ -36,7 +36,7 @@ import org.apache.wicket.markup.html.WebPage;
  * TODO: add display name functionality to {@link EntityDescriptor} and use that
  * as the default for the node title.
  */
-public final class BookmarkableEntityListNavigationHandler extends BookmarkablePageNavigationHandler {
+public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNavigationHandler {
 
 	/**
 	 * the canonicalEntityListNode
@@ -59,6 +59,9 @@ public final class BookmarkableEntityListNavigationHandler extends BookmarkableP
 	 */
 	public BookmarkableEntityListNavigationHandler(final Class<? extends WebPage> pageClass, final String entityName) {
 		super(pageClass);
+		if (entityName == null) {
+			throw new IllegalArgumentException("entityName is null");
+		}
 		setId(entityName);
 		setTitle(entityName);
 		getImplicitPageParameters().add("entity", entityName);
