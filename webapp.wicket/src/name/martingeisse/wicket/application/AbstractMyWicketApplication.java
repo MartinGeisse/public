@@ -13,6 +13,7 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.version.CachingResourceVersion;
+import org.apache.wicket.request.resource.caching.version.LastModifiedResourceVersion;
 
 /**
  * Wicket {@link WebApplication} implementation for this application.
@@ -49,7 +50,10 @@ public abstract class AbstractMyWicketApplication extends WebApplication {
 		getMarkupSettings().setCompressWhitespace(true);
 		
 		// mount package resources using their revision number
-		getResourceSettings().setCachingStrategy(new FilenameWithVersionResourceCachingStrategy("-revision-", new CachingResourceVersion(new FirstLineResourceVersion())));
+		// NOTE: FirstLineResourceVersion is nice but only works when the file is *committed* on changes.
+		// LastModifiedResourceVersion should do as long as the last-modified-date is preserved on deployment.
+//		getResourceSettings().setCachingStrategy(new FilenameWithVersionResourceCachingStrategy("-revision-", new CachingResourceVersion(new FirstLineResourceVersion())));
+		getResourceSettings().setCachingStrategy(new FilenameWithVersionResourceCachingStrategy("-revision-", new CachingResourceVersion(new LastModifiedResourceVersion())));
 
 	}
 

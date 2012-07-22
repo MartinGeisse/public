@@ -20,7 +20,7 @@ tr.odd {
 	background-color: #ddd;
 }
 
-.OuterPageContainer {
+.outer-page-container {
 	width: 1000px;
 	min-height: 500px;
 	margin-left: auto;
@@ -29,25 +29,25 @@ tr.odd {
 	bottom: 0px;
 }
 
-.TopNavigationBar {
+.top-navigation-bar {
 	margin-bottom: 10px;
 	border-bottom: 1px solid #8080ff;
 	background-color: #c0c0ff;
 }
 
-.TopNavigationBar > * {
+.top-navigation-bar > * {
 	display: inline-block;
 	padding: 5px;
 	width: 100px;
 	text-align: center;
 }
 
-.TopNavigationBar a {
+.top-navigation-bar a {
 	text-decoration: none;
 	color: blue;
 }
 
-.LeftNavigationBar {
+.left-navigation-bar {
 	float: left;
 	margin: 5px;
 	padding: 5px;
@@ -56,25 +56,25 @@ tr.odd {
 	background-color: #c0c0ff;
 }
 
-.InnerPageContainer {
+.inner-page-container {
 	margin-top: 20px;
 	margin-left: 230px;
 	margin-right: 10px;
 }
 
-.DataGrid {
+.data-grid {
 	border-collapse: collapse;
 	background-color: #e0e0ff;
 }
 
-.DataGrid tr {
+.data-grid tr {
 }
 
-.DataGrid td {
+.data-grid td {
 	border: 1px solid #aaa;
 }
 
-.PagingNavigator a, .PagingNavigator em {
+.paging-navigator a, .paging-navigator em {
 	display: inline-block;
 	margin: 5px;
 	border: 1px solid #8080ff;
@@ -84,10 +84,52 @@ tr.odd {
 	text-decoration: none;
 }
 
-.PagingNavigator a, .PagingNavigator em {
+.paging-navigator a, .paging-navigator em {
 	background-color: #c0c0ff;
 }
 
-.PagingNavigator .goto em {
+.paging-navigator .goto em {
 	background-color: #c0ffc0;
+}
+
+.error-box {
+	margin: 3px 0px;
+	border: 1px solid #f00;
+	padding: 5px;
+	background-color: #fcc;
+	background-image: url("/wicket/resource/name.martingeisse.wicket.icons.silk.Dummy/exclamation.png");
+	background-repeat: no-repeat;
+	background-position: 5px 5px;
+}
+
+.error-box > div {
+	margin-left: 25px;
+}
+
+.warning-box {
+	margin: 3px 0px;
+	border: 1px solid #f80;
+	padding: 5px;
+	background-color: #ffa;
+	background-image: url("/wicket/resource/name.martingeisse.wicket.icons.silk.Dummy/error.png");
+	background-repeat: no-repeat;
+	background-position: 5px 5px;
+}
+
+.warning-box > div {
+	margin-left: 25px;
+}
+
+.info-box {
+	margin: 3px 0px;
+	border: 1px solid #44f;
+	padding: 5px;
+	background-color: #ccf;
+	background-image: url("/wicket/resource/name.martingeisse.wicket.icons.silk.Dummy/information.png");
+	background-repeat: no-repeat;
+	background-position: 5px 5px;
+}
+
+.info-box > div {
+	margin-left: 25px;
 }
