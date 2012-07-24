@@ -69,11 +69,11 @@ public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePag
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler#validate(name.martingeisse.admin.navigation.NavigationNode)
+	 * @see name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler#prepareMount(name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	protected void validate(NavigationNode node) {
-		super.validate(node);
+	protected void prepareMount(NavigationNode node) {
+		super.prepareMount(node);
 		if (getEntity() == null) {
 			throw new IllegalStateException("unknown entity in navigation node " + node.getPath() + ": "+ getEntityName());
 		}

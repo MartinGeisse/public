@@ -24,9 +24,6 @@ import org.apache.wicket.markup.html.WebPage;
  * unfiltered list node for the entity.
  * 
  * This page uses the entity name as a default for the node id and title.
- * 
- * TODO: add display name functionality to {@link EntityDescriptor} and use that
- * as the default for the node title.
  */
 public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNavigationHandler {
 
@@ -65,7 +62,7 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 			throw new IllegalArgumentException("entityName is null");
 		}
 		setId(entityName);
-		setTitle(entityName);
+		setTitle(null);
 		this.entityName = entityName;
 		this.canonicalEntityListNode = false;
 		this.filter = null;
@@ -134,13 +131,16 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler#validate(name.martingeisse.admin.navigation.NavigationNode)
+	 * @see name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler#prepareMount(name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	protected void validate(NavigationNode node) {
-		super.validate(node);
+	protected void prepareMount(NavigationNode node) {
+		super.prepareMount(node);
 		if (getEntity() == null) {
 			throw new IllegalStateException("unknown entity in navigation node " + node.getPath() + ": "+ getEntityName());
+		}
+		if (getTitle() == null) {
+			setTitle(getEntity().getDisplayName());
 		}
 	}
 	

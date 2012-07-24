@@ -8,6 +8,8 @@ package name.martingeisse.admin.entity;
 
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
+import org.apache.commons.lang.WordUtils;
+
 /**
  * This name mapping strategy checks if the name begins with
  * the specified prefix and if so, removes that prefix.
@@ -68,7 +70,10 @@ public class PrefixEliminatingEntityNameMappingStrategy implements IEntityNameMa
 	 */
 	@Override
 	public String determineEntityDisplayName(EntityDescriptor entity) {
-		return determineEntityName(entity);
+		String baseName = determineEntityName(entity);
+		baseName = baseName.replace('-', ' ');
+		baseName = baseName.replace('_', ' ');
+		return WordUtils.capitalizeFully(baseName);
 	}
 
 }
