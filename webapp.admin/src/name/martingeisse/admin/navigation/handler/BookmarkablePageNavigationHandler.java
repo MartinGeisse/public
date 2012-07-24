@@ -42,11 +42,6 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * stores this special parameter in the explicit parameter
  * set (in the mountRequestMappers() method); code using this
  * class should not change or remove that parameter.
- * 
- * TODO: prevent instances of this class from being used in
- * more than one navigation node. Since it stores "the"
- * navigation path, that cannot work.
- * 
  */
 public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHandler {
 
@@ -64,6 +59,11 @@ public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHan
 	 * the implicitPageParameters
 	 */
 	private final PageParameters implicitPageParameters;
+	
+	/**
+	 * the isMounted
+	 */
+	private boolean isMounted;
 
 	/**
 	 * Constructor.
@@ -73,6 +73,7 @@ public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHan
 		this.pageClass = pageClass;
 		this.explicitPageParameters = new PageParameters();
 		this.implicitPageParameters = new PageParameters();
+		this.isMounted = false;
 	}
 
 	/**
@@ -104,6 +105,10 @@ public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHan
 	 */
 	@Override
 	public final void mountRequestMappers(AdminWicketApplication application, NavigationNode node) {
+		if (isMounted) {
+			throw new IllegalStateException("this handler is already URL-mounted -- are you using the same handler for multiple navigation nodes?");
+		}
+		isMounted = true;
 		prepareMount(node);
 		explicitPageParameters.remove(NavigationUtil.NAVIGATION_PATH_PAGE_PARAMETER_NAME);
 		explicitPageParameters.add(NavigationUtil.NAVIGATION_PATH_PAGE_PARAMETER_NAME, node.getPath());
