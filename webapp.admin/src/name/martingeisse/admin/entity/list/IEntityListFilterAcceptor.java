@@ -11,12 +11,12 @@ package name.martingeisse.admin.entity.list;
  * This interface is implemented by objects that are able
  * to make use of an entity list filter.
  */
-public interface IEntityListFilterConsumer {
+public interface IEntityListFilterAcceptor {
 
 	/**
 	 * Sets the entity list filter for this consumer.
 	 * @param filter the entity list filter
 	 */
-	public void setEntityListFilter(IEntityListFilter filter);
+	public void acceptEntityListFilter(IEntityListFilter filter);
 	
 }

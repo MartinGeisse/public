@@ -46,6 +46,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * TODO: prevent instances of this class from being used in
  * more than one navigation node. Since it stores "the"
  * navigation path, that cannot work.
+ * 
  */
 public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHandler {
 

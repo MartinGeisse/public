@@ -4,12 +4,11 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.component.instance;
+package name.martingeisse.admin.entity.component.instance.page;
 
 import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
 
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -18,11 +17,11 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
  * This class allows to display an entity instance using an existing panel
- * class that takes a model of type {@link EntityDescriptor}. This class
- * is primarily used in combination with {@link EntityInstancePanelHandler}
- * to mount entity instance panels in the navigation.
+ * class that takes a model of type {@link EntityDescriptor}. The
+ * concrete subclass must determine the panel class to use, a model for
+ * the entity instances, and strategies for the panel.
  */
-public class EntityInstancePanelPage extends AbstractAdminPage {
+public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage {
 
 	/**
 	 * the instance
@@ -33,27 +32,8 @@ public class EntityInstancePanelPage extends AbstractAdminPage {
 	 * Constructor.
 	 * @param parameters the page parameters
 	 */
-	public EntityInstancePanelPage(final PageParameters parameters) {
+	public AbstractEntityInstancePanelPage(final PageParameters parameters) {
 		super(parameters);
-	}
-	
-	/**
-	 * @return the entity id
-	 */
-	private int determineId() {
-		return getRequiredStringParameter(getPageParameters(), "id", true).toInt(); // TODO error handling, take ID type from entity descriptor
-	}
-	
-	/**
-	 * @return the panel class
-	 */
-	private Class<? extends Panel> determinePanelClass() {
-		String className = getRequiredStringParameter(getPageParameters(), "panelClass", true).toString();
-		try {
-			return Class.forName(className).asSubclass(Panel.class);
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException("no such panel class: " + className);
-		}
 	}
 	
 	/* (non-Javadoc)
@@ -73,14 +53,6 @@ public class EntityInstancePanelPage extends AbstractAdminPage {
 		}
 	}
 	
-	/**
-	 * Getter method for the instance.
-	 * @return the instance
-	 */
-	public EntityInstance getInstance() {
-		return instance;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Page#onBeforeRender()
 	 */
@@ -88,12 +60,41 @@ public class EntityInstancePanelPage extends AbstractAdminPage {
 	protected void onBeforeRender() {
 		
 		// actually fetch the entity instance to show
-		EntityDescriptor entity = determineEntity(getPageParameters());
+		EntityDescriptor entity = determineEntityType();
 		instance = entity.fetchSingleInstance(determineId());
 		
 		// base class behavior
 		super.onBeforeRender();
 		
 	}
+	
+	/**
+	 * Getter method for the instance.
+	 * @return the instance
+	 */
+	public final EntityInstance getInstance() {
+		return instance;
+	}
+	
+	/**
+	 * Determines the entity ID. The default implementation uses the "id" page parameter.
+	 * @return the entity id
+	 */
+	private int determineId() {
+		// TODO error handling, take ID type from entity descriptor
+		return getRequiredStringParameter(getPageParameters(), "id", true).toInt(); 
+	}
+
+	/**
+	 * Determines the entity type to use.
+	 * @return the entity type.
+	 */
+	protected abstract EntityDescriptor determineEntityType();
+	
+	/**
+	 * Determines the class of the panel to use
+	 * @return the panel class
+	 */
+	protected abstract Class<? extends Panel> determinePanelClass();
 
 }

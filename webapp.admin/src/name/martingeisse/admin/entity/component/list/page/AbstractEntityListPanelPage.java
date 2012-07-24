@@ -4,54 +4,40 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.component.list;
+package name.martingeisse.admin.entity.component.list.page;
 
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
-import name.martingeisse.admin.entity.list.IEntityListFilterConsumer;
+import name.martingeisse.admin.entity.list.IEntityListFilterAcceptor;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
 import name.martingeisse.admin.util.IGetPageable;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
  * This class allows to display an entity list using an existing panel
- * class that takes a model of type {@link EntityInstance}. This class
- * is primarily used in combination with {@link EntityInstancePanelHandler}
- * to mount entity instance panels in the navigation.
+ * class that takes a model of type {@link EntityInstance}. The concrete
+ * subclass must supply the panel class and strategies for the panel
+ * (such as an entity list filter).
  * 
  * The panel may implement either {@link IPageable} or {@link IGetPageable}
  * to enable framework paging support.
  * 
- * The panel may implement {@link IEntityListFilterConsumer} to receive
+ * The panel may implement {@link IEntityListFilterAcceptor} to receive
  * entity list filters from the navigation node.
  */
-public class EntityListPanelPage extends AbstractEntityListPage {
+public abstract class AbstractEntityListPanelPage extends AbstractEntityListPage {
 
 	/**
 	 * Constructor.
 	 * @param parameters the page parameters
 	 */
-	public EntityListPanelPage(final PageParameters parameters) {
+	public AbstractEntityListPanelPage(final PageParameters parameters) {
 		super(parameters);
-	}
-
-	/**
-	 * @return the panel class
-	 */
-	private Class<? extends Panel> determinePanelClass() {
-		final String className = getRequiredStringParameter(getPageParameters(), "panelClass", true).toString();
-		try {
-			return Class.forName(className).asSubclass(Panel.class);
-		} catch (final ClassNotFoundException e) {
-			throw new RuntimeException("no such panel class: " + className);
-		}
 	}
 
 	/* (non-Javadoc)
@@ -63,7 +49,7 @@ public class EntityListPanelPage extends AbstractEntityListPage {
 		
 		// create the panel
 		final Class<? extends Panel> panelClass = determinePanelClass();
-		final IModel<EntityDescriptor> model = new EntityDescriptorModel();
+		final IModel<EntityDescriptor> model = determineEntityTypeModel();
 		final Panel panel;
 		try {
 			panel = panelClass.getConstructor(String.class, IModel.class).newInstance("panel", model);
@@ -74,11 +60,11 @@ public class EntityListPanelPage extends AbstractEntityListPage {
 		}
 		
 		// if the panel accepts entity list filters, fetch them from the navigation node
-		if (panel instanceof IEntityListFilterConsumer) {
-			IEntityListFilterConsumer consumer = (IEntityListFilterConsumer)panel;
-			IEntityListFilter filter = getEntityListFilter();
+		if (panel instanceof IEntityListFilterAcceptor) {
+			IEntityListFilterAcceptor filterAcceptor = (IEntityListFilterAcceptor)panel;
+			IEntityListFilter filter = determineEntityListFilter();
 			if (filter != null) {
-				consumer.setEntityListFilter(filter);
+				filterAcceptor.acceptEntityListFilter(filter);
 			}
 		}
 		
@@ -88,6 +74,18 @@ public class EntityListPanelPage extends AbstractEntityListPage {
 		
 	}
 
+	/**
+	 * Determines the panel class to use.
+	 * @return the panel class
+	 */
+	protected abstract Class<? extends Panel> determinePanelClass();
+
+	/**
+	 * Determiens the entity list filter to use.
+	 * @return the entity list filter
+	 */
+	protected abstract IEntityListFilter determineEntityListFilter();
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityListPage#getPageable()
 	 */
@@ -104,18 +102,4 @@ public class EntityListPanelPage extends AbstractEntityListPage {
 		}
 	}
 
-	/**
-	 * This model returns the entity descriptor.
-	 */
-	private class EntityDescriptorModel extends LoadableDetachableModel<EntityDescriptor> {
-
-		/* (non-Javadoc)
-		 * @see org.apache.wicket.model.LoadableDetachableModel#load()
-		 */
-		@Override
-		protected EntityDescriptor load() {
-			return determineEntity(getPageParameters());
-		}
-
-	}
 }

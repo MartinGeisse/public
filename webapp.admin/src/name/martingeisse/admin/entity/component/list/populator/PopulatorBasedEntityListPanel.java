@@ -9,7 +9,7 @@ package name.martingeisse.admin.entity.component.list.populator;
 import java.util.List;
 
 import name.martingeisse.admin.entity.component.list.EntityInstanceDataProvider;
-import name.martingeisse.admin.entity.component.list.EntityListPanelPage;
+import name.martingeisse.admin.entity.component.list.page.EntityListPanelPage;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.util.IGetPageable;

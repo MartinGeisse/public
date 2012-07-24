@@ -8,6 +8,8 @@ package name.martingeisse.admin.navigation.handler;
 
 import name.martingeisse.admin.entity.IEntityNameAware;
 import name.martingeisse.admin.entity.IGetEntityId;
+import name.martingeisse.admin.entity.schema.ApplicationSchema;
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.NavigationNode;
 
 import org.apache.wicket.Page;
@@ -56,6 +58,14 @@ public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePag
 	public void setEntityName(String entityName) {
 		getImplicitPageParameters().remove("entity");
 		getImplicitPageParameters().add("entity", entityName);
+	}
+
+	/**
+	 * Returns the entity for the entity name stored in this handler.
+	 * @return the entity
+	 */
+	public EntityDescriptor getEntity() {
+		return ApplicationSchema.instance.findEntity(getEntityName());		
 	}
 	
 	/* (non-Javadoc)

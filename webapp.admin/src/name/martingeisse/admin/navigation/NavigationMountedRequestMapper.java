@@ -144,6 +144,9 @@ public final class NavigationMountedRequestMapper extends MountedMapper {
 			if (parameters == null) {
 				parameters = new PageParameters();
 			}
+			for (String key : implicitParameters.getNamedKeys()) {
+				parameters.remove(key);
+			}
 			parameters.mergeWith(implicitParameters);
 			NavigationUtil.setParameterValue(parameters, navigationPath);
 			return parameters;

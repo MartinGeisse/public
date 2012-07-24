@@ -7,9 +7,9 @@
 package name.martingeisse.admin.navigation.handler;
 
 import name.martingeisse.admin.component.page.AbstractAdminPage;
-import name.martingeisse.admin.entity.component.list.AbstractEntityListPage;
+import name.martingeisse.admin.entity.component.list.page.AbstractEntityListPage;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
-import name.martingeisse.admin.entity.list.IEntityListFilterProvider;
+import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.INavigationLocationAware;
 
@@ -38,7 +38,12 @@ import org.apache.wicket.markup.html.WebPage;
  * TODO: add display name functionality to {@link EntityDescriptor} and use that
  * as the default for the node title.
  */
-public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNavigationHandler implements IEntityListFilterProvider {
+public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNavigationHandler {
+
+	/**
+	 * the entityName
+	 */
+	private String entityName;
 
 	/**
 	 * the canonicalEntityListNode
@@ -71,8 +76,27 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 		}
 		setId(entityName);
 		setTitle(entityName);
-		getImplicitPageParameters().add("entity", entityName);
+		this.entityName = entityName;
 		this.canonicalEntityListNode = false;
+		this.filter = null;
+	}
+
+	/**
+	 * Getter method for the entityName.
+	 * @return the entityName
+	 */
+	public String getEntityName() {
+		return entityName;
+	}
+
+	/**
+	 * Setter method for the entityName.
+	 * @param entityName the entityName to set
+	 * @return this for chaining
+	 */
+	public BookmarkableEntityListNavigationHandler setEntityName(final String entityName) {
+		this.entityName = entityName;
+		return this;
 	}
 
 	/**
@@ -111,20 +135,20 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 		return this;
 	}
 
+	/**
+	 * Returns the entity for the entity name stored in this handler.
+	 * @return the entity
+	 */
+	public EntityDescriptor getEntity() {
+		return ApplicationSchema.instance.findEntity(getEntityName());		
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.navigation.handler.AbstractNavigationNodeHandler#getEntityNameForCanonicalEntityListNode()
 	 */
 	@Override
 	public String getEntityNameForCanonicalEntityListNode() {
-		return (canonicalEntityListNode ? getImplicitPageParameters().get("entity").toString() : null);
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.entity.list.IEntityListFilterProvider#getEntityListFilter()
-	 */
-	@Override
-	public IEntityListFilter getEntityListFilter() {
-		return filter;
+		return (canonicalEntityListNode ? entityName : null);
 	}
 
 }

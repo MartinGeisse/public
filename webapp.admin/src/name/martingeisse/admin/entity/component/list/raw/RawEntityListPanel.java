@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import name.martingeisse.admin.entity.component.list.EntityInstanceDataProvider;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
-import name.martingeisse.admin.entity.list.IEntityListFilterConsumer;
+import name.martingeisse.admin.entity.list.IEntityListFilterAcceptor;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer;
 import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
@@ -34,7 +34,7 @@ import org.apache.wicket.model.PropertyModel;
 /**
  * Raw presentation of entities.
  */
-public class RawEntityListPanel extends Panel implements IGetPageable, IEntityListFilterConsumer {
+public class RawEntityListPanel extends Panel implements IGetPageable, IEntityListFilterAcceptor {
 
 	/**
 	 * the filter
@@ -91,10 +91,10 @@ public class RawEntityListPanel extends Panel implements IGetPageable, IEntityLi
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.entity.list.IEntityListFilterConsumer#setEntityListFilter(name.martingeisse.admin.entity.list.IEntityListFilter)
+	 * @see name.martingeisse.admin.entity.list.IEntityListFilterAcceptor#acceptEntityListFilter(name.martingeisse.admin.entity.list.IEntityListFilter)
 	 */
 	@Override
-	public void setEntityListFilter(IEntityListFilter filter) {
+	public void acceptEntityListFilter(IEntityListFilter filter) {
 		this.filter = filter;
 	}
 	

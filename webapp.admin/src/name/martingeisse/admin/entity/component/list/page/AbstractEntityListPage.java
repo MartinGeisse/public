@@ -4,22 +4,17 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.component.list;
+package name.martingeisse.admin.entity.component.list.page;
 
 import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
-import name.martingeisse.admin.entity.component.list.populator.PopulatorBasedEntityListPanel;
-import name.martingeisse.admin.entity.list.IEntityListFilter;
-import name.martingeisse.admin.entity.list.IEntityListFilterProvider;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.navigation.INavigationNodeHandler;
-import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.NavigationUtil;
 
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
@@ -33,13 +28,10 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * This class supports obtaining an entity list filter from the
  * corresponding navigation node. However, this class itself
  * does not use the filter automatically in any way.
+ * 
+ * TODO: Rename to AbstractPaginatedAdminPage
  */
 public abstract class AbstractEntityListPage extends AbstractAdminPage {
-
-	/**
-	 * the entity
-	 */
-	private EntityDescriptor entity;
 	
 	/**
 	 * Constructor.
@@ -47,7 +39,6 @@ public abstract class AbstractEntityListPage extends AbstractAdminPage {
 	 */
 	public AbstractEntityListPage(final PageParameters parameters) {
 		super(parameters);
-		entity = determineEntity(parameters);
 	}
 	
 	/* (non-Javadoc)
@@ -58,7 +49,7 @@ public abstract class AbstractEntityListPage extends AbstractAdminPage {
 		super.onInitialize();
 	
 		// create components
-		String entityNameKey = ("schema.entity." + EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityName(entity));
+		String entityNameKey = ("schema.entity." + EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityName(determineEntityTypeModel().getObject()));
 		StringResourceModel entityDisplayNameModel = new StringResourceModel(entityNameKey, this, null);
 		getMainContainer().add(new Label("entityName", entityDisplayNameModel));
 		IPageable pageable = getPageable();
@@ -73,12 +64,10 @@ public abstract class AbstractEntityListPage extends AbstractAdminPage {
 	}
 
 	/**
-	 * Getter method for the entity.
-	 * @return the entity
+	 * Determines the model for the entity type for the panel.
+	 * @return the model for the entity type.
 	 */
-	public EntityDescriptor getEntity() {
-		return entity;
-	}
+	protected abstract IModel<EntityDescriptor> determineEntityTypeModel();
 	
 	/**
 	 * Returns the {@link IPageable} for automatic paging support, or null to disable
@@ -86,29 +75,5 @@ public abstract class AbstractEntityListPage extends AbstractAdminPage {
 	 * @return the pageable or null
 	 */
 	protected abstract IPageable getPageable();
-	
-	/**
-	 * This method obtains the entity list filter (if any) for this page.
-	 * 
-	 * The default implementation fetches the filter from the handler of the
-	 * navigation node used to reach this page (if any).
-	 * 
-	 * TODO: Allow {@link PopulatorBasedEntityListPanel} to obtain its populators
-	 * from the navigation node the same way as this method does. Goal: Panel
-	 * subclasses only needed for special cases and for fragment populators.
-	 * 
-	 * @return the filter or null
-	 */
-	public IEntityListFilter getEntityListFilter() {
-		NavigationNode navigationNode = NavigationUtil.getNavigationNodeForPage(this);
-		if (navigationNode != null) {
-			INavigationNodeHandler handler = navigationNode.getHandler();
-			if (handler instanceof IEntityListFilterProvider) {
-				IEntityListFilterProvider provider = (IEntityListFilterProvider)handler;
-				return provider.getEntityListFilter();
-			}
-		}
-		return null;
-	}
 	
 }

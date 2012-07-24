@@ -7,8 +7,6 @@
 package name.martingeisse.admin.component.page;
 
 import name.martingeisse.admin.component.pageborder.PageBorderUtil;
-import name.martingeisse.admin.entity.schema.ApplicationSchema;
-import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -102,20 +100,4 @@ public class AbstractAdminPage extends WebPage {
 		}
 	}
 
-	/**
-	 * Looks up the 'entity' parameter and returns the {@link EntityDescriptor} for it. This method
-	 * throws an exception (TODO error page) if the parameter is missing or is not the name
-	 * of any entity.
-	 * @param parameters the page parameters
-	 * @return the entity descriptor
-	 */
-	protected EntityDescriptor determineEntity(PageParameters parameters) {
-		String entityName = getRequiredStringParameter(parameters, "entity", true).toString();
-		EntityDescriptor entity = ApplicationSchema.instance.findEntity(entityName);
-		if (entity == null) {
-			throw new RuntimeException("TODO: error page; entity not found: " + entityName);
-		}
-		return entity;
-	}
-	
 }
