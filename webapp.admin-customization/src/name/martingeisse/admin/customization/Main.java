@@ -155,18 +155,18 @@ public class Main {
 		root.createChild(new UrlNavigationHandler("/").setId("home-dummy").setTitle("Home"));
 		final NavigationNode sub1 = root.createGlobalNavigationFolderChild("sub-one", "Sub One");
 		sub1.createGlobalNavigationFolderChild("s1-sub-one", "s1 Sub One");
-//		sub1sub1.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "phpbb_acl_roles").setId("roles").setTitle("ACL: Roles"));
-//		sub1.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "phpbb_acl_users").setId("users").setTitle("ACL: Users"));
+//		sub1sub1.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "acl_roles").setId("roles").setTitle("ACL: Roles"));
+//		sub1.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "acl_users").setId("users").setTitle("ACL: Users"));
 //		root.createFolderChild("sub-two", "Sub Two");
 //		root.createFolderChild("sub-three", "Sub Three");
-//		root.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "phpbb_acl_users").setId("users1").setTitle("Users-1"));
-//		root.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "phpbb_acl_users").setId("users2").setTitle("Users-2"));
-//		root.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "phpbb_acl_users").setId("users3").setTitle("Users-3"));
+//		root.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "acl_users").setId("users1").setTitle("Users-1"));
+//		root.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "acl_users").setId("users2").setTitle("Users-2"));
+//		root.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "acl_users").setId("users3").setTitle("Users-3"));
 		
-//		final NavigationNode roles = root.createChild(new GlobalEntityListNavigationHandler("phpbb_acl_roles").setId("roles").setTitle("Roles"));
-//		roles.createChild(new EntityInstancePresentationNavigationHandler("phpbb_acl_roles", "default").setId("${id}").setTitle("Instance"));
+//		final NavigationNode roles = root.createChild(new GlobalEntityListNavigationHandler("acl_roles").setId("roles").setTitle("Roles"));
+//		roles.createChild(new EntityInstancePresentationNavigationHandler("acl_roles", "default").setId("${id}").setTitle("Instance"));
 		
-//		root.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "phpbb_acl_roles").setCanonicalEntityListNode(true));
+//		root.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "acl_roles").setCanonicalEntityListNode(true));
 
 		IEntityListFilter myFilter = new IEntityListFilter() {
 			@Override
@@ -180,16 +180,16 @@ public class Main {
 			}
 		};
 		
-		root.createChild(new EntityListPanelHandler(MyPopulatorListPanel.class, "phpbb_acl_roles").setTitle("Roles*"));
+		root.createChild(new EntityListPanelHandler(MyPopulatorListPanel.class, "acl_roles").setTitle("Roles*"));
 		{
 			IEntityCellPopulator description = new EntityFieldPopulator("Role Description", "role_description");
 			IEntityCellPopulator order = new EntityFieldPopulator("Role Order", "role_order");
 			@SuppressWarnings("unchecked")
 			IEntityCellPopulator multi = new MultiCellPopulator("Test", new EntityFieldPopulator(null, "role_description"), new EntityFieldPopulator(null, "role_order"));
-			root.createChild(new PopulatorBasedEntityListHandler("phpbb_acl_roles", description, order, multi).setId("X").setTitle("Roles**"));
+			root.createChild(new PopulatorBasedEntityListHandler("acl_roles", description, order, multi).setId("X").setTitle("Roles**"));
 		}
-		root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "phpbb_acl_roles").setId("A").setTitle("Roles+"));
-		root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "phpbb_acl_roles").setFilter(myFilter).setId("B").setTitle("Roles-"));
+		root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setId("A").setTitle("Roles+"));
+		root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(myFilter).setId("B").setTitle("Roles-"));
 	}
 
 	/**

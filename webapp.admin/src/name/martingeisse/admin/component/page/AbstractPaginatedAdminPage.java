@@ -50,7 +50,7 @@ public abstract class AbstractPaginatedAdminPage extends AbstractAdminPage {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		getMainContainer().add(new Label("entityName", createTitleModel()));
+		getMainContainer().add(new Label("title", createTitleModel()));
 	}
 
 	/**

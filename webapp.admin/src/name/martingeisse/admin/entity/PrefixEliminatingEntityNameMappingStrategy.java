@@ -11,6 +11,7 @@ import name.martingeisse.admin.entity.schema.EntityDescriptor;
 /**
  * This name mapping strategy checks if the name begins with
  * the specified prefix and if so, removes that prefix.
+ * The display name is set to the name.
  */
 public class PrefixEliminatingEntityNameMappingStrategy implements IEntityNameMappingStrategy {
 
@@ -50,16 +51,24 @@ public class PrefixEliminatingEntityNameMappingStrategy implements IEntityNameMa
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.application.capabilities.IEntityNameMappingStrategy#getEntityName(name.martingeisse.admin.schema.EntityDescriptor)
+	 * @see name.martingeisse.admin.entity.IEntityNameMappingStrategy#determineEntityName(name.martingeisse.admin.entity.schema.EntityDescriptor)
 	 */
 	@Override
-	public String getEntityName(EntityDescriptor entity) {
+	public String determineEntityName(EntityDescriptor entity) {
 		String name = entity.getTableName();
 		if (name.startsWith(prefix)) {
 			return name.substring(prefix.length());
 		} else {
 			return name;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.IEntityNameMappingStrategy#determineEntityDisplayName(name.martingeisse.admin.entity.schema.EntityDescriptor)
+	 */
+	@Override
+	public String determineEntityDisplayName(EntityDescriptor entity) {
+		return determineEntityName(entity);
 	}
 
 }

@@ -7,7 +7,6 @@
 package name.martingeisse.admin.entity.component.list.page;
 
 import name.martingeisse.admin.component.page.AbstractPaginatedAdminPage;
-import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 import org.apache.wicket.model.IModel;
@@ -33,7 +32,9 @@ public abstract class AbstractEntityListPage extends AbstractPaginatedAdminPage 
 	 */
 	@Override
 	protected IModel<String> createTitleModel() {
-		String entityNameKey = ("schema.entity." + EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityName(determineEntityTypeModel().getObject()));
+		IModel<EntityDescriptor> entityTypeModel = determineEntityTypeModel();
+		EntityDescriptor entity = entityTypeModel.getObject();
+		String entityNameKey = ("schema.entity." + entity.getName());
 		return new StringResourceModel(entityNameKey, this, null);
 	}
 

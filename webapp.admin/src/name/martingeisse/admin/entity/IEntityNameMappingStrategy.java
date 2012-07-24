@@ -11,7 +11,7 @@ import java.io.Serializable;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 /**
- * This strategy maps database table names to entity names.
+ * This strategy maps database table names to entity names and display names.
  * 
  * TODO: This interface should be used while building the schema.
  * It is currently only used when the displayed name for the
@@ -24,6 +24,13 @@ public interface IEntityNameMappingStrategy extends Serializable {
 	 * @param entity the entity
 	 * @return the entity name
 	 */
-	public String getEntityName(EntityDescriptor entity);
+	public String determineEntityName(EntityDescriptor entity);
+
+	/**
+	 * Returns the entity display name for the specified entity.
+	 * @param entity the entity
+	 * @return the entity display name
+	 */
+	public String determineEntityDisplayName(EntityDescriptor entity);
 	
 }

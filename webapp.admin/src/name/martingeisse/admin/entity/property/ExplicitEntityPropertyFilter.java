@@ -83,7 +83,7 @@ public class ExplicitEntityPropertyFilter extends AbstractFixedScoreEntityProper
 	 */
 	@Override
 	public Boolean isPropertyVisible(EntityDescriptor entityDescriptor, EntityPropertyDescriptor propertyDescriptor) {
-		if (!this.entityName.equals(entityDescriptor.getTableName())) {
+		if (!this.entityName.equals(entityDescriptor.getName())) {
 			return null;
 		} else {
 			return visiblePropertyNames.contains(propertyDescriptor.getName());

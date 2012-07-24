@@ -17,8 +17,8 @@ import java.awt.event.WindowEvent;
 import java.io.OutputStream;
 
 /**
- * TODO: document me
- *
+ * This class allows a simple preview of a rendered image (used to
+ * quickly test renderers).
  */
 public class ImageRendererPreviewFrame extends Frame {
 

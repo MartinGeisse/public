@@ -9,6 +9,7 @@ package name.martingeisse.admin.navigation.handler;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.admin.navigation.NavigationNode;
 
 import org.apache.wicket.markup.html.WebPage;
 
@@ -50,7 +51,7 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 	 * @param entity the entity type to link to
 	 */
 	public BookmarkableEntityListNavigationHandler(final Class<? extends WebPage> pageClass, final EntityDescriptor entity) {
-		this(pageClass, entity.getTableName());
+		this(pageClass, entity.getName());
 	}
 
 	/**
@@ -130,6 +131,17 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 	 */
 	public EntityDescriptor getEntity() {
 		return ApplicationSchema.instance.findEntity(getEntityName());		
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler#validate(name.martingeisse.admin.navigation.NavigationNode)
+	 */
+	@Override
+	protected void validate(NavigationNode node) {
+		super.validate(node);
+		if (getEntity() == null) {
+			throw new IllegalStateException("unknown entity in navigation node " + node.getPath() + ": "+ getEntityName());
+		}
 	}
 	
 	/* (non-Javadoc)

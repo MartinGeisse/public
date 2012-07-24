@@ -29,10 +29,11 @@ public interface IEntityReferenceDetector extends Serializable {
 	 * to look up entities since the global schema reference is not yet
 	 * initialized when this method is invoked.
 	 * @param entityName the name of the entity that contains the property
+	 * @param entityTableName the table name of the entity that contains the property
 	 * @param propertyName the name of the property
 	 * @return the name of the referenced entity, or null if the property
 	 * was not recognized as a reference
 	 */
-	public String detectEntityReference(ApplicationSchema schema, String entityName, String propertyName);
+	public String detectEntityReference(ApplicationSchema schema, String entityName, String entityTableName, String propertyName);
 	
 }

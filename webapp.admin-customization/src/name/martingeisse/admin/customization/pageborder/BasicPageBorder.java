@@ -8,7 +8,6 @@ package name.martingeisse.admin.customization.pageborder;
 
 import java.util.List;
 
-import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
@@ -50,7 +49,7 @@ public class BasicPageBorder extends Border {
 			protected void populateItem(ListItem<EntityDescriptor> item) {
 				EntityDescriptor entity = item.getModelObject();
 				AbstractLink link = entity.getCanonicalListNavigationNode().createLink("link");
-				link.add(new Label("name", EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityName(item.getModelObject()))); // TODO display name
+				link.add(new Label("name", item.getModelObject().getDisplayName()));
 				item.add(link);
 			}
 		});

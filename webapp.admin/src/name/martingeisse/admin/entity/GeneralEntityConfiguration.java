@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.entity;
 
-import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 /**
  * This class contains general configuration that applies to all entities.
@@ -65,16 +64,6 @@ public final class GeneralEntityConfiguration {
 	 */
 	public void setEntityNameMappingStrategy(final IEntityNameMappingStrategy entityNameMappingStrategy) {
 		this.entityNameMappingStrategy = entityNameMappingStrategy;
-	}
-
-	/**
-	 * Returns the entity name for the specified entity.
-	 * @param entity the entity
-	 * @return the name to display
-	 */
-	public String getEntityName(final EntityDescriptor entity) {
-		final IEntityNameMappingStrategy entityNameMappingStrategy = getEntityNameMappingStrategy();
-		return (entityNameMappingStrategy == null ? entity.getTableName() : entityNameMappingStrategy.getEntityName(entity));
 	}
 
 }

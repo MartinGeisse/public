@@ -103,7 +103,7 @@ public class SingleEntityPropertyFilter extends AbstractFixedScoreEntityProperty
 	 */
 	@Override
 	public Boolean isPropertyVisible(EntityDescriptor entityDescriptor, EntityPropertyDescriptor propertyDescriptor) {
-		if (this.entityName != null && !this.entityName.equals(entityDescriptor.getTableName())) {
+		if (this.entityName != null && !this.entityName.equals(entityDescriptor.getName())) {
 			return null;
 		}
 		if (!this.propertyName.equals(propertyDescriptor.getName())) {

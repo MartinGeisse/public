@@ -67,7 +67,7 @@ public class FetchEntityInstanceAction {
 	public EntityInstance execute() {
 
 		if (entity.getIdColumnName() == null) {
-			throw new RuntimeException("Cannot fetch entity instance for entity " + entity.getTableName() + ": ID column unknown");
+			throw new RuntimeException("Cannot fetch entity instance for entity " + entity.getName() + ": ID column unknown");
 		}
 		
 		Connection connection = null;

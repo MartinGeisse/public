@@ -16,7 +16,6 @@ import org.apache.wicket.markup.html.list.LoopItem;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
  * This presentation panel can be used with arbitrary entity instances
@@ -51,10 +50,12 @@ public class RawEntityPresentationPanel extends Panel {
 				if (reference == null || fieldValue == null) {
 					link = new WebMarkupContainer("link");
 				} else {
+					/*
 					PageParameters parameters = new PageParameters();
 					parameters.add("entity", reference.getDestination().getTableName());
 					parameters.add("id", fieldValue);
 					link = null; // TODO new BookmarkablePageLink<Void>("link", EntityPresentationPage.class, parameters);
+					*/
 					throw new RuntimeException("NOT YET IMPLEMENTED");
 				}
 				link.add(new Label("value", "" + fieldValue));

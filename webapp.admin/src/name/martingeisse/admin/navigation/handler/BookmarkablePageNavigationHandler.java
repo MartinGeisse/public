@@ -104,11 +104,22 @@ public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHan
 	 */
 	@Override
 	public final void mountRequestMappers(AdminWicketApplication application, NavigationNode node) {
+		validate(node);
 		explicitPageParameters.remove(NavigationUtil.NAVIGATION_PATH_PAGE_PARAMETER_NAME);
 		explicitPageParameters.add(NavigationUtil.NAVIGATION_PATH_PAGE_PARAMETER_NAME, node.getPath());
 		NavigationMountedRequestMapper mapper = new NavigationMountedRequestMapper(node.getPath(), pageClass);
 		mapper.getImplicitParameters().mergeWith(implicitPageParameters);
 		application.mount(mapper);
+	}
+	
+	/**
+	 * Subclasses may implement this method to validate the information contained in them.
+	 * This method is invoked by the framework before this node is URL-mounted. Subclasses
+	 * should throw an {@link IllegalStateException} if their fields are invalid.
+	 * 
+	 * @param node the navigation node
+	 */
+	protected void validate(NavigationNode node) {
 	}
 	
 	/* (non-Javadoc)

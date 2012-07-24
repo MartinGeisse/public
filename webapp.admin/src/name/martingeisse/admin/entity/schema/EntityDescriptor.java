@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.IEntityNameMappingStrategy;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.instance.FetchEntityInstanceAction;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
@@ -24,24 +24,26 @@ import name.martingeisse.admin.navigation.NavigationNode;
 
 /**
  * This class captures a descriptor for a database entity (table).
- * Instances are created either explicitly from code or implicitly
- * by fetching information from the database. Explicit and implicit
- * descriptors are then merged to build the final application schema.
- * 
- * List Presenters: Each entity keeps a set of named list presenters that are
- * able to create a user interface for lists of this entity. If no presenter
- * is registered, the default presenter from the {@link ApplicationConfiguration}
- * is used instead.
  * 
  * TODO: this class should not be serializable. Instead, models should be able
  * to detach and re-attach from/to instances of this class.
  * 
- * TODO: rename "tableName" to "name".
- * 
  * ID handling: This descriptor stores information about the entity ID (primary
  * key). Currently only single-column IDs are supported.
+ * 
+ * TODO: properly use name / displayName / tableName everywhere
  */
 public class EntityDescriptor implements Serializable {
+
+	/**
+	 * the name
+	 */
+	private String name;
+
+	/**
+	 * the displayName
+	 */
+	private String displayName;
 
 	/**
 	 * the database
@@ -90,6 +92,32 @@ public class EntityDescriptor implements Serializable {
 		this.properties = new HashMap<String, EntityPropertyDescriptor>();
 		this.incomingReferences = new ArrayList<EntityReferenceInfo>();
 		this.outgoingReferences = new ArrayList<EntityReferenceInfo>();
+	}
+
+	/**
+	 * Getter method for the name.
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Getter method for the displayName.
+	 * @return the displayName
+	 */
+	public String getDisplayName() {
+		return displayName;
+	}
+	
+	/**
+	 * Maps the table name to name and display name using the application's
+	 * entity name mapping.
+	 */
+	void mapNames() {
+		IEntityNameMappingStrategy mapping = EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityNameMappingStrategy();
+		this.name = mapping.determineEntityName(this);
+		this.displayName = mapping.determineEntityDisplayName(this);
 	}
 
 	/**

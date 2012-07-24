@@ -107,7 +107,7 @@ public class ApplicationSchema {
 	 */
 	public EntityDescriptor findEntity(String name) {
 		for (final EntityDescriptor entity : entityDescriptors) {
-			if (entity.getTableName().equals(name)) {
+			if (entity.getName().equals(name)) {
 				return entity;
 			}
 		}
@@ -143,6 +143,7 @@ public class ApplicationSchema {
 			DiscoverEntitiesAction action = new DiscoverEntitiesAction();
 			action.setDatabase(databaseDescriptor);
 			for (EntityDescriptor entity : action.execute()) {
+				entity.mapNames();
 				entityDescriptors.add(entity);
 			}
 		}
@@ -157,7 +158,7 @@ public class ApplicationSchema {
 			for (EntityPropertyDescriptor property : entity.getProperties().values()) {
 				String propertyName = property.getName();
 				for (IEntityReferenceDetector detector : EntityConfigurationUtil.getEntityReferenceDetectors()) {
-					String destinationName = detector.detectEntityReference(this, entity.getTableName(), propertyName);
+					String destinationName = detector.detectEntityReference(this, entity.getName(), entity.getTableName(), propertyName);
 					if (destinationName != null) {
 						EntityDescriptor destination = findEntity(destinationName);
 						if (destination != null) {
@@ -219,7 +220,7 @@ public class ApplicationSchema {
 			NavigationNode adHocListNode = allEntitiesNode.createChild(handler);
 			
 			// use the declared canonical list node if any, or the ad-hoc node as a fallback
-			final String entityName = entity.getTableName();
+			final String entityName = entity.getName();
 			final NavigationNode declaredCanonicalListNode = canonicalEntityListNodes.get(entityName);
 			if (declaredCanonicalListNode == null) {
 				canonicalEntityListNodes.put(entityName, adHocListNode);
@@ -232,7 +233,7 @@ public class ApplicationSchema {
 		// create and mount the local entity instance navigation tree for each entity
 		Iterable<IEntityNavigationContributor> entityNavigationContributors = EntityConfigurationUtil.getEntityNavigationContributors();
 		for (EntityDescriptor entity : entityDescriptors) {
-			final String entityName = entity.getTableName();
+			final String entityName = entity.getName();
 			NavigationNode canonicalEntityListNode = canonicalEntityListNodes.get(entityName);
 			NavigationNode entityInstanceRootNode = canonicalEntityListNode.createGlobalNavigationFolderChild("${id}", "Entity Instance");
 			entity.setInstanceNavigationRootNode(entityInstanceRootNode);

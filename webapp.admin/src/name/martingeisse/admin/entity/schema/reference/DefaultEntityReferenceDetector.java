@@ -18,10 +18,10 @@ import org.apache.commons.lang.StringUtils;
 public class DefaultEntityReferenceDetector implements IEntityReferenceDetector {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.schema.IEntityReferenceDetector#detectEntityReference(name.martingeisse.admin.schema.AbstractApplicationSchema, java.lang.String, java.lang.String)
+	 * @see name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector#detectEntityReference(name.martingeisse.admin.entity.schema.ApplicationSchema, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String detectEntityReference(ApplicationSchema schema, String entityName, String propertyName) {
+	public String detectEntityReference(ApplicationSchema schema, String entityName, String entityTableName, String propertyName) {
 		if (propertyName.toLowerCase().endsWith("_id")) {
 			return StringUtils.capitalize(propertyName.substring(0, propertyName.length() - 3));
 		} else if (propertyName.endsWith("Id")) {
