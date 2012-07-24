@@ -23,8 +23,6 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * This class determines the entity from the "entity" page
  * parameter and provides automatic paging support.
  * 
- * TODO: paging support doesn't work!
- * 
  * This class supports obtaining an entity list filter from the
  * corresponding navigation node. However, this class itself
  * does not use the filter automatically in any way.
@@ -52,7 +50,15 @@ public abstract class AbstractEntityListPage extends AbstractAdminPage {
 		String entityNameKey = ("schema.entity." + EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityName(determineEntityTypeModel().getObject()));
 		StringResourceModel entityDisplayNameModel = new StringResourceModel(entityNameKey, this, null);
 		getMainContainer().add(new Label("entityName", entityDisplayNameModel));
-		IPageable pageable = getPageable();
+		
+	}
+	
+	/**
+	 * This method must be called by the onInitialize() method of the subclass. The paging
+	 * navigators are not created by onInitialize() to avoid problems when getPageable()
+	 * isn't yet guaranteed to return a valid result.
+	 */
+	protected final void initializePagingNavigators(IPageable pageable) {
 		if (pageable == null) {
 			getMainContainer().add(new WebComponent("topPagingNavigator"));
 			getMainContainer().add(new WebComponent("bottomPagingNavigator"));
@@ -60,7 +66,6 @@ public abstract class AbstractEntityListPage extends AbstractAdminPage {
 			getMainContainer().add(new PagingNavigator("topPagingNavigator", pageable));
 			getMainContainer().add(new PagingNavigator("bottomPagingNavigator", pageable));
 		}
-		
 	}
 
 	/**

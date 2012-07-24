@@ -9,7 +9,6 @@ package name.martingeisse.admin.entity.component.list.populator;
 import java.util.List;
 
 import name.martingeisse.admin.entity.component.list.EntityInstanceDataProvider;
-import name.martingeisse.admin.entity.component.list.page.EntityListPanelPage;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.util.IGetPageable;
@@ -23,28 +22,25 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 /**
- * Populator-based presentation of entities.
- * 
- * Note that this class cannot be directly used in combination with {@link EntityListPanelPage}.
- * Instead, a subclass must be created that passes the populators to the constructor of this class. 
+ * Populator-based presentation of entities. The calling code or the concrete
+ * subclass must set the populators to use before onInitialize() of this class
+ * is called.
  */
 public class PopulatorBasedEntityListPanel extends Panel implements IGetPageable {
 
 	/**
 	 * the cellPopulators
 	 */
-	private transient List<IEntityCellPopulator> cellPopulators;
+	private List<IEntityCellPopulator> cellPopulators;
 
 	/**
 	 * Constructor.
 	 * @param id the wicket id
 	 * @param entityModel the entity descriptor model
-	 * @param cellPopulators the cell populators that do the actual presentation
 	 */
-	public PopulatorBasedEntityListPanel(final String id, final IModel<EntityDescriptor> entityModel, final List<IEntityCellPopulator> cellPopulators) {
+	public PopulatorBasedEntityListPanel(final String id, final IModel<EntityDescriptor> entityModel) {
 		super(id);
 		setDefaultModel(entityModel);
-		this.cellPopulators = cellPopulators;
 	}
 
 	/**

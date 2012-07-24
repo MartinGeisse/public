@@ -23,6 +23,14 @@ import name.martingeisse.admin.application.IPlugin;
 public class BaselineReadOnlyRendererContributor implements IPropertyReadOnlyRendererContributor, IPlugin {
 
 	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.application.IPlugin#unbox()
+	 */
+	@Override
+	public IPlugin[] unbox() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.application.IPlugin#contribute(name.martingeisse.admin.application.capabilities.ApplicationCapabilities)
 	 */
 	@Override

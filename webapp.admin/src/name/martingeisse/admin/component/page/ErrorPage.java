@@ -15,8 +15,6 @@ import org.apache.wicket.model.Model;
  * not allow the user to continue whatever he/she was doing. (Otherwise a
  * more sophisticated error page, with additional information, links etc.
  * would be used).
- * 
- * TODO: improve the looks of this page
  */
 public class ErrorPage extends AbstractAdminPage {
 

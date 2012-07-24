@@ -34,7 +34,7 @@ public class PopulatorDataViewPanel extends PopulatorBasedEntityListPanel {
 	 * @param parameters the page parameters
 	 */
 	public PopulatorDataViewPanel(String id, IModel<EntityDescriptor> entityModel, PageParameters parameters) {
-		super(id, entityModel, null);
+		super(id, entityModel);
 		setCellPopulators(createPopulatorList());
 	}
 

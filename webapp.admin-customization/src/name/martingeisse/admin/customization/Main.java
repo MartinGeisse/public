@@ -25,6 +25,9 @@ import name.martingeisse.admin.entity.IEntityListFieldOrder;
 import name.martingeisse.admin.entity.IEntityNavigationContributor;
 import name.martingeisse.admin.entity.PrefixEliminatingEntityNameMappingStrategy;
 import name.martingeisse.admin.entity.component.instance.RawEntityPresentationPanel;
+import name.martingeisse.admin.entity.component.list.populator.EntityFieldPopulator;
+import name.martingeisse.admin.entity.component.list.populator.IEntityCellPopulator;
+import name.martingeisse.admin.entity.component.list.populator.MultiCellPopulator;
 import name.martingeisse.admin.entity.component.list.raw.RawEntityListPanel;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
@@ -39,6 +42,7 @@ import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.handler.BookmarkableEntityInstanceNavigationHandler;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
 import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
+import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.wicket.autoform.AutoformPanel;
@@ -177,6 +181,13 @@ public class Main {
 		};
 		
 		root.createChild(new EntityListPanelHandler(MyPopulatorListPanel.class, "phpbb_acl_roles").setTitle("Roles*"));
+		{
+			IEntityCellPopulator description = new EntityFieldPopulator("Role Description", "role_description");
+			IEntityCellPopulator order = new EntityFieldPopulator("Role Order", "role_order");
+			@SuppressWarnings("unchecked")
+			IEntityCellPopulator multi = new MultiCellPopulator("Test", new EntityFieldPopulator(null, "role_description"), new EntityFieldPopulator(null, "role_order"));
+			root.createChild(new PopulatorBasedEntityListHandler("phpbb_acl_roles", description, order, multi).setId("X").setTitle("Roles**"));
+		}
 		root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "phpbb_acl_roles").setId("A").setTitle("Roles+"));
 		root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "phpbb_acl_roles").setFilter(myFilter).setId("B").setTitle("Roles-"));
 	}

@@ -23,6 +23,14 @@ public abstract class AbstractEntityPropertyFilter implements IRawEntityListProp
 	}
 
 	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.application.IPlugin#unbox()
+	 */
+	@Override
+	public IPlugin[] unbox() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.application.IPlugin#contribute()
 	 */
 	@Override

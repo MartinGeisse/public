@@ -28,7 +28,8 @@ public class MyPopulatorListPanel extends PopulatorBasedEntityListPanel {
 	 * @param entityModel the entity model
 	 */
 	public MyPopulatorListPanel(String id, IModel<EntityDescriptor> entityModel) {
-		super(id, entityModel, createPopulators());
+		super(id, entityModel);
+		setCellPopulators(createPopulators());
 	}
 	
 	/**

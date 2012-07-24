@@ -71,6 +71,10 @@ public abstract class AbstractEntityListPanelPage extends AbstractEntityListPage
 		// Add the panel as the last step. Since we're in onInitialize(), this causes the onInitialize()
 		// of the panel to be called immediately, and that must happen *after* the filter is set!
 		getMainContainer().add(panel);
+
+		// initialize the paging navigators last because they need a pageable, which getPageable() returns only
+		// when the panel is in place.
+		initializePagingNavigators(getPageable());
 		
 	}
 
@@ -81,7 +85,7 @@ public abstract class AbstractEntityListPanelPage extends AbstractEntityListPage
 	protected abstract Class<? extends Panel> determinePanelClass();
 
 	/**
-	 * Determiens the entity list filter to use.
+	 * Determines the entity list filter to use.
 	 * @return the entity list filter
 	 */
 	protected abstract IEntityListFilter determineEntityListFilter();
@@ -91,7 +95,7 @@ public abstract class AbstractEntityListPanelPage extends AbstractEntityListPage
 	 */
 	@Override
 	protected IPageable getPageable() {
-		Component panel = getMainContainer().get("panel");
+		Component panel = getFromMainContainer("panel");
 		if (panel instanceof IGetPageable) {
 			IGetPageable getPageable = (IGetPageable)panel;
 			return getPageable.getPageable();

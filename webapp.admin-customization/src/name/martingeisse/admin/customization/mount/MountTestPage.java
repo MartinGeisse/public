@@ -12,7 +12,6 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
- * TODO: document me
  *
  */
 public class MountTestPage extends WebPage {

@@ -22,6 +22,9 @@ import name.martingeisse.admin.entity.schema.EntityDescriptor;
  * class, the fields are null and the isEmpty() method returns true. This
  * happens, for example, when an instance is created from a {@link ResultSet}
  * without rows.
+ * 
+ * TODO: Is not actually serializable because {@link EntityDescriptor} isn't --
+ * keep a detachable reference to the descriptor instead.
  */
 public class EntityInstance implements Serializable {
 

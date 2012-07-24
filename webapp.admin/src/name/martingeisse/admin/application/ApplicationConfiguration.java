@@ -164,13 +164,51 @@ public final class ApplicationConfiguration {
 		parameters.seal();
 		
 		// gather all capabilities
+		unboxPlugins();
+		contributePlugins();
+		capabilities.seal();
+
+		logger.debug("ApplicationConfiguration.initialize(): end");
+	}
+	
+	/**
+	 * 
+	 */
+	private void unboxPlugins() {
+		List<IPlugin> remainingPluginsToUnbox = new ArrayList<IPlugin>(plugins);
+		while (!remainingPluginsToUnbox.isEmpty()) {
+			List<IPlugin> newPluginsToUnbox = unboxStep(remainingPluginsToUnbox);
+			plugins.addAll(newPluginsToUnbox);
+			remainingPluginsToUnbox = newPluginsToUnbox;
+		}
+	}
+	
+	/**
+	 * Invokes the unbox() method of all specified plugins and collects
+	 * their returned plugins in a list.
+	 * @return the contained plugins
+	 */
+	private List<IPlugin> unboxStep(List<IPlugin> outerPlugins) {
+		List<IPlugin> innerPlugins = new ArrayList<IPlugin>();
+		for (IPlugin outerPlugin : outerPlugins) {
+			IPlugin[] innerPluginArray = outerPlugin.unbox();
+			if (innerPluginArray != null) {
+				for (IPlugin innerPlugin : innerPluginArray) {
+					innerPlugins.add(innerPlugin);
+				}
+			}
+		}
+		return innerPlugins;
+	}
+	
+	/**
+	 * 
+	 */
+	private void contributePlugins() {
 		for (final IPlugin plugin : plugins) {
 			logger.trace("adding contributions from plugin: " + plugin);
 			plugin.contribute();
 		}
-		capabilities.seal();
-
-		logger.debug("ApplicationConfiguration.initialize(): end");
 	}
 	
 }

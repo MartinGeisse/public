@@ -14,6 +14,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
 
 /**
  * This class allows to display an entity instance using an existing panel
@@ -81,8 +82,8 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 	 * @return the entity id
 	 */
 	private int determineId() {
-		// TODO error handling, take ID type from entity descriptor
-		return getRequiredStringParameter(getPageParameters(), "id", true).toInt(); 
+		StringValue id = getPageParameters().get("id");
+		return id.toInt(); // TODO: obtain the type of the ID from the entity descriptor
 	}
 
 	/**

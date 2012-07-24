@@ -63,12 +63,6 @@ public final class EntityListPanelPage extends AbstractEntityListPanelPage {
 	 */
 	@Override
 	protected IEntityListFilter determineEntityListFilter() {
-		/*
-		 * TODO: Allow {@link PopulatorBasedEntityListPanel} to obtain its populators
-	 	 * from the navigation node the same way as this method does. Goal: Panel
-	 	 * subclasses only needed for special cases and for fragment populators.
-		 * 
-		 */
 		return getHandler().getFilter();
 	}
 
