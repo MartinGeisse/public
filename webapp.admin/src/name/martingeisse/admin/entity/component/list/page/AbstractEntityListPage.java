@@ -6,30 +6,19 @@
 
 package name.martingeisse.admin.entity.component.list.page;
 
-import name.martingeisse.admin.component.page.AbstractAdminPage;
+import name.martingeisse.admin.component.page.AbstractPaginatedAdminPage;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
-import org.apache.wicket.markup.html.WebComponent;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.navigation.paging.IPageable;
-import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
- * Base class for pages that display a list of entity instances.
- * This class determines the entity from the "entity" page
- * parameter and provides automatic paging support.
- * 
- * This class supports obtaining an entity list filter from the
- * corresponding navigation node. However, this class itself
- * does not use the filter automatically in any way.
- * 
- * TODO: Rename to AbstractPaginatedAdminPage
+ * Base class for pages that display a list of entity instances. This page inherits
+ * paging support and adds a page title based on the entity name.
  */
-public abstract class AbstractEntityListPage extends AbstractAdminPage {
+public abstract class AbstractEntityListPage extends AbstractPaginatedAdminPage {
 	
 	/**
 	 * Constructor.
@@ -40,32 +29,12 @@ public abstract class AbstractEntityListPage extends AbstractAdminPage {
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.pages.AbstractAdminPage#onInitialize()
+	 * @see name.martingeisse.admin.component.page.AbstractPaginatedAdminPage#createTitleModel()
 	 */
 	@Override
-	protected void onInitialize() {
-		super.onInitialize();
-	
-		// create components
+	protected IModel<String> createTitleModel() {
 		String entityNameKey = ("schema.entity." + EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityName(determineEntityTypeModel().getObject()));
-		StringResourceModel entityDisplayNameModel = new StringResourceModel(entityNameKey, this, null);
-		getMainContainer().add(new Label("entityName", entityDisplayNameModel));
-		
-	}
-	
-	/**
-	 * This method must be called by the onInitialize() method of the subclass. The paging
-	 * navigators are not created by onInitialize() to avoid problems when getPageable()
-	 * isn't yet guaranteed to return a valid result.
-	 */
-	protected final void initializePagingNavigators(IPageable pageable) {
-		if (pageable == null) {
-			getMainContainer().add(new WebComponent("topPagingNavigator"));
-			getMainContainer().add(new WebComponent("bottomPagingNavigator"));
-		} else {
-			getMainContainer().add(new PagingNavigator("topPagingNavigator", pageable));
-			getMainContainer().add(new PagingNavigator("bottomPagingNavigator", pageable));
-		}
+		return new StringResourceModel(entityNameKey, this, null);
 	}
 
 	/**
@@ -73,12 +42,5 @@ public abstract class AbstractEntityListPage extends AbstractAdminPage {
 	 * @return the model for the entity type.
 	 */
 	protected abstract IModel<EntityDescriptor> determineEntityTypeModel();
-	
-	/**
-	 * Returns the {@link IPageable} for automatic paging support, or null to disable
-	 * automatic paging support.
-	 * @return the pageable or null
-	 */
-	protected abstract IPageable getPageable();
 	
 }
