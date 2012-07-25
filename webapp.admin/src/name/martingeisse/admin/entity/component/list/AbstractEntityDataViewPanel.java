@@ -88,7 +88,7 @@ public abstract class AbstractEntityDataViewPanel extends Panel {
 	protected void onInitialize() {
 		super.onInitialize();
 		add(createHeaderRepeater("headers"));
-		add(new ZebraDataView<EntityInstance>("rows", createDataProvider(), 30) {
+		add(new ZebraDataView<EntityInstance>("rows", createDataProvider(), 10) {
 			@Override
 			protected void populateItem(final Item<EntityInstance> rowItem) {
 				AbstractEntityDataViewPanel.this.populateRowItem(rowItem);

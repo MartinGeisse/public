@@ -60,7 +60,17 @@ public enum BinaryOperator {
 	/**
 	 * the GREATER_EQUAL
 	 */
-	GREATER_EQUAL(">=");
+	GREATER_EQUAL(">="),
+
+	/**
+	 * the AND
+	 */
+	AND("AND"),
+
+	/**
+	 * the OR
+	 */
+	OR("OR");
 	
 	/**
 	 * the symbol

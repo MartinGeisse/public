@@ -110,7 +110,7 @@ public class RawEntityListPanel extends Panel implements IGetPageable, IEntityLi
 				item.add(new Label("name", getEntity().getRawEntityListFieldOrder()[item.getIndex()]));
 			}
 		});
-		add(new ZebraDataView<EntityInstance>("rows", new MyDataProvider(), 30) {
+		add(new ZebraDataView<EntityInstance>("rows", new MyDataProvider(), 10) {
 			@Override
 			protected void populateItem(final Item<EntityInstance> rowItem) {
 				rowItem.add(new Loop("cells", new PropertyModel<Integer>(RawEntityListPanel.this, "width")) {

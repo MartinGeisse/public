@@ -29,7 +29,7 @@ import name.martingeisse.admin.entity.component.list.populator.EntityFieldPopula
 import name.martingeisse.admin.entity.component.list.populator.IEntityCellPopulator;
 import name.martingeisse.admin.entity.component.list.populator.MultiCellPopulator;
 import name.martingeisse.admin.entity.component.list.raw.RawEntityListPanel;
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.list.EntityListFilter;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.property.ExplicitEntityPropertyFilter;
 import name.martingeisse.admin.entity.property.SingleEntityPropertyFilter;
@@ -45,6 +45,11 @@ import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
 import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
+import name.martingeisse.common.sql.expression.BinaryExpression;
+import name.martingeisse.common.sql.expression.BinaryOperator;
+import name.martingeisse.common.sql.expression.ColumnReference;
+import name.martingeisse.common.sql.expression.IExpression;
+import name.martingeisse.common.sql.expression.IntegerLiteral;
 import name.martingeisse.wicket.autoform.AutoformPanel;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociatedValidator;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
@@ -168,17 +173,21 @@ public class Main {
 		
 //		root.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "acl_roles").setCanonicalEntityListNode(true));
 
-		IEntityListFilter myFilter = new IEntityListFilter() {
-			@Override
-			public boolean evaluate(EntityInstance input) {
-				Object id = input.getId();
-				if (id instanceof Integer) {
-					int intId = (Integer)id;
-					return intId < 15;
-				}
-				return true;
-			}
-		};
+//		IEntityListFilter myFilter = new IEntityListFilter() {
+//			@Override
+//			public boolean evaluate(EntityInstance input) {
+//				Object id = input.getId();
+//				if (id instanceof Integer) {
+//					int intId = (Integer)id;
+//					return intId < 15;
+//				}
+//				return true;
+//			}
+//		};
+		IExpression idCondition1 = new BinaryExpression(new ColumnReference("t", "role_id"), BinaryOperator.LESS_THAN, new IntegerLiteral(15));
+		IExpression idCondition2 = new BinaryExpression(new ColumnReference("t", "role_id"), BinaryOperator.NOT_EQUAL, new IntegerLiteral(7));
+		IExpression idConditions = new BinaryExpression(idCondition1, BinaryOperator.AND, idCondition2);
+		IEntityListFilter myFilter = new EntityListFilter(idConditions);
 		
 		root.createChild(new EntityListPanelHandler(MyPopulatorListPanel.class, "acl_roles").setTitle("Roles*"));
 		{

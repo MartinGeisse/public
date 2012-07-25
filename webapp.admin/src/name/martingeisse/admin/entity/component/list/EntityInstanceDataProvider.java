@@ -19,6 +19,9 @@ import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.common.jdbc.ResultSetReader;
+import name.martingeisse.common.sql.PrimaryTableFetchSpecifier;
+import name.martingeisse.common.sql.SelectStatement;
+import name.martingeisse.common.sql.build.SqlBuilderForMySql;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
@@ -103,6 +106,7 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	 */
 	@Override
 	public int size() {
+		// TODO consider filter!
 		Connection connection = null;
 		try {
 			final EntityDescriptor entity = getEntity();
@@ -139,10 +143,15 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 			// send the query to the database and analyze result meta-data
 			String query;
 			{
-				char b = database.getIdentifierBeginQuoteCharacter();
-				char e = database.getIdentifierEndQuoteCharacter();
-				String orderClause = database.getDefaultOrderClause();
-				query = "SELECT * FROM " + b + entity.getTableName() + e + orderClause + " LIMIT " + count + " OFFSET " + first;
+				SelectStatement selectStatement = new SelectStatement();
+				selectStatement.setPrimaryTableFetchSpecifier(new PrimaryTableFetchSpecifier(entity.getTableName(), IEntityListFilter.ALIAS));
+				if (filter != null) {
+					selectStatement.getConditions().add(filter.getFilterExpression());
+				}
+				query = selectStatement.toString(new SqlBuilderForMySql());
+				query += " " + database.getDefaultOrderClause();
+				query += " LIMIT " + count + " OFFSET " + first;
+				System.out.println("* " + query);
 			}
 			final ResultSet resultSet = statement.executeQuery(query);
 			ResultSetReader reader = new ResultSetReader(resultSet, entity.getIdColumnName(), entity.getRawEntityListFieldOrder());
@@ -161,17 +170,6 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 			resultSet.close();
 			statement.close();
 			
-			// filter the rows. TODO: this gives us "filter(rows LIMIT X)", not "filter(rows) LIMIT X".
-			if (filter != null) {
-				List<EntityInstance> allRows = rows;
-				rows = new ArrayList<EntityInstance>();
-				for (EntityInstance row : allRows) {
-					if (filter.evaluate(row)) {
-						rows.add(row);
-					}
-				}
-			}
-
 			// return the rows as an iterator
 			return rows.iterator();
 
