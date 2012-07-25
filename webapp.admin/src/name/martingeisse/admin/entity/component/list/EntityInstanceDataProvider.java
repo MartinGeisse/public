@@ -19,6 +19,7 @@ import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.common.jdbc.ResultSetReader;
+import name.martingeisse.common.sql.CountAllTarget;
 import name.martingeisse.common.sql.PrimaryTableFetchSpecifier;
 import name.martingeisse.common.sql.SelectStatement;
 import name.martingeisse.common.sql.build.SqlBuilderForMySql;
@@ -106,14 +107,25 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	 */
 	@Override
 	public int size() {
-		// TODO consider filter!
 		Connection connection = null;
 		try {
 			final EntityDescriptor entity = getEntity();
 			final AbstractDatabaseDescriptor database = entity.getDatabase();
 			connection = database.createConnection();
 			final Statement statement = connection.createStatement();
-			int size = database.fetchTableSize(statement, entity.getTableName());
+			
+			String countQuery;
+			{
+				SelectStatement countStatement = new SelectStatement();
+				countStatement.getTargets().add(new CountAllTarget());
+				countStatement.setPrimaryTableFetchSpecifier(new PrimaryTableFetchSpecifier(entity.getTableName(), IEntityListFilter.ALIAS));
+				if (filter != null) {
+					countStatement.getConditions().add(filter.getFilterExpression());
+				}
+				countQuery = countStatement.toString(new SqlBuilderForMySql());
+			}
+			int size = (int)(long)(Long)database.executeSingleResultQuery(statement, countQuery);
+			
 			statement.close();
 			return size;
 		} catch (final SQLException e) {

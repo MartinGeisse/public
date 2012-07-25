@@ -147,19 +147,30 @@ public abstract class AbstractDatabaseDescriptor implements Serializable {
 	 * @throws SQLException on SQL errors
 	 */
 	public int fetchTableSize(Statement statement, String tableName) throws SQLException {
-		final ResultSet resultSet = statement.executeQuery(getTableSizeQuery(tableName));
+		return (int)(long)(Long)executeSingleResultQuery(statement, getTableSizeQuery(tableName));
+	}
+	
+	/**
+	 * Executes a query that is expected to return a single result.
+	 * @param statement the JDBC statement object to use
+	 * @param query the query to execute
+	 * @return the result
+	 * @throws SQLException on SQL errors
+	 */
+	public Object executeSingleResultQuery(Statement statement, String query) throws SQLException {
+		final ResultSet resultSet = statement.executeQuery(query);
 		if (!resultSet.next()) {
-			throw new RuntimeException("unexpected result set layout for COUNT(*) (no row)");
+			throw new RuntimeException("unexpected result set layout (no row) for query: " + query);
 		}
 		if (resultSet.getMetaData().getColumnCount() != 1) {
-			throw new RuntimeException("unexpected result set layout for COUNT(*) (number of columns is " + resultSet.getMetaData().getColumnCount() + ")");
+			throw new RuntimeException("unexpected result set layout (number of columns is " + resultSet.getMetaData().getColumnCount() + ") for query: " + query);
 		}
-		int count = resultSet.getInt(1);
+		Object result = resultSet.getObject(1);
 		if (resultSet.next()) {
-			throw new RuntimeException("unexpected result set layout for COUNT(*) (more than one row)");
+			throw new RuntimeException("unexpected result set layout (more than one row) for query: " + query);
 		}
 		resultSet.close();
-		return count;
+		return result;
 	}
 
 	/**

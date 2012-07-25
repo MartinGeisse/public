@@ -25,6 +25,8 @@ public class Main {
 	public static void main(String[] args) {
 
 		SelectStatement statement = new SelectStatement();
+		statement.getTargets().add(new CountAllTarget());
+		statement.getTargets().add(new CountAllTarget());
 		statement.setPrimaryTableFetchSpecifier(new PrimaryTableFetchSpecifier("phpbb_forums", "Forum"));
 		statement.getConditions().add(BooleanLiteral.TRUE);
 		statement.getConditions().add(BooleanLiteral.TRUE);

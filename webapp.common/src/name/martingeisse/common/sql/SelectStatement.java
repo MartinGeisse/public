@@ -144,7 +144,15 @@ public final class SelectStatement {
 		if (targets.isEmpty()) {
 			builder.write(" * ");
 		} else {
-			throw new RuntimeException("NOT YET IMPLEMENTED");
+			boolean first = true;
+			for (ISelectTarget target : targets) {
+				if (first) {
+					first = false;
+				} else {
+					builder.write(", ");
+				}
+				target.writeTo(builder);
+			}
 		}
 	}
 
