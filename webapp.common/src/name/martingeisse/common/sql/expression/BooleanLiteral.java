@@ -25,6 +25,15 @@ public final class BooleanLiteral implements IExpression {
 	public static final BooleanLiteral TRUE = new BooleanLiteral(true);
 	
 	/**
+	 * Returns the appropriate singleton instance of this class.
+	 * @param value the value to represent
+	 * @return the instance
+	 */
+	public static BooleanLiteral from(boolean value) {
+		return (value ? TRUE : FALSE);
+	}
+	
+	/**
 	 * the value
 	 */
 	private final boolean value;

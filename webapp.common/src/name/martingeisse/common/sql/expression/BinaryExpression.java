@@ -78,4 +78,73 @@ public final class BinaryExpression implements IExpression {
 		builder.write(") ");
 	}
 
+	/**
+	 * Creates an expression chain for an arbitrary number of sub-expressions.
+	 * 
+	 * Returns null if the expressions argument contains no expressions, and the
+	 * one and only expression if it contains a single one. Otherwise combines
+	 * the expressions in a left-associative way using the specified operator.
+	 * 
+	 * @param expressions the expressions
+	 * @param operator the operator to use
+	 * @return the chained expression
+	 */
+	public static IExpression createChain(Iterable<IExpression> expressions, BinaryOperator operator) {
+		IExpression result = null;
+		for (IExpression subExpression : expressions) {
+			if (result == null) {
+				result = subExpression;
+			} else {
+				result = new BinaryExpression(result, operator, subExpression);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * AND-combines the specified expressions. This uses createChain() with the AND
+	 * operator and TRUE as the default value for an empty expression list.
+	 * @param expressions the expressions
+	 * @return the chained expression
+	 */
+	public static IExpression createAndChain(Iterable<IExpression> expressions) {
+		IExpression result = createChain(expressions, BinaryOperator.AND);
+		return (result == null ? BooleanLiteral.TRUE : result);
+	}
+
+	/**
+	 * OR-combines the specified expressions. This uses createChain() with the OR
+	 * operator and FALSE as the default value for an empty expression list.
+	 * @param expressions the expressions
+	 * @return the chained expression
+	 */
+	public static IExpression createOrChain(Iterable<IExpression> expressions) {
+		IExpression result = createChain(expressions, BinaryOperator.OR);
+		return (result == null ? BooleanLiteral.FALSE : result);
+	}
+
+	/**
+	 * ADD-combines the specified expressions, i.e. creates a sum expression.
+	 * This uses createChain() with the ADD operator and 0 as the default
+	 * value for an empty expression list.
+	 * @param expressions the expressions
+	 * @return the chained expression
+	 */
+	public static IExpression createAddChain(Iterable<IExpression> expressions) {
+		IExpression result = createChain(expressions, BinaryOperator.ADD);
+		return (result == null ? new IntegerLiteral(0) : result);
+	}
+
+	/**
+	 * MULTIPLY-combines the specified expressions, i.e. creates a product expression.
+	 * This uses createChain() with the MULTIPLY operator and 1 as the default
+	 * value for an empty expression list.
+	 * @param expressions the expressions
+	 * @return the chained expression
+	 */
+	public static IExpression createMultiplyChain(Iterable<IExpression> expressions) {
+		IExpression result = createChain(expressions, BinaryOperator.MULTIPLY);
+		return (result == null ? new IntegerLiteral(1) : result);
+	}
+	
 }

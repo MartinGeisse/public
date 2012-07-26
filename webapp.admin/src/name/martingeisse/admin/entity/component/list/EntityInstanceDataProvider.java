@@ -124,6 +124,7 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 				}
 				countQuery = countStatement.toString(new SqlBuilderForMySql());
 			}
+			System.out.println("* countQuery: " + countQuery);
 			int size = (int)(long)(Long)database.executeSingleResultQuery(statement, countQuery);
 			
 			statement.close();

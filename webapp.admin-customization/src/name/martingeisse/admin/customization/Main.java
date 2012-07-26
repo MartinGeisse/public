@@ -29,8 +29,6 @@ import name.martingeisse.admin.entity.component.list.populator.EntityFieldPopula
 import name.martingeisse.admin.entity.component.list.populator.IEntityCellPopulator;
 import name.martingeisse.admin.entity.component.list.populator.MultiCellPopulator;
 import name.martingeisse.admin.entity.component.list.raw.RawEntityListPanel;
-import name.martingeisse.admin.entity.list.EntityListFilter;
-import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.property.ExplicitEntityPropertyFilter;
 import name.martingeisse.admin.entity.property.SingleEntityPropertyFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
@@ -50,6 +48,7 @@ import name.martingeisse.common.sql.expression.BinaryOperator;
 import name.martingeisse.common.sql.expression.ColumnReference;
 import name.martingeisse.common.sql.expression.IExpression;
 import name.martingeisse.common.sql.expression.IntegerLiteral;
+import name.martingeisse.common.sql.expression.MultiCondition;
 import name.martingeisse.wicket.autoform.AutoformPanel;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociatedValidator;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
@@ -211,6 +210,13 @@ public class Main {
 			IExpression odd = new BinaryExpression(mod2, BinaryOperator.EQUAL, new IntegerLiteral(1));
 			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(odd).setId("roles_odd").setTitle("Odd"));
 		}
+
+		{
+			MultiCondition condition = new MultiCondition();
+			condition.addFieldInString("role_type", new String[] {"a_", "f_"});
+			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(condition).setId("roles_cond").setTitle("ConditionTest"));
+		}
+		
 	}
 
 	/**
