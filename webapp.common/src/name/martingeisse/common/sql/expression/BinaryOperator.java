@@ -28,9 +28,19 @@ public enum BinaryOperator {
 	MULTIPLY("*"),
 	
 	/**
-	 * the DIVIDE
+	 * the FRACTIONAL_DIVIDE
 	 */
-	DIVIDE("/"),
+	FRACTIONAL_DIVIDE("/"),
+	
+	/**
+	 * the INTEGER_DIVIDE
+	 */
+	INTEGER_DIVIDE("DIV"),
+	
+	/**
+	 * the REMAINDER
+	 */
+	REMAINDER("MOD"),
 	
 	/**
 	 * the EQUAL

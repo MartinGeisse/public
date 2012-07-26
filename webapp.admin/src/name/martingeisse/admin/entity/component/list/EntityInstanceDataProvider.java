@@ -160,11 +160,11 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 				if (filter != null) {
 					selectStatement.getConditions().add(filter.getFilterExpression());
 				}
+				selectStatement.setOffset(first);
+				selectStatement.setLimit(count);
 				query = selectStatement.toString(new SqlBuilderForMySql());
-				query += " " + database.getDefaultOrderClause();
-				query += " LIMIT " + count + " OFFSET " + first;
-				System.out.println("* " + query);
 			}
+			System.out.println("* query: " + query);
 			final ResultSet resultSet = statement.executeQuery(query);
 			ResultSetReader reader = new ResultSetReader(resultSet, entity.getIdColumnName(), entity.getRawEntityListFieldOrder());
 			

@@ -38,6 +38,21 @@ public final class SelectStatement {
 	private List<IExpression> conditions = new ArrayList<IExpression>();
 
 	/**
+	 * the orderSteps
+	 */
+	private List<IOrderStep> orderSteps = new ArrayList<IOrderStep>();
+
+	/**
+	 * the offset
+	 */
+	private Integer offset;
+
+	/**
+	 * the limit
+	 */
+	private Integer limit;
+
+	/**
 	 * Constructor.
 	 */
 	public SelectStatement() {
@@ -108,6 +123,54 @@ public final class SelectStatement {
 	}
 
 	/**
+	 * Getter method for the orderSteps.
+	 * @return the orderSteps
+	 */
+	public List<IOrderStep> getOrderSteps() {
+		return orderSteps;
+	}
+
+	/**
+	 * Setter method for the orderSteps.
+	 * @param orderSteps the orderSteps to set
+	 */
+	public void setOrderSteps(final List<IOrderStep> orderSteps) {
+		this.orderSteps = orderSteps;
+	}
+
+	/**
+	 * Getter method for the offset.
+	 * @return the offset
+	 */
+	public Integer getOffset() {
+		return offset;
+	}
+
+	/**
+	 * Setter method for the offset.
+	 * @param offset the offset to set
+	 */
+	public void setOffset(final Integer offset) {
+		this.offset = offset;
+	}
+
+	/**
+	 * Getter method for the limit.
+	 * @return the limit
+	 */
+	public Integer getLimit() {
+		return limit;
+	}
+
+	/**
+	 * Setter method for the limit.
+	 * @param limit the limit to set
+	 */
+	public void setLimit(final Integer limit) {
+		this.limit = limit;
+	}
+
+	/**
 	 * Turns this select statement to an SQL string using the specified builder.
 	 * 
 	 * The builder should be empty, otherwise its contents appear at the
@@ -132,9 +195,9 @@ public final class SelectStatement {
 		writeFrom(primaryTableFetchSpecifier, builder);
 		// TODO joins
 		writeWhereClause(builder);
-		// TODO ORDER BY
-		// TODO GROUP BY
-		// TODO OFFSET, LIMIT
+		writeOrderByClause(builder);
+		writeOptionalIntegerClause(builder, "LIMIT", limit);
+		writeOptionalIntegerClause(builder, "OFFSET", offset);
 	}
 
 	/**
@@ -145,7 +208,7 @@ public final class SelectStatement {
 			builder.write(" * ");
 		} else {
 			boolean first = true;
-			for (ISelectTarget target : targets) {
+			for (final ISelectTarget target : targets) {
 				if (first) {
 					first = false;
 				} else {
@@ -168,13 +231,13 @@ public final class SelectStatement {
 			builder.writeTableAliasDeclaration(alias);
 		}
 	}
-	
+
 	/**
 	 * @param builder
 	 */
 	private void writeWhereClause(final ISqlBuilder builder) {
 		boolean first = true;
-		for (IExpression condition : conditions) {
+		for (final IExpression condition : conditions) {
 			if (first) {
 				first = false;
 				builder.write(" WHERE ");
@@ -182,6 +245,36 @@ public final class SelectStatement {
 				builder.write(" AND ");
 			}
 			condition.writeTo(builder);
+		}
+	}
+
+	/**
+	 * @param builder
+	 */
+	private void writeOrderByClause(final ISqlBuilder builder) {
+		boolean first = true;
+		for (final IOrderStep orderStep : orderSteps) {
+			if (first) {
+				first = false;
+				builder.write(" ORDER BY ");
+			} else {
+				builder.write(", ");
+			}
+			orderStep.writeTo(builder);
+		}
+	}
+	
+	/**
+	 * @param prefix
+	 * @param value
+	 */
+	private void writeOptionalIntegerClause(final ISqlBuilder builder, String prefix, Integer value) {
+		if (value != null) {
+			builder.write(" ");
+			builder.write(prefix);
+			builder.write(" ");
+			builder.write(value.toString());
+			builder.write(" ");
 		}
 	}
 

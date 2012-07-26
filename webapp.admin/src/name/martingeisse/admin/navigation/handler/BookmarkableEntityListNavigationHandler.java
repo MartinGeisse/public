@@ -6,10 +6,12 @@
 
 package name.martingeisse.admin.navigation.handler;
 
+import name.martingeisse.admin.entity.list.EntityListFilter;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.common.sql.expression.IExpression;
 
 import org.apache.wicket.markup.html.WebPage;
 
@@ -120,6 +122,15 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 	public BookmarkableEntityListNavigationHandler setFilter(final IEntityListFilter filter) {
 		this.filter = filter;
 		return this;
+	}
+
+	/**
+	 * Sets a newly created {@link EntityListFilter} from the specified filter expression.
+	 * @param filterExpression the filter expression
+	 * @return this for chaining
+	 */
+	public BookmarkableEntityListNavigationHandler setFilter(final IExpression filterExpression) {
+		return setFilter(new EntityListFilter(filterExpression));
 	}
 
 	/**

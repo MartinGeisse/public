@@ -184,10 +184,10 @@ public class Main {
 //				return true;
 //			}
 //		};
-		IExpression idCondition1 = new BinaryExpression(new ColumnReference("t", "role_id"), BinaryOperator.LESS_THAN, new IntegerLiteral(15));
-		IExpression idCondition2 = new BinaryExpression(new ColumnReference("t", "role_id"), BinaryOperator.NOT_EQUAL, new IntegerLiteral(7));
-		IExpression idConditions = new BinaryExpression(idCondition1, BinaryOperator.AND, idCondition2);
-		IEntityListFilter myFilter = new EntityListFilter(idConditions);
+//		IExpression idCondition1 = new BinaryExpression(new ColumnReference("t", "role_id"), BinaryOperator.LESS_THAN, new IntegerLiteral(15));
+//		IExpression idCondition2 = new BinaryExpression(new ColumnReference("t", "role_id"), BinaryOperator.NOT_EQUAL, new IntegerLiteral(7));
+//		IExpression idConditions = new BinaryExpression(idCondition1, BinaryOperator.AND, idCondition2);
+//		IEntityListFilter myFilter = new EntityListFilter(idConditions);
 		
 		root.createChild(new EntityListPanelHandler(MyPopulatorListPanel.class, "acl_roles").setTitle("Roles*"));
 		{
@@ -197,8 +197,20 @@ public class Main {
 			IEntityCellPopulator multi = new MultiCellPopulator("Test", new EntityFieldPopulator(null, "role_description"), new EntityFieldPopulator(null, "role_order"));
 			root.createChild(new PopulatorBasedEntityListHandler("acl_roles", description, order, multi).setId("X").setTitle("Roles**"));
 		}
-		root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setId("A").setTitle("Roles+"));
-		root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(myFilter).setId("B").setTitle("Roles-"));
+		
+		root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setId("roles_all").setTitle("Roles"));
+
+		{
+			IExpression mod2 = new BinaryExpression(new ColumnReference("t", "role_id"), BinaryOperator.REMAINDER, new IntegerLiteral(2));
+			IExpression even = new BinaryExpression(mod2, BinaryOperator.EQUAL, new IntegerLiteral(0));
+			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(even).setId("roles_even").setTitle("Even"));
+		}
+
+		{
+			IExpression mod2 = new BinaryExpression(new ColumnReference("t", "role_id"), BinaryOperator.REMAINDER, new IntegerLiteral(2));
+			IExpression odd = new BinaryExpression(mod2, BinaryOperator.EQUAL, new IntegerLiteral(1));
+			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(odd).setId("roles_odd").setTitle("Odd"));
+		}
 	}
 
 	/**
