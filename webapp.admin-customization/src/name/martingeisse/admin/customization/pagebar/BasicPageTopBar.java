@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.customization.pageborder;
+package name.martingeisse.admin.customization.pagebar;
 
 import java.util.List;
 
@@ -15,23 +15,23 @@ import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.component.NavigationMenuView;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.border.Border;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 
 /**
- * The page border.
+ * The page top bar.
  */
-public class BasicPageBorder extends Border {
+public class BasicPageTopBar extends Panel {
 
 	/**
 	 * Constructor.
 	 * @param id the wicket id
 	 */
-	public BasicPageBorder(String id) {
+	public BasicPageTopBar(String id) {
 		super(id);
 		
 		// navigation
@@ -41,10 +41,10 @@ public class BasicPageBorder extends Border {
 				return NavigationConfigurationUtil.getNavigationTree().getRoot().getChildren();
 			}
 		};
-		addToBorder(new NavigationMenuView("topNavigationNodes", topNavigationNodeListModel, 0));
+		add(new NavigationMenuView("topNavigationNodes", topNavigationNodeListModel, 0));
 	
 		// entity menu
-		addToBorder(new ListView<EntityDescriptor>("entities", ApplicationSchema.instance.getEntityDescriptors()) {
+		add(new ListView<EntityDescriptor>("entities", ApplicationSchema.instance.getEntityDescriptors()) {
 			@Override
 			protected void populateItem(ListItem<EntityDescriptor> item) {
 				EntityDescriptor entity = item.getModelObject();

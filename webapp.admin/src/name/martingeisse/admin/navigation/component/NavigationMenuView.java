@@ -31,7 +31,7 @@ import org.apache.wicket.model.PropertyModel;
  * attached to these, respectively, and the markup is repeated for each node.
  * 
  * This class has a maximum nesting depth that determines how many node
- * sub-levels are shwon. Each sub-level of each node is recursively handled
+ * sub-levels are shown. Each sub-level of each node is recursively handled
  * by an instance of this class. The maximum nesting depth should correspond
  * to the nesting depth of the component tags in the markup. The default
  * value is 0 (only the list from the model is shown, no sub-levels).

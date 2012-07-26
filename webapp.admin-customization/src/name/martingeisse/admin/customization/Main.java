@@ -15,10 +15,8 @@ import java.lang.annotation.Target;
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
-import name.martingeisse.admin.component.pageborder.PageBorderFactory;
-import name.martingeisse.admin.customization.pageborder.BasicPageBorder;
-import name.martingeisse.admin.customization.pageborder.EntityInstancePageBorder;
-import name.martingeisse.admin.customization.pageborder.TestBorder;
+import name.martingeisse.admin.customization.incubator.NavigationTabBarFactory;
+import name.martingeisse.admin.customization.pagebar.BasicPageBarFactory;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityListFieldOrder;
@@ -126,7 +124,7 @@ public class Main {
 			public void contributeNavigationNodes(EntityDescriptor entity, NavigationNode mainEntityInstanceNode) {
 				
 				// add entity-local navigation
-				mainEntityInstanceNode.setPageBorderFactory(new PageBorderFactory(EntityInstancePageBorder.class));
+				// mainEntityInstanceNode.setPageBorderFactory(new PageBorderFactory(EntityInstancePageBorder.class));
 
 				// test
 				BookmarkableEntityInstanceNavigationHandler handler;
@@ -134,12 +132,10 @@ public class Main {
 				handler = new EntityInstancePanelHandler(RawEntityPresentationPanel.class);				
 				handler.getImplicitPageParameters().add("presenter", "default");
 				NavigationNode node = mainEntityInstanceNode.createChild(handler.setId("default").setTitle("Default"));
-				node.setPageBorderFactory(new PageBorderFactory(TestBorder.class));
 				
 				handler = new EntityInstancePanelHandler(RawEntityPresentationPanel.class);				
 				handler.getImplicitPageParameters().add("presenter", "default");
-				NavigationNode node2 = node.createChild(handler.setId("default").setTitle("Default"));
-				node2.setPageBorderFactory(new PageBorderFactory(TestBorder.class));
+				node.createChild(handler.setId("default").setTitle("Default"));
 
 			}
 		});
@@ -155,7 +151,7 @@ public class Main {
 	 */
 	private static void buildNavigation() {
 		final NavigationNode root = NavigationConfigurationUtil.getNavigationTree().getRoot();
-		root.setPageBorderFactory(new PageBorderFactory(BasicPageBorder.class));
+		root.setPageBarFactory(new BasicPageBarFactory());
 		root.createChild(new UrlNavigationHandler("/").setId("home-dummy").setTitle("Home"));
 		final NavigationNode sub1 = root.createGlobalNavigationFolderChild("sub-one", "Sub One");
 		sub1.createGlobalNavigationFolderChild("s1-sub-one", "s1 Sub One");
@@ -216,6 +212,9 @@ public class Main {
 			condition.addFieldInString("role_type", new String[] {"a_", "f_"});
 			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(condition).setId("roles_cond").setTitle("ConditionTest"));
 		}
+		
+		
+		NavigationTabBarFactory.apply(root.findChildById("sub-one"));
 		
 	}
 

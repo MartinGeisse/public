@@ -7,7 +7,7 @@
 package name.martingeisse.admin.navigation;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
-import name.martingeisse.admin.component.pageborder.IPageBorderFactory;
+import name.martingeisse.admin.component.pagebar.IPageBarFactory;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -17,7 +17,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 /**
  * This interface is implemented to give navigation nodes their behavior.
  */
-public interface INavigationNodeHandler extends IPageBorderFactory {
+public interface INavigationNodeHandler extends IPageBarFactory {
 
 	/**
 	 * @param node the handled node

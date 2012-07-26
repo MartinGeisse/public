@@ -10,7 +10,7 @@ import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.navigation.INavigationNodeHandler;
 import name.martingeisse.admin.navigation.NavigationNode;
 
-import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.panel.Panel;
 
 /**
  * Base implementation for {@link INavigationNodeHandler}.
@@ -93,13 +93,21 @@ public abstract class AbstractNavigationNodeHandler implements INavigationNodeHa
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#createPageBorder()
+	 * @see name.martingeisse.admin.component.pagebar.IPageBarFactory#createPageTopBar(java.lang.String)
 	 */
 	@Override
-	public WebMarkupContainer createPageBorder() {
+	public Panel createPageTopBar(String id) {
 		return null;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.component.pagebar.IPageBarFactory#createPageBottomBar(java.lang.String)
+	 */
+	@Override
+	public Panel createPageBottomBar(String id) {
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#getEntityNameForCanonicalEntityListNode()
 	 */

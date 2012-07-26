@@ -13,12 +13,11 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
-import name.martingeisse.admin.component.pageborder.IPageBorderFactory;
+import name.martingeisse.admin.component.pagebar.IPageBarFactory;
 import name.martingeisse.admin.navigation.component.NavigationFolderPage;
 import name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler;
 import name.martingeisse.common.util.SpecialHandlingList;
 
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -57,7 +56,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * constant. This ID is not intended to be visible anywhere.
  * 
  * A node can hold additional data besides its handler. Currently, this
- * includes a page border factory. 
+ * includes a page bar factory. 
  */
 public final class NavigationNode implements Iterable<NavigationNode> {
 
@@ -92,9 +91,9 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	private INavigationNodeHandler handler;
 
 	/**
-	 * the pageBorderFactory
+	 * the pageBarFactory
 	 */
-	private IPageBorderFactory pageBorderFactory;
+	private IPageBarFactory pageBarFactory;
 
 	/**
 	 * Constructor.
@@ -144,19 +143,19 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	}
 
 	/**
-	 * Getter method for the pageBorderFactory.
-	 * @return the pageBorderFactory
+	 * Getter method for the pageBarFactory.
+	 * @return the pageBarFactory
 	 */
-	public IPageBorderFactory getPageBorderFactory() {
-		return pageBorderFactory;
+	public IPageBarFactory getPageBarFactory() {
+		return pageBarFactory;
 	}
 
 	/**
-	 * Setter method for the pageBorderFactory.
-	 * @param pageBorderFactory the pageBorderFactory to set
+	 * Setter method for the pageBarFactory.
+	 * @param pageBarFactory the pageBarFactory to set
 	 */
-	public void setPageBorderFactory(final IPageBorderFactory pageBorderFactory) {
-		this.pageBorderFactory = pageBorderFactory;
+	public void setPageBarFactory(final IPageBarFactory pageBarFactory) {
+		this.pageBarFactory = pageBarFactory;
 	}
 
 	/**
@@ -191,6 +190,20 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 		return (getId() != null) && variableDeclarationPattern.matcher(getId()).matches();
 	}
 
+	/**
+	 * Looks for a child with the specified id.
+	 * @param id the id to look for
+	 * @return the child, or null if none was found
+	 */
+	public NavigationNode findChildById(String id) {
+		for (NavigationNode child : children) {
+			if (child.getId().equals(id)) {
+				return child;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * 
 	 */
@@ -278,7 +291,7 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 		ensureHandlerPresent();
 		return (parent != null && (isVariableNode() || parent.hasVariablePath()));
 	}
-	
+
 	/**
 	 * Returns the closest ancestor node that is a variable node, or null if no
 	 * such ancestor exists.
@@ -552,27 +565,6 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 			child.dumpTree();
 		}
 		System.out.println("--- end NavigationNode");
-	}
-
-	/**
-	 * Creates page borders for this navigation nodes and adds them to the
-	 * specified list, starting with the outmost.
-	 * @param pageBorderList the list to add to
-	 */
-	public void createPageBorders(final List<WebMarkupContainer> pageBorderList) {
-		if (parent != null) {
-			parent.createPageBorders(pageBorderList);
-		}
-		if (pageBorderFactory != null) {
-			final WebMarkupContainer border1 = pageBorderFactory.createPageBorder();
-			if (border1 != null) {
-				pageBorderList.add(border1);
-			}
-		}
-		final WebMarkupContainer border2 = handler.createPageBorder();
-		if (border2 != null) {
-			pageBorderList.add(border2);
-		}
 	}
 
 	/**

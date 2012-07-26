@@ -6,13 +6,12 @@
 
 package name.martingeisse.admin.component.page;
 
-import name.martingeisse.admin.component.pageborder.PageBorderUtil;
+import name.martingeisse.admin.component.pagebar.PageBarUtil;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.border.Border;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.CssResourceReference;
@@ -22,11 +21,6 @@ import org.apache.wicket.request.resource.CssResourceReference;
  */
 public class AbstractAdminPage extends WebPage {
 
-	/**
-	 * the mainContainer
-	 */
-	private transient WebMarkupContainer mainContainer;
-	
 	/**
 	 * Constructor.
 	 */
@@ -51,25 +45,25 @@ public class AbstractAdminPage extends WebPage {
 	}
 	
 	/**
-	 * Returns the main container that contains the page contents. Subclasses must
-	 * add child components to this container.
+	 * Returns the main container that contains the actual page components.
 	 * @return the main container
 	 */
-	public WebMarkupContainer getMainContainer() {
-		return mainContainer;
+	public MarkupContainer getMainContainer() {
+		return this;
 	}
 	
 	/**
 	 * Returns a sub-component of the main container. This method must be used instead
 	 * of getMainContainer().get(id) because the get(id) method of Wicket borders
 	 * doesn't return components from the border's body -- it returns components
-	 * from the border itself.
+	 * from the border itself. (The main container currently isn't a border, but
+	 * this method abstracts from that).
+	 * 
 	 * @param id the wicket id of the component to return
 	 * @return the component
 	 */
 	public Component getFromMainContainer(String id) {
-		String borderBodyId = (PageBorderUtil.PAGE_BORDER_ID + "_" + Border.BODY);
-		return getMainContainer().get(borderBodyId).get(id);
+		return get(id);
 	}
 
 	/* (non-Javadoc)
@@ -78,8 +72,8 @@ public class AbstractAdminPage extends WebPage {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		mainContainer = PageBorderUtil.createAllPageBorders(this);
-		add(mainContainer);
+		add(PageBarUtil.createAllPageTopBars(this, "pageTopBars"));
+		add(PageBarUtil.createAllPageBottomBars(this, "pageBottomBars"));
 	}
 	
 	/* (non-Javadoc)
