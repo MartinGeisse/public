@@ -6,14 +6,12 @@
 
 package name.martingeisse.admin.entity.list;
 
-import name.martingeisse.admin.entity.instance.EntityInstance;
-import name.martingeisse.common.computation.predicate.IPredicate;
 import name.martingeisse.common.sql.expression.IExpression;
 
 /**
  * This filter allows to filter lists of entity instances.
  */
-public interface IEntityListFilter extends IPredicate<EntityInstance> {
+public interface IEntityListFilter {
 
 	/**
 	 * The alias used for the entity table.

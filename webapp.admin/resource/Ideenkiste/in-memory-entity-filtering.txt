@@ -1,0 +1,23 @@
+
+Neue Methoden für IEntityFilter, um Entity-Listen "in Memory" zu Filtern:
+
+- getAbsolutePredicate() -> IPredicate<EntityInstance>
+	gibt an, welche Entities von dem Filter akzeptiert werden
+- getFetchRelativePredicate() -> IPredicate<EntityInstance>
+	gibt an, welche der Entities, die nach der FilterExpression
+	übrig bleiben, vom Filter akzeptiert werden. Das ist eine optimierung,
+	um nach der FilterExpression nicht dieselben Eigenschaften noch mal
+	in-memory zu prüfen.
+- getOvershootPercent() -> int
+	Gibt an, wieviele Rows mehr als das angegebene Limit geholt werden sollen,
+	damit nach in-memory-Filtering schätzungsweise genug Rows da sind.
+	Überschüssige Rows werden verworfen. Bei zu wenigen Rows muss
+	nachgefetched werden.
+
+Sinn: Nicht alles lässt sich in SQL ausdrücken.
+
+Default-Implementierung, die die FilterExpression in-memory auswertet.
+Damit muss man nur noch die Sachen in-memory ausprogrammieren, die sich
+nicht als FilterExpression darstellen lassen, was ja auch der
+Ausgangspunkt für in-memory Filtering war.
+

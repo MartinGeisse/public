@@ -6,14 +6,10 @@
 
 package name.martingeisse.admin.entity.list;
 
-import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.common.sql.expression.IExpression;
 
 /**
  * This class implements a general-purpose entity filter.
- * 
- * TODO: The intention is to do in-memory filtering by evaluating
- * the SQL expression.
  */
 public class EntityListFilter implements IEntityListFilter {
 
@@ -51,14 +47,6 @@ public class EntityListFilter implements IEntityListFilter {
 	 */
 	public void setFilterExpression(final IExpression filterExpression) {
 		this.filterExpression = filterExpression;
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.common.computation.predicate.IPredicate#evaluate(java.lang.Object)
-	 */
-	@Override
-	public boolean evaluate(EntityInstance input) {
-		throw new RuntimeException("NOT YET IMPLEMENTED");
 	}
 
 }
