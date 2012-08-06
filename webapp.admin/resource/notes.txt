@@ -5,36 +5,6 @@ Application Schema
 entity perspective: admin, developer, ...
 	evtl auch nur ein flag
 	mir fällt gerade nicht mehr als die beiden ein -> erst mal nur ein flag
-
-global entity presenters ("perspective" fall o.g. nur ein flag):
-	urlId
-	-> "perspectives"
-	ShopOrder: status, items, zahlungen, ...
-	allg. Eigenschaften: Title
-	alles andere aus Subtypen von IEntityPresenter
-	aus der Liste von Presenters wird ein TabPanel für "die" Seite der Entity erzeugt,
-		z.B. Ansicht einer einzigen Bestellung
-
-global table views:
-	urlId
-	Title
-	IFilter[] filters;
-	ICellPopulatorFactory[] cpFactories;
-	-> warum factories? warum nicht gleich CP? Die sind auch an sich stateless!
-
----------------------------------------------------------------
-Perspective-Klassen:
-
----------------------------------------------------------------
-Filter-Klassen:
-
----------------------------------------------------------------
-CellPopulator-Klassen:
-
----------------------------------------------------------------
-
-Warum generisches Datensammeln? Warum nicht Basisklassen für eine spezifische Admin-Oberfläche?
--> Weil das generische Datensammeln die Grundlage für super-schnell-und-einfach zu verwendende
-Basisklassen liefert! Zum Beispiel liefern "bekannte" Datentypen der Entity-Properties, im
-Gegensatz zu den Typen die SQL liefert, gleich die Darstellung, die man haben will, ohne dass
-man diese immer explizit angeben muss.
+	-> Navigation Nodes per Feld, Pages per Annotation and ""Benutzertypen"" koppeln.
+	-> der Begriff kann in einer Application auch noch anders benutzt werden;
+		"Admin Perspective" wäre vllt. ganz gut.

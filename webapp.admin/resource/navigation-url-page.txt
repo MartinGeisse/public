@@ -4,22 +4,7 @@ Man kann zum Beispiel die Entity "Order" als Delegate zur Entity "OrderItem" ein
 für Instance-lokale Seiten für OrderItem-Instanzen vorzugsweise die ungefilterte Liste zu "OrderItem"
 genommen, aber falls es die nicht gibt, die ungefilterte Liste zu "Order".
 
-Aktuelles System hat noch den Nachteil, dass man, um zu einer Entity zu verweisen, deren Position im
-NaviTree kennen muss. Ansonsten erzeugt man einen Link ohne den Location-PP, der Navi-RequestMapper
-erkennt das Mapping nicht, und man landet auf der zentralen Entity-Seite statt auf der
-Navi-gemappten Seite. Hier sollte nach Möglichkeit eine der Navi-gemappten Seiten als "default"
-bestimmt werden und Links dahin zeigen. Das könnte zum Beispiel so aussehen, dass Default-fähige
-Entity-Navi-Nodes (d.h. vor allem ohne Filter!) beim Init sich selbst in der Entity vermerken;
-falls es mehrere gibt gewinnt einer per "Zufall" sofern der App-Init-Code nicht explizit einen
-als Default setzt.
-
-- Die lokalen NaviTrees je EntityType werden von Contributoren erzeugt. Lösungen:
-	- Contributoren können nur in der ersten Ebene einfügen. Einfach aber nicht cool.
-	- Contributoren liefern den Navi-Path, wo sie mounten wollen. Die Nodes dazu
-	  werden vom System erzeugt. Das ist schon cooler, erst recht wenn die
-	  Standard-Contributoren aus dem Framework konfigurierbare Pfade liefern.
-	  Die Contributoren müssen natürlich außerdem die entsprechenden Handler
-	  liefern.
+- IEntityNavigationContributor
 	- wichtiger Standard-Contributor ist natürlich einer, der explizit einen Pfad
 	  und NaviNode nimmt und nur diese liefert (bei allen Entities, die anhand
 	  eines Predicate erkannt werden). Damit kann man eigene Seiten einfügen.
@@ -55,8 +40,6 @@ später. Ist zwar unschön, wenn ${bar} öffentlich zu sehen ist, aber nicht
 katastrophal (eigentlich sollen eh keine URLs öffentlich sichtbar sein,
 wo der Path-PP zu sehen ist). Erst mal alles zum Laufen bringen.
 
---------
-
 	Dabei müsste beim Mounting klar sein, wann eine URL einem normalen Child
 	und wann einem Instance Child entspricht. Das ist bei URL->Handler aber
 	einfach: Der Instance Child Mapper erkennt beliebige Segmentwerte aber
@@ -69,28 +52,16 @@ wo der Path-PP zu sehen ist). Erst mal alles zum Laufen bringen.
 	also NaviPathTemplate im Prinzip wie der MountPath mit einem Platzhalter, aber
 	mit neutraler Syntax und ohne Parametername (der ist eine interne Sache).
 
+------
 
---------
+Navigation Tree kann als Contributor zur Sitemap fungieren. Wobei
+1. es auch andere geben könnte, daher sollte das Sitemap-Erstellen eine separate Funktionalität
+   sein und der NaviTree wirklich nur ein Contributor, kein zentrales Objekt.
+2. XML-Sitemaps bei Admin-Applications unwichtig sind, aber Sitemap-Seiten wichtig.
+3. es Zusammen mit der Sitemap auch eine Suchfunktion geben kann. Wie stark die beiden zusammenhängen
+   muss noch geklärt werden.
 
-Aktuell werden nach dem neuen NAvi System die Entity Presenter Pages gemountet.
-Das ist aber eine schlechte Idee, weil Presenter Pages ein häßlicher Fix
-für das schlechte alte Navi System waren. Entity-Lokale Navi ist das
-"neue Presenter-System". Statt PresentationContributor gibt es jetzt
-EntityNavigationContributor. Diese Pages müssen in der Lage sein, sich gegenseitig
-zu verlinken (unter Verwendung des Navi-Systems). -> wirklich? Nach dem
-alten System konnten Presenter das, aber es war nicht wichtig. Wichtig war
-vor allem das Instance-lokale Navi Menü, was es jetzt ja auch geben kann.
--> die paar wenigen Crosslinks innerhalb einer Entity Instance können mit
-hardcoded local paths + zentral registriertem root path für die jeweilige
-Entity funktionieren.
 
-Interne Verlinkung innerhalb einer Entity: Beim Aufbau des lokalen NaviTree
-werden in den NaviNodes Referenzen auf andere NaviNodes gespeichert. Die
-Pages haben Zugriff darauf bzw. auf deren Paths -> können direkt die
-Nodes Links erzeugen lassen. (URL zusammenbasteln reicht nicht, z.B. wegen
-externer Parameter).
 
-evtl. Schritt: Entity Node bzw. Root path pro Entity merken (?) -> Entity kann von
-überall her verlinkt werden.
 
 

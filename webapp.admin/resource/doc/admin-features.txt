@@ -1,0 +1,19 @@
+
+Was hat das Admin-App-System als ganzes eigentlich zu bieten?
+- Plugins/Capabilities
+- Entity-Schema
+- Navigation
+- Page Borders
+
+aus Wicket / Common
+- Autoforms
+- Computation Framework (predicate, mapping, accumulator, operation)
+- Icons, Helper Components, Helper Servlet Filters, Utils
+
+---
+
+Warum generisches Datensammeln? Warum nicht Basisklassen für eine spezifische Admin-Oberfläche?
+-> Weil das generische Datensammeln die Grundlage für super-schnell-und-einfach zu verwendende
+Basisklassen liefert! Zum Beispiel liefern "bekannte" Datentypen der Entity-Properties, im
+Gegensatz zu den Typen die SQL liefert, gleich die Darstellung, die man haben will, ohne dass
+man diese immer explizit angeben muss.

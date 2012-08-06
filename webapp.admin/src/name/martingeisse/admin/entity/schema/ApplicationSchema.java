@@ -212,7 +212,7 @@ public class ApplicationSchema {
 
 		// create ad-hoc canonical list nodes for entities with no declared canonical list node
 		final NavigationNode globalRoot = NavigationConfigurationUtil.getNavigationTree().getRoot();
-		final NavigationNode allEntitiesNode = globalRoot.createGlobalNavigationFolderChild("all-entities", "All Entities");
+		final NavigationNode allEntitiesNode = globalRoot.createNavigationFolderChild("all-entities", "All Entities");
 		for (EntityDescriptor entity : entityDescriptors) {
 			
 			// create a child node of "All Entities" for this entity
@@ -235,7 +235,7 @@ public class ApplicationSchema {
 		for (EntityDescriptor entity : entityDescriptors) {
 			final String entityName = entity.getName();
 			NavigationNode canonicalEntityListNode = canonicalEntityListNodes.get(entityName);
-			NavigationNode entityInstanceRootNode = canonicalEntityListNode.createGlobalNavigationFolderChild("${id}", "Entity Instance");
+			NavigationNode entityInstanceRootNode = canonicalEntityListNode.createNavigationFolderChild("${id}", "Entity Instance");
 			entity.setInstanceNavigationRootNode(entityInstanceRootNode);
 			for (IEntityNavigationContributor contributor : entityNavigationContributors) {
 				contributor.contributeNavigationNodes(entity, entityInstanceRootNode);

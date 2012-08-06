@@ -8,6 +8,7 @@ package name.martingeisse.admin.util;
 
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.admin.navigation.NavigationNode;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -40,10 +41,21 @@ public class LinkUtil {
 	 * @param wicketId the wicket id of the link to create
 	 * @param entity the linked entity class
 	 * @param entityId the id of the linked entity instance
+	 * @param subpathSegment the subpath segments to walk from the entity instance navigation root
+	 * to reach the node to link. The specified node must exist, otherwise this method throws an
+	 * {@link IllegalArgumentException}.
 	 * @return the link
 	 */
-	public static AbstractLink createSingleEntityLink(String wicketId, EntityDescriptor entity, Object entityId) {
-		BookmarkablePageLink<?> link = (BookmarkablePageLink<?>)entity.getInstanceNavigationRootNode().createLink(wicketId);
+	public static AbstractLink createSingleEntityLink(String wicketId, EntityDescriptor entity, Object entityId, String... subpathSegment) {
+		NavigationNode node = entity.getInstanceNavigationRootNode();
+		for (String segment : subpathSegment) {
+			NavigationNode child = node.findChildById(segment);
+			if (child == null) {
+				throw new IllegalArgumentException("subpath segment '" + segment + "' not found in node " + node.getPath());
+			}
+			node = child;
+		}
+		BookmarkablePageLink<?> link = (BookmarkablePageLink<?>)node.createLink(wicketId);
 		link.getPageParameters().add("id", entityId);
 		return link;
 	}

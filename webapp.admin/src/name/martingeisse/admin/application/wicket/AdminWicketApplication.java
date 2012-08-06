@@ -66,6 +66,8 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		
 		// some more Wicket configuration
 		getApplicationSettings().setPageExpiredErrorPage(HomePage.class);
+		getMarkupSettings().setDefaultBeforeDisabledLink("<span class=\"disabled-link\">");
+		getMarkupSettings().setDefaultAfterDisabledLink("</span>");
 		
 		// mount resource URLs
 		mountResource("common.css", new PackageResourceReference(AbstractAdminPage.class, "common.css"));

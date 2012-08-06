@@ -153,8 +153,12 @@ public class Main {
 		final NavigationNode root = NavigationConfigurationUtil.getNavigationTree().getRoot();
 		root.setPageBarFactory(new BasicPageBarFactory());
 		root.createChild(new UrlNavigationHandler("/").setId("home-dummy").setTitle("Home"));
-		final NavigationNode sub1 = root.createGlobalNavigationFolderChild("sub-one", "Sub One");
-		sub1.createGlobalNavigationFolderChild("s1-sub-one", "s1 Sub One");
+		final NavigationNode sub1 = root.createFirstChildHandlerChild("sub-one", "Sub One");
+		sub1.createNavigationFolderChild("s1-sub-one", "s1 Sub One");
+		sub1.createNavigationFolderChild("s1-sub-two", "s1 Sub Two");
+		sub1.createNavigationFolderChild("s1-sub-three", "s1 Sub Three");
+		
+		
 //		sub1sub1.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "acl_roles").setId("roles").setTitle("ACL: Roles"));
 //		sub1.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "acl_users").setId("users").setTitle("ACL: Users"));
 //		root.createFolderChild("sub-two", "Sub Two");

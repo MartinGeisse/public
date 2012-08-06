@@ -133,3 +133,7 @@ tr.odd {
 .info-box > div {
 	margin-left: 25px;
 }
+
+.disabled-link {
+	color: black;
+}
