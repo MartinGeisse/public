@@ -8,7 +8,7 @@ package name.martingeisse.admin.customization.pagebar;
 
 import java.util.List;
 
-import name.martingeisse.admin.entity.schema.ApplicationSchema;
+import name.martingeisse.admin.entity.model.AllEntityDescriptorsModel;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
@@ -44,7 +44,7 @@ public class BasicPageTopBar extends Panel {
 		add(new NavigationMenuView("topNavigationNodes", topNavigationNodeListModel, 0));
 	
 		// entity menu
-		add(new ListView<EntityDescriptor>("entities", ApplicationSchema.instance.getEntityDescriptors()) {
+		add(new ListView<EntityDescriptor>("entities", AllEntityDescriptorsModel.instance) {
 			@Override
 			protected void populateItem(ListItem<EntityDescriptor> item) {
 				EntityDescriptor entity = item.getModelObject();

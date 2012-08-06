@@ -13,6 +13,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.martingeisse.admin.entity.model.EntityDescriptorModel;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 
@@ -21,7 +22,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
@@ -43,7 +43,7 @@ public class IdOnlyGlobalEntityListPanel extends Panel implements IPageable {
 	 */
 	public IdOnlyGlobalEntityListPanel(final String id, final EntityDescriptor entity, final PageParameters parameters) {
 		super(id);
-		setDefaultModel(Model.of(entity));
+		setDefaultModel(new EntityDescriptorModel(entity));
 	}
 
 	/* (non-Javadoc)

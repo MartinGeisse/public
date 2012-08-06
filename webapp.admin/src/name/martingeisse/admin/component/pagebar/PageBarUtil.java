@@ -32,7 +32,6 @@ public final class PageBarUtil {
 	 * @return the {@link RepeatingView} that contains all top-bars
 	 */
 	public static WebMarkupContainer createAllPageTopBars(Page page, String id) {
-		System.out.println("X TOP");
 		RepeatingView view = new RepeatingView(id);
 		createAllPageTopBars(NavigationUtil.getNavigationNodeForPage(page), view);
 		return view;
@@ -45,7 +44,6 @@ public final class PageBarUtil {
 	 * @return the {@link RepeatingView} that contains all bottom-bars
 	 */
 	public static WebMarkupContainer createAllPageBottomBars(Page page, String id) {
-		System.out.println("X BOTTOM");
 		RepeatingView view = new RepeatingView(id);
 		createAllPageBottomBars(NavigationUtil.getNavigationNodeForPage(page), view);
 		return view;
@@ -55,19 +53,16 @@ public final class PageBarUtil {
 	 * 
 	 */
 	private static void createAllPageTopBars(NavigationNode node, RepeatingView view) {
-		System.out.println("top node: " + node.getPath());
 		if (node.getParent() != null) {
 			createAllPageTopBars(node.getParent(), view);
 		}
 		if (node.getPageBarFactory() != null) {
-			System.out.println("1: " + node.getPath() + " -- " + node.getPageBarFactory());
 			final Panel topBar = node.getPageBarFactory().createPageTopBar(view.newChildId());
 			if (topBar != null) {
 				view.add(topBar);
 			}
 		}
 		{
-			System.out.println("2: " + node.getPath());
 			final Panel topBar = node.getHandler().createPageTopBar(view.newChildId());
 			if (topBar != null) {
 				view.add(topBar);

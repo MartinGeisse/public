@@ -20,7 +20,6 @@ public class BasicPageBarFactory implements IPageBarFactory {
 	 */
 	@Override
 	public Panel createPageTopBar(String id) {
-		System.out.println("*** TOP");
 		return new BasicPageTopBar(id);
 	}
 
@@ -29,7 +28,6 @@ public class BasicPageBarFactory implements IPageBarFactory {
 	 */
 	@Override
 	public Panel createPageBottomBar(String id) {
-		System.out.println("*** BOTTOM");
 		return new BasicPageBottomBar(id);
 	}
 	

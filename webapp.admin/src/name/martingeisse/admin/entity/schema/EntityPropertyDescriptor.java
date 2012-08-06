@@ -6,16 +6,12 @@
 
 package name.martingeisse.admin.entity.schema;
 
-import java.io.Serializable;
 
 /**
  * This class describes a property of an entity, for example
  * a database column.
- * 
- * TODO: this class should not be serializable. Instead, models should be able
- * to detach and re-attach from/to instances of this class.
  */
-public class EntityPropertyDescriptor implements Serializable {
+public class EntityPropertyDescriptor {
 
 	/**
 	 * the name

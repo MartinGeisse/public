@@ -6,11 +6,14 @@
 
 package name.martingeisse.admin.entity.instance;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 /**
@@ -22,16 +25,18 @@ import name.martingeisse.admin.entity.schema.EntityDescriptor;
  * class, the fields are null and the isEmpty() method returns true. This
  * happens, for example, when an instance is created from a {@link ResultSet}
  * without rows.
- * 
- * TODO: Is not actually serializable because {@link EntityDescriptor} isn't --
- * keep a detachable reference to the descriptor instead.
  */
 public class EntityInstance implements Serializable {
 
 	/**
+	 * the entityName -- stored to make the entity itself detachable (transient)
+	 */
+	private String entityName;
+	
+	/**
 	 * the entity
 	 */
-	private EntityDescriptor entity;
+	private transient EntityDescriptor entity;
 
 	/**
 	 * the id
@@ -62,6 +67,7 @@ public class EntityInstance implements Serializable {
 	 * @param fieldValues the field values
 	 */
 	public EntityInstance(final EntityDescriptor entity, final Object id, final String[] fieldNames, final Object[] fieldValues) {
+		this.entityName = entity.getName();
 		this.entity = entity;
 		this.id = id;
 		this.fieldNames = fieldNames;
@@ -77,6 +83,7 @@ public class EntityInstance implements Serializable {
 	 * @throws SQLException on SQL errors
 	 */
 	public EntityInstance(final EntityDescriptor entity, final ResultSet resultSet) throws SQLException {
+		this.entityName = entity.getName();
 		this.entity = entity;
 		this.id = null;
 		this.fieldNames = getFieldNames(entity, resultSet);
@@ -91,6 +98,13 @@ public class EntityInstance implements Serializable {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Serialization support.
+	 */
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		this.entity = ApplicationSchema.instance.findEntity(entityName);
 	}
 	
 	/**

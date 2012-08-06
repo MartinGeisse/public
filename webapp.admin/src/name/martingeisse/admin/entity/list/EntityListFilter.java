@@ -6,12 +6,14 @@
 
 package name.martingeisse.admin.entity.list;
 
+import java.io.Serializable;
+
 import name.martingeisse.common.sql.expression.IExpression;
 
 /**
  * This class implements a general-purpose entity filter.
  */
-public class EntityListFilter implements IEntityListFilter {
+public class EntityListFilter implements IEntityListFilter, Serializable {
 
 	/**
 	 * the filterExpression

@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.entity.schema;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,15 +24,12 @@ import name.martingeisse.admin.navigation.NavigationNode;
 /**
  * This class captures a descriptor for a database entity (table).
  * 
- * TODO: this class should not be serializable. Instead, models should be able
- * to detach and re-attach from/to instances of this class.
- * 
  * ID handling: This descriptor stores information about the entity ID (primary
  * key). Currently only single-column IDs are supported.
  * 
  * TODO: properly use name / displayName / tableName everywhere
  */
-public class EntityDescriptor implements Serializable {
+public class EntityDescriptor {
 
 	/**
 	 * the name

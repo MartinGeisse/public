@@ -38,7 +38,7 @@ public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePag
 	 * Constructor.
 	 * @param pageClass the page class
 	 */
-	public BookmarkableEntityInstanceNavigationHandler(Class<? extends WebPage> pageClass) {
+	public BookmarkableEntityInstanceNavigationHandler(final Class<? extends WebPage> pageClass) {
 		super(pageClass);
 	}
 
@@ -47,7 +47,7 @@ public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePag
 	 */
 	@Override
 	public String getEntityName() {
-		StringValue value = getImplicitPageParameters().get("entity");
+		final StringValue value = getImplicitPageParameters().get("entity");
 		return (value == null ? null : value.toString());
 	}
 
@@ -55,7 +55,7 @@ public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePag
 	 * @see name.martingeisse.admin.entity.IEntityNameAware#setEntityName(java.lang.String)
 	 */
 	@Override
-	public void setEntityName(String entityName) {
+	public void setEntityName(final String entityName) {
 		getImplicitPageParameters().remove("entity");
 		getImplicitPageParameters().add("entity", entityName);
 	}
@@ -65,52 +65,63 @@ public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePag
 	 * @return the entity
 	 */
 	public EntityDescriptor getEntity() {
-		return ApplicationSchema.instance.findEntity(getEntityName());		
+		return ApplicationSchema.instance.findEntity(getEntityName());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler#prepareMount(name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	protected void prepareMount(NavigationNode node) {
+	protected void prepareMount(final NavigationNode node) {
 		super.prepareMount(node);
 		if (getEntity() == null) {
-			throw new IllegalStateException("unknown entity in navigation node " + node.getPath() + ": "+ getEntityName());
+			throw new IllegalStateException("unknown entity in navigation node " + node.getPath() + ": " + getEntityName());
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler#createLink(java.lang.String, name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	public AbstractLink createLink(String id, NavigationNode node) {
-		return new BookmarkablePageLink<Void>(id, getPageClass(), new PageParameters(getExplicitPageParameters())) {
-			@Override
-			protected void onInitialize() {
-				super.onInitialize();
-				
-				// Add the entity ID from the current page to the parameters if no "id" parameter exists yet.
-				// This allows to have instance-local links created from the navigation nodes (which are not
-				// actually instance-local objects) which automatically resolve their ID. At the same time,
-				// the calling code may use createLink() and add parameters manually to specify an explicit ID.
-				if (!getPageParameters().getNamedKeys().contains("id")) {
-					Page page = getPage();
-					if (page instanceof IGetEntityId) {
-						getPageParameters().add("id", ((IGetEntityId)page).getEntityId()); 
-					} else {
-						StringValue parameter = page.getPageParameters().get("id");
-						if (parameter == null || parameter.toString() == null) {
-							throw new IllegalStateException(
-								"BookmarkableEntityInstanceNavigationHandler link: the Page doesn't implement IGetEntityId (page class " +
-								page.getClass().getCanonicalName() +
-								") and doesn't have an id page parameter either; pageParameters: " + page.getPageParameters());
-						}
-						getPageParameters().add("id", parameter.toString());
-					}
-				}
-				
-			}
-		};
+	public AbstractLink createLink(final String id, final NavigationNode node) {
+		return new MyLink(id, getPageClass(), new PageParameters(getExplicitPageParameters()));
 	}
 
+	/**
+	 * The link class must be static because the link must be serializable but the
+	 * handler isn't, so we define it here and not as an inner class.
+	 */
+	private static class MyLink extends BookmarkablePageLink<Void> {
+
+		/**
+		 * Constructor.
+		 */
+		MyLink(final String id, final Class<? extends Page> pageClass, final PageParameters parameters) {
+			super(id, pageClass, parameters);
+		}
+
+		@Override
+		protected void onInitialize() {
+			super.onInitialize();
+
+			// Add the entity ID from the current page to the parameters if no "id" parameter exists yet.
+			// This allows to have instance-local links created from the navigation nodes (which are not
+			// actually instance-local objects) which automatically resolve their ID. At the same time,
+			// the calling code may use createLink() and add parameters manually to specify an explicit ID.
+			if (!getPageParameters().getNamedKeys().contains("id")) {
+				final Page page = getPage();
+				if (page instanceof IGetEntityId) {
+					getPageParameters().add("id", ((IGetEntityId)page).getEntityId());
+				} else {
+					final StringValue parameter = page.getPageParameters().get("id");
+					if (parameter == null || parameter.toString() == null) {
+						throw new IllegalStateException("BookmarkableEntityInstanceNavigationHandler link: the Page doesn't implement IGetEntityId (page class " + page.getClass().getCanonicalName() + ") and doesn't have an id page parameter either; pageParameters: " + page.getPageParameters());
+					}
+					getPageParameters().add("id", parameter.toString());
+				}
+			}
+
+		}
+
+	}
 }

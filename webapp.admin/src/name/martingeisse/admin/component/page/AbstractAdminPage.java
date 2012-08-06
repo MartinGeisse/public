@@ -83,5 +83,5 @@ public class AbstractAdminPage extends WebPage {
 	public void renderHead(IHeaderResponse response) {
 		response.renderCSSReference(new CssResourceReference(AbstractAdminPage.class, "common.css"));
 	}
-	
+
 }

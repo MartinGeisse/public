@@ -124,7 +124,6 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 				}
 				countQuery = countStatement.toString(new SqlBuilderForMySql());
 			}
-			System.out.println("* countQuery: " + countQuery);
 			int size = (int)(long)(Long)database.executeSingleResultQuery(statement, countQuery);
 			
 			statement.close();
@@ -165,7 +164,6 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 				selectStatement.setLimit(count);
 				query = selectStatement.toString(new SqlBuilderForMySql());
 			}
-			System.out.println("* query: " + query);
 			final ResultSet resultSet = statement.executeQuery(query);
 			ResultSetReader reader = new ResultSetReader(resultSet, entity.getIdColumnName(), entity.getRawEntityListFieldOrder());
 			

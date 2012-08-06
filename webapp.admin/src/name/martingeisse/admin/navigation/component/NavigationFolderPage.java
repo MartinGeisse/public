@@ -76,5 +76,5 @@ public class NavigationFolderPage extends AbstractAdminPage {
 	public String getFolderTitle() {
 		return NavigationConfigurationUtil.getNavigationTree().getNodesByPath().get(navigationPath).getTitle();
 	}
-
+	
 }

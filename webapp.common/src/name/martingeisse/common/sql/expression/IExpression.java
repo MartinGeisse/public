@@ -6,12 +6,14 @@
 
 package name.martingeisse.common.sql.expression;
 
+import java.io.Serializable;
+
 import name.martingeisse.common.sql.build.ISqlBuilder;
 
 /**
  * An SQL expression.
  */
-public interface IExpression {
+public interface IExpression extends Serializable {
 
 	/**
 	 * Writes this object to the specified SQL builder.
