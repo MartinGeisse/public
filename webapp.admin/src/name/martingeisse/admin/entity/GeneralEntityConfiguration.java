@@ -10,11 +10,6 @@ package name.martingeisse.admin.entity;
 /**
  * This class contains general configuration that applies to all entities.
  * It is determined by the application and stored in the application configuration.
- * 
- * TODO: In many places, defaults are used if no values are set in this
- * configuration. Refactor: Set default values in this configuration and
- * do not allow null values at runtime. This moves default behavior to
- * a central point (here) and not scatter it across the whole code.
  */
 public final class GeneralEntityConfiguration {
 
@@ -32,6 +27,8 @@ public final class GeneralEntityConfiguration {
 	 * Constructor.
 	 */
 	public GeneralEntityConfiguration() {
+		entityListFieldOrder = null;
+		entityNameMappingStrategy = new PrefixEliminatingEntityNameMappingStrategy("");
 	}
 
 	/**

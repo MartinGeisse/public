@@ -26,8 +26,6 @@ import name.martingeisse.admin.navigation.NavigationNode;
  * 
  * ID handling: This descriptor stores information about the entity ID (primary
  * key). Currently only single-column IDs are supported.
- * 
- * TODO: properly use name / displayName / tableName everywhere
  */
 public class EntityDescriptor {
 

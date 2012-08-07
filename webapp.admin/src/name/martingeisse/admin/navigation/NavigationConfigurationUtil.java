@@ -10,10 +10,6 @@ import name.martingeisse.admin.application.ApplicationConfiguration;
 
 /**
  * Utilities to access navigation-related configuration in the {@link ApplicationConfiguration}.
- * 
- * TODO: implement a set of global debugging flags to enable
- * debugging like this at runtime and just for some users; disable
- * for others to prevent excessive logging and increase performance
  */
 public final class NavigationConfigurationUtil {
 

@@ -1,0 +1,11 @@
+
+Some logging ideas:
+
+Allow inspection for the application configuration. Logging is
+for processes, inspection pages are for structure. I.e. log the
+startup process, but structure is less important there since it
+won't change and can be inspected at runtime.
+
+Add per-session logging switches. This might be as easy as
+dynamically reconfiguring log4j for each request based on session
+values. (<-- simplest thing that could possibly work!)

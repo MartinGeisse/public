@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.entity.schema.database;
 
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -15,11 +14,8 @@ import java.sql.Statement;
 
 /**
  * This class describes a database used by the application.
- * 
- * TODO: this class should not be serializable. Instead, models should be able
- * to detach and re-attach from/to instances of this class.
  */
-public abstract class AbstractDatabaseDescriptor implements Serializable {
+public abstract class AbstractDatabaseDescriptor {
 
 	/**
 	 * the displayName

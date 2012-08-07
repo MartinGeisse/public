@@ -1,0 +1,9 @@
+
+BookmarkableEntityInstanceNavigationHandler Links will look for the page's IGetEntityId
+interface or "id" page parameter to determine the entity ID if none is set in the
+link's page parameters explicitly.
+
+Extend this to look in the whole component hierarchy, starting at the link and moving
+up to the page, checking for IGetEntityId (components do not have individual page
+parameters), and check the page parameters last. This is yet another simplification
+to obtain the entity ID and might save some memory as well.

@@ -27,10 +27,8 @@ import org.apache.wicket.util.string.StringValue;
  * in an implicit page parameter called "entity".
  * 
  * This handler expects to obtain an entity ID. This can be done
- * either by having the page implement {@link IGetEntityId}
- * (TODO: support getting the ID from any component or
- * component behavior), or (as a fallback) by taking a page
- * parameter called "entityId".
+ * either by having the page implement {@link IGetEntityId}, or
+ * (as a fallback) by taking a page parameter called "entityId".
  */
 public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePageNavigationHandler implements IEntityNameAware {
 
