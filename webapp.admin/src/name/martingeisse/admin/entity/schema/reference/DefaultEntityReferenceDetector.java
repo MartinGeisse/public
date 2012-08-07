@@ -15,7 +15,7 @@ import org.apache.commons.lang.StringUtils;
  * This implementation of {@link IEntityReferenceDetector} implements
  * default detection logic.
  */
-public class DefaultEntityReferenceDetector implements IEntityReferenceDetector {
+public class DefaultEntityReferenceDetector extends AbstractEntityReferenceDetector {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector#detectEntityReference(name.martingeisse.admin.entity.schema.ApplicationSchema, java.lang.String, java.lang.String, java.lang.String)

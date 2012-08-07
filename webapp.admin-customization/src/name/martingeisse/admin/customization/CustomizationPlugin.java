@@ -28,7 +28,7 @@ public class CustomizationPlugin implements IPlugin {
 	 */
 	@Override
 	public void contribute() {
-		EntityConfigurationUtil.addEntityReferenceDetector(new FixedNameEntityReferenceDetector("modificationUser_id", "User"));
+		EntityConfigurationUtil.addEntityReferenceDetector(new FixedNameEntityReferenceDetector(null, "modificationUser_id", "User"));
 	}
 
 }

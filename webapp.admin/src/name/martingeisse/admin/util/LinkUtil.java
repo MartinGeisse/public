@@ -41,14 +41,14 @@ public class LinkUtil {
 	 * @param wicketId the wicket id of the link to create
 	 * @param entity the linked entity class
 	 * @param entityId the id of the linked entity instance
-	 * @param subpathSegment the subpath segments to walk from the entity instance navigation root
+	 * @param subpathSegments the subpath segments to walk from the entity instance navigation root
 	 * to reach the node to link. The specified node must exist, otherwise this method throws an
 	 * {@link IllegalArgumentException}.
 	 * @return the link
 	 */
-	public static AbstractLink createSingleEntityLink(String wicketId, EntityDescriptor entity, Object entityId, String... subpathSegment) {
+	public static AbstractLink createSingleEntityLink(String wicketId, EntityDescriptor entity, Object entityId, String... subpathSegments) {
 		NavigationNode node = entity.getInstanceNavigationRootNode();
-		for (String segment : subpathSegment) {
+		for (String segment : subpathSegments) {
 			NavigationNode child = node.findChildById(segment);
 			if (child == null) {
 				throw new IllegalArgumentException("subpath segment '" + segment + "' not found in node " + node.getPath());
@@ -65,10 +65,13 @@ public class LinkUtil {
 	 * @param wicketId the wicket id of the link to create
 	 * @param entityName the name of the linked entity class
 	 * @param entityId the id of the linked entity instance
+	 * @param subpathSegments the subpath segments to walk from the entity instance navigation root
+	 * to reach the node to link. The specified node must exist, otherwise this method throws an
+	 * {@link IllegalArgumentException}.
 	 * @return the link
 	 */
-	public static AbstractLink createSingleEntityLink(String wicketId, String entityName, Object entityId) {
-		return createSingleEntityLink(wicketId, ApplicationSchema.instance.findEntity(entityName), entityId);
+	public static AbstractLink createSingleEntityLink(String wicketId, String entityName, Object entityId, String... subpathSegments) {
+		return createSingleEntityLink(wicketId, ApplicationSchema.instance.findEntity(entityName), entityId, subpathSegments);
 	}
 	
 }

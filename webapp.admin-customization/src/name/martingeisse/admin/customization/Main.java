@@ -33,6 +33,7 @@ import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.database.MysqlDatabaseDescriptor;
+import name.martingeisse.admin.entity.schema.reference.FixedNameEntityReferenceDetector;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.handler.BookmarkableEntityInstanceNavigationHandler;
@@ -83,6 +84,7 @@ public class Main {
 
 		// plugins / capabilities
 		ApplicationConfiguration.get().addPlugin(new DefaultPlugin());
+		ApplicationConfiguration.get().addPlugin(new FixedNameEntityReferenceDetector("extensions", "group_id", "extension_groups"));
 		ApplicationConfiguration.get().addPlugin(new CustomizationPlugin());
 		ApplicationConfiguration.get().addPlugin(new BaselineReadOnlyRendererContributor());
 		ApplicationConfiguration.get().addPlugin(new SingleEntityPropertyFilter(1, null, "modificationTimestamp", false));

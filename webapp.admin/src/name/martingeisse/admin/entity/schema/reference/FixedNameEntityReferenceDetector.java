@@ -11,10 +11,16 @@ import name.martingeisse.admin.entity.schema.ApplicationSchema;
 
 /**
  * Detects an entity reference whenever a property name matches a fixed
- * string, with a fixed destination entity.
+ * string, with a fixed destination entity. The detector can optionally
+ * be restricted to a single referencing (source) entity.
  */
-public final class FixedNameEntityReferenceDetector implements IEntityReferenceDetector {
+public final class FixedNameEntityReferenceDetector extends AbstractEntityReferenceDetector {
 
+	/**
+	 * the sourceEntityName
+	 */
+	private final String sourceEntityName;
+	
 	/**
 	 * the name
 	 */
@@ -27,14 +33,24 @@ public final class FixedNameEntityReferenceDetector implements IEntityReferenceD
 
 	/**
 	 * Constructor.
+	 * @param sourceEntityName the name of the referencing entity, or null to match any referencing entity
 	 * @param knownPropertyName the "known" property name that marks references
 	 * @param destinationEntityName the name of the destination entity
 	 */
-	public FixedNameEntityReferenceDetector(final String knownPropertyName, final String destinationEntityName) {
+	public FixedNameEntityReferenceDetector(final String sourceEntityName, final String knownPropertyName, final String destinationEntityName) {
+		this.sourceEntityName = sourceEntityName;
 		this.knownPropertyName = knownPropertyName;
 		this.destinationEntityName = destinationEntityName;
 	}
 
+	/**
+	 * Getter method for the sourceEntityName.
+	 * @return the sourceEntityName
+	 */
+	public String getSourceEntityName() {
+		return sourceEntityName;
+	}
+	
 	/**
 	 * Getter method for the knownPropertyName.
 	 * @return the knownPropertyName
@@ -56,11 +72,12 @@ public final class FixedNameEntityReferenceDetector implements IEntityReferenceD
 	 */
 	@Override
 	public String detectEntityReference(ApplicationSchema schema, String entityName, String entityTableName, String propertyName) {
-		if (propertyName.equals(knownPropertyName)) {
-			return destinationEntityName;
-		} else {
-			return null;
+		if (sourceEntityName == null || sourceEntityName.equals(entityName)) {
+			if (propertyName.equals(knownPropertyName)) {
+				return destinationEntityName;
+			}
 		}
+		return null;
 	}
 
 }

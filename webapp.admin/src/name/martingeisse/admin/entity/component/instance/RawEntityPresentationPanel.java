@@ -8,6 +8,7 @@ package name.martingeisse.admin.entity.component.instance;
 
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
+import name.martingeisse.admin.util.LinkUtil;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -50,13 +51,7 @@ public class RawEntityPresentationPanel extends Panel {
 				if (reference == null || fieldValue == null) {
 					link = new WebMarkupContainer("link");
 				} else {
-					/*
-					PageParameters parameters = new PageParameters();
-					parameters.add("entity", reference.getDestination().getTableName());
-					parameters.add("id", fieldValue);
-					link = null; // TODO new BookmarkablePageLink<Void>("link", EntityPresentationPage.class, parameters);
-					*/
-					throw new RuntimeException("NOT YET IMPLEMENTED");
+					link = LinkUtil.createSingleEntityLink("link", reference.getDestination(), fieldValue);
 				}
 				link.add(new Label("value", "" + fieldValue));
 				item.add(link);
