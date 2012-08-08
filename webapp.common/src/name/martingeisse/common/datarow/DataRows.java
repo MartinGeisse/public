@@ -14,6 +14,10 @@ import java.util.List;
 
 /**
  * Represents multiple rows of data that conform to the same meta-data.
+ * 
+ * Note that this class does not ensure that either meta-data or data
+ * are present, and does not ensure that the data actually conforms
+ * to the meta-data. It is up to the caller to ensure that.
  */
 public class DataRows extends AbstractDataRowMetaHolder {
 
@@ -23,13 +27,13 @@ public class DataRows extends AbstractDataRowMetaHolder {
 	private List<Object[]> rows = new ArrayList<Object[]>();
 
 	/**
-	 * Constructor. Leaves the meta-data and rows unset.
+	 * Constructor. Leaves the meta-data unset and the row list empty.
 	 */
 	public DataRows() {
 	}
 
 	/**
-	 * Constructor. Sets the specified meta-data but leaves the rows unset.
+	 * Constructor. Sets the specified meta-data but leaves the row list empty.
 	 * @param meta the meta-data to set
 	 */
 	public DataRows(DataRowMeta meta) {
@@ -38,7 +42,7 @@ public class DataRows extends AbstractDataRowMetaHolder {
 
 	/**
 	 * Constructor. Sets the meta-data from the specified JDBC meta-data but
-	 * leaves the rows unset.
+	 * leaves the row list empty.
 	 * @param resultSetMetaData the JDBC meta-data to create the row meta-data from
 	 * @throws SQLException on SQL errors
 	 */

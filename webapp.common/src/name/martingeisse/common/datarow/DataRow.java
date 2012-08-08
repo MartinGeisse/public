@@ -12,6 +12,10 @@ import java.sql.SQLException;
 
 /**
  * Represents a row of data as well as meta-data to which it conforms.
+ * 
+ * Note that this class does not ensure that either meta-data or data
+ * are present, and does not ensure that the data actually conforms
+ * to the meta-data. It is up to the caller to ensure that.
  */
 public class DataRow extends AbstractDataRowMetaHolder {
 
