@@ -9,10 +9,12 @@ package name.martingeisse.admin.entity.schema;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
+import name.martingeisse.common.datarow.DataRowMeta;
 
 /**
  * This action asks the database for all stored entities.
@@ -51,14 +53,16 @@ class DiscoverEntitiesAction {
 			
 			// fetch all tables
 			final List<EntityDescriptor> result = new ArrayList<EntityDescriptor>();
-			ResultSet resultSet = connection.getMetaData().getTables(null, null, null, new String[] {"TABLE"});
-			while (resultSet.next()) {
-				final EntityDescriptor entityDescriptor = new EntityDescriptor();
-				entityDescriptor.setDatabase(database);
-				entityDescriptor.setTableName(resultSet.getString("TABLE_NAME"));
-				result.add(entityDescriptor);
+			{
+				ResultSet resultSet = connection.getMetaData().getTables(null, null, null, new String[] {"TABLE"});
+				while (resultSet.next()) {
+					final EntityDescriptor entityDescriptor = new EntityDescriptor();
+					entityDescriptor.setDatabase(database);
+					entityDescriptor.setTableName(resultSet.getString("TABLE_NAME"));
+					result.add(entityDescriptor);
+				}
+				resultSet.close();
 			}
-			resultSet.close();
 			
 			// fetch the columns for each table
 			for (EntityDescriptor entityDescriptor : result) {
@@ -74,6 +78,17 @@ class DiscoverEntitiesAction {
 				subAction.setConnection(connection);
 				subAction.setEntity(entityDescriptor);
 				entityDescriptor.setIdColumnName(subAction.execute());
+			}
+
+			// Fetch the data row meta-data for each table. Unlike the properties/columns fetched
+			// above this directly detects the format of the result set when fetching the entity.
+			{
+				Statement statement = connection.createStatement();
+				for (EntityDescriptor entityDescriptor : result) {
+					ResultSet resultSet = statement.executeQuery("SELECT * FROM " + entityDescriptor.getTableName() + " LIMIT 1");
+					entityDescriptor.setDataRowMeta(new DataRowMeta(resultSet.getMetaData()));
+					resultSet.close();
+				}
 			}
 			
 			return result;

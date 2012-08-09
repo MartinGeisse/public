@@ -6,6 +6,12 @@
 
 package name.martingeisse.admin.entity.schema.database;
 
+import java.sql.Connection;
+
+import com.mysema.query.sql.MySQLTemplates;
+import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.SQLQueryImpl;
+
 
 /**
  * Concrete implementation of {@link AbstractDatabaseDescriptor} for
@@ -14,28 +20,11 @@ package name.martingeisse.admin.entity.schema.database;
 public class MysqlDatabaseDescriptor extends AbstractDatabaseDescriptor {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.schema.AbstractDatabaseDescriptor#getIdentifierBeginQuoteCharacter()
+	 * @see name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor#createQuery(java.sql.Connection)
 	 */
 	@Override
-	public char getIdentifierBeginQuoteCharacter() {
-		return '`';
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.schema.AbstractDatabaseDescriptor#getIdentifierEndQuoteCharacter()
-	 */
-	@Override
-	public char getIdentifierEndQuoteCharacter() {
-		return '`';
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.schema.AbstractDatabaseDescriptor#getDefaultOrderClause()
-	 */
-	@Override
-	public String getDefaultOrderClause() {
-		// in case surrounding whitespace is missing...
-		return " ";
+	public SQLQuery createQuery(Connection connection) {
+		return new SQLQueryImpl(connection, new MySQLTemplates());
 	}
 
 }

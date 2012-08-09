@@ -41,11 +41,11 @@ public class RawEntityPresentationPanel extends Panel {
 			protected void populateItem(LoopItem item) {
 				
 				// create the name label
-				String fieldName = entityInstance.getFieldNames()[item.getIndex()];
+				String fieldName = entityInstance.getMeta().getNames()[item.getIndex()];
 				item.add(new Label("name", fieldName));
 				
 				// create the value label / link
-				Object fieldValue = entityInstance.getFieldValues()[item.getIndex()];
+				Object fieldValue = entityInstance.getData()[item.getIndex()];
 				EntityReferenceInfo reference = model.getObject().getEntity().findOutgoingReference(fieldName);
 				WebMarkupContainer link;
 				if (reference == null || fieldValue == null) {
@@ -64,7 +64,7 @@ public class RawEntityPresentationPanel extends Panel {
 	 * @return the row width, i.e. the number of fields
 	 */
 	public int getWidth() {
-		return entityInstance.getFieldNames().length;
+		return entityInstance.getMeta().getNames().length;
 	}
 	
 	/* (non-Javadoc)

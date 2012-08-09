@@ -48,7 +48,7 @@ public abstract class AbstractDataRowMetaHolder {
 	 * @param resultSet the result set to read from
 	 * @return the row values
 	 */
-	protected Object[] createDataForCurrentRow(ResultSet resultSet) throws SQLException {
+	protected static Object[] createDataForCurrentRow(ResultSet resultSet) throws SQLException {
 		Object[] data = new Object[resultSet.getMetaData().getColumnCount()];
 		for (int i=0; i<data.length; i++) {
 			data[i] = resultSet.getObject(i + 1);
@@ -56,4 +56,35 @@ public abstract class AbstractDataRowMetaHolder {
 		return data;
 	}
 
+	/**
+	 * Returns the value of the specified field.
+	 * @param fieldName the name of the field whose value to return
+	 * @return the field value
+	 */
+	protected final Object getFieldValue(final Object[] data, final String fieldName) {
+		String[] fieldNames = getMeta().getNames();
+		for (int i = 0; i < fieldNames.length; i++) {
+			if (fieldNames[i].equals(fieldName)) {
+				return data[i];
+			}
+		}
+		throw new IllegalArgumentException("unknown data row field: " + fieldName);
+	}
+
+	/**
+	 * Sets the value of the specified field.
+	 * @param fieldName the name of the field whose value to set
+	 * @param fieldValue the value to set
+	 */
+	protected final void setFieldValue(final Object[] data, final String fieldName, final Object fieldValue) {
+		String[] fieldNames = getMeta().getNames();
+		for (int i = 0; i < fieldNames.length; i++) {
+			if (fieldNames[i].equals(fieldName)) {
+				data[i] = fieldValue;
+				return;
+			}
+		}
+		throw new IllegalArgumentException("unknown data row field: " + fieldName);
+	}
+	
 }

@@ -70,7 +70,7 @@ public class Launcher {
 //		SslSocketConnector sslSocketConnector = new SslSocketConnector(sslContextFactory);
 //		sslSocketConnector.setPort(8443);
 
-		final Server server = new Server(8080);
+		final Server server = new Server(8888);
 //		server.addConnector(sslSocketConnector);
 		server.setHandler(context);
 		server.start();

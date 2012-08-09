@@ -11,9 +11,11 @@ import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.common.sql.expression.IExpression;
 
 import org.apache.wicket.markup.html.WebPage;
+
+import com.mysema.query.types.Expression;
+import com.mysema.query.types.Predicate;
 
 /**
  * This handler is used to mount entity list pages. It adds the entity
@@ -126,11 +128,12 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 
 	/**
 	 * Sets a newly created {@link EntityListFilter} from the specified filter expression.
-	 * @param filterExpression the filter expression
+	 * @param entityExpression the expression that represents the entity
+	 * @param filterPredicate the filter predicate
 	 * @return this for chaining
 	 */
-	public BookmarkableEntityListNavigationHandler setFilter(final IExpression filterExpression) {
-		return setFilter(new EntityListFilter(filterExpression));
+	public BookmarkableEntityListNavigationHandler setFilter(final Expression<?> entityExpression, final Predicate filterPredicate) {
+		return setFilter(new EntityListFilter(entityExpression, filterPredicate));
 	}
 
 	/**

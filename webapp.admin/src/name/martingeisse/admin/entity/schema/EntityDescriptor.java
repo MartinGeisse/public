@@ -6,6 +6,9 @@
 
 package name.martingeisse.admin.entity.schema;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,12 +23,21 @@ import name.martingeisse.admin.entity.instance.FetchEntityInstanceAction;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.common.datarow.AbstractDataRowMetaHolder;
+import name.martingeisse.common.datarow.DataRowMeta;
 
 /**
  * This class captures a descriptor for a database entity (table).
  * 
  * ID handling: This descriptor stores information about the entity ID (primary
  * key). Currently only single-column IDs are supported.
+ * 
+ * TODO: Raw table uses different order for names, values
+ * Values do not use configured raw table field order; ResultSetReader did that.
+ * Make order configurable at all? Database Order is enough for a quick preview,
+ * anything else uses a custom view anyway. OTOH EntityInstance/DataRow should
+ * support getting a field by name, so using a configurable order should be simple,
+ * even if not useful.
  */
 public class EntityDescriptor {
 
@@ -80,6 +92,11 @@ public class EntityDescriptor {
 	private NavigationNode instanceNavigationRootNode;
 
 	/**
+	 * the dataRowMeta
+	 */
+	private DataRowMeta dataRowMeta;
+
+	/**
 	 * Constructor.
 	 */
 	public EntityDescriptor() {
@@ -103,13 +120,13 @@ public class EntityDescriptor {
 	public String getDisplayName() {
 		return displayName;
 	}
-	
+
 	/**
 	 * Maps the table name to name and display name using the application's
 	 * entity name mapping.
 	 */
 	void mapNames() {
-		IEntityNameMappingStrategy mapping = EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityNameMappingStrategy();
+		final IEntityNameMappingStrategy mapping = EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityNameMappingStrategy();
 		this.name = mapping.determineEntityName(this);
 		this.displayName = mapping.determineEntityDisplayName(this);
 	}
@@ -243,14 +260,38 @@ public class EntityDescriptor {
 	}
 
 	/**
+	 * Getter method for the dataRowMeta.
+	 * @return the dataRowMeta
+	 */
+	public DataRowMeta getDataRowMeta() {
+		return dataRowMeta;
+	}
+
+	/**
+	 * Setter method for the dataRowMeta.
+	 * @param dataRowMeta the dataRowMeta to set
+	 */
+	public void setDataRowMeta(final DataRowMeta dataRowMeta) {
+		this.dataRowMeta = dataRowMeta;
+	}
+
+	/**
 	 * Fetches a single instance of this entity.
+	 * 
+	 * The 'optional' flag specifies what happens if no instance can be found.
+	 * If the flag is true, then the instance is optional, and this method
+	 * returns null. Otherwise, the instance is mandatory, and this method
+	 * throws an exception.
+	 * 
 	 * @param id the id of the instance
+	 * @param optional whether the existence of the instance is optional
 	 * @return the fields
 	 */
-	public EntityInstance fetchSingleInstance(final int id) {
+	public EntityInstance fetchSingleInstance(final int id, boolean optional) {
 		final FetchEntityInstanceAction action = new FetchEntityInstanceAction();
 		action.setEntity(this);
 		action.setId(id);
+		action.setOptional(optional);
 		return action.execute();
 	}
 
@@ -299,4 +340,59 @@ public class EntityDescriptor {
 		return fieldOrderArray;
 	}
 
+	/**
+	 * This method delegates to checkDataRowMeta(resultSet.getMetaData()).
+	 * @param resultSet the result set
+	 * @return the meta-data
+	 * @throws SQLException on SQL errors
+	 */
+	public DataRowMeta checkDataRowMeta(ResultSet resultSet) throws SQLException {
+		return checkDataRowMeta(resultSet.getMetaData());
+	}
+
+	/**
+	 * Ensures that the data row meta-data for this entity is equal to the one
+	 * for the specified result set meta-data. Throws an {@link IllegalStateException}
+	 * if that is not the case. This indicates that the table schema is no longer
+	 * the same as when this {@link EntityDescriptor} was created, i.e. that the
+	 * table schema has been changed while the admin application was running.
+	 * Otherwise returns the shared row meta-data object.
+	 * 
+	 * @param resultSetMetaData the meta-data to check
+	 * @return the shared meta-data
+	 * @throws SQLException on SQL errors
+	 */
+	public DataRowMeta checkDataRowMeta(ResultSetMetaData resultSetMetaData) throws SQLException {
+		if (!dataRowMeta.equals(new DataRowMeta(resultSetMetaData))) {
+			throw new IllegalStateException("data row schema for entity " + getName() + " does not match");
+		}
+		return dataRowMeta;
+	}
+
+	/**
+	 * This method delegates to checkDataRowMeta(metaHolder.getMeta()).
+	 * @param metaHolder the meta-data holder
+	 * @return the meta-data
+	 */
+	public DataRowMeta checkDataRowMeta(AbstractDataRowMetaHolder metaHolder) {
+		return checkDataRowMeta(metaHolder.getMeta());
+	}
+	
+	/**
+	 * Ensures that the data row meta-data for this entity is equal to the specified one.
+	 * Throws an {@link IllegalStateException} if that is not the case. This indicates
+	 * that the table schema is no longer the same as when this {@link EntityDescriptor}
+	 * was created, i.e. that the table schema has been changed while the admin
+	 * application was running. Otherwise returns the shared row meta-data object.
+	 * 
+	 * @param meta the meta-data to check
+	 * @return the shared meta-data
+	 */
+	public DataRowMeta checkDataRowMeta(DataRowMeta meta) {
+		if (!dataRowMeta.equals(meta)) {
+			throw new IllegalStateException("data row schema for entity " + getName() + " does not match");
+		}
+		return dataRowMeta;
+	}
+	
 }

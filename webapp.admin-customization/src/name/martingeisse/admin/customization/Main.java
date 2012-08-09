@@ -42,17 +42,17 @@ import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
 import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
-import name.martingeisse.common.sql.expression.BinaryExpression;
-import name.martingeisse.common.sql.expression.BinaryOperator;
-import name.martingeisse.common.sql.expression.ColumnReference;
-import name.martingeisse.common.sql.expression.IExpression;
-import name.martingeisse.common.sql.expression.IntegerLiteral;
-import name.martingeisse.common.sql.expression.MultiCondition;
 import name.martingeisse.wicket.autoform.AutoformPanel;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociatedValidator;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
+
+import com.mysema.query.support.Expressions;
+import com.mysema.query.types.Ops;
+import com.mysema.query.types.Path;
+import com.mysema.query.types.Predicate;
+import com.mysema.query.types.expr.NumberExpression;
 
 /**
  * The main class.
@@ -67,6 +67,42 @@ public class Main {
 	@SuppressWarnings("unchecked")
 	public static void main(final String[] args) throws Exception {
 
+		/*
+		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/phpbb", "root", "");
+		
+		Path<Object> entity = Expressions.path(Object.class, "phpbb_acl_roles");
+		Path<Integer> roleId = Expressions.path(Integer.class, entity, "role_id");
+		NumberExpression<Integer> mod2 = Expressions.numberOperation(Integer.class, Ops.MOD, roleId, Expressions.constant(2));
+		Predicate even = Expressions.predicate(Ops.EQ, mod2, Expressions.constant(0));
+		
+		SQLQueryImpl query = new SQLQueryImpl(connection, new MySQLTemplates());
+		ResultSet resultSet = query.from(entity).where(even).getResults(Wildcard.all);
+		DataRows rows = new DataRows(resultSet);
+		resultSet.close();
+		for (Object[] row : rows.getRows()) {
+			System.out.println("--- row ---");
+			for (int i=0; i<row.length; i++) {
+				System.out.println("* " + rows.getMeta().getNames()[i] + ": " + row[i]);
+			}
+		}
+		
+		connection.close();
+		System.exit(0);
+		*/
+		
+		// --- code generation start ---
+		/*
+		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/phpbb", "root", "");
+		MetaDataExporter exporter = new MetaDataExporter();
+		exporter.setTargetFolder(new File("generated"));
+		exporter.setPackageName("foo");
+		exporter.export(connection.getMetaData());  
+		connection.close();
+		System.exit(0);
+		*/
+		// --- code generation end ---
+		
+		
 		//		DatabaseDescriptor mainDatabase = new DatabaseDescriptor();
 		//		mainDatabase.setDisplayName("main database");
 		//		mainDatabase.setUrl("jdbc:postgresql://localhost/admintest");
@@ -202,23 +238,34 @@ public class Main {
 		root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setId("roles_all").setTitle("Roles"));
 
 		{
-			IExpression mod2 = new BinaryExpression(new ColumnReference("t", "role_id"), BinaryOperator.REMAINDER, new IntegerLiteral(2));
-			IExpression even = new BinaryExpression(mod2, BinaryOperator.EQUAL, new IntegerLiteral(0));
-			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(even).setId("roles_even").setTitle("Even"));
+//			IExpression mod2 = new BinaryExpression(new ColumnReference("t", "role_id"), BinaryOperator.REMAINDER, new IntegerLiteral(2));
+//			IExpression even = new BinaryExpression(mod2, BinaryOperator.EQUAL, new IntegerLiteral(0));
+			
+			Path<Object> entity = Expressions.path(Object.class, "phpbb_acl_roles");
+			Path<Integer> roleId = Expressions.path(Integer.class, entity, "role_id");
+			NumberExpression<Integer> mod2 = Expressions.numberOperation(Integer.class, Ops.MOD, roleId, Expressions.constant(2));
+			Predicate even = Expressions.predicate(Ops.EQ, mod2, Expressions.constant(0));
+			
+			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(entity, even).setId("roles_even").setTitle("Even"));
 		}
 
 		{
-			IExpression mod2 = new BinaryExpression(new ColumnReference("t", "role_id"), BinaryOperator.REMAINDER, new IntegerLiteral(2));
-			IExpression odd = new BinaryExpression(mod2, BinaryOperator.EQUAL, new IntegerLiteral(1));
-			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(odd).setId("roles_odd").setTitle("Odd"));
+//			IExpression mod2 = new BinaryExpression(new ColumnReference("t", "role_id"), BinaryOperator.REMAINDER, new IntegerLiteral(2));
+//			IExpression odd = new BinaryExpression(mod2, BinaryOperator.EQUAL, new IntegerLiteral(1));
+			
+			Path<Object> entity = Expressions.path(Object.class, "phpbb_acl_roles");
+			Path<Integer> roleId = Expressions.path(Integer.class, entity, "role_id");
+			NumberExpression<Integer> mod2 = Expressions.numberOperation(Integer.class, Ops.MOD, roleId, Expressions.constant(2));
+			Predicate odd = Expressions.predicate(Ops.EQ, mod2, Expressions.constant(1));
+			
+			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(entity, odd).setId("roles_odd").setTitle("Odd"));
 		}
 
-		{
-			MultiCondition condition = new MultiCondition();
-			condition.addFieldInString("role_type", new String[] {"a_", "f_"});
-			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(condition).setId("roles_cond").setTitle("ConditionTest"));
-		}
-		
+//		{
+//			MultiCondition condition = new MultiCondition();
+//			condition.addFieldInString("role_type", new String[] {"a_", "f_"});
+//			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(condition).setId("roles_cond").setTitle("ConditionTest"));
+//		}
 		
 		NavigationTabBarFactory.apply(root.findChildById("sub-one"));
 		

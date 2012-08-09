@@ -6,7 +6,8 @@
 
 package name.martingeisse.admin.entity.list;
 
-import name.martingeisse.common.sql.expression.IExpression;
+import com.mysema.query.types.Expression;
+import com.mysema.query.types.Predicate;
 
 /**
  * This filter allows to filter lists of entity instances.
@@ -14,15 +15,15 @@ import name.martingeisse.common.sql.expression.IExpression;
 public interface IEntityListFilter {
 
 	/**
-	 * The alias used for the entity table.
+	 * @return the expression that represents the entity
 	 */
-	public static final String ALIAS = "t";
+	public Expression<?> getEntityExpression();
 	
 	/**
-	 * Creates an {@link IExpression} for the SQL expression that does the
+	 * Creates an {@link Expression} for the SQL expression that does the
 	 * filtering on the database side.
 	 * @return the filter expression
 	 */
-	public IExpression getFilterExpression();
-	
+	public Predicate getFilterPredicate();
+
 }

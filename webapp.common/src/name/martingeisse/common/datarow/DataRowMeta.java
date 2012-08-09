@@ -6,6 +6,7 @@
 
 package name.martingeisse.common.datarow;
 
+import java.io.Serializable;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -13,7 +14,7 @@ import java.util.Arrays;
 /**
  * Describes the data stored in a {@link DataRow}.
  */
-public final class DataRowMeta {
+public final class DataRowMeta implements Serializable {
 
 	/**
 	 * the names

@@ -8,9 +8,9 @@ package name.martingeisse.admin.entity.schema.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+
+import com.mysema.query.sql.SQLQuery;
 
 /**
  * This class describes a database used by the application.
@@ -117,89 +117,10 @@ public abstract class AbstractDatabaseDescriptor {
 	}
 
 	/**
-	 * @return the begin character for identifier quoting
+	 * Creates a QueryDSL {@link SQLQuery} object for this database.
+	 * @param connection the database connection
+	 * @return the query
 	 */
-	public abstract char getIdentifierBeginQuoteCharacter();
-
-	/**
-	 * @return the end character for identifier quoting
-	 */
-	public abstract char getIdentifierEndQuoteCharacter();
-	
-	/**
-	 * Returns the query text for a COUNT(*) query for the specified table.
-	 * @param tableName
-	 * @return
-	 */
-	protected String getTableSizeQuery(String tableName) {
-		return "SELECT COUNT(*) FROM " + getIdentifierBeginQuoteCharacter() + tableName + getIdentifierEndQuoteCharacter();
-	}
-	
-	/**
-	 * Fetches the number of rows in a table.
-	 * @param statement the JDBC statement object to use
-	 * @param tableName the name of the table whose size shall be returned
-	 * @return the number of rows in the table
-	 * @throws SQLException on SQL errors
-	 */
-	public int fetchTableSize(Statement statement, String tableName) throws SQLException {
-		return (int)(long)(Long)executeSingleResultQuery(statement, getTableSizeQuery(tableName));
-	}
-	
-	/**
-	 * Executes a query that is expected to return a single result.
-	 * @param statement the JDBC statement object to use
-	 * @param query the query to execute
-	 * @return the result
-	 * @throws SQLException on SQL errors
-	 */
-	public Object executeSingleResultQuery(Statement statement, String query) throws SQLException {
-		final ResultSet resultSet = statement.executeQuery(query);
-		if (!resultSet.next()) {
-			throw new RuntimeException("unexpected result set layout (no row) for query: " + query);
-		}
-		if (resultSet.getMetaData().getColumnCount() != 1) {
-			throw new RuntimeException("unexpected result set layout (number of columns is " + resultSet.getMetaData().getColumnCount() + ") for query: " + query);
-		}
-		Object result = resultSet.getObject(1);
-		if (resultSet.next()) {
-			throw new RuntimeException("unexpected result set layout (more than one row) for query: " + query);
-		}
-		resultSet.close();
-		return result;
-	}
-
-	/**
-	 * Returns the default ORDER BY clause for this database. This clause is needed to keep
-	 * the order of a query stable if repeatedly executed. May return an empty string if such
-	 * a clause is not necessary. Keeping the order stable is most important with
-	 * pagination.
-	 * 
-	 * For example, MySQL does not need an ORDER BY and returns an empty string. In contrast,
-	 * PostgreSQL does need an ORDER BY because otherwise subsequent queries are not guaranteed
-	 * to keep the order stable. Row updates would then change the row order and totally
-	 * confuse a user who is viewing the table in a paginated way.
-	 * 
-	 * @return the default ORDER BY clause
-	 */
-	public abstract String getDefaultOrderClause();
-	
-	/**
-	 * Fetches a row from the specified table by its ID. This fetches at most one row (using LIMIT),
-	 * but may return no rows at all if the ID was not found.
-	 * 
-	 * @param statement the JDBC statement object to use
-	 * @param tableName the name of the table from which to fetch
-	 * @param idColumnName the name of the ID column
-	 * @param id the ID of the row to fetch
-	 * @return the result set
-	 * @throws SQLException on SQL errors
-	 */
-	public ResultSet fetchRowById(Statement statement, String tableName, String idColumnName, Object id) throws SQLException {
-		char b = getIdentifierBeginQuoteCharacter();
-		char e = getIdentifierEndQuoteCharacter();
-		// TODO can currently only handle numeric IDs
-		return statement.executeQuery("SELECT * FROM " + b + tableName + e + " WHERE " + b + idColumnName + e + " = " + id + " LIMIT 1");
-	}
+	public abstract SQLQuery createQuery(Connection connection);
 	
 }

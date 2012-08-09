@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.entity.component.list.raw;
 
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import name.martingeisse.admin.entity.component.list.EntityInstanceDataProvider;
@@ -17,7 +18,6 @@ import name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer;
 import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
 import name.martingeisse.admin.util.IGetPageable;
 import name.martingeisse.admin.util.LinkUtil;
-import name.martingeisse.common.jdbc.ResultSetReader;
 import name.martingeisse.wicket.util.zebra.ZebraDataView;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -81,6 +81,16 @@ public class RawEntityListPanel extends Panel implements IGetPageable, IEntityLi
 	public EntityDescriptor getEntity() {
 		return (EntityDescriptor)getDefaultModelObject();
 	}
+	
+	/**
+	 * Returns the name of the field that is at the specified index in the
+	 * globally configured raw entity field order. 
+	 * @param index the index
+	 * @return the field name
+	 */
+	String getFieldNameForGloballyDefinedOrder(int index) {
+		return getEntity().getRawEntityListFieldOrder()[index];
+	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.util.IGetPageable#getPageable()
@@ -107,7 +117,7 @@ public class RawEntityListPanel extends Panel implements IGetPageable, IEntityLi
 		add(new Loop("headers", new PropertyModel<Integer>(RawEntityListPanel.this, "width")) {
 			@Override
 			protected void populateItem(LoopItem item) {
-				item.add(new Label("name", getEntity().getRawEntityListFieldOrder()[item.getIndex()]));
+				item.add(new Label("name", getFieldNameForGloballyDefinedOrder(item.getIndex())));
 			}
 		});
 		add(new ZebraDataView<EntityInstance>("rows", new MyDataProvider(), 10) {
@@ -124,7 +134,7 @@ public class RawEntityListPanel extends Panel implements IGetPageable, IEntityLi
 						} else {
 							link = LinkUtil.createSingleEntityLink("link", entity, instance.getId());
 						}
-						link.add(renderers[cellItem.getIndex()].createLabel("value", instance.getFieldValues()[cellItem.getIndex()]));
+						link.add(renderers[cellItem.getIndex()].createLabel("value", instance.getData()[cellItem.getIndex()]));
 						cellItem.add(link);
 					}
 				});
@@ -150,13 +160,13 @@ public class RawEntityListPanel extends Panel implements IGetPageable, IEntityLi
 		 * @see name.martingeisse.admin.multi.EntityInstanceDataProvider#onResultAvailable(name.martingeisse.common.jdbc.ResultSetReader)
 		 */
 		@Override
-		protected void onResultAvailable(ResultSetReader reader) throws SQLException {
+		protected void onResultAvailable(ResultSetMetaData resultSetMetaData) throws SQLException {
 
 			// determine the column names and renderers
-			int width = reader.getWidth();
+			int width = resultSetMetaData.getColumnCount();
 			renderers = new IPropertyReadOnlyRenderer[width];
 			for (int i=0; i<width; i++) {
-				renderers[i] = ReadOnlyRenderingConfigurationUtil.createPropertyReadOnlyRenderer(reader.getSqlFieldType(i));
+				renderers[i] = ReadOnlyRenderingConfigurationUtil.createPropertyReadOnlyRenderer(resultSetMetaData.getColumnType(i + 1));
 				if (renderers[i] == null) {
 					throw new RuntimeException("no renderer");
 				}

@@ -8,7 +8,8 @@ package name.martingeisse.admin.entity.list;
 
 import java.io.Serializable;
 
-import name.martingeisse.common.sql.expression.IExpression;
+import com.mysema.query.types.Expression;
+import com.mysema.query.types.Predicate;
 
 /**
  * This class implements a general-purpose entity filter.
@@ -16,9 +17,14 @@ import name.martingeisse.common.sql.expression.IExpression;
 public class EntityListFilter implements IEntityListFilter, Serializable {
 
 	/**
-	 * the filterExpression
+	 * the entityExpression
 	 */
-	private IExpression filterExpression;
+	private Expression<?> entityExpression;
+	
+	/**
+	 * the filterPredicate
+	 */
+	private Predicate filterPredicate;
 
 	/**
 	 * Constructor.
@@ -28,27 +34,44 @@ public class EntityListFilter implements IEntityListFilter, Serializable {
 
 	/**
 	 * Constructor.
-	 * @param filterExpression the filter expression
+	 * @param entityExpression the expression that represents the entity
+	 * @param filterPredicate the filter predicate
 	 */
-	public EntityListFilter(final IExpression filterExpression) {
-		this.filterExpression = filterExpression;
+	public EntityListFilter(Expression<?> entityExpression, Predicate filterPredicate) {
+		this.entityExpression = entityExpression;
+		this.filterPredicate = filterPredicate;
 	}
 
-	/**
-	 * Getter method for the filterExpression.
-	 * @return the filterExpression
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.list.IEntityListFilter#getEntityExpression()
 	 */
 	@Override
-	public IExpression getFilterExpression() {
-		return filterExpression;
+	public Expression<?> getEntityExpression() {
+		return entityExpression;
+	}
+	
+	/**
+	 * Setter method for the entityExpression.
+	 * @param entityExpression the entityExpression to set
+	 */
+	public void setEntityExpression(Expression<?> entityExpression) {
+		this.entityExpression = entityExpression;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.list.IEntityListFilter#getFilterPredicate()
+	 */
+	@Override
+	public Predicate getFilterPredicate() {
+		return filterPredicate;
 	}
 
 	/**
-	 * Setter method for the filterExpression.
-	 * @param filterExpression the filterExpression to set
+	 * Setter method for the filterPredicate.
+	 * @param filterPredicate the filterPredicate to set
 	 */
-	public void setFilterExpression(final IExpression filterExpression) {
-		this.filterExpression = filterExpression;
+	public void setFilterPredicate(Predicate filterPredicate) {
+		this.filterPredicate = filterPredicate;
 	}
 
 }

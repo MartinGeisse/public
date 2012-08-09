@@ -6,6 +6,7 @@
 
 package name.martingeisse.common.datarow;
 
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -19,7 +20,7 @@ import java.util.List;
  * are present, and does not ensure that the data actually conforms
  * to the meta-data. It is up to the caller to ensure that.
  */
-public class DataRows extends AbstractDataRowMetaHolder {
+public class DataRows extends AbstractDataRowMetaHolder implements Serializable {
 
 	/**
 	 * the rows

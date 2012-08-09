@@ -6,6 +6,12 @@
 
 package name.martingeisse.admin.entity.schema.database;
 
+import java.sql.Connection;
+
+import com.mysema.query.sql.PostgresTemplates;
+import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.SQLQueryImpl;
+
 /**
  * Concrete implementation of {@link AbstractDatabaseDescriptor} for
  * PostgreSQL databases.
@@ -13,29 +19,11 @@ package name.martingeisse.admin.entity.schema.database;
 public class PostgresDatabaseDescriptor extends AbstractDatabaseDescriptor {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.schema.AbstractDatabaseDescriptor#getIdentifierBeginQuoteCharacter()
+	 * @see name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor#createQuery(java.sql.Connection)
 	 */
 	@Override
-	public char getIdentifierBeginQuoteCharacter() {
-		return '"';
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.schema.AbstractDatabaseDescriptor#getIdentifierEndQuoteCharacter()
-	 */
-	@Override
-	public char getIdentifierEndQuoteCharacter() {
-		return '"';
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.schema.AbstractDatabaseDescriptor#getDefaultOrderClause()
-	 */
-	@Override
-	public String getDefaultOrderClause() {
-		// TODO problem: there is no column that is guaranteed to appear in all
-		// tables, so we need to take an arbitrary column from the specific table being fetched
-		throw new RuntimeException("TODO");
+	public SQLQuery createQuery(Connection connection) {
+		return new SQLQueryImpl(connection, new PostgresTemplates());
 	}
 	
 }

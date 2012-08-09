@@ -8,6 +8,7 @@ package name.martingeisse.admin.entity.component.list;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -18,15 +19,16 @@ import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
-import name.martingeisse.common.jdbc.ResultSetReader;
-import name.martingeisse.common.sql.CountAllTarget;
-import name.martingeisse.common.sql.PrimaryTableFetchSpecifier;
-import name.martingeisse.common.sql.SelectStatement;
-import name.martingeisse.common.sql.build.SqlBuilderForMySql;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+
+import com.mysema.query.sql.MySQLTemplates;
+import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.SQLQueryImpl;
+import com.mysema.query.support.Expressions;
+import com.mysema.query.types.expr.Wildcard;
 
 /**
  * An {@link IDataProvider} that fetches entity instances and returns
@@ -90,9 +92,9 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	/**
 	 * This method can be implemented by subclasses to trigger additional behavior
 	 * when the fetch result is available. The default implementation does nothing.
-	 * @param reader the result set reader
+	 * @param resultSetMetaData the result set meta-data
 	 */
-	protected void onResultAvailable(ResultSetReader reader) throws SQLException {
+	protected void onResultAvailable(ResultSetMetaData resultSetMetaData) throws SQLException {
 	}
 	
 	/* (non-Javadoc)
@@ -112,21 +114,12 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 			final EntityDescriptor entity = getEntity();
 			final AbstractDatabaseDescriptor database = entity.getDatabase();
 			connection = database.createConnection();
-			final Statement statement = connection.createStatement();
-			
-			String countQuery;
-			{
-				SelectStatement countStatement = new SelectStatement();
-				countStatement.getTargets().add(new CountAllTarget());
-				countStatement.setPrimaryTableFetchSpecifier(new PrimaryTableFetchSpecifier(entity.getTableName(), IEntityListFilter.ALIAS));
-				if (filter != null) {
-					countStatement.getConditions().add(filter.getFilterExpression());
-				}
-				countQuery = countStatement.toString(new SqlBuilderForMySql());
+			SQLQuery countQuery = new SQLQueryImpl(connection, new MySQLTemplates());
+			countQuery = countQuery.from(Expressions.path(Object.class, entity.getTableName()));
+			if (filter != null) {
+				countQuery = countQuery.where(filter.getFilterPredicate());
 			}
-			int size = (int)(long)(Long)database.executeSingleResultQuery(statement, countQuery);
-			
-			statement.close();
+			int size = (int)countQuery.count();
 			return size;
 		} catch (final SQLException e) {
 			throw new RuntimeException(e);
@@ -152,30 +145,25 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 			connection = database.createConnection();
 			final Statement statement = connection.createStatement();
 
-			// send the query to the database and analyze result meta-data
-			String query;
-			{
-				SelectStatement selectStatement = new SelectStatement();
-				selectStatement.setPrimaryTableFetchSpecifier(new PrimaryTableFetchSpecifier(entity.getTableName(), IEntityListFilter.ALIAS));
-				if (filter != null) {
-					selectStatement.getConditions().add(filter.getFilterExpression());
-				}
-				selectStatement.setOffset(first);
-				selectStatement.setLimit(count);
-				query = selectStatement.toString(new SqlBuilderForMySql());
+			// obtain a ResultSet
+			SQLQuery query = new SQLQueryImpl(connection, new MySQLTemplates());
+			if (filter == null) {
+				query = query.from(Expressions.path(Object.class, entity.getTableName()));
+			} else {
+				query = query.from(filter.getEntityExpression());
+				query = query.where(filter.getFilterPredicate()).limit(count).offset(first);
 			}
-			final ResultSet resultSet = statement.executeQuery(query);
-			ResultSetReader reader = new ResultSetReader(resultSet, entity.getIdColumnName(), entity.getRawEntityListFieldOrder());
+			final ResultSet resultSet = query.getResults(Wildcard.all);
 			
-			// fetch data and fill the rows array
-			List<EntityInstance> rows = new ArrayList<EntityInstance>();
-			String[] fieldNames = reader.getFieldOrder(); // EntityInstance.getFieldNames(entity, resultSet);
-			while (reader.next()) {
-				rows.add(new EntityInstance(entity, reader.getId(), fieldNames, reader.getRow()));
+			// fetch rows
+			entity.checkDataRowMeta(resultSet);
+			final List<EntityInstance> rows = new ArrayList<EntityInstance>();
+			while (resultSet.next()) {
+				rows.add(new EntityInstance(entity, resultSet));
 			}
 			
 			// additional client-specific behavior
-			onResultAvailable(reader);
+			onResultAvailable(resultSet.getMetaData());
 
 			// clean up
 			resultSet.close();

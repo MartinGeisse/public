@@ -62,7 +62,7 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 		
 		// actually fetch the entity instance to show
 		EntityDescriptor entity = determineEntityType();
-		instance = entity.fetchSingleInstance(determineId());
+		instance = entity.fetchSingleInstance(determineId(), false);
 		
 		// base class behavior
 		super.onBeforeRender();

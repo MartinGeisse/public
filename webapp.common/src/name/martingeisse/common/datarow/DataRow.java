@@ -6,6 +6,7 @@
 
 package name.martingeisse.common.datarow;
 
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -17,13 +18,12 @@ import java.sql.SQLException;
  * are present, and does not ensure that the data actually conforms
  * to the meta-data. It is up to the caller to ensure that.
  */
-public class DataRow extends AbstractDataRowMetaHolder {
+public class DataRow extends AbstractDataRowMetaHolder implements Serializable {
 
 	/**
 	 * the data
 	 */
 	private Object[] data;
-
 
 	/**
 	 * Constructor. Leaves the meta-data and row data unset.
@@ -46,18 +46,21 @@ public class DataRow extends AbstractDataRowMetaHolder {
 	 * @throws SQLException on SQL errors
 	 */
 	public DataRow(ResultSetMetaData resultSetMetaData) throws SQLException {
+		if (resultSetMetaData == null) {
+			throw new IllegalArgumentException("resultSetMetaData argument is null");
+		}
 		setMeta(new DataRowMeta(resultSetMetaData));
 	}
 
 	/**
-	 * Constructor that creates an instance from the first row of the
-	 * specified result set.
+	 * Constructor that creates an instance from the current row of the
+	 * specified result set. This method does not advance the result set.
 	 * @param resultSet the JDBC result set
 	 * @throws SQLException on SQL errors
 	 */
 	public DataRow(ResultSet resultSet) throws SQLException {
-		if (!resultSet.next()) {
-			throw new IllegalArgumentException("the result set has no rows");
+		if (resultSet == null) {
+			throw new IllegalArgumentException("resultSet argument is null");
 		}
 		setMeta(new DataRowMeta(resultSet.getMetaData()));
 		data = createDataForCurrentRow(resultSet);
@@ -77,6 +80,24 @@ public class DataRow extends AbstractDataRowMetaHolder {
 	 */
 	public void setData(final Object[] data) {
 		this.data = data;
+	}
+
+	/**
+	 * Returns the value of the specified field.
+	 * @param fieldName the name of the field whose value to return
+	 * @return the field value
+	 */
+	public final Object getFieldValue(final String fieldName) {
+		return getFieldValue(getData(), fieldName);
+	}
+
+	/**
+	 * Sets the value of the specified field.
+	 * @param fieldName the name of the field whose value to set
+	 * @param fieldValue the value to set
+	 */
+	public final void setFieldValue(final String fieldName, final Object fieldValue) {
+		setFieldValue(getData(), fieldName, fieldValue);
 	}
 
 }
