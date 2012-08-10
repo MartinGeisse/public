@@ -27,6 +27,7 @@ import name.martingeisse.admin.entity.component.list.populator.EntityFieldPopula
 import name.martingeisse.admin.entity.component.list.populator.IEntityCellPopulator;
 import name.martingeisse.admin.entity.component.list.populator.MultiCellPopulator;
 import name.martingeisse.admin.entity.component.list.raw.RawEntityListPanel;
+import name.martingeisse.admin.entity.list.EntityListFilterUtils;
 import name.martingeisse.admin.entity.property.ExplicitEntityPropertyFilter;
 import name.martingeisse.admin.entity.property.SingleEntityPropertyFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
@@ -238,27 +239,17 @@ public class Main {
 		root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setId("roles_all").setTitle("Roles"));
 
 		{
-//			IExpression mod2 = new BinaryExpression(new ColumnReference("t", "role_id"), BinaryOperator.REMAINDER, new IntegerLiteral(2));
-//			IExpression even = new BinaryExpression(mod2, BinaryOperator.EQUAL, new IntegerLiteral(0));
-			
-			Path<Object> entity = Expressions.path(Object.class, "phpbb_acl_roles");
-			Path<Integer> roleId = Expressions.path(Integer.class, entity, "role_id");
+			Path<Integer> roleId = EntityListFilterUtils.fieldPath(Integer.class, "role_id");
 			NumberExpression<Integer> mod2 = Expressions.numberOperation(Integer.class, Ops.MOD, roleId, Expressions.constant(2));
 			Predicate even = Expressions.predicate(Ops.EQ, mod2, Expressions.constant(0));
-			
-			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(entity, even).setId("roles_even").setTitle("Even"));
+			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(even).setId("roles_even").setTitle("Even"));
 		}
 
 		{
-//			IExpression mod2 = new BinaryExpression(new ColumnReference("t", "role_id"), BinaryOperator.REMAINDER, new IntegerLiteral(2));
-//			IExpression odd = new BinaryExpression(mod2, BinaryOperator.EQUAL, new IntegerLiteral(1));
-			
-			Path<Object> entity = Expressions.path(Object.class, "phpbb_acl_roles");
-			Path<Integer> roleId = Expressions.path(Integer.class, entity, "role_id");
+			Path<Integer> roleId = EntityListFilterUtils.fieldPath(Integer.class, "role_id");
 			NumberExpression<Integer> mod2 = Expressions.numberOperation(Integer.class, Ops.MOD, roleId, Expressions.constant(2));
 			Predicate odd = Expressions.predicate(Ops.EQ, mod2, Expressions.constant(1));
-			
-			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(entity, odd).setId("roles_odd").setTitle("Odd"));
+			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(odd).setId("roles_odd").setTitle("Odd"));
 		}
 
 //		{

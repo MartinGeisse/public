@@ -15,9 +15,10 @@ import com.mysema.query.types.Predicate;
 public interface IEntityListFilter {
 
 	/**
-	 * @return the expression that represents the entity
+	 * The alias used for the entity in the query. Filter predicates should
+	 * use this to access fields of the entity being filtered.
 	 */
-	public Expression<?> getEntityExpression();
+	public static final String ALIAS = "e";
 	
 	/**
 	 * Creates an {@link Expression} for the SQL expression that does the

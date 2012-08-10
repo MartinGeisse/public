@@ -24,10 +24,7 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import com.mysema.query.sql.MySQLTemplates;
 import com.mysema.query.sql.SQLQuery;
-import com.mysema.query.sql.SQLQueryImpl;
-import com.mysema.query.support.Expressions;
 import com.mysema.query.types.expr.Wildcard;
 
 /**
@@ -114,8 +111,7 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 			final EntityDescriptor entity = getEntity();
 			final AbstractDatabaseDescriptor database = entity.getDatabase();
 			connection = database.createConnection();
-			SQLQuery countQuery = new SQLQueryImpl(connection, new MySQLTemplates());
-			countQuery = countQuery.from(Expressions.path(Object.class, entity.getTableName()));
+			SQLQuery countQuery = entity.query(connection, IEntityListFilter.ALIAS);
 			if (filter != null) {
 				countQuery = countQuery.where(filter.getFilterPredicate());
 			}
@@ -146,11 +142,8 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 			final Statement statement = connection.createStatement();
 
 			// obtain a ResultSet
-			SQLQuery query = new SQLQueryImpl(connection, new MySQLTemplates());
-			if (filter == null) {
-				query = query.from(Expressions.path(Object.class, entity.getTableName()));
-			} else {
-				query = query.from(filter.getEntityExpression());
+			SQLQuery query = entity.query(connection, IEntityListFilter.ALIAS);
+			if (filter != null) {
 				query = query.where(filter.getFilterPredicate()).limit(count).offset(first);
 			}
 			final ResultSet resultSet = query.getResults(Wildcard.all);

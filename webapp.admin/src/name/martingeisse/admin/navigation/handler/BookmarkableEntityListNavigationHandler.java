@@ -14,7 +14,6 @@ import name.martingeisse.admin.navigation.NavigationNode;
 
 import org.apache.wicket.markup.html.WebPage;
 
-import com.mysema.query.types.Expression;
 import com.mysema.query.types.Predicate;
 
 /**
@@ -128,12 +127,11 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 
 	/**
 	 * Sets a newly created {@link EntityListFilter} from the specified filter expression.
-	 * @param entityExpression the expression that represents the entity
 	 * @param filterPredicate the filter predicate
 	 * @return this for chaining
 	 */
-	public BookmarkableEntityListNavigationHandler setFilter(final Expression<?> entityExpression, final Predicate filterPredicate) {
-		return setFilter(new EntityListFilter(entityExpression, filterPredicate));
+	public BookmarkableEntityListNavigationHandler setFilter(final Predicate filterPredicate) {
+		return setFilter(new EntityListFilter(filterPredicate));
 	}
 
 	/**

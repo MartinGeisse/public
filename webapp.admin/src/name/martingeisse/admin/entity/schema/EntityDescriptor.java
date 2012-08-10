@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.entity.schema;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -25,6 +26,12 @@ import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.common.datarow.AbstractDataRowMetaHolder;
 import name.martingeisse.common.datarow.DataRowMeta;
+
+import com.mysema.query.sql.MySQLTemplates;
+import com.mysema.query.sql.RelationalPath;
+import com.mysema.query.sql.RelationalPathBase;
+import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.SQLQueryImpl;
 
 /**
  * This class captures a descriptor for a database entity (table).
@@ -340,6 +347,25 @@ public class EntityDescriptor {
 		return fieldOrderArray;
 	}
 
+	/**
+	 * Creates and returns a {@link RelationalPath} to fetch this entity.
+	 * @param alias the alias to use
+	 * @return the relational path
+	 */
+	public RelationalPath<Object> createRelationalPath(String alias) {
+		return new RelationalPathBase<Object>(Object.class, alias, null, tableName);
+	}
+	
+	/**
+	 * Queries this entity using the specified connection and alias.
+	 * @param connection the JDBC connection
+	 * @param alias the alias for this entity
+	 * @return the query
+	 */
+	public SQLQuery query(Connection connection, String alias) {
+		return new SQLQueryImpl(connection, new MySQLTemplates()).from(createRelationalPath(alias));
+	}
+	
 	/**
 	 * This method delegates to checkDataRowMeta(resultSet.getMetaData()).
 	 * @param resultSet the result set

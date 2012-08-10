@@ -54,6 +54,7 @@ public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePag
 	 */
 	@Override
 	public void setEntityName(final String entityName) {
+		// TODO: make sure the URL cannot override this parameter (security!)
 		getImplicitPageParameters().remove("entity");
 		getImplicitPageParameters().add("entity", entityName);
 	}

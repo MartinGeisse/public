@@ -8,7 +8,6 @@ package name.martingeisse.admin.entity.list;
 
 import java.io.Serializable;
 
-import com.mysema.query.types.Expression;
 import com.mysema.query.types.Predicate;
 
 /**
@@ -16,11 +15,6 @@ import com.mysema.query.types.Predicate;
  */
 public class EntityListFilter implements IEntityListFilter, Serializable {
 
-	/**
-	 * the entityExpression
-	 */
-	private Expression<?> entityExpression;
-	
 	/**
 	 * the filterPredicate
 	 */
@@ -34,28 +28,10 @@ public class EntityListFilter implements IEntityListFilter, Serializable {
 
 	/**
 	 * Constructor.
-	 * @param entityExpression the expression that represents the entity
 	 * @param filterPredicate the filter predicate
 	 */
-	public EntityListFilter(Expression<?> entityExpression, Predicate filterPredicate) {
-		this.entityExpression = entityExpression;
+	public EntityListFilter(Predicate filterPredicate) {
 		this.filterPredicate = filterPredicate;
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.entity.list.IEntityListFilter#getEntityExpression()
-	 */
-	@Override
-	public Expression<?> getEntityExpression() {
-		return entityExpression;
-	}
-	
-	/**
-	 * Setter method for the entityExpression.
-	 * @param entityExpression the entityExpression to set
-	 */
-	public void setEntityExpression(Expression<?> entityExpression) {
-		this.entityExpression = entityExpression;
 	}
 
 	/* (non-Javadoc)
