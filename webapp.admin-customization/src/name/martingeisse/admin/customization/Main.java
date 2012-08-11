@@ -27,7 +27,9 @@ import name.martingeisse.admin.entity.component.list.populator.EntityFieldPopula
 import name.martingeisse.admin.entity.component.list.populator.IEntityCellPopulator;
 import name.martingeisse.admin.entity.component.list.populator.MultiCellPopulator;
 import name.martingeisse.admin.entity.component.list.raw.RawEntityListPanel;
+import name.martingeisse.admin.entity.list.EntityConditions;
 import name.martingeisse.admin.entity.list.EntityListFilterUtils;
+import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.property.ExplicitEntityPropertyFilter;
 import name.martingeisse.admin.entity.property.SingleEntityPropertyFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
@@ -43,12 +45,15 @@ import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
 import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
+import name.martingeisse.admin.util.QuerydslUtil;
 import name.martingeisse.wicket.autoform.AutoformPanel;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociatedValidator;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
 
+import com.mysema.query.sql.MySQLTemplates;
+import com.mysema.query.sql.SQLQueryImpl;
 import com.mysema.query.support.Expressions;
 import com.mysema.query.types.Ops;
 import com.mysema.query.types.Path;
@@ -68,6 +73,20 @@ public class Main {
 	@SuppressWarnings("unchecked")
 	public static void main(final String[] args) throws Exception {
 
+		Path<?> entityPath = Expressions.path(Object.class, IEntityListFilter.ALIAS);
+		Path<?> pathX = Expressions.path(Object.class, entityPath, "x");
+		Path<?> pathY = Expressions.path(Object.class, entityPath, "y");
+		EntityConditions conditions = new EntityConditions(entityPath, Ops.XOR);
+//		conditions.add(Expressions.predicate(Ops.EQ, pathX, pathY));
+//		conditions.add(Expressions.predicate(Ops.GOE, pathX, pathY));
+		conditions.addFieldNotIn("foo", 1, 2, 3);
+		
+		SQLQueryImpl query = new SQLQueryImpl(null, new MySQLTemplates()).from(entityPath);
+		query.where(conditions);
+		// System.out.println(query.toString());
+		QuerydslUtil.dumpQuery(query);
+		System.exit(0);
+		
 		/*
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/phpbb", "root", "");
 		
