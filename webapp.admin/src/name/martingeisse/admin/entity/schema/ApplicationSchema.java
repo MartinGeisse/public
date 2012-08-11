@@ -24,7 +24,6 @@ import name.martingeisse.admin.navigation.INavigationNodeHandler;
 import name.martingeisse.admin.navigation.INavigationNodeVisitor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
 
 /**
  * This class holds global data generated from plugins / capabilities and modifiers.
@@ -212,12 +211,11 @@ public class ApplicationSchema {
 
 		// create ad-hoc canonical list nodes for entities with no declared canonical list node
 		final NavigationNode globalRoot = NavigationConfigurationUtil.getNavigationTree().getRoot();
-		final NavigationNode allEntitiesNode = globalRoot.createNavigationFolderChild("all-entities", "All Entities");
+		final NavigationNode allEntitiesNode = globalRoot.getChildFactory().createNavigationFolderChild("all-entities", "All Entities");
 		for (EntityDescriptor entity : entityDescriptors) {
 			
 			// create a child node of "All Entities" for this entity
-			INavigationNodeHandler handler = new EntityListPanelHandler(RawEntityListPanel.class, entity);
-			NavigationNode adHocListNode = allEntitiesNode.createChild(handler);
+			NavigationNode adHocListNode = allEntitiesNode.getChildFactory().createEntityListPanelChild(entity.getName(), entity.getDisplayName(), RawEntityListPanel.class, entity.getName());
 			
 			// use the declared canonical list node if any, or the ad-hoc node as a fallback
 			final String entityName = entity.getName();
@@ -235,7 +233,7 @@ public class ApplicationSchema {
 		for (EntityDescriptor entity : entityDescriptors) {
 			final String entityName = entity.getName();
 			NavigationNode canonicalEntityListNode = canonicalEntityListNodes.get(entityName);
-			NavigationNode entityInstanceRootNode = canonicalEntityListNode.createNavigationFolderChild("${id}", "Entity Instance");
+			NavigationNode entityInstanceRootNode = canonicalEntityListNode.getChildFactory().createNavigationFolderChild("${id}", "Entity Instance");
 			entity.setInstanceNavigationRootNode(entityInstanceRootNode);
 			for (IEntityNavigationContributor contributor : entityNavigationContributors) {
 				contributor.contributeNavigationNodes(entity, entityInstanceRootNode);

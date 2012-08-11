@@ -14,12 +14,8 @@ import java.util.regex.Pattern;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.component.pagebar.IPageBarFactory;
-import name.martingeisse.admin.navigation.component.NavigationFolderPage;
-import name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler;
-import name.martingeisse.admin.navigation.handler.FirstChildNavigationHandler;
 import name.martingeisse.common.util.SpecialHandlingList;
 
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
@@ -512,60 +508,10 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	}
 
 	/**
-	 * Creates a new {@link NavigationNode} and adds it as a child node.
-	 * @return the new node
+	 * @return a {@link NavigationNodeChildFactory} for this node.
 	 */
-	public NavigationNode createChild() {
-		final NavigationNode child = new NavigationNode();
-		getChildren().add(child);
-		return child;
-	}
-
-	/**
-	 * Creates a new {@link NavigationNode} with the specified handler and adds
-	 * it as a child node.
-	 * @param handler the handler
-	 * @return the new node
-	 */
-	public NavigationNode createChild(final INavigationNodeHandler handler) {
-		final NavigationNode child = new NavigationNode();
-		child.setHandler(handler);
-		getChildren().add(child);
-		return child;
-	}
-
-	/**
-	 * Creates a new {@link NavigationNode} with a 
-	 * {@link NavigationFolderPage} handler and adds it as a child node.
-	 * @param id the node id of the child
-	 * @param title the title of the child
-	 * @return the new node
-	 */
-	public NavigationNode createNavigationFolderChild(final String id, final String title) {
-		return createChild(new BookmarkablePageNavigationHandler(NavigationFolderPage.class).setId(id).setTitle(title));
-	}
-
-	/**
-	 * Creates a new {@link NavigationNode} with a {@link FirstChildNavigationHandler}
-	 * and adds it as a child node.
-	 * @param id the node id of the child
-	 * @param title the title of the child
-	 * @return the new node
-	 */
-	public NavigationNode createFirstChildHandlerChild(final String id, final String title) {
-		return createChild(new FirstChildNavigationHandler().setId(id).setTitle(title));
-	}
-
-	/**
-	 * Creates a new {@link NavigationNode} with a {@link BookmarkablePageNavigationHandler} handler
-	 * for the specified page and adds it as a child node. 
-	 * @param id the node id
-	 * @param title the node title
-	 * @param pageClass the page class
-	 * @return the new node
-	 */
-	public NavigationNode createPageChild(final String id, final String title, final Class<? extends WebPage> pageClass) {
-		return createChild(new BookmarkablePageNavigationHandler(pageClass).setId(id).setTitle(title));
+	public NavigationNodeChildFactory getChildFactory() {
+		return new NavigationNodeChildFactory(this);
 	}
 
 	/**

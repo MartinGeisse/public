@@ -9,8 +9,6 @@ package name.martingeisse.admin.entity.list;
 import java.util.Arrays;
 import java.util.List;
 
-import name.martingeisse.admin.entity.schema.EntityDescriptor;
-
 import com.google.common.base.Objects;
 import com.mysema.query.support.Expressions;
 import com.mysema.query.types.ConstantImpl;
@@ -46,12 +44,10 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	private Predicate predicate;
 
 	/**
-	 * Constructor.
-	 * @param entity the entity to build a predicate for, using the default
-	 * entity filter alias ({@link IEntityListFilter#ALIAS}).
+	 * Constructor using the default entity filter alias ({@link IEntityListFilter#ALIAS}).
 	 */
-	public EntityConditions(final EntityDescriptor entity) {
-		this(entity.createRelationalPath(IEntityListFilter.ALIAS), Ops.AND);
+	public EntityConditions() {
+		this(Expressions.path(Object.class, IEntityListFilter.ALIAS), Ops.AND);
 	}
 
 	/**
@@ -63,13 +59,11 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	}
 
 	/**
-	 * Constructor.
-	 * @param entity the entity to build a predicate for, using the default
-	 * entity filter alias ({@link IEntityListFilter#ALIAS}).
+	 * Constructor using the default entity filter alias ({@link IEntityListFilter#ALIAS}).
 	 * @param buildOperator the operator used to combine expressions
 	 */
-	public EntityConditions(final EntityDescriptor entity, final Operator<Boolean> buildOperator) {
-		this(entity.createRelationalPath(IEntityListFilter.ALIAS), buildOperator);
+	public EntityConditions(final Operator<Boolean> buildOperator) {
+		this(Expressions.path(Object.class, IEntityListFilter.ALIAS), buildOperator);
 	}
 
 	/**

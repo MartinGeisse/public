@@ -29,7 +29,6 @@ import name.martingeisse.admin.entity.component.list.populator.MultiCellPopulato
 import name.martingeisse.admin.entity.component.list.raw.RawEntityListPanel;
 import name.martingeisse.admin.entity.list.EntityConditions;
 import name.martingeisse.admin.entity.list.EntityListFilterUtils;
-import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.property.ExplicitEntityPropertyFilter;
 import name.martingeisse.admin.entity.property.SingleEntityPropertyFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
@@ -39,21 +38,15 @@ import name.martingeisse.admin.entity.schema.database.MysqlDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.reference.FixedNameEntityReferenceDetector;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.handler.BookmarkableEntityInstanceNavigationHandler;
-import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
-import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
 import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
-import name.martingeisse.admin.util.QuerydslUtil;
 import name.martingeisse.wicket.autoform.AutoformPanel;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociatedValidator;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
 
-import com.mysema.query.sql.MySQLTemplates;
-import com.mysema.query.sql.SQLQueryImpl;
 import com.mysema.query.support.Expressions;
 import com.mysema.query.types.Ops;
 import com.mysema.query.types.Path;
@@ -73,43 +66,6 @@ public class Main {
 	@SuppressWarnings("unchecked")
 	public static void main(final String[] args) throws Exception {
 
-		Path<?> entityPath = Expressions.path(Object.class, IEntityListFilter.ALIAS);
-		Path<?> pathX = Expressions.path(Object.class, entityPath, "x");
-		Path<?> pathY = Expressions.path(Object.class, entityPath, "y");
-		EntityConditions conditions = new EntityConditions(entityPath, Ops.XOR);
-//		conditions.add(Expressions.predicate(Ops.EQ, pathX, pathY));
-//		conditions.add(Expressions.predicate(Ops.GOE, pathX, pathY));
-		conditions.addFieldNotIn("foo", 1, 2, 3);
-		
-		SQLQueryImpl query = new SQLQueryImpl(null, new MySQLTemplates()).from(entityPath);
-		query.where(conditions);
-		// System.out.println(query.toString());
-		QuerydslUtil.dumpQuery(query);
-		System.exit(0);
-		
-		/*
-		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/phpbb", "root", "");
-		
-		Path<Object> entity = Expressions.path(Object.class, "phpbb_acl_roles");
-		Path<Integer> roleId = Expressions.path(Integer.class, entity, "role_id");
-		NumberExpression<Integer> mod2 = Expressions.numberOperation(Integer.class, Ops.MOD, roleId, Expressions.constant(2));
-		Predicate even = Expressions.predicate(Ops.EQ, mod2, Expressions.constant(0));
-		
-		SQLQueryImpl query = new SQLQueryImpl(connection, new MySQLTemplates());
-		ResultSet resultSet = query.from(entity).where(even).getResults(Wildcard.all);
-		DataRows rows = new DataRows(resultSet);
-		resultSet.close();
-		for (Object[] row : rows.getRows()) {
-			System.out.println("--- row ---");
-			for (int i=0; i<row.length; i++) {
-				System.out.println("* " + rows.getMeta().getNames()[i] + ": " + row[i]);
-			}
-		}
-		
-		connection.close();
-		System.exit(0);
-		*/
-		
 		// --- code generation start ---
 		/*
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/phpbb", "root", "");
@@ -180,21 +136,8 @@ public class Main {
 		EntityConfigurationUtil.addEntityNavigationContributor(new IEntityNavigationContributor() {
 			@Override
 			public void contributeNavigationNodes(EntityDescriptor entity, NavigationNode mainEntityInstanceNode) {
-				
-				// add entity-local navigation
-				// mainEntityInstanceNode.setPageBorderFactory(new PageBorderFactory(EntityInstancePageBorder.class));
-
-				// test
-				BookmarkableEntityInstanceNavigationHandler handler;
-				
-				handler = new EntityInstancePanelHandler(RawEntityPresentationPanel.class);				
-				handler.getImplicitPageParameters().add("presenter", "default");
-				NavigationNode node = mainEntityInstanceNode.createChild(handler.setId("default").setTitle("Default"));
-				
-				handler = new EntityInstancePanelHandler(RawEntityPresentationPanel.class);				
-				handler.getImplicitPageParameters().add("presenter", "default");
-				node.createChild(handler.setId("default").setTitle("Default"));
-
+				NavigationNode node = mainEntityInstanceNode.getChildFactory().createEntityInstancePanelChild("default", "Default", RawEntityPresentationPanel.class);
+				node.getChildFactory().createEntityInstancePanelChild("default", "Default", RawEntityPresentationPanel.class);
 			}
 		});
 		
@@ -210,11 +153,11 @@ public class Main {
 	private static void buildNavigation() {
 		final NavigationNode root = NavigationConfigurationUtil.getNavigationTree().getRoot();
 		root.setPageBarFactory(new BasicPageBarFactory());
-		root.createChild(new UrlNavigationHandler("/").setId("home-dummy").setTitle("Home"));
-		final NavigationNode sub1 = root.createFirstChildHandlerChild("sub-one", "Sub One");
-		sub1.createNavigationFolderChild("s1-sub-one", "s1 Sub One");
-		sub1.createNavigationFolderChild("s1-sub-two", "s1 Sub Two");
-		sub1.createNavigationFolderChild("s1-sub-three", "s1 Sub Three");
+		root.getChildFactory().createChild("home-dummy", "Home", new UrlNavigationHandler("/"));
+		final NavigationNode sub1 = root.getChildFactory().createFirstChildHandlerChild("sub-one", "Sub One");
+		sub1.getChildFactory().createNavigationFolderChild("s1-sub-one", "s1 Sub One");
+		sub1.getChildFactory().createNavigationFolderChild("s1-sub-two", "s1 Sub Two");
+		sub1.getChildFactory().createNavigationFolderChild("s1-sub-three", "s1 Sub Three");
 		
 		
 //		sub1sub1.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "acl_roles").setId("roles").setTitle("ACL: Roles"));
@@ -246,29 +189,36 @@ public class Main {
 //		IExpression idConditions = new BinaryExpression(idCondition1, BinaryOperator.AND, idCondition2);
 //		IEntityListFilter myFilter = new EntityListFilter(idConditions);
 		
-		root.createChild(new EntityListPanelHandler(MyPopulatorListPanel.class, "acl_roles").setTitle("Roles*"));
+		root.getChildFactory().createEntityListPanelChild("acl_roles", "Roles*", MyPopulatorListPanel.class, "acl_roles");
+		
 		{
 			IEntityCellPopulator description = new EntityFieldPopulator("Role Description", "role_description");
 			IEntityCellPopulator order = new EntityFieldPopulator("Role Order", "role_order");
 			@SuppressWarnings("unchecked")
 			IEntityCellPopulator multi = new MultiCellPopulator("Test", new EntityFieldPopulator(null, "role_description"), new EntityFieldPopulator(null, "role_order"));
-			root.createChild(new PopulatorBasedEntityListHandler("acl_roles", description, order, multi).setId("X").setTitle("Roles**"));
+			root.getChildFactory().createChild("X", "Roles**", new PopulatorBasedEntityListHandler("acl_roles", description, order, multi));
 		}
 		
-		root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setId("roles_all").setTitle("Roles"));
+		root.getChildFactory().createEntityListPanelChild("roles_all", "Roles", RawEntityListPanel.class, "acl_roles");
 
 		{
 			Path<Integer> roleId = EntityListFilterUtils.fieldPath(Integer.class, "role_id");
 			NumberExpression<Integer> mod2 = Expressions.numberOperation(Integer.class, Ops.MOD, roleId, Expressions.constant(2));
 			Predicate even = Expressions.predicate(Ops.EQ, mod2, Expressions.constant(0));
-			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(even).setId("roles_even").setTitle("Even"));
+			root.getChildFactory().createEntityListPanelChild("roles_even", "Even", RawEntityListPanel.class, "acl_roles", even);
 		}
 
 		{
 			Path<Integer> roleId = EntityListFilterUtils.fieldPath(Integer.class, "role_id");
 			NumberExpression<Integer> mod2 = Expressions.numberOperation(Integer.class, Ops.MOD, roleId, Expressions.constant(2));
 			Predicate odd = Expressions.predicate(Ops.EQ, mod2, Expressions.constant(1));
-			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(odd).setId("roles_odd").setTitle("Odd"));
+			root.getChildFactory().createEntityListPanelChild("roles_odd", "Odd", RawEntityListPanel.class, "acl_roles", odd);
+		}
+
+		{
+			EntityConditions conditions = new EntityConditions();
+			conditions.addFieldComparison("role_id", Ops.LT, 10);
+			root.getChildFactory().createEntityListPanelChild("roles_lt10", "<10", RawEntityListPanel.class, "acl_roles", conditions);
 		}
 
 //		{
