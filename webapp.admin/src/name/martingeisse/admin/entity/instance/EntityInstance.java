@@ -93,7 +93,11 @@ public class EntityInstance extends DataRow {
 	 * @return the id
 	 */
 	public final Object getId() {
-		return getFieldValue(getEntity().getIdColumnName());
+		String idColumnName = getEntity().getIdColumnName();
+		if (idColumnName == null) {
+			throw new IllegalStateException("entity " + entityName + " has no primary key and cannot be viewed");
+		}
+		return getFieldValue(idColumnName);
 	}
 
 }

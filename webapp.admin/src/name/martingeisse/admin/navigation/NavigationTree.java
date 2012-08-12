@@ -35,7 +35,9 @@ public final class NavigationTree {
 	 */
 	public NavigationTree() {
 		root = new NavigationNode();
-		root.setHandler(new BookmarkablePageNavigationHandler(NavigationFolderPage.class).setId(NavigationNode.ROOT_NODE_ID).setTitle("Home"));
+		root.setId(NavigationNode.ROOT_NODE_ID);
+		root.setTitle("Home");
+		root.setHandler(new BookmarkablePageNavigationHandler(NavigationFolderPage.class));
 	}
 
 	/**

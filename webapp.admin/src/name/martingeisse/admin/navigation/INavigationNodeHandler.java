@@ -21,15 +21,17 @@ public interface INavigationNodeHandler extends IPageBarFactory {
 
 	/**
 	 * @param node the handled node
-	 * @return the id of the handled node
+	 * @return the fallback id of the handled node -- to be used when the
+	 * node has no ID set
 	 */
-	public String getId(NavigationNode node);
+	public String getFallbackId(NavigationNode node);
 	
 	/**
 	 * @param node the handled node
-	 * @return the title of the handled node
+	 * @return the title of the handled node -- to be used when the node
+	 * has no title set
 	 */
-	public String getTitle(NavigationNode node);
+	public String getFallbackTitle(NavigationNode node);
 	
 	/**
 	 * Creates a Wicket {@link Link} for this node. The link will

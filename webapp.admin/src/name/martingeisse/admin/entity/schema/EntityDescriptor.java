@@ -21,6 +21,7 @@ import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.IEntityNameMappingStrategy;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.instance.FetchEntityInstanceAction;
+import name.martingeisse.admin.entity.property.type.IEntityIdType;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 import name.martingeisse.admin.navigation.NavigationNode;
@@ -72,6 +73,11 @@ public class EntityDescriptor {
 	 * the idColumnName
 	 */
 	private String idColumnName;
+
+	/**
+	 * the idColumnType
+	 */
+	private IEntityIdType idColumnType;
 
 	/**
 	 * the properties
@@ -187,6 +193,22 @@ public class EntityDescriptor {
 	}
 
 	/**
+	 * Getter method for the idColumnType.
+	 * @return the idColumnType
+	 */
+	public IEntityIdType getIdColumnType() {
+		return idColumnType;
+	}
+
+	/**
+	 * Setter method for the idColumnType.
+	 * @param idColumnType the idColumnType to set
+	 */
+	public void setIdColumnType(final IEntityIdType idColumnType) {
+		this.idColumnType = idColumnType;
+	}
+
+	/**
 	 * Getter method for the properties.
 	 * @return the properties
 	 */
@@ -294,7 +316,7 @@ public class EntityDescriptor {
 	 * @param optional whether the existence of the instance is optional
 	 * @return the fields
 	 */
-	public EntityInstance fetchSingleInstance(final int id, boolean optional) {
+	public EntityInstance fetchSingleInstance(final Object id, final boolean optional) {
 		final FetchEntityInstanceAction action = new FetchEntityInstanceAction();
 		action.setEntity(this);
 		action.setId(id);
@@ -352,27 +374,27 @@ public class EntityDescriptor {
 	 * @param alias the alias to use
 	 * @return the relational path
 	 */
-	public RelationalPath<Object> createRelationalPath(String alias) {
+	public RelationalPath<Object> createRelationalPath(final String alias) {
 		return new RelationalPathBase<Object>(Object.class, alias, null, tableName);
 	}
-	
+
 	/**
 	 * Queries this entity using the specified connection and alias.
 	 * @param connection the JDBC connection
 	 * @param alias the alias for this entity
 	 * @return the query
 	 */
-	public SQLQuery query(Connection connection, String alias) {
+	public SQLQuery query(final Connection connection, final String alias) {
 		return new SQLQueryImpl(connection, new MySQLTemplates()).from(createRelationalPath(alias));
 	}
-	
+
 	/**
 	 * This method delegates to checkDataRowMeta(resultSet.getMetaData()).
 	 * @param resultSet the result set
 	 * @return the meta-data
 	 * @throws SQLException on SQL errors
 	 */
-	public DataRowMeta checkDataRowMeta(ResultSet resultSet) throws SQLException {
+	public DataRowMeta checkDataRowMeta(final ResultSet resultSet) throws SQLException {
 		return checkDataRowMeta(resultSet.getMetaData());
 	}
 
@@ -388,7 +410,7 @@ public class EntityDescriptor {
 	 * @return the shared meta-data
 	 * @throws SQLException on SQL errors
 	 */
-	public DataRowMeta checkDataRowMeta(ResultSetMetaData resultSetMetaData) throws SQLException {
+	public DataRowMeta checkDataRowMeta(final ResultSetMetaData resultSetMetaData) throws SQLException {
 		if (!dataRowMeta.equals(new DataRowMeta(resultSetMetaData))) {
 			throw new IllegalStateException("data row schema for entity " + getName() + " does not match");
 		}
@@ -400,10 +422,10 @@ public class EntityDescriptor {
 	 * @param metaHolder the meta-data holder
 	 * @return the meta-data
 	 */
-	public DataRowMeta checkDataRowMeta(AbstractDataRowMetaHolder metaHolder) {
+	public DataRowMeta checkDataRowMeta(final AbstractDataRowMetaHolder metaHolder) {
 		return checkDataRowMeta(metaHolder.getMeta());
 	}
-	
+
 	/**
 	 * Ensures that the data row meta-data for this entity is equal to the specified one.
 	 * Throws an {@link IllegalStateException} if that is not the case. This indicates
@@ -414,11 +436,11 @@ public class EntityDescriptor {
 	 * @param meta the meta-data to check
 	 * @return the shared meta-data
 	 */
-	public DataRowMeta checkDataRowMeta(DataRowMeta meta) {
+	public DataRowMeta checkDataRowMeta(final DataRowMeta meta) {
 		if (!dataRowMeta.equals(meta)) {
 			throw new IllegalStateException("data row schema for entity " + getName() + " does not match");
 		}
 		return dataRowMeta;
 	}
-	
+
 }

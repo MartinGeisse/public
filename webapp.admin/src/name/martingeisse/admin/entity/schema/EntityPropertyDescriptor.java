@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.entity.schema;
 
+import name.martingeisse.admin.entity.property.type.ISqlType;
 
 /**
  * This class describes a property of an entity, for example
@@ -17,6 +18,11 @@ public class EntityPropertyDescriptor {
 	 * the name
 	 */
 	private String name;
+
+	/**
+	 * the type
+	 */
+	private ISqlType type;
 
 	/**
 	 * the visibleInRawEntityList
@@ -43,6 +49,22 @@ public class EntityPropertyDescriptor {
 	 */
 	public void setName(final String name) {
 		this.name = name;
+	}
+
+	/**
+	 * Getter method for the type.
+	 * @return the type
+	 */
+	public ISqlType getType() {
+		return type;
+	}
+
+	/**
+	 * Setter method for the type.
+	 * @param type the type to set
+	 */
+	public void setType(final ISqlType type) {
+		this.type = type;
 	}
 
 	/**

@@ -65,30 +65,20 @@ public class NavigationNodeChildFactory {
 	}
 
 	/**
-	 * Creates a new {@link NavigationNode} with the specified handler and adds
-	 * it as a child node.
-	 * @param handler the handler
-	 * @return the new node
-	 */
-	public final NavigationNode createChild(final INavigationNodeHandler handler) {
-		final NavigationNode child = new NavigationNode();
-		child.setHandler(handler);
-		navigationNode.getChildren().add(child);
-		return child;
-	}
-
-	/**
 	 * Sets the specified id and title for the handler, then creates a new
 	 * {@link NavigationNode} with the handler and adds it as a child node.
 	 * @param id the node ID to set in the handler
 	 * @param title the node title to set in the handler
 	 * @param handler the handler
-	 * @return the new node
+	 * @return the new child node
 	 */
 	public final NavigationNode createChild(final String id, final String title, final AbstractNavigationNodeHandler handler) {
-		handler.setId(id);
-		handler.setTitle(title);
-		return createChild(handler);
+		final NavigationNode child = new NavigationNode();
+		child.setId(id);
+		child.setTitle(title);
+		child.setHandler(handler);
+		navigationNode.getChildren().add(child);
+		return child;
 	}
 
 	// ----------------------------------------------------------------------------------

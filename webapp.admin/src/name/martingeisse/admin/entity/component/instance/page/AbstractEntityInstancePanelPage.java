@@ -8,13 +8,13 @@ package name.martingeisse.admin.entity.component.instance.page;
 
 import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.property.type.IEntityIdType;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.string.StringValue;
 
 /**
  * This class allows to display an entity instance using an existing panel
@@ -81,9 +81,13 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 	 * Determines the entity ID. The default implementation uses the "id" page parameter.
 	 * @return the entity id
 	 */
-	private int determineId() {
-		StringValue id = getPageParameters().get("id");
-		return id.toInt(); // TODO: obtain the type of the ID from the entity descriptor
+	private Object determineId() {
+		EntityDescriptor entity = determineEntityType();
+		IEntityIdType idType = entity.getIdColumnType();
+		if (idType == null) {
+			throw new IllegalStateException("table " + entity.getTableName() + " has no primary key and thus cannot be viewed");
+		}
+		return idType.convertFromPageParameter(getPageParameters().get("id"));
 	}
 
 	/**

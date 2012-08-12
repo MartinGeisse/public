@@ -25,9 +25,9 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * Navigation nodes have a parent node that is set automatically when
  * the node is added to a parent node.
  * 
- * Navigation nodes also have an ID (returned from its handler) that
- * must be unique among its siblings. A node has an implicit path that
- * is constructed from its ID and the IDs of its ancestors like this:
+ * Navigation nodes also have an ID that must be unique among its
+ * siblings. A node has an implicit path that is constructed from
+ * its ID and the IDs of its ancestors like this:
  * 
  * 		/grandparentId/parentId/myId
  * 
@@ -83,6 +83,16 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	private final List<NavigationNode> children = new SubNodeList();
 
 	/**
+	 * the id
+	 */
+	private String id;
+
+	/**
+	 * the title
+	 */
+	private String title;
+
+	/**
 	 * the handler
 	 */
 	private INavigationNodeHandler handler;
@@ -124,6 +134,38 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	}
 
 	/**
+	 * Getter method for the id.
+	 * @return the id
+	 */
+	public String getId() {
+		return (id == null && handler != null) ? handler.getFallbackId(this) : id;
+	}
+
+	/**
+	 * Setter method for the id.
+	 * @param id the id to set
+	 */
+	public void setId(final String id) {
+		this.id = id;
+	}
+
+	/**
+	 * Getter method for the title.
+	 * @return the title
+	 */
+	public String getTitle() {
+		return (title == null && handler != null) ? handler.getFallbackTitle(this) : title;
+	}
+
+	/**
+	 * Setter method for the title.
+	 * @param title the title to set
+	 */
+	public void setTitle(final String title) {
+		this.title = title;
+	}
+
+	/**
 	 * Getter method for the handler.
 	 * @return the handler
 	 */
@@ -156,22 +198,6 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	}
 
 	/**
-	 * Getter method for the id of the handler.
-	 * @return the id
-	 */
-	public String getId() {
-		return handler.getId(this);
-	}
-
-	/**
-	 * Getter method for the title of the handler.
-	 * @return the title
-	 */
-	public String getTitle() {
-		return handler.getTitle(this);
-	}
-
-	/**
 	 * Checks whether this node is a regular node, i.e. not a variable declaration.
 	 * @return true if regular, false if variable declaration or invalid
 	 */
@@ -192,15 +218,15 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	 * @param id the id to look for
 	 * @return the child, or null if none was found
 	 */
-	public NavigationNode findChildById(String id) {
-		for (NavigationNode child : children) {
+	public NavigationNode findChildById(final String id) {
+		for (final NavigationNode child : children) {
 			if (child.getId().equals(id)) {
 				return child;
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -231,27 +257,41 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	}
 
 	/**
+	 * Builds a string that is equal to the path if all IDs are properly set. This method
+	 * can handle missing IDs though, and will print them like this:
 	 * 
+	 * 		/foo/???/bar
+	 * 
+	 * @param builder the string builder to write to
 	 */
-	private static void buildPathDescriptionForError(final StringBuilder builder, final NavigationNode node) {
-		if (node.getParent() == null) {
+	public void buildPathDescriptionForError(final StringBuilder builder) {
+		if (getParent() == null) {
 			builder.append('/');
 		} else {
-			buildPathDescriptionForError(builder, node.getParent());
+			getParent().buildPathDescriptionForError(builder);
 			builder.append('/');
-			final INavigationNodeHandler handler = node.getHandler();
-			builder.append(handler == null ? "???" : handler.getId(node));
+			final String id = getId();
+			builder.append(id == null ? "???" : id);
 		}
+	}
+
+	/**
+	 * Like buildPathDescriptionForError() but returns the string instead of writing it
+	 * to a {@link StringBuilder}.
+	 * @return the path description
+	 */
+	public String getPathDescriptionForError() {
+		final StringBuilder builder = new StringBuilder();
+		buildPathDescriptionForError(builder);
+		return builder.toString();
 	}
 
 	/**
 	 * Throws an {@link IllegalStateException} if no handler is set for this node.
 	 */
-	private void ensureHandlerPresent() {
+	public void ensureHandlerPresent() {
 		if (handler == null) {
-			final StringBuilder builder = new StringBuilder();
-			buildPathDescriptionForError(builder, this);
-			throw new IllegalStateException("no handler set; path = " + builder);
+			throw new IllegalStateException("no handler set; path = " + getPathDescriptionForError());
 		}
 	}
 
@@ -265,13 +305,12 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	 * @return the path
 	 */
 	public final String getPath() {
-		ensureHandlerPresent();
 		if (parent == null) {
 			return "/";
 		} else if (parent.getParent() == null) {
-			return "/" + handler.getId(this);
+			return "/" + getId();
 		} else {
-			return parent.getPath() + "/" + handler.getId(this);
+			return parent.getPath() + "/" + getId();
 		}
 	}
 
@@ -285,7 +324,6 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	 * @return true if there is a variable in the path, false if not
 	 */
 	public boolean hasVariablePath() {
-		ensureHandlerPresent();
 		return (parent != null && (isVariableNode() || parent.hasVariablePath()));
 	}
 

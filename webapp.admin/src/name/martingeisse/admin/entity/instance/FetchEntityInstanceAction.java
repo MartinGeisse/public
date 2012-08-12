@@ -35,7 +35,7 @@ public class FetchEntityInstanceAction {
 	/**
 	 * the id
 	 */
-	private int id;
+	private Object id;
 
 	/**
 	 * the optional
@@ -62,7 +62,7 @@ public class FetchEntityInstanceAction {
 	 * Getter method for the id.
 	 * @return the id
 	 */
-	public int getId() {
+	public Object getId() {
 		return id;
 	}
 
@@ -70,7 +70,7 @@ public class FetchEntityInstanceAction {
 	 * Setter method for the id.
 	 * @param id the id to set
 	 */
-	public void setId(final int id) {
+	public void setId(final Object id) {
 		this.id = id;
 	}
 

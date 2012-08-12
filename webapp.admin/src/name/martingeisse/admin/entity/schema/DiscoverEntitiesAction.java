@@ -13,6 +13,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.martingeisse.admin.entity.property.type.IEntityIdType;
+import name.martingeisse.admin.entity.property.type.ISqlType;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.common.datarow.DataRowMeta;
 
@@ -74,10 +76,32 @@ class DiscoverEntitiesAction {
 			
 			// fetch the primary key for each table
 			for (EntityDescriptor entityDescriptor : result) {
+				
+				// determine the ID column name by fetching database meta-data
 				DiscoverEntityIdAction subAction = new DiscoverEntityIdAction();
 				subAction.setConnection(connection);
 				subAction.setEntity(entityDescriptor);
-				entityDescriptor.setIdColumnName(subAction.execute());
+				String idColumnName = subAction.execute();
+				
+				// cannot handle tables without a primary key for now
+				if (idColumnName == null) {
+					continue;
+				}
+				
+				// using the name, get column meta-data previously fetched
+				EntityPropertyDescriptor idPropertyDescriptor = entityDescriptor.getProperties().get(idColumnName);
+				if (idPropertyDescriptor == null) {
+					throw new IllegalStateException("table meta-data of table " + entityDescriptor.getTableName() + " specified column " + idColumnName + " as its ID column, but no such column exists in the property descriptors");
+				}
+				ISqlType idColumnType = idPropertyDescriptor.getType();
+				if (!(idColumnType instanceof IEntityIdType)) {
+					throw new IllegalStateException("type of the ID column " + entityDescriptor.getTableName() + "." + idColumnName + " is not supported as an entity ID type");
+				}
+
+				// store the information in the entity descriptor
+				entityDescriptor.setIdColumnName(idColumnName);
+				entityDescriptor.setIdColumnType((IEntityIdType)idColumnType);
+				
 			}
 
 			// Fetch the data row meta-data for each table. Unlike the properties/columns fetched

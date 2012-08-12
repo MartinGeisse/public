@@ -64,13 +64,27 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 		if (entityName == null) {
 			throw new IllegalArgumentException("entityName is null");
 		}
-		setId(entityName);
-		setTitle(null);
 		this.entityName = entityName;
 		this.canonicalEntityListNode = false;
 		this.filter = null;
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.handler.AbstractNavigationNodeHandler#getFallbackId(name.martingeisse.admin.navigation.NavigationNode)
+	 */
+	@Override
+	public String getFallbackId(NavigationNode node) {
+		return entityName;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.handler.AbstractNavigationNodeHandler#getFallbackTitle(name.martingeisse.admin.navigation.NavigationNode)
+	 */
+	@Override
+	public String getFallbackTitle(NavigationNode node) {
+		return entityName;
+	}
+	
 	/**
 	 * Getter method for the entityName.
 	 * @return the entityName
@@ -150,9 +164,6 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 		super.prepareMount(node);
 		if (getEntity() == null) {
 			throw new IllegalStateException("unknown entity in navigation node " + node.getPath() + ": "+ getEntityName());
-		}
-		if (getTitle() == null) {
-			setTitle(getEntity().getDisplayName());
 		}
 	}
 	

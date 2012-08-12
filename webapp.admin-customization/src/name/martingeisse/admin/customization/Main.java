@@ -23,12 +23,6 @@ import name.martingeisse.admin.entity.IEntityListFieldOrder;
 import name.martingeisse.admin.entity.IEntityNavigationContributor;
 import name.martingeisse.admin.entity.PrefixEliminatingEntityNameMappingStrategy;
 import name.martingeisse.admin.entity.component.instance.RawEntityPresentationPanel;
-import name.martingeisse.admin.entity.component.list.populator.EntityFieldPopulator;
-import name.martingeisse.admin.entity.component.list.populator.IEntityCellPopulator;
-import name.martingeisse.admin.entity.component.list.populator.MultiCellPopulator;
-import name.martingeisse.admin.entity.component.list.raw.RawEntityListPanel;
-import name.martingeisse.admin.entity.list.EntityConditions;
-import name.martingeisse.admin.entity.list.EntityListFilterUtils;
 import name.martingeisse.admin.entity.property.ExplicitEntityPropertyFilter;
 import name.martingeisse.admin.entity.property.SingleEntityPropertyFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
@@ -38,7 +32,7 @@ import name.martingeisse.admin.entity.schema.database.MysqlDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.reference.FixedNameEntityReferenceDetector;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler;
+import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.wicket.autoform.AutoformPanel;
@@ -46,12 +40,6 @@ import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociate
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
-
-import com.mysema.query.support.Expressions;
-import com.mysema.query.types.Ops;
-import com.mysema.query.types.Path;
-import com.mysema.query.types.Predicate;
-import com.mysema.query.types.expr.NumberExpression;
 
 /**
  * The main class.
@@ -87,13 +75,21 @@ public class Main {
 		//		ApplicationConfiguration.addDatabase(mainDatabase);
 
 		// the database
-		final AbstractDatabaseDescriptor phpbbDatabase = new MysqlDatabaseDescriptor();
-		phpbbDatabase.setDisplayName("phpBB database");
-		phpbbDatabase.setUrl("jdbc:mysql://localhost/phpbb");
-		phpbbDatabase.setUsername("root");
-		phpbbDatabase.setPassword("");
-		ApplicationConfiguration.get().addDatabase(phpbbDatabase);
+//		final AbstractDatabaseDescriptor phpbbDatabase = new MysqlDatabaseDescriptor();
+//		phpbbDatabase.setDisplayName("phpBB database");
+//		phpbbDatabase.setUrl("jdbc:mysql://localhost/phpbb");
+//		phpbbDatabase.setUsername("root");
+//		phpbbDatabase.setPassword("");
+//		ApplicationConfiguration.get().addDatabase(phpbbDatabase);
 
+		// the database
+		final AbstractDatabaseDescriptor phorumDatabase = new MysqlDatabaseDescriptor();
+		phorumDatabase.setDisplayName("Phorum database");
+		phorumDatabase.setUrl("jdbc:mysql://localhost/phorum");
+		phorumDatabase.setUsername("root");
+		phorumDatabase.setPassword("");
+		ApplicationConfiguration.get().addDatabase(phorumDatabase);
+		
 		// plugins / capabilities
 		ApplicationConfiguration.get().addPlugin(new DefaultPlugin());
 		ApplicationConfiguration.get().addPlugin(new FixedNameEntityReferenceDetector("extensions", "group_id", "extension_groups"));
@@ -117,7 +113,8 @@ public class Main {
 		
 		// entity parameters
 		GeneralEntityConfiguration generalEntityConfiguration = new GeneralEntityConfiguration();
-		generalEntityConfiguration.setEntityNameMappingStrategy(new PrefixEliminatingEntityNameMappingStrategy("phpbb_"));
+//		generalEntityConfiguration.setEntityNameMappingStrategy(new PrefixEliminatingEntityNameMappingStrategy("phpbb_"));
+		generalEntityConfiguration.setEntityNameMappingStrategy(new PrefixEliminatingEntityNameMappingStrategy("phorum_"));
 		generalEntityConfiguration.setEntityListFieldOrder(new IEntityListFieldOrder() {
 			@Override
 			public int compare(final EntityPropertyDescriptor o1, final EntityPropertyDescriptor o2) {
@@ -136,8 +133,7 @@ public class Main {
 		EntityConfigurationUtil.addEntityNavigationContributor(new IEntityNavigationContributor() {
 			@Override
 			public void contributeNavigationNodes(EntityDescriptor entity, NavigationNode mainEntityInstanceNode) {
-				NavigationNode node = mainEntityInstanceNode.getChildFactory().createEntityInstancePanelChild("default", "Default", RawEntityPresentationPanel.class);
-				node.getChildFactory().createEntityInstancePanelChild("default", "Default", RawEntityPresentationPanel.class);
+				mainEntityInstanceNode.setHandler(new EntityInstancePanelHandler(RawEntityPresentationPanel.class));
 			}
 		});
 		
@@ -189,6 +185,7 @@ public class Main {
 //		IExpression idConditions = new BinaryExpression(idCondition1, BinaryOperator.AND, idCondition2);
 //		IEntityListFilter myFilter = new EntityListFilter(idConditions);
 		
+		/*
 		root.getChildFactory().createEntityListPanelChild("acl_roles", "Roles*", MyPopulatorListPanel.class, "acl_roles");
 		
 		{
@@ -226,6 +223,7 @@ public class Main {
 //			condition.addFieldInString("role_type", new String[] {"a_", "f_"});
 //			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(condition).setId("roles_cond").setTitle("ConditionTest"));
 //		}
+		*/
 		
 		NavigationTabBarFactory.apply(root.findChildById("sub-one"));
 		
