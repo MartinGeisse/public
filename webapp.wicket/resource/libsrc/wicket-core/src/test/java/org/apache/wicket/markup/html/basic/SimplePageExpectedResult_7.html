@@ -1,0 +1,19 @@
+<html xmlns:wicket>
+<body>
+  <wicket:message key="myKeyNotExsts">Default Text</wicket:message>
+  <wicket:message key="myKey">myValue</wicket:message>
+  <wicket:message key="myKeyNotExists">[Warning: Property for 'myKeyNotExists' not found]</wicket:message>
+  <wicket:message key="myKey">myValue</wicket:message>
+  <span wicket:id="message">here it goes</span>
+  <span wicket:message="attr-name:i18n-key" attr-name="my i18n key">test 2</span>
+  <span wicket:id="message2" wicket:message="attr-name:i18n-key" attr-name="my i18n key">here it goes</span>
+  
+  <input type="image" src="../../test.gif">test 2</input>
+  <input type="image" src="../../test.gif" wicket:message="attr-name:i18n-key" attr-name="my i18n key">test 2</input>
+  
+  <wicket:message key="myKeyBalance">Your balance is <span wicket:id="amount">$5.00</span>. Click <a wicket:id="link" href="./org.apache.wicket.markup.html.basic.SimplePage_3">
+      <wicket:message key="linkText">here</wicket:message>
+    </a> to view the details.</wicket:message>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+<html>
+<head><script type="text/javascript" src="../resource/org.apache.wicket.markup.html.WicketEventReference/wicket-event.js"></script>
+<script type="text/javascript" src="../resource/org.apache.wicket.ajax.WicketAjaxReference/wicket-ajax.js"></script>
+<script type="text/javascript" src="../resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/wicket-ajax-debug.js"></script>
+<script type="text/javascript" id="wicket-ajax-debug-enable">
+/*<![CDATA[*/
+wicketAjaxDebugEnable=true;
+/*]]>*/
+</script>
+<script type="text/javascript" id="wicket-ajax-base-url">
+/*<![CDATA[*/
+Wicket.Ajax.baseUrl="wicket/bookmarkable/org.apache.wicket.ajax.markup.html.ajaxLink.AjaxLinkWithBorderPage";
+/*]]>*/
+</script>
+</head><body>
+  <span wicket:id="border"><wicket:border>
+    Border
+    <wicket:body>
+    <span wicket:id="ajaxLabel" id="ajaxLabel1">UpdateMe</span>
+    <a href="#" wicket:id="ajaxLink" id="ajaxLink2" onclick="var wcall=wicketAjaxGet(&#039;../page?0-1.IBehaviorListener.0-border-border_body-ajaxLink&#039;,function() { }.bind(this),function() { }.bind(this), function() {return Wicket.$(&#039;ajaxLink2&#039;) != null;}.bind(this));return !wcall;">Update</a>
+  </wicket:body>
+    Border
+  </wicket:border></span>
+</body>
+</html>

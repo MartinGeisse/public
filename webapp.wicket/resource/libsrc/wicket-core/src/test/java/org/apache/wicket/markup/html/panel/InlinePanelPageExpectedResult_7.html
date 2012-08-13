@@ -1,0 +1,34 @@
+<html xmlns:wicket>
+<head><script type="text/javascript" src="../resource/org.apache.wicket.markup.html.WicketEventReference/wicket-event.js"></script>
+<script type="text/javascript" src="../resource/org.apache.wicket.ajax.WicketAjaxReference/wicket-ajax.js"></script>
+<script type="text/javascript" src="../resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/wicket-ajax-debug.js"></script>
+<script type="text/javascript" id="wicket-ajax-debug-enable">
+/*<![CDATA[*/
+wicketAjaxDebugEnable=true;
+/*]]>*/
+</script>
+<script type="text/javascript" id="wicket-ajax-base-url">
+/*<![CDATA[*/
+Wicket.Ajax.baseUrl="wicket/bookmarkable/org.apache.wicket.markup.html.panel.InlinePanelPage_7";
+/*]]>*/
+</script>
+</head><body>
+
+<div wicket:id="container">
+  <div wicket:id="fragment">
+  <span wicket:id="fragmentContent" id="fragmentContent1">foo</span>
+</div>
+</div>
+
+<br/>
+
+<div wicket:id="provider"><wicket:panel>
+
+
+
+<a wicket:id="ajaxRefresh" id="ajaxRefresh2" href="#" onclick="var wcall=wicketAjaxGet(&#039;../page?0-1.IBehaviorListener.0-provider-ajaxRefresh&#039;,function() { }.bind(this),function() { }.bind(this), function() {return Wicket.$(&#039;ajaxRefresh2&#039;) != null;}.bind(this));return !wcall;">AJAX refresh</a>
+
+</wicket:panel></div>
+
+</body>
+</html>
