@@ -110,7 +110,7 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 		if (name == null) {
 			throw new IllegalArgumentException("name argument is null");
 		}
-		JavascriptAssemblerUtil.appendIdentifier(getBuilder(), name);
+		JavascriptAssemblerUtil.appendStringLiteral(getBuilder(), name);
 	}
 
 	/**

@@ -11,13 +11,14 @@ import org.apache.wicket.RequestListenerInterface;
 
 /**
  * A simple ad-hoc request listener interface to be used for various purposes.
+ * This listener will not automatically render the page on listener requests. 
  */
 public interface ISimpleCallbackListener extends IRequestListener {
 
 	/** 
 	 * Wicket listener registry entry
 	 */
-	public static final RequestListenerInterface INTERFACE = new RequestListenerInterface(ISimpleCallbackListener.class);
+	public static final RequestListenerInterface INTERFACE = new RequestListenerInterface(ISimpleCallbackListener.class).setRenderPageAfterInvocation(false);
 
 	/**
 	 * Called when the client code invokes the callback.

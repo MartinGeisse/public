@@ -24,4 +24,11 @@ public interface IPropertyReadOnlyRenderer {
 	 */
 	public Label createLabel(String id, Object value);
 	
+	/**
+	 * Converts the specified value to a string.
+	 * @param value the value to convert
+	 * @return the string
+	 */
+	public String valueToString(Object value);
+	
 }

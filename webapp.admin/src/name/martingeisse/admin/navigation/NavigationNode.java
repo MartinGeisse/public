@@ -17,6 +17,9 @@ import name.martingeisse.admin.component.pagebar.IPageBarFactory;
 import name.martingeisse.common.util.SpecialHandlingList;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
+import org.apache.wicket.markup.html.link.ExternalLink;
+import org.apache.wicket.markup.html.link.ILinkListener;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
@@ -517,7 +520,7 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	public AbstractLink createLink(final String id) {
 		return handler.createLink(id, this);
 	}
-
+	
 	/**
 	 * Loops through all nodes and applies the specified visitor to
 	 * all leaf nodes.

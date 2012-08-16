@@ -72,4 +72,22 @@ public class FallbackRenderer implements IPropertyReadOnlyRenderer {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer#valueToString(java.lang.Object)
+	 */
+	@Override
+	public String valueToString(Object value) {
+		String primaryRendererResult = (primaryRenderer == null ? null : primaryRenderer.valueToString(value));
+		if (primaryRendererResult == null) {
+			String s = "" + value;
+			if (s.length() > MAX_LENGTH) {
+				s = s.substring(0, MAX_LENGTH - 3) + "...";
+			}
+			return s;
+		} else {
+			return primaryRendererResult;
+		}
+	}
+
+	
 }

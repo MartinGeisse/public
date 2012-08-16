@@ -9,6 +9,7 @@ package name.martingeisse.admin.application.wicket;
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.component.page.HomePage;
+import name.martingeisse.admin.component.page.images.Dummy;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
@@ -70,7 +71,8 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		getMarkupSettings().setDefaultAfterDisabledLink("</span>");
 		
 		// mount resource URLs
-		mountResource("common.css", new PackageResourceReference(AbstractAdminPage.class, "common.css"));
+		mountResources(AbstractAdminPage.class, "", "common.css", "common.js", "jquery.dataTables.css");
+		mountResources(Dummy.class, "images/", "back_enabled.png", "forward_disabled.png", "forward_enabled_hover.png", "sort_asc_disabled.png", "sort_desc.png", "back_disabled.png", "back_enabled_hover.png", "forward_enabled.png", "sort_asc.png", "sort_both.png", "sort_desc_disabled.png");
 		
 		// mount navigation URLs
 		logger.trace("mounting navigation URLs...");
@@ -87,7 +89,19 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		
 		logger.debug("AdminWicketApplication.init(): end");
 	}
-
+	
+	/**
+	 * Mounts multiple resources using their file name.
+	 * @param anchorClass the class that specifies the package of the resources to mount.
+	 * @param prefix the URL prefix
+	 * @param names the file names of the resources
+	 */
+	public void mountResources(Class<?> anchorClass, String prefix, String... names) {
+		for (String name : names) {
+			mountResource(prefix + name, new PackageResourceReference(anchorClass, name));
+		}
+	}
+	
 	/**
 	 * @return the singleton instance of this class
 	 */

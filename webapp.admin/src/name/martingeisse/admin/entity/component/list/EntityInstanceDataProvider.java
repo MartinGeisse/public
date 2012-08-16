@@ -25,6 +25,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.types.OrderSpecifier;
 import com.mysema.query.types.expr.Wildcard;
 
 /**
@@ -44,22 +45,30 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	private final IEntityListFilter filter;
 	
 	/**
+	 * the orderSpecifiers
+	 */
+	private final OrderSpecifier<? extends Comparable<?>>[] orderSpecifiers;
+	
+	/**
 	 * Constructor.
 	 * @param entityModel the model that provides the entity descriptor
 	 */
 	public EntityInstanceDataProvider(IModel<EntityDescriptor> entityModel) {
 		this.entityModel = entityModel;
 		this.filter = null;
+		this.orderSpecifiers = null;
 	}
 	
 	/**
 	 * Constructor.
 	 * @param entityModel the model that provides the entity descriptor
 	 * @param filter the filter
+	 * @param orderSpecifiers the order specifiers that define the order of the results
 	 */
-	public EntityInstanceDataProvider(IModel<EntityDescriptor> entityModel, IEntityListFilter filter) {
+	public EntityInstanceDataProvider(IModel<EntityDescriptor> entityModel, IEntityListFilter filter, OrderSpecifier<? extends Comparable<?>>[] orderSpecifiers) {
 		this.entityModel = entityModel;
 		this.filter = filter;
+		this.orderSpecifiers = orderSpecifiers;
 	}
 	
 	/**
@@ -84,6 +93,14 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	 */
 	public IEntityListFilter getFilter() {
 		return filter;
+	}
+	
+	/**
+	 * Getter method for the orderSpecifiers.
+	 * @return the orderSpecifiers
+	 */
+	public OrderSpecifier<? extends Comparable<?>>[] getOrderSpecifiers() {
+		return orderSpecifiers;
 	}
 	
 	/**
@@ -144,9 +161,12 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 			// obtain a ResultSet
 			SQLQuery query = entity.query(connection, IEntityListFilter.ALIAS);
 			if (filter != null) {
-				query = query.where(filter.getFilterPredicate()).limit(count).offset(first);
+				query = query.where(filter.getFilterPredicate());
 			}
-			final ResultSet resultSet = query.getResults(Wildcard.all);
+			if (orderSpecifiers != null) {
+				query = query.orderBy(orderSpecifiers);
+			}
+			final ResultSet resultSet = query.limit(count).offset(first).getResults(Wildcard.all);
 			
 			// fetch rows
 			entity.checkDataRowMeta(resultSet);

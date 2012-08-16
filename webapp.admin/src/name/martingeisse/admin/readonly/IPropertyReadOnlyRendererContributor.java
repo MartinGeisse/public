@@ -6,10 +6,11 @@
 
 package name.martingeisse.admin.readonly;
 
+import name.martingeisse.admin.entity.property.type.ISqlType;
 import name.martingeisse.admin.util.IGetScore;
 
 /**
- * Given an SQL type, an instance of this interface may provide
+ * Given a data type, an instance of this interface may provide
  * a read-only renderer for entity properties of that type.
  * 
  * Implementations are free to pass for a certain type, leaving
@@ -31,9 +32,9 @@ public interface IPropertyReadOnlyRendererContributor extends IGetScore {
 	/**
 	 * Gets the renderer for the specified type, or null if this
 	 * contributor does not provide a renderer for that type.
-	 * @param sqlType the type
+	 * @param type the type
 	 * @return the renderer
 	 */
-	public IPropertyReadOnlyRenderer getRenderer(int sqlType);
+	public IPropertyReadOnlyRenderer getRenderer(ISqlType type);
 	
 }

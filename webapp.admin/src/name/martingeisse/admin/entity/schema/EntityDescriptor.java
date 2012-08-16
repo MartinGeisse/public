@@ -305,6 +305,25 @@ public class EntityDescriptor {
 	}
 
 	/**
+	 * Returns one of the navigation nodes associated with instances of this entity.
+	 * @param subpathSegments the subpath segments to walk from the entity instance navigation root
+	 * to reach the node to link. The specified node must exist, otherwise this method throws an
+	 * {@link IllegalArgumentException}.
+	 * @return the navigation node
+	 */
+	public NavigationNode getInstanceNavigationNode(String... subpathSegments) {
+		NavigationNode node = instanceNavigationRootNode;
+		for (String segment : subpathSegments) {
+			NavigationNode child = node.findChildById(segment);
+			if (child == null) {
+				throw new IllegalArgumentException("subpath segment '" + segment + "' not found in node " + node.getPath());
+			}
+			node = child;
+		}
+		return node;
+	}
+	
+	/**
 	 * Fetches a single instance of this entity.
 	 * 
 	 * The 'optional' flag specifies what happens if no instance can be found.

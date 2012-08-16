@@ -16,7 +16,7 @@ import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNameAware;
 import name.martingeisse.admin.entity.IEntityNavigationContributor;
-import name.martingeisse.admin.entity.component.list.raw.RawEntityListPanel;
+import name.martingeisse.admin.entity.component.list.raw.RawEntityListPanel_DataTables;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
@@ -215,7 +215,7 @@ public class ApplicationSchema {
 		for (EntityDescriptor entity : entityDescriptors) {
 			
 			// create a child node of "All Entities" for this entity
-			NavigationNode adHocListNode = allEntitiesNode.getChildFactory().createEntityListPanelChild(entity.getName(), entity.getDisplayName(), RawEntityListPanel.class, entity.getName());
+			NavigationNode adHocListNode = allEntitiesNode.getChildFactory().createEntityListPanelChild(entity.getName(), entity.getDisplayName(), RawEntityListPanel_DataTables.class, entity.getName());
 			
 			// use the declared canonical list node if any, or the ad-hoc node as a fallback
 			final String entityName = entity.getName();

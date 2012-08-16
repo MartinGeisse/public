@@ -15,6 +15,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 /**
  * The base class for all admin pages.
@@ -82,6 +83,8 @@ public class AbstractAdminPage extends WebPage {
 	@Override
 	public void renderHead(IHeaderResponse response) {
 		response.renderCSSReference(new CssResourceReference(AbstractAdminPage.class, "common.css"));
+		response.renderJavaScriptReference(new JavaScriptResourceReference(AbstractAdminPage.class, "common.js"));
+		response.renderCSSReference(new CssResourceReference(AbstractAdminPage.class, "jquery.dataTables.css"));
 	}
 
 }

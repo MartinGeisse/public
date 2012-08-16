@@ -61,4 +61,13 @@ public class BooleanRenderer implements IPropertyReadOnlyRenderer {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer#valueToString(java.lang.Object)
+	 */
+	@Override
+	public String valueToString(Object rawValue) {
+		Boolean value = getValue(rawValue);
+		return (value == null ? "null" : value ? "yes" : "no");
+	}
+
 }

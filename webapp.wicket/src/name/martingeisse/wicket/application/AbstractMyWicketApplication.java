@@ -53,7 +53,7 @@ public abstract class AbstractMyWicketApplication extends WebApplication {
 		// NOTE: FirstLineResourceVersion is nice but only works when the file is *committed* on changes.
 		// LastModifiedResourceVersion should do as long as the last-modified-date is preserved on deployment.
 //		getResourceSettings().setCachingStrategy(new FilenameWithVersionResourceCachingStrategy("-revision-", new CachingResourceVersion(new FirstLineResourceVersion())));
-		getResourceSettings().setCachingStrategy(new FilenameWithVersionResourceCachingStrategy("-revision-", new CachingResourceVersion(new LastModifiedResourceVersion())));
+		getResourceSettings().setCachingStrategy(new FilenameWithVersionResourceCachingStrategy("-", new CachingResourceVersion(new LastModifiedResourceVersion())));
 
 	}
 

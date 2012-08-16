@@ -137,3 +137,24 @@ tr.odd {
 .disabled-link {
 	color: black;
 }
+
+.server-to-client-data {
+	display: none;
+}
+
+.data-table-container {
+	padding: 1px;
+}
+
+.data-table-container .top1 {
+	clear: both;
+	height: 40px;
+}
+
+.data-table-container .top2 {
+	clear: both;
+}
+
+.data-table-container .bottom {
+	clear: both;
+}

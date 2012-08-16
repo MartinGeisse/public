@@ -8,6 +8,8 @@ package name.martingeisse.admin.component.page;
 
 import name.martingeisse.admin.navigation.INavigationLocationAware;
 
+import org.apache.wicket.markup.html.IHeaderResponse;
+
 /**
  * The "home" page.
  */
@@ -27,4 +29,12 @@ public class HomePage extends AbstractAdminPage implements INavigationLocationAw
 		return "/";
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.component.page.AbstractAdminPage#renderHead(org.apache.wicket.markup.html.IHeaderResponse)
+	 */
+	@Override
+	public void renderHead(IHeaderResponse response) {
+		super.renderHead(response);
+	}
+	
 }

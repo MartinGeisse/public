@@ -15,7 +15,6 @@ import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.list.IEntityListFilterAcceptor;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer;
-import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
 import name.martingeisse.admin.util.IGetPageable;
 import name.martingeisse.admin.util.LinkUtil;
 import name.martingeisse.wicket.util.zebra.ZebraDataView;
@@ -153,7 +152,7 @@ public class RawEntityListPanel extends Panel implements IGetPageable, IEntityLi
 		 * Constructor.
 		 */
 		public MyDataProvider() {
-			super(RawEntityListPanel.this.getEntityDescriptorModel(), RawEntityListPanel.this.filter);
+			super(RawEntityListPanel.this.getEntityDescriptorModel(), RawEntityListPanel.this.filter, null);
 		}
 
 		/* (non-Javadoc)
@@ -163,14 +162,15 @@ public class RawEntityListPanel extends Panel implements IGetPageable, IEntityLi
 		protected void onResultAvailable(ResultSetMetaData resultSetMetaData) throws SQLException {
 
 			// determine the column names and renderers
-			int width = resultSetMetaData.getColumnCount();
-			renderers = new IPropertyReadOnlyRenderer[width];
-			for (int i=0; i<width; i++) {
-				renderers[i] = ReadOnlyRenderingConfigurationUtil.createPropertyReadOnlyRenderer(resultSetMetaData.getColumnType(i + 1));
-				if (renderers[i] == null) {
-					throw new RuntimeException("no renderer");
-				}
-			}
+//			int width = resultSetMetaData.getColumnCount();
+//			renderers = new IPropertyReadOnlyRenderer[width];
+//			for (int i=0; i<width; i++) {
+//				renderers[i] = ReadOnlyRenderingConfigurationUtil.createPropertyReadOnlyRenderer(resultSetMetaData.getColumnType(i + 1));
+//				if (renderers[i] == null) {
+//					throw new RuntimeException("no renderer");
+//				}
+//			}
+			throw new RuntimeException("CURRENTLY NOT WORKING"); 
 			
 		}
 		
