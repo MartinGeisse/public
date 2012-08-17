@@ -28,7 +28,7 @@ public class RawEntityPresentationPanel extends Panel {
 	 * the entityInstance
 	 */
 	private transient EntityInstance entityInstance;
-	
+
 	/**
 	 * Constructor.
 	 * @param id the wicket id
@@ -38,15 +38,15 @@ public class RawEntityPresentationPanel extends Panel {
 		super(id, model);
 		add(new Loop("fields", new PropertyModel<Integer>(this, "width")) {
 			@Override
-			protected void populateItem(LoopItem item) {
-				
+			protected void populateItem(final LoopItem item) {
+
 				// create the name label
-				String fieldName = entityInstance.getMeta().getNames()[item.getIndex()];
+				final String fieldName = entityInstance.getMeta().getNames()[item.getIndex()];
 				item.add(new Label("name", fieldName));
-				
+
 				// create the value label / link
-				Object fieldValue = entityInstance.getData()[item.getIndex()];
-				EntityReferenceInfo reference = model.getObject().getEntity().findOutgoingReference(fieldName);
+				final Object fieldValue = entityInstance.getData()[item.getIndex()];
+				final EntityReferenceInfo reference = model.getObject().getEntity().findOutgoingReference(fieldName);
 				WebMarkupContainer link;
 				if (reference == null || fieldValue == null) {
 					link = new WebMarkupContainer("link");
@@ -55,7 +55,7 @@ public class RawEntityPresentationPanel extends Panel {
 				}
 				link.add(new Label("value", "" + fieldValue));
 				item.add(link);
-				
+
 			}
 		});
 	}
@@ -66,7 +66,7 @@ public class RawEntityPresentationPanel extends Panel {
 	public int getWidth() {
 		return entityInstance.getMeta().getNames().length;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Component#onBeforeRender()
 	 */

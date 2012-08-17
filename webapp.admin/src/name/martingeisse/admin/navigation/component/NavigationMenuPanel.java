@@ -38,7 +38,7 @@ import org.apache.wicket.model.PropertyModel;
  * wicket:child), but subclasses may override the whole markup.
  */
 public final class NavigationMenuPanel extends Panel {
-	
+
 	/**
 	 * the maximumNestingDepth
 	 */
@@ -48,7 +48,7 @@ public final class NavigationMenuPanel extends Panel {
 	 * the currentPagePath
 	 */
 	private transient String currentPagePath;
-	
+
 	/**
 	 * Constructor.
 	 * @param id the wicket id
@@ -56,13 +56,13 @@ public final class NavigationMenuPanel extends Panel {
 	public NavigationMenuPanel(final String id) {
 		this(id, Integer.MAX_VALUE);
 	}
-	
+
 	/**
 	 * Constructor.
 	 * @param id the wicket id
 	 * @param maximumNestingDepth the maximum nesting depth
 	 */
-	public NavigationMenuPanel(final String id, int maximumNestingDepth) {
+	public NavigationMenuPanel(final String id, final int maximumNestingDepth) {
 		super(id);
 		this.maximumNestingDepth = maximumNestingDepth;
 	}
@@ -82,11 +82,11 @@ public final class NavigationMenuPanel extends Panel {
 	 * @param model the model
 	 * @param maximumNestingDepth the maximum nesting depth
 	 */
-	public NavigationMenuPanel(final String id, final IModel<List<NavigationNode>> model, int maximumNestingDepth) {
+	public NavigationMenuPanel(final String id, final IModel<List<NavigationNode>> model, final int maximumNestingDepth) {
 		super(id, model);
 		this.maximumNestingDepth = maximumNestingDepth;
 	}
-	
+
 	/**
 	 * Returns the model for the node list.
 	 * @return the model
@@ -95,7 +95,7 @@ public final class NavigationMenuPanel extends Panel {
 	public IModel<List<NavigationNode>> getModel() {
 		return (IModel<List<NavigationNode>>)getDefaultModel();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Component#onInitialize()
 	 */
@@ -104,12 +104,12 @@ public final class NavigationMenuPanel extends Panel {
 		super.onInitialize();
 		add(new ListView<NavigationNode>("nodes", getModel()) {
 			@Override
-			protected void populateItem(ListItem<NavigationNode> item) {
+			protected void populateItem(final ListItem<NavigationNode> item) {
 				NavigationMenuPanel.this.populateItem(item);
 			}
 		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.markup.repeater.AbstractRepeater#onBeforeRender()
 	 */
@@ -118,35 +118,35 @@ public final class NavigationMenuPanel extends Panel {
 		currentPagePath = StringUtils.defaultString(NavigationUtil.getNavigationPathForPage(getPage()));
 		super.onBeforeRender();
 	}
-	
+
 	/**
 	 * This method is used to populate the node items.
 	 * @param item the item to populate
 	 */
 	protected void populateItem(final ListItem<NavigationNode> item) {
-		
+
 		// create the node link
-		NavigationNode node = item.getModelObject();
-		AbstractLink link = node.createLink("link");
+		final NavigationNode node = item.getModelObject();
+		final AbstractLink link = node.createLink("link");
 		link.add(new Label("title", node.getTitle()));
 		item.add(link);
-		
+
 		// mark or disable the link based on the current location
-		String nodePath = node.getPath();
+		final String nodePath = node.getPath();
 		if (nodePath.equals(currentPagePath)) {
 			link.setEnabled(false);
 		} else if (node.isEqualOrPlausibleAncestorOf(currentPagePath)) {
 			link.add(new AttributeAppender("style", "color: red"));
 		}
-		
+
 		// create a panel for the children, but hide if the maximum nesting level is reached
-		IModel<List<NavigationNode>> childrenModel = new PropertyModel<List<NavigationNode>>(item.getModel(), "children");
-		NavigationMenuPanel childrenPanel = new NavigationMenuPanel("children", childrenModel, maximumNestingDepth - 1);
+		final IModel<List<NavigationNode>> childrenModel = new PropertyModel<List<NavigationNode>>(item.getModel(), "children");
+		final NavigationMenuPanel childrenPanel = new NavigationMenuPanel("children", childrenModel, maximumNestingDepth - 1);
 		item.add(childrenPanel);
 		if (maximumNestingDepth == 0) {
 			childrenPanel.setVisible(false);
 		}
-		
+
 	}
 
 }

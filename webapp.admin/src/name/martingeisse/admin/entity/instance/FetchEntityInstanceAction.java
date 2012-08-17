@@ -12,9 +12,7 @@ import java.sql.SQLException;
 
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
-import com.mysema.query.sql.MySQLTemplates;
 import com.mysema.query.sql.SQLQuery;
-import com.mysema.query.sql.SQLQueryImpl;
 import com.mysema.query.support.Expressions;
 import com.mysema.query.types.Expression;
 import com.mysema.query.types.Ops;
@@ -103,10 +101,10 @@ public class FetchEntityInstanceAction {
 		Connection connection = null;
 		try {
 			connection = entity.getDatabase().createConnection();
-			SQLQuery query = new SQLQueryImpl(connection, new MySQLTemplates()); // TODO use the database descriptor as a factory
-			Path<?> entityExpression = Expressions.path(Object.class, entity.getTableName());
-			Expression<?> idExpression = Expressions.path(Object.class, entityExpression, entity.getIdColumnName());
-			Predicate idMatchPredicate = Expressions.predicate(Ops.EQ, idExpression, Expressions.constant(id));
+			final SQLQuery query = entity.getDatabase().createQuery(connection);
+			final Path<?> entityExpression = Expressions.path(Object.class, entity.getTableName());
+			final Expression<?> idExpression = Expressions.path(Object.class, entityExpression, entity.getIdColumnName());
+			final Predicate idMatchPredicate = Expressions.predicate(Ops.EQ, idExpression, Expressions.constant(id));
 			final ResultSet resultSet = query.from(entityExpression).where(idMatchPredicate).getResults(Wildcard.all);
 			entity.checkDataRowMeta(resultSet);
 			if (resultSet.next()) {

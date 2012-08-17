@@ -24,18 +24,18 @@ public class LinkUtil {
 	 */
 	private LinkUtil() {
 	}
-	
+
 	/**
 	 * Creates a link that is disabled and has "#" as its href.
 	 * @param wicketId the wicket id of the link to create
 	 * @return the link
 	 */
-	public static AbstractLink createDisabledLink(String wicketId) {
-		ExternalLink link = new ExternalLink(wicketId, "#");
+	public static AbstractLink createDisabledLink(final String wicketId) {
+		final ExternalLink link = new ExternalLink(wicketId, "#");
 		link.setEnabled(false);
 		return link;
 	}
-	
+
 	/**
 	 * Creates a link to the single-instance entity presentation page of the specified entity instance. 
 	 * @param wicketId the wicket id of the link to create
@@ -46,12 +46,12 @@ public class LinkUtil {
 	 * {@link IllegalArgumentException}.
 	 * @return the link
 	 */
-	public static BookmarkablePageLink<?> createSingleEntityLink(String wicketId, EntityDescriptor entity, Object entityId, String... subpathSegments) {
-		BookmarkablePageLink<?> link = (BookmarkablePageLink<?>)entity.getInstanceNavigationNode(subpathSegments).createLink(wicketId);
+	public static BookmarkablePageLink<?> createSingleEntityLink(final String wicketId, final EntityDescriptor entity, final Object entityId, final String... subpathSegments) {
+		final BookmarkablePageLink<?> link = (BookmarkablePageLink<?>)entity.getInstanceNavigationNode(subpathSegments).createLink(wicketId);
 		link.getPageParameters().add("id", entityId);
 		return link;
 	}
-	
+
 	/**
 	 * Returns the URL for the single-instance entity presentation page of the specified entity instance. 
 	 * @param entity the linked entity class
@@ -61,11 +61,11 @@ public class LinkUtil {
 	 * {@link IllegalArgumentException}.
 	 * @return the link
 	 */
-	public static String getSingleEntityLinkUrl(EntityDescriptor entity, Object entityId, String... subpathSegments) {
-		BookmarkablePageLink<?> link = createSingleEntityLink("dummy", entity, entityId, subpathSegments);
+	public static String getSingleEntityLinkUrl(final EntityDescriptor entity, final Object entityId, final String... subpathSegments) {
+		final BookmarkablePageLink<?> link = createSingleEntityLink("dummy", entity, entityId, subpathSegments);
 		return RequestCycle.get().urlFor(link.getPageClass(), link.getPageParameters()).toString();
 	}
-	
+
 	/**
 	 * Creates a link to the single-instance entity presentation page of the specified entity instance. 
 	 * @param wicketId the wicket id of the link to create
@@ -76,8 +76,8 @@ public class LinkUtil {
 	 * {@link IllegalArgumentException}.
 	 * @return the link
 	 */
-	public static AbstractLink createSingleEntityLink(String wicketId, String entityName, Object entityId, String... subpathSegments) {
+	public static AbstractLink createSingleEntityLink(final String wicketId, final String entityName, final Object entityId, final String... subpathSegments) {
 		return createSingleEntityLink(wicketId, ApplicationSchema.instance.findEntity(entityName), entityId, subpathSegments);
 	}
-	
+
 }

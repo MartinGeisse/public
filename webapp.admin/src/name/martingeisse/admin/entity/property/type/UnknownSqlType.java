@@ -15,7 +15,7 @@ public class UnknownSqlType implements ISqlType {
 	 * the sqlType
 	 */
 	private final int sqlType;
-	
+
 	/**
 	 * Constructor.
 	 * @param sqlType the JDBC type code
@@ -39,5 +39,5 @@ public class UnknownSqlType implements ISqlType {
 	public int getSqlType() {
 		return sqlType;
 	}
-	
+
 }

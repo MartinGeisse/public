@@ -28,7 +28,7 @@ import name.martingeisse.admin.util.IGetScore;
  * lower score are NOT asked in this case.
  */
 public interface IPropertyReadOnlyRendererContributor extends IGetScore {
-	
+
 	/**
 	 * Gets the renderer for the specified type, or null if this
 	 * contributor does not provide a renderer for that type.
@@ -36,5 +36,5 @@ public interface IPropertyReadOnlyRendererContributor extends IGetScore {
 	 * @return the renderer
 	 */
 	public IPropertyReadOnlyRenderer getRenderer(ISqlType type);
-	
+
 }

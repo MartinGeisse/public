@@ -19,16 +19,16 @@ public class StatelessUtil {
 	 * Dumps the component hierarchy, starting at the specified component.
 	 * @param root the component to start at
 	 */
-	public static void dumpStatefulComponents(Component root) {
+	public static void dumpStatefulComponents(final Component root) {
 		if (!root.isStateless()) {
 			System.out.println("stateful component: " + root.getPath());
 		}
 		if (root instanceof MarkupContainer) {
-			MarkupContainer container = (MarkupContainer)root;
-			for (Component child : container) {
+			final MarkupContainer container = (MarkupContainer)root;
+			for (final Component child : container) {
 				dumpStatefulComponents(child);
 			}
 		}
 	}
-	
+
 }

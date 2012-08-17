@@ -25,14 +25,14 @@ public interface INavigationNodeHandler extends IPageBarFactory {
 	 * node has no ID set
 	 */
 	public String getFallbackId(NavigationNode node);
-	
+
 	/**
 	 * @param node the handled node
 	 * @return the title of the handled node -- to be used when the node
 	 * has no title set
 	 */
 	public String getFallbackTitle(NavigationNode node);
-	
+
 	/**
 	 * Creates a Wicket {@link Link} for this node. The link will
 	 * refer to the correct URL for this node, but has no child
@@ -72,5 +72,5 @@ public interface INavigationNodeHandler extends IPageBarFactory {
 	 * @return the entity name or null
 	 */
 	public String getEntityNameForCanonicalEntityListNode();
-	
+
 }

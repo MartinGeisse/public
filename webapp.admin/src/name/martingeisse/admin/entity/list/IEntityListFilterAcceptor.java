@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.entity.list;
 
-
 /**
  * This interface is implemented by objects that are able
  * to make use of an entity list filter.
@@ -18,5 +17,5 @@ public interface IEntityListFilterAcceptor {
 	 * @param filter the entity list filter
 	 */
 	public void acceptEntityListFilter(IEntityListFilter filter);
-	
+
 }

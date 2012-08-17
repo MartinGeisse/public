@@ -19,7 +19,7 @@ public class EntityListFilterUtils {
 	 */
 	private EntityListFilterUtils() {
 	}
-	
+
 	/**
 	 * Creates and returns a {@link Path} for the entity being filtered.
 	 * This is simply a {@link Path} for {@link IEntityListFilter#ALIAS}.
@@ -28,7 +28,7 @@ public class EntityListFilterUtils {
 	public static Path<Object> entityPath() {
 		return Expressions.path(Object.class, IEntityListFilter.ALIAS);
 	}
-	
+
 	/**
 	 * Creates and returns an untyped {@link Path} for the specified field of the
 	 * entity being filtered. This is simply a {@link Path} for a field
@@ -36,10 +36,10 @@ public class EntityListFilterUtils {
 	 * @param fieldName the name of the field
 	 * @return the path for the field
 	 */
-	public static Path<Object> fieldPath(String fieldName) {
+	public static Path<Object> fieldPath(final String fieldName) {
 		return Expressions.path(Object.class, Expressions.path(Object.class, IEntityListFilter.ALIAS), fieldName);
 	}
-	
+
 	/**
 	 * Creates and returns a typed {@link Path} for the specified field of the
 	 * entity being filtered. This is simply a {@link Path} for a field
@@ -49,7 +49,7 @@ public class EntityListFilterUtils {
 	 * @param <T> the static field type
 	 * @return the path for the field
 	 */
-	public static <T> Path<T> fieldPath(Class<T> fieldType, String fieldName) {
+	public static <T> Path<T> fieldPath(final Class<T> fieldType, final String fieldName) {
 		return Expressions.path(fieldType, Expressions.path(Object.class, IEntityListFilter.ALIAS), fieldName);
 	}
 

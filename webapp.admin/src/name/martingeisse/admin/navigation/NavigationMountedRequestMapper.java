@@ -46,7 +46,7 @@ public final class NavigationMountedRequestMapper extends MountedMapper {
 	 * the parametersEncoder
 	 */
 	private final MyParametersEncoder parametersEncoder;
-	
+
 	/**
 	 * Constructor.
 	 * @param navigationPath the navigation path, which is also the mount path
@@ -59,11 +59,11 @@ public final class NavigationMountedRequestMapper extends MountedMapper {
 	/**
 	 * Helper constructor to get access to the parameters encoder.
 	 */
-	private NavigationMountedRequestMapper(final String navigationPath, final Class<? extends IRequestablePage> pageClass, MyParametersEncoder parametersEncoder) {
+	private NavigationMountedRequestMapper(final String navigationPath, final Class<? extends IRequestablePage> pageClass, final MyParametersEncoder parametersEncoder) {
 		super(navigationPath, pageClass, parametersEncoder);
 		this.parametersEncoder = parametersEncoder;
 	}
-	
+
 	/**
 	 * Getter method for the navigationPath.
 	 * @return the navigationPath
@@ -71,7 +71,7 @@ public final class NavigationMountedRequestMapper extends MountedMapper {
 	public String getNavigationPath() {
 		return parametersEncoder.getNavigationPath();
 	}
-	
+
 	/**
 	 * Getter method for the implicitParameters.
 	 * @return the implicitParameters
@@ -79,12 +79,12 @@ public final class NavigationMountedRequestMapper extends MountedMapper {
 	public PageParameters getImplicitParameters() {
 		return parametersEncoder.getImplicitParameters();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.request.mapper.MountedMapper#buildUrl(org.apache.wicket.request.mapper.AbstractBookmarkableMapper.UrlInfo)
 	 */
 	@Override
-	protected Url buildUrl(UrlInfo info) {
+	protected Url buildUrl(final UrlInfo info) {
 		/* This methods performs an additional check so it only maps page/parameter combinations
 		 * back to URLs that have the implicit navigation path parameter set to the value
 		 * stored in this mapper.
@@ -100,7 +100,7 @@ public final class NavigationMountedRequestMapper extends MountedMapper {
 	 * Customized {@link PageParametersEncoder} implementation.
 	 */
 	private static class MyParametersEncoder extends PageParametersEncoder {
-		
+
 		/**
 		 * the navigationPath
 		 */
@@ -110,15 +110,15 @@ public final class NavigationMountedRequestMapper extends MountedMapper {
 		 * the implicitParameters
 		 */
 		private final PageParameters implicitParameters;
-		
+
 		/**
 		 * Constructor.
 		 */
-		MyParametersEncoder(String navigationPath) {
+		MyParametersEncoder(final String navigationPath) {
 			this.navigationPath = navigationPath;
 			this.implicitParameters = new PageParameters();
 		}
-		
+
 		/**
 		 * Getter method for the navigationPath.
 		 * @return the navigationPath
@@ -126,7 +126,7 @@ public final class NavigationMountedRequestMapper extends MountedMapper {
 		public String getNavigationPath() {
 			return navigationPath;
 		}
-		
+
 		/**
 		 * Getter method for the implicitParameters.
 		 * @return the implicitParameters
@@ -144,7 +144,7 @@ public final class NavigationMountedRequestMapper extends MountedMapper {
 			if (parameters == null) {
 				parameters = new PageParameters();
 			}
-			for (String key : implicitParameters.getNamedKeys()) {
+			for (final String key : implicitParameters.getNamedKeys()) {
 				parameters.remove(key);
 			}
 			parameters.mergeWith(implicitParameters);
@@ -159,7 +159,7 @@ public final class NavigationMountedRequestMapper extends MountedMapper {
 		public Url encodePageParameters(final PageParameters pageParameters) {
 			final PageParameters copy = new PageParameters(pageParameters);
 			NavigationUtil.setParameterValue(copy, null);
-			for (String key : implicitParameters.getNamedKeys()) {
+			for (final String key : implicitParameters.getNamedKeys()) {
 				copy.remove(key);
 			}
 			return super.encodePageParameters(copy);

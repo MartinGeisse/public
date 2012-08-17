@@ -38,39 +38,39 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	 * the entityModel
 	 */
 	private final IModel<EntityDescriptor> entityModel;
-	
+
 	/**
 	 * the filter
 	 */
 	private final IEntityListFilter filter;
-	
+
 	/**
 	 * the orderSpecifiers
 	 */
 	private final OrderSpecifier<? extends Comparable<?>>[] orderSpecifiers;
-	
+
 	/**
 	 * Constructor.
 	 * @param entityModel the model that provides the entity descriptor
 	 */
-	public EntityInstanceDataProvider(IModel<EntityDescriptor> entityModel) {
+	public EntityInstanceDataProvider(final IModel<EntityDescriptor> entityModel) {
 		this.entityModel = entityModel;
 		this.filter = null;
 		this.orderSpecifiers = null;
 	}
-	
+
 	/**
 	 * Constructor.
 	 * @param entityModel the model that provides the entity descriptor
 	 * @param filter the filter
 	 * @param orderSpecifiers the order specifiers that define the order of the results
 	 */
-	public EntityInstanceDataProvider(IModel<EntityDescriptor> entityModel, IEntityListFilter filter, OrderSpecifier<? extends Comparable<?>>[] orderSpecifiers) {
+	public EntityInstanceDataProvider(final IModel<EntityDescriptor> entityModel, final IEntityListFilter filter, final OrderSpecifier<? extends Comparable<?>>[] orderSpecifiers) {
 		this.entityModel = entityModel;
 		this.filter = filter;
 		this.orderSpecifiers = orderSpecifiers;
 	}
-	
+
 	/**
 	 * Getter method for the entityModel.
 	 * @return the entityModel
@@ -78,7 +78,7 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	public IModel<EntityDescriptor> getEntityModel() {
 		return entityModel;
 	}
-	
+
 	/**
 	 * Getter method for the entity.
 	 * @return the entity
@@ -86,7 +86,7 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	public EntityDescriptor getEntity() {
 		return getEntityModel().getObject();
 	}
-	
+
 	/**
 	 * Getter method for the filter.
 	 * @return the filter
@@ -94,7 +94,7 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	public IEntityListFilter getFilter() {
 		return filter;
 	}
-	
+
 	/**
 	 * Getter method for the orderSpecifiers.
 	 * @return the orderSpecifiers
@@ -102,15 +102,15 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	public OrderSpecifier<? extends Comparable<?>>[] getOrderSpecifiers() {
 		return orderSpecifiers;
 	}
-	
+
 	/**
 	 * This method can be implemented by subclasses to trigger additional behavior
 	 * when the fetch result is available. The default implementation does nothing.
 	 * @param resultSetMetaData the result set meta-data
 	 */
-	protected void onResultAvailable(ResultSetMetaData resultSetMetaData) throws SQLException {
+	protected void onResultAvailable(final ResultSetMetaData resultSetMetaData) throws SQLException {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.model.IDetachable#detach()
 	 */
@@ -132,7 +132,7 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 			if (filter != null) {
 				countQuery = countQuery.where(filter.getFilterPredicate());
 			}
-			int size = (int)countQuery.count();
+			final int size = (int)countQuery.count();
 			return size;
 		} catch (final SQLException e) {
 			throw new RuntimeException(e);
@@ -150,7 +150,7 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	 * @see org.apache.wicket.markup.repeater.data.IDataProvider#iterator(int, int)
 	 */
 	@Override
-	public Iterator<? extends EntityInstance> iterator(int first, int count) {
+	public Iterator<? extends EntityInstance> iterator(final int first, final int count) {
 		Connection connection = null;
 		try {
 			final EntityDescriptor entity = getEntity();
@@ -167,21 +167,21 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 				query = query.orderBy(orderSpecifiers);
 			}
 			final ResultSet resultSet = query.limit(count).offset(first).getResults(Wildcard.all);
-			
+
 			// fetch rows
 			entity.checkDataRowMeta(resultSet);
 			final List<EntityInstance> rows = new ArrayList<EntityInstance>();
 			while (resultSet.next()) {
 				rows.add(new EntityInstance(entity, resultSet));
 			}
-			
+
 			// additional client-specific behavior
 			onResultAvailable(resultSet.getMetaData());
 
 			// clean up
 			resultSet.close();
 			statement.close();
-			
+
 			// return the rows as an iterator
 			return rows.iterator();
 
@@ -201,8 +201,8 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	 * @see org.apache.wicket.markup.repeater.data.IDataProvider#model(java.lang.Object)
 	 */
 	@Override
-	public IModel<EntityInstance> model(EntityInstance object) {
+	public IModel<EntityInstance> model(final EntityInstance object) {
 		return Model.of(object);
 	}
-	
+
 }

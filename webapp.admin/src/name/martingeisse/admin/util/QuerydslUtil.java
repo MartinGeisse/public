@@ -42,47 +42,47 @@ public class QuerydslUtil {
 	 */
 	private QuerydslUtil() {
 	}
-	
+
 	/**
 	 * Dumps the query text and parameters from the specified query.
 	 * @param query the query to dump
 	 */
-	public static void dumpQuery(SQLQueryImpl query) {
-		
-		Connection connection = new MyConnection();
-		SQLQuery clone = new SQLQueryImpl(connection, new MySQLTemplates(), query.getMetadata()) {
-			
+	public static void dumpQuery(final SQLQueryImpl query) {
+
+		final Connection connection = new MyConnection();
+		final SQLQuery clone = new SQLQueryImpl(connection, new MySQLTemplates(), query.getMetadata()) {
+
 			/* (non-Javadoc)
 			 * @see com.mysema.query.sql.AbstractSQLQuery#setParameters(java.sql.PreparedStatement, java.util.List, java.util.List, java.util.Map)
 			 */
 			@Override
-			protected void setParameters(PreparedStatement stmt, List<?> objects, List<Path<?>> constantPaths, Map<ParamExpression<?>, ?> params) {
-				
+			protected void setParameters(final PreparedStatement stmt, final List<?> objects, final List<Path<?>> constantPaths, final Map<ParamExpression<?>, ?> params) {
+
 				System.out.println("objects: ");
-				for (Object o : objects) {
+				for (final Object o : objects) {
 					System.out.println("* " + o);
 				}
-				
+
 				System.out.println("constant paths: ");
-				for (Path<?> path : constantPaths) {
+				for (final Path<?> path : constantPaths) {
 					System.out.println("* " + path);
 				}
-				
+
 				System.out.println("params: ");
-				for (Map.Entry<ParamExpression<?>, ?> param : params.entrySet()) {
+				for (final Map.Entry<ParamExpression<?>, ?> param : params.entrySet()) {
 					System.out.println("* " + param.getKey() + " -> " + param.getValue());
 				}
-				
+
 				throw new MyAbortException();
 			}
-			
+
 		};
-		
+
 		try {
 			clone.getResults(Wildcard.all);
-		} catch (MyAbortException e) {
+		} catch (final MyAbortException e) {
 		}
-		
+
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class QuerydslUtil {
 	 */
 	private static class MyAbortException extends RuntimeException {
 	}
-	
+
 	/**
 	 * Fake {@link Connection} implementation.
 	 */
@@ -100,7 +100,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Wrapper#isWrapperFor(java.lang.Class)
 		 */
 		@Override
-		public boolean isWrapperFor(Class<?> iface) throws SQLException {
+		public boolean isWrapperFor(final Class<?> iface) throws SQLException {
 			return false;
 		}
 
@@ -108,7 +108,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Wrapper#unwrap(java.lang.Class)
 		 */
 		@Override
-		public <T> T unwrap(Class<T> iface) throws SQLException {
+		public <T> T unwrap(final Class<T> iface) throws SQLException {
 			return null;
 		}
 
@@ -137,7 +137,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#createArrayOf(java.lang.String, java.lang.Object[])
 		 */
 		@Override
-		public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
+		public Array createArrayOf(final String typeName, final Object[] elements) throws SQLException {
 			return null;
 		}
 
@@ -185,7 +185,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#createStatement(int, int, int)
 		 */
 		@Override
-		public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+		public Statement createStatement(final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
 			return null;
 		}
 
@@ -193,7 +193,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#createStatement(int, int)
 		 */
 		@Override
-		public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
+		public Statement createStatement(final int resultSetType, final int resultSetConcurrency) throws SQLException {
 			return null;
 		}
 
@@ -201,7 +201,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#createStruct(java.lang.String, java.lang.Object[])
 		 */
 		@Override
-		public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
+		public Struct createStruct(final String typeName, final Object[] attributes) throws SQLException {
 			return null;
 		}
 
@@ -233,7 +233,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#getClientInfo(java.lang.String)
 		 */
 		@Override
-		public String getClientInfo(String name) throws SQLException {
+		public String getClientInfo(final String name) throws SQLException {
 			return null;
 		}
 
@@ -297,7 +297,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#isValid(int)
 		 */
 		@Override
-		public boolean isValid(int timeout) throws SQLException {
+		public boolean isValid(final int timeout) throws SQLException {
 			return false;
 		}
 
@@ -305,7 +305,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#nativeSQL(java.lang.String)
 		 */
 		@Override
-		public String nativeSQL(String sql) throws SQLException {
+		public String nativeSQL(final String sql) throws SQLException {
 			return null;
 		}
 
@@ -313,7 +313,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#prepareCall(java.lang.String, int, int, int)
 		 */
 		@Override
-		public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+		public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
 			return null;
 		}
 
@@ -321,7 +321,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#prepareCall(java.lang.String, int, int)
 		 */
 		@Override
-		public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
+		public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency) throws SQLException {
 			return null;
 		}
 
@@ -329,7 +329,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#prepareCall(java.lang.String)
 		 */
 		@Override
-		public CallableStatement prepareCall(String sql) throws SQLException {
+		public CallableStatement prepareCall(final String sql) throws SQLException {
 			return null;
 		}
 
@@ -337,7 +337,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#prepareStatement(java.lang.String, int, int, int)
 		 */
 		@Override
-		public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+		public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
 			return null;
 		}
 
@@ -345,7 +345,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#prepareStatement(java.lang.String, int, int)
 		 */
 		@Override
-		public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
+		public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency) throws SQLException {
 			return null;
 		}
 
@@ -353,7 +353,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#prepareStatement(java.lang.String, int)
 		 */
 		@Override
-		public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
+		public PreparedStatement prepareStatement(final String sql, final int autoGeneratedKeys) throws SQLException {
 			return null;
 		}
 
@@ -361,7 +361,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#prepareStatement(java.lang.String, int[])
 		 */
 		@Override
-		public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
+		public PreparedStatement prepareStatement(final String sql, final int[] columnIndexes) throws SQLException {
 			return null;
 		}
 
@@ -369,7 +369,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#prepareStatement(java.lang.String, java.lang.String[])
 		 */
 		@Override
-		public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
+		public PreparedStatement prepareStatement(final String sql, final String[] columnNames) throws SQLException {
 			return null;
 		}
 
@@ -377,7 +377,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#prepareStatement(java.lang.String)
 		 */
 		@Override
-		public PreparedStatement prepareStatement(String sql) throws SQLException {
+		public PreparedStatement prepareStatement(final String sql) throws SQLException {
 			return null;
 		}
 
@@ -385,7 +385,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#releaseSavepoint(java.sql.Savepoint)
 		 */
 		@Override
-		public void releaseSavepoint(Savepoint savepoint) throws SQLException {
+		public void releaseSavepoint(final Savepoint savepoint) throws SQLException {
 		}
 
 		/* (non-Javadoc)
@@ -399,49 +399,49 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#rollback(java.sql.Savepoint)
 		 */
 		@Override
-		public void rollback(Savepoint savepoint) throws SQLException {
+		public void rollback(final Savepoint savepoint) throws SQLException {
 		}
 
 		/* (non-Javadoc)
 		 * @see java.sql.Connection#setAutoCommit(boolean)
 		 */
 		@Override
-		public void setAutoCommit(boolean autoCommit) throws SQLException {
+		public void setAutoCommit(final boolean autoCommit) throws SQLException {
 		}
 
 		/* (non-Javadoc)
 		 * @see java.sql.Connection#setCatalog(java.lang.String)
 		 */
 		@Override
-		public void setCatalog(String catalog) throws SQLException {
+		public void setCatalog(final String catalog) throws SQLException {
 		}
 
 		/* (non-Javadoc)
 		 * @see java.sql.Connection#setClientInfo(java.util.Properties)
 		 */
 		@Override
-		public void setClientInfo(Properties properties) throws SQLClientInfoException {
+		public void setClientInfo(final Properties properties) throws SQLClientInfoException {
 		}
 
 		/* (non-Javadoc)
 		 * @see java.sql.Connection#setClientInfo(java.lang.String, java.lang.String)
 		 */
 		@Override
-		public void setClientInfo(String name, String value) throws SQLClientInfoException {
+		public void setClientInfo(final String name, final String value) throws SQLClientInfoException {
 		}
 
 		/* (non-Javadoc)
 		 * @see java.sql.Connection#setHoldability(int)
 		 */
 		@Override
-		public void setHoldability(int holdability) throws SQLException {
+		public void setHoldability(final int holdability) throws SQLException {
 		}
 
 		/* (non-Javadoc)
 		 * @see java.sql.Connection#setReadOnly(boolean)
 		 */
 		@Override
-		public void setReadOnly(boolean readOnly) throws SQLException {
+		public void setReadOnly(final boolean readOnly) throws SQLException {
 		}
 
 		/* (non-Javadoc)
@@ -456,7 +456,7 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#setSavepoint(java.lang.String)
 		 */
 		@Override
-		public Savepoint setSavepoint(String name) throws SQLException {
+		public Savepoint setSavepoint(final String name) throws SQLException {
 			return null;
 		}
 
@@ -464,16 +464,16 @@ public class QuerydslUtil {
 		 * @see java.sql.Connection#setTransactionIsolation(int)
 		 */
 		@Override
-		public void setTransactionIsolation(int level) throws SQLException {
+		public void setTransactionIsolation(final int level) throws SQLException {
 		}
 
 		/* (non-Javadoc)
 		 * @see java.sql.Connection#setTypeMap(java.util.Map)
 		 */
 		@Override
-		public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
+		public void setTypeMap(final Map<String, Class<?>> map) throws SQLException {
 		}
 
 	}
-	
+
 }

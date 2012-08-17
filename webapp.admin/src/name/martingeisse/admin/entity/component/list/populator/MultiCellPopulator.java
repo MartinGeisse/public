@@ -23,23 +23,23 @@ public class MultiCellPopulator extends AbstractEntityCellPopulator {
 	/**
 	 * the cellPopulators
 	 */
-	private List<ICellPopulator<EntityInstance>> cellPopulators;
-	
+	private final List<ICellPopulator<EntityInstance>> cellPopulators;
+
 	/**
 	 * Constructor.
 	 * @param title the title
 	 * @param cellPopulators the sub-populators
 	 */
-	public MultiCellPopulator(final String title, ICellPopulator<EntityInstance>... cellPopulators) {
+	public MultiCellPopulator(final String title, final ICellPopulator<EntityInstance>... cellPopulators) {
 		this(title, Arrays.asList(cellPopulators));
 	}
-	
+
 	/**
 	 * Constructor.
 	 * @param title the title
 	 * @param cellPopulators the sub-populators
 	 */
-	public MultiCellPopulator(final String title, List<ICellPopulator<EntityInstance>> cellPopulators) {
+	public MultiCellPopulator(final String title, final List<ICellPopulator<EntityInstance>> cellPopulators) {
 		super(title);
 		this.cellPopulators = cellPopulators;
 	}
@@ -48,7 +48,7 @@ public class MultiCellPopulator extends AbstractEntityCellPopulator {
 	 * @see org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator#populateItem(org.apache.wicket.markup.repeater.Item, java.lang.String, org.apache.wicket.model.IModel)
 	 */
 	@Override
-	public void populateItem(Item<ICellPopulator<EntityInstance>> item, String id, IModel<EntityInstance> instanceModel) {
+	public void populateItem(final Item<ICellPopulator<EntityInstance>> item, final String id, final IModel<EntityInstance> instanceModel) {
 		item.add(new MultiCellPanel(id, instanceModel, cellPopulators));
 	}
 

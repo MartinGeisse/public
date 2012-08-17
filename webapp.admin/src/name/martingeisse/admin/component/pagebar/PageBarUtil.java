@@ -18,7 +18,7 @@ import org.apache.wicket.markup.repeater.RepeatingView;
  * Utilities to deal with page bars.
  */
 public final class PageBarUtil {
-	
+
 	/**
 	 * Prevent instantiation.
 	 */
@@ -31,8 +31,8 @@ public final class PageBarUtil {
 	 * @param id the wicket id of the {@link RepeatingView}
 	 * @return the {@link RepeatingView} that contains all top-bars
 	 */
-	public static WebMarkupContainer createAllPageTopBars(Page page, String id) {
-		RepeatingView view = new RepeatingView(id);
+	public static WebMarkupContainer createAllPageTopBars(final Page page, final String id) {
+		final RepeatingView view = new RepeatingView(id);
 		createAllPageTopBars(NavigationUtil.getNavigationNodeForPage(page), view);
 		return view;
 	}
@@ -43,16 +43,16 @@ public final class PageBarUtil {
 	 * @param id the wicket id of the {@link RepeatingView}
 	 * @return the {@link RepeatingView} that contains all bottom-bars
 	 */
-	public static WebMarkupContainer createAllPageBottomBars(Page page, String id) {
-		RepeatingView view = new RepeatingView(id);
+	public static WebMarkupContainer createAllPageBottomBars(final Page page, final String id) {
+		final RepeatingView view = new RepeatingView(id);
 		createAllPageBottomBars(NavigationUtil.getNavigationNodeForPage(page), view);
 		return view;
 	}
-	
+
 	/**
 	 * 
 	 */
-	private static void createAllPageTopBars(NavigationNode node, RepeatingView view) {
+	private static void createAllPageTopBars(final NavigationNode node, final RepeatingView view) {
 		if (node.getParent() != null) {
 			createAllPageTopBars(node.getParent(), view);
 		}
@@ -69,11 +69,11 @@ public final class PageBarUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
-	private static void createAllPageBottomBars(NavigationNode node, RepeatingView view) {
+	private static void createAllPageBottomBars(final NavigationNode node, final RepeatingView view) {
 		{
 			final Panel bottomBar = node.getHandler().createPageBottomBar(view.newChildId());
 			if (bottomBar != null) {
@@ -90,5 +90,5 @@ public final class PageBarUtil {
 			createAllPageBottomBars(node.getParent(), view);
 		}
 	}
-	
+
 }

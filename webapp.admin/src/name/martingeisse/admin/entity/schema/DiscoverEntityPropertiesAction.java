@@ -81,7 +81,7 @@ class DiscoverEntityPropertiesAction {
 	public List<EntityPropertyDescriptor> execute() {
 		try {
 			final List<EntityPropertyDescriptor> result = new ArrayList<EntityPropertyDescriptor>();
-			ResultSet resultSet = connection.getMetaData().getColumns(null, null, entity.getTableName(), null);
+			final ResultSet resultSet = connection.getMetaData().getColumns(null, null, entity.getTableName(), null);
 			while (resultSet.next()) {
 				final EntityPropertyDescriptor propertyDescriptor = new EntityPropertyDescriptor();
 				propertyDescriptor.setVisibleInRawEntityList(true);
@@ -92,7 +92,7 @@ class DiscoverEntityPropertiesAction {
 			}
 			resultSet.close();
 			return result;
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -105,18 +105,18 @@ class DiscoverEntityPropertiesAction {
 	 * @param resultSet the result set with column meta-data
 	 * @return the type for the current column
 	 */
-	private ISqlType determineType(ResultSet resultSet) throws SQLException {
-		int sqlTypeCode = resultSet.getInt("DATA_TYPE");
+	private ISqlType determineType(final ResultSet resultSet) throws SQLException {
+		final int sqlTypeCode = resultSet.getInt("DATA_TYPE");
 		switch (sqlTypeCode) {
-		
+
 		case Types.TINYINT:
 		case Types.SMALLINT:
 		case Types.INTEGER:
 			return IntegerType.instance;
-			
+
 		case Types.BIGINT:
 			return LongType.instance;
-			
+
 		case Types.CHAR:
 		case Types.NCHAR:
 		case Types.VARCHAR:
@@ -126,24 +126,24 @@ class DiscoverEntityPropertiesAction {
 		case Types.CLOB:
 		case Types.NCLOB:
 			return StringType.instance;
-			
+
 		default:
 			return new UnknownSqlType(sqlTypeCode);
-			
+
 		}
 	}
-	
+
 	/**
 	 * @param propertyDescriptor
 	 * @return
 	 */
-	private boolean isPropertyVisibleInRawEntityList(EntityPropertyDescriptor propertyDescriptor) {
+	private boolean isPropertyVisibleInRawEntityList(final EntityPropertyDescriptor propertyDescriptor) {
 		int score = Integer.MIN_VALUE;
 		boolean visible = true;
-		for (IRawEntityListPropertyDisplayFilter filter : EntityConfigurationUtil.getRawEntityListPropertyDisplayFilters()) {
-			int filterScore = filter.getScore(entity, propertyDescriptor);
+		for (final IRawEntityListPropertyDisplayFilter filter : EntityConfigurationUtil.getRawEntityListPropertyDisplayFilters()) {
+			final int filterScore = filter.getScore(entity, propertyDescriptor);
 			if (filterScore >= score) {
-				Boolean filterResult = filter.isPropertyVisible(entity, propertyDescriptor);
+				final Boolean filterResult = filter.isPropertyVisible(entity, propertyDescriptor);
 				if (filterResult != null) {
 					score = filterScore;
 					visible = filterResult;
@@ -152,5 +152,5 @@ class DiscoverEntityPropertiesAction {
 		}
 		return visible;
 	}
-	
+
 }

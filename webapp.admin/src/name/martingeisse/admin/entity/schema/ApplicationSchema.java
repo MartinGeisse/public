@@ -34,21 +34,21 @@ public class ApplicationSchema {
 	 * the instance
 	 */
 	public static volatile ApplicationSchema instance;
-	
+
 	/**
 	 * Initializes the application schema.
 	 */
 	public static void initialize() {
-		ApplicationSchema schema = new ApplicationSchema();
-		
+		final ApplicationSchema schema = new ApplicationSchema();
+
 		// synchronize on the schema to ensure that the thread's cache is emptied afterwards
-		synchronized(schema) {
+		synchronized (schema) {
 			schema.prepare();
 		}
-		
+
 		// store the instance -- the 'instance' variable is volatile to avoid caching
 		instance = schema;
-		
+
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class ApplicationSchema {
 	 * the entityDescriptors
 	 */
 	private final List<EntityDescriptor> entityDescriptors;
-	
+
 	/**
 	 * the entityReferences
 	 */
@@ -90,7 +90,7 @@ public class ApplicationSchema {
 	public List<EntityDescriptor> getEntityDescriptors() {
 		return entityDescriptors;
 	}
-	
+
 	/**
 	 * Getter method for the entityReferences.
 	 * @return the entityReferences
@@ -98,13 +98,13 @@ public class ApplicationSchema {
 	public List<EntityReferenceInfo> getEntityReferences() {
 		return entityReferences;
 	}
-	
+
 	/**
 	 * Finds and returns an entity by its name.
 	 * @param name the entity name
 	 * @return the entity descriptor, or null if not found
 	 */
-	public EntityDescriptor findEntity(String name) {
+	public EntityDescriptor findEntity(final String name) {
 		for (final EntityDescriptor entity : entityDescriptors) {
 			if (entity.getName().equals(name)) {
 				return entity;
@@ -112,7 +112,7 @@ public class ApplicationSchema {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Builds internal data structures from the actual schema built by
 	 * the subclass. This method should be invoked after setting custom
@@ -125,42 +125,42 @@ public class ApplicationSchema {
 		createNavigation();
 		initializeSearchStrategies();
 	}
-	
+
 	/**
 	 * Copies the list of databases from the {@link ApplicationConfigurationOld}.
 	 */
 	private void copyDatabaseList() {
-		for (AbstractDatabaseDescriptor database : ApplicationConfiguration.get().getDatabases()) {
+		for (final AbstractDatabaseDescriptor database : ApplicationConfiguration.get().getDatabases()) {
 			databaseDescriptors.add(database);
 		}
 	}
-	
+
 	/**
 	 * Fetches implicit schema components from the database.
 	 */
 	private void buildEntityDescriptors() {
-		for (AbstractDatabaseDescriptor databaseDescriptor : databaseDescriptors) {
-			DiscoverEntitiesAction action = new DiscoverEntitiesAction();
+		for (final AbstractDatabaseDescriptor databaseDescriptor : databaseDescriptors) {
+			final DiscoverEntitiesAction action = new DiscoverEntitiesAction();
 			action.setDatabase(databaseDescriptor);
-			for (EntityDescriptor entity : action.execute()) {
+			for (final EntityDescriptor entity : action.execute()) {
 				entity.mapNames();
 				entityDescriptors.add(entity);
 			}
 		}
 	}
-	
+
 	/**
 	 * Finds entity references and stores them in the entity reference list as well
 	 * as the source and destination entities.
 	 */
 	private void detectEntityReferences() {
-		for (EntityDescriptor entity : entityDescriptors) {
-			for (EntityPropertyDescriptor property : entity.getPropertiesInDatabaseOrder()) {
-				String propertyName = property.getName();
-				for (IEntityReferenceDetector detector : EntityConfigurationUtil.getEntityReferenceDetectors()) {
-					String destinationName = detector.detectEntityReference(this, entity.getName(), entity.getTableName(), propertyName);
+		for (final EntityDescriptor entity : entityDescriptors) {
+			for (final EntityPropertyDescriptor property : entity.getPropertiesInDatabaseOrder()) {
+				final String propertyName = property.getName();
+				for (final IEntityReferenceDetector detector : EntityConfigurationUtil.getEntityReferenceDetectors()) {
+					final String destinationName = detector.detectEntityReference(this, entity.getName(), entity.getTableName(), propertyName);
 					if (destinationName != null) {
-						EntityDescriptor destination = findEntity(destinationName);
+						final EntityDescriptor destination = findEntity(destinationName);
 						if (destination != null) {
 							registerEntityReference(entity, destination, propertyName);
 						}
@@ -169,12 +169,12 @@ public class ApplicationSchema {
 			}
 		}
 	}
-	
+
 	/**
 	 * Registers an entity reference once it is detected.
 	 */
-	private void registerEntityReference(EntityDescriptor source, EntityDescriptor destination, String fieldName) {
-		EntityReferenceInfo reference = new EntityReferenceInfo();
+	private void registerEntityReference(final EntityDescriptor source, final EntityDescriptor destination, final String fieldName) {
+		final EntityReferenceInfo reference = new EntityReferenceInfo();
 		reference.setSource(source);
 		reference.setDestination(destination);
 		reference.setFieldName(fieldName);
@@ -182,7 +182,7 @@ public class ApplicationSchema {
 		source.getOutgoingReferences().add(reference);
 		destination.getIncomingReferences().add(reference);
 	}
-	
+
 	/**
 	 * Creates navigation nodes in the global navigation tree for each entity, based on the
 	 * globally defined template (in {@link GeneralEntityConfiguration}) and local navigation
@@ -194,15 +194,15 @@ public class ApplicationSchema {
 	 * general template cannot be bound to a single entity type by definition.
 	 */
 	private void createNavigation() {
-		
+
 		// determine the (declared) canonical entity list nodes
 		final Map<String, NavigationNode> canonicalEntityListNodes = new HashMap<String, NavigationNode>();
 		NavigationConfigurationUtil.getNavigationTree().acceptVisior(new INavigationNodeVisitor() {
 			@Override
-			public void visit(NavigationNode node) {
-				String entityName = node.getHandler().getEntityNameForCanonicalEntityListNode();
+			public void visit(final NavigationNode node) {
+				final String entityName = node.getHandler().getEntityNameForCanonicalEntityListNode();
 				if (entityName != null) {
-					NavigationNode old = canonicalEntityListNodes.put(entityName, node);
+					final NavigationNode old = canonicalEntityListNodes.put(entityName, node);
 					if (old != null) {
 						throw new IllegalStateException("found two 'canonical' entity list nodes for entity " + entityName + ": " + node.getPath() + " and " + old.getPath());
 					}
@@ -213,11 +213,11 @@ public class ApplicationSchema {
 		// create ad-hoc canonical list nodes for entities with no declared canonical list node
 		final NavigationNode globalRoot = NavigationConfigurationUtil.getNavigationTree().getRoot();
 		final NavigationNode allEntitiesNode = globalRoot.getChildFactory().createNavigationFolderChild("all-entities", "All Entities");
-		for (EntityDescriptor entity : entityDescriptors) {
-			
+		for (final EntityDescriptor entity : entityDescriptors) {
+
 			// create a child node of "All Entities" for this entity
-			NavigationNode adHocListNode = allEntitiesNode.getChildFactory().createEntityListPanelChild(entity.getName(), entity.getDisplayName(), RawEntityListPanel.class, entity.getName());
-			
+			final NavigationNode adHocListNode = allEntitiesNode.getChildFactory().createEntityListPanelChild(entity.getName(), entity.getDisplayName(), RawEntityListPanel.class, entity.getName());
+
 			// use the declared canonical list node if any, or the ad-hoc node as a fallback
 			final String entityName = entity.getName();
 			final NavigationNode declaredCanonicalListNode = canonicalEntityListNodes.get(entityName);
@@ -228,38 +228,38 @@ public class ApplicationSchema {
 				entity.setCanonicalListNavigationNode(declaredCanonicalListNode);
 			}
 		}
-		
+
 		// create and mount the local entity instance navigation tree for each entity
-		Iterable<IEntityNavigationContributor> entityNavigationContributors = EntityConfigurationUtil.getEntityNavigationContributors();
-		for (EntityDescriptor entity : entityDescriptors) {
+		final Iterable<IEntityNavigationContributor> entityNavigationContributors = EntityConfigurationUtil.getEntityNavigationContributors();
+		for (final EntityDescriptor entity : entityDescriptors) {
 			final String entityName = entity.getName();
-			NavigationNode canonicalEntityListNode = canonicalEntityListNodes.get(entityName);
-			NavigationNode entityInstanceRootNode = canonicalEntityListNode.getChildFactory().createNavigationFolderChild("${id}", "Entity Instance");
+			final NavigationNode canonicalEntityListNode = canonicalEntityListNodes.get(entityName);
+			final NavigationNode entityInstanceRootNode = canonicalEntityListNode.getChildFactory().createNavigationFolderChild("${id}", "Entity Instance");
 			entity.setInstanceNavigationRootNode(entityInstanceRootNode);
-			for (IEntityNavigationContributor contributor : entityNavigationContributors) {
+			for (final IEntityNavigationContributor contributor : entityNavigationContributors) {
 				contributor.contributeNavigationNodes(entity, entityInstanceRootNode);
 			}
 			entityInstanceRootNode.acceptVisitor(new INavigationNodeVisitor() {
 				@Override
-				public void visit(NavigationNode node) {
-					INavigationNodeHandler handler = node.getHandler();
+				public void visit(final NavigationNode node) {
+					final INavigationNodeHandler handler = node.getHandler();
 					if (handler instanceof IEntityNameAware) {
-						IEntityNameAware entityNameAware = (IEntityNameAware)handler;
+						final IEntityNameAware entityNameAware = (IEntityNameAware)handler;
 						entityNameAware.setEntityName(entityName);
 					}
 				}
 			});
 		}
-		
+
 	}
 
 	/**
 	 * Initializes the search strategies for all entities.
 	 */
 	private void initializeSearchStrategies() {
-		for (EntityDescriptor entity : entityDescriptors) {
+		for (final EntityDescriptor entity : entityDescriptors) {
 			entity.initializeSearchStrategy();
 		}
 	}
-	
+
 }

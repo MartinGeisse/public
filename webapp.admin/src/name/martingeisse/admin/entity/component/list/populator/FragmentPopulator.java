@@ -25,40 +25,40 @@ public class FragmentPopulator extends AbstractEntityCellPopulator {
 	/**
 	 * the markupProvider
 	 */
-	private MarkupContainer markupProvider;
-	
+	private final MarkupContainer markupProvider;
+
 	/**
 	 * the fragmentMarkupId
 	 */
-	private String fragmentMarkupId;
-	
+	private final String fragmentMarkupId;
+
 	/**
 	 * Constructor.
 	 * @param markupProvider the markup container that provides the markup for the fragment
 	 * @param fragmentMarkupId the wicket:id of the fragment in the markupProvider
 	 */
-	public FragmentPopulator(MarkupContainer markupProvider, String fragmentMarkupId) {
+	public FragmentPopulator(final MarkupContainer markupProvider, final String fragmentMarkupId) {
 		this(null, markupProvider, fragmentMarkupId);
 	}
-	
+
 	/**
 	 * Constructor.
 	 * @param title the title
 	 * @param markupProvider the markup container that provides the markup for the fragment
 	 * @param fragmentMarkupId the wicket:id of the fragment in the markupProvider
 	 */
-	public FragmentPopulator(String title, MarkupContainer markupProvider, String fragmentMarkupId) {
+	public FragmentPopulator(final String title, final MarkupContainer markupProvider, final String fragmentMarkupId) {
 		super(title);
 		this.markupProvider = markupProvider;
 		this.fragmentMarkupId = fragmentMarkupId;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator#populateItem(org.apache.wicket.markup.repeater.Item, java.lang.String, org.apache.wicket.model.IModel)
 	 */
 	@Override
-	public void populateItem(Item<ICellPopulator<EntityInstance>> cellItem, String componentId, IModel<EntityInstance> rowModel) {
-		Fragment fragment = new Fragment(componentId, fragmentMarkupId, markupProvider, rowModel);
+	public void populateItem(final Item<ICellPopulator<EntityInstance>> cellItem, final String componentId, final IModel<EntityInstance> rowModel) {
+		final Fragment fragment = new Fragment(componentId, fragmentMarkupId, markupProvider, rowModel);
 		cellItem.add(fragment);
 		populateFragment(fragment, rowModel);
 	}
@@ -68,14 +68,14 @@ public class FragmentPopulator extends AbstractEntityCellPopulator {
 	 * @param fragment the fragment
 	 * @param rowModel the row model (also the model o the fragment)
 	 */
-	protected void populateFragment(Fragment fragment, IModel<EntityInstance> rowModel) {
+	protected void populateFragment(final Fragment fragment, final IModel<EntityInstance> rowModel) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.model.IDetachable#detach()
 	 */
 	@Override
 	public void detach() {
 	}
-	
+
 }

@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.application;
 
-
 /**
  * All administration application plugins must implement this interface
  * so customization code can add them to the launcher at startup.
@@ -26,12 +25,12 @@ public interface IPlugin {
 	 * array to indicate that it does not contain any other plugins.
 	 */
 	public IPlugin[] unbox();
-	
+
 	/**
 	 * Contributes this plugin's capabilities to the application capabilities.
 	 * This method accesses the singleton {@link ApplicationConfiguration}
 	 * instance to add capabilities.
 	 */
 	public void contribute();
-	
+
 }

@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.navigation;
 
-
 /**
  * Visitor interface for iterating {@link NavigationNode} instances.
  */
@@ -17,5 +16,5 @@ public interface INavigationNodeVisitor {
 	 * @param node the node to visit
 	 */
 	public void visit(NavigationNode node);
-	
+
 }

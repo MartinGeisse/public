@@ -19,7 +19,7 @@ public class FallbackRenderer implements IPropertyReadOnlyRenderer {
 	 * the MAX_LENGTH
 	 */
 	private static final int MAX_LENGTH = 30;
-	
+
 	/**
 	 * the primaryRenderer
 	 */
@@ -60,7 +60,7 @@ public class FallbackRenderer implements IPropertyReadOnlyRenderer {
 	 */
 	@Override
 	public Label createLabel(final String id, final Object value) {
-		Label primaryRendererResult = (primaryRenderer == null ? null : primaryRenderer.createLabel(id, value));
+		final Label primaryRendererResult = (primaryRenderer == null ? null : primaryRenderer.createLabel(id, value));
 		if (primaryRendererResult == null) {
 			String s = "" + value;
 			if (s.length() > MAX_LENGTH) {
@@ -76,8 +76,8 @@ public class FallbackRenderer implements IPropertyReadOnlyRenderer {
 	 * @see name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer#valueToString(java.lang.Object)
 	 */
 	@Override
-	public String valueToString(Object value) {
-		String primaryRendererResult = (primaryRenderer == null ? null : primaryRenderer.valueToString(value));
+	public String valueToString(final Object value) {
+		final String primaryRendererResult = (primaryRenderer == null ? null : primaryRenderer.valueToString(value));
 		if (primaryRendererResult == null) {
 			String s = "" + value;
 			if (s.length() > MAX_LENGTH) {
@@ -89,5 +89,4 @@ public class FallbackRenderer implements IPropertyReadOnlyRenderer {
 		}
 	}
 
-	
 }

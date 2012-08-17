@@ -6,10 +6,10 @@
 
 package name.martingeisse.admin.navigation.handler;
 
-import name.martingeisse.admin.entity.component.list.populator.PopulatorBasedEntityListPanel;
 import name.martingeisse.admin.entity.component.list.populator.FragmentPopulator;
 import name.martingeisse.admin.entity.component.list.populator.IEntityCellPopulator;
 import name.martingeisse.admin.entity.component.list.populator.NavigationMountedPopulatorBasedEntityListPanel;
+import name.martingeisse.admin.entity.component.list.populator.PopulatorBasedEntityListPanel;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 /**

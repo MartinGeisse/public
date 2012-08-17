@@ -19,7 +19,7 @@ public interface IEntityListFilter {
 	 * use this to access fields of the entity being filtered.
 	 */
 	public static final String ALIAS = "e";
-	
+
 	/**
 	 * Creates an {@link Expression} for the SQL expression that does the
 	 * filtering on the database side.

@@ -31,7 +31,7 @@ public class BaselineReadOnlyRendererContributor implements IPropertyReadOnlyRen
 	public IPlugin[] unbox() {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.application.IPlugin#contribute(name.martingeisse.admin.application.capabilities.ApplicationCapabilities)
 	 */
@@ -52,10 +52,10 @@ public class BaselineReadOnlyRendererContributor implements IPropertyReadOnlyRen
 	 * @see name.martingeisse.admin.readonly.IPropertyReadOnlyRendererContributor#getRenderer(int)
 	 */
 	@Override
-	public IPropertyReadOnlyRenderer getRenderer(ISqlType type) {
+	public IPropertyReadOnlyRenderer getRenderer(final ISqlType type) {
 		if (type instanceof UnknownSqlType) {
-			UnknownSqlType unknownSqlType = (UnknownSqlType)type;
-			int typeCode = unknownSqlType.getSqlType();
+			final UnknownSqlType unknownSqlType = (UnknownSqlType)type;
+			final int typeCode = unknownSqlType.getSqlType();
 			if (typeCode == Types.BOOLEAN || typeCode == Types.BIT) {
 				return BooleanRenderer.INSTANCE;
 			}

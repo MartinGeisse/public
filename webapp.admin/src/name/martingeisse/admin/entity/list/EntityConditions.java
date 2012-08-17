@@ -32,7 +32,7 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	 * the entityPath
 	 */
 	private final Path<?> entityPath;
-	
+
 	/**
 	 * the buildOperator
 	 */
@@ -98,7 +98,7 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	public final Operator<Boolean> getBuildOperator() {
 		return buildOperator;
 	}
-	
+
 	/**
 	 * Getter method for the predicate.
 	 * @return the predicate
@@ -111,7 +111,7 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	 * @see com.mysema.query.types.Expression#accept(com.mysema.query.types.Visitor, java.lang.Object)
 	 */
 	@Override
-	public final <R, C> R accept(Visitor<R, C> v, C context) {
+	public final <R, C> R accept(final Visitor<R, C> v, final C context) {
 		return v.visit(this, context);
 	}
 
@@ -130,7 +130,7 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	public final Operator<? super Boolean> getOperator() {
 		return Ops.WRAPPED;
 	}
-	
+
 	/**
 	 * @return the predicate that has the same effect as this condition object
 	 * in its current state,
@@ -145,12 +145,12 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 			return BooleanTemplate.FALSE;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.mysema.query.types.Operation#getArg(int)
 	 */
 	@Override
-	public final Expression<?> getArg(int index) {
+	public final Expression<?> getArg(final int index) {
 		if (index != 0) {
 			throw new IndexOutOfBoundsException();
 		}
@@ -162,7 +162,7 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	 */
 	@Override
 	public final List<Expression<?>> getArgs() {
-		return Arrays.<Expression<?>>asList(getEffectivePredicate());
+		return Arrays.<Expression<?>> asList(getEffectivePredicate());
 	}
 
 	/* (non-Javadoc)
@@ -185,17 +185,17 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        } else if (obj instanceof EntityConditions) {
-        	EntityConditions other = (EntityConditions)obj;
-            return Objects.equal(other.getEntityPath(), entityPath) && Objects.equal(other.getBuildOperator(), buildOperator) && Objects.equal(other.getPredicate(), predicate);
-        } else {
-            return false;
-        }
+	public boolean equals(final Object obj) {
+		if (obj == this) {
+			return true;
+		} else if (obj instanceof EntityConditions) {
+			final EntityConditions other = (EntityConditions)obj;
+			return Objects.equal(other.getEntityPath(), entityPath) && Objects.equal(other.getBuildOperator(), buildOperator) && Objects.equal(other.getPredicate(), predicate);
+		} else {
+			return false;
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -203,7 +203,7 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	public int hashCode() {
 		return entityPath.hashCode() + buildOperator.hashCode() + (predicate == null ? 0 : predicate.hashCode());
 	}
-	
+
 	/**
 	 * Adds a new predicate and combines it with the existing predicates using the
 	 * operator specified at construction.
@@ -224,7 +224,7 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	 * @param fieldName the name of the field
 	 * @return the path
 	 */
-	public final Path<?> createFieldPath(String fieldName) {
+	public final Path<?> createFieldPath(final String fieldName) {
 		return Expressions.path(Object.class, entityPath, fieldName);
 	}
 
@@ -235,10 +235,10 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	 * @param fieldName the name of the field
 	 * @return the path
 	 */
-	public final <T> Path<T> createFieldPath(Class<T> type, String fieldName) {
+	public final <T> Path<T> createFieldPath(final Class<T> type, final String fieldName) {
 		return Expressions.path(type, entityPath, fieldName);
 	}
-	
+
 	/**
 	 * Adds a new (entity.fieldName (operator) expectedValue) predicate and combines it with the existing
 	 * predicates using the operator specified at construction. The right-hand value is a literal
@@ -247,10 +247,10 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	 * @param operator the comparison operator
 	 * @param rightValue the right-hand value to compare with
 	 */
-	public final void addFieldComparison(String fieldName, Operator<Boolean> operator, Object rightValue) {
+	public final void addFieldComparison(final String fieldName, final Operator<Boolean> operator, final Object rightValue) {
 		add(Expressions.predicate(operator, createFieldPath(fieldName), Expressions.constant(rightValue)));
 	}
-	
+
 	/**
 	 * Adds a new (entity.fieldName = expectedValue) predicate and combines it with the existing
 	 * predicates using the operator specified at construction. The expected value is a literal
@@ -259,10 +259,10 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	 * @param fieldName the name of the field to compare
 	 * @param expectedValue the value to compare with
 	 */
-	public final void addFieldEquals(String fieldName, Object expectedValue) {
+	public final void addFieldEquals(final String fieldName, final Object expectedValue) {
 		addFieldComparison(fieldName, Ops.EQ, expectedValue);
 	}
-	
+
 	/**
 	 * Adds a new (entity.fieldName != notExpectedValue) predicate and combines it with the existing
 	 * predicates using the operator specified at construction. The not-expected value is a literal
@@ -271,10 +271,10 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	 * @param fieldName the name of the field to compare
 	 * @param notExpectedValue the value to compare with
 	 */
-	public final void addFieldNotEquals(String fieldName, Object notExpectedValue) {
+	public final void addFieldNotEquals(final String fieldName, final Object notExpectedValue) {
 		addFieldComparison(fieldName, Ops.NE, notExpectedValue);
 	}
-	
+
 	/**
 	 * Adds a new (entity.fieldName IN (expectedValues)) predicate and combines it with the existing
 	 * predicates using the operator specified at construction. The expected values are literals
@@ -283,10 +283,10 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	 * @param fieldName the name of the field to compare
 	 * @param expectedValues the values to compare with
 	 */
-	public final void addFieldIn(String fieldName, Object... expectedValues) {
+	public final void addFieldIn(final String fieldName, final Object... expectedValues) {
 		add(BooleanOperation.create(Ops.IN, createFieldPath(fieldName), new ConstantImpl<List<?>>(Arrays.asList(expectedValues))));
 	}
-	
+
 	/**
 	 * Adds a new (entity.fieldName NOT IN (notExpectedValues)) predicate and combines it with the existing
 	 * predicates using the operator specified at construction. The not-expected values are literals
@@ -295,8 +295,8 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	 * @param fieldName the name of the field to compare
 	 * @param notExpectedValues the values to compare with
 	 */
-	public final void addFieldNotIn(String fieldName, Object... notExpectedValues) {
+	public final void addFieldNotIn(final String fieldName, final Object... notExpectedValues) {
 		add(BooleanOperation.create(Ops.NOT, BooleanOperation.create(Ops.IN, createFieldPath(fieldName), new ConstantImpl<List<?>>(Arrays.asList(notExpectedValues)))));
 	}
-	
+
 }

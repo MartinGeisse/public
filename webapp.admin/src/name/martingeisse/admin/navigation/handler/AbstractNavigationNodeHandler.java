@@ -27,15 +27,15 @@ public abstract class AbstractNavigationNodeHandler implements INavigationNodeHa
 	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#getFallbackId(name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	public String getFallbackId(NavigationNode node) {
+	public String getFallbackId(final NavigationNode node) {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#getFallbackTitle(name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	public String getFallbackTitle(NavigationNode node) {
+	public String getFallbackTitle(final NavigationNode node) {
 		return null;
 	}
 
@@ -43,25 +43,25 @@ public abstract class AbstractNavigationNodeHandler implements INavigationNodeHa
 	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#mountRequestMappers(name.martingeisse.admin.application.wicket.AdminWicketApplication, name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	public void mountRequestMappers(AdminWicketApplication application, NavigationNode node) {
+	public void mountRequestMappers(final AdminWicketApplication application, final NavigationNode node) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.component.pagebar.IPageBarFactory#createPageTopBar(java.lang.String)
 	 */
 	@Override
-	public Panel createPageTopBar(String id) {
+	public Panel createPageTopBar(final String id) {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.component.pagebar.IPageBarFactory#createPageBottomBar(java.lang.String)
 	 */
 	@Override
-	public Panel createPageBottomBar(String id) {
+	public Panel createPageBottomBar(final String id) {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#getEntityNameForCanonicalEntityListNode()
 	 */

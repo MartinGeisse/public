@@ -25,20 +25,20 @@ public class ScoreComparator implements Comparator<IGetScore> {
 	 * The shared instance of this class used for descending-score ordering.
 	 */
 	public static final ScoreComparator DESCENDING = new ScoreComparator(true);
-	
+
 	/**
 	 * the reversed
 	 */
 	private final boolean reversed;
-	
+
 	/**
 	 * Constructor.
 	 * @param reversed whether this comparator is reversed
 	 */
-	public ScoreComparator(boolean reversed) {
+	public ScoreComparator(final boolean reversed) {
 		this.reversed = reversed;
 	}
-	
+
 	/**
 	 * Getter method for the reversed.
 	 * @return the reversed
@@ -46,14 +46,14 @@ public class ScoreComparator implements Comparator<IGetScore> {
 	public boolean isReversed() {
 		return reversed;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public int compare(IGetScore o1, IGetScore o2) {
-		int normal = o1.getScore() - o2.getScore();
+	public int compare(final IGetScore o1, final IGetScore o2) {
+		final int normal = o1.getScore() - o2.getScore();
 		return (reversed ? -normal : normal);
 	}
-	
+
 }

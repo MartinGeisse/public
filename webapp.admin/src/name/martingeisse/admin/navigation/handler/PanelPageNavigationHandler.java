@@ -107,7 +107,7 @@ public final class PanelPageNavigationHandler extends AbstractNavigationNodeHand
 	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#createLink(java.lang.String, name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	public AbstractLink createLink(final String id, NavigationNode node) {
+	public AbstractLink createLink(final String id, final NavigationNode node) {
 		return new MyLink(id, panelClass, model, modelIsOptional);
 	}
 
@@ -115,32 +115,32 @@ public final class PanelPageNavigationHandler extends AbstractNavigationNodeHand
 	 * Link implementation for nodes of this type.
 	 */
 	private static class MyLink extends StatelessLink<Void> {
-	
+
 		/**
 		 * the panelClass
 		 */
-		private Class<? extends Panel> panelClass;
+		private final Class<? extends Panel> panelClass;
 
 		/**
 		 * the model
 		 */
-		private IModel<?> model;
+		private final IModel<?> model;
 
 		/**
 		 * the modelIsOptional
 		 */
-		private boolean modelIsOptional;
+		private final boolean modelIsOptional;
 
 		/**
 		 * Constructor.
 		 */
-		MyLink(String id, Class<? extends Panel> panelClass, IModel<?> model, boolean modelIsOptional) {
+		MyLink(final String id, final Class<? extends Panel> panelClass, final IModel<?> model, final boolean modelIsOptional) {
 			super(id);
 			this.panelClass = panelClass;
 			this.model = model;
 			this.modelIsOptional = modelIsOptional;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.apache.wicket.markup.html.link.Link#onClick()
 		 */
@@ -148,6 +148,6 @@ public final class PanelPageNavigationHandler extends AbstractNavigationNodeHand
 		public void onClick() {
 			RequestCycle.get().setResponsePage(new PanelPage(panelClass, model, modelIsOptional));
 		}
-		
+
 	}
 }

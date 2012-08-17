@@ -18,5 +18,5 @@ public interface IGetPageable {
 	 * @return the pageable
 	 */
 	public IPageable getPageable();
-	
+
 }

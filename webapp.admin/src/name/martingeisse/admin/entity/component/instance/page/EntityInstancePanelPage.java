@@ -26,7 +26,7 @@ public class EntityInstancePanelPage extends AbstractEntityInstancePanelPage {
 	public EntityInstancePanelPage(final PageParameters parameters) {
 		super(parameters);
 	}
-	
+
 	/**
 	 * @return the navigation node handler
 	 */

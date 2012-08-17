@@ -21,5 +21,5 @@ public interface IEntityIdType extends ISqlType {
 	 * @return the converted value
 	 */
 	public Object convertFromPageParameter(StringValue value);
-	
+
 }

@@ -16,5 +16,5 @@ public interface IGetEntityId {
 	 * @return the entity ID
 	 */
 	public Object getEntityId();
-	
+
 }

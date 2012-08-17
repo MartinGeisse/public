@@ -62,7 +62,7 @@ public class EntityFieldPopulator extends AbstractEntityCellPopulator {
 	 */
 	@Override
 	public void populateItem(final Item<ICellPopulator<EntityInstance>> item, final String id, final IModel<EntityInstance> instanceModel) {
-		IModel<?> fieldModel = new EntityInstanceFieldModel<Object>(instanceModel, fieldName);
+		final IModel<?> fieldModel = new EntityInstanceFieldModel<Object>(instanceModel, fieldName);
 		item.add(new Label(id, fieldModel));
 	}
 

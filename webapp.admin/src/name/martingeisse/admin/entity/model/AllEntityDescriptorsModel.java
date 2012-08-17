@@ -23,7 +23,7 @@ public final class AllEntityDescriptorsModel extends AbstractReadOnlyModel<List<
 	 * The singleton instance of this class.
 	 */
 	public static final AllEntityDescriptorsModel instance = new AllEntityDescriptorsModel();
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.model.AbstractReadOnlyModel#getObject()
 	 */

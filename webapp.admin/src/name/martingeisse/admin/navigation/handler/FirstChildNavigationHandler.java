@@ -50,7 +50,7 @@ public final class FirstChildNavigationHandler extends AbstractNavigationNodeHan
 	 */
 	@Override
 	public void mountRequestMappers(final AdminWicketApplication application, final NavigationNode node) {
-		IRequestHandler requestHandler = new RedirectRequestHandler(getFirstChild(node).getPath());
+		final IRequestHandler requestHandler = new RedirectRequestHandler(getFirstChild(node).getPath());
 		application.mount(new MountMapper(node.getPath(), requestHandler));
 	}
 

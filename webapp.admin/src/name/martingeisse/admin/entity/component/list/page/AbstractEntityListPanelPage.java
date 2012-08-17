@@ -46,7 +46,7 @@ public abstract class AbstractEntityListPanelPage extends AbstractEntityListPage
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		
+
 		// create the panel
 		final Class<? extends Panel> panelClass = determinePanelClass();
 		final IModel<EntityDescriptor> model = determineEntityTypeModel();
@@ -58,16 +58,16 @@ public abstract class AbstractEntityListPanelPage extends AbstractEntityListPage
 		} catch (final Exception e) {
 			throw new RuntimeException("exception while invoking entity list panel constructor of panel class " + panelClass.getCanonicalName(), e);
 		}
-		
+
 		// if the panel accepts entity list filters, fetch them from the navigation node
 		if (panel instanceof IEntityListFilterAcceptor) {
-			IEntityListFilterAcceptor filterAcceptor = (IEntityListFilterAcceptor)panel;
-			IEntityListFilter filter = determineEntityListFilter();
+			final IEntityListFilterAcceptor filterAcceptor = (IEntityListFilterAcceptor)panel;
+			final IEntityListFilter filter = determineEntityListFilter();
 			if (filter != null) {
 				filterAcceptor.acceptEntityListFilter(filter);
 			}
 		}
-		
+
 		// Add the panel as the last step. Since we're in onInitialize(), this causes the onInitialize()
 		// of the panel to be called immediately, and that must happen *after* the filter is set!
 		getMainContainer().add(panel);
@@ -75,7 +75,7 @@ public abstract class AbstractEntityListPanelPage extends AbstractEntityListPage
 		// initialize the paging navigators last because they need a pageable, which getPageable() returns only
 		// when the panel is in place.
 		initializePagingNavigators(getPageable());
-		
+
 	}
 
 	/**
@@ -89,15 +89,15 @@ public abstract class AbstractEntityListPanelPage extends AbstractEntityListPage
 	 * @return the entity list filter
 	 */
 	protected abstract IEntityListFilter determineEntityListFilter();
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityListPage#getPageable()
 	 */
 	@Override
 	protected IPageable getPageable() {
-		Component panel = getFromMainContainer("panel");
+		final Component panel = getFromMainContainer("panel");
 		if (panel instanceof IGetPageable) {
-			IGetPageable getPageable = (IGetPageable)panel;
+			final IGetPageable getPageable = (IGetPageable)panel;
 			return getPageable.getPageable();
 		} else if (panel instanceof IPageable) {
 			return (IPageable)panel;

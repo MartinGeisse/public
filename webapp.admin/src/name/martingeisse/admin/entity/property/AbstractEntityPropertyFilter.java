@@ -29,7 +29,7 @@ public abstract class AbstractEntityPropertyFilter implements IRawEntityListProp
 	public IPlugin[] unbox() {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.application.IPlugin#contribute()
 	 */
@@ -37,5 +37,5 @@ public abstract class AbstractEntityPropertyFilter implements IRawEntityListProp
 	public void contribute() {
 		EntityConfigurationUtil.addRawEntityListPropertyDisplayFilter(this);
 	}
-	
+
 }

@@ -10,7 +10,6 @@ import java.io.Serializable;
 
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 
-
 /**
  * Implementations are contributed by plugins and are able to
  * recognize entity fields as references to other entities.
@@ -35,5 +34,5 @@ public interface IEntityReferenceDetector extends Serializable {
 	 * was not recognized as a reference
 	 */
 	public String detectEntityReference(ApplicationSchema schema, String entityName, String entityTableName, String propertyName);
-	
+
 }

@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.component.pagebar;
 
-
 import org.apache.wicket.markup.html.panel.Panel;
 
 /**
@@ -31,5 +30,5 @@ public interface IPageBarFactory {
 	 * @return the bottom bar or null
 	 */
 	public Panel createPageBottomBar(String id);
-	
+
 }

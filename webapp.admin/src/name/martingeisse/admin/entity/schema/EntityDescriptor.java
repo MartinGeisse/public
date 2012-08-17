@@ -31,11 +31,9 @@ import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.common.datarow.AbstractDataRowMetaHolder;
 import name.martingeisse.common.datarow.DataRowMeta;
 
-import com.mysema.query.sql.MySQLTemplates;
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.RelationalPathBase;
 import com.mysema.query.sql.SQLQuery;
-import com.mysema.query.sql.SQLQueryImpl;
 
 /**
  * This class captures a descriptor for a database entity (table).
@@ -109,7 +107,7 @@ public class EntityDescriptor {
 	 * the dataRowMeta
 	 */
 	private DataRowMeta dataRowMeta;
-	
+
 	/**
 	 * the searchStrategy
 	 */
@@ -229,14 +227,14 @@ public class EntityDescriptor {
 	public Map<String, EntityPropertyDescriptor> getPropertiesByName() {
 		return propertiesByName;
 	}
-	
+
 	/**
 	 * Initializes the properties (both in database order and by-name mapping).
 	 */
-	void initializeProperties(List<EntityPropertyDescriptor> propertiesInDatabaseOrder) {
+	void initializeProperties(final List<EntityPropertyDescriptor> propertiesInDatabaseOrder) {
 		this.propertiesInDatabaseOrder = propertiesInDatabaseOrder;
 		this.propertiesByName = new HashMap<String, EntityPropertyDescriptor>();
-		for (EntityPropertyDescriptor propertyDescriptor : propertiesInDatabaseOrder) {
+		for (final EntityPropertyDescriptor propertyDescriptor : propertiesInDatabaseOrder) {
 			propertiesByName.put(propertyDescriptor.getName(), propertyDescriptor);
 		}
 	}
@@ -421,7 +419,7 @@ public class EntityDescriptor {
 	 * @return the query
 	 */
 	public SQLQuery query(final Connection connection, final String alias) {
-		return new SQLQueryImpl(connection, new MySQLTemplates()).from(createRelationalPath(alias));
+		return getDatabase().createQuery(connection).from(createRelationalPath(alias));
 	}
 
 	/**
@@ -486,14 +484,14 @@ public class EntityDescriptor {
 	public boolean isSearchSupported() {
 		return (searchStrategy != null);
 	}
-	
+
 	/**
 	 * Creates an entity list filter for this entity and for the specified search term,
 	 * or null if no useful filter can be found for the search term.
 	 * @param searchTerm the search term
 	 * @return the filter
 	 */
-	public IEntityListFilter createSearchFilter(String searchTerm) {
+	public IEntityListFilter createSearchFilter(final String searchTerm) {
 		return (searchStrategy == null ? null : searchStrategy.createFilter(this, searchTerm));
 	}
 
@@ -503,8 +501,8 @@ public class EntityDescriptor {
 	public void initializeSearchStrategy() {
 		int maxScore = Integer.MIN_VALUE;
 		IEntitySearchContributor maxScoreContributor = null;
-		for (IEntitySearchContributor contributor : EntityConfigurationUtil.getEntitySearchContributors()) {
-			int score = contributor.getScore(this);
+		for (final IEntitySearchContributor contributor : EntityConfigurationUtil.getEntitySearchContributors()) {
+			final int score = contributor.getScore(this);
 			if (score > maxScore) {
 				maxScoreContributor = contributor;
 				maxScore = score;
@@ -517,5 +515,5 @@ public class EntityDescriptor {
 			}
 		}
 	}
-	
+
 }

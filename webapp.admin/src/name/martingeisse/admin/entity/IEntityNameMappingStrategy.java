@@ -30,5 +30,5 @@ public interface IEntityNameMappingStrategy extends Serializable {
 	 * @return the entity display name
 	 */
 	public String determineEntityDisplayName(EntityDescriptor entity);
-	
+
 }

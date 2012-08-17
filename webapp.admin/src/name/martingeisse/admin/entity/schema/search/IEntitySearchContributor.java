@@ -25,12 +25,12 @@ public interface IEntitySearchContributor {
 	 * @return the score
 	 */
 	public int getScore(EntityDescriptor entity);
-	
+
 	/**
 	 * Returns the search strategy for the specified entity.
 	 * @param entity the entity
 	 * @return the search strategy
 	 */
 	public IEntitySearchStrategy getSearchStrategy(EntityDescriptor entity);
-	
+
 }

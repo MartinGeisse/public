@@ -47,7 +47,7 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 	 * the filter
 	 */
 	private IEntityListFilter filter;
-	
+
 	/**
 	 * Constructor.
 	 * @param id the wicket id
@@ -57,7 +57,7 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 		super(id);
 		setDefaultModel(entityModel);
 	}
-	
+
 	/**
 	 * Getter method for the entityDescriptorModel.
 	 * @return the entityDescriptorModel
@@ -66,7 +66,7 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 	public IModel<EntityDescriptor> getEntityDescriptorModel() {
 		return (IModel<EntityDescriptor>)getDefaultModel();
 	}
-	
+
 	/**
 	 * Getter method for the entity.
 	 * @return the entity
@@ -74,7 +74,7 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 	public EntityDescriptor getEntityDescriptor() {
 		return (EntityDescriptor)getDefaultModelObject();
 	}
-	
+
 	/**
 	 * @return the URL that must be used as the JSON source of the DataTable configuration
 	 */
@@ -86,15 +86,15 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 	 * @see name.martingeisse.admin.entity.list.IEntityListFilterAcceptor#acceptEntityListFilter(name.martingeisse.admin.entity.list.IEntityListFilter)
 	 */
 	@Override
-	public void acceptEntityListFilter(IEntityListFilter filter) {
+	public void acceptEntityListFilter(final IEntityListFilter filter) {
 		this.filter = filter;
 	}
-	
+
 	/**
 	 * @return the number of columns of the DataTable
 	 */
 	protected abstract int getColumnCount();
-	
+
 	/**
 	 * Returns a comparable column expression for the specified column index, used
 	 * to sort the table. May return null to ignore a column when sorting.
@@ -102,7 +102,7 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 	 * @return the expression to sort that column, or null to skip sorting
 	 */
 	protected abstract Expression<Comparable<?>> getColumnSortExpression(int columnIndex);
-	
+
 	/**
 	 * Returns a predicate to filter rows for the specified search term.
 	 * May return null to indicate no filtering.
@@ -110,7 +110,7 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 	 * @return the search predicate
 	 */
 	protected abstract Predicate getSearchPredicate(String searchTerm);
-	
+
 	/**
 	 * This method should use the specified assembler to generate data for
 	 * a single row. Specifically, this method should assume that a JSON array
@@ -127,47 +127,47 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 	 * @param assembler the assembler to use
 	 */
 	protected abstract void assembleRowFields(EntityInstance entityInstance, JavascriptAssembler assembler);
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.wicket.util.ISimpleCallbackListener#onSimpleCallback()
 	 */
 	@Override
 	public void onSimpleCallback() {
-		
+
 		// determine generic parameters
-		WebRequest webRequest = (WebRequest)(RequestCycle.get().getRequest());
-		IRequestParameters parameters = webRequest.getQueryParameters();
-		int offset = PrimitiveUtil.fallback(StringValueUtil.getOptionalLowerCappedInteger(parameters.getParameterValue("iDisplayStart"), 0), 0);
-		int count = PrimitiveUtil.fallback(StringValueUtil.getOptionalLowerCappedInteger(parameters.getParameterValue("iDisplayLength"), 1), 10);
+		final WebRequest webRequest = (WebRequest)(RequestCycle.get().getRequest());
+		final IRequestParameters parameters = webRequest.getQueryParameters();
+		final int offset = PrimitiveUtil.fallback(StringValueUtil.getOptionalLowerCappedInteger(parameters.getParameterValue("iDisplayStart"), 0), 0);
+		final int count = PrimitiveUtil.fallback(StringValueUtil.getOptionalLowerCappedInteger(parameters.getParameterValue("iDisplayLength"), 1), 10);
 		// column-wise searching: bSearchable_*, sSearch_*
-		int echoToken = parameters.getParameterValue("sEcho").toInt();
-		
+		final int echoToken = parameters.getParameterValue("sEcho").toInt();
+
 		// determine sort parameters
-		int sortColumnCount = PrimitiveUtil.fallback(StringValueUtil.getOptionalLowerCappedInteger(parameters.getParameterValue("iSortingCols"), 0), 0);
+		final int sortColumnCount = PrimitiveUtil.fallback(StringValueUtil.getOptionalLowerCappedInteger(parameters.getParameterValue("iSortingCols"), 0), 0);
 		OrderSpecifier<Comparable<?>>[] orderSpecifiers = GenericTypeUtil.unsafeCast(new OrderSpecifier<?>[sortColumnCount]);
 		int orderSpecifierCount = 0;
-		int columnCount = getColumnCount();
-		for (int i=0; i<sortColumnCount; i++) {
-			int sortColumnIndex = parameters.getParameterValue("iSortCol_" + i).toInt();
+		final int columnCount = getColumnCount();
+		for (int i = 0; i < sortColumnCount; i++) {
+			final int sortColumnIndex = parameters.getParameterValue("iSortCol_" + i).toInt();
 			if (sortColumnIndex >= columnCount) {
 				continue;
 			}
-			Expression<Comparable<?>> sortColumnExpression = getColumnSortExpression(sortColumnIndex);
+			final Expression<Comparable<?>> sortColumnExpression = getColumnSortExpression(sortColumnIndex);
 			if (sortColumnExpression == null) {
 				continue;
 			}
-			Order sortColumnOrder = (parameters.getParameterValue("sSortDir_" + i).toString().equalsIgnoreCase("desc") ? Order.DESC : Order.ASC);
+			final Order sortColumnOrder = (parameters.getParameterValue("sSortDir_" + i).toString().equalsIgnoreCase("desc") ? Order.DESC : Order.ASC);
 			orderSpecifiers[orderSpecifierCount] = new OrderSpecifier<Comparable<?>>(sortColumnOrder, sortColumnExpression);
 			orderSpecifierCount++;
 		}
 		if (orderSpecifierCount < orderSpecifiers.length) {
 			orderSpecifiers = GenericTypeUtil.unsafeCast((Comparable<?>[])ArrayUtils.subarray(orderSpecifiers, 0, orderSpecifierCount));
 		}
-		
+
 		// determine search parameters
-		String searchTerm = StringUtils.trimToNull(parameters.getParameterValue("sSearch").toString());
-		Predicate searchPredicate = (searchTerm == null ? null : getSearchPredicate(searchTerm));
-		
+		final String searchTerm = StringUtils.trimToNull(parameters.getParameterValue("sSearch").toString());
+		final Predicate searchPredicate = (searchTerm == null ? null : getSearchPredicate(searchTerm));
+
 		// determine the filter that will actually be used as (implied AND manual)
 		IEntityListFilter actualFilter;
 		if (searchPredicate == null) {
@@ -177,12 +177,12 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 		} else {
 			actualFilter = new EntityListFilter(Expressions.predicate(Ops.AND, filter.getFilterPredicate(), searchPredicate));
 		}
-		
+
 		// fetch data
-		EntityInstanceDataProvider dataProvider = new EntityInstanceDataProvider(getEntityDescriptorModel(), actualFilter, orderSpecifiers);
-		int sizeWithBothFilters = dataProvider.size();
-		Iterator<? extends EntityInstance> iterator = dataProvider.iterator(offset, count);
-		
+		final EntityInstanceDataProvider dataProvider = new EntityInstanceDataProvider(getEntityDescriptorModel(), actualFilter, orderSpecifiers);
+		final int sizeWithBothFilters = dataProvider.size();
+		final Iterator<? extends EntityInstance> iterator = dataProvider.iterator(offset, count);
+
 		// determine the number of entries with only the implied filter (DataTables wants to show this).
 		int sizeWithImpliedFilter;
 		if (searchPredicate == null) {
@@ -190,9 +190,9 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 		} else {
 			sizeWithImpliedFilter = new EntityInstanceDataProvider(getEntityDescriptorModel(), filter, null).size();
 		}
-		
+
 		// generate the output
-		JavascriptAssembler assembler = new JavascriptAssembler();
+		final JavascriptAssembler assembler = new JavascriptAssembler();
 		assembler.beginObject();
 		assembler.prepareObjectProperty("sEcho");
 		assembler.appendNumericLiteral(echoToken);
@@ -203,7 +203,7 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 		assembler.prepareObjectProperty("aaData");
 		assembler.beginList();
 		while (iterator.hasNext()) {
-			EntityInstance entityInstance = iterator.next();
+			final EntityInstance entityInstance = iterator.next();
 			assembler.prepareListElement();
 			assembler.beginList();
 			assembleRowFields(entityInstance, assembler);
@@ -211,11 +211,11 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 		}
 		assembler.endList();
 		assembler.endObject();
-		
+
 		// send the output to the browser
-		Response response = RequestCycle.get().getResponse();
+		final Response response = RequestCycle.get().getResponse();
 		response.write(assembler.getAssembledCode());
-		
+
 	}
 
 }

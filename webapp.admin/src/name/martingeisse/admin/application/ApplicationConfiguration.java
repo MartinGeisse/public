@@ -39,19 +39,19 @@ public final class ApplicationConfiguration {
 	 * the logger
 	 */
 	private static Logger logger = Logger.getLogger(ApplicationConfiguration.class);
-	
+
 	/**
 	 * the instance
 	 */
 	private static ApplicationConfiguration instance = new ApplicationConfiguration();
-	
+
 	/**
 	 * @return the singleton instance of this class
 	 */
 	public static ApplicationConfiguration get() {
 		return instance;
 	}
-	
+
 	/**
 	 * the sealed
 	 */
@@ -71,19 +71,19 @@ public final class ApplicationConfiguration {
 	 * the parameters
 	 */
 	private final SealableClassKeyedContainer<Object> parameters = new SealableClassKeyedContainer<Object>();
-	
+
 	/**
 	 * the capabilities
 	 */
 	private final SealableClassKeyedListContainer<Object> capabilities = new SealableClassKeyedListContainer<Object>();
-	
+
 	/**
 	 * Constructor.
 	 */
 	private ApplicationConfiguration() {
 		parameters.set(NavigationConfigurationUtil.NAVIGATION_TREE_PARAMETER_KEY, new NavigationTree());
 	}
-	
+
 	/**
 	 * Checks whether this class is sealed, and if so, throws an {@link IllegalStateException}.
 	 */
@@ -139,7 +139,7 @@ public final class ApplicationConfiguration {
 	public ClassKeyedContainer<Object> getParameters() {
 		return parameters;
 	}
-	
+
 	/**
 	 * Getter method for the capabilities.
 	 * @return the capabilities
@@ -162,7 +162,7 @@ public final class ApplicationConfiguration {
 		checkChangesAllowed();
 		sealed = true;
 		parameters.seal();
-		
+
 		// gather all capabilities
 		unboxPlugins();
 		contributePlugins();
@@ -170,37 +170,37 @@ public final class ApplicationConfiguration {
 
 		logger.debug("ApplicationConfiguration.initialize(): end");
 	}
-	
+
 	/**
 	 * 
 	 */
 	private void unboxPlugins() {
 		List<IPlugin> remainingPluginsToUnbox = new ArrayList<IPlugin>(plugins);
 		while (!remainingPluginsToUnbox.isEmpty()) {
-			List<IPlugin> newPluginsToUnbox = unboxStep(remainingPluginsToUnbox);
+			final List<IPlugin> newPluginsToUnbox = unboxStep(remainingPluginsToUnbox);
 			plugins.addAll(newPluginsToUnbox);
 			remainingPluginsToUnbox = newPluginsToUnbox;
 		}
 	}
-	
+
 	/**
 	 * Invokes the unbox() method of all specified plugins and collects
 	 * their returned plugins in a list.
 	 * @return the contained plugins
 	 */
-	private List<IPlugin> unboxStep(List<IPlugin> outerPlugins) {
-		List<IPlugin> innerPlugins = new ArrayList<IPlugin>();
-		for (IPlugin outerPlugin : outerPlugins) {
-			IPlugin[] innerPluginArray = outerPlugin.unbox();
+	private List<IPlugin> unboxStep(final List<IPlugin> outerPlugins) {
+		final List<IPlugin> innerPlugins = new ArrayList<IPlugin>();
+		for (final IPlugin outerPlugin : outerPlugins) {
+			final IPlugin[] innerPluginArray = outerPlugin.unbox();
 			if (innerPluginArray != null) {
-				for (IPlugin innerPlugin : innerPluginArray) {
+				for (final IPlugin innerPlugin : innerPluginArray) {
 					innerPlugins.add(innerPlugin);
 				}
 			}
 		}
 		return innerPlugins;
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -210,5 +210,5 @@ public final class ApplicationConfiguration {
 			plugin.contribute();
 		}
 	}
-	
+
 }

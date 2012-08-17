@@ -35,23 +35,23 @@ public class MultiCellPanel extends Panel {
 	 * @param model the entity instance model
 	 * @param cellPopulators the sub-populators
 	 */
-	public MultiCellPanel(final String id, final IModel<EntityInstance> model, List<ICellPopulator<EntityInstance>> cellPopulators) {
+	public MultiCellPanel(final String id, final IModel<EntityInstance> model, final List<ICellPopulator<EntityInstance>> cellPopulators) {
 		super(id, model);
 		add(new ListView<ICellPopulator<EntityInstance>>("subcells", cellPopulators) {
-			
+
 			/* (non-Javadoc)
 			 * @see org.apache.wicket.markup.html.list.ListView#newItem(int, org.apache.wicket.model.IModel)
 			 */
 			@Override
-			protected ListItem<ICellPopulator<EntityInstance>> newItem(int index, IModel<ICellPopulator<EntityInstance>> itemModel) {
+			protected ListItem<ICellPopulator<EntityInstance>> newItem(final int index, final IModel<ICellPopulator<EntityInstance>> itemModel) {
 				return new Item<ICellPopulator<EntityInstance>>(Integer.toString(index), index, itemModel);
 			}
-			
+
 			@Override
-			protected void populateItem(ListItem<ICellPopulator<EntityInstance>> item) {
+			protected void populateItem(final ListItem<ICellPopulator<EntityInstance>> item) {
 				item.getModelObject().populateItem((Item<ICellPopulator<EntityInstance>>)item, "subcell", getEntityInstanceModel());
 			}
-			
+
 		});
 	}
 
@@ -62,5 +62,5 @@ public class MultiCellPanel extends Panel {
 	public IModel<EntityInstance> getEntityInstanceModel() {
 		return (IModel<EntityInstance>)getDefaultModel();
 	}
-	
+
 }

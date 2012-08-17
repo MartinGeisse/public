@@ -30,22 +30,22 @@ public class PanelPage extends AbstractAdminPage {
 	 * of this class from an existing panel.
 	 */
 	public static final String WICKET_ID = "panel";
-	
+
 	/**
 	 * the panelClass
 	 */
 	private Class<? extends Panel> panelClass;
-	
+
 	/**
 	 * the model
 	 */
 	private IModel<?> model;
-	
+
 	/**
 	 * the modelIsOptional
 	 */
 	private boolean modelIsOptional;
-	
+
 	/**
 	 * Constructor. First tries to invoke the one-argument constructor of
 	 * the panel class with the Wicket id. If that constructor cannot be
@@ -53,7 +53,7 @@ public class PanelPage extends AbstractAdminPage {
 	 * model) by passing null for the model.
 	 * @param panelClass the panel class to instantiate
 	 */
-	public PanelPage(Class<? extends Panel> panelClass) {
+	public PanelPage(final Class<? extends Panel> panelClass) {
 		createPanel(panelClass, null, true, true);
 	}
 
@@ -65,7 +65,7 @@ public class PanelPage extends AbstractAdminPage {
 	 * @param panelClass the panel class to instantiate
 	 * @param model the model
 	 */
-	public PanelPage(Class<? extends Panel> panelClass, IModel<?> model) {
+	public PanelPage(final Class<? extends Panel> panelClass, final IModel<?> model) {
 		this(panelClass, model, false);
 	}
 
@@ -80,7 +80,7 @@ public class PanelPage extends AbstractAdminPage {
 	 * @param model the model
 	 * @param modelIsOptional whether the one-argument constructor is used as a fallback
 	 */
-	public PanelPage(Class<? extends Panel> panelClass, IModel<?> model, boolean modelIsOptional) {
+	public PanelPage(final Class<? extends Panel> panelClass, final IModel<?> model, final boolean modelIsOptional) {
 		this.panelClass = panelClass;
 		this.model = model;
 		this.modelIsOptional = modelIsOptional;
@@ -94,53 +94,53 @@ public class PanelPage extends AbstractAdminPage {
 		super.onInitialize();
 		createPanel(panelClass, model, modelIsOptional, false);
 	}
-	
+
 	/**
 	 * 
 	 */
-	private void createPanel(Class<? extends Panel> panelClass, IModel<?> model, boolean useOneArgument, boolean useOneArgumentFirst) {
+	private void createPanel(final Class<? extends Panel> panelClass, final IModel<?> model, final boolean useOneArgument, final boolean useOneArgumentFirst) {
 		try {
-			
+
 			// try one-arg before two-arg?
 			if (useOneArgument && useOneArgumentFirst) {
 				try {
 					getMainContainer().add(panelClass.getConstructor(String.class).newInstance(WICKET_ID));
 					return;
-				} catch (NoSuchMethodException e) {
+				} catch (final NoSuchMethodException e) {
 				}
 			}
-			
+
 			// try two-arg
 			try {
 				getMainContainer().add(panelClass.getConstructor(String.class, IModel.class).newInstance(WICKET_ID, model));
 				return;
-			} catch (NoSuchMethodException e) {
+			} catch (final NoSuchMethodException e) {
 			}
-			
+
 			// try one-arg after two-arg?
 			if (useOneArgument && !useOneArgumentFirst) {
 				try {
 					getMainContainer().add(panelClass.getConstructor(String.class).newInstance(WICKET_ID));
 					return;
-				} catch (NoSuchMethodException e) {
+				} catch (final NoSuchMethodException e) {
 				}
 			}
-			
-		} catch (Exception e) {
+
+		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		// error: no such constructor, give detailed information
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("no suitable panel constructor found for panel class ").append(panelClass.getCanonicalName());
 		builder.append(", one-arg constructor accepted: ").append(useOneArgument);
 		builder.append(", one-arg constructor preferred: ").append(useOneArgumentFirst);
 		builder.append(". Constructors found in panel class: ");
 		try {
-			for (Constructor<?> constructor : panelClass.getConstructors()) {
+			for (final Constructor<?> constructor : panelClass.getConstructors()) {
 				builder.append("\n* ").append(panelClass.getName()).append('(');
 				boolean first = true;
-				for (Class<?> parameterType : constructor.getParameterTypes()) {
+				for (final Class<?> parameterType : constructor.getParameterTypes()) {
 					if (first) {
 						first = false;
 					} else {
@@ -150,18 +150,18 @@ public class PanelPage extends AbstractAdminPage {
 				}
 				builder.append(')');
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			builder.append("*** exception while obtaining constructor list ***");
 		}
 		throw new RuntimeException(builder.toString());
 	}
-	
+
 	/**
 	 * Constructor.
 	 * @param panel the panel to wrap in a page
 	 */
-	public PanelPage(Panel panel) {
+	public PanelPage(final Panel panel) {
 		add(panel);
 	}
-	
+
 }

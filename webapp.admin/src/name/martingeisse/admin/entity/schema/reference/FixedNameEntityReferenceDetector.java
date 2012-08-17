@@ -8,7 +8,6 @@ package name.martingeisse.admin.entity.schema.reference;
 
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 
-
 /**
  * Detects an entity reference whenever a property name matches a fixed
  * string, with a fixed destination entity. The detector can optionally
@@ -20,7 +19,7 @@ public final class FixedNameEntityReferenceDetector extends AbstractEntityRefere
 	 * the sourceEntityName
 	 */
 	private final String sourceEntityName;
-	
+
 	/**
 	 * the name
 	 */
@@ -50,7 +49,7 @@ public final class FixedNameEntityReferenceDetector extends AbstractEntityRefere
 	public String getSourceEntityName() {
 		return sourceEntityName;
 	}
-	
+
 	/**
 	 * Getter method for the knownPropertyName.
 	 * @return the knownPropertyName
@@ -71,7 +70,7 @@ public final class FixedNameEntityReferenceDetector extends AbstractEntityRefere
 	 * @see name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector#detectEntityReference(name.martingeisse.admin.entity.schema.ApplicationSchema, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String detectEntityReference(ApplicationSchema schema, String entityName, String entityTableName, String propertyName) {
+	public String detectEntityReference(final ApplicationSchema schema, final String entityName, final String entityTableName, final String propertyName) {
 		if (sourceEntityName == null || sourceEntityName.equals(entityName)) {
 			if (propertyName.equals(knownPropertyName)) {
 				return destinationEntityName;

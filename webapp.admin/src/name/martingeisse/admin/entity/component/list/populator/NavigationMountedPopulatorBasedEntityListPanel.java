@@ -41,7 +41,7 @@ public class NavigationMountedPopulatorBasedEntityListPanel extends PopulatorBas
 	private PopulatorBasedEntityListHandler getHandler() {
 		return (PopulatorBasedEntityListHandler)(NavigationUtil.getNavigationNodeForComponent(this).getHandler());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Component#onInitialize()
 	 */

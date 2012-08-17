@@ -30,10 +30,10 @@ public final class WicketConfigurationUtil {
 	 * Adds the specified application initialization contributor.
 	 * @param contributor the contributor to add
 	 */
-	public static void addWebApplicationInitializationContributor(IWebApplicationInitializationContributor contributor) {
+	public static void addWebApplicationInitializationContributor(final IWebApplicationInitializationContributor contributor) {
 		ApplicationConfiguration.get().getCapabilities().add(WEB_APPLICATION_INITIALIZATION_CONTRIBUTOR_CAPABILITY_KEY, contributor);
 	}
-	
+
 	/**
 	 * @return an {@link Iterable} for all application initialization contributors.
 	 */
@@ -45,10 +45,10 @@ public final class WicketConfigurationUtil {
 	 * Invokes all web application initialization contributors for the specified application.
 	 * @param webApplication the Wicket web application
 	 */
-	static void invokeWebApplicationInitializationContributors(WebApplication webApplication) {
-		for (IWebApplicationInitializationContributor contributor : getWebApplicationInitializationContributors()) {
+	static void invokeWebApplicationInitializationContributors(final WebApplication webApplication) {
+		for (final IWebApplicationInitializationContributor contributor : getWebApplicationInitializationContributors()) {
 			contributor.onInitializeWebApplication(webApplication);
 		}
 	}
-	
+
 }

@@ -122,5 +122,5 @@ public final class EntityConfigurationUtil {
 	public static Iterable<IEntitySearchContributor> getEntitySearchContributors() {
 		return ApplicationConfiguration.get().getCapabilities().getIterable(ENTITY_SEARCH_CONTRIBUTOR_CAPABILITY_KEY);
 	}
-	
+
 }

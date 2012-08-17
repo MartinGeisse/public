@@ -87,13 +87,13 @@ public class EntityInstance extends DataRow {
 		}
 		super.setMeta(meta);
 	}
-	
+
 	/**
 	 * Getter method for the id.
 	 * @return the id
 	 */
 	public final Object getId() {
-		String idColumnName = getEntity().getIdColumnName();
+		final String idColumnName = getEntity().getIdColumnName();
 		if (idColumnName == null) {
 			throw new IllegalStateException("entity " + entityName + " has no primary key and cannot be viewed");
 		}

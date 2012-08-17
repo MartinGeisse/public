@@ -70,12 +70,12 @@ class DiscoverEntityIdAction {
 	 */
 	public String execute() {
 		try {
-			ResultSet resultSet = connection.getMetaData().getPrimaryKeys(null, null, entity.getTableName());
+			final ResultSet resultSet = connection.getMetaData().getPrimaryKeys(null, null, entity.getTableName());
 			try {
 				if (!resultSet.next()) {
 					return null;
 				}
-				String columnName = resultSet.getString("COLUMN_NAME");
+				final String columnName = resultSet.getString("COLUMN_NAME");
 				if (resultSet.next()) {
 					// multi-column IDs not yet supported.
 					return null;
@@ -85,7 +85,7 @@ class DiscoverEntityIdAction {
 			} finally {
 				resultSet.close();
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}

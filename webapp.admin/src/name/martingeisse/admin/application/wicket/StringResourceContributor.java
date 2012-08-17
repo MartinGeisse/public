@@ -23,24 +23,24 @@ public class StringResourceContributor extends AbstractWebApplicationInitializat
 	 * the logger
 	 */
 	private static Logger logger = Logger.getLogger(StringResourceContributor.class);
-	
+
 	/**
 	 * the origin
 	 */
 	private Class<?> origin;
-	
+
 	/**
 	 * Constructor.
 	 */
 	public StringResourceContributor() {
 		this.origin = getClass();
 	}
-	
+
 	/**
 	 * Constructor.
 	 * @param origin the origin for resource loading
 	 */
-	public StringResourceContributor(Class<?> origin) {
+	public StringResourceContributor(final Class<?> origin) {
 		this.origin = origin;
 	}
 
@@ -56,7 +56,7 @@ public class StringResourceContributor extends AbstractWebApplicationInitializat
 	 * Setter method for the origin.
 	 * @param origin the origin to set
 	 */
-	public void setOrigin(Class<?> origin) {
+	public void setOrigin(final Class<?> origin) {
 		this.origin = origin;
 	}
 
@@ -64,7 +64,7 @@ public class StringResourceContributor extends AbstractWebApplicationInitializat
 	 * @see name.martingeisse.admin.application.capabilities.wicket.IWebApplicationInitializationContributor#onInitializeWebApplication(org.apache.wicket.protocol.http.WebApplication)
 	 */
 	@Override
-	public void onInitializeWebApplication(WebApplication webApplication) {
+	public void onInitializeWebApplication(final WebApplication webApplication) {
 		logger.debug("Adding StringResourceLoader for class: " + origin);
 		webApplication.getResourceSettings().getStringResourceLoaders().add(new ClassStringResourceLoader(origin));
 	}

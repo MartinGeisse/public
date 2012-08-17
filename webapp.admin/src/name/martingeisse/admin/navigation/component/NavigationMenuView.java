@@ -40,7 +40,7 @@ import org.apache.wicket.model.PropertyModel;
  * the link).
  */
 public final class NavigationMenuView extends ListView<NavigationNode> {
-	
+
 	/**
 	 * the maximumNestingDepth
 	 */
@@ -50,13 +50,13 @@ public final class NavigationMenuView extends ListView<NavigationNode> {
 	 * the currentPagePath
 	 */
 	private transient String currentPagePath;
-	
+
 	/**
 	 * Constructor.
 	 * @param id the wicket id
 	 * @param maximumNestingDepth the maximum nesting depth
 	 */
-	public NavigationMenuView(final String id, int maximumNestingDepth) {
+	public NavigationMenuView(final String id, final int maximumNestingDepth) {
 		super(id);
 		this.maximumNestingDepth = maximumNestingDepth;
 	}
@@ -67,7 +67,7 @@ public final class NavigationMenuView extends ListView<NavigationNode> {
 	 * @param model the model
 	 * @param maximumNestingDepth the maximum nesting depth
 	 */
-	public NavigationMenuView(final String id, final IModel<List<NavigationNode>> model, int maximumNestingDepth) {
+	public NavigationMenuView(final String id, final IModel<List<NavigationNode>> model, final int maximumNestingDepth) {
 		super(id, model);
 		this.maximumNestingDepth = maximumNestingDepth;
 	}
@@ -80,33 +80,33 @@ public final class NavigationMenuView extends ListView<NavigationNode> {
 		currentPagePath = StringUtils.defaultString(NavigationUtil.getNavigationPathForPage(getPage()));
 		super.onBeforeRender();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.markup.html.list.ListView#populateItem(org.apache.wicket.markup.html.list.ListItem)
 	 */
 	@Override
 	protected void populateItem(final ListItem<NavigationNode> item) {
-		
+
 		// create the node link
-		NavigationNode node = item.getModelObject();
-		AbstractLink link = node.createLink("link");
+		final NavigationNode node = item.getModelObject();
+		final AbstractLink link = node.createLink("link");
 		link.add(new Label("title", node.getTitle()));
 		item.add(link);
-		
+
 		// mark or disable the link based on the current location
-		String nodePath = node.getPath();
+		final String nodePath = node.getPath();
 		if (nodePath.equals(currentPagePath)) {
 			link.setEnabled(false);
 		} else if (node.isEqualOrPlausibleAncestorOf(currentPagePath)) {
 			link.add(new AttributeAppender("style", "color: red"));
 		}
-		
+
 		// create sub-lists
 		if (maximumNestingDepth > 0) {
-			IModel<List<NavigationNode>> childrenModel = new PropertyModel<List<NavigationNode>>(item.getModel(), "children");
+			final IModel<List<NavigationNode>> childrenModel = new PropertyModel<List<NavigationNode>>(item.getModel(), "children");
 			item.add(new NavigationMenuView("children", childrenModel, maximumNestingDepth - 1));
 		}
-		
+
 	}
 
 }

@@ -30,7 +30,7 @@ public class EntityListFilter implements IEntityListFilter, Serializable {
 	 * Constructor.
 	 * @param filterPredicate the filter predicate
 	 */
-	public EntityListFilter(Predicate filterPredicate) {
+	public EntityListFilter(final Predicate filterPredicate) {
 		this.filterPredicate = filterPredicate;
 	}
 
@@ -46,7 +46,7 @@ public class EntityListFilter implements IEntityListFilter, Serializable {
 	 * Setter method for the filterPredicate.
 	 * @param filterPredicate the filterPredicate to set
 	 */
-	public void setFilterPredicate(Predicate filterPredicate) {
+	public void setFilterPredicate(final Predicate filterPredicate) {
 		this.filterPredicate = filterPredicate;
 	}
 

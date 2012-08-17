@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.entity;
 
-
 /**
  * This class contains general configuration that applies to all entities.
  * It is determined by the application and stored in the application configuration.

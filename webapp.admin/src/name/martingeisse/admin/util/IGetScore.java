@@ -16,5 +16,5 @@ public interface IGetScore {
 	 * @return the score
 	 */
 	public int getScore();
-	
+
 }

@@ -61,18 +61,18 @@ public final class NavigationTree {
 	 * framework after all nodes have been added but before the tree is used.
 	 */
 	public void prepare() {
-		
+
 		// initialize tree structure
 		root.initializeTree();
 		if (!NavigationNode.ROOT_NODE_ID.equals(root.getId())) {
 			throw new IllegalStateException("Navigation root node has invalid ID: " + root.getId());
 		}
-			
+
 		// cache nodes by full path for quick access
 		this.nodesByPath = new HashMap<String, NavigationNode>();
 		nodesByPath.put("/", root);
 		initializeNodesByPath(root, "/");
-		
+
 	}
 
 	/**
@@ -107,8 +107,8 @@ public final class NavigationTree {
 	 * This method delegates to root.acceptVisitor(visitor).
 	 * @param visitor the visitor
 	 */
-	public void acceptVisior(INavigationNodeVisitor visitor) {
+	public void acceptVisior(final INavigationNodeVisitor visitor) {
 		root.acceptVisitor(visitor);
 	}
-	
+
 }

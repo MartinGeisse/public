@@ -33,7 +33,7 @@ public abstract class AbstractEntityDataViewPanel extends Panel {
 		super(id);
 		setDefaultModel(entityModel);
 	}
-	
+
 	/**
 	 * Getter method for the entityDescriptorModel.
 	 * @return the entityDescriptorModel
@@ -42,7 +42,7 @@ public abstract class AbstractEntityDataViewPanel extends Panel {
 	public IModel<EntityDescriptor> getEntityDescriptorModel() {
 		return (IModel<EntityDescriptor>)getDefaultModel();
 	}
-	
+
 	/**
 	 * Getter method for the entity.
 	 * @return the entity
@@ -50,7 +50,7 @@ public abstract class AbstractEntityDataViewPanel extends Panel {
 	public EntityDescriptor getEntity() {
 		return (EntityDescriptor)getDefaultModelObject();
 	}
-	
+
 	/**
 	 * Getter method for the pageable.
 	 * @return the pageable
@@ -58,7 +58,7 @@ public abstract class AbstractEntityDataViewPanel extends Panel {
 	public IPageable getPageable() {
 		return (IPageable)get("rows");
 	}
-	
+
 	/**
 	 * Creates the {@link IDataProvider} for the {@link DataView}. The default
 	 * implementation creates an {@link EntityInstanceDataProvider}. 
@@ -67,7 +67,7 @@ public abstract class AbstractEntityDataViewPanel extends Panel {
 	protected IDataProvider<EntityInstance> createDataProvider() {
 		return new EntityInstanceDataProvider(getEntityDescriptorModel());
 	}
-	
+
 	/**
 	 * Creates an {@link AbstractRepeater} component that renders the table headers.
 	 * @param id the wicket id
@@ -80,7 +80,7 @@ public abstract class AbstractEntityDataViewPanel extends Panel {
 	 * @param rowItem the row item to populate
 	 */
 	protected abstract void populateRowItem(final Item<EntityInstance> rowItem);
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Component#onInitialize()
 	 */

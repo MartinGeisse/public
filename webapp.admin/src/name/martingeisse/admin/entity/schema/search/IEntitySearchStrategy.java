@@ -22,5 +22,5 @@ public interface IEntitySearchStrategy {
 	 * @return the filter
 	 */
 	public IEntityListFilter createFilter(EntityDescriptor entity, String searchTerm);
-	
+
 }

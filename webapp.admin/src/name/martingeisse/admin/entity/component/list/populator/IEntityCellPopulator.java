@@ -19,5 +19,5 @@ public interface IEntityCellPopulator extends ICellPopulator<EntityInstance> {
 	 * @return the column title
 	 */
 	public String getTitle();
-	
+
 }

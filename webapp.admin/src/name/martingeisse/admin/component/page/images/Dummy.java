@@ -18,5 +18,5 @@ public class Dummy {
 	 */
 	private Dummy() {
 	}
-	
+
 }

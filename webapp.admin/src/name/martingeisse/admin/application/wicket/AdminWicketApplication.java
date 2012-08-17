@@ -30,14 +30,14 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 	 */
 	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(AdminWicketApplication.class);
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.protocol.http.WebApplication#init()
 	 */
 	@Override
 	protected void init() {
 		logger.debug("AdminWicketApplication.init(): begin");
-		
+
 		// superclass initialization
 		logger.trace("initializing base application class...");
 		super.init();
@@ -47,7 +47,7 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		logger.trace("initializing ApplicationConfiguration...");
 		ApplicationConfiguration.get().initialize();
 		logger.trace("ApplicationConfiguration initialized");
-		
+
 		// initialize the application schema from the database
 		logger.trace("initializing ApplicationSchema...");
 		ApplicationSchema.initialize();
@@ -64,51 +64,51 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		ReadOnlyRenderingConfigurationUtil.prepareConfiguration();
 		NavigationConfigurationUtil.getNavigationTree().prepare();
 		logger.trace("post-schema initialization finished");
-		
+
 		// some more Wicket configuration
 		getApplicationSettings().setPageExpiredErrorPage(HomePage.class);
 		getMarkupSettings().setDefaultBeforeDisabledLink("<span class=\"disabled-link\">");
 		getMarkupSettings().setDefaultAfterDisabledLink("</span>");
-		
+
 		// mount resource URLs
 		mountResources(AbstractAdminPage.class, "", "common.css", "common.js", "jquery.dataTables.css");
 		mountResources(Dummy.class, "images/", "back_enabled.png", "forward_disabled.png", "forward_enabled_hover.png", "sort_asc_disabled.png", "sort_desc.png", "back_disabled.png", "back_enabled_hover.png", "forward_enabled.png", "sort_asc.png", "sort_both.png", "sort_desc_disabled.png");
-		
+
 		// mount navigation URLs
 		logger.trace("mounting navigation URLs...");
 		NavigationConfigurationUtil.getNavigationTree().mountRequestMappers(this);
 		logger.trace("navigation URLs mounted");
-		
+
 		// let plugins contribute
 		logger.trace("invoking web application initialization contributors...");
 		WicketConfigurationUtil.invokeWebApplicationInitializationContributors(this);
 		logger.trace("application initialization contributors invoked");
-		
+
 		// add fallback string loaders
 		getResourceSettings().getStringResourceLoaders().add(new PrefixedIdentityStringResourceLoader("schema.entity."));
-		
+
 		logger.debug("AdminWicketApplication.init(): end");
 	}
-	
+
 	/**
 	 * Mounts multiple resources using their file name.
 	 * @param anchorClass the class that specifies the package of the resources to mount.
 	 * @param prefix the URL prefix
 	 * @param names the file names of the resources
 	 */
-	public void mountResources(Class<?> anchorClass, String prefix, String... names) {
-		for (String name : names) {
+	public void mountResources(final Class<?> anchorClass, final String prefix, final String... names) {
+		for (final String name : names) {
 			mountResource(prefix + name, new PackageResourceReference(anchorClass, name));
 		}
 	}
-	
+
 	/**
 	 * @return the singleton instance of this class
 	 */
 	public static AdminWicketApplication get() {
 		return (AdminWicketApplication)(WebApplication.get());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Application#getHomePage()
 	 */

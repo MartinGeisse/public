@@ -22,5 +22,5 @@ public interface IEntityNameAware {
 	 * @param entityName the entityName to set
 	 */
 	public void setEntityName(final String entityName);
-	
+
 }

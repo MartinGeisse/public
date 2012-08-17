@@ -15,12 +15,12 @@ public abstract class AbstractEntityCellPopulator implements IEntityCellPopulato
 	 * the title
 	 */
 	private String title;
-	
+
 	/**
 	 * Constructor.
 	 * @param title the title
 	 */
-	public AbstractEntityCellPopulator(String title) {
+	public AbstractEntityCellPopulator(final String title) {
 		this.title = title;
 	}
 
@@ -36,7 +36,7 @@ public abstract class AbstractEntityCellPopulator implements IEntityCellPopulato
 	 * Setter method for the title.
 	 * @param title the title to set
 	 */
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		this.title = title;
 	}
 

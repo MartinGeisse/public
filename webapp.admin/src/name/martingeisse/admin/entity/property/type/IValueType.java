@@ -15,5 +15,5 @@ public interface IValueType {
 	 * @return the class object for this type when dealing with Java values
 	 */
 	public Class<?> getJavaType();
-	
+
 }

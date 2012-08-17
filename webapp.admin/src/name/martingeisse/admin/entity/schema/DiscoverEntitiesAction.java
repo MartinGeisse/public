@@ -52,11 +52,13 @@ class DiscoverEntitiesAction {
 		Connection connection = null;
 		try {
 			connection = database.createConnection();
-			
+
 			// fetch all tables
 			final List<EntityDescriptor> result = new ArrayList<EntityDescriptor>();
 			{
-				ResultSet resultSet = connection.getMetaData().getTables(null, null, null, new String[] {"TABLE"});
+				final ResultSet resultSet = connection.getMetaData().getTables(null, null, null, new String[] {
+					"TABLE"
+				});
 				while (resultSet.next()) {
 					final EntityDescriptor entityDescriptor = new EntityDescriptor();
 					entityDescriptor.setDatabase(database);
@@ -65,35 +67,35 @@ class DiscoverEntitiesAction {
 				}
 				resultSet.close();
 			}
-			
+
 			// fetch the columns for each table
-			for (EntityDescriptor entityDescriptor : result) {
-				DiscoverEntityPropertiesAction subAction = new DiscoverEntityPropertiesAction();
+			for (final EntityDescriptor entityDescriptor : result) {
+				final DiscoverEntityPropertiesAction subAction = new DiscoverEntityPropertiesAction();
 				subAction.setConnection(connection);
 				subAction.setEntity(entityDescriptor);
 				entityDescriptor.initializeProperties(subAction.execute());
 			}
-			
+
 			// fetch the primary key for each table
-			for (EntityDescriptor entityDescriptor : result) {
-				
+			for (final EntityDescriptor entityDescriptor : result) {
+
 				// determine the ID column name by fetching database meta-data
-				DiscoverEntityIdAction subAction = new DiscoverEntityIdAction();
+				final DiscoverEntityIdAction subAction = new DiscoverEntityIdAction();
 				subAction.setConnection(connection);
 				subAction.setEntity(entityDescriptor);
-				String idColumnName = subAction.execute();
-				
+				final String idColumnName = subAction.execute();
+
 				// cannot handle tables without a primary key for now
 				if (idColumnName == null) {
 					continue;
 				}
-				
+
 				// using the name, get column meta-data previously fetched
-				EntityPropertyDescriptor idPropertyDescriptor = entityDescriptor.getPropertiesByName().get(idColumnName);
+				final EntityPropertyDescriptor idPropertyDescriptor = entityDescriptor.getPropertiesByName().get(idColumnName);
 				if (idPropertyDescriptor == null) {
 					throw new IllegalStateException("table meta-data of table " + entityDescriptor.getTableName() + " specified column " + idColumnName + " as its ID column, but no such column exists in the property descriptors");
 				}
-				ISqlType idColumnType = idPropertyDescriptor.getType();
+				final ISqlType idColumnType = idPropertyDescriptor.getType();
 				if (!(idColumnType instanceof IEntityIdType)) {
 					throw new IllegalStateException("type of the ID column " + entityDescriptor.getTableName() + "." + idColumnName + " is not supported as an entity ID type");
 				}
@@ -101,29 +103,29 @@ class DiscoverEntitiesAction {
 				// store the information in the entity descriptor
 				entityDescriptor.setIdColumnName(idColumnName);
 				entityDescriptor.setIdColumnType((IEntityIdType)idColumnType);
-				
+
 			}
 
 			// Fetch the data row meta-data for each table. Unlike the properties/columns fetched
 			// above this directly detects the format of the result set when fetching the entity.
 			{
-				Statement statement = connection.createStatement();
-				for (EntityDescriptor entityDescriptor : result) {
-					ResultSet resultSet = statement.executeQuery("SELECT * FROM " + entityDescriptor.getTableName() + " LIMIT 1");
+				final Statement statement = connection.createStatement();
+				for (final EntityDescriptor entityDescriptor : result) {
+					final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + entityDescriptor.getTableName() + " LIMIT 1");
 					entityDescriptor.setDataRowMeta(new DataRowMeta(resultSet.getMetaData()));
 					resultSet.close();
 				}
 			}
-			
+
 			return result;
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
 			try {
 				if (connection != null) {
 					connection.close();
 				}
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 			}
 		}
 	}

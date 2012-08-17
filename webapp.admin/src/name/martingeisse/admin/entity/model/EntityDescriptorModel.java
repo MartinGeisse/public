@@ -6,10 +6,10 @@
 
 package name.martingeisse.admin.entity.model;
 
-import org.apache.wicket.model.LoadableDetachableModel;
-
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
+
+import org.apache.wicket.model.LoadableDetachableModel;
 
 /**
  * This model is basically a model for an {@link EntityDescriptor}, but stores the
@@ -20,22 +20,22 @@ public final class EntityDescriptorModel extends LoadableDetachableModel<EntityD
 	/**
 	 * the entityName
 	 */
-	private String entityName;
-	
+	private final String entityName;
+
 	/**
 	 * Constructor.
 	 * @param entityName the entity name
 	 */
-	public EntityDescriptorModel(String entityName) {
+	public EntityDescriptorModel(final String entityName) {
 		super();
 		this.entityName = entityName;
 	}
-	
+
 	/**
 	 * Constructor.
 	 * @param entity the entity
 	 */
-	public EntityDescriptorModel(EntityDescriptor entity) {
+	public EntityDescriptorModel(final EntityDescriptor entity) {
 		super(entity);
 		this.entityName = entity.getName();
 	}

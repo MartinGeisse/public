@@ -22,5 +22,5 @@ public interface IEntityNavigationContributor {
 	 * of the entity, i.e. the root node of the local navigation.
 	 */
 	public void contributeNavigationNodes(EntityDescriptor entity, NavigationNode mainEntityInstanceNode);
-	
+
 }

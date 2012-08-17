@@ -51,7 +51,7 @@ public final class UrlNavigationHandler extends AbstractNavigationNodeHandler {
 	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#createLink(java.lang.String, name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	public AbstractLink createLink(final String id, NavigationNode node) {
+	public AbstractLink createLink(final String id, final NavigationNode node) {
 		return new ExternalLink(id, url);
 	}
 

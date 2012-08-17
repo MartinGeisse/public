@@ -22,7 +22,7 @@ public class ErrorPage extends AbstractAdminPage {
 	 * Constructor.
 	 * @param message the error message
 	 */
-	public ErrorPage(String message) {
+	public ErrorPage(final String message) {
 		this(Model.of(message));
 	}
 
@@ -30,7 +30,7 @@ public class ErrorPage extends AbstractAdminPage {
 	 * Constructor.
 	 * @param messageModel the model for the error message
 	 */
-	public ErrorPage(IModel<String> messageModel) {
+	public ErrorPage(final IModel<String> messageModel) {
 		super(messageModel);
 	}
 

@@ -17,5 +17,5 @@ package name.martingeisse.admin.entity.property.type;
  * isn't used at all!
  */
 public interface ISqlType extends IValueType {
-	
+
 }

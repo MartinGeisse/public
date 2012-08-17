@@ -33,8 +33,8 @@ public class HomePage extends AbstractAdminPage implements INavigationLocationAw
 	 * @see name.martingeisse.admin.component.page.AbstractAdminPage#renderHead(org.apache.wicket.markup.html.IHeaderResponse)
 	 */
 	@Override
-	public void renderHead(IHeaderResponse response) {
+	public void renderHead(final IHeaderResponse response) {
 		super.renderHead(response);
 	}
-	
+
 }

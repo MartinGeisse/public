@@ -165,7 +165,7 @@ public class NavigationNodeChildFactory {
 	 * @param filter the filter used to produce the list
 	 * @return the new node
 	 */
-	public final NavigationNode createEntityListPanelChild(final String id, final String title, final Class<? extends Panel> panelClass, final String entityName, IEntityListFilter filter) {
+	public final NavigationNode createEntityListPanelChild(final String id, final String title, final Class<? extends Panel> panelClass, final String entityName, final IEntityListFilter filter) {
 		return createChild(id, title, new EntityListPanelHandler(panelClass, entityName).setFilter(filter));
 	}
 

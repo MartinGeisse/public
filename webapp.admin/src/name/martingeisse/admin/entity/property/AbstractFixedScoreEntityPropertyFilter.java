@@ -56,7 +56,7 @@ public abstract class AbstractFixedScoreEntityPropertyFilter extends AbstractEnt
 	 * @see name.martingeisse.admin.application.capabilities.IEntityPropertyDisplayFilter#getScore(name.martingeisse.admin.schema.EntityDescriptor, name.martingeisse.admin.schema.EntityPropertyDescriptor)
 	 */
 	@Override
-	public int getScore(EntityDescriptor entityDescriptor, EntityPropertyDescriptor propertyDescriptor) {
+	public int getScore(final EntityDescriptor entityDescriptor, final EntityPropertyDescriptor propertyDescriptor) {
 		return score;
 	}
 

@@ -20,19 +20,19 @@ public class BooleanRenderer implements IPropertyReadOnlyRenderer {
 	 * The shared instance of this class.
 	 */
 	public static final BooleanRenderer INSTANCE = new BooleanRenderer();
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer#createLabel(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public Label createLabel(String id, Object rawValue) {
-		
+	public Label createLabel(final String id, final Object rawValue) {
+
 		// determine the boolean value
-		Boolean value = getValue(rawValue);
+		final Boolean value = getValue(rawValue);
 		if (value == null) {
 			return null;
 		}
-		
+
 		// create the HTML for the checkbox
 		String code;
 		if (value) {
@@ -40,18 +40,18 @@ public class BooleanRenderer implements IPropertyReadOnlyRenderer {
 		} else {
 			code = "<input type=\"checkbox\" disabled=\"disabled\" />";
 		}
-		
+
 		// create the label
-		Label label = new Label(id, code);
+		final Label label = new Label(id, code);
 		label.setEscapeModelStrings(false);
 		return label;
-		
+
 	}
-	
+
 	/**
 	 * 
 	 */
-	private Boolean getValue(Object o) {
+	private Boolean getValue(final Object o) {
 		if (o instanceof Boolean) {
 			return (Boolean)o;
 		} else if (o instanceof Integer) {
@@ -65,8 +65,8 @@ public class BooleanRenderer implements IPropertyReadOnlyRenderer {
 	 * @see name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer#valueToString(java.lang.Object)
 	 */
 	@Override
-	public String valueToString(Object rawValue) {
-		Boolean value = getValue(rawValue);
+	public String valueToString(final Object rawValue) {
+		final Boolean value = getValue(rawValue);
 		return (value == null ? "null" : value ? "yes" : "no");
 	}
 

@@ -18,7 +18,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * paging support and adds a page title based on the entity name.
  */
 public abstract class AbstractEntityListPage extends AbstractPaginatedAdminPage {
-	
+
 	/**
 	 * Constructor.
 	 * @param parameters the page parameters
@@ -26,15 +26,15 @@ public abstract class AbstractEntityListPage extends AbstractPaginatedAdminPage 
 	public AbstractEntityListPage(final PageParameters parameters) {
 		super(parameters);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.component.page.AbstractPaginatedAdminPage#createTitleModel()
 	 */
 	@Override
 	protected IModel<String> createTitleModel() {
-		IModel<EntityDescriptor> entityTypeModel = determineEntityTypeModel();
-		EntityDescriptor entity = entityTypeModel.getObject();
-		String entityNameKey = ("schema.entity." + entity.getName());
+		final IModel<EntityDescriptor> entityTypeModel = determineEntityTypeModel();
+		final EntityDescriptor entity = entityTypeModel.getObject();
+		final String entityNameKey = ("schema.entity." + entity.getName());
 		return new StringResourceModel(entityNameKey, this, null);
 	}
 
@@ -43,5 +43,5 @@ public abstract class AbstractEntityListPage extends AbstractPaginatedAdminPage 
 	 * @return the model for the entity type.
 	 */
 	protected abstract IModel<EntityDescriptor> determineEntityTypeModel();
-	
+
 }

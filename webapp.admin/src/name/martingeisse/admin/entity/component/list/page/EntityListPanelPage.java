@@ -29,14 +29,14 @@ public final class EntityListPanelPage extends AbstractEntityListPanelPage {
 	public EntityListPanelPage(final PageParameters parameters) {
 		super(parameters);
 	}
-	
+
 	/**
 	 * @return the navigation node handler
 	 */
 	private EntityListPanelHandler getHandler() {
 		return (EntityListPanelHandler)(NavigationUtil.getNavigationNodeForPage(this).getHandler());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.component.list.page.AbstractEntityListPanelPage#determineEntityTypeModel()
 	 */
@@ -49,7 +49,7 @@ public final class EntityListPanelPage extends AbstractEntityListPanelPage {
 			}
 		};
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.component.list.page.AbstractEntityListPanelPage#determinePanelClass()
 	 */
@@ -57,7 +57,7 @@ public final class EntityListPanelPage extends AbstractEntityListPanelPage {
 	protected Class<? extends Panel> determinePanelClass() {
 		return getHandler().getPanelClass();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.component.list.page.AbstractEntityListPanelPage#determineEntityListFilter()
 	 */

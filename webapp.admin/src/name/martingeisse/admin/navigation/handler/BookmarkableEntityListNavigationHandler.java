@@ -73,7 +73,7 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 	 * @see name.martingeisse.admin.navigation.handler.AbstractNavigationNodeHandler#getFallbackId(name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	public String getFallbackId(NavigationNode node) {
+	public String getFallbackId(final NavigationNode node) {
 		return entityName;
 	}
 
@@ -81,10 +81,10 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 	 * @see name.martingeisse.admin.navigation.handler.AbstractNavigationNodeHandler#getFallbackTitle(name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	public String getFallbackTitle(NavigationNode node) {
+	public String getFallbackTitle(final NavigationNode node) {
 		return entityName;
 	}
-	
+
 	/**
 	 * Getter method for the entityName.
 	 * @return the entityName
@@ -153,20 +153,20 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 	 * @return the entity
 	 */
 	public EntityDescriptor getEntity() {
-		return ApplicationSchema.instance.findEntity(getEntityName());		
+		return ApplicationSchema.instance.findEntity(getEntityName());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler#prepareMount(name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	protected void prepareMount(NavigationNode node) {
+	protected void prepareMount(final NavigationNode node) {
 		super.prepareMount(node);
 		if (getEntity() == null) {
-			throw new IllegalStateException("unknown entity in navigation node " + node.getPath() + ": "+ getEntityName());
+			throw new IllegalStateException("unknown entity in navigation node " + node.getPath() + ": " + getEntityName());
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.navigation.handler.AbstractNavigationNodeHandler#getEntityNameForCanonicalEntityListNode()
 	 */

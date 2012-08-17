@@ -18,5 +18,5 @@ public interface IWebApplicationInitializationContributor {
 	 * @param webApplication the web application
 	 */
 	public void onInitializeWebApplication(WebApplication webApplication);
-	
+
 }

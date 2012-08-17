@@ -21,7 +21,7 @@ public class ParameterUtil {
 	 */
 	private ParameterUtil() {
 	}
-	
+
 	/**
 	 * Ensures that the specified argument is not null.
 	 * @param <T> the static parameter type
@@ -29,11 +29,11 @@ public class ParameterUtil {
 	 * @param name the argument name (for error messages)
 	 * @return the argument value for convenience
 	 */
-	public static <T> T ensureNotNull(T argument, String name) {
+	public static <T> T ensureNotNull(final T argument, final String name) {
 		if (argument == null) {
 			throw new IllegalArgumentException("argument is null: " + name);
 		}
 		return argument;
 	}
-	
+
 }

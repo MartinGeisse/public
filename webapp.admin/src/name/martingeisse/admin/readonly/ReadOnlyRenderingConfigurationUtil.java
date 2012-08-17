@@ -51,7 +51,7 @@ public final class ReadOnlyRenderingConfigurationUtil {
 	 * @param type the data type to handle
 	 * @return the renderer
 	 */
-	public static IPropertyReadOnlyRenderer createPropertyReadOnlyRenderer(ISqlType type) {
+	public static IPropertyReadOnlyRenderer createPropertyReadOnlyRenderer(final ISqlType type) {
 		final FallbackRenderer fallbackRenderer = new FallbackRenderer();
 		for (final IPropertyReadOnlyRendererContributor contributor : getPropertyReadOnlyRendererContributors()) {
 			final IPropertyReadOnlyRenderer renderer = contributor.getRenderer(type);
@@ -67,10 +67,10 @@ public final class ReadOnlyRenderingConfigurationUtil {
 	 * Prepares the application configuration with respect to read-only rendering contributors.
 	 */
 	public static void prepareConfiguration() {
-		List<IPropertyReadOnlyRendererContributor> contributors = ApplicationConfiguration.get().getCapabilities().getCachedList(PROPERTY_READ_ONLY_RENDERER_CONTRIBUTOR_CAPABILITY_KEY);
+		final List<IPropertyReadOnlyRendererContributor> contributors = ApplicationConfiguration.get().getCapabilities().getCachedList(PROPERTY_READ_ONLY_RENDERER_CONTRIBUTOR_CAPABILITY_KEY);
 		if (contributors != null) {
 			Collections.sort(contributors, ScoreComparator.DESCENDING);
 		}
 	}
-	
+
 }

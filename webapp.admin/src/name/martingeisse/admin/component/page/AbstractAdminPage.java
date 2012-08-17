@@ -33,7 +33,7 @@ public class AbstractAdminPage extends WebPage {
 	 * Constructor.
 	 * @param model the page model
 	 */
-	public AbstractAdminPage(IModel<?> model) {
+	public AbstractAdminPage(final IModel<?> model) {
 		super(model);
 	}
 
@@ -41,10 +41,10 @@ public class AbstractAdminPage extends WebPage {
 	 * Constructor.
 	 * @param parameters the page parameters
 	 */
-	public AbstractAdminPage(PageParameters parameters) {
+	public AbstractAdminPage(final PageParameters parameters) {
 		super(parameters);
 	}
-	
+
 	/**
 	 * Returns the main container that contains the actual page components.
 	 * @return the main container
@@ -52,7 +52,7 @@ public class AbstractAdminPage extends WebPage {
 	public MarkupContainer getMainContainer() {
 		return this;
 	}
-	
+
 	/**
 	 * Returns a sub-component of the main container. This method must be used instead
 	 * of getMainContainer().get(id) because the get(id) method of Wicket borders
@@ -63,7 +63,7 @@ public class AbstractAdminPage extends WebPage {
 	 * @param id the wicket id of the component to return
 	 * @return the component
 	 */
-	public Component getFromMainContainer(String id) {
+	public Component getFromMainContainer(final String id) {
 		return get(id);
 	}
 
@@ -76,12 +76,12 @@ public class AbstractAdminPage extends WebPage {
 		add(PageBarUtil.createAllPageTopBars(this, "pageTopBars"));
 		add(PageBarUtil.createAllPageBottomBars(this, "pageBottomBars"));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Component#renderHead(org.apache.wicket.markup.html.IHeaderResponse)
 	 */
 	@Override
-	public void renderHead(IHeaderResponse response) {
+	public void renderHead(final IHeaderResponse response) {
 		response.renderCSSReference(new CssResourceReference(AbstractAdminPage.class, "common.css"));
 		response.renderJavaScriptReference(new JavaScriptResourceReference(AbstractAdminPage.class, "common.js"));
 		response.renderCSSReference(new CssResourceReference(AbstractAdminPage.class, "jquery.dataTables.css"));

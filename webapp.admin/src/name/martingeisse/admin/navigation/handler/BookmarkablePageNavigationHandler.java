@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.navigation.handler;
 
-
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.navigation.INavigationLocationAware;
 import name.martingeisse.admin.navigation.NavigationMountedRequestMapper;
@@ -59,7 +58,7 @@ public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHan
 	 * the implicitPageParameters
 	 */
 	private final PageParameters implicitPageParameters;
-	
+
 	/**
 	 * the isMounted
 	 */
@@ -91,7 +90,7 @@ public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHan
 	public final PageParameters getExplicitPageParameters() {
 		return explicitPageParameters;
 	}
-	
+
 	/**
 	 * Getter method for the implicitPageParameters.
 	 * @return the implicitPageParameters
@@ -99,12 +98,12 @@ public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHan
 	public final PageParameters getImplicitPageParameters() {
 		return implicitPageParameters;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.navigation.handler.AbstractNavigationNodeHandler#mountRequestMappers(name.martingeisse.admin.application.wicket.AdminWicketApplication, name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	public final void mountRequestMappers(AdminWicketApplication application, NavigationNode node) {
+	public final void mountRequestMappers(final AdminWicketApplication application, final NavigationNode node) {
 		if (isMounted) {
 			throw new IllegalStateException("this handler is already URL-mounted -- are you using the same handler for multiple navigation nodes?");
 		}
@@ -112,11 +111,11 @@ public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHan
 		prepareMount(node);
 		explicitPageParameters.remove(NavigationUtil.NAVIGATION_PATH_PAGE_PARAMETER_NAME);
 		explicitPageParameters.add(NavigationUtil.NAVIGATION_PATH_PAGE_PARAMETER_NAME, node.getPath());
-		NavigationMountedRequestMapper mapper = new NavigationMountedRequestMapper(node.getPath(), pageClass);
+		final NavigationMountedRequestMapper mapper = new NavigationMountedRequestMapper(node.getPath(), pageClass);
 		mapper.getImplicitParameters().mergeWith(implicitPageParameters);
 		application.mount(mapper);
 	}
-	
+
 	/**
 	 * Subclasses may implement this method to validate the information contained in them
 	 * and/or do other preparations for URL-mounting this node. This method is invoked by
@@ -125,14 +124,14 @@ public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHan
 	 * 
 	 * @param node the navigation node
 	 */
-	protected void prepareMount(NavigationNode node) {
+	protected void prepareMount(final NavigationNode node) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#createLink(java.lang.String, name.martingeisse.admin.navigation.NavigationNode)
 	 */
 	@Override
-	public AbstractLink createLink(String id, NavigationNode node) {
+	public AbstractLink createLink(final String id, final NavigationNode node) {
 		return new BookmarkablePageLink<Void>(id, pageClass, new PageParameters(explicitPageParameters));
 	}
 

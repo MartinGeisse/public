@@ -21,7 +21,7 @@ public abstract class AbstractWebApplicationInitializationContributor implements
 	public IPlugin[] unbox() {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.application.IPlugin#contribute(name.martingeisse.admin.application.capabilities.ApplicationCapabilities)
 	 */
@@ -29,5 +29,5 @@ public abstract class AbstractWebApplicationInitializationContributor implements
 	public void contribute() {
 		WicketConfigurationUtil.addWebApplicationInitializationContributor(this);
 	}
-	
+
 }

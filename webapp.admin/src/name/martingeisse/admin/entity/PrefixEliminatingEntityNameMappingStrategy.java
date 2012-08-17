@@ -56,8 +56,8 @@ public class PrefixEliminatingEntityNameMappingStrategy implements IEntityNameMa
 	 * @see name.martingeisse.admin.entity.IEntityNameMappingStrategy#determineEntityName(name.martingeisse.admin.entity.schema.EntityDescriptor)
 	 */
 	@Override
-	public String determineEntityName(EntityDescriptor entity) {
-		String name = entity.getTableName();
+	public String determineEntityName(final EntityDescriptor entity) {
+		final String name = entity.getTableName();
 		if (name.startsWith(prefix)) {
 			return name.substring(prefix.length());
 		} else {
@@ -69,7 +69,7 @@ public class PrefixEliminatingEntityNameMappingStrategy implements IEntityNameMa
 	 * @see name.martingeisse.admin.entity.IEntityNameMappingStrategy#determineEntityDisplayName(name.martingeisse.admin.entity.schema.EntityDescriptor)
 	 */
 	@Override
-	public String determineEntityDisplayName(EntityDescriptor entity) {
+	public String determineEntityDisplayName(final EntityDescriptor entity) {
 		String baseName = determineEntityName(entity);
 		baseName = baseName.replace('-', ' ');
 		baseName = baseName.replace('_', ' ');

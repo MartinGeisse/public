@@ -50,13 +50,13 @@ public class NavigationFolderPage extends AbstractAdminPage {
 	protected void onInitialize() {
 		super.onInitialize();
 
-		IModel<List<NavigationNode>> topNavigationNodeListModel = new LoadableDetachableModel<List<NavigationNode>>() {
+		final IModel<List<NavigationNode>> topNavigationNodeListModel = new LoadableDetachableModel<List<NavigationNode>>() {
 			@Override
 			protected List<NavigationNode> load() {
 				return NavigationConfigurationUtil.getNavigationTree().getNodesByPath().get(navigationPath).getChildren();
 			}
 		};
-		
+
 		getMainContainer().add(new Label("folderTitle", new PropertyModel<String>(this, "folderTitle")));
 		getMainContainer().add(new ListView<NavigationNode>("children", topNavigationNodeListModel) {
 			@Override
@@ -76,5 +76,5 @@ public class NavigationFolderPage extends AbstractAdminPage {
 	public String getFolderTitle() {
 		return NavigationConfigurationUtil.getNavigationTree().getNodesByPath().get(navigationPath).getTitle();
 	}
-	
+
 }

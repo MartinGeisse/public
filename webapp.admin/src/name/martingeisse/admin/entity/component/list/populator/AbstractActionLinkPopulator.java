@@ -29,7 +29,7 @@ public abstract class AbstractActionLinkPopulator extends AbstractEntityCellPopu
 	 * Constructor.
 	 * @param title the populator title
 	 */
-	public AbstractActionLinkPopulator(String title) {
+	public AbstractActionLinkPopulator(final String title) {
 		super(title);
 	}
 
@@ -37,8 +37,8 @@ public abstract class AbstractActionLinkPopulator extends AbstractEntityCellPopu
 	 * @see org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator#populateItem(org.apache.wicket.markup.repeater.Item, java.lang.String, org.apache.wicket.model.IModel)
 	 */
 	@Override
-	public void populateItem(Item<ICellPopulator<EntityInstance>> cellItem, String componentId, IModel<EntityInstance> rowModel) {
-		
+	public void populateItem(final Item<ICellPopulator<EntityInstance>> cellItem, final String componentId, final IModel<EntityInstance> rowModel) {
+
 	}
 
 	/* (non-Javadoc)
@@ -52,5 +52,5 @@ public abstract class AbstractActionLinkPopulator extends AbstractEntityCellPopu
 	 * This method is invoked when the user clicks the action link.
 	 */
 	protected abstract void onLinkClicked();
-	
+
 }

@@ -39,5 +39,5 @@ public final class NavigationConfigurationUtil {
 	public static void setNavigationTree(final NavigationTree navigationTree) {
 		ApplicationConfiguration.get().getParameters().set(NAVIGATION_TREE_PARAMETER_KEY, navigationTree);
 	}
-	
+
 }

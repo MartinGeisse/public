@@ -11,6 +11,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.SQLQueryImpl;
+import com.mysema.query.sql.SQLTemplates;
 
 /**
  * This class describes a database used by the application.
@@ -117,10 +119,18 @@ public abstract class AbstractDatabaseDescriptor {
 	}
 
 	/**
+	 * Creates a QueryDSL {@link SQLTemplates} object for this database.
+	 * @return the templates object
+	 */
+	public abstract SQLTemplates createSqlTemplates();
+
+	/**
 	 * Creates a QueryDSL {@link SQLQuery} object for this database.
 	 * @param connection the database connection
 	 * @return the query
 	 */
-	public abstract SQLQuery createQuery(Connection connection);
-	
+	public SQLQuery createQuery(final Connection connection) {
+		return new SQLQueryImpl(connection, createSqlTemplates());
+	}
+
 }

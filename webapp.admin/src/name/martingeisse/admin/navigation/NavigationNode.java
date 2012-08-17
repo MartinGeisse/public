@@ -517,7 +517,7 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	public AbstractLink createLink(final String id) {
 		return handler.createLink(id, this);
 	}
-	
+
 	/**
 	 * Loops through all nodes and applies the specified visitor to
 	 * all leaf nodes.

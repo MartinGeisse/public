@@ -35,5 +35,5 @@ public interface IRawEntityListPropertyDisplayFilter extends Serializable {
 	 * not affect that property
 	 */
 	public Boolean isPropertyVisible(EntityDescriptor entityDescriptor, EntityPropertyDescriptor propertyDescriptor);
-	
+
 }

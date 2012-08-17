@@ -40,7 +40,7 @@ public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePag
 	 * the entityName
 	 */
 	private String entityName;
-	
+
 	/**
 	 * Constructor.
 	 * @param pageClass the page class

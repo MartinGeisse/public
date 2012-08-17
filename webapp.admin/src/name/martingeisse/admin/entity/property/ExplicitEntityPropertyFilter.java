@@ -82,7 +82,7 @@ public class ExplicitEntityPropertyFilter extends AbstractFixedScoreEntityProper
 	 * @see name.martingeisse.admin.application.capabilities.IRawEntityListPropertyDisplayFilter#isPropertyVisible(name.martingeisse.admin.schema.EntityDescriptor, name.martingeisse.admin.schema.EntityPropertyDescriptor)
 	 */
 	@Override
-	public Boolean isPropertyVisible(EntityDescriptor entityDescriptor, EntityPropertyDescriptor propertyDescriptor) {
+	public Boolean isPropertyVisible(final EntityDescriptor entityDescriptor, final EntityPropertyDescriptor propertyDescriptor) {
 		if (!this.entityName.equals(entityDescriptor.getName())) {
 			return null;
 		} else {

@@ -6,12 +6,8 @@
 
 package name.martingeisse.admin.entity.schema.database;
 
-import java.sql.Connection;
-
 import com.mysema.query.sql.MySQLTemplates;
-import com.mysema.query.sql.SQLQuery;
-import com.mysema.query.sql.SQLQueryImpl;
-
+import com.mysema.query.sql.SQLTemplates;
 
 /**
  * Concrete implementation of {@link AbstractDatabaseDescriptor} for
@@ -20,11 +16,11 @@ import com.mysema.query.sql.SQLQueryImpl;
 public class MysqlDatabaseDescriptor extends AbstractDatabaseDescriptor {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor#createQuery(java.sql.Connection)
+	 * @see name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor#createSqlTemplates()
 	 */
 	@Override
-	public SQLQuery createQuery(Connection connection) {
-		return new SQLQueryImpl(connection, new MySQLTemplates());
+	public SQLTemplates createSqlTemplates() {
+		return new MySQLTemplates();
 	}
 
 }

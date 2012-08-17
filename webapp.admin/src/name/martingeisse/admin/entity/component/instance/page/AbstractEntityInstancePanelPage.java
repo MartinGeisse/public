@@ -28,7 +28,7 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 	 * the instance
 	 */
 	private transient EntityInstance instance;
-	
+
 	/**
 	 * Constructor.
 	 * @param parameters the page parameters
@@ -36,39 +36,39 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 	public AbstractEntityInstancePanelPage(final PageParameters parameters) {
 		super(parameters);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.pages.AbstractAdminPage#onInitialize()
 	 */
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		Class<? extends Panel> panelClass = determinePanelClass();
-		IModel<EntityInstance> instanceModel = new PropertyModel<EntityInstance>(this, "instance");
+		final Class<? extends Panel> panelClass = determinePanelClass();
+		final IModel<EntityInstance> instanceModel = new PropertyModel<EntityInstance>(this, "instance");
 		try {
 			getMainContainer().add(panelClass.getConstructor(String.class, IModel.class).newInstance("panel", instanceModel));
-		} catch (NoSuchMethodException e) {
+		} catch (final NoSuchMethodException e) {
 			throw new RuntimeException("entity instance panel " + panelClass.getCanonicalName() + " has no constructor(String, IModel).");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new RuntimeException("exception while invoking entity instance panel constructor of panel class " + panelClass.getCanonicalName(), e);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Page#onBeforeRender()
 	 */
 	@Override
 	protected void onBeforeRender() {
-		
+
 		// actually fetch the entity instance to show
-		EntityDescriptor entity = determineEntityType();
+		final EntityDescriptor entity = determineEntityType();
 		instance = entity.fetchSingleInstance(determineId(), false);
-		
+
 		// base class behavior
 		super.onBeforeRender();
-		
+
 	}
-	
+
 	/**
 	 * Getter method for the instance.
 	 * @return the instance
@@ -76,14 +76,14 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 	public final EntityInstance getInstance() {
 		return instance;
 	}
-	
+
 	/**
 	 * Determines the entity ID. The default implementation uses the "id" page parameter.
 	 * @return the entity id
 	 */
 	private Object determineId() {
-		EntityDescriptor entity = determineEntityType();
-		IEntityIdType idType = entity.getIdColumnType();
+		final EntityDescriptor entity = determineEntityType();
+		final IEntityIdType idType = entity.getIdColumnType();
 		if (idType == null) {
 			throw new IllegalStateException("table " + entity.getTableName() + " has no primary key and thus cannot be viewed");
 		}
@@ -95,7 +95,7 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 	 * @return the entity type.
 	 */
 	protected abstract EntityDescriptor determineEntityType();
-	
+
 	/**
 	 * Determines the class of the panel to use
 	 * @return the panel class

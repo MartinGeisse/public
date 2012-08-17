@@ -26,17 +26,17 @@ public final class EntityReferenceInfo {
 	 * the source
 	 */
 	private EntityDescriptor source;
-	
+
 	/**
 	 * the destination
 	 */
 	private EntityDescriptor destination;
-	
+
 	/**
 	 * the fieldName
 	 */
 	private String fieldName;
-	
+
 	/**
 	 * Constructor.
 	 */
@@ -55,7 +55,7 @@ public final class EntityReferenceInfo {
 	 * Setter method for the source.
 	 * @param source the source to set
 	 */
-	public void setSource(EntityDescriptor source) {
+	public void setSource(final EntityDescriptor source) {
 		this.source = source;
 	}
 
@@ -71,7 +71,7 @@ public final class EntityReferenceInfo {
 	 * Setter method for the destination.
 	 * @param destination the destination to set
 	 */
-	public void setDestination(EntityDescriptor destination) {
+	public void setDestination(final EntityDescriptor destination) {
 		this.destination = destination;
 	}
 
@@ -87,8 +87,8 @@ public final class EntityReferenceInfo {
 	 * Setter method for the fieldName.
 	 * @param fieldName the fieldName to set
 	 */
-	public void setFieldName(String fieldName) {
+	public void setFieldName(final String fieldName) {
 		this.fieldName = fieldName;
 	}
-	
+
 }

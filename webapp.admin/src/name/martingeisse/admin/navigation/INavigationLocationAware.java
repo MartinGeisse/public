@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.navigation;
 
-
 /**
  * This interface is implemented by objects -- currently only pages --
  * that know their own location in the navigation tree. Pages only
@@ -20,5 +19,5 @@ public interface INavigationLocationAware {
 	 * @return the location of this object, or null if this object doesn't actually know
 	 */
 	public String getNavigationPath();
-	
+
 }
