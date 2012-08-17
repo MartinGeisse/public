@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
-import name.martingeisse.admin.entity.IEntityNameMappingStrategy;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.instance.FetchEntityInstanceAction;
 import name.martingeisse.admin.entity.list.IEntityListFilter;

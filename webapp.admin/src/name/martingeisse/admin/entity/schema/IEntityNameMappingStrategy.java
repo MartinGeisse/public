@@ -4,11 +4,10 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity;
+package name.martingeisse.admin.entity.schema;
 
 import java.io.Serializable;
 
-import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 /**
  * This strategy maps database table names to entity names and display names.

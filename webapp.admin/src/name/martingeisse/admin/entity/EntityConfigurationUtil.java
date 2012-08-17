@@ -8,6 +8,7 @@ package name.martingeisse.admin.entity;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilter;
+import name.martingeisse.admin.entity.schema.IEntityNavigationContributor;
 import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 

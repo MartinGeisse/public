@@ -182,17 +182,18 @@ if("."==i){if(j)return null;j=!0}}return"numeric"},function(e){var i=Date.parse(
 $.fn.createRawEntityTable = function() {
 	$(this).each(function() {
 		var thisQuery = $(this);
+		
+		// extract configuration that was written by the server
 		var configurationText = thisQuery.children('.server-to-client-data').text();
 		var configuration = $.parseJSON(configurationText);
-		
-		console.log(configuration);
 		
 		// build the DOM description code for the DataTable
 		var top1DomCode = (configuration.showSearchField ? '<\"top1\"lf>' : '<\"top1\"l>');
 		var top2DomCode = '<\"top2\"ip>';
 		var bottomDomCode = '<\"bottom\"ip>';
 		var domCode = (top1DomCode + top2DomCode + "rt" + bottomDomCode);
-		
+
+		// create the table
 		var tableQuery = thisQuery.children('.data-table-container').children('table');
 		var columnCount = tableQuery.children('thead').children('tr').children('th').size();
 		var tableInfo = tableQuery.dataTable({
@@ -201,11 +202,13 @@ $.fn.createRawEntityTable = function() {
 			'sAjaxSource': configuration.url,
 			'sDom': domCode
 		});
-		console.log(tableInfo);
+		
+		// register the click handler
 		tableQuery.on('click', 'tr', function () {
 			var data = tableInfo._(this)[0];
 			var url = data[columnCount];
 			location.href = url;
 		});
+		
 	});
 }

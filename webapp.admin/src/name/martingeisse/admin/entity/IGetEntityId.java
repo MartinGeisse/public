@@ -8,7 +8,7 @@ package name.martingeisse.admin.entity;
 
 /**
  * This interface provides a getter method for an entity ID. It can be implemented,
- * for example, by pages to provide an ID for navigation links init.
+ * for example, by pages to provide an ID for navigation links.
  */
 public interface IGetEntityId {
 

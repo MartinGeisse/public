@@ -12,8 +12,6 @@ import name.martingeisse.admin.entity.schema.EntityDescriptor;
  * Instances contribute {@link IEntitySearchStrategy} with a score.
  * For each entity, the contributor with the highest score gets to
  * provide the search strategy actually used.
- * 
- * 
  */
 public interface IEntitySearchContributor {
 

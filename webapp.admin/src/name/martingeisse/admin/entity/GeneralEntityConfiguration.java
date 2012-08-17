@@ -6,6 +6,10 @@
 
 package name.martingeisse.admin.entity;
 
+import name.martingeisse.admin.entity.schema.IEntityListFieldOrder;
+import name.martingeisse.admin.entity.schema.IEntityNameMappingStrategy;
+import name.martingeisse.admin.entity.schema.PrefixEliminatingEntityNameMappingStrategy;
+
 /**
  * This class contains general configuration that applies to all entities.
  * It is determined by the application and stored in the application configuration.

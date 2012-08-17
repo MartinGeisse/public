@@ -111,7 +111,7 @@ public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePag
 
 			// Add the entity ID from the current page to the parameters if no "id" parameter exists yet.
 			// This allows to have instance-local links created from the navigation nodes (which are not
-			// actually instance-local objects) which automatically resolve their ID. At the same time,
+			// actually instance-local objects) which automatically resolve their ID. Alternatively,
 			// the calling code may use createLink() and add parameters manually to specify an explicit ID.
 			if (!getPageParameters().getNamedKeys().contains("id")) {
 				final Page page = getPage();

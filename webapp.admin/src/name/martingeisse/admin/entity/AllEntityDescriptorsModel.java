@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.model;
+package name.martingeisse.admin.entity;
 
 import java.util.List;
 

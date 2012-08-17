@@ -13,7 +13,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.admin.entity.model.EntityDescriptorModel;
+import name.martingeisse.admin.entity.EntityDescriptorModel;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 

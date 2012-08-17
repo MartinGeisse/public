@@ -8,7 +8,7 @@ package name.martingeisse.admin.customization.pagebar;
 
 import java.util.List;
 
-import name.martingeisse.admin.entity.model.AllEntityDescriptorsModel;
+import name.martingeisse.admin.entity.AllEntityDescriptorsModel;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;

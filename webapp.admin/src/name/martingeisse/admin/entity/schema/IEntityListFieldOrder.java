@@ -4,11 +4,10 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity;
+package name.martingeisse.admin.entity.schema;
 
 import java.util.Comparator;
 
-import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 
 /**
  * This interface defines an order for the fields of an entity.
