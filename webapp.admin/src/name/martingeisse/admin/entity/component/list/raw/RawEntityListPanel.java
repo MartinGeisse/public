@@ -6,39 +6,36 @@
 
 package name.martingeisse.admin.entity.component.list.raw;
 
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-
-import name.martingeisse.admin.entity.component.list.EntityInstanceDataProvider;
+import name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
-import name.martingeisse.admin.entity.list.IEntityListFilterAcceptor;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer;
+import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
 import name.martingeisse.admin.util.IGetPageable;
 import name.martingeisse.admin.util.LinkUtil;
-import name.martingeisse.wicket.util.zebra.ZebraDataView;
+import name.martingeisse.common.javascript.JavascriptAssembler;
+import name.martingeisse.common.util.GenericTypeUtil;
 
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.list.Loop;
 import org.apache.wicket.markup.html.list.LoopItem;
-import org.apache.wicket.markup.html.navigation.paging.IPageable;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 
-/**
- * Raw presentation of entities.
- */
-public class RawEntityListPanel extends Panel implements IGetPageable, IEntityListFilterAcceptor {
+import com.mysema.query.support.Expressions;
+import com.mysema.query.types.Expression;
+import com.mysema.query.types.Path;
+import com.mysema.query.types.Predicate;
 
-	/**
-	 * the filter
-	 */
-	private IEntityListFilter filter;
+/**
+ * Raw presentation of entities, using JQuery DataTables. This class does not
+ * implement {@link IGetPageable} intentionally since pagination is done in
+ * Javascript.
+ */
+public class RawEntityListPanel extends AbstractEntityDataTablePanel {
 	
 	/**
 	 * the renderers
@@ -51,34 +48,15 @@ public class RawEntityListPanel extends Panel implements IGetPageable, IEntityLi
 	 * @param entityModel the entity model
 	 */
 	public RawEntityListPanel(final String id, final IModel<EntityDescriptor> entityModel) {
-		super(id);
-		setDefaultModel(entityModel);
+		super(id, entityModel);
 	}
 
-	/**
-	 * Getter method for the width.
-	 * @return the width
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel#getColumnCount()
 	 */
-	public int getWidth() {
-		// cannot return renderers.length, otherwise we depend on the order in which child components get their onBeforeRender() called
-		return getEntity().getRawEntityListFieldOrder().length;
-	}
-	
-	/**
-	 * Getter method for the entityDescriptorModel.
-	 * @return the entityDescriptorModel
-	 */
-	@SuppressWarnings("unchecked")
-	public IModel<EntityDescriptor> getEntityDescriptorModel() {
-		return (IModel<EntityDescriptor>)getDefaultModel();
-	}
-	
-	/**
-	 * Getter method for the entity.
-	 * @return the entity
-	 */
-	public EntityDescriptor getEntity() {
-		return (EntityDescriptor)getDefaultModelObject();
+	@Override
+	public int getColumnCount() {
+		return getEntityDescriptor().getRawEntityListFieldOrder().length;
 	}
 	
 	/**
@@ -88,23 +66,7 @@ public class RawEntityListPanel extends Panel implements IGetPageable, IEntityLi
 	 * @return the field name
 	 */
 	String getFieldNameForGloballyDefinedOrder(int index) {
-		return getEntity().getRawEntityListFieldOrder()[index];
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.util.IGetPageable#getPageable()
-	 */
-	@Override
-	public IPageable getPageable() {
-		return (IPageable)get("rows");
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.entity.list.IEntityListFilterAcceptor#acceptEntityListFilter(name.martingeisse.admin.entity.list.IEntityListFilter)
-	 */
-	@Override
-	public void acceptEntityListFilter(IEntityListFilter filter) {
-		this.filter = filter;
+		return getEntityDescriptor().getRawEntityListFieldOrder()[index];
 	}
 	
 	/* (non-Javadoc)
@@ -113,67 +75,95 @@ public class RawEntityListPanel extends Panel implements IGetPageable, IEntityLi
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		add(new Loop("headers", new PropertyModel<Integer>(RawEntityListPanel.this, "width")) {
+		setOutputMarkupId(true);
+		
+		// assemble the JSON configuration for our home-grown initialization function
+		JavascriptAssembler assembler = new JavascriptAssembler();
+		assembler.beginObject();
+		assembler.prepareObjectProperty("url");
+		assembler.appendStringLiteral(getCallbackUrl());
+		assembler.prepareObjectProperty("showSearchField");
+		assembler.appendBooleanLiteral(isSearchSupported());
+		assembler.endObject();
+		
+		// create components
+		add(new Loop("headers", new PropertyModel<Integer>(RawEntityListPanel.this, "columnCount")) {
 			@Override
 			protected void populateItem(LoopItem item) {
 				item.add(new Label("name", getFieldNameForGloballyDefinedOrder(item.getIndex())));
 			}
 		});
-		add(new ZebraDataView<EntityInstance>("rows", new MyDataProvider(), 10) {
-			@Override
-			protected void populateItem(final Item<EntityInstance> rowItem) {
-				rowItem.add(new Loop("cells", new PropertyModel<Integer>(RawEntityListPanel.this, "width")) {
-					@Override
-					protected void populateItem(final LoopItem cellItem) {
-						EntityDescriptor entity = (EntityDescriptor)RawEntityListPanel.this.getDefaultModelObject();
-						EntityInstance instance = rowItem.getModelObject();
-						AbstractLink link;
-						if (instance.getId() == null) {
-							link = LinkUtil.createDisabledLink("link");
-						} else {
-							link = LinkUtil.createSingleEntityLink("link", entity, instance.getId());
-						}
-						link.add(renderers[cellItem.getIndex()].createLabel("value", instance.getData()[cellItem.getIndex()]));
-						cellItem.add(link);
-					}
-				});
-			}
-		});
+		add(new Label("configuration", assembler.getAssembledCode()));
+
 	}
-
-	/**
-	 * Custom {@link IDataProvider} implementation -- cannot be implemented by
-	 * {@link RawEntityListPanel} since that would cause an infinite
-	 * loop on detach(). We also need the common logic from {@link EntityInstanceDataProvider}.
+	
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.Component#onBeforeRender()
 	 */
-	private class MyDataProvider extends EntityInstanceDataProvider {
-
-		/**
-		 * Constructor.
-		 */
-		public MyDataProvider() {
-			super(RawEntityListPanel.this.getEntityDescriptorModel(), RawEntityListPanel.this.filter, null);
-		}
-
-		/* (non-Javadoc)
-		 * @see name.martingeisse.admin.multi.EntityInstanceDataProvider#onResultAvailable(name.martingeisse.common.jdbc.ResultSetReader)
-		 */
-		@Override
-		protected void onResultAvailable(ResultSetMetaData resultSetMetaData) throws SQLException {
-
-			// determine the column names and renderers
-//			int width = resultSetMetaData.getColumnCount();
-//			renderers = new IPropertyReadOnlyRenderer[width];
-//			for (int i=0; i<width; i++) {
-//				renderers[i] = ReadOnlyRenderingConfigurationUtil.createPropertyReadOnlyRenderer(resultSetMetaData.getColumnType(i + 1));
-//				if (renderers[i] == null) {
-//					throw new RuntimeException("no renderer");
-//				}
-//			}
-			throw new RuntimeException("CURRENTLY NOT WORKING"); 
-			
+	@Override
+	protected void onBeforeRender() {
+		super.onBeforeRender();
+		
+		// determine the column renderers
+		EntityDescriptor entity = getEntityDescriptor();
+		final String[] fieldOrder = entity.getRawEntityListFieldOrder();
+		renderers = new IPropertyReadOnlyRenderer[fieldOrder.length];
+		for (int i=0; i<fieldOrder.length; i++) {
+			EntityPropertyDescriptor property = entity.getPropertiesByName().get(fieldOrder[i]);
+			renderers[i] = ReadOnlyRenderingConfigurationUtil.createPropertyReadOnlyRenderer(property.getType());
+			if (renderers[i] == null) {
+				throw new RuntimeException("no renderer");
+			}
 		}
 		
 	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.Component#renderHead(org.apache.wicket.markup.html.IHeaderResponse)
+	 */
+	@Override
+	public void renderHead(IHeaderResponse response) {
+		super.renderHead(response);
+		response.renderOnDomReadyJavaScript("$('#" + getMarkupId() + "').createRawEntityTable();\n");
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel#getColumnSortExpression(int)
+	 */
+	@Override
+	protected Expression<Comparable<?>> getColumnSortExpression(int columnIndex) {
+		Path<?> entityPath = Expressions.path(Object.class, IEntityListFilter.ALIAS);
+		return GenericTypeUtil.unsafeCast(Expressions.path(Comparable.class, entityPath, getFieldNameForGloballyDefinedOrder(columnIndex)));
+	}
+
+	/**
+	 * @return true if supported, false if not
+	 */
+	protected boolean isSearchSupported() {
+		return getEntityDescriptor().isSearchSupported();
+	}
 	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel#getSearchPredicate(java.lang.String)
+	 */
+	@Override
+	protected Predicate getSearchPredicate(String searchTerm) {
+		return getEntityDescriptor().createSearchFilter(searchTerm).getFilterPredicate();
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel#assembleRowFields(name.martingeisse.admin.entity.instance.EntityInstance, name.martingeisse.common.javascript.JavascriptAssembler)
+	 */
+	@Override
+	protected void assembleRowFields(EntityInstance entityInstance, JavascriptAssembler assembler) {
+		EntityDescriptor entity = entityInstance.getEntity();
+		final String[] fieldOrder = entity.getRawEntityListFieldOrder();
+		for (int i=0; i<getColumnCount(); i++) {
+			assembler.prepareListElement();
+			assembler.appendStringLiteral(renderers[i].valueToString(entityInstance.getFieldValue(fieldOrder[i])));
+		}
+		assembler.prepareListElement();
+		assembler.appendStringLiteral(entityInstance.getId() == null ? null : LinkUtil.getSingleEntityLinkUrl(getEntityDescriptor(), entityInstance.getId()));
+	}
+
 }

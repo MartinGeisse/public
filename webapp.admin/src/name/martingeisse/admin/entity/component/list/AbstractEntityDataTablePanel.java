@@ -104,18 +104,8 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 	protected abstract Expression<Comparable<?>> getColumnSortExpression(int columnIndex);
 	
 	/**
-	 * This method should be implemented by concrete subclasses to indicate whether
-	 * searching is supported. If this method returns false, then the search field
-	 * is hidden. Otherwise, getSearchPredicate() should return a search predicate
-	 * when a search term is provided.
-	 * @return true if searching is supported, false to hide the search field
-	 */
-	protected abstract boolean isSearchSupported(); // TODO not yet used
-	
-	/**
 	 * Returns a predicate to filter rows for the specified search term.
-	 * May return null to disable searching. In this case, isSearchSupported()
-	 * should return false to hide the search field.
+	 * May return null to indicate no filtering.
 	 * @param searchTerm the search term
 	 * @return the search predicate
 	 */
@@ -152,7 +142,7 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 		// column-wise searching: bSearchable_*, sSearch_*
 		int echoToken = parameters.getParameterValue("sEcho").toInt();
 		
-		// determine sort parameters TODO order still invalid, fix column order first
+		// determine sort parameters
 		int sortColumnCount = PrimitiveUtil.fallback(StringValueUtil.getOptionalLowerCappedInteger(parameters.getParameterValue("iSortingCols"), 0), 0);
 		OrderSpecifier<Comparable<?>>[] orderSpecifiers = GenericTypeUtil.unsafeCast(new OrderSpecifier<?>[sortColumnCount]);
 		int orderSpecifierCount = 0;
@@ -182,12 +172,13 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 		IEntityListFilter actualFilter;
 		if (searchPredicate == null) {
 			actualFilter = filter;
+		} else if (filter == null) {
+			actualFilter = new EntityListFilter(searchPredicate);
 		} else {
 			actualFilter = new EntityListFilter(Expressions.predicate(Ops.AND, filter.getFilterPredicate(), searchPredicate));
 		}
 		
 		// fetch data
-		// TODO: column header/data order mismatch
 		EntityInstanceDataProvider dataProvider = new EntityInstanceDataProvider(getEntityDescriptorModel(), actualFilter, orderSpecifiers);
 		int sizeWithBothFilters = dataProvider.size();
 		Iterator<? extends EntityInstance> iterator = dataProvider.iterator(offset, count);

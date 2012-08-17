@@ -10,13 +10,14 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilter;
 import name.martingeisse.admin.entity.property.type.ISqlType;
 import name.martingeisse.admin.entity.property.type.IntegerType;
+import name.martingeisse.admin.entity.property.type.LongType;
 import name.martingeisse.admin.entity.property.type.StringType;
 import name.martingeisse.admin.entity.property.type.UnknownSqlType;
 
@@ -77,9 +78,9 @@ class DiscoverEntityPropertiesAction {
 	 * Executes this action.
 	 * @return the result
 	 */
-	public Map<String, EntityPropertyDescriptor> execute() {
+	public List<EntityPropertyDescriptor> execute() {
 		try {
-			final Map<String, EntityPropertyDescriptor> result = new HashMap<String, EntityPropertyDescriptor>();
+			final List<EntityPropertyDescriptor> result = new ArrayList<EntityPropertyDescriptor>();
 			ResultSet resultSet = connection.getMetaData().getColumns(null, null, entity.getTableName(), null);
 			while (resultSet.next()) {
 				final EntityPropertyDescriptor propertyDescriptor = new EntityPropertyDescriptor();
@@ -87,7 +88,7 @@ class DiscoverEntityPropertiesAction {
 				propertyDescriptor.setName(resultSet.getString("COLUMN_NAME"));
 				propertyDescriptor.setType(determineType(resultSet));
 				propertyDescriptor.setVisibleInRawEntityList(isPropertyVisibleInRawEntityList(propertyDescriptor));
-				result.put(propertyDescriptor.getName(), propertyDescriptor);
+				result.add(propertyDescriptor);
 			}
 			resultSet.close();
 			return result;
@@ -111,8 +112,10 @@ class DiscoverEntityPropertiesAction {
 		case Types.TINYINT:
 		case Types.SMALLINT:
 		case Types.INTEGER:
-		case Types.BIGINT: // TODO: long
 			return IntegerType.instance;
+			
+		case Types.BIGINT:
+			return LongType.instance;
 			
 		case Types.CHAR:
 		case Types.NCHAR:

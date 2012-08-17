@@ -9,6 +9,7 @@ package name.martingeisse.admin.entity;
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilter;
 import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
+import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 
 /**
  * Utilities to access entity configuration in the {@link ApplicationConfiguration}.
@@ -34,6 +35,11 @@ public final class EntityConfigurationUtil {
 	 * The capability key for entity instance navigation contributors.
 	 */
 	public static final Class<IEntityNavigationContributor> ENTITY_NAVIGATION_CONTRIBUTOR_CAPABILITY_KEY = IEntityNavigationContributor.class;
+
+	/**
+	 * The capability key for entity search contributors.
+	 */
+	public static final Class<IEntitySearchContributor> ENTITY_SEARCH_CONTRIBUTOR_CAPABILITY_KEY = IEntitySearchContributor.class;
 
 	/**
 	 * Prevent instantiation.
@@ -102,4 +108,19 @@ public final class EntityConfigurationUtil {
 		return ApplicationConfiguration.get().getCapabilities().getIterable(ENTITY_NAVIGATION_CONTRIBUTOR_CAPABILITY_KEY);
 	}
 
+	/**
+	 * Adds the specified entity search contributor.
+	 * @param entitySearchContributor the entity search contributor to add
+	 */
+	public static void addEntitySearchContributor(final IEntitySearchContributor entitySearchContributor) {
+		ApplicationConfiguration.get().getCapabilities().add(ENTITY_SEARCH_CONTRIBUTOR_CAPABILITY_KEY, entitySearchContributor);
+	}
+
+	/**
+	 * @return an {@link Iterable} for all entity search contributors.
+	 */
+	public static Iterable<IEntitySearchContributor> getEntitySearchContributors() {
+		return ApplicationConfiguration.get().getCapabilities().getIterable(ENTITY_SEARCH_CONTRIBUTOR_CAPABILITY_KEY);
+	}
+	
 }

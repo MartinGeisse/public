@@ -21,10 +21,14 @@ import org.apache.wicket.util.string.StringValue;
 
 /**
  * This handler is intended for use within entity-local
- * navigation trees, and especially the general template
- * for such trees. When the template is cloned for an entity,
- * this handler receives the entity name and stores it
- * in an implicit page parameter called "entity".
+ * navigation trees, and especially to build generic
+ * nodes for multiple entities. This handler stores the
+ * entity name, so mounted page can obtain the node and then
+ * the entity name.
+ * 
+ * Note: The entity name is not directly stored as a page
+ * parameter since only the navigation path is secured against
+ * manipulation of the URL by the user.
  * 
  * This handler expects to obtain an entity ID. This can be done
  * either by having the page implement {@link IGetEntityId}, or
@@ -32,6 +36,11 @@ import org.apache.wicket.util.string.StringValue;
  */
 public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePageNavigationHandler implements IEntityNameAware {
 
+	/**
+	 * the entityName
+	 */
+	private String entityName;
+	
 	/**
 	 * Constructor.
 	 * @param pageClass the page class
@@ -45,8 +54,7 @@ public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePag
 	 */
 	@Override
 	public String getEntityName() {
-		final StringValue value = getImplicitPageParameters().get("entity");
-		return (value == null ? null : value.toString());
+		return entityName;
 	}
 
 	/* (non-Javadoc)
@@ -54,9 +62,7 @@ public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePag
 	 */
 	@Override
 	public void setEntityName(final String entityName) {
-		// TODO: make sure the URL cannot override this parameter (security!)
-		getImplicitPageParameters().remove("entity");
-		getImplicitPageParameters().add("entity", entityName);
+		this.entityName = entityName;
 	}
 
 	/**

@@ -16,7 +16,7 @@ import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNameAware;
 import name.martingeisse.admin.entity.IEntityNavigationContributor;
-import name.martingeisse.admin.entity.component.list.raw.RawEntityListPanel_DataTables;
+import name.martingeisse.admin.entity.component.list.raw.RawEntityListPanel;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
@@ -123,6 +123,7 @@ public class ApplicationSchema {
 		buildEntityDescriptors();
 		detectEntityReferences();
 		createNavigation();
+		initializeSearchStrategies();
 	}
 	
 	/**
@@ -154,7 +155,7 @@ public class ApplicationSchema {
 	 */
 	private void detectEntityReferences() {
 		for (EntityDescriptor entity : entityDescriptors) {
-			for (EntityPropertyDescriptor property : entity.getProperties().values()) {
+			for (EntityPropertyDescriptor property : entity.getPropertiesInDatabaseOrder()) {
 				String propertyName = property.getName();
 				for (IEntityReferenceDetector detector : EntityConfigurationUtil.getEntityReferenceDetectors()) {
 					String destinationName = detector.detectEntityReference(this, entity.getName(), entity.getTableName(), propertyName);
@@ -215,7 +216,7 @@ public class ApplicationSchema {
 		for (EntityDescriptor entity : entityDescriptors) {
 			
 			// create a child node of "All Entities" for this entity
-			NavigationNode adHocListNode = allEntitiesNode.getChildFactory().createEntityListPanelChild(entity.getName(), entity.getDisplayName(), RawEntityListPanel_DataTables.class, entity.getName());
+			NavigationNode adHocListNode = allEntitiesNode.getChildFactory().createEntityListPanelChild(entity.getName(), entity.getDisplayName(), RawEntityListPanel.class, entity.getName());
 			
 			// use the declared canonical list node if any, or the ad-hoc node as a fallback
 			final String entityName = entity.getName();
@@ -252,4 +253,13 @@ public class ApplicationSchema {
 		
 	}
 
+	/**
+	 * Initializes the search strategies for all entities.
+	 */
+	private void initializeSearchStrategies() {
+		for (EntityDescriptor entity : entityDescriptors) {
+			entity.initializeSearchStrategy();
+		}
+	}
+	
 }

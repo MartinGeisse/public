@@ -2,20 +2,18 @@
 <html>
 	<body>
 		<wicket:panel>
-			<table class="data-grid" style="min-width: 100%; ">
-				<tr>
-					<th wicket:id="headers">
-						<span wicket:id="name" />
-					</th>
-				</tr>
-				<tr wicket:id="rows">
-					<td wicket:id="cells">
-						<a wicket:id="link">
-							<span wicket:id="value" />
-						</a>
-					</td>
-				</tr>
-			</table>
+			<div class="server-to-client-data" wicket:id="configuration" />
+			<div class="data-table-container">
+				<table class="data-grid" style="min-width: 100%; ">
+					<thead>
+						<tr>
+							<th wicket:id="headers">
+								<span wicket:id="name" />
+							</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
 		</wicket:panel>
 	</body>
 </html>

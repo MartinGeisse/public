@@ -17,9 +17,6 @@ import name.martingeisse.admin.component.pagebar.IPageBarFactory;
 import name.martingeisse.common.util.SpecialHandlingList;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
-import org.apache.wicket.markup.html.link.ExternalLink;
-import org.apache.wicket.markup.html.link.ILinkListener;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**

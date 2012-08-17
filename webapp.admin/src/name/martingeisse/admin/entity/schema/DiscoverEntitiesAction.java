@@ -71,7 +71,7 @@ class DiscoverEntitiesAction {
 				DiscoverEntityPropertiesAction subAction = new DiscoverEntityPropertiesAction();
 				subAction.setConnection(connection);
 				subAction.setEntity(entityDescriptor);
-				entityDescriptor.setProperties(subAction.execute());
+				entityDescriptor.initializeProperties(subAction.execute());
 			}
 			
 			// fetch the primary key for each table
@@ -89,7 +89,7 @@ class DiscoverEntitiesAction {
 				}
 				
 				// using the name, get column meta-data previously fetched
-				EntityPropertyDescriptor idPropertyDescriptor = entityDescriptor.getProperties().get(idColumnName);
+				EntityPropertyDescriptor idPropertyDescriptor = entityDescriptor.getPropertiesByName().get(idColumnName);
 				if (idPropertyDescriptor == null) {
 					throw new IllegalStateException("table meta-data of table " + entityDescriptor.getTableName() + " specified column " + idColumnName + " as its ID column, but no such column exists in the property descriptors");
 				}

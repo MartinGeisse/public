@@ -12,6 +12,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.mysema.query.types.Ops;
+
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
@@ -23,6 +25,9 @@ import name.martingeisse.admin.entity.IEntityListFieldOrder;
 import name.martingeisse.admin.entity.IEntityNavigationContributor;
 import name.martingeisse.admin.entity.PrefixEliminatingEntityNameMappingStrategy;
 import name.martingeisse.admin.entity.component.instance.RawEntityPresentationPanel;
+import name.martingeisse.admin.entity.list.EntityConditions;
+import name.martingeisse.admin.entity.list.EntityListFilter;
+import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.property.ExplicitEntityPropertyFilter;
 import name.martingeisse.admin.entity.property.SingleEntityPropertyFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
@@ -30,6 +35,8 @@ import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.database.MysqlDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.reference.FixedNameEntityReferenceDetector;
+import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
+import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
@@ -135,6 +142,36 @@ public class Main {
 			public void contributeNavigationNodes(EntityDescriptor entity, NavigationNode mainEntityInstanceNode) {
 				mainEntityInstanceNode.setHandler(new EntityInstancePanelHandler(RawEntityPresentationPanel.class));
 			}
+		});
+		
+		// test raw entity presentation column order
+//		EntityConfigurationUtil.getGeneralEntityConfiguration().setEntityListFieldOrder(new IEntityListFieldOrder() {
+//			@Override
+//			public int compare(EntityPropertyDescriptor prop1, EntityPropertyDescriptor prop2) {
+//				return prop1.getName().compareTo(prop2.getName());
+//			}
+//		});
+		
+		// test entity search support
+		EntityConfigurationUtil.addEntitySearchContributor(new IEntitySearchContributor() {
+			
+			@Override
+			public IEntitySearchStrategy getSearchStrategy(EntityDescriptor entity) {
+				return new IEntitySearchStrategy() {
+					@Override
+					public IEntityListFilter createFilter(EntityDescriptor entity, String searchTerm) {
+						EntityConditions conditions = new EntityConditions();
+						conditions.addFieldComparison("name", Ops.LIKE, "%" + searchTerm.replace("%", "") + "%");
+						return new EntityListFilter(conditions);
+					}
+				};
+			}
+			
+			@Override
+			public int getScore(EntityDescriptor entity) {
+				return (entity.getPropertiesByName().get("name") == null ? Integer.MIN_VALUE : 0);
+			}
+			
 		});
 		
 		// run

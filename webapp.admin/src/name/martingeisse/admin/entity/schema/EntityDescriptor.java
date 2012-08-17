@@ -21,9 +21,12 @@ import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.IEntityNameMappingStrategy;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.instance.FetchEntityInstanceAction;
+import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.property.type.IEntityIdType;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
+import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
+import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.common.datarow.AbstractDataRowMetaHolder;
 import name.martingeisse.common.datarow.DataRowMeta;
@@ -39,13 +42,6 @@ import com.mysema.query.sql.SQLQueryImpl;
  * 
  * ID handling: This descriptor stores information about the entity ID (primary
  * key). Currently only single-column IDs are supported.
- * 
- * TODO: Raw table uses different order for names, values
- * Values do not use configured raw table field order; ResultSetReader did that.
- * Make order configurable at all? Database Order is enough for a quick preview,
- * anything else uses a custom view anyway. OTOH EntityInstance/DataRow should
- * support getting a field by name, so using a configurable order should be simple,
- * even if not useful.
  */
 public class EntityDescriptor {
 
@@ -80,9 +76,14 @@ public class EntityDescriptor {
 	private IEntityIdType idColumnType;
 
 	/**
-	 * the properties
+	 * the propertiesInDatabaseOrder
 	 */
-	private Map<String, EntityPropertyDescriptor> properties;
+	private List<EntityPropertyDescriptor> propertiesInDatabaseOrder;
+
+	/**
+	 * the propertiesByName
+	 */
+	private Map<String, EntityPropertyDescriptor> propertiesByName;
 
 	/**
 	 * the incomingReferences
@@ -108,12 +109,17 @@ public class EntityDescriptor {
 	 * the dataRowMeta
 	 */
 	private DataRowMeta dataRowMeta;
+	
+	/**
+	 * the searchStrategy
+	 */
+	private IEntitySearchStrategy searchStrategy;
 
 	/**
 	 * Constructor.
 	 */
 	public EntityDescriptor() {
-		this.properties = new HashMap<String, EntityPropertyDescriptor>();
+		this.propertiesByName = new HashMap<String, EntityPropertyDescriptor>();
 		this.incomingReferences = new ArrayList<EntityReferenceInfo>();
 		this.outgoingReferences = new ArrayList<EntityReferenceInfo>();
 	}
@@ -209,19 +215,30 @@ public class EntityDescriptor {
 	}
 
 	/**
-	 * Getter method for the properties.
-	 * @return the properties
+	 * Getter method for the propertiesInDatabaseOrder.
+	 * @return the propertiesInDatabaseOrder
 	 */
-	public Map<String, EntityPropertyDescriptor> getProperties() {
-		return properties;
+	public List<EntityPropertyDescriptor> getPropertiesInDatabaseOrder() {
+		return propertiesInDatabaseOrder;
 	}
 
 	/**
-	 * Setter method for the properties.
-	 * @param properties the properties to set
+	 * Getter method for the propertiesByName.
+	 * @return the propertiesByName
 	 */
-	public void setProperties(final Map<String, EntityPropertyDescriptor> properties) {
-		this.properties = properties;
+	public Map<String, EntityPropertyDescriptor> getPropertiesByName() {
+		return propertiesByName;
+	}
+	
+	/**
+	 * Initializes the properties (both in database order and by-name mapping).
+	 */
+	void initializeProperties(List<EntityPropertyDescriptor> propertiesInDatabaseOrder) {
+		this.propertiesInDatabaseOrder = propertiesInDatabaseOrder;
+		this.propertiesByName = new HashMap<String, EntityPropertyDescriptor>();
+		for (EntityPropertyDescriptor propertyDescriptor : propertiesInDatabaseOrder) {
+			propertiesByName.put(propertyDescriptor.getName(), propertyDescriptor);
+		}
 	}
 
 	/**
@@ -311,10 +328,10 @@ public class EntityDescriptor {
 	 * {@link IllegalArgumentException}.
 	 * @return the navigation node
 	 */
-	public NavigationNode getInstanceNavigationNode(String... subpathSegments) {
+	public NavigationNode getInstanceNavigationNode(final String... subpathSegments) {
 		NavigationNode node = instanceNavigationRootNode;
-		for (String segment : subpathSegments) {
-			NavigationNode child = node.findChildById(segment);
+		for (final String segment : subpathSegments) {
+			final NavigationNode child = node.findChildById(segment);
 			if (child == null) {
 				throw new IllegalArgumentException("subpath segment '" + segment + "' not found in node " + node.getPath());
 			}
@@ -322,7 +339,7 @@ public class EntityDescriptor {
 		}
 		return node;
 	}
-	
+
 	/**
 	 * Fetches a single instance of this entity.
 	 * 
@@ -365,7 +382,7 @@ public class EntityDescriptor {
 
 		// determine the list of visible fields
 		final List<EntityPropertyDescriptor> fieldOrder = new ArrayList<EntityPropertyDescriptor>();
-		for (final EntityPropertyDescriptor property : properties.values()) {
+		for (final EntityPropertyDescriptor property : propertiesInDatabaseOrder) {
 			if (property.isVisibleInRawEntityList()) {
 				fieldOrder.add(property);
 			}
@@ -462,4 +479,43 @@ public class EntityDescriptor {
 		return dataRowMeta;
 	}
 
+	/**
+	 * Checks whether a search strategy is installed for this entity.
+	 * @return true if searching is supported, false if not
+	 */
+	public boolean isSearchSupported() {
+		return (searchStrategy != null);
+	}
+	
+	/**
+	 * Creates an entity list filter for this entity and for the specified search term,
+	 * or null if no useful filter can be found for the search term.
+	 * @param searchTerm the search term
+	 * @return the filter
+	 */
+	public IEntityListFilter createSearchFilter(String searchTerm) {
+		return (searchStrategy == null ? null : searchStrategy.createFilter(this, searchTerm));
+	}
+
+	/**
+	 * Initializes the search strategy for this entity from the application configuration.
+	 */
+	public void initializeSearchStrategy() {
+		int maxScore = Integer.MIN_VALUE;
+		IEntitySearchContributor maxScoreContributor = null;
+		for (IEntitySearchContributor contributor : EntityConfigurationUtil.getEntitySearchContributors()) {
+			int score = contributor.getScore(this);
+			if (score > maxScore) {
+				maxScoreContributor = contributor;
+				maxScore = score;
+			}
+		}
+		if (maxScoreContributor != null) {
+			this.searchStrategy = maxScoreContributor.getSearchStrategy(this);
+			if (this.searchStrategy == null) {
+				throw new RuntimeException("winning IEntitySearchContributor (" + maxScoreContributor + ") for entity " + getName() + " returned null");
+			}
+		}
+	}
+	
 }
