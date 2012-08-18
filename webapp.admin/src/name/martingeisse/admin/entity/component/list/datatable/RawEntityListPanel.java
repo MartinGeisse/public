@@ -28,7 +28,7 @@ import com.mysema.query.types.Path;
  * implement {@link IGetPageable} intentionally since pagination is done in
  * Javascript.
  */
-public class RawEntityListPanel extends AbstractEntityDataTablePanel {
+public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTableColumnDescriptor> {
 
 	/**
 	 * the renderers
@@ -48,8 +48,13 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel {
 	 * @see name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel#getColumnTitles()
 	 */
 	@Override
-	protected String[] getColumnTitles() {
-		return getEntityDescriptor().getRawEntityListFieldOrder();
+	protected RawDataTableColumnDescriptor[] determineColumnDescriptors() {
+		String[] columnNames = getEntityDescriptor().getRawEntityListFieldOrder();
+		RawDataTableColumnDescriptor[] result = new RawDataTableColumnDescriptor[columnNames.length];
+		for (int i=0; i<columnNames.length; i++) {
+			result[i] = new RawDataTableColumnDescriptor(columnNames[i], columnNames[i]);
+		}
+		return result;
 	}
 
 	/**
@@ -59,7 +64,7 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel {
 	 * @return the field name
 	 */
 	String getFieldNameForGloballyDefinedOrder(final int index) {
-		return getColumnTitlesLazy()[index];
+		return getColumnDescriptor(index).getTitle();
 	}
 
 	/* (non-Javadoc)
@@ -71,10 +76,10 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel {
 
 		// determine the column renderers
 		final EntityDescriptor entity = getEntityDescriptor();
-		final String[] fieldOrder = getColumnTitlesLazy();
+		final DataTableColumnDescriptor[] fieldOrder = determineColumnDescriptors();
 		renderers = new IPropertyReadOnlyRenderer[fieldOrder.length];
 		for (int i = 0; i < fieldOrder.length; i++) {
-			final EntityPropertyDescriptor property = entity.getPropertiesByName().get(fieldOrder[i]);
+			final EntityPropertyDescriptor property = entity.getPropertiesByName().get(fieldOrder[i].getTitle());
 			renderers[i] = ReadOnlyRenderingConfigurationUtil.createPropertyReadOnlyRenderer(property.getType());
 			if (renderers[i] == null) {
 				throw new RuntimeException("no renderer");
@@ -97,10 +102,10 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel {
 	 */
 	@Override
 	protected void assembleRowFields(final EntityInstance entityInstance, final JavascriptAssembler assembler) {
-		final String[] fieldOrder = getColumnTitlesLazy();
+		final DataTableColumnDescriptor[] fieldOrder = getColumnDescriptors();
 		for (int i = 0; i < getColumnCount(); i++) {
 			assembler.prepareListElement();
-			assembler.appendStringLiteral(renderers[i].valueToString(entityInstance.getFieldValue(fieldOrder[i])));
+			assembler.appendStringLiteral(renderers[i].valueToString(entityInstance.getFieldValue(fieldOrder[i].getTitle())));
 		}
 		assembler.prepareListElement();
 		assembler.appendStringLiteral(entityInstance.getId() == null ? null : LinkUtil.getSingleEntityLinkUrl(getEntityDescriptor(), entityInstance.getId()));

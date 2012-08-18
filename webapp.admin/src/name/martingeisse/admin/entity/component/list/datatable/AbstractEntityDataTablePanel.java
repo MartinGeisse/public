@@ -46,8 +46,10 @@ import com.mysema.query.types.Predicate;
  * Base class for entity lists that are implemented with jQuery DataTables.
  * This class does not implement {@link IGetPageable} intentionally since
  * pagination is done in Javascript.
+ * 
+ * @param <CD> the column descriptor type
  */
-public abstract class AbstractEntityDataTablePanel extends Panel implements IEntityListFilterAcceptor, ISimpleCallbackListener {
+public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDescriptor> extends Panel implements IEntityListFilterAcceptor, ISimpleCallbackListener {
 
 	/**
 	 * the filter
@@ -57,7 +59,7 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 	/**
 	 * the cachedColumnTitles
 	 */
-	private transient String[] cachedColumnTitles;
+	private transient CD[] cachedColumnTitles;
 
 	/**
 	 * Constructor.
@@ -122,7 +124,7 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 		add(new Loop("headers", new PropertyModel<Integer>(AbstractEntityDataTablePanel.this, "columnCount")) {
 			@Override
 			protected void populateItem(final LoopItem item) {
-				item.add(new Label("name", getColumnTitlesLazy()[item.getIndex()]));
+				item.add(new Label("name", getColumnDescriptors()[item.getIndex()].getTitle()));
 			}
 		});
 		add(new Label("configuration", assembler.getAssembledCode()));
@@ -148,29 +150,39 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 	}
 	
 	/**
-	 * On-demand cached version of getColumnTitles().
-	 * @return the column titles.
+	 * @return the number of columns of the DataTable, as specified by getColumnTitles().
 	 */
-	protected final String[] getColumnTitlesLazy() {
+	public final int getColumnCount() {
+		return getColumnDescriptors().length;
+	}
+	
+	/**
+	 * Returns the column descriptors. This method basically calls
+	 * determineColumnDescriptors() but uses a cache for the return value. 
+	 * @return the column descriptors.
+	 */
+	protected final CD[] getColumnDescriptors() {
 		if (cachedColumnTitles == null) {
-			cachedColumnTitles = getColumnTitles();
+			cachedColumnTitles = determineColumnDescriptors();
 		}
 		return cachedColumnTitles;
 	}
 	
 	/**
-	 * @return the number of columns of the DataTable, as specified by getColumnTitles().
+	 * Returns the column descriptor with the specified index.
+	 * @param columnIndex the column index
+	 * @return the column descriptor
 	 */
-	public final int getColumnCount() {
-		return getColumnTitlesLazy().length;
+	protected final CD getColumnDescriptor(int columnIndex) {
+		return getColumnDescriptors()[columnIndex];
 	}
 	
 	/**
-	 * Subclasses must implement this method to return the titles for the
-	 * columns. This also indicates the number of columns.
-	 * @return the column titles.
+	 * Subclasses must implement this method to return the descriptors for the
+	 * table columns. This also indicates the number of columns.
+	 * @return the column descriptors.
 	 */
-	protected abstract String[] getColumnTitles();
+	protected abstract CD[] determineColumnDescriptors();
 
 	/**
 	 * Returns a comparable column expression for the specified column index, used

@@ -7,6 +7,7 @@
 package name.martingeisse.admin.customization;
 
 import name.martingeisse.admin.entity.component.list.datatable.AbstractJsonRenderingEntityDataTablePanel;
+import name.martingeisse.admin.entity.component.list.datatable.DataTableColumnDescriptor;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
@@ -31,11 +32,15 @@ public class RenderedEntityDataTablePanelTest extends AbstractJsonRenderingEntit
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.entity.component.list.AbstractJsonRenderingEntityDataTablePanel#getColumnTitles()
+	 * @see name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel#determineColumnDescriptors()
 	 */
 	@Override
-	protected String[] getColumnTitles() {
-		return new String[] {"foo", "bar", "fupp"};
+	protected DataTableColumnDescriptor[] determineColumnDescriptors() {
+		return new DataTableColumnDescriptor[] {
+			new DataTableColumnDescriptor("foo"),
+			new DataTableColumnDescriptor("bar"),
+			new DataTableColumnDescriptor("fupp"),
+		};
 	}
 
 	/* (non-Javadoc)
