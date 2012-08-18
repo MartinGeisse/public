@@ -6,8 +6,8 @@
 
 package name.martingeisse.admin.customization;
 
-import name.martingeisse.admin.entity.component.list.datatable.AbstractJsonRenderingEntityDataTablePanel;
 import name.martingeisse.admin.entity.component.list.datatable.DataTableColumnDescriptor;
+import name.martingeisse.admin.entity.component.list.datatable.render.AbstractJsonRenderingEntityDataTablePanel;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 

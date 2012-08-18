@@ -4,8 +4,10 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.component.list.datatable;
+package name.martingeisse.admin.entity.component.list.datatable.raw;
 
+import name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel;
+import name.martingeisse.admin.entity.component.list.datatable.DataTableColumnDescriptor;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;

@@ -4,7 +4,9 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.component.list.datatable;
+package name.martingeisse.admin.entity.component.list.datatable.raw;
+
+import name.martingeisse.admin.entity.component.list.datatable.DataTableColumnDescriptor;
 
 /**
  * Specialized column descriptor class for {@link RawEntityListPanel}.
