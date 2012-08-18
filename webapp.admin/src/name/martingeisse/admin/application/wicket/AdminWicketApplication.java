@@ -68,12 +68,6 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		logger.trace("ApplicationSchema initialized");
 
 		// initialize module-specific data
-		// TODO: move the code below to a module (instead of centralized) location.
-		// We need a way to control the order in which initialization steps happen --
-		// maybe use an event broadcasting system for that: When a step is finished,
-		// it broadcasts an event; other steps that are now ready to run register
-		// themselves to run (or run immediately ?); steps with multiple dependencies
-		// set a flag on each event and (register to) run when all flags are set.
 		logger.trace("running post-schema initialization...");
 		ReadOnlyRenderingConfigurationUtil.prepareConfiguration();
 		NavigationConfigurationUtil.getNavigationTree().prepare();
