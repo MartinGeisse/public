@@ -15,7 +15,7 @@ import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNameAware;
-import name.martingeisse.admin.entity.component.list.raw.RawEntityListPanel;
+import name.martingeisse.admin.entity.component.list.datatable.RawEntityListPanel;
 import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;

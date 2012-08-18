@@ -4,10 +4,11 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.component.list;
+package name.martingeisse.admin.entity.component.list.datatable;
 
 import java.util.Iterator;
 
+import name.martingeisse.admin.entity.component.list.EntityInstanceDataProvider;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.EntityListFilter;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
@@ -22,8 +23,13 @@ import name.martingeisse.wicket.util.StringValueUtil;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.list.Loop;
+import org.apache.wicket.markup.html.list.LoopItem;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -47,6 +53,11 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 	 * the filter
 	 */
 	private IEntityListFilter filter;
+	
+	/**
+	 * the cachedColumnTitles
+	 */
+	private transient String[] cachedColumnTitles;
 
 	/**
 	 * Constructor.
@@ -90,10 +101,76 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 		this.filter = filter;
 	}
 
-	/**
-	 * @return the number of columns of the DataTable
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.Component#onInitialize()
 	 */
-	protected abstract int getColumnCount();
+	@Override
+	protected void onInitialize() {
+		super.onInitialize();
+		setOutputMarkupId(true);
+
+		// assemble the JSON configuration for our home-grown initialization function
+		final JavascriptAssembler assembler = new JavascriptAssembler();
+		assembler.beginObject();
+		assembler.prepareObjectProperty("url");
+		assembler.appendStringLiteral(getCallbackUrl());
+		assembler.prepareObjectProperty("showSearchField");
+		assembler.appendBooleanLiteral(isSearchSupported());
+		assembler.endObject();
+
+		// create components
+		add(new Loop("headers", new PropertyModel<Integer>(AbstractEntityDataTablePanel.this, "columnCount")) {
+			@Override
+			protected void populateItem(final LoopItem item) {
+				item.add(new Label("name", getColumnTitlesLazy()[item.getIndex()]));
+			}
+		});
+		add(new Label("configuration", assembler.getAssembledCode()));
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.Component#renderHead(org.apache.wicket.markup.html.IHeaderResponse)
+	 */
+	@Override
+	public void renderHead(final IHeaderResponse response) {
+		super.renderHead(response);
+		response.renderOnDomReadyJavaScript("$('#" + getMarkupId() + "').createRawEntityTable();\n");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.Component#onDetach()
+	 */
+	@Override
+	protected void onDetach() {
+		cachedColumnTitles = null;
+		super.onDetach();
+	}
+	
+	/**
+	 * On-demand cached version of getColumnTitles().
+	 * @return the column titles.
+	 */
+	protected final String[] getColumnTitlesLazy() {
+		if (cachedColumnTitles == null) {
+			cachedColumnTitles = getColumnTitles();
+		}
+		return cachedColumnTitles;
+	}
+	
+	/**
+	 * @return the number of columns of the DataTable, as specified by getColumnTitles().
+	 */
+	public final int getColumnCount() {
+		return getColumnTitlesLazy().length;
+	}
+	
+	/**
+	 * Subclasses must implement this method to return the titles for the
+	 * columns. This also indicates the number of columns.
+	 * @return the column titles.
+	 */
+	protected abstract String[] getColumnTitles();
 
 	/**
 	 * Returns a comparable column expression for the specified column index, used
@@ -104,12 +181,30 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 	protected abstract Expression<Comparable<?>> getColumnSortExpression(int columnIndex);
 
 	/**
+	 * Subclasses may implement this method to indicate whether they are capable
+	 * of creating a search predicate for a search term from the user.
+	 * This class uses the result to enable or disable the search field.
+	 * 
+	 * The default implementation asks the entity descriptor for search capability.
+	 * 
+	 * @return true to enable the search field, false to disable
+	 */
+	protected boolean isSearchSupported() {
+		return getEntityDescriptor().isSearchSupported();
+	}
+	
+	/**
 	 * Returns a predicate to filter rows for the specified search term.
 	 * May return null to indicate no filtering.
+	 * 
+	 * The default implementation asks the entity descriptor for search capability.
+	 * 
 	 * @param searchTerm the search term
 	 * @return the search predicate
 	 */
-	protected abstract Predicate getSearchPredicate(String searchTerm);
+	protected Predicate getSearchPredicate(String searchTerm) {
+		return getEntityDescriptor().createSearchFilter(searchTerm).getFilterPredicate();
+	}
 
 	/**
 	 * This method should use the specified assembler to generate data for
@@ -128,6 +223,23 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 	 */
 	protected abstract void assembleRowFields(EntityInstance entityInstance, JavascriptAssembler assembler);
 
+	/**
+	 * Generates an array of arrays for the rows from the specified iterator.
+	 * @param iterator the iterator to take data from
+	 * @param assembler the assembler used to assemble JSON code
+	 */
+	protected void assembleRows(final Iterator<? extends EntityInstance> iterator, JavascriptAssembler assembler) {
+		assembler.beginList();
+		while (iterator.hasNext()) {
+			final EntityInstance entityInstance = iterator.next();
+			assembler.prepareListElement();
+			assembler.beginList();
+			assembleRowFields(entityInstance, assembler);
+			assembler.endList();
+		}
+		assembler.endList();
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.wicket.util.ISimpleCallbackListener#onSimpleCallback()
 	 */
@@ -161,7 +273,7 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 			orderSpecifierCount++;
 		}
 		if (orderSpecifierCount < orderSpecifiers.length) {
-			orderSpecifiers = GenericTypeUtil.unsafeCast((Comparable<?>[])ArrayUtils.subarray(orderSpecifiers, 0, orderSpecifierCount));
+			orderSpecifiers = GenericTypeUtil.unsafeCast((OrderSpecifier<?>[])ArrayUtils.subarray(orderSpecifiers, 0, orderSpecifierCount));
 		}
 
 		// determine search parameters
@@ -201,15 +313,7 @@ public abstract class AbstractEntityDataTablePanel extends Panel implements IEnt
 		assembler.prepareObjectProperty("iTotalDisplayRecords");
 		assembler.appendNumericLiteral(sizeWithBothFilters);
 		assembler.prepareObjectProperty("aaData");
-		assembler.beginList();
-		while (iterator.hasNext()) {
-			final EntityInstance entityInstance = iterator.next();
-			assembler.prepareListElement();
-			assembler.beginList();
-			assembleRowFields(entityInstance, assembler);
-			assembler.endList();
-		}
-		assembler.endList();
+		assembleRows(iterator, assembler);
 		assembler.endObject();
 
 		// send the output to the browser

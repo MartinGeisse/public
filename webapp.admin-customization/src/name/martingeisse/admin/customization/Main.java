@@ -12,8 +12,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.mysema.query.types.Ops;
-
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
@@ -40,6 +38,7 @@ import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
+import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.wicket.autoform.AutoformPanel;
@@ -47,6 +46,8 @@ import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociate
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
+
+import com.mysema.query.types.Ops;
 
 /**
  * The main class.
@@ -261,6 +262,8 @@ public class Main {
 //			root.createChild(new EntityListPanelHandler(RawEntityListPanel.class, "acl_roles").setFilter(condition).setId("roles_cond").setTitle("ConditionTest"));
 //		}
 		*/
+
+		root.getChildFactory().createChild("tabletest", "TableTest", new EntityListPanelHandler(RenderedEntityDataTablePanelTest.class, "settings"));
 		
 		NavigationTabBarFactory.apply(root.findChildById("sub-one"));
 		

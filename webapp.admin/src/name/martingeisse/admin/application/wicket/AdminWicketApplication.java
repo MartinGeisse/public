@@ -14,9 +14,17 @@ import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
+import name.martingeisse.wicket.util.json.JsonEncodingContainer;
 
 import org.apache.log4j.Logger;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.MarkupStream;
+import org.apache.wicket.markup.WicketTag;
+import org.apache.wicket.markup.parser.filter.WicketTagIdentifier;
+import org.apache.wicket.markup.resolver.IComponentResolver;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
@@ -37,6 +45,12 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 	@Override
 	protected void init() {
 		logger.debug("AdminWicketApplication.init(): begin");
+
+		// register custom wicket:* tags
+		logger.trace("registering custom tags...");
+		WicketTagIdentifier.registerWellKnownTagName("json");
+		getPageSettings().addComponentResolver(new JsonComponentResolver());
+		logger.trace("custom tags registered");
 
 		// superclass initialization
 		logger.trace("initializing base application class...");
@@ -115,6 +129,28 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 	@Override
 	public Class<? extends Page> getHomePage() {
 		return HomePage.class;
+	}
+
+	/**
+	 * This resolver knows wicket:json tags and adds a {@link JsonEncodingContainer} for them.
+	 */
+	private static class JsonComponentResolver implements IComponentResolver {
+
+		/* (non-Javadoc)
+		 * @see org.apache.wicket.markup.resolver.IComponentResolver#resolve(org.apache.wicket.MarkupContainer, org.apache.wicket.markup.MarkupStream, org.apache.wicket.markup.ComponentTag)
+		 */
+		@Override
+		public Component resolve(final MarkupContainer container, final MarkupStream markupStream, final ComponentTag tag) {
+			if (tag instanceof WicketTag) {
+				final WicketTag wicketTag = (WicketTag)tag;
+				if ("json".equalsIgnoreCase(wicketTag.getName()) && (wicketTag.getNamespace() != null)) {
+					final String id = tag.getId() + "-" + container.getPage().getAutoIndex();
+					return new JsonEncodingContainer(id);
+				}
+			}
+			return null;
+		}
+
 	}
 
 }

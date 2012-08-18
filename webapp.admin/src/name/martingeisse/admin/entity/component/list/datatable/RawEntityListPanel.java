@@ -4,9 +4,8 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.component.list.raw;
+package name.martingeisse.admin.entity.component.list.datatable;
 
-import name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
@@ -18,17 +17,11 @@ import name.martingeisse.admin.util.LinkUtil;
 import name.martingeisse.common.javascript.JavascriptAssembler;
 import name.martingeisse.common.util.GenericTypeUtil;
 
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.list.Loop;
-import org.apache.wicket.markup.html.list.LoopItem;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
 
 import com.mysema.query.support.Expressions;
 import com.mysema.query.types.Expression;
 import com.mysema.query.types.Path;
-import com.mysema.query.types.Predicate;
 
 /**
  * Raw presentation of entities, using JQuery DataTables. This class does not
@@ -52,11 +45,11 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel#getColumnCount()
+	 * @see name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel#getColumnTitles()
 	 */
 	@Override
-	public int getColumnCount() {
-		return getEntityDescriptor().getRawEntityListFieldOrder().length;
+	protected String[] getColumnTitles() {
+		return getEntityDescriptor().getRawEntityListFieldOrder();
 	}
 
 	/**
@@ -66,35 +59,7 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel {
 	 * @return the field name
 	 */
 	String getFieldNameForGloballyDefinedOrder(final int index) {
-		return getEntityDescriptor().getRawEntityListFieldOrder()[index];
-	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.wicket.Component#onInitialize()
-	 */
-	@Override
-	protected void onInitialize() {
-		super.onInitialize();
-		setOutputMarkupId(true);
-
-		// assemble the JSON configuration for our home-grown initialization function
-		final JavascriptAssembler assembler = new JavascriptAssembler();
-		assembler.beginObject();
-		assembler.prepareObjectProperty("url");
-		assembler.appendStringLiteral(getCallbackUrl());
-		assembler.prepareObjectProperty("showSearchField");
-		assembler.appendBooleanLiteral(isSearchSupported());
-		assembler.endObject();
-
-		// create components
-		add(new Loop("headers", new PropertyModel<Integer>(RawEntityListPanel.this, "columnCount")) {
-			@Override
-			protected void populateItem(final LoopItem item) {
-				item.add(new Label("name", getFieldNameForGloballyDefinedOrder(item.getIndex())));
-			}
-		});
-		add(new Label("configuration", assembler.getAssembledCode()));
-
+		return getColumnTitlesLazy()[index];
 	}
 
 	/* (non-Javadoc)
@@ -106,7 +71,7 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel {
 
 		// determine the column renderers
 		final EntityDescriptor entity = getEntityDescriptor();
-		final String[] fieldOrder = entity.getRawEntityListFieldOrder();
+		final String[] fieldOrder = getColumnTitlesLazy();
 		renderers = new IPropertyReadOnlyRenderer[fieldOrder.length];
 		for (int i = 0; i < fieldOrder.length; i++) {
 			final EntityPropertyDescriptor property = entity.getPropertiesByName().get(fieldOrder[i]);
@@ -119,15 +84,6 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.wicket.Component#renderHead(org.apache.wicket.markup.html.IHeaderResponse)
-	 */
-	@Override
-	public void renderHead(final IHeaderResponse response) {
-		super.renderHead(response);
-		response.renderOnDomReadyJavaScript("$('#" + getMarkupId() + "').createRawEntityTable();\n");
-	}
-
-	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel#getColumnSortExpression(int)
 	 */
 	@Override
@@ -136,28 +92,12 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel {
 		return GenericTypeUtil.unsafeCast(Expressions.path(Comparable.class, entityPath, getFieldNameForGloballyDefinedOrder(columnIndex)));
 	}
 
-	/**
-	 * @return true if supported, false if not
-	 */
-	protected boolean isSearchSupported() {
-		return getEntityDescriptor().isSearchSupported();
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel#getSearchPredicate(java.lang.String)
-	 */
-	@Override
-	protected Predicate getSearchPredicate(final String searchTerm) {
-		return getEntityDescriptor().createSearchFilter(searchTerm).getFilterPredicate();
-	}
-
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel#assembleRowFields(name.martingeisse.admin.entity.instance.EntityInstance, name.martingeisse.common.javascript.JavascriptAssembler)
 	 */
 	@Override
 	protected void assembleRowFields(final EntityInstance entityInstance, final JavascriptAssembler assembler) {
-		final EntityDescriptor entity = entityInstance.getEntity();
-		final String[] fieldOrder = entity.getRawEntityListFieldOrder();
+		final String[] fieldOrder = getColumnTitlesLazy();
 		for (int i = 0; i < getColumnCount(); i++) {
 			assembler.prepareListElement();
 			assembler.appendStringLiteral(renderers[i].valueToString(entityInstance.getFieldValue(fieldOrder[i])));
