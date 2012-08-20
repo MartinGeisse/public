@@ -270,7 +270,7 @@ public class Main {
 		root.getChildFactory().createChild("tabletest", "TableTest", new EntityListPanelHandler(RenderedEntityDataTablePanelTest.class, "settings"));
 		
 		{
-			PopulatorColumnDescriptor column1 = new PopulatorColumnDescriptor("name", new RowFieldPopulator<EntityInstance>("name"));
+			PopulatorColumnDescriptor column1 = new PopulatorColumnDescriptor("name", "name", new RowFieldPopulator<EntityInstance>("name"));
 			PopulatorColumnDescriptor column2 = new PopulatorColumnDescriptor("value", new RowFieldPopulator<EntityInstance>("data"));
 			PopulatorColumnDescriptor[] columns = new PopulatorColumnDescriptor[] {column1, column2};
 			root.getChildFactory().createChild("tabletest2", "TableTest2", new PopulatorBasedEntityListHandler2("settings", columns));

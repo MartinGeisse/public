@@ -200,7 +200,8 @@ $.fn.createRawEntityTable = function() {
 			'bProcessing': true,
 			'bServerSide': true,
 			'sAjaxSource': configuration.url,
-			'sDom': domCode
+			'sDom': domCode,
+			'aoColumns': configuration.columns
 		});
 		
 		// register the click handler

@@ -25,6 +25,8 @@ import org.apache.wicket.model.IModel;
  * Populator-based presentation of entities. The calling code or the concrete
  * subclass must set the populators to use before onInitialize() of this class
  * is called.
+ * 
+ * TODO remove this class
  */
 public class PopulatorBasedEntityListPanel extends Panel implements IGetPageable {
 

@@ -7,7 +7,6 @@
 package name.martingeisse.admin.entity.component.list.datatable.raw;
 
 import name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel;
-import name.martingeisse.admin.entity.component.list.datatable.DataTableColumnDescriptor;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
@@ -68,10 +67,10 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 
 		// determine the column renderers
 		final EntityDescriptor entity = getEntityDescriptor();
-		final DataTableColumnDescriptor[] fieldOrder = determineColumnDescriptors();
+		final RawDataTableColumnDescriptor[] fieldOrder = determineColumnDescriptors();
 		renderers = new IPropertyReadOnlyRenderer[fieldOrder.length];
 		for (int i = 0; i < fieldOrder.length; i++) {
-			final EntityPropertyDescriptor property = entity.getPropertiesByName().get(fieldOrder[i].getTitle());
+			final EntityPropertyDescriptor property = entity.getPropertiesByName().get(fieldOrder[i].getFieldName());
 			renderers[i] = ReadOnlyRenderingConfigurationUtil.createPropertyReadOnlyRenderer(property.getType());
 			if (renderers[i] == null) {
 				throw new RuntimeException("no renderer");
@@ -81,12 +80,20 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 	}
 
 	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel#isColumnSortable(int)
+	 */
+	@Override
+	protected boolean isColumnSortable(int columnIndex) {
+		return true;
+	}
+	
+	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel#getColumnSortExpression(int)
 	 */
 	@Override
 	protected Expression<Comparable<?>> getColumnSortExpression(final int columnIndex) {
 		final Path<?> entityPath = Expressions.path(Object.class, IEntityListFilter.ALIAS);
-		return GenericTypeUtil.unsafeCast(Expressions.path(Comparable.class, entityPath, getColumnDescriptor(columnIndex).getTitle()));
+		return GenericTypeUtil.unsafeCast(Expressions.path(Comparable.class, entityPath, getColumnDescriptor(columnIndex).getFieldName()));
 	}
 
 	/* (non-Javadoc)
@@ -96,7 +103,7 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 	protected void assembleRowFields(final EntityInstance entityInstance, final JavascriptAssembler assembler) {
 		for (int i = 0; i < getColumnCount(); i++) {
 			assembler.prepareListElement();
-			assembler.appendStringLiteral(renderers[i].valueToString(entityInstance.getFieldValue(getColumnDescriptor(i).getTitle())));
+			assembler.appendStringLiteral(renderers[i].valueToString(entityInstance.getFieldValue(getColumnDescriptor(i).getFieldName())));
 		}
 		assembler.prepareListElement();
 		assembler.appendStringLiteral(entityInstance.getId() == null ? null : LinkUtil.getSingleEntityLinkUrl(getEntityDescriptor(), entityInstance.getId()));

@@ -118,6 +118,16 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 		assembler.appendStringLiteral(getCallbackUrl());
 		assembler.prepareObjectProperty("showSearchField");
 		assembler.appendBooleanLiteral(isSearchSupported());
+		assembler.prepareObjectProperty("columns");
+		assembler.beginList();
+		for (int i=0; i<getColumnCount(); i++) {
+			assembler.prepareListElement();
+			assembler.beginObject();
+			assembler.prepareObjectProperty("bSortable");
+			assembler.appendBooleanLiteral(isColumnSortable(i));
+			assembler.endObject();
+		}
+		assembler.endList();
 		assembler.endObject();
 
 		// create components
@@ -191,6 +201,15 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	 * @return the expression to sort that column, or null to skip sorting
 	 */
 	protected abstract Expression<Comparable<?>> getColumnSortExpression(int columnIndex);
+	
+	/**
+	 * Returns true if the specified column is sortable, false if not sortable.
+	 * This method is used to determine whether sort controls shall be placed
+	 * in the table control.
+	 * @param columnIndex the column index
+	 * @return whether that column is sortable
+	 */
+	protected abstract boolean isColumnSortable(int columnIndex);
 
 	/**
 	 * Subclasses may implement this method to indicate whether they are capable

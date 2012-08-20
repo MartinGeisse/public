@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel;
-import name.martingeisse.admin.entity.component.list.datatable.DataTableColumnDescriptor;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.common.javascript.JavascriptAssembler;
@@ -25,6 +24,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.response.StringResponse;
+
+import com.mysema.query.types.Expression;
 
 /**
  * This DataTable implementation requires its subclass to directly render
@@ -47,11 +48,9 @@ import org.apache.wicket.response.StringResponse;
  * inserted via {@link Label}s. In that case, disable model escaping of
  * the labels to preserve greater-than, less-than, and ampersand characters.
  * 
- * TODO: populator-based DataTable? Would be easy to implement as a subclass
- * of this class.
  * @param <CD> the column descriptor type
  */
-public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends DataTableColumnDescriptor> extends AbstractEntityDataTablePanel<CD> {
+public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends RenderingColumnDescriptor> extends AbstractEntityDataTablePanel<CD> {
 	
 	/**
 	 * the entityInstances
@@ -168,6 +167,22 @@ public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends DataT
 	@Override
 	protected void assembleRowFields(EntityInstance entityInstance, JavascriptAssembler assembler) {
 		throw new UnsupportedOperationException();
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel#isColumnSortable(int)
+	 */
+	@Override
+	protected boolean isColumnSortable(int columnIndex) {
+		return (getColumnSortExpression(columnIndex) != null);
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel#getColumnSortExpression(int)
+	 */
+	@Override
+	protected Expression<Comparable<?>> getColumnSortExpression(int columnIndex) {
+		return getColumnDescriptor(columnIndex).getSortExpression();
 	}
 	
 }

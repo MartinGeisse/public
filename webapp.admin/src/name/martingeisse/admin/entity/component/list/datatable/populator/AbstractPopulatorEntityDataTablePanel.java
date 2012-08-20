@@ -24,8 +24,6 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 
-import com.mysema.query.types.Expression;
-
 /**
  * This table implementation is centered around {@link ICellPopulator} objects that render
  * entity fields to table cells. The populators are stored in the column descriptors.
@@ -101,15 +99,6 @@ public abstract class AbstractPopulatorEntityDataTablePanel<CD extends Populator
 		});
 		
 	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel#getColumnSortExpression(int)
-	 */
-	@Override
-	protected Expression<Comparable<?>> getColumnSortExpression(int columnIndex) {
-		return null; // TODO -- if this comes from the CD, maybe move back to AbstractJsonRenderingEntityDataTablePanel
-		// since it should work there too
-	}
 
 	/**
 	 * This class has a {@link JsonEncodingContainer} child and delegates the add()
@@ -120,7 +109,6 @@ public abstract class AbstractPopulatorEntityDataTablePanel<CD extends Populator
 		JsonCellItem(String id, int index, IModel<ICellPopulator<EntityInstance>> model) {
 			super(id, index, model);
 			super.add(new JsonEncodingContainer("jsonEncoder"));
-//			super.add(new WebMarkupContainer("jsonEncoder"));
 		}
 
 		@Override

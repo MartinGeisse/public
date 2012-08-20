@@ -6,8 +6,8 @@
 
 package name.martingeisse.admin.customization;
 
-import name.martingeisse.admin.entity.component.list.datatable.DataTableColumnDescriptor;
 import name.martingeisse.admin.entity.component.list.datatable.render.AbstractJsonRenderingEntityDataTablePanel;
+import name.martingeisse.admin.entity.component.list.datatable.render.RenderingColumnDescriptor;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
@@ -20,7 +20,7 @@ import com.mysema.query.types.Predicate;
 /**
  * TODO: document me
  */
-public class RenderedEntityDataTablePanelTest extends AbstractJsonRenderingEntityDataTablePanel<DataTableColumnDescriptor> {
+public class RenderedEntityDataTablePanelTest extends AbstractJsonRenderingEntityDataTablePanel<RenderingColumnDescriptor> {
 
 	/**
 	 * Constructor.
@@ -35,11 +35,11 @@ public class RenderedEntityDataTablePanelTest extends AbstractJsonRenderingEntit
 	 * @see name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel#determineColumnDescriptors()
 	 */
 	@Override
-	protected DataTableColumnDescriptor[] determineColumnDescriptors() {
-		return new DataTableColumnDescriptor[] {
-			new DataTableColumnDescriptor("foo"),
-			new DataTableColumnDescriptor("bar"),
-			new DataTableColumnDescriptor("fupp"),
+	protected RenderingColumnDescriptor[] determineColumnDescriptors() {
+		return new RenderingColumnDescriptor[] {
+			new RenderingColumnDescriptor("foo"),
+			new RenderingColumnDescriptor("bar"),
+			new RenderingColumnDescriptor("fupp"),
 		};
 	}
 	
@@ -58,6 +58,14 @@ public class RenderedEntityDataTablePanelTest extends AbstractJsonRenderingEntit
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel#isColumnSortable(int)
+	 */
+	@Override
+	protected boolean isColumnSortable(int columnIndex) {
+		return false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel#getColumnSortExpression(int)
 	 */
