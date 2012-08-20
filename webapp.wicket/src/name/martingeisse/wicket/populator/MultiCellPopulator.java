@@ -4,12 +4,10 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.component.list.populator;
+package name.martingeisse.wicket.populator;
 
 import java.util.Arrays;
 import java.util.List;
-
-import name.martingeisse.admin.entity.instance.EntityInstance;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.markup.repeater.Item;
@@ -17,30 +15,28 @@ import org.apache.wicket.model.IModel;
 
 /**
  * This cell populator adds multiple sub-populators to DIVs.
+ * @param <T> the row type
  */
-public class MultiCellPopulator extends AbstractEntityCellPopulator {
+public class MultiCellPopulator<T> implements ICellPopulator<T> {
 
 	/**
 	 * the cellPopulators
 	 */
-	private final List<ICellPopulator<EntityInstance>> cellPopulators;
+	private final List<ICellPopulator<T>> cellPopulators;
 
 	/**
 	 * Constructor.
-	 * @param title the title
 	 * @param cellPopulators the sub-populators
 	 */
-	public MultiCellPopulator(final String title, final ICellPopulator<EntityInstance>... cellPopulators) {
-		this(title, Arrays.asList(cellPopulators));
+	public MultiCellPopulator(final ICellPopulator<T>... cellPopulators) {
+		this(Arrays.asList(cellPopulators));
 	}
 
 	/**
 	 * Constructor.
-	 * @param title the title
 	 * @param cellPopulators the sub-populators
 	 */
-	public MultiCellPopulator(final String title, final List<ICellPopulator<EntityInstance>> cellPopulators) {
-		super(title);
+	public MultiCellPopulator(final List<ICellPopulator<T>> cellPopulators) {
 		this.cellPopulators = cellPopulators;
 	}
 
@@ -48,8 +44,8 @@ public class MultiCellPopulator extends AbstractEntityCellPopulator {
 	 * @see org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator#populateItem(org.apache.wicket.markup.repeater.Item, java.lang.String, org.apache.wicket.model.IModel)
 	 */
 	@Override
-	public void populateItem(final Item<ICellPopulator<EntityInstance>> item, final String id, final IModel<EntityInstance> instanceModel) {
-		item.add(new MultiCellPanel(id, instanceModel, cellPopulators));
+	public void populateItem(final Item<ICellPopulator<T>> item, final String id, final IModel<T> instanceModel) {
+		item.add(new MultiCellPanel<T>(id, instanceModel, cellPopulators));
 	}
 
 	/* (non-Javadoc)

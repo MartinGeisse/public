@@ -41,7 +41,7 @@ import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
 import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
-import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler2;
+import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.wicket.autoform.AutoformPanel;
@@ -273,7 +273,7 @@ public class Main {
 			PopulatorColumnDescriptor column1 = new PopulatorColumnDescriptor("name", "name", new RowFieldPopulator<EntityInstance>("name"));
 			PopulatorColumnDescriptor column2 = new PopulatorColumnDescriptor("value", new RowFieldPopulator<EntityInstance>("data"));
 			PopulatorColumnDescriptor[] columns = new PopulatorColumnDescriptor[] {column1, column2};
-			root.getChildFactory().createChild("tabletest2", "TableTest2", new PopulatorBasedEntityListHandler2("settings", columns));
+			root.getChildFactory().createChild("tabletest2", "TableTest2", new PopulatorBasedEntityListHandler("settings", columns));
 		}
 		
 		NavigationTabBarFactory.apply(root.findChildById("sub-one"));

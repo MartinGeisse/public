@@ -6,62 +6,62 @@
 
 package name.martingeisse.admin.navigation.handler;
 
-import name.martingeisse.admin.entity.component.list.populator.FragmentPopulator;
-import name.martingeisse.admin.entity.component.list.populator.IEntityCellPopulator;
-import name.martingeisse.admin.entity.component.list.populator.NavigationMountedPopulatorBasedEntityListPanel;
-import name.martingeisse.admin.entity.component.list.populator.PopulatorBasedEntityListPanel;
+import name.martingeisse.admin.entity.component.list.datatable.populator.AbstractPopulatorEntityDataTablePanel;
+import name.martingeisse.admin.entity.component.list.datatable.populator.NavigationMountedPopulatorEntityDataTablePanel;
+import name.martingeisse.admin.entity.component.list.datatable.populator.PopulatorColumnDescriptor;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.wicket.populator.FragmentPopulator;
 
 /**
  * This handler allows to mount a populator-based list of entities in the navigation.
  * 
  * This class cannot be used together with {@link FragmentPopulator} since there is
  * no way to provide markup for the fragments. To use fragment populators, build
- * a custom subclass of {@link PopulatorBasedEntityListPanel} and mount
+ * a custom subclass of {@link AbstractPopulatorEntityDataTablePanel} and mount
  * it with an {@link EntityListPanelHandler}.
  */
 public class PopulatorBasedEntityListHandler extends EntityListPanelHandler {
 
 	/**
-	 * the populators
+	 * the columnDescriptors
 	 */
-	private IEntityCellPopulator[] populators;
+	private PopulatorColumnDescriptor[] columnDescriptors;
 
 	/**
 	 * Constructor.
 	 * @param entity the entity type to link to
-	 * @param populators the populators to use
+	 * @param columnDescriptors the column descriptors
 	 */
-	public PopulatorBasedEntityListHandler(final EntityDescriptor entity, final IEntityCellPopulator... populators) {
-		super(NavigationMountedPopulatorBasedEntityListPanel.class, entity);
-		this.populators = populators;
+	public PopulatorBasedEntityListHandler(final EntityDescriptor entity, final PopulatorColumnDescriptor... columnDescriptors) {
+		super(NavigationMountedPopulatorEntityDataTablePanel.class, entity);
+		this.columnDescriptors = columnDescriptors;
 	}
 
 	/**
 	 * Constructor.
 	 * @param entityName the name of the entity to link to
-	 * @param populators the populators to use
+	 * @param columnDescriptors the column descriptors
 	 */
-	public PopulatorBasedEntityListHandler(final String entityName, final IEntityCellPopulator... populators) {
-		super(NavigationMountedPopulatorBasedEntityListPanel.class, entityName);
-		this.populators = populators;
+	public PopulatorBasedEntityListHandler(final String entityName, final PopulatorColumnDescriptor... columnDescriptors) {
+		super(NavigationMountedPopulatorEntityDataTablePanel.class, entityName);
+		this.columnDescriptors = columnDescriptors;
 	}
 
 	/**
-	 * Getter method for the populators.
-	 * @return the populators
+	 * Getter method for the columnDescriptors.
+	 * @return the columnDescriptors
 	 */
-	public IEntityCellPopulator[] getPopulators() {
-		return populators;
+	public PopulatorColumnDescriptor[] getColumnDescriptors() {
+		return columnDescriptors;
 	}
 
 	/**
-	 * Setter method for the populators.
-	 * @param populators the populators to set
+	 * Setter method for the columnDescriptors.
+	 * @param columnDescriptors the columnDescriptors to set
 	 * @return this for chaining
 	 */
-	public PopulatorBasedEntityListHandler setPopulators(final IEntityCellPopulator[] populators) {
-		this.populators = populators;
+	public PopulatorBasedEntityListHandler setColumnDescriptors(final PopulatorColumnDescriptor[] columnDescriptors) {
+		this.columnDescriptors = columnDescriptors;
 		return this;
 	}
 

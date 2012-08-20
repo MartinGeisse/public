@@ -8,7 +8,7 @@ package name.martingeisse.admin.entity.component.list.datatable.populator;
 
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.NavigationUtil;
-import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler2;
+import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler;
 
 import org.apache.wicket.model.IModel;
 
@@ -33,8 +33,8 @@ public class NavigationMountedPopulatorEntityDataTablePanel extends AbstractPopu
 	/**
 	 * @return the navigation node handler
 	 */
-	private PopulatorBasedEntityListHandler2 getHandler() {
-		return (PopulatorBasedEntityListHandler2)(NavigationUtil.getNavigationNodeForComponent(this).getHandler());
+	private PopulatorBasedEntityListHandler getHandler() {
+		return (PopulatorBasedEntityListHandler)(NavigationUtil.getNavigationNodeForComponent(this).getHandler());
 	}
 
 	/* (non-Javadoc)
