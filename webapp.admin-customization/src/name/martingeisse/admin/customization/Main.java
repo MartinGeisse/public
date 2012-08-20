@@ -20,6 +20,8 @@ import name.martingeisse.admin.customization.pagebar.BasicPageBarFactory;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.component.instance.RawEntityPresentationPanel;
+import name.martingeisse.admin.entity.component.list.datatable.populator.PopulatorColumnDescriptor;
+import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.EntityConditions;
 import name.martingeisse.admin.entity.list.EntityListFilter;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
@@ -39,6 +41,7 @@ import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
 import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
+import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler2;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.wicket.autoform.AutoformPanel;
@@ -46,6 +49,7 @@ import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociate
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
+import name.martingeisse.wicket.populator.RowFieldPopulator;
 
 import com.mysema.query.types.Ops;
 
@@ -264,6 +268,13 @@ public class Main {
 		*/
 
 		root.getChildFactory().createChild("tabletest", "TableTest", new EntityListPanelHandler(RenderedEntityDataTablePanelTest.class, "settings"));
+		
+		{
+			PopulatorColumnDescriptor column1 = new PopulatorColumnDescriptor("name", new RowFieldPopulator<EntityInstance>("name"));
+			PopulatorColumnDescriptor column2 = new PopulatorColumnDescriptor("value", new RowFieldPopulator<EntityInstance>("data"));
+			PopulatorColumnDescriptor[] columns = new PopulatorColumnDescriptor[] {column1, column2};
+			root.getChildFactory().createChild("tabletest2", "TableTest2", new PopulatorBasedEntityListHandler2("settings", columns));
+		}
 		
 		NavigationTabBarFactory.apply(root.findChildById("sub-one"));
 		

@@ -124,7 +124,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 		add(new Loop("headers", new PropertyModel<Integer>(AbstractEntityDataTablePanel.this, "columnCount")) {
 			@Override
 			protected void populateItem(final LoopItem item) {
-				item.add(new Label("name", getColumnDescriptors()[item.getIndex()].getTitle()));
+				item.add(new Label("name", getColumnDescriptor(item.getIndex()).getTitle()));
 			}
 		});
 		add(new Label("configuration", assembler.getAssembledCode()));

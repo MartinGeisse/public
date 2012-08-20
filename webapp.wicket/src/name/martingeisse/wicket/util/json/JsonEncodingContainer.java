@@ -20,16 +20,6 @@ import org.apache.wicket.response.StringResponse;
 public class JsonEncodingContainer extends WebMarkupContainer {
 
 	/**
-	 * the previousResponse
-	 */
-	private transient Response previousResponse;
-
-	/**
-	 * the fakeResponse
-	 */
-	private transient StringResponse fakeResponse;
-
-	/**
 	 * Constructor.
 	 * @param id the wicket id
 	 */
@@ -38,27 +28,16 @@ public class JsonEncodingContainer extends WebMarkupContainer {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.apache.wicket.Component#onBeforeRender()
+	 * @see org.apache.wicket.MarkupContainer#onRender()
 	 */
 	@Override
-	protected void onBeforeRender() {
-		super.onBeforeRender();
-		previousResponse = getResponse();
-		fakeResponse = new StringResponse();
+	protected void onRender() {
+		Response previousResponse = getResponse();
+		StringResponse fakeResponse = new StringResponse();
 		getRequestCycle().setResponse(fakeResponse);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.apache.wicket.Component#onAfterRender()
-	 */
-	@Override
-	protected void onAfterRender() {
-		super.onAfterRender();
+		super.onRender();
 		previousResponse.write(JavascriptAssemblerUtil.formatStringLiteral(fakeResponse.toString()));
 		getRequestCycle().setResponse(previousResponse);
-		previousResponse = null;
-		fakeResponse = null;
 	}
-	
 	
 }

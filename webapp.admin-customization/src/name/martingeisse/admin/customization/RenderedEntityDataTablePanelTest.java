@@ -20,7 +20,7 @@ import com.mysema.query.types.Predicate;
 /**
  * TODO: document me
  */
-public class RenderedEntityDataTablePanelTest extends AbstractJsonRenderingEntityDataTablePanel {
+public class RenderedEntityDataTablePanelTest extends AbstractJsonRenderingEntityDataTablePanel<DataTableColumnDescriptor> {
 
 	/**
 	 * Constructor.
@@ -42,9 +42,9 @@ public class RenderedEntityDataTablePanelTest extends AbstractJsonRenderingEntit
 			new DataTableColumnDescriptor("fupp"),
 		};
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.entity.component.list.AbstractJsonRenderingEntityDataTablePanel#populateRowItem(org.apache.wicket.markup.html.list.ListItem)
+	 * @see name.martingeisse.admin.entity.component.list.datatable.render.AbstractJsonRenderingEntityDataTablePanel#populateRowItem(org.apache.wicket.markup.repeater.Item)
 	 */
 	@Override
 	protected void populateRowItem(ListItem<EntityInstance> item) {

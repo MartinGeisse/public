@@ -49,8 +49,9 @@ import org.apache.wicket.response.StringResponse;
  * 
  * TODO: populator-based DataTable? Would be easy to implement as a subclass
  * of this class.
+ * @param <CD> the column descriptor type
  */
-public abstract class AbstractJsonRenderingEntityDataTablePanel extends AbstractEntityDataTablePanel<DataTableColumnDescriptor> {
+public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends DataTableColumnDescriptor> extends AbstractEntityDataTablePanel<CD> {
 	
 	/**
 	 * the entityInstances

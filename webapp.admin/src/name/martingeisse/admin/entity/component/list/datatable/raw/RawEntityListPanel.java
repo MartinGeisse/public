@@ -59,16 +59,6 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 		return result;
 	}
 
-	/**
-	 * Returns the name of the field that is at the specified index in the
-	 * globally configured raw entity field order. 
-	 * @param index the index
-	 * @return the field name
-	 */
-	String getFieldNameForGloballyDefinedOrder(final int index) {
-		return getColumnDescriptor(index).getTitle();
-	}
-
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Component#onBeforeRender()
 	 */
@@ -96,7 +86,7 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 	@Override
 	protected Expression<Comparable<?>> getColumnSortExpression(final int columnIndex) {
 		final Path<?> entityPath = Expressions.path(Object.class, IEntityListFilter.ALIAS);
-		return GenericTypeUtil.unsafeCast(Expressions.path(Comparable.class, entityPath, getFieldNameForGloballyDefinedOrder(columnIndex)));
+		return GenericTypeUtil.unsafeCast(Expressions.path(Comparable.class, entityPath, getColumnDescriptor(columnIndex).getTitle()));
 	}
 
 	/* (non-Javadoc)
@@ -104,10 +94,9 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 	 */
 	@Override
 	protected void assembleRowFields(final EntityInstance entityInstance, final JavascriptAssembler assembler) {
-		final DataTableColumnDescriptor[] fieldOrder = getColumnDescriptors();
 		for (int i = 0; i < getColumnCount(); i++) {
 			assembler.prepareListElement();
-			assembler.appendStringLiteral(renderers[i].valueToString(entityInstance.getFieldValue(fieldOrder[i].getTitle())));
+			assembler.appendStringLiteral(renderers[i].valueToString(entityInstance.getFieldValue(getColumnDescriptor(i).getTitle())));
 		}
 		assembler.prepareListElement();
 		assembler.appendStringLiteral(entityInstance.getId() == null ? null : LinkUtil.getSingleEntityLinkUrl(getEntityDescriptor(), entityInstance.getId()));

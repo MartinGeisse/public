@@ -1,0 +1,43 @@
+/**
+ * Copyright (c) 2011 Martin Geisse
+ *
+ * This file is distributed under the terms of the MIT license.
+ */
+
+package name.martingeisse.admin.entity.component.list.datatable.populator;
+
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
+
+import org.apache.wicket.model.IModel;
+
+/**
+ * Default implementation of {@link AbstractPopulatorEntityDataTablePanel}. This implementation stores
+ * the column descriptors directly in this panel.
+ */
+public class PopulatorEntityDataTablePanel extends AbstractPopulatorEntityDataTablePanel<PopulatorColumnDescriptor> {
+
+	/**
+	 * the columnDescriptors
+	 */
+	private final PopulatorColumnDescriptor[] columnDescriptors;
+	
+	/**
+	 * Constructor.
+	 * @param id the wicket id
+	 * @param entityModel the entity model
+	 * @param columnDescriptors the column descriptors
+	 */
+	public PopulatorEntityDataTablePanel(String id, IModel<EntityDescriptor> entityModel, PopulatorColumnDescriptor[] columnDescriptors) {
+		super(id, entityModel);
+		this.columnDescriptors = columnDescriptors;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel#determineColumnDescriptors()
+	 */
+	@Override
+	protected PopulatorColumnDescriptor[] determineColumnDescriptors() {
+		return columnDescriptors;
+	}
+
+}
