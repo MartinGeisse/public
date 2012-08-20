@@ -12,6 +12,7 @@ import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
+import name.martingeisse.admin.database.JdbcConnectionServletFilter;
 import name.martingeisse.common.servlet.GlobalServletContext;
 
 import org.apache.log4j.Logger;
@@ -52,6 +53,9 @@ public class Launcher {
 		//		// the GZIP filter seems to cause problems on Jetty. The HTTP response either has
 		//		// an incorrect or duplicate Content-Length header (my tools won't tell me...)
 		////		context.addFilter(GzipFilter.class, "/*", allDispatcherTypes);
+		
+		// JDBC connection-closing filter
+		context.addFilter(JdbcConnectionServletFilter.class, "/*", allDispatcherTypes);
 
 		// add the Wicket filter
 		final Filter wicketFilter = new WicketFilter();

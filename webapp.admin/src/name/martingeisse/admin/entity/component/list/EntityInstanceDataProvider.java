@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import name.martingeisse.admin.database.JdbcConnectionManager;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
@@ -125,24 +126,28 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	public int size() {
 		Connection connection = null;
 		try {
+			// TODO support multiple databases
 			final EntityDescriptor entity = getEntity();
-			final AbstractDatabaseDescriptor database = entity.getDatabase();
-			connection = database.createConnection();
+//			final AbstractDatabaseDescriptor database = entity.getDatabase();
+//			connection = database.createConnection();
+			
+			connection = JdbcConnectionManager.getConnection();
+			
 			SQLQuery countQuery = entity.query(connection, IEntityListFilter.ALIAS);
 			if (filter != null) {
 				countQuery = countQuery.where(filter.getFilterPredicate());
 			}
 			final int size = (int)countQuery.count();
 			return size;
-		} catch (final SQLException e) {
-			throw new RuntimeException(e);
+//		} catch (final SQLException e) {
+//			throw new RuntimeException(e);
 		} finally {
-			try {
-				if (connection != null) {
-					connection.close();
-				}
-			} catch (final SQLException e) {
-			}
+//			try {
+//				if (connection != null) {
+//					connection.close();
+//				}
+//			} catch (final SQLException e) {
+//			}
 		}
 	}
 

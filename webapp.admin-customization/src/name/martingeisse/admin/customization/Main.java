@@ -17,6 +17,7 @@ import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
 import name.martingeisse.admin.customization.incubator.NavigationTabBarFactory;
 import name.martingeisse.admin.customization.pagebar.BasicPageBarFactory;
+import name.martingeisse.admin.database.JdbcConnectionManager;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.component.instance.RawEntityPresentationPanel;
@@ -41,6 +42,7 @@ import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
 import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
+import name.martingeisse.admin.navigation.handler.PanelPageNavigationHandler;
 import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
@@ -101,6 +103,7 @@ public class Main {
 		phorumDatabase.setUsername("root");
 		phorumDatabase.setPassword("");
 		ApplicationConfiguration.get().addDatabase(phorumDatabase);
+		JdbcConnectionManager.initializeDatabaseDescriptor(phorumDatabase);
 		
 		// plugins / capabilities
 		ApplicationConfiguration.get().addPlugin(new DefaultPlugin());
@@ -275,7 +278,8 @@ public class Main {
 			PopulatorColumnDescriptor[] columns = new PopulatorColumnDescriptor[] {column1, column2};
 			root.getChildFactory().createChild("tabletest2", "TableTest2", new PopulatorBasedEntityListHandler("settings", columns));
 		}
-		
+
+		root.getChildFactory().createChild("autoform-test", "Autoform", new PanelPageNavigationHandler(MyAutoformPanel.class, null, true));
 		NavigationTabBarFactory.apply(root.findChildById("sub-one"));
 		
 	}
