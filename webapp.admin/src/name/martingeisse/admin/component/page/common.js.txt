@@ -1,5 +1,0 @@
-jQuery v1.7.2
-jQuery Tools v1.2.7
-DataTables 1.9.3
-
-Raw entity tables using DataTables
