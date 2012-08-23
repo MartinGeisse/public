@@ -17,7 +17,7 @@ import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
 import name.martingeisse.admin.customization.incubator.NavigationTabBarFactory;
 import name.martingeisse.admin.customization.pagebar.BasicPageBarFactory;
-import name.martingeisse.admin.database.JdbcConnectionManager;
+import name.martingeisse.admin.database.EntityConnectionManager;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.component.instance.RawEntityPresentationPanel;
@@ -103,7 +103,7 @@ public class Main {
 		phorumDatabase.setUsername("root");
 		phorumDatabase.setPassword("");
 		ApplicationConfiguration.get().addDatabase(phorumDatabase);
-		JdbcConnectionManager.initializeDatabaseDescriptor(phorumDatabase);
+		EntityConnectionManager.initializeDatabaseDescriptors(phorumDatabase);
 		
 		// plugins / capabilities
 		ApplicationConfiguration.get().addPlugin(new DefaultPlugin());

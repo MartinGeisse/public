@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.entity.instance;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -93,15 +92,11 @@ public class FetchEntityInstanceAction {
 	 * @return the result
 	 */
 	public EntityInstance execute() {
-
 		if (entity.getIdColumnName() == null) {
 			throw new RuntimeException("Cannot fetch entity instance for entity " + entity.getName() + ": ID column unknown");
 		}
-
-		Connection connection = null;
 		try {
-			connection = entity.getDatabase().createConnection();
-			final SQLQuery query = entity.getDatabase().createQuery(connection);
+			final SQLQuery query = entity.query(entity.getTableName());
 			final Path<?> entityExpression = Expressions.path(Object.class, entity.getTableName());
 			final Expression<?> idExpression = Expressions.path(Object.class, entityExpression, entity.getIdColumnName());
 			final Predicate idMatchPredicate = Expressions.predicate(Ops.EQ, idExpression, Expressions.constant(id));
@@ -116,13 +111,6 @@ public class FetchEntityInstanceAction {
 			}
 		} catch (final SQLException e) {
 			throw new RuntimeException(e);
-		} finally {
-			try {
-				if (connection != null) {
-					connection.close();
-				}
-			} catch (final SQLException e) {
-			}
 		}
 	}
 

@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.entity.schema;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -17,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import name.martingeisse.admin.database.EntityConnectionManager;
+import name.martingeisse.admin.database.IEntityDatabaseConnection;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.instance.FetchEntityInstanceAction;
@@ -33,6 +34,7 @@ import name.martingeisse.common.datarow.DataRowMeta;
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.RelationalPathBase;
 import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.types.Predicate;
 
 /**
  * This class captures a descriptor for a database entity (table).
@@ -413,12 +415,35 @@ public class EntityDescriptor {
 
 	/**
 	 * Queries this entity using the specified connection and alias.
-	 * @param connection the JDBC connection
 	 * @param alias the alias for this entity
 	 * @return the query
 	 */
-	public SQLQuery query(final Connection connection, final String alias) {
-		return getDatabase().createQuery(connection).from(createRelationalPath(alias));
+	public SQLQuery query(final String alias) {
+		return getConnection().createQuery().from(createRelationalPath(alias));
+	}
+	
+	/**
+	 * Queries for the number of instances of this entity, or the number of
+	 * instances accepted by the specified filter predicate.
+	 * @param filterPredicate the filter predicate
+	 * @return the number of instances
+	 */
+	public long count(Predicate filterPredicate) {
+		SQLQuery countQuery = query(IEntityListFilter.ALIAS);
+		if (filterPredicate != null) {
+			countQuery = countQuery.where(filterPredicate);
+		}
+		return countQuery.count();
+	}
+	
+	/**
+	 * Queries for the number of instances of this entity, or the number of
+	 * instances accepted by the specified filter.
+	 * @param filter the filter
+	 * @return the number of instances
+	 */
+	public long count(IEntityListFilter filter) {
+		return count(filter == null ? null : filter.getFilterPredicate());
 	}
 
 	/**
@@ -515,4 +540,11 @@ public class EntityDescriptor {
 		}
 	}
 
+	/**
+	 * @return the database connection for the database that contains this entity.
+	 */
+	public IEntityDatabaseConnection getConnection() {
+		return EntityConnectionManager.getConnection(getDatabase());
+	}
+	
 }

@@ -20,7 +20,7 @@ import javax.servlet.ServletResponse;
  * for any uncommitted transaction (which results in an exception) and closes
  * the connection. (The connection is created by the connection manager automatically).
  */
-public class JdbcConnectionServletFilter implements Filter {
+public class EntityConnectionServletFilter implements Filter {
 
 	/* (non-Javadoc)
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
@@ -37,7 +37,7 @@ public class JdbcConnectionServletFilter implements Filter {
 		try {
 			chain.doFilter(request, response);
 		} finally {
-			JdbcConnectionManager.disposeConnection();
+			EntityConnectionManager.disposeConnections();
 		}
 	}
 

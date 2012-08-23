@@ -51,7 +51,7 @@ class DiscoverEntitiesAction {
 	public List<EntityDescriptor> execute() {
 		Connection connection = null;
 		try {
-			connection = database.createConnection();
+			connection = database.createJdbcConnection();
 
 			// fetch all tables
 			final List<EntityDescriptor> result = new ArrayList<EntityDescriptor>();

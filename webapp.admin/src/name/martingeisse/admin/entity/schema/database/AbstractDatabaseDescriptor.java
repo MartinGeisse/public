@@ -10,12 +10,17 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import name.martingeisse.admin.database.IEntityDatabaseConnection;
+import name.martingeisse.admin.database.JdbcEntityDatabaseConnection;
+
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.SQLQueryImpl;
 import com.mysema.query.sql.SQLTemplates;
 
 /**
  * This class describes a database used by the application.
+ * 
+ * TODO refactor IDatabaseDescriptor
  */
 public abstract class AbstractDatabaseDescriptor {
 
@@ -114,8 +119,16 @@ public abstract class AbstractDatabaseDescriptor {
 	 * @return the connection
 	 * @throws SQLException on SQL errors
 	 */
-	public Connection createConnection() throws SQLException {
+	public Connection createJdbcConnection() throws SQLException {
 		return DriverManager.getConnection(url, username, password);
+	}
+
+	/**
+	 * Creates an {@link IEntityDatabaseConnection} to this database.
+	 * @return the connection
+	 */
+	public JdbcEntityDatabaseConnection createConnection() {
+		return new JdbcEntityDatabaseConnection(this);
 	}
 
 	/**

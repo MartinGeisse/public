@@ -12,7 +12,7 @@ import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
-import name.martingeisse.admin.database.JdbcConnectionServletFilter;
+import name.martingeisse.admin.database.EntityConnectionServletFilter;
 import name.martingeisse.common.servlet.GlobalServletContext;
 
 import org.apache.log4j.Logger;
@@ -55,7 +55,7 @@ public class Launcher {
 		////		context.addFilter(GzipFilter.class, "/*", allDispatcherTypes);
 		
 		// JDBC connection-closing filter
-		context.addFilter(JdbcConnectionServletFilter.class, "/*", allDispatcherTypes);
+		context.addFilter(EntityConnectionServletFilter.class, "/*", allDispatcherTypes);
 
 		// add the Wicket filter
 		final Filter wicketFilter = new WicketFilter();

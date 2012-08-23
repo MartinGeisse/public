@@ -6,20 +6,16 @@
 
 package name.martingeisse.admin.entity.component.list;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import name.martingeisse.admin.database.JdbcConnectionManager;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
@@ -124,31 +120,7 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	 */
 	@Override
 	public int size() {
-		Connection connection = null;
-		try {
-			// TODO support multiple databases
-			final EntityDescriptor entity = getEntity();
-//			final AbstractDatabaseDescriptor database = entity.getDatabase();
-//			connection = database.createConnection();
-			
-			connection = JdbcConnectionManager.getConnection();
-			
-			SQLQuery countQuery = entity.query(connection, IEntityListFilter.ALIAS);
-			if (filter != null) {
-				countQuery = countQuery.where(filter.getFilterPredicate());
-			}
-			final int size = (int)countQuery.count();
-			return size;
-//		} catch (final SQLException e) {
-//			throw new RuntimeException(e);
-		} finally {
-//			try {
-//				if (connection != null) {
-//					connection.close();
-//				}
-//			} catch (final SQLException e) {
-//			}
-		}
+		return (int)getEntity().count(filter);
 	}
 
 	/* (non-Javadoc)
@@ -156,15 +128,11 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	 */
 	@Override
 	public Iterator<? extends EntityInstance> iterator(final int first, final int count) {
-		Connection connection = null;
 		try {
-			final EntityDescriptor entity = getEntity();
-			final AbstractDatabaseDescriptor database = entity.getDatabase();
-			connection = database.createConnection();
-			final Statement statement = connection.createStatement();
-
+			
 			// obtain a ResultSet
-			SQLQuery query = entity.query(connection, IEntityListFilter.ALIAS);
+			final EntityDescriptor entity = getEntity();
+			SQLQuery query = entity.query(IEntityListFilter.ALIAS);
 			if (filter != null) {
 				query = query.where(filter.getFilterPredicate());
 			}
@@ -172,33 +140,25 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 				query = query.orderBy(orderSpecifiers);
 			}
 			final ResultSet resultSet = query.limit(count).offset(first).getResults(Wildcard.all);
-
+			
 			// fetch rows
 			entity.checkDataRowMeta(resultSet);
 			final List<EntityInstance> rows = new ArrayList<EntityInstance>();
 			while (resultSet.next()) {
 				rows.add(new EntityInstance(entity, resultSet));
 			}
-
+			
 			// additional client-specific behavior
 			onResultAvailable(resultSet.getMetaData());
-
+			
 			// clean up
 			resultSet.close();
-			statement.close();
-
+			
 			// return the rows as an iterator
 			return rows.iterator();
-
-		} catch (final SQLException e) {
+		
+		} catch (SQLException e) {
 			throw new RuntimeException(e);
-		} finally {
-			try {
-				if (connection != null) {
-					connection.close();
-				}
-			} catch (final SQLException e) {
-			}
 		}
 	}
 
