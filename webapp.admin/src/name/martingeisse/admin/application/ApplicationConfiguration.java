@@ -9,7 +9,7 @@ package name.martingeisse.admin.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
+import name.martingeisse.admin.entity.schema.database.IDatabaseDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationTree;
 import name.martingeisse.admin.util.ParameterUtil;
@@ -60,7 +60,7 @@ public final class ApplicationConfiguration {
 	/**
 	 * the databases
 	 */
-	private final List<AbstractDatabaseDescriptor> databases = new ArrayList<AbstractDatabaseDescriptor>();
+	private final List<IDatabaseDescriptor> databases = new ArrayList<IDatabaseDescriptor>();
 
 	/**
 	 * the plugins
@@ -98,7 +98,7 @@ public final class ApplicationConfiguration {
 	 * Adds a database.
 	 * @param database the database to add
 	 */
-	public void addDatabase(final AbstractDatabaseDescriptor database) {
+	public void addDatabase(final IDatabaseDescriptor database) {
 		ParameterUtil.ensureNotNull(database, "database");
 		checkChangesAllowed();
 		logger.info("Adding database to the ApplicationConfiguration: " + database.getDisplayName());
@@ -109,7 +109,7 @@ public final class ApplicationConfiguration {
 	 * Returns an iterable for all databases
 	 * @return the database iterable
 	 */
-	public Iterable<AbstractDatabaseDescriptor> getDatabases() {
+	public Iterable<IDatabaseDescriptor> getDatabases() {
 		return databases;
 	}
 

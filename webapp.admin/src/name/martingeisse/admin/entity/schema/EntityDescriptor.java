@@ -23,7 +23,7 @@ import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.instance.FetchEntityInstanceAction;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.property.type.IEntityIdType;
-import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
+import name.martingeisse.admin.entity.schema.database.IDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
@@ -57,7 +57,7 @@ public class EntityDescriptor {
 	/**
 	 * the database
 	 */
-	private AbstractDatabaseDescriptor database;
+	private IDatabaseDescriptor database;
 
 	/**
 	 * the tableName
@@ -153,7 +153,7 @@ public class EntityDescriptor {
 	 * Getter method for the database.
 	 * @return the database
 	 */
-	public AbstractDatabaseDescriptor getDatabase() {
+	public IDatabaseDescriptor getDatabase() {
 		return database;
 	}
 
@@ -161,7 +161,7 @@ public class EntityDescriptor {
 	 * Setter method for the database.
 	 * @param database the database to set
 	 */
-	public void setDatabase(final AbstractDatabaseDescriptor database) {
+	public void setDatabase(final IDatabaseDescriptor database) {
 		this.database = database;
 	}
 

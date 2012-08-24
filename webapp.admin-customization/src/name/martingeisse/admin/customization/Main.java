@@ -97,7 +97,7 @@ public class Main {
 //		ApplicationConfiguration.get().addDatabase(phpbbDatabase);
 
 		// the database
-		final AbstractDatabaseDescriptor phorumDatabase = new MysqlDatabaseDescriptor();
+		final MysqlDatabaseDescriptor phorumDatabase = new MysqlDatabaseDescriptor();
 		phorumDatabase.setDisplayName("Phorum database");
 		phorumDatabase.setUrl("jdbc:mysql://localhost/phorum");
 		phorumDatabase.setUsername("root");

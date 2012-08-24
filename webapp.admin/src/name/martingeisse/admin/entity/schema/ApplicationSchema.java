@@ -16,7 +16,7 @@ import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNameAware;
 import name.martingeisse.admin.entity.component.list.datatable.raw.RawEntityListPanel;
-import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
+import name.martingeisse.admin.entity.schema.database.IDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
 import name.martingeisse.admin.navigation.INavigationNodeHandler;
@@ -53,7 +53,7 @@ public class ApplicationSchema {
 	/**
 	 * the databaseDescriptors
 	 */
-	private final List<AbstractDatabaseDescriptor> databaseDescriptors;
+	private final List<IDatabaseDescriptor> databaseDescriptors;
 
 	/**
 	 * the entityDescriptors
@@ -69,7 +69,7 @@ public class ApplicationSchema {
 	 * Constructor.
 	 */
 	public ApplicationSchema() {
-		this.databaseDescriptors = new ArrayList<AbstractDatabaseDescriptor>();
+		this.databaseDescriptors = new ArrayList<IDatabaseDescriptor>();
 		this.entityDescriptors = new ArrayList<EntityDescriptor>();
 		this.entityReferences = new ArrayList<EntityReferenceInfo>();
 	}
@@ -78,7 +78,7 @@ public class ApplicationSchema {
 	 * Getter method for the databaseDescriptors.
 	 * @return the databaseDescriptors
 	 */
-	public List<AbstractDatabaseDescriptor> getDatabaseDescriptors() {
+	public List<IDatabaseDescriptor> getDatabaseDescriptors() {
 		return databaseDescriptors;
 	}
 
@@ -129,7 +129,7 @@ public class ApplicationSchema {
 	 * Copies the list of databases from the {@link ApplicationConfigurationOld}.
 	 */
 	private void copyDatabaseList() {
-		for (final AbstractDatabaseDescriptor database : ApplicationConfiguration.get().getDatabases()) {
+		for (final IDatabaseDescriptor database : ApplicationConfiguration.get().getDatabases()) {
 			databaseDescriptors.add(database);
 		}
 	}
@@ -138,7 +138,7 @@ public class ApplicationSchema {
 	 * Fetches implicit schema components from the database.
 	 */
 	private void buildEntityDescriptors() {
-		for (final AbstractDatabaseDescriptor databaseDescriptor : databaseDescriptors) {
+		for (final IDatabaseDescriptor databaseDescriptor : databaseDescriptors) {
 			final DiscoverEntitiesAction action = new DiscoverEntitiesAction();
 			action.setDatabase(databaseDescriptor);
 			for (final EntityDescriptor entity : action.execute()) {

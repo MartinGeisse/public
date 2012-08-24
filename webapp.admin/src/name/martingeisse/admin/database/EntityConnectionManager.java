@@ -9,7 +9,7 @@ package name.martingeisse.admin.database;
 import java.util.HashMap;
 import java.util.Map;
 
-import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
+import name.martingeisse.admin.entity.schema.database.IDatabaseDescriptor;
 
 import org.apache.log4j.Logger;
 
@@ -39,17 +39,17 @@ public class EntityConnectionManager {
 	/**
 	 * the databaseDescriptors
 	 */
-	private static AbstractDatabaseDescriptor[] databaseDescriptors;
+	private static IDatabaseDescriptor[] databaseDescriptors;
 
 	/**
 	 * the defaultDatabaseDescriptor
 	 */
-	private static AbstractDatabaseDescriptor defaultDatabaseDescriptor;
+	private static IDatabaseDescriptor defaultDatabaseDescriptor;
 
 	/**
 	 * the connectionContainer
 	 */
-	private static final ThreadLocal<Map<AbstractDatabaseDescriptor, IEntityDatabaseConnection>> connectionContainer = new ThreadLocal<Map<AbstractDatabaseDescriptor, IEntityDatabaseConnection>>();
+	private static final ThreadLocal<Map<IDatabaseDescriptor, IEntityDatabaseConnection>> connectionContainer = new ThreadLocal<Map<IDatabaseDescriptor, IEntityDatabaseConnection>>();
 
 	/**
 	 * Initializes the database descriptors. This method must be called once at startup
@@ -60,7 +60,7 @@ public class EntityConnectionManager {
 	 * 
 	 * @param databaseDescriptors the database descriptor to use
 	 */
-	public static synchronized void initializeDatabaseDescriptors(final AbstractDatabaseDescriptor... databaseDescriptors) {
+	public static synchronized void initializeDatabaseDescriptors(final IDatabaseDescriptor... databaseDescriptors) {
 		if (databaseDescriptors == null) {
 			throw new IllegalArgumentException("databaseDescriptors array is null");
 		}
@@ -77,7 +77,7 @@ public class EntityConnectionManager {
 	 * Getter method for the database descriptors.
 	 * @return the database descriptors
 	 */
-	public static synchronized AbstractDatabaseDescriptor[] getDatabaseDescriptors() {
+	public static synchronized IDatabaseDescriptor[] getDatabaseDescriptors() {
 		return databaseDescriptors;
 	}
 
@@ -85,7 +85,7 @@ public class EntityConnectionManager {
 	 * Getter method for the default database descriptor.
 	 * @return the default database descriptor
 	 */
-	public static synchronized AbstractDatabaseDescriptor getDefaultDatabaseDescriptor() {
+	public static synchronized IDatabaseDescriptor getDefaultDatabaseDescriptor() {
 		return defaultDatabaseDescriptor;
 	}
 	
@@ -104,10 +104,10 @@ public class EntityConnectionManager {
 	 * @param database the database descriptor
 	 * @return the connection for the current thread and specified database
 	 */
-	public static IEntityDatabaseConnection getConnection(final AbstractDatabaseDescriptor database) {
-		Map<AbstractDatabaseDescriptor, IEntityDatabaseConnection> connections = connectionContainer.get();
+	public static IEntityDatabaseConnection getConnection(final IDatabaseDescriptor database) {
+		Map<IDatabaseDescriptor, IEntityDatabaseConnection> connections = connectionContainer.get();
 		if (connections == null) {
-			connections = new HashMap<AbstractDatabaseDescriptor, IEntityDatabaseConnection>();
+			connections = new HashMap<IDatabaseDescriptor, IEntityDatabaseConnection>();
 			connectionContainer.set(connections);
 		}
 		IEntityDatabaseConnection connection = connections.get(database);
@@ -123,11 +123,11 @@ public class EntityConnectionManager {
 	 */
 	public static void disposeConnections() {
 		logger.debug("disposing of all connections for the current thread");
-		Map<AbstractDatabaseDescriptor, IEntityDatabaseConnection> connections = connectionContainer.get();
+		Map<IDatabaseDescriptor, IEntityDatabaseConnection> connections = connectionContainer.get();
 		if (connections == null) {
 			logger.trace("connection map entry is null -> no open connections");
 		} else {
-			for (final AbstractDatabaseDescriptor database : databaseDescriptors) {
+			for (final IDatabaseDescriptor database : databaseDescriptors) {
 				logger.debug("disposing of connection for database: " + database.getDisplayName());
 				final IEntityDatabaseConnection connection = connections.get(database);
 				if (connection != null) {

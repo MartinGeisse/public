@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import name.martingeisse.admin.database.IEntityDatabaseConnection;
 import name.martingeisse.admin.database.JdbcEntityDatabaseConnection;
 
 import com.mysema.query.sql.SQLQuery;
@@ -19,10 +18,8 @@ import com.mysema.query.sql.SQLTemplates;
 
 /**
  * This class describes a database used by the application.
- * 
- * TODO refactor IDatabaseDescriptor
  */
-public abstract class AbstractDatabaseDescriptor {
+public abstract class AbstractDatabaseDescriptor implements IDatabaseDescriptor {
 
 	/**
 	 * the displayName
@@ -50,10 +47,10 @@ public abstract class AbstractDatabaseDescriptor {
 	public AbstractDatabaseDescriptor() {
 	}
 
-	/**
-	 * Getter method for the displayName.
-	 * @return the displayName
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.schema.database.IDatabaseDescriptor#getDisplayName()
 	 */
+	@Override
 	public String getDisplayName() {
 		return displayName;
 	}
@@ -114,34 +111,32 @@ public abstract class AbstractDatabaseDescriptor {
 		this.password = password;
 	}
 
-	/**
-	 * Creates an SQL connection to this database
-	 * @return the connection
-	 * @throws SQLException on SQL errors
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.schema.database.IDatabaseDescriptor#createJdbcConnection()
 	 */
+	@Override
 	public Connection createJdbcConnection() throws SQLException {
 		return DriverManager.getConnection(url, username, password);
 	}
 
-	/**
-	 * Creates an {@link IEntityDatabaseConnection} to this database.
-	 * @return the connection
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.schema.database.IDatabaseDescriptor#createConnection()
 	 */
+	@Override
 	public JdbcEntityDatabaseConnection createConnection() {
 		return new JdbcEntityDatabaseConnection(this);
 	}
 
-	/**
-	 * Creates a QueryDSL {@link SQLTemplates} object for this database.
-	 * @return the templates object
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.schema.database.IDatabaseDescriptor#createSqlTemplates()
 	 */
+	@Override
 	public abstract SQLTemplates createSqlTemplates();
 
-	/**
-	 * Creates a QueryDSL {@link SQLQuery} object for this database.
-	 * @param connection the database connection
-	 * @return the query
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.schema.database.IDatabaseDescriptor#createQuery(java.sql.Connection)
 	 */
+	@Override
 	public SQLQuery createQuery(final Connection connection) {
 		return new SQLQueryImpl(connection, createSqlTemplates());
 	}

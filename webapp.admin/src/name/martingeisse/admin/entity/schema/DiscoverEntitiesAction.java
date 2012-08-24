@@ -15,7 +15,7 @@ import java.util.List;
 
 import name.martingeisse.admin.entity.property.type.IEntityIdType;
 import name.martingeisse.admin.entity.property.type.ISqlType;
-import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
+import name.martingeisse.admin.entity.schema.database.IDatabaseDescriptor;
 import name.martingeisse.common.datarow.DataRowMeta;
 
 /**
@@ -26,13 +26,13 @@ class DiscoverEntitiesAction {
 	/**
 	 * the database
 	 */
-	private AbstractDatabaseDescriptor database;
+	private IDatabaseDescriptor database;
 
 	/**
 	 * Getter method for the database.
 	 * @return the database
 	 */
-	public AbstractDatabaseDescriptor getDatabase() {
+	public IDatabaseDescriptor getDatabase() {
 		return database;
 	}
 
@@ -40,7 +40,7 @@ class DiscoverEntitiesAction {
 	 * Setter method for the database.
 	 * @param database the database to set
 	 */
-	public void setDatabase(final AbstractDatabaseDescriptor database) {
+	public void setDatabase(final IDatabaseDescriptor database) {
 		this.database = database;
 	}
 
