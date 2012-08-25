@@ -89,6 +89,21 @@ public class JdbcEntityDatabaseConnection implements IEntityDatabaseConnection {
 	}
 
 	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.database.IEntityDatabaseConnection#isTransactionRunning()
+	 */
+	@Override
+	public boolean isTransactionRunning() {
+		try {
+			logger.trace("isTransactionRunning() called...");
+			boolean autocommit = jdbcConnection.getAutoCommit();
+			logger.trace("isTransactionRunning() finished");
+			return !autocommit;
+		} catch (final SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.database.IEntityDatabaseConnection#begin()
 	 */
 	@Override

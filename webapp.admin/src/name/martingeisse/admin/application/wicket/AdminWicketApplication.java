@@ -30,6 +30,26 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 
 /**
  * Wicket {@link WebApplication} implementation for this application.
+ * 
+ * TODO: The default security settings contain a fixed encryption key!
+ * (best have a look at *all* the default application settings)
+ * also have a look at the whole util.crypt package.
+ * 
+ * TODO: authentication strategy ("remember me" cookie) -> deactivate.
+ * (NoOpAuthenticationStrategy)
+ * In the admin framework or in the customization? -> framework
+ * (secure by default). Put a note in the documentation.
+ * 
+ * TODO: authorization strategy: Only affects wicket-specific authorization,
+ * not authorization in general. Provide glue code with Admin-Framework
+ * based authorization.
+ * 
+ * TODO: authroles (1) depends on username/password schemes, (2) uses
+ * roles (is that good?), (3) easy to avoid (wicket-auth, not core),
+ * 
+ * TODO idea: set authentication page class; set IAdminAuthenticationStrategy
+ * -> authenticate(IAdminCredentials):IAdminUserIdentity,
+ * set IAdminAuthorizationStrategy -> authorize(IAdminCredentials,IAdminUserIdentity,what)->boolean,
  */
 public class AdminWicketApplication extends AbstractMyWicketApplication {
 

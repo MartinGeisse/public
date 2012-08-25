@@ -20,6 +20,17 @@ import com.mysema.query.sql.SQLQuery;
 public interface IEntityDatabaseConnection {
 
 	/**
+	 * Checks whether a transaction is running. NOTE: This method can
+	 * only detect transactions that are properly initiated through
+	 * methods of this class. If client code directly sends
+	 * transaction control statements to the database, this method
+	 * won't know about it!
+	 * 
+	 * @return true if a transaction is running, false if not
+	 */
+	public boolean isTransactionRunning();
+	
+	/**
 	 * Begins a transaction.
 	 */
 	public void begin();

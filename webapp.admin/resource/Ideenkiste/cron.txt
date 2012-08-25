@@ -1,0 +1,12 @@
+
+Cron-System, verwendet fertiges Java Scheduling Framework. Statt Cronjobs, die Trigger-Seiten aufrufen.
+- flexibler
+- zeitlich genauer (< 1 Minute Genauigkeit)
+- einfacher in der Entwicklung zu verwenden
+
+Message-Client als Ersatz für Cron:
+- wird von einem Cronjob (alternativ: Java Scheduling, Java Timer, läuft durch) gestartet
+- ruft je 1 Message ab und startet einen Job dafür
+- hat einen Dispatcher, der die gültigen Messages und die Jobs dazu kennt: Messages und
+  Code sind entkoppelt und man kann durch "falsche" Messages nicht beliebigen Code starten
+
