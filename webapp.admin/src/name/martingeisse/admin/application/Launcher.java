@@ -15,6 +15,7 @@ import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.database.EntityConnectionServletFilter;
 import name.martingeisse.common.servlet.AntiJsessionidUrlFilter;
 import name.martingeisse.common.servlet.GlobalServletContext;
+import name.martingeisse.common.servlet.SideEffectsOriginRestrictionFilter;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.WicketFilter;
@@ -51,6 +52,7 @@ public class Launcher {
 
 		// add the global servlet listener
 		context.addEventListener(new GlobalServletContext());
+		context.addFilter(SideEffectsOriginRestrictionFilter.class, "/*", allDispatcherTypes);
 		context.addFilter(AntiJsessionidUrlFilter.class, "/*", allDispatcherTypes);
 
 		// the GZIP filter seems to cause problems on Jetty. The HTTP response either has

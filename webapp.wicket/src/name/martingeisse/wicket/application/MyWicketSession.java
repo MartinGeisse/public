@@ -6,6 +6,8 @@
 
 package name.martingeisse.wicket.application;
 
+import java.util.Random;
+
 import name.martingeisse.common.util.ClassKeyedContainer;
 
 import org.apache.wicket.Session;
@@ -17,11 +19,16 @@ import org.apache.wicket.request.Request;
  * data from application modules.
  */
 public class MyWicketSession extends WebSession {
-
+	
 	/**
 	 * the data
 	 */
 	private final ClassKeyedContainer<Object> data;
+
+	/**
+	 * the pageId
+	 */
+	private int pageId;
 
 	/**
 	 * Constructor.
@@ -30,6 +37,7 @@ public class MyWicketSession extends WebSession {
 	public MyWicketSession(Request request) {
 		super(request);
 		this.data = new ClassKeyedContainer<Object>();
+		this.pageId = (new Random().nextInt() & 0xffffff);
 	}
 	
 	/**
@@ -47,4 +55,12 @@ public class MyWicketSession extends WebSession {
 		return (MyWicketSession)Session.get();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.Session#nextPageId()
+	 */
+	@Override
+	public synchronized int nextPageId() {
+		return pageId++;
+	}
+	
 }
