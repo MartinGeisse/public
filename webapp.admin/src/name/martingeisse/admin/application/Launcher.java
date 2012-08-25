@@ -13,6 +13,7 @@ import javax.servlet.Filter;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.database.EntityConnectionServletFilter;
+import name.martingeisse.common.servlet.AntiJsessionidUrlFilter;
 import name.martingeisse.common.servlet.GlobalServletContext;
 
 import org.apache.log4j.Logger;
@@ -46,14 +47,16 @@ public class Launcher {
 		final ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 		context.setContextPath("/");
 		context.getSessionHandler().getSessionManager().setMaxInactiveInterval(30 * 60);
+		context.getSessionHandler().getSessionManager().setSessionIdPathParameterName("none");
 
 		// add the global servlet listener
 		context.addEventListener(new GlobalServletContext());
+		context.addFilter(AntiJsessionidUrlFilter.class, "/*", allDispatcherTypes);
 
-		//		// the GZIP filter seems to cause problems on Jetty. The HTTP response either has
-		//		// an incorrect or duplicate Content-Length header (my tools won't tell me...)
-		////		context.addFilter(GzipFilter.class, "/*", allDispatcherTypes);
-		
+		// the GZIP filter seems to cause problems on Jetty. The HTTP response either has
+		// an incorrect or duplicate Content-Length header (my tools won't tell me...)
+		//context.addFilter(GzipFilter.class, "/*", allDispatcherTypes);
+
 		// JDBC connection-closing filter
 		context.addFilter(EntityConnectionServletFilter.class, "/*", allDispatcherTypes);
 

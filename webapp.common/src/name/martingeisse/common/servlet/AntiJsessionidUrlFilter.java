@@ -16,8 +16,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-import javax.servlet.http.HttpSession;
 
 /**
  * This filter works against "jsessionid" session identifiers. It does two things:
@@ -63,56 +61,14 @@ public class AntiJsessionidUrlFilter implements Filter {
 		final HttpServletRequest httpRequest = (HttpServletRequest)request;
 		final HttpServletResponse httpResponse = (HttpServletResponse)response;
 
-		// TODO: send 404 instead? Is this really secure just to invalidate session Wouldn't Tomcat just
-		// create a new session used by both the attacker and the victim?
+		// block requests with a jsessionid -- they should not appear since we disable them in Jetty
 		if (httpRequest.isRequestedSessionIdFromURL()) {
-			final HttpSession session = httpRequest.getSession();
-			if (session != null) {
-				session.invalidate();
-			}
+			httpResponse.setStatus(400);
+			return;
 		}
 
-		// create a response wrapper that doesn't encode URLs even if asked to
-		final HttpServletResponseWrapper wrappedResponse = new HttpServletResponseWrapper(httpResponse) {
-			
-			/* (non-Javadoc)
-			 * @see javax.servlet.http.HttpServletResponseWrapper#encodeRedirectUrl(java.lang.String)
-			 */
-			@Override
-			@SuppressWarnings("deprecation")
-			public String encodeRedirectUrl(final String url) {
-				return url;
-			}
-
-			/* (non-Javadoc)
-			 * @see javax.servlet.http.HttpServletResponseWrapper#encodeRedirectURL(java.lang.String)
-			 */
-			@Override
-			public String encodeRedirectURL(final String url) {
-				return url;
-			}
-
-			/* (non-Javadoc)
-			 * @see javax.servlet.http.HttpServletResponseWrapper#encodeUrl(java.lang.String)
-			 */
-			@Override
-			@SuppressWarnings("deprecation")
-			public String encodeUrl(final String url) {
-				return url;
-			}
-
-			/* (non-Javadoc)
-			 * @see javax.servlet.http.HttpServletResponseWrapper#encodeURL(java.lang.String)
-			 */
-			@Override
-			public String encodeURL(final String url) {
-				return url;
-			}
-			
-		};
-
 		// with that response wrapper, go on handling the request
-		filterChain.doFilter(request, wrappedResponse);
+		filterChain.doFilter(request, response);
 
 	}
 

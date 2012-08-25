@@ -14,6 +14,7 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.version.CachingResourceVersion;
 import org.apache.wicket.request.resource.caching.version.LastModifiedResourceVersion;
+import org.apache.wicket.util.lang.Bytes;
 
 /**
  * Wicket {@link WebApplication} implementation for this application.
@@ -44,8 +45,10 @@ public abstract class AbstractMyWicketApplication extends WebApplication {
 		 * CSS resources for example do not. Wicket also doesn't set the Vary: HTTP header.
 		 * Centralized GZIP handling (and caching) should be more manageable.
 		 */
+		getApplicationSettings().setDefaultMaximumUploadSize(Bytes.megabytes(16));
 		getResourceSettings().setJavaScriptCompressor(null);
 		getMarkupSettings().setStripWicketTags(true);
+		getMarkupSettings().setStripComments(true);
 		getMarkupSettings().setDefaultMarkupEncoding("utf-8");
 		getMarkupSettings().setCompressWhitespace(true);
 		

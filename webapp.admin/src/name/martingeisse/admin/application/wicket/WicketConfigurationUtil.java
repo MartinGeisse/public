@@ -8,6 +8,8 @@ package name.martingeisse.admin.application.wicket;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
 
+import org.apache.wicket.authentication.IAuthenticationStrategy;
+import org.apache.wicket.authentication.strategy.NoOpAuthenticationStrategy;
 import org.apache.wicket.protocol.http.WebApplication;
 
 /**
@@ -19,6 +21,11 @@ public final class WicketConfigurationUtil {
 	 * The capability key for web application initialization contributors.
 	 */
 	public static final Class<IWebApplicationInitializationContributor> WEB_APPLICATION_INITIALIZATION_CONTRIBUTOR_CAPABILITY_KEY = IWebApplicationInitializationContributor.class;
+
+	/**
+	 * The parameter key for the Wicket authentication strategy.
+	 */
+	public static final Class<IAuthenticationStrategy> WICKET_AUTHENTICATION_STRATEGY_PARAMETER_KEY = IAuthenticationStrategy.class;
 
 	/**
 	 * Prevent instantiation.
@@ -49,6 +56,31 @@ public final class WicketConfigurationUtil {
 		for (final IWebApplicationInitializationContributor contributor : getWebApplicationInitializationContributors()) {
 			contributor.onInitializeWebApplication(webApplication);
 		}
+	}
+
+	/**
+	 * Getter method for the Wicket authentication strategy.
+	 * @return the Wicket authentication strategy
+	 */
+	public static IAuthenticationStrategy getWicketAuthenticationStrategy() {
+		return ApplicationConfiguration.get().getParameters().get(WICKET_AUTHENTICATION_STRATEGY_PARAMETER_KEY);
+	}
+
+	/**
+	 * Setter method for the Wicket authentication strategy.
+	 * @param wicketAuthenticationStrategy the Wicket authentication strategy to set
+	 */
+	public static void setWicketAuthenticationStrategy(final IAuthenticationStrategy wicketAuthenticationStrategy) {
+		ApplicationConfiguration.get().getParameters().set(WICKET_AUTHENTICATION_STRATEGY_PARAMETER_KEY, wicketAuthenticationStrategy);
+	}
+	
+	/**
+	 * Determines the Wicket {@link IAuthenticationStrategy} to actually use.
+	 * @return the authentication strategy
+	 */
+	public static IAuthenticationStrategy determineEffectiveWicketAuthenticationStrategy() {
+		IAuthenticationStrategy strategy = getWicketAuthenticationStrategy();
+		return (strategy == null ? new NoOpAuthenticationStrategy() : strategy);
 	}
 
 }

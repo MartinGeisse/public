@@ -33,7 +33,6 @@ import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.entity.schema.IEntityListFieldOrder;
 import name.martingeisse.admin.entity.schema.IEntityNavigationContributor;
 import name.martingeisse.admin.entity.schema.PrefixEliminatingEntityNameMappingStrategy;
-import name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.database.MysqlDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.reference.FixedNameEntityReferenceDetector;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;

@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.application.computation.operation;
+package name.martingeisse.admin.computation.operation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

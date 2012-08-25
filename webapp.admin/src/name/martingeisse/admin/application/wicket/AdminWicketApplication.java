@@ -31,21 +31,12 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 /**
  * Wicket {@link WebApplication} implementation for this application.
  * 
- * TODO: The default security settings contain a fixed encryption key!
- * (best have a look at *all* the default application settings)
- * also have a look at the whole util.crypt package.
- * 
- * TODO: authentication strategy ("remember me" cookie) -> deactivate.
- * (NoOpAuthenticationStrategy)
- * In the admin framework or in the customization? -> framework
- * (secure by default). Put a note in the documentation.
+ * TODO: resource settings -- SecurePackageResourceGuard
+ * TODO: start at a random page number (easy fix for CSRF)
  * 
  * TODO: authorization strategy: Only affects wicket-specific authorization,
  * not authorization in general. Provide glue code with Admin-Framework
  * based authorization.
- * 
- * TODO: authroles (1) depends on username/password schemes, (2) uses
- * roles (is that good?), (3) easy to avoid (wicket-auth, not core),
  * 
  * TODO idea: set authentication page class; set IAdminAuthenticationStrategy
  * -> authenticate(IAdminCredentials):IAdminUserIdentity,
@@ -71,6 +62,15 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		WicketTagIdentifier.registerWellKnownTagName("json");
 		getPageSettings().addComponentResolver(new JsonComponentResolver());
 		logger.trace("custom tags registered");
+		
+		// The default encryption code in Wicket use a fixed key and a fixed salt!
+		// We currently don't need encryption since we don't use "remember me"
+		// cookies nor URL encryption. If encryption IS used in the future,
+		// however, we should absolutely generate our own key and salt and
+		// maybe even use per-session generated keys.
+		logger.trace("registering Wicket encryption strategy...");
+		getSecuritySettings().setCryptFactory(new BrokenCryptFactory());
+		logger.trace("Wicket encryption strategy registered");
 
 		// superclass initialization
 		logger.trace("initializing base application class...");
@@ -97,6 +97,7 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		getApplicationSettings().setPageExpiredErrorPage(HomePage.class);
 		getMarkupSettings().setDefaultBeforeDisabledLink("<span class=\"disabled-link\">");
 		getMarkupSettings().setDefaultAfterDisabledLink("</span>");
+		getSecuritySettings().setAuthenticationStrategy(WicketConfigurationUtil.determineEffectiveWicketAuthenticationStrategy());
 
 		// mount resource URLs
 		mountResources(AbstractAdminPage.class, "", "common.css", "common.js", "jquery.dataTables.css");
