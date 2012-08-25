@@ -6,10 +6,10 @@
 
 package name.martingeisse.wicket.model;
 
-import org.apache.wicket.model.IModel;
-
 import name.martingeisse.common.datarow.DataRow;
 import name.martingeisse.common.util.GenericTypeUtil;
+
+import org.apache.wicket.model.IModel;
 
 /**
  * This model represents a single field from a {@link DataRow}.

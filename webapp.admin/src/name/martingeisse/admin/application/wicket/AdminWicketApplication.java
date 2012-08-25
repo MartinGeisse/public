@@ -31,8 +31,6 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 /**
  * Wicket {@link WebApplication} implementation for this application.
  * 
- * TODO: resource settings -- SecurePackageResourceGuard
- * 
  * TODO: authorization strategy: Only affects wicket-specific authorization,
  * not authorization in general. Provide glue code with Admin-Framework
  * based authorization.

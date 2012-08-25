@@ -6,10 +6,10 @@
 
 package name.martingeisse.wicket.autoform.validation;
 
-import org.apache.wicket.validation.IValidator;
-
 import name.martingeisse.wicket.autoform.annotation.components.AutoformComponent;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
+
+import org.apache.wicket.validation.IValidator;
 
 /**
  * This interface must be implemented by user-specified components
