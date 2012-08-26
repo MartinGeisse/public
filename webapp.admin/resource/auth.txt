@@ -1,0 +1,44 @@
+
+Authentication liefert keine identität; sie liefert ein Abbild von Merkmalen
+einer Identität. Wenn zwei Abbilder verschieden sind, kann es sich um dieselbe
+Identität handeln (z.B. zwei Authorization Tokens). Wenn zwei Abbilder gleich
+sind, kann es sich um verschiedene Identitäten handeln (z.B. ein Passwort,
+das mehreren Personen bekannt ist.
+-> UserIdentityProperties (?)
+nicht UserIdentity, da nicht auf Gleichheit prüfbar. 
+Gibt es eine UserIdentity, die auch vorhanden sein *kann*? Beispiel SG: userId.
+Dann wären zwei UserIdentity-Objekte auf gleichheit Prüfbar, aber nicht
+zwei UserIdentityProperties-Objekte oder mixed. Am besten Identität als eine
+der IdentityProperties speichern.
+
+Beispiele für mehrdeutige Identity Properties: IP-Adresse
+Beispiele für eindeutige Identity Properties: userId, publicUserId, loginName
+Zum eingeloggten Benutzer können *alle* bekannten Properties in der Session
+gespeichert werden: Es ist "nur ein Admin-Bereich", z.B. die Benutzerzahl ist
+beschränkt, und ein solcher Datensatz braucht nicht viel Platz in der Session.
+
+IUserIdentity; UserIdentity kommt von der Customization und ist oft einfach
+ein Wrapper um eine User-Entity. Für diesen Fall außerdem eine Hilfsklasse
+anbieten (um DataRow). IUserIdentity extends IUserProperties, damit man an
+alle Daten herankommt.
+Außerdem {UserProperties extends HashMap implements IUserProperties} für
+unvollständige Datensätze.
+
+Authentication liefert:
+	ICredentials -> IUserProperties?
+	IUserProperties -> IUserIdentity?
+Authorization liefert:
+	ICredentials, IUserProperties?, IUserIdentity? -> IPermissions
+	IPermissions, (Action) -> {allowed, denied}
+
+"authorization depends on authentication": In dem Engen Sinne wie bei
+Wikipedia beschrieben bedeutet das, dass Rechte nur aus den bekannten
+Merkmalen der Identität hervorgehen. Im Fazit würde das bedeuten,
+dass alle wichtigen Informationen aus den Credentials mit in das
+Authentication-Ergebnisobjekt gepackt werden und die Credentials nicht
+noch separat bei der Authorization vorliegen. Das schafft eine saubere
+Trennung, ist aber ansonsten nicht von Bedeutung.
+-> lieber nicht trennen -> bei Authorization auch die Credentials mitgeben.
+Auch das ist (in anderem Sinne) "sauber": Man muss keine Credentials als
+fake-Identitäts-Eigenschaften speichern. Ist auch einfacher, daran was
+umzubauen.

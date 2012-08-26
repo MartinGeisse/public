@@ -10,6 +10,7 @@ import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.component.page.HomePage;
 import name.martingeisse.admin.component.page.images.Dummy;
+import name.martingeisse.admin.component.page.login.NopLoginPage;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
@@ -140,7 +141,14 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 	 */
 	@Override
 	public Class<? extends Page> getHomePage() {
-		return HomePage.class;
+		// TODO this should return HomePage.class, and access to any page should bring
+		// up the login page. Bonus points: Store the original request and re-send
+		// after login (will only work for requests that don't need page state since
+		// such requests will typically arrive at a "not logged in" situation if
+		// the session has timed out, and then page state would be lost anyway).
+		// Give an error page for POST requests and statful requests.
+		return NopLoginPage.class;
+		// return HomePage.class;
 	}
 
 	/**

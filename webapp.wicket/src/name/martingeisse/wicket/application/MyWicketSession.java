@@ -21,9 +21,9 @@ import org.apache.wicket.request.Request;
 public class MyWicketSession extends WebSession {
 	
 	/**
-	 * the data
+	 * the dataContainer
 	 */
-	private final ClassKeyedContainer<Object> data;
+	private final ClassKeyedContainer<Object> dataContainer;
 
 	/**
 	 * the pageId
@@ -36,16 +36,24 @@ public class MyWicketSession extends WebSession {
 	 */
 	public MyWicketSession(Request request) {
 		super(request);
-		this.data = new ClassKeyedContainer<Object>();
+		this.dataContainer = new ClassKeyedContainer<Object>();
 		this.pageId = (new Random().nextInt() & 0xffffff);
 	}
 	
 	/**
-	 * Getter method for the data.
-	 * @return the data
+	 * Getter method for the dataContainer.
+	 * @return the dataContainer
 	 */
-	public ClassKeyedContainer<Object> getData() {
-		return data;
+	public ClassKeyedContainer<Object> getDataContainer() {
+		return dataContainer;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.Session#nextPageId()
+	 */
+	@Override
+	public synchronized int nextPageId() {
+		return pageId++;
 	}
 	
 	/**
@@ -55,12 +63,13 @@ public class MyWicketSession extends WebSession {
 		return (MyWicketSession)Session.get();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.wicket.Session#nextPageId()
+	/**
+	 * This method provides quick static access to the data container of the
+	 * current session.
+	 * @return the dataContainer of the current session
 	 */
-	@Override
-	public synchronized int nextPageId() {
-		return pageId++;
+	public static ClassKeyedContainer<Object> getData() {
+		return get().getDataContainer();
 	}
 	
 }

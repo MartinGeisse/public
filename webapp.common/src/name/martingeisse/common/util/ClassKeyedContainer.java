@@ -86,4 +86,11 @@ public class ClassKeyedContainer<B> implements Serializable {
 		return key.cast(map.remove(key));
 	}
 
+	/**
+	 * Removes all data from this container.
+	 */
+	public void clear() {
+		map.clear();
+	}
+	
 }
