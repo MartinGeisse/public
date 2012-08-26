@@ -27,10 +27,10 @@ public final class DefaultAuthorizationStrategy implements IAdminAuthorizationSt
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.application.security.IAdminAuthorizationStrategy#isActionAllowed(name.martingeisse.admin.application.security.IPermissions, java.lang.String)
+	 * @see name.martingeisse.admin.application.security.authorization.IAdminAuthorizationStrategy#checkPermission(name.martingeisse.admin.application.security.authorization.IPermissions, name.martingeisse.admin.application.security.authorization.IPermissionRequest)
 	 */
 	@Override
-	public boolean isActionAllowed(IPermissions permissions, String action) {
+	public boolean checkPermission(IPermissions permissions, IPermissionRequest request) {
 		return (permissions instanceof SuperuserPermissions);
 	}
 

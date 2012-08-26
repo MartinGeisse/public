@@ -6,9 +6,12 @@
 
 package name.martingeisse.admin.component.page.login;
 
+import name.martingeisse.admin.application.security.SecurityUtil;
+import name.martingeisse.admin.application.security.credentials.EmptyCredentials;
+
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.StatelessForm;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.request.flow.RedirectToUrlException;
 
 /**
  * Default login page. This page does not ask the user for any
@@ -43,8 +46,8 @@ public class NopLoginPage extends WebPage {
 		@Override
 		protected void onSubmit() {
 			super.onSubmit();
-			setDefaultModel(Model.of("*"));
-			System.out.println("***");
+			SecurityUtil.login(new EmptyCredentials());
+			throw new RedirectToUrlException("/");
 		}
 		
 	}

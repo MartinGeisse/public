@@ -15,6 +15,8 @@ import java.lang.annotation.Target;
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
+import name.martingeisse.admin.application.security.SecurityConfiguration;
+import name.martingeisse.admin.application.security.SecurityConfigurationUtil;
 import name.martingeisse.admin.customization.incubator.NavigationTabBarFactory;
 import name.martingeisse.admin.customization.pagebar.BasicPageBarFactory;
 import name.martingeisse.admin.database.EntityConnectionManager;
@@ -180,6 +182,9 @@ public class Main {
 			}
 			
 		});
+		
+		// security
+		SecurityConfigurationUtil.setSecurityConfiguration(new SecurityConfiguration());
 		
 		// run
 		buildNavigation();

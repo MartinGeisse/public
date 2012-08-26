@@ -10,10 +10,16 @@ import name.martingeisse.admin.application.security.authentication.IAdminAuthent
 import name.martingeisse.admin.application.security.authentication.IUserIdentity;
 import name.martingeisse.admin.application.security.authentication.IUserProperties;
 import name.martingeisse.admin.application.security.authentication.UserProperties;
+import name.martingeisse.admin.application.security.authorization.CorePermissionRequest;
 import name.martingeisse.admin.application.security.authorization.IAdminAuthorizationStrategy;
+import name.martingeisse.admin.application.security.authorization.IPermissionRequest;
 import name.martingeisse.admin.application.security.authorization.IPermissions;
+import name.martingeisse.admin.application.security.authorization.PermissionDeniedException;
+import name.martingeisse.admin.application.security.authorization.UnauthorizedPermissions;
 import name.martingeisse.admin.application.security.credentials.ICredentials;
 import name.martingeisse.wicket.application.MyWicketSession;
+
+import org.apache.log4j.Logger;
 
 /**
  * Utility methods to deal with the security features of the
@@ -21,6 +27,11 @@ import name.martingeisse.wicket.application.MyWicketSession;
  */
 public class SecurityUtil {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(SecurityUtil.class);
+	
 	/**
 	 * Prevent instantiation.
 	 */
@@ -34,9 +45,12 @@ public class SecurityUtil {
 	 * Otherwise, this method throws an exception but does not cause
 	 * any side-effects.
 	 * 
-	 * TODO: will currently succeed in any case, but result in empty
-	 * permissions. make "web login" an authorizable action and check for permission;
-	 * throw an exception if denied. Only replace session if successful.
+	 * Logging in performs the following steps:
+	 * - determine user properties using the supplied credentials (authentication step 1)
+	 * - try to determine the user's identity (authentication step 2)
+	 * - determine the user's permissions (authorization step 1)
+	 * - check the user's login permission ({@link CorePermissionRequest.Type#LOGIN})
+	 *   (authorization step 2).
 	 * 
 	 * Successfully logging in will replace the current HTTP session with a new
 	 * one, therefore losing any data from a previously logged
@@ -47,31 +61,48 @@ public class SecurityUtil {
 	 * @param credentials the credentials used to log in
 	 */
 	public static void login(final ICredentials credentials) {
+		logger.debug("a user is trying to log in");
 		
 		// authenticate
-		IAdminAuthenticationStrategy authenticationStrategy = SecurityConfigurationUtil.getSecurityConfiguration().getAuthenticationStrategy();
+		IAdminAuthenticationStrategy authenticationStrategy = SecurityConfigurationUtil.getSecurityConfigurationSafe().getAuthenticationStrategy();
+		logger.trace("authentication strategy: " + authenticationStrategy);
 		IUserProperties userProperties = authenticationStrategy.determineProperties(credentials);
 		if (userProperties == null) {
 			userProperties = new UserProperties();
 		}
+		logger.debug("detected user properties: " + userProperties);
 		IUserIdentity userIdentity = authenticationStrategy.determineIdentity(userProperties);
 		if (userIdentity != null) {
 			userProperties = userIdentity;
 		}
+		logger.debug("detected user identity: " + userIdentity);
 		
 		// authorization
-		IAdminAuthorizationStrategy authorizationStrategy = SecurityConfigurationUtil.getSecurityConfiguration().getAuthorizationStrategy();
+		IAdminAuthorizationStrategy authorizationStrategy = SecurityConfigurationUtil.getSecurityConfigurationSafe().getAuthorizationStrategy();
+		logger.trace("authorization strategy: " + authorizationStrategy);
 		IPermissions permissions = authorizationStrategy.determinePermissions(credentials, userProperties, userIdentity);
-		// TODO check login action
+		logger.debug("permissions: " + permissions);
+		IPermissionRequest loginPermissionRequest = new CorePermissionRequest(CorePermissionRequest.Type.LOGIN);
+		logger.trace("checking permission: " + loginPermissionRequest);
+		if (!authorizationStrategy.checkPermission(permissions, loginPermissionRequest)) {
+			logger.debug("login permission denied");
+			throw new PermissionDeniedException(permissions, loginPermissionRequest);
+		}
+		logger.trace("login permission granted");
 		
 		// clear previous session
+		logger.trace("replacing HTTP session");
 		MyWicketSession session = MyWicketSession.get();
 		session.getDataContainer().clear();
 		session.replaceSession();
+		logger.trace("HTTP session replaced");
 		
 		// establish new session
+		logger.trace("storing login data");
 		LoginData loginData = new LoginData(credentials, userProperties, userIdentity, permissions);
 		session.getDataContainer().set(LoginData.class, loginData);
+		logger.trace("login data stored");
+		logger.info("user logged in");
 		
 	}
 
@@ -81,9 +112,11 @@ public class SecurityUtil {
 	 * redirect to the login page.
 	 */
 	public static void logout() {
+		logger.debug("a user is trying to log out");
 		MyWicketSession session = MyWicketSession.get();
 		session.getDataContainer().clear();
 		session.invalidateNow();
+		logger.info("user logged out");
 	}
 
 	/**
@@ -99,16 +132,42 @@ public class SecurityUtil {
 	}
 	
 	/**
-	 * Checks whether the currently logged in user is granted permission
-	 * for the specified action.
+	 * Returns the permissions of the logged in user, or the shared
+	 * {@link UnauthorizedPermissions} instance if the user is not logged in.
+	 * @return the effective permissions
+	 */
+	public static IPermissions getEffectivePermissions() {
+		LoginData loginData = getLoginData();
+		return (loginData == null ? UnauthorizedPermissions.INSTANCE : loginData.getPermissions());
+	}
+	
+	/**
+	 * Checks whether the currently logged in user is granted the specified
+	 * request for permission, and returns the result.
 	 * 
-	 * @param action the action
+	 * @param request the request
 	 * @return true if permission is granted, false if permission is denied
 	 */
-	public static boolean checkPermission(String action) {
-		IAdminAuthorizationStrategy authorizationStrategy = SecurityConfigurationUtil.getSecurityConfiguration().getAuthorizationStrategy();
-		IPermissions permissions = getLoginData().getPermissions();
-		return authorizationStrategy.isActionAllowed(permissions, action);
+	public static boolean getPermission(IPermissionRequest request) {
+		logger.debug("checking permission: " + request);
+		IAdminAuthorizationStrategy authorizationStrategy = SecurityConfigurationUtil.getSecurityConfigurationSafe().getAuthorizationStrategy();
+		IPermissions permissions = getEffectivePermissions();
+		boolean result = authorizationStrategy.checkPermission(permissions, request);
+		logger.debug((result ? "permission granted: " : "permission denied: ") + request);
+		return result;
 	}
 
+	/**
+	 * Checks whether the currently logged in user is granted the specified
+	 * request for permission, and throws an exception if the permission
+	 * was denied.
+	 * 
+	 * @param request the request
+	 */
+	public static void enforcePermission(IPermissionRequest request) {
+		if (!getPermission(request)) {
+			throw new PermissionDeniedException(getEffectivePermissions(), request);
+		}
+	}
+	
 }

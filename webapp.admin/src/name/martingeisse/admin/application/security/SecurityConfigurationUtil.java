@@ -27,6 +27,18 @@ public class SecurityConfigurationUtil {
 	}
 
 	/**
+	 * Getter method for the security configuration. Throws an exception if the configuration is missing (null).
+	 * @return the security configuration
+	 */
+	public static SecurityConfiguration getSecurityConfigurationSafe() {
+		SecurityConfiguration configuration = getSecurityConfiguration();
+		if (configuration == null) {
+			throw new IllegalStateException("no security configuration");
+		}
+		return configuration;
+	}
+
+	/**
 	 * Setter method for the security configuration.
 	 * @param securityConfiguration the security configuration to set
 	 */
