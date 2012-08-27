@@ -11,7 +11,6 @@ import name.martingeisse.admin.application.security.credentials.EmptyCredentials
 
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.StatelessForm;
-import org.apache.wicket.request.flow.RedirectToUrlException;
 
 /**
  * Default login page. This page does not ask the user for any
@@ -47,7 +46,9 @@ public class NopLoginPage extends WebPage {
 		protected void onSubmit() {
 			super.onSubmit();
 			SecurityUtil.login(new EmptyCredentials());
-			throw new RedirectToUrlException("/");
+			if (!continueToOriginalDestination()) {
+        		setResponsePage(getApplication().getHomePage());
+        	}			
 		}
 		
 	}

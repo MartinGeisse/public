@@ -10,7 +10,6 @@ import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.component.page.HomePage;
 import name.martingeisse.admin.component.page.images.Dummy;
-import name.martingeisse.admin.component.page.login.NopLoginPage;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
@@ -31,14 +30,6 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 
 /**
  * Wicket {@link WebApplication} implementation for this application.
- * 
- * TODO: authorization strategy: Only affects wicket-specific authorization,
- * not authorization in general. Provide glue code with Admin-Framework
- * based authorization.
- * 
- * TODO idea: set authentication page class; set IAdminAuthenticationStrategy
- * -> authenticate(IAdminCredentials):IAdminUserIdentity,
- * set IAdminAuthorizationStrategy -> authorize(IAdminCredentials,IAdminUserIdentity,what)->boolean,
  */
 public class AdminWicketApplication extends AbstractMyWicketApplication {
 
@@ -113,6 +104,9 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 
 		// add fallback string loaders
 		getResourceSettings().getStringResourceLoaders().add(new PrefixedIdentityStringResourceLoader("schema.entity."));
+		
+		// redirect to the login page if not logged in
+		getRequestCycleListeners().add(new LoginRequestCycleListener());
 
 		logger.debug("AdminWicketApplication.init(): end");
 	}
@@ -141,14 +135,7 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 	 */
 	@Override
 	public Class<? extends Page> getHomePage() {
-		// TODO this should return HomePage.class, and access to any page should bring
-		// up the login page. Bonus points: Store the original request and re-send
-		// after login (will only work for requests that don't need page state since
-		// such requests will typically arrive at a "not logged in" situation if
-		// the session has timed out, and then page state would be lost anyway).
-		// Give an error page for POST requests and statful requests.
-		return NopLoginPage.class;
-		// return HomePage.class;
+		return HomePage.class;
 	}
 
 	/**
