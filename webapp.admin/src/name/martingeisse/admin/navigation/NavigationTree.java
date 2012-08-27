@@ -72,6 +72,11 @@ public final class NavigationTree {
 		this.nodesByPath = new HashMap<String, NavigationNode>();
 		nodesByPath.put("/", root);
 		initializeNodesByPath(root, "/");
+		
+		// make sure that the "special" URLs used by the framework aren't occupied
+		if (nodesByPath.get("/login") != null) {
+			throw new IllegalStateException("navigation path /login must not be used by any navigation node");
+		}
 
 	}
 

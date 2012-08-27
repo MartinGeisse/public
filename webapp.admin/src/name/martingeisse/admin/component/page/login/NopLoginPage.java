@@ -15,10 +15,16 @@ import org.apache.wicket.markup.html.form.StatelessForm;
 /**
  * Default login page. This page does not ask the user for any
  * credentials. Instead it just has a button that logs the user
- * in.
+ * in. Using the static bypass flag it is also possible to
+ * skip this page and login automatically.
  */
 public class NopLoginPage extends WebPage {
 
+	/**
+	 * Bypass this page and login automatically.
+	 */
+	public static boolean bypass = false;
+	
 	/**
 	 * Constructor.
 	 */
@@ -26,10 +32,31 @@ public class NopLoginPage extends WebPage {
 		add(new LoginForm("form"));
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.Page#onBeforeRender()
+	 */
+	@Override
+	protected void onBeforeRender() {
+		super.onBeforeRender();
+		if (bypass) {
+			login();
+		}
+	}
+	
+	/**
+	 * This method performs the login and the redirect.
+	 */
+	void login() {
+		SecurityUtil.login(new EmptyCredentials());
+		if (!continueToOriginalDestination()) {
+    		setResponsePage(getApplication().getHomePage());
+    	}			
+	}
+	
 	/**
 	 * Login form implementation.
 	 */
-	private static class LoginForm extends StatelessForm<Void> {
+	private class LoginForm extends StatelessForm<Void> {
 
 		/**
 		 * Constructor.
@@ -45,10 +72,7 @@ public class NopLoginPage extends WebPage {
 		@Override
 		protected void onSubmit() {
 			super.onSubmit();
-			SecurityUtil.login(new EmptyCredentials());
-			if (!continueToOriginalDestination()) {
-        		setResponsePage(getApplication().getHomePage());
-        	}			
+			login();
 		}
 		
 	}

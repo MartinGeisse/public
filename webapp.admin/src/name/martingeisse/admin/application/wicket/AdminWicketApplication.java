@@ -7,6 +7,7 @@
 package name.martingeisse.admin.application.wicket;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
+import name.martingeisse.admin.application.security.SecurityConfigurationUtil;
 import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.component.page.HomePage;
 import name.martingeisse.admin.component.page.images.Dummy;
@@ -89,14 +90,21 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		getSecuritySettings().setAuthenticationStrategy(WicketConfigurationUtil.determineEffectiveWicketAuthenticationStrategy());
 
 		// mount resource URLs
+		logger.trace("mounting resource URLs...");
 		mountResources(AbstractAdminPage.class, "", "common.css", "common.js", "jquery.dataTables.css");
 		mountResources(Dummy.class, "images/", "back_enabled.png", "forward_disabled.png", "forward_enabled_hover.png", "sort_asc_disabled.png", "sort_desc.png", "back_disabled.png", "back_enabled_hover.png", "forward_enabled.png", "sort_asc.png", "sort_both.png", "sort_desc_disabled.png");
+		logger.trace("resource URLs mounted");
 
 		// mount navigation URLs
 		logger.trace("mounting navigation URLs...");
 		NavigationConfigurationUtil.getNavigationTree().mountRequestMappers(this);
 		logger.trace("navigation URLs mounted");
 
+		// mount other URLs
+		logger.trace("mounting misc URLs...");
+		mountPage("/login", SecurityConfigurationUtil.getSecurityConfiguration().getLoginPageClass());
+		logger.trace("misc URLs mounted");
+		
 		// let plugins contribute
 		logger.trace("invoking web application initialization contributors...");
 		WicketConfigurationUtil.invokeWebApplicationInitializationContributors(this);
