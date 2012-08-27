@@ -84,9 +84,8 @@ public class LoginRequestCycleListener extends AbstractRequestCycleListener {
 		
 		// any other type of request handler is blocked
 		// TODO: BufferedResponseRequestHandler probably needed for redirect-to-render in more complex login pages
-		// TODO: HTTP error code: 400 -> ?
 		logger.trace("blocking handler: " + handler + " / " + handler.getClass().getCanonicalName());
-		throw new AbortWithHttpErrorCodeException(400);
+		throw new AbortWithHttpErrorCodeException(403);
 
 	}
 
