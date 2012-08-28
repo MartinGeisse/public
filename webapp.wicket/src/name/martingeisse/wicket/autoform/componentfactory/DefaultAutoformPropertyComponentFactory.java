@@ -16,8 +16,6 @@ import name.martingeisse.wicket.autoform.annotation.components.AutoformTextSugge
 import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription;
 import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
 import name.martingeisse.wicket.autoform.validation.IValidatorAcceptor;
-import name.martingeisse.wicket.model.conversion.LiberalBigDecimalConversionModel;
-import name.martingeisse.wicket.model.conversion.LiberalIntegerConversionModel;
 import name.martingeisse.wicket.panel.simple.CheckBoxPanel;
 import name.martingeisse.wicket.panel.simple.DropDownChoicePanel;
 import name.martingeisse.wicket.panel.simple.TextFieldPanel;
@@ -127,8 +125,6 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 	 */
 	protected Panel createPropertyComponentNoOverride(String id, IAutoformPropertyDescription propertyDescriptor, IValidator<?>[] validators, IValidationErrorAcceptor validationErrorAcceptor) {
 
-		// TODO: Do not use liberal conversion models. Instead, properly use Wicket's conversion/validation mechanism.
-		
 		final Class<?> type = propertyDescriptor.getType();
 		final IModel<?> model = propertyDescriptor.getModel();
 
@@ -152,8 +148,7 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 			}
 			
 		} else if (type == Integer.class || type == Integer.TYPE) {
-			final IModel<String> wrapperModel = new LiberalIntegerConversionModel(this.<Integer> castModelUnsafe(model));
-			final TextFieldPanel<String> panel = new TextFieldPanel<String>(id, wrapperModel);
+			final TextFieldPanel<?> panel = new TextFieldPanel<Object>(id, castModelUnsafe(model));
 			if (propertyDescriptor.isReadOnly()) {
 				panel.getTextField().setEnabled(false);
 			}
@@ -162,8 +157,7 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 			return panel;
 			
 		} else if (type == BigDecimal.class) {
-			final IModel<String> wrapperModel = new LiberalBigDecimalConversionModel(this.<BigDecimal> castModelUnsafe(model));
-			final TextFieldPanel<String> panel = new TextFieldPanel<String>(id, wrapperModel);
+			final TextFieldPanel<?> panel = new TextFieldPanel<Object>(id, castModelUnsafe(model));
 			if (propertyDescriptor.isReadOnly()) {
 				panel.getTextField().setEnabled(false);
 			}

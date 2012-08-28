@@ -316,7 +316,7 @@ public class Main {
 		 * Getter method for the name1.
 		 * @return the name1
 		 */
-		@MyMaxLength(4)
+//		@MyMaxLength(4)
 		public int getName1() {
 			return name1;
 		}
@@ -333,7 +333,7 @@ public class Main {
 		 * Getter method for the name2.
 		 * @return the name2
 		 */
-		@AutoformValidator(MyValidator.class)
+//		@AutoformValidator(MyValidator.class)
 		public String getName2() {
 			return name2;
 		}
