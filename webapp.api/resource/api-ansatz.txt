@@ -1,0 +1,12 @@
+
+- pass-through handler: Leitet Calls zu einer existierenden API
+  auf einem anderen Server weiter (auf HTTP-level, nicht auf
+  API-level; letzteres kann man von Hand programmieren wenn
+  nötig) -> eine Art HTTP-Proxy, aber nur für bestimmte Funktionen
+
+- AbstractMethodHandler: Sammelt weitere URL-Segmente in Array,
+  GET in Map, POST in Map; alternativ je GET/POST Bean-Properties
+  
+
+
+

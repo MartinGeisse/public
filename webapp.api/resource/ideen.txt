@@ -8,16 +8,6 @@ this java generated PHP code.
 
 ---
 
-Parallel entwickeln:
-- RESTful Backend Service
-- Wicket WebApp auf Java-Service
-- PHP iPhone Backend und Wicket WebApp auf diesem; iPhone Backend parallel weiterentwickeln
-- Verification Mode: Vergleicht Ergebnisse von Wicket mit Java vs. PHP Backend
-- (Wicket WebApp direkt auf DB? Könnte für direkten Performancevergleich
-	hilfreich sein aber ist ein riesiger Zusatzaufwand. Aufwand ist am ehesten
-	handhabbar wenn diese Version aus denselben Komponenten wie Wicket
-	WebApp + Java backend, nur ohne HTTP-Verbindungsstück, realisiert ist)
-
 Ein erster Schritt ist, das iPhone-Backend aufzuräumen. Unit-Tests werden leider
 wegen der sich ändernden Datenbank nicht gut gehen, also nur manuelle Tests.
 Dieser Schritt ist in jedem Fall sinnvoll, selbst wenn alles bei dem alten
