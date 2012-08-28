@@ -1,0 +1,25 @@
+	@Override
+	public void render(ITableCursor tableCursor, PrintWriter out) {
+		IFieldType[] types = tableCursor.getColumnTypes();
+		while (true) {
+			Object[] row = tableCursor.fetchRow();
+			if (row == null) {
+				break;
+			}
+			if (types.length != row.length) {
+				System.out.println("row length mismatch; row length = " + row.length + ", columns = " + types.length);
+				return;
+			}
+			boolean first = true;
+			for (int i=0; i<types.length; i++) {
+				if (first) {
+					first = false;
+				} else {
+					out.print('|');
+				}
+				String value = types[i].convertToText(row[i]);
+				out.print(value.replace("\\", "\\\\").replace("|", "\\|"));
+			}
+			out.println();
+		}
+	}
