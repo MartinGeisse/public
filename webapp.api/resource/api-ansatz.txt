@@ -7,6 +7,10 @@
 - AbstractMethodHandler: Sammelt weitere URL-Segmente in Array,
   GET in Map, POST in Map; alternativ je GET/POST Bean-Properties
   
-
+- IndexedResourceFolderHandler, NumberIndexedRFH, StringIndexedRFH:
+  Folder selbst listet Indices auf; Elements werden per Index
+  angesprochen; es gibt nur einen Sub-Handler für alle Elements
+  und der Index wird als Parameter hinterlegt wenn dieser
+  aufgerufen wird.
 
 
