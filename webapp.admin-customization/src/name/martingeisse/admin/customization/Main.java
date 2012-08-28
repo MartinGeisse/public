@@ -49,6 +49,7 @@ import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandle
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.wicket.autoform.AutoformPanel;
+import name.martingeisse.wicket.autoform.annotation.structure.AutoformPropertyOrder;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociatedValidator;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
@@ -293,12 +294,13 @@ public class Main {
 	/**
 	 *
 	 */
+	@AutoformPropertyOrder({"name1", "name2", "name3"})
 	public static class MyAutoformBean implements Serializable {
 
 		/**
 		 * the name1
 		 */
-		private String name1;
+		private int name1;
 
 		/**
 		 * the name2
@@ -315,7 +317,7 @@ public class Main {
 		 * @return the name1
 		 */
 		@MyMaxLength(4)
-		public String getName1() {
+		public int getName1() {
 			return name1;
 		}
 
@@ -323,7 +325,7 @@ public class Main {
 		 * Setter method for the name1.
 		 * @param name1 the name1 to set
 		 */
-		public void setName1(final String name1) {
+		public void setName1(final int name1) {
 			this.name1 = name1;
 		}
 
@@ -373,6 +375,14 @@ public class Main {
 		 */
 		public MyAutoformPanel(final String id) {
 			super(id, new MyAutoformBean(), DefaultAutoformBeanDescriber.instance, DefaultAutoformPropertyComponentFactory.instance);
+		}
+		
+		/* (non-Javadoc)
+		 * @see name.martingeisse.wicket.autoform.AutoformPanel#onSuccessfulSubmit()
+		 */
+		@Override
+		protected void onSuccessfulSubmit() {
+			System.out.println("*** SUBMIT ***");
 		}
 
 	}

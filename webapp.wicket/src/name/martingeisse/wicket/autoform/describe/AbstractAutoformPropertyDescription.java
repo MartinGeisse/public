@@ -12,7 +12,7 @@ import java.lang.annotation.Annotation;
 
 import name.martingeisse.common.terms.DisplayName;
 import name.martingeisse.wicket.autoform.annotation.components.AutoformComponent;
-import name.martingeisse.wicket.autoform.annotation.components.AutoformComponentConstructorArgumentName;
+import name.martingeisse.wicket.autoform.annotation.components.AutoformComponentConstructorArgument;
 import name.martingeisse.wicket.autoform.annotation.structure.AutoformReadOnly;
 
 import org.apache.wicket.Component;
@@ -20,7 +20,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 
 /**
- * This class implements basic fields defined in {@link DefaultAutoformPropertyDescription}
+ * This class implements basic fields defined in {@link IAutoformPropertyDescription}
  * as well as fields automatically derived from annotations.
  */
 public abstract class AbstractAutoformPropertyDescription implements IAutoformPropertyDescription {
@@ -117,20 +117,13 @@ public abstract class AbstractAutoformPropertyDescription implements IAutoformPr
 	 */
 	@Override
 	public Annotation getComponentConstructorArgument() {
-		AutoformComponentConstructorArgumentName nameAnnotation = getAnnotation(AutoformComponentConstructorArgumentName.class);
-		if (nameAnnotation == null) {
+		AutoformComponentConstructorArgument argumentAnnotation = getAnnotation(AutoformComponentConstructorArgument.class);
+		if (argumentAnnotation == null) {
 			return null;
 		}
-		Class<?> untypedConstructorArgumentClass;
-		try {
-			untypedConstructorArgumentClass = Class.forName(nameAnnotation.value());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		Class<? extends Annotation> typedConstructorArgumentClass = untypedConstructorArgumentClass.asSubclass(Annotation.class);
-		Annotation constructorArgument = getAnnotation(typedConstructorArgumentClass);
+		Annotation constructorArgument = getAnnotation(argumentAnnotation.value());
 		if (constructorArgument == null) {
-			throw new RuntimeException("Could not find annotation specified by @AutoformComponentConstructorArgumentName: " + nameAnnotation.value());
+			throw new RuntimeException("Could not find annotation specified by @AutoformComponentConstructorArgumentName: " + argumentAnnotation.value());
 		}
 		return constructorArgument;
 	}

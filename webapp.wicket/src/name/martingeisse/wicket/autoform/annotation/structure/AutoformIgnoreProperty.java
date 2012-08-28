@@ -13,6 +13,8 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation, tagged to a getter method, causes autoforms to ignore a property completely.
+ * With this annotation, it does not matter whether the property is listed in
+ * {@link AutoformPropertyOrder} or not.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

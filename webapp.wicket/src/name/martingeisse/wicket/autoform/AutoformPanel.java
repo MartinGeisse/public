@@ -39,12 +39,12 @@ public class AutoformPanel extends Panel {
 	 * the beanDescription
 	 */
 	private final IAutoformBeanDescription beanDescription;
-	
+
 	/**
 	 * the propertyComponentFactory
 	 */
 	private final IAutoformPropertyComponentFactory propertyComponentFactory;
-	
+
 	/**
 	 * Constructor.
 	 * @param id the wicket id
@@ -58,14 +58,14 @@ public class AutoformPanel extends Panel {
 		this.propertyComponentFactory = propertyComponentFactory;
 		createComponents();
 	}
-	
+
 	/**
 	 * 
 	 */
 	private void createComponents() {
-		
+
 		// create the form component
-		Form<?> form = new Form<Void>("form") {
+		final Form<?> form = new Form<Void>("form") {
 			@Override
 			protected void onSubmit() {
 				AutoformPanel.this.onSuccessfulSubmit();
@@ -74,24 +74,24 @@ public class AutoformPanel extends Panel {
 		add(form);
 
 		// create the property repeater
-		ListView<IAutoformPropertyDescription> rows = new ListView<IAutoformPropertyDescription>("rows", beanDescription.getPropertyDescriptions()) {
-			
+		final ListView<IAutoformPropertyDescription> rows = new ListView<IAutoformPropertyDescription>("rows", beanDescription.getPropertyDescriptions()) {
+
 			/* (non-Javadoc)
 			 * @see org.apache.wicket.markup.html.list.ListView#populateItem(org.apache.wicket.markup.html.list.ListItem)
 			 */
 			@Override
-			protected void populateItem(ListItem<IAutoformPropertyDescription> item) {
-				IAutoformPropertyDescription propertyDescription = item.getModelObject();
+			protected void populateItem(final ListItem<IAutoformPropertyDescription> item) {
+				final IAutoformPropertyDescription propertyDescription = item.getModelObject();
 				item.add(new Label("keyLabel", propertyDescription.getDisplayName()));
 				item.add(propertyComponentFactory.createPropertyComponent("valueComponent", propertyDescription, createValidators(propertyDescription), new ValidationErrorAcceptor(item)));
 			}
-			
+
 		};
 		rows.setReuseItems(true);
 		form.add(rows);
-		
+
 	}
-	
+
 	/**
 	 *
 	 */
@@ -100,12 +100,12 @@ public class AutoformPanel extends Panel {
 		/**
 		 * the item
 		 */
-		private ListItem<IAutoformPropertyDescription> item;
-		
+		private final ListItem<IAutoformPropertyDescription> item;
+
 		/**
 		 * Constructor.
 		 */
-		ValidationErrorAcceptor(ListItem<IAutoformPropertyDescription> item) {
+		ValidationErrorAcceptor(final ListItem<IAutoformPropertyDescription> item) {
 			this.item = item;
 		}
 
@@ -113,41 +113,44 @@ public class AutoformPanel extends Panel {
 		 * @see name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor#acceptValidationErrorsFrom(org.apache.wicket.Component)
 		 */
 		@Override
-		public void acceptValidationErrorsFrom(Component component) {
+		public void acceptValidationErrorsFrom(final Component component) {
 			item.add(new ComponentFeedbackPanel("errorMessage", component));
 		}
-		
+
 	}
-	
+
 	/**
 	 * @param property
 	 * @return
 	 */
-	private IValidator<?>[] createValidators(IAutoformPropertyDescription property) {
-		List<IValidator<?>> validators = new ArrayList<IValidator<?>>();
-		
+	private IValidator<?>[] createValidators(final IAutoformPropertyDescription property) {
+		final List<IValidator<?>> validators = new ArrayList<IValidator<?>>();
+
 		// check for AutoformValidator
-		AutoformValidator autoformValidatorAnnotation = property.getAnnotation(AutoformValidator.class);
+		final AutoformValidator autoformValidatorAnnotation = property.getAnnotation(AutoformValidator.class);
 		if (autoformValidatorAnnotation != null) {
-			for (Class<? extends IValidator<?>> validatorClass : autoformValidatorAnnotation.value()) {
+			for (final Class<? extends IValidator<?>> validatorClass : autoformValidatorAnnotation.value()) {
 				try {
 					validators.add(validatorClass.newInstance());
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					throw new RuntimeException(e);
 				}
 			}
 		}
-		
+
 		// check for annotations tagged with AutoformAssociatedValidator
-		for (Annotation annotation : property.getAnnotations()) {
-			Class<? extends Annotation> annotationType = annotation.annotationType();
-			AutoformAssociatedValidator associatedValidatorAnnotation = annotationType.getAnnotation(AutoformAssociatedValidator.class);
+		for (final Annotation annotation : property.getAnnotations()) {
+			final Class<? extends Annotation> annotationType = annotation.annotationType();
+			final AutoformAssociatedValidator associatedValidatorAnnotation = annotationType.getAnnotation(AutoformAssociatedValidator.class);
 			if (associatedValidatorAnnotation != null) {
 				try {
-					Class<? extends IValidator<?>> validatorClass = associatedValidatorAnnotation.value();
-					Constructor<? extends IValidator<?>> constructor = validatorClass.getConstructor(annotationType);
+					final Class<? extends IValidator<?>> validatorClass = associatedValidatorAnnotation.value();
+					final Constructor<? extends IValidator<?>> constructor = validatorClass.getConstructor(annotationType);
+					if (constructor == null) {
+						throw new IllegalStateException("associated validator class " + validatorClass + " has no constructor(" + annotationType + ")");
+					}
 					validators.add(constructor.newInstance(annotation));
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					throw new RuntimeException(e);
 				}
 			}
@@ -155,7 +158,7 @@ public class AutoformPanel extends Panel {
 
 		return validators.toArray(new IValidator<?>[validators.size()]);
 	}
-	
+
 	/**
 	 * Getter method for the beanDescription.
 	 * @return the beanDescription
@@ -163,7 +166,7 @@ public class AutoformPanel extends Panel {
 	public IAutoformBeanDescription getBeanDescription() {
 		return beanDescription;
 	}
-	
+
 	/**
 	 * @return the form used by this autoform panel
 	 */
@@ -176,7 +179,6 @@ public class AutoformPanel extends Panel {
 	 * The default implementation does nothing.
 	 */
 	protected void onSuccessfulSubmit() {
-		System.out.println("*** SUBMIT ***");
 	}
-	
+
 }

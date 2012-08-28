@@ -6,6 +6,7 @@
 
 package name.martingeisse.wicket.autoform.annotation.components;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -16,7 +17,7 @@ import java.lang.annotation.Target;
  * of the component for an autoform property. The argument must be
  * an annotation instance and must be attached to the getter method just
  * like other autoform property annotations. In addition, this annotation
- * must be attached to the getter too, and must specify the name of
+ * must be attached to the getter too, and must specify the type of
  * the annotation to pass to the constructor.
  * 
  * Example: A bean has a property called customerName, using the
@@ -24,7 +25,7 @@ import java.lang.annotation.Target;
  * property are attached to the getter method. To pass an additional
  * constructor argument of annotation type \@MyAnnotation, you must
  * add that annotation to the getter method, as well as
- * \@AutoformComponentConstructorArgumentName("MyAnnotation").
+ * \@AutoformComponentConstructorArgumentName(\@MyAnnotation.class).
  * 
  * The component class must obviously be tailored for use with autoforms
  * for this feature to make sense. However, this allows to customize
@@ -35,12 +36,12 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AutoformComponentConstructorArgumentName {
+public @interface AutoformComponentConstructorArgument {
 
 	/**
-	 * @return the name of the annotation type whose instance to pass
+	 * @return the type of the annotation type whose instance to pass
 	 * to the component constructor.
 	 */
-	public String value();
+	public Class<? extends Annotation> value();
 	
 }

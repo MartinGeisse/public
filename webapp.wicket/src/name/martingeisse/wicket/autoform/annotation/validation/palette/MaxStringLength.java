@@ -4,21 +4,23 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.wicket.autoform.annotation.validation;
+package name.martingeisse.wicket.autoform.annotation.validation.palette;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociatedValidator;
+
 /**
- * This annotation causes the autoform system to validate the
- * length of string fields. It cannot be attached to other fields.
- * This annotation has no effect on string fields whose value is null.
+ * Validation for string-typed properties: The property value
+ * must have at most the specified length.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AutoformStringLengthValidation {
+@AutoformAssociatedValidator(StringLengthValidator.class)
+public @interface MaxStringLength {
 
 	/**
 	 * @return the maximum string length.

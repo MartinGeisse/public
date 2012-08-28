@@ -30,10 +30,10 @@ import org.apache.wicket.model.IModel;
  * bean properties as text, using toString(). Another example is to enforce a
  * text area instead of a text field.
  * 
- * If no {@link AutoformComponentConstructorArgumentName} is present for the property,
+ * If no {@link AutoformComponentConstructorArgument} is present for the property,
  * then the component constructor is expected to have two arguments of type {@link String}
  * and {@link IModel} that take the wicket id and the model for the property, respectively.
- * If {@link AutoformComponentConstructorArgumentName} is present, then the corresponding
+ * If {@link AutoformComponentConstructorArgument} is present, then the corresponding
  * annotation instance is passed as an additional constructor argument and the constructor
  * is expected to accept either the corresponding annotation interface or {@link Annotation}
  * as its third parameter type.

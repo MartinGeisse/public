@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 
 import name.martingeisse.common.terms.DisplayName;
-import name.martingeisse.wicket.autoform.annotation.components.AutoformComponentConstructorArgumentName;
+import name.martingeisse.wicket.autoform.annotation.components.AutoformComponentConstructorArgument;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
@@ -61,12 +61,10 @@ public interface IAutoformPropertyDescription extends Serializable {
 	
 	/**
 	 * Obtains an additional argument for the component constructor that is
-	 * specified via {@link AutoformComponentConstructorArgumentName}, or null if that
+	 * specified via {@link AutoformComponentConstructorArgument}, or null if that
 	 * annotation cannot be found. Throws an exception if
-	 * {@link AutoformComponentConstructorArgumentName} is present but
-	 * - no class with that name exists, or
-	 * - the class with that name is not an annotation class, or
-	 * - no matching annotation can be found
+	 * {@link AutoformComponentConstructorArgument} is present but no matching
+	 * annotation can be found
 	 * @return the constructor argument or null
 	 */
 	public Annotation getComponentConstructorArgument();

@@ -14,21 +14,40 @@ import java.util.List;
 import name.martingeisse.wicket.autoform.annotation.structure.AutoformIgnoreProperty;
 import name.martingeisse.wicket.autoform.annotation.structure.AutoformPropertyOrder;
 
-import org.apache.commons.beanutils.PropertyUtils;
-
 /**
- * This describer starts with a base property list: If an AutoformFields annotation exists
- * at the bean class, then the list from that annotation is used as the base property
- * list. Otherwise, reflection is used to obtain a list of all bean properties and this
- * is used as the base property list.
+ * This describer builds descriptions for bean properties with the following rules:
+ * - properties for which acceptAsRelevant() returns false are considered
+ *   irrelevant to autoforms in general, such as Java's getClass(). No
+ *   property description is build from them, and including them in
+ *   {@link AutoformPropertyOrder} is an error.
+ * - properties for which acceptAsVisible() returns false are hidden in
+ *   the description, although relevant in principle. They are also expected
+ *   to appear in {@link AutoformPropertyOrder} (if present).
+ *   This can be used to hide specific properties of a bean according to
+ *   the context, using a context-specific describer subclass.
+ * - properties tagged with {@link AutoformIgnoreProperty} do not produce
+ *   a property description. Whether or not they appear in
+ *   {@link AutoformPropertyOrder} is ignored. This allows the bean author to
+ *   skip the distinction and hide a property with the same annotation,
+ *   no matter if the property is irrelevant, relevant but permanently
+ *   hidden, or temporarily hidden for quick prototyping.
  * 
- * Properties that are annotated with AutoformIgnoreProperty are ignored without any
- * further handling.
+ * Internals:
  * 
- * Properties are then handed to the acceptProperty() method. The default implementation
- * filters out the "class" property. Subclasses can customize this behavior.
+ * The describer starts with the list of all bean properties, and first
+ * performs the following validation check: If {@link AutoformPropertyOrder}
+ * is present, then each property that is not tagged with
+ * {@link AutoformIgnoreProperty} must appear in that order list if and
+ * only if it is relevant according to acceptAsRelevant().
  * 
- * For all remaining properties, a property description is generated.
+ * The describer then builds a property list: If {@link AutoformPropertyOrder}
+ * is present, then the list is built from that order, skipping all properties
+ * with {@link AutoformIgnoreProperty}. Otherwise it contains all properties
+ * without {@link AutoformIgnoreProperty} in an unspecified order.
+ * 
+ * This describer then removes all hidden properties, i.e. properties for
+ * which acceptAsVisible() returns false. For all remaining properties, a
+ * property description is generated.
  */
 public class DefaultAutoformBeanDescriber implements IAutoformBeanDescriber {
 
@@ -38,9 +57,30 @@ public class DefaultAutoformBeanDescriber implements IAutoformBeanDescriber {
 	public static final DefaultAutoformBeanDescriber instance = new DefaultAutoformBeanDescriber();
 	
 	/**
-	 * Prevent further instantiation.
+	 * Prevent further instantiation of this class, but allow subclass instances.
 	 */
 	protected DefaultAutoformBeanDescriber() {
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.terra.wicket.autoform.IAutoformBeanDescriber#describe(java.lang.Object)
+	 */
+	@Override
+	public DefaultAutoformBeanDescription describe(Object bean) {
+		
+		// analyze the bean
+		Serializable serializableBean = enforceSerializableBean(bean);
+		List<PropertyDescriptor> sortedVisibleBeanPropertyDescriptors = new DefaultAutoformBeanDescriberHelper(this, serializableBean.getClass()).run();
+		
+		// generate our own property descriptors for the properties
+		List<IAutoformPropertyDescription> propertyDescriptions = new ArrayList<IAutoformPropertyDescription>();
+		for (PropertyDescriptor beanPropertyDescriptor : sortedVisibleBeanPropertyDescriptors) {
+			propertyDescriptions.add(new DefaultAutoformPropertyDescription(serializableBean, beanPropertyDescriptor));
+		}
+		
+		// generate the bean description
+		return createBeanDescription(bean, propertyDescriptions);
+		
 	}
 	
 	/**
@@ -51,82 +91,52 @@ public class DefaultAutoformBeanDescriber implements IAutoformBeanDescriber {
 		try {
 			return (Serializable)bean;
 		} catch (ClassCastException e) {
-			throw new IllegalArgumentException("bean is not serialiable");
+			throw new IllegalArgumentException("bean is not serializable");
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.terra.wicket.autoform.IAutoformBeanDescriber#describe(java.lang.Object)
-	 */
-	@Override
-	public DefaultAutoformBeanDescription describe(Object bean) {
-		Serializable serializableBean = enforceSerializableBean(bean);
-		List<PropertyDescriptor> beanPropertyDescriptors = createBasePropertyList(bean);
-		List<IAutoformPropertyDescription> propertyDescriptions = new ArrayList<IAutoformPropertyDescription>();
-		for (PropertyDescriptor beanPropertyDescriptor : beanPropertyDescriptors) {
-			if (beanPropertyDescriptor.getReadMethod().getAnnotation(AutoformIgnoreProperty.class) == null) {
-				if (acceptProperty(beanPropertyDescriptor)) {
-					propertyDescriptions.add(new DefaultAutoformPropertyDescription(serializableBean, beanPropertyDescriptor));
-				}
-			}
-		}
-		return new DefaultAutoformBeanDescription(bean, propertyDescriptions);
-	}
-
 	/**
-	 * @return
-	 */
-	private List<PropertyDescriptor> createBasePropertyList(Object bean) {
-		// TODO: if AutoformPropertyOrder then check that it lists exactly those properties
-		// not tagged with AutoformIgnoreProperty
-		List<PropertyDescriptor> result = new ArrayList<PropertyDescriptor>();
-		AutoformPropertyOrder annotation = bean.getClass().getAnnotation(AutoformPropertyOrder.class);
-		if (annotation == null) {
-			for (PropertyDescriptor beanPropertyDescriptor : PropertyUtils.getPropertyDescriptors(bean)) {
-				result.add(beanPropertyDescriptor);
-			}
-		} else {
-			for (String propertyName : annotation.value()) {
-				try {
-					result.add(PropertyUtils.getPropertyDescriptor(bean, propertyName));
-				} catch (Exception e) {
-					throw new RuntimeException("bean class " + bean.getClass() + ": cannot get property descriptor named " + propertyName + ", " + e);
-				}
-			}
-		}
-		return result;
-	}
-	
-	/**
-	 * Subclasses can override this method to control which properties are listed. The default implementation
-	 * accepts all properties except "class".
+	 * Subclasses can override this method to control which properties are considered
+	 * relevant to autoforms. See the description of this class for detailed
+	 * information. In particular, properties excluded by this method must not
+	 * be listed in {@link AutoformPropertyOrder} (if present).
+	 * 
+	 * The default implementation accepts all properties except "class".
+	 * 
 	 * @param beanPropertyDescriptor the descriptor for the property to check
-	 * @return true to include the property in the autoform, false to exclude
+	 * @return true to accept the property as relevant, false to consider it
+	 * annotated with {@link AutoformIgnoreProperty} implicitly
 	 */
-	protected boolean acceptProperty(PropertyDescriptor beanPropertyDescriptor) {
+	protected boolean acceptAsRelevant(PropertyDescriptor beanPropertyDescriptor) {
 		return !"class".equals(beanPropertyDescriptor.getName());
 	}
+
+	/**
+	 * Subclasses can override this method to control which properties are visible
+	 * in an autoform. This allows to hide properties from outside a bean, but
+	 * the properties are still considered relevant to autoforms. In particular,
+	 * properties excluded by this method must still be listed by
+	 * {@link AutoformPropertyOrder} (if present).
+	 * 
+	 * The default implementation does not exclude any property, i.e. it always
+	 * returns true.
+	 * 
+	 * @param beanPropertyDescriptor the descriptor for the property to check
+	 * @return true to show, false to hide
+	 */
+	protected boolean acceptAsVisible(PropertyDescriptor beanPropertyDescriptor) {
+		return true;
+	}
 	
 	/**
-	 * Adds a property description to the specified bean description and places it either directly
-	 * before or directly after the indicator property. It is an error if the indicator property
-	 * does not occur in the bean description.
-	 * 
-	 * @param beanDescription the bean description to which the property shall be added
-	 * @param indicatorPropertyName the indicator property that determines the index where the property is added
-	 * @param propertyToAdd the property to add
-	 * @param after whether the property shall be added after (true) or before (false) the indicator
+	 * Actually creates the bean description. Subclasses can override this method,
+	 * for example, to post-process the property list.
+	 * @param bean the bean
+	 * @param propertyDescriptions the property descriptions
+	 * @return the bean description
 	 */
-	protected static void addProperty(DefaultAutoformBeanDescription beanDescription, String indicatorPropertyName, IAutoformPropertyDescription propertyToAdd, boolean after) {
-		int index = 0;
-		for (IAutoformPropertyDescription existingProperty : beanDescription.getPropertyDescriptions()) {
-			if (existingProperty.getName().equals(indicatorPropertyName)) {
-				beanDescription.getPropertyDescriptions().add(after ? (index + 1) : index, propertyToAdd);
-				return;
-			}
-			index++;
-		}
-		throw new IllegalArgumentException("unknown indicator property: " + indicatorPropertyName);
+	protected DefaultAutoformBeanDescription createBeanDescription(Object bean, List<IAutoformPropertyDescription> propertyDescriptions) {
+		return new DefaultAutoformBeanDescription(bean, propertyDescriptions);
 	}
-
+	
 }

@@ -187,7 +187,8 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 			return panel;
 			
 		} else {
-			throw new RuntimeException("cannot create autoform property component for type: " + type.getCanonicalName());
+			throw new RuntimeException("cannot create autoform property component for type: " + type.getCanonicalName() +
+				" (property: " + propertyDescriptor.getName() + ")");
 		}
 
 	}
