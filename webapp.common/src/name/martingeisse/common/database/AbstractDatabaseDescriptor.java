@@ -4,13 +4,12 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.schema.database;
+package name.martingeisse.common.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import name.martingeisse.admin.database.JdbcEntityDatabaseConnection;
 
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.SQLQueryImpl;

@@ -13,9 +13,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.martingeisse.admin.database.IDatabaseDescriptor;
 import name.martingeisse.admin.entity.property.type.IEntityIdType;
 import name.martingeisse.admin.entity.property.type.ISqlType;
-import name.martingeisse.admin.entity.schema.database.IDatabaseDescriptor;
 import name.martingeisse.common.datarow.DataRowMeta;
 
 /**

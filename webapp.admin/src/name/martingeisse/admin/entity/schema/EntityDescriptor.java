@@ -17,13 +17,13 @@ import java.util.List;
 import java.util.Map;
 
 import name.martingeisse.admin.database.EntityConnectionManager;
+import name.martingeisse.admin.database.IDatabaseDescriptor;
 import name.martingeisse.admin.database.IEntityDatabaseConnection;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.instance.FetchEntityInstanceAction;
 import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.property.type.IEntityIdType;
-import name.martingeisse.admin.entity.schema.database.IDatabaseDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;

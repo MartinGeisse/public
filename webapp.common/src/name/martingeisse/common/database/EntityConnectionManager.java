@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.database;
+package name.martingeisse.common.database;
 
 import java.util.HashMap;
 import java.util.Map;

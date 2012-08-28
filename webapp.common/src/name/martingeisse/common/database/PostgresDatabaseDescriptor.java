@@ -4,23 +4,23 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.schema.database;
+package name.martingeisse.common.database;
 
-import com.mysema.query.sql.MySQLTemplates;
+import com.mysema.query.sql.PostgresTemplates;
 import com.mysema.query.sql.SQLTemplates;
 
 /**
  * Concrete implementation of {@link AbstractDatabaseDescriptor} for
- * MySQL databases.
+ * PostgreSQL databases.
  */
-public class MysqlDatabaseDescriptor extends AbstractDatabaseDescriptor {
+public class PostgresDatabaseDescriptor extends AbstractDatabaseDescriptor {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor#createSqlTemplates()
 	 */
 	@Override
 	public SQLTemplates createSqlTemplates() {
-		return new MySQLTemplates();
+		return new PostgresTemplates();
 	}
 
 }
