@@ -20,6 +20,7 @@ import name.martingeisse.admin.application.security.SecurityConfigurationUtil;
 import name.martingeisse.admin.component.page.login.NopLoginPage;
 import name.martingeisse.admin.customization.incubator.NavigationTabBarFactory;
 import name.martingeisse.admin.customization.pagebar.BasicPageBarFactory;
+import name.martingeisse.admin.customization.reflist.SettingPanel;
 import name.martingeisse.admin.database.EntityConnectionManager;
 import name.martingeisse.admin.database.MysqlDatabaseDescriptor;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
@@ -150,7 +151,11 @@ public class Main {
 		EntityConfigurationUtil.addEntityNavigationContributor(new IEntityNavigationContributor() {
 			@Override
 			public void contributeNavigationNodes(EntityDescriptor entity, NavigationNode mainEntityInstanceNode) {
-				mainEntityInstanceNode.setHandler(new EntityInstancePanelHandler(RawEntityPresentationPanel.class));
+				if (entity.getName().equals("settings")) {
+					mainEntityInstanceNode.setHandler(new EntityInstancePanelHandler(SettingPanel.class));
+				} else {
+					mainEntityInstanceNode.setHandler(new EntityInstancePanelHandler(RawEntityPresentationPanel.class));
+				}
 			}
 		});
 		

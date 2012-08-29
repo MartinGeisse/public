@@ -100,7 +100,7 @@ public class FetchEntityInstanceAction {
 			final Path<?> entityExpression = Expressions.path(Object.class, entity.getTableName());
 			final Expression<?> idExpression = Expressions.path(Object.class, entityExpression, entity.getIdColumnName());
 			final Predicate idMatchPredicate = Expressions.predicate(Ops.EQ, idExpression, Expressions.constant(id));
-			final ResultSet resultSet = query.from(entityExpression).where(idMatchPredicate).getResults(Wildcard.all);
+			final ResultSet resultSet = query.where(idMatchPredicate).getResults(Wildcard.all);
 			entity.checkDataRowMeta(resultSet);
 			if (resultSet.next()) {
 				return new EntityInstance(entity, resultSet);
