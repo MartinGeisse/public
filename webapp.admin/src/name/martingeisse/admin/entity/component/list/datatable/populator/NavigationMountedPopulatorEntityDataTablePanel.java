@@ -7,6 +7,7 @@
 package name.martingeisse.admin.entity.component.list.datatable.populator;
 
 import name.martingeisse.admin.entity.EntityDescriptorModel;
+import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.NavigationUtil;
 import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler;
@@ -47,6 +48,15 @@ public class NavigationMountedPopulatorEntityDataTablePanel extends AbstractPopu
 	 */
 	public NavigationMountedPopulatorEntityDataTablePanel(final String id, final IModel<EntityDescriptor> entityModel) {
 		super(id, entityModel);
+	}
+
+	/**
+	 * Constructor.
+	 * @param id the wicket id
+	 * @param selection the entity selection
+	 */
+	public NavigationMountedPopulatorEntityDataTablePanel(final String id, final EntitySelection selection) {
+		super(id, selection);
 	}
 
 	/**

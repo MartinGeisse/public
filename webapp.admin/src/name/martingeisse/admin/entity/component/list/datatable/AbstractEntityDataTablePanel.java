@@ -8,6 +8,7 @@ package name.martingeisse.admin.entity.component.list.datatable;
 
 import java.util.Iterator;
 
+import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.component.list.EntityInstanceDataProvider;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.IEntityPredicateAcceptor;
@@ -53,7 +54,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	 * the filter
 	 */
 	private Predicate filter;
-	
+
 	/**
 	 * the cachedColumnTitles
 	 */
@@ -67,6 +68,16 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	public AbstractEntityDataTablePanel(final String id, final IModel<EntityDescriptor> entityModel) {
 		super(id);
 		setDefaultModel(entityModel);
+	}
+
+	/**
+	 * Constructor.
+	 * @param id the wicket id
+	 * @param selection the entity selection
+	 */
+	public AbstractEntityDataTablePanel(final String id, final EntitySelection selection) {
+		this(id, selection.getEntityModel());
+		setFilter(selection.getPredicate());
 	}
 
 	/**
@@ -93,12 +104,28 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 		return urlFor(ISimpleCallbackListener.INTERFACE, null).toString();
 	}
 
+	/**
+	 * Getter method for the filter.
+	 * @return the filter
+	 */
+	public Predicate getFilter() {
+		return filter;
+	}
+
+	/**
+	 * Setter method for the filter.
+	 * @param filter the filter to set
+	 */
+	public void setFilter(final Predicate filter) {
+		this.filter = filter;
+	}
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.list.IEntityListFilterAcceptor#acceptEntityListFilter(name.martingeisse.admin.entity.list.IEntityListFilter)
 	 */
 	@Override
 	public void acceptEntityListFilter(final Predicate filter) {
-		this.filter = filter;
+		setFilter(filter);
 	}
 
 	/* (non-Javadoc)
@@ -118,7 +145,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 		assembler.appendBooleanLiteral(isSearchSupported());
 		assembler.prepareObjectProperty("columns");
 		assembler.beginList();
-		for (int i=0; i<getColumnCount(); i++) {
+		for (int i = 0; i < getColumnCount(); i++) {
 			assembler.prepareListElement();
 			assembler.beginObject();
 			assembler.prepareObjectProperty("bSortable");
@@ -156,14 +183,14 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 		cachedColumnTitles = null;
 		super.onDetach();
 	}
-	
+
 	/**
 	 * @return the number of columns of the DataTable, as specified by getColumnTitles().
 	 */
 	public final int getColumnCount() {
 		return getColumnDescriptors().length;
 	}
-	
+
 	/**
 	 * Returns the column descriptors. This method basically calls
 	 * determineColumnDescriptors() but uses a cache for the return value. 
@@ -175,16 +202,16 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 		}
 		return cachedColumnTitles;
 	}
-	
+
 	/**
 	 * Returns the column descriptor with the specified index.
 	 * @param columnIndex the column index
 	 * @return the column descriptor
 	 */
-	protected final CD getColumnDescriptor(int columnIndex) {
+	protected final CD getColumnDescriptor(final int columnIndex) {
 		return getColumnDescriptors()[columnIndex];
 	}
-	
+
 	/**
 	 * Subclasses must implement this method to return the descriptors for the
 	 * table columns. This also indicates the number of columns.
@@ -199,7 +226,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	 * @return the expression to sort that column, or null to skip sorting
 	 */
 	protected abstract Expression<Comparable<?>> getColumnSortExpression(int columnIndex);
-	
+
 	/**
 	 * Returns true if the specified column is sortable, false if not sortable.
 	 * This method is used to determine whether sort controls shall be placed
@@ -221,7 +248,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	protected boolean isSearchSupported() {
 		return getEntityDescriptor().isSearchSupported();
 	}
-	
+
 	/**
 	 * Returns a predicate to filter rows for the specified search term.
 	 * May return null to indicate no filtering.
@@ -231,7 +258,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	 * @param searchTerm the search term
 	 * @return the search predicate
 	 */
-	protected Predicate getSearchPredicate(String searchTerm) {
+	protected Predicate getSearchPredicate(final String searchTerm) {
 		return getEntityDescriptor().createSearchFilter(searchTerm);
 	}
 
@@ -257,7 +284,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	 * @param iterator the iterator to take data from
 	 * @param assembler the assembler used to assemble JSON code
 	 */
-	protected void assembleRows(final Iterator<? extends EntityInstance> iterator, JavascriptAssembler assembler) {
+	protected void assembleRows(final Iterator<? extends EntityInstance> iterator, final JavascriptAssembler assembler) {
 		assembler.beginList();
 		while (iterator.hasNext()) {
 			final EntityInstance entityInstance = iterator.next();
@@ -268,7 +295,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 		}
 		assembler.endList();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.wicket.util.ISimpleCallbackListener#onSimpleCallback()
 	 */

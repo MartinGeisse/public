@@ -7,6 +7,7 @@
 package name.martingeisse.admin.entity.component.list.datatable.populator;
 
 import name.martingeisse.admin.entity.EntityDescriptorModel;
+import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 import org.apache.wicket.model.IModel;
@@ -50,6 +51,17 @@ public class PopulatorEntityDataTablePanel extends AbstractPopulatorEntityDataTa
 	 */
 	public PopulatorEntityDataTablePanel(String id, IModel<EntityDescriptor> entityModel, PopulatorColumnDescriptor[] columnDescriptors) {
 		super(id, entityModel);
+		this.columnDescriptors = columnDescriptors;
+	}
+
+	/**
+	 * Constructor.
+	 * @param id the wicket id
+	 * @param selection the entity selection
+	 * @param columnDescriptors the column descriptors
+	 */
+	public PopulatorEntityDataTablePanel(final String id, final EntitySelection selection, PopulatorColumnDescriptor[] columnDescriptors) {
+		super(id, selection);
 		this.columnDescriptors = columnDescriptors;
 	}
 

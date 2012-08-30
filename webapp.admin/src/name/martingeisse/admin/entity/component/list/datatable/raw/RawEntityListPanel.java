@@ -7,6 +7,7 @@
 package name.martingeisse.admin.entity.component.list.datatable.raw;
 
 import name.martingeisse.admin.entity.EntityDescriptorModel;
+import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.EntityExpressionUtil;
@@ -62,6 +63,15 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 	 */
 	public RawEntityListPanel(final String id, final IModel<EntityDescriptor> entityModel) {
 		super(id, entityModel);
+	}
+
+	/**
+	 * Constructor.
+	 * @param id the wicket id
+	 * @param selection the entity selection
+	 */
+	public RawEntityListPanel(final String id, final EntitySelection selection) {
+		super(id, selection);
 	}
 
 	/* (non-Javadoc)

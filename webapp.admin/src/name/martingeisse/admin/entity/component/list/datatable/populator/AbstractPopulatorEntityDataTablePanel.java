@@ -9,6 +9,7 @@ package name.martingeisse.admin.entity.component.list.datatable.populator;
 import java.util.Arrays;
 import java.util.List;
 
+import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.component.list.datatable.render.AbstractJsonRenderingEntityDataTablePanel;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
@@ -44,6 +45,15 @@ public abstract class AbstractPopulatorEntityDataTablePanel<CD extends Populator
 	 */
 	public AbstractPopulatorEntityDataTablePanel(String id, IModel<EntityDescriptor> entityModel) {
 		super(id, entityModel);
+	}
+
+	/**
+	 * Constructor.
+	 * @param id the wicket id
+	 * @param selection the entity selection
+	 */
+	public AbstractPopulatorEntityDataTablePanel(final String id, final EntitySelection selection) {
+		super(id, selection);
 	}
 
 	/* (non-Javadoc)

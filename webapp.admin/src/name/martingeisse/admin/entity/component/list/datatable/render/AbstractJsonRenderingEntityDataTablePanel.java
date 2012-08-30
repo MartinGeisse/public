@@ -9,6 +9,7 @@ package name.martingeisse.admin.entity.component.list.datatable.render;
 import java.util.Iterator;
 import java.util.List;
 
+import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
@@ -51,19 +52,28 @@ import com.mysema.query.types.Expression;
  * @param <CD> the column descriptor type
  */
 public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends RenderingColumnDescriptor> extends AbstractEntityDataTablePanel<CD> {
-	
+
 	/**
 	 * the entityInstances
 	 */
 	private transient List<EntityInstance> entityInstances;
-	
+
 	/**
 	 * Constructor.
 	 * @param id the wicket id
 	 * @param entityModel the entity model
 	 */
-	public AbstractJsonRenderingEntityDataTablePanel(String id, IModel<EntityDescriptor> entityModel) {
+	public AbstractJsonRenderingEntityDataTablePanel(final String id, final IModel<EntityDescriptor> entityModel) {
 		super(id, entityModel);
+	}
+
+	/**
+	 * Constructor.
+	 * @param id the wicket id
+	 * @param selection the entity selection
+	 */
+	public AbstractJsonRenderingEntityDataTablePanel(final String id, final EntitySelection selection) {
+		super(id, selection);
 	}
 
 	/**
@@ -73,7 +83,7 @@ public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends Rende
 	public List<EntityInstance> getEntityInstances() {
 		return entityInstances;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Component#onDetach()
 	 */
@@ -82,43 +92,43 @@ public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends Rende
 		entityInstances = null;
 		super.onDetach();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Component#onInitialize()
 	 */
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		
-		WebMarkupContainer contentRenderArea = new WebMarkupContainer("contentRenderArea");
+
+		final WebMarkupContainer contentRenderArea = new WebMarkupContainer("contentRenderArea");
 		contentRenderArea.setVisible(false);
 		add(contentRenderArea);
-		
-		ListView<EntityInstance> entityInstancesListView = new ListView<EntityInstance>("rows", new PropertyModel<List<EntityInstance>>(this, "entityInstances")) {
-			
+
+		final ListView<EntityInstance> entityInstancesListView = new ListView<EntityInstance>("rows", new PropertyModel<List<EntityInstance>>(this, "entityInstances")) {
+
 			/* (non-Javadoc)
 			 * @see org.apache.wicket.markup.html.list.ListView#populateItem(org.apache.wicket.markup.html.list.ListItem)
 			 */
 			@Override
-			protected void populateItem(ListItem<EntityInstance> item) {
+			protected void populateItem(final ListItem<EntityInstance> item) {
 				AbstractJsonRenderingEntityDataTablePanel.this.populateRowItem(item);
 			}
-			
+
 			/* (non-Javadoc)
 			 * @see org.apache.wicket.markup.html.list.ListView#renderItem(org.apache.wicket.markup.html.list.ListItem)
 			 */
 			@Override
-			protected void renderItem(ListItem<?> item) {
+			protected void renderItem(final ListItem<?> item) {
 				if (item.getIndex() > 0) {
 					getResponse().write(",");
 				}
 				super.renderItem(item);
 			}
-			
+
 		};
 		contentRenderArea.add(entityInstancesListView);
 	}
-	
+
 	/**
 	 * Subclasses must implement this method to add components to data rows.
 	 * @param item the row item
@@ -132,48 +142,48 @@ public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends Rende
 	private void setEntityInstances(final Iterator<? extends EntityInstance> iterator) {
 		entityInstances = IteratorUtils.toList(iterator);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel#assembleRows(java.util.Iterator, name.martingeisse.common.javascript.JavascriptAssembler)
 	 */
 	@Override
-	protected void assembleRows(final Iterator<? extends EntityInstance> iterator, JavascriptAssembler assembler) {
-		
+	protected void assembleRows(final Iterator<? extends EntityInstance> iterator, final JavascriptAssembler assembler) {
+
 		// replace the current response by a fake response to capture the rendering output
-		Response previousResponse = RequestCycle.get().getResponse();
-		StringResponse fakeResponse = new StringResponse();
+		final Response previousResponse = RequestCycle.get().getResponse();
+		final StringResponse fakeResponse = new StringResponse();
 		RequestCycle.get().setResponse(fakeResponse);
-		
+
 		// store the entity instances so the list view can get them
 		setEntityInstances(iterator);
-		
+
 		// render the content rendering area
-		WebMarkupContainer contentRenderArea = (WebMarkupContainer)get("contentRenderArea");
+		final WebMarkupContainer contentRenderArea = (WebMarkupContainer)get("contentRenderArea");
 		contentRenderArea.setVisible(true);
 		contentRenderArea.render();
 		contentRenderArea.setVisible(false);
-		
+
 		// restore the original response
 		RequestCycle.get().setResponse(previousResponse);
-		
+
 		// JSON-encode the rendered output
 		assembler.getBuilder().append(fakeResponse.toString());
-		
+
 	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel#assembleRowFields(name.martingeisse.admin.entity.instance.EntityInstance, name.martingeisse.common.javascript.JavascriptAssembler)
 	 */
 	@Override
-	protected void assembleRowFields(EntityInstance entityInstance, JavascriptAssembler assembler) {
+	protected void assembleRowFields(final EntityInstance entityInstance, final JavascriptAssembler assembler) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel#isColumnSortable(int)
 	 */
 	@Override
-	protected boolean isColumnSortable(int columnIndex) {
+	protected boolean isColumnSortable(final int columnIndex) {
 		return (getColumnSortExpression(columnIndex) != null);
 	}
 
@@ -181,8 +191,8 @@ public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends Rende
 	 * @see name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel#getColumnSortExpression(int)
 	 */
 	@Override
-	protected Expression<Comparable<?>> getColumnSortExpression(int columnIndex) {
+	protected Expression<Comparable<?>> getColumnSortExpression(final int columnIndex) {
 		return getColumnDescriptor(columnIndex).getSortExpression();
 	}
-	
+
 }
