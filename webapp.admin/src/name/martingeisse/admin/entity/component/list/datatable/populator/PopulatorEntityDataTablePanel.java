@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.entity.component.list.datatable.populator;
 
+import name.martingeisse.admin.entity.EntityDescriptorModel;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 import org.apache.wicket.model.IModel;
@@ -20,6 +21,26 @@ public class PopulatorEntityDataTablePanel extends AbstractPopulatorEntityDataTa
 	 * the columnDescriptors
 	 */
 	private final PopulatorColumnDescriptor[] columnDescriptors;
+
+	/**
+	 * Constructor.
+	 * @param id the wicket id
+	 * @param entityName the entity name
+	 * @param columnDescriptors the column descriptors
+	 */
+	public PopulatorEntityDataTablePanel(final String id, String entityName, PopulatorColumnDescriptor[] columnDescriptors) {
+		this(id, new EntityDescriptorModel(entityName), columnDescriptors);
+	}
+
+	/**
+	 * Constructor.
+	 * @param id the wicket id
+	 * @param entity the entity
+	 * @param columnDescriptors the column descriptors
+	 */
+	public PopulatorEntityDataTablePanel(final String id, EntityDescriptor entity, PopulatorColumnDescriptor[] columnDescriptors) {
+		this(id, new EntityDescriptorModel(entity), columnDescriptors);
+	}
 	
 	/**
 	 * Constructor.

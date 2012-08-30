@@ -1,0 +1,8 @@
+
+- EntityDataSource (final) -> Kapselt EntityDescriptor + Predicate
+	Verwendbar für List-Fetch und Single-Fetch (LIMIT 1)
+
+- Entity-Tabellen und Single-Presentation auf EntityDataSource umstellen
+
+- EntityDataSource aus Referenzen (foreign keys) erzeugen
+

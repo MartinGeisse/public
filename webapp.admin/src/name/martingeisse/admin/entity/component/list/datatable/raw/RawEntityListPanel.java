@@ -6,9 +6,10 @@
 
 package name.martingeisse.admin.entity.component.list.datatable.raw;
 
+import name.martingeisse.admin.entity.EntityDescriptorModel;
 import name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel;
 import name.martingeisse.admin.entity.instance.EntityInstance;
-import name.martingeisse.admin.entity.list.IEntityListFilter;
+import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer;
@@ -35,6 +36,24 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 	 * the renderers
 	 */
 	private transient IPropertyReadOnlyRenderer[] renderers;
+
+	/**
+	 * Constructor.
+	 * @param id the wicket id
+	 * @param entityName the entity name
+	 */
+	public RawEntityListPanel(final String id, String entityName) {
+		this(id, new EntityDescriptorModel(entityName));
+	}
+
+	/**
+	 * Constructor.
+	 * @param id the wicket id
+	 * @param entity the entity
+	 */
+	public RawEntityListPanel(final String id, EntityDescriptor entity) {
+		this(id, new EntityDescriptorModel(entity));
+	}
 
 	/**
 	 * Constructor.
@@ -92,7 +111,7 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 	 */
 	@Override
 	protected Expression<Comparable<?>> getColumnSortExpression(final int columnIndex) {
-		final Path<?> entityPath = Expressions.path(Object.class, IEntityListFilter.ALIAS);
+		final Path<?> entityPath = Expressions.path(Object.class, EntityExpressionUtil.ALIAS);
 		return GenericTypeUtil.unsafeCast(Expressions.path(Comparable.class, entityPath, getColumnDescriptor(columnIndex).getFieldName()));
 	}
 

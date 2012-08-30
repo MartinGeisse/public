@@ -10,9 +10,7 @@ import java.util.Iterator;
 
 import name.martingeisse.admin.entity.component.list.EntityInstanceDataProvider;
 import name.martingeisse.admin.entity.instance.EntityInstance;
-import name.martingeisse.admin.entity.list.EntityListFilter;
-import name.martingeisse.admin.entity.list.IEntityListFilter;
-import name.martingeisse.admin.entity.list.IEntityListFilterAcceptor;
+import name.martingeisse.admin.entity.list.IEntityPredicateAcceptor;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.util.IGetPageable;
 import name.martingeisse.common.javascript.JavascriptAssembler;
@@ -49,12 +47,12 @@ import com.mysema.query.types.Predicate;
  * 
  * @param <CD> the column descriptor type
  */
-public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDescriptor> extends Panel implements IEntityListFilterAcceptor, ISimpleCallbackListener {
+public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDescriptor> extends Panel implements IEntityPredicateAcceptor, ISimpleCallbackListener {
 
 	/**
 	 * the filter
 	 */
-	private IEntityListFilter filter;
+	private Predicate filter;
 	
 	/**
 	 * the cachedColumnTitles
@@ -99,7 +97,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	 * @see name.martingeisse.admin.entity.list.IEntityListFilterAcceptor#acceptEntityListFilter(name.martingeisse.admin.entity.list.IEntityListFilter)
 	 */
 	@Override
-	public void acceptEntityListFilter(final IEntityListFilter filter) {
+	public void acceptEntityListFilter(final Predicate filter) {
 		this.filter = filter;
 	}
 
@@ -234,7 +232,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	 * @return the search predicate
 	 */
 	protected Predicate getSearchPredicate(String searchTerm) {
-		return getEntityDescriptor().createSearchFilter(searchTerm).getFilterPredicate();
+		return getEntityDescriptor().createSearchFilter(searchTerm);
 	}
 
 	/**
@@ -312,17 +310,17 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 		final Predicate searchPredicate = (searchTerm == null ? null : getSearchPredicate(searchTerm));
 
 		// determine the filter that will actually be used as (implied AND manual)
-		IEntityListFilter actualFilter;
+		Predicate actualPredicate;
 		if (searchPredicate == null) {
-			actualFilter = filter;
+			actualPredicate = filter;
 		} else if (filter == null) {
-			actualFilter = new EntityListFilter(searchPredicate);
+			actualPredicate = searchPredicate;
 		} else {
-			actualFilter = new EntityListFilter(Expressions.predicate(Ops.AND, filter.getFilterPredicate(), searchPredicate));
+			actualPredicate = Expressions.predicate(Ops.AND, filter, searchPredicate);
 		}
 
 		// fetch data
-		final EntityInstanceDataProvider dataProvider = new EntityInstanceDataProvider(getEntityDescriptorModel(), actualFilter, orderSpecifiers);
+		final EntityInstanceDataProvider dataProvider = new EntityInstanceDataProvider(getEntityDescriptorModel(), actualPredicate, orderSpecifiers);
 		final int sizeWithBothFilters = dataProvider.size();
 		final Iterator<? extends EntityInstance> iterator = dataProvider.iterator(offset, count);
 

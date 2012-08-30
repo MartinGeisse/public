@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.entity.component.list.datatable.populator;
 
+import name.martingeisse.admin.entity.EntityDescriptorModel;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.NavigationUtil;
 import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler;
@@ -20,6 +21,24 @@ import org.apache.wicket.model.IModel;
  * {@link NavigationUtil#getNavigationNodeForComponent(org.apache.wicket.Component)}.
  */
 public class NavigationMountedPopulatorEntityDataTablePanel extends AbstractPopulatorEntityDataTablePanel<PopulatorColumnDescriptor> {
+
+	/**
+	 * Constructor.
+	 * @param id the wicket id
+	 * @param entityName the entity name
+	 */
+	public NavigationMountedPopulatorEntityDataTablePanel(final String id, String entityName) {
+		this(id, new EntityDescriptorModel(entityName));
+	}
+
+	/**
+	 * Constructor.
+	 * @param id the wicket id
+	 * @param entity the entity
+	 */
+	public NavigationMountedPopulatorEntityDataTablePanel(final String id, EntityDescriptor entity) {
+		this(id, new EntityDescriptorModel(entity));
+	}
 
 	/**
 	 * Constructor.

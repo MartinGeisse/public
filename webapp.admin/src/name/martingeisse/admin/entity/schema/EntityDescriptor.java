@@ -22,7 +22,7 @@ import name.martingeisse.admin.database.IEntityDatabaseConnection;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.instance.FetchEntityInstanceAction;
-import name.martingeisse.admin.entity.list.IEntityListFilter;
+import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.admin.entity.property.type.IEntityIdType;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
@@ -429,21 +429,11 @@ public class EntityDescriptor {
 	 * @return the number of instances
 	 */
 	public long count(Predicate filterPredicate) {
-		SQLQuery countQuery = query(IEntityListFilter.ALIAS);
+		SQLQuery countQuery = query(EntityExpressionUtil.ALIAS);
 		if (filterPredicate != null) {
 			countQuery = countQuery.where(filterPredicate);
 		}
 		return countQuery.count();
-	}
-	
-	/**
-	 * Queries for the number of instances of this entity, or the number of
-	 * instances accepted by the specified filter.
-	 * @param filter the filter
-	 * @return the number of instances
-	 */
-	public long count(IEntityListFilter filter) {
-		return count(filter == null ? null : filter.getFilterPredicate());
 	}
 
 	/**
@@ -515,7 +505,7 @@ public class EntityDescriptor {
 	 * @param searchTerm the search term
 	 * @return the filter
 	 */
-	public IEntityListFilter createSearchFilter(final String searchTerm) {
+	public Predicate createSearchFilter(final String searchTerm) {
 		return (searchStrategy == null ? null : searchStrategy.createFilter(this, searchTerm));
 	}
 

@@ -8,7 +8,7 @@ package name.martingeisse.admin.entity.component.list.datatable.populator;
 
 import name.martingeisse.admin.entity.component.list.datatable.render.RenderingColumnDescriptor;
 import name.martingeisse.admin.entity.instance.EntityInstance;
-import name.martingeisse.admin.entity.list.EntityListFilterUtils;
+import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.common.util.GenericTypeUtil;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -60,7 +60,7 @@ public class PopulatorColumnDescriptor extends RenderingColumnDescriptor impleme
 	 * @return the expression
 	 */
 	private static Expression<Comparable<?>> sortFieldToSortExpression(String sortField) {
-		return GenericTypeUtil.unsafeCast(EntityListFilterUtils.fieldPath(Comparable.class, sortField));
+		return GenericTypeUtil.unsafeCast(EntityExpressionUtil.fieldPath(Comparable.class, sortField));
 	}
 
 	/**

@@ -7,8 +7,7 @@
 package name.martingeisse.admin.entity.component.list.page;
 
 import name.martingeisse.admin.entity.instance.EntityInstance;
-import name.martingeisse.admin.entity.list.IEntityListFilter;
-import name.martingeisse.admin.entity.list.IEntityListFilterAcceptor;
+import name.martingeisse.admin.entity.list.IEntityPredicateAcceptor;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.util.IGetPageable;
 
@@ -17,6 +16,8 @@ import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+
+import com.mysema.query.types.Predicate;
 
 /**
  * This class allows to display an entity list using an existing panel
@@ -27,7 +28,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * The panel may implement either {@link IPageable} or {@link IGetPageable}
  * to enable framework paging support.
  * 
- * The panel may implement {@link IEntityListFilterAcceptor} to receive
+ * The panel may implement {@link IEntityPredicateAcceptor} to receive
  * entity list filters from the navigation node.
  */
 public abstract class AbstractEntityListPanelPage extends AbstractEntityListPage {
@@ -60,9 +61,9 @@ public abstract class AbstractEntityListPanelPage extends AbstractEntityListPage
 		}
 
 		// if the panel accepts entity list filters, fetch them from the navigation node
-		if (panel instanceof IEntityListFilterAcceptor) {
-			final IEntityListFilterAcceptor filterAcceptor = (IEntityListFilterAcceptor)panel;
-			final IEntityListFilter filter = determineEntityListFilter();
+		if (panel instanceof IEntityPredicateAcceptor) {
+			final IEntityPredicateAcceptor filterAcceptor = (IEntityPredicateAcceptor)panel;
+			final Predicate filter = determineEntityListFilter();
 			if (filter != null) {
 				filterAcceptor.acceptEntityListFilter(filter);
 			}
@@ -85,10 +86,10 @@ public abstract class AbstractEntityListPanelPage extends AbstractEntityListPage
 	protected abstract Class<? extends Panel> determinePanelClass();
 
 	/**
-	 * Determines the entity list filter to use.
-	 * @return the entity list filter
+	 * Determines the entity predicate to use.
+	 * @return the entity predicate
 	 */
-	protected abstract IEntityListFilter determineEntityListFilter();
+	protected abstract Predicate determineEntityListFilter();
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityListPage#getPageable()

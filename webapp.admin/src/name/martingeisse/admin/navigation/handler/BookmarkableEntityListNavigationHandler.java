@@ -6,8 +6,6 @@
 
 package name.martingeisse.admin.navigation.handler;
 
-import name.martingeisse.admin.entity.list.EntityListFilter;
-import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.NavigationNode;
@@ -43,7 +41,7 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 	/**
 	 * the filter
 	 */
-	private IEntityListFilter filter;
+	private Predicate filter;
 
 	/**
 	 * Constructor.
@@ -125,7 +123,7 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 	 * Getter method for the filter.
 	 * @return the filter
 	 */
-	public IEntityListFilter getFilter() {
+	public Predicate getFilter() {
 		return filter;
 	}
 
@@ -134,18 +132,9 @@ public class BookmarkableEntityListNavigationHandler extends BookmarkablePageNav
 	 * @param filter the filter to set
 	 * @return this for chaining
 	 */
-	public BookmarkableEntityListNavigationHandler setFilter(final IEntityListFilter filter) {
+	public BookmarkableEntityListNavigationHandler setFilter(final Predicate filter) {
 		this.filter = filter;
 		return this;
-	}
-
-	/**
-	 * Sets a newly created {@link EntityListFilter} from the specified filter expression.
-	 * @param filterPredicate the filter predicate
-	 * @return this for chaining
-	 */
-	public BookmarkableEntityListNavigationHandler setFilter(final Predicate filterPredicate) {
-		return setFilter(new EntityListFilter(filterPredicate));
 	}
 
 	/**

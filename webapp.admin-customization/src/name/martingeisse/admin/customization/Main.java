@@ -29,8 +29,6 @@ import name.martingeisse.admin.entity.component.instance.RawEntityPresentationPa
 import name.martingeisse.admin.entity.component.list.datatable.populator.PopulatorColumnDescriptor;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.EntityConditions;
-import name.martingeisse.admin.entity.list.EntityListFilter;
-import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.property.ExplicitEntityPropertyFilter;
 import name.martingeisse.admin.entity.property.SingleEntityPropertyFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
@@ -57,6 +55,7 @@ import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
 import name.martingeisse.wicket.populator.RowFieldPopulator;
 
 import com.mysema.query.types.Ops;
+import com.mysema.query.types.Predicate;
 
 /**
  * The main class.
@@ -174,10 +173,10 @@ public class Main {
 			public IEntitySearchStrategy getSearchStrategy(EntityDescriptor entity) {
 				return new IEntitySearchStrategy() {
 					@Override
-					public IEntityListFilter createFilter(EntityDescriptor entity, String searchTerm) {
+					public Predicate createFilter(EntityDescriptor entity, String searchTerm) {
 						EntityConditions conditions = new EntityConditions();
 						conditions.addFieldComparison("name", Ops.LIKE, "%" + searchTerm.replace("%", "") + "%");
-						return new EntityListFilter(conditions);
+						return conditions;
 					}
 				};
 			}

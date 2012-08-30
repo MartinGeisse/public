@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import name.martingeisse.admin.entity.instance.EntityInstance;
-import name.martingeisse.admin.entity.list.IEntityListFilter;
+import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -23,6 +23,7 @@ import org.apache.wicket.model.Model;
 
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.types.OrderSpecifier;
+import com.mysema.query.types.Predicate;
 import com.mysema.query.types.expr.Wildcard;
 
 /**
@@ -39,7 +40,7 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	/**
 	 * the filter
 	 */
-	private final IEntityListFilter filter;
+	private final Predicate filter;
 
 	/**
 	 * the orderSpecifiers
@@ -62,7 +63,7 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	 * @param filter the filter
 	 * @param orderSpecifiers the order specifiers that define the order of the results
 	 */
-	public EntityInstanceDataProvider(final IModel<EntityDescriptor> entityModel, final IEntityListFilter filter, final OrderSpecifier<? extends Comparable<?>>[] orderSpecifiers) {
+	public EntityInstanceDataProvider(final IModel<EntityDescriptor> entityModel, final Predicate filter, final OrderSpecifier<? extends Comparable<?>>[] orderSpecifiers) {
 		this.entityModel = entityModel;
 		this.filter = filter;
 		this.orderSpecifiers = orderSpecifiers;
@@ -88,7 +89,7 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	 * Getter method for the filter.
 	 * @return the filter
 	 */
-	public IEntityListFilter getFilter() {
+	public Predicate getFilter() {
 		return filter;
 	}
 
@@ -132,9 +133,9 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 			
 			// obtain a ResultSet
 			final EntityDescriptor entity = getEntity();
-			SQLQuery query = entity.query(IEntityListFilter.ALIAS);
+			SQLQuery query = entity.query(EntityExpressionUtil.ALIAS);
 			if (filter != null) {
-				query = query.where(filter.getFilterPredicate());
+				query = query.where(filter);
 			}
 			if (orderSpecifiers != null) {
 				query = query.orderBy(orderSpecifiers);

@@ -15,6 +15,8 @@ import org.apache.wicket.model.IModel;
 
 /**
  * This cell populator adds multiple sub-populators to DIVs.
+ * TODO: Fixed prefix texts incl. i18n
+ * 
  * @param <T> the row type
  */
 public class MultiCellPopulator<T> implements ICellPopulator<T> {

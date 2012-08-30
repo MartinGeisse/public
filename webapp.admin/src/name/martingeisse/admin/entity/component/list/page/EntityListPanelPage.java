@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.entity.component.list.page;
 
-import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.NavigationUtil;
 import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
@@ -15,6 +14,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+
+import com.mysema.query.types.Predicate;
 
 /**
  * This class allows to mount an entity list panel in the navigation
@@ -62,7 +63,7 @@ public final class EntityListPanelPage extends AbstractEntityListPanelPage {
 	 * @see name.martingeisse.admin.entity.component.list.page.AbstractEntityListPanelPage#determineEntityListFilter()
 	 */
 	@Override
-	protected IEntityListFilter determineEntityListFilter() {
+	protected Predicate determineEntityListFilter() {
 		return getHandler().getFilter();
 	}
 

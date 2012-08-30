@@ -44,10 +44,10 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	private Predicate predicate;
 
 	/**
-	 * Constructor using the default entity filter alias ({@link IEntityListFilter#ALIAS}).
+	 * Constructor using the default entity filter alias ({@link EntityExpressionUtil#ALIAS}).
 	 */
 	public EntityConditions() {
-		this(Expressions.path(Object.class, IEntityListFilter.ALIAS), Ops.AND);
+		this(Expressions.path(Object.class, EntityExpressionUtil.ALIAS), Ops.AND);
 	}
 
 	/**
@@ -59,11 +59,11 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	}
 
 	/**
-	 * Constructor using the default entity filter alias ({@link IEntityListFilter#ALIAS}).
+	 * Constructor using the default entity filter alias ({@link EntityExpressionUtil#ALIAS}).
 	 * @param buildOperator the operator used to combine expressions
 	 */
 	public EntityConditions(final Operator<Boolean> buildOperator) {
-		this(Expressions.path(Object.class, IEntityListFilter.ALIAS), buildOperator);
+		this(Expressions.path(Object.class, EntityExpressionUtil.ALIAS), buildOperator);
 	}
 
 	/**

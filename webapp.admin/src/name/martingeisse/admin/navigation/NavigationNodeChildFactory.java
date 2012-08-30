@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.navigation;
 
-import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.navigation.component.NavigationFolderPage;
 import name.martingeisse.admin.navigation.handler.AbstractNavigationNodeHandler;
 import name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler;
@@ -153,20 +152,6 @@ public class NavigationNodeChildFactory {
 	 */
 	public final NavigationNode createEntityListPanelChild(final String id, final String title, final Class<? extends Panel> panelClass, final String entityName, final Predicate filterPredicate) {
 		return createChild(id, title, new EntityListPanelHandler(panelClass, entityName).setFilter(filterPredicate));
-	}
-
-	/**
-	 * Creates a new {@link NavigationNode} with a {@link EntityListPanelHandler} handler
-	 * for the specified entity-list panel and adds it as a child node. 
-	 * @param id the node id
-	 * @param title the node title
-	 * @param panelClass the panel class
-	 * @param entityName the entity name
-	 * @param filter the filter used to produce the list
-	 * @return the new node
-	 */
-	public final NavigationNode createEntityListPanelChild(final String id, final String title, final Class<? extends Panel> panelClass, final String entityName, final IEntityListFilter filter) {
-		return createChild(id, title, new EntityListPanelHandler(panelClass, entityName).setFilter(filter));
 	}
 
 	/**

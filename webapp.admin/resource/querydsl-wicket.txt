@@ -1,0 +1,3 @@
+
+QueryDSL-Elemente, die Wicket IModel<>s nehmen. Nötig z.B. für
+shared filter conditions.

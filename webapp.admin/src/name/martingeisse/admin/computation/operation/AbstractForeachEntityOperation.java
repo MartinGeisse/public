@@ -13,7 +13,7 @@ import java.util.List;
 
 import name.martingeisse.admin.database.IEntityDatabaseConnection;
 import name.martingeisse.admin.entity.instance.EntityInstance;
-import name.martingeisse.admin.entity.list.IEntityListFilter;
+import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.common.computation.operation.AbstractForeachOperation;
 import name.martingeisse.common.computation.operation.ForeachHandlingMode;
@@ -131,7 +131,7 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 
 			// obtain a ResultSet
 			final EntityDescriptor entity = getEntityDescriptor();
-			final SQLQuery query = entity.query(IEntityListFilter.ALIAS);
+			final SQLQuery query = entity.query(EntityExpressionUtil.ALIAS);
 			configureQuery(parameter, query);
 			final ResultSet resultSet = query.getResults(Wildcard.all);
 

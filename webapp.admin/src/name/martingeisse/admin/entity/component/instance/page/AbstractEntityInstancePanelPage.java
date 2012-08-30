@@ -55,18 +55,12 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.wicket.Page#onBeforeRender()
+	 * @see org.apache.wicket.Page#onDetach()
 	 */
 	@Override
-	protected void onBeforeRender() {
-
-		// actually fetch the entity instance to show
-		final EntityDescriptor entity = determineEntityType();
-		instance = entity.fetchSingleInstance(determineId(), false);
-
-		// base class behavior
-		super.onBeforeRender();
-
+	protected void onDetach() {
+		instance = null;
+		super.onDetach();
 	}
 
 	/**
@@ -74,6 +68,9 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 	 * @return the instance
 	 */
 	public final EntityInstance getInstance() {
+		if (instance == null) {
+			instance = determineEntityType().fetchSingleInstance(determineId(), false);
+		}
 		return instance;
 	}
 

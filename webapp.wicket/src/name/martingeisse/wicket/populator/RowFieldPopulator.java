@@ -16,6 +16,9 @@ import org.apache.wicket.model.IModel;
 
 /**
  * This populator creates a label for a field from a {@link DataRow}.
+ * TODO: Create a subclass called EntityPropertyPopulator in the
+ * admin project, mostly because devs are gonna look for that and
+ * not think of RowFieldPopulator... but may be useful for added features.
  * @param <T> the row type
  */
 public class RowFieldPopulator<T extends DataRow> implements ICellPopulator<T> {

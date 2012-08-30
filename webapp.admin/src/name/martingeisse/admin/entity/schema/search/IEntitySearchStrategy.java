@@ -6,11 +6,12 @@
 
 package name.martingeisse.admin.entity.schema.search;
 
-import name.martingeisse.admin.entity.list.IEntityListFilter;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
+import com.mysema.query.types.Predicate;
+
 /**
- * Given a search term, this strategy is able to create an {@link IEntityListFilter}
+ * Given a search term, this strategy is able to create a {@link Predicate}
  * for the entity for which it was returned by an {@link IEntitySearchContributor}.
  */
 public interface IEntitySearchStrategy {
@@ -21,6 +22,6 @@ public interface IEntitySearchStrategy {
 	 * @param searchTerm the search term
 	 * @return the filter
 	 */
-	public IEntityListFilter createFilter(EntityDescriptor entity, String searchTerm);
+	public Predicate createFilter(EntityDescriptor entity, String searchTerm);
 
 }
