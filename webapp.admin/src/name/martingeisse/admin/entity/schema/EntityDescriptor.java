@@ -20,8 +20,8 @@ import name.martingeisse.admin.database.EntityConnectionManager;
 import name.martingeisse.admin.database.IDatabaseDescriptor;
 import name.martingeisse.admin.database.IEntityDatabaseConnection;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.instance.EntityInstance;
-import name.martingeisse.admin.entity.instance.FetchEntityInstanceAction;
 import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.admin.entity.property.type.IEntityIdType;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
@@ -30,6 +30,8 @@ import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.common.datarow.AbstractDataRowMetaHolder;
 import name.martingeisse.common.datarow.DataRowMeta;
+
+import org.apache.log4j.Logger;
 
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.RelationalPathBase;
@@ -44,6 +46,11 @@ import com.mysema.query.types.Predicate;
  */
 public class EntityDescriptor {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(EntityDescriptor.class);
+	
 	/**
 	 * the name
 	 */
@@ -147,6 +154,7 @@ public class EntityDescriptor {
 		final IEntityNameMappingStrategy mapping = EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityNameMappingStrategy();
 		this.name = mapping.determineEntityName(this);
 		this.displayName = mapping.determineEntityDisplayName(this);
+		logger.info("entity name mapped: table = " + tableName + ", name = " + name + ", display = " + displayName);
 	}
 
 	/**
@@ -352,11 +360,7 @@ public class EntityDescriptor {
 	 * @return the fields
 	 */
 	public EntityInstance fetchSingleInstance(final Object id, final boolean optional) {
-		final FetchEntityInstanceAction action = new FetchEntityInstanceAction();
-		action.setEntity(this);
-		action.setId(id);
-		action.setOptional(optional);
-		return action.execute();
+		return EntitySelection.forId(this, id).fetchSingleInstance(optional);
 	}
 
 	/**
@@ -366,7 +370,7 @@ public class EntityDescriptor {
 	 */
 	public EntityReferenceInfo findOutgoingReference(final String fieldName) {
 		for (final EntityReferenceInfo reference : outgoingReferences) {
-			if (reference.getFieldName().equals(fieldName)) {
+			if (reference.getSourceFieldName().equals(fieldName)) {
 				return reference;
 			}
 		}

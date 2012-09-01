@@ -6,12 +6,12 @@
 
 package name.martingeisse.admin.customization.reflist;
 
+import name.martingeisse.admin.entity.EntityInstanceModel;
+import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.component.list.datatable.raw.RawEntityListPanel;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.instance.EntityInstanceFieldModel;
 import name.martingeisse.admin.entity.list.EntityConditions;
-import name.martingeisse.admin.entity.schema.ApplicationSchema;
-import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -34,14 +34,20 @@ public class SettingPanel extends Panel {
 		add(new Label("type", new EntityInstanceFieldModel<String>(instanceModel, "type")));
 		add(new Label("data", new EntityInstanceFieldModel<String>(instanceModel, "data")));
 
-		EntityReferenceInfo ref = ApplicationSchema.instance.findEntity("settings").findOutgoingReference("group_id");
-		
-		
-		EntityConditions notesPredicate = new EntityConditions();
+		final Object groupId = instanceModel.getObject().getFieldValue("group_id");
+		if (groupId == null) {
+			add(new Label("group", "<NONE>"));
+		} else {
+			final EntitySelection groupSelection = EntitySelection.forId("settings_groups", groupId);
+			final EntityInstanceModel groupModel = groupSelection.createSingleInstanceModel(true);
+			add(new Label("group", new EntityInstanceFieldModel<String>(groupModel, "name")));
+		}
+
+		final EntityConditions notesPredicate = new EntityConditions();
 		notesPredicate.addFieldEquals("setting_name", instanceModel.getObject().getFieldValue("name"));
-		RawEntityListPanel notesPanel = new RawEntityListPanel("notes", "settings_notes");
+		final RawEntityListPanel notesPanel = new RawEntityListPanel("notes", "settings_notes");
 		notesPanel.acceptEntityListFilter(notesPredicate);
 		add(notesPanel);
 	}
-	
+
 }

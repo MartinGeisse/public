@@ -28,14 +28,19 @@ public final class EntityReferenceInfo {
 	private EntityDescriptor source;
 
 	/**
+	 * the sourceFieldName
+	 */
+	private String sourceFieldName;
+
+	/**
 	 * the destination
 	 */
 	private EntityDescriptor destination;
 
 	/**
-	 * the fieldName
+	 * the destinationFieldName
 	 */
-	private String fieldName;
+	private String destinationFieldName;
 
 	/**
 	 * Constructor.
@@ -60,6 +65,22 @@ public final class EntityReferenceInfo {
 	}
 
 	/**
+	 * Getter method for the sourceFieldName.
+	 * @return the sourceFieldName
+	 */
+	public String getSourceFieldName() {
+		return sourceFieldName;
+	}
+
+	/**
+	 * Setter method for the sourceFieldName.
+	 * @param sourceFieldName the sourceFieldName to set
+	 */
+	public void setSourceFieldName(final String sourceFieldName) {
+		this.sourceFieldName = sourceFieldName;
+	}
+
+	/**
 	 * Getter method for the destination.
 	 * @return the destination
 	 */
@@ -76,19 +97,19 @@ public final class EntityReferenceInfo {
 	}
 
 	/**
-	 * Getter method for the fieldName.
-	 * @return the fieldName
+	 * Getter method for the destinationFieldName.
+	 * @return the destinationFieldName
 	 */
-	public String getFieldName() {
-		return fieldName;
+	public String getDestinationFieldName() {
+		return destinationFieldName;
 	}
 
 	/**
-	 * Setter method for the fieldName.
-	 * @param fieldName the fieldName to set
+	 * Setter method for the destinationFieldName.
+	 * @param destinationFieldName the destinationFieldName to set
 	 */
-	public void setFieldName(final String fieldName) {
-		this.fieldName = fieldName;
+	public void setDestinationFieldName(final String destinationFieldName) {
+		this.destinationFieldName = destinationFieldName;
 	}
 
 }

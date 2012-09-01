@@ -157,29 +157,15 @@ public class ApplicationSchema {
 			for (final EntityPropertyDescriptor property : entity.getPropertiesInDatabaseOrder()) {
 				final String propertyName = property.getName();
 				for (final IEntityReferenceDetector detector : EntityConfigurationUtil.getEntityReferenceDetectors()) {
-					final String destinationName = detector.detectEntityReference(this, entity.getName(), entity.getTableName(), propertyName);
-					if (destinationName != null) {
-						final EntityDescriptor destination = findEntity(destinationName);
-						if (destination != null) {
-							registerEntityReference(entity, destination, propertyName);
-						}
+					final EntityReferenceInfo reference = detector.detectEntityReference(this, entity, propertyName);
+					if (reference != null) {
+						entityReferences.add(reference);
+						reference.getSource().getOutgoingReferences().add(reference);
+						reference.getDestination().getIncomingReferences().add(reference);
 					}
 				}
 			}
 		}
-	}
-
-	/**
-	 * Registers an entity reference once it is detected.
-	 */
-	private void registerEntityReference(final EntityDescriptor source, final EntityDescriptor destination, final String fieldName) {
-		final EntityReferenceInfo reference = new EntityReferenceInfo();
-		reference.setSource(source);
-		reference.setDestination(destination);
-		reference.setFieldName(fieldName);
-		entityReferences.add(reference);
-		source.getOutgoingReferences().add(reference);
-		destination.getIncomingReferences().add(reference);
 	}
 
 	/**

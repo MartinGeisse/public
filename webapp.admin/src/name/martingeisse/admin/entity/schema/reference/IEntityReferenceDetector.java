@@ -9,6 +9,7 @@ package name.martingeisse.admin.entity.schema.reference;
 import java.io.Serializable;
 
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 /**
  * Implementations are contributed by plugins and are able to
@@ -27,12 +28,11 @@ public interface IEntityReferenceDetector extends Serializable {
 	 * @param schema the application schema. Note that this object must be used
 	 * to look up entities since the global schema reference is not yet
 	 * initialized when this method is invoked.
-	 * @param entityName the name of the entity that contains the property
-	 * @param entityTableName the table name of the entity that contains the property
+	 * @param entity the entity that contains the property
 	 * @param propertyName the name of the property
 	 * @return the name of the referenced entity, or null if the property
 	 * was not recognized as a reference
 	 */
-	public String detectEntityReference(ApplicationSchema schema, String entityName, String entityTableName, String propertyName);
+	public EntityReferenceInfo detectEntityReference(ApplicationSchema schema, EntityDescriptor entity, String propertyName);
 
 }

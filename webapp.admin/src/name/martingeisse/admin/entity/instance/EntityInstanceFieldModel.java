@@ -93,7 +93,8 @@ public class EntityInstanceFieldModel<T> implements IModel<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public T getObject() {
-		return (T)resolveInstance().getFieldValue(fieldName);
+		EntityInstance instance = resolveInstance();
+		return (instance == null ? null : (T)instance.getFieldValue(fieldName));
 	}
 
 	/* (non-Javadoc)
@@ -101,7 +102,11 @@ public class EntityInstanceFieldModel<T> implements IModel<T> {
 	 */
 	@Override
 	public void setObject(final T object) {
-		resolveInstance().setFieldValue(fieldName, object);
+		EntityInstance instance = resolveInstance();
+		if (instance == null) {
+			throw new RuntimeException("cannot set entity instance field: no entity instance found");
+		}
+		instance.setFieldValue(fieldName, object);
 	}
 
 	/**
