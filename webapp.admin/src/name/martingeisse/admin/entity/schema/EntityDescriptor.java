@@ -24,7 +24,7 @@ import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.admin.entity.property.type.IEntityIdType;
-import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
+import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
 import name.martingeisse.admin.navigation.NavigationNode;
@@ -92,14 +92,9 @@ public class EntityDescriptor {
 	private Map<String, EntityPropertyDescriptor> propertiesByName;
 
 	/**
-	 * the incomingReferences
+	 * the referenceEndpoints
 	 */
-	private List<EntityReferenceInfo> incomingReferences;
-
-	/**
-	 * the outgoingReferences
-	 */
-	private List<EntityReferenceInfo> outgoingReferences;
+	private List<EntityReferenceEndpoint> referenceEndpoints;
 
 	/**
 	 * the canonicalListNavigationNode
@@ -126,8 +121,7 @@ public class EntityDescriptor {
 	 */
 	public EntityDescriptor() {
 		this.propertiesByName = new HashMap<String, EntityPropertyDescriptor>();
-		this.incomingReferences = new ArrayList<EntityReferenceInfo>();
-		this.outgoingReferences = new ArrayList<EntityReferenceInfo>();
+		this.referenceEndpoints = new ArrayList<EntityReferenceEndpoint>();
 	}
 
 	/**
@@ -249,37 +243,13 @@ public class EntityDescriptor {
 	}
 
 	/**
-	 * Getter method for the incomingReferences.
-	 * @return the incomingReferences
+	 * Getter method for the referenceEndpoints.
+	 * @return the referenceEndpoints
 	 */
-	public List<EntityReferenceInfo> getIncomingReferences() {
-		return incomingReferences;
+	public List<EntityReferenceEndpoint> getReferenceEndpoints() {
+		return referenceEndpoints;
 	}
-
-	/**
-	 * Setter method for the incomingReferences.
-	 * @param incomingReferences the incomingReferences to set
-	 */
-	public void setIncomingReferences(final List<EntityReferenceInfo> incomingReferences) {
-		this.incomingReferences = incomingReferences;
-	}
-
-	/**
-	 * Getter method for the outgoingReferences.
-	 * @return the outgoingReferences
-	 */
-	public List<EntityReferenceInfo> getOutgoingReferences() {
-		return outgoingReferences;
-	}
-
-	/**
-	 * Setter method for the outgoingReferences.
-	 * @param outgoingReferences the outgoingReferences to set
-	 */
-	public void setOutgoingReferences(final List<EntityReferenceInfo> outgoingReferences) {
-		this.outgoingReferences = outgoingReferences;
-	}
-
+	
 	/**
 	 * Getter method for the canonicalListNavigationNode.
 	 * @return the canonicalListNavigationNode
@@ -364,14 +334,14 @@ public class EntityDescriptor {
 	}
 
 	/**
-	 * Looks for an outgoing reference with the specified field name.
+	 * Looks for a reference with the specified field name.
 	 * @param fieldName the field name
 	 * @return the reference, or null if none was found
 	 */
-	public EntityReferenceInfo findOutgoingReference(final String fieldName) {
-		for (final EntityReferenceInfo reference : outgoingReferences) {
-			if (reference.getSourceFieldName().equals(fieldName)) {
-				return reference;
+	public EntityReferenceEndpoint findReference(final String fieldName) {
+		for (final EntityReferenceEndpoint endpoint : referenceEndpoints) {
+			if (endpoint.getPropertyName().equals(fieldName)) {
+				return endpoint;
 			}
 		}
 		return null;

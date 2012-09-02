@@ -17,7 +17,6 @@ import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNameAware;
 import name.martingeisse.admin.entity.component.list.datatable.raw.RawEntityListPanel;
-import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
 import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
 import name.martingeisse.admin.navigation.INavigationNodeHandler;
 import name.martingeisse.admin.navigation.INavigationNodeVisitor;
@@ -61,17 +60,11 @@ public class ApplicationSchema {
 	private final List<EntityDescriptor> entityDescriptors;
 
 	/**
-	 * the entityReferences
-	 */
-	private final List<EntityReferenceInfo> entityReferences;
-
-	/**
 	 * Constructor.
 	 */
 	public ApplicationSchema() {
 		this.databaseDescriptors = new ArrayList<IDatabaseDescriptor>();
 		this.entityDescriptors = new ArrayList<EntityDescriptor>();
-		this.entityReferences = new ArrayList<EntityReferenceInfo>();
 	}
 
 	/**
@@ -88,14 +81,6 @@ public class ApplicationSchema {
 	 */
 	public List<EntityDescriptor> getEntityDescriptors() {
 		return entityDescriptors;
-	}
-
-	/**
-	 * Getter method for the entityReferences.
-	 * @return the entityReferences
-	 */
-	public List<EntityReferenceInfo> getEntityReferences() {
-		return entityReferences;
 	}
 
 	/**
@@ -126,7 +111,7 @@ public class ApplicationSchema {
 	}
 
 	/**
-	 * Copies the list of databases from the {@link ApplicationConfigurationOld}.
+	 * Copies the list of databases from the {@link ApplicationConfiguration}.
 	 */
 	private void copyDatabaseList() {
 		for (final IDatabaseDescriptor database : ApplicationConfiguration.get().getDatabases()) {
@@ -157,12 +142,7 @@ public class ApplicationSchema {
 			for (final EntityPropertyDescriptor property : entity.getPropertiesInDatabaseOrder()) {
 				final String propertyName = property.getName();
 				for (final IEntityReferenceDetector detector : EntityConfigurationUtil.getEntityReferenceDetectors()) {
-					final EntityReferenceInfo reference = detector.detectEntityReference(this, entity, propertyName);
-					if (reference != null) {
-						entityReferences.add(reference);
-						reference.getSource().getOutgoingReferences().add(reference);
-						reference.getDestination().getIncomingReferences().add(reference);
-					}
+					detector.detectEntityReference(this, entity, propertyName);
 				}
 			}
 		}

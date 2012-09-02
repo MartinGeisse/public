@@ -7,7 +7,7 @@
 package name.martingeisse.admin.entity.component.instance;
 
 import name.martingeisse.admin.entity.instance.EntityInstance;
-import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
+import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.util.LinkUtil;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -46,12 +46,13 @@ public class RawEntityPresentationPanel extends Panel {
 
 				// create the value label / link
 				final Object fieldValue = entityInstance.getData()[item.getIndex()];
-				final EntityReferenceInfo reference = model.getObject().getEntity().findOutgoingReference(fieldName);
+				final EntityReferenceEndpoint referenceEndpoint = model.getObject().getEntity().findReference(fieldName);
 				WebMarkupContainer link;
-				if (reference == null || fieldValue == null) {
+				if (referenceEndpoint == null || fieldValue == null) {
 					link = new WebMarkupContainer("link");
 				} else {
-					link = LinkUtil.createSingleEntityLink("link", reference.getDestination(), fieldValue);
+					// TODO doesn't work if the far property is not the ID. Should also check the multiplicity
+					link = LinkUtil.createSingleEntityLink("link", referenceEndpoint.getOther().getEntity(), fieldValue);
 				}
 				link.add(new Label("value", "" + fieldValue));
 				item.add(link);

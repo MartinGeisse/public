@@ -25,9 +25,14 @@ public final class FixedNameEntityReferenceDetector extends AbstractEntityRefere
 	private final String sourceEntityName;
 
 	/**
-	 * the name
+	 * sourcePropertyName
 	 */
-	private final String knownPropertyName;
+	private final String sourcePropertyName;
+	
+	/**
+	 * the sourceMultiplicity
+	 */
+	private final EntityReferenceEndpointMultiplicity sourceMultiplicity;
 
 	/**
 	 * the destinationEntityName
@@ -38,19 +43,28 @@ public final class FixedNameEntityReferenceDetector extends AbstractEntityRefere
 	 * the destinationPropertyName
 	 */
 	private final String destinationPropertyName;
+	
+	/**
+	 * the destinationMultiplicity
+	 */
+	private final EntityReferenceEndpointMultiplicity destinationMultiplicity;
 
 	/**
 	 * Constructor.
 	 * @param sourceEntityName the name of the referencing entity, or null to match any referencing entity
-	 * @param knownPropertyName the "known" property name that marks references
+	 * @param sourcePropertyName the "known" property name that marks references
+	 * @param sourceMultiplicity the multiplicity of the reference on the "source" side
 	 * @param destinationEntityName the name of the destination entity
 	 * @param destinationPropertyName the name of the key property in the destination entity
+	 * @param destinationMultiplicity the multiplicity of the reference on the "destination" side
 	 */
-	public FixedNameEntityReferenceDetector(final String sourceEntityName, final String knownPropertyName, final String destinationEntityName, final String destinationPropertyName) {
+	public FixedNameEntityReferenceDetector(final String sourceEntityName, final String sourcePropertyName, final EntityReferenceEndpointMultiplicity sourceMultiplicity, final String destinationEntityName, final String destinationPropertyName, EntityReferenceEndpointMultiplicity destinationMultiplicity) {
 		this.sourceEntityName = sourceEntityName;
-		this.knownPropertyName = knownPropertyName;
+		this.sourcePropertyName = sourcePropertyName;
+		this.sourceMultiplicity = sourceMultiplicity;
 		this.destinationEntityName = destinationEntityName;
 		this.destinationPropertyName = destinationPropertyName;
+		this.destinationMultiplicity = destinationMultiplicity;
 	}
 
 	/**
@@ -62,13 +76,21 @@ public final class FixedNameEntityReferenceDetector extends AbstractEntityRefere
 	}
 
 	/**
-	 * Getter method for the knownPropertyName.
-	 * @return the knownPropertyName
+	 * Getter method for the sourcePropertyName.
+	 * @return the sourcePropertyName
 	 */
-	public String getKnownPropertyName() {
-		return knownPropertyName;
+	public String getSourcePropertyName() {
+		return sourcePropertyName;
 	}
 
+	/**
+	 * Getter method for the sourceMultiplicity.
+	 * @return the sourceMultiplicity
+	 */
+	public EntityReferenceEndpointMultiplicity getSourceMultiplicity() {
+		return sourceMultiplicity;
+	}
+	
 	/**
 	 * Getter method for the destinationEntityName.
 	 * @return the destinationEntityName
@@ -84,23 +106,28 @@ public final class FixedNameEntityReferenceDetector extends AbstractEntityRefere
 	public String getDestinationPropertyName() {
 		return destinationPropertyName;
 	}
+	
+	/**
+	 * Getter method for the destinationMultiplicity.
+	 * @return the destinationMultiplicity
+	 */
+	public EntityReferenceEndpointMultiplicity getDestinationMultiplicity() {
+		return destinationMultiplicity;
+	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector#detectEntityReference(name.martingeisse.admin.entity.schema.ApplicationSchema, name.martingeisse.admin.entity.schema.EntityDescriptor, java.lang.String)
 	 */
 	@Override
-	public EntityReferenceInfo detectEntityReference(ApplicationSchema schema, EntityDescriptor entity, String propertyName) {
+	public void detectEntityReference(ApplicationSchema schema, EntityDescriptor entity, String propertyName) {
 		if (sourceEntityName == null || sourceEntityName.equals(entity.getName())) {
-			if (propertyName.equals(knownPropertyName)) {
-				EntityReferenceInfo reference = new EntityReferenceInfo();
-				reference.setSource(entity);
-				reference.setSourceFieldName(propertyName);
-				reference.setDestination(schema.findEntity(destinationEntityName));
-				reference.setDestinationFieldName(destinationPropertyName == null ? reference.getDestination().getIdColumnName() : destinationPropertyName);
-				return reference;
+			if (propertyName.equals(sourcePropertyName)) {
+				EntityDescriptor destinationEntity = schema.findEntity(destinationEntityName);
+				EntityReferenceEndpoint near = EntityReferenceEndpoint.createPair(entity, sourcePropertyName, sourceMultiplicity, destinationEntity, destinationPropertyName, destinationMultiplicity);
+				entity.getReferenceEndpoints().add(near);
+				destinationEntity.getReferenceEndpoints().add(near.getOther());
 			}
 		}
-		return null;
 	}
 
 }

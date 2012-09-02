@@ -27,29 +27,28 @@ public class DefaultEntityReferenceDetector extends AbstractEntityReferenceDetec
 	 * @see name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector#detectEntityReference(name.martingeisse.admin.entity.schema.ApplicationSchema, name.martingeisse.admin.entity.schema.EntityDescriptor, java.lang.String)
 	 */
 	@Override
-	public EntityReferenceInfo detectEntityReference(ApplicationSchema schema, EntityDescriptor entity, String propertyName) {
+	public void detectEntityReference(ApplicationSchema schema, EntityDescriptor entity, String propertyName) {
 		
+		// TODO re: camel-case, underscores, +"s", etc. -- is there any useful default behavior? use something simple and allow subclasses to override
 		String destinationEntityName;
 		if (propertyName.toLowerCase().endsWith("_id")) {
-			destinationEntityName = StringUtils.capitalize(propertyName.substring(0, propertyName.length() - 3));
+			// destinationEntityName = StringUtils.capitalize(propertyName.substring(0, propertyName.length() - 3));
+			destinationEntityName = propertyName.substring(0, propertyName.length() - 3) + 's';
 		} else if (propertyName.endsWith("Id")) {
 			destinationEntityName = StringUtils.capitalize(propertyName.substring(0, propertyName.length() - 2));
 		} else {
-			return null;
+			return;
 		}
 		
 		EntityDescriptor destination = schema.findEntity(destinationEntityName);
 		if (destination == null) {
 			logger.warn("entity reference in " + entity.getName() + "." + propertyName + " indicates an entity called " + destinationEntityName + ", but that entity doesn't exist");
-			return null;
+			return;
 		}
-		
-		EntityReferenceInfo reference = new EntityReferenceInfo();
-		reference.setSource(entity);
-		reference.setSourceFieldName(propertyName);
-		reference.setDestination(destination);
-		reference.setDestinationFieldName(destination.getIdColumnName());
-		return reference;
+
+		EntityReferenceEndpoint near = EntityReferenceEndpoint.createPair(entity, propertyName, EntityReferenceEndpointMultiplicity.ANY, destination, destination.getIdColumnName(), EntityReferenceEndpointMultiplicity.ONE);
+		entity.getReferenceEndpoints().add(near);
+		destination.getReferenceEndpoints().add(near.getOther());
 
 	}
 

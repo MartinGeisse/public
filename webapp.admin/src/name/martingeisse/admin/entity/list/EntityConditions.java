@@ -240,6 +240,24 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	}
 
 	/**
+	 * Adds a new (entity.fieldName IS NULL) predicate and combines it with the existing
+	 * predicates using the operator specified at construction.
+	 * @param fieldName the name of the field to compare with NULL
+	 */
+	public final void addFieldIsNull(final String fieldName) {
+		add(Expressions.predicate(Ops.IS_NULL, createFieldPath(fieldName)));
+	}
+
+	/**
+	 * Adds a new (entity.fieldName IS NOT NULL) predicate and combines it with the existing
+	 * predicates using the operator specified at construction.
+	 * @param fieldName the name of the field to compare with NULL
+	 */
+	public final void addFieldIsNotNull(final String fieldName) {
+		add(Expressions.predicate(Ops.IS_NOT_NULL, createFieldPath(fieldName)));
+	}
+	
+	/**
 	 * Adds a new (entity.fieldName (operator) expectedValue) predicate and combines it with the existing
 	 * predicates using the operator specified at construction. The right-hand value is a literal
 	 * (constant) -- create and add a custom predicate to compare with arbitrary expressions.
@@ -260,7 +278,11 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	 * @param expectedValue the value to compare with
 	 */
 	public final void addFieldEquals(final String fieldName, final Object expectedValue) {
-		addFieldComparison(fieldName, Ops.EQ, expectedValue);
+		if (expectedValue == null) {
+			addFieldIsNull(fieldName);
+		} else {
+			addFieldComparison(fieldName, Ops.EQ, expectedValue);
+		}
 	}
 
 	/**
@@ -272,7 +294,11 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	 * @param notExpectedValue the value to compare with
 	 */
 	public final void addFieldNotEquals(final String fieldName, final Object notExpectedValue) {
-		addFieldComparison(fieldName, Ops.NE, notExpectedValue);
+		if (notExpectedValue == null) {
+			addFieldIsNotNull(fieldName);
+		} else {
+			addFieldComparison(fieldName, Ops.NE, notExpectedValue);
+		}
 	}
 
 	/**
@@ -299,4 +325,12 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 		add(BooleanOperation.create(Ops.NOT, BooleanOperation.create(Ops.IN, createFieldPath(fieldName), new ConstantImpl<List<?>>(Arrays.asList(notExpectedValues)))));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return getEffectivePredicate().toString();
+	}
+	
 }

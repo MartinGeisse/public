@@ -15,13 +15,14 @@ import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.EntityConditions;
 import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.entity.schema.reference.EntityReferenceInfo;
+import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 
 import org.apache.wicket.model.IModel;
 
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.types.Predicate;
 import com.mysema.query.types.expr.Wildcard;
+import com.mysema.query.types.template.BooleanTemplate;
 
 /**
  * This class groups an entity descriptor and filtering predicate in
@@ -67,30 +68,30 @@ public final class EntitySelection {
 	 * will still use the old reference key.
 	 * 
 	 * @param referrerInstanceModel the referrer model
-	 * @param referenceInfo the reference
+	 * @param nearReferenceEndpoint the near endpoint of the reference
 	 */
-	public EntitySelection(final IModel<EntityInstance> referrerInstanceModel, final EntityReferenceInfo referenceInfo) {
-
+	public EntitySelection(final IModel<EntityInstance> referrerInstanceModel, final EntityReferenceEndpoint nearReferenceEndpoint) {
+		final EntityReferenceEndpoint farReferenceEndpoint = nearReferenceEndpoint.getOther();
+		
 		// obtain the value of the key property in the referrer
 		final EntityInstance referrer = referrerInstanceModel.getObject();
-		if (referrer.getEntity() != referenceInfo.getSource()) {
-			throw new IllegalArgumentException("EntitySelection (from reference): referrer instance is an instance of entity " + referrer.getEntityName() + ", but reference source is " + referenceInfo.getSource().getName());
+		if (referrer.getEntity() != nearReferenceEndpoint.getEntity()) {
+			throw new IllegalArgumentException("EntitySelection (from reference): referrer instance is an instance of entity " + referrer.getEntityName() + ", but reference source is " + nearReferenceEndpoint.getEntity().getName());
 		}
-		final Object referrerKey = referrer.getFieldValue(referenceInfo.getSourceFieldName());
+		final Object referrerKey = referrer.getFieldValue(nearReferenceEndpoint.getPropertyName());
 
 		// build a condition object for the query
 		final EntityConditions conditions = new EntityConditions();
-		conditions.addFieldEquals(referenceInfo.getDestinationFieldName(), referrerKey);
+		conditions.addFieldEquals(farReferenceEndpoint.getPropertyName(), referrerKey);
 
 		// initialize this entity selection
-		this.entityModel = new EntityDescriptorModel(referenceInfo.getDestination());
+		this.entityModel = new EntityDescriptorModel(farReferenceEndpoint.getEntity());
 		this.predicate = conditions;
 
 	}
 	
 	/**
-	 * Returns an instance of this class that selects an instance of the specified
-	 * entity by id.
+	 * Returns an instance of this class that selects an instance of the specified entity by id.
 	 * @param entityModel the model for the entity descriptor
 	 * @param id the id of the entity instance to select
 	 * @return the {@link EntitySelection} instance
@@ -100,8 +101,7 @@ public final class EntitySelection {
 	}
 	
 	/**
-	 * Returns an instance of this class that selects an instance of the specified
-	 * entity by id.
+	 * Returns an instance of this class that selects an instance of the specified entity by id.
 	 * @param entity the entity descriptor
 	 * @param id the id of the entity instance to select
 	 * @return the {@link EntitySelection} instance
@@ -111,8 +111,7 @@ public final class EntitySelection {
 	}
 	
 	/**
-	 * Returns an instance of this class that selects an instance of the specified
-	 * entity by id.
+	 * Returns an instance of this class that selects an instance of the specified entity by id.
 	 * @param entityName the entity name
 	 * @param id the id of the entity instance to select
 	 * @return the {@link EntitySelection} instance
@@ -125,11 +124,58 @@ public final class EntitySelection {
 	 * Internal implementation of the forId() methods.
 	 */
 	private static EntitySelection forId(final IModel<EntityDescriptor> entityModel, EntityDescriptor entity, Object id) {
-		final EntityConditions conditions = new EntityConditions();
-		conditions.addFieldEquals(entity.getIdColumnName(), id);
-		return new EntitySelection(entityModel, conditions);
+		return forKey(entityModel, entity, entity.getIdColumnName(), id, false);
 	}
 
+	/**
+	 * Returns an instance of this class that selects instances of the specified entity by comparing a key property with a fixed value.
+	 * @param entityModel the model for the entity descriptor
+	 * @param propertyName the name of the key property that is used to select instances
+	 * @param propertyValue the value of the key property that is used to select instances
+	 * @param nullIsReference whether null is a valid value of the key property (true) or indicates an empty selection implicitly (false)
+	 * @return the {@link EntitySelection} instance
+	 */
+	public static EntitySelection forKey(final IModel<EntityDescriptor> entityModel, String propertyName, Object propertyValue, boolean nullIsReference) {
+		return forKey(entityModel, entityModel.getObject(), propertyName, propertyValue, nullIsReference);
+	}
+	
+	/**
+	 * Returns an instance of this class that selects instances of the specified entity by comparing a key property with a fixed value.
+	 * @param entity the entity descriptor
+	 * @param propertyName the name of the key property that is used to select instances
+	 * @param propertyValue the value of the key property that is used to select instances
+	 * @param nullIsReference whether null is a valid value of the key property (true) or indicates an empty selection implicitly (false)
+	 * @return the {@link EntitySelection} instance
+	 */
+	public static EntitySelection forKey(EntityDescriptor entity, String propertyName, Object propertyValue, boolean nullIsReference) {
+		return forKey(new EntityDescriptorModel(entity), entity, propertyName, propertyValue, nullIsReference);
+	}
+	
+	/**
+	 * Returns an instance of this class that selects instances of the specified entity by comparing a key property with a fixed value.
+	 * @param entityName the entity name
+	 * @param propertyName the name of the key property that is used to select instances
+	 * @param propertyValue the value of the key property that is used to select instances
+	 * @param nullIsReference whether null is a valid value of the key property (true) or indicates an empty selection implicitly (false)
+	 * @return the {@link EntitySelection} instance
+	 */
+	public static EntitySelection forKey(String entityName, String propertyName, Object propertyValue, boolean nullIsReference) {
+		return forKey(new EntityDescriptorModel(entityName), propertyName, propertyValue, nullIsReference);
+	}
+
+	/**
+	 * Internal implementation of the forUniqueKey() methods.
+	 */
+	private static EntitySelection forKey(final IModel<EntityDescriptor> entityModel, EntityDescriptor entity, String propertyName, Object propertyValue, boolean nullIsReference) {
+		if (propertyValue == null && !nullIsReference) {
+			return new EntitySelection(entityModel, BooleanTemplate.FALSE);
+		} else {
+			final EntityConditions conditions = new EntityConditions();
+			conditions.addFieldEquals(propertyName, propertyValue);
+			return new EntitySelection(entityModel, conditions);
+		}
+	}
+	
 	/**
 	 * Getter method for the entityModel.
 	 * @return the entityModel
@@ -199,7 +245,7 @@ public final class EntitySelection {
 			} else if (optional) {
 				return null;
 			} else {
-				throw new NoSuchElementException("no instance of entity " + entity.getName() + " with conditions: " + predicate);
+				throw new NoSuchElementException("no instance of entity '" + entity.getName() + "' with conditions: " + predicate);
 			}
 		} catch (final SQLException e) {
 			throw new RuntimeException(e);
@@ -233,7 +279,7 @@ public final class EntitySelection {
 			} else if (optional) {
 				return null;
 			} else {
-				throw new NoSuchElementException("no instance of entity " + entity.getName() + " with conditions: " + predicate);
+				throw new NoSuchElementException("no instance of entity '" + entity.getName() + "' with conditions: " + predicate);
 			}
 		} catch (final SQLException e) {
 			throw new RuntimeException(e);

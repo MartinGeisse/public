@@ -36,6 +36,7 @@ import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.entity.schema.IEntityListFieldOrder;
 import name.martingeisse.admin.entity.schema.IEntityNavigationContributor;
 import name.martingeisse.admin.entity.schema.PrefixEliminatingEntityNameMappingStrategy;
+import name.martingeisse.admin.entity.schema.lowlevel.JdbcSchemaStructure;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
@@ -105,6 +106,10 @@ public class Main {
 		phorumDatabase.setPassword("");
 		ApplicationConfiguration.get().addDatabase(phorumDatabase);
 		EntityConnectionManager.initializeDatabaseDescriptors(phorumDatabase);
+		
+		// test
+		JdbcSchemaStructure schema = new JdbcSchemaStructure(phorumDatabase.createJdbcConnection());
+		System.exit(0);
 		
 		// plugins / capabilities
 		ApplicationConfiguration.get().addPlugin(new DefaultPlugin());
