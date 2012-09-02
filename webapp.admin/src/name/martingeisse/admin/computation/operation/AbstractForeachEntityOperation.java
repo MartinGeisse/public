@@ -11,12 +11,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.admin.database.IEntityDatabaseConnection;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.common.computation.operation.AbstractForeachOperation;
 import name.martingeisse.common.computation.operation.ForeachHandlingMode;
+import name.martingeisse.common.database.IEntityDatabaseConnection;
 
 import org.apache.log4j.Logger;
 

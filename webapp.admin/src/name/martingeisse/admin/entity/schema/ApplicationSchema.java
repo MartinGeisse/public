@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
-import name.martingeisse.admin.database.IDatabaseDescriptor;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNameAware;
@@ -22,6 +21,7 @@ import name.martingeisse.admin.navigation.INavigationNodeHandler;
 import name.martingeisse.admin.navigation.INavigationNodeVisitor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.common.database.IDatabaseDescriptor;
 
 /**
  * This class holds global data generated from plugins / capabilities and modifiers.

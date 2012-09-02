@@ -12,7 +12,7 @@ import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
-import name.martingeisse.admin.database.EntityConnectionServletFilter;
+import name.martingeisse.common.database.EntityConnectionServletFilter;
 import name.martingeisse.common.servlet.AntiJsessionidUrlFilter;
 import name.martingeisse.common.servlet.GlobalServletContext;
 import name.martingeisse.common.servlet.SideEffectsOriginRestrictionFilter;

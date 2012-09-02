@@ -16,9 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import name.martingeisse.admin.database.EntityConnectionManager;
-import name.martingeisse.admin.database.IDatabaseDescriptor;
-import name.martingeisse.admin.database.IEntityDatabaseConnection;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.instance.EntityInstance;
@@ -28,6 +25,9 @@ import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
 import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.common.database.EntityConnectionManager;
+import name.martingeisse.common.database.IDatabaseDescriptor;
+import name.martingeisse.common.database.IEntityDatabaseConnection;
 import name.martingeisse.common.datarow.AbstractDataRowMetaHolder;
 import name.martingeisse.common.datarow.DataRowMeta;
 

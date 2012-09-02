@@ -9,12 +9,12 @@ package name.martingeisse.admin.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.admin.database.IDatabaseDescriptor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationTree;
 import name.martingeisse.admin.util.ParameterUtil;
 import name.martingeisse.admin.util.SealableClassKeyedContainer;
 import name.martingeisse.admin.util.SealableClassKeyedListContainer;
+import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.util.ClassKeyedContainer;
 import name.martingeisse.common.util.ClassKeyedListContainer;
 
