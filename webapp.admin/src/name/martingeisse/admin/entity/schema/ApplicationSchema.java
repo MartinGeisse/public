@@ -6,6 +6,10 @@
 
 package name.martingeisse.admin.entity.schema;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,12 +20,19 @@ import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNameAware;
 import name.martingeisse.admin.entity.component.list.datatable.raw.RawEntityListPanel;
+import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilter;
+import name.martingeisse.admin.entity.property.type.IEntityIdType;
+import name.martingeisse.admin.entity.property.type.ISqlType;
+import name.martingeisse.admin.entity.schema.lowlevel.JdbcColumnStructure;
+import name.martingeisse.admin.entity.schema.lowlevel.JdbcSchemaStructure;
+import name.martingeisse.admin.entity.schema.lowlevel.JdbcTableStructure;
 import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
 import name.martingeisse.admin.navigation.INavigationNodeHandler;
 import name.martingeisse.admin.navigation.INavigationNodeVisitor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.common.database.IDatabaseDescriptor;
+import name.martingeisse.common.datarow.DataRowMeta;
 
 /**
  * This class holds global data generated from plugins / capabilities and modifiers.
@@ -55,6 +66,11 @@ public class ApplicationSchema {
 	private final List<IDatabaseDescriptor> databaseDescriptors;
 
 	/**
+	 * the databaseStructures
+	 */
+	private final Map<IDatabaseDescriptor, JdbcSchemaStructure> databaseStructures;
+	
+	/**
 	 * the entityDescriptors
 	 */
 	private final List<EntityDescriptor> entityDescriptors;
@@ -64,6 +80,7 @@ public class ApplicationSchema {
 	 */
 	public ApplicationSchema() {
 		this.databaseDescriptors = new ArrayList<IDatabaseDescriptor>();
+		this.databaseStructures = new HashMap<IDatabaseDescriptor, JdbcSchemaStructure>();
 		this.entityDescriptors = new ArrayList<EntityDescriptor>();
 	}
 
@@ -124,20 +141,106 @@ public class ApplicationSchema {
 	 */
 	private void buildEntityDescriptors() {
 		for (final IDatabaseDescriptor databaseDescriptor : databaseDescriptors) {
-			final DiscoverEntitiesAction action = new DiscoverEntitiesAction();
-			action.setDatabase(databaseDescriptor);
-			for (final EntityDescriptor entity : action.execute()) {
-				entity.mapNames();
-				entityDescriptors.add(entity);
+			try {
+				
+				// determine database structure
+				Connection connection = databaseDescriptor.createJdbcConnection();
+				JdbcSchemaStructure structure = new JdbcSchemaStructure(connection);
+				connection.close();
+				databaseStructures.put(databaseDescriptor, structure);
+
+				// discover entities
+				List<EntityDescriptor> currentDatabaseEntities = new ArrayList<EntityDescriptor>();
+				for (JdbcTableStructure table : structure.getTables()) {
+					
+					// initialize the entity descriptor
+					final EntityDescriptor entityDescriptor = new EntityDescriptor();
+					entityDescriptor.setDatabase(databaseDescriptor);
+					entityDescriptor.setTableName(table.getSelector().getTable());
+					
+					// initialize properties
+					final List<EntityPropertyDescriptor> properties = new ArrayList<EntityPropertyDescriptor>();
+					for (JdbcColumnStructure column : table.getColumns()) {
+						final EntityPropertyDescriptor propertyDescriptor = new EntityPropertyDescriptor();
+						propertyDescriptor.setName(column.getSelector().getColumn());
+						propertyDescriptor.setType(column.determineHighlevelType());
+						propertyDescriptor.setVisibleInRawEntityList(true);
+						propertyDescriptor.setVisibleInRawEntityList(isPropertyVisibleInRawEntityList(entityDescriptor, propertyDescriptor));
+						properties.add(propertyDescriptor);
+					}
+					entityDescriptor.initializeProperties(properties);
+					
+					// initialize ID property information
+					// note: we cannot handle entities without a primary key or with a multi-column primary key yet
+					if (table.getPrimaryKeyElements().size() != 1) {
+						continue;
+					}
+					String idColumnName = table.getPrimaryKeyElements().get(0).getSelector().getColumn();
+					final EntityPropertyDescriptor idPropertyDescriptor = entityDescriptor.getPropertiesByName().get(idColumnName);
+					if (idPropertyDescriptor == null) {
+						throw new IllegalStateException("table meta-data of table " + entityDescriptor.getTableName() + " specified column " + idColumnName + " as its ID column, but no such column exists in the property descriptors");
+					}
+					final ISqlType idColumnType = idPropertyDescriptor.getType();
+					if (!(idColumnType instanceof IEntityIdType)) {
+						throw new IllegalStateException("type of the ID column " + entityDescriptor.getTableName() + "." + idColumnName + " is not supported as an entity ID type");
+					}
+					entityDescriptor.setIdColumnName(idColumnName);
+					entityDescriptor.setIdColumnType((IEntityIdType)idColumnType);
+					
+					// add the entity to the schema
+					entityDescriptors.add(entityDescriptor);
+					currentDatabaseEntities.add(entityDescriptor);
+					
+				}
+				
+				// Fetch the data row meta-data for each table. Unlike the properties/columns fetched
+				// above this directly detects the format of the result set when fetching the entity.
+				{
+					final Statement statement = connection.createStatement();
+					for (final EntityDescriptor entityDescriptor : currentDatabaseEntities) {
+						final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + entityDescriptor.getTableName() + " LIMIT 1");
+						entityDescriptor.setDataRowMeta(new DataRowMeta(resultSet.getMetaData()));
+						resultSet.close();
+					}
+				}
+				
+				// map the table names to entity names and display names
+				for (final EntityDescriptor entity : currentDatabaseEntities) {
+					entity.mapNames();
+				}
+				
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
 			}
 		}
 	}
 
 	/**
+	 * 
+	 */
+	private boolean isPropertyVisibleInRawEntityList(final EntityDescriptor entity, final EntityPropertyDescriptor propertyDescriptor) {
+		int score = Integer.MIN_VALUE;
+		boolean visible = true;
+		for (final IRawEntityListPropertyDisplayFilter filter : EntityConfigurationUtil.getRawEntityListPropertyDisplayFilters()) {
+			final int filterScore = filter.getScore(entity, propertyDescriptor);
+			if (filterScore >= score) {
+				final Boolean filterResult = filter.isPropertyVisible(entity, propertyDescriptor);
+				if (filterResult != null) {
+					score = filterScore;
+					visible = filterResult;
+				}
+			}
+		}
+		return visible;
+	}
+	
+	/**
 	 * Finds entity references and stores them in the entity reference list as well
 	 * as the source and destination entities.
 	 */
 	private void detectEntityReferences() {
+		// TODO use DB structure: foreign keys -> references
+		
 		for (final EntityDescriptor entity : entityDescriptors) {
 			for (final EntityPropertyDescriptor property : entity.getPropertiesInDatabaseOrder()) {
 				final String propertyName = property.getName();

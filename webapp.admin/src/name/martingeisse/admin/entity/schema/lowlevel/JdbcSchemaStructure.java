@@ -55,6 +55,45 @@ public final class JdbcSchemaStructure {
 		tablesResulSet.close();
 		tablesResulSet = null;
 		
+		// detect all columns (NOTE: they are already sorted by JDBC)
+		ResultSet columnsResultSet = connection.getMetaData().getColumns(null, null, null, null);
+		while (columnsResultSet.next()) {
+			JdbcColumnStructure column = new JdbcColumnStructure(columnsResultSet);
+			JdbcColumnSelector columnSelector = column.getSelector();
+			JdbcTableSelector columnTableSelector = columnSelector.copyTableSelector();
+			JdbcTableStructure table = tablesByName.get(columnSelector.getTable());
+			if (table == null) {
+				throw new RuntimeException("found no table for column: " + columnSelector);
+			}
+			JdbcTableSelector tableSelector = table.getSelector();
+			if (!tableSelector.equals(columnTableSelector)) {
+				throw new RuntimeException("found wrong table " + tableSelector + " for column: " + columnSelector + ", expected " + columnTableSelector);
+			}
+		}
+		columnsResultSet.close();
+		columnsResultSet = null;
+		
+		// detect all primary keys
+		for (JdbcTableStructure table : tables) {
+			JdbcTableSelector tableSelector = table.getSelector();
+			ResultSet primaryKeyResultSet = connection.getMetaData().getPrimaryKeys(null, null, tableSelector.getTable());
+			while (primaryKeyResultSet.next()) {
+				JdbcPrimaryKeyElement element = new JdbcPrimaryKeyElement(primaryKeyResultSet);
+				JdbcTableSelector elementTableSelector = element.getSelector().copyTableSelector();
+				if (!elementTableSelector.equals(tableSelector)) {
+					throw new RuntimeException("found primary key element " + element.getSelector() + " for wrong table " + tableSelector + ", belongs to " + elementTableSelector);
+				}
+				table.getPrimaryKeyElements().add(element);
+			}
+			primaryKeyResultSet.close();
+			primaryKeyResultSet = null;
+		}
+		
+		// prepare tables
+		for (JdbcTableStructure table : tables) {
+			table.prepare();
+		}
+		
 		// detect all foreign keys (first step: raw detection)
 		this.foreignKeys = new ArrayList<JdbcForeignKey>();
 		for (JdbcTableStructure parentTable : tables) {
