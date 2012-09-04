@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * The low-level structure of a JDBC database.
  */
-public final class JdbcSchemaStructure {
+public final class JdbcSchemaStructure implements ILowlevelDatabaseStructure {
 
 	/**
 	 * the tables
@@ -69,6 +69,7 @@ public final class JdbcSchemaStructure {
 			if (!tableSelector.equals(columnTableSelector)) {
 				throw new RuntimeException("found wrong table " + tableSelector + " for column: " + columnSelector + ", expected " + columnTableSelector);
 			}
+			table.getColumns().add(column);
 		}
 		columnsResultSet.close();
 		columnsResultSet = null;
@@ -134,6 +135,14 @@ public final class JdbcSchemaStructure {
 	 */
 	public List<JdbcTableStructure> getTables() {
 		return tables;
+	}
+	
+	/**
+	 * Getter method for the tablesByName.
+	 * @return the tablesByName
+	 */
+	public Map<String, JdbcTableStructure> getTablesByName() {
+		return tablesByName;
 	}
 	
 	/**

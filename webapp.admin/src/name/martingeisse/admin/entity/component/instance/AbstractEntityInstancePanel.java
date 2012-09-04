@@ -110,13 +110,6 @@ public class AbstractEntityInstancePanel extends Panel {
 		
 		// create a selection and turn it into an entity instance model
 		final EntitySelection selection = EntitySelection.forKey(farEndpoint.getEntity(), farEndpoint.getPropertyName(), keyValue, nullIsReference);
-		System.out.println("*** " + selection.getPredicate().toString());
-		System.out.println("*** " + nearEndpoint.getEntity().getName());
-		System.out.println("*** " + nearEndpoint.getPropertyName());
-		System.out.println("*** " + farEndpoint.getEntity().getName());
-		System.out.println("*** " + farEndpoint.getPropertyName());
-		
-		
 		return selection.createSingleInstanceModel(farEndpoint.getMultiplicity().isOptional());
 		
 	}

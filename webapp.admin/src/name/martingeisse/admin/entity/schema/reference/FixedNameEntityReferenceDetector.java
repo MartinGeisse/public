@@ -8,6 +8,7 @@ package name.martingeisse.admin.entity.schema.reference;
 
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.admin.entity.schema.lowlevel.ILowlevelDatabaseStructure;
 
 /**
  * Detects an entity reference whenever a property name matches a fixed
@@ -116,10 +117,10 @@ public final class FixedNameEntityReferenceDetector extends AbstractEntityRefere
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector#detectEntityReference(name.martingeisse.admin.entity.schema.ApplicationSchema, name.martingeisse.admin.entity.schema.EntityDescriptor, java.lang.String)
+	 * @see name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector#detectEntityReference(name.martingeisse.admin.entity.schema.ApplicationSchema, name.martingeisse.admin.entity.schema.lowlevel.ILowlevelDatabaseStructure, name.martingeisse.admin.entity.schema.EntityDescriptor, java.lang.String)
 	 */
 	@Override
-	public void detectEntityReference(ApplicationSchema schema, EntityDescriptor entity, String propertyName) {
+	public void detectEntityReference(ApplicationSchema schema, ILowlevelDatabaseStructure lowlevelDatabaseStructure, EntityDescriptor entity, String propertyName) {
 		if (sourceEntityName == null || sourceEntityName.equals(entity.getName())) {
 			if (propertyName.equals(sourcePropertyName)) {
 				EntityDescriptor destinationEntity = schema.findEntity(destinationEntityName);

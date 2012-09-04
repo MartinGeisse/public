@@ -1,0 +1,54 @@
+
+Wie funktionieren Autoforms mit der Datenbank zusammen?
+
+Größtes Problem ist die Frage, wie man Annotations an die Datenbank heranbringt.
+Das ist so wichtig, denn wenn es nicht geht, dann müsste es für die DB
+eine Möglichkeit geben, *jede* der Funktionalitäten, die man normal mit
+Annotations einbaut, auf andere Weise hereinzubringen (z.B. Validatoren
+direkt hinzufügen statt per Annotations; Autoform-Components direkt
+hinzufügen, ...)
+
+Definition:
+- "Stück": AutoformComponent, Validator, ReadOnly, ...
+  also alles, was man in Beans per Annotation definiert
+
+Möglichkeiten:
+- ohne Annotations: Die "Stücke" bekommen einen Zweiten Konstruktor, der
+  die Werte direkt nimmt -> viel Arbeit
+- custom Impl für die Annotations -> viel Arbeit
+- Definition in Config-Datei -> kann nur zur Laufzeit geprüft werden
+- Beans sind Vorschrift, zumindest für Stücke -> widerspricht dem Grundgedanken des Admin-Frameworks
+- für die Stücke keine Beans, aber Java-Klassen mit nichts als Public-Feldern, wo die
+  Annotations dranstehen -> besser als nichts, da könnte man dann noch mehr
+  coole Features einbauen; Wenn man Beans hat kann man dasselbe alternativ
+  da machen ("Pseudo-Bean", "DatabaseRuleClass") -> wie in Cake-Models. Beispiel:
+  
+  	public static void onAfterLoad(EntityInstance instance);
+  	
+Allerdings teilen sich viele Stücke auch in Gruppen ein:
+- Validierungen, die implizit aus der Datenbank kommen (z.B. Feldlängen)
+- übertragbare Stücke (Validierungen an einem Primary Key übertragen sich auf seine Foreign Keys)
+- nach Muster definierte Stücke (an einem Primary Key: alle FKs auf diesen PK bitte per Dropdown anzeigen)
+- manuelle Datentypen bzw. Datentyp-Mixins: Hier wird eine separate Klasse für das Mixin erstellt und diese kann
+  z.B. die Validierungen tragen oder returnen. Dann wird nur noch in 1 Befehl ein Feld mit einem Mixin versehen.
+  Dazu kommen Mixins per Pattern. Mixins definieren: Validierung, AF-Component, ...
+  Beispiel: Email-Adresse. Mixins sind relativ viel Aufwand, also sollten die nicht so oft vorkommen;
+  dafür sind sie flexibel.
+- Patterns für das Anbringen von Mixins:
+	- table + column
+	- column in allen Tabellen (z.B. id, last modified)
+	- alle FKs für diesen PK
+
+Mixins greifen letztendlich doch wieder den Ansatz auf: ohne Annotations bzw. custom Impl für die Annotations.
+Und reißen den Aufwand dann raus indem nicht nur Validierungen, sondern mehr (z.B. AF-Components)
+zusammen verpackt werden, und das noch mit viel re-Use. Ich bin noch nicht überzeugt, dass das ein guter
+Ansatz ist, aber sollte ich mal weiter verfolgen.
+
+Impl.:
+- IEntityPropertyMixin -- saubere Schnittstelle
+- AbstractDatabasePropertyMixin -- liest Annotations von seiner eigenen konkreten Klasse (keine Annotation-Vererbung)
+	Pattern + eigene Annotations + Methoden
+
+Dazu dann passend: IEntityMixin, z.B. für Feldübergreifende Validierung.
+
+

@@ -23,6 +23,7 @@ import name.martingeisse.admin.entity.component.list.datatable.raw.RawEntityList
 import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilter;
 import name.martingeisse.admin.entity.property.type.IEntityIdType;
 import name.martingeisse.admin.entity.property.type.ISqlType;
+import name.martingeisse.admin.entity.schema.lowlevel.ILowlevelDatabaseStructure;
 import name.martingeisse.admin.entity.schema.lowlevel.JdbcColumnStructure;
 import name.martingeisse.admin.entity.schema.lowlevel.JdbcSchemaStructure;
 import name.martingeisse.admin.entity.schema.lowlevel.JdbcTableStructure;
@@ -34,11 +35,19 @@ import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.datarow.DataRowMeta;
 
+import org.apache.log4j.Logger;
+
 /**
  * This class holds global data generated from plugins / capabilities and modifiers.
  */
 public class ApplicationSchema {
 
+	/**
+	 * the logger
+	 */
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(ApplicationSchema.class);
+	
 	/**
 	 * the instance
 	 */
@@ -115,6 +124,20 @@ public class ApplicationSchema {
 	}
 
 	/**
+	 * Finds and returns an entity by its database table name.
+	 * @param tableName the table name
+	 * @return the entity descriptor, or null if not found
+	 */
+	public EntityDescriptor findEntityByTableName(final String tableName) {
+		for (final EntityDescriptor entity : entityDescriptors) {
+			if (entity.getTableName().equals(tableName)) {
+				return entity;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Builds internal data structures from the actual schema built by
 	 * the subclass. This method should be invoked after setting custom
 	 * schema components but before using the schema.
@@ -142,11 +165,10 @@ public class ApplicationSchema {
 	private void buildEntityDescriptors() {
 		for (final IDatabaseDescriptor databaseDescriptor : databaseDescriptors) {
 			try {
+				Connection connection = databaseDescriptor.createJdbcConnection();
 				
 				// determine database structure
-				Connection connection = databaseDescriptor.createJdbcConnection();
 				JdbcSchemaStructure structure = new JdbcSchemaStructure(connection);
-				connection.close();
 				databaseStructures.put(databaseDescriptor, structure);
 
 				// discover entities
@@ -209,6 +231,7 @@ public class ApplicationSchema {
 					entity.mapNames();
 				}
 				
+				connection.close();
 			} catch (SQLException e) {
 				throw new RuntimeException(e);
 			}
@@ -239,13 +262,12 @@ public class ApplicationSchema {
 	 * as the source and destination entities.
 	 */
 	private void detectEntityReferences() {
-		// TODO use DB structure: foreign keys -> references
-		
 		for (final EntityDescriptor entity : entityDescriptors) {
+			ILowlevelDatabaseStructure lowlevelStructure = databaseStructures.get(entity.getDatabase());
 			for (final EntityPropertyDescriptor property : entity.getPropertiesInDatabaseOrder()) {
 				final String propertyName = property.getName();
 				for (final IEntityReferenceDetector detector : EntityConfigurationUtil.getEntityReferenceDetectors()) {
-					detector.detectEntityReference(this, entity, propertyName);
+					detector.detectEntityReference(this, lowlevelStructure, entity, propertyName);
 				}
 			}
 		}
