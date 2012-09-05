@@ -8,7 +8,9 @@ package name.martingeisse.admin.entity;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilter;
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.IEntityNavigationContributor;
+import name.martingeisse.admin.entity.schema.autoform.IEntityAutoformAnnotatedClassResolver;
 import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 
@@ -41,6 +43,11 @@ public final class EntityConfigurationUtil {
 	 * The capability key for entity search contributors.
 	 */
 	public static final Class<IEntitySearchContributor> ENTITY_SEARCH_CONTRIBUTOR_CAPABILITY_KEY = IEntitySearchContributor.class;
+
+	/**
+	 * The capability key for entity autoform annotated class resolvers.
+	 */
+	public static final Class<IEntityAutoformAnnotatedClassResolver> ENTITY_AUTOFORM_ANNOTATED_CLASS_RESOLVER_CAPABILITY_KEY = IEntityAutoformAnnotatedClassResolver.class;
 
 	/**
 	 * Prevent instantiation.
@@ -124,4 +131,43 @@ public final class EntityConfigurationUtil {
 		return ApplicationConfiguration.get().getCapabilities().getIterable(ENTITY_SEARCH_CONTRIBUTOR_CAPABILITY_KEY);
 	}
 
+	/**
+	 * Adds the specified entity autoform annotated class resolver.
+	 * @param entityAutoformAnnotatedClassResolver the entity autoform annotated class resolver to add
+	 */
+	public static void addEntityAutoformAnnotatedClassResolver(final IEntityAutoformAnnotatedClassResolver entityAutoformAnnotatedClassResolver) {
+		ApplicationConfiguration.get().getCapabilities().add(ENTITY_AUTOFORM_ANNOTATED_CLASS_RESOLVER_CAPABILITY_KEY, entityAutoformAnnotatedClassResolver);
+	}
+
+	/**
+	 * @return an {@link Iterable} for all entity autoform annotated class resolvers.
+	 */
+	public static Iterable<IEntityAutoformAnnotatedClassResolver> getEntityAutoformAnnotatedClassResolvers() {
+		return ApplicationConfiguration.get().getCapabilities().getIterable(ENTITY_AUTOFORM_ANNOTATED_CLASS_RESOLVER_CAPABILITY_KEY);
+	}
+
+	/**
+	 * Resolves the annotated class for the specified entity.
+	 * @param entity the entity
+	 * @return the annotated class
+	 */
+	public static Class<?> resolveAnnotatedClass(EntityDescriptor entity) {
+		Class<?> result = null;
+		IEntityAutoformAnnotatedClassResolver successfulResolver = null;
+		for (IEntityAutoformAnnotatedClassResolver resolver : getEntityAutoformAnnotatedClassResolvers()) {
+			Class<?> currentResult = resolver.resolveEntityAutoformAnnotatedClass(entity);
+			if (currentResult != null) {
+				if (result == null || result == currentResult) {
+					result = currentResult;
+					successfulResolver = resolver;
+				} else {
+					throw new RuntimeException("Ambiguous autoform-annotated classes found for entity " + entity.getName() +
+						": Resolver " + successfulResolver + " returned " + result + ", but resolver " +
+						resolver + " returned " + currentResult);
+				}
+			}
+		}
+		return result;
+	}
+	
 }

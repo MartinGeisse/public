@@ -58,7 +58,6 @@ public final class EntityReferenceEndpoint {
 	 * @return the near endpoint.
 	 */
 	public static EntityReferenceEndpoint createPair(final EntityDescriptor nearEntity, final String nearPropertyName, final EntityReferenceEndpointMultiplicity nearMultiplicity, final EntityDescriptor farEntity, final String farPropertyName, final EntityReferenceEndpointMultiplicity farMultiplicity) {
-		System.out.println("+++ " + nearEntity.getName() + "." + nearPropertyName + " <-> " + farEntity.getName() + "." + farPropertyName);
 		return new EntityReferenceEndpoint(nearEntity, nearPropertyName, nearMultiplicity, farEntity, farPropertyName, farMultiplicity);
 	}
 

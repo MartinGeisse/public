@@ -7,6 +7,7 @@
 package name.martingeisse.admin.entity.schema;
 
 import name.martingeisse.admin.entity.property.type.ISqlType;
+import name.martingeisse.admin.entity.schema.autoform.EntityPropertyAutoformMetadata;
 
 /**
  * This class describes a property of an entity, for example
@@ -28,6 +29,11 @@ public class EntityPropertyDescriptor {
 	 * the visibleInRawEntityList
 	 */
 	private boolean visibleInRawEntityList;
+
+	/**
+	 * the autoformMetadata
+	 */
+	private EntityPropertyAutoformMetadata autoformMetadata;
 
 	/**
 	 * Constructor.
@@ -81,6 +87,22 @@ public class EntityPropertyDescriptor {
 	 */
 	public void setVisibleInRawEntityList(final boolean visibleInRawEntityList) {
 		this.visibleInRawEntityList = visibleInRawEntityList;
+	}
+
+	/**
+	 * Getter method for the autoformMetadata.
+	 * @return the autoformMetadata
+	 */
+	public EntityPropertyAutoformMetadata getAutoformMetadata() {
+		return autoformMetadata;
+	}
+
+	/**
+	 * Setter method for the autoformMetadata.
+	 * @param autoformMetadata the autoformMetadata to set
+	 */
+	public void setAutoformMetadata(final EntityPropertyAutoformMetadata autoformMetadata) {
+		this.autoformMetadata = autoformMetadata;
 	}
 
 }

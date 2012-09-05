@@ -23,6 +23,8 @@ import name.martingeisse.admin.entity.component.list.datatable.raw.RawEntityList
 import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilter;
 import name.martingeisse.admin.entity.property.type.IEntityIdType;
 import name.martingeisse.admin.entity.property.type.ISqlType;
+import name.martingeisse.admin.entity.schema.autoform.DefaultEntityAutoformMetadataResolver;
+import name.martingeisse.admin.entity.schema.autoform.IEntityAutoformMetadataResolver;
 import name.martingeisse.admin.entity.schema.lowlevel.ILowlevelDatabaseStructure;
 import name.martingeisse.admin.entity.schema.lowlevel.JdbcColumnStructure;
 import name.martingeisse.admin.entity.schema.lowlevel.JdbcSchemaStructure;
@@ -148,6 +150,7 @@ public class ApplicationSchema {
 		detectEntityReferences();
 		createNavigation();
 		initializeSearchStrategies();
+		initializeAutoformMetadata();
 	}
 
 	/**
@@ -352,4 +355,12 @@ public class ApplicationSchema {
 		}
 	}
 
+	/**
+	 * Initializes meta-data used to build autoforms.
+	 */
+	private void initializeAutoformMetadata() {
+		IEntityAutoformMetadataResolver resolver = new DefaultEntityAutoformMetadataResolver();
+		resolver.resolveEntityAutoformMetadata(this);
+	}
+	
 }

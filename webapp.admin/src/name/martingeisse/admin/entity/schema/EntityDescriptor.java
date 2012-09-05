@@ -21,6 +21,7 @@ import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.admin.entity.property.type.IEntityIdType;
+import name.martingeisse.admin.entity.schema.autoform.EntityAutoformMetadata;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
@@ -50,7 +51,7 @@ public class EntityDescriptor {
 	 * the logger
 	 */
 	private static Logger logger = Logger.getLogger(EntityDescriptor.class);
-	
+
 	/**
 	 * the name
 	 */
@@ -94,7 +95,7 @@ public class EntityDescriptor {
 	/**
 	 * the referenceEndpoints
 	 */
-	private List<EntityReferenceEndpoint> referenceEndpoints;
+	private final List<EntityReferenceEndpoint> referenceEndpoints;
 
 	/**
 	 * the canonicalListNavigationNode
@@ -115,6 +116,11 @@ public class EntityDescriptor {
 	 * the searchStrategy
 	 */
 	private IEntitySearchStrategy searchStrategy;
+
+	/**
+	 * the autoformMetadata
+	 */
+	private EntityAutoformMetadata autoformMetadata;
 
 	/**
 	 * Constructor.
@@ -249,7 +255,7 @@ public class EntityDescriptor {
 	public List<EntityReferenceEndpoint> getReferenceEndpoints() {
 		return referenceEndpoints;
 	}
-	
+
 	/**
 	 * Getter method for the canonicalListNavigationNode.
 	 * @return the canonicalListNavigationNode
@@ -296,6 +302,22 @@ public class EntityDescriptor {
 	 */
 	public void setDataRowMeta(final DataRowMeta dataRowMeta) {
 		this.dataRowMeta = dataRowMeta;
+	}
+
+	/**
+	 * Getter method for the autoformMetadata.
+	 * @return the autoformMetadata
+	 */
+	public EntityAutoformMetadata getAutoformMetadata() {
+		return autoformMetadata;
+	}
+
+	/**
+	 * Setter method for the autoformMetadata.
+	 * @param autoformMetadata the autoformMetadata to set
+	 */
+	public void setAutoformMetadata(final EntityAutoformMetadata autoformMetadata) {
+		this.autoformMetadata = autoformMetadata;
 	}
 
 	/**
@@ -395,14 +417,14 @@ public class EntityDescriptor {
 	public SQLQuery query(final String alias) {
 		return getConnection().createQuery().from(createRelationalPath(alias));
 	}
-	
+
 	/**
 	 * Queries for the number of instances of this entity, or the number of
 	 * instances accepted by the specified filter predicate.
 	 * @param filterPredicate the filter predicate
 	 * @return the number of instances
 	 */
-	public long count(Predicate filterPredicate) {
+	public long count(final Predicate filterPredicate) {
 		SQLQuery countQuery = query(EntityExpressionUtil.ALIAS);
 		if (filterPredicate != null) {
 			countQuery = countQuery.where(filterPredicate);
@@ -510,5 +532,5 @@ public class EntityDescriptor {
 	public IEntityDatabaseConnection getConnection() {
 		return EntityConnectionManager.getConnection(getDatabase());
 	}
-	
+
 }

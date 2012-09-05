@@ -6,74 +6,37 @@
 
 package name.martingeisse.wicket.autoform.describe;
 
+import java.lang.annotation.Annotation;
 import java.util.List;
-
-import name.martingeisse.common.terms.DisplayName;
 
 /**
  * This class contains the information about a whole autoform bean.
  */
-public final class DefaultAutoformBeanDescription implements IAutoformBeanDescription {
-
-	/**
-	 * the bean
-	 */
-	private final Object bean;
-
-	/**
-	 * the propertyDescriptions
-	 */
-	private final List<IAutoformPropertyDescription> propertyDescriptions;
+public final class DefaultAutoformBeanDescription extends AbstractAutoformBeanDescription<Object> {
 
 	/**
 	 * Constructor.
 	 * @param bean the bean being shown
 	 * @param propertyDescriptions the list of property descriptions to show in the autoform
 	 */
-	public DefaultAutoformBeanDescription(Object bean, List<IAutoformPropertyDescription> propertyDescriptions) {
-		this.bean = bean;
-		this.propertyDescriptions = propertyDescriptions;
+	public DefaultAutoformBeanDescription(final Object bean, final List<IAutoformPropertyDescription> propertyDescriptions) {
+		super(bean, propertyDescriptions);
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformBeanDescription#getBean()
+	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformBeanDescription#getAnnotation(java.lang.Class)
 	 */
 	@Override
-	public Object getBean() {
-		return bean;
+	public <A extends Annotation> A getAnnotation(final Class<A> annotationClass) {
+		return getBean().getClass().getAnnotation(annotationClass);
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformBeanDescription#getPropertyDescriptions()
+	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformBeanDescription#getAnnotations()
 	 */
 	@Override
-	public List<IAutoformPropertyDescription> getPropertyDescriptions() {
-		return propertyDescriptions;
+	public Annotation[] getAnnotations() {
+		return getBean().getClass().getAnnotations();
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformBeanDescription#getDisplayName()
-	 */
-	@Override
-	public String getDisplayName() {
-		DisplayName annotation = bean.getClass().getAnnotation(DisplayName.class);
-		return (annotation == null) ? bean.getClass().getSimpleName() : annotation.value();
-	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformBeanDescription#getPropertyDescription(java.lang.String)
-	 */
-	@Override
-	public IAutoformPropertyDescription getPropertyDescription(String propertyName) {
-		if (propertyName == null) {
-			throw new IllegalArgumentException("propertyName is null");
-		}
-		for (IAutoformPropertyDescription description : getPropertyDescriptions()) {
-			if (propertyName.equals(description.getName())) {
-				return description;
-			}
-		}
-		return null;
-	}
-	
 }

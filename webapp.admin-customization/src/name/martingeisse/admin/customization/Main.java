@@ -196,6 +196,9 @@ public class Main {
 		SecurityConfigurationUtil.setSecurityConfiguration(new SecurityConfiguration());
 		NopLoginPage.bypass = false;
 		
+		// entity autoforms
+		EntityConfigurationUtil.addEntityAutoformAnnotatedClassResolver(new EntityAutoformAnnotatedClassResolver("name.martingeisse.admin.customization.entity"));
+		
 		// run
 		buildNavigation();
 		Launcher.launch();

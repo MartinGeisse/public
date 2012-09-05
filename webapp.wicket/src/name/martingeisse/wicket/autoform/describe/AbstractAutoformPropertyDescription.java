@@ -20,8 +20,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 
 /**
- * This class implements basic fields defined in {@link IAutoformPropertyDescription}
- * as well as fields automatically derived from annotations.
+ * This class implements basic methods defined in {@link IAutoformPropertyDescription}
+ * as well as behavior automatically derived from annotations.
  */
 public abstract class AbstractAutoformPropertyDescription implements IAutoformPropertyDescription {
 
