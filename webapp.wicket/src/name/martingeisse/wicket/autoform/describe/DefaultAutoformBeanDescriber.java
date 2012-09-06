@@ -42,19 +42,19 @@ public class DefaultAutoformBeanDescriber extends AbstractAutoformBeanDescriber<
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformBeanDescriber#createBeanDescription(java.lang.Object, java.util.List)
+	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformBeanDescriber#createBeanDescriptor(java.lang.Object, java.util.List)
 	 */
 	@Override
-	protected DefaultAutoformBeanDescription createBeanDescription(final Serializable bean, final List<IAutoformPropertyDescription> propertyDescriptions) {
-		return new DefaultAutoformBeanDescription(bean, propertyDescriptions);
+	protected DefaultAutoformBeanDescriptor createBeanDescriptor(final Serializable bean, final List<IAutoformPropertyDescriptor> propertyDescriptors) {
+		return new DefaultAutoformBeanDescriptor(bean, propertyDescriptors);
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformBeanDescriber#createPropertyDescription(java.lang.Object, java.lang.Object)
+	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformBeanDescriber#createPropertyDescriptor(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	protected IAutoformPropertyDescription createPropertyDescription(final Serializable bean, final PropertyDescriptor beanPropertyDescriptor) {
-		return new DefaultAutoformPropertyDescription(bean, beanPropertyDescriptor);
+	protected IAutoformPropertyDescriptor createPropertyDescriptor(final Serializable bean, final PropertyDescriptor beanPropertyDescriptor) {
+		return new DefaultAutoformPropertyDescriptor(bean, beanPropertyDescriptor);
 	}
 
 	/* (non-Javadoc)

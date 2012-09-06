@@ -14,7 +14,7 @@ import java.io.Serializable;
  * bean properties and annotations.
  * 
  * Naming convention: This interface is called "describer", referring to the fact
- * that it actively creates a description from a bean to describe. The "description"
+ * that it actively creates a descriptor from a bean to describe. The "descriptor"
  * is a passive object that contains the results from this describer.
  * 
  * {@link DefaultAutoformBeanDescriber} is the default implementation and
@@ -33,6 +33,6 @@ public interface IAutoformBeanDescriber extends Serializable {
 	 * @param bean the bean to describe
 	 * @return information about the bean for use in the autoform
 	 */
-	public IAutoformBeanDescription describe(Object bean);
+	public IAutoformBeanDescriptor describe(Object bean);
 	
 }

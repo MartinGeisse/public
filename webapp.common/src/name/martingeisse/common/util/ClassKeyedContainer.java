@@ -7,6 +7,7 @@
 package name.martingeisse.common.util;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -85,12 +86,20 @@ public class ClassKeyedContainer<B> implements Serializable {
 	public <T extends B> T remove(Class<T> key) {
 		return key.cast(map.remove(key));
 	}
-
+	
 	/**
 	 * Removes all data from this container.
 	 */
 	public void clear() {
 		map.clear();
+	}
+
+	/**
+	 * Getter method for the collection of values stored in this container.
+	 * @return the collection of values
+	 */
+	public Collection<B> getValues() {
+		return map.values();
 	}
 	
 }

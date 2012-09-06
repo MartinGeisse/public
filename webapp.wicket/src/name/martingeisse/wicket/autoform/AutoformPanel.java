@@ -16,8 +16,8 @@ import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociate
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformValidator;
 import name.martingeisse.wicket.autoform.componentfactory.IAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.IAutoformBeanDescriber;
-import name.martingeisse.wicket.autoform.describe.IAutoformBeanDescription;
-import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription;
+import name.martingeisse.wicket.autoform.describe.IAutoformBeanDescriptor;
+import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor;
 import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
 
 import org.apache.wicket.Component;
@@ -36,9 +36,9 @@ import org.apache.wicket.validation.IValidator;
 public class AutoformPanel extends Panel {
 
 	/**
-	 * the beanDescription
+	 * the beanDescriptor
 	 */
-	private final IAutoformBeanDescription beanDescription;
+	private final IAutoformBeanDescriptor beanDescriptor;
 
 	/**
 	 * the propertyComponentFactory
@@ -54,7 +54,7 @@ public class AutoformPanel extends Panel {
 	 */
 	public AutoformPanel(final String id, final Serializable bean, final IAutoformBeanDescriber beanDescriber, final IAutoformPropertyComponentFactory propertyComponentFactory) {
 		super(id, Model.of(bean));
-		this.beanDescription = beanDescriber.describe(bean);
+		this.beanDescriptor = beanDescriber.describe(bean);
 		this.propertyComponentFactory = propertyComponentFactory;
 		createComponents();
 	}
@@ -74,16 +74,16 @@ public class AutoformPanel extends Panel {
 		add(form);
 
 		// create the property repeater
-		final ListView<IAutoformPropertyDescription> rows = new ListView<IAutoformPropertyDescription>("rows", beanDescription.getPropertyDescriptions()) {
+		final ListView<IAutoformPropertyDescriptor> rows = new ListView<IAutoformPropertyDescriptor>("rows", beanDescriptor.getPropertyDescriptors()) {
 
 			/* (non-Javadoc)
 			 * @see org.apache.wicket.markup.html.list.ListView#populateItem(org.apache.wicket.markup.html.list.ListItem)
 			 */
 			@Override
-			protected void populateItem(final ListItem<IAutoformPropertyDescription> item) {
-				final IAutoformPropertyDescription propertyDescription = item.getModelObject();
-				item.add(new Label("keyLabel", propertyDescription.getDisplayName()));
-				item.add(propertyComponentFactory.createPropertyComponent("valueComponent", propertyDescription, createValidators(propertyDescription), new ValidationErrorAcceptor(item)));
+			protected void populateItem(final ListItem<IAutoformPropertyDescriptor> item) {
+				final IAutoformPropertyDescriptor propertyDescriptor = item.getModelObject();
+				item.add(new Label("keyLabel", propertyDescriptor.getDisplayName()));
+				item.add(propertyComponentFactory.createPropertyComponent("valueComponent", propertyDescriptor, createValidators(propertyDescriptor), new ValidationErrorAcceptor(item)));
 			}
 
 		};
@@ -100,12 +100,12 @@ public class AutoformPanel extends Panel {
 		/**
 		 * the item
 		 */
-		private final ListItem<IAutoformPropertyDescription> item;
+		private final ListItem<IAutoformPropertyDescriptor> item;
 
 		/**
 		 * Constructor.
 		 */
-		ValidationErrorAcceptor(final ListItem<IAutoformPropertyDescription> item) {
+		ValidationErrorAcceptor(final ListItem<IAutoformPropertyDescriptor> item) {
 			this.item = item;
 		}
 
@@ -123,7 +123,7 @@ public class AutoformPanel extends Panel {
 	 * @param property
 	 * @return
 	 */
-	private IValidator<?>[] createValidators(final IAutoformPropertyDescription property) {
+	private IValidator<?>[] createValidators(final IAutoformPropertyDescriptor property) {
 		final List<IValidator<?>> validators = new ArrayList<IValidator<?>>();
 
 		// check for AutoformValidator
@@ -160,11 +160,11 @@ public class AutoformPanel extends Panel {
 	}
 
 	/**
-	 * Getter method for the beanDescription.
-	 * @return the beanDescription
+	 * Getter method for the beanDescriptor.
+	 * @return the beanDescriptor
 	 */
-	public IAutoformBeanDescription getBeanDescription() {
-		return beanDescription;
+	public IAutoformBeanDescriptor getBeanDescriptor() {
+		return beanDescriptor;
 	}
 
 	/**

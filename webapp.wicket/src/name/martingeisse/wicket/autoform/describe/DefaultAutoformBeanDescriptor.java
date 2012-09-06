@@ -13,19 +13,19 @@ import java.util.List;
 /**
  * This class contains the information about a whole autoform bean.
  */
-public final class DefaultAutoformBeanDescription extends AbstractAutoformBeanDescription<Serializable> {
+public final class DefaultAutoformBeanDescriptor extends AbstractAutoformBeanDescriptor<Serializable> {
 
 	/**
 	 * Constructor.
 	 * @param bean the bean being shown
-	 * @param propertyDescriptions the list of property descriptions to show in the autoform
+	 * @param propertyDescriptors the list of property descriptors to show in the autoform
 	 */
-	public DefaultAutoformBeanDescription(final Serializable bean, final List<IAutoformPropertyDescription> propertyDescriptions) {
-		super(bean, propertyDescriptions);
+	public DefaultAutoformBeanDescriptor(final Serializable bean, final List<IAutoformPropertyDescriptor> propertyDescriptors) {
+		super(bean, propertyDescriptors);
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformBeanDescription#getAnnotation(java.lang.Class)
+	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformBeanDescriptor#getAnnotation(java.lang.Class)
 	 */
 	@Override
 	public <A extends Annotation> A getAnnotation(final Class<A> annotationClass) {
@@ -33,7 +33,7 @@ public final class DefaultAutoformBeanDescription extends AbstractAutoformBeanDe
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformBeanDescription#getAnnotations()
+	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformBeanDescriptor#getAnnotations()
 	 */
 	@Override
 	public Annotation[] getAnnotations() {

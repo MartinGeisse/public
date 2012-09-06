@@ -17,7 +17,7 @@ import org.apache.commons.beanutils.PropertyUtils;
  * This class contains the information about a single property
  * in an autoform, using a Java Beans {@link PropertyDescriptor}.
  */
-public final class DefaultAutoformPropertyDescription extends AbstractAutoformPropertyDescription {
+public final class DefaultAutoformPropertyDescriptor extends AbstractAutoformPropertyDescriptor {
 
 	/**
 	 * the bean
@@ -38,16 +38,14 @@ public final class DefaultAutoformPropertyDescription extends AbstractAutoformPr
 	 * @param bean the bean that contains the property
 	 * @param propertyDescriptor the property descriptor for the bean property
 	 */
-	public DefaultAutoformPropertyDescription(Serializable bean, PropertyDescriptor propertyDescriptor) {
+	public DefaultAutoformPropertyDescriptor(Serializable bean, PropertyDescriptor propertyDescriptor) {
 		super(bean, propertyDescriptor);
 		this.bean = bean;
 		this.propertyDescriptor = propertyDescriptor;
 	}
 	
 	/**
-	 * @param in
-	 * @throws IOException
-	 * @throws ClassNotFoundException
+	 * 
 	 */
 	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
 		in.defaultReadObject();
@@ -59,7 +57,7 @@ public final class DefaultAutoformPropertyDescription extends AbstractAutoformPr
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription#getAnnotation(java.lang.Class)
+	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor#getAnnotation(java.lang.Class)
 	 */
 	@Override
 	public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
@@ -67,7 +65,7 @@ public final class DefaultAutoformPropertyDescription extends AbstractAutoformPr
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription#getAnnotations()
+	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor#getAnnotations()
 	 */
 	@Override
 	public Annotation[] getAnnotations() {
@@ -75,7 +73,7 @@ public final class DefaultAutoformPropertyDescription extends AbstractAutoformPr
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformPropertyDescription#isReadOnly()
+	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformPropertyDescriptor#isReadOnly()
 	 */
 	@Override
 	public boolean isReadOnly() {

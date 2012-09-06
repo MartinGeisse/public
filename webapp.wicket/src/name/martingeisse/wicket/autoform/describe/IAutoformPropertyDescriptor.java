@@ -19,7 +19,7 @@ import org.apache.wicket.model.IModel;
  * This interface represents the information gathered by an {@link IAutoformBeanDescriber}
  * for a single property of a specific bean (or bean-equivalent object).
  */
-public interface IAutoformPropertyDescription extends Serializable {
+public interface IAutoformPropertyDescriptor extends Serializable {
 
 	/**
 	 * Getter method for the name.

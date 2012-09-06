@@ -20,10 +20,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 
 /**
- * This class implements basic methods defined in {@link IAutoformPropertyDescription}
+ * This class implements basic methods defined in {@link IAutoformPropertyDescriptor}
  * as well as behavior automatically derived from annotations.
  */
-public abstract class AbstractAutoformPropertyDescription implements IAutoformPropertyDescription {
+public abstract class AbstractAutoformPropertyDescriptor implements IAutoformPropertyDescriptor {
 
 	/**
 	 * the name
@@ -46,7 +46,7 @@ public abstract class AbstractAutoformPropertyDescription implements IAutoformPr
 	 * @param type the Java type of the property
 	 * @param model the Wicket model used to read/write the property value
 	 */
-	public AbstractAutoformPropertyDescription(final String name, final Class<?> type, final IModel<?> model) {
+	public AbstractAutoformPropertyDescriptor(final String name, final Class<?> type, final IModel<?> model) {
 		this.name = name;
 		this.type = type;
 		this.model = model;
@@ -58,12 +58,12 @@ public abstract class AbstractAutoformPropertyDescription implements IAutoformPr
 	 * @param propertyDescriptor the property descriptor for the bean property. The property descriptor
 	 * is not saved by this class since that would hinder serializability.
 	 */
-	public AbstractAutoformPropertyDescription(final Serializable bean, final PropertyDescriptor propertyDescriptor) {
+	public AbstractAutoformPropertyDescriptor(final Serializable bean, final PropertyDescriptor propertyDescriptor) {
 		this(propertyDescriptor.getName(), propertyDescriptor.getPropertyType(), new PropertyModel<Object>(bean, propertyDescriptor.getName()));
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription#getName()
+	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor#getName()
 	 */
 	@Override
 	public String getName() {
@@ -71,7 +71,7 @@ public abstract class AbstractAutoformPropertyDescription implements IAutoformPr
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription#getDisplayName()
+	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor#getDisplayName()
 	 */
 	@Override
 	public String getDisplayName() {
@@ -80,7 +80,7 @@ public abstract class AbstractAutoformPropertyDescription implements IAutoformPr
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription#getType()
+	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor#getType()
 	 */
 	@Override
 	public Class<?> getType() {
@@ -88,7 +88,7 @@ public abstract class AbstractAutoformPropertyDescription implements IAutoformPr
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription#getModel()
+	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor#getModel()
 	 */
 	@Override
 	public IModel<?> getModel() {
@@ -96,7 +96,7 @@ public abstract class AbstractAutoformPropertyDescription implements IAutoformPr
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription#isReadOnly()
+	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor#isReadOnly()
 	 */
 	@Override
 	public boolean isReadOnly() {
@@ -104,7 +104,7 @@ public abstract class AbstractAutoformPropertyDescription implements IAutoformPr
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription#getComponentClassOverride()
+	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor#getComponentClassOverride()
 	 */
 	@Override
 	public Class<? extends Component> getComponentClassOverride() {
@@ -113,7 +113,7 @@ public abstract class AbstractAutoformPropertyDescription implements IAutoformPr
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription#getComponentConstructorArgument()
+	 * @see name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor#getComponentConstructorArgument()
 	 */
 	@Override
 	public Annotation getComponentConstructorArgument() {

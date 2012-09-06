@@ -12,12 +12,12 @@ import java.util.List;
 import name.martingeisse.common.terms.DisplayName;
 
 /**
- * This class implements basic methods defined in {@link IAutoformBeanDescription}
+ * This class implements basic methods defined in {@link IAutoformBeanDescriptor}
  * as well as behavior automatically derived from annotations.
  * 
  * @param <T> the internal bean type
  */
-public abstract class AbstractAutoformBeanDescription<T> implements IAutoformBeanDescription {
+public abstract class AbstractAutoformBeanDescriptor<T> implements IAutoformBeanDescriptor {
 
 	/**
 	 * the bean
@@ -25,22 +25,22 @@ public abstract class AbstractAutoformBeanDescription<T> implements IAutoformBea
 	private final T bean;
 
 	/**
-	 * the propertyDescriptions
+	 * the propertyDescriptors
 	 */
-	private final List<IAutoformPropertyDescription> propertyDescriptions;
+	private final List<IAutoformPropertyDescriptor> propertyDescriptors;
 
 	/**
 	 * Constructor.
 	 * @param bean the bean being shown
-	 * @param propertyDescriptions the list of property descriptions to show in the autoform
+	 * @param propertyDescriptors the list of property descriptors to show in the autoform
 	 */
-	public AbstractAutoformBeanDescription(T bean, List<IAutoformPropertyDescription> propertyDescriptions) {
+	public AbstractAutoformBeanDescriptor(T bean, List<IAutoformPropertyDescriptor> propertyDescriptors) {
 		this.bean = bean;
-		this.propertyDescriptions = propertyDescriptions;
+		this.propertyDescriptors = propertyDescriptors;
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformBeanDescription#getBean()
+	 * @see name.martingeisse.wicket.autoform.describe.IAutoformBeanDescriptor#getBean()
 	 */
 	@Override
 	public T getBean() {
@@ -48,11 +48,11 @@ public abstract class AbstractAutoformBeanDescription<T> implements IAutoformBea
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformBeanDescription#getPropertyDescriptions()
+	 * @see name.martingeisse.wicket.autoform.describe.IAutoformBeanDescriptor#getPropertyDescriptors()
 	 */
 	@Override
-	public List<IAutoformPropertyDescription> getPropertyDescriptions() {
-		return propertyDescriptions;
+	public List<IAutoformPropertyDescriptor> getPropertyDescriptors() {
+		return propertyDescriptors;
 	}
 
 	/**
@@ -73,7 +73,7 @@ public abstract class AbstractAutoformBeanDescription<T> implements IAutoformBea
 	public abstract Annotation[] getAnnotations();
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformBeanDescription#getDisplayName()
+	 * @see name.martingeisse.wicket.autoform.describe.IAutoformBeanDescriptor#getDisplayName()
 	 */
 	@Override
 	public String getDisplayName() {
@@ -82,16 +82,16 @@ public abstract class AbstractAutoformBeanDescription<T> implements IAutoformBea
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.describe.IAutoformBeanDescription#getPropertyDescription(java.lang.String)
+	 * @see name.martingeisse.wicket.autoform.describe.IAutoformBeanDescriptor#getPropertyDescriptor(java.lang.String)
 	 */
 	@Override
-	public IAutoformPropertyDescription getPropertyDescription(String propertyName) {
+	public IAutoformPropertyDescriptor getPropertyDescriptor(String propertyName) {
 		if (propertyName == null) {
 			throw new IllegalArgumentException("propertyName is null");
 		}
-		for (IAutoformPropertyDescription description : getPropertyDescriptions()) {
-			if (propertyName.equals(description.getName())) {
-				return description;
+		for (IAutoformPropertyDescriptor descriptor : getPropertyDescriptors()) {
+			if (propertyName.equals(descriptor.getName())) {
+				return descriptor;
 			}
 		}
 		return null;

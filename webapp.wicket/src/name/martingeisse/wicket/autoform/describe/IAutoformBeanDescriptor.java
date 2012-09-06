@@ -13,7 +13,7 @@ import java.util.List;
  * This interface represents the information gathered by an {@link IAutoformBeanDescriber}
  * for a specific bean (or bean-equivalent object).
  */
-public interface IAutoformBeanDescription extends Serializable {
+public interface IAutoformBeanDescriptor extends Serializable {
 
 	/**
 	 * Getter method for the bean.
@@ -28,16 +28,16 @@ public interface IAutoformBeanDescription extends Serializable {
 	public String getDisplayName();
 
 	/**
-	 * Getter method for the propertyDescriptions.
-	 * @return the propertyDescriptions
+	 * Getter method for the propertyDescriptors.
+	 * @return the propertyDescriptors
 	 */
-	public List<IAutoformPropertyDescription> getPropertyDescriptions();
+	public List<IAutoformPropertyDescriptor> getPropertyDescriptors();
 
 	/**
-	 * Returns the property description for the specified property.
+	 * Returns the property descriptor for the specified property.
 	 * @param propertyName the name of the property
-	 * @return the property description
+	 * @return the property descriptor
 	 */
-	public IAutoformPropertyDescription getPropertyDescription(String propertyName);
+	public IAutoformPropertyDescriptor getPropertyDescriptor(String propertyName);
 
 }

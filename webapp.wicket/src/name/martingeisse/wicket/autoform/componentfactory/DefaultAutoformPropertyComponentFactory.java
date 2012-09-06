@@ -13,7 +13,7 @@ import name.martingeisse.common.terms.IGetDisplayNameAware;
 import name.martingeisse.common.terms.IReadOnlyAware;
 import name.martingeisse.wicket.autoform.annotation.components.AutoformComponent;
 import name.martingeisse.wicket.autoform.annotation.components.AutoformTextSuggestions;
-import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription;
+import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor;
 import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
 import name.martingeisse.wicket.autoform.validation.IValidatorAcceptor;
 import name.martingeisse.wicket.panel.simple.CheckBoxPanel;
@@ -42,15 +42,15 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 	public static final DefaultAutoformPropertyComponentFactory instance = new DefaultAutoformPropertyComponentFactory();
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.autoform.componentfactory.IAutoformPropertyComponentFactory#createPropertyComponent(java.lang.String, name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescription, org.apache.wicket.validation.IValidator<?>[], name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor)
+	 * @see name.martingeisse.wicket.autoform.componentfactory.IAutoformPropertyComponentFactory#createPropertyComponent(java.lang.String, name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor, org.apache.wicket.validation.IValidator<?>[], name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor)
 	 */
 	@Override
-	public final Component createPropertyComponent(String id, IAutoformPropertyDescription propertyDescription, IValidator<?>[] validators, IValidationErrorAcceptor validationErrorAcceptor) {
-		Class<? extends Component> componentClassOverride = propertyDescription.getComponentClassOverride();
+	public final Component createPropertyComponent(String id, IAutoformPropertyDescriptor propertyDescriptor, IValidator<?>[] validators, IValidationErrorAcceptor validationErrorAcceptor) {
+		Class<? extends Component> componentClassOverride = propertyDescriptor.getComponentClassOverride();
 		if (componentClassOverride == null) {
-			return createPropertyComponentNoOverride(id, propertyDescription, validators, validationErrorAcceptor);
+			return createPropertyComponentNoOverride(id, propertyDescriptor, validators, validationErrorAcceptor);
 		} else {
-			return createPropertyComponent(id, propertyDescription, componentClassOverride, validators, validationErrorAcceptor);
+			return createPropertyComponent(id, propertyDescriptor, componentClassOverride, validators, validationErrorAcceptor);
 		}
 	}
 	
@@ -58,24 +58,24 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 	 * Creates a property component for a specific component class. This is used to implement
 	 * {@link AutoformComponent}.
 	 * @param id the wicket id of the component to create
-	 * @param propertyDescription the property description
+	 * @param propertyDescriptor the property descriptor
 	 * @param componentClassOverride the component class to use
 	 * @param validators the validators to add to the component
 	 * @param validationErrorAcceptor the acceptor for validation errors
 	 * @return the component
 	 */
-	protected final Component createPropertyComponent(String id, IAutoformPropertyDescription propertyDescription, Class<? extends Component> componentClassOverride, IValidator<?>[] validators, IValidationErrorAcceptor validationErrorAcceptor) {
+	protected final Component createPropertyComponent(String id, IAutoformPropertyDescriptor propertyDescriptor, Class<? extends Component> componentClassOverride, IValidator<?>[] validators, IValidationErrorAcceptor validationErrorAcceptor) {
 		try {
-			Component component = findAndInvokePropertyComponentConstructor(id, propertyDescription, componentClassOverride);
+			Component component = findAndInvokePropertyComponentConstructor(id, propertyDescriptor, componentClassOverride);
 			if (component instanceof IReadOnlyAware) {
 				IReadOnlyAware readOnlyAware = (IReadOnlyAware)component;
-				readOnlyAware.setReadOnly(propertyDescription.isReadOnly());
-			} else if (propertyDescription.isReadOnly()) {
-				throw new RuntimeException("property " + propertyDescription.getName() + " is marked as read-only but component class " + component.getClass() + " does not implement IReadOnlyAware");
+				readOnlyAware.setReadOnly(propertyDescriptor.isReadOnly());
+			} else if (propertyDescriptor.isReadOnly()) {
+				throw new RuntimeException("property " + propertyDescriptor.getName() + " is marked as read-only but component class " + component.getClass() + " does not implement IReadOnlyAware");
 			}
 			if (validators.length > 0) {
 				if (!(component instanceof IValidatorAcceptor)) {
-					throw new RuntimeException("property " + propertyDescription.getName() + " has validation annotations but component class " + component.getClass() + " does not implement IValidatorAcceptor");
+					throw new RuntimeException("property " + propertyDescriptor.getName() + " has validation annotations but component class " + component.getClass() + " does not implement IValidatorAcceptor");
 				}
 				IValidatorAcceptor acceptor = (IValidatorAcceptor)component;
 				acceptor.acceptValidators(validators, validationErrorAcceptor);
@@ -89,14 +89,14 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 	/**
 	 * Invokes an appropriate constructor for the component.
 	 * @param id the wicket id
-	 * @param propertyDescription the property description
+	 * @param propertyDescriptor the property descriptor
 	 * @param componentClass the component class to use
 	 * @return the component instance
 	 * @throws Exception on errors
 	 */
-	private final Component findAndInvokePropertyComponentConstructor(String id, IAutoformPropertyDescription propertyDescription, Class<? extends Component> componentClass) throws Exception {
-		final Annotation additionalArgument = propertyDescription.getComponentConstructorArgument();
-		final IModel<?> propertyModel = propertyDescription.getModel();
+	private final Component findAndInvokePropertyComponentConstructor(String id, IAutoformPropertyDescriptor propertyDescriptor, Class<? extends Component> componentClass) throws Exception {
+		final Annotation additionalArgument = propertyDescriptor.getComponentConstructorArgument();
+		final IModel<?> propertyModel = propertyDescriptor.getModel();
 		if (additionalArgument == null) {
 			try {
 				return componentClass.getConstructor(String.class, IModel.class).newInstance(id, propertyModel);
@@ -123,7 +123,7 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 	 * @param validationErrorAcceptor the acceptor for validation errors
 	 * @return the component
 	 */
-	protected Panel createPropertyComponentNoOverride(String id, IAutoformPropertyDescription propertyDescriptor, IValidator<?>[] validators, IValidationErrorAcceptor validationErrorAcceptor) {
+	protected Panel createPropertyComponentNoOverride(String id, IAutoformPropertyDescriptor propertyDescriptor, IValidator<?>[] validators, IValidationErrorAcceptor validationErrorAcceptor) {
 
 		final Class<?> type = propertyDescriptor.getType();
 		final IModel<?> model = propertyDescriptor.getModel();

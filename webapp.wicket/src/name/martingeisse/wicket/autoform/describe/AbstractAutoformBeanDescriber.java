@@ -13,17 +13,17 @@ import name.martingeisse.wicket.autoform.annotation.structure.AutoformIgnoreProp
 import name.martingeisse.wicket.autoform.annotation.structure.AutoformPropertyOrder;
 
 /**
- * This describer builds descriptions for bean properties with the following rules:
+ * This describer builds descriptors for bean properties with the following rules:
  * - properties for which acceptAsRelevant() returns false are considered
- *   irrelevant to autoforms in general. No property description is build
+ *   irrelevant to autoforms in general. No property descriptor is build
  *   from them, and including them in {@link AutoformPropertyOrder} is an error.
  * - properties for which acceptAsVisible() returns false are hidden in
- *   the description, although relevant in principle. They are also expected
+ *   the descriptor, although relevant in principle. They are also expected
  *   to appear in {@link AutoformPropertyOrder} (if that annotation
  *   is present). This can be used to hide specific properties of a
  *   bean according to the context, using a context-specific describer subclass.
  * - properties tagged with {@link AutoformIgnoreProperty} do not produce
- *   a property description. Whether or not they appear in
+ *   a property descriptor. Whether or not they appear in
  *   {@link AutoformPropertyOrder} is ignored. This allows the bean author to
  *   skip the distinction and hide a property with the same annotation,
  *   no matter if the property is irrelevant, relevant but permanently
@@ -45,7 +45,7 @@ import name.martingeisse.wicket.autoform.annotation.structure.AutoformPropertyOr
  * 
  * This describer then removes all hidden properties, i.e. properties for
  * which acceptAsVisible() returns false. For all remaining properties, a
- * property description is generated.
+ * property descriptor is generated.
  * 
  * @param <BEANDESC> the type of implementation-specific bean descriptors being used
  * @param <PROPDESC> the type of implementation-specific property descriptors being used
@@ -70,20 +70,20 @@ public abstract class AbstractAutoformBeanDescriber<BEANDESC, PROPDESC, BEAN> im
 	 * @see name.martingeisse.terra.wicket.autoform.IAutoformBeanDescriber#describe(java.lang.Object)
 	 */
 	@Override
-	public DefaultAutoformBeanDescription describe(Object untypedBean) {
+	public AbstractAutoformBeanDescriptor<BEAN> describe(Object untypedBean) {
 		
 		// analyze the bean
 		BEAN bean = beanBaseClass.cast(untypedBean);
 		List<PROPDESC> sortedVisibleBeanPropertyDescriptors = createHelper(bean).run();
 		
 		// generate our own property descriptors for the properties
-		List<IAutoformPropertyDescription> propertyDescriptions = new ArrayList<IAutoformPropertyDescription>();
+		List<IAutoformPropertyDescriptor> propertyDescriptors = new ArrayList<IAutoformPropertyDescriptor>();
 		for (PROPDESC beanPropertyDescriptor : sortedVisibleBeanPropertyDescriptors) {
-			propertyDescriptions.add(createPropertyDescription(bean, beanPropertyDescriptor));
+			propertyDescriptors.add(createPropertyDescriptor(bean, beanPropertyDescriptor));
 		}
 		
-		// generate the bean description
-		return createBeanDescription(bean, propertyDescriptions);
+		// generate the bean descriptor
+		return createBeanDescriptor(bean, propertyDescriptors);
 		
 	}
 	
@@ -124,19 +124,19 @@ public abstract class AbstractAutoformBeanDescriber<BEANDESC, PROPDESC, BEAN> im
 	protected abstract AbstractAutoformBeanDescriberHelper<BEANDESC, PROPDESC, ?> createHelper(BEAN bean);
 	
 	/**
-	 * Actually creates the bean description.
+	 * Actually creates the bean descriptor.
 	 * @param bean the bean
-	 * @param propertyDescriptions the property descriptions
-	 * @return the bean description
+	 * @param propertyDescriptors the property descriptors
+	 * @return the bean descriptor
 	 */
-	protected abstract DefaultAutoformBeanDescription createBeanDescription(BEAN bean, List<IAutoformPropertyDescription> propertyDescriptions);
+	protected abstract AbstractAutoformBeanDescriptor<BEAN> createBeanDescriptor(BEAN bean, List<IAutoformPropertyDescriptor> propertyDescriptors);
 
 	/**
-	 * Creates a description object for one of the bean's properties.
+	 * Creates a descriptor object for one of the bean's properties.
 	 * @param bean the bean being described
 	 * @param beanPropertyDescriptor the internal property descriptor
-	 * @return the property description
+	 * @return the property descriptor
 	 */
-	protected abstract IAutoformPropertyDescription createPropertyDescription(BEAN bean, PROPDESC beanPropertyDescriptor);
+	protected abstract IAutoformPropertyDescriptor createPropertyDescriptor(BEAN bean, PROPDESC beanPropertyDescriptor);
 	
 }
