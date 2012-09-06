@@ -6,20 +6,21 @@
 
 package name.martingeisse.wicket.autoform.describe;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**
  * This class contains the information about a whole autoform bean.
  */
-public final class DefaultAutoformBeanDescription extends AbstractAutoformBeanDescription<Object> {
+public final class DefaultAutoformBeanDescription extends AbstractAutoformBeanDescription<Serializable> {
 
 	/**
 	 * Constructor.
 	 * @param bean the bean being shown
 	 * @param propertyDescriptions the list of property descriptions to show in the autoform
 	 */
-	public DefaultAutoformBeanDescription(final Object bean, final List<IAutoformPropertyDescription> propertyDescriptions) {
+	public DefaultAutoformBeanDescription(final Serializable bean, final List<IAutoformPropertyDescription> propertyDescriptions) {
 		super(bean, propertyDescriptions);
 	}
 

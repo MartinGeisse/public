@@ -19,9 +19,9 @@ import name.martingeisse.wicket.autoform.annotation.structure.AutoformPropertyOr
  *   from them, and including them in {@link AutoformPropertyOrder} is an error.
  * - properties for which acceptAsVisible() returns false are hidden in
  *   the description, although relevant in principle. They are also expected
- *   to appear in {@link AutoformPropertyOrder} (if present).
- *   This can be used to hide specific properties of a bean according to
- *   the context, using a context-specific describer subclass.
+ *   to appear in {@link AutoformPropertyOrder} (if that annotation
+ *   is present). This can be used to hide specific properties of a
+ *   bean according to the context, using a context-specific describer subclass.
  * - properties tagged with {@link AutoformIgnoreProperty} do not produce
  *   a property description. Whether or not they appear in
  *   {@link AutoformPropertyOrder} is ignored. This allows the bean author to
@@ -91,7 +91,7 @@ public abstract class AbstractAutoformBeanDescriber<BEANDESC, PROPDESC, BEAN> im
 	 * Subclasses can override this method to control which properties are considered
 	 * relevant to autoforms. See the description of this class for detailed
 	 * information. In particular, properties excluded by this method must not
-	 * be listed in {@link AutoformPropertyOrder} (if present).
+	 * be listed in {@link AutoformPropertyOrder} (if that annotation is present).
 	 * 
 	 * @param beanPropertyDescriptor the descriptor for the property to check
 	 * @return true to accept the property as relevant, false to consider it
@@ -106,7 +106,7 @@ public abstract class AbstractAutoformBeanDescriber<BEANDESC, PROPDESC, BEAN> im
 	 * in an autoform. This allows to hide properties from outside a bean, but
 	 * the properties are still considered relevant to autoforms. In particular,
 	 * properties excluded by this method must still be listed by
-	 * {@link AutoformPropertyOrder} (if present).
+	 * {@link AutoformPropertyOrder} (if that annotation is present).
 	 * 
 	 * The default implementation does not exclude any property, i.e. it always
 	 * returns true.
