@@ -4,22 +4,22 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.schema.autoform;
+package name.martingeisse.admin.entity.schema.annotation;
 
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 
 
 /**
- * This strategy finds entity autoform meta-data at startup.
+ * This strategy finds entity annotations at startup.
  */
-public interface IEntityAutoformMetadataResolver {
+public interface IEntityAnnotationResolver {
 
 	/**
-	 * Resolves meta-data for all entities of the application schema and stores
+	 * Resolves annotations for all entities of the application schema and stores
 	 * it in the corresponding fields in the entity and its properties.
 	 * @param applicationSchema the application schema (note that the singleton
 	 * reference to this object is not yet set at the time this method is called).
 	 */
-	public void resolveEntityAutoformMetadata(ApplicationSchema applicationSchema);
+	public void resolveEntityAnnotations(ApplicationSchema applicationSchema);
 	
 }

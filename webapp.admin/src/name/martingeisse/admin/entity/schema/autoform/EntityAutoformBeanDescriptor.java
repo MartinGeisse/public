@@ -34,7 +34,7 @@ public class EntityAutoformBeanDescriptor extends AbstractAutoformBeanDescriptor
 	 * 
 	 */
 	private ClassKeyedContainer<Annotation> getAnnotationContainer() {
-		return getBean().getEntity().getAutoformMetadata().getAnnotations();
+		return getBean().getEntity().getAnnotations();
 	}
 	
 	/* (non-Javadoc)

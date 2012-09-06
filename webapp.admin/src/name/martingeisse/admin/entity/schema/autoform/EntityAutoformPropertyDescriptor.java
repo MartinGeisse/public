@@ -58,7 +58,7 @@ public class EntityAutoformPropertyDescriptor extends AbstractAutoformPropertyDe
 	 * 
 	 */
 	private ClassKeyedContainer<Annotation> getAnnotationContainer() {
-		return propertyDescriptor.getAutoformMetadata().getAnnotations();
+		return propertyDescriptor.getAnnotations();
 	}
 
 	/* (non-Javadoc)

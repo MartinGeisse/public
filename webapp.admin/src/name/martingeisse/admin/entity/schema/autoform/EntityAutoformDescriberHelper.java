@@ -32,7 +32,7 @@ public class EntityAutoformDescriberHelper extends AbstractAutoformBeanDescriber
 	 */
 	@Override
 	protected <A extends Annotation> A getBeanAnnotation(final EntityDescriptor entityDescriptor, final Class<A> annotationClass) {
-		return entityDescriptor.getAutoformMetadata().getAnnotations().get(annotationClass);
+		return entityDescriptor.getAnnotations().get(annotationClass);
 	}
 
 	/* (non-Javadoc)
@@ -57,7 +57,7 @@ public class EntityAutoformDescriberHelper extends AbstractAutoformBeanDescriber
 	 */
 	@Override
 	protected <A extends Annotation> A getPropertyAnnotation(final EntityPropertyDescriptor propertyDescriptor, final Class<A> annotationClass) {
-		return propertyDescriptor.getAutoformMetadata().getAnnotations().get(annotationClass);
+		return propertyDescriptor.getAnnotations().get(annotationClass);
 	}
 
 }

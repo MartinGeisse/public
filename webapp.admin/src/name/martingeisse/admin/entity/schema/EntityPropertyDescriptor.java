@@ -6,8 +6,10 @@
 
 package name.martingeisse.admin.entity.schema;
 
+import java.lang.annotation.Annotation;
+
 import name.martingeisse.admin.entity.property.type.ISqlType;
-import name.martingeisse.admin.entity.schema.autoform.EntityPropertyAutoformMetadata;
+import name.martingeisse.common.util.ClassKeyedContainer;
 
 /**
  * This class describes a property of an entity, for example
@@ -31,14 +33,15 @@ public class EntityPropertyDescriptor {
 	private boolean visibleInRawEntityList;
 
 	/**
-	 * the autoformMetadata
+	 * the annotations
 	 */
-	private EntityPropertyAutoformMetadata autoformMetadata;
+	private ClassKeyedContainer<Annotation> annotations;
 
 	/**
 	 * Constructor.
 	 */
 	public EntityPropertyDescriptor() {
+		this.annotations = new ClassKeyedContainer<Annotation>();
 	}
 
 	/**
@@ -90,19 +93,19 @@ public class EntityPropertyDescriptor {
 	}
 
 	/**
-	 * Getter method for the autoformMetadata.
-	 * @return the autoformMetadata
+	 * Getter method for the annotations.
+	 * @return the annotations
 	 */
-	public EntityPropertyAutoformMetadata getAutoformMetadata() {
-		return autoformMetadata;
+	public ClassKeyedContainer<Annotation> getAnnotations() {
+		return annotations;
 	}
 
 	/**
-	 * Setter method for the autoformMetadata.
-	 * @param autoformMetadata the autoformMetadata to set
+	 * Setter method for the annotations.
+	 * @param annotations the annotations to set
 	 */
-	public void setAutoformMetadata(final EntityPropertyAutoformMetadata autoformMetadata) {
-		this.autoformMetadata = autoformMetadata;
+	public void setAnnotations(final ClassKeyedContainer<Annotation> annotations) {
+		this.annotations = annotations;
 	}
 
 }

@@ -7,13 +7,13 @@
 package name.martingeisse.admin.customization;
 
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.entity.schema.autoform.IEntityAutoformAnnotatedClassResolver;
+import name.martingeisse.admin.entity.schema.annotation.IEntityAnnotatedClassResolver;
 import name.martingeisse.common.util.string.StringUtil;
 
 /**
  *
  */
-public class EntityAutoformAnnotatedClassResolver implements IEntityAutoformAnnotatedClassResolver {
+public class EntityAutoformAnnotatedClassResolver implements IEntityAnnotatedClassResolver {
 
 	/**
 	 * the packageName
@@ -32,7 +32,7 @@ public class EntityAutoformAnnotatedClassResolver implements IEntityAutoformAnno
 	 * @see name.martingeisse.admin.entity.schema.autoform.IEntityAutoformAnnotatedClassResolver#resolveEntityAutoformAnnotatedClass(name.martingeisse.admin.entity.schema.EntityDescriptor)
 	 */
 	@Override
-	public Class<?> resolveEntityAutoformAnnotatedClass(EntityDescriptor entity) {
+	public Class<?> resolveEntityAnnotatedClass(EntityDescriptor entity) {
 		String entityName = entity.getName();
 		String simpleClassName = convertEntityNameToClassName(entityName);
 		String fullyQualifiedClassName = packageName + '.' + simpleClassName;

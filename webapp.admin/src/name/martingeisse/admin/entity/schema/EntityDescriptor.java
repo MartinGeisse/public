@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.entity.schema;
 
+import java.lang.annotation.Annotation;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -21,7 +22,6 @@ import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.admin.entity.property.type.IEntityIdType;
-import name.martingeisse.admin.entity.schema.autoform.EntityAutoformMetadata;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
@@ -31,6 +31,7 @@ import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.database.IEntityDatabaseConnection;
 import name.martingeisse.common.datarow.AbstractDataRowMetaHolder;
 import name.martingeisse.common.datarow.DataRowMeta;
+import name.martingeisse.common.util.ClassKeyedContainer;
 
 import org.apache.log4j.Logger;
 
@@ -118,9 +119,9 @@ public class EntityDescriptor {
 	private IEntitySearchStrategy searchStrategy;
 
 	/**
-	 * the autoformMetadata
+	 * the annotations
 	 */
-	private EntityAutoformMetadata autoformMetadata;
+	private ClassKeyedContainer<Annotation> annotations;
 
 	/**
 	 * Constructor.
@@ -128,6 +129,7 @@ public class EntityDescriptor {
 	public EntityDescriptor() {
 		this.propertiesByName = new HashMap<String, EntityPropertyDescriptor>();
 		this.referenceEndpoints = new ArrayList<EntityReferenceEndpoint>();
+		this.annotations = new ClassKeyedContainer<Annotation>();
 	}
 
 	/**
@@ -305,19 +307,19 @@ public class EntityDescriptor {
 	}
 
 	/**
-	 * Getter method for the autoformMetadata.
-	 * @return the autoformMetadata
+	 * Getter method for the annotations.
+	 * @return the annotations
 	 */
-	public EntityAutoformMetadata getAutoformMetadata() {
-		return autoformMetadata;
+	public ClassKeyedContainer<Annotation> getAnnotations() {
+		return annotations;
 	}
 
 	/**
-	 * Setter method for the autoformMetadata.
-	 * @param autoformMetadata the autoformMetadata to set
+	 * Setter method for the annotations.
+	 * @param annotations the annotations to set
 	 */
-	public void setAutoformMetadata(final EntityAutoformMetadata autoformMetadata) {
-		this.autoformMetadata = autoformMetadata;
+	public void setAnnotations(final ClassKeyedContainer<Annotation> annotations) {
+		this.annotations = annotations;
 	}
 
 	/**
