@@ -10,6 +10,7 @@ import name.martingeisse.admin.application.security.authentication.IUserIdentity
 import name.martingeisse.admin.application.security.authentication.IUserProperties;
 import name.martingeisse.admin.application.security.authorization.IPermissions;
 import name.martingeisse.admin.application.security.credentials.ICredentials;
+import name.martingeisse.common.util.ParameterUtil;
 
 /**
  * An instance of this class in the session indicates that the
@@ -48,10 +49,10 @@ public final class LoginData {
 	 * @param permissions the user's permissions
 	 */
 	public LoginData(final ICredentials credentials, final IUserProperties userProperties, final IUserIdentity userIdentity, final IPermissions permissions) {
-		this.credentials = credentials;
-		this.userProperties = userProperties;
-		this.userIdentity = userIdentity;
-		this.permissions = permissions;
+		this.credentials = ParameterUtil.ensureNotNull(credentials, "credentials");
+		this.userProperties = ParameterUtil.ensureNotNull(userProperties, "userProperties");
+		this.userIdentity = ParameterUtil.ensureNotNull(userIdentity, "userIdentity");
+		this.permissions = ParameterUtil.ensureNotNull(permissions, "permissions");
 	}
 
 	/**

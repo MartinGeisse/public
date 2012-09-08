@@ -8,6 +8,8 @@ package name.martingeisse.admin.application.wicket;
 
 import name.martingeisse.admin.application.security.SecurityConfigurationUtil;
 import name.martingeisse.admin.application.security.SecurityUtil;
+import name.martingeisse.common.util.ParameterUtil;
+import name.martingeisse.common.util.ReturnValueUtil;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.Page;
@@ -39,6 +41,8 @@ public class LoginRequestCycleListener extends AbstractRequestCycleListener {
 	@Override
 	public void onRequestHandlerResolved(final RequestCycle cycle, final IRequestHandler handler) {
 		logger.trace("LoginRequestCycleListener: checking...");
+		ParameterUtil.ensureNotNull(cycle, "cycle");
+		ParameterUtil.ensureNotNull(handler, "handler");
 		
 		// this handler has no business with the request if he user is logged in
 		if (SecurityUtil.isLoggedIn()) {
@@ -53,8 +57,9 @@ public class LoginRequestCycleListener extends AbstractRequestCycleListener {
 			// handler for a page -- allowed if it is the login page
 			final IPageClassRequestHandler pageClassRequestHandler = (IPageClassRequestHandler)handler;
 			final Class<?> pageClass = pageClassRequestHandler.getPageClass();
-			final Class<? extends Page> loginPageClass = SecurityConfigurationUtil.getSecurityConfigurationSafe().getLoginPageClass();
 			logger.trace("handler is for page: " + pageClass);
+			final Class<? extends Page> loginPageClass = SecurityConfigurationUtil.getSecurityConfigurationSafe().getLoginPageClass();
+			ReturnValueUtil.nullMeansMissing(loginPageClass, "security configuration: login page class");
 			if (pageClass != loginPageClass) {
 				logger.trace("sending intercept-redirect to the login page");
 				throw new RestartResponseAtInterceptPageException(loginPageClass);

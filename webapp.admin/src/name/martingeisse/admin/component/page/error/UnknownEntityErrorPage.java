@@ -29,7 +29,6 @@ public class UnknownEntityErrorPage extends AbstractSpecializedExceptionPage {
 	 */
 	public UnknownEntityErrorPage(Throwable caughtException, UnknownEntityException originalCause, Page page) {
 		super(caughtException, page);
-		System.out.println("TODO FOOBAR!");
 		add(new Label("entityName", originalCause.getEntityName()));
 		add(new ListView<EntityDescriptor>("knownEntityList", new AllEntityDescriptorsModel()) {
 			@Override

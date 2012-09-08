@@ -19,6 +19,8 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 /**
  * The base class for all admin pages.
+ * 
+ * TODO: parameter check / return value check: ab hier weiterprüfen
  */
 public class AbstractAdminPage extends WebPage {
 

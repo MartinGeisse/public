@@ -6,6 +6,9 @@
 
 package name.martingeisse.admin.application.wicket;
 
+import name.martingeisse.common.util.ObjectStateUtil;
+import name.martingeisse.common.util.ParameterUtil;
+
 import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.resource.loader.ClassStringResourceLoader;
@@ -65,6 +68,8 @@ public class StringResourceContributor extends AbstractWebApplicationInitializat
 	 */
 	@Override
 	public void onInitializeWebApplication(final WebApplication webApplication) {
+		ParameterUtil.ensureNotNull(webApplication, "webApplication");
+		ObjectStateUtil.nullMeansMissing(origin, "origin");
 		logger.debug("Adding StringResourceLoader for class: " + origin);
 		webApplication.getResourceSettings().getStringResourceLoaders().add(new ClassStringResourceLoader(origin));
 	}

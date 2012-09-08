@@ -33,7 +33,7 @@ public class SettingPanel extends AbstractEntityInstancePanel {
 		add(new Label("type", new EntityInstanceFieldModel<String>(instanceModel, "type")));
 		add(new Label("data", new EntityInstanceFieldModel<String>(instanceModel, "data")));
 
-		add(LinkUtil.createSingleEntityLink("editLink", "setting", null, "edit"));
+		add(LinkUtil.createSingleEntityLink("editLink", "settings", null, "edit"));
 
 		IModel<EntityInstance> groupModel = createModelForRelatedSingleEntityInstance("group_id");
 		add(new Label("group", new EntityInstanceFieldModel<String>(groupModel, "name")));

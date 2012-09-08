@@ -8,6 +8,8 @@ package name.martingeisse.admin.application.wicket;
 
 import java.util.Locale;
 
+import name.martingeisse.common.util.ObjectStateUtil;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 
@@ -77,6 +79,7 @@ public class PrefixedIdentityStringResourceLoader implements IStringResourceLoad
 	 * @return
 	 */
 	private String getString(final String key) {
+		ObjectStateUtil.nullMeansMissing(prefix, "prefix");
 		if (key.startsWith(prefix)) {
 			return key.substring(prefix.length());
 		} else {

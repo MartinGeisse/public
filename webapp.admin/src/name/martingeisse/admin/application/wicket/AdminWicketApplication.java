@@ -14,6 +14,7 @@ import name.martingeisse.admin.component.page.images.Dummy;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
+import name.martingeisse.common.util.ReturnValueUtil;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
 import name.martingeisse.wicket.util.json.JsonEncodingContainer;
 
@@ -33,6 +34,7 @@ import org.apache.wicket.util.IProvider;
 
 /**
  * Wicket {@link WebApplication} implementation for this application.
+ * TODO: parameter check / return value check: ab hier weiterprüfen
  */
 public class AdminWicketApplication extends AbstractMyWicketApplication {
 
@@ -119,7 +121,7 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 
 		// mount other URLs
 		logger.trace("mounting misc URLs...");
-		mountPage("/login", SecurityConfigurationUtil.getSecurityConfiguration().getLoginPageClass());
+		mountPage("/login", ReturnValueUtil.nullMeansMissing(SecurityConfigurationUtil.getSecurityConfiguration().getLoginPageClass(), "security configuration: login page class"));
 		logger.trace("misc URLs mounted");
 		
 		// let plugins contribute

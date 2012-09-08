@@ -17,6 +17,8 @@ import name.martingeisse.admin.application.security.authorization.IPermissions;
 import name.martingeisse.admin.application.security.authorization.PermissionDeniedException;
 import name.martingeisse.admin.application.security.authorization.UnauthorizedPermissions;
 import name.martingeisse.admin.application.security.credentials.ICredentials;
+import name.martingeisse.common.util.ParameterUtil;
+import name.martingeisse.common.util.ReturnValueUtil;
 import name.martingeisse.wicket.application.MyWicketSession;
 
 import org.apache.log4j.Logger;
@@ -61,11 +63,13 @@ public class SecurityUtil {
 	 * @param credentials the credentials used to log in
 	 */
 	public static void login(final ICredentials credentials) {
+		ParameterUtil.ensureNotNull(credentials, "credentials");
 		logger.debug("a user is trying to log in");
 
 		// authenticate
 		final IAdminAuthenticationStrategy authenticationStrategy = SecurityConfigurationUtil.getSecurityConfigurationSafe().getAuthenticationStrategy();
 		logger.trace("authentication strategy: " + authenticationStrategy);
+		ReturnValueUtil.nullMeansMissing(authenticationStrategy, "security configuration: authentication strategy");
 		IUserProperties userProperties = authenticationStrategy.determineProperties(credentials);
 		if (userProperties == null) {
 			userProperties = new UserProperties();
@@ -80,8 +84,10 @@ public class SecurityUtil {
 		// authorization
 		final IAdminAuthorizationStrategy authorizationStrategy = SecurityConfigurationUtil.getSecurityConfigurationSafe().getAuthorizationStrategy();
 		logger.trace("authorization strategy: " + authorizationStrategy);
+		ReturnValueUtil.nullMeansMissing(authorizationStrategy, "security configuration: authorization strategy");
 		final IPermissions permissions = authorizationStrategy.determinePermissions(credentials, userProperties, userIdentity);
 		logger.debug("permissions: " + permissions);
+		ReturnValueUtil.nullMeansMissing(permissions, "permissions returned by the authorization strategy");
 		final IPermissionRequest loginPermissionRequest = new CorePermissionRequest(CorePermissionRequest.Type.LOGIN);
 		logger.trace("checking permission: " + loginPermissionRequest);
 		if (!authorizationStrategy.checkPermission(permissions, loginPermissionRequest)) {
@@ -161,6 +167,7 @@ public class SecurityUtil {
 	public static boolean getPermission(final IPermissionRequest request) {
 		logger.debug("checking permission: " + request);
 		final IAdminAuthorizationStrategy authorizationStrategy = SecurityConfigurationUtil.getSecurityConfigurationSafe().getAuthorizationStrategy();
+		ReturnValueUtil.nullMeansMissing(authorizationStrategy, "security configuration: authorization strategy");
 		final IPermissions permissions = getEffectivePermissions();
 		final boolean result = authorizationStrategy.checkPermission(permissions, request);
 		logger.debug((result ? "permission granted: " : "permission denied: ") + request);

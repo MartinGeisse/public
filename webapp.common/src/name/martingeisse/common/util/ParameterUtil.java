@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.util;
+package name.martingeisse.common.util;
 
 /**
  * Utility methods to handle method parameters.

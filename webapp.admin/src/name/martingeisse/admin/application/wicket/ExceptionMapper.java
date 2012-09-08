@@ -8,6 +8,7 @@ package name.martingeisse.admin.application.wicket;
 
 import name.martingeisse.admin.component.page.error.UnknownEntityErrorPage;
 import name.martingeisse.admin.entity.UnknownEntityException;
+import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.Application;
@@ -47,6 +48,7 @@ public class ExceptionMapper extends DefaultExceptionMapper {
 	 */
 	@Override
 	public IRequestHandler map(final Exception e) {
+		ParameterUtil.ensureNotNull(e, "e");
 		try {
 			final IRequestHandler result = internalMap(e);
 			if (result == null) {

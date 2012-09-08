@@ -35,9 +35,9 @@ import name.martingeisse.admin.navigation.INavigationNodeHandler;
 import name.martingeisse.admin.navigation.INavigationNodeVisitor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.util.ParameterUtil;
 import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.datarow.DataRowMeta;
+import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.log4j.Logger;
 

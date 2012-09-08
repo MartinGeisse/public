@@ -8,6 +8,7 @@ package name.martingeisse.admin.util;
 
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;

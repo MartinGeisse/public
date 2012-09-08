@@ -6,6 +6,8 @@
 
 package name.martingeisse.admin.entity;
 
+import name.martingeisse.common.util.ParameterUtil;
+
 /**
  * This exception type is thrown when an entity is specified by name,
  * but no such entity exists.
@@ -23,6 +25,7 @@ public class UnknownEntityException extends RuntimeException {
 	 */
 	public UnknownEntityException(String entityName) {
 		super("Unknown entity: " + entityName);
+		ParameterUtil.ensureNotNull(entityName, "entityName");
 		this.entityName = entityName;
 	}
 
