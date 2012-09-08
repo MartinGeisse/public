@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
-import name.martingeisse.admin.entity.property.type.ISqlType;
+import name.martingeisse.admin.entity.property.type.ISqlTypeInfo;
 import name.martingeisse.admin.util.ScoreComparator;
 
 /**
@@ -51,7 +51,7 @@ public final class ReadOnlyRenderingConfigurationUtil {
 	 * @param type the data type to handle
 	 * @return the renderer
 	 */
-	public static IPropertyReadOnlyRenderer createPropertyReadOnlyRenderer(final ISqlType type) {
+	public static IPropertyReadOnlyRenderer createPropertyReadOnlyRenderer(final ISqlTypeInfo type) {
 		final FallbackRenderer fallbackRenderer = new FallbackRenderer();
 		for (final IPropertyReadOnlyRendererContributor contributor : getPropertyReadOnlyRendererContributors()) {
 			final IPropertyReadOnlyRenderer renderer = contributor.getRenderer(type);

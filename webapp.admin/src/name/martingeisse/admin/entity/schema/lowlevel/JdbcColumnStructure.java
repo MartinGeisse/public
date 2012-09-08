@@ -9,13 +9,9 @@ package name.martingeisse.admin.entity.schema.lowlevel;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 
-import name.martingeisse.admin.entity.property.type.ISqlType;
-import name.martingeisse.admin.entity.property.type.IntegerType;
-import name.martingeisse.admin.entity.property.type.LongType;
-import name.martingeisse.admin.entity.property.type.StringType;
-import name.martingeisse.admin.entity.property.type.UnknownSqlType;
+import name.martingeisse.admin.entity.property.type.ISqlTypeInfo;
+import name.martingeisse.admin.entity.property.type.TypeInfoUtil;
 
 /**
  * The low-level structure of a JDBC column.
@@ -138,34 +134,11 @@ public final class JdbcColumnStructure {
 	}
 
 	/**
-	 * Determines the high-level {@link ISqlType} for this column.
+	 * Determines the high-level {@link ISqlTypeInfo} for this column.
 	 * @return the high-level type for this current column
 	 */
-	public ISqlType determineHighlevelType() {
-		switch (sqlType) {
-
-		case Types.TINYINT:
-		case Types.SMALLINT:
-		case Types.INTEGER:
-			return IntegerType.instance;
-
-		case Types.BIGINT:
-			return LongType.instance;
-
-		case Types.CHAR:
-		case Types.NCHAR:
-		case Types.VARCHAR:
-		case Types.NVARCHAR:
-		case Types.LONGVARCHAR:
-		case Types.LONGNVARCHAR:
-		case Types.CLOB:
-		case Types.NCLOB:
-			return StringType.instance;
-
-		default:
-			return new UnknownSqlType(sqlType);
-
-		}
+	public ISqlTypeInfo determineHighlevelType() {
+		return TypeInfoUtil.getTypeInfoForSqlTypeCode(sqlType);
 	}
 
 }

@@ -21,8 +21,8 @@ import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNameAware;
 import name.martingeisse.admin.entity.component.list.datatable.raw.RawEntityListPanel;
 import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilter;
-import name.martingeisse.admin.entity.property.type.IEntityIdType;
-import name.martingeisse.admin.entity.property.type.ISqlType;
+import name.martingeisse.admin.entity.property.type.IEntityIdTypeInfo;
+import name.martingeisse.admin.entity.property.type.ISqlTypeInfo;
 import name.martingeisse.admin.entity.schema.annotation.DefaultEntityAnnotationResolver;
 import name.martingeisse.admin.entity.schema.annotation.IEntityAnnotationResolver;
 import name.martingeisse.admin.entity.schema.lowlevel.ILowlevelDatabaseStructure;
@@ -205,12 +205,12 @@ public class ApplicationSchema {
 					if (idPropertyDescriptor == null) {
 						throw new IllegalStateException("table meta-data of table " + entityDescriptor.getTableName() + " specified column " + idColumnName + " as its ID column, but no such column exists in the property descriptors");
 					}
-					final ISqlType idColumnType = idPropertyDescriptor.getType();
-					if (!(idColumnType instanceof IEntityIdType)) {
+					final ISqlTypeInfo idColumnType = idPropertyDescriptor.getType();
+					if (!(idColumnType instanceof IEntityIdTypeInfo)) {
 						throw new IllegalStateException("type of the ID column " + entityDescriptor.getTableName() + "." + idColumnName + " is not supported as an entity ID type");
 					}
 					entityDescriptor.setIdColumnName(idColumnName);
-					entityDescriptor.setIdColumnType((IEntityIdType)idColumnType);
+					entityDescriptor.setIdColumnType((IEntityIdTypeInfo)idColumnType);
 					
 					// add the entity to the schema
 					entityDescriptors.add(entityDescriptor);

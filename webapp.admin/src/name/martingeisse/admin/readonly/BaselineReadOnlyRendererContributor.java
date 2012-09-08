@@ -9,8 +9,8 @@ package name.martingeisse.admin.readonly;
 import java.sql.Types;
 
 import name.martingeisse.admin.application.IPlugin;
-import name.martingeisse.admin.entity.property.type.ISqlType;
-import name.martingeisse.admin.entity.property.type.UnknownSqlType;
+import name.martingeisse.admin.entity.property.type.ISqlTypeInfo;
+import name.martingeisse.admin.entity.property.type.UnknownSqlTypeInfo;
 
 /**
  * This contributor provides basic rendering of entity properties.
@@ -52,10 +52,10 @@ public class BaselineReadOnlyRendererContributor implements IPropertyReadOnlyRen
 	 * @see name.martingeisse.admin.readonly.IPropertyReadOnlyRendererContributor#getRenderer(int)
 	 */
 	@Override
-	public IPropertyReadOnlyRenderer getRenderer(final ISqlType type) {
-		if (type instanceof UnknownSqlType) {
-			final UnknownSqlType unknownSqlType = (UnknownSqlType)type;
-			final int typeCode = unknownSqlType.getSqlType();
+	public IPropertyReadOnlyRenderer getRenderer(final ISqlTypeInfo type) {
+		if (type instanceof UnknownSqlTypeInfo) {
+			final UnknownSqlTypeInfo unknownSqlType = (UnknownSqlTypeInfo)type;
+			final int typeCode = unknownSqlType.getSqlTypeCode();
 			if (typeCode == Types.BOOLEAN || typeCode == Types.BIT) {
 				return BooleanRenderer.INSTANCE;
 			}

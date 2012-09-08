@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.readonly;
 
-import name.martingeisse.admin.entity.property.type.ISqlType;
+import name.martingeisse.admin.entity.property.type.ISqlTypeInfo;
 import name.martingeisse.admin.util.IGetScore;
 
 /**
@@ -35,6 +35,6 @@ public interface IPropertyReadOnlyRendererContributor extends IGetScore {
 	 * @param type the type
 	 * @return the renderer
 	 */
-	public IPropertyReadOnlyRenderer getRenderer(ISqlType type);
+	public IPropertyReadOnlyRenderer getRenderer(ISqlTypeInfo type);
 
 }

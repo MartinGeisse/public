@@ -8,7 +8,8 @@ package name.martingeisse.admin.entity.component.instance.page;
 
 import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.entity.instance.EntityInstance;
-import name.martingeisse.admin.entity.property.type.IEntityIdType;
+import name.martingeisse.admin.entity.property.type.EntityPropertyTypeInfoUtil;
+import name.martingeisse.admin.entity.property.type.IEntityIdTypeInfo;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 import org.apache.wicket.markup.html.panel.Panel;
@@ -80,11 +81,11 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 	 */
 	private Object determineId() {
 		final EntityDescriptor entity = determineEntityType();
-		final IEntityIdType idType = entity.getIdColumnType();
+		final IEntityIdTypeInfo idType = entity.getIdColumnType();
 		if (idType == null) {
 			throw new IllegalStateException("table " + entity.getTableName() + " has no primary key and thus cannot be viewed");
 		}
-		return idType.convertFromPageParameter(getPageParameters().get("id"));
+		return EntityPropertyTypeInfoUtil.convertFromStringValue(idType, getPageParameters().get("id"));
 	}
 
 	/**

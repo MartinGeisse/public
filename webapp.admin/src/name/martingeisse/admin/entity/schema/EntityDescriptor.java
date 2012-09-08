@@ -21,7 +21,7 @@ import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.EntityExpressionUtil;
-import name.martingeisse.admin.entity.property.type.IEntityIdType;
+import name.martingeisse.admin.entity.property.type.IEntityIdTypeInfo;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
@@ -81,7 +81,7 @@ public class EntityDescriptor {
 	/**
 	 * the idColumnType
 	 */
-	private IEntityIdType idColumnType;
+	private IEntityIdTypeInfo idColumnType;
 
 	/**
 	 * the propertiesInDatabaseOrder
@@ -211,7 +211,7 @@ public class EntityDescriptor {
 	 * Getter method for the idColumnType.
 	 * @return the idColumnType
 	 */
-	public IEntityIdType getIdColumnType() {
+	public IEntityIdTypeInfo getIdColumnType() {
 		return idColumnType;
 	}
 
@@ -219,7 +219,7 @@ public class EntityDescriptor {
 	 * Setter method for the idColumnType.
 	 * @param idColumnType the idColumnType to set
 	 */
-	public void setIdColumnType(final IEntityIdType idColumnType) {
+	public void setIdColumnType(final IEntityIdTypeInfo idColumnType) {
 		this.idColumnType = idColumnType;
 	}
 

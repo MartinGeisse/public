@@ -8,7 +8,7 @@ package name.martingeisse.admin.entity.schema;
 
 import java.lang.annotation.Annotation;
 
-import name.martingeisse.admin.entity.property.type.ISqlType;
+import name.martingeisse.admin.entity.property.type.ISqlTypeInfo;
 import name.martingeisse.common.util.ClassKeyedContainer;
 
 /**
@@ -25,7 +25,7 @@ public class EntityPropertyDescriptor {
 	/**
 	 * the type
 	 */
-	private ISqlType type;
+	private ISqlTypeInfo type;
 
 	/**
 	 * the visibleInRawEntityList
@@ -64,7 +64,7 @@ public class EntityPropertyDescriptor {
 	 * Getter method for the type.
 	 * @return the type
 	 */
-	public ISqlType getType() {
+	public ISqlTypeInfo getType() {
 		return type;
 	}
 
@@ -72,7 +72,7 @@ public class EntityPropertyDescriptor {
 	 * Setter method for the type.
 	 * @param type the type to set
 	 */
-	public void setType(final ISqlType type) {
+	public void setType(final ISqlTypeInfo type) {
 		this.type = type;
 	}
 
