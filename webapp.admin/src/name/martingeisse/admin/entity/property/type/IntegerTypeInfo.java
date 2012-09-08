@@ -9,6 +9,8 @@ package name.martingeisse.admin.entity.property.type;
 import java.math.BigInteger;
 import java.sql.Types;
 
+import org.apache.wicket.util.string.StringValue;
+
 /**
  * Type object for integers of various sizes.
  * An integer type is defined by a number of storage
@@ -135,4 +137,18 @@ public final class IntegerTypeInfo implements IEntityIdTypeInfo {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.property.type.IEntityIdTypeInfo#convertFromStringValue(org.apache.wicket.util.string.StringValue)
+	 */
+	@Override
+	public Object convertFromStringValue(StringValue value) {
+		if (bytes <= 4) {
+			return value.toInteger();
+		} else if (bytes <= 8) {
+			return value.toLong();
+		} else {
+			throw new RuntimeException("cannot convert " + (bytes*8) + "-bit integer value from Wicket StringValue");
+		}
+	}
+	
 }

@@ -123,7 +123,7 @@ public final class FixedNameEntityReferenceDetector extends AbstractEntityRefere
 	public void detectEntityReference(ApplicationSchema schema, ILowlevelDatabaseStructure lowlevelDatabaseStructure, EntityDescriptor entity, String propertyName) {
 		if (sourceEntityName == null || sourceEntityName.equals(entity.getName())) {
 			if (propertyName.equals(sourcePropertyName)) {
-				EntityDescriptor destinationEntity = schema.findEntity(destinationEntityName);
+				EntityDescriptor destinationEntity = schema.findOptionalEntity(destinationEntityName);
 				EntityReferenceEndpoint near = EntityReferenceEndpoint.createPair(entity, sourcePropertyName, sourceMultiplicity, destinationEntity, destinationPropertyName, destinationMultiplicity);
 				entity.getReferenceEndpoints().add(near);
 				destinationEntity.getReferenceEndpoints().add(near.getOther());

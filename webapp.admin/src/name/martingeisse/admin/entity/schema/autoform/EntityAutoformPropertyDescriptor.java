@@ -40,6 +40,7 @@ public class EntityAutoformPropertyDescriptor extends AbstractAutoformPropertyDe
 	public EntityAutoformPropertyDescriptor(EntityInstance entityInstance, EntityPropertyDescriptor propertyDescriptor) {
 		super(propertyDescriptor.getName(), propertyDescriptor.getType().getJavaWorkType(), new EntityInstanceFieldModel<Object>(entityInstance, propertyDescriptor.getName()));
 		this.entityInstance = entityInstance;
+		this.propertyDescriptor = propertyDescriptor;
 	}
 
 	/**

@@ -8,7 +8,6 @@ package name.martingeisse.admin.entity.component.instance.page;
 
 import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.entity.instance.EntityInstance;
-import name.martingeisse.admin.entity.property.type.EntityPropertyTypeInfoUtil;
 import name.martingeisse.admin.entity.property.type.IEntityIdTypeInfo;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
@@ -85,7 +84,7 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 		if (idType == null) {
 			throw new IllegalStateException("table " + entity.getTableName() + " has no primary key and thus cannot be viewed");
 		}
-		return EntityPropertyTypeInfoUtil.convertFromStringValue(idType, getPageParameters().get("id"));
+		return idType.convertFromStringValue(getPageParameters().get("id"));
 	}
 
 	/**

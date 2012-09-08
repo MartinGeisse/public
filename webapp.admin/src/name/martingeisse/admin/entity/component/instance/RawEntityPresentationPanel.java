@@ -7,6 +7,7 @@
 package name.martingeisse.admin.entity.component.instance;
 
 import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.util.LinkUtil;
 
@@ -59,6 +60,10 @@ public class RawEntityPresentationPanel extends Panel {
 
 			}
 		});
+		
+		EntityDescriptor entity = model.getObject().getEntity();
+		add(LinkUtil.createSingleEntityLink("editLink", entity, null, "edit"));
+		
 	}
 
 	/**

@@ -19,6 +19,7 @@ import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNameAware;
+import name.martingeisse.admin.entity.UnknownEntityException;
 import name.martingeisse.admin.entity.component.list.datatable.raw.RawEntityListPanel;
 import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilter;
 import name.martingeisse.admin.entity.property.type.IEntityIdTypeInfo;
@@ -34,6 +35,7 @@ import name.martingeisse.admin.navigation.INavigationNodeHandler;
 import name.martingeisse.admin.navigation.INavigationNodeVisitor;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.admin.util.ParameterUtil;
 import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.datarow.DataRowMeta;
 
@@ -113,16 +115,31 @@ public class ApplicationSchema {
 
 	/**
 	 * Finds and returns an entity by its name.
-	 * @param name the entity name
+	 * @param entityName the entity name
 	 * @return the entity descriptor, or null if not found
 	 */
-	public EntityDescriptor findEntity(final String name) {
+	public EntityDescriptor findOptionalEntity(final String entityName) {
+		ParameterUtil.ensureNotNull(entityName, "entityName");
 		for (final EntityDescriptor entity : entityDescriptors) {
-			if (entity.getName().equals(name)) {
+			if (entity.getName().equals(entityName)) {
 				return entity;
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Finds and returns an entity by its name. Throws an {@link UnknownEntityException}
+	 * if no such entity exists.
+	 * @param entityName the entity name
+	 * @return the entity descriptor
+	 */
+	public EntityDescriptor findRequiredEntity(final String entityName) {
+		EntityDescriptor entity = findOptionalEntity(entityName);
+		if (entity == null) {
+			throw new UnknownEntityException(entityName);
+		}
+		return entity;
 	}
 
 	/**

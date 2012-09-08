@@ -45,7 +45,7 @@ public final class EntityDescriptorModel extends LoadableDetachableModel<EntityD
 	 */
 	@Override
 	protected EntityDescriptor load() {
-		return ApplicationSchema.instance.findEntity(entityName);
+		return ApplicationSchema.instance.findOptionalEntity(entityName);
 	}
 
 }

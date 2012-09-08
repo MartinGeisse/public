@@ -11,6 +11,7 @@ import name.martingeisse.admin.entity.component.list.datatable.raw.RawEntityList
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.instance.EntityInstanceFieldModel;
 import name.martingeisse.admin.entity.list.EntityConditions;
+import name.martingeisse.admin.util.LinkUtil;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
@@ -31,6 +32,8 @@ public class SettingPanel extends AbstractEntityInstancePanel {
 		add(new Label("name", new EntityInstanceFieldModel<String>(instanceModel, "name")));
 		add(new Label("type", new EntityInstanceFieldModel<String>(instanceModel, "type")));
 		add(new Label("data", new EntityInstanceFieldModel<String>(instanceModel, "data")));
+
+		add(LinkUtil.createSingleEntityLink("editLink", "setting", null, "edit"));
 
 		IModel<EntityInstance> groupModel = createModelForRelatedSingleEntityInstance("group_id");
 		add(new Label("group", new EntityInstanceFieldModel<String>(groupModel, "name")));

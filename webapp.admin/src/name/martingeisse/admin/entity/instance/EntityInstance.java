@@ -58,7 +58,7 @@ public class EntityInstance extends DataRow {
 	 * Serialization support.
 	 */
 	private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
-		this.entity = ApplicationSchema.instance.findEntity(entityName);
+		this.entity = ApplicationSchema.instance.findOptionalEntity(entityName);
 	}
 
 	/**

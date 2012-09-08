@@ -23,6 +23,7 @@ import name.martingeisse.admin.customization.pagebar.BasicPageBarFactory;
 import name.martingeisse.admin.customization.reflist.SettingPanel;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
+import name.martingeisse.admin.entity.component.instance.NavigationMountedEntityAutoformPanel;
 import name.martingeisse.admin.entity.component.instance.RawEntityPresentationPanel;
 import name.martingeisse.admin.entity.component.list.datatable.populator.PopulatorColumnDescriptor;
 import name.martingeisse.admin.entity.instance.EntityInstance;
@@ -159,6 +160,7 @@ public class Main {
 				} else {
 					mainEntityInstanceNode.setHandler(new EntityInstancePanelHandler(RawEntityPresentationPanel.class));
 				}
+				mainEntityInstanceNode.getChildFactory().createEntityInstancePanelChild("edit", "Edit", NavigationMountedEntityAutoformPanel.class);
 			}
 		});
 		

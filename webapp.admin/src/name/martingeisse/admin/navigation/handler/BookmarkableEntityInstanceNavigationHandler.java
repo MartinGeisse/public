@@ -70,7 +70,7 @@ public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePag
 	 * @return the entity
 	 */
 	public EntityDescriptor getEntity() {
-		return ApplicationSchema.instance.findEntity(getEntityName());
+		return ApplicationSchema.instance.findOptionalEntity(getEntityName());
 	}
 
 	/* (non-Javadoc)

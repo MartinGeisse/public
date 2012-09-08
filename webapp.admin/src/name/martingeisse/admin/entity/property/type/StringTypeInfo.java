@@ -8,6 +8,8 @@ package name.martingeisse.admin.entity.property.type;
 
 import java.sql.Types;
 
+import org.apache.wicket.util.string.StringValue;
+
 /**
  * Type object for strings. A string type is defined by three
  * properties:
@@ -119,4 +121,12 @@ public final class StringTypeInfo implements IEntityIdTypeInfo {
 		return String.class;
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.property.type.IEntityIdTypeInfo#convertFromStringValue(org.apache.wicket.util.string.StringValue)
+	 */
+	@Override
+	public Object convertFromStringValue(StringValue value) {
+		return value.toString();
+	}
+	
 }

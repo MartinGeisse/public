@@ -27,13 +27,30 @@ import org.apache.wicket.markup.WicketTag;
 import org.apache.wicket.markup.parser.filter.WicketTagIdentifier;
 import org.apache.wicket.markup.resolver.IComponentResolver;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.IExceptionMapper;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.IProvider;
 
 /**
  * Wicket {@link WebApplication} implementation for this application.
  */
 public class AdminWicketApplication extends AbstractMyWicketApplication {
 
+	/**
+	 * the exceptionMapper
+	 */
+	private ExceptionMapper exceptionMapper = new ExceptionMapper();
+	
+	/**
+	 * the exceptionMapperProvider
+	 */
+	private IProvider<IExceptionMapper> exceptionMapperProvider = new IProvider<IExceptionMapper>() {
+		@Override
+		public IExceptionMapper get() {
+			return exceptionMapper;
+		}
+	};
+	
 	/**
 	 * the logger
 	 */
@@ -144,6 +161,14 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 	@Override
 	public Class<? extends Page> getHomePage() {
 		return HomePage.class;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.Application#getExceptionMapperProvider()
+	 */
+	@Override
+	public IProvider<IExceptionMapper> getExceptionMapperProvider() {
+		return exceptionMapperProvider;
 	}
 
 	/**
