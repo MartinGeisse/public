@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import name.martingeisse.common.util.ParameterUtil;
+
 import com.mysema.query.sql.MySQLTemplates;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.SQLQueryImpl;
@@ -34,6 +36,8 @@ import com.mysema.query.types.expr.Wildcard;
 
 /**
  * Utility methods to deal with QueryDSL's objects.
+ * 
+ * TODO: parameter check / return value check: bis einschl. dieser klasse prüfen 
  */
 public class QuerydslUtil {
 
@@ -48,6 +52,7 @@ public class QuerydslUtil {
 	 * @param query the query to dump
 	 */
 	public static void dumpQuery(final SQLQueryImpl query) {
+		ParameterUtil.ensureNotNull(query, "query");
 
 		final Connection connection = new MyConnection();
 		final SQLQuery clone = new SQLQueryImpl(connection, new MySQLTemplates(), query.getMetadata()) {

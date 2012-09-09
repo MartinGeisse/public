@@ -10,10 +10,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-
+import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.SQLQueryImpl;
 import com.mysema.query.sql.SQLTemplates;
+import com.mysema.query.sql.dml.SQLDeleteClause;
+import com.mysema.query.sql.dml.SQLInsertClause;
+import com.mysema.query.sql.dml.SQLUpdateClause;
 
 /**
  * This class describes a database used by the application.
@@ -138,6 +141,30 @@ public abstract class AbstractDatabaseDescriptor implements IDatabaseDescriptor 
 	@Override
 	public SQLQuery createQuery(final Connection connection) {
 		return new SQLQueryImpl(connection, createSqlTemplates());
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.database.IDatabaseDescriptor#createInsert(java.sql.Connection)
+	 */
+	@Override
+	public SQLInsertClause createInsert(final Connection connection, final RelationalPath<?> entityPath) {
+		return new SQLInsertClause(connection, createSqlTemplates(), entityPath);
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.database.IDatabaseDescriptor#createUpdate(java.sql.Connection, com.mysema.query.sql.RelationalPath)
+	 */
+	@Override
+	public SQLUpdateClause createUpdate(final Connection connection, final RelationalPath<?> entityPath) {
+		return new SQLUpdateClause(connection, createSqlTemplates(), entityPath);
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.database.IDatabaseDescriptor#createDelete(java.sql.Connection, com.mysema.query.sql.RelationalPath)
+	 */
+	@Override
+	public SQLDeleteClause createDelete(final Connection connection, final RelationalPath<?> entityPath) {
+		return new SQLDeleteClause(connection, createSqlTemplates(), entityPath);
 	}
 
 }

@@ -10,7 +10,6 @@ import name.martingeisse.admin.entity.EntityDescriptorModel;
 import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel;
 import name.martingeisse.admin.entity.instance.EntityInstance;
-import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer;
@@ -121,7 +120,7 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 	 */
 	@Override
 	protected Expression<Comparable<?>> getColumnSortExpression(final int columnIndex) {
-		final Path<?> entityPath = Expressions.path(Object.class, EntityExpressionUtil.ALIAS);
+		final Path<?> entityPath = Expressions.path(Object.class, EntityDescriptor.ALIAS);
 		return GenericTypeUtil.unsafeCast(Expressions.path(Comparable.class, entityPath, getColumnDescriptor(columnIndex).getFieldName()));
 	}
 

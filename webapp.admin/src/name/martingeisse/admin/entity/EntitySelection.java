@@ -13,7 +13,6 @@ import java.util.NoSuchElementException;
 import name.martingeisse.admin.entity.component.list.EntityInstanceDataProvider;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.EntityConditions;
-import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 
@@ -218,7 +217,7 @@ public final class EntitySelection {
 	 * @return the result set
 	 */
 	public static ResultSet executeQueryFor(EntityDescriptor entity, Predicate predicate) {
-		SQLQuery query = entity.query(EntityExpressionUtil.ALIAS);
+		SQLQuery query = entity.createQuery(EntityDescriptor.ALIAS);
 		if (predicate != null) {
 			query = query.where(predicate);
 		}

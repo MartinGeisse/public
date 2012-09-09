@@ -6,6 +6,8 @@
 
 package name.martingeisse.admin.util;
 
+import name.martingeisse.common.util.ParameterUtil;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 
@@ -20,6 +22,7 @@ public class StatelessUtil {
 	 * @param root the component to start at
 	 */
 	public static void dumpStatefulComponents(final Component root) {
+		ParameterUtil.ensureNotNull(root, "root");
 		if (!root.isStateless()) {
 			System.out.println("stateful component: " + root.getPath());
 		}

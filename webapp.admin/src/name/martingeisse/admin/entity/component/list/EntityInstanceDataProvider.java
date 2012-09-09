@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import name.martingeisse.admin.entity.instance.EntityInstance;
-import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -133,7 +132,7 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 			
 			// obtain a ResultSet
 			final EntityDescriptor entity = getEntity();
-			SQLQuery query = entity.query(EntityExpressionUtil.ALIAS);
+			SQLQuery query = entity.createQuery(EntityDescriptor.ALIAS);
 			if (filter != null) {
 				query = query.where(filter);
 			}

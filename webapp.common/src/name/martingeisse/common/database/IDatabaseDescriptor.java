@@ -9,9 +9,12 @@ package name.martingeisse.common.database;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-
+import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.SQLTemplates;
+import com.mysema.query.sql.dml.SQLDeleteClause;
+import com.mysema.query.sql.dml.SQLInsertClause;
+import com.mysema.query.sql.dml.SQLUpdateClause;
 
 /**
  * This interface is implemented by entity databases.
@@ -49,5 +52,29 @@ public interface IDatabaseDescriptor {
 	 * @return the query
 	 */
 	public SQLQuery createQuery(final Connection connection);
+
+	/**
+	 * Creates a QueryDSL {@link SQLInsertClause} object for this database.
+	 * @param connection the database connection
+	 * @param entityPath the entity to create an insert clause for
+	 * @return the insert clause
+	 */
+	public SQLInsertClause createInsert(final Connection connection, RelationalPath<?> entityPath);
+
+	/**
+	 * Creates a QueryDSL {@link SQLUpdateClause} object for this database.
+	 * @param connection the database connection
+	 * @param entityPath the entity to create an update clause for
+	 * @return the update clause
+	 */
+	public SQLUpdateClause createUpdate(final Connection connection, RelationalPath<?> entityPath);
+
+	/**
+	 * Creates a QueryDSL {@link SQLDeleteClause} object for this database.
+	 * @param connection the database connection
+	 * @param entityPath the entity to create an delete clause for
+	 * @return the delete clause
+	 */
+	public SQLDeleteClause createDelete(final Connection connection, RelationalPath<?> entityPath);
 	
 }

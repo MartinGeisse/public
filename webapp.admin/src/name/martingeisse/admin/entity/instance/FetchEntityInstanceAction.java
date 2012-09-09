@@ -96,7 +96,7 @@ public class FetchEntityInstanceAction {
 			throw new RuntimeException("Cannot fetch entity instance for entity " + entity.getName() + ": ID column unknown");
 		}
 		try {
-			final SQLQuery query = entity.query(entity.getTableName());
+			final SQLQuery query = entity.createQuery(entity.getTableName());
 			final Path<?> entityExpression = Expressions.path(Object.class, entity.getTableName());
 			final Expression<?> idExpression = Expressions.path(Object.class, entityExpression, entity.getIdColumnName());
 			final Predicate idMatchPredicate = Expressions.predicate(Ops.EQ, idExpression, Expressions.constant(id));

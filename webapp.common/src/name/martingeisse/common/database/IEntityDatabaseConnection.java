@@ -6,7 +6,11 @@
 
 package name.martingeisse.common.database;
 
+import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.dml.SQLDeleteClause;
+import com.mysema.query.sql.dml.SQLInsertClause;
+import com.mysema.query.sql.dml.SQLUpdateClause;
 
 /**
  * This is an abstraction of connections to entity databases.
@@ -66,5 +70,26 @@ public interface IEntityDatabaseConnection {
 	 * @return the query
 	 */
 	public SQLQuery createQuery();
+
+	/**
+	 * Creates a new insert clause for this database.
+	 * @param entityPath the entity to create an insert clause for
+	 * @return the insert clause
+	 */
+	public SQLInsertClause createInsert(RelationalPath<?> entityPath);
+
+	/**
+	 * Creates a new update clause for this database.
+	 * @param entityPath the entity to create an update clause for
+	 * @return the update clause
+	 */
+	public SQLUpdateClause createUpdate(RelationalPath<?> entityPath);
+
+	/**
+	 * Creates a new delete clause for this database.
+	 * @param entityPath the entity to create an delete clause for
+	 * @return the delete clause
+	 */
+	public SQLDeleteClause createDelete(RelationalPath<?> entityPath);
 	
 }

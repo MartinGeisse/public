@@ -20,7 +20,6 @@ import java.util.Map;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.instance.EntityInstance;
-import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.admin.entity.property.type.IEntityIdTypeInfo;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
@@ -32,12 +31,18 @@ import name.martingeisse.common.database.IEntityDatabaseConnection;
 import name.martingeisse.common.datarow.AbstractDataRowMetaHolder;
 import name.martingeisse.common.datarow.DataRowMeta;
 import name.martingeisse.common.util.ClassKeyedContainer;
+import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.log4j.Logger;
 
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.RelationalPathBase;
 import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.dml.SQLDeleteClause;
+import com.mysema.query.sql.dml.SQLInsertClause;
+import com.mysema.query.sql.dml.SQLUpdateClause;
+import com.mysema.query.support.Expressions;
+import com.mysema.query.types.Path;
 import com.mysema.query.types.Predicate;
 
 /**
@@ -48,6 +53,12 @@ import com.mysema.query.types.Predicate;
  */
 public class EntityDescriptor {
 
+	/**
+	 * The default alias used for the entity in database queries.
+	 * Filter predicates should use this to access fields of the entity being filtered.
+	 */
+	public static final String ALIAS = "e";
+	
 	/**
 	 * the logger
 	 */
@@ -408,6 +419,7 @@ public class EntityDescriptor {
 	 * @return the relational path
 	 */
 	public RelationalPath<Object> createRelationalPath(final String alias) {
+		ParameterUtil.ensureNotNull(alias, "alias");
 		return new RelationalPathBase<Object>(Object.class, alias, null, tableName);
 	}
 
@@ -416,7 +428,8 @@ public class EntityDescriptor {
 	 * @param alias the alias for this entity
 	 * @return the query
 	 */
-	public SQLQuery query(final String alias) {
+	public SQLQuery createQuery(final String alias) {
+		ParameterUtil.ensureNotNull(alias, "alias");
 		return getConnection().createQuery().from(createRelationalPath(alias));
 	}
 
@@ -427,11 +440,64 @@ public class EntityDescriptor {
 	 * @return the number of instances
 	 */
 	public long count(final Predicate filterPredicate) {
-		SQLQuery countQuery = query(EntityExpressionUtil.ALIAS);
+		SQLQuery countQuery = createQuery(ALIAS);
 		if (filterPredicate != null) {
 			countQuery = countQuery.where(filterPredicate);
 		}
 		return countQuery.count();
+	}
+
+	/**
+	 * Creates an {@link SQLInsertClause} for this entity.
+	 * 
+	 * @param alias the alias for this entity
+	 * @return the insert clause
+	 */
+	public SQLInsertClause createInsert(final String alias) {
+		ParameterUtil.ensureNotNull(alias, "alias");
+		return getConnection().createInsert(createRelationalPath(alias));
+	}
+
+	/**
+	 * Creates an {@link SQLInsertClause} for this entity using the specified
+	 * columns. This is a convenience method to allow specifying the column
+	 * names as strings instead of {@link Path}s.
+	 * 
+	 * @param alias the alias for this entity
+	 * @param columns the column names
+	 * @return the insert clause
+	 */
+	public SQLInsertClause createInsert(final String alias, final String... columns) {
+		ParameterUtil.ensureNotNull(alias, "alias");
+		ParameterUtil.ensureNotNull(columns, "columns");
+		ParameterUtil.ensureNoNullElement(columns, "columns");
+		final Path<?>[] paths = new Path<?>[columns.length];
+		for (int i = 0; i < paths.length; i++) {
+			paths[i] = Expressions.path(Object.class, columns[i]);
+		}
+		return createInsert(alias).columns(paths);
+	}
+
+	/**
+	 * Creates an {@link SQLUpdateClause} for this entity.
+	 * 
+	 * @param alias the alias for this entity
+	 * @return the update clause
+	 */
+	public SQLUpdateClause createUpdate(final String alias) {
+		ParameterUtil.ensureNotNull(alias, "alias");
+		return getConnection().createUpdate(createRelationalPath(alias));
+	}
+
+	/**
+	 * Creates an {@link SQLDeleteClause} for this entity.
+	 * 
+	 * @param alias the alias for this entity
+	 * @return the delete clause
+	 */
+	public SQLDeleteClause createDelete(final String alias) {
+		ParameterUtil.ensureNotNull(alias, "alias");
+		return getConnection().createDelete(createRelationalPath(alias));
 	}
 
 	/**

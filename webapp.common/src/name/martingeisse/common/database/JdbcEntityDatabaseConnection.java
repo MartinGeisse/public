@@ -9,10 +9,13 @@ package name.martingeisse.common.database;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-
 import org.apache.log4j.Logger;
 
+import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.dml.SQLDeleteClause;
+import com.mysema.query.sql.dml.SQLInsertClause;
+import com.mysema.query.sql.dml.SQLUpdateClause;
 
 /**
  * JDBC-based implementation of {@link IEntityDatabaseConnection}.
@@ -23,30 +26,30 @@ public class JdbcEntityDatabaseConnection implements IEntityDatabaseConnection {
 	 * the logger
 	 */
 	private static Logger logger = Logger.getLogger(JdbcEntityDatabaseConnection.class);
-	
+
 	/**
 	 * the database
 	 */
-	private AbstractDatabaseDescriptor database;
-	
+	private final AbstractDatabaseDescriptor database;
+
 	/**
 	 * the jdbcConnection
 	 */
 	private Connection jdbcConnection;
-	
+
 	/**
 	 * Constructor.
 	 * @param database the database
 	 */
-	public JdbcEntityDatabaseConnection(AbstractDatabaseDescriptor database) {
+	public JdbcEntityDatabaseConnection(final AbstractDatabaseDescriptor database) {
 		this.database = database;
 		try {
 			this.jdbcConnection = database.createJdbcConnection();
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/**
 	 * Getter method for the database.
 	 * @return the database
@@ -54,7 +57,7 @@ public class JdbcEntityDatabaseConnection implements IEntityDatabaseConnection {
 	public AbstractDatabaseDescriptor getDatabase() {
 		return database;
 	}
-	
+
 	/**
 	 * Getter method for the jdbcConnection.
 	 * @return the jdbcConnection
@@ -62,7 +65,7 @@ public class JdbcEntityDatabaseConnection implements IEntityDatabaseConnection {
 	public Connection getJdbcConnection() {
 		return jdbcConnection;
 	}
-	
+
 	/**
 	 * Expects a running transaction, i.e. throws an {@link IllegalStateException}
 	 * if no running transaction can be detected.
@@ -94,14 +97,14 @@ public class JdbcEntityDatabaseConnection implements IEntityDatabaseConnection {
 	public boolean isTransactionRunning() {
 		try {
 			logger.trace("isTransactionRunning() called...");
-			boolean autocommit = jdbcConnection.getAutoCommit();
+			final boolean autocommit = jdbcConnection.getAutoCommit();
 			logger.trace("isTransactionRunning() finished");
 			return !autocommit;
 		} catch (final SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.database.IEntityDatabaseConnection#begin()
 	 */
@@ -131,7 +134,7 @@ public class JdbcEntityDatabaseConnection implements IEntityDatabaseConnection {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.database.IEntityDatabaseConnection#commitBegin()
 	 */
@@ -177,7 +180,7 @@ public class JdbcEntityDatabaseConnection implements IEntityDatabaseConnection {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.database.IEntityDatabaseConnection#dispose()
 	 */
@@ -191,7 +194,7 @@ public class JdbcEntityDatabaseConnection implements IEntityDatabaseConnection {
 					jdbcConnection.rollback();
 					logger.debug("rollback finished");
 				}
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				logger.error("an exception occurred during forced rollback", e);
 			}
 			logger.trace("checking for active transaction finished");
@@ -199,7 +202,7 @@ public class JdbcEntityDatabaseConnection implements IEntityDatabaseConnection {
 			logger.trace("about to close connection");
 			try {
 				jdbcConnection.close();
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				logger.error("an exception occurred while closing the JDBC connection", e);
 			}
 			logger.debug("connection closed");
@@ -213,5 +216,29 @@ public class JdbcEntityDatabaseConnection implements IEntityDatabaseConnection {
 	public SQLQuery createQuery() {
 		return database.createQuery(jdbcConnection);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.database.IEntityDatabaseConnection#createInsert(com.mysema.query.sql.RelationalPath)
+	 */
+	@Override
+	public SQLInsertClause createInsert(final RelationalPath<?> entityPath) {
+		return database.createInsert(jdbcConnection, entityPath);
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.database.IEntityDatabaseConnection#createUpdate(com.mysema.query.sql.RelationalPath)
+	 */
+	@Override
+	public SQLUpdateClause createUpdate(final RelationalPath<?> entityPath) {
+		return database.createUpdate(jdbcConnection, entityPath);
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.database.IEntityDatabaseConnection#createDelete(com.mysema.query.sql.RelationalPath)
+	 */
+	@Override
+	public SQLDeleteClause createDelete(final RelationalPath<?> entityPath) {
+		return database.createDelete(jdbcConnection, entityPath);
+	}
+
 }

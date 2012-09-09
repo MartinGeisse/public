@@ -9,6 +9,8 @@ package name.martingeisse.admin.entity.list;
 import java.util.Arrays;
 import java.util.List;
 
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
+
 import com.google.common.base.Objects;
 import com.mysema.query.support.Expressions;
 import com.mysema.query.types.ConstantImpl;
@@ -44,10 +46,10 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	private Predicate predicate;
 
 	/**
-	 * Constructor using the default entity filter alias ({@link EntityExpressionUtil#ALIAS}).
+	 * Constructor using the default entity filter alias ({@link EntityDescriptor#ALIAS}).
 	 */
 	public EntityConditions() {
-		this(Expressions.path(Object.class, EntityExpressionUtil.ALIAS), Ops.AND);
+		this(Expressions.path(Object.class, EntityDescriptor.ALIAS), Ops.AND);
 	}
 
 	/**
@@ -59,11 +61,11 @@ public class EntityConditions implements Predicate, Cloneable, Operation<Boolean
 	}
 
 	/**
-	 * Constructor using the default entity filter alias ({@link EntityExpressionUtil#ALIAS}).
+	 * Constructor using the default entity filter alias ({@link EntityDescriptor#ALIAS}).
 	 * @param buildOperator the operator used to combine expressions
 	 */
 	public EntityConditions(final Operator<Boolean> buildOperator) {
-		this(Expressions.path(Object.class, EntityExpressionUtil.ALIAS), buildOperator);
+		this(Expressions.path(Object.class, EntityDescriptor.ALIAS), buildOperator);
 	}
 
 	/**
