@@ -20,6 +20,32 @@ import com.mysema.query.sql.dml.SQLUpdateClause;
  * 
  * Note that this interfaces uses an SQL-like transaction API style
  * (begin/commit/rollback), unlike JDBC's "autocommit" style.
+ * 
+ * TODO: Support nested transactions:
+ * - represent transactions as objects:
+ *   - begin() begins a transaction and returns a T object
+ *   - the T object has commit/rollback
+ *   - the T has an internal "running" flag for illegal state detection
+ *   - the T has commitBegin and rollbackBegin that work in-place
+ *     or return a new T object (?)
+ * - this interface has a method to get currently running T objects.
+ * - T objects have a beginChild() that creates a child T
+ * - T objects know their parent (if any) and currently running child (if any)
+ * - commit on a T with running child is illegal
+ * - rollback on a T with running child is valid and does a rollback on all children
+ * - implementation of nested T's: savepoints.
+ *   - begin sets a savepoint
+ *   - commit clears the savepoint
+ *   - rollback does a rollback-to-savepoint
+ * - remove T management methods from this interface except for root begin and
+ *   get-current.
+ * - two get-current methods: get current root, get current leaf. Are these useful
+ *   at all? App code should not use get-current to commit/rollback but keep the T'n
+ *   object so it doesn't work on the wrong T.
+ *   Correct: Keep the T object and work on that -- it's always the right one.
+ *   but: missing get-current method is also confusing. best solution seems to be:
+ *   include both get-current methods; warn in method comment; must be used correctly.
+ *   bad solution but still the best there is.
  */
 public interface IEntityDatabaseConnection {
 

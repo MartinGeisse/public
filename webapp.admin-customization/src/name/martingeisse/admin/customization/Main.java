@@ -298,7 +298,7 @@ public class Main {
 			root.getChildFactory().createChild("tabletest2", "TableTest2", new PopulatorBasedEntityListHandler("settings", columns));
 		}
 
-		root.getChildFactory().createChild("autoform-test", "Autoform", new PanelPageNavigationHandler(MyAutoformPanel.class, null, true));
+		root.getChildFactory().createChild("autoform-test", "Autoform", new PanelPageNavigationHandler(MyAutoformPanel.class, null, true, false));
 		NavigationTabBarFactory.apply(root.findChildById("sub-one"));
 		
 	}

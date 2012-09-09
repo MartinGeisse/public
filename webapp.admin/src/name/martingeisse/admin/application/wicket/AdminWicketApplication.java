@@ -14,6 +14,8 @@ import name.martingeisse.admin.component.page.images.Dummy;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
+import name.martingeisse.common.util.ObjectStateUtil;
+import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
 import name.martingeisse.wicket.util.json.JsonEncodingContainer;
@@ -34,19 +36,18 @@ import org.apache.wicket.util.IProvider;
 
 /**
  * Wicket {@link WebApplication} implementation for this application.
- * TODO: parameter check / return value check: ab hier weiterprüfen
  */
 public class AdminWicketApplication extends AbstractMyWicketApplication {
 
 	/**
 	 * the exceptionMapper
 	 */
-	private ExceptionMapper exceptionMapper = new ExceptionMapper();
+	private final ExceptionMapper exceptionMapper = new ExceptionMapper();
 	
 	/**
 	 * the exceptionMapperProvider
 	 */
-	private IProvider<IExceptionMapper> exceptionMapperProvider = new IProvider<IExceptionMapper>() {
+	private final IProvider<IExceptionMapper> exceptionMapperProvider = new IProvider<IExceptionMapper>() {
 		@Override
 		public IExceptionMapper get() {
 			return exceptionMapper;
@@ -99,6 +100,7 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		// initialize module-specific data
 		logger.trace("running post-schema initialization...");
 		ReadOnlyRenderingConfigurationUtil.prepareConfiguration();
+		ObjectStateUtil.nullMeansMissing(NavigationConfigurationUtil.getNavigationTree(), "navigation tree");
 		NavigationConfigurationUtil.getNavigationTree().prepare();
 		logger.trace("post-schema initialization finished");
 
@@ -145,6 +147,10 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 	 * @param names the file names of the resources
 	 */
 	public void mountResources(final Class<?> anchorClass, final String prefix, final String... names) {
+		ParameterUtil.ensureNotNull(anchorClass, "anchorClass");
+		ParameterUtil.ensureNotNull(prefix, "prefix");
+		ParameterUtil.ensureNotNull(names, "names");
+		ParameterUtil.ensureNoNullElement(names, "names");
 		for (final String name : names) {
 			mountResource(prefix + name, new PackageResourceReference(anchorClass, name));
 		}

@@ -6,6 +6,8 @@
 
 package name.martingeisse.admin.component.page.error;
 
+import name.martingeisse.common.util.ParameterUtil;
+
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.pages.ExceptionErrorPage;
 
@@ -23,8 +25,7 @@ public abstract class AbstractSpecializedExceptionPage extends ExceptionErrorPag
 	 * @param page the page where the exception occurred
 	 */
 	public AbstractSpecializedExceptionPage(Throwable throwable, Page page) {
-		super(throwable, page);
-		System.out.println("*** FOOBAR");
+		super(ParameterUtil.ensureNotNull(throwable, "throwable"), page);
 	}
 
 }

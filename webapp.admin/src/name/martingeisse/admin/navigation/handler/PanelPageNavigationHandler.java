@@ -33,9 +33,14 @@ public final class PanelPageNavigationHandler extends AbstractNavigationNodeHand
 	private IModel<?> model;
 
 	/**
-	 * the modelIsOptional
+	 * the allowModelLessConstructor
 	 */
-	private boolean modelIsOptional;
+	private boolean allowModelLessConstructor;
+
+	/**
+	 * the preferModelLessConstructor
+	 */
+	private boolean preferModelLessConstructor;
 
 	/**
 	 * Constructor.
@@ -47,12 +52,14 @@ public final class PanelPageNavigationHandler extends AbstractNavigationNodeHand
 	 * Constructor.
 	 * @param panelClass see {@link PanelPage} for a description of this parameter
 	 * @param model see {@link PanelPage} for a description of this parameter
-	 * @param modelIsOptional see {@link PanelPage} for a description of this parameter
+	 * @param allowModelLessConstructor see {@link PanelPage} for a description of this parameter
+	 * @param preferModelLessConstructor see {@link PanelPage} for a description of this parameter
 	 */
-	public PanelPageNavigationHandler(final Class<? extends Panel> panelClass, final IModel<?> model, final boolean modelIsOptional) {
+	public PanelPageNavigationHandler(final Class<? extends Panel> panelClass, final IModel<?> model, final boolean allowModelLessConstructor, final boolean preferModelLessConstructor) {
 		this.panelClass = panelClass;
 		this.model = model;
-		this.modelIsOptional = modelIsOptional;
+		this.allowModelLessConstructor = allowModelLessConstructor;
+		this.preferModelLessConstructor = preferModelLessConstructor;
 	}
 
 	/**
@@ -88,19 +95,35 @@ public final class PanelPageNavigationHandler extends AbstractNavigationNodeHand
 	}
 
 	/**
-	 * Getter method for the modelIsOptional.
-	 * @return the modelIsOptional
+	 * Getter method for the allowModelLessConstructor.
+	 * @return the allowModelLessConstructor
 	 */
-	public boolean isModelIsOptional() {
-		return modelIsOptional;
+	public boolean isAllowModelLessConstructor() {
+		return allowModelLessConstructor;
 	}
 
 	/**
-	 * Setter method for the modelIsOptional.
-	 * @param modelIsOptional the modelIsOptional to set
+	 * Setter method for the allowModelLessConstructor.
+	 * @param allowModelLessConstructor the allowModelLessConstructor to set
 	 */
-	public void setModelIsOptional(final boolean modelIsOptional) {
-		this.modelIsOptional = modelIsOptional;
+	public void setAllowModelLessConstructor(final boolean allowModelLessConstructor) {
+		this.allowModelLessConstructor = allowModelLessConstructor;
+	}
+
+	/**
+	 * Getter method for the preferModelLessConstructor.
+	 * @return the preferModelLessConstructor
+	 */
+	public boolean isPreferModelLessConstructor() {
+		return preferModelLessConstructor;
+	}
+
+	/**
+	 * Setter method for the preferModelLessConstructor.
+	 * @param preferModelLessConstructor the preferModelLessConstructor to set
+	 */
+	public void setPreferModelLessConstructor(final boolean preferModelLessConstructor) {
+		this.preferModelLessConstructor = preferModelLessConstructor;
 	}
 
 	/* (non-Javadoc)
@@ -108,7 +131,7 @@ public final class PanelPageNavigationHandler extends AbstractNavigationNodeHand
 	 */
 	@Override
 	public AbstractLink createLink(final String id, final NavigationNode node) {
-		return new MyLink(id, panelClass, model, modelIsOptional);
+		return new MyLink(id, panelClass, model, allowModelLessConstructor, preferModelLessConstructor);
 	}
 
 	/**
@@ -127,18 +150,24 @@ public final class PanelPageNavigationHandler extends AbstractNavigationNodeHand
 		private final IModel<?> model;
 
 		/**
-		 * the modelIsOptional
+		 * the allowModelLessConstructor
 		 */
-		private final boolean modelIsOptional;
+		private boolean allowModelLessConstructor;
+
+		/**
+		 * the preferModelLessConstructor
+		 */
+		private boolean preferModelLessConstructor;
 
 		/**
 		 * Constructor.
 		 */
-		MyLink(final String id, final Class<? extends Panel> panelClass, final IModel<?> model, final boolean modelIsOptional) {
+		MyLink(final String id, final Class<? extends Panel> panelClass, final IModel<?> model, final boolean allowModelLessConstructor, final boolean preferModelLessConstructor) {
 			super(id);
 			this.panelClass = panelClass;
 			this.model = model;
-			this.modelIsOptional = modelIsOptional;
+			this.allowModelLessConstructor = allowModelLessConstructor;
+			this.preferModelLessConstructor = preferModelLessConstructor;
 		}
 
 		/* (non-Javadoc)
@@ -146,7 +175,7 @@ public final class PanelPageNavigationHandler extends AbstractNavigationNodeHand
 		 */
 		@Override
 		public void onClick() {
-			RequestCycle.get().setResponsePage(new PanelPage(panelClass, model, modelIsOptional));
+			RequestCycle.get().setResponsePage(new PanelPage(panelClass, model, allowModelLessConstructor, preferModelLessConstructor));
 		}
 
 	}

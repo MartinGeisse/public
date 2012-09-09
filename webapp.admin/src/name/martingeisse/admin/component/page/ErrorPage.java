@@ -6,6 +6,9 @@
 
 package name.martingeisse.admin.component.page;
 
+import name.martingeisse.common.util.ObjectStateUtil;
+import name.martingeisse.common.util.ParameterUtil;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -23,7 +26,7 @@ public class ErrorPage extends AbstractAdminPage {
 	 * @param message the error message
 	 */
 	public ErrorPage(final String message) {
-		this(Model.of(message));
+		this(Model.of(ParameterUtil.ensureNotNull(message, "message")));
 	}
 
 	/**
@@ -31,7 +34,7 @@ public class ErrorPage extends AbstractAdminPage {
 	 * @param messageModel the model for the error message
 	 */
 	public ErrorPage(final IModel<String> messageModel) {
-		super(messageModel);
+		super(ParameterUtil.ensureNotNull(messageModel, "messageModel"));
 	}
 
 	/* (non-Javadoc)
@@ -40,6 +43,7 @@ public class ErrorPage extends AbstractAdminPage {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		getMainContainer().add(new Label("message", getDefaultModel()));
+		getMainContainer().add(new Label("message", ObjectStateUtil.nullNotAllowed(getDefaultModel(), "error message model value")));
 	}
+	
 }

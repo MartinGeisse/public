@@ -9,6 +9,7 @@ package name.martingeisse.admin.component.page.error;
 import name.martingeisse.admin.entity.AllEntityDescriptorsModel;
 import name.martingeisse.admin.entity.UnknownEntityException;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.basic.Label;
@@ -29,6 +30,7 @@ public class UnknownEntityErrorPage extends AbstractSpecializedExceptionPage {
 	 */
 	public UnknownEntityErrorPage(Throwable caughtException, UnknownEntityException originalCause, Page page) {
 		super(caughtException, page);
+		ParameterUtil.ensureNotNull(originalCause, "originalCause");
 		add(new Label("entityName", originalCause.getEntityName()));
 		add(new ListView<EntityDescriptor>("knownEntityList", new AllEntityDescriptorsModel()) {
 			@Override

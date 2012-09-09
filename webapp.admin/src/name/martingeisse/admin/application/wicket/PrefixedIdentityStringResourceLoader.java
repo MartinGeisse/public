@@ -8,7 +8,7 @@ package name.martingeisse.admin.application.wicket;
 
 import java.util.Locale;
 
-import name.martingeisse.common.util.ObjectStateUtil;
+import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
@@ -26,19 +26,14 @@ public class PrefixedIdentityStringResourceLoader implements IStringResourceLoad
 	/**
 	 * the prefix
 	 */
-	private String prefix;
-
-	/**
-	 * Constructor.
-	 */
-	public PrefixedIdentityStringResourceLoader() {
-	}
+	private final String prefix;
 
 	/**
 	 * Constructor.
 	 * @param prefix the prefix
 	 */
 	public PrefixedIdentityStringResourceLoader(final String prefix) {
+		ParameterUtil.ensureNotNull(prefix, "prefix");
 		this.prefix = prefix;
 	}
 
@@ -48,14 +43,6 @@ public class PrefixedIdentityStringResourceLoader implements IStringResourceLoad
 	 */
 	public String getPrefix() {
 		return prefix;
-	}
-
-	/**
-	 * Setter method for the prefix.
-	 * @param prefix the prefix to set
-	 */
-	public void setPrefix(final String prefix) {
-		this.prefix = prefix;
 	}
 
 	/* (non-Javadoc)
@@ -79,7 +66,6 @@ public class PrefixedIdentityStringResourceLoader implements IStringResourceLoad
 	 * @return
 	 */
 	private String getString(final String key) {
-		ObjectStateUtil.nullMeansMissing(prefix, "prefix");
 		if (key.startsWith(prefix)) {
 			return key.substring(prefix.length());
 		} else {

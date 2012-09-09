@@ -6,7 +6,6 @@
 
 package name.martingeisse.admin.application.wicket;
 
-import name.martingeisse.common.util.ObjectStateUtil;
 import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.log4j.Logger;
@@ -30,7 +29,7 @@ public class StringResourceContributor extends AbstractWebApplicationInitializat
 	/**
 	 * the origin
 	 */
-	private Class<?> origin;
+	private final Class<?> origin;
 
 	/**
 	 * Constructor.
@@ -44,6 +43,7 @@ public class StringResourceContributor extends AbstractWebApplicationInitializat
 	 * @param origin the origin for resource loading
 	 */
 	public StringResourceContributor(final Class<?> origin) {
+		ParameterUtil.ensureNotNull(origin, "origin");
 		this.origin = origin;
 	}
 
@@ -55,21 +55,12 @@ public class StringResourceContributor extends AbstractWebApplicationInitializat
 		return origin;
 	}
 
-	/**
-	 * Setter method for the origin.
-	 * @param origin the origin to set
-	 */
-	public void setOrigin(final Class<?> origin) {
-		this.origin = origin;
-	}
-
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.application.capabilities.wicket.IWebApplicationInitializationContributor#onInitializeWebApplication(org.apache.wicket.protocol.http.WebApplication)
 	 */
 	@Override
 	public void onInitializeWebApplication(final WebApplication webApplication) {
 		ParameterUtil.ensureNotNull(webApplication, "webApplication");
-		ObjectStateUtil.nullMeansMissing(origin, "origin");
 		logger.debug("Adding StringResourceLoader for class: " + origin);
 		webApplication.getResourceSettings().getStringResourceLoaders().add(new ClassStringResourceLoader(origin));
 	}

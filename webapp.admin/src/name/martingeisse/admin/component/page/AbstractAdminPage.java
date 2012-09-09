@@ -7,6 +7,8 @@
 package name.martingeisse.admin.component.page;
 
 import name.martingeisse.admin.component.pagebar.PageBarUtil;
+import name.martingeisse.common.util.ParameterUtil;
+import name.martingeisse.common.util.ReturnValueUtil;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -19,8 +21,6 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 /**
  * The base class for all admin pages.
- * 
- * TODO: parameter check / return value check: ab hier weiterprüfen
  */
 public class AbstractAdminPage extends WebPage {
 
@@ -75,6 +75,7 @@ public class AbstractAdminPage extends WebPage {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
+		ReturnValueUtil.nullNotAllowed(getMainContainer(), "getMainContainer()");
 		add(PageBarUtil.createAllPageTopBars(this, "pageTopBars"));
 		add(PageBarUtil.createAllPageBottomBars(this, "pageBottomBars"));
 	}
@@ -84,6 +85,7 @@ public class AbstractAdminPage extends WebPage {
 	 */
 	@Override
 	public void renderHead(final IHeaderResponse response) {
+		ParameterUtil.ensureNotNull(response, "response");
 		response.renderCSSReference(new CssResourceReference(AbstractAdminPage.class, "common.css"));
 		response.renderCSSReference(new CssResourceReference(AbstractAdminPage.class, "jquery.dataTables.css"));
 		response.renderJavaScriptReference(new JavaScriptResourceReference(AbstractAdminPage.class, "common.js"));

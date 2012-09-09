@@ -6,6 +6,8 @@
 
 package name.martingeisse.admin.component.page;
 
+import name.martingeisse.common.util.ReturnValueUtil;
+
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
@@ -18,6 +20,10 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * for paginated lists. Subclasses must implement obtaining the
  * {@link IPageable} to enable paging support. This page allows
  * to disable paging support by returning null in that method.
+ * 
+ * Note that the most common implementation is based on JQuery
+ * DataTables and does not use the built-in pagination support
+ * since DataTables come with their own AJAX-based pagination.
  */
 public abstract class AbstractPaginatedAdminPage extends AbstractAdminPage {
 
@@ -50,7 +56,7 @@ public abstract class AbstractPaginatedAdminPage extends AbstractAdminPage {
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		getMainContainer().add(new Label("title", createTitleModel()));
+		getMainContainer().add(new Label("title", ReturnValueUtil.nullNotAllowed(createTitleModel(), "createTitleModel()")));
 	}
 
 	/**
