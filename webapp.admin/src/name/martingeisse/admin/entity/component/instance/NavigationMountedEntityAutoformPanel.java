@@ -8,6 +8,7 @@ package name.martingeisse.admin.entity.component.instance;
 
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.autoform.EntityAutoformDescriber;
+import name.martingeisse.admin.navigation.NavigationUtil;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 
@@ -27,6 +28,15 @@ public class NavigationMountedEntityAutoformPanel extends EditEntityAutoformPane
 	 */
 	public NavigationMountedEntityAutoformPanel(final String id, final IModel<EntityInstance> model) {
 		super(id, model.getObject(), EntityAutoformDescriber.instance, DefaultAutoformPropertyComponentFactory.instance);
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.component.instance.EditEntityAutoformPanel#onSuccessfulSubmit()
+	 */
+	@Override
+	protected void onSuccessfulSubmit() {
+		super.onSuccessfulSubmit();
+		throw NavigationUtil.getNavigationNodeForComponent(this).getParent().createReplaceHandlerException(this);
 	}
 	
 }

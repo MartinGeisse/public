@@ -16,6 +16,9 @@ import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.common.computation.operation.AbstractForeachOperation;
 import name.martingeisse.common.computation.operation.ForeachHandlingMode;
 import name.martingeisse.common.database.IEntityDatabaseConnection;
+import name.martingeisse.common.util.ObjectStateUtil;
+import name.martingeisse.common.util.ParameterUtil;
+import name.martingeisse.common.util.ReturnValueUtil;
 
 import org.apache.log4j.Logger;
 
@@ -54,14 +57,6 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	/**
 	 * Constructor. The exception handling mode and transaction mode
 	 * default to NONE.
-	 */
-	public AbstractForeachEntityOperation() {
-		this(null, ForeachHandlingMode.NONE, ForeachHandlingMode.NONE);
-	}
-
-	/**
-	 * Constructor. The exception handling mode and transaction mode
-	 * default to NONE.
 	 * @param entityDescriptor the entity descriptor for the entity to fetch from
 	 */
 	public AbstractForeachEntityOperation(final EntityDescriptor entityDescriptor) {
@@ -76,13 +71,15 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	 */
 	public AbstractForeachEntityOperation(final EntityDescriptor entityDescriptor, final ForeachHandlingMode exceptionMode, final ForeachHandlingMode transactionMode) {
 		super(exceptionMode);
+		this.entityDescriptor = ParameterUtil.ensureNotNull(entityDescriptor, "entityDescriptor");
+		this.transactionMode = ParameterUtil.ensureNotNull(transactionMode, "transactionMode");
 	}
 
 	/**
 	 * Getter method for the entityDescriptor.
 	 * @return the entityDescriptor
 	 */
-	public EntityDescriptor getEntityDescriptor() {
+	public final EntityDescriptor getEntityDescriptor() {
 		return entityDescriptor;
 	}
 
@@ -90,15 +87,15 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	 * Setter method for the entityDescriptor.
 	 * @param entityDescriptor the entityDescriptor to set
 	 */
-	public void setEntityDescriptor(final EntityDescriptor entityDescriptor) {
-		this.entityDescriptor = entityDescriptor;
+	public final void setEntityDescriptor(final EntityDescriptor entityDescriptor) {
+		this.entityDescriptor = ParameterUtil.ensureNotNull(entityDescriptor, "entityDescriptor");
 	}
 
 	/**
 	 * Getter method for the transactionMode.
 	 * @return the transactionMode
 	 */
-	public ForeachHandlingMode getTransactionMode() {
+	public final ForeachHandlingMode getTransactionMode() {
 		return transactionMode;
 	}
 
@@ -106,19 +103,26 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	 * Setter method for the transactionMode.
 	 * @param transactionMode the transactionMode to set
 	 */
-	public void setTransactionMode(final ForeachHandlingMode transactionMode) {
-		this.transactionMode = transactionMode;
+	public final void setTransactionMode(final ForeachHandlingMode transactionMode) {
+		this.transactionMode = ParameterUtil.ensureNotNull(transactionMode, "transactionMode");
 	}
 
+	/**
+	 * Returns a database connection for the entity.
+	 * @return the connection
+	 */
+	private IEntityDatabaseConnection getConnection() {
+		return ReturnValueUtil.nullNotAllowed(entityDescriptor.getConnection(), "getConnection() in entity: " + entityDescriptor.getName());
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.common.computation.operation.AbstractForeachOperation#onValidate(java.lang.Object)
 	 */
 	@Override
 	protected void onValidate(final P parameter) {
 		super.onValidate(parameter);
-		if (transactionMode == null) {
-			throw new IllegalStateException("transactionMode is null");
-		}
+		ObjectStateUtil.nullNotAllowed(transactionMode, "transactionMode");
+		ObjectStateUtil.nullNotAllowed(entityDescriptor, "entityDescriptor");
 	}
 
 	/* (non-Javadoc)
@@ -129,16 +133,15 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 		try {
 
 			// obtain a ResultSet
-			final EntityDescriptor entity = getEntityDescriptor();
-			final SQLQuery query = entity.createQuery(EntityDescriptor.ALIAS);
+			final SQLQuery query = entityDescriptor.createQuery(EntityDescriptor.ALIAS);
 			configureQuery(parameter, query);
 			final ResultSet resultSet = query.getResults(Wildcard.all);
 
 			// fetch rows
-			entity.checkDataRowMeta(resultSet);
+			entityDescriptor.checkDataRowMeta(resultSet);
 			final List<EntityInstance> rows = new ArrayList<EntityInstance>();
 			while (resultSet.next()) {
-				rows.add(new EntityInstance(entity, resultSet));
+				rows.add(ReturnValueUtil.nullNotAllowed(convertRow(parameter, resultSet), "convertRow()"));
 			}
 
 			// clean up
@@ -179,7 +182,8 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	 * @throws SQLException on SQL errors
 	 */
 	protected EntityInstance convertRow(final P parameter, final ResultSet resultSet) throws SQLException {
-		return new EntityInstance(getEntityDescriptor(), resultSet);
+		ParameterUtil.ensureNotNull(resultSet, "resultSet");
+		return new EntityInstance(entityDescriptor, resultSet);
 	}
 
 	/* (non-Javadoc)
@@ -196,7 +200,7 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	 */
 	@Override
 	protected void handleListAndContextWork(final P parameter) {
-		IEntityDatabaseConnection connection = getEntityDescriptor().getConnection();
+		IEntityDatabaseConnection connection = getConnection();
 		if (transactionMode.isIncludesGlobal()) {
 			connection.begin();
 		}
@@ -212,7 +216,7 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	@Override
 	protected void onGlobalException(final P parameter, final Exception e) {
 		super.onGlobalException(parameter, e);
-		IEntityDatabaseConnection connection = getEntityDescriptor().getConnection();
+		IEntityDatabaseConnection connection = getConnection();
 		if (transactionMode.isIncludesGlobal()) {
 			connection.rollback();
 		}
@@ -223,7 +227,7 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	 */
 	@Override
 	protected void handleElementAndContextWork(final P parameter, final EntityInstance element) {
-		IEntityDatabaseConnection connection = getEntityDescriptor().getConnection();
+		IEntityDatabaseConnection connection = getConnection();
 		if (transactionMode.isIncludesLocal()) {
 			connection.begin();
 		}
@@ -239,7 +243,7 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	@Override
 	protected void onLocalException(final P parameter, final EntityInstance element, final Exception e) {
 		super.onLocalException(parameter, element, e);
-		IEntityDatabaseConnection connection = getEntityDescriptor().getConnection();
+		IEntityDatabaseConnection connection = getConnection();
 		if (transactionMode.isIncludesLocal()) {
 			connection.rollback();
 		}

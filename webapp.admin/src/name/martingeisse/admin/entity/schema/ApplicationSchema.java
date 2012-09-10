@@ -194,6 +194,7 @@ public class ApplicationSchema {
 				// discover entities
 				List<EntityDescriptor> currentDatabaseEntities = new ArrayList<EntityDescriptor>();
 				for (JdbcTableStructure table : structure.getTables()) {
+					logger.debug("discovered entity table: " + table.getSelector());
 					
 					// initialize the entity descriptor
 					final EntityDescriptor entityDescriptor = new EntityDescriptor();
@@ -203,12 +204,14 @@ public class ApplicationSchema {
 					// initialize properties
 					final List<EntityPropertyDescriptor> properties = new ArrayList<EntityPropertyDescriptor>();
 					for (JdbcColumnStructure column : table.getColumns()) {
+						logger.debug("discovered entity property: " + column.getSelector());
 						final EntityPropertyDescriptor propertyDescriptor = new EntityPropertyDescriptor();
 						propertyDescriptor.setName(column.getSelector().getColumn());
 						propertyDescriptor.setType(column.determineHighlevelType());
 						propertyDescriptor.setVisibleInRawEntityList(true);
 						propertyDescriptor.setVisibleInRawEntityList(isPropertyVisibleInRawEntityList(entityDescriptor, propertyDescriptor));
 						properties.add(propertyDescriptor);
+						logger.debug("-> type: " + propertyDescriptor.getType());
 					}
 					entityDescriptor.initializeProperties(properties);
 					

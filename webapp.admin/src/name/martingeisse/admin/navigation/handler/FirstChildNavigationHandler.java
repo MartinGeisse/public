@@ -9,8 +9,10 @@ package name.martingeisse.admin.navigation.handler;
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.navigation.NavigationNode;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.RequestHandlerStack.ReplaceHandlerException;
 import org.apache.wicket.request.http.handler.RedirectRequestHandler;
 import org.apache.wicket.request.mapper.mount.MountMapper;
 
@@ -60,6 +62,14 @@ public final class FirstChildNavigationHandler extends AbstractNavigationNodeHan
 	@Override
 	public AbstractLink createLink(final String id, final NavigationNode node) {
 		return getFirstChild(node).createLink(id);
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#createReplaceHandlerException(name.martingeisse.admin.navigation.NavigationNode, org.apache.wicket.Component)
+	 */
+	@Override
+	public ReplaceHandlerException createReplaceHandlerException(NavigationNode node, Component context) {
+		return getFirstChild(node).createReplaceHandlerException(context);
 	}
 
 	/**

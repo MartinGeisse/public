@@ -16,7 +16,9 @@ import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.component.pagebar.IPageBarFactory;
 import name.martingeisse.common.util.SpecialHandlingList;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.link.AbstractLink;
+import org.apache.wicket.request.RequestHandlerStack.ReplaceHandlerException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
@@ -516,6 +518,15 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	 */
 	public AbstractLink createLink(final String id) {
 		return handler.createLink(id, this);
+	}
+
+	/**
+	 * This method delegates to {@link INavigationNodeHandler#createReplaceHandlerException(NavigationNode, Component)}.
+	 * @param context the context component
+	 * @return the link
+	 */
+	public ReplaceHandlerException createReplaceHandlerException(Component context) {
+		return handler.createReplaceHandlerException(this, context);
 	}
 
 	/**

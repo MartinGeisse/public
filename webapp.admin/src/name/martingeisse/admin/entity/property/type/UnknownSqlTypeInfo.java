@@ -48,4 +48,12 @@ public class UnknownSqlTypeInfo implements ISqlTypeInfo {
 		return sqlTypeCode;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "{unknown SQL type; code = " + sqlTypeCode + "}";
+	}
+	
 }

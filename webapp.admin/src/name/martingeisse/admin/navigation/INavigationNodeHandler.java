@@ -9,9 +9,11 @@ package name.martingeisse.admin.navigation;
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.component.pagebar.IPageBarFactory;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.request.RequestHandlerStack.ReplaceHandlerException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
@@ -55,6 +57,23 @@ public interface INavigationNodeHandler extends IPageBarFactory {
 	 * @return the link
 	 */
 	public AbstractLink createLink(String id, NavigationNode node);
+	
+	/**
+	 * Creates a {@link ReplaceHandlerException}, typically to redirect to the page
+	 * that is represented by this navigation node.
+	 * 
+	 * This method requires a context component that is "the component to which
+	 * the link from {{@link #createLink(String, NavigationNode)} would have been
+	 * added, were a link needed and not a redirect". Some navigation node handlers
+	 * require a context component to determine their page. For example,
+	 * entity-instance nodes use the component (and in turn, the page) to determine
+	 * the ID of the entity they link to.
+	 * 
+	 * @param node the handled node
+	 * @param context the context component
+	 * @return the {@link ReplaceHandlerException}
+	 */
+	public ReplaceHandlerException createReplaceHandlerException(NavigationNode node, Component context);
 
 	/**
 	 * Mounts the request mappers for this node and its descendants in the Wicket

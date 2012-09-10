@@ -16,6 +16,8 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 /**
  * This model returns all entity descriptors. A shared instance of this class
  * is provided.
+ * 
+ * TODO: parameter check / return value check: ab hier weiterprüfen
  */
 public final class AllEntityDescriptorsModel extends AbstractReadOnlyModel<List<EntityDescriptor>> {
 

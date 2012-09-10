@@ -8,8 +8,11 @@ package name.martingeisse.admin.navigation.handler;
 
 import name.martingeisse.admin.navigation.NavigationNode;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.ExternalLink;
+import org.apache.wicket.request.RequestHandlerStack.ReplaceHandlerException;
+import org.apache.wicket.request.flow.RedirectToUrlException;
 
 /**
  * This handler uses a fixed URL and is meant for linking external
@@ -55,4 +58,12 @@ public final class UrlNavigationHandler extends AbstractNavigationNodeHandler {
 		return new ExternalLink(id, url);
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#createReplaceHandlerException(name.martingeisse.admin.navigation.NavigationNode, org.apache.wicket.Component)
+	 */
+	@Override
+	public ReplaceHandlerException createReplaceHandlerException(NavigationNode node, Component context) {
+		return new RedirectToUrlException(url);
+	}
+	
 }

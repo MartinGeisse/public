@@ -30,6 +30,9 @@ public final class PageBarUtil {
 	 * @param page the page to create the top bars for
 	 * @param id the wicket id of the {@link RepeatingView}
 	 * @return the {@link RepeatingView} that contains all top-bars
+	 * 
+	 * TODO: if NavigationUtil.getNavigationNodeForPage(page) returns null then
+	 * add an empty component instead of the RepeatingView.
 	 */
 	public static WebMarkupContainer createAllPageTopBars(final Page page, final String id) {
 		final RepeatingView view = new RepeatingView(id);
@@ -42,6 +45,9 @@ public final class PageBarUtil {
 	 * @param page the page to create the bottom bars for
 	 * @param id the wicket id of the {@link RepeatingView}
 	 * @return the {@link RepeatingView} that contains all bottom-bars
+	 * 
+	 * TODO: if NavigationUtil.getNavigationNodeForPage(page) returns null then
+	 * add an empty component instead of the RepeatingView.
 	 */
 	public static WebMarkupContainer createAllPageBottomBars(final Page page, final String id) {
 		final RepeatingView view = new RepeatingView(id);

@@ -8,6 +8,10 @@ package name.martingeisse.common.computation.operation;
 
 import java.util.List;
 
+import name.martingeisse.common.util.ObjectStateUtil;
+import name.martingeisse.common.util.ParameterUtil;
+import name.martingeisse.common.util.ReturnValueUtil;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -47,7 +51,7 @@ public abstract class AbstractForeachOperation<T, P> {
 	 * @param exceptionMode the exception handling mode
 	 */
 	public AbstractForeachOperation(final ForeachHandlingMode exceptionMode) {
-		this.exceptionMode = exceptionMode;
+		this.exceptionMode = ParameterUtil.ensureNotNull(exceptionMode, "exceptionMode");;
 	}
 
 	/**
@@ -63,7 +67,7 @@ public abstract class AbstractForeachOperation<T, P> {
 	 * @param exceptionMode the exceptionMode to set
 	 */
 	public void setExceptionMode(final ForeachHandlingMode exceptionMode) {
-		this.exceptionMode = exceptionMode;
+		this.exceptionMode = ParameterUtil.ensureNotNull(exceptionMode, "exceptionMode");;
 	}
 
 	/**
@@ -75,9 +79,7 @@ public abstract class AbstractForeachOperation<T, P> {
 	protected final void run(final P parameter) {
 
 		// validate
-		if (exceptionMode == null) {
-			throw new IllegalStateException("exceptionMode is null");
-		}
+		ObjectStateUtil.nullNotAllowed(exceptionMode, "exceptionMode");
 		onValidate(parameter);
 
 		// run the internal implementation of this method either with or
@@ -136,6 +138,7 @@ public abstract class AbstractForeachOperation<T, P> {
 	 */
 	protected final List<T> determineListThenLoop(final P parameter) {
 		final List<T> list = determineList(parameter);
+		ReturnValueUtil.nullNotAllowed(list, "determineList");
 		onListObtained(parameter, list);
 		for (final T element : list) {
 			if (exceptionMode.isIncludesLocal()) {

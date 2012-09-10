@@ -12,10 +12,13 @@ import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.NavigationNode;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.Page;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.request.RequestHandlerStack.ReplaceHandlerException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 
@@ -91,7 +94,44 @@ public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePag
 	public AbstractLink createLink(final String id, final NavigationNode node) {
 		return new MyLink(id, getPageClass(), new PageParameters(getExplicitPageParameters()));
 	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler#createReplaceHandlerException(name.martingeisse.admin.navigation.NavigationNode, org.apache.wicket.Component)
+	 */
+	@Override
+	public ReplaceHandlerException createReplaceHandlerException(NavigationNode node, Component context) {
+		PageParameters pageParameters = new PageParameters(getExplicitPageParameters());
+		pageParameters.add("id", determineEntityId(context));
+		return new RestartResponseException(getPageClass(), pageParameters);
+	}
 
+	/**
+	 * Determines the entity ID to which this navigation node refers in the specified context.
+	 * Throws an {@link IllegalStateException} if this method cannot determine the ID.
+	 * 
+	 * This method is used by {{@link #createReplaceHandlerException(NavigationNode, Component)}
+	 * in any case, and by the link from {{@link #createLink(String, NavigationNode)} if
+	 * no ID was set in the link explicitly. This allows to have entity-instance links and redirects
+	 * created from the navigation nodes (which are not actually instance-local objects) which
+	 * automatically resolve their ID. Alternatively, the calling code may use createLink() and add
+	 * the "id" parameter manually to specify an explicit ID.
+	 * 
+	 * @param context the context component
+	 * @return the entity ID
+	 */
+	static Object determineEntityId(Component context) {
+		final Page page = context.getPage();
+		if (page instanceof IGetEntityId) {
+			return ((IGetEntityId)page).getEntityId();
+		} else {
+			final StringValue parameter = page.getPageParameters().get("id");
+			if (parameter == null || parameter.toString() == null) {
+				throw new IllegalStateException("BookmarkableEntityInstanceNavigationHandler: the context Page doesn't implement IGetEntityId (page class " + page.getClass().getCanonicalName() + ") and doesn't have an id page parameter either; pageParameters: " + page.getPageParameters());
+			}
+			return parameter.toString();
+		}
+	}
+	
 	/**
 	 * The link class must be static because the link must be serializable but the
 	 * handler isn't, so we define it here and not as an inner class.
@@ -108,24 +148,9 @@ public class BookmarkableEntityInstanceNavigationHandler extends BookmarkablePag
 		@Override
 		protected void onInitialize() {
 			super.onInitialize();
-
-			// Add the entity ID from the current page to the parameters if no "id" parameter exists yet.
-			// This allows to have instance-local links created from the navigation nodes (which are not
-			// actually instance-local objects) which automatically resolve their ID. Alternatively,
-			// the calling code may use createLink() and add parameters manually to specify an explicit ID.
 			if (!getPageParameters().getNamedKeys().contains("id")) {
-				final Page page = getPage();
-				if (page instanceof IGetEntityId) {
-					getPageParameters().add("id", ((IGetEntityId)page).getEntityId());
-				} else {
-					final StringValue parameter = page.getPageParameters().get("id");
-					if (parameter == null || parameter.toString() == null) {
-						throw new IllegalStateException("BookmarkableEntityInstanceNavigationHandler link: the Page doesn't implement IGetEntityId (page class " + page.getClass().getCanonicalName() + ") and doesn't have an id page parameter either; pageParameters: " + page.getPageParameters());
-					}
-					getPageParameters().add("id", parameter.toString());
-				}
+				getPageParameters().add("id", determineEntityId(this));
 			}
-
 		}
 
 	}

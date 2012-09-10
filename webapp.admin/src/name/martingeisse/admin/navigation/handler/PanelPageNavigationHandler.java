@@ -9,10 +9,13 @@ package name.martingeisse.admin.navigation.handler;
 import name.martingeisse.admin.component.page.PanelPage;
 import name.martingeisse.admin.navigation.NavigationNode;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.StatelessLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.RequestHandlerStack.ReplaceHandlerException;
 import org.apache.wicket.request.cycle.RequestCycle;
 
 /**
@@ -132,6 +135,14 @@ public final class PanelPageNavigationHandler extends AbstractNavigationNodeHand
 	@Override
 	public AbstractLink createLink(final String id, final NavigationNode node) {
 		return new MyLink(id, panelClass, model, allowModelLessConstructor, preferModelLessConstructor);
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#createReplaceHandlerException(name.martingeisse.admin.navigation.NavigationNode, org.apache.wicket.Component)
+	 */
+	@Override
+	public ReplaceHandlerException createReplaceHandlerException(NavigationNode node, Component context) {
+		return new RestartResponseException(new PanelPage(panelClass, model, allowModelLessConstructor, preferModelLessConstructor));
 	}
 
 	/**

@@ -150,5 +150,13 @@ public final class IntegerTypeInfo implements IEntityIdTypeInfo {
 			throw new RuntimeException("cannot convert " + (bytes*8) + "-bit integer value from Wicket StringValue");
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "{integer type: " + bytes + " bytes; min = " + minValue + ", max = " + maxValue + "}";
+	}
 	
 }

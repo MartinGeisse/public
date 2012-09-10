@@ -138,7 +138,7 @@ public final class JdbcColumnStructure {
 	 * @return the high-level type for this current column
 	 */
 	public ISqlTypeInfo determineHighlevelType() {
-		return TypeInfoUtil.getTypeInfoForSqlTypeCode(sqlType);
+		return TypeInfoUtil.getTypeInfoForSqlTypeCode(sqlType, size);
 	}
 
 }

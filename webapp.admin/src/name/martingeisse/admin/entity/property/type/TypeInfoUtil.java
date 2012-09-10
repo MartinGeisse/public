@@ -21,12 +21,34 @@ public final class TypeInfoUtil {
 
 	/**
 	 * Obtains the {@link ITypeInfo} for the specified JDBC SQL type code.
+	 * 
+	 * Note that this method will return a 1-byte integer type for TINYINT(1),
+	 * which is correct behavior. The MySQL idiom of using TINYINT(1) when you
+	 * mean "boolean" is not handled by this method, so if such behavior is
+	 * expected, you should instruct the MySQL database driver to do it (which it
+	 * does by default). Other databases have a distinct boolean type, so mapping
+	 * TINYINT(1) to boolean is incorrect for them; it actually means "1-byte
+	 * integer with only a single decimal digit being displayed".
+	 * 
 	 * @param sqlTypeCode the type code
+	 * @param size the "size" type parameter
 	 * @return the type info object
 	 */
-	public static ISqlTypeInfo getTypeInfoForSqlTypeCode(int sqlTypeCode) {
+	public static ISqlTypeInfo getTypeInfoForSqlTypeCode(int sqlTypeCode, int size) {
+		if (size < 0) {
+			throw new IllegalArgumentException("size cannot be negative");
+		}
 		switch (sqlTypeCode) {
 
+		case Types.BOOLEAN:
+			return BooleanTypeInfo.instance;
+			
+		case Types.BIT:
+			if (size == 0) {
+				return BooleanTypeInfo.instance;
+			}
+			throw new RuntimeException("cannot handle BIT(" + size + ")");
+			
 		case Types.TINYINT:
 			return new IntegerTypeInfo(1);
 			

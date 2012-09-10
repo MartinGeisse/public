@@ -12,9 +12,12 @@ import name.martingeisse.admin.navigation.NavigationMountedRequestMapper;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.NavigationUtil;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.request.RequestHandlerStack.ReplaceHandlerException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
@@ -135,4 +138,12 @@ public class BookmarkablePageNavigationHandler extends AbstractNavigationNodeHan
 		return new BookmarkablePageLink<Void>(id, pageClass, new PageParameters(explicitPageParameters));
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.navigation.INavigationNodeHandler#createReplaceHandlerException(name.martingeisse.admin.navigation.NavigationNode, org.apache.wicket.Component)
+	 */
+	@Override
+	public ReplaceHandlerException createReplaceHandlerException(NavigationNode node, Component context) {
+		return new RestartResponseException(pageClass, explicitPageParameters);
+	}
+	
 }

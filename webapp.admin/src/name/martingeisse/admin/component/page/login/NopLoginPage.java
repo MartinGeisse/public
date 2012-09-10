@@ -17,8 +17,6 @@ import org.apache.wicket.markup.html.form.StatelessForm;
  * credentials. Instead it just has a button that logs the user
  * in. Using the static bypass flag it is also possible to
  * skip this page and login automatically.
- * 
- * TODO: parameter check / return value check: ab hier weiterprüfen
  */
 public class NopLoginPage extends WebPage {
 

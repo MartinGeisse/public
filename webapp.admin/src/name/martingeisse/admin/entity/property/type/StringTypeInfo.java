@@ -128,5 +128,13 @@ public final class StringTypeInfo implements IEntityIdTypeInfo {
 	public Object convertFromStringValue(StringValue value) {
 		return value.toString();
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "{string type; allowEmpty = " + allowEmpty + ", maxLength = " + maxLength + ", padded = " + padded + "}";
+	}
 	
 }
