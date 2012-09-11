@@ -10,6 +10,7 @@ import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.autoform.EntityAutoformDescriber;
 import name.martingeisse.admin.navigation.NavigationUtil;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
+import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 
 import org.apache.wicket.model.IModel;
@@ -27,7 +28,7 @@ public class NavigationMountedEntityAutoformPanel extends EditEntityAutoformPane
 	 * @param model the entity instance model
 	 */
 	public NavigationMountedEntityAutoformPanel(final String id, final IModel<EntityInstance> model) {
-		super(id, model.getObject(), EntityAutoformDescriber.instance, DefaultAutoformPropertyComponentFactory.instance);
+		super(id, ParameterUtil.ensureNotNull(model.getObject(), "model"), EntityAutoformDescriber.instance, DefaultAutoformPropertyComponentFactory.instance);
 	}
 
 	/* (non-Javadoc)

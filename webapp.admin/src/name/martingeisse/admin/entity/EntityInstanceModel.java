@@ -9,6 +9,7 @@ package name.martingeisse.admin.entity;
 import java.util.NoSuchElementException;
 
 import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.wicket.model.IModel;
 
@@ -24,19 +25,14 @@ public class EntityInstanceModel implements IModel<EntityInstance> {
 	/**
 	 * the selection
 	 */
-	protected EntitySelection selection;
-
-	/**
-	 * Constructor.
-	 */
-	EntityInstanceModel() {
-	}
+	final EntitySelection selection;
 
 	/**
 	 * Constructor.
 	 * @param selection the selection
 	 */
 	public EntityInstanceModel(final EntitySelection selection) {
+		ParameterUtil.ensureNotNull(selection, "selection");
 		this.selection = selection;
 	}
 
@@ -46,14 +42,6 @@ public class EntityInstanceModel implements IModel<EntityInstance> {
 	 */
 	public EntitySelection getSelection() {
 		return selection;
-	}
-
-	/**
-	 * Setter method for the selection.
-	 * @param selection the selection to set
-	 */
-	public void setSelection(final EntitySelection selection) {
-		this.selection = selection;
 	}
 
 	/* (non-Javadoc)
@@ -88,13 +76,6 @@ public class EntityInstanceModel implements IModel<EntityInstance> {
 
 		/**
 		 * Constructor.
-		 */
-		public Required() {
-			super();
-		}
-
-		/**
-		 * Constructor.
 		 * @param selection the selection
 		 */
 		public Required(final EntitySelection selection) {
@@ -114,13 +95,6 @@ public class EntityInstanceModel implements IModel<EntityInstance> {
 	 * This class returns null if the entity instance cannot be found.
 	 */
 	public static final class Optional extends EntityInstanceModel {
-
-		/**
-		 * Constructor.
-		 */
-		public Optional() {
-			super();
-		}
 
 		/**
 		 * Constructor.

@@ -11,6 +11,8 @@ import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.common.util.GenericTypeUtil;
+import name.martingeisse.common.util.ParameterUtil;
+import name.martingeisse.common.util.ReturnValueUtil;
 
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -27,18 +29,10 @@ public class AbstractEntityInstancePanel extends Panel {
 	/**
 	 * Constructor.
 	 * @param id the wicket id
-	 */
-	public AbstractEntityInstancePanel(final String id) {
-		super(id);
-	}
-
-	/**
-	 * Constructor.
-	 * @param id the wicket id
 	 * @param instanceModel the model
 	 */
 	public AbstractEntityInstancePanel(final String id, final IModel<EntityInstance> instanceModel) {
-		super(id, instanceModel);
+		super(id, ParameterUtil.ensureNotNull(instanceModel, "instanceModel"));
 	}
 
 	/**
@@ -46,7 +40,7 @@ public class AbstractEntityInstancePanel extends Panel {
 	 * @return the model
 	 */
 	public final IModel<EntityInstance> getModel() {
-		return GenericTypeUtil.unsafeCast(getDefaultModel());
+		return GenericTypeUtil.unsafeCast(ReturnValueUtil.nullMeansMissing(getDefaultModel(), "model"));
 	}
 
 	/**
@@ -54,7 +48,7 @@ public class AbstractEntityInstancePanel extends Panel {
 	 * @param model the model to set
 	 */
 	public final void setModel(final IModel<EntityInstance> model) {
-		setDefaultModel(model);
+		setDefaultModel(ParameterUtil.ensureNotNull(model, "model"));
 	}
 
 	/**
@@ -62,7 +56,7 @@ public class AbstractEntityInstancePanel extends Panel {
 	 * @return the entityInstance
 	 */
 	public final EntityInstance getEntityInstance() {
-		return getModel().getObject();
+		return ReturnValueUtil.nullMeansMissing(getModel().getObject(), "model object");
 	}
 	
 	/**
@@ -91,6 +85,7 @@ public class AbstractEntityInstancePanel extends Panel {
 	 * @return the model for the reference target
 	 */
 	public final IModel<EntityInstance> createModelForRelatedSingleEntityInstance(String nearPropertyName) {
+		ParameterUtil.ensureNotNull(nearPropertyName, "nearPropertyName");
 		
 		// find the reference endpoint
 		final EntityReferenceEndpoint nearEndpoint = getEntityDescriptor().findReference(nearPropertyName);

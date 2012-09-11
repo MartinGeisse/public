@@ -24,8 +24,7 @@ public class UnknownEntityException extends RuntimeException {
 	 * @param entityName the name that does not belong to any known entity
 	 */
 	public UnknownEntityException(String entityName) {
-		super("Unknown entity: " + entityName);
-		ParameterUtil.ensureNotNull(entityName, "entityName");
+		super("Unknown entity: " + ParameterUtil.ensureNotNull(entityName, "entityName"));
 		this.entityName = entityName;
 	}
 

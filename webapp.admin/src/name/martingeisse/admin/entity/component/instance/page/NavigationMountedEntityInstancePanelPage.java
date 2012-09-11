@@ -9,6 +9,7 @@ package name.martingeisse.admin.entity.component.instance.page;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.navigation.NavigationUtil;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
+import name.martingeisse.common.util.ReturnValueUtil;
 
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -17,13 +18,13 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * This class allows to mount an entity instance panel in the navigation
  * in combination with {@link EntityInstancePanelHandler}.
  */
-public class EntityInstancePanelPage extends AbstractEntityInstancePanelPage {
+public class NavigationMountedEntityInstancePanelPage extends AbstractEntityInstancePanelPage {
 
 	/**
 	 * Constructor.
 	 * @param parameters the page parameters
 	 */
-	public EntityInstancePanelPage(final PageParameters parameters) {
+	public NavigationMountedEntityInstancePanelPage(final PageParameters parameters) {
 		super(parameters);
 	}
 
@@ -31,7 +32,7 @@ public class EntityInstancePanelPage extends AbstractEntityInstancePanelPage {
 	 * @return the navigation node handler
 	 */
 	private EntityInstancePanelHandler getHandler() {
-		return (EntityInstancePanelHandler)(NavigationUtil.getNavigationNodeForPage(this).getHandler());
+		return (EntityInstancePanelHandler)(ReturnValueUtil.nullMeansMissing(NavigationUtil.getNavigationNodeForPage(this), "navigation node").getHandler());
 	}
 
 	/* (non-Javadoc)

@@ -8,6 +8,7 @@ package name.martingeisse.admin.entity;
 
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.wicket.model.LoadableDetachableModel;
 
@@ -28,6 +29,7 @@ public final class EntityDescriptorModel extends LoadableDetachableModel<EntityD
 	 */
 	public EntityDescriptorModel(final String entityName) {
 		super();
+		ParameterUtil.ensureNotNull(entityName, "entityName");
 		this.entityName = entityName;
 	}
 
@@ -37,6 +39,7 @@ public final class EntityDescriptorModel extends LoadableDetachableModel<EntityD
 	 */
 	public EntityDescriptorModel(final EntityDescriptor entity) {
 		super(entity);
+		ParameterUtil.ensureNotNull(entity, "entity");
 		this.entityName = entity.getName();
 	}
 

@@ -101,7 +101,7 @@ public class Main {
 		// the database
 		final MysqlDatabaseDescriptor phorumDatabase = new MysqlDatabaseDescriptor();
 		phorumDatabase.setDisplayName("Phorum database");
-		phorumDatabase.setUrl("jdbc:mysql://localhost/phorum");
+		phorumDatabase.setUrl("jdbc:mysql://localhost/phorum?zeroDateTimeBehavior=convertToNull");
 		phorumDatabase.setUsername("root");
 		phorumDatabase.setPassword("");
 		ApplicationConfiguration.get().addDatabase(phorumDatabase);

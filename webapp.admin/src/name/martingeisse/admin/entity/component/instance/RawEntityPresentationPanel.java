@@ -10,6 +10,8 @@ import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.util.LinkUtil;
+import name.martingeisse.common.util.ParameterUtil;
+import name.martingeisse.common.util.ReturnValueUtil;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -36,7 +38,8 @@ public class RawEntityPresentationPanel extends Panel {
 	 * @param model the entity instance model
 	 */
 	public RawEntityPresentationPanel(final String id, final IModel<EntityInstance> model) {
-		super(id, model);
+		super(id, ParameterUtil.ensureNotNull(model, "model"));
+				
 		add(new Loop("fields", new PropertyModel<Integer>(this, "width")) {
 			@Override
 			protected void populateItem(final LoopItem item) {
@@ -78,7 +81,7 @@ public class RawEntityPresentationPanel extends Panel {
 	 */
 	@Override
 	protected void onBeforeRender() {
-		entityInstance = (EntityInstance)getDefaultModelObject();
+		entityInstance = ReturnValueUtil.nullMeansMissing((EntityInstance)getDefaultModelObject(), "entity instance");
 		super.onBeforeRender();
 	}
 

@@ -15,6 +15,8 @@ import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.EntityConditions;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
+import name.martingeisse.common.util.ObjectStateUtil;
+import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.wicket.model.IModel;
 
@@ -44,6 +46,7 @@ public final class EntitySelection {
 	 * @param entityModel the model for the entity descriptor
 	 */
 	public EntitySelection(final IModel<EntityDescriptor> entityModel) {
+		ParameterUtil.ensureNotNull(entityModel, "entityModel");
 		this.entityModel = entityModel;
 		this.predicate = null;
 	}
@@ -54,6 +57,7 @@ public final class EntitySelection {
 	 * @param predicate the fetch predicate
 	 */
 	public EntitySelection(final IModel<EntityDescriptor> entityModel, final Predicate predicate) {
+		ParameterUtil.ensureNotNull(entityModel, "entityModel");
 		this.entityModel = entityModel;
 		this.predicate = predicate;
 	}
@@ -70,14 +74,17 @@ public final class EntitySelection {
 	 * @param nearReferenceEndpoint the near endpoint of the reference
 	 */
 	public EntitySelection(final IModel<EntityInstance> referrerInstanceModel, final EntityReferenceEndpoint nearReferenceEndpoint) {
+		ParameterUtil.ensureNotNull(referrerInstanceModel, "referrerInstanceModel");
+		ParameterUtil.ensureNotNull(nearReferenceEndpoint, "nearReferenceEndpoint");
 		final EntityReferenceEndpoint farReferenceEndpoint = nearReferenceEndpoint.getOther();
 		
 		// obtain the value of the key property in the referrer
-		final EntityInstance referrer = referrerInstanceModel.getObject();
+		final EntityInstance referrer = ObjectStateUtil.nullMeansMissing(referrerInstanceModel.getObject(), "referrer (entity instance)") ;
 		if (referrer.getEntity() != nearReferenceEndpoint.getEntity()) {
 			throw new IllegalArgumentException("EntitySelection (from reference): referrer instance is an instance of entity " + referrer.getEntityName() + ", but reference source is " + nearReferenceEndpoint.getEntity().getName());
 		}
 		final Object referrerKey = referrer.getFieldValue(nearReferenceEndpoint.getPropertyName());
+		// TODO: what if referrerKey is null? check if null means "no reference" or "reference by null"? or is that clear in this context?
 
 		// build a condition object for the query
 		final EntityConditions conditions = new EntityConditions();
@@ -96,6 +103,8 @@ public final class EntitySelection {
 	 * @return the {@link EntitySelection} instance
 	 */
 	public static EntitySelection forId(final IModel<EntityDescriptor> entityModel, Object id) {
+		ParameterUtil.ensureNotNull(entityModel, "entityModel");
+		ParameterUtil.ensureNotNull(id, "id");
 		return forId(entityModel, entityModel.getObject(), id);
 	}
 	
@@ -106,6 +115,8 @@ public final class EntitySelection {
 	 * @return the {@link EntitySelection} instance
 	 */
 	public static EntitySelection forId(EntityDescriptor entity, Object id) {
+		ParameterUtil.ensureNotNull(entity, "entity");
+		ParameterUtil.ensureNotNull(id, "id");
 		return forId(new EntityDescriptorModel(entity), entity, id);
 	}
 	
@@ -116,6 +127,8 @@ public final class EntitySelection {
 	 * @return the {@link EntitySelection} instance
 	 */
 	public static EntitySelection forId(String entityName, Object id) {
+		ParameterUtil.ensureNotNull(entityName, "entityName");
+		ParameterUtil.ensureNotNull(id, "id");
 		return forId(new EntityDescriptorModel(entityName), id);
 	}
 
@@ -123,6 +136,9 @@ public final class EntitySelection {
 	 * Internal implementation of the forId() methods.
 	 */
 	private static EntitySelection forId(final IModel<EntityDescriptor> entityModel, EntityDescriptor entity, Object id) {
+		ParameterUtil.ensureNotNull(entityModel, "entityModel");
+		ParameterUtil.ensureNotNull(entity, "entity");
+		ParameterUtil.ensureNotNull(id, "id");
 		return forKey(entityModel, entity, entity.getIdColumnName(), id, false);
 	}
 
@@ -135,6 +151,8 @@ public final class EntitySelection {
 	 * @return the {@link EntitySelection} instance
 	 */
 	public static EntitySelection forKey(final IModel<EntityDescriptor> entityModel, String propertyName, Object propertyValue, boolean nullIsReference) {
+		ParameterUtil.ensureNotNull(entityModel, "entityModel");
+		ParameterUtil.ensureNotNull(propertyName, "propertyName");
 		return forKey(entityModel, entityModel.getObject(), propertyName, propertyValue, nullIsReference);
 	}
 	
@@ -147,6 +165,8 @@ public final class EntitySelection {
 	 * @return the {@link EntitySelection} instance
 	 */
 	public static EntitySelection forKey(EntityDescriptor entity, String propertyName, Object propertyValue, boolean nullIsReference) {
+		ParameterUtil.ensureNotNull(entity, "entity");
+		ParameterUtil.ensureNotNull(propertyName, "propertyName");
 		return forKey(new EntityDescriptorModel(entity), entity, propertyName, propertyValue, nullIsReference);
 	}
 	
@@ -159,6 +179,8 @@ public final class EntitySelection {
 	 * @return the {@link EntitySelection} instance
 	 */
 	public static EntitySelection forKey(String entityName, String propertyName, Object propertyValue, boolean nullIsReference) {
+		ParameterUtil.ensureNotNull(entityName, "entityName");
+		ParameterUtil.ensureNotNull(propertyName, "propertyName");
 		return forKey(new EntityDescriptorModel(entityName), propertyName, propertyValue, nullIsReference);
 	}
 
@@ -166,6 +188,9 @@ public final class EntitySelection {
 	 * Internal implementation of the forUniqueKey() methods.
 	 */
 	private static EntitySelection forKey(final IModel<EntityDescriptor> entityModel, EntityDescriptor entity, String propertyName, Object propertyValue, boolean nullIsReference) {
+		ParameterUtil.ensureNotNull(entityModel, "entityModel");
+		ParameterUtil.ensureNotNull(entity, "entity");
+		ParameterUtil.ensureNotNull(propertyName, "propertyName");
 		if (propertyValue == null && !nullIsReference) {
 			return new EntitySelection(entityModel, BooleanTemplate.FALSE);
 		} else {
@@ -207,6 +232,7 @@ public final class EntitySelection {
 	 * @return the result set
 	 */
 	public static ResultSet executeQueryFor(IModel<EntityDescriptor> entityModel, Predicate predicate) {
+		ParameterUtil.ensureNotNull(entityModel, "entityModel");
 		return executeQueryFor(entityModel.getObject(), predicate);
 	}
 
@@ -217,6 +243,7 @@ public final class EntitySelection {
 	 * @return the result set
 	 */
 	public static ResultSet executeQueryFor(EntityDescriptor entity, Predicate predicate) {
+		ParameterUtil.ensureNotNull(entity, "entity");
 		SQLQuery query = entity.createQuery(EntityDescriptor.ALIAS);
 		if (predicate != null) {
 			query = query.where(predicate);
@@ -235,20 +262,7 @@ public final class EntitySelection {
 	 * @return the instance
 	 */
 	public EntityInstance fetchSingleInstance(final boolean optional) {
-		try {
-			final EntityDescriptor entity = entityModel.getObject();
-			final ResultSet resultSet = executeQuery();
-			entity.checkDataRowMeta(resultSet);
-			if (resultSet.next()) {
-				return new EntityInstance(entity, resultSet);
-			} else if (optional) {
-				return null;
-			} else {
-				throw new NoSuchElementException("no instance of entity '" + entity.getName() + "' with conditions: " + predicate);
-			}
-		} catch (final SQLException e) {
-			throw new RuntimeException(e);
-		}
+		return fetchSingleInstanceFor(entityModel, predicate, optional);
 	}
 
 	/**
@@ -259,6 +273,7 @@ public final class EntitySelection {
 	 * @return the instance
 	 */
 	public static EntityInstance fetchSingleInstanceFor(IModel<EntityDescriptor> entityModel, Predicate predicate, final boolean optional) {
+		ParameterUtil.ensureNotNull(entityModel, "entityModel");
 		return fetchSingleInstanceFor(entityModel.getObject(), predicate, optional);
 	}
 
@@ -270,6 +285,7 @@ public final class EntitySelection {
 	 * @return the instance
 	 */
 	public static EntityInstance fetchSingleInstanceFor(EntityDescriptor entity, Predicate predicate, final boolean optional) {
+		ParameterUtil.ensureNotNull(entity, "entity");
 		try {
 			final ResultSet resultSet = executeQueryFor(entity, predicate);
 			entity.checkDataRowMeta(resultSet);

@@ -46,6 +46,8 @@ import com.mysema.query.types.Predicate;
  * This class does not implement {@link IGetPageable} intentionally since
  * pagination is done in Javascript.
  * 
+ * TODO: parameter check / return value check: ab hier weiterprüfen
+ * 
  * @param <CD> the column descriptor type
  */
 public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDescriptor> extends Panel implements IEntityPredicateAcceptor, ISimpleCallbackListener {

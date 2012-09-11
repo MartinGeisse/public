@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.navigation.handler;
 
-import name.martingeisse.admin.entity.component.instance.page.EntityInstancePanelPage;
+import name.martingeisse.admin.entity.component.instance.page.NavigationMountedEntityInstancePanelPage;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 
 import org.apache.wicket.markup.html.panel.Panel;
@@ -28,7 +28,7 @@ public class EntityInstancePanelHandler extends BookmarkableEntityInstanceNaviga
 	 * @param panelClass the panel class
 	 */
 	public EntityInstancePanelHandler(final Class<? extends Panel> panelClass) {
-		super(EntityInstancePanelPage.class);
+		super(NavigationMountedEntityInstancePanelPage.class);
 		this.panelClass = panelClass;
 	}
 

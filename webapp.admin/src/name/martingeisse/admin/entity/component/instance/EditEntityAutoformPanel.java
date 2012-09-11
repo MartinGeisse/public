@@ -14,6 +14,8 @@ import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.autoform.EntityAutoformDescriber;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
 import name.martingeisse.common.util.GenericTypeUtil;
+import name.martingeisse.common.util.ParameterUtil;
+import name.martingeisse.common.util.ReturnValueUtil;
 import name.martingeisse.wicket.autoform.AutoformPanel;
 import name.martingeisse.wicket.autoform.AutoformUtil;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
@@ -52,7 +54,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 	 * @param model the entity instance model
 	 */
 	public EditEntityAutoformPanel(final String id, final IModel<EntityInstance> model) {
-		this(id, model.getObject(), EntityAutoformDescriber.instance, DefaultAutoformPropertyComponentFactory.instance);
+		this(id, ParameterUtil.ensureNotNull(model, "model").getObject(), EntityAutoformDescriber.instance, DefaultAutoformPropertyComponentFactory.instance);
 	}
 
 	/**
@@ -63,7 +65,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 	 * @param propertyComponentFactory the factory used to create components for the bean properties
 	 */
 	public EditEntityAutoformPanel(String id, EntityInstance bean, IAutoformBeanDescriber beanDescriber, IAutoformPropertyComponentFactory propertyComponentFactory) {
-		super(id, bean, beanDescriber, propertyComponentFactory);
+		super(id, ParameterUtil.ensureNotNull(bean, "bean"), ParameterUtil.ensureNotNull(beanDescriber, "beanDescriber"), ParameterUtil.ensureNotNull(propertyComponentFactory, "propertyComponentFactory"));
 	}
 	
 	/**
@@ -71,7 +73,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 	 * @return the model
 	 */
 	public final IModel<EntityInstance> getModel() {
-		return GenericTypeUtil.unsafeCast(getDefaultModel());
+		return GenericTypeUtil.unsafeCast(ReturnValueUtil.nullMeansMissing(getDefaultModel(), "model"));
 	}
 
 	/**
@@ -92,7 +94,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 	 * @return the entityInstance
 	 */
 	public final EntityInstance getEntityInstance() {
-		return getModel().getObject();
+		return ReturnValueUtil.nullMeansMissing(getModel().getObject(), "entity instance");
 	}
 	
 	/**
@@ -139,5 +141,4 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 		
 	}
 
-	
 }

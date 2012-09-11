@@ -10,6 +10,8 @@ import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.property.type.IEntityIdTypeInfo;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.common.util.ParameterUtil;
+import name.martingeisse.common.util.ReturnValueUtil;
 
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -35,6 +37,8 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 	 */
 	public AbstractEntityInstancePanelPage(final PageParameters parameters) {
 		super(parameters);
+		ParameterUtil.ensureNotNull(parameters, "parameters");
+		ParameterUtil.ensureNotNull(parameters.get("id"), "id parameter");
 	}
 
 	/* (non-Javadoc)
@@ -69,7 +73,7 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 	 */
 	public final EntityInstance getInstance() {
 		if (instance == null) {
-			instance = determineEntityType().fetchSingleInstance(determineId(), false);
+			instance = ReturnValueUtil.nullMeansMissing(determineEntityType(), "entity descriptor").fetchSingleInstance(determineId(), false);
 		}
 		return instance;
 	}
@@ -79,7 +83,7 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 	 * @return the entity id
 	 */
 	private Object determineId() {
-		final EntityDescriptor entity = determineEntityType();
+		final EntityDescriptor entity = ReturnValueUtil.nullMeansMissing(determineEntityType(), "entity descriptor");
 		final IEntityIdTypeInfo idType = entity.getIdColumnType();
 		if (idType == null) {
 			throw new IllegalStateException("table " + entity.getTableName() + " has no primary key and thus cannot be viewed");
