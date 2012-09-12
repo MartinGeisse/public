@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
-import name.martingeisse.admin.entity.property.type.ISqlTypeInfo;
+import name.martingeisse.admin.entity.schema.type.ISqlTypeInfo;
 import name.martingeisse.admin.util.ScoreComparator;
 
 /**

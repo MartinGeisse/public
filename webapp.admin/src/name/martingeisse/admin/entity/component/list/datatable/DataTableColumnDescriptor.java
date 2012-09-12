@@ -9,6 +9,8 @@ package name.martingeisse.admin.entity.component.list.datatable;
 /**
  * DataTable implementations use this class to indicate column
  * behavior to the base class.
+ * 
+ * TODO: parameter check / return value check: ab hier weiterprüfen
  */
 public class DataTableColumnDescriptor {
 

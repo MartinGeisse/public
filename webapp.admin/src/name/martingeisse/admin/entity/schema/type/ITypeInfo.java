@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.property.type;
+package name.martingeisse.admin.entity.schema.type;
 
 /**
  * Generic super-interface for type information. All types have

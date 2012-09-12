@@ -9,8 +9,8 @@ package name.martingeisse.admin.readonly;
 import java.sql.Types;
 
 import name.martingeisse.admin.application.IPlugin;
-import name.martingeisse.admin.entity.property.type.ISqlTypeInfo;
-import name.martingeisse.admin.entity.property.type.UnknownSqlTypeInfo;
+import name.martingeisse.admin.entity.schema.type.ISqlTypeInfo;
+import name.martingeisse.admin.entity.schema.type.UnknownSqlTypeInfo;
 
 /**
  * This contributor provides basic rendering of entity properties.

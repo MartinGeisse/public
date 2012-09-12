@@ -16,7 +16,9 @@ import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.util.IGetPageable;
 import name.martingeisse.common.javascript.JavascriptAssembler;
 import name.martingeisse.common.util.GenericTypeUtil;
+import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.PrimitiveUtil;
+import name.martingeisse.common.util.ReturnValueUtil;
 import name.martingeisse.wicket.util.ISimpleCallbackListener;
 import name.martingeisse.wicket.util.StringValueUtil;
 
@@ -46,8 +48,6 @@ import com.mysema.query.types.Predicate;
  * This class does not implement {@link IGetPageable} intentionally since
  * pagination is done in Javascript.
  * 
- * TODO: parameter check / return value check: ab hier weiterprüfen
- * 
  * @param <CD> the column descriptor type
  */
 public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDescriptor> extends Panel implements IEntityPredicateAcceptor, ISimpleCallbackListener {
@@ -69,6 +69,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	 */
 	public AbstractEntityDataTablePanel(final String id, final IModel<EntityDescriptor> entityModel) {
 		super(id);
+		ParameterUtil.ensureNotNull(entityModel, "entityModel");
 		setDefaultModel(entityModel);
 	}
 
@@ -78,7 +79,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	 * @param selection the entity selection
 	 */
 	public AbstractEntityDataTablePanel(final String id, final EntitySelection selection) {
-		this(id, selection.getEntityModel());
+		this(id, ParameterUtil.ensureNotNull(selection, "selection").getEntityModel());
 		setFilter(selection.getPredicate());
 	}
 
@@ -88,7 +89,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	 */
 	@SuppressWarnings("unchecked")
 	public IModel<EntityDescriptor> getEntityDescriptorModel() {
-		return (IModel<EntityDescriptor>)getDefaultModel();
+		return ReturnValueUtil.nullMeansMissing((IModel<EntityDescriptor>)getDefaultModel(), "entity descriptor model");
 	}
 
 	/**
@@ -96,7 +97,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	 * @return the entity
 	 */
 	public EntityDescriptor getEntityDescriptor() {
-		return (EntityDescriptor)getDefaultModelObject();
+		return ReturnValueUtil.nullMeansMissing((EntityDescriptor)getDefaultModelObject(), "entity descriptor");
 	}
 
 	/**
@@ -200,7 +201,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	 */
 	protected final CD[] getColumnDescriptors() {
 		if (cachedColumnTitles == null) {
-			cachedColumnTitles = determineColumnDescriptors();
+			cachedColumnTitles = ReturnValueUtil.nullNotAllowed(determineColumnDescriptors(), "determineColumnDescriptors()");
 		}
 		return cachedColumnTitles;
 	}
@@ -310,7 +311,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 		final int offset = PrimitiveUtil.fallback(StringValueUtil.getOptionalLowerCappedInteger(parameters.getParameterValue("iDisplayStart"), 0), 0);
 		final int count = PrimitiveUtil.fallback(StringValueUtil.getOptionalLowerCappedInteger(parameters.getParameterValue("iDisplayLength"), 1), 10);
 		// column-wise searching: bSearchable_*, sSearch_*
-		final int echoToken = parameters.getParameterValue("sEcho").toInt();
+		final int echoToken = ParameterUtil.ensureNotNull(parameters.getParameterValue("sEcho"), "sEcho page parameter").toInt();
 
 		// determine sort parameters
 		final int sortColumnCount = PrimitiveUtil.fallback(StringValueUtil.getOptionalLowerCappedInteger(parameters.getParameterValue("iSortingCols"), 0), 0);

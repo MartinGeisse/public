@@ -8,7 +8,7 @@ package name.martingeisse.admin.entity.schema;
 
 import java.lang.annotation.Annotation;
 
-import name.martingeisse.admin.entity.property.type.ISqlTypeInfo;
+import name.martingeisse.admin.entity.schema.type.ISqlTypeInfo;
 import name.martingeisse.common.util.ClassKeyedContainer;
 
 /**

@@ -10,8 +10,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import name.martingeisse.admin.entity.property.type.ISqlTypeInfo;
-import name.martingeisse.admin.entity.property.type.TypeInfoUtil;
+import name.martingeisse.admin.entity.schema.type.ISqlTypeInfo;
+import name.martingeisse.admin.entity.schema.type.TypeInfoUtil;
 
 /**
  * The low-level structure of a JDBC column.

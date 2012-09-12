@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.readonly;
 
-import name.martingeisse.admin.entity.property.type.ISqlTypeInfo;
+import name.martingeisse.admin.entity.schema.type.ISqlTypeInfo;
 import name.martingeisse.admin.util.IGetScore;
 
 /**

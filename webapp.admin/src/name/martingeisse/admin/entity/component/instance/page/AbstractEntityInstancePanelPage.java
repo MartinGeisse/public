@@ -8,8 +8,8 @@ package name.martingeisse.admin.entity.component.instance.page;
 
 import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.entity.instance.EntityInstance;
-import name.martingeisse.admin.entity.property.type.IEntityIdTypeInfo;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.admin.entity.schema.type.IEntityIdTypeInfo;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
 
