@@ -24,6 +24,7 @@ import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
 import name.martingeisse.admin.entity.schema.type.IEntityIdTypeInfo;
+import name.martingeisse.admin.entity.schema.type.ISqlTypeInfo;
 import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.IDatabaseDescriptor;
@@ -123,6 +124,11 @@ public class EntityDescriptor {
 	 * the dataRowMeta
 	 */
 	private DataRowMeta dataRowMeta;
+	
+	/**
+	 * the dataRowTypes
+	 */
+	private ISqlTypeInfo[] dataRowTypes;
 
 	/**
 	 * the searchStrategy
@@ -315,6 +321,27 @@ public class EntityDescriptor {
 	 */
 	public void setDataRowMeta(final DataRowMeta dataRowMeta) {
 		this.dataRowMeta = dataRowMeta;
+	}
+	
+	/**
+	 * Getter method for the dataRowTypes.
+	 * @return the dataRowTypes
+	 */
+	public ISqlTypeInfo[] getDataRowTypes() {
+		return dataRowTypes;
+	}
+	
+	/**
+	 * Initializes the data row types from the {@link DataRowMeta} and the entity properties.
+	 */
+	public void initializeDataRowTypes() {
+		String[] dataRowNames = dataRowMeta.getNames();
+		int width = dataRowNames.length;
+		this.dataRowTypes = new ISqlTypeInfo[width];
+		for (int i=0; i<width; i++) {
+			EntityPropertyDescriptor property = getPropertiesByName().get(dataRowNames[i]);
+			dataRowTypes[i] = property.getType();
+		}
 	}
 
 	/**

@@ -245,6 +245,7 @@ public class ApplicationSchema {
 					for (final EntityDescriptor entityDescriptor : currentDatabaseEntities) {
 						final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + entityDescriptor.getTableName() + " LIMIT 1");
 						entityDescriptor.setDataRowMeta(new DataRowMeta(resultSet.getMetaData()));
+						entityDescriptor.initializeDataRowTypes();
 						resultSet.close();
 					}
 				}

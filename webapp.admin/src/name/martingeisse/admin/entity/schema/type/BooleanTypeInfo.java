@@ -6,17 +6,32 @@
 
 package name.martingeisse.admin.entity.schema.type;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Types;
 
 /**
  * Type object for boolean values.
  */
-public class BooleanTypeInfo implements ISqlTypeInfo {
+public class BooleanTypeInfo extends AbstractSqlTypeInfo {
 
 	/**
-	 * The shared instance of this class.
+	 * The shared non-nullable instance of this class.
 	 */
-	public static final BooleanTypeInfo instance = new BooleanTypeInfo();
+	public static final BooleanTypeInfo nonNullableInstance = new BooleanTypeInfo(false);
+
+	/**
+	 * The shared nullable instance of this class.
+	 */
+	public static final BooleanTypeInfo nullableInstance = new BooleanTypeInfo(true);
+	
+	/**
+	 * Constructor.
+	 * @param nullable whether this type is nullable
+	 */
+	public BooleanTypeInfo(boolean nullable) {
+		super(nullable);
+	}
 	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.property.type.ITypeInfo#getJavaWorkType()
@@ -42,4 +57,12 @@ public class BooleanTypeInfo implements ISqlTypeInfo {
 		return Types.BOOLEAN;
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.schema.type.ISqlTypeInfo#readFromResultSet(java.sql.ResultSet, int)
+	 */
+	@Override
+	public Object readFromResultSet(ResultSet resultSet, int index) throws SQLException {
+		return resultSet.getObject(index);
+	}
+	
 }

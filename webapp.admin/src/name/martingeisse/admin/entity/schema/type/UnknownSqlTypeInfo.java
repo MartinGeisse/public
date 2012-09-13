@@ -6,10 +6,13 @@
 
 package name.martingeisse.admin.entity.schema.type;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
  * This class can be used as a general fallback for SQL types.
  */
-public class UnknownSqlTypeInfo implements ISqlTypeInfo {
+public class UnknownSqlTypeInfo extends AbstractSqlTypeInfo {
 
 	/**
 	 * the sqlTypeCode
@@ -18,9 +21,11 @@ public class UnknownSqlTypeInfo implements ISqlTypeInfo {
 
 	/**
 	 * Constructor.
+	 * @param nullable whether this type is nullable
 	 * @param sqlTypeCode the JDBC type code
 	 */
-	public UnknownSqlTypeInfo(final int sqlTypeCode) {
+	public UnknownSqlTypeInfo(final boolean nullable, final int sqlTypeCode) {
+		super(nullable);
 		this.sqlTypeCode = sqlTypeCode;
 	}
 
@@ -54,6 +59,14 @@ public class UnknownSqlTypeInfo implements ISqlTypeInfo {
 	@Override
 	public String toString() {
 		return "{unknown SQL type; code = " + sqlTypeCode + "}";
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.schema.type.ISqlTypeInfo#readFromResultSet(java.sql.ResultSet, int)
+	 */
+	@Override
+	public Object readFromResultSet(ResultSet resultSet, int index) throws SQLException {
+		return resultSet.getObject(index);
 	}
 	
 }

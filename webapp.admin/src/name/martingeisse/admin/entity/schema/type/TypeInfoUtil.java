@@ -32,51 +32,58 @@ public final class TypeInfoUtil {
 	 * 
 	 * @param sqlTypeCode the type code
 	 * @param size the "size" type parameter
+	 * @param nullable whether the type is nullable
 	 * @return the type info object
 	 */
-	public static ISqlTypeInfo getTypeInfoForSqlTypeCode(int sqlTypeCode, int size) {
+	public static ISqlTypeInfo getTypeInfoForSqlTypeCode(int sqlTypeCode, int size, boolean nullable) {
 		if (size < 0) {
 			throw new IllegalArgumentException("size cannot be negative");
 		}
 		switch (sqlTypeCode) {
 
 		case Types.BOOLEAN:
-			return BooleanTypeInfo.instance;
+			return (nullable ? BooleanTypeInfo.nullableInstance : BooleanTypeInfo.nonNullableInstance);
 			
 		case Types.BIT:
 			if (size == 0) {
-				return BooleanTypeInfo.instance;
+				return (nullable ? BooleanTypeInfo.nullableInstance : BooleanTypeInfo.nonNullableInstance);
 			}
 			throw new RuntimeException("cannot handle BIT(" + size + ")");
 			
 		case Types.TINYINT:
-			return new IntegerTypeInfo(1);
+			return new IntegerTypeInfo(nullable, 1);
 			
 		case Types.SMALLINT:
-			return new IntegerTypeInfo(2);
+			return new IntegerTypeInfo(nullable, 2);
 			
 		case Types.INTEGER:
-			return new IntegerTypeInfo(4);
+			return new IntegerTypeInfo(nullable, 4);
 			
 		case Types.BIGINT:
-			return new IntegerTypeInfo(8);
+			return new IntegerTypeInfo(nullable, 8);
 
 		case Types.CHAR:
 		case Types.NCHAR:
-			return new StringTypeInfo(true, 0xff, true);
+			return new StringTypeInfo(nullable, true, 0xff, true);
 
 		case Types.VARCHAR:
 		case Types.NVARCHAR:
-			return new StringTypeInfo(true, 0xffff, false);
+			return new StringTypeInfo(nullable, true, 0xffff, false);
 			
 		case Types.LONGVARCHAR:
 		case Types.LONGNVARCHAR:
 		case Types.CLOB:
 		case Types.NCLOB:
-			return new StringTypeInfo(true, null, false);
+			return new StringTypeInfo(nullable, true, null, false);
+			
+		case Types.DATE:
+			return new DateTypeInfo(nullable);
+			
+		case Types.TIMESTAMP:
+			return new DateTimeTypeInfo(nullable);
 
 		default:
-			return new UnknownSqlTypeInfo(sqlTypeCode);
+			return new UnknownSqlTypeInfo(nullable, sqlTypeCode);
 
 		}
 

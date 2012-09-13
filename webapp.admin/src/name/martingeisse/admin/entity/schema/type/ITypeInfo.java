@@ -23,6 +23,11 @@ package name.martingeisse.admin.entity.schema.type;
 public interface ITypeInfo {
 
 	/**
+	 * @return true if and only if the value of this type can be null
+	 */
+	public boolean isNullable();
+	
+	/**
 	 * @return the class object for this type when working with Java values
 	 */
 	public Class<?> getJavaWorkType();

@@ -15,6 +15,7 @@ import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.common.datarow.DataRow;
 import name.martingeisse.common.datarow.DataRowMeta;
+import name.martingeisse.common.util.ParameterUtil;
 
 /**
  * Represents a single entity instance fetched from the database. This is
@@ -45,10 +46,7 @@ public class EntityInstance extends DataRow {
 	 * @throws SQLException on SQL errors
 	 */
 	public EntityInstance(final EntityDescriptor entity, final ResultSet resultSet) throws SQLException {
-		super(resultSet);
-		if (entity == null) {
-			throw new IllegalArgumentException("entity argument is null");
-		}
+		super(ParameterUtil.ensureNotNull(resultSet, "resultSet"), ParameterUtil.ensureNotNull(entity, "entity").getDataRowTypes());
 		entity.checkDataRowMeta(this);
 		this.entityName = entity.getName();
 		this.entity = entity;

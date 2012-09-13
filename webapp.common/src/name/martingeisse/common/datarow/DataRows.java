@@ -56,11 +56,14 @@ public class DataRows extends AbstractDataRowMetaHolder implements Serializable 
 	 * reads all rows from the result set as data using readMoreRows(resultSet).
 	 * @param resultSet the JDBC result set to create the row meta-data from and
 	 * to read rows from
+	 * @param typeConverters the type converters that extract values from the result set.
+	 * This array must have the same size as the result set rows.
 	 * @throws SQLException on SQL errors
 	 */
-	public DataRows(ResultSet resultSet) throws SQLException {
+	public DataRows(ResultSet resultSet, IDataRowTypeConverter[] typeConverters) throws SQLException {
+		argumentCheck(resultSet, typeConverters);
 		setMeta(new DataRowMeta(resultSet.getMetaData()));
-		readMoreRows(resultSet);
+		readMoreRows(resultSet, typeConverters);
 	}
 
 	/**
@@ -69,11 +72,14 @@ public class DataRows extends AbstractDataRowMetaHolder implements Serializable 
 	 * @param resultSet the JDBC result set to create the row meta-data from and
 	 * to read rows from
 	 * @param rowCount the maximum number of rows to read
+	 * @param typeConverters the type converters that extract values from the result set.
+	 * This array must have the same size as the result set rows.
 	 * @throws SQLException on SQL errors
 	 */
-	public DataRows(ResultSet resultSet, int rowCount) throws SQLException {
+	public DataRows(ResultSet resultSet, IDataRowTypeConverter[] typeConverters, int rowCount) throws SQLException {
+		argumentCheck(resultSet, typeConverters);
 		setMeta(new DataRowMeta(resultSet.getMetaData()));
-		readMoreRows(resultSet, rowCount);
+		readMoreRows(resultSet, typeConverters, rowCount);
 	}
 	
 	/**
@@ -120,10 +126,12 @@ public class DataRows extends AbstractDataRowMetaHolder implements Serializable 
 	 * to specify the number of rows to read.
 	 * 
 	 * @param resultSet the result set to read from
+	 * @param typeConverters the type converters that extract values from the result set.
+	 * This array must have the same size as the result set rows.
 	 * @throws SQLException on SQL errors
 	 */
-	public final void readMoreRows(ResultSet resultSet) throws SQLException {
-		readMoreRows(resultSet, -1);
+	public final void readMoreRows(ResultSet resultSet, IDataRowTypeConverter[] typeConverters) throws SQLException {
+		readMoreRows(resultSet, typeConverters, -1);
 	}
 	
 	/**
@@ -142,11 +150,14 @@ public class DataRows extends AbstractDataRowMetaHolder implements Serializable 
 	 * 
 	 * @param resultSet the result set to read from
 	 * @param rowCount the maximum number of rows to fetch
+	 * @param typeConverters the type converters that extract values from the result set.
+	 * This array must have the same size as the result set rows.
 	 * @throws SQLException on SQL errors
 	 */
-	public final void readMoreRows(ResultSet resultSet, int rowCount) throws SQLException {
+	public final void readMoreRows(ResultSet resultSet, IDataRowTypeConverter[] typeConverters, int rowCount) throws SQLException {
+		argumentCheck(resultSet, typeConverters);
 		while (rowCount != 0 && resultSet.next()) {
-			getRows().add(createDataForCurrentRow(resultSet));
+			getRows().add(createDataForCurrentRow(resultSet, typeConverters));
 			if (rowCount > 0) {
 				rowCount--;
 			}

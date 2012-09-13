@@ -133,7 +133,9 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 		List<IAutoformPropertyDescriptor> writableProperties = AutoformUtil.getPropertiesByReadOnlyFlag(beanDescriptor, false);
 		Path<Object> entityPath = EntityExpressionUtil.entityPath();
 		for (IAutoformPropertyDescriptor property : writableProperties) {
-			update.set(Expressions.path(Object.class, entityPath, property.getName()), property.getModel().getObject());
+			Object workObject = property.getModel().getObject();
+			Object databaseObject = entity.getPropertiesByName().get(property.getName()).getType().convertForSave(workObject);
+			update.set(Expressions.path(Object.class, entityPath, property.getName()), databaseObject);
 		}
 		
 		// execute the update

@@ -7,6 +7,8 @@
 package name.martingeisse.admin.entity.schema.type;
 
 import java.math.BigInteger;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Types;
 
 import org.apache.wicket.util.string.StringValue;
@@ -24,7 +26,7 @@ import org.apache.wicket.util.string.StringValue;
  * the assumption that values outside that range will not
  * typically use hard limits.
  */
-public final class IntegerTypeInfo implements IEntityIdTypeInfo {
+public final class IntegerTypeInfo extends AbstractEntityIdTypeInfo {
 
 	/**
 	 * the bytes
@@ -43,9 +45,11 @@ public final class IntegerTypeInfo implements IEntityIdTypeInfo {
 
 	/**
 	 * Constructor.
+	 * @param nullable whether this type is nullable
 	 * @param bytes the number of storage bytes
 	 */
-	public IntegerTypeInfo(final int bytes) {
+	public IntegerTypeInfo(boolean nullable, final int bytes) {
+		super(nullable);
 		this.bytes = bytes;
 		this.minValue = null;
 		this.maxValue = null;
@@ -53,11 +57,13 @@ public final class IntegerTypeInfo implements IEntityIdTypeInfo {
 
 	/**
 	 * Constructor.
+	 * @param nullable whether this type is nullable
 	 * @param bytes the number of storage bytes
 	 * @param minValue the minimum value, or null for no lower bound
 	 * @param maxValue the maximum value, or null for no upper bound
 	 */
-	public IntegerTypeInfo(final int bytes, final Long minValue, final Long maxValue) {
+	public IntegerTypeInfo(boolean nullable, final int bytes, final Long minValue, final Long maxValue) {
+		super(nullable);
 		this.bytes = bytes;
 		this.minValue = minValue;
 		this.maxValue = maxValue;
@@ -157,6 +163,14 @@ public final class IntegerTypeInfo implements IEntityIdTypeInfo {
 	@Override
 	public String toString() {
 		return "{integer type: " + bytes + " bytes; min = " + minValue + ", max = " + maxValue + "}";
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.schema.type.ISqlTypeInfo#readFromResultSet(java.sql.ResultSet, int)
+	 */
+	@Override
+	public Object readFromResultSet(ResultSet resultSet, int index) throws SQLException {
+		return resultSet.getObject(index);
 	}
 	
 }

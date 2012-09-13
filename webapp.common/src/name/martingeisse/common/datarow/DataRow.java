@@ -56,14 +56,14 @@ public class DataRow extends AbstractDataRowMetaHolder implements Serializable {
 	 * Constructor that creates an instance from the current row of the
 	 * specified result set. This method does not advance the result set.
 	 * @param resultSet the JDBC result set
+	 * @param typeConverters the type converters that extract values from the result set.
+	 * This array must have the same size as the result set rows.
 	 * @throws SQLException on SQL errors
 	 */
-	public DataRow(ResultSet resultSet) throws SQLException {
-		if (resultSet == null) {
-			throw new IllegalArgumentException("resultSet argument is null");
-		}
+	public DataRow(ResultSet resultSet, IDataRowTypeConverter[] typeConverters) throws SQLException {
+		argumentCheck(resultSet, typeConverters);
 		setMeta(new DataRowMeta(resultSet.getMetaData()));
-		data = createDataForCurrentRow(resultSet);
+		data = createDataForCurrentRow(resultSet, typeConverters);
 	}
 
 	/**

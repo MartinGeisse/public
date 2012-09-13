@@ -6,23 +6,23 @@
 
 package name.martingeisse.admin.entity.schema.type;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 
-import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 
 /**
- * Represents a date type without time-of-day information.
+ * Represents a date type including time-of-day information.
  */
-public class DateTypeInfo extends AbstractSqlTypeInfo {
+public class DateTimeTypeInfo extends AbstractSqlTypeInfo {
 
 	/**
 	 * Constructor.
 	 * @param nullable whether this type is nullable
 	 */
-	public DateTypeInfo(boolean nullable) {
+	public DateTimeTypeInfo(boolean nullable) {
 		super(nullable);
 	}
 
@@ -31,7 +31,7 @@ public class DateTypeInfo extends AbstractSqlTypeInfo {
 	 */
 	@Override
 	public Class<?> getJavaWorkType() {
-		return DateMidnight.class;
+		return DateTime.class;
 	}
 
 	/* (non-Javadoc)
@@ -39,7 +39,7 @@ public class DateTypeInfo extends AbstractSqlTypeInfo {
 	 */
 	@Override
 	public Class<?> getJavaStorageType() {
-		return DateMidnight.class;
+		return DateTime.class;
 	}
 
 	/* (non-Javadoc)
@@ -47,7 +47,7 @@ public class DateTypeInfo extends AbstractSqlTypeInfo {
 	 */
 	@Override
 	public int getSqlTypeCode() {
-		return Types.DATE;
+		return Types.TIMESTAMP;
 	}
 
 	/* (non-Javadoc)
@@ -55,9 +55,15 @@ public class DateTypeInfo extends AbstractSqlTypeInfo {
 	 */
 	@Override
 	public Object readFromResultSet(ResultSet resultSet, int index) throws SQLException {
-		// TODO: time zones -- see DateTimeTypeInfo
-		Date date = resultSet.getDate(index);
-		return (date == null ? null : new DateMidnight(date.getTime()));
+		// TODO: this conversion uses an implicit time zone to create the "Date" object
+		// AND an implicit time zone to create the DateMidnight object.
+		// -> Where does the former come from?
+		// -> might we want a different one to be used for the former?
+		// -> might we want a different one to be used for the latter?
+		Timestamp date = resultSet.getTimestamp(index);
+		// TODO: same for back-conversion -- this seems to happen automatically at the moment.
+		
+		return (date == null ? null : new DateTime(date.getTime()));
 	}
 
 	/* (non-Javadoc)
@@ -68,7 +74,7 @@ public class DateTypeInfo extends AbstractSqlTypeInfo {
 		if (untypedValue == null) {
 			return null;
 		}
-		DateMidnight value = (DateMidnight)untypedValue;
+		DateTime value = (DateTime)untypedValue;
 		return value.toDate();
 	}
 	

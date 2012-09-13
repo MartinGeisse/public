@@ -6,6 +6,8 @@
 
 package name.martingeisse.admin.entity.schema.type;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Types;
 
 import org.apache.wicket.util.string.StringValue;
@@ -19,7 +21,7 @@ import org.apache.wicket.util.string.StringValue;
  * - a flag that indicates whether the string is always space-padded to
  *   its maximum length (only valid if a maximum length is specified).
  */
-public final class StringTypeInfo implements IEntityIdTypeInfo {
+public final class StringTypeInfo extends AbstractEntityIdTypeInfo {
 
 	/**
 	 * the allowEmpty
@@ -38,20 +40,23 @@ public final class StringTypeInfo implements IEntityIdTypeInfo {
 
 	/**
 	 * Constructor.
+	 * @param nullable whether this type is nullable
 	 * @param allowEmpty whether this type allows the empty string
 	 */
-	public StringTypeInfo(final boolean allowEmpty) {
-		this(allowEmpty, null, false);
+	public StringTypeInfo(final boolean nullable, final boolean allowEmpty) {
+		this(nullable, allowEmpty, null, false);
 	}
 
 	/**
 	 * Constructor.
+	 * @param nullable whether this type is nullable
 	 * @param allowEmpty whether this type allows the empty string
 	 * @param maxLength the maximum string length, or null for unbounded length
 	 * @param padded whether the string is always space-padded to its maximum length.
 	 * Must be false if maxLength is null.
 	 */
-	public StringTypeInfo(final boolean allowEmpty, final Integer maxLength, final boolean padded) {
+	public StringTypeInfo(final boolean nullable, final boolean allowEmpty, final Integer maxLength, final boolean padded) {
+		super(nullable);
 		if (maxLength != null && maxLength < 0) {
 			throw new IllegalArgumentException("trying to construct string type with negative max length");
 		}
@@ -135,6 +140,14 @@ public final class StringTypeInfo implements IEntityIdTypeInfo {
 	@Override
 	public String toString() {
 		return "{string type; allowEmpty = " + allowEmpty + ", maxLength = " + maxLength + ", padded = " + padded + "}";
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.schema.type.ISqlTypeInfo#readFromResultSet(java.sql.ResultSet, int)
+	 */
+	@Override
+	public Object readFromResultSet(ResultSet resultSet, int index) throws SQLException {
+		return resultSet.getObject(index);
 	}
 	
 }

@@ -26,6 +26,8 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.validation.IValidator;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 
 /**
  * This factory chooses an appropriate property component based on the property
@@ -127,6 +129,7 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 
 		final Class<?> type = propertyDescriptor.getType();
 		final IModel<?> model = propertyDescriptor.getModel();
+		System.out.println("*** " + type);
 
 		if (type == String.class) {
 			AutoformTextSuggestions suggestionsAnnotation = propertyDescriptor.getAnnotation(AutoformTextSuggestions.class);
@@ -178,6 +181,26 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 			DropDownChoicePanel<?> panel = dropDownChoiceHelper(id, model, type);
 			addValidatorsUnsafe(panel.getDropDownChoice(), validators);
 			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getDropDownChoice());
+			return panel;
+			
+		} else if (type == DateMidnight.class) {
+			final TextFieldPanel<DateMidnight> panel = new TextFieldPanel<DateMidnight>(id, this.<DateMidnight> castModelUnsafe(model));
+			panel.getTextField().setType(DateMidnight.class);
+			if (propertyDescriptor.isReadOnly()) {
+				panel.getTextField().setEnabled(false);
+			}
+			addValidatorsUnsafe(panel.getTextField(), validators);
+			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
+			return panel;
+
+		} else if (type == DateTime.class) {
+			final TextFieldPanel<DateTime> panel = new TextFieldPanel<DateTime>(id, this.<DateTime> castModelUnsafe(model));
+			panel.getTextField().setType(DateTime.class);
+			if (propertyDescriptor.isReadOnly()) {
+				panel.getTextField().setEnabled(false);
+			}
+			addValidatorsUnsafe(panel.getTextField(), validators);
+			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
 			return panel;
 			
 		} else {

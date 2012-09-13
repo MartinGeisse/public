@@ -8,6 +8,8 @@ package name.martingeisse.admin.application.wicket;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.security.SecurityConfigurationUtil;
+import name.martingeisse.admin.application.wicket.converter.DateConverter;
+import name.martingeisse.admin.application.wicket.converter.DateTimeConverter;
 import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.component.page.HomePage;
 import name.martingeisse.admin.component.page.images.Dummy;
@@ -22,6 +24,7 @@ import name.martingeisse.wicket.util.json.JsonEncodingContainer;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
+import org.apache.wicket.ConverterLocator;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.ComponentTag;
@@ -33,6 +36,8 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IExceptionMapper;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.IProvider;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 
 /**
  * Wicket {@link WebApplication} implementation for this application.
@@ -103,6 +108,11 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		ObjectStateUtil.nullMeansMissing(NavigationConfigurationUtil.getNavigationTree(), "navigation tree");
 		NavigationConfigurationUtil.getNavigationTree().prepare();
 		logger.trace("post-schema initialization finished");
+		
+		// register type converters
+		ConverterLocator converterLocator = (ConverterLocator)getConverterLocator();
+		converterLocator.set(DateMidnight.class, new DateConverter());
+		converterLocator.set(DateTime.class, new DateTimeConverter());
 
 		// some more Wicket configuration
 		getApplicationSettings().setPageExpiredErrorPage(HomePage.class);
