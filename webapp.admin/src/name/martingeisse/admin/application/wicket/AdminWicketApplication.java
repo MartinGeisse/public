@@ -15,7 +15,6 @@ import name.martingeisse.admin.component.page.HomePage;
 import name.martingeisse.admin.component.page.images.Dummy;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
-import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
 import name.martingeisse.common.util.ObjectStateUtil;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
@@ -104,7 +103,6 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 
 		// initialize module-specific data
 		logger.trace("running post-schema initialization...");
-		ReadOnlyRenderingConfigurationUtil.prepareConfiguration();
 		ObjectStateUtil.nullMeansMissing(NavigationConfigurationUtil.getNavigationTree(), "navigation tree");
 		NavigationConfigurationUtil.getNavigationTree().prepare();
 		logger.trace("post-schema initialization finished");

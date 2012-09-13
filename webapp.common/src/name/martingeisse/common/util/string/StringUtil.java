@@ -49,4 +49,30 @@ public final class StringUtil {
 		return StringUtils.remove(WordUtils.capitalizeFully(s, UNDERSCORE_ARRAY), '_');
 	}
 	
+	/**
+	 * Limits the length of the specified input string. If the string fits into
+	 * the maxLength then it is returned unchanged. Otherwise, a prefix of the
+	 * input string with "..." appended is returned such that the return value
+	 * exactly fits the maxLength. This implies that maxLength is at least 3
+	 * to fit the ellipsis.
+	 * 
+	 * This method returns null if the input string is null.
+	 * 
+	 * @param s the string to limit in length
+	 * @param maxLength the maximum length
+	 * @return the length-limited string
+	 */
+	public static String limitLength(String s, int maxLength) {
+		if (maxLength < 3) {
+			throw new IllegalArgumentException("maxLength too small (must be at least 3): " + maxLength);
+		}
+		if (s == null) {
+			return null;
+		} else if (s.length() > maxLength) {
+			return s.substring(0, maxLength - 3) + "...";
+		} else {
+			return s;
+		}
+	}
+	
 }

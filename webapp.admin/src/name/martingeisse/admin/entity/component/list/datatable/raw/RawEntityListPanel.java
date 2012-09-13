@@ -11,13 +11,11 @@ import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
-import name.martingeisse.admin.readonly.IPropertyReadOnlyRenderer;
-import name.martingeisse.admin.readonly.ReadOnlyRenderingConfigurationUtil;
 import name.martingeisse.admin.util.IGetPageable;
 import name.martingeisse.admin.util.LinkUtil;
 import name.martingeisse.common.javascript.JavascriptAssembler;
 import name.martingeisse.common.util.GenericTypeUtil;
+import name.martingeisse.wicket.util.WicketConverterUtil;
 
 import org.apache.wicket.model.IModel;
 
@@ -33,10 +31,10 @@ import com.mysema.query.types.Path;
 public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTableColumnDescriptor> {
 
 	/**
-	 * the renderers
+	 * the MAX_TEXT_LENGTH
 	 */
-	private transient IPropertyReadOnlyRenderer[] renderers;
-
+	private static final int MAX_TEXT_LENGTH = 50;
+	
 	/**
 	 * Constructor.
 	 * @param id the wicket id
@@ -87,27 +85,6 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.wicket.Component#onBeforeRender()
-	 */
-	@Override
-	protected void onBeforeRender() {
-		super.onBeforeRender();
-
-		// determine the column renderers
-		final EntityDescriptor entity = getEntityDescriptor();
-		final RawDataTableColumnDescriptor[] fieldOrder = determineColumnDescriptors();
-		renderers = new IPropertyReadOnlyRenderer[fieldOrder.length];
-		for (int i = 0; i < fieldOrder.length; i++) {
-			final EntityPropertyDescriptor property = entity.getPropertiesByName().get(fieldOrder[i].getFieldName());
-			renderers[i] = ReadOnlyRenderingConfigurationUtil.createPropertyReadOnlyRenderer(property.getType());
-			if (renderers[i] == null) {
-				throw new RuntimeException("no renderer");
-			}
-		}
-
-	}
-
-	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel#isColumnSortable(int)
 	 */
 	@Override
@@ -130,8 +107,10 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 	@Override
 	protected void assembleRowFields(final EntityInstance entityInstance, final JavascriptAssembler assembler) {
 		for (int i = 0; i < getColumnCount(); i++) {
+			Object value = entityInstance.getFieldValue(getColumnDescriptor(i).getFieldName());
+			String valueText = WicketConverterUtil.convertValueToString(value, this, MAX_TEXT_LENGTH);
 			assembler.prepareListElement();
-			assembler.appendStringLiteral(renderers[i].valueToString(entityInstance.getFieldValue(getColumnDescriptor(i).getFieldName())));
+			assembler.appendStringLiteral(valueText);
 		}
 		assembler.prepareListElement();
 		assembler.appendStringLiteral(entityInstance.getId() == null ? null : LinkUtil.getSingleEntityLinkUrl(getEntityDescriptor(), entityInstance.getId()));

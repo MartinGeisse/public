@@ -12,6 +12,7 @@ import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.util.LinkUtil;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
+import name.martingeisse.wicket.util.WicketConverterUtil;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -58,7 +59,7 @@ public class RawEntityPresentationPanel extends Panel {
 					// TODO doesn't work if the far property is not the ID. Should also check the multiplicity
 					link = LinkUtil.createSingleEntityLink("link", referenceEndpoint.getOther().getEntity(), fieldValue);
 				}
-				link.add(new Label("value", "" + fieldValue));
+				link.add(new Label("value", WicketConverterUtil.createLabelModel(fieldValue, this)));
 				item.add(link);
 
 			}

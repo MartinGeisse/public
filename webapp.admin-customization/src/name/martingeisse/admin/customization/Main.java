@@ -44,7 +44,6 @@ import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
 import name.martingeisse.admin.navigation.handler.PanelPageNavigationHandler;
 import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
-import name.martingeisse.admin.readonly.BaselineReadOnlyRendererContributor;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.MysqlDatabaseDescriptor;
 import name.martingeisse.wicket.autoform.AutoformPanel;
@@ -116,7 +115,6 @@ public class Main {
 		ApplicationConfiguration.get().addPlugin(new DefaultPlugin());
 		// ApplicationConfiguration.get().addPlugin(new FixedNameEntityReferenceDetector("extensions", "group_id", "extension_groups"));
 		ApplicationConfiguration.get().addPlugin(new CustomizationPlugin());
-		ApplicationConfiguration.get().addPlugin(new BaselineReadOnlyRendererContributor());
 		ApplicationConfiguration.get().addPlugin(new SingleEntityPropertyFilter(1, null, "modificationTimestamp", false));
 		ApplicationConfiguration.get().addPlugin(new SingleEntityPropertyFilter(1, null, "modificationUser_id", false));
 		ApplicationConfiguration.get().addPlugin(new SingleEntityPropertyFilter(1, "User", "lastLoginAttemptTimestamp", false));
