@@ -135,10 +135,11 @@ public final class JdbcColumnStructure {
 
 	/**
 	 * Determines the high-level {@link ISqlTypeInfo} for this column.
+	 * @param hasDefaultTimeZone whether the database has a known default time zone
 	 * @return the high-level type for this current column
 	 */
-	public ISqlTypeInfo determineHighlevelType() {
-		return TypeInfoUtil.getTypeInfoForSqlTypeCode(sqlType, size, nullable);
+	public ISqlTypeInfo determineHighlevelType(boolean hasDefaultTimeZone) {
+		return TypeInfoUtil.getTypeInfoForSqlTypeCode(sqlType, size, nullable, hasDefaultTimeZone);
 	}
 
 }

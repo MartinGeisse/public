@@ -207,7 +207,7 @@ public class ApplicationSchema {
 						logger.debug("discovered entity property: " + column.getSelector());
 						final EntityPropertyDescriptor propertyDescriptor = new EntityPropertyDescriptor();
 						propertyDescriptor.setName(column.getSelector().getColumn());
-						propertyDescriptor.setType(column.determineHighlevelType());
+						propertyDescriptor.setType(column.determineHighlevelType(databaseDescriptor.getDefaultTimeZone() != null));
 						propertyDescriptor.setVisibleInRawEntityList(true);
 						propertyDescriptor.setVisibleInRawEntityList(isPropertyVisibleInRawEntityList(entityDescriptor, propertyDescriptor));
 						properties.add(propertyDescriptor);

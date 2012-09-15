@@ -7,6 +7,7 @@
 package name.martingeisse.admin.entity.component.list.datatable.raw;
 
 import name.martingeisse.admin.entity.component.list.datatable.DataTableColumnDescriptor;
+import name.martingeisse.common.util.ParameterUtil;
 
 /**
  * Specialized column descriptor class for {@link RawEntityListPanel}.
@@ -16,13 +17,7 @@ public class RawDataTableColumnDescriptor extends DataTableColumnDescriptor {
 	/**
 	 * the fieldName
 	 */
-	private String fieldName;
-
-	/**
-	 * Constructor.
-	 */
-	public RawDataTableColumnDescriptor() {
-	}
+	private final String fieldName;
 
 	/**
 	 * Constructor.
@@ -31,6 +26,7 @@ public class RawDataTableColumnDescriptor extends DataTableColumnDescriptor {
 	 */
 	public RawDataTableColumnDescriptor(final String title, final String fieldName) {
 		super(title);
+		ParameterUtil.ensureNotNull(fieldName, "fieldName");
 		this.fieldName = fieldName;
 	}
 
@@ -40,14 +36,6 @@ public class RawDataTableColumnDescriptor extends DataTableColumnDescriptor {
 	 */
 	public String getFieldName() {
 		return fieldName;
-	}
-
-	/**
-	 * Setter method for the fieldName.
-	 * @param fieldName the fieldName to set
-	 */
-	public void setFieldName(final String fieldName) {
-		this.fieldName = fieldName;
 	}
 
 }

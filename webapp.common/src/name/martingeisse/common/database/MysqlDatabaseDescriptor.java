@@ -23,4 +23,20 @@ public class MysqlDatabaseDescriptor extends AbstractDatabaseDescriptor {
 		return new MySQLTemplates();
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.database.IDatabaseDescriptor#getDateTimePattern()
+	 */
+	@Override
+	public String getDateTimePattern() {
+		return "yyyy-MM-dd HH:mm:ss.S";
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.database.IDatabaseDescriptor#getDatePattern()
+	 */
+	@Override
+	public String getDatePattern() {
+		return "yyyy-MM-dd";
+	}
+	
 }

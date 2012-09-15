@@ -29,6 +29,8 @@ import org.apache.wicket.model.IModel;
  * This table implementation is centered around {@link ICellPopulator} objects that render
  * entity fields to table cells. The populators are stored in the column descriptors.
  * 
+ * TODO: parameter check / return value check: ab hier weiterprüfen
+ * 
  * @param <CD> the column descriptor type
  */
 public abstract class AbstractPopulatorEntityDataTablePanel<CD extends PopulatorColumnDescriptor> extends AbstractJsonRenderingEntityDataTablePanel<CD> {

@@ -9,6 +9,8 @@ package name.martingeisse.admin.entity.schema.type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import name.martingeisse.common.database.IDatabaseDescriptor;
+
 /**
  * This class can be used as a general fallback for SQL types.
  */
@@ -62,10 +64,10 @@ public class UnknownSqlTypeInfo extends AbstractSqlTypeInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.entity.schema.type.ISqlTypeInfo#readFromResultSet(java.sql.ResultSet, int)
+	 * @see name.martingeisse.common.datarow.IDataRowTypeConverter#readFromResultSet(java.sql.ResultSet, int, name.martingeisse.common.database.IDatabaseDescriptor)
 	 */
 	@Override
-	public Object readFromResultSet(ResultSet resultSet, int index) throws SQLException {
+	public Object readFromResultSet(ResultSet resultSet, int index, IDatabaseDescriptor databaseDescriptor) throws SQLException {
 		return resultSet.getObject(index);
 	}
 	

@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.martingeisse.common.database.IDatabaseDescriptor;
+
 /**
  * Represents multiple rows of data that conform to the same meta-data.
  * 
@@ -58,12 +60,13 @@ public class DataRows extends AbstractDataRowMetaHolder implements Serializable 
 	 * to read rows from
 	 * @param typeConverters the type converters that extract values from the result set.
 	 * This array must have the same size as the result set rows.
+	 * @param databaseDescriptor the database descriptor from which the result set was read
 	 * @throws SQLException on SQL errors
 	 */
-	public DataRows(ResultSet resultSet, IDataRowTypeConverter[] typeConverters) throws SQLException {
+	public DataRows(ResultSet resultSet, IDataRowTypeConverter[] typeConverters, IDatabaseDescriptor databaseDescriptor) throws SQLException {
 		argumentCheck(resultSet, typeConverters);
 		setMeta(new DataRowMeta(resultSet.getMetaData()));
-		readMoreRows(resultSet, typeConverters);
+		readMoreRows(resultSet, typeConverters, databaseDescriptor);
 	}
 
 	/**
@@ -71,15 +74,16 @@ public class DataRows extends AbstractDataRowMetaHolder implements Serializable 
 	 * reads all rows from the result set as data using readMoreRows(resultSet, rowCount).
 	 * @param resultSet the JDBC result set to create the row meta-data from and
 	 * to read rows from
-	 * @param rowCount the maximum number of rows to read
 	 * @param typeConverters the type converters that extract values from the result set.
 	 * This array must have the same size as the result set rows.
+	 * @param databaseDescriptor the database descriptor from which the result set was read
+	 * @param rowCount the maximum number of rows to read
 	 * @throws SQLException on SQL errors
 	 */
-	public DataRows(ResultSet resultSet, IDataRowTypeConverter[] typeConverters, int rowCount) throws SQLException {
+	public DataRows(ResultSet resultSet, IDataRowTypeConverter[] typeConverters, IDatabaseDescriptor databaseDescriptor, int rowCount) throws SQLException {
 		argumentCheck(resultSet, typeConverters);
 		setMeta(new DataRowMeta(resultSet.getMetaData()));
-		readMoreRows(resultSet, typeConverters, rowCount);
+		readMoreRows(resultSet, typeConverters, databaseDescriptor, rowCount);
 	}
 	
 	/**
@@ -128,10 +132,11 @@ public class DataRows extends AbstractDataRowMetaHolder implements Serializable 
 	 * @param resultSet the result set to read from
 	 * @param typeConverters the type converters that extract values from the result set.
 	 * This array must have the same size as the result set rows.
+	 * @param databaseDescriptor the database descriptor from which the result set was read
 	 * @throws SQLException on SQL errors
 	 */
-	public final void readMoreRows(ResultSet resultSet, IDataRowTypeConverter[] typeConverters) throws SQLException {
-		readMoreRows(resultSet, typeConverters, -1);
+	public final void readMoreRows(ResultSet resultSet, IDataRowTypeConverter[] typeConverters, IDatabaseDescriptor databaseDescriptor) throws SQLException {
+		readMoreRows(resultSet, typeConverters, databaseDescriptor, -1);
 	}
 	
 	/**
@@ -150,14 +155,15 @@ public class DataRows extends AbstractDataRowMetaHolder implements Serializable 
 	 * 
 	 * @param resultSet the result set to read from
 	 * @param rowCount the maximum number of rows to fetch
+	 * @param databaseDescriptor the database descriptor from which the result set was read
 	 * @param typeConverters the type converters that extract values from the result set.
 	 * This array must have the same size as the result set rows.
 	 * @throws SQLException on SQL errors
 	 */
-	public final void readMoreRows(ResultSet resultSet, IDataRowTypeConverter[] typeConverters, int rowCount) throws SQLException {
+	public final void readMoreRows(ResultSet resultSet, IDataRowTypeConverter[] typeConverters, IDatabaseDescriptor databaseDescriptor, int rowCount) throws SQLException {
 		argumentCheck(resultSet, typeConverters);
 		while (rowCount != 0 && resultSet.next()) {
-			getRows().add(createDataForCurrentRow(resultSet, typeConverters));
+			getRows().add(createDataForCurrentRow(resultSet, typeConverters, databaseDescriptor));
 			if (rowCount > 0) {
 				rowCount--;
 			}

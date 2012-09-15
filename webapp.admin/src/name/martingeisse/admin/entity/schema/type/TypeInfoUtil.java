@@ -33,9 +33,10 @@ public final class TypeInfoUtil {
 	 * @param sqlTypeCode the type code
 	 * @param size the "size" type parameter
 	 * @param nullable whether the type is nullable
+	 * @param hasDefaultTimeZone whether the database has a known default time zone
 	 * @return the type info object
 	 */
-	public static ISqlTypeInfo getTypeInfoForSqlTypeCode(int sqlTypeCode, int size, boolean nullable) {
+	public static ISqlTypeInfo getTypeInfoForSqlTypeCode(int sqlTypeCode, int size, boolean nullable, boolean hasDefaultTimeZone) {
 		if (size < 0) {
 			throw new IllegalArgumentException("size cannot be negative");
 		}
@@ -77,10 +78,14 @@ public final class TypeInfoUtil {
 			return new StringTypeInfo(nullable, true, null, false);
 			
 		case Types.DATE:
-			return new DateTypeInfo(nullable);
+			return new LocalDateTypeInfo(nullable);
 			
 		case Types.TIMESTAMP:
-			return new DateTimeTypeInfo(nullable);
+			if (hasDefaultTimeZone) {
+				return new DateTimeTypeInfo(nullable);
+			} else {
+				return new LocalDateTimeTypeInfo(nullable);
+			}
 
 		default:
 			return new UnknownSqlTypeInfo(nullable, sqlTypeCode);

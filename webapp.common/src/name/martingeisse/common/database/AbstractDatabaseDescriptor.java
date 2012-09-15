@@ -10,6 +10,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.joda.time.DateTimeZone;
+
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.SQLQueryImpl;
@@ -42,6 +44,11 @@ public abstract class AbstractDatabaseDescriptor implements IDatabaseDescriptor 
 	 * the password
 	 */
 	private String password;
+
+	/**
+	 * the defaultTimeZone
+	 */
+	private DateTimeZone defaultTimeZone;
 
 	/**
 	 * Constructor.
@@ -111,6 +118,23 @@ public abstract class AbstractDatabaseDescriptor implements IDatabaseDescriptor 
 	 */
 	public void setPassword(final String password) {
 		this.password = password;
+	}
+
+	/**
+	 * Getter method for the defaultTimeZone.
+	 * @return the defaultTimeZone
+	 */
+	@Override
+	public DateTimeZone getDefaultTimeZone() {
+		return defaultTimeZone;
+	}
+
+	/**
+	 * Setter method for the defaultTimeZone.
+	 * @param defaultTimeZone the defaultTimeZone to set
+	 */
+	public void setDefaultTimeZone(final DateTimeZone defaultTimeZone) {
+		this.defaultTimeZone = defaultTimeZone;
 	}
 
 	/* (non-Javadoc)

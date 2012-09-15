@@ -9,6 +9,7 @@ package name.martingeisse.common.datarow;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.util.ParameterUtil;
 
 /**
@@ -67,13 +68,14 @@ public abstract class AbstractDataRowMetaHolder {
 	 * @param resultSet the result set to read from
 	 * @param typeConverters the type converters that extract values from the result set.
 	 * This array must have the same size as the result set rows.
+	 * @param databaseDescriptor the database descriptor from which the result set was read
 	 * @return the row values
 	 */
-	protected static Object[] createDataForCurrentRow(ResultSet resultSet, IDataRowTypeConverter[] typeConverters) throws SQLException {
+	protected static Object[] createDataForCurrentRow(ResultSet resultSet, IDataRowTypeConverter[] typeConverters, IDatabaseDescriptor databaseDescriptor) throws SQLException {
 		argumentCheck(resultSet, typeConverters);
 		Object[] data = new Object[resultSet.getMetaData().getColumnCount()];
 		for (int i=0; i<data.length; i++) {
-			data[i] = typeConverters[i].readFromResultSet(resultSet, i + 1);
+			data[i] = typeConverters[i].readFromResultSet(resultSet, i + 1, databaseDescriptor);
 		}
 		return data;
 	}

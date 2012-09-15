@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+import name.martingeisse.common.database.IDatabaseDescriptor;
+
 /**
  * Represents a row of data as well as meta-data to which it conforms.
  * 
@@ -58,12 +60,13 @@ public class DataRow extends AbstractDataRowMetaHolder implements Serializable {
 	 * @param resultSet the JDBC result set
 	 * @param typeConverters the type converters that extract values from the result set.
 	 * This array must have the same size as the result set rows.
+	 * @param databaseDescriptor the database descriptor from which the result set was read
 	 * @throws SQLException on SQL errors
 	 */
-	public DataRow(ResultSet resultSet, IDataRowTypeConverter[] typeConverters) throws SQLException {
+	public DataRow(ResultSet resultSet, IDataRowTypeConverter[] typeConverters, IDatabaseDescriptor databaseDescriptor) throws SQLException {
 		argumentCheck(resultSet, typeConverters);
 		setMeta(new DataRowMeta(resultSet.getMetaData()));
-		data = createDataForCurrentRow(resultSet, typeConverters);
+		data = createDataForCurrentRow(resultSet, typeConverters, databaseDescriptor);
 	}
 
 	/**

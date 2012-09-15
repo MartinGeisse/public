@@ -26,8 +26,9 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.validation.IValidator;
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 
 /**
  * This factory chooses an appropriate property component based on the property
@@ -183,16 +184,6 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getDropDownChoice());
 			return panel;
 			
-		} else if (type == DateMidnight.class) {
-			final TextFieldPanel<DateMidnight> panel = new TextFieldPanel<DateMidnight>(id, this.<DateMidnight> castModelUnsafe(model));
-			panel.getTextField().setType(DateMidnight.class);
-			if (propertyDescriptor.isReadOnly()) {
-				panel.getTextField().setEnabled(false);
-			}
-			addValidatorsUnsafe(panel.getTextField(), validators);
-			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
-			return panel;
-
 		} else if (type == DateTime.class) {
 			final TextFieldPanel<DateTime> panel = new TextFieldPanel<DateTime>(id, this.<DateTime> castModelUnsafe(model));
 			panel.getTextField().setType(DateTime.class);
@@ -203,6 +194,26 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
 			return panel;
 			
+		} else if (type == LocalDateTime.class) {
+			final TextFieldPanel<LocalDateTime> panel = new TextFieldPanel<LocalDateTime>(id, this.<LocalDateTime> castModelUnsafe(model));
+			panel.getTextField().setType(LocalDateTime.class);
+			if (propertyDescriptor.isReadOnly()) {
+				panel.getTextField().setEnabled(false);
+			}
+			addValidatorsUnsafe(panel.getTextField(), validators);
+			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
+			return panel;
+
+		} else if (type == LocalDate.class) {
+			final TextFieldPanel<LocalDate> panel = new TextFieldPanel<LocalDate>(id, this.<LocalDate> castModelUnsafe(model));
+			panel.getTextField().setType(LocalDate.class);
+			if (propertyDescriptor.isReadOnly()) {
+				panel.getTextField().setEnabled(false);
+			}
+			addValidatorsUnsafe(panel.getTextField(), validators);
+			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
+			return panel;
+
 		} else {
 			throw new RuntimeException("cannot create autoform property component for type: " + type.getCanonicalName() +
 				" (property: " + propertyDescriptor.getName() + ")");

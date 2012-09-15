@@ -49,6 +49,8 @@ import com.mysema.query.types.Expression;
  * inserted via {@link Label}s. In that case, disable model escaping of
  * the labels to preserve greater-than, less-than, and ampersand characters.
  * 
+ * TODO: param / return check marked with TODO
+ * 
  * @param <CD> the column descriptor type
  */
 public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends RenderingColumnDescriptor> extends AbstractEntityDataTablePanel<CD> {
@@ -192,6 +194,7 @@ public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends Rende
 	 */
 	@Override
 	protected Expression<Comparable<?>> getColumnSortExpression(final int columnIndex) {
+		// TODO
 		return getColumnDescriptor(columnIndex).getSortExpression();
 	}
 

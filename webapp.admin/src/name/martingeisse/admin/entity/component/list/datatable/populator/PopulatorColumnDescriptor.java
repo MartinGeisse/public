@@ -10,6 +10,7 @@ import name.martingeisse.admin.entity.component.list.datatable.render.RenderingC
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.common.util.GenericTypeUtil;
+import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.markup.repeater.Item;
@@ -25,13 +26,7 @@ public class PopulatorColumnDescriptor extends RenderingColumnDescriptor impleme
 	/**
 	 * the cellPopulator
 	 */
-	private ICellPopulator<EntityInstance> cellPopulator;
-
-	/**
-	 * Constructor.
-	 */
-	public PopulatorColumnDescriptor() {
-	}
+	private final ICellPopulator<EntityInstance> cellPopulator;
 
 	/**
 	 * Constructor.
@@ -40,6 +35,7 @@ public class PopulatorColumnDescriptor extends RenderingColumnDescriptor impleme
 	 */
 	public PopulatorColumnDescriptor(final String title, final ICellPopulator<EntityInstance> cellPopulator) {
 		super(title);
+		ParameterUtil.ensureNotNull(cellPopulator, "cellPopulator");
 		this.cellPopulator = cellPopulator;
 	}
 
@@ -51,6 +47,7 @@ public class PopulatorColumnDescriptor extends RenderingColumnDescriptor impleme
 	 */
 	public PopulatorColumnDescriptor(final String title, String sortField, final ICellPopulator<EntityInstance> cellPopulator) {
 		super(title, sortFieldToSortExpression(sortField));
+		ParameterUtil.ensureNotNull(cellPopulator, "cellPopulator");
 		this.cellPopulator = cellPopulator;
 	}
 	
@@ -80,14 +77,6 @@ public class PopulatorColumnDescriptor extends RenderingColumnDescriptor impleme
 	 */
 	public ICellPopulator<EntityInstance> getCellPopulator() {
 		return cellPopulator;
-	}
-
-	/**
-	 * Setter method for the cellPopulator.
-	 * @param cellPopulator the cellPopulator to set
-	 */
-	public void setCellPopulator(final ICellPopulator<EntityInstance> cellPopulator) {
-		this.cellPopulator = cellPopulator;
 	}
 
 	/* (non-Javadoc)

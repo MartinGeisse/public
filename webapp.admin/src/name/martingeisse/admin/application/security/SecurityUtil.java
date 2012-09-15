@@ -51,7 +51,7 @@ public class SecurityUtil {
 	 * - determine user properties using the supplied credentials (authentication step 1)
 	 * - try to determine the user's identity (authentication step 2)
 	 * - determine the user's permissions (authorization step 1)
-	 * - check the user's login permission ({@link CorePermissionRequest.Type#LOGIN})
+	 * - check the user's login permission ({@link name.martingeisse.admin.application.security.authorization.CorePermissionRequest.Type#LOGIN})
 	 *   (authorization step 2).
 	 * 
 	 * Successfully logging in will replace the current HTTP session with a new

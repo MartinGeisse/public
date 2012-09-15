@@ -12,30 +12,21 @@ import java.sql.Types;
 
 import name.martingeisse.common.database.IDatabaseDescriptor;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.ReadableInstant;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Represents a date type including time-of-day information
- * with a known time zone.
- * 
- * Note: JDBC drivers suck royally when it comes to date-time
- * handling. There is are so many implicit rules, redundant
- * configuration options, incompatibility between vendors and
- * violation of the standard that we're better off taking the
- * value as a string (so we get exactly the information stored
- * in the table cell) and parsing it ourselves.
+ * but with unknown time zone.
  */
-public class DateTimeTypeInfo extends AbstractSqlTypeInfo {
+public class LocalDateTimeTypeInfo extends AbstractSqlTypeInfo {
 
 	/**
 	 * Constructor.
 	 * @param nullable whether this type is nullable
 	 */
-	public DateTimeTypeInfo(boolean nullable) {
+	public LocalDateTimeTypeInfo(boolean nullable) {
 		super(nullable);
 	}
 
@@ -44,7 +35,7 @@ public class DateTimeTypeInfo extends AbstractSqlTypeInfo {
 	 */
 	@Override
 	public Class<?> getJavaWorkType() {
-		return DateTime.class;
+		return LocalDateTime.class;
 	}
 
 	/* (non-Javadoc)
@@ -52,7 +43,7 @@ public class DateTimeTypeInfo extends AbstractSqlTypeInfo {
 	 */
 	@Override
 	public Class<?> getJavaStorageType() {
-		return DateTime.class;
+		return LocalDateTime.class;
 	}
 
 	/* (non-Javadoc)
@@ -68,14 +59,18 @@ public class DateTimeTypeInfo extends AbstractSqlTypeInfo {
 	 */
 	@Override
 	public Object readFromResultSet(ResultSet resultSet, int index, IDatabaseDescriptor databaseDescriptor) throws SQLException {
+		
+		// get the value as a string and handle null
 		String stringValue = resultSet.getString(index);
 		if (stringValue == null) {
 			return null;
-		} else {
-			DateTimeFormatter formatter = getFormatter(databaseDescriptor);
-			DateTime result = formatter.parseDateTime(stringValue);
-			return result;
 		}
+		
+		// parse the value
+		DateTimeFormatter formatter = DateTimeFormat.forPattern(databaseDescriptor.getDateTimePattern());
+		LocalDateTime result = formatter.parseLocalDateTime(stringValue);
+		return result;
+
 	}
 
 	/* (non-Javadoc)
@@ -85,25 +80,14 @@ public class DateTimeTypeInfo extends AbstractSqlTypeInfo {
 	public Object convertForSave(Object value, IDatabaseDescriptor databaseDescriptor) {
 		if (value == null) {
 			return null;
-		} else if (value instanceof ReadableInstant) {
-			ReadableInstant readableInstant = (ReadableInstant)value;
-			DateTimeFormatter formatter = getFormatter(databaseDescriptor);
-			String formatted = formatter.print(readableInstant);
+		} else if (value instanceof LocalDateTime) {
+			LocalDateTime localDateTime = (LocalDateTime)value;
+			DateTimeFormatter formatter = DateTimeFormat.forPattern(databaseDescriptor.getDateTimePattern());
+			String formatted = formatter.print(localDateTime);
 			return formatted;
 		} else {
 			throw new IllegalArgumentException("invalid value for date-time conversion: " + value + " (class: " + value.getClass() + ")");
 		}
 	}
-
-	/**
-	 * Obtains a date-time formatter for instants for the specified database.
-	 * The formatter uses the default time zone of the database and the vendor-specific datetime format.
-	 */
-	private static DateTimeFormatter getFormatter(IDatabaseDescriptor databaseDescriptor) {
-		DateTimeZone timeZone = databaseDescriptor.getDefaultTimeZone();
-		if (timeZone == null) {
-			throw new IllegalStateException("no database time zone");
-		}
-		return DateTimeFormat.forPattern(databaseDescriptor.getDateTimePattern()).withZone(timeZone);
-	}
+	
 }

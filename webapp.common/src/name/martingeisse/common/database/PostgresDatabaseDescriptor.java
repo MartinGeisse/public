@@ -23,4 +23,20 @@ public class PostgresDatabaseDescriptor extends AbstractDatabaseDescriptor {
 		return new PostgresTemplates();
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.database.IDatabaseDescriptor#getDateTimePattern()
+	 */
+	@Override
+	public String getDateTimePattern() {
+		throw new RuntimeException();
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.database.IDatabaseDescriptor#getDatePattern()
+	 */
+	@Override
+	public String getDatePattern() {
+		throw new RuntimeException();
+	}
+	
 }

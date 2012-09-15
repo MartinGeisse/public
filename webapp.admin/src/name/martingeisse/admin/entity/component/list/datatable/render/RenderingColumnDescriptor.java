@@ -21,20 +21,14 @@ public class RenderingColumnDescriptor extends DataTableColumnDescriptor {
 	/**
 	 * the sortExpression
 	 */
-	private Expression<Comparable<?>> sortExpression;
-
-	/**
-	 * Constructor.
-	 */
-	public RenderingColumnDescriptor() {
-	}
+	private final Expression<Comparable<?>> sortExpression;
 
 	/**
 	 * Constructor.
 	 * @param title the title
 	 */
 	public RenderingColumnDescriptor(final String title) {
-		super(title);
+		this(title, null);
 	}
 
 	/**
@@ -53,14 +47,6 @@ public class RenderingColumnDescriptor extends DataTableColumnDescriptor {
 	 */
 	public Expression<Comparable<?>> getSortExpression() {
 		return sortExpression;
-	}
-
-	/**
-	 * Setter method for the sortExpression.
-	 * @param sortExpression the sortExpression to set
-	 */
-	public void setSortExpression(final Expression<Comparable<?>> sortExpression) {
-		this.sortExpression = sortExpression;
 	}
 
 }

@@ -12,6 +12,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.joda.time.DateTimeZone;
+
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
@@ -97,12 +99,47 @@ public class Main {
 //		phpbbDatabase.setPassword("");
 //		ApplicationConfiguration.get().addDatabase(phpbbDatabase);
 
-		// the database
+		//
+		// The database. Note about "useTimezone=false": This is needed so we can load local dates and
+		// datetimes from the database. JDBC uses an inherently broken model here, which we're trying to
+		// circumvent. Speaking in Joda-Time terms, the database stores a local date or datetime value,
+		// NOT an instant -- that is, the timezone is implicit, not stored. JDBC, however, always
+		// wants to convert this to an instant that is expressed as a java.sql.Date or java.sql.Timestamp,
+		// i.e. an instant that is represented in UTC, using an implicit timezone whose origin depends
+		// on the JDBC driver. To obtain a local value without too much hassle, we set "useTimezone=false"
+		// to make this conversion a NOP, i.e. make JDBC assume that the database value is a local value
+		// that is to be interpreted as UTC, so the conversion just takes this value and adds "UTC" to it.
+		// We then take the value and create a local value as a Joda object by throwing away the "UTC" again.
+		//
+		// NOTE: This description is specific to MySQL. For other databases, we basically need to do
+		// whatever is necessary to read the local value from the database as a local value expressed
+		// as a Joda object, circumventing JDBC's stupidity and implicit rules.
+		//
+		// NOTE: The server stores a server-wide time zone setting. One *could* use that to interpret
+		// database values as instants instead of local values. However, (1) this setting cannot be
+		// trusted to be correct since it's not used in many places in DB-side time handling (i.e.
+		// we might very well have to deal with an incorrectly configured database and existing
+		// applications that know how to work around it), and (2) we'll have to deal with values in the
+		// DB that are meant as local values, and might even be part of a (local value, time zone) pair.
+		// Applying the server time zone to such values would be incorrect. So we'll only deal with the
+		// server time zone as much as needed to get rid of it and obtain the local values that are
+		// actually stored in the DB tables.
+		//
+		// If part of the application wants to store an instant in the database -- a quite common task --
+		// we'll rather have the application convert it manually, possibly providing access to
+		// automatic type conversion (e.g. an implicitly converting ISqlDateTimeTypeInfo). The
+		// admin framework should not do this -- it would be an implicit conversion layer that adds
+		// confusion, and it would be unclear to the application developer how the time zone used
+		// for that conversion is related to the SQL server time zone setting.
+		//
+		// NOTE: Actually we don't absolutely *need* that parameter for MySQL since it's the default.
+		//
 		final MysqlDatabaseDescriptor phorumDatabase = new MysqlDatabaseDescriptor();
 		phorumDatabase.setDisplayName("Phorum database");
-		phorumDatabase.setUrl("jdbc:mysql://localhost/phorum?zeroDateTimeBehavior=convertToNull");
+		phorumDatabase.setUrl("jdbc:mysql://localhost/phorum?zeroDateTimeBehavior=convertToNull&useTimezone=false");
 		phorumDatabase.setUsername("root");
 		phorumDatabase.setPassword("");
+		phorumDatabase.setDefaultTimeZone(DateTimeZone.forID("Europe/Berlin"));
 		ApplicationConfiguration.get().addDatabase(phorumDatabase);
 		EntityConnectionManager.initializeDatabaseDescriptors(phorumDatabase);
 		

@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.entity.schema.type;
 
+import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.datarow.IDataRowTypeConverter;
 
 /**
@@ -25,12 +26,14 @@ public interface ISqlTypeInfo extends ITypeInfo, IDataRowTypeConverter {
 	/**
 	 * Converts an instance of this type for saving into the database.
 	 * This method basically does the inverse conversion as
-	 * {{@link #readFromResultSet(java.sql.ResultSet, int)}.
+	 * {{@link #readFromResultSet(java.sql.ResultSet, int, IDatabaseDescriptor)}.
 	 * 
 	 * @param value the value to convert. Should be an instance of the
 	 * type returned by {{@link #getJavaWorkType()}.
+	 * @param databaseDescriptor the database descriptor for the database to which
+	 * the row will be saved
 	 * @return the JDBC-compatible value to save into the database
 	 */
-	public Object convertForSave(Object value);
+	public Object convertForSave(Object value, IDatabaseDescriptor databaseDescriptor);
 	
 }

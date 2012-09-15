@@ -46,7 +46,7 @@ public class EntityInstance extends DataRow {
 	 * @throws SQLException on SQL errors
 	 */
 	public EntityInstance(final EntityDescriptor entity, final ResultSet resultSet) throws SQLException {
-		super(ParameterUtil.ensureNotNull(resultSet, "resultSet"), ParameterUtil.ensureNotNull(entity, "entity").getDataRowTypes());
+		super(ParameterUtil.ensureNotNull(resultSet, "resultSet"), ParameterUtil.ensureNotNull(entity, "entity").getDataRowTypes(), entity.getDatabase());
 		entity.checkDataRowMeta(this);
 		this.entityName = entity.getName();
 		this.entity = entity;

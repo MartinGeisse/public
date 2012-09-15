@@ -8,8 +8,9 @@ package name.martingeisse.admin.application.wicket;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.security.SecurityConfigurationUtil;
-import name.martingeisse.admin.application.wicket.converter.DateConverter;
 import name.martingeisse.admin.application.wicket.converter.DateTimeConverter;
+import name.martingeisse.admin.application.wicket.converter.LocalDateConverter;
+import name.martingeisse.admin.application.wicket.converter.LocalDateTimeConverter;
 import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.component.page.HomePage;
 import name.martingeisse.admin.component.page.images.Dummy;
@@ -35,8 +36,9 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IExceptionMapper;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.IProvider;
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 
 /**
  * Wicket {@link WebApplication} implementation for this application.
@@ -109,8 +111,9 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		
 		// register type converters
 		ConverterLocator converterLocator = (ConverterLocator)getConverterLocator();
-		converterLocator.set(DateMidnight.class, new DateConverter());
 		converterLocator.set(DateTime.class, new DateTimeConverter());
+		converterLocator.set(LocalDateTime.class, new LocalDateTimeConverter());
+		converterLocator.set(LocalDate.class, new LocalDateConverter());
 
 		// some more Wicket configuration
 		getApplicationSettings().setPageExpiredErrorPage(HomePage.class);
