@@ -17,7 +17,9 @@ import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor;
 import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
 import name.martingeisse.wicket.autoform.validation.IValidatorAcceptor;
 import name.martingeisse.wicket.panel.simple.CheckBoxPanel;
+import name.martingeisse.wicket.panel.simple.DateTextFieldPanel;
 import name.martingeisse.wicket.panel.simple.DropDownChoicePanel;
+import name.martingeisse.wicket.panel.simple.IFormComponentPanel;
 import name.martingeisse.wicket.panel.simple.TextFieldPanel;
 import name.martingeisse.wicket.panel.simple.TextFieldWithSuggestionsPanel;
 
@@ -128,97 +130,49 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 	 */
 	protected Panel createPropertyComponentNoOverride(String id, IAutoformPropertyDescriptor propertyDescriptor, IValidator<?>[] validators, IValidationErrorAcceptor validationErrorAcceptor) {
 
+		// create the specific component for the property's type and model
 		final Class<?> type = propertyDescriptor.getType();
 		final IModel<?> model = propertyDescriptor.getModel();
-		System.out.println("*** " + type);
-
+		IFormComponentPanel<?> panel;
 		if (type == String.class) {
 			AutoformTextSuggestions suggestionsAnnotation = propertyDescriptor.getAnnotation(AutoformTextSuggestions.class);
 			String[] suggestions = (suggestionsAnnotation == null) ? null : suggestionsAnnotation.value();
 			if (suggestions != null && !propertyDescriptor.isReadOnly()) {
-				final TextFieldWithSuggestionsPanel panel = new TextFieldWithSuggestionsPanel(id, this.<String> castModelUnsafe(model));
-				panel.setSuggestions(suggestions);
-				addValidatorsUnsafe(panel.getTextField(), validators);
-				validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
-				return panel;
+				final TextFieldWithSuggestionsPanel panel2 = new TextFieldWithSuggestionsPanel(id, this.<String> castModelUnsafe(model));
+				panel2.setSuggestions(suggestions);
+				panel = panel2;
 			} else {
-				final TextFieldPanel<String> panel = new TextFieldPanel<String>(id, this.<String> castModelUnsafe(model));
-				if (propertyDescriptor.isReadOnly()) {
-					panel.getTextField().setEnabled(false);
-				}
-				addValidatorsUnsafe(panel.getTextField(), validators);
-				validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
-				return panel;
+				panel = new TextFieldPanel<String>(id, this.<String> castModelUnsafe(model));
 			}
-			
-		} else if (type == Integer.class || type == Integer.TYPE) {
-			final TextFieldPanel<?> panel = new TextFieldPanel<Object>(id, castModelUnsafe(model));
-			if (propertyDescriptor.isReadOnly()) {
-				panel.getTextField().setEnabled(false);
-			}
-			addValidatorsUnsafe(panel.getTextField(), validators);
-			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
-			return panel;
-			
-		} else if (type == BigDecimal.class) {
-			final TextFieldPanel<?> panel = new TextFieldPanel<Object>(id, castModelUnsafe(model));
-			if (propertyDescriptor.isReadOnly()) {
-				panel.getTextField().setEnabled(false);
-			}
-			addValidatorsUnsafe(panel.getTextField(), validators);
-			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
-			return panel;
-			
+		} else if (type == Integer.class || type == Integer.TYPE || type == BigDecimal.class) {
+			panel = new TextFieldPanel<Object>(id, castModelUnsafe(model));
 		} else if (type == Boolean.class || type == Boolean.TYPE) {
-			final CheckBoxPanel panel = new CheckBoxPanel(id, this.<Boolean> castModelUnsafe(model));
-			if (propertyDescriptor.isReadOnly()) {
-				panel.getCheckBox().setEnabled(false);
-			}
-			addValidatorsUnsafe(panel.getCheckBox(), validators);
-			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getCheckBox());
-			return panel;
-			
+			panel = new CheckBoxPanel(id, this.<Boolean> castModelUnsafe(model));
 		} else if (Enum.class.isAssignableFrom(type)) {
-			DropDownChoicePanel<?> panel = dropDownChoiceHelper(id, model, type);
-			addValidatorsUnsafe(panel.getDropDownChoice(), validators);
-			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getDropDownChoice());
-			return panel;
-			
+			panel = dropDownChoiceHelper(id, model, type);
 		} else if (type == DateTime.class) {
-			final TextFieldPanel<DateTime> panel = new TextFieldPanel<DateTime>(id, this.<DateTime> castModelUnsafe(model));
-			panel.getTextField().setType(DateTime.class);
-			if (propertyDescriptor.isReadOnly()) {
-				panel.getTextField().setEnabled(false);
-			}
-			addValidatorsUnsafe(panel.getTextField(), validators);
-			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
-			return panel;
-			
+			panel = new TextFieldPanel<DateTime>(id, this.<DateTime> castModelUnsafe(model));
 		} else if (type == LocalDateTime.class) {
-			final TextFieldPanel<LocalDateTime> panel = new TextFieldPanel<LocalDateTime>(id, this.<LocalDateTime> castModelUnsafe(model));
-			panel.getTextField().setType(LocalDateTime.class);
-			if (propertyDescriptor.isReadOnly()) {
-				panel.getTextField().setEnabled(false);
-			}
-			addValidatorsUnsafe(panel.getTextField(), validators);
-			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
-			return panel;
-
+			panel = new TextFieldPanel<LocalDateTime>(id, this.<LocalDateTime> castModelUnsafe(model));
 		} else if (type == LocalDate.class) {
-			final TextFieldPanel<LocalDate> panel = new TextFieldPanel<LocalDate>(id, this.<LocalDate> castModelUnsafe(model));
-			panel.getTextField().setType(LocalDate.class);
-			if (propertyDescriptor.isReadOnly()) {
-				panel.getTextField().setEnabled(false);
-			}
-			addValidatorsUnsafe(panel.getTextField(), validators);
-			validationErrorAcceptor.acceptValidationErrorsFrom(panel.getTextField());
-			return panel;
-
+			panel = new DateTextFieldPanel<LocalDate>(id, this.<LocalDate> castModelUnsafe(model));
 		} else {
 			throw new RuntimeException("cannot create autoform property component for type: " + type.getCanonicalName() +
 				" (property: " + propertyDescriptor.getName() + ")");
 		}
 
+		// prepare the component panel for this autoform
+		FormComponent<?> formComponent = panel.getFormComponent();
+		if (formComponent != null) {
+			formComponent.setType(type);
+			if (propertyDescriptor.isReadOnly()) {
+				formComponent.setEnabled(false);
+			}
+			addValidatorsUnsafe(formComponent, validators);
+			validationErrorAcceptor.acceptValidationErrorsFrom(formComponent);
+		}
+		return panel.getPanel();
+		
 	}
 	
 	/**

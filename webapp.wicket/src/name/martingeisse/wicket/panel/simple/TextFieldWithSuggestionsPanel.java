@@ -13,6 +13,7 @@ import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -21,7 +22,7 @@ import org.apache.wicket.model.PropertyModel;
 /**
  * A simple {@link Panel} that wraps a {@link TextField}.
  */
-public class TextFieldWithSuggestionsPanel extends Panel implements IHeaderContributor {
+public class TextFieldWithSuggestionsPanel extends Panel implements IHeaderContributor, IFormComponentPanel<String> {
 
 	/**
 	 * the CUSTOM_TEXT
@@ -101,7 +102,7 @@ public class TextFieldWithSuggestionsPanel extends Panel implements IHeaderContr
 	public final TextField<String> getTextField() {
 		return textField;
 	}
-
+	
 	/**
 	 * Getter method for the suggestionsIncludingCustom.
 	 * @return the suggestionsIncludingCustom
@@ -196,4 +197,20 @@ public class TextFieldWithSuggestionsPanel extends Panel implements IHeaderContr
 		textFieldStyle = "visibility: visible; ";
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getPanel()
+	 */
+	@Override
+	public Panel getPanel() {
+		return this;
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getFormComponent()
+	 */
+	@Override
+	public FormComponent<String> getFormComponent() {
+		return textField;
+	}
+	
 }

@@ -87,6 +87,7 @@ public class AbstractAdminPage extends WebPage {
 	public void renderHead(final IHeaderResponse response) {
 		ParameterUtil.ensureNotNull(response, "response");
 		response.renderCSSReference(new CssResourceReference(AbstractAdminPage.class, "common.css"));
+		response.renderCSSReference(new CssResourceReference(AbstractAdminPage.class, "jquery-ui-1.8.23.custom.css"));
 		response.renderCSSReference(new CssResourceReference(AbstractAdminPage.class, "jquery.dataTables.css"));
 		response.renderJavaScriptReference(new JavaScriptResourceReference(AbstractAdminPage.class, "common.js"));
 	}

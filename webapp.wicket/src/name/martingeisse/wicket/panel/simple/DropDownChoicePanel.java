@@ -13,6 +13,7 @@ import name.martingeisse.common.terms.IGetDisplayNameAware;
 import name.martingeisse.wicket.util.DisplayNameEnumChoiceRenderer;
 
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
@@ -20,7 +21,7 @@ import org.apache.wicket.model.IModel;
  * A simple {@link Panel} that wraps a {@link DropDownChoice}.
  * @param <T> the model type
  */
-public class DropDownChoicePanel<T> extends Panel {
+public class DropDownChoicePanel<T> extends Panel implements IFormComponentPanel<T> {
 
 	/**
 	 * the dropDownChoice
@@ -106,4 +107,20 @@ public class DropDownChoicePanel<T> extends Panel {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getPanel()
+	 */
+	@Override
+	public Panel getPanel() {
+		return this;
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getFormComponent()
+	 */
+	@Override
+	public FormComponent<T> getFormComponent() {
+		return dropDownChoice;
+	}
+	
 }

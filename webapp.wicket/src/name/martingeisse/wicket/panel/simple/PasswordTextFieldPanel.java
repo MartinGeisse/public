@@ -6,6 +6,7 @@
 
 package name.martingeisse.wicket.panel.simple;
 
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -13,7 +14,7 @@ import org.apache.wicket.model.IModel;
 /**
  * A simple {@link Panel} that wraps a {@link PasswordTextField}.
  */
-public class PasswordTextFieldPanel extends Panel {
+public class PasswordTextFieldPanel extends Panel implements IFormComponentPanel<String> {
 
 	/**
 	 * the passwordTextField
@@ -64,4 +65,20 @@ public class PasswordTextFieldPanel extends Panel {
 		return passwordTextField;
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getPanel()
+	 */
+	@Override
+	public Panel getPanel() {
+		return this;
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getFormComponent()
+	 */
+	@Override
+	public FormComponent<String> getFormComponent() {
+		return passwordTextField;
+	}
+	
 }

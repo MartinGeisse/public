@@ -8,6 +8,7 @@ package name.martingeisse.wicket.panel.simple;
 
 import name.martingeisse.common.terms.IReadOnlyAware;
 
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -16,7 +17,7 @@ import org.apache.wicket.model.IModel;
  * A simple {@link Panel} that wraps a {@link TextArea}.
  * @param <T> the model type
  */
-public class TextAreaPanel<T> extends Panel implements IReadOnlyAware {
+public class TextAreaPanel<T> extends Panel implements IReadOnlyAware, IFormComponentPanel<T> {
 
 	/**
 	 * the textArea
@@ -82,4 +83,20 @@ public class TextAreaPanel<T> extends Panel implements IReadOnlyAware {
 		textArea.setEnabled(!readOnly);
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getPanel()
+	 */
+	@Override
+	public Panel getPanel() {
+		return this;
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getFormComponent()
+	 */
+	@Override
+	public FormComponent<T> getFormComponent() {
+		return textArea;
+	}
+	
 }

@@ -6,6 +6,7 @@
 
 package name.martingeisse.wicket.panel.simple;
 
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -14,7 +15,7 @@ import org.apache.wicket.model.IModel;
  * A simple {@link Panel} that wraps a {@link TextField}.
  * @param <T> the model type
  */
-public class TextFieldPanel<T> extends Panel {
+public class TextFieldPanel<T> extends Panel implements IFormComponentPanel<T> {
 
 	/**
 	 * the textField
@@ -61,6 +62,22 @@ public class TextFieldPanel<T> extends Panel {
 	 * @return the textField
 	 */
 	public final TextField<T> getTextField() {
+		return textField;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getPanel()
+	 */
+	@Override
+	public Panel getPanel() {
+		return this;
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getFormComponent()
+	 */
+	@Override
+	public FormComponent<T> getFormComponent() {
 		return textField;
 	}
 
