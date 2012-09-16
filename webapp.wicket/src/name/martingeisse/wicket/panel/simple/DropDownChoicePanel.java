@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import name.martingeisse.common.terms.IGetDisplayNameAware;
+import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
 import name.martingeisse.wicket.util.DisplayNameEnumChoiceRenderer;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -108,10 +110,10 @@ public class DropDownChoicePanel<T> extends Panel implements IFormComponentPanel
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getPanel()
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getRootComponent()
 	 */
 	@Override
-	public Panel getPanel() {
+	public Component getRootComponent() {
 		return this;
 	}
 	
@@ -121,6 +123,14 @@ public class DropDownChoicePanel<T> extends Panel implements IFormComponentPanel
 	@Override
 	public FormComponent<T> getFormComponent() {
 		return dropDownChoice;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#connectValidationErrorAcceptor(name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor)
+	 */
+	@Override
+	public void connectValidationErrorAcceptor(IValidationErrorAcceptor validationErrorAcceptor) {
+		validationErrorAcceptor.acceptValidationErrorsFrom(dropDownChoice);
 	}
 	
 }

@@ -18,6 +18,7 @@ import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
 import name.martingeisse.wicket.autoform.validation.IValidatorAcceptor;
 import name.martingeisse.wicket.panel.simple.CheckBoxPanel;
 import name.martingeisse.wicket.panel.simple.DateTextFieldPanel;
+import name.martingeisse.wicket.panel.simple.DateTimeTextFieldPanel;
 import name.martingeisse.wicket.panel.simple.DropDownChoicePanel;
 import name.martingeisse.wicket.panel.simple.IFormComponentPanel;
 import name.martingeisse.wicket.panel.simple.TextFieldPanel;
@@ -25,7 +26,6 @@ import name.martingeisse.wicket.panel.simple.TextFieldWithSuggestionsPanel;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.validation.IValidator;
 import org.joda.time.DateTime;
@@ -128,7 +128,7 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 	 * @param validationErrorAcceptor the acceptor for validation errors
 	 * @return the component
 	 */
-	protected Panel createPropertyComponentNoOverride(String id, IAutoformPropertyDescriptor propertyDescriptor, IValidator<?>[] validators, IValidationErrorAcceptor validationErrorAcceptor) {
+	protected Component createPropertyComponentNoOverride(String id, IAutoformPropertyDescriptor propertyDescriptor, IValidator<?>[] validators, IValidationErrorAcceptor validationErrorAcceptor) {
 
 		// create the specific component for the property's type and model
 		final Class<?> type = propertyDescriptor.getType();
@@ -151,9 +151,15 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 		} else if (Enum.class.isAssignableFrom(type)) {
 			panel = dropDownChoiceHelper(id, model, type);
 		} else if (type == DateTime.class) {
-			panel = new TextFieldPanel<DateTime>(id, this.<DateTime> castModelUnsafe(model));
+			panel = new DateTimeTextFieldPanel<DateTime>(id, this.<DateTime> castModelUnsafe(model));
 		} else if (type == LocalDateTime.class) {
-			panel = new TextFieldPanel<LocalDateTime>(id, this.<LocalDateTime> castModelUnsafe(model));
+			// TODO: a quick look at the code indicates that
+			// validateRequired operates on the actual input, which is nonsense for a FormComponentPanel
+			// (maybe set the required flag accordingly)
+			// -> should work
+			// (required-flag isn't properly implemented yet anyway)
+			// applies to read-only and other flags too
+			panel = new DateTimeTextFieldPanel<LocalDateTime>(id, this.<LocalDateTime> castModelUnsafe(model));
 		} else if (type == LocalDate.class) {
 			panel = new DateTextFieldPanel<LocalDate>(id, this.<LocalDate> castModelUnsafe(model));
 		} else {
@@ -169,9 +175,9 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 				formComponent.setEnabled(false);
 			}
 			addValidatorsUnsafe(formComponent, validators);
-			validationErrorAcceptor.acceptValidationErrorsFrom(formComponent);
+			panel.connectValidationErrorAcceptor(validationErrorAcceptor);
 		}
-		return panel.getPanel();
+		return panel.getRootComponent();
 		
 	}
 	

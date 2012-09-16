@@ -6,6 +6,9 @@
 
 package name.martingeisse.wicket.panel.simple;
 
+import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
+
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -66,10 +69,10 @@ public class TextFieldPanel<T> extends Panel implements IFormComponentPanel<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getPanel()
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getRootComponent()
 	 */
 	@Override
-	public Panel getPanel() {
+	public Component getRootComponent() {
 		return this;
 	}
 	
@@ -81,4 +84,12 @@ public class TextFieldPanel<T> extends Panel implements IFormComponentPanel<T> {
 		return textField;
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#connectValidationErrorAcceptor(name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor)
+	 */
+	@Override
+	public void connectValidationErrorAcceptor(IValidationErrorAcceptor validationErrorAcceptor) {
+		validationErrorAcceptor.acceptValidationErrorsFrom(textField);
+	}
+	
 }

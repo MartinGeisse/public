@@ -14,15 +14,22 @@ import org.apache.wicket.Component;
  * components. When creating a property component, this interface
  * must be invoked and the actual form component be passed for
  * which validation error feedback messages will be registered.
+ * 
+ * The effect of invoking both methods or invoking one method
+ * more than once is unspecified.
  */
 public interface IValidationErrorAcceptor {
 
 	/**
-	 * Accepts validation errors from the specified component. The effect
-	 * of invoking this method more than once for a single acceptor is
-	 * unspecified.
+	 * Accepts validation errors from the specified component.
 	 * @param component the component for which validation errors will be registered
 	 */
 	public void acceptValidationErrorsFrom(Component component);
-	
+
+	/**
+	 * Accepts validation errors from the specified components.
+	 * @param components the component for which validation errors will be registered
+	 */
+	public void acceptValidationErrorsFromMultiple(Component... components);
+
 }

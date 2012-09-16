@@ -46,7 +46,9 @@ public class MyWicketSession extends WebSession {
 		setLocale(Locale.GERMANY);
 		this.dataContainer = new ClassKeyedContainer<Object>();
 		this.pageId = (new Random().nextInt() & 0xffffff);
-		this.timeZone = DateTimeZone.getDefault();
+		
+		// TODO
+		this.timeZone = DateTimeZone.forID("Europe/Moscow"); // DateTimeZone.getDefault();
 	}
 	
 	/**

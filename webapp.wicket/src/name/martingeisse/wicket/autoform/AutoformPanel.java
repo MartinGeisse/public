@@ -19,6 +19,7 @@ import name.martingeisse.wicket.autoform.describe.IAutoformBeanDescriber;
 import name.martingeisse.wicket.autoform.describe.IAutoformBeanDescriptor;
 import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor;
 import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
+import name.martingeisse.wicket.panel.MultiComponentFeedbackPanel;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
@@ -117,6 +118,14 @@ public class AutoformPanel extends Panel {
 			item.add(new ComponentFeedbackPanel("errorMessage", component));
 		}
 
+		/* (non-Javadoc)
+		 * @see name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor#acceptValidationErrorsFromMultiple(org.apache.wicket.Component[])
+		 */
+		@Override
+		public void acceptValidationErrorsFromMultiple(Component... components) {
+			item.add(new MultiComponentFeedbackPanel("errorMessage", components));
+		}
+		
 	}
 
 	/**

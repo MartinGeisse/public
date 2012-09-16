@@ -9,6 +9,9 @@ package name.martingeisse.wicket.panel.simple;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
+
+import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -198,10 +201,10 @@ public class TextFieldWithSuggestionsPanel extends Panel implements IHeaderContr
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getPanel()
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getRootComponent()
 	 */
 	@Override
-	public Panel getPanel() {
+	public Component getRootComponent() {
 		return this;
 	}
 	
@@ -211,6 +214,14 @@ public class TextFieldWithSuggestionsPanel extends Panel implements IHeaderContr
 	@Override
 	public FormComponent<String> getFormComponent() {
 		return textField;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#connectValidationErrorAcceptor(name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor)
+	 */
+	@Override
+	public void connectValidationErrorAcceptor(IValidationErrorAcceptor validationErrorAcceptor) {
+		validationErrorAcceptor.acceptValidationErrorsFrom(textField);
 	}
 	
 }

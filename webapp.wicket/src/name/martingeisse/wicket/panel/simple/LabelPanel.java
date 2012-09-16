@@ -6,6 +6,9 @@
 
 package name.martingeisse.wicket.panel.simple;
 
+import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
+
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -65,10 +68,10 @@ public class LabelPanel extends Panel implements IFormComponentPanel<String> {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getPanel()
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getRootComponent()
 	 */
 	@Override
-	public Panel getPanel() {
+	public Component getRootComponent() {
 		return this;
 	}
 	
@@ -78,6 +81,13 @@ public class LabelPanel extends Panel implements IFormComponentPanel<String> {
 	@Override
 	public FormComponent<String> getFormComponent() {
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#connectValidationErrorAcceptor(name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor)
+	 */
+	@Override
+	public void connectValidationErrorAcceptor(IValidationErrorAcceptor validationErrorAcceptor) {
 	}
 	
 }
