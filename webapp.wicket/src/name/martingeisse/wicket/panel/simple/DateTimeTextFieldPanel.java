@@ -10,6 +10,7 @@ import name.martingeisse.wicket.application.MyWicketSession;
 import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.FormComponentPanel;
@@ -236,6 +237,15 @@ public class DateTimeTextFieldPanel<T> extends FormComponentPanel<T> implements 
 	public void renderHead(IHeaderResponse response) {
 		String markupId = getDateTextField().getMarkupId();
 		response.renderOnDomReadyJavaScript("$('#" + markupId + "').datepicker({ dateFormat: 'd.m.yy' });");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.Component#onComponentTag(org.apache.wicket.markup.ComponentTag)
+	 */
+	@Override
+	protected void onComponentTag(ComponentTag tag) {
+		super.onComponentTag(tag);
+		tag.append("class", "DateTimeTextFieldPanel", " ");
 	}
 	
 }

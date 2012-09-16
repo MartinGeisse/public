@@ -9,33 +9,24 @@ package name.martingeisse.wicket.panel.simple;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
-
-import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 
 /**
- * A simple {@link Panel} that wraps a {@link TextField}.
+ * A specialized {@link TextFieldPanel} that provides suggestions for
+ * user input, but also allows arbitrary input.
  */
-public class TextFieldWithSuggestionsPanel extends Panel implements IHeaderContributor, IFormComponentPanel<String> {
+public class TextFieldWithSuggestionsPanel extends TextFieldPanel<String> {
 
 	/**
 	 * the CUSTOM_TEXT
 	 */
 	private static final String CUSTOM_TEXT = "(sonstige)";
-
-	/**
-	 * the textField
-	 */
-	private final TextField<String> textField;
 
 	/**
 	 * the suggestionsIncludingCustom
@@ -57,7 +48,7 @@ public class TextFieldWithSuggestionsPanel extends Panel implements IHeaderContr
 	 * @param id the wicket id of this panel
 	 */
 	public TextFieldWithSuggestionsPanel(final String id) {
-		this(id, new TextField<String>(getTextFieldId()));
+		this(id, new TextField<String>(FORM_COMPONENT_ID));
 	}
 
 	/**
@@ -66,19 +57,18 @@ public class TextFieldWithSuggestionsPanel extends Panel implements IHeaderContr
 	 * @param model the model used by the text field
 	 */
 	public TextFieldWithSuggestionsPanel(final String id, final IModel<String> model) {
-		this(id, new TextField<String>(getTextFieldId(), model));
+		this(id, new TextField<String>(FORM_COMPONENT_ID, model));
 	}
 
 	/**
 	 * Constructor.
 	 * @param id the wicket id of this panel
-	 * @param textField the text field to use. Must use the wicket:id returned by getTextFieldId().
+	 * @param textField the text field to use. Must use the value of {#FORM_COMPONENT_ID} as its Wicket id. 
 	 */
 	public TextFieldWithSuggestionsPanel(final String id, final TextField<String> textField) {
 		super(id);
 		setOutputMarkupId(true);
 
-		this.textField = textField;
 		textField.add(new AttributeAppender("style", new PropertyModel<String>(this, "textFieldStyle"), ""));
 		add(textField);
 
@@ -91,21 +81,6 @@ public class TextFieldWithSuggestionsPanel extends Panel implements IHeaderContr
 
 	}
 
-	/**
-	 * @return the wicket:id that the wrapped text field must use.
-	 */
-	public static String getTextFieldId() {
-		return "wrapped";
-	}
-
-	/**
-	 * Getter method for the textField.
-	 * @return the textField
-	 */
-	public final TextField<String> getTextField() {
-		return textField;
-	}
-	
 	/**
 	 * Getter method for the suggestionsIncludingCustom.
 	 * @return the suggestionsIncludingCustom
@@ -154,6 +129,7 @@ public class TextFieldWithSuggestionsPanel extends Panel implements IHeaderContr
 	 */
 	@Override
 	public void renderHead(final IHeaderResponse response) {
+		super.renderHead(response);
 		response.renderJavaScript(generateInitializationJavascript(), null);
 	}
 
@@ -181,7 +157,7 @@ public class TextFieldWithSuggestionsPanel extends Panel implements IHeaderContr
 	 * 
 	 */
 	private void checkIfValueMatchesSuggestion() {
-		final String value = textField.getModelObject();
+		final String value = getFormComponent().getModelObject();
 		if (value == null) {
 			selectedSuggestion = null;
 			textFieldStyle = "visibility: hidden; ";
@@ -201,27 +177,12 @@ public class TextFieldWithSuggestionsPanel extends Panel implements IHeaderContr
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getRootComponent()
+	 * @see org.apache.wicket.Component#onComponentTag(org.apache.wicket.markup.ComponentTag)
 	 */
 	@Override
-	public Component getRootComponent() {
-		return this;
-	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getFormComponent()
-	 */
-	@Override
-	public FormComponent<String> getFormComponent() {
-		return textField;
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#connectValidationErrorAcceptor(name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor)
-	 */
-	@Override
-	public void connectValidationErrorAcceptor(IValidationErrorAcceptor validationErrorAcceptor) {
-		validationErrorAcceptor.acceptValidationErrorsFrom(textField);
+	protected void onComponentTag(ComponentTag tag) {
+		super.onComponentTag(tag);
+		tag.append("class", "TextFieldWithSuggestionsPanel", " ");
 	}
 	
 }

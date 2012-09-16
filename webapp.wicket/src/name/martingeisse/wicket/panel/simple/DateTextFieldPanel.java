@@ -7,6 +7,7 @@
 package name.martingeisse.wicket.panel.simple;
 
 
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.model.IModel;
@@ -24,7 +25,7 @@ public class DateTextFieldPanel<T> extends TextFieldPanel<T> implements IHeaderC
 	 */
 	public DateTextFieldPanel(final String id, final IModel<T> model) {
 		super(id, model);
-		getTextField().setOutputMarkupId(true);
+		getFormComponent().setOutputMarkupId(true);
 	}
 
 	/* (non-Javadoc)
@@ -32,8 +33,17 @@ public class DateTextFieldPanel<T> extends TextFieldPanel<T> implements IHeaderC
 	 */
 	@Override
 	public void renderHead(IHeaderResponse response) {
-		String markupId = getTextField().getMarkupId();
+		String markupId = getFormComponent().getMarkupId();
 		response.renderOnDomReadyJavaScript("$('#" + markupId + "').datepicker({ dateFormat: 'd.m.yy' });");
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.Component#onComponentTag(org.apache.wicket.markup.ComponentTag)
+	 */
+	@Override
+	protected void onComponentTag(ComponentTag tag) {
+		super.onComponentTag(tag);
+		tag.append("class", "DateTextFieldPanel", " ");
+	}
+	
 }

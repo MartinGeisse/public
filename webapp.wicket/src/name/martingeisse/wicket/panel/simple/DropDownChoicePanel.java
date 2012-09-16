@@ -10,58 +10,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 import name.martingeisse.common.terms.IGetDisplayNameAware;
-import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
 import name.martingeisse.wicket.util.DisplayNameEnumChoiceRenderer;
 
-import org.apache.wicket.Component;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 /**
- * A simple {@link Panel} that wraps a {@link DropDownChoice}.
+ * A simple panel that wraps a {@link DropDownChoice}.
  * @param <T> the model type
  */
-public class DropDownChoicePanel<T> extends Panel implements IFormComponentPanel<T> {
-
-	/**
-	 * the dropDownChoice
-	 */
-	private final DropDownChoice<T> dropDownChoice;
+public class DropDownChoicePanel<T> extends AbstractSimpleFormComponentPanel<T, DropDownChoice<T>> {
 
 	/**
 	 * Constructor.
 	 * @param id the wicket id of this panel
 	 */
 	public DropDownChoicePanel(String id) {
-		this(id, new DropDownChoice<T>(getDropDownChoiceId()));
+		super(id);
+		add(new DropDownChoice<T>(FORM_COMPONENT_ID));
 	}
 
 	/**
 	 * Constructor.
 	 * @param id the wicket id of this panel
-	 * @param dropDownChoice the drop-down choice to use. Must use the wicket:id returned by getDropDownChoiceId().
+	 * @param dropDownChoice the drop-down choice to use. Must use the value of {#FORM_COMPONENT_ID} as its Wicket id.
 	 */
 	public DropDownChoicePanel(String id, DropDownChoice<T> dropDownChoice) {
 		super(id);
-		this.dropDownChoice = dropDownChoice;
 		add(dropDownChoice);
-	}
-
-	/**
-	 * @return the wicket:id that the wrapped drop-down choice must use.
-	 */
-	public static String getDropDownChoiceId() {
-		return "wrapped";
-	}
-
-	/**
-	 * Getter method for the dropDownChoice.
-	 * @return the dropDownChoice
-	 */
-	public DropDownChoice<T> getDropDownChoice() {
-		return dropDownChoice;
 	}
 	
 	/**
@@ -74,13 +51,13 @@ public class DropDownChoicePanel<T> extends Panel implements IFormComponentPanel
 	 */
 	public static <T extends Enum<T>> DropDownChoicePanel<T> createForRawEnum(String id, IModel<T> model, Class<T> enumClass) {
 		DropDownChoicePanel<T> panel = new DropDownChoicePanel<T>(id);
-		panel.getDropDownChoice().setModel(model);
-		panel.getDropDownChoice().setChoices(getEnumElementsAsList(enumClass));
+		panel.getFormComponent().setModel(model);
+		panel.getFormComponent().setChoices(getEnumElementsAsList(enumClass));
 		return panel;
 	}
 
 	/**
-	 * Creates an instance for an enum type.
+	 * Creates an instance for an enum type that implements {@link IGetDisplayNameAware}.
 	 * @param <T> the enum type
 	 * @param id the wicket id
 	 * @param model the model
@@ -89,9 +66,9 @@ public class DropDownChoicePanel<T> extends Panel implements IFormComponentPanel
 	 */
 	public static <T extends Enum<T> & IGetDisplayNameAware> DropDownChoicePanel<T> createForDisplayNameEnum(String id, IModel<T> model, Class<T> enumClass) {
 		DropDownChoicePanel<T> panel = new DropDownChoicePanel<T>(id);
-		panel.getDropDownChoice().setModel(model);
-		panel.getDropDownChoice().setChoices(getEnumElementsAsList(enumClass));
-		panel.getDropDownChoice().setChoiceRenderer(new DisplayNameEnumChoiceRenderer<T>());
+		panel.getFormComponent().setModel(model);
+		panel.getFormComponent().setChoices(getEnumElementsAsList(enumClass));
+		panel.getFormComponent().setChoiceRenderer(new DisplayNameEnumChoiceRenderer<T>());
 		return panel;
 	}
 
@@ -110,27 +87,12 @@ public class DropDownChoicePanel<T> extends Panel implements IFormComponentPanel
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getRootComponent()
+	 * @see org.apache.wicket.Component#onComponentTag(org.apache.wicket.markup.ComponentTag)
 	 */
 	@Override
-	public Component getRootComponent() {
-		return this;
-	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getFormComponent()
-	 */
-	@Override
-	public FormComponent<T> getFormComponent() {
-		return dropDownChoice;
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#connectValidationErrorAcceptor(name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor)
-	 */
-	@Override
-	public void connectValidationErrorAcceptor(IValidationErrorAcceptor validationErrorAcceptor) {
-		validationErrorAcceptor.acceptValidationErrorsFrom(dropDownChoice);
+	protected void onComponentTag(ComponentTag tag) {
+		super.onComponentTag(tag);
+		tag.append("class", "DropDownChoicePanel", " ");
 	}
 	
 }

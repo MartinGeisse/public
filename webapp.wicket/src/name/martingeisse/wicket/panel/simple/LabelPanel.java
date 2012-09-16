@@ -9,27 +9,31 @@ package name.martingeisse.wicket.panel.simple;
 import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 /**
- * A simple {@link Panel} that wraps a {@link Label}.
+ * A simple panel that wraps a {@link Label}.
+ * 
+ * The wrapped label always uses the Wicket id "wrapped"
+ * (also available as class constant LABEL_ID).
  */
 public class LabelPanel extends Panel implements IFormComponentPanel<String> {
 
 	/**
-	 * the label
+	 * The Wicket id of the wrapped label.
 	 */
-	private final Label label;
+	public static final String LABEL_ID = "wrapped";
 
 	/**
 	 * Constructor.
 	 * @param id the wicket id of this panel
 	 */
 	public LabelPanel(String id) {
-		this(id, new Label(getLabelId()));
+		this(id, new Label(LABEL_ID));
 	}
 
 	/**
@@ -38,33 +42,25 @@ public class LabelPanel extends Panel implements IFormComponentPanel<String> {
 	 * @param model the model used by the label
 	 */
 	public LabelPanel(String id, IModel<?> model) {
-		this(id, new Label(getLabelId(), model));
+		this(id, new Label(LABEL_ID, model));
 	}
 
 	/**
 	 * Constructor.
 	 * @param id the wicket id of this panel
-	 * @param label the label to use. Must use the wicket:id returned by getLabelId().
+	 * @param label the label to use. Must use the value of {#LABEL_ID} as its Wicket id.
 	 */
 	public LabelPanel(String id, Label label) {
 		super(id);
-		this.label = label;
 		add(label);
 	}
 
-	/**
-	 * @return the wicket:id that the wrapped label must use.
-	 */
-	public static String getLabelId() {
-		return "wrapped";
-	}
-	
 	/**
 	 * Getter method for the label.
 	 * @return the label
 	 */
 	public final Label getLabel() {
-		return label;
+		return (Label)get(LABEL_ID);
 	}
 
 	/* (non-Javadoc)
@@ -88,6 +84,15 @@ public class LabelPanel extends Panel implements IFormComponentPanel<String> {
 	 */
 	@Override
 	public void connectValidationErrorAcceptor(IValidationErrorAcceptor validationErrorAcceptor) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.Component#onComponentTag(org.apache.wicket.markup.ComponentTag)
+	 */
+	@Override
+	protected void onComponentTag(ComponentTag tag) {
+		super.onComponentTag(tag);
+		tag.append("class", "LabelPanel", " ");
 	}
 	
 }

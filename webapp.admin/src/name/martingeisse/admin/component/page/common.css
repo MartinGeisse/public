@@ -155,3 +155,11 @@ tr.odd {
 
 .data-table-container .bottom {
 }
+
+.TextFieldPanel input {
+	width: 100%;
+}
+
+.TextFieldPanel.DateTextFieldPanel input {
+	width: 100px;
+}

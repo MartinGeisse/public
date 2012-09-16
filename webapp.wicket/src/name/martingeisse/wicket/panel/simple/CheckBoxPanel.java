@@ -6,30 +6,22 @@
 
 package name.martingeisse.wicket.panel.simple;
 
-import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
-
-import org.apache.wicket.Component;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.CheckBox;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 /**
- * A simple {@link Panel} that wraps a {@link CheckBox}.
+ * A simple panel that wraps a {@link CheckBox}.
  */
-public class CheckBoxPanel extends Panel implements IFormComponentPanel<Boolean> {
-
-	/**
-	 * the checkBox
-	 */
-	private final CheckBox checkBox;
+public class CheckBoxPanel extends AbstractSimpleFormComponentPanel<Boolean, CheckBox> {
 
 	/**
 	 * Constructor.
 	 * @param id the wicket id of this panel
 	 */
 	public CheckBoxPanel(String id) {
-		this(id, new CheckBox(getCheckBoxId()));
+		super(id);
+		add(new CheckBox(FORM_COMPONENT_ID));
 	}
 
 	/**
@@ -38,57 +30,27 @@ public class CheckBoxPanel extends Panel implements IFormComponentPanel<Boolean>
 	 * @param model the model used by the check box
 	 */
 	public CheckBoxPanel(String id, IModel<Boolean> model) {
-		this(id, new CheckBox(getCheckBoxId(), model));
+		super(id);
+		add(new CheckBox(FORM_COMPONENT_ID, model));
 	}
 
 	/**
 	 * Constructor.
 	 * @param id the wicket id of this panel
-	 * @param checkBox the check box to use. Must use the wicket:id returned by getCheckBoxId().
+	 * @param checkBox the check box to use. Must use the value of {#FORM_COMPONENT_ID} as its Wicket id.
 	 */
 	public CheckBoxPanel(String id, CheckBox checkBox) {
 		super(id);
-		this.checkBox = checkBox;
 		add(checkBox);
 	}
 
-	/**
-	 * @return the wicket:id that the wrapped check box must use.
-	 */
-	public static String getCheckBoxId() {
-		return "wrapped";
-	}
-
-	/**
-	 * Getter method for the checkBox.
-	 * @return the checkBox
-	 */
-	public CheckBox getCheckBox() {
-		return checkBox;
-	}
-
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getRootComponent()
+	 * @see org.apache.wicket.Component#onComponentTag(org.apache.wicket.markup.ComponentTag)
 	 */
 	@Override
-	public Component getRootComponent() {
-		return this;
-	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getFormComponent()
-	 */
-	@Override
-	public FormComponent<Boolean> getFormComponent() {
-		return checkBox;
-	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#connectValidationErrorAcceptor(name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor)
-	 */
-	@Override
-	public void connectValidationErrorAcceptor(IValidationErrorAcceptor validationErrorAcceptor) {
-		validationErrorAcceptor.acceptValidationErrorsFrom(checkBox);
+	protected void onComponentTag(ComponentTag tag) {
+		super.onComponentTag(tag);
+		tag.append("class", "CheckBoxPanel", " ");
 	}
 	
 }

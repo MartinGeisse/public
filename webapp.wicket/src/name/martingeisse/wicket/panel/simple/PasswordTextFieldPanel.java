@@ -6,10 +6,7 @@
 
 package name.martingeisse.wicket.panel.simple;
 
-import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -17,19 +14,15 @@ import org.apache.wicket.model.IModel;
 /**
  * A simple {@link Panel} that wraps a {@link PasswordTextField}.
  */
-public class PasswordTextFieldPanel extends Panel implements IFormComponentPanel<String> {
-
-	/**
-	 * the passwordTextField
-	 */
-	private final PasswordTextField passwordTextField;
+public class PasswordTextFieldPanel extends AbstractSimpleFormComponentPanel<String, PasswordTextField> {
 
 	/**
 	 * Constructor.
 	 * @param id the wicket id of this panel
 	 */
 	public PasswordTextFieldPanel(String id) {
-		this(id, new PasswordTextField(getPasswordTextFieldId()));
+		super(id);
+		add(new PasswordTextField(FORM_COMPONENT_ID));
 	}
 
 	/**
@@ -38,58 +31,27 @@ public class PasswordTextFieldPanel extends Panel implements IFormComponentPanel
 	 * @param model the model used by the password text field
 	 */
 	public PasswordTextFieldPanel(String id, IModel<String> model) {
-		this(id, new PasswordTextField(getPasswordTextFieldId(), model));
+		super(id);
+		add(new PasswordTextField(FORM_COMPONENT_ID, model));
 	}
 
 	/**
 	 * Constructor.
 	 * @param id the wicket id of this panel
-	 * @param passwordTextField the password text field to use. Must use the wicket:id returned by getPasswordTextFieldId().
+	 * @param passwordTextField the password text field to use. Must use the value of {#FORM_COMPONENT_ID} as its Wicket id.
 	 */
 	public PasswordTextFieldPanel(String id, PasswordTextField passwordTextField) {
 		super(id);
-		this.passwordTextField = passwordTextField;
 		add(passwordTextField);
-		passwordTextField.setRequired(false);
-	}
-
-	/**
-	 * @return the wicket:id that the wrapped password text field must use.
-	 */
-	public static String getPasswordTextFieldId() {
-		return "wrapped";
-	}
-	
-	/**
-	 * Getter method for the passwordTextField.
-	 * @return the passwordTextField
-	 */
-	public final PasswordTextField getPasswordTextField() {
-		return passwordTextField;
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getRootComponent()
+	 * @see org.apache.wicket.Component#onComponentTag(org.apache.wicket.markup.ComponentTag)
 	 */
 	@Override
-	public Component getRootComponent() {
-		return this;
-	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getFormComponent()
-	 */
-	@Override
-	public FormComponent<String> getFormComponent() {
-		return passwordTextField;
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#connectValidationErrorAcceptor(name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor)
-	 */
-	@Override
-	public void connectValidationErrorAcceptor(IValidationErrorAcceptor validationErrorAcceptor) {
-		validationErrorAcceptor.acceptValidationErrorsFrom(passwordTextField);
+	protected void onComponentTag(ComponentTag tag) {
+		super.onComponentTag(tag);
+		tag.append("class", "PasswordTextFieldPanel", " ");
 	}
 	
 }

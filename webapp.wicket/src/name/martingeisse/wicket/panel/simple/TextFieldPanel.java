@@ -6,10 +6,7 @@
 
 package name.martingeisse.wicket.panel.simple;
 
-import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -18,19 +15,15 @@ import org.apache.wicket.model.IModel;
  * A simple {@link Panel} that wraps a {@link TextField}.
  * @param <T> the model type
  */
-public class TextFieldPanel<T> extends Panel implements IFormComponentPanel<T> {
-
-	/**
-	 * the textField
-	 */
-	private final TextField<T> textField;
+public class TextFieldPanel<T> extends AbstractSimpleFormComponentPanel<T, TextField<T>> {
 
 	/**
 	 * Constructor.
 	 * @param id the wicket id of this panel
 	 */
 	public TextFieldPanel(String id) {
-		this(id, new TextField<T>(getTextFieldId()));
+		super(id);
+		add(new TextField<T>(FORM_COMPONENT_ID));
 	}
 
 	/**
@@ -39,57 +32,27 @@ public class TextFieldPanel<T> extends Panel implements IFormComponentPanel<T> {
 	 * @param model the model used by the text field
 	 */
 	public TextFieldPanel(String id, IModel<T> model) {
-		this(id, new TextField<T>(getTextFieldId(), model));
+		super(id);
+		add(new TextField<T>(FORM_COMPONENT_ID, model));
 	}
 
 	/**
 	 * Constructor.
 	 * @param id the wicket id of this panel
-	 * @param textField the text field to use. Must use the wicket:id returned by getTextFieldId().
+	 * @param textField the text field to use. Must use the value of {#FORM_COMPONENT_ID} as its Wicket id.
 	 */
 	public TextFieldPanel(String id, TextField<T> textField) {
 		super(id);
-		this.textField = textField;
 		add(textField);
 	}
 
-	/**
-	 * @return the wicket:id that the wrapped text field must use.
-	 */
-	public static String getTextFieldId() {
-		return "wrapped";
-	}
-	
-	/**
-	 * Getter method for the textField.
-	 * @return the textField
-	 */
-	public final TextField<T> getTextField() {
-		return textField;
-	}
-
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getRootComponent()
+	 * @see org.apache.wicket.Component#onComponentTag(org.apache.wicket.markup.ComponentTag)
 	 */
 	@Override
-	public Component getRootComponent() {
-		return this;
-	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#getFormComponent()
-	 */
-	@Override
-	public FormComponent<T> getFormComponent() {
-		return textField;
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.panel.simple.IFormComponentPanel#connectValidationErrorAcceptor(name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor)
-	 */
-	@Override
-	public void connectValidationErrorAcceptor(IValidationErrorAcceptor validationErrorAcceptor) {
-		validationErrorAcceptor.acceptValidationErrorsFrom(textField);
+	protected void onComponentTag(ComponentTag tag) {
+		super.onComponentTag(tag);
+		tag.append("class", "TextFieldPanel", " ");
 	}
 	
 }
