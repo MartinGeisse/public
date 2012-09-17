@@ -12,7 +12,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import name.martingeisse.admin.entity.EntityCapabilities;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
@@ -22,7 +21,7 @@ import name.martingeisse.common.util.string.StringUtil;
 import org.apache.commons.beanutils.PropertyUtils;
 
 /**
- * Default implementation of {@link IEntityAnnotationResolver}.
+ * Default implementation of {@link IEntityAnnotationContributor}.
  * This class copies annotations from an annotated class that
  * mirrors a database table. Annotations at the class are used to
  * control entity-level handling. Public fields as well as bean
@@ -33,23 +32,30 @@ import org.apache.commons.beanutils.PropertyUtils;
  * at non-public fields, non-public getter methods, getter methods
  * with parameters, or setter methods are ignored!
  */
-public final class DefaultEntityAnnotationResolver implements IEntityAnnotationResolver {
+public final class AnnotatedClassEntityAnnotationContributor implements IEntityAnnotationContributor {
 
 	/**
-	 * Constructor.
+	 * the annotatedClassResolver
 	 */
-	public DefaultEntityAnnotationResolver() {
+	private final IEntityAnnotatedClassResolver annotatedClassResolver;
+	
+	/**
+	 * Constructor.
+	 * @param annotatedClassResolver the annotated class resolver
+	 */
+	public AnnotatedClassEntityAnnotationContributor(IEntityAnnotatedClassResolver annotatedClassResolver) {
+		this.annotatedClassResolver = annotatedClassResolver;
 	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.schema.annotation.IEntityAnnotationResolver#resolveEntityAnnotations(name.martingeisse.admin.entity.schema.ApplicationSchema)
 	 */
 	@Override
-	public void resolveEntityAnnotations(ApplicationSchema applicationSchema) {
+	public void contributeEntityAnnotations(ApplicationSchema applicationSchema) {
 		for (final EntityDescriptor entity : applicationSchema.getEntityDescriptors()) {
 
 			// find the annotated class for this entity (if any)
-			final Class<?> annotatedClass = EntityCapabilities.resolveAnnotatedClass(entity);
+			final Class<?> annotatedClass = annotatedClassResolver.resolveEntityAnnotatedClass(entity);
 			if (annotatedClass == null) {
 				continue;
 			}

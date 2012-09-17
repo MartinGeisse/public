@@ -8,6 +8,7 @@ package name.martingeisse.admin.entity.component.instance;
 
 import java.util.List;
 
+import name.martingeisse.admin.entity.EntityConfiguration;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
@@ -18,7 +19,6 @@ import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
 import name.martingeisse.wicket.autoform.AutoformPanel;
 import name.martingeisse.wicket.autoform.AutoformUtil;
-import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.componentfactory.IAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.IAutoformBeanDescriber;
 import name.martingeisse.wicket.autoform.describe.IAutoformBeanDescriptor;
@@ -54,7 +54,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 	 * @param model the entity instance model
 	 */
 	public EditEntityAutoformPanel(final String id, final IModel<EntityInstance> model) {
-		this(id, ParameterUtil.ensureNotNull(model, "model").getObject(), EntityAutoformDescriber.instance, DefaultAutoformPropertyComponentFactory.instance);
+		this(id, ParameterUtil.ensureNotNull(model, "model").getObject(), EntityAutoformDescriber.instance, EntityConfiguration.parameterKey.get().getAutoformPropertyComponentFactory());
 	}
 
 	/**

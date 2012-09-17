@@ -21,7 +21,7 @@ import name.martingeisse.admin.customization.incubator.NavigationTabBarFactory;
 import name.martingeisse.admin.customization.pagebar.BasicPageBarFactory;
 import name.martingeisse.admin.customization.reflist.SettingPanel;
 import name.martingeisse.admin.entity.EntityCapabilities;
-import name.martingeisse.admin.entity.GeneralEntityConfiguration;
+import name.martingeisse.admin.entity.EntityConfiguration;
 import name.martingeisse.admin.entity.component.instance.NavigationMountedEntityAutoformPanel;
 import name.martingeisse.admin.entity.component.instance.RawEntityPresentationPanel;
 import name.martingeisse.admin.entity.component.list.datatable.populator.PopulatorColumnDescriptor;
@@ -34,6 +34,8 @@ import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.entity.schema.IEntityListFieldOrder;
 import name.martingeisse.admin.entity.schema.IEntityNavigationContributor;
 import name.martingeisse.admin.entity.schema.PrefixEliminatingEntityNameMappingStrategy;
+import name.martingeisse.admin.entity.schema.annotation.AnnotatedClassEntityAnnotationContributor;
+import name.martingeisse.admin.entity.schema.annotation.IEntityAnnotatedClassResolver;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
 import name.martingeisse.admin.navigation.NavigationNode;
@@ -169,7 +171,7 @@ public class Main {
 //		PagesConfigurationUtil.setPageBorderFactory(new name.martingeisse.admin.customization.PageBorderFactory());
 		
 		// entity parameters
-		GeneralEntityConfiguration generalEntityConfiguration = new GeneralEntityConfiguration();
+		EntityConfiguration generalEntityConfiguration = new EntityConfiguration();
 //		generalEntityConfiguration.setEntityNameMappingStrategy(new PrefixEliminatingEntityNameMappingStrategy("phpbb_"));
 		generalEntityConfiguration.setEntityNameMappingStrategy(new PrefixEliminatingEntityNameMappingStrategy("phorum_"));
 		generalEntityConfiguration.setEntityListFieldOrder(new IEntityListFieldOrder() {
@@ -184,7 +186,7 @@ public class Main {
 				}
 			}
 		});
-		GeneralEntityConfiguration.parameterKey.set(generalEntityConfiguration);
+		EntityConfiguration.parameterKey.set(generalEntityConfiguration);
 		
 		// entity navigation contributors
 		EntityCapabilities.entityNavigationContributorCapability.add(new IEntityNavigationContributor() {
@@ -234,7 +236,8 @@ public class Main {
 		NopLoginPage.bypass = false;
 		
 		// entity autoforms
-		EntityCapabilities.entityAutoformAnnotatedClassResolverCapability.add(new EntityAutoformAnnotatedClassResolver("name.martingeisse.admin.customization.entity"));
+		IEntityAnnotatedClassResolver classResolver = new EntityAutoformAnnotatedClassResolver("name.martingeisse.admin.customization.entity");
+		EntityCapabilities.entityAnnotationContributorCapability.add(new AnnotatedClassEntityAnnotationContributor(classResolver));
 		
 		// run
 		buildNavigation();

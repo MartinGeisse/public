@@ -10,18 +10,20 @@ import name.martingeisse.admin.application.ParameterKey;
 import name.martingeisse.admin.entity.schema.IEntityListFieldOrder;
 import name.martingeisse.admin.entity.schema.IEntityNameMappingStrategy;
 import name.martingeisse.admin.entity.schema.PrefixEliminatingEntityNameMappingStrategy;
+import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
+import name.martingeisse.wicket.autoform.componentfactory.IAutoformPropertyComponentFactory;
 
 /**
  * This class contains general configuration that applies to all entities.
  * It is determined by the application and stored in the application configuration.
  */
-public final class GeneralEntityConfiguration {
+public final class EntityConfiguration {
 
 	/**
 	 * The parameter key for the general entity configuration.
 	 */
-	public static final ParameterKey<GeneralEntityConfiguration> parameterKey = new ParameterKey<GeneralEntityConfiguration>();
-	
+	public static final ParameterKey<EntityConfiguration> parameterKey = new ParameterKey<EntityConfiguration>();
+
 	/**
 	 * the entityListFieldOrder
 	 */
@@ -33,11 +35,17 @@ public final class GeneralEntityConfiguration {
 	private IEntityNameMappingStrategy entityNameMappingStrategy;
 
 	/**
+	 * the autoformPropertyComponentFactory
+	 */
+	private IAutoformPropertyComponentFactory autoformPropertyComponentFactory;
+
+	/**
 	 * Constructor.
 	 */
-	public GeneralEntityConfiguration() {
+	public EntityConfiguration() {
 		entityListFieldOrder = null;
 		entityNameMappingStrategy = new PrefixEliminatingEntityNameMappingStrategy("");
+		autoformPropertyComponentFactory = DefaultAutoformPropertyComponentFactory.instance;
 	}
 
 	/**
@@ -70,6 +78,22 @@ public final class GeneralEntityConfiguration {
 	 */
 	public void setEntityNameMappingStrategy(final IEntityNameMappingStrategy entityNameMappingStrategy) {
 		this.entityNameMappingStrategy = entityNameMappingStrategy;
+	}
+
+	/**
+	 * Getter method for the autoformPropertyComponentFactory.
+	 * @return the autoformPropertyComponentFactory
+	 */
+	public IAutoformPropertyComponentFactory getAutoformPropertyComponentFactory() {
+		return autoformPropertyComponentFactory;
+	}
+
+	/**
+	 * Setter method for the autoformPropertyComponentFactory.
+	 * @param autoformPropertyComponentFactory the autoformPropertyComponentFactory to set
+	 */
+	public void setAutoformPropertyComponentFactory(final IAutoformPropertyComponentFactory autoformPropertyComponentFactory) {
+		this.autoformPropertyComponentFactory = autoformPropertyComponentFactory;
 	}
 
 }

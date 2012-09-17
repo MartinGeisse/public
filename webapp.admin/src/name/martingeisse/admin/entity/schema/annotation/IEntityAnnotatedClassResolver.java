@@ -9,7 +9,7 @@ package name.martingeisse.admin.entity.schema.annotation;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 /**
- * This strategy is used by {@link DefaultEntityAnnotationResolver}
+ * This strategy is used by {@link AnnotatedClassEntityAnnotationContributor}
  * (and possibly other annotation resolvers) and finds the
  * annotated class for each entity.
  * 

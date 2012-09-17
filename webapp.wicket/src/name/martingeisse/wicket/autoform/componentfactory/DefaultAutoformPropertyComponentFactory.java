@@ -46,6 +46,12 @@ public class DefaultAutoformPropertyComponentFactory implements IAutoformPropert
 	 */
 	public static final DefaultAutoformPropertyComponentFactory instance = new DefaultAutoformPropertyComponentFactory();
 
+	/**
+	 * Constructor.
+	 */
+	public DefaultAutoformPropertyComponentFactory() {
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.wicket.autoform.componentfactory.IAutoformPropertyComponentFactory#createPropertyComponent(java.lang.String, name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor, org.apache.wicket.validation.IValidator<?>[], name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor)
 	 */

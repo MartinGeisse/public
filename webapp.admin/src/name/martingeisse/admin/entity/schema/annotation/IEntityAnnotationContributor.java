@@ -10,16 +10,17 @@ import name.martingeisse.admin.entity.schema.ApplicationSchema;
 
 
 /**
- * This strategy finds entity annotations at startup.
+ * This strategy contributes entity annotations at startup.
  */
-public interface IEntityAnnotationResolver {
+public interface IEntityAnnotationContributor {
 
 	/**
-	 * Resolves annotations for all entities of the application schema and stores
+	 * Contributes annotations for all entities of the application schema and stores
 	 * it in the corresponding fields in the entity and its properties.
+	 * 
 	 * @param applicationSchema the application schema (note that the singleton
 	 * reference to this object is not yet set at the time this method is called).
 	 */
-	public void resolveEntityAnnotations(ApplicationSchema applicationSchema);
+	public void contributeEntityAnnotations(ApplicationSchema applicationSchema);
 	
 }

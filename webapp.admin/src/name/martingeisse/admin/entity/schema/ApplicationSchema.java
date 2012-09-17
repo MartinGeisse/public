@@ -17,13 +17,12 @@ import java.util.Map;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.entity.EntityCapabilities;
-import name.martingeisse.admin.entity.GeneralEntityConfiguration;
+import name.martingeisse.admin.entity.EntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNameAware;
 import name.martingeisse.admin.entity.UnknownEntityException;
 import name.martingeisse.admin.entity.component.list.datatable.raw.RawEntityListPanel;
 import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilter;
-import name.martingeisse.admin.entity.schema.annotation.DefaultEntityAnnotationResolver;
-import name.martingeisse.admin.entity.schema.annotation.IEntityAnnotationResolver;
+import name.martingeisse.admin.entity.schema.annotation.IEntityAnnotationContributor;
 import name.martingeisse.admin.entity.schema.lowlevel.ILowlevelDatabaseStructure;
 import name.martingeisse.admin.entity.schema.lowlevel.JdbcColumnStructure;
 import name.martingeisse.admin.entity.schema.lowlevel.JdbcSchemaStructure;
@@ -33,8 +32,8 @@ import name.martingeisse.admin.entity.schema.type.IEntityIdTypeInfo;
 import name.martingeisse.admin.entity.schema.type.ISqlTypeInfo;
 import name.martingeisse.admin.navigation.INavigationNodeHandler;
 import name.martingeisse.admin.navigation.INavigationNodeVisitor;
-import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.NavigationConfiguration;
+import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.datarow.DataRowMeta;
 import name.martingeisse.common.util.ParameterUtil;
@@ -300,7 +299,7 @@ public class ApplicationSchema {
 
 	/**
 	 * Creates navigation nodes in the global navigation tree for each entity, based on the
-	 * globally defined template (in {@link GeneralEntityConfiguration}) and local navigation
+	 * globally defined template (in {@link EntityConfiguration}) and local navigation
 	 * trees defined in the {@link EntityDescriptor}s.
 	 * 
 	 * This method also looks for any navigation nodes in the local navigation tree that
@@ -380,8 +379,9 @@ public class ApplicationSchema {
 	 * Initializes meta-data used to build autoforms.
 	 */
 	private void initializeAutoformMetadata() {
-		IEntityAnnotationResolver resolver = new DefaultEntityAnnotationResolver();
-		resolver.resolveEntityAnnotations(this);
+		for (IEntityAnnotationContributor contributor : EntityCapabilities.entityAnnotationContributorCapability) {
+			contributor.contributeEntityAnnotations(this);
+		}
 	}
 	
 }

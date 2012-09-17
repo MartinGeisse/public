@@ -9,9 +9,8 @@ package name.martingeisse.admin.entity;
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.CapabilityKey;
 import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilter;
-import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.IEntityNavigationContributor;
-import name.martingeisse.admin.entity.schema.annotation.IEntityAnnotatedClassResolver;
+import name.martingeisse.admin.entity.schema.annotation.IEntityAnnotationContributor;
 import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 
@@ -41,9 +40,9 @@ public final class EntityCapabilities {
 	public static final CapabilityKey<IEntitySearchContributor> entitySearchContributorCapability = new CapabilityKey<IEntitySearchContributor>();
 
 	/**
-	 * The capability key for entity autoform annotated class resolvers.
+	 * The capability key for entity annotation contributors.
 	 */
-	public static final CapabilityKey<IEntityAnnotatedClassResolver> entityAutoformAnnotatedClassResolverCapability = new CapabilityKey<IEntityAnnotatedClassResolver>();
+	public static final CapabilityKey<IEntityAnnotationContributor> entityAnnotationContributorCapability = new CapabilityKey<IEntityAnnotationContributor>();
 
 	/**
 	 * Prevent instantiation.
@@ -51,28 +50,4 @@ public final class EntityCapabilities {
 	private EntityCapabilities() {
 	}
 
-	/**
-	 * Resolves the annotated class for the specified entity.
-	 * @param entity the entity
-	 * @return the annotated class
-	 */
-	public static Class<?> resolveAnnotatedClass(EntityDescriptor entity) {
-		Class<?> result = null;
-		IEntityAnnotatedClassResolver successfulResolver = null;
-		for (IEntityAnnotatedClassResolver resolver : entityAutoformAnnotatedClassResolverCapability) {
-			Class<?> currentResult = resolver.resolveEntityAnnotatedClass(entity);
-			if (currentResult != null) {
-				if (result == null || result == currentResult) {
-					result = currentResult;
-					successfulResolver = resolver;
-				} else {
-					throw new RuntimeException("Ambiguous autoform-annotated classes found for entity " + entity.getName() +
-						": Resolver " + successfulResolver + " returned " + result + ", but resolver " +
-						resolver + " returned " + currentResult);
-				}
-			}
-		}
-		return result;
-	}
-	
 }
