@@ -10,7 +10,7 @@ import java.util.List;
 
 import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.NavigationParameters;
+import name.martingeisse.admin.navigation.NavigationConfiguration;
 import name.martingeisse.admin.navigation.NavigationUtil;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -53,7 +53,7 @@ public class NavigationFolderPage extends AbstractAdminPage {
 		final IModel<List<NavigationNode>> topNavigationNodeListModel = new LoadableDetachableModel<List<NavigationNode>>() {
 			@Override
 			protected List<NavigationNode> load() {
-				return NavigationParameters.navigationTreeParameter.get().getNodesByPath().get(navigationPath).getChildren();
+				return NavigationConfiguration.navigationTreeParameter.get().getNodesByPath().get(navigationPath).getChildren();
 			}
 		};
 
@@ -74,7 +74,7 @@ public class NavigationFolderPage extends AbstractAdminPage {
 	 * @return the title of the folder
 	 */
 	public String getFolderTitle() {
-		return NavigationParameters.navigationTreeParameter.get().getNodesByPath().get(navigationPath).getTitle();
+		return NavigationConfiguration.navigationTreeParameter.get().getNodesByPath().get(navigationPath).getTitle();
 	}
 
 }

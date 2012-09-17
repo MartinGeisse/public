@@ -9,7 +9,7 @@ package name.martingeisse.admin.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.admin.navigation.NavigationParameters;
+import name.martingeisse.admin.navigation.NavigationConfiguration;
 import name.martingeisse.admin.navigation.NavigationTree;
 import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.util.ParameterUtil;
@@ -52,7 +52,7 @@ public final class ApplicationConfiguration {
 	 * static initializer.
 	 */
 	static {
-		NavigationParameters.navigationTreeParameter.set(new NavigationTree());
+		NavigationConfiguration.navigationTreeParameter.set(new NavigationTree());
 	}
 	
 	/**

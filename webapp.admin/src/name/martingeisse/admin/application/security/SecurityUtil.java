@@ -67,7 +67,7 @@ public class SecurityUtil {
 		logger.debug("a user is trying to log in");
 
 		// authenticate
-		final IAdminAuthenticationStrategy authenticationStrategy = SecurityParameters.getSecurityConfigurationSafe().getAuthenticationStrategy();
+		final IAdminAuthenticationStrategy authenticationStrategy = SecurityConfiguration.getInstanceSafe().getAuthenticationStrategy();
 		logger.trace("authentication strategy: " + authenticationStrategy);
 		ReturnValueUtil.nullMeansMissing(authenticationStrategy, "security configuration: authentication strategy");
 		IUserProperties userProperties = authenticationStrategy.determineProperties(credentials);
@@ -82,7 +82,7 @@ public class SecurityUtil {
 		logger.debug("detected user identity: " + userIdentity);
 
 		// authorization
-		final IAdminAuthorizationStrategy authorizationStrategy = SecurityParameters.getSecurityConfigurationSafe().getAuthorizationStrategy();
+		final IAdminAuthorizationStrategy authorizationStrategy = SecurityConfiguration.getInstanceSafe().getAuthorizationStrategy();
 		logger.trace("authorization strategy: " + authorizationStrategy);
 		ReturnValueUtil.nullMeansMissing(authorizationStrategy, "security configuration: authorization strategy");
 		final IPermissions permissions = authorizationStrategy.determinePermissions(credentials, userProperties, userIdentity);
@@ -166,7 +166,7 @@ public class SecurityUtil {
 	 */
 	public static boolean getPermission(final IPermissionRequest request) {
 		logger.debug("checking permission: " + request);
-		final IAdminAuthorizationStrategy authorizationStrategy = SecurityParameters.getSecurityConfigurationSafe().getAuthorizationStrategy();
+		final IAdminAuthorizationStrategy authorizationStrategy = SecurityConfiguration.getInstanceSafe().getAuthorizationStrategy();
 		ReturnValueUtil.nullMeansMissing(authorizationStrategy, "security configuration: authorization strategy");
 		final IPermissions permissions = getEffectivePermissions();
 		final boolean result = authorizationStrategy.checkPermission(permissions, request);

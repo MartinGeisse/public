@@ -6,16 +6,22 @@
 
 package name.martingeisse.admin.application.wicket;
 
+import name.martingeisse.admin.application.CapabilityKey;
 import name.martingeisse.admin.application.ParameterKey;
 
 import org.apache.wicket.authentication.IAuthenticationStrategy;
 import org.apache.wicket.authentication.strategy.NoOpAuthenticationStrategy;
 
 /**
- * Wicket-related parameter keys.
+ * Wicket-related capability and parameter keys.
  */
-public final class WicketParameters {
+public final class WicketConfiguration {
 
+	/**
+	 * The capability key for web application initialization contributors.
+	 */
+	public static final CapabilityKey<IWebApplicationInitializationContributor> webApplicationInitializationCapability = new CapabilityKey<IWebApplicationInitializationContributor>();
+	
 	/**
 	 * The parameter key for the Wicket authentication strategy.
 	 */
@@ -24,7 +30,7 @@ public final class WicketParameters {
 	/**
 	 * Prevent instantiation.
 	 */
-	private WicketParameters() {
+	private WicketConfiguration() {
 	}
 
 	/**

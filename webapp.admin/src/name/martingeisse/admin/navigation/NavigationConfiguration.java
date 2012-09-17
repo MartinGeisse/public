@@ -11,7 +11,7 @@ import name.martingeisse.admin.application.ParameterKey;
 /**
  * Navigation-related parameter keys.
  */
-public final class NavigationParameters {
+public final class NavigationConfiguration {
 
 	/**
 	 * The parameter key for the navigation tree.
@@ -21,7 +21,7 @@ public final class NavigationParameters {
 	/**
 	 * Prevent instantiation.
 	 */
-	private NavigationParameters() {
+	private NavigationConfiguration() {
 	}
 
 }

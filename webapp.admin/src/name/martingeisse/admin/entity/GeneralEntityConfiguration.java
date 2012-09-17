@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.entity;
 
+import name.martingeisse.admin.application.ParameterKey;
 import name.martingeisse.admin.entity.schema.IEntityListFieldOrder;
 import name.martingeisse.admin.entity.schema.IEntityNameMappingStrategy;
 import name.martingeisse.admin.entity.schema.PrefixEliminatingEntityNameMappingStrategy;
@@ -16,6 +17,11 @@ import name.martingeisse.admin.entity.schema.PrefixEliminatingEntityNameMappingS
  */
 public final class GeneralEntityConfiguration {
 
+	/**
+	 * The parameter key for the general entity configuration.
+	 */
+	public static final ParameterKey<GeneralEntityConfiguration> parameterKey = new ParameterKey<GeneralEntityConfiguration>();
+	
 	/**
 	 * the entityListFieldOrder
 	 */

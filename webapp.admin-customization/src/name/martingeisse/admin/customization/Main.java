@@ -16,13 +16,11 @@ import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
 import name.martingeisse.admin.application.security.SecurityConfiguration;
-import name.martingeisse.admin.application.security.SecurityParameters;
 import name.martingeisse.admin.component.page.login.NopLoginPage;
 import name.martingeisse.admin.customization.incubator.NavigationTabBarFactory;
 import name.martingeisse.admin.customization.pagebar.BasicPageBarFactory;
 import name.martingeisse.admin.customization.reflist.SettingPanel;
 import name.martingeisse.admin.entity.EntityCapabilities;
-import name.martingeisse.admin.entity.EntityParameters;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.component.instance.NavigationMountedEntityAutoformPanel;
 import name.martingeisse.admin.entity.component.instance.RawEntityPresentationPanel;
@@ -39,7 +37,7 @@ import name.martingeisse.admin.entity.schema.PrefixEliminatingEntityNameMappingS
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.NavigationParameters;
+import name.martingeisse.admin.navigation.NavigationConfiguration;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
 import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
 import name.martingeisse.admin.navigation.handler.PanelPageNavigationHandler;
@@ -186,7 +184,7 @@ public class Main {
 				}
 			}
 		});
-		EntityParameters.generalEntityConfigurationParameter.set(generalEntityConfiguration);
+		GeneralEntityConfiguration.parameterKey.set(generalEntityConfiguration);
 		
 		// entity navigation contributors
 		EntityCapabilities.entityNavigationContributorCapability.add(new IEntityNavigationContributor() {
@@ -232,7 +230,7 @@ public class Main {
 		});
 		
 		// security
-		SecurityParameters.securityConfigurationParameter.set(new SecurityConfiguration());
+		SecurityConfiguration.parameterKey.set(new SecurityConfiguration());
 		NopLoginPage.bypass = false;
 		
 		// entity autoforms
@@ -248,7 +246,7 @@ public class Main {
 	 * 
 	 */
 	private static void buildNavigation() {
-		final NavigationNode root = NavigationParameters.navigationTreeParameter.get().getRoot();
+		final NavigationNode root = NavigationConfiguration.navigationTreeParameter.get().getRoot();
 		root.setPageBarFactory(new BasicPageBarFactory());
 		root.getChildFactory().createChild("home-dummy", "Home", new UrlNavigationHandler("/"));
 		final NavigationNode sub1 = root.getChildFactory().createFirstChildHandlerChild("sub-one", "Sub One");

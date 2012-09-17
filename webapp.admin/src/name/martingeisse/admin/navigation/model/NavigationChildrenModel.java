@@ -9,7 +9,7 @@ package name.martingeisse.admin.navigation.model;
 import java.util.List;
 
 import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.NavigationParameters;
+import name.martingeisse.admin.navigation.NavigationConfiguration;
 
 import org.apache.wicket.model.LoadableDetachableModel;
 
@@ -60,7 +60,7 @@ public class NavigationChildrenModel extends LoadableDetachableModel<List<Naviga
 	 */
 	@Override
 	protected List<NavigationNode> load() {
-		return NavigationParameters.navigationTreeParameter.get().getNodesByPath().get(path).getChildren();
+		return NavigationConfiguration.navigationTreeParameter.get().getNodesByPath().get(path).getChildren();
 	}
 
 }

@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.application.security;
 
+import name.martingeisse.admin.application.ParameterKey;
 import name.martingeisse.admin.application.security.authentication.DefaultAuthenticationStrategy;
 import name.martingeisse.admin.application.security.authentication.IAdminAuthenticationStrategy;
 import name.martingeisse.admin.application.security.authorization.DefaultAuthorizationStrategy;
@@ -19,6 +20,23 @@ import org.apache.wicket.markup.html.WebPage;
  */
 public final class SecurityConfiguration {
 
+	/**
+	 * the parameterKey
+	 */
+	public static final ParameterKey<SecurityConfiguration> parameterKey = new ParameterKey<SecurityConfiguration>();
+	
+	/**
+	 * Getter method for the security configuration. Throws an exception if the configuration is missing (null).
+	 * @return the security configuration
+	 */
+	public static SecurityConfiguration getInstanceSafe() {
+		SecurityConfiguration configuration = parameterKey.get();
+		if (configuration == null) {
+			throw new IllegalStateException("no security configuration");
+		}
+		return configuration;
+	}
+	
 	/**
 	 * the loginPageClass
 	 */

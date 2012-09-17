@@ -7,7 +7,7 @@
 package name.martingeisse.admin.application.wicket;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
-import name.martingeisse.admin.application.security.SecurityParameters;
+import name.martingeisse.admin.application.security.SecurityConfiguration;
 import name.martingeisse.admin.application.wicket.converter.DateTimeConverter;
 import name.martingeisse.admin.application.wicket.converter.LocalDateConverter;
 import name.martingeisse.admin.application.wicket.converter.LocalDateTimeConverter;
@@ -16,7 +16,7 @@ import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.component.page.HomePage;
 import name.martingeisse.admin.component.page.images.Dummy;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
-import name.martingeisse.admin.navigation.NavigationParameters;
+import name.martingeisse.admin.navigation.NavigationConfiguration;
 import name.martingeisse.common.util.ObjectStateUtil;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
@@ -107,8 +107,8 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 
 		// initialize module-specific data
 		logger.trace("running post-schema initialization...");
-		ObjectStateUtil.nullMeansMissing(NavigationParameters.navigationTreeParameter.get(), "navigation tree");
-		NavigationParameters.navigationTreeParameter.get().prepare();
+		ObjectStateUtil.nullMeansMissing(NavigationConfiguration.navigationTreeParameter.get(), "navigation tree");
+		NavigationConfiguration.navigationTreeParameter.get().prepare();
 		logger.trace("post-schema initialization finished");
 		
 		// register type converters
@@ -122,7 +122,7 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		getApplicationSettings().setPageExpiredErrorPage(HomePage.class);
 		getMarkupSettings().setDefaultBeforeDisabledLink("<span class=\"disabled-link\">");
 		getMarkupSettings().setDefaultAfterDisabledLink("</span>");
-		getSecuritySettings().setAuthenticationStrategy(WicketParameters.determineEffectiveWicketAuthenticationStrategy());
+		getSecuritySettings().setAuthenticationStrategy(WicketConfiguration.determineEffectiveWicketAuthenticationStrategy());
 
 		// mount resource URLs
 		logger.trace("mounting resource URLs...");
@@ -133,17 +133,17 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 
 		// mount navigation URLs
 		logger.trace("mounting navigation URLs...");
-		NavigationParameters.navigationTreeParameter.get().mountRequestMappers(this);
+		NavigationConfiguration.navigationTreeParameter.get().mountRequestMappers(this);
 		logger.trace("navigation URLs mounted");
 
 		// mount other URLs
 		logger.trace("mounting misc URLs...");
-		mountPage("/login", ReturnValueUtil.nullMeansMissing(SecurityParameters.securityConfigurationParameter.get().getLoginPageClass(), "security configuration: login page class"));
+		mountPage("/login", ReturnValueUtil.nullMeansMissing(SecurityConfiguration.getInstanceSafe().getLoginPageClass(), "security configuration: login page class"));
 		logger.trace("misc URLs mounted");
 		
 		// let plugins contribute
 		logger.trace("invoking web application initialization contributors...");
-		for (final IWebApplicationInitializationContributor contributor : WicketCapabilities.webApplicationInitializationCapability) {
+		for (final IWebApplicationInitializationContributor contributor : WicketConfiguration.webApplicationInitializationCapability) {
 			contributor.onInitializeWebApplication(this);
 		}
 		logger.trace("application initialization contributors invoked");

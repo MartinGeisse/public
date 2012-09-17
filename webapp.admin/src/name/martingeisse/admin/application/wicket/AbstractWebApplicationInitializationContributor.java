@@ -27,7 +27,7 @@ public abstract class AbstractWebApplicationInitializationContributor implements
 	 */
 	@Override
 	public void contribute() {
-		WicketCapabilities.webApplicationInitializationCapability.add(this);
+		WicketConfiguration.webApplicationInitializationCapability.add(this);
 	}
 
 }
