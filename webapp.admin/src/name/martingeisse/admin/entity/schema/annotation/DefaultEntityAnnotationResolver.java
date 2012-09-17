@@ -12,7 +12,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.EntityCapabilities;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
@@ -49,7 +49,7 @@ public final class DefaultEntityAnnotationResolver implements IEntityAnnotationR
 		for (final EntityDescriptor entity : applicationSchema.getEntityDescriptors()) {
 
 			// find the annotated class for this entity (if any)
-			final Class<?> annotatedClass = EntityConfigurationUtil.resolveAnnotatedClass(entity);
+			final Class<?> annotatedClass = EntityCapabilities.resolveAnnotatedClass(entity);
 			if (annotatedClass == null) {
 				continue;
 			}

@@ -7,7 +7,7 @@
 package name.martingeisse.admin.entity.property;
 
 import name.martingeisse.admin.application.IPlugin;
-import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.EntityCapabilities;
 
 /**
  * Base implementation for {@link IRawEntityListPropertyDisplayFilter}. This
@@ -35,7 +35,7 @@ public abstract class AbstractEntityPropertyFilter implements IRawEntityListProp
 	 */
 	@Override
 	public void contribute() {
-		EntityConfigurationUtil.addRawEntityListPropertyDisplayFilter(this);
+		EntityCapabilities.rawEntityListPropertyDisplayFilterCapability.add(this);
 	}
 
 }

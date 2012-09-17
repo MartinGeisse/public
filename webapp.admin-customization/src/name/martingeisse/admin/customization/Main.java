@@ -12,8 +12,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.joda.time.DateTimeZone;
-
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
@@ -23,6 +21,7 @@ import name.martingeisse.admin.component.page.login.NopLoginPage;
 import name.martingeisse.admin.customization.incubator.NavigationTabBarFactory;
 import name.martingeisse.admin.customization.pagebar.BasicPageBarFactory;
 import name.martingeisse.admin.customization.reflist.SettingPanel;
+import name.martingeisse.admin.entity.EntityCapabilities;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.component.instance.NavigationMountedEntityAutoformPanel;
@@ -54,6 +53,8 @@ import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociate
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
 import name.martingeisse.wicket.populator.RowFieldPopulator;
+
+import org.joda.time.DateTimeZone;
 
 import com.mysema.query.types.Ops;
 import com.mysema.query.types.Predicate;
@@ -188,7 +189,7 @@ public class Main {
 		EntityConfigurationUtil.setGeneralEntityConfiguration(generalEntityConfiguration);
 		
 		// entity navigation contributors
-		EntityConfigurationUtil.addEntityNavigationContributor(new IEntityNavigationContributor() {
+		EntityCapabilities.entityNavigationContributorCapability.add(new IEntityNavigationContributor() {
 			@Override
 			public void contributeNavigationNodes(EntityDescriptor entity, NavigationNode mainEntityInstanceNode) {
 				if (entity.getName().equals("settings")) {
@@ -209,7 +210,7 @@ public class Main {
 //		});
 		
 		// test entity search support
-		EntityConfigurationUtil.addEntitySearchContributor(new IEntitySearchContributor() {
+		EntityCapabilities.entitySearchContributorCapability.add(new IEntitySearchContributor() {
 			
 			@Override
 			public IEntitySearchStrategy getSearchStrategy(EntityDescriptor entity) {
@@ -235,7 +236,7 @@ public class Main {
 		NopLoginPage.bypass = false;
 		
 		// entity autoforms
-		EntityConfigurationUtil.addEntityAutoformAnnotatedClassResolver(new EntityAutoformAnnotatedClassResolver("name.martingeisse.admin.customization.entity"));
+		EntityCapabilities.entityAutoformAnnotatedClassResolverCapability.add(new EntityAutoformAnnotatedClassResolver("name.martingeisse.admin.customization.entity"));
 		
 		// run
 		buildNavigation();

@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.application;
 
-import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.EntityCapabilities;
 import name.martingeisse.admin.entity.schema.reference.DefaultEntityReferenceDetector;
 
 /**
@@ -27,7 +27,7 @@ public class DefaultPlugin implements IPlugin {
 	 */
 	@Override
 	public void contribute() {
-		EntityConfigurationUtil.addEntityReferenceDetector(new DefaultEntityReferenceDetector());
+		EntityCapabilities.entityReferenceDetectorCapability.add(new DefaultEntityReferenceDetector());
 	}
 
 }

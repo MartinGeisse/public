@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
-import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.EntityCapabilities;
 import name.martingeisse.admin.entity.GeneralEntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNameAware;
 import name.martingeisse.admin.entity.UnknownEntityException;
@@ -269,7 +269,7 @@ public class ApplicationSchema {
 	private boolean isPropertyVisibleInRawEntityList(final EntityDescriptor entity, final EntityPropertyDescriptor propertyDescriptor) {
 		int score = Integer.MIN_VALUE;
 		boolean visible = true;
-		for (final IRawEntityListPropertyDisplayFilter filter : EntityConfigurationUtil.getRawEntityListPropertyDisplayFilters()) {
+		for (final IRawEntityListPropertyDisplayFilter filter : EntityCapabilities.rawEntityListPropertyDisplayFilterCapability) {
 			final int filterScore = filter.getScore(entity, propertyDescriptor);
 			if (filterScore >= score) {
 				final Boolean filterResult = filter.isPropertyVisible(entity, propertyDescriptor);
@@ -291,7 +291,7 @@ public class ApplicationSchema {
 			ILowlevelDatabaseStructure lowlevelStructure = databaseStructures.get(entity.getDatabase());
 			for (final EntityPropertyDescriptor property : entity.getPropertiesInDatabaseOrder()) {
 				final String propertyName = property.getName();
-				for (final IEntityReferenceDetector detector : EntityConfigurationUtil.getEntityReferenceDetectors()) {
+				for (final IEntityReferenceDetector detector : EntityCapabilities.entityReferenceDetectorCapability) {
 					detector.detectEntityReference(this, lowlevelStructure, entity, propertyName);
 				}
 			}
@@ -345,13 +345,12 @@ public class ApplicationSchema {
 		}
 
 		// create and mount the local entity instance navigation tree for each entity
-		final Iterable<IEntityNavigationContributor> entityNavigationContributors = EntityConfigurationUtil.getEntityNavigationContributors();
 		for (final EntityDescriptor entity : entityDescriptors) {
 			final String entityName = entity.getName();
 			final NavigationNode canonicalEntityListNode = canonicalEntityListNodes.get(entityName);
 			final NavigationNode entityInstanceRootNode = canonicalEntityListNode.getChildFactory().createNavigationFolderChild("${id}", "Entity Instance");
 			entity.setInstanceNavigationRootNode(entityInstanceRootNode);
-			for (final IEntityNavigationContributor contributor : entityNavigationContributors) {
+			for (final IEntityNavigationContributor contributor : EntityCapabilities.entityNavigationContributorCapability) {
 				contributor.contributeNavigationNodes(entity, entityInstanceRootNode);
 			}
 			entityInstanceRootNode.acceptVisitor(new INavigationNodeVisitor() {

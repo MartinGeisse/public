@@ -12,10 +12,8 @@ import java.util.List;
 import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationTree;
 import name.martingeisse.admin.util.SealableClassKeyedContainer;
-import name.martingeisse.admin.util.SealableClassKeyedListContainer;
 import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.util.ClassKeyedContainer;
-import name.martingeisse.common.util.ClassKeyedListContainer;
 import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.log4j.Logger;
@@ -75,7 +73,7 @@ public final class ApplicationConfiguration {
 	/**
 	 * the capabilities
 	 */
-	private final SealableClassKeyedListContainer<Object> capabilities = new SealableClassKeyedListContainer<Object>();
+	private final CapabilityRegistry capabilities = new CapabilityRegistry();
 
 	/**
 	 * Constructor.
@@ -144,7 +142,7 @@ public final class ApplicationConfiguration {
 	 * Getter method for the capabilities.
 	 * @return the capabilities
 	 */
-	public ClassKeyedListContainer<Object> getCapabilities() {
+	public CapabilityRegistry getCapabilities() {
 		return capabilities;
 	}
 

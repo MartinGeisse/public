@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import name.martingeisse.admin.entity.EntityCapabilities;
 import name.martingeisse.admin.entity.EntityConfigurationUtil;
 import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.instance.EntityInstance;
@@ -606,7 +607,7 @@ public class EntityDescriptor {
 	public void initializeSearchStrategy() {
 		int maxScore = Integer.MIN_VALUE;
 		IEntitySearchContributor maxScoreContributor = null;
-		for (final IEntitySearchContributor contributor : EntityConfigurationUtil.getEntitySearchContributors()) {
+		for (final IEntitySearchContributor contributor : EntityCapabilities.entitySearchContributorCapability) {
 			final int score = contributor.getScore(this);
 			if (score > maxScore) {
 				maxScoreContributor = contributor;

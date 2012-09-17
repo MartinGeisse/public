@@ -143,7 +143,9 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		
 		// let plugins contribute
 		logger.trace("invoking web application initialization contributors...");
-		WicketConfigurationUtil.invokeWebApplicationInitializationContributors(this);
+		for (final IWebApplicationInitializationContributor contributor : WicketCapabilities.webApplicationInitializationCapability) {
+			contributor.onInitializeWebApplication(this);
+		}
 		logger.trace("application initialization contributors invoked");
 
 		// add fallback string loaders

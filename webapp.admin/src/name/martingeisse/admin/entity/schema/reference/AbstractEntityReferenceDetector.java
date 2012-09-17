@@ -7,7 +7,7 @@
 package name.martingeisse.admin.entity.schema.reference;
 
 import name.martingeisse.admin.application.IPlugin;
-import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.EntityCapabilities;
 
 /**
  * Base implementation of {@link IEntityReferenceDetector} that also behaves
@@ -28,7 +28,7 @@ public abstract class AbstractEntityReferenceDetector implements IEntityReferenc
 	 */
 	@Override
 	public void contribute() {
-		EntityConfigurationUtil.addEntityReferenceDetector(this);
+		EntityCapabilities.entityReferenceDetectorCapability.add(this);
 	}
 
 }
