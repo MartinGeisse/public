@@ -9,6 +9,7 @@ package name.martingeisse.admin.entity.schema;
 import java.lang.annotation.Annotation;
 
 import name.martingeisse.admin.entity.schema.type.ISqlTypeInfo;
+import name.martingeisse.common.terms.IConsumer;
 import name.martingeisse.common.util.ClassKeyedContainer;
 
 /**
@@ -35,7 +36,7 @@ public class EntityPropertyDescriptor {
 	/**
 	 * the annotations
 	 */
-	private ClassKeyedContainer<Annotation> annotations;
+	private final ClassKeyedContainer<Annotation> annotations;
 
 	/**
 	 * Constructor.
@@ -101,11 +102,17 @@ public class EntityPropertyDescriptor {
 	}
 
 	/**
-	 * Setter method for the annotations.
-	 * @param annotations the annotations to set
+	 * Adds the annotations from the property's type to the annotation container.
 	 */
-	public void setAnnotations(final ClassKeyedContainer<Annotation> annotations) {
-		this.annotations = annotations;
+	public void addAnnotationsFromType() {
+		type.contributeImplicitAutoformAnnotations(new IConsumer<Annotation>() {
+			@Override
+			@SuppressWarnings({"rawtypes", "unchecked"})
+			public void consume(Annotation value) {
+				ClassKeyedContainer container = annotations;
+				container.set(value.annotationType(), value);
+			}
+		});
 	}
 
 }

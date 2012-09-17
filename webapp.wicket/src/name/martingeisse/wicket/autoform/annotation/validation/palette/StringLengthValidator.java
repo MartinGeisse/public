@@ -25,7 +25,7 @@ public class StringLengthValidator extends AbstractValidator<String> {
 	/**
 	 * the maxLength
 	 */
-	private int maxLength;
+	private final int maxLength;
 
 	/**
 	 * Constructor.

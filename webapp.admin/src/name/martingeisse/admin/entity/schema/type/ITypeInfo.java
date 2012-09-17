@@ -6,6 +6,11 @@
 
 package name.martingeisse.admin.entity.schema.type;
 
+import java.lang.annotation.Annotation;
+
+import name.martingeisse.common.terms.IConsumer;
+import name.martingeisse.wicket.autoform.annotation.validation.palette.MaxStringLength;
+
 /**
  * Generic super-interface for type information. All types have
  * the following information associated with them:
@@ -37,4 +42,15 @@ public interface ITypeInfo {
 	 */
 	public Class<?> getJavaStorageType();
 
+	/**
+	 * Contributes autoform annotations that all fields using this type should
+	 * have implicitly. For example, a length-constrained string type
+	 * should contribute at least {@link MaxStringLength}.
+	 * 
+	 * Contributed annotations should be added to the argument list.
+	 * 
+	 * @param consumer the consumer for annotations
+	 */
+	public void contributeImplicitAutoformAnnotations(IConsumer<Annotation> consumer);
+	
 }

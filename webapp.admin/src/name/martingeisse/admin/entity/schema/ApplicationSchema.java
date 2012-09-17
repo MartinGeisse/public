@@ -210,6 +210,7 @@ public class ApplicationSchema {
 						propertyDescriptor.setType(column.determineHighlevelType(databaseDescriptor.getDefaultTimeZone() != null));
 						propertyDescriptor.setVisibleInRawEntityList(true);
 						propertyDescriptor.setVisibleInRawEntityList(isPropertyVisibleInRawEntityList(entityDescriptor, propertyDescriptor));
+						propertyDescriptor.addAnnotationsFromType();
 						properties.add(propertyDescriptor);
 						logger.debug("-> type: " + propertyDescriptor.getType());
 					}

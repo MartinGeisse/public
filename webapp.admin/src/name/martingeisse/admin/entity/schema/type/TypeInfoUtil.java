@@ -65,17 +65,17 @@ public final class TypeInfoUtil {
 
 		case Types.CHAR:
 		case Types.NCHAR:
-			return new StringTypeInfo(nullable, true, 0xff, true);
+			return new StringTypeInfo(nullable, true, size, true);
 
 		case Types.VARCHAR:
 		case Types.NVARCHAR:
-			return new StringTypeInfo(nullable, true, 0xffff, false);
+			return new StringTypeInfo(nullable, true, size, false);
 			
 		case Types.LONGVARCHAR:
 		case Types.LONGNVARCHAR:
 		case Types.CLOB:
 		case Types.NCLOB:
-			return new StringTypeInfo(nullable, true, null, false);
+			return new StringTypeInfo(nullable, true, size, false);
 			
 		case Types.DATE:
 			return new LocalDateTypeInfo(nullable);

@@ -6,6 +6,11 @@
 
 package name.martingeisse.admin.entity.schema.type;
 
+import java.lang.annotation.Annotation;
+
+import name.martingeisse.common.terms.IConsumer;
+import name.martingeisse.wicket.autoform.annotation.structure.impl.AutoformRequiredPropertyImpl;
+
 /**
  * Base implementation of {@link ITypeInfo}.
  */
@@ -30,6 +35,17 @@ public abstract class AbstractTypeInfo implements ITypeInfo {
 	@Override
 	public boolean isNullable() {
 		return nullable;
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.schema.type.ITypeInfo#contributeImplicitAutoformAnnotations(java.util.List)
+	 */
+	@Override
+	public void contributeImplicitAutoformAnnotations(IConsumer<Annotation> annotations) {
+		if (!nullable) {
+			// TODO: empty strings vs. null
+			annotations.consume(new AutoformRequiredPropertyImpl());
+		}
 	}
 	
 }
