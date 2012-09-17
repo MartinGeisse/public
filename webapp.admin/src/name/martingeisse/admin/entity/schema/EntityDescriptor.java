@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import name.martingeisse.admin.entity.EntityCapabilities;
-import name.martingeisse.admin.entity.EntityConfigurationUtil;
+import name.martingeisse.admin.entity.EntityParameters;
 import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
@@ -171,7 +171,7 @@ public class EntityDescriptor {
 	 * entity name mapping.
 	 */
 	void mapNames() {
-		final IEntityNameMappingStrategy mapping = EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityNameMappingStrategy();
+		final IEntityNameMappingStrategy mapping = EntityParameters.generalEntityConfigurationParameter.get().getEntityNameMappingStrategy();
 		this.name = mapping.determineEntityName(this);
 		this.displayName = mapping.determineEntityDisplayName(this);
 		logger.info("entity name mapped: table = " + tableName + ", name = " + name + ", display = " + displayName);
@@ -425,7 +425,7 @@ public class EntityDescriptor {
 		}
 
 		// determine their order
-		final Comparator<EntityPropertyDescriptor> fieldComparator = EntityConfigurationUtil.getGeneralEntityConfiguration().getEntityListFieldOrder();
+		final Comparator<EntityPropertyDescriptor> fieldComparator = EntityParameters.generalEntityConfigurationParameter.get().getEntityListFieldOrder();
 		if (fieldComparator != null) {
 			Collections.sort(fieldOrder, fieldComparator);
 		}

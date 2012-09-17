@@ -9,7 +9,9 @@ package name.martingeisse.admin.application;
 import java.util.Iterator;
 
 /**
- * Identifies a type of capability that can be contributed by plugins.
+ * Identifies a type of capability that can be contributed by plugins
+ * or by the application. For each key, any number of contributed
+ * capabilities can be stored.
  * 
  * Capability keys are compared based on their identity. That is, two
  * capability keys can only be equal if they are the same object.

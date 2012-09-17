@@ -9,11 +9,9 @@ package name.martingeisse.admin.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
+import name.martingeisse.admin.navigation.NavigationParameters;
 import name.martingeisse.admin.navigation.NavigationTree;
-import name.martingeisse.admin.util.SealableClassKeyedContainer;
 import name.martingeisse.common.database.IDatabaseDescriptor;
-import name.martingeisse.common.util.ClassKeyedContainer;
 import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.log4j.Logger;
@@ -51,6 +49,13 @@ public final class ApplicationConfiguration {
 	}
 
 	/**
+	 * static initializer.
+	 */
+	static {
+		NavigationParameters.navigationTreeParameter.set(new NavigationTree());
+	}
+	
+	/**
 	 * the sealed
 	 */
 	private boolean sealed = false;
@@ -68,7 +73,7 @@ public final class ApplicationConfiguration {
 	/**
 	 * the parameters
 	 */
-	private final SealableClassKeyedContainer<Object> parameters = new SealableClassKeyedContainer<Object>();
+	private final ParameterRegistry parameters = new ParameterRegistry();
 
 	/**
 	 * the capabilities
@@ -79,7 +84,6 @@ public final class ApplicationConfiguration {
 	 * Constructor.
 	 */
 	private ApplicationConfiguration() {
-		parameters.set(NavigationConfigurationUtil.NAVIGATION_TREE_PARAMETER_KEY, new NavigationTree());
 	}
 
 	/**
@@ -134,7 +138,7 @@ public final class ApplicationConfiguration {
 	 * Getter method for the parameters.
 	 * @return the parameters
 	 */
-	public ClassKeyedContainer<Object> getParameters() {
+	ParameterRegistry getParameters() {
 		return parameters;
 	}
 
@@ -142,7 +146,7 @@ public final class ApplicationConfiguration {
 	 * Getter method for the capabilities.
 	 * @return the capabilities
 	 */
-	public CapabilityRegistry getCapabilities() {
+	CapabilityRegistry getCapabilities() {
 		return capabilities;
 	}
 

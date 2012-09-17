@@ -10,8 +10,8 @@ import java.util.List;
 
 import name.martingeisse.admin.entity.AllEntityDescriptorsModel;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.admin.navigation.NavigationParameters;
 import name.martingeisse.admin.navigation.component.NavigationMenuView;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -38,7 +38,7 @@ public class BasicPageTopBar extends Panel {
 		IModel<List<NavigationNode>> topNavigationNodeListModel = new LoadableDetachableModel<List<NavigationNode>>() {
 			@Override
 			protected List<NavigationNode> load() {
-				return NavigationConfigurationUtil.getNavigationTree().getRoot().getChildren();
+				return NavigationParameters.navigationTreeParameter.get().getRoot().getChildren();
 			}
 		};
 		add(new NavigationMenuView("topNavigationNodes", topNavigationNodeListModel, 0));

@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.application.wicket;
 
-import name.martingeisse.admin.application.security.SecurityConfigurationUtil;
+import name.martingeisse.admin.application.security.SecurityParameters;
 import name.martingeisse.admin.application.security.SecurityUtil;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
@@ -58,7 +58,7 @@ public class LoginRequestCycleListener extends AbstractRequestCycleListener {
 			final IPageClassRequestHandler pageClassRequestHandler = (IPageClassRequestHandler)handler;
 			final Class<?> pageClass = pageClassRequestHandler.getPageClass();
 			logger.trace("handler is for page: " + pageClass);
-			final Class<? extends Page> loginPageClass = SecurityConfigurationUtil.getSecurityConfigurationSafe().getLoginPageClass();
+			final Class<? extends Page> loginPageClass = SecurityParameters.getSecurityConfigurationSafe().getLoginPageClass();
 			ReturnValueUtil.nullMeansMissing(loginPageClass, "security configuration: login page class");
 			if (pageClass != loginPageClass) {
 				logger.trace("sending intercept-redirect to the login page");

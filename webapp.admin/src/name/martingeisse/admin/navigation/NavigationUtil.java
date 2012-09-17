@@ -92,7 +92,7 @@ public final class NavigationUtil {
 	 * @throws IllegalArgumentException if no node was found and required is true
 	 */
 	public static NavigationNode getNavigationNodeForPath(final String path, final boolean required) throws IllegalArgumentException {
-		final NavigationNode node = (path == null ? null : NavigationConfigurationUtil.getNavigationTree().getNodesByPath().get(path));
+		final NavigationNode node = (path == null ? null : NavigationParameters.navigationTreeParameter.get().getNodesByPath().get(path));
 		if (node != null) {
 			return node;
 		} else if (required) {
@@ -154,7 +154,7 @@ public final class NavigationUtil {
 	 */
 	public static NavigationNode getNavigationNodeForPage(final Page page) {
 		final String currentNavigationPath = StringUtils.defaultString(NavigationUtil.getNavigationPathForPage(page));
-		return NavigationConfigurationUtil.getNavigationTree().getRoot().findMostSpecificNode(currentNavigationPath);
+		return NavigationParameters.navigationTreeParameter.get().getRoot().findMostSpecificNode(currentNavigationPath);
 	}
 
 }

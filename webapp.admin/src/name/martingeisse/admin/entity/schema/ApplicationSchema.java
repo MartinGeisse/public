@@ -33,8 +33,8 @@ import name.martingeisse.admin.entity.schema.type.IEntityIdTypeInfo;
 import name.martingeisse.admin.entity.schema.type.ISqlTypeInfo;
 import name.martingeisse.admin.navigation.INavigationNodeHandler;
 import name.martingeisse.admin.navigation.INavigationNodeVisitor;
-import name.martingeisse.admin.navigation.NavigationConfigurationUtil;
 import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.admin.navigation.NavigationParameters;
 import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.datarow.DataRowMeta;
 import name.martingeisse.common.util.ParameterUtil;
@@ -312,7 +312,7 @@ public class ApplicationSchema {
 
 		// determine the (declared) canonical entity list nodes
 		final Map<String, NavigationNode> canonicalEntityListNodes = new HashMap<String, NavigationNode>();
-		NavigationConfigurationUtil.getNavigationTree().acceptVisior(new INavigationNodeVisitor() {
+		NavigationParameters.navigationTreeParameter.get().acceptVisior(new INavigationNodeVisitor() {
 			@Override
 			public void visit(final NavigationNode node) {
 				final String entityName = node.getHandler().getEntityNameForCanonicalEntityListNode();
@@ -326,7 +326,7 @@ public class ApplicationSchema {
 		});
 
 		// create ad-hoc canonical list nodes for entities with no declared canonical list node
-		final NavigationNode globalRoot = NavigationConfigurationUtil.getNavigationTree().getRoot();
+		final NavigationNode globalRoot = NavigationParameters.navigationTreeParameter.get().getRoot();
 		final NavigationNode allEntitiesNode = globalRoot.getChildFactory().createNavigationFolderChild("all-entities", "All Entities");
 		for (final EntityDescriptor entity : entityDescriptors) {
 
