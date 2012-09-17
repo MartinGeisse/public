@@ -6,17 +6,18 @@
 
 package name.martingeisse.admin.util;
 
-import name.martingeisse.common.util.ClassKeyedListContainer;
+import name.martingeisse.common.util.KeyedListContainer;
 
 /**
- * This subclass of {@link ClassKeyedListContainer} allows to be
+ * This subclass of {@link KeyedListContainer} allows to be
  * sealed against modification.
  * 
  * Note: the list returned from this container cannot be sealed yet.
  * 
- * @param <B> the base type of all contained objects
+ * @param <K> the key type
+ * @param <V> the value type
  */
-public class SealableClassKeyedListContainer<B> extends ClassKeyedListContainer<B> {
+public class SealableKeyedListContainer<K, V> extends KeyedListContainer<K, V> {
 
 	/**
 	 * the sealed
@@ -26,7 +27,7 @@ public class SealableClassKeyedListContainer<B> extends ClassKeyedListContainer<
 	/**
 	 * Constructor.
 	 */
-	public SealableClassKeyedListContainer() {
+	public SealableKeyedListContainer() {
 		this.sealed = false;
 	}
 
@@ -51,7 +52,7 @@ public class SealableClassKeyedListContainer<B> extends ClassKeyedListContainer<
 	 * @see name.martingeisse.common.util.KeyedListContainer#add(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void add(Class<? extends B> key, B value) {
+	public void add(K key, V value) {
 		ensureNotSealed();
 		super.add(key, value);
 	}
