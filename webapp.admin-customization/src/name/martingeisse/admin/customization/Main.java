@@ -50,6 +50,7 @@ import name.martingeisse.common.database.MysqlDatabaseDescriptor;
 import name.martingeisse.wicket.autoform.AutoformPanel;
 import name.martingeisse.wicket.autoform.annotation.structure.AutoformPropertyOrder;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociatedValidator;
+import name.martingeisse.wicket.autoform.annotation.validation.palette.MinIntegerValue;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
 import name.martingeisse.wicket.populator.RowFieldPopulator;
@@ -367,6 +368,7 @@ public class Main {
 		 * @return the name1
 		 */
 //		@MyMaxLength(4)
+		@MinIntegerValue(3)
 		public int getName1() {
 			return name1;
 		}

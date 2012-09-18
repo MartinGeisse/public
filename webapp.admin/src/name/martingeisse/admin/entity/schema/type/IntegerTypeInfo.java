@@ -6,14 +6,12 @@
 
 package name.martingeisse.admin.entity.schema.type;
 
-import java.lang.annotation.Annotation;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
 import name.martingeisse.common.database.IDatabaseDescriptor;
-import name.martingeisse.common.terms.IConsumer;
 
 import org.apache.wicket.util.string.StringValue;
 
@@ -177,13 +175,4 @@ public final class IntegerTypeInfo extends AbstractEntityIdTypeInfo {
 		return resultSet.getObject(index);
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.entity.schema.type.AbstractTypeInfo#contributeImplicitAutoformAnnotations(java.util.List)
-	 */
-	@Override
-	public void contributeImplicitAutoformAnnotations(IConsumer<Annotation> annotations) {
-		super.contributeImplicitAutoformAnnotations(annotations);
-		// TODO: min/max value
-	}
-	
 }
