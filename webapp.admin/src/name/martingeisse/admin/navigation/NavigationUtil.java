@@ -150,7 +150,8 @@ public final class NavigationUtil {
 	/**
 	 * Returns the current navigation node for the specified page.
 	 * @param page the page
-	 * @return the navigation node
+	 * @return the navigation node (never null -- if no actual node can be found,
+	 * this method returns the root not)
 	 */
 	public static NavigationNode getNavigationNodeForPage(final Page page) {
 		final String currentNavigationPath = StringUtils.defaultString(NavigationUtil.getNavigationPathForPage(page));
