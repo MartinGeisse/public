@@ -17,6 +17,7 @@ import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.BufferedResponseRequestHandler;
 import org.apache.wicket.request.handler.IPageClassRequestHandler;
 import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
 import org.apache.wicket.request.handler.resource.ResourceRequestHandler;
@@ -85,10 +86,15 @@ public class LoginRequestCycleListener extends AbstractRequestCycleListener {
 			logger.trace("handler is a SwitchProtocolRequestHandler");
 			return;
 			
+		} else if (handler instanceof BufferedResponseRequestHandler) {
+			
+			// needed to render stateful login pages
+			logger.trace("handler is a BufferedResponseRequestHandler");
+			return;
+			
 		}
 		
 		// any other type of request handler is blocked
-		// TODO: BufferedResponseRequestHandler probably needed for redirect-to-render in more complex login pages
 		logger.trace("blocking handler: " + handler + " / " + handler.getClass().getCanonicalName());
 		throw new AbortWithHttpErrorCodeException(403);
 
