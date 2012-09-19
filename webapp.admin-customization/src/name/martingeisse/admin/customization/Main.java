@@ -6,11 +6,14 @@
 
 package name.martingeisse.admin.customization;
 
+import java.io.File;
 import java.io.Serializable;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
@@ -38,8 +41,8 @@ import name.martingeisse.admin.entity.schema.annotation.AnnotatedClassEntityAnno
 import name.martingeisse.admin.entity.schema.annotation.IEntityAnnotatedClassResolver;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
-import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.NavigationConfiguration;
+import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
 import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
 import name.martingeisse.admin.navigation.handler.PanelPageNavigationHandler;
@@ -57,8 +60,14 @@ import name.martingeisse.wicket.populator.RowFieldPopulator;
 
 import org.joda.time.DateTimeZone;
 
+import com.mysema.query.codegen.BeanSerializer;
+import com.mysema.query.sql.codegen.MetaDataExporter;
+import com.mysema.query.sql.mysql.MySQLQuery;
 import com.mysema.query.types.Ops;
 import com.mysema.query.types.Predicate;
+
+import foo.PhorumSettings;
+import foo.QPhorumSettings;
 
 /**
  * The main class.
@@ -74,15 +83,23 @@ public class Main {
 	public static void main(final String[] args) throws Exception {
 
 		// --- code generation start ---
+		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/phorum?zeroDateTimeBehavior=convertToNull&useTimezone=false", "root", "");
 		/*
-		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/phpbb", "root", "");
 		MetaDataExporter exporter = new MetaDataExporter();
 		exporter.setTargetFolder(new File("generated"));
 		exporter.setPackageName("foo");
-		exporter.export(connection.getMetaData());  
+		exporter.setBeanSerializer(new BeanSerializer());
+		exporter.export(connection.getMetaData());
+		*/
+		
+		PhorumSettings settings = new MySQLQuery(connection).from(QPhorumSettings.phorumSettings).where(QPhorumSettings.phorumSettings.name.eq("cache")).singleResult(QPhorumSettings.phorumSettings);
+		System.out.println(settings);
+		System.out.println(settings.getName());
+		System.out.println(settings.getType());
+		System.out.println(settings.getData());
+		
 		connection.close();
 		System.exit(0);
-		*/
 		// --- code generation end ---
 		
 		
