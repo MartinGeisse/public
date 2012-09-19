@@ -46,7 +46,7 @@ public class Recorder<T> extends HiddenField<Object>
 {
 	private static final long serialVersionUID = 1L;
 
-	/**  set of selected ids */
+	/** set of selected ids */
 	private final List<String> selectedIds;
 
 	/** parent palette object */
@@ -150,11 +150,11 @@ public class Recorder<T> extends HiddenField<Object>
 	/**
 	 * @return list over selected choices
 	 */
-	private List<T> getSelectedList()
+	protected List<T> getSelectedList()
 	{
 		if (getSelectedIds().isEmpty())
 		{
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 
 		final IChoiceRenderer<T> renderer = getPalette().getChoiceRenderer();
@@ -194,17 +194,18 @@ public class Recorder<T> extends HiddenField<Object>
 	/**
 	 * @return list over unselected choices
 	 */
-	private List<T> getUnselectedList()
+	protected List<T> getUnselectedList()
 	{
 		final Collection<? extends T> choices = getPalette().getChoices();
 
 		if (choices.size() - getSelectedIds().size() == 0)
 		{
-			return Collections.<T>emptyList();
+			return Collections.<T> emptyList();
 		}
 
 		final IChoiceRenderer<T> renderer = getPalette().getChoiceRenderer();
-		final List<T> unselected = new ArrayList<T>(Math.max(1, choices.size() - getSelectedIds().size()));
+		final List<T> unselected = new ArrayList<T>(Math.max(1, choices.size() -
+			getSelectedIds().size()));
 
 		for (final T choice : choices)
 		{
@@ -241,13 +242,16 @@ public class Recorder<T> extends HiddenField<Object>
 		updateIds(getValue());
 	}
 
-	private void updateIds(final String value)
+	protected void updateIds(final String value)
 	{
 		getSelectedIds().clear();
 
-		for (final String id : Strings.split(value, ','))
+		if (!Strings.isEmpty(value))
 		{
-			getSelectedIds().add(id);
+			for (final String id : Strings.split(value, ','))
+			{
+				getSelectedIds().add(id);
+			}
 		}
 	}
 }

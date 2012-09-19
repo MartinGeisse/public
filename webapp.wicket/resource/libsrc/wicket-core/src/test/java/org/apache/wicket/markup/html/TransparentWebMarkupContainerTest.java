@@ -27,7 +27,7 @@ import org.apache.wicket.mock.MockPageManager;
 import org.apache.wicket.page.IManageablePage;
 import org.apache.wicket.page.IPageManager;
 import org.apache.wicket.page.IPageManagerContext;
-import org.apache.wicket.util.lang.WicketObjects;
+import org.apache.wicket.core.util.lang.WicketObjects;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.StringResourceStream;
 import org.apache.wicket.util.tester.WicketTester;
@@ -107,6 +107,7 @@ public class TransparentWebMarkupContainerTest extends WicketTestCase
 			{
 				return new IPageManagerProvider()
 				{
+					@Override
 					public IPageManager get(IPageManagerContext context)
 					{
 						return new MockPageManager()
@@ -140,6 +141,7 @@ public class TransparentWebMarkupContainerTest extends WicketTestCase
 			add(new TestBorder("border"));
 		}
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{
@@ -162,6 +164,7 @@ public class TransparentWebMarkupContainerTest extends WicketTestCase
 			addToBorder(new Label("c1", "some border title"));
 		}
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{
@@ -182,6 +185,7 @@ public class TransparentWebMarkupContainerTest extends WicketTestCase
 			add(new TransparentWebMarkupContainer("container").add(new Label("msg", "test_message")));
 		}
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{
@@ -209,6 +213,7 @@ public class TransparentWebMarkupContainerTest extends WicketTestCase
 			add(new TransparentWebMarkupContainer("container"));
 		}
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{

@@ -23,7 +23,6 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupElement;
-import org.apache.wicket.markup.MarkupParser;
 import org.apache.wicket.markup.MarkupResourceStream;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.WicketTag;
@@ -31,7 +30,7 @@ import org.apache.wicket.markup.html.TransparentWebMarkupContainer;
 import org.apache.wicket.markup.parser.AbstractMarkupFilter;
 import org.apache.wicket.markup.resolver.IComponentResolver;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.util.string.UrlUtils;
+import org.apache.wicket.core.util.string.UrlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,7 +141,7 @@ public final class RelativePathPrefixHandler extends AbstractMarkupFilter
 			{
 				if (tag.getId() == null)
 				{
-					tag.setId(WICKET_RELATIVE_PATH_PREFIX_CONTAINER_ID);
+					tag.setId(getWicketRelativePathPrefix());
 					tag.setAutoComponentTag(true);
 				}
 				tag.addBehavior(RELATIVE_PATH_BEHAVIOR);
@@ -154,13 +153,13 @@ public final class RelativePathPrefixHandler extends AbstractMarkupFilter
 		return tag;
 	}
 
+	@Override
 	public Component resolve(final MarkupContainer container, final MarkupStream markupStream,
 		final ComponentTag tag)
 	{
-		if ((tag != null) && (tag.getId().startsWith(WICKET_RELATIVE_PATH_PREFIX_CONTAINER_ID)))
+		if ((tag != null) && (tag.getId().equals(getWicketRelativePathPrefix())))
 		{
-			String id = WICKET_RELATIVE_PATH_PREFIX_CONTAINER_ID +
-				container.getPage().getAutoIndex();
+			String id = tag.getId() + container.getPage().getAutoIndex();
 
 			// we do not want to mess with the hierarchy, so the container has to be
 			// transparent as it may have wicket components inside. for example a raw anchor tag
@@ -168,5 +167,10 @@ public final class RelativePathPrefixHandler extends AbstractMarkupFilter
 			return new TransparentWebMarkupContainer(id);
 		}
 		return null;
+	}
+
+	private String getWicketRelativePathPrefix()
+	{
+		return getWicketNamespace() + WICKET_RELATIVE_PATH_PREFIX_CONTAINER_ID;
 	}
 }

@@ -17,7 +17,7 @@
 package org.apache.wicket.model;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.util.lang.PropertyResolver;
+import org.apache.wicket.core.util.lang.PropertyResolver;
 
 /**
  * A model that references a property by name on the current model of the component it is bound to.
@@ -60,6 +60,7 @@ public class ComponentPropertyModel<T> extends AbstractReadOnlyModel<T>
 	/**
 	 * @see org.apache.wicket.model.IComponentAssignedModel#wrapOnAssignment(org.apache.wicket.Component)
 	 */
+	@Override
 	public IWrapModel<T> wrapOnAssignment(final Component component)
 	{
 		return new AssignmentWrapper<T>(component, propertyName);
@@ -88,6 +89,7 @@ public class ComponentPropertyModel<T> extends AbstractReadOnlyModel<T>
 		/**
 		 * @see org.apache.wicket.model.IWrapModel#getWrappedModel()
 		 */
+		@Override
 		public IModel<T> getWrappedModel()
 		{
 			return ComponentPropertyModel.this;

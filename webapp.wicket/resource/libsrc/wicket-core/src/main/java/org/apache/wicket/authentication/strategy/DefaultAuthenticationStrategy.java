@@ -20,6 +20,7 @@ import org.apache.wicket.Application;
 import org.apache.wicket.authentication.IAuthenticationStrategy;
 import org.apache.wicket.util.cookies.CookieUtils;
 import org.apache.wicket.util.crypt.ICrypt;
+import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.string.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,11 +56,7 @@ public class DefaultAuthenticationStrategy implements IAuthenticationStrategy
 	 */
 	public DefaultAuthenticationStrategy(final String cookieKey)
 	{
-		if (Strings.isEmpty(cookieKey))
-		{
-			throw new IllegalArgumentException("Parameter 'cookieKey' must not be null or empty.");
-		}
-		this.cookieKey = cookieKey;
+		this.cookieKey = Args.notEmpty(cookieKey, "cookieKey");
 	}
 
 	/**
@@ -91,6 +88,7 @@ public class DefaultAuthenticationStrategy implements IAuthenticationStrategy
 	/**
 	 * @see org.apache.wicket.authentication.IAuthenticationStrategy#load()
 	 */
+	@Override
 	public String[] load()
 	{
 		String value = getCookieUtils().load(cookieKey);
@@ -134,6 +132,7 @@ public class DefaultAuthenticationStrategy implements IAuthenticationStrategy
 	 * @see org.apache.wicket.authentication.IAuthenticationStrategy#save(java.lang.String,
 	 *      java.lang.String)
 	 */
+	@Override
 	public void save(final String username, final String password)
 	{
 		String value = username + VALUE_SEPARATOR + password;
@@ -146,6 +145,7 @@ public class DefaultAuthenticationStrategy implements IAuthenticationStrategy
 	/**
 	 * @see org.apache.wicket.authentication.IAuthenticationStrategy#remove()
 	 */
+	@Override
 	public void remove()
 	{
 		getCookieUtils().remove(cookieKey);

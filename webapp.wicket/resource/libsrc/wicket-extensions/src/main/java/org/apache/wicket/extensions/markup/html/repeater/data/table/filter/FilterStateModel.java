@@ -28,7 +28,7 @@ import org.apache.wicket.model.IModel;
  * TextField tf = new TextField(&quot;tf&quot;, new FilterStateModel(locator));
  * </pre>
  * 
- * Text field tf will now user the object that filter state locator locates as its underlying model.
+ * Text field tf will now use the object that filter state locator locates as its underlying model.
  * </p>
  * 
  * @param <T>
@@ -55,6 +55,7 @@ class FilterStateModel<T> implements IModel<T>
 	/**
 	 * @see org.apache.wicket.model.IModel#getObject()
 	 */
+	@Override
 	public T getObject()
 	{
 		return locator.getFilterState();
@@ -63,6 +64,7 @@ class FilterStateModel<T> implements IModel<T>
 	/**
 	 * @see org.apache.wicket.model.IModel#setObject(java.lang.Object)
 	 */
+	@Override
 	public void setObject(final T object)
 	{
 		locator.setFilterState(object);
@@ -71,6 +73,7 @@ class FilterStateModel<T> implements IModel<T>
 	/**
 	 * @see org.apache.wicket.model.IDetachable#detach()
 	 */
+	@Override
 	public void detach()
 	{
 	}

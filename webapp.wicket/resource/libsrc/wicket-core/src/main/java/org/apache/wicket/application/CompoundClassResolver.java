@@ -53,6 +53,7 @@ public class CompoundClassResolver implements IClassResolver
 	 * @throws ClassNotFoundException
 	 *             If the class was not found
 	 */
+	@Override
 	public Class<?> resolveClass(final String className) throws ClassNotFoundException
 	{
 		boolean debugEnabled = logger.isDebugEnabled();
@@ -87,6 +88,7 @@ public class CompoundClassResolver implements IClassResolver
 	 *            The name of the resource to find.
 	 * @return An {@link Iterator} of all the {@link URL}s matching the resource name.
 	 */
+	@Override
 	public Iterator<URL> getResources(final String name)
 	{
 		Args.notNull(name, "name");
@@ -104,6 +106,25 @@ public class CompoundClassResolver implements IClassResolver
 		}
 
 		return urls.iterator();
+	}
+
+	/**
+	 * @return the class loader returned by the first registered IClassResolver. If there is no
+	 *  registered IClassResolver then the current thread's context class loader will be returned.
+	 */
+	@Override
+	public ClassLoader getClassLoader()
+	{
+		final ClassLoader classLoader;
+		if (resolvers.isEmpty() == false)
+		{
+			classLoader = resolvers.iterator().next().getClassLoader();
+		}
+		else
+		{
+			classLoader = Thread.currentThread().getContextClassLoader();
+		}
+		return classLoader;
 	}
 
 	/**

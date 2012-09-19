@@ -17,6 +17,7 @@
 package org.apache.wicket.extensions.ajax.markup.html.autocomplete;
 
 import org.apache.wicket.request.Response;
+import org.apache.wicket.util.string.Strings;
 
 /**
  * A renderer that abstracts autoassist specific details and allows subclasses to only render the
@@ -33,6 +34,7 @@ public abstract class AbstractAutoCompleteRenderer<T> implements IAutoCompleteRe
 {
 	private static final long serialVersionUID = 1L;
 
+	@Override
 	public final void render(final T object, final Response response, final String criteria)
 	{
 		String textValue = getTextValue(object);
@@ -43,6 +45,7 @@ public abstract class AbstractAutoCompleteRenderer<T> implements IAutoCompleteRe
 					object.toString());
 		}
 		textValue = textValue.replaceAll("\\\"", "&quot;");
+		textValue = Strings.escapeMarkup(textValue).toString();
 
 		response.write("<li textvalue=\"" + textValue + "\"");
 		final CharSequence handler = getOnSelectJavaScriptExpression(object);
@@ -55,11 +58,13 @@ public abstract class AbstractAutoCompleteRenderer<T> implements IAutoCompleteRe
 		response.write("</li>");
 	}
 
+	@Override
 	public final void renderHeader(final Response response)
 	{
 		response.write("<ul>");
 	}
 
+	@Override
 	public final void renderFooter(final Response response, int count)
 	{
 		response.write("</ul>");

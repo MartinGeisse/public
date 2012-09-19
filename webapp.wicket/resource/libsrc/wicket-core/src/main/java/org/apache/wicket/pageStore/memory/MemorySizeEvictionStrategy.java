@@ -18,12 +18,12 @@ package org.apache.wicket.pageStore.memory;
 
 import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.lang.Bytes;
-import org.apache.wicket.util.lang.WicketObjects;
+import org.apache.wicket.core.util.lang.WicketObjects;
 
 /**
  * An eviction strategy that keeps the data store size up to configured bytes
  */
-public class MemorySizeEvictionStrategy implements DataStoreEvictionStrategy
+public class MemorySizeEvictionStrategy implements IDataStoreEvictionStrategy
 {
 
 	private final Bytes maxBytes;
@@ -43,8 +43,9 @@ public class MemorySizeEvictionStrategy implements DataStoreEvictionStrategy
 
 	/**
 	 * 
-	 * @see org.apache.wicket.pageStore.memory.DataStoreEvictionStrategy#evict(org.apache.wicket.pageStore.memory.PageTable)
+	 * @see IDataStoreEvictionStrategy#evict(org.apache.wicket.pageStore.memory.PageTable)
 	 */
+	@Override
 	public void evict(PageTable pageTable)
 	{
 

@@ -24,7 +24,8 @@ import name.martingeisse.wicket.util.StringValueUtil;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.Loop;
 import org.apache.wicket.markup.html.list.LoopItem;
@@ -175,7 +176,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	@Override
 	public void renderHead(final IHeaderResponse response) {
 		super.renderHead(response);
-		response.renderOnDomReadyJavaScript("$('#" + getMarkupId() + "').createRawEntityTable();\n");
+		response.render(OnDomReadyHeaderItem.forScript("$('#" + getMarkupId() + "').createRawEntityTable();\n"));
 	}
 
 	/* (non-Javadoc)
@@ -351,11 +352,11 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 
 		// fetch data
 		final EntityInstanceDataProvider dataProvider = new EntityInstanceDataProvider(getEntityDescriptorModel(), actualPredicate, orderSpecifiers);
-		final int sizeWithBothFilters = dataProvider.size();
+		final long sizeWithBothFilters = dataProvider.size();
 		final Iterator<? extends EntityInstance> iterator = dataProvider.iterator(offset, count);
 
 		// determine the number of entries with only the implied filter (DataTables wants to show this).
-		int sizeWithImpliedFilter;
+		long sizeWithImpliedFilter;
 		if (searchPredicate == null) {
 			sizeWithImpliedFilter = sizeWithBothFilters;
 		} else {

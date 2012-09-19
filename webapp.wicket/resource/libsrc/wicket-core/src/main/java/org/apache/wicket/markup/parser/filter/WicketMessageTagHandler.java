@@ -24,7 +24,6 @@ import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupElement;
-import org.apache.wicket.markup.MarkupParser;
 import org.apache.wicket.markup.MarkupResourceStream;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.TransparentWebMarkupContainer;
@@ -56,13 +55,6 @@ public final class WicketMessageTagHandler extends AbstractMarkupFilter
 	 * The id automatically assigned to tags with wicket:message attribute but without id
 	 */
 	public final static String WICKET_MESSAGE_CONTAINER_ID = "_message_attr_";
-
-	/**
-	 * singleton instance of {@link AttributeLocalizer}
-	 * @deprecated Do not use it because it is not aware of the markup namespace
-	 */
-	@Deprecated
-	public static final Behavior ATTRIBUTE_LOCALIZER = new AttributeLocalizer();
 
 	/**
 	 * Constructor for the IComponentResolver role.
@@ -99,7 +91,7 @@ public final class WicketMessageTagHandler extends AbstractMarkupFilter
 				// if this is a raw tag we need to set the id to something so
 				// that wicket will not merge this as raw markup and instead
 				// pass it on to a resolver
-				tag.setId(WICKET_MESSAGE_CONTAINER_ID);
+				tag.setId(getWicketMessageIdPrefix());
 				tag.setAutoComponentTag(true);
 				tag.setModified(true);
 			}
@@ -121,11 +113,6 @@ public final class WicketMessageTagHandler extends AbstractMarkupFilter
 
 		private final String wicketMessageAttrName;
 
-		public AttributeLocalizer()
-		{
-			this(MarkupParser.WICKET+':'+"message");
-		}
-
 		public AttributeLocalizer(String wicketMessageAttrName)
 		{
 			this.wicketMessageAttrName = wicketMessageAttrName;
@@ -139,7 +126,7 @@ public final class WicketMessageTagHandler extends AbstractMarkupFilter
 			{
 				expr = expr.trim();
 
-				String[] attrsAndKeys = expr.split(",");
+				String[] attrsAndKeys = Strings.split(expr, ',');
 
 				for (String attrAndKey : attrsAndKeys)
 				{
@@ -172,14 +159,15 @@ public final class WicketMessageTagHandler extends AbstractMarkupFilter
 		}
 	}
 
+	@Override
 	public Component resolve(MarkupContainer container, MarkupStream markupStream, ComponentTag tag)
 	{
 		// localize any raw markup that has wicket:message attrs
-		if ((tag != null) && (tag.getId().startsWith(WICKET_MESSAGE_CONTAINER_ID)))
+		if ((tag != null) && (tag.getId().startsWith(getWicketMessageIdPrefix())))
 		{
 			Component wc;
 			int autoIndex = container.getPage().getAutoIndex();
-			String id = WICKET_MESSAGE_CONTAINER_ID + autoIndex;
+			String id = getWicketMessageIdPrefix() + autoIndex;
 
 			if (tag.isOpenClose())
 			{
@@ -199,5 +187,10 @@ public final class WicketMessageTagHandler extends AbstractMarkupFilter
 	{
 		String wicketNamespace = getWicketNamespace();
 		return wicketNamespace + ':' + "message";
+	}
+
+	private String getWicketMessageIdPrefix()
+	{
+		return getWicketNamespace() + WICKET_MESSAGE_CONTAINER_ID;
 	}
 }

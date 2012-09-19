@@ -18,9 +18,11 @@ package org.apache.wicket.extensions.ajax.markup.html;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
-import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -85,10 +87,17 @@ public abstract class AjaxLazyLoadPanel extends Panel
 				{
 					Component component = getLazyLoadComponent(LAZY_LOAD_COMPONENT_ID);
 					AjaxLazyLoadPanel.this.replace(component);
-					setState((byte)2);
+					setState((byte) 2);
 				}
 				target.add(AjaxLazyLoadPanel.this);
 
+			}
+
+			@Override
+			protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
+			{
+				super.updateAjaxAttributes(attributes);
+				AjaxLazyLoadPanel.this.updateAjaxAttributes(attributes);
 			}
 
 			@Override
@@ -97,33 +106,31 @@ public abstract class AjaxLazyLoadPanel extends Panel
 				super.renderHead(component, response);
 				if (state < 2)
 				{
-					handleCallbackScript(response, getCallbackScript().toString());
+					CharSequence js = getCallbackScript(component);
+					handleCallbackScript(response, js, component);
 				}
 			}
-
-			@Override
-			protected AjaxChannel getChannel()
-			{
-				return AjaxLazyLoadPanel.this.getChannel();
-			}
-
 		});
 	}
 
-	protected AjaxChannel getChannel()
+	protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
 	{
-		return null;
 	}
 
 	/**
 	 * Allows subclasses to change the callback script if needed.
 	 * 
 	 * @param response
+	 *      the current response that writes to the header
 	 * @param callbackScript
+	 *      the JavaScript to write in the header
+	 * @param component
+	 *      the component which produced the callback script
 	 */
-	protected void handleCallbackScript(final IHeaderResponse response, final String callbackScript)
+	protected void handleCallbackScript(final IHeaderResponse response,
+		final CharSequence callbackScript, final Component component)
 	{
-		response.renderOnDomReadyJavaScript(callbackScript);
+		response.render(OnDomReadyHeaderItem.forScript(callbackScript));
 	}
 
 	/**

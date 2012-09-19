@@ -19,11 +19,12 @@ package org.apache.wicket.ajax.form;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes.Method;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IFormSubmitter;
 import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
-import org.apache.wicket.util.string.AppendingStringBuffer;
 
 /**
  * Ajax event behavior that submits a form via ajax when the event it is attached to, is invoked.
@@ -119,34 +120,31 @@ public abstract class AjaxFormSubmitBehavior extends AjaxEventBehavior
 		}
 	}
 
-	/**
-	 * 
-	 * @see org.apache.wicket.ajax.AjaxEventBehavior#getEventHandler()
-	 */
 	@Override
-	protected CharSequence getEventHandler()
+	protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
 	{
-		final String formId = getForm().getMarkupId();
-		final CharSequence url = getCallbackUrl();
+		super.updateAjaxAttributes(attributes);
 
-		AppendingStringBuffer call = new AppendingStringBuffer("wicketSubmitFormById('").append(
-			formId)
-			.append("', '")
-			.append(url)
-			.append("', ");
+		Form<?> form = getForm();
+		attributes.setFormId(form.getMarkupId());
+
+		String formMethod = form.getMarkupAttributes().getString("method");
+		if (formMethod == null || "POST".equalsIgnoreCase(formMethod))
+		{
+			attributes.setMethod(Method.POST);
+		}
+
+		if (form.getRootForm().isMultiPart())
+		{
+			attributes.setMultipart(true);
+			attributes.setMethod(Method.POST);
+		}
 
 		if (getComponent() instanceof IFormSubmittingComponent)
 		{
-			call.append("'")
-				.append(((IFormSubmittingComponent)getComponent()).getInputName())
-				.append("' ");
+			String submittingComponentName = ((IFormSubmittingComponent)getComponent()).getInputName();
+			attributes.setSubmittingComponentName(submittingComponentName);
 		}
-		else
-		{
-			call.append("null");
-		}
-
-		return generateCallbackScript(call) + ";";
 	}
 
 	/**
@@ -157,50 +155,72 @@ public abstract class AjaxFormSubmitBehavior extends AjaxEventBehavior
 	{
 		getForm().getRootForm().onFormSubmitted(new IFormSubmitter()
 		{
+			@Override
 			public Form<?> getForm()
 			{
 				return AjaxFormSubmitBehavior.this.getForm();
 			}
 
+			@Override
 			public boolean getDefaultFormProcessing()
 			{
 				return AjaxFormSubmitBehavior.this.getDefaultProcessing();
 			}
 
+			@Override
+			public void onError()
+			{
+				AjaxFormSubmitBehavior.this.onError(target);
+			}
+
+			@Override
 			public void onSubmit()
 			{
 				AjaxFormSubmitBehavior.this.onSubmit(target);
 			}
 
-			public void onError()
+			@Override
+			public void onAfterSubmit()
 			{
-				AjaxFormSubmitBehavior.this.onError(target);
+				AjaxFormSubmitBehavior.this.onAfterSubmit(target);
 			}
 		});
 	}
 
 	/**
-	 * Listener method that is invoked after the form has been submitted and processed without
-	 * errors
-	 * 
-	 * @param target
+	 * Override this method to provide special submit handling in a multi-button form. This method
+	 * will be called <em>after</em> the form's onSubmit method.
 	 */
-	protected abstract void onSubmit(AjaxRequestTarget target);
+	protected void onAfterSubmit(AjaxRequestTarget target)
+	{
+	}
+
+	/**
+	 * Override this method to provide special submit handling in a multi-button form. This method
+	 * will be called <em>before</em> the form's onSubmit method.
+	 */
+	protected void onSubmit(AjaxRequestTarget target)
+	{
+	}
+
 
 	/**
 	 * Listener method invoked when the form has been processed and errors occurred
 	 * 
 	 * @param target
 	 */
-	protected abstract void onError(AjaxRequestTarget target);
+	protected void onError(AjaxRequestTarget target)
+	{
+	}
 
 	/**
 	 * @see org.apache.wicket.ajax.AbstractDefaultAjaxBehavior#getPreconditionScript()
 	 */
 	@Override
+	@Deprecated
 	protected CharSequence getPreconditionScript()
 	{
-		return "return Wicket.$$(this)&&Wicket.$$('" + getForm().getMarkupId() + "')";
+		return null;
 	}
 
 	/**

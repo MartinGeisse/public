@@ -33,7 +33,7 @@ import org.apache.wicket.markup.parser.filter.WicketTagIdentifier;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.response.StringResponse;
-import org.apache.wicket.util.lang.PropertyResolver;
+import org.apache.wicket.core.util.lang.PropertyResolver;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
 import org.slf4j.Logger;
@@ -111,6 +111,7 @@ public class WicketMessageResolver implements IComponentResolver
 	 */
 	private static final String DEFAULT_VALUE = "DEFAULT_WICKET_MESSAGE_RESOLVER_VALUE";
 
+	@Override
 	public Component resolve(final MarkupContainer container, final MarkupStream markupStream,
 		final ComponentTag tag)
 	{
@@ -177,6 +178,7 @@ public class WicketMessageResolver implements IComponentResolver
 			setEscapeModelStrings(false);
 		}
 
+		@Override
 		public Component resolve(MarkupContainer container, MarkupStream markupStream,
 			ComponentTag tag)
 		{

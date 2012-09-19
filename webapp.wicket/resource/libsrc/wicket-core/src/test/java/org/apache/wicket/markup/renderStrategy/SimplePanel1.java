@@ -19,7 +19,8 @@ package org.apache.wicket.markup.renderStrategy;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 
@@ -73,7 +74,7 @@ public class SimplePanel1 extends Panel
 			@Override
 			public void renderHead(Component component, IHeaderResponse response)
 			{
-				response.renderCSSReference(id + ".css");
+				response.render(CssHeaderItem.forUrl(id + ".css"));
 			}
 		});
 		return container;
@@ -83,6 +84,6 @@ public class SimplePanel1 extends Panel
 	public void renderHead(IHeaderResponse response)
 	{
 		super.renderHead(response);
-		response.renderCSSReference(getClass().getSimpleName() + ".css");
+		response.render(CssHeaderItem.forUrl(getClass().getSimpleName() + ".css"));
 	}
 }

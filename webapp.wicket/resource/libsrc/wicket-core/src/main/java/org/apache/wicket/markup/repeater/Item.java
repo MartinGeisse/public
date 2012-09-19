@@ -96,9 +96,11 @@ public class Item<T> extends ListItem<T>
 		/**
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public int compare(Item<?> lhs, Item<?> rhs)
 		{
-			return lhs.getIndex() - rhs.getIndex();
+			long diff = lhs.getIndex() - rhs.getIndex();
+			return diff == 0 ? 0 : diff > 0 ? 1 : -1;
 		}
 	}
 }

@@ -32,7 +32,8 @@ import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.form.validation.FormValidatorAdapter;
@@ -46,11 +47,11 @@ import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.Url;
-import org.apache.wicket.request.UrlDecoder;
 import org.apache.wicket.request.UrlRenderer;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.settings.IApplicationSettings;
+import org.apache.wicket.util.encoding.UrlDecoder;
 import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.AppendingStringBuffer;
@@ -69,64 +70,63 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Base class for forms. To implement a form, subclass this class, add {@link FormComponent}s (such
- * as {@link CheckBox}es, {@link ListChoice}s or {@link TextField}s) to the form. You can nest
- * multiple {@link IFormSubmittingComponent}s if you want to vary submit behavior. However, it is
- * not necessary to use any of Wicket's classes (such as {@link Button} or {@link SubmitLink}), just
- * putting e.g. &lt;input type="submit" value="go"/&gt; suffices.
+ * Container for {@link FormComponent}s (such as {@link CheckBox}es, {@link ListChoice}s or
+ * {@link TextField}s). Subclass this class to receive submit notifications through
+ * {@link #onSubmit()} or nest multiple {@link IFormSubmittingComponent}s if you want to vary submit
+ * behavior. In the former case it is not necessary to use any of Wicket's classes (such as
+ * {@link Button} or {@link SubmitLink}), just putting e.g. &lt;input type="submit" value="go"/&gt;
+ * suffices.
  * <p>
- * By default, the processing of a form works like this:
- * <li>The submitting component is looked up. An submitting {@link IFormSubmittingComponent} (such
- * as a button) is nested in this form (is a child component) and was clicked by the user. If an
- * {@link IFormSubmittingComponent} was found, and it has the defaultFormProcessing field set to
- * false (default is true), it's onSubmit method will be called right away, thus no validation is
- * done, and things like updating form component models that would normally be done are skipped. In
- * that respect, nesting an {@link IFormSubmittingComponent} with the defaultFormProcessing field
- * set to false has the same effect as nesting a normal link. If you want you can call
- * {@link #validate()} to execute form validation, {@link #hasError()} to find out whether
- * validate() resulted in validation errors, and {@link #updateFormComponentModels()} to update the
- * models of nested form components.</li>
- * <li>When no submitting {@link IFormSubmittingComponent} with defaultFormProcessing set to false
- * was found, this form is processed (method {@link #process(IFormSubmitter)}. Now, two possible
- * paths exist:
+ * As a {@link IFormSubmitListener} the form gets notified of listener requests in
+ * {@link #onFormSubmitted()}. By default, the processing of this submit works like this:
  * <ul>
- * <li>Form validation failed. All nested form components will be marked invalid, and
+ * <li>All nested {@link FormComponent}s are notified of new input via
+ * {@link FormComponent#inputChanged()}</li>
+ * <li>The form submitter is looked up, e.g. a {@link Button} is contained in the component
+ * hierarchy of this form and was clicked by the user:
+ * <ul>
+ * <li>If an {@link IFormSubmitter} was found which
+ * {@link IFormSubmitter#getDefaultFormProcessing()} returns {@code false} (default is {@code true}
+ * ), it's {@link IFormSubmitter#onSubmit()} method will be called right away, thus all further
+ * processing is skipped. This has the same effect as nesting a normal link in the form. <br>
+ * If needed the form submitter can continue processing however, by calling {@link #validate()} to
+ * execute form validation, {@link #hasError()} to find out whether validate() resulted in
+ * validation errors, and {@link #updateFormComponentModels()} to update the models of nested form
+ * components.</li>
+ * <li>Otherwise this form is further processed via {@link #process(IFormSubmitter)}, resulting in
+ * all nested components being validated via {@link FormComponent#validate()}. <br>
+ * <ul>
+ * <li>If form validation failed, all nested form components will be marked invalid, and
  * {@link #onError()} is called to allow clients to provide custom error handling code.</li>
- * <li>Form validation succeeded. The nested components will be asked to update their models and
- * persist their data is applicable. After that, method delegateSubmit with optionally the
- * submitting {@link IFormSubmittingComponent} is called. The default when there is a submitting
- * {@link IFormSubmittingComponent} is to first call onSubmit on that Component, and after that call
- * {@link #onSubmit()} on this form. Clients may override {@link #delegateSubmit(IFormSubmitter)} if
- * they want different behavior.</li>
+ * <li>Otherwise the nested components will be asked to update their models via
+ * {@link FormComponent#updateModel()}. After that submit notification is delegated to the
+ * {@link IFormSubmitter#onSubmit()} (if just found) before calling {@link #onSubmit()} on this
+ * form. Subclasses may override {@link #delegateSubmit(IFormSubmitter)} if they want a different
+ * behavior.</li>
  * </ul>
  * </li>
+ * </ul>
  * </li>
- * </p>
+ * </ul>
  * 
- * Form for handling (file) uploads with multipart requests is supported by calling
- * {@link #setMultiPart(boolean)}(true) ( although Wicket will try to automatically detect this for
- * you ). Use this with {@link FileUploadField} components. You can attach multiple
- * {@link FileUploadField} components for multiple file uploads.
+ * A Form can be configured for handling uploads with multipart requests (e.g. files) by calling
+ * {@link #setMultiPart(boolean)} (although Wicket will try to automatically detect this for you).
+ * Use this with {@link FileUploadField} components. You can attach multiple {@link FileUploadField}
+ * components for multiple file uploads.
  * <p>
  * In case of an upload error two resource keys are available to specify error messages:
- * uploadTooLarge and uploadFailed
+ * {@code uploadTooLarge} and {@code uploadFailed}, i.e. for a form with id {@code myform} in
+ * {@code MyPage.properties}:
  * 
- * i.e. in [page].properties
+ * <pre>
+ * myform.uploadTooLarge=You have uploaded a file that is over the allowed limit of 2Mb
+ * </pre>
  * 
- * [form-id].uploadTooLarge=You have uploaded a file that is over the allowed limit of 2Mb
- * 
- * <p>
- * If you want to have multiple {@link IFormSubmittingComponent}s which submit the same form, simply
- * put two or more {@link IFormSubmittingComponent}s somewhere in the hierarchy of components that
- * are children of the form.
- * </p>
- * <p>
  * Forms can be nested. You can put a form in another form. Since HTML doesn't allow nested
  * &lt;form&gt; tags, the inner forms will be rendered using the &lt;div&gt; tag. You have to submit
  * the inner forms using explicit components (like {@link Button} or {@link SubmitLink}), you can't
  * rely on implicit submit behavior (by using just &lt;input type="submit"&gt; that is not attached
  * to a component).
- * </p>
  * <p>
  * When a nested form is submitted, the user entered values in outer (parent) forms are preserved
  * and only the fields in the submitted form are validated. </b>
@@ -147,12 +147,18 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 	private static final String HIDDEN_DIV_START = "<div style=\"width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden\">";
 
 	/**
+	 * The value of HTMLFormElement's <code>enctype</code> attribute needed for file uploading.
+	 */
+	public static final String ENCTYPE_MULTIPART_FORM_DATA = "multipart/form-data";
+
+	/**
 	 * Visitor used for validation
 	 * 
 	 * @author Igor Vaynberg (ivaynberg)
 	 */
 	public abstract static class ValidationVisitor implements IVisitor<FormComponent<?>, Void>
 	{
+		@Override
 		public void component(final FormComponent<?> formComponent, final IVisit<Void> visit)
 		{
 
@@ -204,6 +210,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 		}
 
 		/** {@inheritDoc} */
+		@Override
 		public void component(final Component component, final IVisit<Void> visit)
 		{
 			if (component instanceof IFormModelUpdateListener)
@@ -383,6 +390,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 		// Visit all the (visible) form components and clear the input on each.
 		visitFormComponentsPostOrder(new IVisitor<FormComponent<?>, Void>()
 		{
+			@Override
 			public void component(final FormComponent<?> formComponent, IVisit<Void> visit)
 			{
 				if (formComponent.isVisibleInHierarchy())
@@ -419,6 +427,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 		IFormSubmittingComponent submittingComponent = getPage().visitChildren(
 			IFormSubmittingComponent.class, new IVisitor<Component, IFormSubmittingComponent>()
 			{
+				@Override
 				public void component(final Component component,
 					final IVisit<IFormSubmittingComponent> visit)
 				{
@@ -567,6 +576,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 		{
 			visitChildren(Form.class, new IVisitor<Form<?>, Bytes>()
 			{
+				@Override
 				public void component(Form<?> component, IVisit<Bytes> visit)
 				{
 					maxSize[0] = LongValue.maxNullSafe(maxSize[0], component.maxSize);
@@ -667,6 +677,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 	 * 
 	 * @see #onFormSubmitted(IFormSubmitter)
 	 */
+	@Override
 	public final void onFormSubmitted()
 	{
 		// check methods match
@@ -742,10 +753,12 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 
 				// When processing was triggered by a Wicket IFormSubmittingComponent and that
 				// component indicates it wants to be called immediately
-				// (without processing), call IFormSubmittingComponent.onSubmit() right away.
+				// (without processing), call the IFormSubmittingComponent.onSubmit* methods right
+				// away.
 				if (submitter != null && !submitter.getDefaultFormProcessing())
 				{
 					submitter.onSubmit();
+					submitter.onAfterSubmit();
 				}
 				else
 				{
@@ -920,17 +933,19 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 	 */
 	protected void callOnError(IFormSubmitter submitter)
 	{
+		final Form<?> processingForm = findFormToProcess(submitter);
+
 		if (submitter != null)
 		{
 			submitter.onError();
 		}
-		onError();
-		// call onError on nested forms
-		visitChildren(Form.class, new IVisitor<Component, Void>()
+
+		// invoke Form#onSubmit(..) going from innermost to outermost
+		Visits.visitPostOrder(processingForm, new IVisitor<Form<?>, Void>()
 		{
-			public void component(final Component component, final IVisit<Void> visit)
+			@Override
+			public void component(Form<?> form, IVisit<Void> visit)
 			{
-				final Form<?> form = (Form<?>)component;
 				if (!form.isEnabledInHierarchy() || !form.isVisibleInHierarchy())
 				{
 					visit.dontGoDeeper();
@@ -941,7 +956,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 					form.onError();
 				}
 			}
-		});
+		}, new ClassVisitFilter(Form.class));
 	}
 
 
@@ -954,6 +969,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 
 		visitChildren(Form.class, new IVisitor<Component, Void>()
 		{
+			@Override
 			public void component(final Component component, final IVisit<Void> visit)
 			{
 				Form<?> form = (Form<?>)component;
@@ -1037,6 +1053,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 		// Search for FormComponents like TextField etc.
 		visitFormComponents(new IVisitor<FormComponent<?>, Void>()
 		{
+			@Override
 			public void component(final FormComponent<?> formComponent, IVisit<Void> visit)
 			{
 				formComponent.setVersioned(isVersioned);
@@ -1085,6 +1102,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 		// Check ALL children for error messages irrespective of FormComponents or not
 		Boolean error = visitChildren(Component.class, new IVisitor<Component, Boolean>()
 		{
+			@Override
 			public void component(final Component component, final IVisit<Boolean> visit)
 			{
 				if (component.hasErrorMessage())
@@ -1134,6 +1152,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 	{
 		visitFormComponentsPostOrder(new IVisitor<FormComponent<?>, Void>()
 		{
+			@Override
 			public void component(final FormComponent<?> formComponent, IVisit<Void> visit)
 			{
 				formComponent.inputChanged();
@@ -1171,7 +1190,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 		buffer.append(defaultSubmittingComponent.getInputName());
 		buffer.append("\" onclick=\" var b=document.getElementById('");
 		buffer.append(submittingComponent.getMarkupId());
-		buffer.append("'); if (b!=null&amp;&amp;b.onclick!=null&amp;&amp;typeof(b.onclick) != 'undefined') {  var r = b.onclick.bind(b)(); if (r != false) b.click(); } else { b.click(); };  return false;\" ");
+		buffer.append("'); if (b!=null&amp;&amp;b.onclick!=null&amp;&amp;typeof(b.onclick) != 'undefined') {  var r = Wicket.bind(b.onclick, b)(); if (r != false) b.click(); } else { b.click(); };  return false;\" ");
 		buffer.append(" />");
 
 		// close div
@@ -1195,8 +1214,8 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 	 * processing to clients.
 	 * <p>
 	 * This implementation first finds out whether the form processing was triggered by a nested
-	 * IFormSubmittingComponent of this form. If that is the case, that component's onSubmit is
-	 * called first.
+	 * IFormSubmittingComponent of this form. If that is the case, that component's
+	 * onSubmitBefore/AfterForm methods are called appropriately..
 	 * </p>
 	 * <p>
 	 * Regardless of whether a submitting component was found, the form's onSubmit method is called
@@ -1212,7 +1231,6 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 	{
 		final Form<?> processingForm = findFormToProcess(submittingComponent);
 
-
 		// process submitting component (if specified)
 		if (submittingComponent != null)
 		{
@@ -1223,15 +1241,20 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 		// invoke Form#onSubmit(..) going from innermost to outermost
 		Visits.visitPostOrder(processingForm, new IVisitor<Form<?>, Void>()
 		{
+			@Override
 			public void component(Form<?> form, IVisit<Void> visit)
 			{
 				if (form.isEnabledInHierarchy() && form.isVisibleInHierarchy())
 				{
-
 					form.onSubmit();
 				}
 			}
 		}, new ClassVisitFilter(Form.class));
+
+		if (submittingComponent != null)
+		{
+			submittingComponent.onAfterSubmit();
+		}
 	}
 
 	/**
@@ -1284,6 +1307,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 		Boolean anyEmbeddedMultipart = visitChildren(Component.class,
 			new IVisitor<Component, Boolean>()
 			{
+				@Override
 				public void component(final Component component, final IVisit<Boolean> visit)
 				{
 					boolean isMultiPart = false;
@@ -1401,6 +1425,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 		// Visit all the form components and validate each
 		visitFormComponentsPostOrder(new IVisitor<FormComponent<?>, Void>()
 		{
+			@Override
 			public void component(final FormComponent<?> formComponent, IVisit<Void> visit)
 			{
 				// If form component is using form model
@@ -1420,6 +1445,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 		// call invalidate methods of all nested form components
 		visitFormComponentsPostOrder(new IVisitor<FormComponent<?>, Void>()
 		{
+			@Override
 			public void component(final FormComponent<?> formComponent, IVisit<Void> visit)
 			{
 				if (formComponent.isVisibleInHierarchy())
@@ -1446,6 +1472,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 	{
 		visitChildren(Form.class, new IVisitor<Form<?>, Void>()
 		{
+			@Override
 			public void component(final Form<?> form, final IVisit<Void> visit)
 			{
 				if (form.isEnabledInHierarchy() && form.isVisibleInHierarchy())
@@ -1468,6 +1495,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 		// call valid methods of all nested form components
 		visitFormComponentsPostOrder(new IVisitor<FormComponent<?>, Void>()
 		{
+			@Override
 			public void component(final FormComponent<?> formComponent, IVisit<Void> visit)
 			{
 				if (formComponent.getForm() == Form.this && formComponent.isVisibleInHierarchy())
@@ -1517,7 +1545,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 					tag.put("method", METHOD_POST.toLowerCase(Locale.ENGLISH));
 				}
 
-				tag.put("enctype", "multipart/form-data");
+				tag.put("enctype", ENCTYPE_MULTIPART_FORM_DATA);
 				//
 				// require the application-encoding for multipart/form-data to be sure to
 				// get multipart-uploaded characters with the proper encoding on the following
@@ -1532,7 +1560,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 			{
 				// sanity check
 				String enctype = (String)tag.getAttributes().get("enctype");
-				if ("multipart/form-data".equalsIgnoreCase(enctype))
+				if (ENCTYPE_MULTIPART_FORM_DATA.equalsIgnoreCase(enctype))
 				{
 					// though not set explicitly in Java, this is a multipart
 					// form
@@ -1623,7 +1651,8 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 			{
 				String url = getActionUrl().toString();
 				int i = url.indexOf('?');
-				String[] params = ((i > -1) ? url.substring(i + 1) : url).split("&");
+				String queryString = (i > -1) ? url.substring(i + 1) : url;
+				String[] params = Strings.split(queryString, '&');
 
 				writeParamsAsHiddenFields(params, buffer);
 			}
@@ -1738,6 +1767,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 	{
 		visitChildren(Form.class, new IVisitor<Form<?>, Void>()
 		{
+			@Override
 			public void component(final Form<?> form, final IVisit<Void> visit)
 			{
 				if (form.isEnabledInHierarchy() && form.isVisibleInHierarchy())
@@ -1915,6 +1945,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 	{
 		Visits.visitPostOrder(this, new IVisitor<Form<?>, Void>()
 		{
+			@Override
 			public void component(final Form<?> form, final IVisit<Void> visit)
 			{
 				if (form == Form.this)
@@ -2005,8 +2036,8 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 			// register some metadata so we can later properly handle multipart ajax posts for
 			// embedded forms
 			registerJavaScriptNamespaces(response);
-			response.renderJavaScript("Wicket.Forms[\"" + getMarkupId() + "\"]={multipart:true};",
-				Form.class.getName() + '.' + getMarkupId() + ".metadata");
+			response.render(JavaScriptHeaderItem.forScript("Wicket.Forms[\"" + getMarkupId() +
+				"\"]={multipart:true};", Form.class.getName() + '.' + getMarkupId() + ".metadata"));
 		}
 	}
 
@@ -2017,9 +2048,9 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 	 */
 	protected void registerJavaScriptNamespaces(IHeaderResponse response)
 	{
-		response.renderJavaScript(
+		response.render(JavaScriptHeaderItem.forScript(
 			"if (typeof(Wicket)=='undefined') { Wicket={}; } if (typeof(Wicket.Forms)=='undefined') { Wicket.Forms={}; }",
-			Form.class.getName());
+			Form.class.getName()));
 	}
 
 	/**
@@ -2067,6 +2098,14 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 	 * @author igor
 	 */
 	public static enum MethodMismatchResponse {
-		CONTINUE, ABORT;
+		/**
+		 * Continue processing.
+		 */
+		CONTINUE,
+
+		/**
+		 * Abort processing.
+		 */
+		ABORT;
 	}
 }

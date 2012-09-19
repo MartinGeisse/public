@@ -16,11 +16,12 @@
  */
 package org.apache.wicket.extensions.rating;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.Loop;
@@ -31,12 +32,13 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 
 /**
  * Rating component that generates a number of stars where a user can click on to rate something.
- * Subclasses should implement {@link #onRated(int, AjaxRequestTarget)} to provide the calculation
+ * Subclasses should implement {@link #onRated(int, org.apache.wicket.ajax.AjaxRequestTarget)} to provide the calculation
  * of the rating, and {@link #onIsStarActive(int)} to indicate whether to render an active star or
  * an inactive star.
  * <p>
@@ -145,7 +147,7 @@ public abstract class RatingPanel extends Panel
 
 			// add the star image, which is either active (highlighted) or
 			// inactive (no star)
-			link.add(new WebMarkupContainer("star").add(new SimpleAttributeModifier("src",
+			link.add(new WebMarkupContainer("star").add(AttributeModifier.replace("src",
 				(onIsStarActive(iteration) ? getActiveStarUrl(iteration)
 					: getInactiveStarUrl(iteration)))));
 			item.add(link);
@@ -322,8 +324,8 @@ public abstract class RatingPanel extends Panel
 		super.renderHead(response);
 		if (addDefaultCssStyle)
 		{
-			response.renderCSSReference(new PackageResourceReference(RatingPanel.class,
-				"RatingPanel.css"));
+			response.render(CssHeaderItem.forReference(new CssResourceReference(
+				RatingPanel.class, "RatingPanel.css")));
 		}
 
 	}

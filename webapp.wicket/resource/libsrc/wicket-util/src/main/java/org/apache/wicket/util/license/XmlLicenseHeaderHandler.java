@@ -23,7 +23,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import junit.framework.Assert;
-
 import org.apache.wicket.util.diff.Diff;
 import org.apache.wicket.util.diff.Revision;
 import org.apache.wicket.util.string.Strings;
@@ -49,6 +48,7 @@ class XmlLicenseHeaderHandler extends AbstractLicenseHeaderHandler
 		return "xmlLicense.txt";
 	}
 
+	@Override
 	public boolean checkLicenseHeader(final File file)
 	{
 		Revision revision = null;
@@ -88,6 +88,7 @@ class XmlLicenseHeaderHandler extends AbstractLicenseHeaderHandler
 		return revision.size() == 0;
 	}
 
+	@Override
 	public List<String> getSuffixes()
 	{
 		return Arrays.asList("xml", "fml");

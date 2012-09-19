@@ -20,6 +20,8 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketTestCase;
 import org.apache.wicket.markup.IMarkupResourceStreamProvider;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.StringResourceStream;
@@ -64,6 +66,7 @@ public class MarkupHeadFirstTest extends WicketTestCase
 			add(new MarkupHeadFirstPanel("panel"));
 		}
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{
@@ -87,10 +90,11 @@ public class MarkupHeadFirstTest extends WicketTestCase
 		@Override
 		public void renderHead(IHeaderResponse response)
 		{
-			response.renderJavaScriptReference("java.js");
+			response.render(JavaScriptHeaderItem.forUrl("java.js"));
 			super.renderHead(response);
 		}
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{

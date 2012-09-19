@@ -35,7 +35,7 @@ import org.junit.Test;
 public class NestedFormsTest extends WicketTestCase
 {
 	/**
-	 * 
+	 *
 	 */
 	@Test
 	public void postOrderSequenceSubmittingRootForm()
@@ -51,7 +51,7 @@ public class NestedFormsTest extends WicketTestCase
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Test
 	public void postOrderSequenceSubmittingInnerForm()
@@ -131,6 +131,7 @@ public class NestedFormsTest extends WicketTestCase
 			innerForm.add(innerSubmit);
 		}
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{

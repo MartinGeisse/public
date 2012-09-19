@@ -144,16 +144,17 @@ public class FileUploadFieldTest extends WicketTestCase
 		/** */
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void validate(IValidatable<List<FileUpload>> validatable)
 		{
 			if (validatable.getValue() instanceof List == false)
 			{
-				validatable.error(new ValidationError().addMessageKey("validatable value type not expected"));
+				validatable.error(new ValidationError().addKey("validatable value type not expected"));
 			}
 			FileUpload upload = validatable.getValue().get(0);
 			if (!upload.getClientFileName().contains(TEST_FILE_NAME))
 			{
-				validatable.error(new ValidationError().addMessageKey("uploaded file name not expected"));
+				validatable.error(new ValidationError().addKey("uploaded file name not expected"));
 			}
 			File tmpFile = null;
 			try
@@ -161,7 +162,7 @@ public class FileUploadFieldTest extends WicketTestCase
 				tmpFile = writeTestFile(1);
 				if (!new String(read(tmpFile)).equals(new String(upload.getBytes())))
 				{
-					validatable.error(new ValidationError().addMessageKey("uploaded content not expected"));
+					validatable.error(new ValidationError().addKey("uploaded content not expected"));
 				}
 			}
 			catch (IOException e)

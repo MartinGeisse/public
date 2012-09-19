@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.request.ILogData;
 import org.apache.wicket.request.ILoggableRequestHandler;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.handler.logger.NoLogData;
 import org.apache.wicket.session.ISessionStore;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.string.Strings;
 
 /**
@@ -154,6 +154,11 @@ public interface IRequestLogger
 	void logRequestedUrl(String url);
 
 	/**
+	 * Perform the actual logging
+	 */
+	public void performLogging();
+
+	/**
 	 * This class hold the information one request of a session has.
 	 * 
 	 * @author jcompagner
@@ -215,7 +220,7 @@ public interface IRequestLogger
 		}
 
 		/**
-		 * @return Returns the total time this session has spent.
+		 * @return Returns the total time this session has spent in ms.
 		 */
 		public long getTotalTimeTaken()
 		{
@@ -271,6 +276,7 @@ public interface IRequestLogger
 			sessionSize = size;
 		}
 
+		@Override
 		public int compareTo(SessionData sd)
 		{
 			return (int)(sd.lastActive - lastActive);

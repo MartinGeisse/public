@@ -23,8 +23,13 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxCallListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.core.util.string.JavaScriptUtils;
+import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
@@ -33,23 +38,21 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IObjectClassAwareModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.convert.IConverter;
-import org.apache.wicket.util.string.JavaScriptUtils;
 import org.apache.wicket.validation.IValidator;
-
 
 /**
  * An implementation of ajaxified edit-in-place component using a {@link TextField} as it's editor.
  * <p>
  * There are several methods that can be overridden for customization.
  * <ul>
- * <li>{@link #onEdit(AjaxRequestTarget)} is called when the label is clicked and the editor is to
- * be displayed. The default implementation switches the label for the editor and places the caret
- * at the end of the text.</li>
- * <li>{@link #onSubmit(AjaxRequestTarget)} is called when in edit mode, the user submitted new
- * content, that content validated well, and the model value successfully updated. This
- * implementation also clears any <code>window.status</code> set.</li>
- * <li>{@link #onError(AjaxRequestTarget)} is called when in edit mode, the user submitted new
- * content, but that content did not validate. Get the current input by calling
+ * <li>{@link #onEdit(org.apache.wicket.ajax.AjaxRequestTarget)} is called when the label is clicked
+ * and the editor is to be displayed. The default implementation switches the label for the editor
+ * and places the caret at the end of the text.</li>
+ * <li>{@link #onSubmit(org.apache.wicket.ajax.AjaxRequestTarget)} is called when in edit mode, the
+ * user submitted new content, that content validated well, and the model value successfully
+ * updated. This implementation also clears any <code>window.status</code> set.</li>
+ * <li>{@link #onError(org.apache.wicket.ajax.AjaxRequestTarget)} is called when in edit mode, the
+ * user submitted new content, but that content did not validate. Get the current input by calling
  * {@link FormComponent#getInput()} on {@link #getEditor()}, and the error message by calling:
  * 
  * <pre>
@@ -59,9 +62,9 @@ import org.apache.wicket.validation.IValidator;
  * The default implementation of this method displays the error message in
  * <code>window.status</code>, redisplays the editor, selects the editor's content and sets the
  * focus on it.
- * <li>{@link #onCancel(AjaxRequestTarget)} is called when in edit mode, the user choose not to
- * submit the contents (he/she pressed escape). The default implementation displays the label again
- * without any further action.</li>
+ * <li>{@link #onCancel(org.apache.wicket.ajax.AjaxRequestTarget)} is called when in edit mode, the
+ * user choose not to submit the contents (he/she pressed escape). The default implementation
+ * displays the label again without any further action.</li>
  * </ul>
  * </p>
  * 
@@ -84,43 +87,19 @@ public class AjaxEditableLabel<T> extends Panel
 	{
 		private static final long serialVersionUID = 1L;
 
-		/**
-		 * Constructor.
-		 */
-		public EditorAjaxBehavior()
-		{
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
-		protected void onComponentTag(final ComponentTag tag)
+		public void renderHead(final Component component, final IHeaderResponse response)
 		{
-			super.onComponentTag(tag);
+			super.renderHead(component, response);
 
-			String callbackUrl = getCallbackUrl().toString();
-			char separator = (callbackUrl != null && callbackUrl.indexOf('?') > -1) ? '&' : '?';
-
-			final String saveCall = "{" +
-				generateCallbackScript("wicketAjaxGet('" + callbackUrl + separator +
-					"save=true&'+this.name+'='+wicketEncode(this.value)") + "; return false;}";
-
-			final String cancelCall = "{" +
-				generateCallbackScript("wicketAjaxGet('" + callbackUrl + separator + "save=false'") +
-				"; return false;}";
-
-
-			final String keypress = "var kc=wicketKeyCode(event); if (kc==27) " + cancelCall +
-				" else if (kc!=13) { return true; } else " + saveCall;
-
-			tag.put("onblur", saveCall);
-			tag.put("onkeydown", keypress);
+			AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
+			if (target != null)
+			{
+				CharSequence callbackScript = getCallbackScript(component);
+				target.appendJavaScript(callbackScript);
+			}
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		protected void respond(final AjaxRequestTarget target)
 		{
@@ -164,9 +143,6 @@ public class AjaxEditableLabel<T> extends Panel
 			super(event);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		protected void onEvent(final AjaxRequestTarget target)
 		{
@@ -239,9 +215,6 @@ public class AjaxEditableLabel<T> extends Panel
 		return this;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final AjaxEditableLabel<T> setDefaultModel(final IModel<?> model)
 	{
@@ -317,7 +290,41 @@ public class AjaxEditableLabel<T> extends Panel
 		};
 		editor.setOutputMarkupId(true);
 		editor.setVisible(false);
-		editor.add(new EditorAjaxBehavior());
+		editor.add(new EditorAjaxBehavior()
+		{
+			@Override
+			protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
+			{
+				super.updateAjaxAttributes(attributes);
+				attributes.setEventNames("blur", "keyup");
+
+				CharSequence dynamicExtraParameters = "var result = [], "
+					+ "kc=Wicket.Event.keyCode(attrs.event),"
+					+ "evtType=attrs.event.type;"
+					+ "if (evtType === 'keyup') {"
+					+
+					// ESCAPE key
+					"if (kc===27) { result.push( { name: 'save', value: false } ); }"
+					+
+
+					// ENTER key
+					"else if (kc===13) { result = Wicket.Form.serializeElement(attrs.c); result.push( { name: 'save', value: true } ); }"
+					+ "}"
+					+ "else if (evtType==='blur') { result = Wicket.Form.serializeElement(attrs.c); result.push( { name: 'save', value: true } ); }"
+					+ "return result;";
+				attributes.getDynamicExtraParameters().add(dynamicExtraParameters);
+
+				CharSequence precondition = "var kc=Wicket.Event.keyCode(attrs.event),"
+					+ "evtType=attrs.event.type,"
+					+ "ret=false;"
+					+ "if(evtType==='blur' || (evtType==='keyup' && (kc===27 || kc===13))) ret = true;"
+					+ "return ret;";
+				AjaxCallListener ajaxCallListener = new AjaxCallListener();
+				ajaxCallListener.onPrecondition(precondition);
+				attributes.getAjaxCallListeners().add(ajaxCallListener);
+
+			}
+		});
 		return editor;
 	}
 
@@ -377,7 +384,7 @@ public class AjaxEditableLabel<T> extends Panel
 	 */
 	protected String getLabelAjaxEvent()
 	{
-		return "onclick";
+		return "click";
 	}
 
 
@@ -409,9 +416,6 @@ public class AjaxEditableLabel<T> extends Panel
 		return label;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void onBeforeRender()
 	{
@@ -464,9 +468,9 @@ public class AjaxEditableLabel<T> extends Panel
 	 */
 	protected void onError(final AjaxRequestTarget target)
 	{
-		Serializable errorMessage = editor.getFeedbackMessage().getMessage();
-		if (errorMessage != null)
+		if (editor.hasErrorMessage())
 		{
+			Serializable errorMessage = editor.getFeedbackMessages().first(FeedbackMessage.ERROR);
 			target.appendJavaScript("window.status='" +
 				JavaScriptUtils.escapeQuotes(errorMessage.toString()) + "';");
 		}
@@ -512,23 +516,26 @@ public class AjaxEditableLabel<T> extends Panel
 	 */
 	private class WrapperModel implements IModel<T>, IObjectClassAwareModel<T>
 	{
-
+		@Override
 		public T getObject()
 		{
 			return getParentModel().getObject();
 		}
 
+		@Override
 		public void setObject(final T object)
 		{
 			getParentModel().setObject(object);
 		}
 
+		@Override
 		public void detach()
 		{
 			getParentModel().detach();
 
 		}
 
+		@Override
 		public Class<T> getObjectClass()
 		{
 			if (getParentModel() instanceof IObjectClassAwareModel)

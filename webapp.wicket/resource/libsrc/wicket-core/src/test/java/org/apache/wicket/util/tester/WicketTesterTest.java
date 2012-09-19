@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 import junit.framework.AssertionFailedError;
 
@@ -34,10 +35,12 @@ import org.apache.wicket.Session;
 import org.apache.wicket.WicketTestCase;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.WicketAjaxReference;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authorization.IAuthorizationStrategy;
+import org.apache.wicket.core.request.handler.BookmarkablePageRequestHandler;
+import org.apache.wicket.core.request.handler.IPageProvider;
+import org.apache.wicket.core.request.handler.PageProvider;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -54,9 +57,6 @@ import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.component.IRequestableComponent;
 import org.apache.wicket.request.flow.RedirectToUrlException;
-import org.apache.wicket.request.handler.BookmarkablePageRequestHandler;
-import org.apache.wicket.request.handler.IPageProvider;
-import org.apache.wicket.request.handler.PageProvider;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ByteArrayResource;
 import org.apache.wicket.request.resource.PackageResource.PackageResourceBlockedException;
@@ -512,16 +512,19 @@ public class WicketTesterTest extends WicketTestCase
 
 			private String value;
 
+			@Override
 			public String getObject()
 			{
 				return value;
 			}
 
+			@Override
 			public void setObject(String object)
 			{
 				value = object;
 			}
 
+			@Override
 			public void detach()
 			{
 			}
@@ -889,7 +892,7 @@ public class WicketTesterTest extends WicketTestCase
 
 		form.setValue("text", "XX");
 		setTextFieldAndAssertSubmit(false);
-		Session.get().cleanupFeedbackMessages();
+		tester.clearFeedbackMessages();
 
 		form.setValue("text", "XXXYYYXXX");
 		setTextFieldAndAssertSubmit(true);
@@ -979,8 +982,11 @@ public class WicketTesterTest extends WicketTestCase
 	@Test
 	public void startResourceReference()
 	{
-		tester.startResourceReference(WicketAjaxReference.INSTANCE);
-		tester.assertContains("wicketAjaxGet()");
+		tester.startResourceReference(tester.getApplication()
+			.getJavaScriptLibrarySettings()
+			.getWicketAjaxReference());
+		// verify that a random string from that resource is in the response
+		tester.assertContains("getAjaxBaseUrl");
 	}
 
 	/**
@@ -989,8 +995,12 @@ public class WicketTesterTest extends WicketTestCase
 	@Test
 	public void startResource()
 	{
-		tester.startResource(WicketAjaxReference.INSTANCE.getResource());
-		tester.assertContains("wicketAjaxGet()");
+		tester.startResource(tester.getApplication()
+			.getJavaScriptLibrarySettings()
+			.getWicketAjaxReference()
+			.getResource());
+		// verify that a random string from that resource is in the response
+		tester.assertContains("getAjaxBaseUrl");
 	}
 
 	/**
@@ -1128,6 +1138,7 @@ public class WicketTesterTest extends WicketTestCase
 		{
 			private boolean allowed = true;
 
+			@Override
 			public <T extends IRequestableComponent> boolean isInstantiationAuthorized(
 				Class<T> componentClass)
 			{
@@ -1136,6 +1147,7 @@ public class WicketTesterTest extends WicketTestCase
 				return allowed || !WebPage.class.isAssignableFrom(componentClass);
 			}
 
+			@Override
 			public boolean isActionAuthorized(Component component, Action action)
 			{
 				if (component instanceof AccessDeniedPage)
@@ -1254,5 +1266,27 @@ public class WicketTesterTest extends WicketTestCase
 		}
 		tester.startPage(new RedirectPage());
 		tester.assertRenderedPage(CreateBook.class);
+	}
+
+	public static class AlwaysRedirectPage extends WebPage
+	{
+		public AlwaysRedirectPage()
+		{
+			// redirects to another web server on the same computer
+			throw new RedirectToUrlException("http://localhost:4333/");
+		}
+	}
+
+	/**
+	 * https://issues.apache.org/jira/browse/WICKET-4610
+	 */
+	@Test
+	public void redirectToAbsoluteUrlTest()
+	{
+		WicketTester tester = new WicketTester();
+		tester.setFollowRedirects(false);
+		tester.startPage(AlwaysRedirectPage.class);
+		tester.assertRedirectUrl("http://localhost:4333/");
+		assertEquals(HttpServletResponse.SC_FOUND, tester.getLastResponse().getStatus());
 	}
 }

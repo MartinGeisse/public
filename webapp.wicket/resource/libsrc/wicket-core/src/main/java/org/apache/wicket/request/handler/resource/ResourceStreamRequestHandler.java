@@ -19,7 +19,7 @@ package org.apache.wicket.request.handler.resource;
 import org.apache.wicket.request.ILoggableRequestHandler;
 import org.apache.wicket.request.IRequestCycle;
 import org.apache.wicket.request.IRequestHandler;
-import org.apache.wicket.request.handler.logger.ResourceStreamLogData;
+import org.apache.wicket.core.request.handler.logger.ResourceStreamLogData;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.request.resource.IResource.Attributes;
 import org.apache.wicket.request.resource.ResourceStreamResource;
@@ -87,6 +87,7 @@ public class ResourceStreamRequestHandler implements IRequestHandler, ILoggableR
 		this.fileName = fileName;
 	}
 
+	@Override
 	public void detach(IRequestCycle requestCycle)
 	{
 		if (logData == null)
@@ -95,6 +96,7 @@ public class ResourceStreamRequestHandler implements IRequestHandler, ILoggableR
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public ResourceStreamLogData getLogData()
 	{
 		return logData;
@@ -124,6 +126,7 @@ public class ResourceStreamRequestHandler implements IRequestHandler, ILoggableR
 	 * 
 	 * @see org.apache.wicket.request.IRequestHandler#respond(org.apache.wicket.request.IRequestCycle)
 	 */
+	@Override
 	public void respond(IRequestCycle requestCycle)
 	{
 		Attributes attributes = new Attributes(requestCycle.getRequest(),

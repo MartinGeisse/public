@@ -158,7 +158,7 @@ public class FilesTest extends Assert
 	}
 
 	/**
-	 * WICKET-4509 url must be decoded
+	 * WICKET-4509
 	 * 
 	 * @throws Exception
 	 */
@@ -167,6 +167,6 @@ public class FilesTest extends Assert
 	{
 		URL url = new URL("file:/file%20with%20whitespace");
 
-		assertEquals("/file with whitespace", Files.getLocalFileFromUrl(url).getPath());
+		assertEquals( java.io.File.separator + "file with whitespace", Files.getLocalFileFromUrl(url).getPath());
 	}
 }

@@ -16,7 +16,6 @@
  */
 package org.apache.wicket.extensions.markup.html.form.select;
 
-import org.apache.wicket.extensions.markup.html.form.select.SelectOption;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;

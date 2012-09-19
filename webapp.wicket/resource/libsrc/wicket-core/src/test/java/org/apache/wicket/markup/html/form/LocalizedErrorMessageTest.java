@@ -38,26 +38,40 @@ public class LocalizedErrorMessageTest extends WicketTestCase
 		LocalizedMessagePage page = new LocalizedMessagePage();
 		tester.startPage(page);
 
-		tester.getRequest()
-			.getPostParameters()
-			.setParameterValue(page.integerField.getInputName(), "foo");
+		tester.getRequest().getPostParameters().setParameterValue(page.field.getInputName(), "foo");
 		tester.submitForm(page.form);
 
-		tester.assertErrorMessages("'foo' in veld 'integer' moet een geheel getal zijn. ");
+		tester.assertErrorMessages("'Number' moet een getal zijn. ");
 		tester.getSession().setLocale(new Locale("us"));
 
-		tester.getSession().cleanupFeedbackMessages();
+		tester.clearFeedbackMessages();
 
 		page = new LocalizedMessagePage();
 		tester.startPage(page);
 
-		tester.getRequest()
-			.getPostParameters()
-			.setParameterValue(page.integerField.getInputName(), "foo");
+		tester.getRequest().getPostParameters().setParameterValue(page.field.getInputName(), "foo");
 
 		tester.submitForm(page.form);
 
-		tester.assertErrorMessages("'foo' is not a valid Integer.");
+		tester.assertErrorMessages("'Number' is not a valid Double.");
+	}
+
+	/**
+	 * WICKET-4608 vars should be properly converted
+	 */
+	@Test
+	public void testConvertedVars()
+	{
+		tester.getSession().setLocale(new Locale("de"));
+
+		LocalizedMessagePage page = new LocalizedMessagePage();
+		tester.startPage(page);
+
+		tester.getRequest().getPostParameters().setParameterValue(page.field.getInputName(), "20");
+		tester.submitForm(page.form);
+
+		// decimal separator is ',' in German
+		tester.assertErrorMessages("Number muss zwischen 0,5 und 1,5 liegen.");
 	}
 
 	/**
@@ -75,25 +89,21 @@ public class LocalizedErrorMessageTest extends WicketTestCase
 		LocalizedMessagePage page = new LocalizedMessagePage();
 		tester.startPage(page);
 
-		tester.getRequest()
-			.getPostParameters()
-			.setParameterValue(page.integerField.getInputName(), "foo");
+		tester.getRequest().getPostParameters().setParameterValue(page.field.getInputName(), "foo");
 
 		tester.submitForm(page.form);
 
-		tester.assertErrorMessages("'foo' ist kein g\u00FCltiger Wert f\u00FCr 'Integer'.");
+		tester.assertErrorMessages("'Number' ist kein g\u00FCltiger Wert f\u00FCr 'Double'.");
 		tester.getSession().setLocale(new Locale("pl"));
 
-		tester.getSession().cleanupFeedbackMessages();
+		tester.clearFeedbackMessages();
 
 		page = new LocalizedMessagePage();
 		tester.startPage(page);
 
-		tester.getRequest()
-			.getPostParameters()
-			.setParameterValue(page.integerField.getInputName(), "foo");
+		tester.getRequest().getPostParameters().setParameterValue(page.field.getInputName(), "foo");
 
 		tester.submitForm(page.form);
-		tester.assertErrorMessages("'foo' nie jest w\u0142a\u015Bciwym Integer.");
+		tester.assertErrorMessages("'Number' nie jest w\u0142a\u015Bciwym Double.");
 	}
 }

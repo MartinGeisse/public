@@ -45,6 +45,9 @@ public class CssPackageResource extends PackageResource
 		String variation)
 	{
 		super(scope, name, locale, style, variation);
+
+		// CSS resources can be compressed if there is configured ICssCompressor
+		setCompress(true);
 	}
 
 	@Override
@@ -54,7 +57,7 @@ public class CssPackageResource extends PackageResource
 
 		ICssCompressor compressor = getCompressor();
 
-		if (compressor != null)
+		if (compressor != null && getCompress())
 		{
 			try
 			{
@@ -90,4 +93,5 @@ public class CssPackageResource extends PackageResource
 		}
 		return compressor;
 	}
+
 }

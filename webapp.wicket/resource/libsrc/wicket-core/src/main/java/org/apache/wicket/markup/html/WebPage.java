@@ -29,7 +29,7 @@ import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.handler.IPageRequestHandler;
+import org.apache.wicket.core.request.handler.IPageRequestHandler;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -67,7 +67,9 @@ public class WebPage extends Page
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Constructor. Having this constructor public means that your page is 'bookmarkable' and hence
+	 * Constructor.
+	 *
+	 * Having this constructor public means that your page is 'bookmarkable' and hence
 	 * can be called/ created from anywhere.
 	 */
 	protected WebPage()
@@ -133,7 +135,7 @@ public class WebPage extends Page
 		// Configure the response such as headers etc.
 		configureResponse((WebResponse)RequestCycle.get().getResponse());
 
-		// The rules if and when to insert an xml decl in the response are a it tricky. Allow the
+		// The rules if and when to insert an xml decl in the response are a bit tricky. Allow the
 		// user to replace the default per page and per application.
 		renderXmlDecl();
 
@@ -141,7 +143,7 @@ public class WebPage extends Page
 	}
 
 	/**
-	 * The rules if and when to insert an xml decl in the response are a it tricky. Allow the user
+	 * The rules if and when to insert an xml decl in the response are a bit tricky. Allow the user
 	 * to replace the default per page and per application.
 	 */
 	protected void renderXmlDecl()
@@ -239,6 +241,7 @@ public class WebPage extends Page
 		// if there are transparent resolvers used
 		HtmlHeaderContainer header = visitChildren(new IVisitor<Component, HtmlHeaderContainer>()
 		{
+			@Override
 			public void component(final Component component, final IVisit<HtmlHeaderContainer> visit)
 			{
 				if (component instanceof HtmlHeaderContainer)
@@ -268,7 +271,7 @@ public class WebPage extends Page
 				getRequestCycle().setResponse(response);
 
 				// Render all header sections of all components on the page
-				AbstractHeaderRenderStrategy.get().renderHeader(header, getPage());
+				AbstractHeaderRenderStrategy.get().renderHeader(header, null, getPage());
 				response.close();
 
 				if (response.getBuffer().length() > 0)
@@ -307,7 +310,7 @@ public class WebPage extends Page
 	}
 
 	/**
-	 * Prevents page from get dirt inside an AJAX request.
+	 * Prevents page from get dirty inside an AJAX request.
 	 */
 	@Override
 	public final void dirty(boolean isInitialization)

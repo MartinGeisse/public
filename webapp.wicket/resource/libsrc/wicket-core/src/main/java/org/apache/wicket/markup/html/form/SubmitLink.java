@@ -45,7 +45,7 @@ import org.apache.wicket.model.IModel;
  *                                 + mod.getValue1());
  *           };
  *      });
- *          
+ * 
  *      &lt;form wicket:id=&quot;linkForm&quot; &gt;
  *          &lt;input wicket:id=&quot;value1&quot; type=&quot;text&quot; size=&quot;30&quot;/&gt;
  *          &lt;a wicket:id=&quot;link1&quot;&gt;Press link1 to submit&lt;/a&gt;
@@ -145,6 +145,7 @@ public class SubmitLink extends AbstractSubmitLink
 	public final void onLinkClicked()
 	{
 		onSubmit();
+		onAfterSubmit();
 	}
 
 	/**
@@ -224,18 +225,30 @@ public class SubmitLink extends AbstractSubmitLink
 		}
 	}
 
-	/**
-	 * @see org.apache.wicket.markup.html.form.IFormSubmittingComponent#onSubmit()
-	 */
-	public void onSubmit()
-	{
-	}
 
 	/**
 	 * @see org.apache.wicket.markup.html.form.IFormSubmittingComponent#onError()
 	 */
+	@Override
 	public void onError()
 	{
 	}
 
+	/**
+	 * Override this method to provide special submit handling in a multi-button form. This method
+	 * will be called <em>after</em> the form's onSubmit method.
+	 */
+	@Override
+	public void onAfterSubmit()
+	{
+	}
+
+	/**
+	 * Override this method to provide special submit handling in a multi-button form. This method
+	 * will be called <em>before</em> the form's onSubmit method.
+	 */
+	@Override
+	public void onSubmit()
+	{
+	}
 }

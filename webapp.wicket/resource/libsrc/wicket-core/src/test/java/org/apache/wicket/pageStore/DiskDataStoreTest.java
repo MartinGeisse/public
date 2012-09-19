@@ -28,14 +28,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.wicket.settings.IStoreSettings;
 import org.apache.wicket.settings.def.StoreSettings;
+import org.apache.wicket.util.SlowTests;
 import org.apache.wicket.util.lang.Bytes;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  */
+@Category(SlowTests.class)
 public class DiskDataStoreTest extends Assert
 {
 	/** Log for reporting. */
@@ -177,6 +180,7 @@ public class DiskDataStoreTest extends Assert
 	 */
 	private abstract class ExceptionCapturingRunnable implements Runnable
 	{
+		@Override
 		public final void run()
 		{
 			try

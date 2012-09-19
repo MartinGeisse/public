@@ -18,57 +18,58 @@ package org.apache.wicket.validation.validator;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 
-import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.validation.IValidatable;
-
+import org.apache.wicket.validation.ValidationError;
 
 /**
- * Validator for checking dates. This validator can be extended or can be used for one of its static
- * factory methods to get the default <code>DateValidator</code> as a range, maximum, or minimum
- * type.
+ * Validator for checking if a given date falls within [min,max] range.
  * 
- * @author Jonathan Locke
- * @author Johan Compagner
- * @author Igor Vaynberg (ivaynberg)
- * @since 1.2.6
+ * If either min or max are {@code null} they are not checked.
+ * 
+ * <p>
+ * Resource keys:
+ * <ul>
+ * <li>{@code DateValidator.exact} if min==max</li>
+ * <li>{@code DateValidator.range} if both min and max are not {@code null}</li>
+ * <li>{@code DateValidator.minimum} if max is {@code null}</li>
+ * <li>{@code DateValidator.maximum} if min is {@code null}</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * Error Message Variables:
+ * <ul>
+ * <li>{@code name}: the id of {@code Component} that failed</li>
+ * <li>{@code label}: the label of the {@code Component} (either comes from
+ * {@code FormComponent.labelModel} or resource key {@code <form-id>.<form-component-id>}</li>
+ * <li>{@code input}: the input value</li>
+ * <li>{@code inputdate}: the formatted input value</li>
+ * <li>{@code minimum}: the minimum allowed value</li>
+ * <li>{@code maximum}: the maximum allowed value</li>
+ * </ul>
+ * </p>
+ * 
+ * @author igor
  */
-public abstract class DateValidator extends AbstractValidator<Date>
+public class DateValidator extends RangeValidator<Date>
 {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Gets a <code>Date</code> range validator for checking if the <code>Date</code> value falls
-	 * between the minimum and maximum <code>Date</code> values. If that is not the case, an error
-	 * message will be generated with the key "DateValidator.range". The message keys that can be
-	 * used are:
-	 * <p>
-	 * <ul>
-	 * <li>${minimum}: the minimum date</li>
-	 * <li>${maximum}: the maximum date</li>
-	 * <li>${input}: the input the user gave</li>
-	 * <li>${name}: the name of the <code>Component</code> that failed</li>
-	 * <li>${label}: the label of the <code>Component</code> - either comes from
-	 * <code>FormComponent.labelModel</code> or resource key [form-id].[form-component-id] in that
-	 * order</li>
-	 * </ul>
-	 * 
 	 * @param minimum
 	 *            the minimum <code>Date</code>
 	 * @param maximum
 	 *            the maximum <code>Date</code>
-	 * 
-	 * @return the requested <code>DateValidator</code>
+	 * @return a {@link DateValidator} that validates if a date is between (inclusive) a minimum and
+	 *         maximum
 	 */
 	public static DateValidator range(Date minimum, Date maximum)
 	{
-		return new RangeValidator(minimum, maximum, null);
+		return new DateValidator(minimum, maximum);
 	}
 
 	/**
-	 * @see #range(Date, Date)
-	 * 
 	 * @param minimum
 	 *            the minimum <code>Date</code>
 	 * @param maximum
@@ -76,240 +77,123 @@ public abstract class DateValidator extends AbstractValidator<Date>
 	 * @param format
 	 *            The format string used to format the date with SimpleDateFormat
 	 * 
-	 * @return the requested <code>DateValidator</code>
+	 * @return a {@link DateValidator} that validates if a date is between (inclusive) a minimum and
+	 *         maximum
 	 */
 	public static DateValidator range(Date minimum, Date maximum, String format)
 	{
-		return new RangeValidator(minimum, maximum, format);
+		return new DateValidator(minimum, maximum, format);
 	}
 
 	/**
-	 * Gets a <code>Date</code> minimum validator for checking if a <code>Date</code> value is
-	 * greater than the given minimum <code>Date</code> value. If that is not the case, an error
-	 * message will be generated with the key "DateValidator.minimum". The message keys that can be
-	 * used are:
-	 * <p>
-	 * <ul>
-	 * <li>${minimum}: the minimum date</li>
-	 * <li>${input}: the input the user gave</li>
-	 * <li>${name}: the name of the <code>Component</code> that failed</li>
-	 * <li>${label}: the label of the <code>Component</code> - either comes from
-	 * <code>FormComponent.labelModel</code> or resource key [form-id].[form-component-id] in that
-	 * order</li>
-	 * </ul>
-	 * 
 	 * @param minimum
 	 *            the minimum <code>Date</code>
 	 * 
-	 * @return the requested <code>DateValidator</code>
+	 * @return a {@link DateValidator} that validates if a date is after or equal to a minimum date
 	 */
 	public static DateValidator minimum(Date minimum)
 	{
-		return new MinimumValidator(minimum, null);
+		return new DateValidator(minimum, null);
 	}
 
 	/**
-	 * @see #minimum(Date)
-	 * 
 	 * @param minimum
 	 *            the minimum <code>Date</code>
 	 * @param format
 	 *            The format string used to format the date with SimpleDateFormat
 	 * 
-	 * @return the requested <code>DateValidator</code>
+	 * @return a {@link DateValidator} that validates if a date is after or equal to a minimum date
 	 */
 	public static DateValidator minimum(Date minimum, String format)
 	{
-		return new MinimumValidator(minimum, format);
+		return new DateValidator(minimum, null, format);
 	}
 
 	/**
-	 * Gets a <code>Date</code> maximum validator for checking if a <code>Date</code> value is
-	 * smaller than the given maximum value. If that is not the case, an error message will be
-	 * generated with the key "DateValidator.maximum". The message keys that can be used are:
-	 * <p>
-	 * <ul>
-	 * <li>${maximum}: the maximum date</li>
-	 * <li>${input}: the input the user gave</li>
-	 * <li>${name}: the name of the <code>Component</code> that failed</li>
-	 * <li>${label}: the label of the <code>Component</code> - either comes from
-	 * <code>FormComponent.labelModel</code> or resource key [form-id].[form-component-id] in that
-	 * order</li>
-	 * </ul>
-	 * 
 	 * @param maximum
 	 *            the maximum <code>Date</code>
 	 * 
-	 * @return the requested <code>DateValidator</code>
+	 * @return a {@link DateValidator} that validates if a date is before or equal to a maximum date
 	 */
 	public static DateValidator maximum(Date maximum)
 	{
-		return new MaximumValidator(maximum, null);
+		return new DateValidator(null, maximum);
 	}
 
 	/**
-	 * @see #maximum(Date)
-	 * 
 	 * @param maximum
 	 *            the maximum <code>Date</code>
 	 * @param format
 	 *            The format string used to format the date with SimpleDateFormat
 	 * 
-	 * @return the requested <code>DateValidator</code>
+	 * @return a {@link DateValidator} that validates if a date is before or equal to a maximum date
 	 */
 	public static DateValidator maximum(Date maximum, String format)
 	{
-		return new MaximumValidator(maximum, format);
+		return new DateValidator(null, maximum, format);
+	}
+
+	private String format;
+
+	/**
+	 * Constructor that sets the minimum and maximum date values and a custom date formating.
+	 * 
+	 * @param minimum
+	 *            the minimum date
+	 * @param maximum
+	 *            the maximum date
+	 * @param format
+	 *            The format string used to format the date with SimpleDateFormat
+	 */
+	public DateValidator(Date minimum, Date maximum, String format)
+	{
+		super(minimum, maximum);
+		this.format = format;
 	}
 
 	/**
+	 * Constructor that sets the minimum and maximum date values.
 	 * 
+	 * @param minimum
+	 *            the minimum date
+	 * @param maximum
+	 *            the maximum date
 	 */
-	private static class RangeValidator extends DateValidator
+	public DateValidator(Date minimum, Date maximum)
 	{
-		private static final long serialVersionUID = 1L;
-		private final Date minimum;
-		private final Date maximum;
-		private final String format;
-
-		private RangeValidator(Date minimum, Date maximum, String format)
-		{
-			this.minimum = minimum;
-			this.maximum = maximum;
-			this.format = format;
-		}
-
-		@Override
-		protected Map<String, Object> variablesMap(IValidatable<Date> validatable)
-		{
-			final Map<String, Object> map = super.variablesMap(validatable);
-			if (format == null)
-			{
-				map.put("minimum", minimum);
-				map.put("maximum", maximum);
-				map.put("inputdate", validatable.getValue());
-			}
-			else
-			{
-				SimpleDateFormat sdf = new SimpleDateFormat(format);
-				map.put("minimum", sdf.format(minimum));
-				map.put("maximum", sdf.format(maximum));
-				map.put("inputdate", sdf.format(validatable.getValue()));
-			}
-			return map;
-		}
-
-		/**
-		 * @see AbstractValidator#resourceKey(FormComponent)
-		 */
-		@Override
-		protected String resourceKey()
-		{
-			return "DateValidator.range";
-		}
-
-		@Override
-		protected void onValidate(IValidatable<Date> validatable)
-		{
-			Date value = validatable.getValue();
-			if (value.before(minimum) || value.after(maximum))
-			{
-				error(validatable);
-			}
-		}
+		this(minimum, maximum, null);
 	}
 
-	private static class MinimumValidator extends DateValidator
+	/**
+	 * Constructor used for subclasses who want to set the range using
+	 * {@link #setRange(Comparable, Comparable)}
+	 */
+	protected DateValidator()
 	{
-		private static final long serialVersionUID = 1L;
-		private final Date minimum;
-		private final String format;
-
-		private MinimumValidator(Date minimum, String format)
-		{
-			this.minimum = minimum;
-			this.format = format;
-		}
-
-		@Override
-		protected Map<String, Object> variablesMap(IValidatable<Date> validatable)
-		{
-			final Map<String, Object> map = super.variablesMap(validatable);
-			if (format == null)
-			{
-				map.put("minimum", minimum);
-				map.put("inputdate", validatable.getValue());
-			}
-			else
-			{
-				SimpleDateFormat sdf = new SimpleDateFormat(format);
-				map.put("minimum", sdf.format(minimum));
-				map.put("inputdate", sdf.format(validatable.getValue()));
-			}
-			return map;
-		}
-
-		@Override
-		protected String resourceKey()
-		{
-			return "DateValidator.minimum";
-		}
-
-		@Override
-		protected void onValidate(IValidatable<Date> validatable)
-		{
-			Date value = validatable.getValue();
-			if (value.before(minimum))
-			{
-				error(validatable);
-			}
-		}
 	}
 
-	private static class MaximumValidator extends DateValidator
+	@Override
+	protected ValidationError decorate(ValidationError error, IValidatable<Date> validatable)
 	{
-		private static final long serialVersionUID = 1L;
-		private final Date maximum;
-		private final String format;
+		error = super.decorate(error, validatable);
 
-		private MaximumValidator(Date maximum, String format)
-		{
-			this.maximum = maximum;
-			this.format = format;
-		}
+		error.setVariable("inputdate", validatable.getValue());
 
-		@Override
-		protected Map<String, Object> variablesMap(IValidatable<Date> validatable)
+		// format variables if format has been specified
+		if (format != null)
 		{
-			final Map<String, Object> map = super.variablesMap(validatable);
-			if (format == null)
+			SimpleDateFormat sdf = new SimpleDateFormat(format);
+			if (getMinimum() != null)
 			{
-				map.put("maximum", maximum);
-				map.put("inputdate", validatable.getValue());
+				error.setVariable("minimum", sdf.format(getMinimum()));
 			}
-			else
+			if (getMaximum() != null)
 			{
-				SimpleDateFormat sdf = new SimpleDateFormat(format);
-				map.put("maximum", sdf.format(maximum));
-				map.put("inputdate", sdf.format(validatable.getValue()));
+				error.setVariable("maximum", sdf.format(getMaximum()));
 			}
-			return map;
+			error.setVariable("inputdate", sdf.format(validatable.getValue()));
 		}
 
-		@Override
-		protected String resourceKey()
-		{
-			return "DateValidator.maximum";
-		}
-
-		@Override
-		protected void onValidate(IValidatable<Date> validatable)
-		{
-			Date value = validatable.getValue();
-			if (value.after(maximum))
-			{
-				error(validatable);
-			}
-		}
+		return error;
 	}
 }

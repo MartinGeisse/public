@@ -18,9 +18,12 @@ package org.apache.wicket.ajax.form;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.attributes.ThrottlingSettings;
 import org.apache.wicket.feedback.IFeedback;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
@@ -80,6 +83,7 @@ public class AjaxFormValidatingBehavior extends AjaxFormSubmitBehavior
 	{
 		getComponent().getPage().visitChildren(IFeedback.class, new IVisitor<Component, Void>()
 		{
+			@Override
 			public void component(final Component component, final IVisit<Void> visit)
 			{
 				target.add(component);
@@ -108,18 +112,43 @@ public class AjaxFormValidatingBehavior extends AjaxFormSubmitBehavior
 	public static void addToAllFormComponents(final Form<?> form, final String event,
 		final Duration throttleDelay)
 	{
-		form.visitChildren(FormComponent.class, new IVisitor<Component, Void>()
+		form.visitChildren(FormComponent.class, new FormValidateVisitor(form, event, throttleDelay));
+	}
+
+	private static class FormValidateVisitor implements IVisitor<Component, Void>, IClusterable
+	{
+		private final Form<?> form;
+		private final String event;
+		private final Duration throttleDelay;
+
+		private FormValidateVisitor(Form<?> form, String event, Duration throttleDelay)
 		{
-			public void component(final Component component, final IVisit<Void> visit)
+			this.form = form;
+			this.event = event;
+			this.throttleDelay = throttleDelay;
+		}
+
+		@Override
+		public void component(final Component component, final IVisit<Void> visit)
+		{
+			final AjaxFormValidatingBehavior behavior = new AjaxFormValidatingBehavior(form, event)
 			{
-				AjaxFormValidatingBehavior behavior = new AjaxFormValidatingBehavior(form, event);
-				if (throttleDelay != null)
+				@Override
+				protected void updateAjaxAttributes(final AjaxRequestAttributes attributes)
 				{
-					behavior.setThrottleDelay(throttleDelay);
+					super.updateAjaxAttributes(attributes);
+
+					if (throttleDelay != null)
+					{
+						String id = "throttle-" + component.getMarkupId();
+						ThrottlingSettings throttlingSettings = new ThrottlingSettings(id,
+							throttleDelay);
+						attributes.setThrottlingSettings(throttlingSettings);
+					}
 				}
-				component.add(behavior);
-				visit.dontGoDeeper();
-			}
-		});
+			};
+			component.add(behavior);
+			visit.dontGoDeeper();
+		}
 	}
 }

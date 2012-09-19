@@ -100,6 +100,7 @@ public class AsynchronousDataStore implements IDataStore
 	/**
 	 * @see org.apache.wicket.pageStore.IDataStore#destroy()
 	 */
+	@Override
 	public void destroy()
 	{
 		if (pageSavingThread.isAlive())
@@ -132,6 +133,7 @@ public class AsynchronousDataStore implements IDataStore
 	/**
 	 * @see org.apache.wicket.pageStore.IDataStore#getData(java.lang.String, int)
 	 */
+	@Override
 	public byte[] getData(final String sessionId, final int id)
 	{
 		Entry entry = getEntry(sessionId, id);
@@ -153,6 +155,7 @@ public class AsynchronousDataStore implements IDataStore
 	/**
 	 * @see org.apache.wicket.pageStore.IDataStore#isReplicated()
 	 */
+	@Override
 	public boolean isReplicated()
 	{
 		return dataStore.isReplicated();
@@ -161,6 +164,7 @@ public class AsynchronousDataStore implements IDataStore
 	/**
 	 * @see org.apache.wicket.pageStore.IDataStore#removeData(java.lang.String, int)
 	 */
+	@Override
 	public void removeData(final String sessionId, final int id)
 	{
 		String key = getKey(sessionId, id);
@@ -179,6 +183,7 @@ public class AsynchronousDataStore implements IDataStore
 	/**
 	 * @see org.apache.wicket.pageStore.IDataStore#removeData(java.lang.String)
 	 */
+	@Override
 	public void removeData(final String sessionId)
 	{
 		for (Iterator<Entry> itor = entries.iterator(); itor.hasNext();)
@@ -205,6 +210,7 @@ public class AsynchronousDataStore implements IDataStore
 	 * 
 	 * @see org.apache.wicket.pageStore.IDataStore#storeData(java.lang.String, int, byte[])
 	 */
+	@Override
 	public void storeData(final String sessionId, final int id, final byte[] data)
 	{
 		Entry entry = new Entry(sessionId, id, data);
@@ -328,6 +334,7 @@ public class AsynchronousDataStore implements IDataStore
 			this.entryMap = entryMap;
 		}
 
+		@Override
 		public void run()
 		{
 			while (!Thread.interrupted())
@@ -350,5 +357,12 @@ public class AsynchronousDataStore implements IDataStore
 				}
 			}
 		}
+	}
+
+	@Override
+	public final boolean canBeAsynchronous()
+	{
+		// should not wrap in abother AsynchronousDataStore
+		return false;
 	}
 }

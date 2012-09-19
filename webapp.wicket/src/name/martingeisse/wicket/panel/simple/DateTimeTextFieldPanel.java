@@ -11,7 +11,8 @@ import name.martingeisse.wicket.autoform.validation.IValidationErrorAcceptor;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.FormComponentPanel;
 import org.apache.wicket.markup.html.form.TextField;
@@ -236,7 +237,7 @@ public class DateTimeTextFieldPanel<T> extends FormComponentPanel<T> implements 
 	@Override
 	public void renderHead(IHeaderResponse response) {
 		String markupId = getDateTextField().getMarkupId();
-		response.renderOnDomReadyJavaScript("$('#" + markupId + "').datepicker({ dateFormat: 'd.m.yy' });");
+		response.render(OnDomReadyHeaderItem.forScript("$('#" + markupId + "').datepicker({ dateFormat: 'd.m.yy' });"));
 	}
 
 	/* (non-Javadoc)

@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.wicket.util.lang.Bytes;
+
 /**
  * This folder subclass provides some type safety and extensibility for "files" that hold other
  * files.
@@ -42,6 +44,7 @@ public class Folder extends File
 		 */
 		public static FileFilter ALL_FILES = new FileFilter()
 		{
+			@Override
 			public boolean accept(final File file)
 			{
 				return true;
@@ -158,6 +161,14 @@ public class Folder extends File
 	}
 
 	/**
+	 * @return Disk space free on the partition where this folder lives
+	 */
+	public Bytes freeDiskSpace()
+	{
+		return Bytes.bytes(super.getFreeSpace());
+	}
+
+	/**
 	 * @return Files in this folder
 	 */
 	public File[] getFiles()
@@ -205,6 +216,7 @@ public class Folder extends File
 			/**
 			 * @see java.io.FileFilter#accept(java.io.File)
 			 */
+			@Override
 			public boolean accept(final java.io.File file)
 			{
 				return file.isFile() && filter.accept(new File(file));
@@ -233,6 +245,7 @@ public class Folder extends File
 	{
 		return getFolders(new FolderFilter()
 		{
+			@Override
 			public boolean accept(final Folder folder)
 			{
 				final String name = folder.getName();
@@ -254,6 +267,7 @@ public class Folder extends File
 			/**
 			 * @see java.io.FileFilter#accept(java.io.File)
 			 */
+			@Override
 			public boolean accept(final java.io.File file)
 			{
 				return file.isDirectory() && filter.accept(new Folder(file.getPath()));

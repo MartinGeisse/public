@@ -29,12 +29,13 @@ import org.apache.wicket.markup.html.IPackageResourceGuard;
 import org.apache.wicket.request.resource.caching.IStaticCacheableResource;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.io.IOUtils;
+import org.apache.wicket.util.lang.Classes;
 import org.apache.wicket.util.lang.Packages;
-import org.apache.wicket.util.lang.WicketObjects;
+import org.apache.wicket.core.util.lang.WicketObjects;
 import org.apache.wicket.util.resource.IFixedLocationResourceStream;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
-import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
+import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Time;
 import org.slf4j.Logger;
@@ -117,11 +118,25 @@ public class PackageResource extends AbstractResource implements IStaticCacheabl
 	private final String variation;
 
 	/**
+	 * A flag indicating whether {@code ITextResourceCompressor} can be used to compress this resource.
+	 * Default is {@code false} because this resource may be used for binary data (e.g. an image).
+	 * Specializations of this class should change this flag appropriately.
+	 */
+	private boolean compress = false;
+
+	/**
+	 * controls whether {@link org.apache.wicket.request.resource.caching.IResourceCachingStrategy}
+	 * should be applied to resource
+	 */
+	
+	private boolean cachingEnabled = true;
+	
+	/**
 	 * text encoding (may be null) - only makes sense for character-based resources
 	 */
 	
 	private String textEncoding = null;
-
+	
 	/**
 	 * Hidden constructor.
 	 * 
@@ -170,6 +185,17 @@ public class PackageResource extends AbstractResource implements IStaticCacheabl
 		return style != null ? style : Session.get().getStyle();
 	}
 
+	@Override
+	public boolean isCachingEnabled()
+	{
+		return cachingEnabled;
+	}
+
+	public void setCachingEnabled(final boolean enabled)
+	{
+		this.cachingEnabled = enabled;
+	}
+
 	/**
 	 * get text encoding (intented for character-based resources)
 	 
@@ -191,6 +217,7 @@ public class PackageResource extends AbstractResource implements IStaticCacheabl
 		this.textEncoding = textEncoding;
 	}
 
+	@Override
 	public Serializable getCacheKey()
 	{
 		IResourceStream stream = getCacheableResourceStream();
@@ -262,10 +289,10 @@ public class PackageResource extends AbstractResource implements IStaticCacheabl
 
 			// set Content-Type (may be null)
 			resourceResponse.setContentType(contentType);
-
+			
 			// set content encoding (may be null)
 			resourceResponse.setTextEncoding(getTextEncoding());
-			
+
 			try
 			{
 				// read resource data
@@ -362,6 +389,7 @@ public class PackageResource extends AbstractResource implements IStaticCacheabl
 	 * @see org.apache.wicket.request.resource.caching.IStaticCacheableResource#getCacheableResourceStream()
 	 * @see #getResourceStream()
 	 */
+	@Override
 	public IResourceStream getCacheableResourceStream()
 	{
 		return internalGetResourceStream(getCurrentStyle(), getCurrentLocale());
@@ -369,45 +397,30 @@ public class PackageResource extends AbstractResource implements IStaticCacheabl
 	
 	/**
 	 * locate resource stream for current resource
-	 * <p/>
-	 * Unfortunately this method has changed from scope 'public' in wicket 1.4 to scope 'protected'
-	 * in wicket 1.5. We realized this too late and now changing it would break the api. So in case
-	 * you need access to this method you have the following options:
-	 * 
-	 * <ul>
-	 * <li>
-	 * copy-paste the code in the method body of {@link #getResourceStream()} and wait for wicket
-	 * 1.6</li>
-	 * <li>
-	 * extend PackageResource, passing the package resources attributes and make
-	 * {@link #getResourceStream()} public again:
-	 * 
-	 * <pre>
-	 * public class MyPackageResource extends PackageResource
-	 * {
-	 * 	public MyPackageResource(Class&lt;?&gt; scope, String name, Locale locale, String style,
-	 * 		String variation)
-	 * 	{
-	 * 		super(scope, name, locale, style, variation);
-	 * 	}
-	 * 
-	 * 	// change access to public here
-	 * 	public IResourceStream getResourceStream()
-	 * 	{
-	 * 		return super.getResourceStream();
-	 * 	}
-	 * }
-	 * </pre>
-	 * 
-	 * </li>
-	 * </ul>
-	 * 
 	 * 
 	 * @return resource stream or <code>null</code> if not found
 	 */
-	protected IResourceStream getResourceStream()
+	public IResourceStream getResourceStream()
 	{
 		return internalGetResourceStream(style, locale);
+	}
+
+	/**
+	 * @return whether {@link org.apache.wicket.resource.ITextResourceCompressor} can be used to compress the
+	 *         resource.
+	 */
+	public boolean getCompress()
+	{
+		return compress;
+	}
+
+	/**
+	 * @param compress
+	 *            A flag indicating whether the resource should be compressed.
+	 */
+	public void setCompress(boolean compress)
+	{
+		this.compress = compress;
 	}
 
 	private IResourceStream internalGetResourceStream(final String style, final Locale locale)
@@ -500,7 +513,7 @@ public class PackageResource extends AbstractResource implements IStaticCacheabl
 	{
 		final StringBuilder result = new StringBuilder();
 		result.append('[')
-			.append(getClass().getSimpleName())
+			.append(Classes.simpleName(getClass()))
 			.append(' ')
 			.append("name = ")
 			.append(path)

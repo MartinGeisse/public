@@ -20,10 +20,13 @@ package org.apache.wicket.extensions.ajax.markup.html.autocomplete;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.resource.CoreLibrariesContributor;
 import org.apache.wicket.util.string.Strings;
 
 /**
@@ -67,6 +70,7 @@ public abstract class AbstractAutoCompleteBehavior extends AbstractDefaultAjaxBe
 	public void renderHead(final Component component, final IHeaderResponse response)
 	{
 		super.renderHead(component, response);
+		CoreLibrariesContributor.contributeAjax(component.getApplication(), response);
 		renderAutocompleteHead(response);
 	}
 
@@ -77,7 +81,7 @@ public abstract class AbstractAutoCompleteBehavior extends AbstractDefaultAjaxBe
 	 */
 	private void renderAutocompleteHead(final IHeaderResponse response)
 	{
-		response.renderJavaScriptReference(AUTOCOMPLETE_JS);
+		response.render(JavaScriptHeaderItem.forReference(AUTOCOMPLETE_JS));
 		final String id = getComponent().getMarkupId();
 
 		String indicatorId = findIndicatorId();
@@ -92,7 +96,7 @@ public abstract class AbstractAutoCompleteBehavior extends AbstractDefaultAjaxBe
 
 		String initJS = String.format("new Wicket.AutoComplete('%s','%s',%s,%s);", id,
 			getCallbackUrl(), constructSettingsJS(), indicatorId);
-		response.renderOnDomReadyJavaScript(initJS);
+		response.render(OnDomReadyHeaderItem.forScript(initJS));
 	}
 
 	/**
@@ -110,6 +114,7 @@ public abstract class AbstractAutoCompleteBehavior extends AbstractDefaultAjaxBe
 		sb.append(",showListOnEmptyInput: ").append(settings.getShowListOnEmptyInput());
 		sb.append(",showListOnFocusGain: ").append(settings.getShowListOnFocusGain());
 		sb.append(",throttleDelay: ").append(settings.getThrottleDelay());
+		sb.append(",parameterName: '").append(settings.getParameterName()).append('\'');
 		sb.append(",showCompleteListOnFocusGain: ").append(
 			settings.getShowCompleteListOnFocusGain());
 		if (settings.getCssClassName() != null)
@@ -118,23 +123,6 @@ public abstract class AbstractAutoCompleteBehavior extends AbstractDefaultAjaxBe
 		}
 		sb.append('}');
 		return sb.toString();
-	}
-
-	@Override
-	protected void onBind()
-	{
-		// add empty AbstractDefaultAjaxBehavior to the component, to force
-		// rendering wicket-ajax.js reference if no other ajax behavior is on
-		// page
-		getComponent().add(new AbstractDefaultAjaxBehavior()
-		{
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected void respond(final AjaxRequestTarget target)
-			{
-			}
-		});
 	}
 
 	/**
@@ -154,9 +142,10 @@ public abstract class AbstractAutoCompleteBehavior extends AbstractDefaultAjaxBe
 		final RequestCycle requestCycle = RequestCycle.get();
 		final String val = requestCycle.getRequest()
 			.getRequestParameters()
-			.getParameterValue("q")
+			.getParameterValue(settings.getParameterName())
 			.toOptionalString();
 
 		onRequest(val, requestCycle);
 	}
+
 }

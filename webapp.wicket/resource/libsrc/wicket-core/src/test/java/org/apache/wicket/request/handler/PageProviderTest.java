@@ -27,13 +27,13 @@ import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.WicketTestCase;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.core.request.handler.PageProvider;
 import org.apache.wicket.markup.IMarkupResourceStreamProvider;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.request.Url;
-import org.apache.wicket.request.mapper.StalePageException;
-import org.apache.wicket.request.mapper.TestMapperContext;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.core.request.mapper.StalePageException;
+import org.apache.wicket.core.request.mapper.TestMapperContext;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.resource.StringResourceStream;
@@ -262,13 +262,6 @@ public class PageProviderTest extends WicketTestCase
 		/** */
 		public TestPage()
 		{
-			this(new PageParameters());
-		}
-
-		public TestPage(PageParameters parameters)
-		{
-			super(parameters);
-
 			add(link = new Link<Void>("link")
 			{
 				private static final long serialVersionUID = 1L;
@@ -299,6 +292,7 @@ public class PageProviderTest extends WicketTestCase
 			});
 		}
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{
@@ -313,6 +307,7 @@ public class PageProviderTest extends WicketTestCase
 	{
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{

@@ -19,9 +19,9 @@ package org.apache.wicket.resource.loader;
 import java.util.Locale;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
 import org.apache.wicket.resource.IPropertiesFactory;
 import org.apache.wicket.resource.Properties;
-import org.apache.wicket.util.resource.locator.ResourceNameIterator;
 import org.apache.wicket.util.string.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ public class PackageStringResourceLoader extends ComponentStringResourceLoader
 	private static final Logger log = LoggerFactory.getLogger(PackageStringResourceLoader.class);
 
 	/** The name (without extension) of the properties file */
-	private String filename = "package";
+	private String filename = "wicket-package";
 
 	/**
 	 * Create and initialize the resource loader.
@@ -93,7 +93,7 @@ public class PackageStringResourceLoader extends ComponentStringResourceLoader
 				}
 
 				// Iterator over all the combinations
-				ResourceNameIterator iter = newResourceNameIterator(path, locale, style, variation);
+				IResourceNameIterator iter = newResourceNameIterator(path, locale, style, variation);
 				while (iter.hasNext())
 				{
 					String newPath = iter.next();

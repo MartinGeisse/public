@@ -16,7 +16,7 @@
  */
 package org.apache.wicket.extensions.ajax.markup.html.autocomplete;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * This class encapsulates various settings for {@link AbstractAutoCompleteBehavior}. See the
@@ -68,6 +68,8 @@ public final class AutoCompleteSettings implements IClusterable
 	private boolean showCompleteListOnFocusGain = false;
 
 	private int throttleDelay = 300;
+
+	private String parameterName = "q";
 
 	/**
 	 * Indicates whether the first item in the list is automatically selected when the autocomplete
@@ -333,5 +335,26 @@ public final class AutoCompleteSettings implements IClusterable
 	{
 		this.useHideShowCoveredIEFix = useHideShowCoveredIEFix;
 		return this;
+	}
+
+	/**
+	 * Sets the name of the request parameter that will bring the value of the user input
+	 *
+	 * @param parameterName
+	 *      the name of the request parameter that will bring the value of the user input
+	 * @return this {@link AutoCompleteSettings}
+	 */
+	public AutoCompleteSettings setParameterName(final String parameterName)
+	{
+		this.parameterName = parameterName;
+		return this;
+	}
+
+	/**
+	 * @return the name of the request parameter that will bring the value of the user input
+	 */
+	public String getParameterName()
+	{
+		return parameterName;
 	}
 }

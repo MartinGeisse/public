@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.wicket.util.encoding.UrlDecoder;
+import org.apache.wicket.util.encoding.UrlEncoder;
 import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.lang.Generics;
 import org.apache.wicket.util.lang.Objects;
@@ -63,9 +65,9 @@ public class Url implements Serializable
 
 	private static final String DEFAULT_CHARSET_NAME = "UTF-8";
 
-	private final List<String> segments = Generics.newArrayList();
+	private final List<String> segments;
 
-	private final List<QueryParameter> parameters = Generics.newArrayList();
+	private final List<QueryParameter> parameters;
 
 	private String charsetName;
 	private transient Charset _charset;
@@ -79,7 +81,8 @@ public class Url implements Serializable
 	 * 
 	 * @author igor
 	 */
-	public static enum StringMode {
+	public static enum StringMode 
+	{
 		/** local urls are rendered without the host name */
 		LOCAL,
 		/**
@@ -90,22 +93,83 @@ public class Url implements Serializable
 	}
 
 	/**
-	 * 
-	 * @param qp
-	 * @param charset
-	 * @return query parameters
+	 * Construct.
 	 */
-	private static QueryParameter parseQueryParameter(final String qp, final Charset charset)
+	public Url()
 	{
-		if (qp.indexOf('=') == -1)
-		{
-			// name => empty value
-			return new QueryParameter(decodeParameter(qp, charset), "");
-		}
+		segments = Generics.newArrayList();
+		parameters = Generics.newArrayList();
+	}
 
-		String parts[] = Strings.split(qp, '=');
-		return new QueryParameter(decodeParameter(parts[0], charset), decodeParameter(parts[1],
-			charset));
+	/**
+	 * Construct.
+	 * 
+	 * @param charset
+	 */
+	public Url(final Charset charset)
+	{
+		this();
+		setCharset(charset);
+	}
+
+
+	/**
+	 * copy constructor
+	 * 
+	 * @param url
+	 *            url being copied
+	 */
+	public Url(final Url url)
+	{
+		Args.notNull(url, "url");
+
+		this.protocol = url.protocol;
+		this.host = url.host;
+		this.port = url.port;
+		this.segments = new ArrayList<String>(url.segments);
+		this.parameters = new ArrayList<QueryParameter>(url.parameters);
+		this.charsetName = url.charsetName;
+		this._charset = url._charset;
+	}
+
+	/**
+	 * Construct.
+	 * 
+	 * @param segments
+	 * @param parameters
+	 */
+	public Url(final List<String> segments, final List<QueryParameter> parameters)
+	{
+		this(segments, parameters, null);
+	}
+
+	/**
+	 * Construct.
+	 * 
+	 * @param segments
+	 * @param charset
+	 */
+	public Url(final List<String> segments, final Charset charset)
+	{
+		this(segments, Collections.<QueryParameter> emptyList(), charset);
+	}
+
+	/**
+	 * Construct.
+	 * 
+	 * @param segments
+	 * @param parameters
+	 * @param charset
+	 */
+	public Url(final List<String> segments, final List<QueryParameter> parameters,
+		final Charset charset)
+	{
+		Args.notNull(segments, "segments");
+		Args.notNull(parameters, "parameters");
+
+		this.segments = new ArrayList<String>(segments);
+		this.parameters = new ArrayList<QueryParameter>(parameters);
+		setCharset(charset);
 	}
 
 	/**
@@ -115,7 +179,7 @@ public class Url implements Serializable
 	 *            absolute or relative url with query string
 	 * @return Url object
 	 */
-	public static Url parse(final String url)
+	public static Url parse(final CharSequence url)
 	{
 		return parse(url, null);
 	}
@@ -123,20 +187,21 @@ public class Url implements Serializable
 	/**
 	 * Parses the given URL string.
 	 * 
-	 * @param url
+	 * @param _url
 	 *            absolute or relative url with query string
 	 * @param charset
 	 * @return Url object
 	 */
-	public static Url parse(String url, Charset charset)
+	public static Url parse(CharSequence _url, Charset charset)
 	{
-		Args.notNull(url, "url");
+		Args.notNull(_url, "_url");
 
 		final Url result = new Url(charset);
 
 		// the url object resolved the charset, use that
 		charset = result.getCharset();
 
+		String url = _url.toString();
 		// extract query string part
 		final String queryString;
 		final String absoluteUrl;
@@ -248,6 +313,25 @@ public class Url implements Serializable
 	}
 
 	/**
+	 * 
+	 * @param qp
+	 * @param charset
+	 * @return query parameters
+	 */
+	private static QueryParameter parseQueryParameter(final String qp, final Charset charset)
+	{
+		if (qp.indexOf('=') == -1)
+		{
+			// name => empty value
+			return new QueryParameter(decodeParameter(qp, charset), "");
+		}
+
+		String parts[] = Strings.split(qp, '=');
+		return new QueryParameter(decodeParameter(parts[0], charset), decodeParameter(parts[1],
+			charset));
+	}
+
+	/**
 	 * get default port number for protocol
 	 * 
 	 * @param protocol
@@ -272,82 +356,6 @@ public class Url implements Serializable
 		{
 			return null;
 		}
-	}
-
-	/**
-	 * Construct.
-	 */
-	public Url()
-	{
-	}
-
-	/**
-	 * Construct.
-	 * 
-	 * @param charset
-	 */
-	public Url(final Charset charset)
-	{
-		setCharset(charset);
-	}
-
-
-	/**
-	 * Construct.
-	 * 
-	 * @param url
-	 *            url being copied
-	 */
-	public Url(final Url url)
-	{
-		Args.notNull(url, "url");
-
-		segments.addAll(url.getSegments());
-		parameters.addAll(url.getQueryParameters());
-		setCharset(url.getCharset());
-		setProtocol(url.getProtocol());
-		setHost(url.getHost());
-		setPort(url.getPort());
-	}
-
-	/**
-	 * Construct.
-	 * 
-	 * @param segments
-	 * @param parameters
-	 */
-	public Url(final List<String> segments, final List<QueryParameter> parameters)
-	{
-		this(segments, parameters, null);
-	}
-
-	/**
-	 * Construct.
-	 * 
-	 * @param segments
-	 * @param charset
-	 */
-	public Url(final List<String> segments, final Charset charset)
-	{
-		this(segments, Collections.<QueryParameter> emptyList(), charset);
-	}
-
-	/**
-	 * Construct.
-	 * 
-	 * @param segments
-	 * @param parameters
-	 * @param charset
-	 */
-	public Url(final List<String> segments, final List<QueryParameter> parameters,
-		final Charset charset)
-	{
-		Args.notNull(segments, "segments");
-		Args.notNull(parameters, "parameters");
-
-		this.segments.addAll(segments);
-		this.parameters.addAll(parameters);
-		setCharset(charset);
 	}
 
 	/**
@@ -609,59 +617,7 @@ public class Url implements Serializable
 		return toString(getCharset());
 	}
 
-	/**
-	 * render full representation of url (including protocol, host and port) into string
-	 * representation
-	 * 
-	 * @return absolute representation of the url
-	 * @deprecated see {@link Url#toString(StringMode)}
-	 */
-	@Deprecated
-	public String toAbsoluteString()
-	{
-		return toAbsoluteString(getCharset());
-	}
-
-	/**
-	 * render full representation of url (including protocol, host and port) into string
-	 * representation
-	 * 
-	 * @param charset
-	 * 
-	 * @return see toStringRepresentation
-	 * @deprecated see {@link Url#toString(StringMode, Charset)}
-	 */
-	@Deprecated
-	public String toAbsoluteString(final Charset charset)
-	{
-		StringBuilder result = new StringBuilder();
-
-		String protocol = this.protocol;
-		if (Strings.isEmpty(protocol))
-		{
-			protocol = "http";
-		}
-
-		// output scheme://host:port if specified
-		if (Strings.isEmpty(host) == false)
-		{
-			result.append(protocol);
-			result.append("://");
-			result.append(host);
-
-			if (port != null && port.equals(getDefaultPortForProtocol(protocol)) == false)
-			{
-				result.append(':');
-				result.append(port);
-			}
-		}
-
-		// append relative part
-		return Strings.join("/", result.toString(), this.toString());
-	}
-
-
-	/**
+        /**
 	 * Stringizes this url
 	 * 
 	 * @param mode
@@ -786,7 +742,7 @@ public class Url implements Serializable
 	 * @param segments
 	 * @return true if at least one segement is real
 	 */
-	private boolean isAtLeastOnSegmentReal(final List<String> segments)
+	private boolean isAtLeastOneSegmentReal(final List<String> segments)
 	{
 		for (String s : segments)
 		{
@@ -807,7 +763,7 @@ public class Url implements Serializable
 	{
 		boolean checkedLastSegment = false;
 
-		if (!isAtLeastOnSegmentReal(segments) && !isLastSegmentEmpty(segments))
+		if (!isAtLeastOneSegmentReal(segments) && !isLastSegmentEmpty(segments))
 		{
 			segments = new ArrayList<String>(segments);
 			segments.add("");
@@ -1177,9 +1133,6 @@ public class Url implements Serializable
 	 * 
 	 * This code correlates to 
 	 * <a href="https://issues.apache.org/jira/browse/WICKET-4303">WICKET-4303</a>
-	 *
-	 * @param url
-	 *         unprocessed url
 	 *
 	 * @return canonical url
 	 */

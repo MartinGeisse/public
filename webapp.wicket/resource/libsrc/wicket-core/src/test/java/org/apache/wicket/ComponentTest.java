@@ -17,11 +17,14 @@
 package org.apache.wicket;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.WebComponent;
-import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.markup.html.link.Link;
 import org.junit.Test;
 
 /**
@@ -147,5 +150,89 @@ public class ComponentTest extends WicketTestCase
 		component.add(statefulBehavior);
 		component.setVisible(false);
 		assertFalse(component.isStateless());
+
+
+		// do the same set of tests on a component that is stateful "by itself"
+		// rather than from a behavior
+		Link<Void> link = new Link<Void>("someId") {
+			@Override
+			public void onClick()
+			{
+			}
+		};
+        
+		// Links are stateful by default
+		assertFalse(link.isStateless());
+        
+		//make the link invisible
+		link.setVisible(false);
+
+		// invisible link cannot be requested by default so it
+		// can pretend being stateless
+		assertTrue(link.isStateless());
+
+		// same for disabled link
+		link.setVisible(true).setEnabled(false);
+		assertTrue(link.isStateless());
+        
+		// make the link such that it can call listener interface
+		// methods no matter whether it is visible or enabled
+		link = new Link("someId") {
+
+		    @Override
+		    public boolean canCallListenerInterface(Method method) {
+			return true;
+		    }
+
+		    @Override
+		    public void onClick() {
+		    }
+		};
+
+		link.setVisible(false);
+		assertFalse(link.isStateless());
+	}
+
+	/**
+	 * https://issues.apache.org/jira/browse/WICKET-4483
+	 *
+	 * setDefaultModel() should call modelChanging/modelChanged only if the new model
+	 * is different that the old one. The same as setDefaultModelObject().
+	 */
+	@Test
+	public void modelChange()
+	{
+		final AtomicBoolean modelChanging = new AtomicBoolean(false);
+		final AtomicBoolean modelChanged = new AtomicBoolean(false);
+
+		WebComponent component = new WebComponent("someId")
+		{
+			@Override
+			protected void onModelChanging()
+			{
+				super.onModelChanging();
+				modelChanging.set(true);
+			}
+
+			@Override
+			protected void onModelChanged()
+			{
+				super.onModelChanged();
+				modelChanged.set(true);
+			}
+		};
+
+		assertNull(component.getDefaultModel());
+		IModel<Integer> model = Model.of(1);
+
+		// set a model which is different that the old one (old = null, new = non-null)
+		component.setDefaultModel(model);
+		assertTrue(modelChanging.getAndSet(false));
+		assertTrue(modelChanged.getAndSet(false));
+
+		// set the same instance - no change notifications should happen
+		component.setDefaultModel(model);
+		assertFalse(modelChanging.get());
+		assertFalse(modelChanged.get());
 	}
 }

@@ -91,6 +91,7 @@ public final class Task
 		{
 			final Runnable runnable = new Runnable()
 			{
+				@Override
 				public void run()
 				{
 					// Sleep until start time
@@ -106,7 +107,7 @@ public final class Task
 
 							if (log.isTraceEnabled())
 							{
-								log.trace("Run the job: '{}'", code.toString());
+								log.trace("Run the job: '{}'", code);
 							}
 
 							try
@@ -122,7 +123,7 @@ public final class Task
 
 							if (log.isTraceEnabled())
 							{
-								log.trace("Finished with job: '{}'", code.toString());
+								log.trace("Finished with job: '{}'", code);
 							}
 
 							// Sleep until the period is over (or not at all if it's

@@ -95,7 +95,7 @@ public abstract class AssociatedMarkupSourcingStrategy extends AbstractMarkupSou
 		if (associatedMarkup == null)
 		{
 			throw new MarkupNotFoundException("Failed to find markup file associated. " +
-				parent.getClass().getSimpleName() + ": " + parent.toString());
+				Classes.simpleName(parent.getClass()) + ": " + parent.toString());
 		}
 
 		// Find <wicket:panel>
@@ -213,7 +213,7 @@ public abstract class AssociatedMarkupSourcingStrategy extends AbstractMarkupSou
 	{
 		if (!(component instanceof WebMarkupContainer))
 		{
-			throw new WicketRuntimeException(component.getClass().getSimpleName() +
+			throw new WicketRuntimeException(Classes.simpleName(component.getClass()) +
 				" can only be associated with WebMarkupContainer.");
 		}
 
@@ -291,7 +291,7 @@ public abstract class AssociatedMarkupSourcingStrategy extends AbstractMarkupSou
 
 		// create a unique id for the HtmlHeaderContainer
 		StringBuilder builder = new StringBuilder(100);
-		builder.append("_");
+		builder.append('_');
 		builder.append(Classes.simpleName(markupClass));
 		if (container.getVariation() != null)
 		{
@@ -360,7 +360,7 @@ public abstract class AssociatedMarkupSourcingStrategy extends AbstractMarkupSou
 					return associatedMarkupStream.getCurrentIndex();
 				}
 				// wicket:head must be before border, panel or extend
-				// @TODO why is that? Why can't it be anywhere? (except insight wicket:fragment
+				// @TODO why is that? Why can't it be anywhere? (except inside wicket:fragment)
 				else if (tag.isOpen() &&
 					(tag.isPanelTag() || tag.isBorderTag() || tag.isExtendTag()))
 				{

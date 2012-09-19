@@ -53,6 +53,7 @@ public abstract class AbstractClassResolver implements IClassResolver
 	 */
 	private final ConcurrentMap<String, WeakReference<Class<?>>> classes = new ConcurrentHashMap<String, WeakReference<Class<?>>>();
 
+	@Override
 	public final Class<?> resolveClass(final String className) throws ClassNotFoundException
 	{
 		Class<?> clazz = null;
@@ -116,13 +117,7 @@ public abstract class AbstractClassResolver implements IClassResolver
 		return clazz;
 	}
 
-	/**
-	 * Returns the {@link ClassLoader} to be used for resolving classes
-	 * 
-	 * @return the {@link ClassLoader} to be used for resolving classes
-	 */
-	protected abstract ClassLoader getClassLoader();
-
+	@Override
 	public Iterator<URL> getResources(final String name)
 	{
 		Set<URL> resultSet = new TreeSet<URL>(new UrlExternalFormComparator());

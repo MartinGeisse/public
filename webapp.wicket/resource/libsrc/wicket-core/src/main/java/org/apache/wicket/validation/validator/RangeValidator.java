@@ -18,25 +18,74 @@ package org.apache.wicket.validation.validator;
 
 import java.io.Serializable;
 
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.util.lang.Classes;
 import org.apache.wicket.validation.IValidatable;
-import org.apache.wicket.validation.IValidator;
 import org.apache.wicket.validation.ValidationError;
 
 /**
  * Validator for checking if a given value falls within [min,max] range.
  * 
+ * If either min or max are {@code null} they are not checked.
+ * 
+ * <p>
+ * Resource keys:
+ * <ul>
+ * <li>{@code RangeValidator.exact} if min==max</li>
+ * <li>{@code RangeValidator.range} if both min and max are not {@code null}</li>
+ * <li>{@code RangeValidator.minimum} if max is {@code null}</li>
+ * <li>{@code RangeValidator.maximum} if min is {@code null}</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * Error Message Variables:
+ * <ul>
+ * <li>{@code name}: the id of {@code Component} that failed</li>
+ * <li>{@code label}: the label of the {@code Component} (either comes from
+ * {@code FormComponent.labelModel} or resource key {@code <form-id>.<form-component-id>}</li>
+ * <li>{@code input}: the input value</li>
+ * <li>{@code minimum}: the minimum allowed value</li>
+ * <li>{@code maximum}: the maximum allowed value</li>
+ * </ul>
+ * </p>
+ * 
  * @param <Z>
  *            type of validatable
+ * 
+ * @author igor
  */
-public class RangeValidator<Z extends Comparable<Z> & Serializable> extends Behavior
-	implements
-		IValidator<Z>
+public class RangeValidator<Z extends Comparable<Z> & Serializable> extends
+	AbstractRangeValidator<Z, Z>
 {
 	private static final long serialVersionUID = 1L;
-	private Z minimum;
-	private Z maximum;
+
+	/**
+	 * @param minimum
+	 * @param maximum
+	 * @return a {@link RangeValidator} that validates if a value falls within a range
+	 */
+	public static <T extends Comparable<T> & Serializable> RangeValidator<T> range(T minimum,
+		T maximum)
+	{
+		return new RangeValidator<T>(minimum, maximum);
+	}
+
+	/**
+	 * @param minimum
+	 * @return a {@link RangeValidator} that validates if a value is a least {@code minimum}
+	 */
+	public static <T extends Comparable<T> & Serializable> RangeValidator<T> minimum(T minimum)
+	{
+		return new RangeValidator<T>(minimum, null);
+	}
+
+	/**
+	 * @param maximum
+	 * @return a {@link RangeValidator} that validates if a value is a most {@code maximum}
+	 */
+	public static <T extends Comparable<T> & Serializable> RangeValidator<T> maximum(T maximum)
+	{
+		return new RangeValidator<T>(null, maximum);
+	}
 
 	/**
 	 * Constructor that sets the minimum and maximum values.
@@ -59,66 +108,26 @@ public class RangeValidator<Z extends Comparable<Z> & Serializable> extends Beha
 	{
 	}
 
-	/**
-	 * Sets validator range
-	 * 
-	 * @param minimum
-	 * @param maximum
-	 */
-	protected final void setRange(Z minimum, Z maximum)
+	@Override
+	protected Z getValue(IValidatable<Z> validatable)
 	{
-		this.minimum = minimum;
-		this.maximum = maximum;
+		return validatable.getValue();
 	}
 
-	/** {@inheritDoc} */
-	public void validate(IValidatable<Z> validatable)
+	@Override
+	protected ValidationError decorate(ValidationError error, IValidatable<Z> validatable)
 	{
-		Z value = validatable.getValue();
-		final Z min = getMinimum();
-		final Z max = getMaximum();
-		if ((min != null && value.compareTo(min) < 0) || (max != null && value.compareTo(max) > 0))
+		// TODO wicket 7: remove deprecated keys
+		error = super.decorate(error, validatable);
+		switch (getMode())
 		{
-			ValidationError error = new ValidationError();
-			error.addMessageKey(resourceKey());
-			error.setVariable("minimum", min);
-			error.setVariable("maximum", max);
-			validatable.error(error);
+			case MINIMUM :
+				error.addKey("MaximumValidator");
+				break;
+			case MAXIMUM :
+				error.addKey("MinimumValidator");
+				break;
 		}
+		return error;
 	}
-
-	/**
-	 * Gets the minimum value.
-	 * 
-	 * @return minimum value
-	 */
-	public Z getMinimum()
-	{
-		return minimum;
-	}
-
-	/**
-	 * Gets the maximum value.
-	 * 
-	 * @return maximum value
-	 */
-	public Z getMaximum()
-	{
-		return maximum;
-	}
-
-	/**
-	 * Gets the message resource key for this validator's error message from the
-	 * <code>ApplicationSettings</code> class.
-	 * 
-	 * <strong>NOTE</strong>: THIS METHOD SHOULD NEVER RETURN <code>null</code>.
-	 * 
-	 * @return the message resource key for this validator
-	 */
-	// TODO Wicket 1.6 - remove that method and make this class extending AbstractValidator
-	protected String resourceKey()
-	{
-		return Classes.simpleName(RangeValidator.class);
-	}
-
 }

@@ -20,9 +20,11 @@ import java.util.UUID;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.util.string.JavaScriptUtils;
 import org.apache.wicket.util.string.StringValue;
 
 /**
@@ -31,7 +33,7 @@ import org.apache.wicket.util.string.StringValue;
  *
  * Note: this behavior may be assigned only to an instance of a WebPage class.
  *
- * @since 1.5.7
+ * @since 6.0
  */
 public abstract class AjaxNewWindowNotifyingBehavior extends AbstractDefaultAjaxBehavior
 {
@@ -82,9 +84,12 @@ public abstract class AjaxNewWindowNotifyingBehavior extends AbstractDefaultAjax
 	}
 
 	@Override
-	public CharSequence getCallbackUrl()
+	protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
 	{
-		return super.getCallbackUrl() + "&"+PARAM_WINDOW_NAME + "=' + window.name + '";
+		super.updateAjaxAttributes(attributes);
+		
+		String uuidParam = "return {'"+ PARAM_WINDOW_NAME +"': window.name}";
+		attributes.getDynamicExtraParameters().add(uuidParam);
 	}
 
 	@Override
@@ -95,10 +100,9 @@ public abstract class AjaxNewWindowNotifyingBehavior extends AbstractDefaultAjax
 		if (hasBeenRendered == false)
 		{
 			hasBeenRendered = true;
-			response.renderOnDomReadyJavaScript(String.format("window.name='%s'", windowName));
+			response.render(OnDomReadyHeaderItem.forScript(String.format("window.name='%s'", windowName)));
 		}
-		CharSequence callbackScript = JavaScriptUtils.escapeQuotes(getCallbackScript());
-		response.renderOnLoadJavaScript("setTimeout('" + callbackScript + "', 30);");
+		response.render(OnLoadHeaderItem.forScript("setTimeout(function() {" + getCallbackScript().toString() + "}, 30);"));
 	}
 
 	@Override

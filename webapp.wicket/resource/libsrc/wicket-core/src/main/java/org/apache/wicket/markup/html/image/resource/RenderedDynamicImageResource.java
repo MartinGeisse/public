@@ -171,19 +171,6 @@ public abstract class RenderedDynamicImageResource extends DynamicImageResource
 	/**
 	 * Renders this image
 	 * 
-	 * @return The image data
-	 * @deprecated Use {@link #render(org.apache.wicket.request.resource.IResource.Attributes)}
-	 *             instead.
-	 */
-	@Deprecated
-	protected byte[] render()
-	{
-		return render((Attributes)null);
-	}
-
-	/**
-	 * Renders this image
-	 * 
 	 * @param attributes
 	 *            the current request attributes
 	 * @return The image data
@@ -201,23 +188,6 @@ public abstract class RenderedDynamicImageResource extends DynamicImageResource
 	}
 
 	/**
-	 * Override this method to provide your rendering code
-	 * 
-	 * @param graphics
-	 *            The graphics context to render on
-	 * @return True if the image was rendered. False if the image size was changed by the rendering
-	 *         implementation and the image should be re-rendered at the new size.
-	 * @deprecated Use
-	 *             {@link RenderedDynamicImageResource#render(Graphics2D, org.apache.wicket.request.resource.IResource.Attributes)
-	 *             instead}
-	 */
-	@Deprecated
-	protected boolean render(Graphics2D graphics)
-	{
-		return true;
-	}
-
-	/**
 	 * Override this method to provide your rendering code.
 	 * 
 	 * @param graphics
@@ -227,9 +197,5 @@ public abstract class RenderedDynamicImageResource extends DynamicImageResource
 	 * @return {@code true} if the image was rendered. {@code false} if the image size was changed
 	 *         by the rendering implementation and the image should be re-rendered at the new size.
 	 */
-	// TODO Wicket.next: make this method abstract
-	protected boolean render(Graphics2D graphics, final Attributes attributes)
-	{
-		return render(graphics);
-	}
+	protected abstract boolean render(Graphics2D graphics, final Attributes attributes);
 }

@@ -17,12 +17,11 @@
 package org.apache.wicket.ajax.markup.html.form;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.AbstractSubmitLink;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.util.string.AppendingStringBuffer;
 
 /**
  * A link that submits a form via ajax. Since this link takes the form as a constructor argument it
@@ -57,33 +56,14 @@ public abstract class AjaxSubmitLink extends AbstractSubmitLink
 	{
 		super(id, form);
 
-		add(new AjaxFormSubmitBehavior(form, "onclick")
+		add(new AjaxFormSubmitBehavior(form, "click")
 		{
-
 			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected void onSubmit(AjaxRequestTarget target)
-			{
-				AjaxSubmitLink.this.onSubmit(target, getForm());
-			}
 
 			@Override
 			protected void onError(AjaxRequestTarget target)
 			{
 				AjaxSubmitLink.this.onError(target, getForm());
-			}
-
-			@Override
-			protected CharSequence getEventHandler()
-			{
-				return new AppendingStringBuffer(super.getEventHandler()).append("; return false;");
-			}
-
-			@Override
-			protected IAjaxCallDecorator getAjaxCallDecorator()
-			{
-				return AjaxSubmitLink.this.getAjaxCallDecorator();
 			}
 
 			@Override
@@ -107,19 +87,47 @@ public abstract class AjaxSubmitLink extends AbstractSubmitLink
 			{
 				return AjaxSubmitLink.this.getDefaultFormProcessing();
 			}
+
+			@Override
+			protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
+			{
+				super.updateAjaxAttributes(attributes);
+				AjaxSubmitLink.this.updateAjaxAttributes(attributes);
+			}
+
+			@Override
+			protected void onSubmit(AjaxRequestTarget target)
+			{
+				AjaxSubmitLink.this.onSubmit(target, getForm());
+			}
+
+			@Override
+			protected void onAfterSubmit(AjaxRequestTarget target)
+			{
+				AjaxSubmitLink.this.onAfterSubmit(target, getForm());
+			}
 		});
 
 	}
 
 	/**
-	 * Returns the {@link IAjaxCallDecorator} that will be used to modify the generated javascript.
-	 * This is the preferred way of changing the javascript in the onclick handler
-	 * 
-	 * @return call decorator used to modify the generated javascript or null for none
+	 * Override this method to provide special submit handling in a multi-button form. This method
+	 * will be called <em>before</em> the form's onSubmit method.
 	 */
-	protected IAjaxCallDecorator getAjaxCallDecorator()
+	protected void onSubmit(AjaxRequestTarget target, Form<?> form)
 	{
-		return null;
+	}
+
+	/**
+	 * Override this method to provide special submit handling in a multi-button form. This method
+	 * will be called <em>after</em> the form's onSubmit method.
+	 */
+	protected void onAfterSubmit(AjaxRequestTarget target, Form<?> form)
+	{
+	}
+
+	protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
+	{
 	}
 
 	@Override
@@ -141,40 +149,41 @@ public abstract class AjaxSubmitLink extends AbstractSubmitLink
 	}
 
 	/**
-	 * Final implementation of the Button's onSubmit. AjaxSubmitLinks have there own onSubmit which
-	 * is called.
-	 * 
-	 * @see org.apache.wicket.markup.html.form.Button#onSubmit()
-	 */
-	public final void onSubmit()
-	{
-	}
-
-	/**
 	 * Final implementation of the Button's onError. AjaxSubmitLinks have their own onError which is
 	 * called.
 	 * 
 	 * @see org.apache.wicket.markup.html.form.Button#onError()
 	 */
+	@Override
 	public final void onError()
 	{
+	}
 
+
+	/**
+	 * Listener method invoked on form submit with errors. This method is called <em>before</em>
+	 * {@link Form#onError()}.
+	 * 
+	 * @param target
+	 * @param form
+	 */
+	protected void onError(AjaxRequestTarget target, Form<?> form)
+	{
 	}
 
 	/**
-	 * Listener method invoked on form submit
-	 * 
-	 * @param target
-	 * @param form
+	 * Use {@link #onSubmit(AjaxRequestTarget, Form)} instead.
 	 */
-	protected abstract void onSubmit(AjaxRequestTarget target, Form<?> form);
+	@Override
+	public final void onSubmit()
+	{
+	}
 
 	/**
-	 * Listener method invoked on form submit with errors
-	 * 
-	 * @param target
-	 * @param form
+	 * Use {@link #onAfterSubmit(AjaxRequestTarget, Form)} instead.
 	 */
-	protected abstract void onError(AjaxRequestTarget target, Form<?> form);
-
+	@Override
+	public final void onAfterSubmit()
+	{
+	}
 }

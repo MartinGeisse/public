@@ -54,6 +54,7 @@ public class CompoundRequestMapper implements ICompoundRequestMapper
 			this.compatibilityScore = compatibilityScore;
 		}
 
+		@Override
 		public int compareTo(final MapperWithScore o)
 		{
 			return (compatibilityScore < o.compatibilityScore ? 1
@@ -65,9 +66,29 @@ public class CompoundRequestMapper implements ICompoundRequestMapper
 			return mapper;
 		}
 
-		/**
-		 * @see java.lang.Object#toString()
-		 */
+		@Override
+		public boolean equals(Object o)
+		{
+			if (this == o)
+				return true;
+			if (!(o instanceof MapperWithScore))
+				return false;
+
+			MapperWithScore that = (MapperWithScore)o;
+
+			if (compatibilityScore != that.compatibilityScore)
+				return false;
+			return mapper.equals(that.mapper);
+		}
+
+		@Override
+		public int hashCode()
+		{
+			int result = mapper.hashCode();
+			result = 31 * result + compatibilityScore;
+			return result;
+		}
+
 		@Override
 		public String toString()
 		{
@@ -77,25 +98,14 @@ public class CompoundRequestMapper implements ICompoundRequestMapper
 
 	private final List<IRequestMapper> mappers = new CopyOnWriteArrayList<IRequestMapper>();
 
-	/**
-	 * Construct.
-	 */
-	public CompoundRequestMapper()
-	{
-	}
-
-	/**
-	 * @see org.apache.wicket.request.mapper.ICompoundRequestMapper#add(org.apache.wicket.request.IRequestMapper)
-	 */
+	@Override
 	public CompoundRequestMapper add(final IRequestMapper mapper)
 	{
 		mappers.add(0, mapper);
 		return this;
 	}
 
-	/**
-	 * @see org.apache.wicket.request.mapper.ICompoundRequestMapper#remove(org.apache.wicket.request.IRequestMapper)
-	 */
+	@Override
 	public CompoundRequestMapper remove(final IRequestMapper mapper)
 	{
 		mappers.remove(mapper);
@@ -114,6 +124,7 @@ public class CompoundRequestMapper implements ICompoundRequestMapper
 	 * @return RequestHandler for the request or <code>null</code> if no mapper for the request is
 	 *         found.
 	 */
+	@Override
 	public IRequestHandler mapRequest(final Request request)
 	{
 		List<MapperWithScore> list = new ArrayList<MapperWithScore>(mappers.size());
@@ -151,6 +162,7 @@ public class CompoundRequestMapper implements ICompoundRequestMapper
 	 * @param handler
 	 * @return Url for the handler or <code>null</code> if no mapper for the handler is found.
 	 */
+	@Override
 	public Url mapHandler(final IRequestHandler handler)
 	{
 		for (IRequestMapper mapper : mappers)
@@ -169,6 +181,7 @@ public class CompoundRequestMapper implements ICompoundRequestMapper
 	 * 
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int getCompatibilityScore(final Request request)
 	{
 		int score = Integer.MIN_VALUE;
@@ -179,19 +192,20 @@ public class CompoundRequestMapper implements ICompoundRequestMapper
 		return score;
 	}
 
+	@Override
 	public Iterator<IRequestMapper> iterator()
 	{
 		return mappers.iterator();
 	}
 
+	@Override
 	public void unmount(String path)
 	{
 		final Url url = Url.parse(path);
 		final Request request = createRequest(url);
 
-		for (Iterator<IRequestMapper> itor = iterator(); itor.hasNext();)
+		for (IRequestMapper mapper : this)
 		{
-			IRequestMapper mapper = itor.next();
 			if (mapper.mapRequest(request) != null)
 			{
 				remove(mapper);
@@ -206,7 +220,7 @@ public class CompoundRequestMapper implements ICompoundRequestMapper
 
 	Request createRequest(final Url url)
 	{
-		Request request = new Request()
+		return new Request()
 		{
 			@Override
 			public Url getUrl()
@@ -238,6 +252,5 @@ public class CompoundRequestMapper implements ICompoundRequestMapper
 				return null;
 			}
 		};
-		return request;
 	}
 }

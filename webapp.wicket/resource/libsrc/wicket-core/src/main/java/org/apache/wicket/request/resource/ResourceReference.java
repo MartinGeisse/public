@@ -17,12 +17,15 @@
 package org.apache.wicket.request.resource;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Locale;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.lang.Objects;
-import org.apache.wicket.util.lang.WicketObjects;
+import org.apache.wicket.core.util.lang.WicketObjects;
 
 /**
  * Reference to a resource. Can be used to reference global resources.
@@ -32,11 +35,11 @@ import org.apache.wicket.util.lang.WicketObjects;
  * are used to generate URLs for resource references. <code>locale</code>, <code>style</code> and
  * <code>variation</code> are optional fields to allow having specific references for individual
  * locales, styles and variations.
- *
+ * 
  * @author Matej Knopp
  * @author Juergen Donnerstag
  */
-public abstract class ResourceReference implements Serializable
+public abstract class ResourceReference implements IClusterable
 {
 	private static final long serialVersionUID = 1L;
 
@@ -44,7 +47,7 @@ public abstract class ResourceReference implements Serializable
 
 	/**
 	 * Creates new {@link ResourceReference} instance.
-	 *
+	 * 
 	 * @param key
 	 *            The data making up the resource reference
 	 */
@@ -57,7 +60,7 @@ public abstract class ResourceReference implements Serializable
 
 	/**
 	 * Creates new {@link ResourceReference} instance.
-	 *
+	 * 
 	 * @param scope
 	 *            mandatory parameter
 	 * @param name
@@ -80,7 +83,7 @@ public abstract class ResourceReference implements Serializable
 
 	/**
 	 * Creates new {@link ResourceReference} instance.
-	 *
+	 * 
 	 * @param scope
 	 *            mandatory parameter
 	 * @param name
@@ -93,7 +96,7 @@ public abstract class ResourceReference implements Serializable
 
 	/**
 	 * Construct.
-	 *
+	 * 
 	 * @param name
 	 *            resource name
 	 */
@@ -122,9 +125,9 @@ public abstract class ResourceReference implements Serializable
 
 	/**
 	 * returns extension of the resource reference
-	 *
-	 * @return extension of the resource's name in lower-case
-	 * or <code>null</code> if there is no extension
+	 * 
+	 * @return extension of the resource's name in lower-case or <code>null</code> if there is no
+	 *         extension
 	 */
 	public final String getExtension()
 	{
@@ -185,7 +188,7 @@ public abstract class ResourceReference implements Serializable
 	/**
 	 * Can be used to disable registering certain resource references in
 	 * {@link ResourceReferenceRegistry}.
-	 *
+	 * 
 	 * @return <code>true</code> if this reference can be registered, <code>false</code> otherwise.
 	 */
 	public boolean canBeRegistered()
@@ -222,7 +225,7 @@ public abstract class ResourceReference implements Serializable
 
 	/**
 	 * Returns the resource.
-	 *
+	 * 
 	 * @return resource instance
 	 */
 	public abstract IResource getResource();
@@ -230,7 +233,7 @@ public abstract class ResourceReference implements Serializable
 	/**
 	 * Allows to specify which locale, style and variation values will the generated URL for this
 	 * resource reference have.
-	 *
+	 * 
 	 * @return url attributes
 	 */
 	public UrlAttributes getUrlAttributes()
@@ -240,7 +243,7 @@ public abstract class ResourceReference implements Serializable
 
 	/**
 	 * @see ResourceReference#getUrlAttributes()
-	 *
+	 * 
 	 * @author Matej Knopp
 	 */
 	public static class UrlAttributes
@@ -251,7 +254,7 @@ public abstract class ResourceReference implements Serializable
 
 		/**
 		 * Construct.
-		 *
+		 * 
 		 * @param locale
 		 *            resource locale
 		 * @param style
@@ -336,15 +339,15 @@ public abstract class ResourceReference implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		final String scope;
-		final String name;
-		final Locale locale;
-		final String style;
-		final String variation;
+		private final String scope;
+		private final String name;
+		private final Locale locale;
+		private final String style;
+		private final String variation;
 
 		/**
 		 * Construct.
-		 *
+		 * 
 		 * @param reference
 		 *            resource reference
 		 */
@@ -356,7 +359,7 @@ public abstract class ResourceReference implements Serializable
 
 		/**
 		 * Construct.
-		 *
+		 * 
 		 * @param scope
 		 *            resource scope
 		 * @param name
@@ -414,7 +417,7 @@ public abstract class ResourceReference implements Serializable
 
 		/**
 		 * Gets scope.
-		 *
+		 * 
 		 * @return scope
 		 */
 		public final String getScope()
@@ -432,7 +435,7 @@ public abstract class ResourceReference implements Serializable
 
 		/**
 		 * Gets name.
-		 *
+		 * 
 		 * @return name
 		 */
 		public final String getName()
@@ -442,7 +445,7 @@ public abstract class ResourceReference implements Serializable
 
 		/**
 		 * Gets locale.
-		 *
+		 * 
 		 * @return locale
 		 */
 		public final Locale getLocale()
@@ -452,7 +455,7 @@ public abstract class ResourceReference implements Serializable
 
 		/**
 		 * Gets style.
-		 *
+		 * 
 		 * @return style
 		 */
 		public final String getStyle()
@@ -462,7 +465,7 @@ public abstract class ResourceReference implements Serializable
 
 		/**
 		 * Gets variation.
-		 *
+		 * 
 		 * @return variation
 		 */
 		public final String getVariation()
@@ -485,5 +488,13 @@ public abstract class ResourceReference implements Serializable
 	public String toString()
 	{
 		return data.toString();
+	}
+
+	/**
+	 * @return the resources this ResourceReference depends on.
+	 */
+	public Iterable<? extends HeaderItem> getDependencies()
+	{
+		return Collections.emptyList();
 	}
 }

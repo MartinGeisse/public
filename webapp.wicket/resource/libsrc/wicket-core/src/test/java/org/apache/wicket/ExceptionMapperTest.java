@@ -21,8 +21,8 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.request.IExceptionMapper;
 import org.apache.wicket.request.IRequestHandler;
-import org.apache.wicket.request.handler.PageProvider;
-import org.apache.wicket.request.handler.RenderPageRequestHandler;
+import org.apache.wicket.core.request.handler.PageProvider;
+import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.util.IProvider;
 import org.apache.wicket.util.lang.Exceptions;
 import org.apache.wicket.util.resource.IResourceStream;
@@ -69,6 +69,7 @@ public class ExceptionMapperTest extends WicketTestCase
 			this.wrapped = wrapped;
 		}
 
+		@Override
 		public IExceptionMapper get()
 		{
 			return wrapperExceptionMapper = new WrapperExceptionMapper(wrapped.get());
@@ -90,6 +91,7 @@ public class ExceptionMapperTest extends WicketTestCase
 			this.wrapped = wrapped;
 		}
 
+		@Override
 		public IRequestHandler map(Exception e)
 		{
 			if (Exceptions.findCause(e, TestException.class) != null)
@@ -115,6 +117,7 @@ public class ExceptionMapperTest extends WicketTestCase
 	{
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{

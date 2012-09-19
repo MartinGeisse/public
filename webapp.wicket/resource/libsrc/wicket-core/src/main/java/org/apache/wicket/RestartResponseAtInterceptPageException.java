@@ -31,9 +31,9 @@ import org.apache.wicket.request.Url;
 import org.apache.wicket.request.Url.QueryParameter;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.flow.ResetResponseException;
-import org.apache.wicket.request.handler.PageProvider;
-import org.apache.wicket.request.handler.RenderPageRequestHandler;
-import org.apache.wicket.request.handler.RenderPageRequestHandler.RedirectPolicy;
+import org.apache.wicket.core.request.handler.PageProvider;
+import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
+import org.apache.wicket.core.request.handler.RenderPageRequestHandler.RedirectPolicy;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.handler.RedirectRequestHandler;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -154,13 +154,13 @@ public class RestartResponseAtInterceptPageException extends ResetResponseExcept
 			}
 		}
 
-		private static MetaDataKey<InterceptData> key = new MetaDataKey<InterceptData>()
+		private static final MetaDataKey<InterceptData> key = new MetaDataKey<InterceptData>()
 		{
 			private static final long serialVersionUID = 1L;
 		};
 	}
 
-	static boolean continueToOriginalDestination()
+	static void continueToOriginalDestination()
 	{
 		InterceptData data = InterceptData.get();
 		if (data != null)
@@ -168,23 +168,24 @@ public class RestartResponseAtInterceptPageException extends ResetResponseExcept
 			data.continueOk = true;
 			String url = RequestCycle.get().getUrlRenderer().renderUrl(data.originalUrl);
 			RequestCycle.get().replaceAllRequestHandlers(new RedirectRequestHandler(url));
-			return true;
 		}
-		return false;
 	}
 
 	static IRequestMapper MAPPER = new IRequestMapper()
 	{
+		@Override
 		public int getCompatibilityScore(Request request)
 		{
 			return matchedData(request) != null ? Integer.MAX_VALUE : 0;
 		}
 
+		@Override
 		public Url mapHandler(IRequestHandler requestHandler)
 		{
 			return null;
 		}
 
+		@Override
 		public IRequestHandler mapRequest(Request request)
 		{
 			InterceptData data = matchedData(request);

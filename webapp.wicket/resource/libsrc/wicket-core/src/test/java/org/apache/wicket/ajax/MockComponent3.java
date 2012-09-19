@@ -16,7 +16,8 @@
  */
 package org.apache.wicket.ajax;
 
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
@@ -41,7 +42,7 @@ public class MockComponent3 extends Panel
 	@Override
 	public void renderHead(IHeaderResponse response)
 	{
-		response.renderCSSReference(new PackageResourceReference(MockComponent3.class,
-			"mockStyleSheet3.css"));
+		response.render(CssHeaderItem.forReference(new PackageResourceReference(
+				MockComponent3.class, "mockStyleSheet3.css")));
 	}
 }

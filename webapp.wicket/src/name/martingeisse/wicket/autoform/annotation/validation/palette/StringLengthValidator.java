@@ -6,16 +6,17 @@
 
 package name.martingeisse.wicket.autoform.annotation.validation.palette;
 
-import java.util.Map;
-
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.validation.IValidatable;
-import org.apache.wicket.validation.validator.AbstractValidator;
+import org.apache.wicket.validation.IValidator;
+import org.apache.wicket.validation.ValidationError;
 
 /**
  * Common implementation for {@link ExactStringLength}, {@link MinStringLength}
  * and {@link MaxStringLength} validation.
  */
-public class StringLengthValidator extends AbstractValidator<String> {
+public class StringLengthValidator extends Behavior implements IValidator<String>, IClusterable {
 
 	/**
 	 * the minLength
@@ -64,58 +65,49 @@ public class StringLengthValidator extends AbstractValidator<String> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.wicket.validation.validator.AbstractValidator#onValidate(org.apache.wicket.validation.IValidatable)
+	 * @see org.apache.wicket.validation.IValidator#validate(org.apache.wicket.validation.IValidatable)
 	 */
 	@Override
-	protected void onValidate(IValidatable<String> validatable) {
+	public void validate(IValidatable<String> validatable) {
 		int length = validatable.getValue().length();
 		if ((minLength >= 0 && length < minLength) || (maxLength >= 0 && length > maxLength)) {
-			error(validatable);
+			ValidationError error = new ValidationError(this, getVariation());
+			error.setVariable("length", validatable.getValue().length());
+			if (minLength >= 0 && maxLength >= 0 && minLength == maxLength) {
+				error.setVariable("exact", minLength);
+			} else {
+				if (minLength >= 0) {
+					error.setVariable("minimum", minLength);
+				}
+				if (maxLength >= 0) {
+					error.setVariable("maximum", maxLength);
+				}
+			}
+			validatable.error(error);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.wicket.validation.validator.AbstractValidator#resourceKey()
+	/**
+	 * Returns the variation for the error message.
 	 */
-	@Override
-	protected String resourceKey() {
+	private String getVariation() {
 		if (minLength >= 0) {
 			if (maxLength >= 0) {
 				if (minLength == maxLength) {
-					return "StringValidator.exact";
+					return "exact";
 				} else {
-					return "StringValidator.range";
+					return "range";
 				}
 			} else {
-				return "StringValidator.minimum";
+				return "minimum";
 			}
 		} else {
 			if (maxLength >= 0) {
-				return "StringValidator.maximum";
+				return "maximum";
 			} else {
 				throw new IllegalStateException("validation error occured although neither a minimum nor a maximum string length are defined");
 			}
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.apache.wicket.validation.validator.AbstractValidator#variablesMap(org.apache.wicket.validation.IValidatable)
-	 */
-	@Override
-	protected Map<String, Object> variablesMap(IValidatable<String> validatable) {
-		final Map<String, Object> map = super.variablesMap(validatable);
-		map.put("length", validatable.getValue().length());
-		if (minLength >= 0 && maxLength >= 0 && minLength == maxLength) {
-			map.put("exact", minLength);
-		} else {
-			if (minLength >= 0) {
-				map.put("minimum", minLength);
-			}
-			if (maxLength >= 0) {
-				map.put("maximum", maxLength);
-			}
-		}
-		return map;
-	}
-
 }

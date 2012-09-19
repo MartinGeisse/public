@@ -21,7 +21,7 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxIndicatorAware;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -65,7 +65,7 @@ public class AjaxIndicatorAppender extends Behavior
 	{
 		super.renderHead(component, response);
 
-		AjaxRequestTarget target = AjaxRequestTarget.get();
+		AjaxRequestTarget target = component.getRequestCycle().find(AjaxRequestTarget.class);
 		if (target != null)
 		{
 			final String javascript = "var e = Wicket.$('" + getMarkupId() +
@@ -124,7 +124,7 @@ public class AjaxIndicatorAppender extends Behavior
 	}
 
 	/**
-	 * @see org.apache.wicket.behavior.AbstractBehavior#bind(org.apache.wicket.Component)
+	 * @see org.apache.wicket.behavior.Behavior#bind(org.apache.wicket.Component)
 	 */
 	@Override
 	public final void bind(final Component component)

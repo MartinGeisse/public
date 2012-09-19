@@ -163,7 +163,7 @@ public class UrlRendererTest extends Assert
 	/**
 	 * https://issues.apache.org/jira/browse/WICKET-4401
 	 * 
-	 * A Url should not end with '..' because some web containers do not handle it properly. Using
+	 * A Url should not ends with '..' because some web containers do not handle it properly. Using
 	 * '../' works better.
 	 */
 	@Test
@@ -174,8 +174,21 @@ public class UrlRendererTest extends Assert
 	}
 
 	/**
-	 * https://issues.apache.org/jira/browse/WICKET-4514
+	 * Verify that absolute urls are rendered as is, ignoring
+	 * the current client url and base url completely.
+	 *
+	 * https://issues.apache.org/jira/browse/WICKET-4466
 	 */
+	@Test
+	public void renderAbsoluteUrl()
+	{
+		String absoluteUrl = "http://www.example.com/some/path.ext";
+		Url url = Url.parse(absoluteUrl);
+		UrlRenderer renderer = new UrlRenderer(new MockWebRequest(Url.parse("foo/bar")));
+		String renderedUrl = renderer.renderUrl(url);
+		assertEquals(absoluteUrl, renderedUrl);
+	}
+
 	@Test
 	public void renderFullUrlWithRelativeArgument()
 	{

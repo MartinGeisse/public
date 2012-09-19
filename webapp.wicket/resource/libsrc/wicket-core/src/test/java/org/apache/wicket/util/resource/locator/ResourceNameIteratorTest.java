@@ -16,11 +16,16 @@
  */
 package org.apache.wicket.util.resource.locator;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 
 import org.apache.wicket.WicketTestCase;
+import org.apache.wicket.core.util.resource.locator.ExtensionResourceNameIterator;
+import org.apache.wicket.core.util.resource.locator.LocaleResourceNameIterator;
+import org.apache.wicket.core.util.resource.locator.ResourceNameIterator;
+import org.apache.wicket.core.util.resource.locator.StyleAndVariationResourceNameIterator;
 import org.junit.Test;
 
 
@@ -84,25 +89,56 @@ public class ResourceNameIteratorTest extends WicketTestCase
 		iterator.next();
 		assertFalse(iterator.hasNext());
 
+		iterator = new StyleAndVariationResourceNameIterator("style", null);
+		assertTrue(iterator.hasNext());
+		iterator.next();
+		assertEquals("style", iterator.getStyle());
+		assertEquals(null, iterator.getVariation());
+		iterator.next();
+		assertEquals(null, iterator.getStyle());
+		assertEquals(null, iterator.getVariation());
+		assertFalse(iterator.hasNext());
+
 		iterator = new StyleAndVariationResourceNameIterator("style", "variation");
 		assertTrue(iterator.hasNext());
-
 		iterator.next();
 		assertEquals("style", iterator.getStyle());
 		assertEquals("variation", iterator.getVariation());
-
 		iterator.next();
 		assertEquals("style", iterator.getStyle());
-		assertNull(iterator.getVariation());
-
+		assertEquals(null, iterator.getVariation());
 		iterator.next();
-		assertNull(iterator.getStyle());
+		assertEquals(null, iterator.getStyle());
 		assertEquals("variation", iterator.getVariation());
-
 		iterator.next();
-		assertNull(iterator.getStyle());
-		assertNull(iterator.getVariation());
+		assertEquals(null, iterator.getStyle());
+		assertEquals(null, iterator.getVariation());
+		assertFalse(iterator.hasNext());
+	}
 
+	/**
+	 * 
+	 */
+	@Test
+	public void extensionResourceNameIterator()
+	{
+		ExtensionResourceNameIterator iterator = new ExtensionResourceNameIterator(null);
+		assertTrue(iterator.hasNext());
+		assertEquals(null, iterator.next());
+		assertFalse(iterator.hasNext());
+
+		iterator = new ExtensionResourceNameIterator(Arrays.asList("txt"));
+		assertTrue(iterator.hasNext());
+		assertEquals("txt", iterator.next());
+		assertFalse(iterator.hasNext());
+
+		iterator = new ExtensionResourceNameIterator(Arrays.asList("properties", "utf8.properties", "properties.xml"));
+		assertTrue(iterator.hasNext());
+		assertEquals("properties", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("utf8.properties", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("properties.xml", iterator.next());
 		assertFalse(iterator.hasNext());
 	}
 
@@ -116,14 +152,29 @@ public class ResourceNameIteratorTest extends WicketTestCase
 		String style = null;
 		String var = "var";
 		Locale locale = Locale.getDefault();
-		String ext = null;
+		Iterable<String> extensions = null;
 		boolean strict = false;
-		Iterator<String> iterator = new ResourceNameIterator(path, style, var, locale, ext, strict);
+		Iterator<String> iterator = new ResourceNameIterator(path, style, var, locale, extensions, strict);
 		HashSet<String> variations = new HashSet<String>();
 		while (iterator.hasNext())
 		{
 			assertTrue(variations.add(iterator.next()));
 		}
 		assertEquals(6, variations.size());
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public void noTrailingDotWhenNoExtension()
+	{
+		Iterator<String> iterator = new ResourceNameIterator("foo", null, null, null, null, false);
+
+		assertTrue(iterator.hasNext());
+
+		assertEquals("foo", iterator.next());
+
+		assertFalse(iterator.hasNext());
 	}
 }

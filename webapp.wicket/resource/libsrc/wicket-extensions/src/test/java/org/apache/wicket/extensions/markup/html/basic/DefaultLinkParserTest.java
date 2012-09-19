@@ -20,6 +20,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
+ * Test for {@link DefaultLinkParser}.
+ * 
  * @author Juergen Donnerstag
  */
 public class DefaultLinkParserTest extends Assert

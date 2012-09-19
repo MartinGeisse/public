@@ -48,9 +48,6 @@ public class RequestCycleSettings implements IRequestCycleSettings
 	 */
 	private boolean gatherExtendedBrowserInfo = false;
 
-	/** Type of handling for unexpected exceptions */
-	private IExceptionSettings.UnexpectedExceptionDisplay unexpectedExceptionDisplay = IExceptionSettings.SHOW_EXCEPTION_PAGE;
-
 	/**
 	 * The render strategy, defaults to 'REDIRECT_TO_BUFFER'. This property influences the default
 	 * way in how a logical request that consists of an 'action' and a 'render' part is handled, and
@@ -58,7 +55,7 @@ public class RequestCycleSettings implements IRequestCycleSettings
 	 */
 	private IRequestCycleSettings.RenderStrategy renderStrategy = RenderStrategy.REDIRECT_TO_BUFFER;
 
-	/** List of {@link org.apache.wicket.IResponseFilter}s. */
+	/** List of {@link IResponseFilter}s. */
 	private List<IResponseFilter> responseFilters;
 
 	/**
@@ -79,8 +76,9 @@ public class RequestCycleSettings implements IRequestCycleSettings
 // ****************************************************************************
 
 	/**
-	 * @see org.apache.wicket.settings.IRequestCycleSettings#addResponseFilter(org.apache.wicket.IResponseFilter)
+	 * @see org.apache.wicket.settings.IRequestCycleSettings#addResponseFilter(IResponseFilter)
 	 */
+	@Override
 	public void addResponseFilter(IResponseFilter responseFilter)
 	{
 		if (responseFilters == null)
@@ -93,6 +91,7 @@ public class RequestCycleSettings implements IRequestCycleSettings
 	/**
 	 * @see org.apache.wicket.settings.IRequestCycleSettings#getBufferResponse()
 	 */
+	@Override
 	public boolean getBufferResponse()
 	{
 		return bufferResponse;
@@ -101,6 +100,7 @@ public class RequestCycleSettings implements IRequestCycleSettings
 	/**
 	 * @see org.apache.wicket.settings.IRequestCycleSettings#getGatherExtendedBrowserInfo()
 	 */
+	@Override
 	public boolean getGatherExtendedBrowserInfo()
 	{
 		return gatherExtendedBrowserInfo;
@@ -109,6 +109,7 @@ public class RequestCycleSettings implements IRequestCycleSettings
 	/**
 	 * @see org.apache.wicket.settings.IRequestCycleSettings#getRenderStrategy()
 	 */
+	@Override
 	public IRequestCycleSettings.RenderStrategy getRenderStrategy()
 	{
 		return renderStrategy;
@@ -117,6 +118,7 @@ public class RequestCycleSettings implements IRequestCycleSettings
 	/**
 	 * @see org.apache.wicket.settings.IRequestCycleSettings#getResponseFilters()
 	 */
+	@Override
 	public List<IResponseFilter> getResponseFilters()
 	{
 		if (responseFilters == null)
@@ -132,6 +134,7 @@ public class RequestCycleSettings implements IRequestCycleSettings
 	/**
 	 * @see org.apache.wicket.settings.IRequestCycleSettings#getResponseRequestEncoding()
 	 */
+	@Override
 	public String getResponseRequestEncoding()
 	{
 		return responseRequestEncoding;
@@ -140,22 +143,16 @@ public class RequestCycleSettings implements IRequestCycleSettings
 	/**
 	 * @see org.apache.wicket.settings.IRequestCycleSettings#getTimeout()
 	 */
+	@Override
 	public Duration getTimeout()
 	{
 		return timeout;
 	}
 
 	/**
-	 * @see org.apache.wicket.settings.IRequestCycleSettings#getUnexpectedExceptionDisplay()
-	 */
-	public IExceptionSettings.UnexpectedExceptionDisplay getUnexpectedExceptionDisplay()
-	{
-		return unexpectedExceptionDisplay;
-	}
-
-	/**
 	 * @see org.apache.wicket.settings.IRequestCycleSettings#setBufferResponse(boolean)
 	 */
+	@Override
 	public void setBufferResponse(boolean bufferResponse)
 	{
 		this.bufferResponse = bufferResponse;
@@ -164,14 +161,16 @@ public class RequestCycleSettings implements IRequestCycleSettings
 	/**
 	 * @see org.apache.wicket.settings.IRequestCycleSettings#setGatherExtendedBrowserInfo(boolean)
 	 */
+	@Override
 	public void setGatherExtendedBrowserInfo(boolean gatherExtendedBrowserInfo)
 	{
 		this.gatherExtendedBrowserInfo = gatherExtendedBrowserInfo;
 	}
 
 	/**
-	 * @see org.apache.wicket.settings.IRequestCycleSettings#setRenderStrategy(org.apache.wicket.settings.Settings.RenderStrategy)
+	 * @see org.apache.wicket.settings.IRequestCycleSettings#setRenderStrategy(RenderStrategy)
 	 */
+	@Override
 	public void setRenderStrategy(IRequestCycleSettings.RenderStrategy renderStrategy)
 	{
 		this.renderStrategy = renderStrategy;
@@ -180,6 +179,7 @@ public class RequestCycleSettings implements IRequestCycleSettings
 	/**
 	 * @see org.apache.wicket.settings.IRequestCycleSettings#setResponseRequestEncoding(java.lang.String)
 	 */
+	@Override
 	public void setResponseRequestEncoding(final String encoding)
 	{
 		Args.notNull(encoding, "encoding");
@@ -189,6 +189,7 @@ public class RequestCycleSettings implements IRequestCycleSettings
 	/**
 	 * @see org.apache.wicket.settings.IRequestCycleSettings#setTimeout(org.apache.wicket.util.time.Duration)
 	 */
+	@Override
 	public void setTimeout(Duration timeout)
 	{
 		if (timeout == null)
@@ -196,14 +197,5 @@ public class RequestCycleSettings implements IRequestCycleSettings
 			throw new IllegalArgumentException("timeout cannot be null");
 		}
 		this.timeout = timeout;
-	}
-
-	/**
-	 * @see org.apache.wicket.settings.IRequestCycleSettings#setUnexpectedExceptionDisplay(org.apache.wicket.settings.Settings.UnexpectedExceptionDisplay)
-	 */
-	public void setUnexpectedExceptionDisplay(
-		final IExceptionSettings.UnexpectedExceptionDisplay unexpectedExceptionDisplay)
-	{
-		this.unexpectedExceptionDisplay = unexpectedExceptionDisplay;
 	}
 }

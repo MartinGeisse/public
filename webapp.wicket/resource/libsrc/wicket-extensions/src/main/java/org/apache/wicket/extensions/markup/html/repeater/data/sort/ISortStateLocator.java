@@ -16,7 +16,7 @@
  */
 package org.apache.wicket.extensions.markup.html.repeater.data.sort;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 
 /**
@@ -24,12 +24,14 @@ import org.apache.wicket.IClusterable;
  * version ISortState objects.
  * 
  * @author Igor Vaynberg (ivaynberg)
+ * @param <T>
+ *            the type of the sort property
  * 
  */
-public interface ISortStateLocator extends IClusterable
+public interface ISortStateLocator<T> extends IClusterable
 {
 	/**
 	 * @return ISortState object
 	 */
-	ISortState getSortState();
+	ISortState<T> getSortState();
 }

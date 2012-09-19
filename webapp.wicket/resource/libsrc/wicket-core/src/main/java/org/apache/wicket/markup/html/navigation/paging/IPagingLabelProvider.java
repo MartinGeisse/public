@@ -16,7 +16,7 @@
  */
 package org.apache.wicket.markup.html.navigation.paging;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * This interface is used by the PagingNavigator components to get the label of the pages there are
@@ -31,5 +31,5 @@ public interface IPagingLabelProvider extends IClusterable
 	 *            The page number for which the label must be generated.
 	 * @return The string to be displayed for this page number
 	 */
-	String getPageLabel(int page);
+	String getPageLabel(long page);
 }

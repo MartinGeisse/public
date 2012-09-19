@@ -26,7 +26,7 @@ import org.apache.wicket.util.lang.Args;
  * markup. It supports child first and parent first traversal and intercepts while moving down or up
  * the hierarchy.
  * <p>
- * It assume the container class implements <code>Iterable</code>. The leaf nodes don't need to.
+ * It assumes the container class implements <code>Iterable</code>. The leaf nodes don't need to.
  * <p>
  * Consecutive calls to <code>hasNext()</code> without <code>next()</code> in between, don't move
  * the cursor, but return the same value until <code>next()</code> is called.
@@ -105,6 +105,7 @@ public abstract class AbstractHierarchyIterator<N, I extends N> implements Itera
 	 */
 	abstract protected Iterator<N> newIterator(final N node);
 
+	@Override
 	public boolean hasNext()
 	{
 		// Did we reach the end already?
@@ -305,6 +306,7 @@ public abstract class AbstractHierarchyIterator<N, I extends N> implements Itera
 	/**
 	 * Traverse the hierarchy and get the next element
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public I next()
 	{
@@ -330,6 +332,7 @@ public abstract class AbstractHierarchyIterator<N, I extends N> implements Itera
 		return (I)data.lastNode;
 	}
 
+	@Override
 	public void remove()
 	{
 		if (data == null)
@@ -362,6 +365,7 @@ public abstract class AbstractHierarchyIterator<N, I extends N> implements Itera
 		traverse = false;
 	}
 
+	@Override
 	public final Iterator<I> iterator()
 	{
 		return this;
@@ -421,17 +425,20 @@ public abstract class AbstractHierarchyIterator<N, I extends N> implements Itera
 			this.iter = iter;
 		}
 
+		@Override
 		public boolean hasNext()
 		{
 			return iter.hasNext();
 		}
 
+		@Override
 		public N next()
 		{
 			lastNode = iter.next();
 			return lastNode;
 		}
 
+		@Override
 		public void remove()
 		{
 			iter.remove();

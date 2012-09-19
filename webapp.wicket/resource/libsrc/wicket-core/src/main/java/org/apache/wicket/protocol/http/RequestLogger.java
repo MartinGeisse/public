@@ -18,6 +18,7 @@ package org.apache.wicket.protocol.http;
 
 import org.apache.wicket.request.ILoggableRequestHandler;
 import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.util.lang.Classes;
 import org.apache.wicket.util.string.AppendingStringBuffer;
 import org.apache.wicket.util.string.Strings;
 import org.slf4j.Logger;
@@ -32,8 +33,8 @@ import org.slf4j.LoggerFactory;
  * the event target and what {@link IRequestHandler} was the response target. It also records what
  * session data was touched for this and how long the request did take.
  * 
- * To view this information live see the {@link InspectorBug} that shows the {@link InspectorPage}
- * with the {@link LiveSessionsPage}.
+ * To view this information live see org.apache.wicket.devutils.inspector.InspectorBug that shows
+ * the org.apache.wicket.devutils.inspector.InspectorPage with the org.apache.wicket.devutils.inspector.LiveSessionsPage.
  * 
  * This implementation uses a rounded buffer for storing the request data, and strives to minimize
  * contention on accessing the rounded buffer. At the beginning of your application start, the
@@ -114,9 +115,10 @@ public class RequestLogger extends AbstractRequestLogger
 		AppendingStringBuffer sb = new AppendingStringBuffer(128);
 		if (handler != null)
 		{
+			Class<? extends IRequestHandler> handlerClass = handler.getClass();
 			sb.append("handler=");
-			sb.append(handler.getClass().isAnonymousClass() ? handler.getClass().getName()
-				: handler.getClass().getSimpleName());
+			sb.append(handlerClass.isAnonymousClass() ? handlerClass.getName()
+					: Classes.simpleName(handlerClass));
 			if (handler instanceof ILoggableRequestHandler)
 			{
 				sb.append(",data=");

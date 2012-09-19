@@ -18,10 +18,10 @@ package org.apache.wicket;
 
 import org.apache.wicket.request.component.IRequestablePage;
 import org.apache.wicket.request.flow.ResetResponseException;
-import org.apache.wicket.request.handler.IPageProvider;
-import org.apache.wicket.request.handler.PageProvider;
-import org.apache.wicket.request.handler.RenderPageRequestHandler;
-import org.apache.wicket.request.handler.RenderPageRequestHandler.RedirectPolicy;
+import org.apache.wicket.core.request.handler.IPageProvider;
+import org.apache.wicket.core.request.handler.PageProvider;
+import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
+import org.apache.wicket.core.request.handler.RenderPageRequestHandler.RedirectPolicy;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
@@ -29,6 +29,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * page.
  * 
  * @author Igor Vaynberg (ivaynberg)
+ * @see NonResettingRestartException
  */
 public class RestartResponseException extends ResetResponseException
 {

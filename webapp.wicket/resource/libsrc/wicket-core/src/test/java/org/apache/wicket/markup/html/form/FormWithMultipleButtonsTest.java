@@ -66,7 +66,7 @@ public class FormWithMultipleButtonsTest extends WicketTestCase
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Test
 	public void buttonInvokedFirst()
@@ -131,6 +131,7 @@ public class FormWithMultipleButtonsTest extends WicketTestCase
 			});
 		}
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{

@@ -21,6 +21,8 @@ import javax.swing.tree.TreeNode;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
 
 /**
@@ -28,11 +30,12 @@ import org.apache.wicket.markup.html.basic.Label;
  * 
  * @author Matej Knopp
  */
+@Deprecated
 public abstract class AbstractColumn implements IColumn
 {
 	private static final long serialVersionUID = 1L;
 
-	private final String header;
+	private final IModel<String> header;
 
 	private final ColumnLocation location;
 
@@ -49,6 +52,20 @@ public abstract class AbstractColumn implements IColumn
 	 */
 	public AbstractColumn(final ColumnLocation location, final String header)
 	{
+		this(location, Model.of(header));
+	}
+
+	/**
+	 * Creates the tree column.
+	 *
+	 * @param location
+	 *            Specifies how the column should be aligned and what his size should be
+	 *
+	 * @param header
+	 *            Header caption
+	 */
+	public AbstractColumn(final ColumnLocation location, final IModel<String> header)
+	{
 		this.location = location;
 		this.header = header;
 	}
@@ -56,6 +73,7 @@ public abstract class AbstractColumn implements IColumn
 	/**
 	 * @see IColumn#getLocation()
 	 */
+	@Override
 	public ColumnLocation getLocation()
 	{
 		return location;
@@ -64,6 +82,7 @@ public abstract class AbstractColumn implements IColumn
 	/**
 	 * @see IColumn#getSpan(TreeNode)
 	 */
+	@Override
 	public int getSpan(final TreeNode node)
 	{
 		return 0;
@@ -72,6 +91,7 @@ public abstract class AbstractColumn implements IColumn
 	/**
 	 * @see IColumn#isVisible()
 	 */
+	@Override
 	public boolean isVisible()
 	{
 		return true;
@@ -80,6 +100,7 @@ public abstract class AbstractColumn implements IColumn
 	/**
 	 * @see IColumn#newHeader(MarkupContainer, String)
 	 */
+	@Override
 	public Component newHeader(final MarkupContainer parent, final String id)
 	{
 		return new Label(id, header);
@@ -88,6 +109,7 @@ public abstract class AbstractColumn implements IColumn
 	/**
 	 * @see IColumn#setTreeTable(TreeTable)
 	 */
+	@Override
 	public void setTreeTable(final TreeTable treeTable)
 	{
 		if ((this.treeTable != null) && (this.treeTable != treeTable))

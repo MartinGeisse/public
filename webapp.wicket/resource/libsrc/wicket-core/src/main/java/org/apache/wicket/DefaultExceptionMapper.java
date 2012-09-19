@@ -17,21 +17,23 @@
 package org.apache.wicket;
 
 import org.apache.wicket.authorization.AuthorizationException;
+import org.apache.wicket.core.request.handler.IPageRequestHandler;
+import org.apache.wicket.core.request.handler.ListenerInvocationNotAllowedException;
+import org.apache.wicket.core.request.handler.PageProvider;
+import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
+import org.apache.wicket.core.request.mapper.StalePageException;
 import org.apache.wicket.markup.html.pages.ExceptionErrorPage;
 import org.apache.wicket.protocol.http.PageExpiredException;
 import org.apache.wicket.protocol.http.servlet.ResponseIOException;
 import org.apache.wicket.request.IExceptionMapper;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Request;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.EmptyRequestHandler;
-import org.apache.wicket.request.handler.IPageRequestHandler;
-import org.apache.wicket.request.handler.ListenerInvocationNotAllowedException;
-import org.apache.wicket.request.handler.PageProvider;
-import org.apache.wicket.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.request.http.WebRequest;
+import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.request.http.handler.ErrorCodeRequestHandler;
-import org.apache.wicket.request.mapper.StalePageException;
 import org.apache.wicket.settings.IExceptionSettings;
 import org.apache.wicket.settings.IExceptionSettings.UnexpectedExceptionDisplay;
 import org.slf4j.Logger;
@@ -46,10 +48,17 @@ public class DefaultExceptionMapper implements IExceptionMapper
 {
 	private static final Logger logger = LoggerFactory.getLogger(DefaultExceptionMapper.class);
 
+	@Override
 	public IRequestHandler map(Exception e)
 	{
 		try
 		{
+			Response response = RequestCycle.get().getResponse();
+			if (response instanceof WebResponse)
+			{
+				// we don't wan't to cache an exceptional reply in the browser
+				((WebResponse)response).disableCaching();
+			}
 			return internalMap(e);
 		}
 		catch (RuntimeException e2)

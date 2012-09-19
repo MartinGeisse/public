@@ -17,11 +17,11 @@
 package org.apache.wicket.ajax;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Page;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.core.util.string.JavaScriptUtils;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.request.http.WebRequest;
-import org.apache.wicket.util.string.JavaScriptUtils;
 import org.apache.wicket.util.time.Duration;
 
 /**
@@ -34,11 +34,9 @@ import org.apache.wicket.util.time.Duration;
  */
 public abstract class AbstractAjaxTimerBehavior extends AbstractDefaultAjaxBehavior
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
+	private static final String WICKET_TIMERS_ID = AbstractAjaxTimerBehavior.class.getSimpleName() + "-timers";
 	/** The update interval */
 	private Duration updateInterval;
 
@@ -54,19 +52,7 @@ public abstract class AbstractAjaxTimerBehavior extends AbstractDefaultAjaxBehav
 	 */
 	public AbstractAjaxTimerBehavior(final Duration updateInterval)
 	{
-		if (updateInterval == null || updateInterval.getMilliseconds() <= 0)
-		{
-			throw new IllegalArgumentException("Invalid update interval");
-		}
-		this.updateInterval = updateInterval;
-	}
-
-	/**
-	 * Stops the timer
-	 */
-	public final void stop()
-	{
-		stopped = true;
+		setUpdateInterval(updateInterval);
 	}
 
 	/**
@@ -99,12 +85,15 @@ public abstract class AbstractAjaxTimerBehavior extends AbstractDefaultAjaxBehav
 	{
 		super.renderHead(component, response);
 
-		WebRequest request = (WebRequest)RequestCycle.get().getRequest();
+		response.render(JavaScriptHeaderItem.forScript("if (typeof(Wicket.TimerHandles) === 'undefined') {Wicket.TimerHandles = {}}",
+				WICKET_TIMERS_ID));
 
-		if (!stopped && (!headRendered || !request.isAjax()))
+		WebRequest request = (WebRequest) component.getRequest();
+
+		if (!isStopped() && (!headRendered || !request.isAjax()))
 		{
 			headRendered = true;
-			response.renderOnLoadJavaScript(getJsTimeoutCall(updateInterval));
+			response.render(OnLoadHeaderItem.forScript(getJsTimeoutCall(updateInterval)));
 		}
 	}
 
@@ -115,47 +104,35 @@ public abstract class AbstractAjaxTimerBehavior extends AbstractDefaultAjaxBehav
 	 */
 	protected final String getJsTimeoutCall(final Duration updateInterval)
 	{
-		CharSequence callbackScript = getCallbackScript();
-		callbackScript = JavaScriptUtils.escapeQuotes(callbackScript);
-		// use setTimeout(String) instead of setTimeout(function) because IE leaks memory
-		return "setTimeout(\"" + callbackScript + "\", " + updateInterval.getMilliseconds() +
-			");";
-	}
+		CharSequence js = getCallbackScript();
+		js = JavaScriptUtils.escapeQuotes(js);
 
-	@Override
-	protected CharSequence getCallbackScript()
-	{
-		return generateCallbackScript("wicketAjaxGet('" + getCallbackUrl() + "'");
+		String timeoutHandle = getTimeoutHandle();
+		// this might look strange, but it is necessary for IE not to leak :(
+		return timeoutHandle+" = setTimeout('" + js + "', " +
+			updateInterval.getMilliseconds() + ')';
 	}
 
 	/**
-	 * @see org.apache.wicket.ajax.AbstractDefaultAjaxBehavior#getPreconditionScript()
+	 * @return the name of the handle that is used to stop any scheduled timer
 	 */
-	@Override
-	protected CharSequence getPreconditionScript()
-	{
-		String precondition = null;
-		if (!(getComponent() instanceof Page))
-		{
-			String componentId = getComponent().getMarkupId();
-			precondition = "var c = Wicket.$('" + componentId +
-				"'); return typeof(c) != 'undefined' && c != null";
-		}
-		return precondition;
+	private String getTimeoutHandle() {
+		return "Wicket.TimerHandles['"+getComponent().getMarkupId() + "']";
 	}
-
+	
 	/**
 	 * 
-	 * @see org.apache.wicket.ajax.AbstractDefaultAjaxBehavior#respond(org.apache.wicket.ajax.AjaxRequestTarget)
+	 * @see org.apache.wicket.ajax.AbstractDefaultAjaxBehavior#respond(AjaxRequestTarget)
 	 */
 	@Override
 	protected final void respond(final AjaxRequestTarget target)
 	{
-		onTimer(target);
-
-		if (!stopped && isEnabled(getComponent()))
+		if (!isStopped() && isEnabled(getComponent()))
 		{
-			target.getHeaderResponse().renderOnLoadJavaScript(getJsTimeoutCall(updateInterval));
+			onTimer(target);
+
+			target.getHeaderResponse().render(
+			OnLoadHeaderItem.forScript(getJsTimeoutCall(updateInterval)));
 		}
 	}
 
@@ -168,12 +145,35 @@ public abstract class AbstractAjaxTimerBehavior extends AbstractDefaultAjaxBehav
 	protected abstract void onTimer(final AjaxRequestTarget target);
 
 	/**
-	 * @return {@code true} if has been stopped via {@link #stop()}
+	 * @return {@code true} if has been stopped via {@link #stop(AjaxRequestTarget)}
 	 */
 	public final boolean isStopped()
 	{
 		return stopped;
 	}
 
+	/**
+	 * Re-enables the timer if already stopped
+	 *
+	 * @param target
+	 */
+	public final void restart(final AjaxRequestTarget target)
+	{
+		if (isStopped())
+		{
+			stopped = false;
+			headRendered = false;
+			target.add(getComponent());
+		}
+	}
 
+	/**
+	 * Stops the timer
+	 */
+	public final void stop(final AjaxRequestTarget target)
+	{
+		stopped = true;
+		String timeoutHandle = getTimeoutHandle();
+		target.prependJavaScript("clearTimeout("+timeoutHandle+"); delete "+timeoutHandle+";");
+	}
 }

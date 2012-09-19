@@ -18,7 +18,6 @@ package org.apache.wicket.request.resource;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,6 +34,7 @@ import org.apache.wicket.request.resource.caching.IStaticCacheableResource;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.io.Streams;
 import org.apache.wicket.util.lang.Args;
+import org.apache.wicket.util.lang.Classes;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.time.Time;
 
@@ -471,15 +471,23 @@ public abstract class AbstractResource implements IResource
 	 * 
 	 * @see org.apache.wicket.request.resource.IResource#respond(org.apache.wicket.request.resource.IResource.Attributes)
 	 */
+	@Override
 	public void respond(final Attributes attributes)
 	{
 		// Get a "new" ResourceResponse to write a response
 		ResourceResponse data = newResourceResponse(attributes);
 
-		// let caching strategy decorate response if resource is intended to be cached
+		// is resource supposed to be cached?
 		if (this instanceof IStaticCacheableResource)
 		{
-			getCachingStrategy().decorateResponse(data, (IStaticCacheableResource)this);
+			final IStaticCacheableResource cacheable = (IStaticCacheableResource)this;
+
+			// is caching enabled?
+			if (cacheable.isCachingEnabled())
+			{
+				// apply caching strategy to response
+				getCachingStrategy().decorateResponse(data, cacheable);
+			}
 		}
 		// set response header
 		setResponseHeaders(data, attributes);
@@ -494,7 +502,14 @@ public abstract class AbstractResource implements IResource
 			throw new IllegalStateException("ResourceResponse#setWriteCallback() must be set.");
 		}
 
-		data.getWriteCallback().writeData(attributes);
+		try
+		{
+			data.getWriteCallback().writeData(attributes);
+		}
+		catch (IOException iox)
+		{
+			throw new WicketRuntimeException(iox);
+		}
 	}
 
 	/**
@@ -514,7 +529,7 @@ public abstract class AbstractResource implements IResource
 		{
 			throw new IllegalArgumentException("you are not allowed to directly access header [" +
 				name + "], " + "use one of the other specialized methods of " +
-				getClass().getSimpleName() + " to get or modify its value");
+					Classes.simpleName(getClass()) + " to get or modify its value");
 		}
 	}
 
@@ -554,7 +569,6 @@ public abstract class AbstractResource implements IResource
 			String fileName = data.getFileName();
 			ContentDisposition disposition = data.getContentDisposition();
 			String mimeType = data.getContentType();
-
 			long contentLength = data.getContentLength();
 
 			// 3. Content Disposition
@@ -634,7 +648,7 @@ public abstract class AbstractResource implements IResource
 		 * @param attributes
 		 *            request attributes
 		 */
-		public abstract void writeData(Attributes attributes);
+		public abstract void writeData(Attributes attributes) throws IOException;
 
 		/**
 		 * Convenience method to write an {@link InputStream} to response.
@@ -644,37 +658,10 @@ public abstract class AbstractResource implements IResource
 		 * @param stream
 		 *            input stream
 		 */
-		protected final void writeStream(Attributes attributes, InputStream stream)
+		protected final void writeStream(Attributes attributes, InputStream stream) throws IOException
 		{
 			final Response response = attributes.getResponse();
-			OutputStream s = new OutputStream()
-			{
-				@Override
-				public void write(int b) throws IOException
-				{
-					response.write(new byte[] { (byte)b });
-				}
-
-				@Override
-				public void write(byte[] b) throws IOException
-				{
-					response.write(b);
-				}
-
-				@Override
-				public void write(byte[] b, int off, int len) throws IOException
-				{
-					response.write(b, off, len);
-				}
-			};
-			try
-			{
-				Streams.copy(stream, s);
-			}
-			catch (IOException e)
-			{
-				throw new WicketRuntimeException(e);
-			}
+			Streams.copy(stream, response.getOutputStream());
 		}
 	}
 }

@@ -23,10 +23,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLDecoder;
 
+import org.apache.wicket.util.encoding.UrlDecoder;
 import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.io.Streams;
 import org.apache.wicket.util.lang.Args;
@@ -47,7 +46,9 @@ public class Files
 	// protocols for urls
 	private static final String URL_FILE_PREFIX = "file:";
 	private static final String URL_LOCAL_JAR_FILE_PREFIX = "jar:file:";
-
+	
+	// characters not allowed in filenames
+	private static final String FILENAME_FORBIDDEN_CHARACTERS = "\"*/:<>?\\|,";
 
 	/**
 	 * Private constructor to prevent instantiation.
@@ -295,8 +296,6 @@ public class Files
 		}
 	}
 
-	private static String FORBIDDEN_IN_NAME = "\"*/:<>?\\|,";
-
 	/**
 	 * <p>
 	 * Replaces commonly unsupported characters with '_'
@@ -309,9 +308,9 @@ public class Files
 	public static final String cleanupFilename(final String filename)
 	{
 		String name = filename;
-		for (int i = 0; i < FORBIDDEN_IN_NAME.length(); i++)
+		for (int i = 0; i < FILENAME_FORBIDDEN_CHARACTERS.length(); i++)
 		{
-			name = name.replace(FORBIDDEN_IN_NAME.charAt(i), '_');
+			name = name.replace(FILENAME_FORBIDDEN_CHARACTERS.charAt(i), '_');
 		}
 		return name;
 	}
@@ -366,15 +365,7 @@ public class Files
 	public static File getLocalFileFromUrl(URL url)
 	{
 		final URL location = Args.notNull(url, "url");
-
-		try
-		{
-			return getLocalFileFromUrl(URLDecoder.decode(location.toExternalForm(), "UTF-8"));
-		}
-		catch (UnsupportedEncodingException ex)
-		{
-			return null;
-		}
+		return getLocalFileFromUrl(UrlDecoder.PATH_INSTANCE.decode(location.toExternalForm(), "UTF-8"));
 	}
 
 	/**

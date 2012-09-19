@@ -16,8 +16,8 @@
  */
 package org.apache.wicket.application;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.util.listener.ListenerCollection;
 
 /**
@@ -29,10 +29,12 @@ public class HeaderContributorListenerCollection extends ListenerCollection<IHea
 {
 	private static final long serialVersionUID = 1L;
 
+	@Override
 	public void renderHead(final IHeaderResponse response)
 	{
 		notify(new INotifier<IHeaderContributor>()
 		{
+			@Override
 			public void notify(final IHeaderContributor listener)
 			{
 				listener.renderHead(response);

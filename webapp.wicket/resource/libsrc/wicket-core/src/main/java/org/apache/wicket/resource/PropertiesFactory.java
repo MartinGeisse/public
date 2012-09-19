@@ -30,7 +30,7 @@ import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.listener.IChangeListener;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
-import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
+import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.util.value.ValueMap;
 import org.apache.wicket.util.watch.IModificationWatcher;
 import org.apache.wicket.util.watch.ModificationWatcher;
@@ -102,6 +102,7 @@ public class PropertiesFactory implements IPropertiesFactory
 	/**
 	 * @see org.apache.wicket.resource.IPropertiesFactory#addListener(org.apache.wicket.resource.IPropertiesChangeListener)
 	 */
+	@Override
 	public void addListener(final IPropertiesChangeListener listener)
 	{
 		// Make sure listeners are added only once
@@ -114,6 +115,7 @@ public class PropertiesFactory implements IPropertiesFactory
 	/**
 	 * @see org.apache.wicket.resource.IPropertiesFactory#clearCache()
 	 */
+	@Override
 	public final void clearCache()
 	{
 		if (propertiesCache != null)
@@ -129,6 +131,7 @@ public class PropertiesFactory implements IPropertiesFactory
 	 * 
 	 * @see org.apache.wicket.resource.IPropertiesFactory#load(java.lang.Class, java.lang.String)
 	 */
+	@Override
 	public Properties load(final Class<?> clazz, final String path)
 	{
 		// Check the cache
@@ -144,7 +147,7 @@ public class PropertiesFactory implements IPropertiesFactory
 			while ((properties == null) && iter.hasNext())
 			{
 				IPropertiesLoader loader = iter.next();
-				String fullPath = path + loader.getFileExtension();
+				String fullPath = path + "." + loader.getFileExtension();
 
 				// If not in the cache than try to load properties
 				IResourceStream resourceStream = context.getResourceStreamLocator()
@@ -259,6 +262,7 @@ public class PropertiesFactory implements IPropertiesFactory
 	{
 		watcher.add(resourceStream, new IChangeListener()
 		{
+			@Override
 			public void onChange()
 			{
 				log.info("A properties files has changed. Removing all entries " +

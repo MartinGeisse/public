@@ -17,7 +17,7 @@
 package org.apache.wicket.extensions.markup.html.repeater.data.table;
 
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.navigation.paging.IPageableItems;
 import org.apache.wicket.model.Model;
@@ -68,7 +68,7 @@ public class NavigatorLabel extends Label
 		/**
 		 * @return "z" in "Showing x to y of z"
 		 */
-		public int getOf()
+		public long getOf()
 		{
 			return pageable.getItemCount();
 		}
@@ -76,7 +76,7 @@ public class NavigatorLabel extends Label
 		/**
 		 * @return "x" in "Showing x to y of z"
 		 */
-		public int getFrom()
+		public long getFrom()
 		{
 			if (getOf() == 0)
 			{
@@ -88,7 +88,7 @@ public class NavigatorLabel extends Label
 		/**
 		 * @return "y" in "Showing x to y of z"
 		 */
-		public int getTo()
+		public long getTo()
 		{
 			if (getOf() == 0)
 			{

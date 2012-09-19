@@ -16,7 +16,8 @@
  */
 package org.apache.wicket.markup.html.basic;
 
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 
 
@@ -32,6 +33,6 @@ public class SimplePage_15 extends WebPage
 	@Override
 	public void renderHead(IHeaderResponse response)
 	{
-		response.renderCSSReference("BasePage.css");
+		response.render(CssHeaderItem.forUrl("BasePage.css"));
 	}
 }

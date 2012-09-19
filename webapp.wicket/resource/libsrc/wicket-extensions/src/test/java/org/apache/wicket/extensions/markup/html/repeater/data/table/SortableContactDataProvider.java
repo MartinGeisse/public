@@ -29,7 +29,7 @@ import org.apache.wicket.model.IModel;
  * @author igor
  * 
  */
-public class SortableContactDataProvider extends SortableDataProvider<Contact>
+public class SortableContactDataProvider extends SortableDataProvider<Contact, String>
 {
 	private static final long serialVersionUID = 1L;
 
@@ -48,9 +48,10 @@ public class SortableContactDataProvider extends SortableDataProvider<Contact>
 	}
 
 	/**
-	 * @see org.apache.wicket.markup.repeater.data.IDataProvider#iterator(int, int)
+	 * @see org.apache.wicket.markup.repeater.data.IDataProvider#iterator(long, long)
 	 */
-	public Iterator<Contact> iterator(final int first, final int count)
+	@Override
+	public Iterator<Contact> iterator(final long first, final long count)
 	{
 		return getContactsDB().find(first, count, getSort()).iterator();
 	}
@@ -58,7 +59,8 @@ public class SortableContactDataProvider extends SortableDataProvider<Contact>
 	/**
 	 * @see org.apache.wicket.markup.repeater.data.IDataProvider#size()
 	 */
-	public int size()
+	@Override
+	public long size()
 	{
 		return getContactsDB().getCount();
 	}
@@ -66,6 +68,7 @@ public class SortableContactDataProvider extends SortableDataProvider<Contact>
 	/**
 	 * @see org.apache.wicket.markup.repeater.data.IDataProvider#model(java.lang.Object)
 	 */
+	@Override
 	public IModel<Contact> model(final Contact object)
 	{
 		return new DetachableContactModel(object);

@@ -23,10 +23,10 @@ import org.apache.wicket.markup.IMarkupResourceStreamProvider;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.IRequestHandler;
-import org.apache.wicket.request.handler.IPageAndComponentProvider;
-import org.apache.wicket.request.handler.ListenerInterfaceRequestHandler;
-import org.apache.wicket.request.handler.ListenerInvocationNotAllowedException;
-import org.apache.wicket.request.handler.PageAndComponentProvider;
+import org.apache.wicket.core.request.handler.IPageAndComponentProvider;
+import org.apache.wicket.core.request.handler.ListenerInterfaceRequestHandler;
+import org.apache.wicket.core.request.handler.ListenerInvocationNotAllowedException;
+import org.apache.wicket.core.request.handler.PageAndComponentProvider;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.StringResourceStream;
@@ -114,6 +114,7 @@ public class BehaviorRequestTest extends WicketTestCase
 			add(container);
 		}
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{
@@ -138,6 +139,7 @@ public class BehaviorRequestTest extends WicketTestCase
 				component.urlFor(this, IBehaviorListener.INTERFACE, new PageParameters()));
 		}
 
+		@Override
 		public void onRequest()
 		{
 			called = true;

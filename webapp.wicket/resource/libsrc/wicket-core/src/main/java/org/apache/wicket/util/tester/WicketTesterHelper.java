@@ -22,9 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.Assert;
-
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.behavior.Behavior;
@@ -76,6 +75,7 @@ public class WicketTesterHelper
 		{
 			page.visitChildren(new IVisitor<Component, Void>()
 			{
+				@Override
 				public void component(final Component component, final IVisit<Void> visit)
 				{
 					final ComponentData object = new ComponentData();
@@ -170,11 +170,21 @@ public class WicketTesterHelper
 	 */
 	public static AjaxEventBehavior findAjaxEventBehavior(Component component, String event)
 	{
+		if (event.startsWith("on"))
+		{
+			event = event.substring(2);
+		}
+
 		for (Behavior behavior : component.getBehaviors())
 		{
 			if (behavior instanceof AjaxEventBehavior)
 			{
-				if (event.equalsIgnoreCase(((AjaxEventBehavior)behavior).getEvent()))
+				String behaviorEvent = ((AjaxEventBehavior)behavior).getEvent();
+				if (behaviorEvent.startsWith("on"))
+				{
+					behaviorEvent = behaviorEvent.substring(2);
+				}
+				if (event.equalsIgnoreCase(behaviorEvent))
 				{
 					return (AjaxEventBehavior)behavior;
 				}

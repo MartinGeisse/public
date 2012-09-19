@@ -16,6 +16,7 @@
  */
 package org.apache.wicket.util.string.interpolator;
 
+import org.apache.wicket.core.util.string.interpolator.PropertyVariableInterpolator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -33,7 +34,7 @@ public class PropertyVariableInterpolatorTest extends Assert
 	public void withValue()
 	{
 		TestClass object = new TestClass("value");
-		String result = PropertyVariableInterpolator.interpolate("${key}", object);
+		String result = new PropertyVariableInterpolator("${key}", object).toString();
 		assertEquals("value", result.toString());
 	}
 
@@ -45,7 +46,7 @@ public class PropertyVariableInterpolatorTest extends Assert
 	public void withValueAndEscape()
 	{
 		TestClass object = new TestClass("3.24");
-		String result = PropertyVariableInterpolator.interpolate("$$${key}", object);
+		String result = new PropertyVariableInterpolator("$$${key}", object).toString();
 		assertEquals("$3.24", result.toString());
 	}
 
@@ -55,7 +56,7 @@ public class PropertyVariableInterpolatorTest extends Assert
 	@Test
 	public void withoutValue()
 	{
-		String result = PropertyVariableInterpolator.interpolate("${key}", null);
+		String result = new PropertyVariableInterpolator("${key}", null).toString();
 		assertEquals("${key}", result.toString());
 	}
 

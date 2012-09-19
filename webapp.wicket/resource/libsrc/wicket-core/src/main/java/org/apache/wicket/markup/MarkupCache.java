@@ -102,12 +102,14 @@ public class MarkupCache implements IMarkupCache
 		markupKeyCache = newCacheImplementation();
 	}
 
+	@Override
 	public void clear()
 	{
 		markupCache.clear();
 		markupKeyCache.clear();
 	}
 
+	@Override
 	public void shutdown()
 	{
 		markupCache.shutdown();
@@ -118,13 +120,14 @@ public class MarkupCache implements IMarkupCache
 	 * Note that this method will be called from a "cleanup" thread which might not have a thread
 	 * local application.
 	 */
+	@Override
 	public final IMarkupFragment removeMarkup(final String cacheKey)
 	{
 		Args.notNull(cacheKey, "cacheKey");
 
 		if (log.isDebugEnabled())
 		{
-			log.debug("Remove from cache: " + cacheKey);
+			log.debug("Removing from cache: " + cacheKey);
 		}
 
 		// Remove the markup from the cache
@@ -144,7 +147,7 @@ public class MarkupCache implements IMarkupCache
 			log.debug("Removed from cache: " + locationString);
 		}
 
-		// If a base markup file has been removed from the cache, than
+		// If a base markup file has been removed from the cache then
 		// the derived markup should be removed as well.
 		removeMarkupWhereBaseMarkupIsNoLongerInTheCache();
 
@@ -244,6 +247,7 @@ public class MarkupCache implements IMarkupCache
 		return false;
 	}
 
+	@Override
 	public final int size()
 	{
 		return markupCache.size();
@@ -262,6 +266,7 @@ public class MarkupCache implements IMarkupCache
 		return markupCache;
 	}
 
+	@Override
 	public final Markup getMarkup(final MarkupContainer container, final Class<?> clazz,
 		final boolean enforceReload)
 	{
@@ -305,7 +310,7 @@ public class MarkupCache implements IMarkupCache
 			}
 		}
 
-		// NO_MARKUP should only be used insight the Cache.
+		// NO_MARKUP should only be used inside the Cache.
 		if (markup == Markup.NO_MARKUP)
 		{
 			markup = null;
@@ -319,13 +324,14 @@ public class MarkupCache implements IMarkupCache
 	 * <p>
 	 * Subclasses may change the default implementation. E.g. they might choose not to update the
 	 * cache to enforce reloading of any markup not found. This might be useful in very dynamic
-	 * environments.
+	 * environments. Additionally a non-caching IResourceStreamLocator should be used.
 	 * 
 	 * @param cacheKey
 	 * @param container
 	 * @param markup
 	 *            Markup.NO_MARKUP
 	 * @return Same as parameter "markup"
+	 * @see org.apache.wicket.settings.IResourceSettings#setResourceStreamLocator(org.apache.wicket.core.util.resource.locator.IResourceStreamLocator)
 	 */
 	protected Markup onMarkupNotFound(final String cacheKey, final MarkupContainer container,
 		final Markup markup)
@@ -335,7 +341,7 @@ public class MarkupCache implements IMarkupCache
 			log.debug("Markup not found: " + cacheKey);
 		}
 
-		// If cacheKey == null, than caching is disabled for the component
+		// If cacheKey == null then caching is disabled for the component
 		if (cacheKey != null)
 		{
 			// flag markup as non-existent
@@ -458,7 +464,7 @@ public class MarkupCache implements IMarkupCache
 			return markup;
 		}
 
-		// In case the markup could not be loaded (without exception), than ..
+		// In case the markup could not be loaded (without exception) then ..
 		if (cacheKey != null)
 		{
 			removeMarkup(cacheKey);
@@ -511,6 +517,7 @@ public class MarkupCache implements IMarkupCache
 			{
 				watcher.add(markupResourceStream, new IChangeListener()
 				{
+					@Override
 					public void onChange()
 					{
 						if (log.isDebugEnabled())
@@ -661,11 +668,13 @@ public class MarkupCache implements IMarkupCache
 		{
 		}
 
+		@Override
 		public void clear()
 		{
 			cache.clear();
 		}
 
+		@Override
 		public boolean containsKey(final Object key)
 		{
 			if (key == null)
@@ -675,6 +684,7 @@ public class MarkupCache implements IMarkupCache
 			return cache.containsKey(key);
 		}
 
+		@Override
 		public V get(final Object key)
 		{
 			if (key == null)
@@ -684,22 +694,26 @@ public class MarkupCache implements IMarkupCache
 			return cache.get(key);
 		}
 
+		@Override
 		public Collection<K> getKeys()
 		{
 			return cache.keySet();
 		}
 
+		@Override
 		public Collection<V> getValues()
 		{
 			return cache.values();
 		}
 
+		@Override
 		public void put(K key, V value)
 		{
 			// Note that neither key nor value are allowed to be null with ConcurrentHashMap
 			cache.put(key, value);
 		}
 
+		@Override
 		public boolean remove(K key)
 		{
 			if (key == null)
@@ -709,11 +723,13 @@ public class MarkupCache implements IMarkupCache
 			return cache.remove(key) == null;
 		}
 
+		@Override
 		public int size()
 		{
 			return cache.size();
 		}
 
+		@Override
 		public void shutdown()
 		{
 			clear();

@@ -37,6 +37,7 @@ public class DefaultPageManagerContext implements IPageManagerContext
 	/**
 	 * @see org.apache.wicket.page.IPageManagerContext#bind()
 	 */
+	@Override
 	public void bind()
 	{
 		Session.get().bind();
@@ -45,6 +46,7 @@ public class DefaultPageManagerContext implements IPageManagerContext
 	/**
 	 * @see org.apache.wicket.page.IPageManagerContext#getRequestData()
 	 */
+	@Override
 	public Object getRequestData()
 	{
 		RequestCycle requestCycle = RequestCycle.get();
@@ -58,6 +60,7 @@ public class DefaultPageManagerContext implements IPageManagerContext
 	/**
 	 * @see org.apache.wicket.page.IPageManagerContext#getSessionAttribute(java.lang.String)
 	 */
+	@Override
 	public Serializable getSessionAttribute(final String key)
 	{
 		return Session.get().getAttribute(key);
@@ -66,14 +69,16 @@ public class DefaultPageManagerContext implements IPageManagerContext
 	/**
 	 * @see org.apache.wicket.page.IPageManagerContext#getSessionId()
 	 */
+	@Override
 	public String getSessionId()
 	{
 		return Session.get().getId();
 	}
 
 	/**
-	 * @see org.apache.wicket.page.IPageManagerContext#setRequestData(RequestAdapter)
+	 * @see org.apache.wicket.page.IPageManagerContext#setRequestData(Object)
 	 */
+	@Override
 	public void setRequestData(final Object data)
 	{
 		RequestCycle requestCycle = RequestCycle.get();
@@ -88,6 +93,7 @@ public class DefaultPageManagerContext implements IPageManagerContext
 	 * @see org.apache.wicket.page.IPageManagerContext#setSessionAttribute(java.lang.String,
 	 *      java.io.Serializable)
 	 */
+	@Override
 	public void setSessionAttribute(String key, Serializable value)
 	{
 		Session.get().setAttribute(key, value);

@@ -74,25 +74,24 @@ public class ListDataProvider<T extends Serializable> implements IDataProvider<T
 		return list;
 	}
 
-	/**
-	 * @see IDataProvider#iterator(int, int)
-	 */
-	public Iterator<? extends T> iterator(final int first, final int count)
+	@Override
+	public Iterator<? extends T> iterator(final long first, final long count)
 	{
 		List<T> list = getData();
 
-		int toIndex = first + count;
+		long toIndex = first + count;
 		if (toIndex > list.size())
 		{
 			toIndex = list.size();
 		}
-		return list.subList(first, toIndex).listIterator();
+		return list.subList((int)first, (int)toIndex).listIterator();
 	}
 
 	/**
 	 * @see IDataProvider#size()
 	 */
-	public int size()
+	@Override
+	public long size()
 	{
 		return getData().size();
 	}
@@ -100,6 +99,7 @@ public class ListDataProvider<T extends Serializable> implements IDataProvider<T
 	/**
 	 * @see IDataProvider#model(Object)
 	 */
+	@Override
 	public IModel<T> model(T object)
 	{
 		return new Model<T>(object);
@@ -108,6 +108,7 @@ public class ListDataProvider<T extends Serializable> implements IDataProvider<T
 	/**
 	 * @see org.apache.wicket.model.IDetachable#detach()
 	 */
+	@Override
 	public void detach()
 	{
 	}

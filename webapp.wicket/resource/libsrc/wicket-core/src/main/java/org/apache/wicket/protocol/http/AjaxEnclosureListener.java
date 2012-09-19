@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.AjaxRequestTarget.IJavaScriptResponse;
 import org.apache.wicket.markup.html.internal.InlineEnclosure;
 import org.apache.wicket.markup.parser.filter.InlineEnclosureHandler;
 import org.apache.wicket.util.visit.IVisit;
@@ -68,6 +67,7 @@ public class AjaxEnclosureListener implements AjaxRequestTarget.IListener
 	/**
 	 * Try to find Enclosures that have their controllers added already, and add them to the target.
 	 */
+	@Override
 	public void onBeforeRespond(final Map<String, Component> map, final AjaxRequestTarget target)
 	{
 		// We need to iterate over the map, but the map changes if we add an
@@ -77,6 +77,7 @@ public class AjaxEnclosureListener implements AjaxRequestTarget.IListener
 
 		target.getPage().visitChildren(InlineEnclosure.class, new IVisitor<InlineEnclosure, Void>()
 		{
+			@Override
 			public void component(final InlineEnclosure enclosure, final IVisit<Void> visit)
 			{
 				for (Component component : originalComponents)
@@ -107,7 +108,8 @@ public class AjaxEnclosureListener implements AjaxRequestTarget.IListener
 		return enclosure.getParent().get(enclosure.getChildId()) == component;
 	}
 
-	public void onAfterRespond(final Map<String, Component> map, final IJavaScriptResponse response)
+	@Override
+	public void onAfterRespond(final Map<String, Component> map, final AjaxRequestTarget.IJavaScriptResponse response)
 	{
 	}
 }

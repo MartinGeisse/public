@@ -18,13 +18,14 @@ package org.apache.wicket.extensions.wizard;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.CssResourceReference;
 
 
 /**
@@ -113,7 +114,7 @@ public class Wizard extends Panel implements IWizardModelListener, IWizard
 	 * @param id
 	 *            The component model
 	 * @param addDefaultCssStyle
-	 *            Whether to add the {@link #addDefaultCssStyle() default style}
+	 *            Whether to add the {@link #addDefaultCssStyle(org.apache.wicket.markup.head.IHeaderResponse) default style}
 	 */
 	public Wizard(final String id, final boolean addDefaultCssStyle)
 	{
@@ -148,7 +149,7 @@ public class Wizard extends Panel implements IWizardModelListener, IWizard
 	 * @param wizardModel
 	 *            The transitions model
 	 * @param addDefaultCssStyle
-	 *            Whether to add the {@link #addDefaultCssStyle() default style}
+	 *            Whether to add the {@link #addDefaultCssStyle(org.apache.wicket.markup.head.IHeaderResponse) default style}
 	 */
 	public Wizard(final String id, final IWizardModel wizardModel, final boolean addDefaultCssStyle)
 	{
@@ -167,7 +168,8 @@ public class Wizard extends Panel implements IWizardModelListener, IWizard
 	 */
 	public void addDefaultCssStyle(final IHeaderResponse response)
 	{
-		response.renderCSSReference(new PackageResourceReference(Wizard.class, "Wizard.css"));
+		response.render(CssHeaderItem.forReference(new CssResourceReference(Wizard.class,
+			"Wizard.css")));
 	}
 
 	@Override
@@ -203,6 +205,7 @@ public class Wizard extends Panel implements IWizardModelListener, IWizard
 	/**
 	 * @see org.apache.wicket.extensions.wizard.IWizard#getWizardModel()
 	 */
+	@Override
 	public final IWizardModel getWizardModel()
 	{
 		return wizardModel;
@@ -224,6 +227,7 @@ public class Wizard extends Panel implements IWizardModelListener, IWizard
 	/**
 	 * @see org.apache.wicket.extensions.wizard.IWizardModelListener#onActiveStepChanged(org.apache.wicket.extensions.wizard.IWizardStep)
 	 */
+	@Override
 	public void onActiveStepChanged(final IWizardStep newStep)
 	{
 		form.replace(newStep.getView(VIEW_ID, this, this));
@@ -233,6 +237,7 @@ public class Wizard extends Panel implements IWizardModelListener, IWizard
 	/**
 	 * Called when the wizard is canceled.
 	 */
+	@Override
 	public void onCancel()
 	{
 	}
@@ -240,6 +245,7 @@ public class Wizard extends Panel implements IWizardModelListener, IWizard
 	/**
 	 * Called when the wizard is finished.
 	 */
+	@Override
 	public void onFinish()
 	{
 	}

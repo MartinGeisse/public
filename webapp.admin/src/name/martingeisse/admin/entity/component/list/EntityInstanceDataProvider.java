@@ -121,15 +121,15 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	 * @see org.apache.wicket.markup.repeater.data.IDataProvider#size()
 	 */
 	@Override
-	public int size() {
-		return (int)getEntity().count(filter);
+	public long size() {
+		return getEntity().count(filter);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.wicket.markup.repeater.data.IDataProvider#iterator(int, int)
+	 * @see org.apache.wicket.markup.repeater.data.IDataProvider#iterator(long, long)
 	 */
 	@Override
-	public Iterator<? extends EntityInstance> iterator(final int first, final int count) {
+	public Iterator<? extends EntityInstance> iterator(final long first, final long count) {
 		try {
 			
 			// obtain a ResultSet

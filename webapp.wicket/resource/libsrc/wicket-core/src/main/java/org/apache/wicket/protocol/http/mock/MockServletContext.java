@@ -36,6 +36,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.ValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,6 +161,7 @@ public class MockServletContext implements ServletContext
 	 *            The attribute name
 	 * @return The value, or null
 	 */
+	@Override
 	public Object getAttribute(final String name)
 	{
 		return attributes.get(name);
@@ -170,6 +172,7 @@ public class MockServletContext implements ServletContext
 	 * 
 	 * @return The attribute names
 	 */
+	@Override
 	public Enumeration<String> getAttributeNames()
 	{
 		return Collections.enumeration(attributes.keySet());
@@ -184,6 +187,7 @@ public class MockServletContext implements ServletContext
 	 *            The url path
 	 * @return Always returns this
 	 */
+	@Override
 	public ServletContext getContext(String name)
 	{
 		return this;
@@ -196,6 +200,7 @@ public class MockServletContext implements ServletContext
 	 *            The name
 	 * @return The parameter, or null if no such parameter
 	 */
+	@Override
 	public String getInitParameter(final String name)
 	{
 		return initParameters.getString(name);
@@ -206,6 +211,7 @@ public class MockServletContext implements ServletContext
 	 * 
 	 * @return The init parameter names
 	 */
+	@Override
 	public Enumeration<String> getInitParameterNames()
 	{
 		return Collections.enumeration(initParameters.keySet());
@@ -214,6 +220,7 @@ public class MockServletContext implements ServletContext
 	/**
 	 * @return Always 2
 	 */
+	@Override
 	public int getMajorVersion()
 	{
 		return 2;
@@ -227,6 +234,7 @@ public class MockServletContext implements ServletContext
 	 *            The name to get the mime type for
 	 * @return The mime type
 	 */
+	@Override
 	public String getMimeType(final String name)
 	{
 		int index = name.lastIndexOf('.');
@@ -243,6 +251,7 @@ public class MockServletContext implements ServletContext
 	/**
 	 * @return Always 5
 	 */
+	@Override
 	public int getMinorVersion()
 	{
 		return 5;
@@ -255,6 +264,7 @@ public class MockServletContext implements ServletContext
 	 *            The name of the servlet or JSP
 	 * @return The dispatcher
 	 */
+	@Override
 	public RequestDispatcher getNamedDispatcher(final String name)
 	{
 		return getRequestDispatcher(name);
@@ -267,6 +277,7 @@ public class MockServletContext implements ServletContext
 	 *            The name
 	 * @return The real path or null
 	 */
+	@Override
 	public String getRealPath(String name)
 	{
 		if (webappRoot == null)
@@ -297,16 +308,19 @@ public class MockServletContext implements ServletContext
 	 *            The name of the resource to get the dispatcher for
 	 * @return The dispatcher
 	 */
+	@Override
 	public RequestDispatcher getRequestDispatcher(final String name)
 	{
 		return new RequestDispatcher()
 		{
+			@Override
 			public void forward(ServletRequest servletRequest, ServletResponse servletResponse)
 				throws IOException
 			{
 				servletResponse.getWriter().write("FORWARD TO RESOURCE: " + name);
 			}
 
+			@Override
 			public void include(ServletRequest servletRequest, ServletResponse servletResponse)
 				throws IOException
 			{
@@ -324,6 +338,7 @@ public class MockServletContext implements ServletContext
 	 * @throws MalformedURLException
 	 *             If the URL is invalid
 	 */
+	@Override
 	public URL getResource(String name) throws MalformedURLException
 	{
 		if (webappRoot == null)
@@ -354,6 +369,7 @@ public class MockServletContext implements ServletContext
 	 *            The name of the resource to get
 	 * @return The input stream for the resource, or null of resource is not found
 	 */
+	@Override
 	public InputStream getResourceAsStream(String name)
 	{
 		if (webappRoot == null)
@@ -393,6 +409,7 @@ public class MockServletContext implements ServletContext
 	 *            The starting name
 	 * @return The set of resource paths at this location
 	 */
+	@Override
 	public Set<String> getResourcePaths(String name)
 	{
 		if (webappRoot == null)
@@ -415,7 +432,7 @@ public class MockServletContext implements ServletContext
 		}
 		else
 		{
-			elements = name.split("/");
+			elements = Strings.split(name, '/');
 		}
 
 		File current = webappRoot;
@@ -458,6 +475,7 @@ public class MockServletContext implements ServletContext
 	 * 
 	 * @return The server info
 	 */
+	@Override
 	public String getServerInfo()
 	{
 		return "Wicket Mock Test Environment v1.0";
@@ -472,6 +490,7 @@ public class MockServletContext implements ServletContext
 	 * @throws ServletException
 	 *             Not used
 	 */
+	@Override
 	public Servlet getServlet(String name) throws ServletException
 	{
 		return null;
@@ -482,6 +501,7 @@ public class MockServletContext implements ServletContext
 	 * 
 	 * @return The name
 	 */
+	@Override
 	public String getServletContextName()
 	{
 		return application.getName();
@@ -492,6 +512,7 @@ public class MockServletContext implements ServletContext
 	 * 
 	 * @return null
 	 */
+	@Override
 	public Enumeration<String> getServletNames()
 	{
 		return null;
@@ -502,6 +523,7 @@ public class MockServletContext implements ServletContext
 	 * 
 	 * @return null
 	 */
+	@Override
 	public Enumeration<Servlet> getServlets()
 	{
 		return null;
@@ -515,6 +537,7 @@ public class MockServletContext implements ServletContext
 	 * @param msg
 	 *            The message to log
 	 */
+	@Override
 	public void log(Exception e, String msg)
 	{
 		log.error(msg, e);
@@ -526,6 +549,7 @@ public class MockServletContext implements ServletContext
 	 * @param msg
 	 *            The message to log
 	 */
+	@Override
 	public void log(String msg)
 	{
 		log.info(msg);
@@ -539,6 +563,7 @@ public class MockServletContext implements ServletContext
 	 * @param cause
 	 *            The cause exception
 	 */
+	@Override
 	public void log(String msg, Throwable cause)
 	{
 		log.error(msg, cause);
@@ -550,6 +575,7 @@ public class MockServletContext implements ServletContext
 	 * @param name
 	 *            The name
 	 */
+	@Override
 	public void removeAttribute(final String name)
 	{
 		attributes.remove(name);
@@ -563,6 +589,7 @@ public class MockServletContext implements ServletContext
 	 * @param o
 	 *            The value
 	 */
+	@Override
 	public void setAttribute(final String name, final Object o)
 	{
 		attributes.put(name, o);
@@ -571,6 +598,7 @@ public class MockServletContext implements ServletContext
 	/**
 	 * @return context path
 	 */
+	@Override
 	public String getContextPath()
 	{
 		return "";

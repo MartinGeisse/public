@@ -16,33 +16,42 @@
  */
 package org.apache.wicket.ajax;
 
-import org.apache.wicket.Application;
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
-import org.apache.wicket.ajax.calldecorator.IAjaxCallDecoratorDelegate;
+import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.ajax.attributes.AjaxCallListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes.Method;
+import org.apache.wicket.ajax.attributes.CallbackParameter;
+import org.apache.wicket.ajax.attributes.IAjaxCallListener;
+import org.apache.wicket.ajax.attributes.ThrottlingSettings;
+import org.apache.wicket.ajax.json.JSONArray;
+import org.apache.wicket.ajax.json.JSONException;
+import org.apache.wicket.ajax.json.JSONObject;
+import org.apache.wicket.ajax.json.JsonFunction;
+import org.apache.wicket.ajax.json.JsonUtils;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.IComponentAwareHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.WicketEventReference;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.apache.wicket.settings.IDebugSettings;
-import org.apache.wicket.util.lang.Args;
-import org.apache.wicket.util.string.AppendingStringBuffer;
+import org.apache.wicket.resource.CoreLibrariesContributor;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
 
 /**
  * The base class for Wicket's default AJAX implementation.
- * 
+ *
  * @since 1.2
- * 
+ *
  * @author Igor Vaynberg (ivaynberg)
- * 
+ *
  */
 public abstract class AbstractDefaultAjaxBehavior extends AbstractAjaxBehavior
 {
@@ -52,13 +61,18 @@ public abstract class AbstractDefaultAjaxBehavior extends AbstractAjaxBehavior
 	public static final ResourceReference INDICATOR = new PackageResourceReference(
 		AbstractDefaultAjaxBehavior.class, "indicator.gif");
 
-	/** reference to the default ajax debug support javascript file. */
-	private static final ResourceReference JAVASCRIPT_DEBUG = new JavaScriptResourceReference(
-		AbstractDefaultAjaxBehavior.class, "wicket-ajax-debug.js");
+	private static final String DYNAMIC_PARAMETER_FUNCTION_TEMPLATE = "function(attrs){%s}";
+	private static final String PRECONDITION_FUNCTION_TEMPLATE      = "function(attrs){%s}";
+	private static final String COMPLETE_HANDLER_FUNCTION_TEMPLATE  = "function(attrs, jqXHR, textStatus){%s}";
+	private static final String FAILURE_HANDLER_FUNCTION_TEMPLATE   = "function(attrs, jqXHR, errorMessage, textStatus){%s}";
+	private static final String SUCCESS_HANDLER_FUNCTION_TEMPLATE   = "function(attrs, jqXHR, data, textStatus){%s}";
+	private static final String AFTER_HANDLER_FUNCTION_TEMPLATE     = "function(attrs){%s}";
+	private static final String BEFORE_SEND_HANDLER_FUNCTION_TEMPLATE    = "function(attrs, jqXHR, settings){%s}";
+	private static final String BEFORE_HANDLER_FUNCTION_TEMPLATE    = "function(attrs){%s}";
 
 	/**
 	 * Subclasses should call super.onBind()
-	 * 
+	 *
 	 * @see org.apache.wicket.behavior.AbstractAjaxBehavior#onBind()
 	 */
 	@Override
@@ -68,114 +82,439 @@ public abstract class AbstractDefaultAjaxBehavior extends AbstractAjaxBehavior
 	}
 
 	/**
-	 * @see org.apache.wicket.behavior.AbstractAjaxBehavior#renderHead(Component,org.apache.wicket.markup.html.IHeaderResponse)
+	 * @see org.apache.wicket.behavior.AbstractAjaxBehavior#renderHead(Component,
+	 *      org.apache.wicket.markup.head.IHeaderResponse)
 	 */
 	@Override
-	public void renderHead(Component component, IHeaderResponse response)
+	public void renderHead(final Component component, final IHeaderResponse response)
 	{
 		super.renderHead(component, response);
 
-		response.renderJavaScriptReference(WicketEventReference.INSTANCE);
-		response.renderJavaScriptReference(WicketAjaxReference.INSTANCE);
+		CoreLibrariesContributor.contributeAjax(component.getApplication(), response);
 
-		final IDebugSettings debugSettings = Application.get().getDebugSettings();
-		if (debugSettings.isAjaxDebugModeEnabled())
-		{
-			response.renderJavaScriptReference(JAVASCRIPT_DEBUG);
-			response.renderJavaScript("wicketAjaxDebugEnable=true;", "wicket-ajax-debug-enable");
-		}
-
-		Url baseUrl = RequestCycle.get().getUrlRenderer().getBaseUrl();
+		RequestCycle requestCycle = component.getRequestCycle();
+		Url baseUrl = requestCycle.getUrlRenderer().getBaseUrl();
 		CharSequence ajaxBaseUrl = Strings.escapeMarkup(baseUrl.toString());
-		response.renderJavaScript("Wicket.Ajax.baseUrl=\"" + ajaxBaseUrl + "\";",
-			"wicket-ajax-base-url");
+		response.render(JavaScriptHeaderItem.forScript("Wicket.Ajax.baseUrl=\"" + ajaxBaseUrl +
+			"\";", "wicket-ajax-base-url"));
 
-		contributeAjaxCallDecorator(component, response);
+		renderExtraHeaderContributors(component, response);
 	}
 
 	/**
-	 * Contributes dependencies of IAjaxCallDecorator to the header
+	 * Renders header contribution by IAjaxCallListener instances which additionally implement
+	 * IComponentAwareHeaderContributor interface.
 	 *
 	 * @param component
-	 *      the component this behavior is attached to
+	 *            the component assigned to this behavior
 	 * @param response
-	 *      the header response to write to
+	 *            the current header response
 	 */
-	private void contributeAjaxCallDecorator(Component component, IHeaderResponse response)
+	private void renderExtraHeaderContributors(final Component component,
+		final IHeaderResponse response)
 	{
-		IAjaxCallDecorator ajaxCallDecorator = getAjaxCallDecorator();
-		contributeComponentAwareHeaderContributor(ajaxCallDecorator, component, response);
+		AjaxRequestAttributes attributes = getAttributes();
 
-		Object cursor = ajaxCallDecorator;
-		while (cursor != null)
+		List<IAjaxCallListener> ajaxCallListeners = attributes.getAjaxCallListeners();
+		for (IAjaxCallListener ajaxCallListener : ajaxCallListeners)
 		{
-			if (cursor instanceof IAjaxCallDecoratorDelegate)
+			if (ajaxCallListener instanceof IComponentAwareHeaderContributor)
 			{
-				cursor = ((IAjaxCallDecoratorDelegate) cursor).getDelegate();
-				contributeComponentAwareHeaderContributor(cursor, component, response);
+				IComponentAwareHeaderContributor contributor = (IComponentAwareHeaderContributor)ajaxCallListener;
+				contributor.renderHead(component, response);
+			}
+		}
+	}
+
+	/**
+	 * @return the Ajax settings for this behavior
+	 * @since 6.0
+	 */
+	protected final AjaxRequestAttributes getAttributes()
+	{
+		AjaxRequestAttributes attributes = new AjaxRequestAttributes();
+		updateAjaxAttributesBackwardCompatibility(attributes);
+		updateAjaxAttributes(attributes);
+		return attributes;
+	}
+
+	/**
+	 * Gives a chance to the specializations to modify the attributes.
+	 *
+	 * @param attributes
+	 * @since 6.0
+	 */
+	protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
+	{
+	}
+
+	/**
+	 * The code below handles backward compatibility.
+	 *
+	 * @param attributes
+	 */
+	private void updateAjaxAttributesBackwardCompatibility(final AjaxRequestAttributes attributes)
+	{
+		AjaxCallListener backwardCompatibleAjaxCallListener = new AjaxCallListener();
+		backwardCompatibleAjaxCallListener.onSuccess(getSuccessScript());
+		backwardCompatibleAjaxCallListener.onFailure(getFailureScript());
+		backwardCompatibleAjaxCallListener.onPrecondition(getPreconditionScript());
+		attributes.getAjaxCallListeners().add(backwardCompatibleAjaxCallListener);
+
+		AjaxChannel channel = getChannel();
+		if (channel != null)
+		{
+			attributes.setChannel(channel);
+		}
+	}
+
+	/**
+	 * <pre>
+	 * 				{
+	 * 					u: 'editable-label?6-1.IBehaviorListener.0-text1-label',  // url
+	 * 					m: 'POST',          // method name. Default: 'GET'
+	 * 					c: 'label7',        // component id (String) or window for page
+	 * 					e: 'click',         // event name
+	 * 					sh: [],             // list of success handlers
+	 * 					fh: [],             // list of failure handlers
+	 * 					pre: [],            // list of preconditions. If empty set default : Wicket.$(settings{c}) !== null
+	 * 					ep: {},             // extra parameters
+	 * 					async: true|false,  // asynchronous XHR or not
+	 * 					ch: 'someName|d',   // AjaxChannel
+	 * 					i: 'indicatorId',   // indicator component id
+	 * 					ad: true,           // allow default
+	 * 				}
+	 * </pre>
+	 *
+	 * @param component
+	 *            the component with that behavior
+	 * @return the attributes as string in JSON format
+	 */
+	protected final CharSequence renderAjaxAttributes(final Component component)
+	{
+		AjaxRequestAttributes attributes = getAttributes();
+		return renderAjaxAttributes(component, attributes);
+	}
+
+	/**
+	 *
+	 * @param component
+	 * @param attributes
+	 * @return the attributes as string in JSON format
+	 */
+	protected final CharSequence renderAjaxAttributes(final Component component,
+		AjaxRequestAttributes attributes)
+	{
+		JSONObject attributesJson = new JSONObject();
+
+		try
+		{
+			attributesJson.put("u", getCallbackUrl());
+			Method method = attributes.getMethod();
+			if (Method.POST == method)
+			{
+				attributesJson.put("m", method);
+			}
+
+			if (component instanceof Page == false)
+			{
+				String componentId = component.getMarkupId();
+				attributesJson.put("c", componentId);
+			}
+
+			String formId = attributes.getFormId();
+			if (Strings.isEmpty(formId) == false)
+			{
+				attributesJson.put("f", formId);
+			}
+
+			if (attributes.isMultipart())
+			{
+				attributesJson.put("mp", true);
+			}
+
+			String submittingComponentId = attributes.getSubmittingComponentName();
+			if (Strings.isEmpty(submittingComponentId) == false)
+			{
+				attributesJson.put("sc", submittingComponentId);
+			}
+
+			String indicatorId = findIndicatorId();
+			if (Strings.isEmpty(indicatorId) == false)
+			{
+				attributesJson.put("i", indicatorId);
+			}
+
+			for (IAjaxCallListener ajaxCallListener : attributes.getAjaxCallListeners())
+			{
+				if (ajaxCallListener != null)
+				{
+					CharSequence beforeHandler = ajaxCallListener.getBeforeHandler(component);
+					appendListenerHandler(beforeHandler, attributesJson, "bh", BEFORE_HANDLER_FUNCTION_TEMPLATE);
+
+					CharSequence beforeSendHandler = ajaxCallListener.getBeforeSendHandler(component);
+					appendListenerHandler(beforeSendHandler, attributesJson, "bsh", BEFORE_SEND_HANDLER_FUNCTION_TEMPLATE);
+
+					CharSequence afterHandler = ajaxCallListener.getAfterHandler(component);
+					appendListenerHandler(afterHandler, attributesJson, "ah", AFTER_HANDLER_FUNCTION_TEMPLATE);
+
+					CharSequence successHandler = ajaxCallListener.getSuccessHandler(component);
+					appendListenerHandler(successHandler, attributesJson, "sh", SUCCESS_HANDLER_FUNCTION_TEMPLATE);
+
+					CharSequence failureHandler = ajaxCallListener.getFailureHandler(component);
+					appendListenerHandler(failureHandler, attributesJson, "fh", FAILURE_HANDLER_FUNCTION_TEMPLATE);
+
+					CharSequence completeHandler = ajaxCallListener.getCompleteHandler(component);
+					appendListenerHandler(completeHandler, attributesJson, "coh", COMPLETE_HANDLER_FUNCTION_TEMPLATE);
+
+					CharSequence precondition = ajaxCallListener.getPrecondition(component);
+					appendListenerHandler(precondition, attributesJson, "pre", PRECONDITION_FUNCTION_TEMPLATE);
+				}
+			}
+
+			JSONArray extraParameters = JsonUtils.asArray(attributes.getExtraParameters());
+
+			if (extraParameters.length() > 0)
+			{
+				attributesJson.put("ep", extraParameters);
+			}
+
+			List<CharSequence> dynamicExtraParameters = attributes.getDynamicExtraParameters();
+			if (dynamicExtraParameters != null)
+			{
+				for (CharSequence dynamicExtraParameter : dynamicExtraParameters)
+				{
+					String func = String.format(DYNAMIC_PARAMETER_FUNCTION_TEMPLATE, dynamicExtraParameter);
+					JsonFunction function = new JsonFunction(func);
+					attributesJson.append("dep", function);
+				}
+			}
+
+			if (attributes.isAsynchronous() == false)
+			{
+				attributesJson.put("async", false);
+			}
+
+			String[] eventNames = attributes.getEventNames();
+			if (eventNames.length == 1)
+			{
+				attributesJson.put("e", eventNames[0]);
 			}
 			else
 			{
-				cursor = null;
+				for (String eventName : eventNames)
+				{
+					attributesJson.append("e", eventName);
+				}
+			}
+
+			AjaxChannel channel = attributes.getChannel();
+			if (channel != null)
+			{
+				attributesJson.put("ch", channel);
+			}
+
+			if (attributes.isAllowDefault())
+			{
+				attributesJson.put("ad", true);
+			}
+
+			Duration requestTimeout = attributes.getRequestTimeout();
+			if (requestTimeout != null)
+			{
+				attributesJson.put("rt", requestTimeout.getMilliseconds());
+			}
+
+			boolean wicketAjaxResponse = attributes.isWicketAjaxResponse();
+			if (wicketAjaxResponse == false)
+			{
+				attributesJson.put("wr", false);
+			}
+
+			String dataType = attributes.getDataType();
+			if (AjaxRequestAttributes.XML_DATA_TYPE.equals(dataType) == false)
+			{
+				attributesJson.put("dt", dataType);
+			}
+
+			ThrottlingSettings throttlingSettings = attributes.getThrottlingSettings();
+			if (throttlingSettings != null)
+			{
+				JSONObject throttlingSettingsJson = new JSONObject();
+				throttlingSettingsJson.put("id", throttlingSettings.getId());
+				throttlingSettingsJson.put("d", throttlingSettings.getDelay().getMilliseconds());
+				if (throttlingSettings.getPostponeTimerOnUpdate())
+				{
+					throttlingSettingsJson.put("p", true);
+				}
+				attributesJson.put("tr", throttlingSettingsJson);
+			}
+
+			postprocessConfiguration(attributesJson, component);
+		}
+		catch (JSONException e)
+		{
+			throw new WicketRuntimeException(e);
+		}
+
+		String attributesAsJson = attributesJson.toString();
+
+		return attributesAsJson;
+	}
+
+	private void appendListenerHandler(final CharSequence handler, final JSONObject attributesJson,
+			final String propertyName, final String functionTemplate)
+		throws JSONException
+	{
+		if (Strings.isEmpty(handler) == false)
+		{
+			final JsonFunction function;
+			if (handler instanceof JsonFunction)
+			{
+				function = (JsonFunction) handler;
+			}
+			else
+			{
+				String func = String.format(functionTemplate, handler);
+				function = new JsonFunction(func);
+			}
+			attributesJson.append(propertyName, function);
+		}
+	}
+
+	/**
+	 * Gives a chance to modify the JSON attributesJson that is going to be used as attributes for
+	 * the Ajax call.
+	 *
+	 * @param attributesJson
+	 *            the JSON object created by #renderAjaxAttributes()
+	 * @param component
+	 *            the component with the attached Ajax behavior
+	 * @throws JSONException
+	 *             thrown if an error occurs while modifying {@literal attributesJson} argument
+	 */
+	protected void postprocessConfiguration(JSONObject attributesJson, Component component)
+		throws JSONException
+	{
+	}
+
+	/**
+	 * @return javascript that will generate an ajax GET request to this behavior with its assigned
+	 *         component
+	 */
+	public CharSequence getCallbackScript()
+	{
+		return getCallbackScript(getComponent());
+	}
+
+	/**
+	 * @param component
+	 *            the component to use when generating the attributes
+	 * @return script that can be used to execute this Ajax behavior.
+	 */
+	// 'protected' because this method is intended to be called by other Behavior methods which
+	// accept the component as parameter
+	protected CharSequence getCallbackScript(final Component component)
+	{
+		CharSequence ajaxAttributes = renderAjaxAttributes(component);
+		return "Wicket.Ajax.ajax(" + ajaxAttributes + ");";
+	}
+
+	/**
+	 * Generates a javascript function that can take parameters and performs an AJAX call which
+	 * includes these parameters. The generated code looks like this:
+	 *
+	 * <pre>
+	 * function(param1, param2) {
+	 *    var attrs = attrsJson;
+	 *    var params = {'param1': param1, 'param2': param2};
+	 *    attrs.ep = jQuery.extend(attrs.ep, params);
+	 *    Wicket.Ajax.ajax(attrs);
+	 * }
+	 * </pre>
+	 *
+	 * @param extraParameters
+	 * @return A function that can be used as a callback function in javascript
+	 */
+	public CharSequence getCallbackFunction(CallbackParameter... extraParameters)
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append("function (");
+		boolean first = true;
+		for (CallbackParameter curExtraParameter : extraParameters)
+		{
+			if (curExtraParameter.getFunctionParameterName() != null)
+			{
+				if (!first)
+					sb.append(',');
+				else
+					first = false;
+				sb.append(curExtraParameter.getFunctionParameterName());
 			}
 		}
+		sb.append(") {\n");
+		sb.append(getCallbackFunctionBody(extraParameters));
+		sb.append("}\n");
+		return sb;
 	}
 
 	/**
-	 * Contributes to the header if {@literal target} is an instance of IComponentAwareHeaderContributor
+	 * Generates the body the {@linkplain #getCallbackFunction(CallbackParameter...) callback
+	 * function}. To embed this code directly into a piece of javascript, make sure any context
+	 * parameters are available as local variables, global variables or within the closure.
 	 *
-	 * @param target
-	 *      the candidate object that may contribute to the header
-	 * @param component
-	 *      the component this behavior is attached to
-	 * @param response
-	 *      the header response to write to
+	 * @param extraParameters
+	 * @return The body of the {@linkplain #getCallbackFunction(CallbackParameter...) callback
+	 *         function}.
 	 */
-	private void contributeComponentAwareHeaderContributor(Object target, Component component, IHeaderResponse response)
+	public CharSequence getCallbackFunctionBody(CallbackParameter... extraParameters)
 	{
-		if (target instanceof IComponentAwareHeaderContributor)
+		AjaxRequestAttributes attributes = getAttributes();
+		CharSequence attrsJson = renderAjaxAttributes(getComponent(), attributes);
+		StringBuilder sb = new StringBuilder();
+		sb.append("var attrs = ");
+		sb.append(attrsJson);
+		sb.append(";\n");
+		sb.append("var params = {");
+		boolean first = true;
+		for (CallbackParameter curExtraParameter : extraParameters)
 		{
-			IComponentAwareHeaderContributor contributor = (IComponentAwareHeaderContributor)target;
-			contributor.renderHead(component, response);
+			if (curExtraParameter.getAjaxParameterName() != null)
+			{
+				if (!first)
+					sb.append(',');
+				else
+					first = false;
+				sb.append('\'')
+					.append(curExtraParameter.getAjaxParameterName())
+					.append("': ")
+					.append(curExtraParameter.getAjaxParameterCode());
+			}
 		}
-	}
-
-	/**
-	 * @return ajax call decorator used to decorate the call generated by this behavior or null for
-	 *         none
-	 */
-	protected IAjaxCallDecorator getAjaxCallDecorator()
-	{
-		return null;
-	}
-
-	/**
-	 * @return javascript that will generate an ajax GET request to this behavior
-	 */
-	protected CharSequence getCallbackScript()
-	{
-		return generateCallbackScript("wicketAjaxGet('" + getCallbackUrl() + "'");
+		sb.append("};\n");
+		if (attributes.getExtraParameters().isEmpty())
+			sb.append("attrs.ep = params;\n");
+		else
+			sb.append("attrs.ep = Wicket.merge(attrs.ep, params);\n");
+		sb.append("Wicket.Ajax.ajax(attrs);\n");
+		return sb;
 	}
 
 	/**
 	 * @return an optional javascript expression that determines whether the request will actually
 	 *         execute (in form of return XXX;);
+	 * @deprecated Use {@link org.apache.wicket.ajax.attributes.AjaxRequestAttributes}
 	 */
+	@Deprecated
 	protected CharSequence getPreconditionScript()
 	{
-		if (getComponent() instanceof Page)
-		{
-			return "return true;";
-		}
-		else
-		{
-			return "return Wicket.$('" + getComponent().getMarkupId() + "') != null;";
-		}
+		return null;
 	}
 
 	/**
 	 * @return javascript that will run when the ajax call finishes with an error status
 	 */
+	@Deprecated
 	protected CharSequence getFailureScript()
 	{
 		return null;
@@ -184,142 +523,19 @@ public abstract class AbstractDefaultAjaxBehavior extends AbstractAjaxBehavior
 	/**
 	 * @return javascript that will run when the ajax call finishes successfully
 	 */
+	@Deprecated
 	protected CharSequence getSuccessScript()
 	{
 		return null;
 	}
 
 	/**
-	 * Returns javascript that performs an ajax callback to this behavior. The script is decorated
-	 * by the ajax callback decorator from
-	 * {@link AbstractDefaultAjaxBehavior#getAjaxCallDecorator()}.
-	 * 
-	 * @param partialCall
-	 *            JavaScript of a partial call to the function performing the actual ajax callback.
-	 *            Must be in format <code>function(params,</code> with signature
-	 *            <code>function(params, onSuccessHandler, onFailureHandler</code>. Example:
-	 *            <code>wicketAjaxGet('callbackurl'</code>
-	 * 
-	 * @return script that performs ajax callback to this behavior
-	 */
-	protected CharSequence generateCallbackScript(final CharSequence partialCall)
-	{
-		final CharSequence onSuccessScript = getSuccessScript();
-		final CharSequence onFailureScript = getFailureScript();
-		final CharSequence precondition = getPreconditionScript();
-
-		final IAjaxCallDecorator decorator = getAjaxCallDecorator();
-
-		String indicatorId = findIndicatorId();
-
-		CharSequence success = (onSuccessScript == null) ? "" : onSuccessScript;
-		CharSequence failure = (onFailureScript == null) ? "" : onFailureScript;
-
-		if (decorator != null)
-		{
-			success = decorator.decorateOnSuccessScript(getComponent(), success);
-		}
-
-		if (!Strings.isEmpty(indicatorId))
-		{
-			String hide = ";Wicket.hideIncrementally('" + indicatorId + "');";
-			success = success + hide;
-			failure = failure + hide;
-		}
-
-		if (decorator != null)
-		{
-			failure = decorator.decorateOnFailureScript(getComponent(), failure);
-		}
-
-		AppendingStringBuffer buff = new AppendingStringBuffer(256);
-		buff.append("var ").append(IAjaxCallDecorator.WICKET_CALL_RESULT_VAR).append("=");
-		buff.append(partialCall);
-
-		buff.append(",function() { ").append(success).append("}.bind(this)");
-		buff.append(",function() { ").append(failure).append("}.bind(this)");
-
-		if (precondition != null)
-		{
-			buff.append(", function() {");
-			if (Strings.isEmpty(indicatorId) == false)
-			{
-				// WICKET-4257 - ugly way to revert showIncrementally if
-				// the precondition doesn't match after channel postpone
-				buff.append("if (!function() {");
-				buff.append(precondition);
-				buff.append("}.bind(this)()) {Wicket.hideIncrementally('");
-				buff.append(indicatorId);
-				buff.append("');}");
-			}
-			buff.append(precondition);
-			buff.append("}.bind(this)");
-		}
-
-		AjaxChannel channel = getChannel();
-		if (channel != null)
-		{
-			if (precondition == null)
-			{
-				buff.append(", null");
-			}
-			buff.append(", '");
-			buff.append(channel.getChannelName());
-			buff.append("'");
-		}
-
-		buff.append(");");
-
-		CharSequence call = buff;
-
-		if (!Strings.isEmpty(indicatorId))
-		{
-			final AppendingStringBuffer indicatorWithPrecondition = new AppendingStringBuffer(
-				"if (");
-			if (precondition != null)
-			{
-				indicatorWithPrecondition.append("function(){")
-					.append(precondition)
-					.append("}.bind(this)()");
-			}
-			else
-			{
-				indicatorWithPrecondition.append("true");
-			}
-			indicatorWithPrecondition.append(") { Wicket.showIncrementally('")
-				.append(indicatorId)
-				.append("');}")
-				.append(call);
-
-			call = indicatorWithPrecondition;
-		}
-
-		if (decorator != null)
-		{
-			call = decorator.decorateScript(getComponent(), call);
-		}
-
-		return call;
-	}
-
-	/**
-	 * @return the name and the type of the channel to use when processing Ajax calls at the client
-	 *         side
-	 * @deprecated Use {@link #getChannel()} instead
-	 */
-	// TODO Wicket.next - Remove this method
-	@Deprecated
-	protected String getChannelName()
-	{
-		AjaxChannel channel = getChannel();
-		return channel != null ? channel.getChannelName() : null;
-	}
-
-	/**
 	 * Provides an AjaxChannel for this Behavior.
-	 * 
+	 *
 	 * @return an AjaxChannel - Defaults to null.
-	 * */
+	 * @deprecated Use {@link org.apache.wicket.ajax.attributes.AjaxRequestAttributes}
+	 */
+	@Deprecated
 	protected AjaxChannel getChannel()
 	{
 		return null;
@@ -328,7 +544,7 @@ public abstract class AbstractDefaultAjaxBehavior extends AbstractAjaxBehavior
 	/**
 	 * Finds the markup id of the indicator. The default search order is: component, behavior,
 	 * component's parent hierarchy.
-	 * 
+	 *
 	 * @return markup id or <code>null</code> if no indicator found
 	 */
 	protected String findIndicatorId()
@@ -358,6 +574,7 @@ public abstract class AbstractDefaultAjaxBehavior extends AbstractAjaxBehavior
 	/**
 	 * @see org.apache.wicket.behavior.IBehaviorListener#onRequest()
 	 */
+	@Override
 	public final void onRequest()
 	{
 		WebApplication app = (WebApplication)getComponent().getApplication();
@@ -373,43 +590,6 @@ public abstract class AbstractDefaultAjaxBehavior extends AbstractAjaxBehavior
 	 * @param target
 	 *            The AJAX target
 	 */
-	// TODO rename this to onEvent or something? respond is mostly the same as
-	// onRender
-	// this is not the case this is still the event handling period. respond is
-	// called
-	// in the RequestCycle on the AjaxRequestTarget..
 	protected abstract void respond(AjaxRequestTarget target);
 
-	/**
-	 * Wraps the provided javascript with a throttled block. Throttled behaviors only execute once
-	 * within the given delay even though they are triggered multiple times.
-	 * <p>
-	 * For example, this is useful when attaching an event behavior to the onkeypress event. It is
-	 * not desirable to have an ajax call made every time the user types so we throttle that call to
-	 * a desirable delay, such as once per second. This gives us a near real time ability to provide
-	 * feedback without overloading the server with ajax calls.
-	 * 
-	 * @param script
-	 *            javascript to be throttled
-	 * @param throttleId
-	 *            the id of the throttle to be used. Usually this should remain constant for the
-	 *            same javascript block.
-	 * @param throttleDelay
-	 *            time span within which the javascript block will only execute once
-	 * @return wrapped javascript
-	 */
-	public static CharSequence throttleScript(CharSequence script, String throttleId,
-		Duration throttleDelay)
-	{
-		Args.notEmpty(script, "script");
-		Args.notEmpty(throttleId, "throttleId");
-		Args.notNull(throttleDelay, "throttleDelay");
-
-		return new AppendingStringBuffer("wicketThrottler.throttle( '").append(throttleId)
-			.append("', ")
-			.append(throttleDelay.getMilliseconds())
-			.append(", function() { ")
-			.append(script)
-			.append("}.bind(this));");
-	}
 }

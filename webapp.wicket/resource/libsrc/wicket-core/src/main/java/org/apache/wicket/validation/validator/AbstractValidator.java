@@ -19,8 +19,8 @@ package org.apache.wicket.validation.validator;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.lang.Classes;
 import org.apache.wicket.validation.INullAcceptingValidator;
 import org.apache.wicket.validation.IValidatable;
@@ -37,13 +37,21 @@ import org.apache.wicket.validation.ValidationError;
  * returns <code>null</code>. Validators that wish to validate the <code>null</code> value need to
  * override {@link #validateOnNullValue()} and return <code>true</code>.
  * 
+ * FIXME 7.0 remove
+ * 
  * @author Jonathan Locke
  * @author Eelco Hillenius
  * @author Igor Vaynberg (ivaynberg)
  * @param <T>
  *            type of validatable
  * @since 1.2.6
+ * @deprecated with changes to {@link ValidationError} in 6.0 this class serves very little purpose.
+ *             Validators should implement {@link IValidator} directly and extend {@link Behavior}
+ *             where needed.
+ * 
+ * 
  */
+@Deprecated
 public abstract class AbstractValidator<T> extends Behavior
 	implements
 		INullAcceptingValidator<T>,
@@ -77,6 +85,7 @@ public abstract class AbstractValidator<T> extends Behavior
 	/**
 	 * @see IValidator#validate(IValidatable)
 	 */
+	@Override
 	public final void validate(IValidatable<T> validatable)
 	{
 		if (validatable.getValue() != null || validateOnNullValue())
@@ -166,11 +175,11 @@ public abstract class AbstractValidator<T> extends Behavior
 		}
 
 
-		ValidationError error = new ValidationError().addMessageKey(resourceKey);
+		ValidationError error = new ValidationError().addKey(resourceKey);
 		final String defaultKey = Classes.simpleName(getClass());
 		if (!resourceKey.equals(defaultKey))
 		{
-			error.addMessageKey(defaultKey);
+			error.addKey(defaultKey);
 		}
 
 		error.setVariables(vars);

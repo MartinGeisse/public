@@ -16,6 +16,7 @@
  */
 package org.apache.wicket.markup.html.form;
 
+import java.io.Serializable;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import org.apache.wicket.IConverterLocator;
 import org.apache.wicket.Localizer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.core.util.lang.WicketObjects;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IPropertyReflectionAwareModel;
@@ -43,11 +45,10 @@ import org.apache.wicket.util.convert.ConversionException;
 import org.apache.wicket.util.convert.IConverter;
 import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.lang.Classes;
-import org.apache.wicket.util.lang.WicketObjects;
 import org.apache.wicket.util.string.StringList;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
+import org.apache.wicket.util.string.interpolator.VariableInterpolator;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitFilter;
 import org.apache.wicket.util.visit.IVisitor;
@@ -113,9 +114,10 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 		private final Set<String> triedKeys = new LinkedHashSet<String>();
 
 		/**
-		 * @see org.apache.wicket.validation.IErrorMessageSource#getMessage(java.lang.String)
+		 * @see org.apache.wicket.validation.IErrorMessageSource#getMessage(String, java.util.Map)
 		 */
-		public String getMessage(String key)
+		@Override
+		public String getMessage(String key, Map<String, Object> vars)
 		{
 			final FormComponent<T> formComponent = FormComponent.this;
 
@@ -130,12 +132,12 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 			String prefix = formComponent.getValidatorKeyPrefix();
 			String message = null;
 
-			// first try the full form of key [form-component-id].[key]
+			// first try the full form of key [form-component-id].[prefix].[key]
 			String resource = getId() + "." + prefix(prefix, key);
 			message = getString(localizer, resource, formComponent);
 
 			// if not found, try a more general form (without prefix)
-			// [form-component-id].[prefix].[key]
+			// [form-component-id].[key]
 			if (Strings.isEmpty(message) && Strings.isEmpty(prefix))
 			{
 				resource = getId() + "." + key;
@@ -161,6 +163,10 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 			if (Strings.isEmpty(message))
 			{
 				message = null;
+			}
+			else
+			{
+				message = substitute(message, addDefaultVars(vars));
 			}
 			return message;
 		}
@@ -194,16 +200,38 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 			return localizer.getString(key, component, "");
 		}
 
-		/**
-		 * @see org.apache.wicket.validation.IErrorMessageSource#substitute(java.lang.String,
-		 *      java.util.Map)
-		 */
-		public String substitute(String string, Map<String, Object> vars)
+		private String substitute(String string, final Map<String, Object> vars)
 			throws IllegalStateException
 		{
-			return new MapVariableInterpolator(string, addDefaultVars(vars), Application.get()
+			return new VariableInterpolator(string, Application.get()
 				.getResourceSettings()
-				.getThrowExceptionOnMissingResource()).toString();
+				.getThrowExceptionOnMissingResource())
+			{
+				private static final long serialVersionUID = 1L;
+
+				@SuppressWarnings({ "rawtypes", "unchecked" })
+				@Override
+				protected String getValue(String variableName)
+				{
+					Object value = vars.get(variableName);
+					if (value == null)
+					{
+						return null;
+					}
+					else
+					{
+						IConverter converter = getConverter(value.getClass());
+						if (converter == null)
+						{
+							return Strings.toString(value);
+						}
+						else
+						{
+							return converter.convertToString(value, getLocale());
+						}
+					}
+				}
+			}.toString();
 		}
 
 		/**
@@ -283,6 +311,7 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 		/**
 		 * @see org.apache.wicket.validation.IValidatable#error(org.apache.wicket.validation.IValidationError)
 		 */
+		@Override
 		public void error(IValidationError error)
 		{
 			FormComponent.this.error(error);
@@ -291,6 +320,7 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 		/**
 		 * @see org.apache.wicket.validation.IValidatable#getValue()
 		 */
+		@Override
 		public T getValue()
 		{
 			return getConvertedInput();
@@ -299,11 +329,13 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 		/**
 		 * @see org.apache.wicket.validation.IValidatable#isValid()
 		 */
+		@Override
 		public boolean isValid()
 		{
 			return FormComponent.this.isValid();
 		}
 
+		@Override
 		public IModel<T> getModel()
 		{
 			return FormComponent.this.getModel();
@@ -349,6 +381,7 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 		return Visits.visitPostOrder(component, visitor, new IVisitFilter()
 		{
 
+			@Override
 			public boolean visitChildren(Object object)
 			{
 				if (object instanceof IFormVisitorParticipant)
@@ -358,6 +391,7 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 				return true;
 			}
 
+			@Override
 			public boolean visitObject(Object object)
 			{
 				return (object instanceof FormComponent<?>);
@@ -387,11 +421,13 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 
 		return Visits.visitPostOrder(component, visitor, new IVisitFilter()
 		{
+			@Override
 			public boolean visitObject(Object object)
 			{
 				return true;
 			}
 
+			@Override
 			public boolean visitChildren(Object object)
 			{
 				if (object instanceof IFormVisitorParticipant)
@@ -473,8 +509,6 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 	 * @throws IllegalArgumentException
 	 *             if validator is null
 	 * @see IValidator
-	 * @see IValidatorAddListener
-	 * 
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public final FormComponent<T> add(final IValidator<? super T> validator)
@@ -546,7 +580,6 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 	 * @throws IllegalArgumentException
 	 *             if validator is null
 	 * @see IValidator
-	 * @see IValidatorAddListener
 	 */
 	public final FormComponent<T> add(final IValidator<? super T>... validators)
 	{
@@ -620,7 +653,7 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 		Args.notNull(error, "error");
 
 		MessageSource source = new MessageSource();
-		String message = error.getErrorMessage(source);
+		Serializable message = error.getErrorMessage(source);
 
 		if (message == null)
 		{
@@ -643,9 +676,9 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 			}
 			buffer.append(".");
 			message = buffer.toString();
-			logger.warn(message);
+			logger.warn(message.toString());
 		}
-		error(new ValidationErrorFeedback(error, message));
+		error(message);
 	}
 
 	/**
@@ -934,6 +967,7 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 	{
 		class IsValidVisitor implements IVisitor<FormComponent<?>, Boolean>
 		{
+			@Override
 			public void component(final FormComponent<?> formComponent, final IVisit<Boolean> visit)
 			{
 				if (formComponent.hasErrorMessage())
@@ -950,6 +984,7 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 	/**
 	 * @see IFormVisitorParticipant#processChildren()
 	 */
+	@Override
 	public boolean processChildren()
 	{
 		return true;
@@ -984,9 +1019,10 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 	 * @param labelModel
 	 * @return this for chaining
 	 */
+	@Override
 	public FormComponent<T> setLabel(IModel<String> labelModel)
 	{
-		setLabelInternal(labelModel);
+		super.setLabel(labelModel);
 		return this;
 	}
 
@@ -1054,6 +1090,7 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 	 * DO NOT CALL THIS METHOD DIRECTLY UNLESS YOU ARE SURE WHAT YOU ARE DOING. USUALLY UPDATING
 	 * YOUR MODEL IS HANDLED BY THE FORM, NOT DIRECTLY BY YOU.
 	 */
+	@Override
 	public void updateModel()
 	{
 		setModelObject(getConvertedInput());
@@ -1077,6 +1114,15 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 	 */
 	public void validate()
 	{
+		// clear any previous feedback messages
+
+		if (hasFeedbackMessage())
+		{
+			getFeedbackMessages().clear();
+		}
+
+		// validate
+
 		validateRequired();
 		if (isValid())
 		{
@@ -1122,13 +1168,13 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 				ValidationError error = new ValidationError();
 				if (e.getResourceKey() != null)
 				{
-					error.addMessageKey(e.getResourceKey());
+					error.addKey(e.getResourceKey());
 				}
 				if (e.getTargetType() != null)
 				{
-					error.addMessageKey("ConversionError." + Classes.simpleName(e.getTargetType()));
+					error.addKey("ConversionError." + Classes.simpleName(e.getTargetType()));
 				}
-				error.addMessageKey("ConversionError");
+				error.addKey("ConversionError");
 				reportValidationError(e, error);
 			}
 		}
@@ -1145,11 +1191,11 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 				ValidationError error = new ValidationError();
 				if (e.getResourceKey() != null)
 				{
-					error.addMessageKey(e.getResourceKey());
+					error.addKey(e.getResourceKey());
 				}
 				String simpleName = Classes.simpleName(getType());
-				error.addMessageKey("IConverter." + simpleName);
-				error.addMessageKey("IConverter");
+				error.addKey("IConverter." + simpleName);
+				error.addKey("IConverter");
 				error.setVariable("type", simpleName);
 				reportValidationError(e, error);
 			}
@@ -1393,7 +1439,7 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 	 */
 	private void reportRequiredError()
 	{
-		error(new ValidationError().addMessageKey("Required"));
+		error(new ValidationError().addKey("Required"));
 	}
 
 	/**
@@ -1515,7 +1561,7 @@ public abstract class FormComponent<T> extends LabeledWebMarkupContainer
 	 * @throws UnsupportedOperationException
 	 *             if the existing model object Collection cannot be modified
 	 */
-	protected static <S> void updateCollectionModel(FormComponent<Collection<S>> formComponent)
+	public static <S> void updateCollectionModel(FormComponent<Collection<S>> formComponent)
 	{
 		Collection<S> convertedInput = formComponent.getConvertedInput();
 

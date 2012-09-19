@@ -23,7 +23,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import junit.framework.Assert;
-
 import org.apache.wicket.util.string.Strings;
 
 class JavaLicenseHeaderHandler extends AbstractLicenseHeaderHandler
@@ -77,6 +76,7 @@ class JavaLicenseHeaderHandler extends AbstractLicenseHeaderHandler
 		return added;
 	}
 
+	@Override
 	public boolean checkLicenseHeader(final File file)
 	{
 		String header = extractLicenseHeader(file, 0, 16);
@@ -84,6 +84,7 @@ class JavaLicenseHeaderHandler extends AbstractLicenseHeaderHandler
 		return getLicenseHeader().equals(header);
 	}
 
+	@Override
 	public List<String> getSuffixes()
 	{
 		return Arrays.asList("java");

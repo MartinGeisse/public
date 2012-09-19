@@ -16,13 +16,14 @@
  */
 package org.apache.wicket.markup.html.form;
 
-import org.apache.wicket.ajax.WicketAjaxReference;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.WicketEventReference;
-import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.resource.CoreLibrariesContributor;
 
 /**
  * Base class for all Javascript-based "select-all" checkboxes. Provides a simple "select all"
@@ -41,7 +42,7 @@ public abstract class AbstractCheckSelector extends LabeledWebMarkupContainer
 {
 	private static final long serialVersionUID = 1L;
 
-	private static final ResourceReference JS = new PackageResourceReference(
+	private static final ResourceReference JS = new JavaScriptResourceReference(
 		AbstractCheckSelector.class, "AbstractCheckSelector.js");
 
 	/**
@@ -70,19 +71,18 @@ public abstract class AbstractCheckSelector extends LabeledWebMarkupContainer
 	public void renderHead(IHeaderResponse response)
 	{
 		// make sure we have all the javascript we need
-		response.renderJavaScriptReference(WicketEventReference.INSTANCE);
-		response.renderJavaScriptReference(WicketAjaxReference.INSTANCE);
-		response.renderJavaScriptReference(JS);
+		CoreLibrariesContributor.contributeAjax(getApplication(), response);
+		response.render(JavaScriptHeaderItem.forReference(JS));
 		String findCheckboxes = getFindCheckboxesFunction().toString();
 
 		// initialize the selector
-		response.renderOnLoadJavaScript("Wicket.CheckboxSelector.initializeSelector('" +
-			this.getMarkupId() + "', " + findCheckboxes + ");");
+		response.render(OnLoadHeaderItem.forScript("Wicket.CheckboxSelector.initializeSelector('" +
+			this.getMarkupId() + "', " + findCheckboxes + ");"));
 		if (wantAutomaticUpdate())
 		{
 			// initialize the handlers for automatic updating of the selector state
-			response.renderOnLoadJavaScript("Wicket.CheckboxSelector.attachUpdateHandlers('" +
-				this.getMarkupId() + "', " + findCheckboxes + ");");
+			response.render(OnLoadHeaderItem.forScript("Wicket.CheckboxSelector.attachUpdateHandlers('" +
+				this.getMarkupId() + "', " + findCheckboxes + ");"));
 		}
 	}
 

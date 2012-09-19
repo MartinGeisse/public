@@ -81,6 +81,7 @@ public class AsynchronousDataStoreTest
 	{
 		protected abstract void r();
 
+		@Override
 		public void run()
 		{
 			try

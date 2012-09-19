@@ -20,8 +20,7 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.calldecorator.CancelEventIfNoAjaxDecorator;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.model.IModel;
@@ -87,12 +86,6 @@ public abstract class AjaxLink<T> extends AbstractLink implements IAjaxLink
 			}
 
 			@Override
-			protected IAjaxCallDecorator getAjaxCallDecorator()
-			{
-				return new CancelEventIfNoAjaxDecorator(AjaxLink.this.getAjaxCallDecorator());
-			}
-
-			@Override
 			protected void onComponentTag(ComponentTag tag)
 			{
 				// add the onclick handler only if link is enabled
@@ -103,17 +96,23 @@ public abstract class AjaxLink<T> extends AbstractLink implements IAjaxLink
 			}
 
 			@Override
-			protected AjaxChannel getChannel()
+			protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
 			{
-				return AjaxLink.this.getChannel();
+				super.updateAjaxAttributes(attributes);
+				AjaxLink.this.updateAjaxAttributes(attributes);
 			}
 		};
+	}
+
+	protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
+	{
 	}
 
 	/**
 	 * @return the channel that manages how Ajax calls are executed
 	 * @see AbstractDefaultAjaxBehavior#getChannel()
 	 */
+	@Deprecated
 	protected AjaxChannel getChannel()
 	{
 		return null;
@@ -141,20 +140,11 @@ public abstract class AjaxLink<T> extends AbstractLink implements IAjaxLink
 	}
 
 	/**
-	 * Returns ajax call decorator that will be used to decorate the ajax call.
-	 * 
-	 * @return ajax call decorator
-	 */
-	protected IAjaxCallDecorator getAjaxCallDecorator()
-	{
-		return null;
-	}
-
-	/**
 	 * Listener method invoked on the ajax request generated when the user clicks the link
 	 * 
 	 * @param target
 	 */
+	@Override
 	public abstract void onClick(final AjaxRequestTarget target);
 
 	/**

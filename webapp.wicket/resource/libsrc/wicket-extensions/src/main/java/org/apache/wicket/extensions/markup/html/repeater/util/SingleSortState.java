@@ -16,28 +16,27 @@
  */
 package org.apache.wicket.extensions.markup.html.repeater.util;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.lang.Args;
 
 /**
  * Implementation of ISortState that can keep track of sort information for a single property.
  * 
  * @author Igor Vaynberg (ivaynberg)
+ * @param <T>
+ *            the type of the sort property
  * 
  */
-public class SingleSortState implements ISortState, IClusterable
+public class SingleSortState<T> implements ISortState<T>, IClusterable
 {
 	private static final long serialVersionUID = 1L;
 
-	SortParam param;
+	SortParam<T> param;
 
-	/**
-	 * @see org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState#setPropertySortOrder(String,
-	 *      org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder)
-	 */
-	public void setPropertySortOrder(final String property, final SortOrder order)
+	@Override
+	public void setPropertySortOrder(final T property, final SortOrder order)
 	{
 		Args.notNull(property, "property");
 		Args.notNull(order, "order");
@@ -51,14 +50,12 @@ public class SingleSortState implements ISortState, IClusterable
 		}
 		else
 		{
-			param = new SortParam(property, order == SortOrder.ASCENDING);
+			param = new SortParam<T>(property, order == SortOrder.ASCENDING);
 		}
 	}
 
-	/**
-	 * @see org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState#getPropertySortOrder(java.lang.String)
-	 */
-	public SortOrder getPropertySortOrder(final String property)
+	@Override
+	public SortOrder getPropertySortOrder(final T property)
 	{
 		Args.notNull(property, "property");
 
@@ -72,7 +69,7 @@ public class SingleSortState implements ISortState, IClusterable
 	/**
 	 * @return current sort state
 	 */
-	public SortParam getSort()
+	public SortParam<T> getSort()
 	{
 		return param;
 	}
@@ -83,18 +80,15 @@ public class SingleSortState implements ISortState, IClusterable
 	 * @param param
 	 *            parameter containing new sorting information
 	 */
-	public void setSort(final SortParam param)
+	public void setSort(final SortParam<T> param)
 	{
 		this.param = param;
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString()
 	{
-		return "[SingleSortState sort=" + ((param == null) ? "null" : param.toString()) + "]";
+		return "[SingleSortState sort=" + ((param == null) ? "null" : param.toString()) + ']';
 	}
 
 }

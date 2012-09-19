@@ -1,10 +1,11 @@
 <html>
-<head><script type="text/javascript" src="../resource/org.apache.wicket.markup.html.WicketEventReference/wicket-event.js"></script>
-<script type="text/javascript" src="../resource/org.apache.wicket.ajax.WicketAjaxReference/wicket-ajax.js"></script>
-<script type="text/javascript" src="../resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/wicket-ajax-debug.js"></script>
+<head><script type="text/javascript" src="../resource/org.apache.wicket.resource.JQueryResourceReference/jquery/jquery.js"></script>
+<script type="text/javascript" src="../resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/res/js/wicket-event-jquery.js"></script>
+<script type="text/javascript" src="../resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/res/js/wicket-ajax-jquery.js"></script>
+<script type="text/javascript" src="../resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/res/js/wicket-ajax-jquery-debug.js"></script>
 <script type="text/javascript" id="wicket-ajax-debug-enable">
 /*<![CDATA[*/
-wicketAjaxDebugEnable=true;
+Wicket.Ajax.DebugWindow.enabled=true;
 /*]]>*/
 </script>
 <script type="text/javascript" id="wicket-ajax-base-url">
@@ -12,12 +13,19 @@ wicketAjaxDebugEnable=true;
 Wicket.Ajax.baseUrl="wicket/bookmarkable/org.apache.wicket.ajax.markup.html.ajaxLink.AjaxLinkWithBorderPage";
 /*]]>*/
 </script>
+<script type="text/javascript" >
+/*<![CDATA[*/
+Wicket.Event.add(window, "domready", function(event) { 
+Wicket.Ajax.ajax({"u":"../page?0-1.IBehaviorListener.0-border-border_body-ajaxLink","e":"click","c":"ajaxLink1"});;
+;});
+/*]]>*/
+</script>
 </head><body>
   <span wicket:id="border"><wicket:border>
     Border
     <wicket:body>
-    <span wicket:id="ajaxLabel" id="ajaxLabel1">UpdateMe</span>
-    <a href="#" wicket:id="ajaxLink" id="ajaxLink2" onclick="var wcall=wicketAjaxGet(&#039;../page?0-1.IBehaviorListener.0-border-border_body-ajaxLink&#039;,function() { }.bind(this),function() { }.bind(this), function() {return Wicket.$(&#039;ajaxLink2&#039;) != null;}.bind(this));return !wcall;">Update</a>
+    <span wicket:id="ajaxLabel" id="ajaxLabel2">UpdateMe</span>
+    <a href="#" wicket:id="ajaxLink" id="ajaxLink1">Update</a>
   </wicket:body>
     Border
   </wicket:border></span>

@@ -46,7 +46,7 @@ public class PackageResourceGuard implements IPackageResourceGuard
 	/** Set of filenames that are denied access. */
 	private Set<String> blockedFiles = new HashSet<String>(4);
 
-	private boolean allowAccessToWebInfResources = false;
+	private boolean allowAccessToRootResources = false;
 
 	/**
 	 * Construct.
@@ -65,6 +65,7 @@ public class PackageResourceGuard implements IPackageResourceGuard
 	 * @see org.apache.wicket.markup.html.IPackageResourceGuard#accept(java.lang.Class,
 	 *      java.lang.String)
 	 */
+	@Override
 	public boolean accept(Class<?> scope, String path)
 	{
 		String absolutePath = Packages.absolutePath(scope, path);
@@ -126,7 +127,7 @@ public class PackageResourceGuard implements IPackageResourceGuard
 			}
 		}
 
-		if (!allowAccessToWebInfResources)
+		if (!allowAccessToRootResources)
 		{
 			String absolute = path;
 			if (absolute.startsWith("/"))
@@ -135,7 +136,7 @@ public class PackageResourceGuard implements IPackageResourceGuard
 			}
 			if (!absolute.contains("/"))
 			{
-				log.warn("Access to web-inf directory via '..' is by default disabled for shared resources: " +
+				log.warn("Access to root directory is by default disabled for shared resources: " +
 					path);
 				return false;
 			}
@@ -216,24 +217,22 @@ public class PackageResourceGuard implements IPackageResourceGuard
 	}
 
 	/**
-	 * Checks whether or not resources in the WEB-INF folder can be access.
+	 * Checks whether or not resources in the web root folder can be access.
 	 * 
 	 * @return {@code true} iff root resources can be accessed
 	 */
-	public final boolean isAllowAccessToWebInfResources()
+	public final boolean isAllowAccessToRootResources()
 	{
-		return allowAccessToWebInfResources;
+		return allowAccessToRootResources;
 	}
 
 	/**
-	 * Sets whether or not resources in the root (WEB-INF) folder can be accessed.
+	 * Sets whether or not resources in the web root folder can be accessed.
 	 * 
 	 * @param allowAccessToRootResources
 	 */
-	public final void setAllowAccessToWebInfResources(boolean allowAccessToRootResources)
+	public final void setAllowAccessToRootResources(boolean allowAccessToRootResources)
 	{
-		allowAccessToWebInfResources = allowAccessToRootResources;
+		this.allowAccessToRootResources = allowAccessToRootResources;
 	}
-
-
 }

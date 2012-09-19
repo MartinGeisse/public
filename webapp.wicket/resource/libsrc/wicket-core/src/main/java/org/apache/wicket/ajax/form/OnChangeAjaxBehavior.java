@@ -16,16 +16,17 @@
  */
 package org.apache.wicket.ajax.form;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.form.AbstractTextComponent;
 import org.apache.wicket.markup.html.form.FormComponent;
 
 /**
- * A behavior that updates the hosting {@link FormComponent} via ajax when value of the component is
+ * A behavior that updates the hosting {@link FormComponent} via Ajax when value of the component is
  * changed.
- * 
+ * <p>
  * This behavior uses best available method to track changes on different types of form components.
+ * To accomplish this for text input form components it uses a custom event, named 'inputchange',
+ * that is handled in the best way for the specific browser. For other form component types the
+ * 'change' event is used.
+ * </p>
  * 
  * @author Janne Hietam&auml;ki (janne)
  * 
@@ -34,28 +35,21 @@ import org.apache.wicket.markup.html.form.FormComponent;
  */
 public abstract class OnChangeAjaxBehavior extends AjaxFormComponentUpdatingBehavior
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Construct.
+	 * 'inputchange' event delegates to 'input', 'keyup', 'cut' and 'paste' events
+	 * for text input form component depending on the browser.
+	 * 'change' is used as a fallback for all other form component types.
+	 */
+	public static final String EVENT_NAME = "inputchange change";
+
+	/**
+	 * Constructor.
 	 */
 	public OnChangeAjaxBehavior()
 	{
-		super("onchange");
+		super(EVENT_NAME);
 	}
 
-	@Override
-	public void renderHead(Component component, IHeaderResponse response)
-	{
-		super.renderHead(component, response);
-
-		if (component instanceof AbstractTextComponent)
-		{
-			final String id = getComponent().getMarkupId();
-			response.renderOnDomReadyJavaScript("new Wicket.ChangeHandler('" + id + "');");
-		}
-	}
 }

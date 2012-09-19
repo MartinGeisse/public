@@ -34,12 +34,13 @@ public abstract class AbstractPagingNavigationTest extends WicketTestCase
 		private static final long serialVersionUID = 1L;
 
 		/** expected page which is set by the link. */
-		private int expectedPage = 0;
+		private long expectedPage = 0;
 
 		/**
 		 * @see IPageable#getCurrentPage()
 		 */
-		public int getCurrentPage()
+		@Override
+		public long getCurrentPage()
 		{
 			return currentpage;
 		}
@@ -47,7 +48,8 @@ public abstract class AbstractPagingNavigationTest extends WicketTestCase
 		/**
 		 * @see IPageable#setCurrentPage(int)
 		 */
-		public void setCurrentPage(int page)
+		@Override
+		public void setCurrentPage(long page)
 		{
 			assertEquals("setCurrentPage", expectedPage, page);
 		}
@@ -55,7 +57,8 @@ public abstract class AbstractPagingNavigationTest extends WicketTestCase
 		/**
 		 * @see org.apache.wicket.markup.html.navigation.paging.IPageable#getPageCount()
 		 */
-		public int getPageCount()
+		@Override
+		public long getPageCount()
 		{
 			return pagecount;
 		}
@@ -72,8 +75,8 @@ public abstract class AbstractPagingNavigationTest extends WicketTestCase
 	}
 
 	/** mock page count. */
-	protected int pagecount = 0;
+	protected long pagecount = 0;
 
 	/** mock current page. */
-	protected int currentpage = 0;
+	protected long currentpage = 0;
 }

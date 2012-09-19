@@ -21,13 +21,12 @@ import java.io.InputStream;
 import java.io.Serializable;
 
 import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.core.util.resource.WebExternalResourceStream;
 import org.apache.wicket.request.resource.caching.IStaticCacheableResource;
-import org.apache.wicket.util.io.ByteArrayOutputStream;
 import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.io.Streams;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
-import org.apache.wicket.util.resource.WebExternalResourceStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +43,7 @@ public class ContextRelativeResource extends AbstractResource implements IStatic
 	private static final Logger log = LoggerFactory.getLogger(ContextRelativeResource.class);
 
 	private final String path;
+	private boolean cachingEnabled;
 
 	/**
 	 * Construct.
@@ -62,14 +62,28 @@ public class ContextRelativeResource extends AbstractResource implements IStatic
 		{
 			pathRelativeToContextRoot = "/" + pathRelativeToContextRoot;
 		}
-		path = pathRelativeToContextRoot;
+		this.path = pathRelativeToContextRoot;
+		this.cachingEnabled = true;
 	}
-	
+
+	@Override
+	public boolean isCachingEnabled()
+	{
+		return cachingEnabled;
+	}
+
+	public void setCachingEnabled(final boolean enabled)
+	{
+		this.cachingEnabled = enabled;
+	}
+
+	@Override
 	public Serializable getCacheKey()
 	{
 		return CACHE_PREFIX + path;
 	}
 
+	@Override
 	public IResourceStream getCacheableResourceStream()
 	{
 		return new WebExternalResourceStream(path);
@@ -88,28 +102,22 @@ public class ContextRelativeResource extends AbstractResource implements IStatic
 		resourceResponse.setWriteCallback(new WriteCallback()
 		{
 			@Override
-			public void writeData(final Attributes attributes)
+			public void writeData(final Attributes attributes) throws IOException
 			{
-				InputStream inputStream = null;
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				try
 				{
-					inputStream = webExternalResourceStream.getInputStream();
-					Streams.copy(inputStream, baos);
-					attributes.getResponse().write(baos.toByteArray());
+					InputStream inputStream = webExternalResourceStream.getInputStream();
+					try
+					{
+						Streams.copy(inputStream, attributes.getResponse().getOutputStream());
+					}
+					finally {
+						IOUtils.closeQuietly(inputStream);
+					}
 				}
 				catch (ResourceStreamNotFoundException rsnfx)
 				{
 					throw new WicketRuntimeException(rsnfx);
-				}
-				catch (IOException iox)
-				{
-					throw new WicketRuntimeException(iox);
-				}
-				finally
-				{
-					IOUtils.closeQuietly(inputStream);
-					IOUtils.closeQuietly(baos);
 				}
 			}
 		});

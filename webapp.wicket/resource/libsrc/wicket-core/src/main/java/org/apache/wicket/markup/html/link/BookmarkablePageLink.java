@@ -18,7 +18,7 @@ package org.apache.wicket.markup.html.link;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.lang.WicketObjects;
+import org.apache.wicket.core.util.lang.WicketObjects;
 
 /**
  * Renders a stable link which can be cached in a web browser and used at a later time.
@@ -137,62 +137,6 @@ public class BookmarkablePageLink<T> extends Link<T>
 	{
 		// Bookmarkable links do not have a click handler.
 		// Instead they are dispatched by the request handling servlet.
-	}
-
-	private void setParameterImpl(String key, Object value)
-	{
-		getPageParameters().set(key, value);
-	}
-
-	/**
-	 * Adds a given page property value to this link.
-	 * 
-	 * @param property
-	 *            The property
-	 * @param value
-	 *            The value
-	 * @return This
-	 * @deprecated Use {@link #getPageParameters()}.set() instead
-	 */
-	@Deprecated
-	public BookmarkablePageLink<T> setParameter(final String property, final int value)
-	{
-		setParameterImpl(property, Integer.toString(value));
-		return this;
-	}
-
-	/**
-	 * Adds a given page property value to this link.
-	 * 
-	 * @param property
-	 *            The property
-	 * @param value
-	 *            The value
-	 * @return This
-	 * @deprecated Use {@link #getPageParameters()}.set() instead
-	 */
-	@Deprecated
-	public BookmarkablePageLink<T> setParameter(final String property, final long value)
-	{
-		setParameterImpl(property, Long.toString(value));
-		return this;
-	}
-
-	/**
-	 * Adds a given page property value to this link.
-	 * 
-	 * @param property
-	 *            The property
-	 * @param value
-	 *            The value
-	 * @return This
-	 * @deprecated Use {@link #getPageParameters()}.set() instead
-	 */
-	@Deprecated
-	public BookmarkablePageLink<T> setParameter(final String property, final String value)
-	{
-		setParameterImpl(property, value);
-		return this;
 	}
 
 	/**

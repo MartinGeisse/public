@@ -18,8 +18,11 @@ package org.apache.wicket.markup.renderStrategy;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
+import org.apache.wicket.application.HeaderContributorListenerCollection;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer.HeaderStreamState;
 import org.apache.wicket.util.lang.Args;
 
 /**
@@ -93,8 +96,9 @@ public abstract class AbstractHeaderRenderStrategy implements IHeaderRenderStrat
 	{
 	}
 
+	@Override
 	public void renderHeader(final HtmlHeaderContainer headerContainer,
-		final Component rootComponent)
+		HeaderStreamState headerStreamState, final Component rootComponent)
 	{
 		Args.notNull(headerContainer, "headerContainer");
 		Args.notNull(rootComponent, "rootComponent");
@@ -102,10 +106,10 @@ public abstract class AbstractHeaderRenderStrategy implements IHeaderRenderStrat
 		// First the application level headers
 		renderApplicationLevelHeaders(headerContainer);
 
-		// Than the root component's headers
-		renderRootComponent(headerContainer, rootComponent);
+		// Then the root component's headers
+		renderRootComponent(headerContainer, headerStreamState, rootComponent);
 
-		// Than its child hierarchy
+		// Then its child hierarchy
 		renderChildHeaders(headerContainer, rootComponent);
 	}
 
@@ -113,11 +117,13 @@ public abstract class AbstractHeaderRenderStrategy implements IHeaderRenderStrat
 	 * Render the root component (e.g. Page).
 	 * 
 	 * @param headerContainer
+	 * @param headerStreamState
 	 * @param rootComponent
 	 */
 	protected void renderRootComponent(final HtmlHeaderContainer headerContainer,
-		final Component rootComponent)
+		final HeaderStreamState headerStreamState, final Component rootComponent)
 	{
+		headerContainer.renderHeaderTagBody(headerStreamState);
 		rootComponent.renderHead(headerContainer);
 	}
 
@@ -141,10 +147,13 @@ public abstract class AbstractHeaderRenderStrategy implements IHeaderRenderStrat
 
 		if (Application.exists())
 		{
-			for (IHeaderContributor listener : Application.get()
-				.getHeaderContributorListenerCollection())
+			HeaderContributorListenerCollection headerContributorListenerCollection =
+					Application.get().getHeaderContributorListenerCollection();
+			IHeaderResponse headerResponse = headerContainer.getHeaderResponse();
+
+			for (IHeaderContributor listener : headerContributorListenerCollection)
 			{
-				listener.renderHead(headerContainer.getHeaderResponse());
+				listener.renderHead(headerResponse);
 			}
 		}
 	}

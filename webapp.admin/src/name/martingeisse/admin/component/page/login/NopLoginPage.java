@@ -47,10 +47,14 @@ public class NopLoginPage extends WebPage {
 	 * This method performs the login and the redirect.
 	 */
 	void login() {
+		
+		// login and continue
 		SecurityUtil.login(new EmptyCredentials());
-		if (!continueToOriginalDestination()) {
-    		setResponsePage(getApplication().getHomePage());
-    	}			
+		continueToOriginalDestination();
+		
+		// in case no original destination is available, go to the home page
+    	setResponsePage(getApplication().getHomePage());
+    	
 	}
 	
 	/**

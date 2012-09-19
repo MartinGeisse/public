@@ -16,7 +16,6 @@
  */
 package org.apache.wicket.markup;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
@@ -171,9 +170,9 @@ public class TagUtils
 	 * @param tag
 	 *      the component tag where the attributes will be applied
 	 */
-	public static void copyAttributes(final Component component, final ComponentTag tag)
+	public static void copyAttributes(final MarkupContainer component, final ComponentTag tag)
 	{
-		IMarkupFragment markup = ((MarkupContainer)component).getMarkup(null);
+		IMarkupFragment markup = component.getMarkup(null);
 		String namespace = markup.getMarkupResourceStream().getWicketNamespace() + ":";
 
 		MarkupElement elem = markup.get(0);

@@ -20,7 +20,6 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
@@ -28,19 +27,19 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.IAjaxLink;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.html.tree.AbstractTree;
-import org.apache.wicket.markup.html.tree.LinkType;
-import org.apache.wicket.markup.html.tree.WicketTreeModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Tree class that contains convenient functions related to presentation of the tree, which includes
@@ -52,10 +51,11 @@ import org.apache.wicket.request.resource.ResourceReference;
  * use {@link Tree}
  * <p>
  * This class allows you to choose between 3 types of links.
- * {@link DefaultAbstractTree#setLinkType(org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree.LinkType)}
+ * {@link DefaultAbstractTree#setLinkType(LinkType)}
  * 
  * @author Matej Knopp
  */
+@Deprecated
 public abstract class DefaultAbstractTree extends AbstractTree
 {
 	private static final long serialVersionUID = 1L;
@@ -72,7 +72,7 @@ public abstract class DefaultAbstractTree extends AbstractTree
 	/**
 	 * Reference to the css file.
 	 */
-	private static final ResourceReference CSS = new PackageResourceReference(
+	private static final ResourceReference CSS = new CssResourceReference(
 		DefaultAbstractTree.class, "res/tree.css");
 
 	/** Reference to the icon of closed tree folder */
@@ -353,6 +353,7 @@ public abstract class DefaultAbstractTree extends AbstractTree
 			{
 				private static final long serialVersionUID = 1L;
 
+				@Override
 				public void onClick(final AjaxRequestTarget target)
 				{
 					if (isNodeExpanded(node))
@@ -513,6 +514,7 @@ public abstract class DefaultAbstractTree extends AbstractTree
 		{
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public void onClick(final AjaxRequestTarget target)
 			{
 				getTreeState().selectNode(node, !getTreeState().isNodeSelected(node));
@@ -581,7 +583,7 @@ public abstract class DefaultAbstractTree extends AbstractTree
 		ResourceReference css = getCSS();
 		if (css != null)
 		{
-			response.renderCSSReference(css);
+			response.render(CssHeaderItem.forReference(css));
 		}
 	}
 }

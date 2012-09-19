@@ -16,7 +16,8 @@
  */
 package org.apache.wicket.markup.html.header;
 
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
@@ -37,7 +38,7 @@ public class MyPage2 extends WebPage
 	@Override
 	public void renderHead(IHeaderResponse response)
 	{
-		response.renderCSSReference(new PackageResourceReference(getClass(),
-			getClass().getSimpleName() + ".css"));
+		response.render(CssHeaderItem.forReference(new PackageResourceReference(getClass(),
+				getClass().getSimpleName() + ".css")));
 	}
 }

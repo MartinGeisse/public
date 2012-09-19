@@ -6,7 +6,8 @@
 
 package name.martingeisse.wicket.util;
 
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
 /**
@@ -29,7 +30,7 @@ public class WicketHeadUtil {
 	 * @param c the class whose code shall be included
 	 */
 	public static void includeClassJavascript(IHeaderResponse response, Class<?> c) {
-		response.renderJavaScriptReference(new PackageResourceReference(c, c.getSimpleName() + ".js"), c.getCanonicalName());
+		response.render(JavaScriptHeaderItem.forReference(new PackageResourceReference(c, c.getSimpleName() + ".js")));
 	}
 	
 }

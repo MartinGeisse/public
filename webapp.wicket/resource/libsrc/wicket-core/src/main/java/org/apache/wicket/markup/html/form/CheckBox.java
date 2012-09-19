@@ -43,6 +43,11 @@ import org.apache.wicket.util.convert.IConverter;
  * You can can extend this class and override method wantOnSelectionChangedNotifications() to force
  * server roundtrips on each selection change.
  * </p>
+ * <p>
+ * A CheckBox always has a valid therefore values from methods
+ * {@link FormComponent#setRequired(boolean)} and {@link FormComponent#isRequired()} are not taken
+ * into account.
+ * </p>
  * 
  * @author Jonathan Locke
  */
@@ -72,6 +77,7 @@ public class CheckBox extends FormComponent<Boolean> implements IOnChangeListene
 	/**
 	 * @see org.apache.wicket.markup.html.form.IOnChangeListener#onSelectionChanged()
 	 */
+	@Override
 	public void onSelectionChanged()
 	{
 		convertInput();
@@ -221,6 +227,7 @@ public class CheckBox extends FormComponent<Boolean> implements IOnChangeListene
 		 * @see org.apache.wicket.util.convert.IConverter#convertToObject(java.lang.String,
 		 *      java.util.Locale)
 		 */
+		@Override
 		public Boolean convertToObject(String value, Locale locale)
 		{
 			if ("on".equals(value) || "true".equals(value))
@@ -237,10 +244,18 @@ public class CheckBox extends FormComponent<Boolean> implements IOnChangeListene
 		 * @see org.apache.wicket.util.convert.IConverter#convertToString(java.lang.Object,
 		 *      java.util.Locale)
 		 */
+		@Override
 		public String convertToString(Boolean value, Locale locale)
 		{
 			return value.toString();
 		}
+	}
+
+	@Override
+	public boolean checkRequired()
+	{
+		// a checkbox always has a value so this check always passes
+		return true;
 	}
 
 }

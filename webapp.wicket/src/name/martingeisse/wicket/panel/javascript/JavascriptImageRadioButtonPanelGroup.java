@@ -12,7 +12,9 @@ import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -145,7 +147,7 @@ public class JavascriptImageRadioButtonPanelGroup implements Serializable {
 	 */
 	public static void renderStaticJavascript(final IHeaderResponse response) {
 		final Class<?> c = JavascriptImageRadioButtonPanelGroup.class;
-		response.renderJavaScriptReference(new PackageResourceReference(c, c.getSimpleName() + ".js"), c.getCanonicalName());
+		response.render(JavaScriptHeaderItem.forReference(new PackageResourceReference(c, c.getSimpleName() + ".js"), c.getCanonicalName()));
 	}
 
 	/**
@@ -184,7 +186,7 @@ public class JavascriptImageRadioButtonPanelGroup implements Serializable {
 			builder.append("}");
 		}
 		builder.append("]);");
-		response.renderOnLoadJavaScript(builder.toString());
+		response.render(OnDomReadyHeaderItem.forScript(builder.toString()));
 	}
 
 	/**

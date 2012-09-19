@@ -20,7 +20,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 
 /**
- * Convinience class that takes care of common ITab functionality
+ * Convenience class that takes care of common ITab functionality
  * 
  * @see ITab
  * 
@@ -46,6 +46,7 @@ public abstract class AbstractTab implements ITab
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IModel<String> getTitle()
 	{
 		return title;
@@ -54,6 +55,7 @@ public abstract class AbstractTab implements ITab
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isVisible()
 	{
 		return true;
@@ -62,5 +64,6 @@ public abstract class AbstractTab implements ITab
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public abstract WebMarkupContainer getPanel(final String panelId);
 }

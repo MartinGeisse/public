@@ -31,6 +31,8 @@ import org.apache.wicket.ConverterLocator;
 import org.apache.wicket.IConverterLocator;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.WicketTestCase;
+import org.apache.wicket.core.util.lang.PropertyResolver;
+import org.apache.wicket.core.util.lang.PropertyResolverConverter;
 import org.apache.wicket.util.convert.ConversionException;
 import org.apache.wicket.util.convert.IConverter;
 import org.apache.wicket.util.convert.converter.AbstractConverter;
@@ -73,7 +75,7 @@ public class PropertyResolverTest extends WicketTestCase
 	@Test
 	public void simpleExpression() throws Exception
 	{
-		String name = (String)PropertyResolver.getValue("name", person);
+		String name = (String) PropertyResolver.getValue("name", person);
 		assertNull(name);
 
 		PropertyResolver.setValue("name", person, "wicket", CONVERTER);
@@ -693,6 +695,7 @@ public class PropertyResolverTest extends WicketTestCase
 		{
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public Long convertToObject(String value, Locale locale)
 			{
 				Date date = dateConverter.convertToObject(value, locale);

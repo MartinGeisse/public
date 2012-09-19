@@ -77,7 +77,6 @@ import org.slf4j.LoggerFactory;
  * not visible to WicketTester.
  * </p>
  * 
- * @see EnclosureResolver
  * @see EnclosureHandler
  * @see EnclosureContainer
  * 
@@ -203,6 +202,7 @@ public class Enclosure extends WebMarkupContainer implements IComponentResolver
 								controller = ComponentResolvers.resolve(enclosureParent,
 									markupStream, fullComponentTag, new ResolverFilter()
 									{
+										@Override
 										public boolean ignoreResolver(
 											final IComponentResolver resolver)
 										{
@@ -229,6 +229,7 @@ public class Enclosure extends WebMarkupContainer implements IComponentResolver
 		return controller;
 	}
 
+	@Override
 	public Component resolve(MarkupContainer container, MarkupStream markupStream, ComponentTag tag)
 	{
 		if (childId.equals(tag.getId()))

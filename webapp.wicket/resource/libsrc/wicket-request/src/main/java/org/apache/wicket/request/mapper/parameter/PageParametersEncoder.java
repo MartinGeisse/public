@@ -16,7 +16,6 @@
  */
 package org.apache.wicket.request.mapper.parameter;
 
-import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.Url.QueryParameter;
 
@@ -35,20 +34,21 @@ public class PageParametersEncoder implements IPageParametersEncoder
 	}
 
 	/**
-	 * @see org.apache.wicket.request.mapper.parameter.IPageParametersEncoder#decodePageParameters(org.apache.wicket.request.Request)
+	 * @see IPageParametersEncoder#decodePageParameters(org.apache.wicket.request.Url)
 	 */
-	public PageParameters decodePageParameters(final Request request)
+	@Override
+	public PageParameters decodePageParameters(final Url url)
 	{
 		PageParameters parameters = new PageParameters();
 
 		int i = 0;
-		for (String s : request.getUrl().getSegments())
+		for (String s : url.getSegments())
 		{
 			parameters.set(i, s);
 			++i;
 		}
 
-		for (QueryParameter p : request.getUrl().getQueryParameters())
+		for (QueryParameter p : url.getQueryParameters())
 		{
 			parameters.add(p.getName(), p.getValue());
 		}
@@ -59,19 +59,23 @@ public class PageParametersEncoder implements IPageParametersEncoder
 	/**
 	 * @see org.apache.wicket.request.mapper.parameter.IPageParametersEncoder#encodePageParameters(org.apache.wicket.request.mapper.parameter.PageParameters)
 	 */
+	@Override
 	public Url encodePageParameters(final PageParameters pageParameters)
 	{
 		Url url = new Url();
 
-		for (int i = 0; i < pageParameters.getIndexedCount(); ++i)
+		if (pageParameters != null)
 		{
-			url.getSegments().add(pageParameters.get(i).toString());
-		}
+			for (int i = 0; i < pageParameters.getIndexedCount(); ++i)
+			{
+				url.getSegments().add(pageParameters.get(i).toString());
+			}
 
-		for (PageParameters.NamedPair pair : pageParameters.getAllNamed())
-		{
-			QueryParameter param = new QueryParameter(pair.getKey(), pair.getValue());
-			url.getQueryParameters().add(param);
+			for (PageParameters.NamedPair pair : pageParameters.getAllNamed())
+			{
+				QueryParameter param = new QueryParameter(pair.getKey(), pair.getValue());
+				url.getQueryParameters().add(param);
+			}
 		}
 
 		return url;

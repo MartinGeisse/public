@@ -16,7 +16,9 @@
  */
 package org.apache.wicket.markup.parser.filter;
 
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
@@ -43,10 +45,10 @@ public class PanelWithHeaderPart extends Panel
 	@Override
 	public void renderHead(IHeaderResponse response)
 	{
-		response.renderCSSReference(new PackageResourceReference(PanelWithHeaderPart.class,
-			"test.css"));
-		response.renderJavaScriptReference(new JavaScriptResourceReference(
-			PanelWithHeaderPart.class, "test.js"));
+		response.render(CssHeaderItem.forReference(new PackageResourceReference(
+				PanelWithHeaderPart.class, "test.css")));
+		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(
+				PanelWithHeaderPart.class, "test.js")));
 	}
 
 }

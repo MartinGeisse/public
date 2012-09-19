@@ -45,6 +45,9 @@ public class JavaScriptPackageResource extends PackageResource
 		String variation)
 	{
 		super(scope, name, locale, style, variation);
+
+		// JS resources can be compressed if there is configured IJavaScriptCompressor
+		setCompress(true);
 	}
 
 	@Override
@@ -54,7 +57,7 @@ public class JavaScriptPackageResource extends PackageResource
 
 		IJavaScriptCompressor compressor = getCompressor();
 
-		if (compressor != null)
+		if (compressor != null && getCompress())
 		{
 			try
 			{

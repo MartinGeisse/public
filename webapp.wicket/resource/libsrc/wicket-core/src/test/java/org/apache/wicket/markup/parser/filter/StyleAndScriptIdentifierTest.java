@@ -22,14 +22,29 @@ import org.apache.wicket.markup.MarkupElement;
 import org.junit.Test;
 
 /**
- * @since 1.5.6
+ * @since 6.0
  */
 public class StyleAndScriptIdentifierTest extends WicketTestCase
 {
+	/**
+	 * https://issues.apache.org/jira/browse/WICKET-4425
+	 *
+	 * Verifies that the content of <script id="script1" type="text/x-jquery-tmpl">
+	 * wont be wrapped in CDATA, while all <script type="text/javascript"> will
+	 * be wrapped unless they have their body already wrapped
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void doNotWrapScriptTemplates() throws Exception
+	{
+		executeTest(PageWithScriptTemplate.class, "PageWithScriptTemplate_expected.html");
+	}
+
 	@Test
 	public void showWrapInCdata()
 	{
-		StyleAndScriptIdentifier filter = new StyleAndScriptIdentifier(Markup.NO_MARKUP);
+		StyleAndScriptIdentifier filter = new StyleAndScriptIdentifier();
 
 		String elementBody = "<!-- someJS() ";
 		assertFalse(filter.shouldWrapInCdata(elementBody));
@@ -78,7 +93,7 @@ public class StyleAndScriptIdentifierTest extends WicketTestCase
 		{
 			markup.addMarkupElement(markupElement);
 		}
-		StyleAndScriptIdentifier filter = new StyleAndScriptIdentifier(Markup.NO_MARKUP);
+		StyleAndScriptIdentifier filter = new StyleAndScriptIdentifier();
 		filter.postProcess(markup);
 		assertEquals("<script>\n/*<![CDATA[*/\nsomeJS()\n/*]]>*/\n</script>", markup.toString(true));
 	}

@@ -22,7 +22,7 @@ import org.apache.wicket.markup.html.basic.SimplePage;
 import org.apache.wicket.mock.MockApplication;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.mapper.CompoundRequestMapper;
-import org.apache.wicket.request.mapper.CryptoMapper;
+import org.apache.wicket.core.request.mapper.CryptoMapper;
 import org.apache.wicket.util.crypt.Base64;
 import org.apache.wicket.util.crypt.ICrypt;
 import org.apache.wicket.util.crypt.ICryptFactory;
@@ -101,21 +101,25 @@ public class CryptedUrlWebRequestCodingStrategyTest extends WicketTestCase
 	private static class TestCryptFactory implements ICryptFactory
 	{
 
+		@Override
 		public ICrypt newCrypt()
 		{
 			return new ICrypt()
 			{
 
+				@Override
 				public String decryptUrlSafe(String text)
 				{
 					return new String(new Base64(true).decode(text));
 				}
 
+				@Override
 				public String encryptUrlSafe(String plainText)
 				{
 					return new String(new Base64(true).encode(plainText.getBytes()));
 				}
 
+				@Override
 				public void setKey(String key)
 				{
 				}

@@ -20,12 +20,12 @@ import java.lang.reflect.Method;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.IComponentAwareEventSink;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IComponentAwareHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Behaviors are kind of plug-ins for Components. They allow functionality to be added to a
@@ -199,20 +199,6 @@ public abstract class Behavior
 	}
 
 	/**
-	 * Checks if a listener can be invoked on this behavior
-	 * 
-	 * @param component
-	 * @return true if a listener interface can be invoked on this behavior
-	 * 
-	 * @deprecated use {@link #canCallListenerInterface(Component, Method)}
-	 */
-	@Deprecated
-	public boolean canCallListenerInterface(Component component)
-	{
-		return isEnabled(component) && component.canCallListenerInterface();
-	}
-
-	/**
 	 * Checks whether or not a listener interface can be invoked on this behavior. For further
 	 * information please read the javadoc on {@link Component#canCallListenerInterface(Method)},
 	 * this method has the same semantics.
@@ -228,8 +214,7 @@ public abstract class Behavior
 	 */
 	public boolean canCallListenerInterface(Component component, Method method)
 	{
-		return canCallListenerInterface(component) && isEnabled(component) &&
-			component.canCallListenerInterface(method);
+		return isEnabled(component) && component.canCallListenerInterface(method);
 	}
 
 
@@ -241,6 +226,7 @@ public abstract class Behavior
 	 * @param response
 	 *            Response object
 	 */
+	@Override
 	public void renderHead(Component component, IHeaderResponse response)
 	{
 	}
@@ -263,6 +249,7 @@ public abstract class Behavior
 	 * @see org.apache.wicket.IComponentAwareEventSink#onEvent(org.apache.wicket.Component,
 	 *      org.apache.wicket.event.IEvent)
 	 */
+	@Override
 	public void onEvent(Component component, IEvent<?> event)
 	{
 	}

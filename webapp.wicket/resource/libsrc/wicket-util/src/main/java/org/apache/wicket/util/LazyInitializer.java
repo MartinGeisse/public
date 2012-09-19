@@ -16,7 +16,7 @@
  */
 package org.apache.wicket.util;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * An abstraction for lazy-initializing values. Guarantees only a single instance of the value is
@@ -35,6 +35,7 @@ public abstract class LazyInitializer<T> implements IProvider<T>, IClusterable
 
 	private transient volatile T instance = null;
 
+	@Override
 	public T get()
 	{
 		if (instance == null)

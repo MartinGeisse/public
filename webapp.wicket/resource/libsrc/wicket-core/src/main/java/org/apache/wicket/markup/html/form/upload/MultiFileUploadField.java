@@ -24,7 +24,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -203,11 +205,11 @@ public class MultiFileUploadField extends FormComponentPanel<Collection<FileUplo
 	public void renderHead(IHeaderResponse response)
 	{
 		// initialize the javascript library
-		response.renderJavaScriptReference(JS);
-		response.renderOnDomReadyJavaScript("new MultiSelector('" + getInputName() +
+		response.render(JavaScriptHeaderItem.forReference(JS));
+		response.render(OnDomReadyHeaderItem.forScript("new MultiSelector('" + getInputName() +
 			"', document.getElementById('" + container.getMarkupId() + "'), " + max + ",'" +
 			getString("org.apache.wicket.mfu.delete") + "').addElement(document.getElementById('" +
-			upload.getMarkupId() + "'));");
+			upload.getMarkupId() + "'));"));
 	}
 
 	/**

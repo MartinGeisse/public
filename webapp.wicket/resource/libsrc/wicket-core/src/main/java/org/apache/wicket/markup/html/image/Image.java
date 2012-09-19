@@ -145,6 +145,7 @@ public class Image extends WebComponent implements IResourceListener
 	/**
 	 * @see org.apache.wicket.IResourceListener#onResourceRequested()
 	 */
+	@Override
 	public void onResourceRequested()
 	{
 		localizedImageResource.onResourceRequested(null);
@@ -248,7 +249,7 @@ public class Image extends WebComponent implements IResourceListener
 	}
 
 	/**
-	 * Adding an image to {@link AjaxRequestTarget} most of the times mean that the image has
+	 * Adding an image to {@link org.apache.wicket.ajax.AjaxRequestTarget} most of the times mean that the image has
 	 * changes and must be re-rendered.
 	 * <p>
 	 * With this method the user may change this default behavior for some of her images.
@@ -258,7 +259,7 @@ public class Image extends WebComponent implements IResourceListener
 	 */
 	protected boolean shouldAddAntiCacheParameter()
 	{
-		return AjaxRequestTarget.get() != null;
+		return getRequestCycle().find(AjaxRequestTarget.class) != null;
 	}
 
 	/**

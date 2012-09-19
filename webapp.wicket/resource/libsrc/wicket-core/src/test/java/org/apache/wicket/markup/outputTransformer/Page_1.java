@@ -85,6 +85,7 @@ public class Page_1 extends WebPage
 				return output.toString().toUpperCase();
 			}
 		};
+
 		add(borderContainer);
 		Border border = new SimpleBorder("myBorder");
 		borderContainer.add(border);

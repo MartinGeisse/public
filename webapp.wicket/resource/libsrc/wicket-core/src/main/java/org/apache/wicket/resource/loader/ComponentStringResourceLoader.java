@@ -24,6 +24,8 @@ import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
+import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
+import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
@@ -31,8 +33,6 @@ import org.apache.wicket.markup.repeater.AbstractRepeater;
 import org.apache.wicket.resource.IPropertiesFactory;
 import org.apache.wicket.resource.Properties;
 import org.apache.wicket.util.lang.Args;
-import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
-import org.apache.wicket.util.resource.locator.ResourceNameIterator;
 import org.apache.wicket.util.string.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +112,7 @@ public class ComponentStringResourceLoader implements IStringResourceLoader
 	 * @see org.apache.wicket.resource.loader.IStringResourceLoader#loadStringResource(java.lang.Class,
 	 *      java.lang.String, java.util.Locale, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public String loadStringResource(Class<?> clazz, final String key, final Locale locale,
 		final String style, final String variation)
 	{
@@ -134,7 +135,7 @@ public class ComponentStringResourceLoader implements IStringResourceLoader
 			String path = clazz.getName().replace('.', '/');
 
 			// Iterator over all the combinations
-			ResourceNameIterator iter = newResourceNameIterator(path, locale, style, variation);
+			IResourceNameIterator iter = newResourceNameIterator(path, locale, style, variation);
 			while (iter.hasNext())
 			{
 				String newPath = iter.next();
@@ -181,7 +182,7 @@ public class ComponentStringResourceLoader implements IStringResourceLoader
 	 * @param variation
 	 * @return resource name iterator
 	 */
-	protected ResourceNameIterator newResourceNameIterator(final String path, final Locale locale,
+	protected IResourceNameIterator newResourceNameIterator(final String path, final Locale locale,
 		final String style, final String variation)
 	{
 		return Application.get()
@@ -205,6 +206,7 @@ public class ComponentStringResourceLoader implements IStringResourceLoader
 	 * @see org.apache.wicket.resource.loader.IStringResourceLoader#loadStringResource(org.apache.wicket.Component,
 	 *      java.lang.String, java.util.Locale, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public String loadStringResource(final Component component, final String key,
 		final Locale locale, final String style, final String variation)
 	{
@@ -230,7 +232,7 @@ public class ComponentStringResourceLoader implements IStringResourceLoader
 		{
 			// get current component class
 			final Class<?> clazz = current.getClass();
-			
+
 			// first, try the fully qualified resource name relative to the
 			// component on the path from page down.
 			if (Strings.isEmpty(prefix) == false)
@@ -244,7 +246,7 @@ public class ComponentStringResourceLoader implements IStringResourceLoader
 					return string;
 				}
 
-				// shorten resource key prefix when going downwards (skip for repeaters) 
+				// shorten resource key prefix when going downwards (skip for repeaters)
 				if ((current instanceof AbstractRepeater) == false)
 				{
 					prefix = Strings.afterFirst(prefix, '.');
@@ -275,7 +277,7 @@ public class ComponentStringResourceLoader implements IStringResourceLoader
 		Component current = Args.notNull(component, "component");
 
 		final StringBuilder buffer = new StringBuilder();
-		
+
 		while (current.getParent() != null)
 		{
 			final boolean skip = current.getParent() instanceof AbstractRepeater;
@@ -294,7 +296,7 @@ public class ComponentStringResourceLoader implements IStringResourceLoader
 	}
 
 	/**
-	 * return the trail of components from page to specified component 
+	 * return the trail of components from page to specified component
 	 * 
 	 * @param component
 	 *            The component to retrieve path for

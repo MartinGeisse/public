@@ -14,7 +14,9 @@ import name.martingeisse.common.javascript.JavascriptAssemblerUtil;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
 /**
@@ -145,7 +147,7 @@ public class JavascriptSpriteRadioButtonPanelGroup implements Serializable {
 	 */
 	public static void renderStaticJavascript(final IHeaderResponse response) {
 		final Class<?> c = JavascriptSpriteRadioButtonPanelGroup.class;
-		response.renderJavaScriptReference(new PackageResourceReference(c, c.getSimpleName() + ".js"), c.getCanonicalName());
+		response.render(JavaScriptHeaderItem.forReference(new PackageResourceReference(c, c.getSimpleName() + ".js"), c.getCanonicalName()));
 	}
 
 	/**
@@ -184,7 +186,7 @@ public class JavascriptSpriteRadioButtonPanelGroup implements Serializable {
 			builder.append("}");
 		}
 		builder.append("]);");
-		response.renderOnLoadJavaScript(builder.toString());
+		response.render(OnDomReadyHeaderItem.forScript(builder.toString()));
 	}
 	
 	/**

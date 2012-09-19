@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.wicket.Application;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.AppendingStringBuffer;
-import org.apache.wicket.util.string.JavaScriptUtils;
+import org.apache.wicket.core.util.string.JavaScriptUtils;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +56,9 @@ public class AjaxServerAndClientTimeFilter implements IResponseFilter
 	private static Logger log = LoggerFactory.getLogger(AjaxServerAndClientTimeFilter.class);
 
 	/**
-	 * @see org.apache.wicket.IResponseFilter#filter(org.apache.wicket.util.string.AppendingStringBuffer)
+	 * @see IResponseFilter#filter(org.apache.wicket.util.string.AppendingStringBuffer)
 	 */
+	@Override
 	public AppendingStringBuffer filter(AppendingStringBuffer responseBuffer)
 	{
 		int headIndex = responseBuffer.indexOf("<head>");
@@ -86,7 +87,7 @@ public class AjaxServerAndClientTimeFilter implements IResponseFilter
 			startScript.append("';]]></evaluate>");
 			responseBuffer.insert(ajaxEnd, startScript.toString());
 			responseBuffer.insert(ajaxStart + 15,
-				"<evaluate><![CDATA[clientTimeVariable = new Date().getTime();]]></evaluate>");
+				"<priority-evaluate><![CDATA[clientTimeVariable = new Date().getTime();]]></priority-evaluate>");
 		}
 		log.info(timeTaken + "ms server time taken for request " +
 			RequestCycle.get().getRequest().getUrl() + " response size: " + responseBuffer.length());

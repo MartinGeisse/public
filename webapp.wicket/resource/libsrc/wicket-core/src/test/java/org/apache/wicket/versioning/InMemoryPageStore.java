@@ -16,7 +16,6 @@
  */
 package org.apache.wicket.versioning;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,7 +33,7 @@ public class InMemoryPageStore implements IDataStore
 	/**
 	 * A map of : sessionId => pageId => pageAsBytes
 	 */
-	private final Map<String, Map<Integer, byte[]>> store;
+	private final ConcurrentHashMap<String, Map<Integer, byte[]>> store;
 
 	/**
 	 * Construct.
@@ -44,6 +43,7 @@ public class InMemoryPageStore implements IDataStore
 		store = new ConcurrentHashMap<String, Map<Integer, byte[]>> ();
 	}
 
+	@Override
 	public void destroy()
 	{
 		store.clear();
@@ -52,6 +52,7 @@ public class InMemoryPageStore implements IDataStore
 	/**
 	 * @see org.apache.wicket.pageStore.IDataStore#getData(java.lang.String, int)
 	 */
+	@Override
 	public byte[] getData(String sessionId, int pageId)
 	{
 		byte[] pageAsBytes = null;
@@ -68,6 +69,7 @@ public class InMemoryPageStore implements IDataStore
 	/**
 	 * @see org.apache.wicket.pageStore.IDataStore#removeData(java.lang.String, int)
 	 */
+	@Override
 	public void removeData(String sessionId, int pageId)
 	{
 		final Map<Integer, byte[]> sessionPages = store.get(sessionId);
@@ -80,6 +82,7 @@ public class InMemoryPageStore implements IDataStore
 	/**
 	 * @see org.apache.wicket.pageStore.IDataStore#removeData(java.lang.String)
 	 */
+	@Override
 	public void removeData(String sessionId)
 	{
 		store.remove(sessionId);
@@ -88,13 +91,18 @@ public class InMemoryPageStore implements IDataStore
 	/**
 	 * @see org.apache.wicket.pageStore.IDataStore#storeData(java.lang.String, int, byte[])
 	 */
+	@Override
 	public void storeData(String sessionId, int pageId, byte[] pageAsBytes)
 	{
 		Map<Integer, byte[]> sessionPages = store.get(sessionId);
 		if (sessionPages == null)
 		{
 			sessionPages = new ConcurrentHashMap<Integer, byte[]>();
-			store.put(sessionId, sessionPages);
+			Map<Integer, byte[]> tmpSessionPages = store.putIfAbsent(sessionId, sessionPages);
+			if (tmpSessionPages != null)
+			{
+				sessionPages = tmpSessionPages;
+			}
 		}
 
 		sessionPages.put(pageId, pageAsBytes);
@@ -103,7 +111,14 @@ public class InMemoryPageStore implements IDataStore
 	/**
 	 * @see org.apache.wicket.pageStore.IDataStore#isReplicated()
 	 */
+	@Override
 	public boolean isReplicated()
+	{
+		return false;
+	}
+
+	@Override
+	public boolean canBeAsynchronous()
 	{
 		return false;
 	}

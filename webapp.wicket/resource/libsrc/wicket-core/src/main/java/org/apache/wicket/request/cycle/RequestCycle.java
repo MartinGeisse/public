@@ -25,7 +25,6 @@ import org.apache.wicket.ThreadContext;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.event.IEventSink;
 import org.apache.wicket.protocol.http.IRequestLogger;
-import org.apache.wicket.protocol.http.IStagedRequestLogger;
 import org.apache.wicket.request.IExceptionMapper;
 import org.apache.wicket.request.IRequestCycle;
 import org.apache.wicket.request.IRequestHandler;
@@ -36,16 +35,17 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.UrlRenderer;
 import org.apache.wicket.request.component.IRequestablePage;
-import org.apache.wicket.request.handler.BookmarkablePageRequestHandler;
-import org.apache.wicket.request.handler.IPageProvider;
-import org.apache.wicket.request.handler.PageProvider;
-import org.apache.wicket.request.handler.RenderPageRequestHandler;
+import org.apache.wicket.core.request.handler.BookmarkablePageRequestHandler;
+import org.apache.wicket.core.request.handler.IPageProvider;
+import org.apache.wicket.core.request.handler.PageProvider;
+import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
 import org.apache.wicket.request.handler.resource.ResourceRequestHandler;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.caching.IStaticCacheableResource;
+import org.apache.wicket.settings.IApplicationSettings;
 import org.apache.wicket.util.lang.Args;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,8 +69,6 @@ import org.slf4j.LoggerFactory;
 public class RequestCycle implements IRequestCycle, IEventSink
 {
 	private static final Logger log = LoggerFactory.getLogger(RequestCycle.class);
-
-	private boolean cleanupFeedbackMessagesOnDetach;
 
 	/**
 	 * Returns request cycle associated with current thread.
@@ -127,7 +125,6 @@ public class RequestCycle implements IRequestCycle, IEventSink
 		Args.notNull(context.getRequestMapper(), "context.requestMapper");
 		Args.notNull(context.getExceptionMapper(), "context.exceptionMapper");
 
-		cleanupFeedbackMessagesOnDetach = true;
 		listeners = new RequestCycleListenerCollection();
 		startTime = System.currentTimeMillis();
 		requestHandlerExecutor = new HandlerExecutor();
@@ -165,6 +162,7 @@ public class RequestCycle implements IRequestCycle, IEventSink
 	 * 
 	 * @return UrlRenderer instance.
 	 */
+	@Override
 	public final UrlRenderer getUrlRenderer()
 	{
 		if (urlRenderer == null)
@@ -337,6 +335,7 @@ public class RequestCycle implements IRequestCycle, IEventSink
 	/**
 	 * @return current request
 	 */
+	@Override
 	public Request getRequest()
 	{
 		return request;
@@ -452,7 +451,8 @@ public class RequestCycle implements IRequestCycle, IEventSink
 	 */
 	public final CharSequence urlFor(ResourceReference reference, PageParameters params)
 	{
-		ResourceReferenceRequestHandler handler = new ResourceReferenceRequestHandler(reference, params);
+		ResourceReferenceRequestHandler handler = new ResourceReferenceRequestHandler(reference,
+			params);
 		return urlFor(handler);
 	}
 
@@ -473,7 +473,7 @@ public class RequestCycle implements IRequestCycle, IEventSink
 		final PageParameters parameters)
 	{
 		IRequestHandler handler = new BookmarkablePageRequestHandler(new PageProvider(pageClass,
-				parameters));
+			parameters));
 		return urlFor(handler);
 	}
 
@@ -503,18 +503,18 @@ public class RequestCycle implements IRequestCycle, IEventSink
 			String renderedUrl = getUrlRenderer().renderUrl(url);
 			if (handler instanceof ResourceReferenceRequestHandler)
 			{
-				ResourceReferenceRequestHandler rrrh = (ResourceReferenceRequestHandler) handler;
+				ResourceReferenceRequestHandler rrrh = (ResourceReferenceRequestHandler)handler;
 				IResource resource = rrrh.getResource();
-				if (!(resource instanceof IStaticCacheableResource) || shouldEncodeStaticResource)
+				if (resource != null && !(resource instanceof IStaticCacheableResource) || shouldEncodeStaticResource)
 				{
 					renderedUrl = getOriginalResponse().encodeURL(renderedUrl);
 				}
 			}
 			else if (handler instanceof ResourceRequestHandler)
 			{
-				ResourceRequestHandler rrh = (ResourceRequestHandler) handler;
+				ResourceRequestHandler rrh = (ResourceRequestHandler)handler;
 				IResource resource = rrh.getResource();
-				if (!(resource instanceof IStaticCacheableResource) || shouldEncodeStaticResource)
+				if (resource != null && !(resource instanceof IStaticCacheableResource) || shouldEncodeStaticResource)
 				{
 					renderedUrl = getOriginalResponse().encodeURL(renderedUrl);
 				}
@@ -564,10 +564,8 @@ public class RequestCycle implements IRequestCycle, IEventSink
 		if (Application.exists())
 		{
 			IRequestLogger requestLogger = Application.get().getRequestLogger();
-			if (requestLogger instanceof IStagedRequestLogger)
-			{
-				((IStagedRequestLogger)requestLogger).performLogging();
-			}
+			if (requestLogger != null)
+				requestLogger.performLogging();
 		}
 	}
 
@@ -576,14 +574,6 @@ public class RequestCycle implements IRequestCycle, IEventSink
 	 */
 	public void onDetach()
 	{
-		if (cleanupFeedbackMessagesOnDetach)
-		{
-			if (Session.exists())
-			{
-				Session.get().cleanupFeedbackMessages();
-			}
-		}
-
 		try
 		{
 			onEndRequest();
@@ -657,10 +647,14 @@ public class RequestCycle implements IRequestCycle, IEventSink
 	 * Gets whether or not feedback messages are to be cleaned up on detach.
 	 * 
 	 * @return true if they are
+	 * @deprecated see {@link IApplicationSettings#getFeedbackMessageCleanupFilter()}
+	 * 
+	 *             TODO 7.0 remove
 	 */
-	public boolean isCleanupFeedbackMessagesOnDetach()
+	@Deprecated
+	public final boolean isCleanupFeedbackMessagesOnDetach()
 	{
-		return cleanupFeedbackMessagesOnDetach;
+		throw new UnsupportedOperationException("Deprecated, see javadoc");
 	}
 
 	/**
@@ -668,10 +662,15 @@ public class RequestCycle implements IRequestCycle, IEventSink
 	 * 
 	 * @param cleanupFeedbackMessagesOnDetach
 	 *            true if you want them to be cleaned up
+	 * 
+	 * @deprecated see {@link #isCleanupFeedbackMessagesOnDetach()}
+	 * 
+	 *             TODO 7.0 remove
 	 */
-	public void setCleanupFeedbackMessagesOnDetach(boolean cleanupFeedbackMessagesOnDetach)
+	@Deprecated
+	public final void setCleanupFeedbackMessagesOnDetach(boolean cleanupFeedbackMessagesOnDetach)
 	{
-		this.cleanupFeedbackMessagesOnDetach = cleanupFeedbackMessagesOnDetach;
+		throw new UnsupportedOperationException("Deprecated, see javadoc");
 	}
 
 	/**
@@ -683,6 +682,7 @@ public class RequestCycle implements IRequestCycle, IEventSink
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public void onEvent(IEvent<?> event)
 	{
 	}
@@ -712,6 +712,7 @@ public class RequestCycle implements IRequestCycle, IEventSink
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Response getResponse()
 	{
 		return activeResponse;
@@ -720,6 +721,7 @@ public class RequestCycle implements IRequestCycle, IEventSink
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Response setResponse(final Response response)
 	{
 		Response current = activeResponse;
@@ -730,6 +732,7 @@ public class RequestCycle implements IRequestCycle, IEventSink
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void scheduleRequestHandlerAfterCurrent(IRequestHandler handler)
 	{
 		// just delegating the call to {@link IRequestHandlerExecutor} and invoking listeners
@@ -765,6 +768,33 @@ public class RequestCycle implements IRequestCycle, IEventSink
 	public void replaceAllRequestHandlers(final IRequestHandler handler)
 	{
 		requestHandlerExecutor.replaceAll(handler);
+	}
+
+	/**
+	 * Finds a IRequestHandler which is either the currently executing handler or is scheduled to be
+	 * executed.
+	 * 
+	 * @return the found IRequestHandler or {@code null}
+	 */
+	public <T extends IRequestHandler> T find(final Class<T> type)
+	{
+		if (type == null)
+		{
+			return null;
+		}
+
+		IRequestHandler result = getActiveRequestHandler();
+
+		if (result == null || type.isAssignableFrom(result.getClass()) == false)
+		{
+			result = getRequestHandlerScheduledAfterCurrent();
+			if (result == null || type.isAssignableFrom(result.getClass()) == false)
+			{
+				result = null;
+			}
+		}
+
+		return (T)result;
 	}
 
 	/**

@@ -11,7 +11,8 @@ import java.util.List;
 
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
@@ -130,7 +131,7 @@ public class TextFieldWithSuggestionsPanel extends TextFieldPanel<String> {
 	@Override
 	public void renderHead(final IHeaderResponse response) {
 		super.renderHead(response);
-		response.renderJavaScript(generateInitializationJavascript(), null);
+		response.render(OnDomReadyHeaderItem.forScript(generateInitializationJavascript()));
 	}
 
 	/**

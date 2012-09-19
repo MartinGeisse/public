@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public class HttpSessionStore implements ISessionStore
 {
 	/** log. */
-	private static Logger log = LoggerFactory.getLogger(HttpSessionStore.class);
+	private static final Logger log = LoggerFactory.getLogger(HttpSessionStore.class);
 
 	/** */
 	private final Set<UnboundListener> unboundListeners = new CopyOnWriteArraySet<UnboundListener>();
@@ -98,6 +98,7 @@ public class HttpSessionStore implements ISessionStore
 	/**
 	 * @see org.apache.wicket.session.ISessionStore#bind(Request, Session)
 	 */
+	@Override
 	public final void bind(final Request request, final Session newSession)
 	{
 		if (getAttribute(request, Session.SESSION_ATTRIBUTE_NAME) != newSession)
@@ -116,7 +117,7 @@ public class HttpSessionStore implements ISessionStore
 				// register an unbinding listener for cleaning up
 				String applicationKey = Application.get().getName();
 				httpSession.setAttribute("Wicket:SessionUnbindingListener-" + applicationKey,
-					new SessionBindingListener(applicationKey, httpSession.getId()));
+					new SessionBindingListener(applicationKey));
 
 				// register the session object itself
 				setAttribute(request, Session.SESSION_ATTRIBUTE_NAME, newSession);
@@ -124,6 +125,7 @@ public class HttpSessionStore implements ISessionStore
 		}
 	}
 
+	@Override
 	public void flushSession(Request request, Session session)
 	{
 		if (getAttribute(request, Session.SESSION_ATTRIBUTE_NAME) != session)
@@ -140,6 +142,7 @@ public class HttpSessionStore implements ISessionStore
 	/**
 	 * @see org.apache.wicket.session.ISessionStore#destroy()
 	 */
+	@Override
 	public void destroy()
 	{
 	}
@@ -148,6 +151,7 @@ public class HttpSessionStore implements ISessionStore
 	 * @see org.apache.wicket.session.ISessionStore#getSessionId(org.apache.wicket.request.Request,
 	 *      boolean)
 	 */
+	@Override
 	public String getSessionId(final Request request, final boolean create)
 	{
 		String id = null;
@@ -174,6 +178,7 @@ public class HttpSessionStore implements ISessionStore
 	/**
 	 * @see org.apache.wicket.session.ISessionStore#invalidate(Request)
 	 */
+	@Override
 	public final void invalidate(final Request request)
 	{
 		HttpSession httpSession = getHttpSession(request, false);
@@ -187,6 +192,7 @@ public class HttpSessionStore implements ISessionStore
 	/**
 	 * @see org.apache.wicket.session.ISessionStore#lookup(org.apache.wicket.request.Request)
 	 */
+	@Override
 	public final Session lookup(final Request request)
 	{
 		String sessionId = getSessionId(request, false);
@@ -249,6 +255,7 @@ public class HttpSessionStore implements ISessionStore
 	 * @see org.apache.wicket.session.ISessionStore#getAttribute(org.apache.wicket.request.Request,
 	 *      java.lang.String)
 	 */
+	@Override
 	public final Serializable getAttribute(final Request request, final String name)
 	{
 		HttpSession httpSession = getHttpSession(request, false);
@@ -262,6 +269,7 @@ public class HttpSessionStore implements ISessionStore
 	/**
 	 * @see org.apache.wicket.session.ISessionStore#getAttributeNames(org.apache.wicket.request.Request)
 	 */
+	@Override
 	public final List<String> getAttributeNames(final Request request)
 	{
 		List<String> list = new ArrayList<String>();
@@ -287,6 +295,7 @@ public class HttpSessionStore implements ISessionStore
 	 * @see org.apache.wicket.session.ISessionStore#removeAttribute(org.apache.wicket.request.Request,
 	 *      java.lang.String)
 	 */
+	@Override
 	public final void removeAttribute(final Request request, final String name)
 	{
 		HttpSession httpSession = getHttpSession(request, false);
@@ -311,6 +320,7 @@ public class HttpSessionStore implements ISessionStore
 	 * @see org.apache.wicket.session.ISessionStore#setAttribute(org.apache.wicket.request.Request,
 	 *      java.lang.String, java.io.Serializable)
 	 */
+	@Override
 	public final void setAttribute(final Request request, final String name,
 		final Serializable value)
 	{
@@ -338,6 +348,7 @@ public class HttpSessionStore implements ISessionStore
 	/**
 	 * @see org.apache.wicket.session.ISessionStore#registerUnboundListener(org.apache.wicket.session.ISessionStore.UnboundListener)
 	 */
+	@Override
 	public final void registerUnboundListener(final UnboundListener listener)
 	{
 		unboundListeners.add(listener);
@@ -346,6 +357,7 @@ public class HttpSessionStore implements ISessionStore
 	/**
 	 * @see org.apache.wicket.session.ISessionStore#unregisterUnboundListener(org.apache.wicket.session.ISessionStore.UnboundListener)
 	 */
+	@Override
 	public final void unregisterUnboundListener(final UnboundListener listener)
 	{
 		unboundListeners.remove(listener);
@@ -354,6 +366,7 @@ public class HttpSessionStore implements ISessionStore
 	/**
 	 * @see org.apache.wicket.session.ISessionStore#getUnboundListener()
 	 */
+	@Override
 	public final Set<UnboundListener> getUnboundListener()
 	{
 		return Collections.unmodifiableSet(unboundListeners);
@@ -364,6 +377,7 @@ public class HttpSessionStore implements ISessionStore
 	 * 
 	 * @param listener
 	 */
+	@Override
 	public void registerBindListener(BindListener listener)
 	{
 		bindListeners.add(listener);
@@ -374,6 +388,7 @@ public class HttpSessionStore implements ISessionStore
 	 * 
 	 * @param listener
 	 */
+	@Override
 	public void unregisterBindListener(BindListener listener)
 	{
 		bindListeners.remove(listener);
@@ -382,6 +397,7 @@ public class HttpSessionStore implements ISessionStore
 	/**
 	 * @return The list of registered bind listeners
 	 */
+	@Override
 	public Set<BindListener> getBindListeners()
 	{
 		return Collections.unmodifiableSet(bindListeners);
@@ -400,26 +416,21 @@ public class HttpSessionStore implements ISessionStore
 		/** The unique key of the application within this web application. */
 		private final String applicationKey;
 
-		/** Session id. */
-		private final String sessionId;
-
 		/**
 		 * Construct.
 		 * 
 		 * @param applicationKey
 		 *            The unique key of the application within this web application
-		 * @param sessionId
-		 *            The session's id
 		 */
-		public SessionBindingListener(final String applicationKey, final String sessionId)
+		public SessionBindingListener(final String applicationKey)
 		{
 			this.applicationKey = applicationKey;
-			this.sessionId = sessionId;
 		}
 
 		/**
 		 * @see javax.servlet.http.HttpSessionBindingListener#valueBound(javax.servlet.http.HttpSessionBindingEvent)
 		 */
+		@Override
 		public void valueBound(final HttpSessionBindingEvent evg)
 		{
 		}
@@ -427,17 +438,17 @@ public class HttpSessionStore implements ISessionStore
 		/**
 		 * @see javax.servlet.http.HttpSessionBindingListener#valueUnbound(javax.servlet.http.HttpSessionBindingEvent)
 		 */
+		@Override
 		public void valueUnbound(final HttpSessionBindingEvent evt)
 		{
-			if (log.isDebugEnabled())
-			{
-				log.debug("Session unbound: " + sessionId);
-			}
+			String sessionId = evt.getSession().getId();
+
+			log.debug("Session unbound: {}", sessionId);
 
 			Application application = Application.get(applicationKey);
 			if (application == null)
 			{
-				log.debug("Wicket application with name '" + applicationKey + "' not found.");
+				log.debug("Wicket application with name '{}' not found.", applicationKey);
 				return;
 			}
 

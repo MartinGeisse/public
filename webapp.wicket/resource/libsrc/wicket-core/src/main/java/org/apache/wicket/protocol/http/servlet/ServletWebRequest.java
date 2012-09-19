@@ -42,7 +42,7 @@ import org.apache.wicket.util.lang.Checks;
 import org.apache.wicket.util.string.PrependingStringBuffer;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.util.string.UrlUtils;
+import org.apache.wicket.core.util.string.UrlUtils;
 import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.upload.FileItemFactory;
 import org.apache.wicket.util.upload.FileUploadException;
@@ -97,9 +97,9 @@ public class ServletWebRequest extends WebRequest
 
 		this.httpServletRequest = httpServletRequest;
 
-		errorAttributes = ErrorAttributes.of(httpServletRequest);
+		errorAttributes = ErrorAttributes.of(httpServletRequest, filterPrefix);
 
-		forwardAttributes = ForwardAttributes.of(httpServletRequest);
+		forwardAttributes = ForwardAttributes.of(httpServletRequest, filterPrefix);
 
 		if (forwardAttributes != null || errorAttributes != null)
 		{
@@ -352,21 +352,25 @@ public class ServletWebRequest extends WebRequest
 
 	private final IRequestParameters postRequestParameters = new IWritableRequestParameters()
 	{
+		@Override
 		public void reset()
 		{
 			getPostRequestParameters().clear();
 		}
 
+		@Override
 		public void setParameterValues(String key, List<StringValue> values)
 		{
 			getPostRequestParameters().put(key, values);
 		}
 
+		@Override
 		public Set<String> getParameterNames()
 		{
 			return Collections.unmodifiableSet(getPostRequestParameters().keySet());
 		}
 
+		@Override
 		public StringValue getParameterValue(String name)
 		{
 			List<StringValue> values = getPostRequestParameters().get(name);
@@ -380,6 +384,7 @@ public class ServletWebRequest extends WebRequest
 			}
 		}
 
+		@Override
 		public List<StringValue> getParameterValues(String name)
 		{
 			List<StringValue> values = getPostRequestParameters().get(name);

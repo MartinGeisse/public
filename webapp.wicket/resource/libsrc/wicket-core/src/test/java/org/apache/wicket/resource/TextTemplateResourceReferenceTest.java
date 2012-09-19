@@ -23,10 +23,11 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.WicketTestCase;
 import org.apache.wicket.markup.IMarkupResourceStreamProvider;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.StringResourceStream;
 import org.junit.Test;
@@ -84,9 +85,10 @@ public class TextTemplateResourceReferenceTest extends WicketTestCase
 
 			final TextTemplateResourceReference reference = new TextTemplateResourceReference(
 				TextTemplateResourceReferenceTest.class, TEMPLATE_NAME, Model.ofMap(variables));
-			response.renderJavaScriptReference(reference);
+			response.render(JavaScriptHeaderItem.forReference(reference));
 		}
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{

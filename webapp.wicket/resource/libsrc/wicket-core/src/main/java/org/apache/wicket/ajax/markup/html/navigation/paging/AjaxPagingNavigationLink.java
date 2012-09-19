@@ -43,7 +43,7 @@ public class AjaxPagingNavigationLink extends PagingNavigationLink<Void> impleme
 	 *            The page number in the PageableListView that this link links to. Negative
 	 *            pageNumbers are relative to the end of the list.
 	 */
-	public AjaxPagingNavigationLink(final String id, final IPageable pageable, final int pageNumber)
+	public AjaxPagingNavigationLink(final String id, final IPageable pageable, final long pageNumber)
 	{
 		super(id, pageable, pageNumber);
 
@@ -54,7 +54,7 @@ public class AjaxPagingNavigationLink extends PagingNavigationLink<Void> impleme
 	protected void onInitialize()
 	{
 		super.onInitialize();
-		add(newAjaxPagingNavigationBehavior(pageable, "onclick"));
+		add(newAjaxPagingNavigationBehavior(pageable, "click"));
 	}
 
 	/**
@@ -88,6 +88,7 @@ public class AjaxPagingNavigationLink extends PagingNavigationLink<Void> impleme
 	 * @param target
 	 *            the request target, when <code>null</code>, a full page refresh will be generated
 	 */
+	@Override
 	public void onClick(AjaxRequestTarget target)
 	{
 		pageable.setCurrentPage(getPageNumber());

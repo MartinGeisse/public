@@ -73,9 +73,11 @@ import org.apache.wicket.util.visit.IVisitor;
  * 
  * @param <T>
  *            The model object type
+ * @param <S>
+ *            the type of the sorting parameter
  * 
  */
-public class DataTable<T> extends Panel implements IPageableItems
+public class DataTable<T, S> extends Panel implements IPageableItems
 {
 	static abstract class CssAttributeBehavior extends Behavior
 	{
@@ -92,15 +94,7 @@ public class DataTable<T> extends Panel implements IPageableItems
 			String className = getCssClass();
 			if (!Strings.isEmpty(className))
 			{
-				CharSequence oldClassName = tag.getAttribute("class");
-				if (Strings.isEmpty(oldClassName))
-				{
-					tag.put("class", className);
-				}
-				else
-				{
-					tag.put("class", oldClassName + " " + className);
-				}
+				tag.append("class", className, " ");
 			}
 		}
 	}
@@ -111,7 +105,7 @@ public class DataTable<T> extends Panel implements IPageableItems
 
 	private final WebMarkupContainer body;
 
-	private final List<IColumn<T>> columns;
+	private final List<? extends IColumn<T, S>> columns;
 
 	private final ToolbarsContainer topToolbars;
 
@@ -131,8 +125,8 @@ public class DataTable<T> extends Panel implements IPageableItems
 	 * @param rowsPerPage
 	 *            number of rows per page
 	 */
-	public DataTable(final String id, final List<IColumn<T>> columns,
-		final IDataProvider<T> dataProvider, final int rowsPerPage)
+	public DataTable(final String id, final List<? extends IColumn<T, S>> columns,
+		final IDataProvider<T> dataProvider, final long rowsPerPage)
 	{
 		super(id);
 
@@ -152,17 +146,17 @@ public class DataTable<T> extends Panel implements IPageableItems
 			protected Item newCellItem(final String id, final int index, final IModel model)
 			{
 				Item item = DataTable.this.newCellItem(id, index, model);
-				final IColumn<T> column = DataTable.this.columns.get(index);
+				final IColumn<T, S> column = DataTable.this.columns.get(index);
 				if (column instanceof IStyledColumn)
 				{
-					item.add(new DataTable.CssAttributeBehavior()
+					item.add(new CssAttributeBehavior()
 					{
 						private static final long serialVersionUID = 1L;
 
 						@Override
 						protected String getCssClass()
 						{
-							return ((IStyledColumn<?>)column).getCssClass();
+							return ((IStyledColumn<T, S>)column).getCssClass();
 						}
 					});
 				}
@@ -254,7 +248,7 @@ public class DataTable<T> extends Panel implements IPageableItems
 	/**
 	 * @return array of column objects this table displays
 	 */
-	public final List<IColumn<T>> getColumns()
+	public final List<? extends IColumn<T, S>> getColumns()
 	{
 		return columns;
 	}
@@ -262,7 +256,8 @@ public class DataTable<T> extends Panel implements IPageableItems
 	/**
 	 * @see org.apache.wicket.markup.html.navigation.paging.IPageable#getCurrentPage()
 	 */
-	public final int getCurrentPage()
+	@Override
+	public final long getCurrentPage()
 	{
 		return datagrid.getCurrentPage();
 	}
@@ -270,7 +265,8 @@ public class DataTable<T> extends Panel implements IPageableItems
 	/**
 	 * @see org.apache.wicket.markup.html.navigation.paging.IPageable#getPageCount()
 	 */
-	public final int getPageCount()
+	@Override
+	public final long getPageCount()
 	{
 		return datagrid.getPageCount();
 	}
@@ -278,7 +274,7 @@ public class DataTable<T> extends Panel implements IPageableItems
 	/**
 	 * @return total number of rows in this table
 	 */
-	public final int getRowCount()
+	public final long getRowCount()
 	{
 		return datagrid.getRowCount();
 	}
@@ -286,15 +282,17 @@ public class DataTable<T> extends Panel implements IPageableItems
 	/**
 	 * @return number of rows per page
 	 */
-	public final int getItemsPerPage()
+	@Override
+	public final long getItemsPerPage()
 	{
 		return datagrid.getItemsPerPage();
 	}
 
 	/**
-	 * @see org.apache.wicket.markup.html.navigation.paging.IPageable#setCurrentPage(int)
+	 * @see org.apache.wicket.markup.html.navigation.paging.IPageable#setCurrentPage(long)
 	 */
-	public final void setCurrentPage(final int page)
+	@Override
+	public final void setCurrentPage(final long page)
 	{
 		datagrid.setCurrentPage(page);
 		onPageChanged();
@@ -311,7 +309,7 @@ public class DataTable<T> extends Panel implements IPageableItems
 	 *            item reuse strategy
 	 * @return this for chaining
 	 */
-	public final DataTable<T> setItemReuseStrategy(final IItemReuseStrategy strategy)
+	public final DataTable<T, S> setItemReuseStrategy(final IItemReuseStrategy strategy)
 	{
 		datagrid.setItemReuseStrategy(strategy);
 		return this;
@@ -324,7 +322,7 @@ public class DataTable<T> extends Panel implements IPageableItems
 	 *            number of items to display per page
 	 * 
 	 */
-	public void setItemsPerPage(final int items)
+	public void setItemsPerPage(final long items)
 	{
 		datagrid.setItemsPerPage(items);
 	}
@@ -332,7 +330,8 @@ public class DataTable<T> extends Panel implements IPageableItems
 	/**
 	 * @see org.apache.wicket.markup.html.navigation.paging.IPageableItems#getItemCount()
 	 */
-	public int getItemCount()
+	@Override
+	public long getItemCount()
 	{
 		return datagrid.getItemCount();
 	}
@@ -358,10 +357,10 @@ public class DataTable<T> extends Panel implements IPageableItems
 	 * 
 	 * @return DataItem created DataItem
 	 */
-	protected Item<IColumn<T>> newCellItem(final String id, final int index,
-		final IModel<IColumn<T>> model)
+	protected Item<IColumn<T, S>> newCellItem(final String id, final int index,
+		final IModel<IColumn<T, S>> model)
 	{
-		return new Item<IColumn<T>>(id, index, model);
+		return new Item<IColumn<T, S>>(id, index, model);
 	}
 
 	/**
@@ -391,7 +390,7 @@ public class DataTable<T> extends Panel implements IPageableItems
 	{
 		super.onDetach();
 
-		for (IColumn<?> column : columns)
+		for (IColumn<T, S> column : columns)
 		{
 			column.detach();
 		}
@@ -444,6 +443,7 @@ public class DataTable<T> extends Panel implements IPageableItems
 
 			Boolean visible = toolbars.visitChildren(new IVisitor<Component, Boolean>()
 			{
+				@Override
 				public void component(Component object, IVisit<Boolean> visit)
 				{
 					object.configure();
@@ -472,6 +472,10 @@ public class DataTable<T> extends Panel implements IPageableItems
 	private static class Caption extends Label
 	{
 		/**
+		 */
+		private static final long serialVersionUID = 1L;
+
+		/**
 		 * Construct.
 		 * 
 		 * @param id
@@ -493,7 +497,7 @@ public class DataTable<T> extends Panel implements IPageableItems
 		}
 
 		@Override
-		protected IModel<?> initModel()
+		protected IModel<String> initModel()
 		{
 			// don't try to find the model in the parent
 			return null;

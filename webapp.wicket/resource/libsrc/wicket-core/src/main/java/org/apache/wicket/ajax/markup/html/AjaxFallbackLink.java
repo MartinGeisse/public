@@ -20,15 +20,20 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.calldecorator.CancelEventIfNoAjaxDecorator;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 
 /**
  * An ajax link that will degrade to a normal request if ajax is not available or javascript is
- * disabled
+ * disabled.
+ * 
+ * <p>
+ * If JavaScript is enabled then the registered JavaScript event 'click' handler will be used,
+ * otherwise the 'href' attribute if the markup element is an &lt;a&gt;, &lt;area&gt; or
+ * &lt;link&gt;. AjaxFallbackLink doesn't fallback if the markup element is none of the three above.
+ * </p>
  * 
  * @since 1.2
  * 
@@ -67,7 +72,7 @@ public abstract class AjaxFallbackLink<T> extends Link<T> implements IAjaxLink
 	protected void onInitialize()
 	{
 		super.onInitialize();
-		add(newAjaxEventBehavior("onclick"));
+		add(newAjaxEventBehavior("click"));
 	}
 
 	/**
@@ -77,29 +82,14 @@ public abstract class AjaxFallbackLink<T> extends Link<T> implements IAjaxLink
 	 */
 	protected AjaxEventBehavior newAjaxEventBehavior(String event)
 	{
-		return new AjaxEventBehavior("onclick")
+		return new AjaxEventBehavior(event)
 		{
 			private static final long serialVersionUID = 1L;
 
-			/**
-			 * 
-			 * @see org.apache.wicket.ajax.AjaxEventBehavior#onEvent(org.apache.wicket.ajax.AjaxRequestTarget)
-			 */
 			@Override
 			protected void onEvent(AjaxRequestTarget target)
 			{
 				onClick(target);
-			}
-
-			/**
-			 * 
-			 * @see org.apache.wicket.ajax.AbstractDefaultAjaxBehavior#getAjaxCallDecorator()
-			 */
-			@Override
-			protected IAjaxCallDecorator getAjaxCallDecorator()
-			{
-				return new CancelEventIfNoAjaxDecorator(
-					AjaxFallbackLink.this.getAjaxCallDecorator());
 			}
 
 			/**
@@ -121,23 +111,29 @@ public abstract class AjaxFallbackLink<T> extends Link<T> implements IAjaxLink
 			{
 				return AjaxFallbackLink.this.getChannel();
 			}
+
+			@Override
+			protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
+			{
+				super.updateAjaxAttributes(attributes);
+				AjaxFallbackLink.this.updateAjaxAttributes(attributes);
+			}
 		};
+	}
+
+	/**
+	 * @param attributes
+	 */
+	protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
+	{
 	}
 
 	/**
 	 * @return the channel that manages how Ajax calls are executed
 	 * @see AbstractDefaultAjaxBehavior#getChannel()
 	 */
+	@Deprecated
 	protected AjaxChannel getChannel()
-	{
-		return null;
-	}
-
-	/**
-	 * 
-	 * @return call decorator to use or null if none
-	 */
-	protected IAjaxCallDecorator getAjaxCallDecorator()
 	{
 		return null;
 	}
@@ -159,5 +155,33 @@ public abstract class AjaxFallbackLink<T> extends Link<T> implements IAjaxLink
 	 * @param target
 	 *            ajax target if this linked was invoked using ajax, null otherwise
 	 */
+	@Override
 	public abstract void onClick(final AjaxRequestTarget target);
+
+	/**
+	 * Removes any inline 'onclick' attributes set by Link#onComponentTag(ComponentTag).
+	 * 
+	 * @param tag
+	 *            the component tag
+	 */
+	@Override
+	protected void onComponentTag(ComponentTag tag)
+	{
+		super.onComponentTag(tag);
+
+		// Ajax links work with JavaScript Event registration
+		tag.remove("onclick");
+
+		String tagName = tag.getName();
+		if (isLinkEnabled() &&
+			!("a".equalsIgnoreCase(tagName) || "area".equalsIgnoreCase(tagName) || "link".equalsIgnoreCase(tagName)))
+		{
+			String msg = String.format(
+				"%s must be used only with <a>, <area> or <link> markup elements. "
+					+ "The fallback functionality doesn't work for other markup elements. "
+					+ "Component path: %s, markup element: <%s>.",
+				AjaxFallbackLink.class.getSimpleName(), getClassRelativePath(), tagName);
+			findMarkupStream().throwMarkupException(msg);
+		}
+	}
 }

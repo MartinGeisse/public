@@ -8,8 +8,9 @@ package name.martingeisse.wicket.panel.simple;
 
 
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.model.IModel;
 
 /**
@@ -34,7 +35,7 @@ public class DateTextFieldPanel<T> extends TextFieldPanel<T> implements IHeaderC
 	@Override
 	public void renderHead(IHeaderResponse response) {
 		String markupId = getFormComponent().getMarkupId();
-		response.renderOnDomReadyJavaScript("$('#" + markupId + "').datepicker({ dateFormat: 'd.m.yy' });");
+		response.render(OnDomReadyHeaderItem.forScript("$('#" + markupId + "').datepicker({ dateFormat: 'd.m.yy' });"));
 	}
 
 	/* (non-Javadoc)

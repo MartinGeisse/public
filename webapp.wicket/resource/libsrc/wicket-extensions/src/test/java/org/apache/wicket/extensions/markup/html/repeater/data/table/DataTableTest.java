@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.WicketTestCase;
 import org.apache.wicket.markup.IMarkupResourceStreamProvider;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -32,25 +33,16 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.StringResourceStream;
 import org.apache.wicket.util.string.StringValue;
-import org.apache.wicket.util.tester.DiffUtil;
 import org.apache.wicket.util.tester.WicketTester;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 
  */
-public class DataTableTest extends Assert
+public class DataTableTest extends WicketTestCase
 {
-	/** Log for reporting. */
-	private static final Logger log = LoggerFactory.getLogger(DataTableTest.class);
-
-	private WicketTester tester;
-
 	/**
 	 * 
 	 */
@@ -58,15 +50,6 @@ public class DataTableTest extends Assert
 	public void before()
 	{
 		tester = new WicketTester(new RepeaterApplication());
-	}
-
-	/**
-	 * 
-	 */
-	@After
-	public void after()
-	{
-		tester.destroy();
 	}
 
 	/**
@@ -91,14 +74,6 @@ public class DataTableTest extends Assert
 
 		index = document.indexOf("<caption", index + 1);
 		assertTrue("There must be not be <caption>", index == -1);
-
-// log.error(document);
-// log.error("==============================================");
-// log.error("==============================================");
-// log.error(removeFillers(document));
-
-		String doc = removeFillers(document);
-		DiffUtil.validatePage(doc, getClass(), "DataTablePage_ExpectedResult.html", true);
 	}
 
 	/**
@@ -147,18 +122,6 @@ public class DataTableTest extends Assert
 
 	}
 
-	private String removeFillers(String doc)
-	{
-		doc = doc.replaceAll("(?s)<span .*?>.*?</span>", "<x/>");
-		doc = doc.replaceAll("(?s)<div .*?>.*?</div>", "<x/>");
-		doc = doc.replaceAll("(?s)<a .*?>.*?</a>", "<x/>");
-		doc = doc.replaceAll("(?s)>\\s*?[\\n\\r]+\\s*?</", "><x/></");
-		doc = doc.replaceAll("(?s)[\\n\\r]+\\s*?([\\n\\r]+)", "\r\n");
-		doc = doc.replaceAll("(<x/>)+", "<x/>");
-
-		return doc;
-	}
-
 	/**
 	 * A page with a DataTable that either has items (tbody) or header and footer (thead/tfoot)
 	 */
@@ -181,38 +144,43 @@ public class DataTableTest extends Assert
 
 				private List<Integer> items = Arrays.asList(1, 3, 5);
 
+				@Override
 				public void detach()
 				{
 				}
 
-				public Iterator<? extends Number> iterator(int first, int count)
+				@Override
+				public Iterator<? extends Number> iterator(long first, long count)
 				{
 					StringValue emptyValue = getPageParameters().get("empty");
 					return emptyValue.toBoolean() ? Collections.<Integer> emptyList().iterator()
 						: items.iterator();
 				}
 
-				public int size()
+				@Override
+				public long size()
 				{
 					StringValue emptyValue = getPageParameters().get("empty");
 					return emptyValue.toBoolean() ? 0 : items.size();
 				}
 
+				@Override
 				public IModel<Number> model(Number object)
 				{
 					return Model.of(object);
 				}
 			};
 
-			List<IColumn<Number>> columns = new ArrayList<IColumn<Number>>();
-			columns.add(new PropertyColumn<Number>(Model.of("value"), "value"));
+			List<IColumn<Number, String>> columns = new ArrayList<IColumn<Number, String>>();
+			columns.add(new PropertyColumn<Number, String>(Model.of("value"), "value"));
 
-			DataTable<Number> table = new DataTable<Number>("table", columns, provider, 10);
+			DataTable<Number, String> table = new DataTable<Number, String>("table", columns, provider, 10);
 			table.addBottomToolbar(new NoRecordsToolbar(table));
 			table.addTopToolbar(new NoRecordsToolbar(table));
 			add(table);
 		}
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{

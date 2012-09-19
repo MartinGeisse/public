@@ -34,7 +34,7 @@ public class AjaxSubmitLinkClickTest extends WicketTestCase
 	private boolean linkClicked;
 
 	/**
-	 * 
+	 *
 	 */
 	@Before
 	public void before()
@@ -43,7 +43,7 @@ public class AjaxSubmitLinkClickTest extends WicketTestCase
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void testClickLinkInsideForm_ajaxSubmitLink()
 	{
@@ -88,7 +88,7 @@ public class AjaxSubmitLinkClickTest extends WicketTestCase
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void testClickLink_ajaxSubmitLink()
 	{

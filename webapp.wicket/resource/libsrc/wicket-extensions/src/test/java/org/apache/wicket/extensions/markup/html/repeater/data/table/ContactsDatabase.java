@@ -87,12 +87,12 @@ public class ContactsDatabase
 	 * @param sort
 	 * @return list of contacts
 	 */
-	public List<Contact> find(final int first, final int count, final SortParam sort)
+	public List<Contact> find(final long first, final long count, final SortParam<String> sort)
 	{
-		return getIndex(sort).subList(first, first + count);
+		return getIndex(sort).subList((int)first, (int)(first + count));
 	}
 
-	protected List<Contact> getIndex(final SortParam sort)
+	protected List<Contact> getIndex(final SortParam<String> sort)
 	{
 		if (sort == null)
 		{
@@ -161,6 +161,7 @@ public class ContactsDatabase
 	{
 		Collections.sort(fnameIdx, new Comparator<Contact>()
 		{
+			@Override
 			public int compare(final Contact arg0, final Contact arg1)
 			{
 				return (arg0).getFirstName().compareTo((arg1).getFirstName());
@@ -169,6 +170,7 @@ public class ContactsDatabase
 
 		Collections.sort(lnameIdx, new Comparator<Contact>()
 		{
+			@Override
 			public int compare(final Contact arg0, final Contact arg1)
 			{
 				return (arg0).getLastName().compareTo((arg1).getLastName());
@@ -177,6 +179,7 @@ public class ContactsDatabase
 
 		Collections.sort(fnameDescIdx, new Comparator<Contact>()
 		{
+			@Override
 			public int compare(final Contact arg0, final Contact arg1)
 			{
 				return (arg1).getFirstName().compareTo((arg0).getFirstName());
@@ -185,6 +188,7 @@ public class ContactsDatabase
 
 		Collections.sort(lnameDescIdx, new Comparator<Contact>()
 		{
+			@Override
 			public int compare(final Contact arg0, final Contact arg1)
 			{
 				return (arg1).getLastName().compareTo((arg0).getLastName());

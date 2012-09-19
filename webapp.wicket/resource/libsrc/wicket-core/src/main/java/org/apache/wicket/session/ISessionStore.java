@@ -198,24 +198,22 @@ public interface ISessionStore
 		void bindingSession(Request request, Session newSession);
 	}
 
-	// TODO Wicket.next add these methods to the interface
 	/**
 	 * Registers listener invoked when session is bound.
 	 * 
 	 * @param listener
 	 */
-	// void registerBindListener(BindListener listener);
+	void registerBindListener(BindListener listener);
 
 	/**
 	 * Unregisters listener invoked when session is bound.
 	 * 
 	 * @param listener
 	 */
-	// void unregisterBindListener(BindListener listener);
+	void unregisterBindListener(BindListener listener);
 
 	/**
 	 * @return The list of registered bind listeners
 	 */
-	// Set<BindListener> getBindListener();
-
+	Set<BindListener> getBindListeners();
 }

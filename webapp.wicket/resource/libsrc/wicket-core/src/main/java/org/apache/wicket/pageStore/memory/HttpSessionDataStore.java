@@ -25,8 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link DataStore} which stores the pages in the {@link HttpSession}. Uses
- * {@link DataStoreEvictionStrategy} to keep the memory footprint reasonable.
+ * A {@link IDataStore} which stores the pages in the {@link HttpSession}. Uses
+ * {@link IDataStoreEvictionStrategy} to keep the memory footprint reasonable.
  * 
  * <p>
  * Usage:
@@ -56,7 +56,7 @@ public class HttpSessionDataStore implements IDataStore
 
 	private final IPageManagerContext pageManagerContext;
 
-	private final DataStoreEvictionStrategy evictionStrategy;
+	private final IDataStoreEvictionStrategy evictionStrategy;
 
 	/**
 	 * Construct.
@@ -65,7 +65,7 @@ public class HttpSessionDataStore implements IDataStore
 	 * @param evictionStrategy
 	 */
 	public HttpSessionDataStore(IPageManagerContext pageManagerContext,
-		DataStoreEvictionStrategy evictionStrategy)
+		IDataStoreEvictionStrategy evictionStrategy)
 	{
 		this.pageManagerContext = pageManagerContext;
 		this.evictionStrategy = evictionStrategy;
@@ -76,6 +76,7 @@ public class HttpSessionDataStore implements IDataStore
 	 *            Ignored. Only pages from the current http session can be read
 	 * @see org.apache.wicket.pageStore.IDataStore#getData(java.lang.String, int)
 	 */
+	@Override
 	public byte[] getData(String sessionId, int pageId)
 	{
 		PageTable pageTable = getPageTable(false);
@@ -87,6 +88,7 @@ public class HttpSessionDataStore implements IDataStore
 		return pageAsBytes;
 	}
 
+	@Override
 	public void removeData(String sessionId, int pageId)
 	{
 		PageTable pageTable = getPageTable(false);
@@ -96,6 +98,7 @@ public class HttpSessionDataStore implements IDataStore
 		}
 	}
 
+	@Override
 	public void removeData(String sessionId)
 	{
 		PageTable pageTable = getPageTable(false);
@@ -105,6 +108,7 @@ public class HttpSessionDataStore implements IDataStore
 		}
 	}
 
+	@Override
 	public void storeData(String sessionId, int pageId, byte[] pageAsBytes)
 	{
 		PageTable pageTable = getPageTable(true);
@@ -120,6 +124,7 @@ public class HttpSessionDataStore implements IDataStore
 		}
 	}
 
+	@Override
 	public void destroy()
 	{
 		// do nothing
@@ -127,6 +132,7 @@ public class HttpSessionDataStore implements IDataStore
 		// so there is no reachable http session
 	}
 
+	@Override
 	public boolean isReplicated()
 	{
 		return true;
@@ -145,6 +151,14 @@ public class HttpSessionDataStore implements IDataStore
 			}
 		}
 		return pageTable;
+	}
+
+	@Override
+	public final boolean canBeAsynchronous()
+	{
+		// HttpSessionDataStore needs access to the current http session
+		// and this is not possible in AsychronousDataStore
+		return false;
 	}
 
 }

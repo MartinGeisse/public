@@ -16,7 +16,7 @@
  */
 package org.apache.wicket.feedback;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Interface for filtering feedback messages.
@@ -32,9 +32,24 @@ public interface IFeedbackMessageFilter extends IClusterable
 	{
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public boolean accept(FeedbackMessage message)
 		{
 			return true;
+		}
+	};
+
+	/**
+	 * Filter that does not match any message
+	 */
+	public static final IFeedbackMessageFilter NONE = new IFeedbackMessageFilter()
+	{
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public boolean accept(FeedbackMessage message)
+		{
+			return false;
 		}
 	};
 

@@ -26,20 +26,23 @@ import java.util.Map;
 
 import org.apache.wicket.application.IClassResolver;
 import org.apache.wicket.authorization.IAuthorizationStrategy;
+import org.apache.wicket.core.request.ClientInfo;
+import org.apache.wicket.core.util.lang.WicketObjects;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.event.IEventSink;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.FeedbackMessages;
 import org.apache.wicket.page.IPageManager;
 import org.apache.wicket.page.PageAccessSynchronizer;
-import org.apache.wicket.request.ClientInfo;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.session.ISessionStore;
+import org.apache.wicket.settings.IApplicationSettings;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.IProvider;
 import org.apache.wicket.util.LazyInitializer;
 import org.apache.wicket.util.lang.Objects;
-import org.apache.wicket.util.lang.WicketObjects;
+import org.apache.wicket.util.tester.BaseWicketTester;
 import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,28 +52,21 @@ import org.slf4j.LoggerFactory;
  * Holds information about a user session, including some fixed number of most recent pages (and all
  * their nested component information).
  * <ul>
- * <li><b>Access via Component </b>- If a RequestCycle object is not available, the Session can be
- * retrieved for a Component by calling {@link Component#getSession()}. As currently implemented,
- * each Component does not itself have a reference to the session that contains it. However, the
- * Page component at the root of the containment hierarchy does have a reference to the Session that
- * holds the Page. So {@link Component#getSession()} traverses the component hierarchy to the root
- * Page and then calls {@link Page#getSession()}.
+ * <li><b>Access</b> - the Session can be retrieved either by {@link Component#getSession()}
+ * or by directly calling the static method Session.get(). All classes which extend directly or indirectly
+ * {@link org.apache.wicket.markup.html.WebMarkupContainer} can also use its convenience method
+ * {@link org.apache.wicket.markup.html.WebMarkupContainer#getWebSession()}
  * 
- * <li><b>Access via Thread Local </b>- In the odd case where neither a RequestCycle nor a Component
- * is available, the currently active Session for the calling thread can be retrieved by calling the
- * static method Session.get(). This last form should only be used if the first two forms cannot be
- * used since thread local access can involve a potentially more expensive hash map lookup.
- * 
- * <li><b>Locale </b>- A session has a Locale property to support localization. The Locale for a
+ * <li><b>Locale</b> - A session has a Locale property to support localization. The Locale for a
  * session can be set by calling {@link Session#setLocale(Locale)}. The Locale for a Session
  * determines how localized resources are found and loaded.
  * 
- * <li><b>Style </b>- Besides having an appearance based on locale, resources can also have
+ * <li><b>Style</b> - Besides having an appearance based on locale, resources can also have
  * different looks in the same locale (a.k.a. "skins"). The style for a session determines the look
  * which is used within the appropriate locale. The session style ("skin") can be set with the
  * setStyle() method.
  * 
- * <li><b>Resource Loading </b>- Based on the Session locale and style, searching for resources
+ * <li><b>Resource Loading</b> - Based on the Session locale and style, searching for resources
  * occurs in the following order (where sourcePath is set via the ApplicationSettings object for the
  * current Application, and style and locale are Session properties):
  * <ul>
@@ -84,7 +80,7 @@ import org.slf4j.LoggerFactory;
  * 8. [classPath]/name.[extension] <br>
  * </ul>
  * 
- * <li><b>Session Properties </b>- Arbitrary objects can be attached to a Session by installing a
+ * <li><b>Session Properties</b> - Arbitrary objects can be attached to a Session by installing a
  * session factory on your Application class which creates custom Session subclasses that have
  * typesafe properties specific to the application (see {@link Application} for details). To
  * discourage non-typesafe access to Session properties, no setProperty() or getProperty() method is
@@ -92,16 +88,16 @@ import org.slf4j.LoggerFactory;
  * change a property on your own. This way the session will be reset again in the http session so
  * that the http session knows the session is changed.
  * 
- * <li><b>Class Resolver </b>- Sessions have a class resolver ( {@link IClassResolver})
+ * <li><b>Class Resolver</b> - Sessions have a class resolver ( {@link IClassResolver})
  * implementation that is used to locate classes for components such as pages.
  * 
- * <li><b>Page Factory </b>- A pluggable implementation of {@link IPageFactory} is used to
+ * <li><b>Page Factory</b> - A pluggable implementation of {@link IPageFactory} is used to
  * instantiate pages for the session.
  * 
- * <li><b>Removal </b>- Pages can be removed from the Session forcibly by calling remove(Page) or
+ * <li><b>Removal</b> - Pages can be removed from the Session forcibly by calling remove(Page) or
  * removeAll(), although such an action should rarely be necessary.
  * 
- * <li><b>Flash Messages</b>- Flash messages are messages that are stored in session and are removed
+ * <li><b>Flash Messages</b> - Flash messages are messages that are stored in session and are removed
  * after they are displayed to the user. Session acts as a store for these messages because they can
  * last across requests.
  * 
@@ -268,8 +264,16 @@ public abstract class Session implements IClusterable, IEventSink
 	/**
 	 * Cleans up all rendered feedback messages and any unrendered, dangling feedback messages there
 	 * may be left after that.
+	 * 
+	 * @deprecated see
+	 *             {@link IApplicationSettings#setFeedbackMessageCleanupFilter(org.apache.wicket.feedback.IFeedbackMessageFilter)}
+	 *             for cleanup during testing see {@link BaseWicketTester#cleanupFeedbackMessages()}
 	 */
-	public abstract void cleanupFeedbackMessages();
+	@Deprecated
+	public final void cleanupFeedbackMessages()
+	{
+		throw new UnsupportedOperationException("Deprecated, see the javadoc");
+	}
 
 
 	/**
@@ -640,10 +644,25 @@ public abstract class Session implements IClusterable, IEventSink
 	 */
 	public void detach()
 	{
+		detachFeedback();
+
 		if (sessionInvalidated)
 		{
 			invalidateNow();
 		}
+	}
+
+	private void detachFeedback()
+	{
+		final int removed = feedbackMessages.clear(getApplication().getApplicationSettings()
+			.getFeedbackMessageCleanupFilter());
+
+		if (removed != 0)
+		{
+			dirty();
+		}
+
+		feedbackMessages.detach();
 	}
 
 	/**
@@ -676,8 +695,6 @@ public abstract class Session implements IClusterable, IEventSink
 	 *            The name of the attribute to store
 	 * @return The value of the attribute
 	 */
-	// TODO WICKET-NG made public for page manager, used to be protected, see if there is a way to
-	// revert
 	public final Serializable getAttribute(final String name)
 	{
 		if (!isTemporary())
@@ -701,7 +718,7 @@ public abstract class Session implements IClusterable, IEventSink
 	/**
 	 * @return List of attributes for this session
 	 */
-	protected final List<String> getAttributeNames()
+	public final List<String> getAttributeNames()
 	{
 		if (!isTemporary())
 		{
@@ -743,7 +760,7 @@ public abstract class Session implements IClusterable, IEventSink
 	 * @param name
 	 *            the name of the attribute to remove
 	 */
-	protected final void removeAttribute(String name)
+	public final void removeAttribute(String name)
 	{
 		if (!isTemporary())
 		{
@@ -770,8 +787,6 @@ public abstract class Session implements IClusterable, IEventSink
 	 * @param value
 	 *            The value of the attribute
 	 */
-	// TODO WICKET-NG made public for page manager, used to be protected, see if there is a way to
-	// revert
 	public final void setAttribute(String name, Serializable value)
 	{
 		if (!isTemporary())
@@ -838,7 +853,7 @@ public abstract class Session implements IClusterable, IEventSink
 
 	/**
 	 * Returns the {@link IPageManager} instance.
-	 *
+	 * 
 	 * @return {@link IPageManager} instance.
 	 */
 	public final IPageManager getPageManager()
@@ -848,6 +863,7 @@ public abstract class Session implements IClusterable, IEventSink
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public void onEvent(IEvent<?> event)
 	{
 	}

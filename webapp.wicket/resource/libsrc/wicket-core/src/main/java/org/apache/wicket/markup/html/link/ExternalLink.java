@@ -22,7 +22,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.flow.RedirectToUrlException;
-import org.apache.wicket.util.string.UrlUtils;
+import org.apache.wicket.core.util.string.UrlUtils;
 
 /**
  * <p>
@@ -227,15 +227,5 @@ public class ExternalLink extends AbstractLink
 	{
 		this.contextRelative = contextRelative;
 		return this;
-	}
-
-	/**
-	 * @deprecated use {@link #getBody()} instead
-	 * @return the model used for the link's body
-	 */
-	@Deprecated
-	public IModel<?> getLabel()
-	{
-		return getBody();
 	}
 }

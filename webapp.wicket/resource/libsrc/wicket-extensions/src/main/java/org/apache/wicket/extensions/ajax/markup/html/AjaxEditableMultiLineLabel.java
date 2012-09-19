@@ -18,6 +18,9 @@ package org.apache.wicket.extensions.ajax.markup.html;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.attributes.AjaxCallListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes.Method;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
@@ -29,6 +32,10 @@ import org.apache.wicket.model.IModel;
 /**
  * An inplace editor much like {@link AjaxEditableLabel}, but now with support for multi line
  * content and a {@link TextArea text area} as its editor.
+ * <p>
+ *     <strong>Note</strong>: attach this component to a block HTML element (like &lt;div&gt;)
+ *     because its label uses block elements to show the content.
+ * </p>
  * 
  * @author eelcohillenius
  * 
@@ -112,12 +119,9 @@ public class AjaxEditableMultiLineLabel<T> extends AjaxEditableLabel<T>
 	@Override
 	protected String getLabelAjaxEvent()
 	{
-		return "onclick";
+		return "click";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected FormComponent<T> newEditor(final MarkupContainer parent, final String componentId,
 		final IModel<T> model)
@@ -126,18 +130,12 @@ public class AjaxEditableMultiLineLabel<T> extends AjaxEditableLabel<T>
 		{
 			private static final long serialVersionUID = 1L;
 
-			/**
-			 * {@inheritDoc}
-			 */
 			@Override
 			protected void onModelChanged()
 			{
 				AjaxEditableMultiLineLabel.this.onModelChanged();
 			}
 
-			/**
-			 * {@inheritDoc}
-			 */
 			@Override
 			protected void onModelChanging()
 			{
@@ -170,24 +168,33 @@ public class AjaxEditableMultiLineLabel<T> extends AjaxEditableLabel<T>
 		{
 			private static final long serialVersionUID = 1L;
 
-			/**
-			 * {@inheritDoc}
-			 */
 			@Override
-			protected void onComponentTag(final ComponentTag tag)
+			protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
 			{
-				super.onComponentTag(tag);
-				final String saveCall = "{wicketAjaxPost('" + getCallbackUrl() + "&save=true', " +
-					"wicketSerialize(this)); return true;}";
+				super.updateAjaxAttributes(attributes);
+				attributes.setMethod(Method.POST);
+				attributes.setEventNames("blur", "keyup");
+				CharSequence dynamicExtraParameters = 
+						"var result = [], " +
+								"kc=Wicket.Event.keyCode(attrs.event)," +
+								"evtType=attrs.event.type;" +
+								"if (evtType === 'keyup') {" +
+									// ESCAPE key
+									"if (kc===27) { result.push( { name: 'save', value: false } ); }" +
+								"}" +
+								"else if (evtType==='blur') { result = Wicket.Form.serializeElement(attrs.c); result.push( { name: 'save', value: true } ); }" +
+								"return result;";
+				attributes.getDynamicExtraParameters().add(dynamicExtraParameters);
 
-				final String cancelCall = "{wicketAjaxGet('" + getCallbackUrl() +
-					"&save=false');this.onblur='';return false;}";
-
-				final String keypress = "var kc=wicketKeyCode(event); if (kc==27) " + cancelCall +
-					"; ";
-
-				tag.put("onblur", saveCall);
-				tag.put("onkeydown", keypress);
+				CharSequence precondition =
+						"var kc=Wicket.Event.keyCode(attrs.event),"+
+								"evtType=attrs.event.type,"+
+								"ret=false;"+
+								"if(evtType==='blur' || (evtType==='keyup' && (kc===27))) ret = true;"+
+								"return ret;";
+				AjaxCallListener ajaxCallListener = new AjaxCallListener();
+				ajaxCallListener.onPrecondition(precondition);
+				attributes.getAjaxCallListeners().add(ajaxCallListener);
 			}
 		});
 		return editor;

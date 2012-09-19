@@ -19,21 +19,23 @@ package org.apache.wicket.extensions.ajax.markup.html.form.upload;
 import java.util.Formatter;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.Component;
 import org.apache.wicket.IInitializer;
-import org.apache.wicket.ajax.WicketAjaxReference;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.WicketEventReference;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.SharedResourceReference;
+import org.apache.wicket.resource.CoreLibrariesContributor;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 import org.slf4j.Logger;
@@ -86,6 +88,7 @@ public class UploadProgressBar extends Panel
 		/**
 		 * @see org.apache.wicket.IInitializer#init(org.apache.wicket.Application)
 		 */
+		@Override
 		public void init(final Application application)
 		{
 			// register the upload status resource
@@ -102,15 +105,16 @@ public class UploadProgressBar extends Panel
 		}
 
 		/** {@inheritDoc} */
+		@Override
 		public void destroy(final Application application)
 		{
 		}
 	}
 
-	private static final ResourceReference JS = new PackageResourceReference(
+	private static final ResourceReference JS = new JavaScriptResourceReference(
 		UploadProgressBar.class, "progressbar.js");
 
-	private static final ResourceReference CSS = new PackageResourceReference(
+	private static final ResourceReference CSS = new CssResourceReference(
 		UploadProgressBar.class, "UploadProgressBar.css");
 
 	private static final String RESOURCE_NAME = UploadProgressBar.class.getName();
@@ -202,13 +206,13 @@ public class UploadProgressBar extends Panel
 	public void renderHead(final IHeaderResponse response)
 	{
 		super.renderHead(response);
-		response.renderJavaScriptReference(WicketEventReference.INSTANCE);
-		response.renderJavaScriptReference(WicketAjaxReference.INSTANCE);
-		response.renderJavaScriptReference(JS);
+
+		CoreLibrariesContributor.contributeAjax(getApplication(), response);
+		response.render(JavaScriptHeaderItem.forReference(JS));
 		ResourceReference css = getCss();
 		if (css != null)
 		{
-			response.renderCSSReference(css);
+			response.render(CssHeaderItem.forReference(css));
 		}
 
 		ResourceReference ref = new SharedResourceReference(RESOURCE_NAME);
@@ -222,10 +226,11 @@ public class UploadProgressBar extends Panel
 		StringBuilder builder = new StringBuilder(128);
 		Formatter formatter = new Formatter(builder);
 
-		formatter.format("new Wicket.WUPB('%s', '%s', '%s', '%s', '%s', '%s').bind('%s')",
+		formatter.format(
+			"Wicket.bind(new Wicket.WUPB('%s', '%s', '%s', '%s', '%s', '%s'), Wicket.$('%s'))",
 			getMarkupId(), statusDiv.getMarkupId(), barDiv.getMarkupId(), url, uploadFieldId,
 			status, getCallbackForm().getMarkupId());
-		response.renderOnDomReadyJavaScript(builder.toString());
+		response.render(OnDomReadyHeaderItem.forScript(builder.toString()));
 	}
 
 	/**
@@ -238,9 +243,10 @@ public class UploadProgressBar extends Panel
 	private Form<?> getCallbackForm()
 	{
 		Boolean insideModal = form.visitParents(ModalWindow.class,
-			new IVisitor<Component, Boolean>()
+			new IVisitor<ModalWindow, Boolean>()
 			{
-				public void component(final Component object, final IVisit<Boolean> visit)
+				@Override
+				public void component(final ModalWindow object, final IVisit<Boolean> visit)
 				{
 					visit.stop(true);
 				}

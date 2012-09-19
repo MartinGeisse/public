@@ -38,8 +38,10 @@ import org.apache.wicket.model.IModel;
  * @author Igor Vaynberg ( ivaynberg )
  * @param <T>
  *            The model object type
+ * @param <S>
+ *            the type of the sorting parameter
  */
-public class DefaultDataTable<T> extends DataTable<T>
+public class DefaultDataTable<T, S> extends DataTable<T, S>
 {
 	private static final long serialVersionUID = 1L;
 
@@ -55,13 +57,13 @@ public class DefaultDataTable<T> extends DataTable<T>
 	 * @param rowsPerPage
 	 *            number of rows per page
 	 */
-	public DefaultDataTable(final String id, final List<IColumn<T>> columns,
-		final ISortableDataProvider<T> dataProvider, final int rowsPerPage)
+	public DefaultDataTable(final String id, final List<? extends IColumn<T, S>> columns,
+		final ISortableDataProvider<T, S> dataProvider, final int rowsPerPage)
 	{
 		super(id, columns, dataProvider, rowsPerPage);
 
 		addTopToolbar(new NavigationToolbar(this));
-		addTopToolbar(new HeadersToolbar(this, dataProvider));
+		addTopToolbar(new HeadersToolbar<S>(this, dataProvider));
 		addBottomToolbar(new NoRecordsToolbar(this));
 	}
 

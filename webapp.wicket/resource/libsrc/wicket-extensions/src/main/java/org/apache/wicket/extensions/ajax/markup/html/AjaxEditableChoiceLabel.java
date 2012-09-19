@@ -19,6 +19,7 @@ package org.apache.wicket.extensions.ajax.markup.html;
 import java.util.List;
 
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.WebComponent;
@@ -204,13 +205,13 @@ public class AjaxEditableChoiceLabel<T> extends AjaxEditableLabel<T>
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected void onComponentTag(final ComponentTag tag)
+			protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
 			{
-				super.onComponentTag(tag);
-				final String saveCall = "{wicketAjaxGet('" + getCallbackUrl() +
-					"&save=true&'+this.name+'='+wicketEncode(this.value)); return true;}";
-
-				tag.put("onchange", saveCall);
+				super.updateAjaxAttributes(attributes);
+				attributes.setEventNames("change");
+				attributes.getExtraParameters().put("save", "true");
+				List<CharSequence> dynamicParameters = attributes.getDynamicExtraParameters();
+				dynamicParameters.add("return Wicket.Form.serializeElement(attrs.c)");
 			}
 		});
 		return editor;

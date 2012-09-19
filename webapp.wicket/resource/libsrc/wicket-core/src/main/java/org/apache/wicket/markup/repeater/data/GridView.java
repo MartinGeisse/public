@@ -22,6 +22,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RepeatingView;
+import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.lang.Generics;
 
 
@@ -147,7 +148,7 @@ public abstract class GridView<T> extends DataViewBase<T>
 
 	private void updateItemsPerPage()
 	{
-		int items = Integer.MAX_VALUE;
+		long items = Long.MAX_VALUE;
 
 		long result = (long)rows * (long)columns;
 
@@ -260,9 +261,8 @@ public abstract class GridView<T> extends DataViewBase<T>
 	 * 
 	 * @author igor
 	 * @param <T>
-	 * 
 	 */
-	private static class ItemsIterator<T> implements Iterator<Item<T>>
+	public static class ItemsIterator<T> implements Iterator<Item<T>>
 	{
 		private final Iterator<MarkupContainer> rows;
 		private Iterator<Item<T>> cells;
@@ -275,13 +275,14 @@ public abstract class GridView<T> extends DataViewBase<T>
 		 */
 		public ItemsIterator(Iterator<MarkupContainer> rows)
 		{
-			this.rows = rows;
+			this.rows = Args.notNull(rows, "rows");
 			findNext();
 		}
 
 		/**
 		 * @see java.util.Iterator#remove()
 		 */
+		@Override
 		public void remove()
 		{
 			throw new UnsupportedOperationException();
@@ -290,6 +291,7 @@ public abstract class GridView<T> extends DataViewBase<T>
 		/**
 		 * @see java.util.Iterator#hasNext()
 		 */
+		@Override
 		public boolean hasNext()
 		{
 			return next != null;
@@ -298,6 +300,7 @@ public abstract class GridView<T> extends DataViewBase<T>
 		/**
 		 * @see java.util.Iterator#next()
 		 */
+		@Override
 		public Item<T> next()
 		{
 			Item<T> item = next;

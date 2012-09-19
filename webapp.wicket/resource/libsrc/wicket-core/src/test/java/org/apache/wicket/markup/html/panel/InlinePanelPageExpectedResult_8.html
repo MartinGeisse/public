@@ -1,10 +1,11 @@
 <html xmlns:wicket>
-<head><script type="text/javascript" src="../resource/org.apache.wicket.markup.html.WicketEventReference/wicket-event.js"></script>
-<script type="text/javascript" src="../resource/org.apache.wicket.ajax.WicketAjaxReference/wicket-ajax.js"></script>
-<script type="text/javascript" src="../resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/wicket-ajax-debug.js"></script>
+<head><script type="text/javascript" src="../resource/org.apache.wicket.resource.JQueryResourceReference/jquery/jquery.js"></script>
+<script type="text/javascript" src="../resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/res/js/wicket-event-jquery.js"></script>
+<script type="text/javascript" src="../resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/res/js/wicket-ajax-jquery.js"></script>
+<script type="text/javascript" src="../resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/res/js/wicket-ajax-jquery-debug.js"></script>
 <script type="text/javascript" id="wicket-ajax-debug-enable">
 /*<![CDATA[*/
-wicketAjaxDebugEnable=true;
+Wicket.Ajax.DebugWindow.enabled=true;
 /*]]>*/
 </script>
 <script type="text/javascript" id="wicket-ajax-base-url">
@@ -12,13 +13,20 @@ wicketAjaxDebugEnable=true;
 Wicket.Ajax.baseUrl="wicket/bookmarkable/org.apache.wicket.markup.html.panel.InlinePanelPage_8";
 /*]]>*/
 </script>
+<script type="text/javascript" >
+/*<![CDATA[*/
+Wicket.Event.add(window, "domready", function(event) { 
+Wicket.Ajax.ajax({"u":"../page?0-1.IBehaviorListener.0-add","e":"click","c":"add1"});;
+;});
+/*]]>*/
+</script>
 </head><body>
 
 <div wicket:id="first">
   <span wicket:id="number">0</span><br/>
-  <div id="nextContainer1" style="display:none"></div>
+  <div id="nextContainer2" style="display:none"></div>
 </div>
-<a wicket:id="add" id="add2" href="#" onclick="var wcall=wicketAjaxGet(&#039;../page?0-1.IBehaviorListener.0-add&#039;,function() { }.bind(this),function() { }.bind(this), function() {return Wicket.$(&#039;add2&#039;) != null;}.bind(this));return !wcall;">Add</a>
+<a wicket:id="add" id="add1" href="#">Add</a>
 
 
 

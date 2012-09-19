@@ -70,7 +70,7 @@ public class AjaxPagingNavigationIncrementLink extends PagingNavigationIncrement
 	protected void onInitialize()
 	{
 		super.onInitialize();
-		add(newAjaxPagingNavigationBehavior(pageable, "onclick"));
+		add(newAjaxPagingNavigationBehavior(pageable, "click"));
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class AjaxPagingNavigationIncrementLink extends PagingNavigationIncrement
 	protected AjaxPagingNavigationBehavior newAjaxPagingNavigationBehavior(IPageable pageable,
 		String event)
 	{
-		return new AjaxPagingNavigationBehavior(this, pageable, "onclick");
+		return new AjaxPagingNavigationBehavior(this, pageable, "click");
 	}
 
 	/**
@@ -122,6 +122,7 @@ public class AjaxPagingNavigationIncrementLink extends PagingNavigationIncrement
 	 * @param target
 	 *            the request target, when <code>null</code>, a full page refresh will be generated
 	 */
+	@Override
 	public void onClick(AjaxRequestTarget target)
 	{
 		// Tell the PageableListView which page to print next

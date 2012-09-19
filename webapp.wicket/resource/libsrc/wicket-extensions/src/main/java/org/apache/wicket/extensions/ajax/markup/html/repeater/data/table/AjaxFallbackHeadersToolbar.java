@@ -17,7 +17,7 @@
 package org.apache.wicket.extensions.ajax.markup.html.repeater.data.table;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.attributes.IAjaxCallListener;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.sort.AjaxFallbackOrderByBorder;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
@@ -27,13 +27,15 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 
 /**
  * Ajaxified {@link HeadersToolbar}
- * 
+ *
+ * @param <S>
+ *            the type of the sort property
  * @see HeadersToolbar
  * 
  * @author ivaynberg
  * 
  */
-public class AjaxFallbackHeadersToolbar extends HeadersToolbar
+public class AjaxFallbackHeadersToolbar<S> extends HeadersToolbar<S>
 {
 	private static final long serialVersionUID = 1L;
 
@@ -43,7 +45,7 @@ public class AjaxFallbackHeadersToolbar extends HeadersToolbar
 	 * @param table
 	 * @param stateLocator
 	 */
-	public AjaxFallbackHeadersToolbar(final DataTable<?> table, final ISortStateLocator stateLocator)
+	public AjaxFallbackHeadersToolbar(final DataTable<?, S> table, final ISortStateLocator<S> stateLocator)
 	{
 		super(table, stateLocator);
 		table.setOutputMarkupId(true);
@@ -53,10 +55,10 @@ public class AjaxFallbackHeadersToolbar extends HeadersToolbar
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected WebMarkupContainer newSortableHeader(final String borderId, final String property,
-		final ISortStateLocator locator)
+	protected WebMarkupContainer newSortableHeader(final String borderId, final S property,
+		final ISortStateLocator<S> locator)
 	{
-		return new AjaxFallbackOrderByBorder(borderId, property, locator, getAjaxCallDecorator())
+		return new AjaxFallbackOrderByBorder<S>(borderId, property, locator, getAjaxCallListener())
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -80,7 +82,7 @@ public class AjaxFallbackHeadersToolbar extends HeadersToolbar
 	 * 
 	 * @return decorator or null for none
 	 */
-	protected IAjaxCallDecorator getAjaxCallDecorator()
+	protected IAjaxCallListener getAjaxCallListener()
 	{
 		return null;
 	}

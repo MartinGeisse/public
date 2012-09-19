@@ -30,7 +30,6 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.StringResourceStream;
 import org.apache.wicket.util.string.StringValue;
-import org.apache.wicket.util.string.Strings;
 import org.junit.Test;
 
 
@@ -102,6 +101,7 @@ public class BehaviorUrlTest extends WicketTestCase
 
 		}
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{
@@ -136,6 +136,7 @@ public class BehaviorUrlTest extends WicketTestCase
 				component.urlFor(this, IBehaviorListener.INTERFACE, new PageParameters()));
 		}
 
+		@Override
 		public void onRequest()
 		{
 		}
@@ -150,7 +151,8 @@ public class BehaviorUrlTest extends WicketTestCase
 		tester.startPage(EscapeTestPage.class);
 
 		String response = tester.getLastResponseAsString();
-		assertTrue(response.contains(Strings.escapeMarkup(EscapeTestPage.TEST_QUERY_STRING)));
+//		System.err.println(response);
+		assertTrue(response.contains(EscapeTestPage.TEST_QUERY_STRING));
 
 		tester.executeAjaxEvent("form:textfield", "onchange");
 

@@ -32,7 +32,7 @@ public class HomePage extends WebPage
 	private final TestForm form;
 
 	/**
-	 * 
+	 *
 	 */
 	public HomePage()
 	{

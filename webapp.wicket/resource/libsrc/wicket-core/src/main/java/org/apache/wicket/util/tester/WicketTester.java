@@ -26,11 +26,9 @@ import java.util.List;
 import javax.servlet.ServletContext;
 
 import junit.framework.AssertionFailedError;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedback;
@@ -136,14 +134,7 @@ import org.slf4j.LoggerFactory;
  * 	tester.assertInfoMessages(new String[] { &quot;Wicket Rocks ;-)&quot; });
  * }
  * </pre>
- * 
- * Instead of <code>tester.startPage(pageClass)</code>, we define a
- * {@link org.apache.wicket.util.tester.ITestPageSource} to provide testing page instance for
- * <code>WicketTester</code>. This is necessary because <code>YourPage</code> uses a custom
- * constructor, which is very common for transferring model data, but cannot be instantiated by
- * reflection. Finally, we use <code>assertInfoMessages</code> to assert there is a feedback message
- * "Wicket Rocks ;-)" at the INFO level.
- * 
+ *
  * Many methods require a 'path' parameter. E.g. the page relative path can be obtained via
  * {@link Component#getPageRelativePath()}. Since each Component has an ID/name, any Component can
  * also be referenced by its ID {@link MarkupContainer#get(String)}. And since MarkupContainer's and
@@ -260,7 +251,7 @@ public class WicketTester extends BaseWicketTester
 
 	/**
 	 * Tests that a <code>Component</code> has been added to a <code>AjaxRequestTarget</code>, using
-	 * {@link AjaxRequestTarget#add(Component...)}. This method actually tests that a
+	 * {@link org.apache.wicket.ajax.AjaxRequestTarget#add(Component...)}. This method actually tests that a
 	 * <code>Component</code> is on the Ajax response sent back to the client.
 	 * <p>
 	 * PLEASE NOTE! This method doesn't actually insert the <code>Component</code> in the client DOM
@@ -278,7 +269,7 @@ public class WicketTester extends BaseWicketTester
 
 	/**
 	 * Tests that a <code>Component</code> has been added to a <code>AjaxRequestTarget</code>, using
-	 * {@link AjaxRequestTarget#add(Component...)}. This method actually tests that a
+	 * {@link org.apache.wicket.ajax.AjaxRequestTarget#add(Component...)}. This method actually tests that a
 	 * <code>Component</code> is on the Ajax response sent back to the client.
 	 * <p>
 	 * PLEASE NOTE! This method doesn't actually insert the <code>Component</code> in the client DOM

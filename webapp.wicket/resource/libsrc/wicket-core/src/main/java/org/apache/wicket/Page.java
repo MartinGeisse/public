@@ -22,12 +22,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.wicket.authorization.IAuthorizationStrategy;
 import org.apache.wicket.authorization.UnauthorizedActionException;
-import org.apache.wicket.authorization.strategies.page.SimplePageAuthorizationStrategy;
+import org.apache.wicket.core.util.lang.WicketObjects;
 import org.apache.wicket.markup.MarkupException;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.MarkupType;
+import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.resolver.IComponentResolver;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.page.IPageManager;
@@ -35,11 +35,10 @@ import org.apache.wicket.pageStore.IPageStore;
 import org.apache.wicket.request.component.IRequestablePage;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.session.ISessionStore;
 import org.apache.wicket.settings.IDebugSettings;
+import org.apache.wicket.settings.IPageSettings;
 import org.apache.wicket.util.lang.Classes;
 import org.apache.wicket.util.lang.Generics;
-import org.apache.wicket.util.lang.WicketObjects;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
@@ -48,61 +47,29 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Abstract base class for pages. As a MarkupContainer subclass, a Page can contain a component
- * hierarchy and markup in some markup language such as HTML. Users of the framework should not
- * attempt to subclass Page directly. Instead they should subclass a subclass of Page that is
- * appropriate to the markup type they are using, such as WebPage (for HTML markup).
+ * Abstract base class for pages. As a {@link MarkupContainer} subclass, a Page can contain a
+ * component hierarchy and markup in some markup language such as HTML. Users of the framework
+ * should not attempt to subclass Page directly. Instead they should subclass a subclass of Page
+ * that is appropriate to the markup type they are using, such as {@link WebPage} (for HTML markup).
+ * <p>
+ * Page has the following differences to {@link Component}s main concepts:
  * <ul>
- * <li><b>Construction </b>- When a page is constructed, it is automatically added to the current
- * PageMap in the Session. When a Page is added to the Session's PageMap, the PageMap assigns the
- * Page an id. A PageMap is roughly equivalent to a browser window and encapsulates a set of pages
- * accessible through that window. When a popup window is created, a new PageMap is created for the
- * popup.
- * 
- * <li><b>Identity </b>- The Session that a Page is contained in can be retrieved by calling
- * Page.getSession(). Page identifiers start at 0 for each PageMap in the Session and increment as
- * new pages are added to the map. The PageMap-(and Session)-unique identifier assigned to a given
- * Page can be retrieved by calling getId(). So, the first Page added to a new user Session will
- * always be named "0".
- * 
- * <li><b>LifeCycle </b>- Subclasses of Page which are interested in lifecycle events can override
- * onBeginRequest, onEndRequest() and onModelChanged(). The onBeginRequest() method is inherited
- * from Component. A call to onBeginRequest() is made for every Component on a Page before page
- * rendering begins. At the end of a request (when rendering has completed) to a Page, the
- * onEndRequest() method is called for every Component on the Page.
- * 
- * <li><b>Nested Component Hierarchy </b>- The Page class is a subclass of MarkupContainer. All
- * MarkupContainers can have "associated markup", which resides alongside the Java code by default.
- * All MarkupContainers are also Component containers. Through nesting, of containers, a Page can
- * contain any arbitrary tree of Components. For more details on MarkupContainers, see
- * {@link org.apache.wicket.MarkupContainer}.
- * 
- * <li><b>Bookmarkable Pages </b>- Pages can be constructed with any constructor when they are being
- * used in a Wicket session, but if you wish to link to a Page using a URL that is "bookmarkable"
- * (which implies that the URL will not have any session information encoded in it, and that you can
- * call this page directly without having a session first directly from your browser), you need to
- * implement your Page with a no-arg constructor or with a constructor that accepts a PageParameters
- * argument (which wraps any query string parameters for a request). In case the page has both
- * constructors, the constructor with PageParameters will be used.
- * 
- * <li><b>Models </b>- Pages, like other Components, can have models (see {@link IModel}). A Page
- * can be assigned a model by passing one to the Page's constructor, by overriding initModel() or
- * with an explicit invocation of setModel(). If the model is a
- * {@link org.apache.wicket.model.CompoundPropertyModel}, Components on the Page can use the Page's
- * model implicitly via container inheritance. If a Component is not assigned a model, the
- * initModel() override in Component will cause that Component to use the nearest CompoundModel in
- * the parent chain, in this case, the Page's model. For basic CompoundModels, the name of the
- * Component determines which property of the implicit page model the component is bound to. If more
- * control is desired over the binding of Components to the page model (for example, if you want to
- * specify some property expression other than the component's name for retrieving the model
- * object), BoundCompoundPropertyModel can be used.
- * 
- * <li><b>Back Button </b>- Pages can support the back button by enabling versioning with a call to
- * setVersioned(boolean). If a Page is versioned and changes occur to it which need to be tracked, a
- * version manager will be installed using the {@link ISessionStore}'s factory method
- * newVersionManager().
- * 
- * <li><b>Security </b>- See {@link IAuthorizationStrategy}, {@link SimplePageAuthorizationStrategy}
+ * <li><b>Identity </b>- Page numerical identifiers start at 0 for each {@link Session} and
+ * increment for each new page. This numerical identifier is used as the component identifier
+ * accessible via {@link #getId()}.</li>
+ * <li><b>Construction </b>- When a page is constructed, it is automatically registerd with the
+ * application's {@link IPageManager}. <br>
+ * Pages can be constructed with any constructor like any other component, but if you wish to link
+ * to a Page using a URL that is "bookmarkable" (which implies that the URL will not have any
+ * session information encoded in it, and that you can call this page directly without having a
+ * session first directly from your browser), you need to implement your Page with a no-arg
+ * constructor or with a constructor that accepts a {@link PageParameters} argument (which wraps any
+ * query string parameters for a request). In case the page has both constructors, the constructor
+ * with PageParameters will be used.</li>
+ * <li><b>Versioning </b>- Pages support the browser's back button when versioning is enabled via
+ * {@link #setVersioned(boolean)}. By default all pages are versioned if not configured differently
+ * in {@link IPageSettings#setVersionPagesByDefault(boolean)}</li>
+ * </ul>
  * 
  * @see org.apache.wicket.markup.html.WebPage
  * @see org.apache.wicket.MarkupContainer
@@ -126,7 +93,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 	/** True if the page should try to be stateless */
 	private static final int FLAG_STATELESS_HINT = FLAG_RESERVED5;
 
-	/** TODO WICKET-NG JAVADOC */
+	/** Flag that indicates if the page was created using one of its bookmarkable constructors */
 	private static final int FLAG_WAS_CREATED_BOOKMARKABLE = FLAG_RESERVED8;
 
 	/** Log. */
@@ -221,6 +188,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 	 * 
 	 * @return {@link PageParameters} The construction page parameter
 	 */
+	@Override
 	public PageParameters getPageParameters()
 	{
 		return pageParameters;
@@ -288,6 +256,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public boolean setFreezePageId(boolean freeze)
 	{
 		boolean frozen = getFlag(FLAG_PREVENT_DIRTY);
@@ -406,6 +375,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 		buffer.append("Page ").append(getId());
 		visitChildren(new IVisitor<Component, Void>()
 		{
+			@Override
 			public void component(final Component component, final IVisit<Void> visit)
 			{
 				int levels = 0;
@@ -415,7 +385,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 				}
 				buffer.append(StringValue.repeat(levels, "	"))
 					.append(component.getPageRelativePath())
-					.append(":")
+					.append(':')
 					.append(Classes.simpleName(component.getClass()));
 			}
 		});
@@ -427,6 +397,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 	 * 
 	 * @return Returns true if the page is bookmarkable.
 	 */
+	@Override
 	public boolean isBookmarkable()
 	{
 		return getApplication().getPageFactory().isBookmarkable(getClass());
@@ -463,6 +434,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 	 * 
 	 * @return Whether this page is stateless
 	 */
+	@Override
 	public final boolean isPageStateless()
 	{
 		if (isBookmarkable() == false)
@@ -493,6 +465,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 			Component statefulComponent = visitChildren(Component.class,
 				new IVisitor<Component, Component>()
 				{
+					@Override
 					public void component(final Component component, final IVisit<Component> visit)
 					{
 						if (!component.isStateless())
@@ -520,6 +493,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 	 * 
 	 * @see org.apache.wicket.IRedirectListener#onRedirect()
 	 */
+	@Override
 	public final void onRedirect()
 	{
 	}
@@ -600,6 +574,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 			final StringBuilder buffer = new StringBuilder();
 			renderedContainer.visitChildren(new IVisitor<Component, Void>()
 			{
+				@Override
 				public void component(final Component component, final IVisit<Void> visit)
 				{
 					// If component never rendered
@@ -615,7 +590,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 							buffer.append(Integer.toString(unrenderedComponents.size()))
 								.append(". ")
 								.append(component)
-								.append("\n");
+								.append('\n');
 							String metadata = component.getMetaData(Component.CONSTRUCTED_AT_KEY);
 							if (metadata != null)
 							{
@@ -688,7 +663,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 				{
 					// Throw exception
 					throw new WicketRuntimeException(
-						"The component(s) below failed to render. A common problem is that you have added a component in code but forgot to reference it in the markup (thus the component will never be rendered).\n\n" +
+						"The component(s) below failed to render. Possible reasons could be that: 1) you have added a component in code but forgot to reference it in the markup (thus the component will never be rendered), 2) if your components were added in a parent container then make sure the markup for the child container includes them in <wicket:extend>.\n\n" +
 							buffer.toString());
 				}
 			}
@@ -780,6 +755,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 	{
 		visitChildren(new IVisitor<Component, Void>()
 		{
+			@Override
 			public void component(final Component component, final IVisit<Void> visit)
 			{
 				// If form component is using form model
@@ -796,8 +772,8 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 	{
 		super.internalOnAfterConfigure();
 
-		// check if the page can be rendered
-		if (!isActionAuthorized(RENDER))
+		// first try to check if the page can be rendered:
+		if (!isRenderAllowed())
 		{
 			if (log.isDebugEnabled())
 			{
@@ -850,6 +826,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 		{
 			visitChildren(new IVisitor<Component, Void>()
 			{
+				@Override
 				public void component(final Component component, final IVisit<Void> visit)
 				{
 					component.setMetaData(Component.CONSTRUCTED_AT_KEY, null);
@@ -993,6 +970,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 	/**
 	 * @see org.apache.wicket.page.IManageablePage#getPageId()
 	 */
+	@Override
 	public int getPageId()
 	{
 		return numericId;
@@ -1001,13 +979,15 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 	/**
 	 * @see org.apache.wicket.request.component.IRequestablePage#getRenderCount()
 	 */
+	@Override
 	public int getRenderCount()
 	{
 		return renderCount;
 	}
 
 	/**
-	 * TODO WICKET-NG javadoc
+	 * Sets the flag that determins whether or not this page was created using one of its
+	 * bookmarkable constructors
 	 * 
 	 * @param wasCreatedBookmarkable
 	 */
@@ -1016,7 +996,12 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 		setFlag(FLAG_WAS_CREATED_BOOKMARKABLE, wasCreatedBookmarkable);
 	}
 
-	/** TODO WICKET-NG javadoc */
+	/**
+	 * Checks if this page was created using one of its bookmarkable constructors
+	 * 
+	 * @see org.apache.wicket.request.component.IRequestablePage#wasCreatedBookmarkable()
+	 */
+	@Override
 	public final boolean wasCreatedBookmarkable()
 	{
 		return getFlag(FLAG_WAS_CREATED_BOOKMARKABLE);
@@ -1025,6 +1010,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 	/**
 	 * @see org.apache.wicket.request.component.IRequestablePage#renderPage()
 	 */
+	@Override
 	public void renderPage()
 	{
 		// page id is frozen during the render

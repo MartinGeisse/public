@@ -29,12 +29,22 @@ import org.apache.wicket.Page;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
 import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.ajax.AjaxRequestHandler;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.AjaxRequestTargetListenerCollection;
+import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
+import org.apache.wicket.core.request.mapper.MountedMapper;
+import org.apache.wicket.core.request.mapper.PackageMapper;
+import org.apache.wicket.core.request.mapper.ResourceMapper;
+import org.apache.wicket.core.util.file.WebApplicationPath;
+import org.apache.wicket.core.util.resource.ClassPathResourceFinder;
 import org.apache.wicket.markup.MarkupType;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.AutoLabelResolver;
 import org.apache.wicket.markup.html.form.AutoLabelTextResolver;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.pages.AccessDeniedPage;
 import org.apache.wicket.markup.html.pages.InternalErrorPage;
 import org.apache.wicket.markup.html.pages.PageExpiredErrorPage;
@@ -49,16 +59,15 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.request.handler.render.PageRenderer;
 import org.apache.wicket.request.handler.render.WebPageRenderer;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.WebResponse;
-import org.apache.wicket.request.mapper.MountedMapper;
-import org.apache.wicket.request.mapper.PackageMapper;
-import org.apache.wicket.request.mapper.ResourceMapper;
 import org.apache.wicket.request.mapper.mount.MountMapper;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.resource.bundles.ResourceBundleReference;
 import org.apache.wicket.session.HttpSessionStore;
 import org.apache.wicket.session.ISessionStore;
 import org.apache.wicket.util.IContextProvider;
@@ -66,12 +75,12 @@ import org.apache.wicket.util.IProvider;
 import org.apache.wicket.util.crypt.CharEncoding;
 import org.apache.wicket.util.file.FileCleaner;
 import org.apache.wicket.util.file.IFileCleaner;
-import org.apache.wicket.util.file.IResourceFinder;
-import org.apache.wicket.util.file.WebApplicationPath;
+import org.apache.wicket.util.file.Path;
 import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.lang.PackageName;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
+import org.apache.wicket.util.upload.FileUploadException;
 import org.apache.wicket.util.watch.IModificationWatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +116,6 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.wicket.settings.IRequestCycleSettings
  * @see org.apache.wicket.settings.IResourceSettings
  * @see org.apache.wicket.settings.ISecuritySettings
- * @see org.apache.wicket.settings.ISessionSettings
  * @see javax.servlet.Filter
  * @see javax.servlet.FilterConfig
  * @see javax.servlet.ServletContext
@@ -122,6 +130,8 @@ public abstract class WebApplication extends Application
 {
 	/** Log. */
 	private static final Logger log = LoggerFactory.getLogger(WebApplication.class);
+
+	public static final String META_INF_RESOURCES = "META-INF/resources";
 
 	private ServletContext servletContext;
 
@@ -378,18 +388,45 @@ public abstract class WebApplication extends Application
 	}
 
 	/**
-	 * Partly unmounts/ignores a path that normally would map to another mount path. Like
-	 * mount("/mypage", MyPage.class); and then "/mypage/arealdir" should be ignored. This can be
-	 * done by calling unMount("/mypage/arealdir");
+	 * Registers a replacement resource for the given javascript resource. This replacement can be
+	 * another {@link JavaScriptResourceReference} for a packaged resource, but it can also be an
+	 * {@link org.apache.wicket.request.resource.UrlResourceReference} to replace the resource by a resource hosted on a CDN.
+	 * Registering a replacement will cause the resource to replaced by the given resource
+	 * throughout the application: if {@code base} is added, {@code replacement} will be added
+	 * instead.
 	 * 
-	 * @param path
-	 *            the path that should be ignored.
-	 * 
+	 * @param base
+	 *            The resource to replace
+	 * @param replacement
+	 *            The replacement
 	 */
-	public final void addIgnoreMountPath(String path)
+	public final void addResourceReplacement(JavaScriptResourceReference base,
+		ResourceReference replacement)
 	{
-		// WICKET-NG TODO how is this supposed to work :/
-		throw new UnsupportedOperationException();
+		ResourceBundleReference bundle = new ResourceBundleReference(replacement);
+		bundle.addProvidedResources(JavaScriptHeaderItem.forReference(base));
+		getResourceBundles().addBundle(JavaScriptHeaderItem.forReference(bundle));
+	}
+
+	/**
+	 * Registers a replacement resource for the given CSS resource. This replacement can be another
+	 * {@link CssResourceReference} for a packaged resource, but it can also be an
+	 * {@link org.apache.wicket.request.resource.UrlResourceReference} to replace the resource by a resource hosted on a CDN.
+	 * Registering a replacement will cause the resource to replaced by the given resource
+	 * throughout the application: if {@code base} is added, {@code replacement} will be added
+	 * instead.
+	 * 
+	 * @param base
+	 *            The resource to replace
+	 * @param replacement
+	 *            The replacement
+	 */
+	public final void addResourceReplacement(CssResourceReference base,
+		ResourceReference replacement)
+	{
+		ResourceBundleReference bundle = new ResourceBundleReference(replacement);
+		bundle.addProvidedResources(CssHeaderItem.forReference(base));
+		getResourceBundles().addBundle(CssHeaderItem.forReference(bundle));
 	}
 
 	/**
@@ -402,7 +439,7 @@ public abstract class WebApplication extends Application
 	 *            the filter mapping read from web.xml
 	 * @return a WebRequest object
 	 */
-	protected WebRequest newWebRequest(HttpServletRequest servletRequest, final String filterPath)
+	public WebRequest newWebRequest(HttpServletRequest servletRequest, final String filterPath)
 	{
 		return new ServletWebRequest(servletRequest, filterPath);
 	}
@@ -450,6 +487,23 @@ public abstract class WebApplication extends Application
 		}
 
 		WebRequest webRequest = newWebRequest(servletRequest, filterPath);
+
+		String contentType = servletRequest.getContentType();
+		String method = servletRequest.getMethod();
+
+		if (webRequest instanceof ServletWebRequest && Form.METHOD_POST.equalsIgnoreCase(method) &&
+				Strings.isEmpty(contentType) == false && contentType.toLowerCase().startsWith(Form.ENCTYPE_MULTIPART_FORM_DATA))
+		{
+			try
+			{
+				return ((ServletWebRequest)webRequest).newMultipartWebRequest(
+					getApplicationSettings().getDefaultMaximumUploadSize(), "externalForm");
+			}
+			catch (FileUploadException e)
+			{
+				throw new RuntimeException(e);
+			}
+		}
 
 		return webRequest;
 	}
@@ -581,6 +635,11 @@ public abstract class WebApplication extends Application
 	{
 		super.internalInit();
 
+		getResourceSettings().getResourceFinders().add(
+			new WebApplicationPath(getServletContext(), ""));
+		getResourceSettings().getResourceFinders().add(
+			new ClassPathResourceFinder(META_INF_RESOURCES));
+
 		// Set default error pages for HTML markup
 		getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
 		getApplicationSettings().setInternalErrorPage(InternalErrorPage.class);
@@ -591,18 +650,17 @@ public abstract class WebApplication extends Application
 		getPageSettings().addComponentResolver(new AutoLabelResolver());
 		getPageSettings().addComponentResolver(new AutoLabelTextResolver());
 
-		// Set resource finder to web app path
-		getResourceSettings().setResourceFinder(getResourceFinder());
-
 		getResourceSettings().setFileCleaner(new FileCleaner());
 
-		// Add optional sourceFolder for resources.
-		String resourceFolder = getInitParameter("sourceFolder");
-		if (resourceFolder != null)
+		if (getConfigurationType() == RuntimeConfigurationType.DEVELOPMENT)
 		{
-			getResourceSettings().addResourceFolder(resourceFolder);
+			// Add optional sourceFolder for resources.
+			String resourceFolder = getInitParameter("sourceFolder");
+			if (resourceFolder != null)
+			{
+				getResourceSettings().getResourceFinders().add(new Path(resourceFolder));
+			}
 		}
-
 		setPageRendererProvider(new WebPageRendererProvider());
 		setSessionStoreProvider(new WebSessionStoreProvider());
 		setAjaxRequestTargetProvider(new DefaultAjaxRequestTargetProvider());
@@ -626,7 +684,7 @@ public abstract class WebApplication extends Application
 		{
 			throw new IllegalStateException(
 				"Configuration type is write-once. You can not change it. " + "" +
-				"Current value='" + configurationType);
+					"Current value='" + configurationType + "'");
 		}
 		this.configurationType = Args.notNull(configurationType, "configurationType");
 	}
@@ -705,9 +763,9 @@ public abstract class WebApplication extends Application
 	 * <p>
 	 * Default implementation: the page mime type must be "application/xhtml+xml" and request
 	 * HTTP_ACCEPT header must include "application/xhtml+xml" to automatically include the xml
-	 * decl. Please see {@linkplain here 
-	 * http://developer.mozilla.org/en/Writing_JavaScript_for_XHTML#Finally.3a_Content_Negotiation}
-	 * for details.
+	 * decl. Please see <a href=
+	 * "https://developer.mozilla.org/en/Writing_JavaScript_for_XHTML#Finally:_Content_Negotiation"
+	 * >Writing JavaScript for XHTML</a> for details.
 	 * <p>
 	 * Please note that xml decls in Wicket's markup are only used for reading the markup. The
 	 * markup's xml decl will always be removed and never be used to configure the response.
@@ -746,16 +804,6 @@ public abstract class WebApplication extends Application
 				response.write(" ?>");
 			}
 		}
-	}
-
-	/**
-	 * By default it return a WebApplicationPath
-	 * 
-	 * @return resource finder
-	 */
-	protected IResourceFinder getResourceFinder()
-	{
-		return new WebApplicationPath(getServletContext());
 	}
 
 	/**
@@ -868,6 +916,7 @@ public abstract class WebApplication extends Application
 
 	private static class WebPageRendererProvider implements IPageRendererProvider
 	{
+		@Override
 		public PageRenderer get(RenderPageRequestHandler handler)
 		{
 			return new WebPageRenderer(handler);
@@ -876,6 +925,7 @@ public abstract class WebApplication extends Application
 
 	private static class WebSessionStoreProvider implements IProvider<ISessionStore>
 	{
+		@Override
 		public ISessionStore get()
 		{
 			return new HttpSessionStore();
@@ -883,9 +933,9 @@ public abstract class WebApplication extends Application
 	}
 
 	/**
-	 * Returns the provider for {@link AjaxRequestTarget} objects.
+	 * Returns the provider for {@link org.apache.wicket.ajax.AjaxRequestTarget} objects.
 	 * 
-	 * @return the provider for {@link AjaxRequestTarget} objects.
+	 * @return the provider for {@link org.apache.wicket.ajax.AjaxRequestTarget} objects.
 	 */
 	public IContextProvider<AjaxRequestTarget, Page> getAjaxRequestTargetProvider()
 	{
@@ -893,7 +943,7 @@ public abstract class WebApplication extends Application
 	}
 
 	/**
-	 * Sets the provider for {@link AjaxRequestTarget} objects.
+	 * Sets the provider for {@link org.apache.wicket.ajax.AjaxRequestTarget} objects.
 	 * 
 	 * @param ajaxRequestTargetProvider
 	 *            the new provider
@@ -905,9 +955,9 @@ public abstract class WebApplication extends Application
 	}
 
 	/**
-	 * Returns the registered {@link AjaxRequestTarget.IListener} objects.
+	 * Returns the registered {@link org.apache.wicket.ajax.AjaxRequestTarget.IListener} objects.
 	 * 
-	 * @return the registered {@link AjaxRequestTarget.IListener} objects.
+	 * @return the registered {@link org.apache.wicket.ajax.AjaxRequestTarget.IListener} objects.
 	 */
 	public AjaxRequestTargetListenerCollection getAjaxRequestTargetListeners()
 	{
@@ -918,9 +968,10 @@ public abstract class WebApplication extends Application
 		implements
 			IContextProvider<AjaxRequestTarget, Page>
 	{
-		public AjaxRequestTarget get(Page context)
+		@Override
+		public AjaxRequestTarget get(Page page)
 		{
-			return new AjaxRequestTarget(context);
+			return new AjaxRequestHandler(page);
 		}
 	}
 

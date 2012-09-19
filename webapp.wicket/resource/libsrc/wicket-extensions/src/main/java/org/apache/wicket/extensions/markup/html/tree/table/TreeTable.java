@@ -20,30 +20,33 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.extensions.markup.html.tree.AbstractTree;
 import org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree;
+import org.apache.wicket.extensions.markup.html.tree.WicketTreeModel;
 import org.apache.wicket.extensions.markup.html.tree.table.ColumnLocation.Alignment;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.markup.html.tree.AbstractTree;
-import org.apache.wicket.markup.html.tree.WicketTreeModel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.io.IClusterable;
 
 
 /**
  * TreeTable is a component that represents a grid with a tree. It's divided into columns. One of
  * the columns has to be column derived from {@link PropertyTreeColumn}.
- * 
+ *
+ * @deprecated Use {@link org.apache.wicket.extensions.markup.html.repeater.tree.TableTree} instead
  * @author Matej Knopp
  */
+@Deprecated
 public class TreeTable extends DefaultAbstractTree
 {
 	/**
@@ -110,7 +113,7 @@ public class TreeTable extends DefaultAbstractTree
 	}
 
 	/** Reference to the css file. */
-	private static final ResourceReference CSS = new PackageResourceReference(
+	private static final ResourceReference CSS = new CssResourceReference(
 		DefaultAbstractTree.class, "res/tree-table.css");
 
 	private static final long serialVersionUID = 1L;
@@ -205,8 +208,8 @@ public class TreeTable extends DefaultAbstractTree
 			@Override
 			public void renderHead(final Component component, final IHeaderResponse response)
 			{
-				response.renderOnDomReadyJavaScript("Wicket.TreeTable.attachUpdate(\"" +
-					getMarkupId() + "\")");
+				response.render(OnDomReadyHeaderItem.forScript("Wicket.TreeTable.attachUpdate(\"" +
+					getMarkupId() + "\")"));
 			}
 		});
 	}

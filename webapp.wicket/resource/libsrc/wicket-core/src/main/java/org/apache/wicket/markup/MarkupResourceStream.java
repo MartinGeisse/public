@@ -23,8 +23,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.lang.Bytes;
-import org.apache.wicket.util.lang.WicketObjects;
+import org.apache.wicket.core.util.lang.WicketObjects;
 import org.apache.wicket.util.resource.IFixedLocationResourceStream;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
@@ -68,7 +69,7 @@ public class MarkupResourceStream implements IResourceStream, IFixedLocationReso
 	/** In case of the inherited markup, this is the base markup */
 	private transient Markup baseMarkup;
 
-	/** The encoding as found in <?xml ... encoding="" ?>. Null, else */
+	/** The encoding as found in &lt;?xml ... encoding="" ?&gt;. {@code null}, otherwise */
 	private String encoding;
 
 	/** Wicket namespace: see WICKET_XHTML_DTD */
@@ -100,18 +101,14 @@ public class MarkupResourceStream implements IResourceStream, IFixedLocationReso
 	public MarkupResourceStream(final IResourceStream resourceStream,
 		final ContainerInfo containerInfo, final Class<?> markupClass)
 	{
-		this.resourceStream = resourceStream;
+		this.resourceStream = Args.notNull(resourceStream, "resourceStream");
 		this.containerInfo = containerInfo;
 		markupClassName = markupClass == null ? null : markupClass.getName();
-
-		if (resourceStream == null)
-		{
-			throw new IllegalArgumentException("Parameter 'resourceStream' must not be null");
-		}
 
 		setWicketNamespace(MarkupParser.WICKET);
 	}
 
+	@Override
 	public String locationAsString()
 	{
 		if (resourceStream instanceof IFixedLocationResourceStream)
@@ -121,36 +118,43 @@ public class MarkupResourceStream implements IResourceStream, IFixedLocationReso
 		return null;
 	}
 
+	@Override
 	public void close() throws IOException
 	{
 		resourceStream.close();
 	}
 
+	@Override
 	public String getContentType()
 	{
 		return resourceStream.getContentType();
 	}
 
+	@Override
 	public InputStream getInputStream() throws ResourceStreamNotFoundException
 	{
 		return resourceStream.getInputStream();
 	}
 
+	@Override
 	public Locale getLocale()
 	{
 		return resourceStream.getLocale();
 	}
 
+	@Override
 	public Time lastModifiedTime()
 	{
 		return resourceStream.lastModifiedTime();
 	}
 
+	@Override
 	public Bytes length()
 	{
 		return resourceStream.length();
 	}
 
+	@Override
 	public void setLocale(Locale locale)
 	{
 		resourceStream.setLocale(locale);
@@ -259,7 +263,7 @@ public class MarkupResourceStream implements IResourceStream, IFixedLocationReso
 		this.wicketNamespace = wicketNamespace;
 		wicketId = wicketNamespace + ":id";
 
-		if (!MarkupParser.WICKET.equals(wicketNamespace))
+		if (!MarkupParser.WICKET.equals(wicketNamespace) && log.isDebugEnabled())
 		{
 			log.debug("You are using a non-standard namespace name: '{}'", wicketNamespace);
 		}
@@ -300,21 +304,25 @@ public class MarkupResourceStream implements IResourceStream, IFixedLocationReso
 		return baseMarkup;
 	}
 
+	@Override
 	public String getStyle()
 	{
 		return resourceStream.getStyle();
 	}
 
+	@Override
 	public String getVariation()
 	{
 		return resourceStream.getVariation();
 	}
 
+	@Override
 	public void setStyle(String style)
 	{
 		resourceStream.setStyle(style);
 	}
 
+	@Override
 	public void setVariation(String variation)
 	{
 		resourceStream.setVariation(variation);
@@ -374,7 +382,7 @@ public class MarkupResourceStream implements IResourceStream, IFixedLocationReso
 	}
 
 	/**
-	 * @see href http://www.w3.org/TR/html5-diff/#doctype
+	 * @see <a href="http://www.w3.org/TR/html5-diff/#doctype">DOCTYPE</a>
 	 * @return True, if doctype == &lt;!DOCTYPE html&gt;
 	 */
 	public boolean isHtml5()

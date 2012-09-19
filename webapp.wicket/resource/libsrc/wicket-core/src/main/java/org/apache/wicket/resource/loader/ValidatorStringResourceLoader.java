@@ -19,18 +19,19 @@ package org.apache.wicket.resource.loader;
 import java.util.Locale;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.validation.FormValidatorAdapter;
+import org.apache.wicket.markup.html.form.validation.IFormValidator;
 import org.apache.wicket.validation.IValidator;
 import org.apache.wicket.validation.ValidatorAdapter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
  * This is one of Wicket's default string resource loaders.
  * <p>
  * The validator string resource loader checks resource bundles attached to validators (eg
- * MinimumValidator.properties). The validator list is pulled from the form component in error.
+ * MinimumValidator.properties). The validator list is pulled from the form / form component in error.
  * <p>
  * This implementation is fully aware of both locale and style values when trying to obtain the
  * appropriate resources.
@@ -40,8 +41,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ValidatorStringResourceLoader extends ComponentStringResourceLoader
 {
-	private static final Logger log = LoggerFactory.getLogger(ValidatorStringResourceLoader.class);
-
 	/**
 	 * Create and initialize the resource loader.
 	 */
@@ -57,8 +56,10 @@ public class ValidatorStringResourceLoader extends ComponentStringResourceLoader
 	public String loadStringResource(Class<?> clazz, final String key, final Locale locale,
 		final String style, final String variation)
 	{
-		// only care about IValidator subclasses
-		if (clazz == null || !IValidator.class.isAssignableFrom(clazz))
+		// only care about IValidator/IFormValidator subclasses
+		if (
+				clazz == null ||
+				!(IValidator.class.isAssignableFrom(clazz) || IFormValidator.class.isAssignableFrom(clazz)))
 		{
 			return null;
 		}
@@ -74,24 +75,54 @@ public class ValidatorStringResourceLoader extends ComponentStringResourceLoader
 	public String loadStringResource(final Component component, final String key,
 		final Locale locale, final String style, final String variation)
 	{
-		if (component == null || !(component instanceof FormComponent))
+
+		final String resource;
+		if (component instanceof FormComponent)
 		{
-			return null;
+			resource = loadStringResource((FormComponent) component, key, locale, style, variation);
+		}
+		else if (component instanceof Form)
+		{
+			resource = loadStringResource((Form) component, key, locale, style, variation);
+		}
+		else
+		{
+			resource = null;
 		}
 
-		FormComponent<?> fc = (FormComponent<?>)component;
-		for (IValidator<?> validator : fc.getValidators())
+		return resource;
+	}
+
+
+	private String loadStringResource(Form<?> form, final String key,
+		final Locale locale, final String style, final String variation)
+	{
+		for (IFormValidator validator : form.getFormValidators())
 		{
 			Class<?> scope = getScope(validator);
 			String resource = loadStringResource(scope, key, locale, style,
-				variation);
+					variation);
 			if (resource != null)
 			{
 				return resource;
 			}
 		}
+		return null;
+	}
 
-		// not found
+	private String loadStringResource(FormComponent<?> fc, final String key,
+		final Locale locale, final String style, final String variation)
+	{
+		for (IValidator<?> validator : fc.getValidators())
+		{
+			Class<?> scope = getScope(validator);
+			String resource = loadStringResource(scope, key, locale, style,
+					variation);
+			if (resource != null)
+			{
+				return resource;
+			}
+		}
 		return null;
 	}
 
@@ -105,6 +136,20 @@ public class ValidatorStringResourceLoader extends ComponentStringResourceLoader
 		else
 		{
 			scope = validator.getClass();
+		}
+		return scope;
+	}
+
+	private Class<? extends IFormValidator> getScope(IFormValidator formValidator)
+	{
+		Class<? extends IFormValidator> scope;
+		if (formValidator instanceof FormValidatorAdapter)
+		{
+			scope = ((FormValidatorAdapter) formValidator).getValidator().getClass();
+		}
+		else
+		{
+			scope = formValidator.getClass();
 		}
 		return scope;
 	}

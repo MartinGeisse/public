@@ -12,7 +12,9 @@ import name.martingeisse.common.util.ReturnValueUtil;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -86,10 +88,10 @@ public class AbstractAdminPage extends WebPage {
 	@Override
 	public void renderHead(final IHeaderResponse response) {
 		ParameterUtil.ensureNotNull(response, "response");
-		response.renderCSSReference(new CssResourceReference(AbstractAdminPage.class, "common.css"));
-		response.renderCSSReference(new CssResourceReference(AbstractAdminPage.class, "jquery-ui-1.8.23.custom.css"));
-		response.renderCSSReference(new CssResourceReference(AbstractAdminPage.class, "jquery.dataTables.css"));
-		response.renderJavaScriptReference(new JavaScriptResourceReference(AbstractAdminPage.class, "common.js"));
+		response.render(CssHeaderItem.forReference(new CssResourceReference(AbstractAdminPage.class, "common.css")));
+		response.render(CssHeaderItem.forReference(new CssResourceReference(AbstractAdminPage.class, "jquery-ui-1.8.23.custom.css")));
+		response.render(CssHeaderItem.forReference(new CssResourceReference(AbstractAdminPage.class, "jquery.dataTables.css")));
+		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(AbstractAdminPage.class, "common.js")));
 	}
 
 }

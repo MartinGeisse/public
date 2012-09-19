@@ -20,6 +20,7 @@ import junit.framework.Assert;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.util.visit.ClassVisitFilter;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 import org.apache.wicket.util.visit.Visits;
@@ -53,6 +54,7 @@ public class VisitorTest extends WicketTestCase
 
 		Visits.visit(container, new IVisitor<Component, Void>()
 		{
+			@Override
 			public void component(Component component, IVisit<Void> visit)
 			{
 				path.append(component.getId());
@@ -75,6 +77,7 @@ public class VisitorTest extends WicketTestCase
 
 		container.visitChildren(new IVisitor<Component, Void>()
 		{
+			@Override
 			public void component(Component component, IVisit<Void> visit)
 			{
 				path.append(component.getId());
@@ -95,6 +98,7 @@ public class VisitorTest extends WicketTestCase
 		TestContainer container = new TestContainer();
 		FormComponent.visitComponentsPostOrder(container, new IVisitor<Component, Void>()
 		{
+			@Override
 			public void component(Component component, IVisit<Void> visit)
 			{
 				path.append(component.getId());
@@ -115,6 +119,7 @@ public class VisitorTest extends WicketTestCase
 		TestContainer container = new TestContainer();
 		Object result = container.visitChildren(new IVisitor<Component, String>()
 		{
+			@Override
 			public void component(Component component, IVisit<String> visit)
 			{
 				path.append(component.getId());
@@ -139,6 +144,7 @@ public class VisitorTest extends WicketTestCase
 		TestContainer container = new TestContainer();
 		container.visitChildren(new IVisitor<Component, Void>()
 		{
+			@Override
 			public void component(Component component, IVisit<Void> visit)
 			{
 				path.append(component.getId());
@@ -162,6 +168,7 @@ public class VisitorTest extends WicketTestCase
 		TestContainer container = new TestContainer();
 		container.visitChildren(new IVisitor<Component, Void>()
 		{
+			@Override
 			public void component(Component component, IVisit<Void> visit)
 			{
 				path.append(component.getId());
@@ -174,6 +181,43 @@ public class VisitorTest extends WicketTestCase
 		Assert.assertEquals("BCDEGH", path.toString());
 	}
 
+	/**
+	 * https://issues.apache.org/jira/browse/WICKET-3805
+	 * 
+	 * Visit parents with arbitrary type
+	 */
+	public void testVisitParents()
+	{
+		TestContainer testContainer = new TestContainer();
+		IVisitor<MarkupContainer, MarkerInterface> visitor = new IVisitor<MarkupContainer, MarkerInterface>()
+		{
+			@Override
+			public void component(MarkupContainer object, IVisit<MarkerInterface> visit)
+			{
+				visit.stop((MarkerInterface)object);
+			}
+		};
+		MarkerInterface markedParent = testContainer.get("G:H").visitParents(MarkupContainer.class,
+			visitor, new ClassVisitFilter(MarkerInterface.class));
+		assertEquals("G", markedParent.getId());
+	}
+
+	private static interface MarkerInterface
+	{
+		public String getId();
+	}
+
+	private static class MarkedWebMarkupContainer extends WebMarkupContainer
+		implements
+			MarkerInterface
+	{
+		private static final long serialVersionUID = 1L;
+
+		public MarkedWebMarkupContainer(String id)
+		{
+			super(id);
+		}
+	}
 
 	private static class TestContainer extends WebMarkupContainer
 	{
@@ -187,7 +231,7 @@ public class VisitorTest extends WicketTestCase
 			WebMarkupContainer d = new WebMarkupContainer("D");
 			WebMarkupContainer e = new WebMarkupContainer("E");
 			WebMarkupContainer f = new WebMarkupContainer("F");
-			WebMarkupContainer g = new WebMarkupContainer("G");
+			WebMarkupContainer g = new MarkedWebMarkupContainer("G");
 			WebMarkupContainer h = new WebMarkupContainer("H");
 			add(b);
 			add(c);

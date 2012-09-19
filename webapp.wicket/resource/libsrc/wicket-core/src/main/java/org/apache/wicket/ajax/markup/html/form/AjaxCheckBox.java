@@ -16,9 +16,8 @@
  */
 package org.apache.wicket.ajax.markup.html.form;
 
-import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
@@ -56,20 +55,15 @@ public abstract class AjaxCheckBox extends CheckBox
 
 		setOutputMarkupId(true);
 
-		add(new AjaxFormComponentUpdatingBehavior("onclick")
+		add(new AjaxFormComponentUpdatingBehavior("click")
 		{
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected IAjaxCallDecorator getAjaxCallDecorator()
+			protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
 			{
-				return AjaxCheckBox.this.getAjaxCallDecorator();
-			}
-
-			@Override
-			protected AjaxChannel getChannel()
-			{
-				return AjaxCheckBox.this.getChannel();
+				super.updateAjaxAttributes(attributes);
+				AjaxCheckBox.this.updateAjaxAttributes(attributes);
 			}
 
 			@Override
@@ -80,14 +74,13 @@ public abstract class AjaxCheckBox extends CheckBox
 		});
 	}
 
-	protected AjaxChannel getChannel()
+	/**
+	 * @param attributes
+	 *      the attributes to use for the Ajax request
+	 * @see org.apache.wicket.ajax.AbstractDefaultAjaxBehavior#updateAjaxAttributes(org.apache.wicket.ajax.attributes.AjaxRequestAttributes)
+	 */
+	protected void updateAjaxAttributes(final AjaxRequestAttributes attributes)
 	{
-		return null;
-	}
-
-	protected IAjaxCallDecorator getAjaxCallDecorator()
-	{
-		return null;
 	}
 
 	/**

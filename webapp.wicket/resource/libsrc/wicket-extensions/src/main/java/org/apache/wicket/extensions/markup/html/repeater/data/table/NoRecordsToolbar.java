@@ -19,6 +19,7 @@ package org.apache.wicket.extensions.markup.html.repeater.data.table;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 
@@ -46,7 +47,7 @@ public class NoRecordsToolbar extends AbstractToolbar
 	 * @param table
 	 *            data table this toolbar will be attached to
 	 */
-	public NoRecordsToolbar(final DataTable<?> table)
+	public NoRecordsToolbar(final DataTable<?, ?> table)
 	{
 		this(table, DEFAULT_MESSAGE_MODEL);
 	}
@@ -57,14 +58,23 @@ public class NoRecordsToolbar extends AbstractToolbar
 	 * @param messageModel
 	 *            model that will be used to display the "no records found" message
 	 */
-	public NoRecordsToolbar(final DataTable<?> table, final IModel<String> messageModel)
+	public NoRecordsToolbar(final DataTable<?, ?> table, final IModel<String> messageModel)
 	{
 		super(table);
 
 		WebMarkupContainer td = new WebMarkupContainer("td");
 		add(td);
 
-		td.add(AttributeModifier.replace("colspan", String.valueOf(table.getColumns().size())));
+		td.add(AttributeModifier.replace("colspan", new AbstractReadOnlyModel<String>()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public String getObject()
+			{
+				return String.valueOf(table.getColumns().size());
+			}
+		}));
 		td.add(new Label("msg", messageModel));
 	}
 

@@ -21,7 +21,7 @@ import java.util.Locale;
 import org.apache.wicket.request.ILoggableRequestHandler;
 import org.apache.wicket.request.IRequestCycle;
 import org.apache.wicket.request.IRequestHandler;
-import org.apache.wicket.request.handler.logger.ResourceReferenceLogData;
+import org.apache.wicket.core.request.handler.logger.ResourceReferenceLogData;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -84,6 +84,7 @@ public class ResourceReferenceRequestHandler implements IRequestHandler, ILoggab
 	/**
 	 * @see org.apache.wicket.request.IRequestHandler#detach(org.apache.wicket.request.IRequestCycle)
 	 */
+	@Override
 	public void detach(IRequestCycle requestCycle)
 	{
 		if (logData == null)
@@ -91,6 +92,7 @@ public class ResourceReferenceRequestHandler implements IRequestHandler, ILoggab
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public ResourceReferenceLogData getLogData()
 	{
 		return logData;
@@ -100,6 +102,7 @@ public class ResourceReferenceRequestHandler implements IRequestHandler, ILoggab
 	/**
 	 * @see org.apache.wicket.request.IRequestHandler#respond(org.apache.wicket.request.IRequestCycle)
 	 */
+	@Override
 	public void respond(IRequestCycle requestCycle)
 	{
 		new ResourceRequestHandler(getResourceReference().getResource(), getPageParameters()).respond(requestCycle);

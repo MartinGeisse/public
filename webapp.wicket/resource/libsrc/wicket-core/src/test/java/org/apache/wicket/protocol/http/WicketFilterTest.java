@@ -150,6 +150,7 @@ public class WicketFilterTest extends Assert
 			MockHttpServletResponse response = new MockHttpServletResponse(request);
 			filter.doFilter(request, response, new FilterChain()
 			{
+				@Override
 				public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse)
 					throws IOException, ServletException
 				{
@@ -212,21 +213,25 @@ public class WicketFilterTest extends Assert
 			initParameters.put(WicketFilter.IGNORE_PATHS_PARAM, "/css,/js,images");
 		}
 
+		@Override
 		public String getFilterName()
 		{
 			return getClass().getName();
 		}
 
+		@Override
 		public ServletContext getServletContext()
 		{
 			return new MockServletContext(null, null);
 		}
 
+		@Override
 		public String getInitParameter(String s)
 		{
 			return initParameters.get(s);
 		}
 
+		@Override
 		public Enumeration<String> getInitParameterNames()
 		{
 			throw new UnsupportedOperationException("Not implemented");
@@ -237,12 +242,14 @@ public class WicketFilterTest extends Assert
 	 */
 	public static class FilterTestingApplicationFactory implements IWebApplicationFactory
 	{
+		@Override
 		public WebApplication createApplication(WicketFilter filter)
 		{
 			return application;
 		}
 
 		/** {@inheritDoc} */
+		@Override
 		public void destroy(WicketFilter filter)
 		{
 		}
@@ -277,6 +284,7 @@ public class WicketFilterTest extends Assert
 			this.successCount = successCount;
 		}
 
+		@Override
 		public void run()
 		{
 			try
@@ -368,6 +376,7 @@ public class WicketFilterTest extends Assert
 		HttpServletResponse response = mock(HttpServletResponse.class);
 		when(response.encodeRedirectURL(Matchers.anyString())).thenAnswer(new Answer<String>()
 		{
+			@Override
 			public String answer(InvocationOnMock invocation) throws Throwable
 			{
 				return (String)invocation.getArguments()[0];
@@ -395,4 +404,62 @@ public class WicketFilterTest extends Assert
 		// the request is processed so the chain is not executed
 		verify(chain, Mockito.times(3)).doFilter(request, response);
 	}
+
+	/**
+	 * <a href="https://issues.apache.org/jira/browse/WICKET-4626">WICKET-4626</a>
+	 * <p>
+	 * Test method WicketFilter#canonicaliseFilterPath(String)
+	 * </p>
+	 */
+	@Test
+	public void canonicaliseFilterPath()
+	{
+		String s;
+
+		s = WicketFilter.canonicaliseFilterPath("");
+		assertEquals("", s);
+
+		s = WicketFilter.canonicaliseFilterPath("/");
+		assertEquals("", s);
+
+		s = WicketFilter.canonicaliseFilterPath("//");
+		assertEquals("", s);
+
+		s = WicketFilter.canonicaliseFilterPath("///");
+		assertEquals("", s);
+
+		s = WicketFilter.canonicaliseFilterPath("/wicket");
+		assertEquals("wicket/", s);
+
+		s = WicketFilter.canonicaliseFilterPath("/wicket/");
+		assertEquals("wicket/", s);
+
+		s = WicketFilter.canonicaliseFilterPath("wicket/");
+		assertEquals("wicket/", s);
+
+		s = WicketFilter.canonicaliseFilterPath("wicket");
+		assertEquals("wicket/", s);
+
+		s = WicketFilter.canonicaliseFilterPath("///wicket");
+		assertEquals("wicket/", s);
+
+		s = WicketFilter.canonicaliseFilterPath("///wicket///");
+		assertEquals("wicket/", s);
+
+		s = WicketFilter.canonicaliseFilterPath("wicket///");
+		assertEquals("wicket/", s);
+
+		s = WicketFilter.canonicaliseFilterPath("/wicket/foobar");
+		assertEquals("wicket/foobar/", s);
+
+		s = WicketFilter.canonicaliseFilterPath("/wicket/foobar/");
+		assertEquals("wicket/foobar/", s);
+
+		s = WicketFilter.canonicaliseFilterPath("wicket/foobar/");
+		assertEquals("wicket/foobar/", s);
+
+		s = WicketFilter.canonicaliseFilterPath("/wicket///foobar/");
+		assertEquals("wicket///foobar/", s); // ok we're not perfect!
+	}
+
 }

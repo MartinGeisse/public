@@ -16,7 +16,9 @@
  */
 package org.apache.wicket.validation;
 
-import org.apache.wicket.IClusterable;
+import java.io.Serializable;
+
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Interface representing a validation error.
@@ -31,7 +33,7 @@ public interface IValidationError extends IClusterable
 	 * 
 	 * @param messageSource
 	 *            the message source
-	 * @return the error message <code>String</code>
+	 * @return the error message
 	 */
-	String getErrorMessage(IErrorMessageSource messageSource);
+	Serializable getErrorMessage(IErrorMessageSource messageSource);
 }

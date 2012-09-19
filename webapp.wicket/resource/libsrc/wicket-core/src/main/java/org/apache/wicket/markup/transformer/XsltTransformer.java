@@ -28,7 +28,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.util.resource.IResourceStream;
-import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
+import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
 
 
 /**
@@ -62,7 +62,7 @@ public class XsltTransformer implements ITransformer
 	 *            XSL input file path relative to the component's package. If the path does not end
 	 *            with <tt>.xsl</tt>, then it is considered as a basename and will be passed as-is
 	 *            to
-	 *            {@link IResourceStreamLocator#locate(Class, String, String, java.util.Locale, String)}
+	 *            {@link IResourceStreamLocator#locate(Class, String, String, String, java.util.Locale, String, boolean)}
 	 *            . All stylesheets must have the <tt>.xsl</tt> extension.
 	 */
 	public XsltTransformer(final String xslFile)
@@ -82,6 +82,7 @@ public class XsltTransformer implements ITransformer
 	 * located in the same path as the nearest parent with an associated markup and must have a
 	 * filename equal to the component's id.
 	 */
+	@Override
 	public CharSequence transform(final Component component, final CharSequence output)
 		throws Exception
 	{

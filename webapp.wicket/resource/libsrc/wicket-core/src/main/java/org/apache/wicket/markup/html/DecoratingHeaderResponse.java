@@ -16,9 +16,9 @@
  */
 package org.apache.wicket.markup.html;
 
+import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.request.Response;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.request.resource.ResourceReference;
 
 /**
  * This is simply a helper implementation of IHeaderResponse that really delegates all of its method
@@ -57,141 +57,37 @@ public abstract class DecoratingHeaderResponse implements IHeaderResponse
 		return realResponse;
 	}
 
-	public void renderJavaScriptReference(ResourceReference reference)
+	@Override
+	public void render(HeaderItem item)
 	{
-		realResponse.renderJavaScriptReference(reference);
+		realResponse.render(item);
 	}
 
-	public void renderJavaScriptReference(ResourceReference reference, String id)
-	{
-		realResponse.renderJavaScriptReference(reference, id);
-	}
-
-	public void renderJavaScriptReference(ResourceReference reference,
-		PageParameters pageParameters, String id)
-	{
-		realResponse.renderJavaScriptReference(reference, pageParameters, id);
-	}
-
-	public void renderJavaScriptReference(ResourceReference reference,
-		PageParameters pageParameters, String id, boolean defer)
-	{
-		realResponse.renderJavaScriptReference(reference, pageParameters, id, defer);
-	}
-
-	public void renderJavaScriptReference(ResourceReference reference,
-		PageParameters pageParameters, String id, boolean defer, String charset)
-	{
-		realResponse.renderJavaScriptReference(reference, pageParameters, id, defer, charset);
-	}
-
-	public void renderJavaScriptReference(String url)
-	{
-		realResponse.renderJavaScriptReference(url);
-	}
-
-	public void renderJavaScriptReference(String url, String id)
-	{
-		realResponse.renderJavaScriptReference(url, id);
-	}
-
-	public void renderJavaScriptReference(String url, String id, boolean defer)
-	{
-		realResponse.renderJavaScriptReference(url, id, defer);
-	}
-
-	public void renderJavaScriptReference(String url, String id, boolean defer, String charset)
-	{
-		realResponse.renderJavaScriptReference(url, id, defer, charset);
-	}
-
-	public void renderJavaScript(CharSequence javascript, String id)
-	{
-		realResponse.renderJavaScript(javascript, id);
-	}
-
-	public void renderCSSReference(ResourceReference reference)
-	{
-		realResponse.renderCSSReference(reference);
-	}
-
-	public void renderCSS(CharSequence css, String id)
-	{
-		realResponse.renderCSS(css, id);
-	}
-
-	public void renderCSSReference(String url)
-	{
-		realResponse.renderCSSReference(url);
-	}
-
-	public void renderCSSReference(ResourceReference reference, String media)
-	{
-		realResponse.renderCSSReference(reference, media);
-	}
-
-	public void renderCSSReference(ResourceReference reference, PageParameters pageParameters,
-		String media)
-	{
-		realResponse.renderCSSReference(reference, pageParameters, media);
-	}
-
-	public void renderCSSReference(ResourceReference reference, PageParameters pageParameters,
-		String media, String condition)
-	{
-		realResponse.renderCSSReference(reference, pageParameters, media, condition);
-	}
-
-	public void renderCSSReference(String url, String media)
-	{
-		realResponse.renderCSSReference(url, media);
-	}
-
-	public void renderCSSReference(String url, String media, String condition)
-	{
-		realResponse.renderCSSReference(url, media, condition);
-	}
-
-	public void renderString(CharSequence string)
-	{
-		realResponse.renderString(string);
-	}
-
+	@Override
 	public void markRendered(Object object)
 	{
 		realResponse.markRendered(object);
 	}
 
+	@Override
 	public boolean wasRendered(Object object)
 	{
 		return realResponse.wasRendered(object);
 	}
 
+	@Override
 	public Response getResponse()
 	{
 		return realResponse.getResponse();
 	}
 
-	public void renderOnDomReadyJavaScript(String javascript)
-	{
-		realResponse.renderOnDomReadyJavaScript(javascript);
-	}
-
-	public void renderOnLoadJavaScript(String javascript)
-	{
-		realResponse.renderOnLoadJavaScript(javascript);
-	}
-
-	public void renderOnEventJavaScript(String target, String event, String javascript)
-	{
-		realResponse.renderOnEventJavaScript(target, event, javascript);
-	}
-
+	@Override
 	public void close()
 	{
 		realResponse.close();
 	}
 
+	@Override
 	public boolean isClosed()
 	{
 		return realResponse.isClosed();

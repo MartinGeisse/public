@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.Assert;
-
 import org.apache.wicket.util.diff.Diff;
 import org.apache.wicket.util.diff.Revision;
 
@@ -43,6 +42,7 @@ class PropertiesLicenseHeaderHandler extends AbstractLicenseHeaderHandler
 		return "propertiesLicense.txt";
 	}
 
+	@Override
 	public boolean checkLicenseHeader(final File file)
 	{
 		Revision revision = null;
@@ -61,6 +61,7 @@ class PropertiesLicenseHeaderHandler extends AbstractLicenseHeaderHandler
 		return revision.size() == 0;
 	}
 
+	@Override
 	public List<String> getSuffixes()
 	{
 		return Arrays.asList("properties");

@@ -16,15 +16,17 @@
  */
 package org.apache.wicket.extensions.markup.html.repeater.data.sort;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Interface used by OrderByLink to interact with any object that keeps track of sorting state
  * 
  * @author Igor Vaynberg (ivaynberg)
+ * @param <S>
+ *            the type of the sort property
  * 
  */
-public interface ISortState extends IClusterable
+public interface ISortState<S> extends IClusterable
 {
 	/**
 	 * Sets sort order of the property
@@ -34,7 +36,7 @@ public interface ISortState extends IClusterable
 	 * @param order
 	 *            sort order
 	 */
-	public void setPropertySortOrder(String property, SortOrder order);
+	public void setPropertySortOrder(S property, SortOrder order);
 
 	/**
 	 * Gets the sort order of a property
@@ -43,6 +45,6 @@ public interface ISortState extends IClusterable
 	 *            sort property to be checked
 	 * @return sort order
 	 */
-	public SortOrder getPropertySortOrder(String property);
+	public SortOrder getPropertySortOrder(S property);
 
 }

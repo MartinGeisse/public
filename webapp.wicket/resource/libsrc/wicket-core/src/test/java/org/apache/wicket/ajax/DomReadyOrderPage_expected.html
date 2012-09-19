@@ -1,10 +1,11 @@
 <html>
-<head><script type="text/javascript" src="../resource/org.apache.wicket.markup.html.WicketEventReference/wicket-event.js"></script>
-<script type="text/javascript" src="../resource/org.apache.wicket.ajax.WicketAjaxReference/wicket-ajax.js"></script>
-<script type="text/javascript" src="../resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/wicket-ajax-debug.js"></script>
+<head><script type="text/javascript" src="../resource/org.apache.wicket.resource.JQueryResourceReference/jquery/jquery.js"></script>
+<script type="text/javascript" src="../resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/res/js/wicket-event-jquery.js"></script>
+<script type="text/javascript" src="../resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/res/js/wicket-ajax-jquery.js"></script>
+<script type="text/javascript" src="../resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/res/js/wicket-ajax-jquery-debug.js"></script>
 <script type="text/javascript" id="wicket-ajax-debug-enable">
 /*<![CDATA[*/
-wicketAjaxDebugEnable=true;
+Wicket.Ajax.DebugWindow.enabled=true;
 /*]]>*/
 </script>
 <script type="text/javascript" id="wicket-ajax-base-url">
@@ -14,15 +15,14 @@ Wicket.Ajax.baseUrl="wicket/bookmarkable/org.apache.wicket.ajax.DomReadyOrderPag
 </script>
 <script type="text/javascript" >
 /*<![CDATA[*/
-Wicket.Event.add(window, "domready", function(event) { test1();;});
-/*]]>*/
-</script>
-<script type="text/javascript" >
-/*<![CDATA[*/
-Wicket.Event.add(window, "domready", function(event) { test2();;});
+Wicket.Event.add(window, "domready", function(event) { 
+Wicket.Ajax.ajax({"u":"../page?0-1.IBehaviorListener.0-test","e":"click","c":"test1"});;
+test1();;
+test2();;
+;});
 /*]]>*/
 </script>
 </head><body>
-<a href="../page?0-1.ILinkListener-test" wicket:id="test" id="test1" onclick="var wcall=wicketAjaxGet(&#039;../page?0-1.IBehaviorListener.0-test&#039;,function() { }.bind(this),function() { }.bind(this), function() {return Wicket.$(&#039;test1&#039;) != null;}.bind(this));return !wcall;">Test</a>
+<a href="../page?0-1.ILinkListener-test" wicket:id="test" id="test1">Test</a>
 </body>
 </html>

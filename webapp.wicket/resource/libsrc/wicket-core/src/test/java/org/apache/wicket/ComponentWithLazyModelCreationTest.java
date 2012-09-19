@@ -25,14 +25,14 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.IRequestHandler;
-import org.apache.wicket.request.handler.ListenerInterfaceRequestHandler;
-import org.apache.wicket.request.handler.PageAndComponentProvider;
+import org.apache.wicket.core.request.handler.ListenerInterfaceRequestHandler;
+import org.apache.wicket.core.request.handler.PageAndComponentProvider;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.StringResourceStream;
 import org.junit.Test;
 
 /**
- * @see href https://issues.apache.org/jira/browse/WICKET3142
+ * @see <a href="https://issues.apache.org/jira/browse/WICKET3142">WICKET3142</a>
  */
 public class ComponentWithLazyModelCreationTest extends WicketTestCase
 {
@@ -100,6 +100,7 @@ public class ComponentWithLazyModelCreationTest extends WicketTestCase
 			add(label);
 		}
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{
@@ -125,6 +126,7 @@ public class ComponentWithLazyModelCreationTest extends WicketTestCase
 			statefullUrl = component.getRequestCycle().mapUrlFor(handler).toString();
 		}
 
+		@Override
 		public void onRequest()
 		{
 			requested = true;

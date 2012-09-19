@@ -21,7 +21,7 @@ import java.util.Locale;
 import org.apache.wicket.Application;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.util.resource.IResourceStream;
-import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
+import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +54,7 @@ public class DefaultMarkupResourceStreamProvider implements IMarkupResourceStrea
 	 * Note: IResourceStreamLocators should be used in case the strategy to find a markup resource
 	 * should be extended for ALL components of your application.
 	 * 
-	 * @see org.apache.wicket.util.resource.locator.IResourceStreamLocator
+	 * @see org.apache.wicket.core.util.resource.locator.IResourceStreamLocator
 	 * @see org.apache.wicket.markup.DefaultMarkupResourceStreamProvider
 	 * 
 	 * @param container
@@ -62,6 +62,7 @@ public class DefaultMarkupResourceStreamProvider implements IMarkupResourceStrea
 	 *            The container the markup should be associated with
 	 * @return A IResourceStream if the resource was found
 	 */
+	@Override
 	public IResourceStream getMarkupResourceStream(final MarkupContainer container,
 		Class<?> containerClass)
 	{

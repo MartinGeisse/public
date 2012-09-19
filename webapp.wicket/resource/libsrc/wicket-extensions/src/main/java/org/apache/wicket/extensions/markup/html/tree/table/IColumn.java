@@ -19,8 +19,8 @@ package org.apache.wicket.extensions.markup.html.tree.table;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.util.io.IClusterable;
 
 
 /**
@@ -28,6 +28,7 @@ import org.apache.wicket.MarkupContainer;
  * 
  * @author Matej Knopp
  */
+@Deprecated
 public interface IColumn extends IClusterable
 {
 	/**

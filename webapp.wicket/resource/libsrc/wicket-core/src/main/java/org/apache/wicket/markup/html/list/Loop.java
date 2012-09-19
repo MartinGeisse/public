@@ -73,7 +73,7 @@ public abstract class Loop extends AbstractRepeater
 	 */
 	public final int getIterations()
 	{
-		return (Integer) getDefaultModelObject();
+		return (Integer)getDefaultModelObject();
 	}
 
 	/**
@@ -126,11 +126,13 @@ public abstract class Loop extends AbstractRepeater
 		{
 			private int index = 0;
 
+			@Override
 			public boolean hasNext()
 			{
 				return index < iterations;
 			}
 
+			@Override
 			public Component next()
 			{
 				return get(Integer.toString(index++));

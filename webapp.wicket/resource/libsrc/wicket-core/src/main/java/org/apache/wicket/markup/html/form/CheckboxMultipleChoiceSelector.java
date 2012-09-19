@@ -16,8 +16,9 @@
  */
 package org.apache.wicket.markup.html.form;
 
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 
 
@@ -33,7 +34,7 @@ public class CheckboxMultipleChoiceSelector extends AbstractCheckSelector
 {
 	private static final long serialVersionUID = 1L;
 
-	private final static ResourceReference JS = new PackageResourceReference(
+	private final static ResourceReference JS = new JavaScriptResourceReference(
 		CheckboxMultipleChoiceSelector.class, "CheckboxMultipleChoiceSelector.js");
 
 	private final CheckBoxMultipleChoice<?> choiceComponent;
@@ -56,7 +57,7 @@ public class CheckboxMultipleChoiceSelector extends AbstractCheckSelector
 	public void renderHead(IHeaderResponse response)
 	{
 		super.renderHead(response);
-		response.renderJavaScriptReference(JS);
+		response.render(JavaScriptHeaderItem.forReference(JS));
 	}
 
 	@Override

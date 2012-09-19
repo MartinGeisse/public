@@ -121,13 +121,13 @@ public class Model<T extends Serializable> implements IModel<T>
 	 * 
 	 * @param <C>
 	 *            model type
-	 * @param set
+	 * @param collection
 	 *            The Collection, which may or may not be Serializable
 	 * @return A Model object wrapping the Set
 	 */
-	public static <C> IModel<Collection<? extends C>> of(final Collection<? extends C> set)
+	public static <C> IModel<Collection<? extends C>> of(final Collection<? extends C> collection)
 	{
-		return new WildcardCollectionModel<C>(set);
+		return new WildcardCollectionModel<C>(collection);
 	}
 
 
@@ -145,6 +145,19 @@ public class Model<T extends Serializable> implements IModel<T>
 	}
 
 	/**
+	 * Supresses generics warning when converting model types
+	 * 
+	 * @param <T>
+	 * @param model
+	 * @return <code>model</code>
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> IModel<T> of(IModel<?> model)
+	{
+		return (IModel<T>)model;
+	}
+
+	/**
 	 * Factory methods for Model which uses type inference to make code shorter. Equivalent to
 	 * <code>new Model<TypeOfObject>()</code>.
 	 * 
@@ -159,6 +172,7 @@ public class Model<T extends Serializable> implements IModel<T>
 	/**
 	 * @see org.apache.wicket.model.IModel#getObject()
 	 */
+	@Override
 	public T getObject()
 	{
 		return object;
@@ -172,6 +186,7 @@ public class Model<T extends Serializable> implements IModel<T>
 	 *            the model object
 	 * @see org.apache.wicket.model.IModel#setObject(Object)
 	 */
+	@Override
 	public void setObject(final T object)
 	{
 		if (object != null)
@@ -187,6 +202,7 @@ public class Model<T extends Serializable> implements IModel<T>
 	/**
 	 * @see org.apache.wicket.model.IDetachable#detach()
 	 */
+	@Override
 	public void detach()
 	{
 		if (object instanceof IDetachable)
@@ -226,18 +242,5 @@ public class Model<T extends Serializable> implements IModel<T>
 		}
 		Model<?> that = (Model<?>)obj;
 		return Objects.equal(object, that.object);
-	}
-
-	/**
-	 * Supresses generics warning when converting model types
-	 * 
-	 * @param <T>
-	 * @param model
-	 * @return <code>model</code>
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> IModel<T> of(IModel<?> model)
-	{
-		return (IModel<T>)model;
 	}
 }

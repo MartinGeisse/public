@@ -23,7 +23,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 
 /**
- * 
+ *
  */
 public class MyBorder extends Border
 {

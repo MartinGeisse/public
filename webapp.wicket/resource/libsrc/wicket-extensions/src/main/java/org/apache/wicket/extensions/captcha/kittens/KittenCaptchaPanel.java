@@ -32,9 +32,13 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.IResourceListener;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxCallListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.attributes.IAjaxCallListener;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.image.NonCachingImage;
@@ -46,6 +50,8 @@ import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.DynamicImageResource;
 import org.apache.wicket.util.time.Time;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A unique and fun-to-use captcha technique I developed at Thoof.
@@ -55,6 +61,8 @@ import org.apache.wicket.util.time.Time;
 public class KittenCaptchaPanel extends Panel
 {
 	private static final long serialVersionUID = 2711167040323855070L;
+
+	private static final Logger LOG = LoggerFactory.getLogger(KittenCaptchaPanel.class);
 
 	// The background grass area
 	private static BufferedImage grass = load("images/grass.png");
@@ -94,7 +102,7 @@ public class KittenCaptchaPanel extends Panel
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			LOG.error("Error loading image", e);
 			return null;
 		}
 	}
@@ -160,18 +168,24 @@ public class KittenCaptchaPanel extends Panel
 
 		// Image referencing captcha image resource
 		image = new NonCachingImage("image", imageResource = new CaptchaImageResource(animals));
-		image.add(new AjaxEventBehavior("onclick")
+		image.add(new AjaxEventBehavior("click")
 		{
 			private static final long serialVersionUID = 7480352029955897654L;
 
 			@Override
-			protected CharSequence getCallbackScript()
+			protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
 			{
-				// Call-back script shows loading indicator and makes wicket
-				// ajax request passing in mouse co-ordinates
-				return generateCallbackScript("showLoadingIndicator(); wicketAjaxGet('" +
-					getCallbackUrl() +
-					"&x=' + getEventX(this, event) + '&y=' + getEventY(this, event)");
+				super.updateAjaxAttributes(attributes);
+				IAjaxCallListener ajaxCallListener = new AjaxCallListener() {
+					@Override
+					public CharSequence getBeforeSendHandler(Component component)
+					{
+						return "showLoadingIndicator();";
+					}
+				};
+				attributes.getAjaxCallListeners().add(ajaxCallListener);
+				List<CharSequence> dynamicExtraParameters = attributes.getDynamicExtraParameters();
+				dynamicExtraParameters.add("return { x: getEventX(this, event), y: getEventY(this, event)}");
 			}
 
 			@Override
@@ -369,7 +383,7 @@ public class KittenCaptchaPanel extends Panel
 			}
 			catch (IOException e)
 			{
-				e.printStackTrace();
+				LOG.error("Error loading image", e);
 				return null;
 			}
 		}

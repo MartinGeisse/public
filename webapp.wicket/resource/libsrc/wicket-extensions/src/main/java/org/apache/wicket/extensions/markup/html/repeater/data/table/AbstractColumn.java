@@ -25,12 +25,16 @@ import org.apache.wicket.model.IModel;
  * 
  * @author Igor Vaynberg ( ivaynberg )
  * @param <T>
+ * @param <S>
+ *            the type of the sort property
  */
-public abstract class AbstractColumn<T> implements IStyledColumn<T>
+public abstract class AbstractColumn<T, S> implements IStyledColumn<T, S>
 {
 	private static final long serialVersionUID = 1L;
-	private IModel<String> displayModel;
-	private String sortProperty;
+
+	private final IModel<String> displayModel;
+
+	private final S sortProperty;
 
 	/**
 	 * @param displayModel
@@ -38,7 +42,7 @@ public abstract class AbstractColumn<T> implements IStyledColumn<T>
 	 * @param sortProperty
 	 *            sort property this column represents
 	 */
-	public AbstractColumn(final IModel<String> displayModel, final String sortProperty)
+	public AbstractColumn(final IModel<String> displayModel, final S sortProperty)
 	{
 		this.displayModel = displayModel;
 		this.sortProperty = sortProperty;
@@ -64,7 +68,8 @@ public abstract class AbstractColumn<T> implements IStyledColumn<T>
 	/**
 	 * @see org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn#getSortProperty()
 	 */
-	public String getSortProperty()
+	@Override
+	public S getSortProperty()
 	{
 		return sortProperty;
 	}
@@ -72,6 +77,7 @@ public abstract class AbstractColumn<T> implements IStyledColumn<T>
 	/**
 	 * @see org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn#isSortable()
 	 */
+	@Override
 	public boolean isSortable()
 	{
 		return getSortProperty() != null;
@@ -80,6 +86,7 @@ public abstract class AbstractColumn<T> implements IStyledColumn<T>
 	/**
 	 * @see org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn#getHeader(java.lang.String)
 	 */
+	@Override
 	public Component getHeader(final String componentId)
 	{
 		return new Label(componentId, getDisplayModel());
@@ -88,6 +95,7 @@ public abstract class AbstractColumn<T> implements IStyledColumn<T>
 	/**
 	 * @see org.apache.wicket.model.IDetachable#detach()
 	 */
+	@Override
 	public void detach()
 	{
 		if (displayModel != null)
@@ -96,9 +104,7 @@ public abstract class AbstractColumn<T> implements IStyledColumn<T>
 		}
 	}
 
-	/**
-	 * @ssee {@link IStyledColumn#getCssClass()}
-	 */
+	@Override
 	public String getCssClass()
 	{
 		return null;

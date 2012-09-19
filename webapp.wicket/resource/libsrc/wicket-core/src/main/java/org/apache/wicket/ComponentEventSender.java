@@ -54,6 +54,7 @@ final class ComponentEventSender implements IEventSource
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public <T> void send(IEventSink sink, Broadcast type, T payload)
 	{
 		ComponentEvent<?> event = new ComponentEvent<T>(sink, source, type, payload);
@@ -224,7 +225,7 @@ final class ComponentEventSender implements IEventSource
 			{
 				return;
 			}
-			cursor.visitParents(Component.class, new ComponentEventVisitor(event, dispatcher));
+			cursor.visitParents(MarkupContainer.class, new ComponentEventVisitor(event, dispatcher));
 		}
 
 		if (event.isStop())
@@ -280,7 +281,7 @@ final class ComponentEventSender implements IEventSource
 	 * 
 	 * @author igor
 	 */
-	private static class ComponentEventVisitor implements IVisitor<Component, Void>
+	private static class ComponentEventVisitor<T extends Component> implements IVisitor<T, Void>
 	{
 		private final ComponentEvent<?> e;
 		private final IEventDispatcher dispatcher;
@@ -300,7 +301,8 @@ final class ComponentEventSender implements IEventSource
 		}
 
 		/** {@inheritDoc} */
-		public void component(Component object, IVisit<Void> visit)
+		@Override
+		public void component(T object, IVisit<Void> visit)
 		{
 			dispatchToComponent(dispatcher, object, e);
 

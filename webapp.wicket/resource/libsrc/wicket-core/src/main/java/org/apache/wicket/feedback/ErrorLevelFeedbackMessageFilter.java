@@ -33,6 +33,7 @@ public class ErrorLevelFeedbackMessageFilter implements IFeedbackMessageFilter
 	 * 
 	 * @param minimumErrorLevel
 	 *            The component to filter on, the constraints can be: <br />
+	 *            {@link org.apache.wicket.feedback.FeedbackMessage#SUCCESS} <br />
 	 *            {@link org.apache.wicket.feedback.FeedbackMessage#UNDEFINED} <br />
 	 *            {@link org.apache.wicket.feedback.FeedbackMessage#DEBUG} <br />
 	 *            {@link org.apache.wicket.feedback.FeedbackMessage#INFO} <br />
@@ -48,6 +49,7 @@ public class ErrorLevelFeedbackMessageFilter implements IFeedbackMessageFilter
 	/**
 	 * @see org.apache.wicket.feedback.IFeedbackMessageFilter#accept(org.apache.wicket.feedback.FeedbackMessage)
 	 */
+	@Override
 	public boolean accept(FeedbackMessage message)
 	{
 		return message.isLevel(minimumErrorLevel);

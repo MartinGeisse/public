@@ -25,6 +25,7 @@ import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.parser.XmlTag.TagType;
 import org.apache.wicket.markup.resolver.IComponentResolver;
+import org.apache.wicket.util.lang.Classes;
 
 /**
  * Implements boilerplate as needed by many markup sourcing strategies.
@@ -40,6 +41,7 @@ public abstract class AbstractMarkupSourcingStrategy implements IMarkupSourcingS
 	{
 	}
 
+	@Override
 	public abstract IMarkupFragment getMarkup(final MarkupContainer container, final Component child);
 
 	/**
@@ -79,6 +81,7 @@ public abstract class AbstractMarkupSourcingStrategy implements IMarkupSourcingS
 	/**
 	 * Make sure we open up open-close tags to open-body-close
 	 */
+	@Override
 	public void onComponentTag(final Component component, final ComponentTag tag)
 	{
 		if (tag.isOpenClose())
@@ -91,6 +94,7 @@ public abstract class AbstractMarkupSourcingStrategy implements IMarkupSourcingS
 	 * Skip the components body which is expected to be raw markup only (no wicket components). It
 	 * will be replaced by the associated markup.
 	 */
+	@Override
 	public void onComponentTagBody(final Component component, final MarkupStream markupStream,
 		final ComponentTag openTag)
 	{
@@ -105,9 +109,9 @@ public abstract class AbstractMarkupSourcingStrategy implements IMarkupSourcingS
 					"Close tag not found for tag: " +
 						openTag.toString() +
 						". For " +
-						component.getClass().getSimpleName() +
-						" Components only raw markup is allow in between the tags but not other Wicket Component." +
-						". Component: " + component.toString());
+							Classes.simpleName(component.getClass()) +
+								" Components only raw markup is allow in between the tags but not other Wicket Component." +
+								". Component: " + component.toString());
 			}
 		}
 	}
@@ -115,6 +119,7 @@ public abstract class AbstractMarkupSourcingStrategy implements IMarkupSourcingS
 	/**
 	 * Empty. Nothing to be added to the response by default.
 	 */
+	@Override
 	public void renderHead(final Component component, HtmlHeaderContainer container)
 	{
 	}

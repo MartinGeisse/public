@@ -21,7 +21,7 @@ import org.apache.wicket.WicketTestCase;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.request.handler.ListenerInvocationNotAllowedException;
+import org.apache.wicket.core.request.handler.ListenerInvocationNotAllowedException;
 import org.junit.Test;
 
 /**
@@ -41,6 +41,8 @@ public class FormParentDisabledRawInputTest extends WicketTestCase
 		 */
 		public TestPage()
 		{
+			setStatelessHint(false);
+
 			WebMarkupContainer container = new WebMarkupContainer("container")
 			{
 				private static final long serialVersionUID = 1L;
@@ -49,7 +51,7 @@ public class FormParentDisabledRawInputTest extends WicketTestCase
 				public boolean isEnabled()
 				{
 					return enabled;
-				};
+				}
 			};
 			Form<?> form = new Form<Void>("form");
 			container.add(form);

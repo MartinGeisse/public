@@ -101,9 +101,10 @@ public class HttpSessionDataStoreTest extends WicketTestCase
 	}
 
 
-	private static final class NoopEvictionStrategy implements DataStoreEvictionStrategy
+	private static final class NoopEvictionStrategy implements IDataStoreEvictionStrategy
 	{
 
+		@Override
 		public void evict(PageTable pageTable)
 		{
 		}

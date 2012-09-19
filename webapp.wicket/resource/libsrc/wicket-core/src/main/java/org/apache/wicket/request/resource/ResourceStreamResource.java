@@ -50,9 +50,18 @@ public class ResourceStreamResource extends AbstractResource
 	private Duration cacheDuration;
 
 	/**
-	 * Construct.
+	 * Constructor.
+	 */
+	public ResourceStreamResource()
+	{
+		this(null);
+	}
+
+	/**
+	 * Constructor.
 	 * 
 	 * @param stream
+	 *      the resource stream to read from
 	 */
 	public ResourceStreamResource(IResourceStream stream)
 	{
@@ -61,7 +70,7 @@ public class ResourceStreamResource extends AbstractResource
 
 	/**
 	 * @param fileName
-	 * @return this
+	 * @return this object, for chaining
 	 */
 	public ResourceStreamResource setFileName(String fileName)
 	{
@@ -71,7 +80,7 @@ public class ResourceStreamResource extends AbstractResource
 
 	/**
 	 * @param contentDisposition
-	 * @return thsi
+	 * @return this object, for chaining
 	 */
 	public ResourceStreamResource setContentDisposition(ContentDisposition contentDisposition)
 	{
@@ -81,7 +90,7 @@ public class ResourceStreamResource extends AbstractResource
 
 	/**
 	 * @param textEncoding
-	 * @return this
+	 * @return this object, for chaining
 	 */
 	public ResourceStreamResource setTextEncoding(String textEncoding)
 	{
@@ -100,7 +109,7 @@ public class ResourceStreamResource extends AbstractResource
 	/**
 	 * @param cacheDuration
 	 *            the duration for which the resource will be cached by the browser
-	 * @return this component
+	 * @return this object, for chaining
 	 */
 	public ResourceStreamResource setCacheDuration(Duration cacheDuration)
 	{
@@ -110,7 +119,7 @@ public class ResourceStreamResource extends AbstractResource
 
 	/**
 	 * Lazy or dynamic initialization of the wrapped IResourceStream(Writer)
-	 * @return the underlying IResourceStream
+	 * @return the underlying IResourceStream. May be {@code null}.
 	 */
 	protected IResourceStream getResourceStream()
 	{
@@ -120,7 +129,7 @@ public class ResourceStreamResource extends AbstractResource
 	private IResourceStream internalGetResourceStream()
 	{
 		final IResourceStream resourceStream = getResourceStream();
-		Checks.notNull(resourceStream, "%s#getResourceStream() should not return null!", ResourceStreamResource.class.getName());
+		Checks.notNull(resourceStream, "%s#getResourceStream() should not return null!", getClass().getName());
 		return resourceStream;
 	}
 
@@ -144,7 +153,7 @@ public class ResourceStreamResource extends AbstractResource
 		if (data.dataNeedsToBeWritten(attributes))
 		{
 			InputStream inputStream = null;
-			if (stream instanceof IResourceStreamWriter == false)
+			if (resourceStream instanceof IResourceStreamWriter == false)
 			{
 				try
 				{
@@ -153,7 +162,7 @@ public class ResourceStreamResource extends AbstractResource
 				catch (ResourceStreamNotFoundException e)
 				{
 					data.setError(HttpServletResponse.SC_NOT_FOUND);
-					close();
+					close(resourceStream);
 				}
 			}
 
@@ -178,10 +187,10 @@ public class ResourceStreamResource extends AbstractResource
 				data.setWriteCallback(new WriteCallback()
 				{
 					@Override
-					public void writeData(Attributes attributes)
+					public void writeData(Attributes attributes) throws IOException
 					{
-						((IResourceStreamWriter)resourceStream).write(attributes.getResponse());
-						close();
+						((IResourceStreamWriter)resourceStream).write(attributes.getResponse().getOutputStream());
+						close(resourceStream);
 					}
 				});
 			}
@@ -191,7 +200,7 @@ public class ResourceStreamResource extends AbstractResource
 				data.setWriteCallback(new WriteCallback()
 				{
 					@Override
-					public void writeData(Attributes attributes)
+					public void writeData(Attributes attributes) throws IOException
 					{
 						try
 						{
@@ -199,7 +208,7 @@ public class ResourceStreamResource extends AbstractResource
 						}
 						finally
 						{
-							close();
+							close(resourceStream);
 						}
 					}
 				});
@@ -209,11 +218,11 @@ public class ResourceStreamResource extends AbstractResource
 		return data;
 	}
 
-	private void close()
+	private void close(IResourceStream stream)
 	{
 		try
 		{
-			internalGetResourceStream().close();
+			stream.close();
 		}
 		catch (IOException e)
 		{

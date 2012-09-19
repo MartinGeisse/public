@@ -23,7 +23,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.PropertyModel;
 
 /**
- * 
+ *
  */
 public class FormPage extends WebPage
 {

@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import name.martingeisse.admin.entity.EntityCapabilities;
-import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.EntityConfiguration;
+import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.instance.EntityInstance;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;

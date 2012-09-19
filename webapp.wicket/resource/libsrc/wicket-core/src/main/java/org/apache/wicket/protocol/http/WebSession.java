@@ -16,13 +16,9 @@
  */
 package org.apache.wicket.protocol.http;
 
-import java.util.List;
-
-import org.apache.wicket.Application;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.Session;
-import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.WebPage;
@@ -30,9 +26,6 @@ import org.apache.wicket.markup.html.pages.BrowserInfoPage;
 import org.apache.wicket.protocol.http.request.WebClientInfo;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.http.WebRequest;
-import org.apache.wicket.request.http.WebResponse;
-import org.apache.wicket.settings.IRequestCycleSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +53,7 @@ public class WebSession extends Session
 	{
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public boolean accept(FeedbackMessage message)
 		{
 			return message.getReporter() != null;
@@ -74,6 +68,7 @@ public class WebSession extends Session
 	{
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public boolean accept(FeedbackMessage message)
 		{
 			return message.getReporter() == null && message.isRendered();
@@ -96,62 +91,6 @@ public class WebSession extends Session
 		super(request);
 	}
 
-
-	/**
-	 * @see org.apache.wicket.Session#cleanupFeedbackMessages()
-	 */
-	@Override
-	public void cleanupFeedbackMessages()
-	{
-		// remove all component feedback messages if we are either using one
-		// pass or render to buffer render strategy (in which case we can remove
-		// without further delay) or in case the redirect to render strategy is
-		// used, when we're doing the render request (isRedirect should return
-		// false in that case)
-
-		// TODO NG - does this huge if really make sense?
-
-		if (Application.get().getRequestCycleSettings().getRenderStrategy() != IRequestCycleSettings.RenderStrategy.REDIRECT_TO_RENDER ||
-			((WebRequest)RequestCycle.get().getRequest()).isAjax() ||
-			(!((WebResponse)RequestCycle.get().getResponse()).isRedirect()))
-		{
-			// If session scoped, rendered messages got indeed cleaned up, mark
-			// the session as dirty
-			if (getFeedbackMessages().clear(RENDERED_SESSION_SCOPED_MESSAGES) > 0)
-			{
-				dirty();
-			}
-
-			// see if any component related feedback messages were left unrendered and warn if in
-			// dev mode
-			if (getApplication().usesDevelopmentConfig())
-			{
-				List<FeedbackMessage> messages = getFeedbackMessages().messages(
-					WebSession.MESSAGES_FOR_COMPONENTS);
-				for (FeedbackMessage message : messages)
-				{
-					if (!message.isRendered())
-					{
-						logger.warn(
-							"Component-targetted feedback message was left unrendered. This could be because you are missing a FeedbackPanel on the page.  Message: {}",
-							message);
-					}
-				}
-			}
-
-			cleanupComponentFeedbackMessages();
-		}
-	}
-
-	/**
-	 * Clear all feedback messages
-	 */
-	protected void cleanupComponentFeedbackMessages()
-	{
-		// clean up all component related feedback messages
-		getFeedbackMessages().clear(WebSession.MESSAGES_FOR_COMPONENTS);
-	}
-
 	/**
 	 * Call signOut() and remove the logon data from whereever they have been persisted (e.g.
 	 * Cookies)
@@ -170,22 +109,6 @@ public class WebSession extends Session
 	}
 
 	/**
-	 * Note: You must subclass WebSession and implement your own. We didn't want to make it abstract
-	 * to force every application to implement it. Instead we throw an exception.
-	 * 
-	 * @param username
-	 *            The username
-	 * @param password
-	 *            The password
-	 * @return True if the user was authenticated successfully
-	 */
-	public boolean authenticate(final String username, final String password)
-	{
-		throw new WicketRuntimeException(
-			"You must subclass WebSession and implement your own authentication method for all Wicket applications using authentication.");
-	}
-
-	/**
 	 * {@inheritDoc}
 	 * 
 	 * <p>
@@ -196,7 +119,7 @@ public class WebSession extends Session
 	 * because the temporary page needs a constructed {@link Session} to be able to work.
 	 * <p>
 	 * If you need to set a default client info property then better use
-	 * {@link #setClientInfo(org.apache.wicket.request.ClientInfo)} directly.
+	 * {@link #setClientInfo(org.apache.wicket.core.request.ClientInfo)} directly.
 	 */
 	@Override
 	public WebClientInfo getClientInfo()

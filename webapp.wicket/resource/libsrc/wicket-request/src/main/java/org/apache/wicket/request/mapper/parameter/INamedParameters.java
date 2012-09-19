@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.wicket.request.IRequestMapper;
-import org.apache.wicket.request.mapper.parameter.PageParameters.NamedPair;
+import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.string.StringValue;
 
 /**
@@ -30,6 +30,47 @@ import org.apache.wicket.util.string.StringValue;
  */
 public interface INamedParameters
 {
+	/**
+	 * Represents a named parameter entry. There can be multiple {@link NamedPair}s in
+	 * {@link PageParameters} that have same key.
+	 * 
+	 * @author Matej Knopp
+	 */
+	public static class NamedPair
+	{
+		private final String key;
+		private final String value;
+
+		/**
+		 * Constructor
+		 * 
+		 * @param key
+		 * @param value
+		 */
+		public NamedPair(final String key, final String value)
+		{
+			this.key = Args.notNull(key, "key");;
+			this.value = Args.notNull(value, "value");
+		}
+
+		/**
+		 * @return key
+		 */
+		public String getKey()
+		{
+			return key;
+		}
+
+		/**
+		 * @return value
+		 */
+		public String getValue()
+		{
+			return value;
+		}
+	}
+
+
 	/**
 	 * Return set of all named parameter names.
 	 * 
@@ -66,18 +107,6 @@ public interface INamedParameters
 	 * @return the position of the parameter. {@code -1} if there is no parameter with that name.
 	 */
 	int getPosition(String name);
-
-	/**
-	 * Removes named parameter with given name.
-	 * 
-	 * @param name
-	 *            the name of the parameter to remove
-	 * @return this
-	 * @deprecated use {@link #remove(String, String...)}
-	 */
-	@Deprecated
-	// TODO Wicket 1.6 - remove this method and leave only #remove(String, String...) (WICKET-3938)
-	INamedParameters remove(final String name);
 
 	/**
 	 * Removes named parameter with given name.

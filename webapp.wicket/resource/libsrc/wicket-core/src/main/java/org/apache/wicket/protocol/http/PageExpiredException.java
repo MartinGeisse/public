@@ -22,7 +22,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.request.handler.IPageProvider;
+import org.apache.wicket.core.request.handler.IPageProvider;
 import org.apache.wicket.settings.IStoreSettings;
 
 /**
@@ -33,7 +33,10 @@ import org.apache.wicket.settings.IStoreSettings;
  * <li>the http session has expired and thus all pages related to this session are erased too</li>
  * <li>the page instance has been erased because the store size exceeded</li>
  * </ul>
- * 
+ *
+ * <p>This exception is used to tell Wicket to respond with the configured PageExpiredPage, so its
+ * stacktrace it is not really needed.</p>
+ *
  * @see HttpSession#setMaxInactiveInterval(int)
  * @see IStoreSettings#setMaxSizePerSession(org.apache.wicket.util.lang.Bytes)
  * @see NotSerializableException
@@ -60,5 +63,17 @@ public class PageExpiredException extends WicketRuntimeException
 	public PageExpiredException(final String message, Exception cause)
 	{
 		super(message, cause);
+	}
+
+	/**
+	 * Suppress loading of the stacktrace because it is not needed.
+	 *
+	 * @see java.lang.Throwable#fillInStackTrace()
+	 */
+	@Override
+	public Throwable fillInStackTrace()
+	{
+		// don't do anything here
+		return null;
 	}
 }

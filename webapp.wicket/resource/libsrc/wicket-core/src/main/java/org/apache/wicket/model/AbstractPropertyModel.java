@@ -22,11 +22,9 @@ import java.lang.reflect.Method;
 import org.apache.wicket.Application;
 import org.apache.wicket.Session;
 import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.util.lang.PropertyResolver;
-import org.apache.wicket.util.lang.PropertyResolverConverter;
+import org.apache.wicket.core.util.lang.PropertyResolver;
+import org.apache.wicket.core.util.lang.PropertyResolverConverter;
 import org.apache.wicket.util.string.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Serves as a base class for different kinds of property models. By default, this class uses
@@ -45,20 +43,12 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  *            The Model object type
  */
-public abstract class AbstractPropertyModel<T>
+public abstract class AbstractPropertyModel<T> extends ChainingModel<T>
 	implements
-		IChainingModel<T>,
 		IObjectClassAwareModel<T>,
 		IPropertyReflectionAwareModel<T>
 {
-	private static final Logger logger = LoggerFactory.getLogger(AbstractPropertyModel.class);
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	/** Any model object (which may or may not implement IModel) */
-	private Object target;
 
 	/**
 	 * Constructor
@@ -68,51 +58,13 @@ public abstract class AbstractPropertyModel<T>
 	 */
 	public AbstractPropertyModel(final Object modelObject)
 	{
-		if (modelObject == null)
-		{
-			throw new IllegalArgumentException("Parameter modelObject cannot be null");
-		}
-
-		if (modelObject instanceof Session)
-		{
-			logger.warn("It is not a good idea to reference the Session instance "
-				+ "in models directly as it may lead to serialization problems. "
-				+ "If you need to access a property of the session via the model use the "
-				+ "page instance as the model object and 'session.attribute' as the path.");
-		}
-
-		target = modelObject;
-	}
-
-	/**
-	 * Unsets this property model's instance variables and detaches the model.
-	 * 
-	 * @see org.apache.wicket.model.IDetachable#detach()
-	 */
-	public void detach()
-	{
-		// Detach nested object if it's a detachable
-		if (target instanceof IDetachable)
-		{
-			((IDetachable)target).detach();
-		}
-	}
-
-	/**
-	 * @see org.apache.wicket.model.IChainingModel#getChainedModel()
-	 */
-	public IModel<?> getChainedModel()
-	{
-		if (target instanceof IModel)
-		{
-			return (IModel<?>)target;
-		}
-		return null;
+		super(modelObject);
 	}
 
 	/**
 	 * @see org.apache.wicket.model.IModel#getObject()
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public T getObject()
 	{
@@ -120,7 +72,7 @@ public abstract class AbstractPropertyModel<T>
 		if (Strings.isEmpty(expression))
 		{
 			// Return a meaningful value for an empty property expression
-			return (T)getTarget();
+			return (T) getInnermostModelOrObject();
 		}
 		else if (expression.startsWith("."))
 		{
@@ -128,7 +80,7 @@ public abstract class AbstractPropertyModel<T>
 				"Property expressions cannot start with a '.' character");
 		}
 
-		final Object target = getTarget();
+		final Object target = getInnermostModelOrObject();
 		if (target != null)
 		{
 			return (T)PropertyResolver.getValue(expression, target);
@@ -147,20 +99,13 @@ public abstract class AbstractPropertyModel<T>
 	}
 
 	/**
-	 * @see org.apache.wicket.model.IChainingModel#setChainedModel(org.apache.wicket.model.IModel)
-	 */
-	public void setChainedModel(IModel<?> model)
-	{
-		target = model;
-	}
-
-	/**
 	 * Applies the property expression on the model object using the given object argument.
 	 * 
 	 * @param object
 	 *            The object that will be used when setting a value on the model object
 	 * @see IModel#setObject(Object)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void setObject(T object)
 	{
@@ -169,13 +114,14 @@ public abstract class AbstractPropertyModel<T>
 		{
 			// TODO check, really do this?
 			// why not just set the target to the object?
+			Object target = getTarget();
 			if (target instanceof IModel)
 			{
 				((IModel<T>)target).setObject(object);
 			}
 			else
 			{
-				target = object;
+				setTarget(object);
 			}
 		}
 		else
@@ -183,43 +129,14 @@ public abstract class AbstractPropertyModel<T>
 			PropertyResolverConverter prc = null;
 			prc = new PropertyResolverConverter(Application.get().getConverterLocator(),
 				Session.get().getLocale());
-			PropertyResolver.setValue(expression, getTarget(), object, prc);
+			PropertyResolver.setValue(expression, getInnermostModelOrObject(), object, prc);
 		}
-	}
-
-	/**
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString()
-	{
-	 StringBuilder sb = new StringBuilder("Model:classname=[");
-		sb.append(getClass().getName()).append("]");
-		sb.append(":nestedModel=[").append(target).append("]");
-		return sb.toString();
-	}
-
-	/**
-	 * @return The target object
-	 */
-	public final Object getTarget()
-	{
-		Object object = target;
-		while (object instanceof IModel)
-		{
-			Object tmp = ((IModel<?>)object).getObject();
-			if (tmp == object)
-			{
-				break;
-			}
-			object = tmp;
-		}
-		return object;
 	}
 
 	/**
 	 * @return model object class
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public Class<T> getObjectClass()
 	{
@@ -227,11 +144,11 @@ public abstract class AbstractPropertyModel<T>
 		if (Strings.isEmpty(expression))
 		{
 			// Return a meaningful value for an empty property expression
-			Object target = getTarget();
+			Object target = getInnermostModelOrObject();
 			return (Class<T>)(target != null ? target.getClass() : null);
 		}
 
-		final Object target = getTarget();
+		final Object target = getInnermostModelOrObject();
 		if (target != null)
 		{
 			try
@@ -243,11 +160,11 @@ public abstract class AbstractPropertyModel<T>
 				// ignore.
 			}
 		}
-		else if (this.target instanceof IObjectClassAwareModel)
+		else if (getTarget() instanceof IObjectClassAwareModel)
 		{
 			try
 			{
-				Class<?> targetClass = ((IObjectClassAwareModel<?>)this.target).getObjectClass();
+				Class<?> targetClass = ((IObjectClassAwareModel<?>) getTarget()).getObjectClass();
 				if (targetClass != null)
 				{
 					return PropertyResolver.getPropertyClass(expression, targetClass);
@@ -265,12 +182,13 @@ public abstract class AbstractPropertyModel<T>
 	/**
 	 * @see org.apache.wicket.model.IPropertyReflectionAwareModel#getPropertyField()
 	 */
+	@Override
 	public Field getPropertyField()
 	{
 		String expression = propertyExpression();
 		if (Strings.isEmpty(expression) == false)
 		{
-			Object target = getTarget();
+			Object target = getInnermostModelOrObject();
 			if (target != null)
 			{
 				try
@@ -289,12 +207,13 @@ public abstract class AbstractPropertyModel<T>
 	/**
 	 * @see org.apache.wicket.model.IPropertyReflectionAwareModel#getPropertyGetter()
 	 */
+	@Override
 	public Method getPropertyGetter()
 	{
 		String expression = propertyExpression();
 		if (Strings.isEmpty(expression) == false)
 		{
-			Object target = getTarget();
+			Object target = getInnermostModelOrObject();
 			if (target != null)
 			{
 				try
@@ -312,12 +231,13 @@ public abstract class AbstractPropertyModel<T>
 	/**
 	 * @see org.apache.wicket.model.IPropertyReflectionAwareModel#getPropertySetter()
 	 */
+	@Override
 	public Method getPropertySetter()
 	{
 		String expression = propertyExpression();
 		if (Strings.isEmpty(expression) == false)
 		{
-			Object target = getTarget();
+			Object target = getInnermostModelOrObject();
 			if (target != null)
 			{
 				try
@@ -336,4 +256,23 @@ public abstract class AbstractPropertyModel<T>
 	 * @return The property expression for the component
 	 */
 	protected abstract String propertyExpression();
+
+	/**
+	 * @return The innermost model or the object if the target is not a model
+	 */
+	// legacy method ...
+	public final Object getInnermostModelOrObject()
+	{
+		Object object = getTarget();
+		while (object instanceof IModel)
+		{
+			Object tmp = ((IModel<?>)object).getObject();
+			if (tmp == object)
+			{
+				break;
+			}
+			object = tmp;
+		}
+		return object;
+	}
 }

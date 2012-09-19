@@ -18,6 +18,7 @@ package org.apache.wicket.markup.html.form;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
+import org.apache.wicket.util.lang.Classes;
 import org.apache.wicket.util.string.Strings;
 
 /**
@@ -67,6 +68,7 @@ public class EnumChoiceRenderer<T extends Enum<T>> implements IChoiceRenderer<T>
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public final Object getDisplayValue(T object)
 	{
 		final String value;
@@ -94,7 +96,7 @@ public class EnumChoiceRenderer<T extends Enum<T>> implements IChoiceRenderer<T>
 	 */
 	protected String resourceKey(T object)
 	{
-		return object.getDeclaringClass().getSimpleName() + "." + object.name();
+		return Classes.simpleName(object.getDeclaringClass()) + '.' + object.name();
 	}
 
 	/**
@@ -110,6 +112,7 @@ public class EnumChoiceRenderer<T extends Enum<T>> implements IChoiceRenderer<T>
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public String getIdValue(T object, int index)
 	{
 		return object.name();

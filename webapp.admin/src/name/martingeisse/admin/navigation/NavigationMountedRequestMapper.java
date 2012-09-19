@@ -7,10 +7,9 @@
 package name.martingeisse.admin.navigation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.request.Request;
+import org.apache.wicket.core.request.mapper.MountedMapper;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.component.IRequestablePage;
-import org.apache.wicket.request.mapper.MountedMapper;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.mapper.parameter.PageParametersEncoder;
 
@@ -139,8 +138,8 @@ public final class NavigationMountedRequestMapper extends MountedMapper {
 		 * @see org.apache.wicket.request.mapper.parameter.PageParametersEncoder#decodePageParameters(org.apache.wicket.request.Request)
 		 */
 		@Override
-		public PageParameters decodePageParameters(final Request request) {
-			PageParameters parameters = super.decodePageParameters(request);
+		public PageParameters decodePageParameters(final Url url) {
+			PageParameters parameters = super.decodePageParameters(url);
 			if (parameters == null) {
 				parameters = new PageParameters();
 			}

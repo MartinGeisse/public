@@ -19,13 +19,11 @@ package org.apache.wicket.ajax.markup.html.form;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.string.AppendingStringBuffer;
-import org.apache.wicket.util.string.Strings;
 
 /**
  * A button that submits the form via ajax.
@@ -89,59 +87,26 @@ public abstract class AjaxButton extends Button
 		super(id, model);
 		this.form = form;
 
-		add(new AjaxFormSubmitBehavior(form, "onclick")
+		add(new AjaxFormSubmitBehavior(form, "click")
 		{
 			private static final long serialVersionUID = 1L;
 
-			/**
-			 * 
-			 * @see org.apache.wicket.ajax.form.AjaxFormSubmitBehavior#onSubmit(org.apache.wicket.ajax.AjaxRequestTarget)
-			 */
 			@Override
 			protected void onSubmit(AjaxRequestTarget target)
 			{
 				AjaxButton.this.onSubmit(target, AjaxButton.this.getForm());
 			}
 
-			/**
-			 * 
-			 * @see org.apache.wicket.ajax.form.AjaxFormSubmitBehavior#onError(org.apache.wicket.ajax.AjaxRequestTarget)
-			 */
+			@Override
+			protected void onAfterSubmit(AjaxRequestTarget target)
+			{
+				AjaxButton.this.onAfterSubmit(target, AjaxButton.this.getForm());
+			}
+
 			@Override
 			protected void onError(AjaxRequestTarget target)
 			{
 				AjaxButton.this.onError(target, AjaxButton.this.getForm());
-			}
-
-			/**
-			 * 
-			 * @see org.apache.wicket.ajax.form.AjaxFormSubmitBehavior#getEventHandler()
-			 */
-			@Override
-			protected CharSequence getEventHandler()
-			{
-				final String script = AjaxButton.this.getOnClickScript();
-
-				AppendingStringBuffer handler = new AppendingStringBuffer();
-
-				if (!Strings.isEmpty(script))
-				{
-					handler.append(script).append(";");
-				}
-
-				handler.append(super.getEventHandler());
-				handler.append("; return false;");
-				return handler;
-			}
-
-			/**
-			 * 
-			 * @see org.apache.wicket.ajax.AbstractDefaultAjaxBehavior#getAjaxCallDecorator()
-			 */
-			@Override
-			protected IAjaxCallDecorator getAjaxCallDecorator()
-			{
-				return AjaxButton.this.getAjaxCallDecorator();
 			}
 
 			@Override
@@ -151,11 +116,22 @@ public abstract class AjaxButton extends Button
 			}
 
 			@Override
+			protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
+			{
+				super.updateAjaxAttributes(attributes);
+				AjaxButton.this.updateAjaxAttributes(attributes);
+			}
+
+			@Override
 			public boolean getDefaultProcessing()
 			{
 				return AjaxButton.this.getDefaultFormProcessing();
 			}
 		});
+	}
+
+	protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
+	{
 	}
 
 	/**
@@ -177,34 +153,35 @@ public abstract class AjaxButton extends Button
 		}
 	}
 
-
-	/**
-	 * Returns the {@link IAjaxCallDecorator} that will be used to modify the generated javascript.
-	 * This is the preferred way of changing the javascript in the onclick handler
-	 * 
-	 * @return call decorator used to modify the generated javascript or null for none
-	 */
-	protected IAjaxCallDecorator getAjaxCallDecorator()
-	{
-		return null;
-	}
-
 	/**
 	 * @return the channel that manages how Ajax calls are executed
 	 * @see AbstractDefaultAjaxBehavior#getChannel()
 	 */
+	@Deprecated
 	protected AjaxChannel getChannel()
 	{
 		return null;
 	}
 
 	/**
-	 * Listener method invoked on form submit with no errors
+	 * Listener method invoked on form submit with no errors, before {@link Form#onSubmit()}.
 	 * 
 	 * @param target
 	 * @param form
 	 */
-	protected abstract void onSubmit(AjaxRequestTarget target, Form<?> form);
+	protected void onSubmit(AjaxRequestTarget target, Form<?> form)
+	{
+	}
+
+	/**
+	 * Listener method invoked on form submit with no errors, after {@link Form#onSubmit()}.
+	 * 
+	 * @param target
+	 * @param form
+	 */
+	protected void onAfterSubmit(AjaxRequestTarget target, Form<?> form)
+	{
+	}
 
 	/**
 	 * Listener method invoked on form submit with errors
@@ -212,5 +189,7 @@ public abstract class AjaxButton extends Button
 	 * @param target
 	 * @param form
 	 */
-	protected abstract void onError(AjaxRequestTarget target, Form<?> form);
+	protected void onError(AjaxRequestTarget target, Form<?> form)
+	{
+	}
 }

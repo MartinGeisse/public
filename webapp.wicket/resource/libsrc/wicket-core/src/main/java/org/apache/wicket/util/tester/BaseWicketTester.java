@@ -16,7 +16,8 @@
  */
 package org.apache.wicket.util.tester;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.fail;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -37,7 +38,6 @@ import java.util.regex.Pattern;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import junit.framework.AssertionFailedError;
@@ -58,14 +58,19 @@ import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxEventBehavior;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
+import org.apache.wicket.core.request.handler.BookmarkablePageRequestHandler;
+import org.apache.wicket.core.request.handler.IPageProvider;
+import org.apache.wicket.core.request.handler.ListenerInterfaceRequestHandler;
+import org.apache.wicket.core.request.handler.PageAndComponentProvider;
+import org.apache.wicket.core.request.handler.PageProvider;
+import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
+import org.apache.wicket.feedback.FeedbackCollector;
 import org.apache.wicket.feedback.FeedbackMessage;
-import org.apache.wicket.feedback.FeedbackMessages;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.ContainerInfo;
 import org.apache.wicket.markup.IMarkupFragment;
@@ -84,7 +89,6 @@ import org.apache.wicket.markup.html.link.ILinkListener;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.parser.XmlPullParser;
 import org.apache.wicket.markup.parser.XmlTag;
 import org.apache.wicket.mock.MockApplication;
@@ -109,12 +113,6 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.cycle.RequestCycleContext;
-import org.apache.wicket.request.handler.BookmarkablePageRequestHandler;
-import org.apache.wicket.request.handler.IPageProvider;
-import org.apache.wicket.request.handler.ListenerInterfaceRequestHandler;
-import org.apache.wicket.request.handler.PageAndComponentProvider;
-import org.apache.wicket.request.handler.PageProvider;
-import org.apache.wicket.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.request.handler.render.PageRenderer;
 import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
 import org.apache.wicket.request.http.WebResponse;
@@ -186,6 +184,7 @@ public class BaseWicketTester
 
 	private IRequestHandler forcedHandler;
 
+	private IFeedbackMessageFilter originalFeedbackMessageCleanupFilter;
 	// Simulates the cookies maintained by the browser
 	private final List<Cookie> browserCookies = Generics.newArrayList();
 
@@ -194,14 +193,6 @@ public class BaseWicketTester
 	// User may provide request header value any time. They get applied (and reset) upon next
 	// invocation of processRequest()
 	private Map<String, String> preHeader;
-
-	/**
-	 * The method that is used to create the {@link ServletWebRequest} from the provided
-	 * {@link WebApplication}.
-	 */
-	// TODO Wicket 1.6 - make WebApplication.newWebRequest() somehow visible for BaseWicketTester
-	// to avoid the usage of reflection
-	private Method newWebRequestMethod = null;
 
 	/**
 	 * Creates <code>WicketTester</code> and automatically create a <code>WebApplication</code>, but
@@ -307,6 +298,11 @@ public class BaseWicketTester
 		application.setRequestCycleProvider(new TestRequestCycleProvider(
 			application.getRequestCycleProvider()));
 
+		// set a feedback message filter that will not remove any messages
+		originalFeedbackMessageCleanupFilter = application.getApplicationSettings()
+			.getFeedbackMessageCleanupFilter();
+		application.getApplicationSettings().setFeedbackMessageCleanupFilter(
+			IFeedbackMessageFilter.NONE);
 		IPageManagerProvider pageManagerProvider = newTestPageManagerProvider();
 		if (pageManagerProvider != null)
 		{
@@ -316,6 +312,7 @@ public class BaseWicketTester
 		// create a new session when the old one is invalidated
 		application.getSessionStore().registerUnboundListener(new UnboundListener()
 		{
+			@Override
 			public void sessionUnbound(String sessionId)
 			{
 				newSession();
@@ -381,13 +378,44 @@ public class BaseWicketTester
 		ServletWebRequest servletWebRequest = newServletWebRequest();
 		requestCycle = application.createRequestCycle(servletWebRequest,
 			newServletWebResponse(servletWebRequest));
-		requestCycle.setCleanupFeedbackMessagesOnDetach(false);
 		ThreadContext.setRequestCycle(requestCycle);
 
 		if (session == null)
 		{
 			newSession();
 		}
+	}
+
+	/**
+	 * Cleans up feedback messages. This usually happens on detach, but is disabled in unit testing
+	 * so feedback mesasges can be examined.
+	 */
+	public void cleanupFeedbackMessages()
+	{
+		cleanupFeedbackMessages(originalFeedbackMessageCleanupFilter);
+	}
+
+	/**
+	 * Removes all feedback messages
+	 */
+	public void clearFeedbackMessages()
+	{
+		cleanupFeedbackMessages(IFeedbackMessageFilter.ALL);
+	}
+
+	/**
+	 * Cleans up feedback messages given the specified filter.
+	 * 
+	 * @param filter
+	 *            filter used to cleanup messages, accepted messages will be removed
+	 */
+	private void cleanupFeedbackMessages(IFeedbackMessageFilter filter)
+	{
+		application.getApplicationSettings().setFeedbackMessageCleanupFilter(filter);
+		getLastRenderedPage().detach();
+		getSession().detach();
+		application.getApplicationSettings().setFeedbackMessageCleanupFilter(
+			IFeedbackMessageFilter.NONE);
 	}
 
 	/**
@@ -426,31 +454,9 @@ public class BaseWicketTester
 	 */
 	private ServletWebRequest newServletWebRequest()
 	{
-		if (newWebRequestMethod == null)
-		{
-			try
-			{
-				newWebRequestMethod = WebApplication.class.getDeclaredMethod("newWebRequest",
-					new Class[] { HttpServletRequest.class, String.class });
-				newWebRequestMethod.setAccessible(true);
-			}
-			catch (Exception e)
-			{
-				throw new RuntimeException(e);
-			}
-		}
 
-		ServletWebRequest webRequest;
-		try
-		{
-			webRequest = (ServletWebRequest)newWebRequestMethod.invoke(application, request,
-				request.getFilterPrefix());
-		}
-		catch (Exception x)
-		{
-			throw new RuntimeException(x);
-		}
-		return webRequest;
+
+		return (ServletWebRequest)application.newWebRequest(request, request.getFilterPrefix());
 	}
 
 	/**
@@ -620,15 +626,6 @@ public class BaseWicketTester
 
 		try
 		{
-			if (!redirect)
-			{
-				/*
-				 * we do not reset the session during redirect processing because we want to
-				 * preserve the state before the redirect, eg any error messages reported
-				 */
-				session.cleanupFeedbackMessages();
-			}
-
 			if (getLastResponse() != null)
 			{
 				// transfer cookies from previous response to this request, quirky but how old stuff
@@ -728,13 +725,20 @@ public class BaseWicketTester
 	{
 		String originalHost = requestUrl.getHost();
 		String redirectHost = newUrl.getHost();
-		if (originalHost == redirectHost)
+		Integer originalPort = requestUrl.getPort();
+		Integer newPort = newUrl.getPort();
+
+		if (originalHost.equals(redirectHost))
 		{
 			return false; // identical or both null
 		}
 		else if (redirectHost == null)
 		{
 			return false; // no new host
+		}
+		else if (originalPort.equals(newPort) == false)
+		{
+			return true;
 		}
 		else
 		{
@@ -823,9 +827,10 @@ public class BaseWicketTester
 	 * @param page
 	 * @return Page
 	 */
-	public Page startPage(final Page page)
+	@SuppressWarnings("unchecked")
+	public <T extends Page> T startPage(final T page)
 	{
-		return startPage(new PageProvider(page));
+		return (T)startPage(new PageProvider(page));
 	}
 
 	/**
@@ -1011,35 +1016,6 @@ public class BaseWicketTester
 
 		Url url = Url.parse(link.urlFor(ILinkListener.INTERFACE, new PageParameters()).toString());
 		return transform(url).toString();
-	}
-
-	/**
-	 * Renders a <code>Page</code> defined in <code>TestPageSource</code>. This is usually used when
-	 * a page does not have default constructor. For example, a <code>ViewBook</code> page requires
-	 * a <code>Book</code> instance:
-	 * 
-	 * <pre>
-	 * tester.startPage(new TestPageSource()
-	 * {
-	 * 	public Page getTestPage()
-	 * 	{
-	 * 		Book mockBook = new Book(&quot;myBookName&quot;);
-	 * 		return new ViewBook(mockBook);
-	 * 	}
-	 * });
-	 * </pre>
-	 * 
-	 * @param testPageSource
-	 *            a <code>Page</code> factory that creates a test page instance
-	 * @return the rendered Page
-	 * @deprecated since 1.5 use {@link #startPage(Page)} instead
-	 */
-	@Deprecated
-	public final Page startPage(final ITestPageSource testPageSource)
-	{
-		Args.notNull(testPageSource, "testPageResource");
-
-		return startPage(testPageSource.getTestPage());
 	}
 
 	/**
@@ -1244,67 +1220,13 @@ public class BaseWicketTester
 	}
 
 	/**
-	 * Renders a <code>Panel</code> defined in <code>TestPanelSource</code>. The usage is similar to
-	 * {@link #startPage(ITestPageSource)}. Please note that testing <code>Panel</code> must use the
-	 * supplied <code>panelId<code> as a <code>Component</code> id.
-	 * 
-	 * <pre>
-	 * tester.startPanel(new TestPanelSource()
-	 * {
-	 * 	public Panel getTestPanel(String panelId)
-	 * 	{
-	 * 		MyData mockMyData = new MyData();
-	 * 		return new MyPanel(panelId, mockMyData);
-	 * 	}
-	 * });
-	 * </pre>
-	 * 
-	 * Note that when try to access a component, e.g. via accessLabel(), the 'path' parameter must
-	 * be relative to the panel. Not relative to the Page which will automatically be added for you.
-	 * 
-	 * @param testPanelSource
-	 *            a <code>Panel</code> factory that creates test <code>Panel</code> instances
-	 * @return a rendered <code>Panel</code>
-	 * @deprecated since 1.5 use {@link #startComponentInPage(Class, IMarkupFragment)} instead
-	 */
-	@Deprecated
-	public final Panel startPanel(final ITestPanelSource testPanelSource)
-	{
-		Args.notNull(testPanelSource, "testPanelSource");
-
-		return startComponentInPage(testPanelSource.getTestPanel(DummyPanelPage.TEST_PANEL_ID),
-			null);
-	}
-
-	/**
-	 * Renders a <code>Panel</code> from a <code>Panel(String id)</code> constructor.
-	 * <p>
-	 * Note that when try to access a component, e.g. via accessLabel(), the 'path' parameter must
-	 * be relative to the panel. Not relative to the Page which will automatically be added for you.
-	 * 
-	 * @param <C>
-	 *            the type of the component
-	 * @param panelClass
-	 *            a test <code>Panel</code> class with <code>Panel(String id)</code> constructor
-	 * @return a rendered <code>Panel</code>
-	 * @deprecated Use startComponentInPage(Class) instead
-	 */
-	@Deprecated
-	public final <C extends Panel> C startPanel(final Class<C> panelClass)
-	{
-		Args.notNull(panelClass, "panelClass");
-
-		return startComponentInPage(panelClass, null);
-	}
-
-	/**
 	 * Process a component. A web page will be automatically created with the markup created in
 	 * {@link #createPageMarkup(String)}.
 	 * <p>
-	 * <strong>Note</strong>: the instantiated component will have an auto-generated id. To reach
-	 * any of its children use their relative path to the component itself. For example if the
-	 * started component has a child a Link component with id "link" then after starting the
-	 * component you can click it with: <code>tester.clickLink("link")</code>
+	 *     <strong>Note</strong>: the instantiated component will have an auto-generated id. To
+	 *     reach any of its children use their relative path to the component itself. For example
+	 *     if the started component has a child a Link component with id "link" then after starting
+	 *     the component you can click it with: <code>tester.clickLink("link")</code>
 	 * </p>
 	 * 
 	 * @param <C>
@@ -1324,10 +1246,10 @@ public class BaseWicketTester
 	 * provided. In case pageMarkup is null, the markup will be automatically created with
 	 * {@link #createPageMarkup(String)}.
 	 * <p>
-	 * <strong>Note</strong>: the instantiated component will have an auto-generated id. To reach
-	 * any of its children use their relative path to the component itself. For example if the
-	 * started component has a child a Link component with id "link" then after starting the
-	 * component you can click it with: <code>tester.clickLink("link")</code>
+	 *     <strong>Note</strong>: the instantiated component will have an auto-generated id. To
+	 *     reach any of its children use their relative path to the component itself. For example
+	 *     if the started component has a child a Link component with id "link" then after starting
+	 *     the component you can click it with: <code>tester.clickLink("link")</code>
 	 * </p>
 	 * 
 	 * @param <C>
@@ -1369,10 +1291,10 @@ public class BaseWicketTester
 	 * Process a component. A web page will be automatically created with markup created by the
 	 * {@link #createPageMarkup(String)}.
 	 * <p>
-	 * <strong>Note</strong>: the component id is set by the user. To reach any of its children use
-	 * this id + their relative path to the component itself. For example if the started component
-	 * has id <em>compId</em> and a Link child component component with id "link" then after
-	 * starting the component you can click it with: <code>tester.clickLink("compId:link")</code>
+	 *     <strong>Note</strong>: the component id is set by the user. To
+	 *     reach any of its children use this id + their relative path to the component itself. For example
+	 *     if the started component has id <em>compId</em> and a Link child component component with id "link"
+	 *     then after starting the component you can click it with: <code>tester.clickLink("compId:link")</code>
 	 * </p>
 	 * 
 	 * @param <C>
@@ -1392,10 +1314,10 @@ public class BaseWicketTester
 	 * provided. In case {@code pageMarkup} is null, the markup will be automatically created with
 	 * {@link #createPageMarkup(String)}.
 	 * <p>
-	 * <strong>Note</strong>: the component id is set by the user. To reach any of its children use
-	 * this id + their relative path to the component itself. For example if the started component
-	 * has id <em>compId</em> and a Link child component component with id "link" then after
-	 * starting the component you can click it with: <code>tester.clickLink("compId:link")</code>
+	 *     <strong>Note</strong>: the component id is set by the user. To
+	 *     reach any of its children use this id + their relative path to the component itself. For example
+	 *     if the started component has id <em>compId</em> and a Link child component component with id "link"
+	 *     then after starting the component you can click it with: <code>tester.clickLink("compId:link")</code>
 	 * </p>
 	 * 
 	 * @param <C>
@@ -1504,7 +1426,7 @@ public class BaseWicketTester
 	 */
 	public static class StartComponentInPage extends WebPage
 	{
-		private IMarkupFragment pageMarkup = null;
+		private transient IMarkupFragment pageMarkup = null;
 
 		/**
 		 * Construct.
@@ -1582,7 +1504,7 @@ public class BaseWicketTester
 			String componentIdPageId = componentInPage.component.getId() + ':';
 			if (path.startsWith(componentIdPageId) == false)
 			{
-				path = componentIdPageId + path;
+				path =  componentIdPageId + path;
 			}
 		}
 
@@ -1672,7 +1594,7 @@ public class BaseWicketTester
 		if (component == null)
 		{
 			result = Result.fail("path: '" + path + "' does no exist for page: " +
-				Classes.simpleName(getLastRenderedPage().getClass()));
+					Classes.simpleName(getLastRenderedPage().getClass()));
 		}
 		else
 		{
@@ -2109,11 +2031,10 @@ public class BaseWicketTester
 	 */
 	public List<Serializable> getMessages(final int level)
 	{
-		FeedbackMessages feedbackMessages = Session.get().getFeedbackMessages();
-		List<FeedbackMessage> allMessages = feedbackMessages.messages(new IFeedbackMessageFilter()
+		List<FeedbackMessage> allMessages = new FeedbackCollector(getLastRenderedPage()).collect(new IFeedbackMessageFilter()
 		{
-			private static final long serialVersionUID = 1L;
 
+			@Override
 			public boolean accept(FeedbackMessage message)
 			{
 				return message.getLevel() == level;
@@ -2165,8 +2086,9 @@ public class BaseWicketTester
 
 	/**
 	 * Tests that a <code>Component</code> has been added to a <code>AjaxRequestTarget</code>, using
-	 * {@link AjaxRequestTarget#add(org.apache.wicket.Component...)}. This method actually tests
-	 * that a <code>Component</code> is on the Ajax response sent back to the client.
+	 * {@link org.apache.wicket.ajax.AjaxRequestTarget#add(org.apache.wicket.Component...)}. This
+	 * method actually tests that a <code>Component</code> is on the Ajax response sent back to the
+	 * client.
 	 * <p>
 	 * PLEASE NOTE! This method doesn't actually insert the <code>Component</code> in the client DOM
 	 * tree, using JavaScript. But it shouldn't be needed because you have to trust that the Wicket
@@ -2251,7 +2173,7 @@ public class BaseWicketTester
 	 * Simulates the firing of all ajax timer behaviors on the page
 	 * 
 	 * @param page
-	 *            the page which timers will be executed
+	 *      the page which timers will be executed
 	 */
 	public void executeAllTimerBehaviors(final MarkupContainer page)
 	{
@@ -2261,6 +2183,7 @@ public class BaseWicketTester
 		// and for all its children
 		page.visitChildren(Component.class, new IVisitor<Component, Void>()
 		{
+			@Override
 			public void component(final Component component, final IVisit<Void> visit)
 			{
 				internalExecuteAllTimerBehaviors(component);
@@ -2279,8 +2202,7 @@ public class BaseWicketTester
 			{
 				if (log.isDebugEnabled())
 				{
-					log.debug("Triggering AjaxSelfUpdatingTimerBehavior: {}",
-						component.getClassRelativePath());
+					log.debug("Triggering AjaxSelfUpdatingTimerBehavior: {}", component.getClassRelativePath());
 				}
 
 				executeBehavior(timer);
@@ -2410,6 +2332,7 @@ public class BaseWicketTester
 
 		form.visitFormComponents(new IVisitor<FormComponent<?>, Void>()
 		{
+			@Override
 			public void component(final FormComponent<?> formComponent, final IVisit<Void> visit)
 			{
 				final String inputName = formComponent.getInputName();
@@ -2677,6 +2600,7 @@ public class BaseWicketTester
 			this.delegate = delegate;
 		}
 
+		@Override
 		public PageRenderer get(RenderPageRequestHandler handler)
 		{
 			Page newPage = (Page)handler.getPageProvider().getPageInstance();
@@ -2703,6 +2627,7 @@ public class BaseWicketTester
 			this.delegate = delegate;
 		}
 
+		@Override
 		public IRequestHandler map(Exception e)
 		{
 			if (exposeExceptions)
@@ -2735,6 +2660,7 @@ public class BaseWicketTester
 			this.delegate = delegate;
 		}
 
+		@Override
 		public RequestCycle get(RequestCycleContext context)
 		{
 			context.setRequestMapper(new TestRequestMapper(context.getRequestMapper()));
@@ -2756,16 +2682,19 @@ public class BaseWicketTester
 			this.delegate = delegate;
 		}
 
+		@Override
 		public int getCompatibilityScore(Request request)
 		{
 			return delegate.getCompatibilityScore(request);
 		}
 
+		@Override
 		public Url mapHandler(IRequestHandler requestHandler)
 		{
 			return delegate.mapHandler(requestHandler);
 		}
 
+		@Override
 		public IRequestHandler mapRequest(Request request)
 		{
 			if (forcedHandler != null)
@@ -2790,6 +2719,7 @@ public class BaseWicketTester
 	 */
 	private static class TestPageManagerProvider implements IPageManagerProvider
 	{
+		@Override
 		public IPageManager get(IPageManagerContext pageManagerContext)
 		{
 			return new MockPageManager();
@@ -2808,21 +2738,25 @@ public class BaseWicketTester
 			initParameters.put(WicketFilter.FILTER_MAPPING_PARAM, "/servlet/*");
 		}
 
+		@Override
 		public String getFilterName()
 		{
 			return getClass().getName();
 		}
 
+		@Override
 		public ServletContext getServletContext()
 		{
 			return servletContext;
 		}
 
+		@Override
 		public String getInitParameter(String s)
 		{
 			return initParameters.get(s);
 		}
 
+		@Override
 		public Enumeration<String> getInitParameterNames()
 		{
 			throw new UnsupportedOperationException("Not implemented");
@@ -2851,6 +2785,7 @@ public class BaseWicketTester
 			cookies.add(cookie);
 		}
 
+		@Override
 		public void writeMetaData(WebResponse webResponse)
 		{
 			for (Cookie cookie : cookies)

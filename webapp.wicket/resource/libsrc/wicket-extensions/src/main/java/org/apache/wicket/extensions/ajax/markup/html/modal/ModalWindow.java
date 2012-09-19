@@ -17,15 +17,15 @@
 package org.apache.wicket.extensions.ajax.markup.html.modal;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.Page;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.calldecorator.CancelEventIfNoAjaxDecorator;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.AbstractRepeater;
@@ -33,11 +33,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.handler.PageProvider;
-import org.apache.wicket.request.handler.RenderPageRequestHandler;
+import org.apache.wicket.core.request.handler.PageProvider;
+import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.resource.CoreLibrariesContributor;
 import org.apache.wicket.util.lang.EnumeratedType;
 import org.apache.wicket.util.string.AppendingStringBuffer;
 import org.apache.wicket.util.string.Strings;
@@ -59,16 +60,16 @@ import org.apache.wicket.util.string.Strings;
  * <code>{@link #setPageCreator(ModalWindow.PageCreator)}</code> method.
  * </ul>
  * In case the content is a component, it is not rendered until the window is shown (method
- * <code>{@link #show(AjaxRequestTarget)})</code>. The window can be made visible from an ajax
- * handler using <code>{@link #show(AjaxRequestTarget)}</code>.
+ * <code>{@link #show(org.apache.wicket.ajax.AjaxRequestTarget)})</code>. The window can be made visible from an ajax
+ * handler using <code>{@link #show(org.apache.wicket.ajax.AjaxRequestTarget)}</code>.
  * <p>
  * To close the window there are multiple options. Static method
- * <code>{@link #close(AjaxRequestTarget)}</code> can be used to close the window from a handler of
+ * <code>{@link #close(org.apache.wicket.ajax.AjaxRequestTarget)}</code> can be used to close the window from a handler of
  * ajax link inside the window. By default the close button in the upper right corner of the window
  * closes it. This behavior can be altered using
  * <code>{@link #setCloseButtonCallback(ModalWindow.CloseButtonCallback)}</code>. If you want to be
  * notified when the window is closed (either using the close button or calling
- * <code>{@link #close(AjaxRequestTarget)})</code>, you can use
+ * <code>{@link #close(org.apache.wicket.ajax.AjaxRequestTarget)})</code>, you can use
  * <code>{@link #setWindowClosedCallback(ModalWindow.WindowClosedCallback)}</code>.
  * <p>
  * Title is specified using {@link #setTitle(String)}. If the content is a page (iframe), the title
@@ -127,7 +128,7 @@ public class ModalWindow extends Panel
 	private static final ResourceReference JAVASCRIPT = new JavaScriptResourceReference(
 		ModalWindow.class, "res/modal.js");
 
-	private static final ResourceReference CSS = new PackageResourceReference(ModalWindow.class,
+	private static final ResourceReference CSS = new CssResourceReference(ModalWindow.class,
 		"res/modal.css");
 
 	/** the default id of the content component */
@@ -152,6 +153,7 @@ public class ModalWindow extends Panel
 	private IModel<String> title = null;
 	private MaskType maskType = MaskType.SEMI_TRANSPARENT;
 	private boolean autoSize = false;
+	private boolean unloadConfirmation = true;
 
 	private PageCreator pageCreator = null;
 	private CloseButtonCallback closeButtonCallback = null;
@@ -187,10 +189,10 @@ public class ModalWindow extends Panel
 	{
 		/**
 		 * Methods invoked after the button has been clicked. The invocation is done using an ajax
-		 * call, so <code>{@link AjaxRequestTarget}</code> instance is available.
+		 * call, so <code>{@link org.apache.wicket.ajax.AjaxRequestTarget}</code> instance is available.
 		 * 
 		 * @param target
-		 *            <code>{@link AjaxRequestTarget}</code> instance bound with the ajax request.
+		 *            <code>{@link org.apache.wicket.ajax.AjaxRequestTarget}</code> instance bound with the ajax request.
 		 * 
 		 * @return True if the window can be closed (will close the window), false otherwise
 		 */
@@ -210,7 +212,7 @@ public class ModalWindow extends Panel
 		 * Called after the window has been closed.
 		 * 
 		 * @param target
-		 *            <code>{@link AjaxRequestTarget}</code> instance bound with the ajax request.
+		 *            <code>{@link org.apache.wicket.ajax.AjaxRequestTarget}</code> instance bound with the ajax request.
 		 */
 		public void onClose(AjaxRequestTarget target);
 	}
@@ -258,6 +260,7 @@ public class ModalWindow extends Panel
 		// WindowClosedBehavior to be executed
 		setWindowClosedCallback(new WindowClosedCallback()
 		{
+			@Override
 			public void onClose(AjaxRequestTarget target)
 			{
 				// noop
@@ -270,12 +273,14 @@ public class ModalWindow extends Panel
 	public void renderHead(final IHeaderResponse response)
 	{
 		super.renderHead(response);
-		response.renderJavaScriptReference(JAVASCRIPT);
+
+		CoreLibrariesContributor.contributeAjax(getApplication(), response);
+		response.render(JavaScriptHeaderItem.forReference(JAVASCRIPT));
 
 		ResourceReference cssResource = newCssResource();
 		if (cssResource != null)
 		{
-			response.renderCSSReference(cssResource);
+			response.render(CssHeaderItem.forReference(cssResource));
 		}
 	}
 
@@ -284,6 +289,7 @@ public class ModalWindow extends Panel
 	 * other sources, e.g. a global CSS resource.
 	 * 
 	 * @return The CSS resource reference or null if CSS is contributed via other means.
+	 * @see #setCssClassName(String)
 	 */
 	protected ResourceReference newCssResource()
 	{
@@ -362,7 +368,7 @@ public class ModalWindow extends Panel
 	/**
 	 * Hides the modal window. This can be called from within the modal window, however, the modal
 	 * window must have configured WindowClosedCallback. Otherwise use the
-	 * {@link #close(AjaxRequestTarget)} method.
+	 * {@link #close(org.apache.wicket.ajax.AjaxRequestTarget)} method.
 	 * 
 	 * @param target
 	 *            Request target associated with current ajax request.
@@ -412,7 +418,7 @@ public class ModalWindow extends Panel
 			+ "  } catch (ignore) {\n"
 			+ "  }\n"
 			+ "}\n"
-			+ "if (typeof(win) != \"undefined\" && typeof(win.current) != \"undefined\") {\n"
+			+ "if (win && win.current) {\n"
 			+ " var close = function(w) { w.setTimeout(function() {\n"
 			+ "		win.current.close();\n"
 			+ "	}, 0);  } \n"
@@ -499,6 +505,7 @@ public class ModalWindow extends Panel
 	 * 
 	 * @param cssClassName
 	 * @return this
+	 * @see #newCssResource()
 	 */
 	public ModalWindow setCssClassName(final String cssClassName)
 	{
@@ -619,6 +626,30 @@ public class ModalWindow extends Panel
 	public boolean isResizable()
 	{
 		return resizable;
+	}
+
+	/**
+	 * Sets a flag whether to ask the user before leaving the page.
+	 *
+	 * @param unloadConfirmation
+	 *            a flag whether to ask the user before leaving the page
+	 * @return {@code this} instance, for chaining
+	 */
+	public ModalWindow showUnloadConfirmation(final boolean unloadConfirmation)
+	{
+		this.unloadConfirmation = unloadConfirmation;
+		return this;
+	}
+
+	/**
+	 * Returns whether the user should be asked before leaving the page.
+	 *
+	 * @return {@code true} if the user should be asked if the last action
+	 *  causes leaving the page, {@code false} otherwise
+	 */
+	public boolean showUnloadConfirmation()
+	{
+		return unloadConfirmation;
 	}
 
 	/**
@@ -933,7 +964,7 @@ public class ModalWindow extends Panel
 		}
 
 		@Override
-		protected CharSequence getCallbackScript()
+		public CharSequence getCallbackScript()
 		{
 			return super.getCallbackScript();
 		}
@@ -961,19 +992,10 @@ public class ModalWindow extends Panel
 		}
 
 		/**
-		 * @see org.apache.wicket.ajax.AbstractDefaultAjaxBehavior#getAjaxCallDecorator()
-		 */
-		@Override
-		protected IAjaxCallDecorator getAjaxCallDecorator()
-		{
-			return new CancelEventIfNoAjaxDecorator(super.getAjaxCallDecorator());
-		}
-
-		/**
 		 * @see org.apache.wicket.ajax.AbstractDefaultAjaxBehavior#getCallbackScript()
 		 */
 		@Override
-		protected final CharSequence getCallbackScript()
+		public final CharSequence getCallbackScript()
 		{
 			return super.getCallbackScript();
 		}
@@ -1103,6 +1125,7 @@ public class ModalWindow extends Panel
 
 		appendAssignment(buffer, "settings.autoSize", autoSize);
 
+		appendAssignment(buffer, "settings.unloadConfirmation", showUnloadConfirmation());
 
 		// set true if we set a windowclosedcallback
 		boolean haveCloseCallback = false;
@@ -1229,7 +1252,7 @@ public class ModalWindow extends Panel
 	}
 
 	/**
-	 * Gives the possibility to provide custom {@link IAjaxCallDecorator}
+	 * Gives the possibility to provide custom {@link org.apache.wicket.ajax.attributes.IAjaxCallListener}
 	 * 
 	 * @return the behavior that should be used for the window close button
 	 */

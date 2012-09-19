@@ -26,7 +26,9 @@ import org.apache.wicket.extensions.markup.html.form.palette.component.Choices;
 import org.apache.wicket.extensions.markup.html.form.palette.component.Recorder;
 import org.apache.wicket.extensions.markup.html.form.palette.component.Selection;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
@@ -35,8 +37,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 
 
@@ -116,7 +118,7 @@ public class Palette<T> extends Panel
 		Palette.class, "palette.js");
 
 	/** reference to the palette's css resource */
-	private static final ResourceReference CSS = new PackageResourceReference(Palette.class,
+	private static final ResourceReference CSS = new CssResourceReference(Palette.class,
 		"palette.css");
 
 	/**
@@ -625,11 +627,13 @@ public class Palette<T> extends Panel
 	@Override
 	public void renderHead(final IHeaderResponse response)
 	{
-		response.renderJavaScriptReference(JAVASCRIPT);
 		ResourceReference css = getCSS();
 		if (css != null)
 		{
-			response.renderCSSReference(css);
+			response.render(CssHeaderItem.forReference(css));
 		}
+		response.render(JavaScriptHeaderItem.forReference(JAVASCRIPT));
 	}
+
+
 }

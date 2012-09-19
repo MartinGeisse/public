@@ -168,6 +168,7 @@ public class ImmutableBehaviorIdsTest extends WicketTestCase
 			tag.put(attr, component.urlFor(this, IBehaviorListener.INTERFACE, new PageParameters()));
 		}
 
+		@Override
 		public void onRequest()
 		{
 		}
@@ -184,6 +185,7 @@ public class ImmutableBehaviorIdsTest extends WicketTestCase
 			add(container);
 		}
 
+		@Override
 		public IResourceStream getMarkupResourceStream(MarkupContainer container,
 			Class<?> containerClass)
 		{
