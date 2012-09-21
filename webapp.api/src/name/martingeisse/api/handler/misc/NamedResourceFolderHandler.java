@@ -4,15 +4,17 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.api.handler;
+package name.martingeisse.api.handler.misc;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import name.martingeisse.api.handler.IRequestHandler;
 import name.martingeisse.api.request.RequestCycle;
 import name.martingeisse.api.request.RequestPathChain;
+import name.martingeisse.api.request.RequestPathNotFoundException;
 
 /**
  * This handler represents a "resource folder" that contains other
@@ -53,8 +55,7 @@ public class NamedResourceFolderHandler implements IRequestHandler {
 		}
 		IRequestHandler handler = resources.get(path.getHead());
 		if (handler == null) {
-			requestCycle.emitResourceNotFoundResponse();
-			throw new RequestHandlingFinishedException();
+			throw new RequestPathNotFoundException();
 		}
 		handler.handle(requestCycle, path.getTail());
 	}

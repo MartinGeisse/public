@@ -70,6 +70,7 @@ public class EntityConnectionManager {
 			throw new IllegalStateException("database descriptors are already initialized");
 		}
 		EntityConnectionManager.databaseDescriptors = databaseDescriptors;
+		EntityConnectionManager.defaultDatabaseDescriptor = databaseDescriptors[0];
 	}
 
 	/**

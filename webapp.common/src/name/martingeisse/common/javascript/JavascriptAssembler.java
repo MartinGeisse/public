@@ -6,70 +6,136 @@
 
 package name.martingeisse.common.javascript;
 
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.ReadableInstant;
+import org.joda.time.ReadablePartial;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 /**
  * This class is used to assemble Javascript source code.
  */
 public class JavascriptAssembler extends SourceCodeAssembler {
 
 	/**
+	 * Application code can set this field to install a default date
+	 * formatter used by new instances of {@link JavascriptAssembler}.
+	 * Note however that access to this field is not synchronized automatically.
+	 */
+	public static DateTimeFormatter defaultDateFormatter = DateTimeFormat.mediumDate().withZone(DateTimeZone.UTC);
+
+	/**
+	 * Application code can set this field to install a default datetime
+	 * formatter used by new instances of {@link JavascriptAssembler}.
+	 * Note however that access to this field is not synchronized automatically.
+	 */
+	public static DateTimeFormatter defaultDateTimeFormatter = DateTimeFormat.mediumDateTime().withZone(DateTimeZone.UTC);
+
+	/**
 	 * 
 	 */
 	private boolean firstCollectionElement;
-	
+
+	/**
+	 * the dateFormatter
+	 */
+	private DateTimeFormatter dateFormatter;
+
+	/**
+	 * the dateFormatter
+	 */
+	private DateTimeFormatter dateTimeFormatter;
+
 	/**
 	 * Constructor.
 	 */
 	public JavascriptAssembler() {
 		firstCollectionElement = false;
+		dateFormatter = defaultDateFormatter;
+		dateTimeFormatter = defaultDateTimeFormatter;
+	}
+
+	/**
+	 * Getter method for the dateFormatter.
+	 * @return the dateFormatter
+	 */
+	public DateTimeFormatter getDateFormatter() {
+		return dateFormatter;
+	}
+
+	/**
+	 * Setter method for the dateFormatter.
+	 * @param dateFormatter the dateFormatter to set
+	 */
+	public void setDateFormatter(DateTimeFormatter dateFormatter) {
+		this.dateFormatter = dateFormatter;
+	}
+
+	/**
+	 * Getter method for the dateTimeFormatter.
+	 * @return the dateTimeFormatter
+	 */
+	public DateTimeFormatter getDateTimeFormatter() {
+		return dateTimeFormatter;
+	}
+
+	/**
+	 * Setter method for the dateTimeFormatter.
+	 * @param dateTimeFormatter the dateTimeFormatter to set
+	 */
+	public void setDateTimeFormatter(DateTimeFormatter dateTimeFormatter) {
+		this.dateTimeFormatter = dateTimeFormatter;
 	}
 
 	/**
 	 * Appends the specified identifier to the builder.
 	 * @param name the identifier to append
 	 */
-	public void appendIdentifier(String name) {
+	public final void appendIdentifier(String name) {
 		if (name == null) {
 			throw new IllegalArgumentException("name argument is null");
 		}
 		JavascriptAssemblerUtil.appendIdentifier(getBuilder(), name);
 	}
-	
+
 	/**
 	 * Appends the null literal to the builder.
 	 */
-	public void appendNullLiteral() {
+	public final void appendNullLiteral() {
 		getBuilder().append("null");
 	}
-	
+
 	/**
 	 * Appends the specified string literal to the builder.
 	 * @param value the value of the literal to append (must not be null)
 	 */
-	public void appendStringLiteral(String value) {
+	public final void appendStringLiteral(String value) {
 		if (value == null) {
 			throw new IllegalArgumentException("value argument is null");
 		}
 		JavascriptAssemblerUtil.appendStringLiteral(getBuilder(), value);
 	}
-	
+
 	/**
 	 * Appends the specified string literal to the builder, or the null literal if
 	 * the argument is null.
 	 * @param value the value of the literal to append (may be null)
 	 */
-	public void appendStringLiteralOrNull(String value) {
+	public final void appendStringLiteralOrNull(String value) {
 		if (value == null) {
 			appendNullLiteral();
 		} else {
 			JavascriptAssemblerUtil.appendStringLiteral(getBuilder(), value);
 		}
 	}
-	
+
 	/**
 	 * Appends the specified boolean literal to the builder.
 	 * @param value the value of the literal to append
 	 */
-	public void appendBooleanLiteral(boolean value) {
+	public final void appendBooleanLiteral(boolean value) {
 		JavascriptAssemblerUtil.appendBooleanLiteral(getBuilder(), value);
 	}
 
@@ -77,7 +143,7 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * Appends the specified numeric literal to the builder.
 	 * @param value the value of the literal to append
 	 */
-	public void appendNumericLiteral(int value) {
+	public final void appendNumericLiteral(int value) {
 		getBuilder().append(value);
 	}
 
@@ -85,7 +151,7 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * Appends the specified numeric literal to the builder.
 	 * @param value the value of the literal to append
 	 */
-	public void appendNumericLiteral(double value) {
+	public final void appendNumericLiteral(double value) {
 		getBuilder().append(value);
 	}
 
@@ -93,11 +159,73 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * Appends the specified numeric literal to the builder.
 	 * @param value the value of the literal to append
 	 */
-	public void appendNumericLiteral(Number value) {
+	public final void appendNumericLiteral(Number value) {
 		if (value == null) {
 			throw new IllegalArgumentException("value argument is null");
 		}
 		getBuilder().append(value.toString());
+	}
+
+	/**
+	 * Appends the date contained in the specified instant according
+	 * to the date formatter that is set for this assembler.
+	 * @param value the instant to extract the date from
+	 */
+	public final void appendDateLiteral(ReadableInstant value) {
+		appendJodaLiteral(value, dateFormatter);
+	}
+
+	/**
+	 * Appends the datetime contained in the specified instant according
+	 * to the datetime formatter that is set for this assembler.
+	 * @param value the instant to extract the datetime from
+	 */
+	public final void appendDateTimeLiteral(ReadableInstant value) {
+		appendJodaLiteral(value, dateTimeFormatter);
+	}
+
+	/**
+	 * Uses the specified Joda-Time instant and formatter to append a string literal.
+	 * 
+	 * @param instant the instant to append
+	 * @param formatter the formatter used to turn the instant into a string
+	 */
+	public final void appendJodaLiteral(ReadableInstant value, DateTimeFormatter formatter) {
+		if (value == null) {
+			throw new IllegalArgumentException("value argument is null");
+		}
+		appendStringLiteral(formatter.print(value));
+	}
+
+	/**
+	 * Appends the specified date according to the date formatter
+	 * that is set for this assembler.
+	 * @param value the date
+	 */
+	public final void appendDateLiteral(ReadablePartial value) {
+		appendJodaLiteral(value, dateFormatter);
+	}
+
+	/**
+	 * Appends the specified datetime according to the datetime formatter
+	 * that is set for this assembler.
+	 * @param value the datetime
+	 */
+	public final void appendDateTimeLiteral(ReadablePartial value) {
+		appendJodaLiteral(value, dateTimeFormatter);
+	}
+
+	/**
+	 * Uses the specified Joda-Time partial and formatter to append a string literal.
+	 * 
+	 * @param partial the partial to append
+	 * @param formatter the formatter used to turn the partial into a string
+	 */
+	public final void appendJodaLiteral(ReadablePartial value, DateTimeFormatter formatter) {
+		if (value == null) {
+			throw new IllegalArgumentException("value argument is null");
+		}
+		appendStringLiteral(formatter.print(value));
 	}
 
 	/**
@@ -106,7 +234,7 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * must conform to identifier syntax.
 	 * @param name the name of the property
 	 */
-	public void appendPropertyName(String name) {
+	public final void appendPropertyName(String name) {
 		if (name == null) {
 			throw new IllegalArgumentException("name argument is null");
 		}
@@ -121,14 +249,14 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 		getBuilder().append(mark);
 		firstCollectionElement = true;
 	}
-	
+
 	/**
 	 * Common handling to end a list or object.
 	 * @param mark the punctuation mark to use
 	 */
 	private void endCollection(char mark) {
 		getBuilder().append(mark);
-		
+
 		/**
 		 * This statement is necessary to handle the special
 		 * case that the first element of a collection is an
@@ -152,50 +280,105 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 			getBuilder().append(", ");
 		}
 	}
-	
+
 	/**
 	 * Begins a new list expression.
 	 */
-	public void beginList() {
+	public final void beginList() {
 		beginCollection('[');
 	}
-	
+
 	/**
 	 * Ends the current list expression.
 	 */
-	public void endList() {
+	public final void endList() {
 		endCollection(']');
 	}
-	
+
 	/**
 	 * This method must be called before each list element.
 	 */
-	public void prepareListElement() {
+	public final void prepareListElement() {
 		prepareCollectionElement();
 	}
-	
+
 	/**
 	 * Begins a new object expression.
 	 */
-	public void beginObject() {
+	public final void beginObject() {
 		beginCollection('{');
 	}
-	
+
 	/**
 	 * Ends the current object expression.
 	 */
-	public void endObject() {
+	public final void endObject() {
 		endCollection('}');
 	}
-	
+
 	/**
 	 * This method must be called before each object property.
 	 * @param name the name of the property
 	 */
-	public void prepareObjectProperty(String name) {
+	public final void prepareObjectProperty(String name) {
 		prepareCollectionElement();
 		appendPropertyName(name);
 		getBuilder().append(": ");
+	}
+
+	/**
+	 * Appends the specified primitive-typed literal to the builder.
+	 * Supported Java types are: {@link String}, {@link Number},
+	 * {@link Boolean}, and null values.
+	 * 
+	 * @param value the value of the literal to append
+	 */
+	public final void appendPrimitive(Object value) {
+		if (value == null) {
+			appendNullLiteral();
+		} else if (value instanceof String) {
+			appendStringLiteral((String)value);
+		} else if (value instanceof Number) {
+			appendNumericLiteral((Number)value);
+		} else if (value instanceof Boolean) {
+			appendBooleanLiteral((Boolean)value);
+		} else if (value instanceof ReadableInstant) {
+			appendDateTimeLiteral((ReadableInstant)value);
+		} else if (value instanceof LocalDate) {
+			appendDateLiteral((LocalDate)value);
+		} else if (value instanceof LocalDateTime) {
+			appendDateTimeLiteral((LocalDateTime)value);
+		} else if (value instanceof ReadablePartial) {
+			appendDateTimeLiteral((ReadablePartial)value);
+		} else {
+			appendCustomPrimitive(value);
+		}
+	}
+
+	/**
+	 * This method is invoked by {@link #appendPrimitive(Object)} for
+	 * unknown types. It should either convert the value to a valid
+	 * JSON expression or, if the value has an unknown type, call
+	 * {@link #unknownPrimitiveTypeException(Object)} and throw the
+	 * returned exception.
+	 * 
+	 * The default implementation knows no custom type and thus always
+	 * throws the exception.
+	 * 
+	 * @param value the value of the literal to append
+	 */
+	protected void appendCustomPrimitive(Object value) {
+		throw unknownPrimitiveTypeException(value);
+	}
+
+	/**
+	 * Creates an {@link IllegalArgumentException} about a value with an
+	 * unknown primitive type that was passed to {@link #appendPrimitive(Object)}.
+	 * @param value the value
+	 * @return the exception
+	 */
+	protected final IllegalArgumentException unknownPrimitiveTypeException(Object value) {
+		return new IllegalArgumentException("not a JSON-compatible primitive value: " + value);
 	}
 
 	/**
@@ -255,18 +438,18 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * This method creates complete lines including indentation and
 	 * also increments indentation for the nested scope.
 	 */
-	public void beginNestedScope() {
+	public final void beginNestedScope() {
 		appendIndentedLine("(function() {");
 		incrementIndentation();
 	}
-	
+
 	/**
 	 * Ends a nested scope started by beginNestedScope(). See that method for
 	 * a discussion of the purpose of nested scopes.
 	 */
-	public void endNestedScope() {
+	public final void endNestedScope() {
 		decrementIdentation();
 		appendIndentedLine("})();");
 	}
-	
+
 }

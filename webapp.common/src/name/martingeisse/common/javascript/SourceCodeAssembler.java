@@ -6,6 +6,9 @@
 
 package name.martingeisse.common.javascript;
 
+import java.io.IOException;
+import java.io.Writer;
+
 /**
  * This class implements common functionality for source
  * code assembling, mainly keeping a string builder and
@@ -82,6 +85,25 @@ public class SourceCodeAssembler {
 	 */
 	public String getAssembledCode() {
 		return getBuilder().toString();
+	}
+	
+	/**
+	 * Resets this assembler to its initial state.
+	 */
+	public void reset() {
+		builder.setLength(0);
+		currentIdentationLevel = 0;
+	}
+	
+	/**
+	 * Flushes the contents of this assembler to the specified
+	 * writer. This sets the current contents of the assembler to
+	 * the empty string but retains the indentation level.
+	 * @param w the writer
+	 */
+	public void flushTo(Writer w) throws IOException {
+		w.write(builder.toString());
+		builder.setLength(0);
 	}
 
 	/**
