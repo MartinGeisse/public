@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="lib/java/codegen/codegen-0.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/java/codegen/querydsl-codegen-2.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/java/codegen/querydsl-sql-codegen-2.7.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/webapp.tools"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

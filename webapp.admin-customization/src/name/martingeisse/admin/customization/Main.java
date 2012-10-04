@@ -6,11 +6,14 @@
 
 package name.martingeisse.admin.customization;
 
+import java.io.File;
 import java.io.Serializable;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
@@ -47,6 +50,7 @@ import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandle
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.MysqlDatabaseDescriptor;
+import name.martingeisse.tools.codegen.BeanSerializer;
 import name.martingeisse.wicket.autoform.AutoformPanel;
 import name.martingeisse.wicket.autoform.annotation.structure.AutoformPropertyOrder;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociatedValidator;
@@ -57,6 +61,7 @@ import name.martingeisse.wicket.populator.RowFieldPopulator;
 
 import org.joda.time.DateTimeZone;
 
+import com.mysema.query.sql.codegen.MetaDataExporter;
 import com.mysema.query.types.Ops;
 import com.mysema.query.types.Predicate;
 
@@ -74,16 +79,14 @@ public class Main {
 	public static void main(final String[] args) throws Exception {
 
 		// --- code generation start ---
-		/*
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/phorum?zeroDateTimeBehavior=convertToNull&useTimezone=false", "root", "");
 		MetaDataExporter exporter = new MetaDataExporter();
 		exporter.setTargetFolder(new File("generated"));
-		exporter.setPackageName("foo");
+		exporter.setPackageName("phorum");
 		exporter.setBeanSerializer(new BeanSerializer());
 		exporter.export(connection.getMetaData());
 		connection.close();
 		System.exit(0);
-		*/
 		// --- code generation end ---
 		
 		
