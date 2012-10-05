@@ -48,6 +48,7 @@ public class MyValidator implements IValidator<String> {
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.validation.IValidator#validate(org.apache.wicket.validation.IValidatable)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public void validate(IValidatable<String> validatable) {
 		String value = validatable.getValue();

@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Generated;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -40,7 +42,6 @@ import com.mysema.codegen.model.TypeExtends;
 import com.mysema.codegen.model.Types;
 import com.mysema.query.codegen.Delegate;
 import com.mysema.query.codegen.EntityType;
-import com.mysema.query.codegen.JavaTypeMappings;
 import com.mysema.query.codegen.Property;
 import com.mysema.query.codegen.SerializerConfig;
 import com.mysema.query.codegen.Supertype;
@@ -48,8 +49,8 @@ import com.mysema.query.codegen.TypeMappings;
 import com.mysema.query.sql.ForeignKey;
 import com.mysema.query.sql.PrimaryKey;
 import com.mysema.query.sql.RelationalPathBase;
-import com.mysema.query.sql.codegen.DefaultNamingStrategy;
 import com.mysema.query.sql.codegen.NamingStrategy;
+import com.mysema.query.sql.codegen.SQLCodegenModule;
 import com.mysema.query.sql.support.ForeignKeyData;
 import com.mysema.query.sql.support.InverseForeignKeyData;
 import com.mysema.query.sql.support.KeyData;
@@ -77,6 +78,7 @@ public class MetaDataSerializer extends AbstractSerializer {
 	/**
 	 * The QueryDSL type for the INITS constant.
 	 */
+	@SuppressWarnings("unused")
 	private static final ClassType PATH_INITS_TYPE = new ClassType(PathInits.class);
 
 	/**
@@ -97,17 +99,23 @@ public class MetaDataSerializer extends AbstractSerializer {
 	/**
 	 * the typeMappings
 	 */
-	private TypeMappings typeMappings = new JavaTypeMappings();
+	private TypeMappings typeMappings;
 
 	/**
 	 * the namingStrategy
 	 */
-	private NamingStrategy namingStrategy = new DefaultNamingStrategy();
+	private NamingStrategy namingStrategy;
 
 	/**
 	 * Constructor.
+	 * @param typeMappings the type mappings
+	 * @param namingStrategy the naming strategy
+	 * @param innerClassesForKeys (ignored)
 	 */
-	public MetaDataSerializer() {
+	@Inject
+	public MetaDataSerializer(TypeMappings typeMappings, NamingStrategy namingStrategy, @Named(SQLCodegenModule.INNER_CLASSES_FOR_KEYS) boolean innerClassesForKeys) {
+        this.typeMappings = typeMappings;
+        this.namingStrategy = namingStrategy;
 	}
 
 	/* (non-Javadoc)
@@ -132,6 +140,7 @@ public class MetaDataSerializer extends AbstractSerializer {
 		printImports(entityType, config, w);
 
 		// class javadoc
+		w.nl();
 		w.javadoc(typeMappings.getPathType(entityType, entityType, true).getSimpleName() + " is a Querydsl query type for "
 			+ entityType.getSimpleName());
 
@@ -371,7 +380,10 @@ public class MetaDataSerializer extends AbstractSerializer {
 			inits.add(0, STAR);
 			value = "new PathInits(" + QUOTE + JOINER.join(inits) + QUOTE + ")";
 		}
-		w.privateStaticFinal(PATH_INITS_TYPE, "INITS", value);
+		
+		// I don't exactly know why, but the INITS isn't used at all, so don't generate it
+		value = value + ""; // suppress warnings
+		// w.privateStaticFinal(PATH_INITS_TYPE, "INITS", value);
 
 	}
 
@@ -383,6 +395,7 @@ public class MetaDataSerializer extends AbstractSerializer {
 			String variableName = namingStrategy.getDefaultVariableName(entityType);
 			String alias = namingStrategy.getDefaultAlias(entityType);
 			Type queryType = typeMappings.getPathType(entityType, entityType, true);
+			w.javadoc("The default instance of this class.");
 			w.publicStaticFinal(queryType, variableName, NEW + queryType.getSimpleName() + "(\"" + alias + "\")");
 		}
 	}
@@ -430,6 +443,9 @@ public class MetaDataSerializer extends AbstractSerializer {
 			Type type = property.getType();
 			TypeCategory category = type.getCategory();
 
+			// add a Javadoc comment for this property
+			w.javadoc("Metamodel property for property '" + property.getName() + "'");
+			
 			// TODO: the original code said: "the custom types should have the custom type category"
 			if (typeMappings.isRegistered(type) && category != TypeCategory.CUSTOM && category != TypeCategory.ENTITY) {
 				printCustomProperty(entityType, property, w);
@@ -662,6 +678,7 @@ public class MetaDataSerializer extends AbstractSerializer {
 			}
 			value.append(")");
 			Type type = new ClassType(PrimaryKey.class, entityType);
+			w.javadoc("Metamodel property for primary key '" + primaryKey.getName() + "'");
 			w.publicFinal(type, fieldName, value.toString());
 		}
 	}
@@ -707,6 +724,7 @@ public class MetaDataSerializer extends AbstractSerializer {
 
 			// generate the field
 			Type type = new ClassType(ForeignKey.class, foreignKey.getType());
+			w.javadoc("Metamodel property for " + (reverse ? "reverse " : "") + "foreign key '" + foreignKey.getName() + "'");
 			w.publicFinal(type, fieldName, value.toString());
 
 		}
@@ -728,34 +746,31 @@ public class MetaDataSerializer extends AbstractSerializer {
 		String cast = (isGeneric ? "(Class)" : EMPTY);
 
 		// handle additional constructor parameters
-		String additionalParams;
-		if (hasEntityFields) {
-			StringBuilder builder = new StringBuilder();
-			if (entityType.getData().containsKey("schema")) {
-				builder.append(", \"").append(entityType.getData().get("schema")).append("\"");
-			} else {
-				builder.append(", null");
-			}
-			builder.append(", \"").append(entityType.getData().get("table")).append("\"");
-			additionalParams = builder.toString();
+		StringBuilder builder = new StringBuilder();
+		if (entityType.getData().containsKey("schema")) {
+			builder.append(", \"").append(entityType.getData().get("schema")).append("\"");
 		} else {
-			additionalParams = "";
+			builder.append(", null");
 		}
+		builder.append(", \"").append(entityType.getData().get("table")).append("\"");
+		String additionalParams = builder.toString();
 
 		// constructor (String variable)
+		w.javadoc("Path-variable based constructor.", "@param variable the path variable for this entity");
 		if (isGeneric) {
 			w.suppressWarnings(UNCHECKED);
 		}
 		w.beginConstructor(new Parameter("variable", Types.STRING));
 		if (stringOrBoolean) {
-			w.line(chainedCall, "(forVariable(variable)", additionalParams, ");");
+			w.line(chainedCall, "(forVariable(variable)", hasEntityFields ? "" : additionalParams, ");");
 		} else {
 			String inits = hasEntityFields ? ", INITS" : EMPTY;
-			w.line(chainedCall, "(", cast, localName, ".class, forVariable(variable)", inits, additionalParams, ");");
+			w.line(chainedCall, "(", cast, localName, ".class, forVariable(variable)", inits, hasEntityFields ? "" : additionalParams, ");");
 		}
 		w.end();
 
 		// constructor (Path-Type path)
+		w.javadoc("Path based constructor", "@param path the path for this entity");
 		w.beginConstructor(new Parameter("path", new ClassType(Path.class, entityType.isFinal() ? entityType : new TypeExtends(entityType))));
 		if (hasEntityFields) {
 			w.line("this(path.getType(), path.getMetadata(), path.getMetadata().isRoot() ? INITS : PathInits.DEFAULT);");
@@ -769,6 +784,7 @@ public class MetaDataSerializer extends AbstractSerializer {
 		w.end();
 
 		// constructor (PathMetadata metadata)
+		w.javadoc("Path metadata based constructor", "@param metadata the path metadata for this entity");
 		if (isGeneric && !hasEntityFields) {
 			w.suppressWarnings(UNCHECKED);
 		}
@@ -786,6 +802,7 @@ public class MetaDataSerializer extends AbstractSerializer {
 
 		// constructor (PathMetadata metadata, PathInits inits)
 		if (hasEntityFields) {
+			w.javadoc("Path metadata and inits based constructor.", "@param metadata the path metadata for this entity", "@param inits the path inits for this entity");
 			if (isGeneric) {
 				w.suppressWarnings(UNCHECKED);
 			}
@@ -812,6 +829,7 @@ public class MetaDataSerializer extends AbstractSerializer {
 
 			// generate the constructor
 			Type typeParameterType = new ClassType(Class.class, new TypeExtends(entityType));
+			w.javadoc("Baseline constructor.", "@param type the type to fetch", "@param metadata the path metadata for this entity", "@param inits the path inits for this entity");
 			w.beginConstructor(new Parameter("type", typeParameterType), PATH_METADATA, PATH_INITS);
 			w.line("super(type, metadata, inits" + additionalParams + ");");
 			if (supertypeHasEntityFields) {
