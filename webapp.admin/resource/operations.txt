@@ -1,6 +1,0 @@
-
-DatabaseForeachOperation:
-- hat einen ExceptionMode: NONE, GLOBAL, LOCAL
-- hat einen TransactionMode: NONE, GLOBAL, LOCAL
-
-
