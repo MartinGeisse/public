@@ -22,7 +22,6 @@ import com.mysema.codegen.model.TypeCategory;
 import com.mysema.codegen.model.Types;
 import com.mysema.query.codegen.EntityType;
 import com.mysema.query.codegen.Property;
-import com.mysema.query.codegen.Serializer;
 import com.mysema.query.codegen.SerializerConfig;
 import com.mysema.util.BeanUtils;
 
@@ -30,33 +29,12 @@ import com.mysema.util.BeanUtils;
  * Customized bean serializer that creates the Java beans (not the
  * query classes) from the database schema.
  */
-public class BeanSerializer implements Serializer {
-
-	/**
-	 * the fileComment
-	 */
-	private String fileComment = "This file was generated from the database schema.";
+public class BeanSerializer extends AbstractSerializer {
 
 	/**
 	 * Constructor.
 	 */
 	public BeanSerializer() {
-	}
-
-	/**
-	 * Getter method for the fileComment.
-	 * @return the fileComment
-	 */
-	public String getFileComment() {
-		return fileComment;
-	}
-
-	/**
-	 * Setter method for the fileComment.
-	 * @param fileComment the fileComment to set
-	 */
-	public void setFileComment(final String fileComment) {
-		this.fileComment = fileComment;
 	}
 
 	/* (non-Javadoc)
@@ -66,56 +44,56 @@ public class BeanSerializer implements Serializer {
 	public void serialize(final EntityType entityType, final SerializerConfig config, final CodeWriter w) throws IOException {
 
 		// file comment
-		w.javadoc(fileComment);
+		printFileComment(w);
 
 		// package declaration
 		if (!entityType.getPackageName().isEmpty()) {
 			w.packageDecl(entityType.getPackageName());
 		}
-		
+
 		// imports
 		printImports(entityType, config, w);
-		
+
 		// class Javadoc comment
 		w.javadoc("This class represents rows from table '" + entityType.getData().get("table") + "'.");
-		
+
 		// class annotations
 		printAnnotations(entityType.getAnnotations(), w);
-		
+
 		// begin writing the class itself
 		w.beginClass(entityType, entityType.getSuperType() == null ? null : entityType.getSuperType().getType());
-		
+
 		// add an explicit empty constructor because it looks nicer
 		w.javadoc("Constructor.");
 		w.beginConstructor();
 		w.end();
-		
+
 		// generate the data fields
-		for (Property property : entityType.getProperties()) {
-			w.javadoc("the " + property.getName());
+		for (final Property property : entityType.getProperties()) {
+			w.javadoc("the " + property.getEscapedName());
 			printAnnotations(property.getAnnotations(), w);
 			w.privateField(property.getType(), property.getEscapedName());
 		}
-		
+
 		// generate accessor methods
-		for (Property property : entityType.getProperties()) {
-			String propertyName = property.getEscapedName();
-			String capitalizedPropertyName = BeanUtils.capitalize(propertyName);
-			Type propertyType = property.getType();
-			
+		for (final Property property : entityType.getProperties()) {
+			final String propertyName = property.getEscapedName();
+			final String capitalizedPropertyName = BeanUtils.capitalize(propertyName);
+			final Type propertyType = property.getType();
+
 			// getter method
 			w.javadoc("Getter method for the " + propertyName + ".", "@return the " + propertyName);
 			w.beginPublicMethod(propertyType, "get" + capitalizedPropertyName);
 			w.line("return ", propertyName, ";");
 			w.end();
-			
+
 			// setter method
 			w.javadoc("Setter method for the " + propertyName + ".", "@param " + propertyName + " the " + propertyName + " to set");
-			Parameter parameter = new Parameter(propertyName, propertyType);
+			final Parameter parameter = new Parameter(propertyName, propertyType);
 			w.beginPublicMethod(Types.VOID, "set" + capitalizedPropertyName, parameter);
 			w.line("this.", propertyName, " = ", propertyName, ";");
 			w.end();
-			
+
 		}
 
 		// generate toString() method
@@ -125,9 +103,9 @@ public class BeanSerializer implements Serializer {
 		w.annotation(Override.class);
 		w.beginPublicMethod(Types.STRING, "toString");
 		{
-			StringBuilder builder = new StringBuilder();
-			for (Property property : entityType.getProperties()) {
-				String propertyName = property.getEscapedName();
+			final StringBuilder builder = new StringBuilder();
+			for (final Property property : entityType.getProperties()) {
+				final String propertyName = property.getEscapedName();
 				builder.append(builder.length() == 0 ? "\"" : " + \", ");
 				builder.append(propertyName);
 				builder.append(" = \" + ");
@@ -140,65 +118,47 @@ public class BeanSerializer implements Serializer {
 			w.line("return ", builder.toString(), ";");
 		}
 		w.end();
-		
+
 		// finish writing the class itself
 		w.end();
-		
+
 	}
-	
+
 	/**
 	 * Prints import clauses.
 	 */
 	private void printImports(final EntityType entityType, final SerializerConfig config, final CodeWriter w) throws IOException {
-		
+
 		// to avoid duplicate imports, we first collect all imports in a set
-		Set<String> imports = new HashSet<String>();
-		
+		final Set<String> imports = new HashSet<String>();
+
 		// annotation types
 		addAnnotationImports(imports, entityType.getAnnotations());
-		for (Property property : entityType.getProperties()) {
+		for (final Property property : entityType.getProperties()) {
 			addAnnotationImports(imports, property.getAnnotations());
 		}
-		
+
 		// collection types
 		addIf(imports, List.class.getName(), entityType.hasLists());
 		addIf(imports, Collection.class.getName(), entityType.hasCollections());
 		addIf(imports, Set.class.getName(), entityType.hasSets());
 		addIf(imports, Map.class.getName(), entityType.hasMaps());
-		
+
 		// utility classes
 		addIf(imports, Arrays.class.getName(), entityType.hasArrays());
 
 		// actually write the imports
-		w.importClasses(imports.toArray(new String[imports.size()]));
-		
-	}
-	
-	/**
-	 * Adds imports for all annotations to the import collection.
-	 */
-	private void addAnnotationImports(Collection<String> imports, Collection<Annotation> annotations) {
-		for (Annotation annotation : annotations) {
-			imports.add(annotation.annotationType().getName());
-		}
-	}
-	
-	/**
-	 * Adds an element to the collection if the condition is true.
-	 */
-	private <T> void addIf(Collection<T> collection, T element, boolean condition) {
-		if (condition) {
-			collection.add(element);
-		}
+		printImports(w, imports);
+
 	}
 
 	/**
-	 * Prints the specified annotations.
+	 * Adds imports for all annotations to the import collection.
 	 */
-	private void printAnnotations(Collection<Annotation> annotations, final CodeWriter w) throws IOException {
-		for (Annotation annotation : annotations) {
-			w.annotation(annotation);
+	private void addAnnotationImports(final Collection<String> imports, final Collection<Annotation> annotations) {
+		for (final Annotation annotation : annotations) {
+			imports.add(annotation.annotationType().getName());
 		}
 	}
-	
+
 }

@@ -16,27 +16,27 @@ public class PhorumSearch {
     }
 
     /**
-     * the date_test
+     * the dateTest
      */
     private java.sql.Date dateTest;
 
     /**
-     * the datetime_test
+     * the datetimeTest
      */
     private java.sql.Timestamp datetimeTest;
 
     /**
-     * the forum_id
+     * the forumId
      */
     private Integer forumId;
 
     /**
-     * the message_id
+     * the messageId
      */
     private Integer messageId;
 
     /**
-     * the search_text
+     * the searchText
      */
     private String searchText;
 

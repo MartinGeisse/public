@@ -16,7 +16,7 @@ public class PhorumUserGroupXref {
     }
 
     /**
-     * the group_id
+     * the groupId
      */
     private Integer groupId;
 
@@ -26,7 +26,7 @@ public class PhorumUserGroupXref {
     private Byte status;
 
     /**
-     * the user_id
+     * the userId
      */
     private Integer userId;
 

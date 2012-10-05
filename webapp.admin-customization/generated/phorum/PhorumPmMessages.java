@@ -36,7 +36,7 @@ public class PhorumPmMessages {
     private String meta;
 
     /**
-     * the pm_message_id
+     * the pmMessageId
      */
     private Integer pmMessageId;
 
@@ -46,7 +46,7 @@ public class PhorumPmMessages {
     private String subject;
 
     /**
-     * the user_id
+     * the userId
      */
     private Integer userId;
 

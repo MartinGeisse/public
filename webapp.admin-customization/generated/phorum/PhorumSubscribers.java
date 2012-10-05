@@ -16,12 +16,12 @@ public class PhorumSubscribers {
     }
 
     /**
-     * the forum_id
+     * the forumId
      */
     private Integer forumId;
 
     /**
-     * the sub_type
+     * the subType
      */
     private Byte subType;
 
@@ -31,7 +31,7 @@ public class PhorumSubscribers {
     private Integer thread;
 
     /**
-     * the user_id
+     * the userId
      */
     private Integer userId;
 

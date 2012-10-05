@@ -16,17 +16,17 @@ public class PhorumUserNewflags {
     }
 
     /**
-     * the forum_id
+     * the forumId
      */
     private Integer forumId;
 
     /**
-     * the message_id
+     * the messageId
      */
     private Integer messageId;
 
     /**
-     * the user_id
+     * the userId
      */
     private Integer userId;
 

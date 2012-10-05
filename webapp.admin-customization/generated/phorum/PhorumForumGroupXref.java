@@ -16,12 +16,12 @@ public class PhorumForumGroupXref {
     }
 
     /**
-     * the forum_id
+     * the forumId
      */
     private Integer forumId;
 
     /**
-     * the group_id
+     * the groupId
      */
     private Integer groupId;
 

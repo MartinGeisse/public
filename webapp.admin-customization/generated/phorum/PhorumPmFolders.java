@@ -21,12 +21,12 @@ public class PhorumPmFolders {
     private String foldername;
 
     /**
-     * the pm_folder_id
+     * the pmFolderId
      */
     private Integer pmFolderId;
 
     /**
-     * the user_id
+     * the userId
      */
     private Integer userId;
 

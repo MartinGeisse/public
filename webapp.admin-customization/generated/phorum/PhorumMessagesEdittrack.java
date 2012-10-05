@@ -16,17 +16,17 @@ public class PhorumMessagesEdittrack {
     }
 
     /**
-     * the diff_body
+     * the diffBody
      */
     private String diffBody;
 
     /**
-     * the diff_subject
+     * the diffSubject
      */
     private String diffSubject;
 
     /**
-     * the message_id
+     * the messageId
      */
     private Integer messageId;
 
@@ -36,12 +36,12 @@ public class PhorumMessagesEdittrack {
     private Integer time;
 
     /**
-     * the track_id
+     * the trackId
      */
     private Integer trackId;
 
     /**
-     * the user_id
+     * the userId
      */
     private Integer userId;
 

@@ -51,6 +51,7 @@ import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.MysqlDatabaseDescriptor;
 import name.martingeisse.tools.codegen.BeanSerializer;
+import name.martingeisse.tools.codegen.MetaDataSerializer;
 import name.martingeisse.wicket.autoform.AutoformPanel;
 import name.martingeisse.wicket.autoform.annotation.structure.AutoformPropertyOrder;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociatedValidator;
@@ -83,6 +84,7 @@ public class Main {
 		MetaDataExporter exporter = new MetaDataExporter();
 		exporter.setTargetFolder(new File("generated"));
 		exporter.setPackageName("phorum");
+		exporter.setSerializerClass(MetaDataSerializer.class);
 		exporter.setBeanSerializer(new BeanSerializer());
 		exporter.export(connection.getMetaData());
 		connection.close();

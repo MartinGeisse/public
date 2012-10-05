@@ -16,7 +16,7 @@ public class PhorumGroups {
     }
 
     /**
-     * the group_id
+     * the groupId
      */
     private Integer groupId;
 

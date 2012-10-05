@@ -21,7 +21,7 @@ public class PhorumSettingsNotes {
     private String note;
 
     /**
-     * the setting_name
+     * the settingName
      */
     private String settingName;
 

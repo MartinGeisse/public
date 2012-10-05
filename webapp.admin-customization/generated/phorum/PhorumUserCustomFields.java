@@ -26,7 +26,7 @@ public class PhorumUserCustomFields {
     private Integer type;
 
     /**
-     * the user_id
+     * the userId
      */
     private Integer userId;
 

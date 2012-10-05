@@ -41,7 +41,7 @@ public class PhorumMessages {
     private String email;
 
     /**
-     * the forum_id
+     * the forumId
      */
     private Integer forumId;
 
@@ -51,7 +51,7 @@ public class PhorumMessages {
     private String ip;
 
     /**
-     * the message_id
+     * the messageId
      */
     private Integer messageId;
 
@@ -61,7 +61,7 @@ public class PhorumMessages {
     private String meta;
 
     /**
-     * the moderator_post
+     * the moderatorPost
      */
     private Boolean moderatorPost;
 
@@ -81,22 +81,22 @@ public class PhorumMessages {
     private String msgid;
 
     /**
-     * the parent_id
+     * the parentId
      */
     private Integer parentId;
 
     /**
-     * the recent_author
+     * the recentAuthor
      */
     private String recentAuthor;
 
     /**
-     * the recent_message_id
+     * the recentMessageId
      */
     private Integer recentMessageId;
 
     /**
-     * the recent_user_id
+     * the recentUserId
      */
     private Integer recentUserId;
 
@@ -121,7 +121,7 @@ public class PhorumMessages {
     private Integer thread;
 
     /**
-     * the thread_count
+     * the threadCount
      */
     private Integer threadCount;
 
@@ -131,7 +131,7 @@ public class PhorumMessages {
     private Integer threadviewcount;
 
     /**
-     * the user_id
+     * the userId
      */
     private Integer userId;
 

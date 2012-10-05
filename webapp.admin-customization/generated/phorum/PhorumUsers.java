@@ -26,17 +26,17 @@ public class PhorumUsers {
     private Boolean admin;
 
     /**
-     * the date_added
+     * the dateAdded
      */
     private Integer dateAdded;
 
     /**
-     * the date_last_active
+     * the dateLastActive
      */
     private Integer dateLastActive;
 
     /**
-     * the display_name
+     * the displayName
      */
     private String displayName;
 
@@ -46,42 +46,42 @@ public class PhorumUsers {
     private String email;
 
     /**
-     * the email_notify
+     * the emailNotify
      */
     private Boolean emailNotify;
 
     /**
-     * the email_temp
+     * the emailTemp
      */
     private String emailTemp;
 
     /**
-     * the hide_activity
+     * the hideActivity
      */
     private Boolean hideActivity;
 
     /**
-     * the hide_email
+     * the hideEmail
      */
     private Boolean hideEmail;
 
     /**
-     * the is_dst
+     * the isDst
      */
     private Boolean isDst;
 
     /**
-     * the last_active_forum
+     * the lastActiveForum
      */
     private Integer lastActiveForum;
 
     /**
-     * the moderation_email
+     * the moderationEmail
      */
     private Boolean moderationEmail;
 
     /**
-     * the moderator_data
+     * the moderatorData
      */
     private String moderatorData;
 
@@ -91,12 +91,12 @@ public class PhorumUsers {
     private String password;
 
     /**
-     * the password_temp
+     * the passwordTemp
      */
     private String passwordTemp;
 
     /**
-     * the pm_email_notify
+     * the pmEmailNotify
      */
     private Boolean pmEmailNotify;
 
@@ -106,32 +106,32 @@ public class PhorumUsers {
     private Integer posts;
 
     /**
-     * the real_name
+     * the realName
      */
     private String realName;
 
     /**
-     * the sessid_lt
+     * the sessidLt
      */
     private String sessidLt;
 
     /**
-     * the sessid_st
+     * the sessidSt
      */
     private String sessidSt;
 
     /**
-     * the sessid_st_timeout
+     * the sessidStTimeout
      */
     private Integer sessidStTimeout;
 
     /**
-     * the settings_data
+     * the settingsData
      */
     private String settingsData;
 
     /**
-     * the show_signature
+     * the showSignature
      */
     private Boolean showSignature;
 
@@ -141,32 +141,32 @@ public class PhorumUsers {
     private String signature;
 
     /**
-     * the threaded_list
+     * the threadedList
      */
     private Boolean threadedList;
 
     /**
-     * the threaded_read
+     * the threadedRead
      */
     private Boolean threadedRead;
 
     /**
-     * the tz_offset
+     * the tzOffset
      */
     private Float tzOffset;
 
     /**
-     * the user_id
+     * the userId
      */
     private Integer userId;
 
     /**
-     * the user_language
+     * the userLanguage
      */
     private String userLanguage;
 
     /**
-     * the user_template
+     * the userTemplate
      */
     private String userTemplate;
 

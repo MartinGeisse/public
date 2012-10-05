@@ -21,7 +21,7 @@ public class PhorumSettings {
     private String data;
 
     /**
-     * the group_id
+     * the groupId
      */
     private Integer groupId;
 

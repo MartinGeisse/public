@@ -16,17 +16,17 @@ public class PhorumFiles {
     }
 
     /**
-     * the add_datetime
+     * the addDatetime
      */
     private Integer addDatetime;
 
     /**
-     * the file_data
+     * the fileData
      */
     private String fileData;
 
     /**
-     * the file_id
+     * the fileId
      */
     private Integer fileId;
 
@@ -46,12 +46,12 @@ public class PhorumFiles {
     private String link;
 
     /**
-     * the message_id
+     * the messageId
      */
     private Integer messageId;
 
     /**
-     * the user_id
+     * the userId
      */
     private Integer userId;
 

@@ -16,37 +16,37 @@ public class PhorumPmXref {
     }
 
     /**
-     * the pm_folder_id
+     * the pmFolderId
      */
     private Integer pmFolderId;
 
     /**
-     * the pm_message_id
+     * the pmMessageId
      */
     private Integer pmMessageId;
 
     /**
-     * the pm_xref_id
+     * the pmXrefId
      */
     private Integer pmXrefId;
 
     /**
-     * the read_flag
+     * the readFlag
      */
     private Boolean readFlag;
 
     /**
-     * the reply_flag
+     * the replyFlag
      */
     private Boolean replyFlag;
 
     /**
-     * the special_folder
+     * the specialFolder
      */
     private String specialFolder;
 
     /**
-     * the user_id
+     * the userId
      */
     private Integer userId;
 

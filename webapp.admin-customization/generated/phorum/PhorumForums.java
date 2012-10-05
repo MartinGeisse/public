@@ -21,32 +21,32 @@ public class PhorumForums {
     private Boolean active;
 
     /**
-     * the allow_attachment_types
+     * the allowAttachmentTypes
      */
     private String allowAttachmentTypes;
 
     /**
-     * the allow_email_notify
+     * the allowEmailNotify
      */
     private Boolean allowEmailNotify;
 
     /**
-     * the cache_version
+     * the cacheVersion
      */
     private Integer cacheVersion;
 
     /**
-     * the check_duplicate
+     * the checkDuplicate
      */
     private Boolean checkDuplicate;
 
     /**
-     * the count_views
+     * the countViews
      */
     private Boolean countViews;
 
     /**
-     * the count_views_per_thread
+     * the countViewsPerThread
      */
     private Boolean countViewsPerThread;
 
@@ -56,52 +56,52 @@ public class PhorumForums {
     private String description;
 
     /**
-     * the display_fixed
+     * the displayFixed
      */
     private Boolean displayFixed;
 
     /**
-     * the display_ip_address
+     * the displayIpAddress
      */
     private Boolean displayIpAddress;
 
     /**
-     * the display_order
+     * the displayOrder
      */
     private Integer displayOrder;
 
     /**
-     * the edit_post
+     * the editPost
      */
     private Boolean editPost;
 
     /**
-     * the email_moderators
+     * the emailModerators
      */
     private Boolean emailModerators;
 
     /**
-     * the float_to_top
+     * the floatToTop
      */
     private Boolean floatToTop;
 
     /**
-     * the folder_flag
+     * the folderFlag
      */
     private Boolean folderFlag;
 
     /**
-     * the forum_id
+     * the forumId
      */
     private Integer forumId;
 
     /**
-     * the forum_path
+     * the forumPath
      */
     private String forumPath;
 
     /**
-     * the inherit_id
+     * the inheritId
      */
     private Integer inheritId;
 
@@ -111,37 +111,37 @@ public class PhorumForums {
     private String language;
 
     /**
-     * the last_post_time
+     * the lastPostTime
      */
     private Integer lastPostTime;
 
     /**
-     * the list_length_flat
+     * the listLengthFlat
      */
     private Integer listLengthFlat;
 
     /**
-     * the list_length_threaded
+     * the listLengthThreaded
      */
     private Integer listLengthThreaded;
 
     /**
-     * the max_attachment_size
+     * the maxAttachmentSize
      */
     private Integer maxAttachmentSize;
 
     /**
-     * the max_attachments
+     * the maxAttachments
      */
     private Integer maxAttachments;
 
     /**
-     * the max_totalattachment_size
+     * the maxTotalattachmentSize
      */
     private Integer maxTotalattachmentSize;
 
     /**
-     * the message_count
+     * the messageCount
      */
     private Integer messageCount;
 
@@ -156,32 +156,32 @@ public class PhorumForums {
     private String name;
 
     /**
-     * the parent_id
+     * the parentId
      */
     private Integer parentId;
 
     /**
-     * the pub_perms
+     * the pubPerms
      */
     private Integer pubPerms;
 
     /**
-     * the read_length
+     * the readLength
      */
     private Integer readLength;
 
     /**
-     * the reg_perms
+     * the regPerms
      */
     private Integer regPerms;
 
     /**
-     * the reverse_threading
+     * the reverseThreading
      */
     private Boolean reverseThreading;
 
     /**
-     * the sticky_count
+     * the stickyCount
      */
     private Integer stickyCount;
 
@@ -191,22 +191,22 @@ public class PhorumForums {
     private String template;
 
     /**
-     * the template_settings
+     * the templateSettings
      */
     private String templateSettings;
 
     /**
-     * the thread_count
+     * the threadCount
      */
     private Integer threadCount;
 
     /**
-     * the threaded_list
+     * the threadedList
      */
     private Boolean threadedList;
 
     /**
-     * the threaded_read
+     * the threadedRead
      */
     private Boolean threadedRead;
 

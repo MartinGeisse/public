@@ -16,17 +16,17 @@ public class PhorumPmBuddies {
     }
 
     /**
-     * the buddy_user_id
+     * the buddyUserId
      */
     private Integer buddyUserId;
 
     /**
-     * the pm_buddy_id
+     * the pmBuddyId
      */
     private Integer pmBuddyId;
 
     /**
-     * the user_id
+     * the userId
      */
     private Integer userId;
 

@@ -21,7 +21,7 @@ public class PhorumBanlists {
     private String comments;
 
     /**
-     * the forum_id
+     * the forumId
      */
     private Integer forumId;
 

@@ -16,7 +16,7 @@ public class PhorumUserPermissions {
     }
 
     /**
-     * the forum_id
+     * the forumId
      */
     private Integer forumId;
 
@@ -26,7 +26,7 @@ public class PhorumUserPermissions {
     private Integer permission;
 
     /**
-     * the user_id
+     * the userId
      */
     private Integer userId;
 
