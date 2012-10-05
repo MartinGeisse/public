@@ -15,13 +15,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import name.martingeisse.api.servlet.ServletUtil;
-import name.martingeisse.api.util.IParameterSet;
 
 /**
  * Stores information about a request cycle, such as {@link HttpServletRequest},
  * {@link HttpServletResponse}, decoded request data, etc.
  */
-public final class RequestCycle implements IParameterSet {
+public final class RequestCycle {
 
 	/**
 	 * the request
@@ -34,9 +33,19 @@ public final class RequestCycle implements IParameterSet {
 	private final HttpServletResponse response;
 
 	/**
+	 * the requestMethod
+	 */
+	private final RequestMethod requestMethod;
+	
+	/**
 	 * the requestPath
 	 */
 	private final RequestPathChain requestPath;
+	
+	/**
+	 * the parameters
+	 */
+	private final RequestParameters parameters;
 
 	/**
 	 * Constructor.
@@ -48,9 +57,11 @@ public final class RequestCycle implements IParameterSet {
 		this.request = request;
 		this.response = response;
 
+		this.requestMethod = (request.getMethod().equalsIgnoreCase("POST") ? RequestMethod.POST : RequestMethod.GET);
 		final String uri = request.getRequestURI();
 		final String requestPathText = (uri.startsWith("/") ? uri.substring(1) : uri);
 		this.requestPath = RequestPathChain.parse(requestPathText);
+		this.parameters = new RequestParameters(request);
 	}
 
 	/**
@@ -70,11 +81,27 @@ public final class RequestCycle implements IParameterSet {
 	}
 
 	/**
+	 * Getter method for the requestMethod.
+	 * @return the requestMethod
+	 */
+	public RequestMethod getRequestMethod() {
+		return requestMethod;
+	}
+	
+	/**
 	 * Getter method for the requestPath.
 	 * @return the requestPath
 	 */
 	public RequestPathChain getRequestPath() {
 		return requestPath;
+	}
+	
+	/**
+	 * Getter method for the parameters.
+	 * @return the parameters
+	 */
+	public RequestParameters getParameters() {
+		return parameters;
 	}
 
 	/**
@@ -128,30 +155,6 @@ public final class RequestCycle implements IParameterSet {
 	 */
 	public void emitMessageResponse(int statusCode, String message) throws IOException {
 		ServletUtil.emitMessageResponse(response, statusCode, message);
-	}
-
-	/**
-	 * Writes a 404 response for the request.
-	 * @throws IOException on I/O errors
-	 */
-	public void emitResourceNotFoundResponse() throws IOException {
-		ServletUtil.emitResourceNotFoundResponse(request, response);
-	}
-
-	/**
-	 * Writes a 500 response about an internal server error (typically an unexpected exception).
-	 * @throws IOException on I/O errors
-	 */
-	public void emitInternalServerErrorResponse() throws IOException {
-		ServletUtil.emitInternalServerErrorResponse(response);
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.restful.util.IParameterSet#getParameter(java.lang.String)
-	 */
-	@Override
-	public String getParameter(String name) {
-		return request.getParameter(name);
 	}
 
 }

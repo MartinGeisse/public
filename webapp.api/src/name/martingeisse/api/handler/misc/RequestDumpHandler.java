@@ -4,10 +4,11 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.api.handler;
+package name.martingeisse.api.handler.misc;
 
 import java.io.PrintWriter;
 
+import name.martingeisse.api.handler.IRequestHandler;
 import name.martingeisse.api.request.RequestCycle;
 import name.martingeisse.api.request.RequestPathChain;
 

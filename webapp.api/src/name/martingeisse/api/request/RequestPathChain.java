@@ -9,6 +9,8 @@ package name.martingeisse.api.request;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import name.martingeisse.common.util.ParameterUtil;
+
 /**
  * The request path is decoded into a chain of segments.
  */
@@ -30,6 +32,7 @@ public final class RequestPathChain implements Iterable<String> {
 	 * @param tail the remaining segments of the chain
 	 */
 	public RequestPathChain(String head, RequestPathChain tail) {
+		ParameterUtil.ensureNotNull(head, "head");
 		this.head = head;
 		this.tail = tail;
 	}
