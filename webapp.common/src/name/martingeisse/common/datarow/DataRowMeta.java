@@ -12,7 +12,8 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 /**
- * Describes the data stored in a {@link DataRow}.
+ * Describes the data stored in {@link DataRow} / {@link IDataRow}
+ * and {@link DataRows}.
  */
 public final class DataRowMeta implements Serializable {
 

@@ -185,7 +185,7 @@ public final class EntitySelection {
 	}
 
 	/**
-	 * Internal implementation of the forUniqueKey() methods.
+	 * Internal implementation of the forKey() methods.
 	 */
 	private static EntitySelection forKey(final IModel<EntityDescriptor> entityModel, EntityDescriptor entity, String propertyName, Object propertyValue, boolean nullIsReference) {
 		ParameterUtil.ensureNotNull(entityModel, "entityModel");

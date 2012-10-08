@@ -112,5 +112,48 @@ Codegen zu starten. Trotzdem natürlich cool wenn es gehen würde.
 
 Erst mal die Interfaces bauen und alles umstellen.
 
+Eine viel wesentlichere Überlegung ist: Kann das Fetchen von DataRow vs. Q-Klasse
+transparent gemacht werden? Wenn nicht, dann ist damit sofort klar: Immer
+generierter Code. Wesentlich sind hier z.B., ob WHERE-Klauseln transparent
+formuliert werden können (immer der gleiche AS-Alias, unabhängig von DataRow
+vs. Q-Klasse). Wenn das nicht so ist, dann sind auf einen Schlag so große
+Probleme da, dass es sich nicht mehr lohnt, beides umzusetzen.
+
+WHERE-Klauseln werden, wenn Q-Klassen vorhanden sind, vom Anwendungscode mit
+denen formuliert. Also muss der generische Code gleichartiges tun -> das geht.
+Der generische Code hat Zugriff auf die Q-Klassen und kann diese benutzen,
+um WHERE-Klauseln zu bauen. Dafür müssen ein paar Sachen geändert werden.
+Die Frage ist: Wie aufwändig ist es, wenn gleichzeitig die Variante ohne
+Q-Klassen weiter funktionieren muss? Das Zusammenbauen der WHERE-Klauseln hat
+das jetzt gleich komplizierter gemacht.
+
+Allerdings gilt: Der generische Code muss jetzt immer in der Lage sein, die
+Q-Klassen zu benutzen. *Das* ist der komplizierte Teil. Gleichzeitig eine
+Alternative offenzuhalten ist evtl. gar nicht so kompliziert. Die WHERE
+Klauseln müssen im Falle der Q-Klassen über den RelationalPath aus dem
+Entity-Descriptor gebaut werden. Also könnte der EntityDescriptor eine
+Factory-Methode für
+(1) Paths
+(2) EntityConditions
+bekommen. Ob diese Factory jetzt intern den RelationalPath aus der Q-Klasse
+nimmt oder selbst baut (für DataRow-Zugriff) ist nach außen egal. Wichtig ist
+nur: Wenn die Q-Klasse da ist, muss sie auch benutzt werden, denn der 
+App-Entwickler tut das auch -- und dann würden ansonsten Pfade verschiedener
+Art gemischt.
+
+Dann wird EntityDescriptor.ALIAS auch mehr oder weniger "private" -- äußerer
+Code sollte das nicht verwenden, weil es nur in Code mit DataRow-Zugriff
+gültig ist. Das ist ein guter Ansatzpunkt, um den Code umzustellen! Dito
+die Verwendung von ResultSet. Die executeQuery() Methoden müssten eine
+List<IDataRow> oder List<IEntityInstance> liefern. IEntityInstance klingt
+erst mal wie eine gute Idee (z.B. mit getEntityId() zusätzlich zur IDataRow),
+also mal einbauen und umstellen.
+- IDataRow: DB-Results allgemein
+- IEntityInstance extends IDataRow: DB-Results, die direkt einer Tabelle entsprechen
+
+Ein weiterer Ansatzpunkt ist dann, den Codegen auf IEntityInstance umzustellen.
+
+
+
 
 
