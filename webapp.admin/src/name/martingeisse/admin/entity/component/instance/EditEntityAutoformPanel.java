@@ -134,7 +134,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 		Path<Object> entityPath = EntityExpressionUtil.entityPath();
 		for (IAutoformPropertyDescriptor property : writableProperties) {
 			Object workObject = property.getModel().getObject();
-			Object databaseObject = entity.getPropertiesByName().get(property.getName()).getType().convertForSave(workObject, entity.getDatabase());
+			Object databaseObject = entity.getProperties().get(property.getName()).getType().convertForSave(workObject, entity.getDatabase());
 			update.set(Expressions.path(Object.class, entityPath, property.getName()), databaseObject);
 		}
 		

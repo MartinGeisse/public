@@ -250,7 +250,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	 * @return true to enable the search field, false to disable
 	 */
 	protected boolean isSearchSupported() {
-		return getEntityDescriptor().isSearchSupported();
+		return getEntityDescriptor().getSearcher().isSearchSupported();
 	}
 
 	/**
@@ -263,7 +263,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	 * @return the search predicate
 	 */
 	protected Predicate getSearchPredicate(final String searchTerm) {
-		return getEntityDescriptor().createSearchFilter(searchTerm);
+		return getEntityDescriptor().getSearcher().createSearchFilter(searchTerm);
 	}
 
 	/**

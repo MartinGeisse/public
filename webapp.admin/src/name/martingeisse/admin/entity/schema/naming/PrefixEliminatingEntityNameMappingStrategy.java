@@ -4,8 +4,10 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.schema;
+package name.martingeisse.admin.entity.schema.naming;
 
+
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 import org.apache.commons.lang.WordUtils;
 
@@ -14,7 +16,7 @@ import org.apache.commons.lang.WordUtils;
  * the specified prefix and if so, removes that prefix.
  * The display name is set to the name.
  */
-public class PrefixEliminatingEntityNameMappingStrategy implements IEntityNameMappingStrategy {
+public final class PrefixEliminatingEntityNameMappingStrategy implements IEntityNameMappingStrategy {
 
 	/**
 	 * the prefix

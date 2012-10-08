@@ -7,70 +7,23 @@
 - wenn auf Basis einer Bean -> Interface für DataRow-Verhalten
 - Der QueryDSL-Codegenerator muss ggf. angepasst werden
 
-Es geht vor allem um folgende Fragen:
-- sollen die Daten in Fields oder als Array gespeichert werden?
-- Gibt es Probleme mit der Reihenfolge der Felder in der Verwendung als DataRow?
+...
 
-Erster Eindruck vom generierten Code:
-- die Q-Klassen sind so in Ordnung. Ggf. muss hier wegen der Feldreihenfolge noch
-  angepasst werden. Kommentare usw. sind nicht da, d.h. der Code kann noch
-  verschönert werden.
-- die Beans sind auf das nötigste Reduziert: fields, getters, setters. Für
-  die Kommentare gilt dasselbe wie bei den Q-Klassen.
-
-Theoretische Überlegungen zu Fields vs. Arrays:
-- die Q-Klassen benutzen von sich aus Getter/Setter. Sobald G/S funktionieren,
-  funktionieren auch die Q-Klassen. Sie könnten von der Performance her schlechter
-  sein als ResultSet->DataRow, wobei unklar ist, ob das ins Gewicht fällt
-  (Vermutung: nein; das ist nicht dramatischer als PropertyModels in Wicket).
-- wenn Arrays, dann müssen die Getter/Setter per Index auf das Array zugreifen.
-  Der Index kann on-the-fly oder beim Startup gefunden werden; in letzterem
-  Fall würde es eine Mapping-Tabelle geben.
-- wenn Fields, dann müssten Index-G/S auf die anderen zugreifen. Vermutlich
-  würde es im Index-G und im Index-S jeweils ein großes Switch-Statement geben.
-  
-Das bringt jetzt noch keine Entscheidung. Nächste Überlegung wäre bzgl. der
-Feldreihenfolge im ResultSet:
-- DataRows prüfen im Konstruktor, dass die Reihenfolge noch stimmt. Das ist die
-  Garantie dafür, dass die Reihenfolge hier keine Probleme macht. Von daher
-  könnten auch Entities mit generiertem Code direkt als Rows laden, ohne die
-  Felder aufzuzählen -> Vorteil, weniger Last in der DB und Verbindung dahin.
-  Das war ja tatsächlich ein bekanntes Performance-Problem.
-- Um das bei Klassen mit generiertem Code auszunutzen müssten die Q-Klassen
-  ohne Aufzählung der Felder fetchen und dann DataRows füllen. Ersteres braucht
-  evtl. eine Änderung am Code-Generator. Letzteres braucht sicher eine Änderung,
-  da die Q-Klassen sonst per Getter/Setter zugreifen (TODO: bestätigen).
-- für Klassen ohne generierten Code *muss* diese Prüfung weiter bleiben, weil
-  ein Zugriff per G/S nicht möglich ist.
-- die Reihenfolge steht im EntityDescriptor, unabhängig von der Instance-Implementierung
-- Fields: Es würde entweder eine Methode geben, um eine Row im "bekannten"
-  Format in die Bean zu laden (schlecht: das Format ist erst zur Startup-Zeit
-  bekannt, nicht zur CodeGen-Zeit), oder es wird der Index-Setter benutzt
-  (geht) oder die Felder werden per Name zugeordnet (geht).
-
-Geschmackliche Überlegungen:
-Entity Instances soweit möglich als Beans statt Arrays speichern ist cooler. Könnte
-auch einen kleinen Performancevorteil bringen, ist aber fraglich ob das eine
-Rolle spielt. 
-
-Erste praktische Überlegung:
-QueryDSL erzeugt für Beans defaultmäßig BeanPath-Objekte und daraus on-the-fly
-QBean-Objekte mit field access -- bei DataRows wird das nicht funktionieren.
-Das lässt sich nur umgehen, wenn man tief in QueryDSL eingreift. Es gibt also
-praktisch gesehen nur zwei Möglichkeiten:
-- Entity Instances mit generiertem Code sind Beans
-- Eingriff in den Codegenerator für die Q-Klassen, damit DataRow-freundlicher Code
-  erzeugt wird
-
-Ein Eingriff in die Q-Klassen wird sau eklig und wird auch das QueryDSL-Prinzip
-der Typsicheren Queries untergraben. Damit ist schon mal klargestellt:
+Bisherige Überlegungen (Stand 6.10. 14:00 noch im Git) haben ergeben:
 
 	* Entity Instances mit generiertem Code sind Bean-Klassen, keine DataRow-Subklassen.
 	  QueryDSL füllt diese per direktem Zugriff auf die Fields per Reflection.
+	* Index-G/S werden z.B. per switch abgebildet. G/S für ganze Rows sind denkbar. Beides
+	  wäre Teil eines IDataRow
 
-Es folgt:
-- Index-G/S werden z.B. per switch abgebildet. G/S für ganze Rows sind denkbar. Beides
-  wäre Teil eines IDataRow o.ä.
+Nachteil: Generierte Klassen können sich nicht automatisch an DB-Änderungen anpassen:
+Auch der Generische Code sieht die Änderungen dann nicht! Auch wenn der generische
+Code per DataRow lädt: Es kann passieren, dass App-Code per Q-Klasse lädt und dann
+an den generischen Code übergibt. Neue Felder würden dann z.B. fehlen. Das Hauptproblem
+ist also, dass Q-Klassen neue Felder gar nicht erst laden. Lösungen:
+- Q-Klassen doch auf DataRow umstellen. Umständlich.
+- Für generierte Klassen werden Änderungen erst mit neu generieren gültig. Für
+  Tabellen ohne generierte Klassen sofort. Etwas unschön aber nicht dramatisch.
 
 Weitere wichtige Feststellung ist, dass wenn man den RelationalPath (also die Instanz
 der Q-Klasse) hat, man auch die Java-Klasse bekommt. Diese ist auch das, was eine
@@ -83,3 +36,55 @@ wesentliche Festlegung ist also möglich:
 	  basiert aber grundsätzlich auf Arrays und hat keine weitere QueryDSL-Unterstützung.
 	  Sie werden per "SELECT *" mit Reihenfolge-Check geladen. Die Java Beans dagegen
 	  werden wie in QueryDSL üblich behandelt. 
+
+---
+
+Nächste Schritte:
+- IDataRow definieren
+- Codegenerator: Beans müssen IDataRow implementieren.
+- woher kommt die Feldreihenfolge? Aus dem Codegenerator oder beim Startup festgelegt?
+- muss der generische Code (EntityDescriptor) mit der Q-Klasse configuriert werden?
+- wenn es eine generierte Klasse gibt: Lädt der generische Code dann per DataRow
+  oder über die Q-Klasse?
+  
+  Gefühl sagt: Sinnvoll ist: Per Q-Klasse, da der DataRow-Code eine evtl.
+  Änderung in der DB schon sehen würde, diese aber in der IDataRow so nicht
+  vorfindet. Ähnliches gilt für Änderungen an den Q-Klassen ggü. dem Standard,
+  was mit einem custom Codegen denkbar ist.
+  
+  	Problem: Wie kommt der EntityDescriptor an die Q-Klasse? Die manuell alle übergeben
+  	ist fies. Der Code-Generator könnte da aber nachhelfen. Außerdem gibt es schon
+  	einen Mechanismus, damit der ED an die Bean-Klassen kommt (über die muss er so
+  	oder so Bescheid wissen). Dann könnte der Codegen eine Annotation an die
+  	Bean-Klasse taggen, die auf die Q-Klasse verweist.
+  
+  Der Grundgedanke ist dann:
+  - Wenn Codegen, dann Beans und Q-Klassen. Dann werden immer nur die Q-Klassen
+    verwendet, sowohl von generischem Code (dieser bekommt Zugriff auf die QKs)
+    als auch von spezifischem Code.
+  - Wenn kein Codegen, dann nur DataRow mit konstant gehaltener Reihenfolge.
+
+  Dann muss das Verhalten "ResultSet mit bekannter Reihenfolge" abstrahiert werden;
+  das gilt nur noch für Tabellen ohne Codegen.
+  
+  Die Frage ist immer: Ist es die richtige Entscheidung, im generischen Code für
+  Tabellen mit Codegen die Q-Klassen anstatt ResultSet+DataRow mit bekannter und
+  fest gehaltener Reihenfolge zu benutzen? Es erscheint weniger aufwändig und cooler
+  und vermeidet Probleme falls die Q-Klassen davon abweichen, denn in letzterem
+  Fall wird der Benutzer das Verhalten der Q-Klassen erwarten, weil er nur das
+  kennt. Die Frage ist: sollten die Q-Klassen überhaupt abweichen können, und gibt
+  es andere Probleme, die auftreten könnten?
+  
+  -> "do the simplest thing..." -> generischer Code bekommt Zugriff auf die
+  Q-Klassen, bis etwas wesentliches dagegenspricht.
+  
+  Ist auch simpler, denn es gibt nur zwei Fälle (generisch/datarow/bekannte Reihenfolge,
+  spezfisch/beans/q-klassen) statt drei Fälle (generisch, spezifisch,
+  gen/spez mix in verschiedenen Codeteilen).
+
+
+  
+  
+  
+  
+  

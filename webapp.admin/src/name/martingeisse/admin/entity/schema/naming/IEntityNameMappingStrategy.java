@@ -4,9 +4,12 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.entity.schema;
+package name.martingeisse.admin.entity.schema.naming;
 
 import java.io.Serializable;
+
+import name.martingeisse.admin.application.ParameterKey;
+import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 
 /**
@@ -14,6 +17,11 @@ import java.io.Serializable;
  */
 public interface IEntityNameMappingStrategy extends Serializable {
 
+	/**
+	 * The parameter key for this interface.
+	 */
+	public static final ParameterKey<IEntityNameMappingStrategy> PARAMETER_KEY = new ParameterKey<IEntityNameMappingStrategy>();
+	
 	/**
 	 * Returns the entity name for the specified entity. Should not assume
 	 * either the name or display name to be set.

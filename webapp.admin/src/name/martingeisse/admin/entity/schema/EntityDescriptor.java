@@ -10,20 +10,13 @@ import java.lang.annotation.Annotation;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import name.martingeisse.admin.entity.EntityCapabilities;
-import name.martingeisse.admin.entity.EntityConfiguration;
 import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.schema.orm.EntitySpecificCodeMapping;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
-import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
-import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
+import name.martingeisse.admin.entity.schema.search.EntitySearcher;
 import name.martingeisse.admin.entity.schema.type.IEntityIdTypeInfo;
 import name.martingeisse.admin.entity.schema.type.ISqlTypeInfo;
 import name.martingeisse.admin.navigation.NavigationNode;
@@ -34,8 +27,6 @@ import name.martingeisse.common.datarow.AbstractDataRowMetaHolder;
 import name.martingeisse.common.datarow.DataRowMeta;
 import name.martingeisse.common.util.ClassKeyedContainer;
 import name.martingeisse.common.util.ParameterUtil;
-
-import org.apache.log4j.Logger;
 
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.RelationalPathBase;
@@ -50,6 +41,10 @@ import com.mysema.query.types.Predicate;
 /**
  * This class captures a descriptor for a database entity (table).
  * 
+ * Instances are created during initialization of the {@link ApplicationSchema}
+ * and controlled by various strategies. User code should not create instances
+ * of this class directly. 
+ * 
  * ID handling: This descriptor stores information about the entity ID (primary
  * key). Currently only single-column IDs are supported.
  */
@@ -60,11 +55,6 @@ public class EntityDescriptor {
 	 * Filter predicates should use this to access fields of the entity being filtered.
 	 */
 	public static final String ALIAS = "e";
-	
-	/**
-	 * the logger
-	 */
-	private static Logger logger = Logger.getLogger(EntityDescriptor.class);
 
 	/**
 	 * the name
@@ -97,19 +87,14 @@ public class EntityDescriptor {
 	private IEntityIdTypeInfo idColumnType;
 
 	/**
-	 * the propertiesInDatabaseOrder
+	 * the properties
 	 */
-	private List<EntityPropertyDescriptor> propertiesInDatabaseOrder;
-
-	/**
-	 * the propertiesByName
-	 */
-	private Map<String, EntityPropertyDescriptor> propertiesByName;
+	private EntityProperties properties;
 
 	/**
 	 * the referenceEndpoints
 	 */
-	private final List<EntityReferenceEndpoint> referenceEndpoints;
+	private List<EntityReferenceEndpoint> referenceEndpoints;
 
 	/**
 	 * the canonicalListNavigationNode
@@ -117,37 +102,39 @@ public class EntityDescriptor {
 	private NavigationNode canonicalListNavigationNode;
 
 	/**
-	 * the instanceNavigationRootNode
+	 * the navigation
 	 */
-	private NavigationNode instanceNavigationRootNode;
+	private EntityNavigation navigation;
 
 	/**
 	 * the dataRowMeta
 	 */
 	private DataRowMeta dataRowMeta;
-	
+
 	/**
 	 * the dataRowTypes
 	 */
 	private ISqlTypeInfo[] dataRowTypes;
 
 	/**
-	 * the searchStrategy
+	 * the searcher
 	 */
-	private IEntitySearchStrategy searchStrategy;
+	private EntitySearcher searcher;
 
 	/**
 	 * the annotations
 	 */
-	private ClassKeyedContainer<Annotation> annotations;
+	private final ClassKeyedContainer<Annotation> annotations = new ClassKeyedContainer<Annotation>();
+
+	/**
+	 * the specificCodeMapping
+	 */
+	private EntitySpecificCodeMapping specificCodeMapping;
 
 	/**
 	 * Constructor.
 	 */
-	public EntityDescriptor() {
-		this.propertiesByName = new HashMap<String, EntityPropertyDescriptor>();
-		this.referenceEndpoints = new ArrayList<EntityReferenceEndpoint>();
-		this.annotations = new ClassKeyedContainer<Annotation>();
+	EntityDescriptor() {
 	}
 
 	/**
@@ -159,6 +146,14 @@ public class EntityDescriptor {
 	}
 
 	/**
+	 * Setter method for the name.
+	 * @param name the name to set
+	 */
+	void setName(final String name) {
+		this.name = name;
+	}
+
+	/**
 	 * Getter method for the displayName.
 	 * @return the displayName
 	 */
@@ -167,14 +162,11 @@ public class EntityDescriptor {
 	}
 
 	/**
-	 * Maps the table name to name and display name using the application's
-	 * entity name mapping.
+	 * Setter method for the displayName.
+	 * @param displayName the displayName to set
 	 */
-	void mapNames() {
-		final IEntityNameMappingStrategy mapping = EntityConfiguration.parameterKey.get().getEntityNameMappingStrategy();
-		this.name = mapping.determineEntityName(this);
-		this.displayName = mapping.determineEntityDisplayName(this);
-		logger.info("entity name mapped: table = " + tableName + ", name = " + name + ", display = " + displayName);
+	void setDisplayName(final String displayName) {
+		this.displayName = displayName;
 	}
 
 	/**
@@ -189,7 +181,7 @@ public class EntityDescriptor {
 	 * Setter method for the database.
 	 * @param database the database to set
 	 */
-	public void setDatabase(final IDatabaseDescriptor database) {
+	void setDatabase(final IDatabaseDescriptor database) {
 		this.database = database;
 	}
 
@@ -205,7 +197,7 @@ public class EntityDescriptor {
 	 * Setter method for the tableName.
 	 * @param tableName the tableName to set
 	 */
-	public void setTableName(final String tableName) {
+	void setTableName(final String tableName) {
 		this.tableName = tableName;
 	}
 
@@ -221,7 +213,7 @@ public class EntityDescriptor {
 	 * Setter method for the idColumnName.
 	 * @param idColumnName the idColumnName to set
 	 */
-	public void setIdColumnName(final String idColumnName) {
+	void setIdColumnName(final String idColumnName) {
 		this.idColumnName = idColumnName;
 	}
 
@@ -237,43 +229,40 @@ public class EntityDescriptor {
 	 * Setter method for the idColumnType.
 	 * @param idColumnType the idColumnType to set
 	 */
-	public void setIdColumnType(final IEntityIdTypeInfo idColumnType) {
+	void setIdColumnType(final IEntityIdTypeInfo idColumnType) {
 		this.idColumnType = idColumnType;
 	}
 
 	/**
-	 * Getter method for the propertiesInDatabaseOrder.
-	 * @return the propertiesInDatabaseOrder
+	 * Getter method for the properties.
+	 * @return the properties
 	 */
-	public List<EntityPropertyDescriptor> getPropertiesInDatabaseOrder() {
-		return propertiesInDatabaseOrder;
+	public EntityProperties getProperties() {
+		return properties;
 	}
 
 	/**
-	 * Getter method for the propertiesByName.
-	 * @return the propertiesByName
+	 * Setter method for the properties.
+	 * @param properties the properties to set
 	 */
-	public Map<String, EntityPropertyDescriptor> getPropertiesByName() {
-		return propertiesByName;
+	void setProperties(EntityProperties properties) {
+		this.properties = properties;
 	}
-
-	/**
-	 * Initializes the properties (both in database order and by-name mapping).
-	 */
-	void initializeProperties(final List<EntityPropertyDescriptor> propertiesInDatabaseOrder) {
-		this.propertiesInDatabaseOrder = propertiesInDatabaseOrder;
-		this.propertiesByName = new HashMap<String, EntityPropertyDescriptor>();
-		for (final EntityPropertyDescriptor propertyDescriptor : propertiesInDatabaseOrder) {
-			propertiesByName.put(propertyDescriptor.getName(), propertyDescriptor);
-		}
-	}
-
+	
 	/**
 	 * Getter method for the referenceEndpoints.
 	 * @return the referenceEndpoints
 	 */
 	public List<EntityReferenceEndpoint> getReferenceEndpoints() {
 		return referenceEndpoints;
+	}
+
+	/**
+	 * Setter method for the referenceEndpoints.
+	 * @param referenceEndpoints the referenceEndpoints to set
+	 */
+	void setReferenceEndpoints(final List<EntityReferenceEndpoint> referenceEndpoints) {
+		this.referenceEndpoints = referenceEndpoints;
 	}
 
 	/**
@@ -288,24 +277,24 @@ public class EntityDescriptor {
 	 * Setter method for the canonicalListNavigationNode.
 	 * @param canonicalListNavigationNode the canonicalListNavigationNode to set
 	 */
-	public void setCanonicalListNavigationNode(final NavigationNode canonicalListNavigationNode) {
+	void setCanonicalListNavigationNode(final NavigationNode canonicalListNavigationNode) {
 		this.canonicalListNavigationNode = canonicalListNavigationNode;
 	}
 
 	/**
-	 * Getter method for the instanceNavigationRootNode.
-	 * @return the instanceNavigationRootNode
+	 * Getter method for the navigation.
+	 * @return the navigation
 	 */
-	public NavigationNode getInstanceNavigationRootNode() {
-		return instanceNavigationRootNode;
+	public EntityNavigation getNavigation() {
+		return navigation;
 	}
 
 	/**
-	 * Setter method for the instanceNavigationRootNode.
-	 * @param instanceNavigationRootNode the instanceNavigationRootNode to set
+	 * Setter method for the navigation.
+	 * @param navigation the navigation to set
 	 */
-	public void setInstanceNavigationRootNode(final NavigationNode instanceNavigationRootNode) {
-		this.instanceNavigationRootNode = instanceNavigationRootNode;
+	void setNavigation(final EntityNavigation navigation) {
+		this.navigation = navigation;
 	}
 
 	/**
@@ -320,10 +309,10 @@ public class EntityDescriptor {
 	 * Setter method for the dataRowMeta.
 	 * @param dataRowMeta the dataRowMeta to set
 	 */
-	public void setDataRowMeta(final DataRowMeta dataRowMeta) {
+	void setDataRowMeta(final DataRowMeta dataRowMeta) {
 		this.dataRowMeta = dataRowMeta;
 	}
-	
+
 	/**
 	 * Getter method for the dataRowTypes.
 	 * @return the dataRowTypes
@@ -331,18 +320,29 @@ public class EntityDescriptor {
 	public ISqlTypeInfo[] getDataRowTypes() {
 		return dataRowTypes;
 	}
-	
+
 	/**
-	 * Initializes the data row types from the {@link DataRowMeta} and the entity properties.
+	 * Setter method for the dataRowTypes.
+	 * @param dataRowTypes the dataRowTypes to set
 	 */
-	public void initializeDataRowTypes() {
-		String[] dataRowNames = dataRowMeta.getNames();
-		int width = dataRowNames.length;
-		this.dataRowTypes = new ISqlTypeInfo[width];
-		for (int i=0; i<width; i++) {
-			EntityPropertyDescriptor property = getPropertiesByName().get(dataRowNames[i]);
-			dataRowTypes[i] = property.getType();
-		}
+	void setDataRowTypes(final ISqlTypeInfo[] dataRowTypes) {
+		this.dataRowTypes = dataRowTypes;
+	}
+
+	/**
+	 * Getter method for the searcher.
+	 * @return the searcher
+	 */
+	public EntitySearcher getSearcher() {
+		return searcher;
+	}
+
+	/**
+	 * Setter method for the searcher.
+	 * @param searcher the searcher to set
+	 */
+	void setSearcher(final EntitySearcher searcher) {
+		this.searcher = searcher;
 	}
 
 	/**
@@ -354,31 +354,23 @@ public class EntityDescriptor {
 	}
 
 	/**
-	 * Setter method for the annotations.
-	 * @param annotations the annotations to set
+	 * Getter method for the specificCodeMapping.
+	 * @return the specificCodeMapping
 	 */
-	public void setAnnotations(final ClassKeyedContainer<Annotation> annotations) {
-		this.annotations = annotations;
+	public EntitySpecificCodeMapping getSpecificCodeMapping() {
+		return specificCodeMapping;
 	}
 
 	/**
-	 * Returns one of the navigation nodes associated with instances of this entity.
-	 * @param subpathSegments the subpath segments to walk from the entity instance navigation root
-	 * to reach the node to link. The specified node must exist, otherwise this method throws an
-	 * {@link IllegalArgumentException}.
-	 * @return the navigation node
+	 * Setter method for the specificCodeMapping.
+	 * @param specificCodeMapping the specificCodeMapping to set
 	 */
-	public NavigationNode getInstanceNavigationNode(final String... subpathSegments) {
-		NavigationNode node = instanceNavigationRootNode;
-		for (final String segment : subpathSegments) {
-			final NavigationNode child = node.findChildById(segment);
-			if (child == null) {
-				throw new IllegalArgumentException("subpath segment '" + segment + "' not found in node " + node.getPath());
-			}
-			node = child;
-		}
-		return node;
+	void setSpecificCodeMapping(final EntitySpecificCodeMapping specificCodeMapping) {
+		this.specificCodeMapping = specificCodeMapping;
 	}
+
+	// ----------------------------------------
+	// TODO: clean up the code below this line
 
 	/**
 	 * Fetches a single instance of this entity.
@@ -408,37 +400,6 @@ public class EntityDescriptor {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * @return the names of the fields for raw lists of this entity type, in the order
-	 * they shall be displayed.
-	 */
-	public String[] getRawEntityListFieldOrder() {
-
-		// determine the list of visible fields
-		final List<EntityPropertyDescriptor> fieldOrder = new ArrayList<EntityPropertyDescriptor>();
-		for (final EntityPropertyDescriptor property : propertiesInDatabaseOrder) {
-			if (property.isVisibleInRawEntityList()) {
-				fieldOrder.add(property);
-			}
-		}
-
-		// determine their order
-		final Comparator<EntityPropertyDescriptor> fieldComparator = EntityConfiguration.parameterKey.get().getEntityListFieldOrder();
-		if (fieldComparator != null) {
-			Collections.sort(fieldOrder, fieldComparator);
-		}
-
-		// build an array of the field names
-		final String[] fieldOrderArray = new String[fieldOrder.size()];
-		int position = 0;
-		for (final EntityPropertyDescriptor property : fieldOrder) {
-			fieldOrderArray[position] = property.getName();
-			position++;
-		}
-
-		return fieldOrderArray;
 	}
 
 	/**
@@ -581,45 +542,6 @@ public class EntityDescriptor {
 			throw new IllegalStateException("data row schema for entity " + getName() + " does not match");
 		}
 		return dataRowMeta;
-	}
-
-	/**
-	 * Checks whether a search strategy is installed for this entity.
-	 * @return true if searching is supported, false if not
-	 */
-	public boolean isSearchSupported() {
-		return (searchStrategy != null);
-	}
-
-	/**
-	 * Creates an entity list filter for this entity and for the specified search term,
-	 * or null if no useful filter can be found for the search term.
-	 * @param searchTerm the search term
-	 * @return the filter
-	 */
-	public Predicate createSearchFilter(final String searchTerm) {
-		return (searchStrategy == null ? null : searchStrategy.createFilter(this, searchTerm));
-	}
-
-	/**
-	 * Initializes the search strategy for this entity from the application configuration.
-	 */
-	public void initializeSearchStrategy() {
-		int maxScore = Integer.MIN_VALUE;
-		IEntitySearchContributor maxScoreContributor = null;
-		for (final IEntitySearchContributor contributor : EntityCapabilities.entitySearchContributorCapability) {
-			final int score = contributor.getScore(this);
-			if (score > maxScore) {
-				maxScoreContributor = contributor;
-				maxScore = score;
-			}
-		}
-		if (maxScoreContributor != null) {
-			this.searchStrategy = maxScoreContributor.getSearchStrategy(this);
-			if (this.searchStrategy == null) {
-				throw new RuntimeException("winning IEntitySearchContributor (" + maxScoreContributor + ") for entity " + getName() + " returned null");
-			}
-		}
 	}
 
 	/**

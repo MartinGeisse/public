@@ -40,7 +40,7 @@ public class EntityAutoformDescriberHelper extends AbstractAutoformBeanDescriber
 	 */
 	@Override
 	protected EntityPropertyDescriptor[] getPropertyDescriptors(final EntityDescriptor entityDescriptor) {
-		List<EntityPropertyDescriptor> properties = entityDescriptor.getPropertiesInDatabaseOrder();
+		List<EntityPropertyDescriptor> properties = entityDescriptor.getProperties().getPropertiesInDatabaseOrder();
 		return properties.toArray(new EntityPropertyDescriptor[properties.size()]);
 	}
 

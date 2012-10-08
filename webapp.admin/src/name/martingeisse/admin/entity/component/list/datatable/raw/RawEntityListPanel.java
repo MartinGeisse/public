@@ -76,7 +76,7 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 	 */
 	@Override
 	protected RawDataTableColumnDescriptor[] determineColumnDescriptors() {
-		String[] columnNames = getEntityDescriptor().getRawEntityListFieldOrder();
+		String[] columnNames = getEntityDescriptor().getProperties().getRawEntityListPropertyOrder();
 		RawDataTableColumnDescriptor[] result = new RawDataTableColumnDescriptor[columnNames.length];
 		for (int i=0; i<columnNames.length; i++) {
 			result[i] = new RawDataTableColumnDescriptor(columnNames[i], columnNames[i]);

@@ -67,7 +67,7 @@ public final class AnnotatedClassEntityAnnotationContributor implements IEntityA
 			for (final Field field : annotatedClass.getFields()) {
 				if ((field.getModifiers() & Modifier.PUBLIC) != 0) {
 					final String name = StringUtil.convertCamelCaseToLowercaseUnderscores(field.getName());
-					copy(field.getAnnotations(), entity.getPropertiesByName().get(name).getAnnotations());
+					copy(field.getAnnotations(), entity.getProperties().get(name).getAnnotations());
 				}
 			}
 
@@ -79,7 +79,7 @@ public final class AnnotatedClassEntityAnnotationContributor implements IEntityA
 				final Method getter = beanPropertyDescriptor.getReadMethod();
 				if ((getter.getModifiers() & Modifier.PUBLIC) != 0) {
 					final String entityPropertyName = StringUtil.convertCamelCaseToLowercaseUnderscores(beanPropertyDescriptor.getName());
-					final EntityPropertyDescriptor entityPropertyDescriptor = entity.getPropertiesByName().get(entityPropertyName);
+					final EntityPropertyDescriptor entityPropertyDescriptor = entity.getProperties().get(entityPropertyName);
 					if (entityPropertyDescriptor == null) {
 						throw new RuntimeException("bean property " + beanPropertyDescriptor.getName() + " of the annotated entity class " + annotatedClass +
 							" has no corresponding entity property; tried: " + entityPropertyName);

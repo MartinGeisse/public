@@ -8,8 +8,6 @@ package name.martingeisse.admin.entity;
 
 import name.martingeisse.admin.application.ParameterKey;
 import name.martingeisse.admin.entity.schema.IEntityListFieldOrder;
-import name.martingeisse.admin.entity.schema.IEntityNameMappingStrategy;
-import name.martingeisse.admin.entity.schema.PrefixEliminatingEntityNameMappingStrategy;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.componentfactory.IAutoformPropertyComponentFactory;
 
@@ -30,11 +28,6 @@ public final class EntityConfiguration {
 	private IEntityListFieldOrder entityListFieldOrder;
 
 	/**
-	 * the entityNameMappingStrategy
-	 */
-	private IEntityNameMappingStrategy entityNameMappingStrategy;
-
-	/**
 	 * the autoformPropertyComponentFactory
 	 */
 	private IAutoformPropertyComponentFactory autoformPropertyComponentFactory;
@@ -44,7 +37,6 @@ public final class EntityConfiguration {
 	 */
 	public EntityConfiguration() {
 		entityListFieldOrder = null;
-		entityNameMappingStrategy = new PrefixEliminatingEntityNameMappingStrategy("");
 		autoformPropertyComponentFactory = DefaultAutoformPropertyComponentFactory.instance;
 	}
 
@@ -62,22 +54,6 @@ public final class EntityConfiguration {
 	 */
 	public void setEntityListFieldOrder(final IEntityListFieldOrder entityListFieldOrder) {
 		this.entityListFieldOrder = entityListFieldOrder;
-	}
-
-	/**
-	 * Getter method for the entityNameMappingStrategy.
-	 * @return the entityNameMappingStrategy
-	 */
-	public IEntityNameMappingStrategy getEntityNameMappingStrategy() {
-		return entityNameMappingStrategy;
-	}
-
-	/**
-	 * Setter method for the entityNameMappingStrategy.
-	 * @param entityNameMappingStrategy the entityNameMappingStrategy to set
-	 */
-	public void setEntityNameMappingStrategy(final IEntityNameMappingStrategy entityNameMappingStrategy) {
-		this.entityNameMappingStrategy = entityNameMappingStrategy;
 	}
 
 	/**

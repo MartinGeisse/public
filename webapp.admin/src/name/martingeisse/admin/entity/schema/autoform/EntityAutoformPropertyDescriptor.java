@@ -49,7 +49,7 @@ public class EntityAutoformPropertyDescriptor extends AbstractAutoformPropertyDe
 	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
 		in.defaultReadObject();
 		try {
-			this.propertyDescriptor = entityInstance.getEntity().getPropertiesByName().get(getName());
+			this.propertyDescriptor = entityInstance.getEntity().getProperties().get(getName());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

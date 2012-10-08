@@ -27,7 +27,13 @@ import name.martingeisse.admin.entity.schema.lowlevel.ILowlevelDatabaseStructure
 import name.martingeisse.admin.entity.schema.lowlevel.JdbcColumnStructure;
 import name.martingeisse.admin.entity.schema.lowlevel.JdbcSchemaStructure;
 import name.martingeisse.admin.entity.schema.lowlevel.JdbcTableStructure;
+import name.martingeisse.admin.entity.schema.naming.DefaultEntityNameMappingStrategy;
+import name.martingeisse.admin.entity.schema.naming.IEntityNameMappingStrategy;
+import name.martingeisse.admin.entity.schema.orm.DefaultEntitySpecificCodeMapper;
+import name.martingeisse.admin.entity.schema.orm.IEntityOrmMapper;
+import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
+import name.martingeisse.admin.entity.schema.search.EntitySearcher;
 import name.martingeisse.admin.entity.schema.type.IEntityIdTypeInfo;
 import name.martingeisse.admin.entity.schema.type.ISqlTypeInfo;
 import name.martingeisse.admin.navigation.INavigationNodeHandler;
@@ -37,6 +43,7 @@ import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.datarow.DataRowMeta;
 import name.martingeisse.common.util.ParameterUtil;
+import name.martingeisse.common.util.ReturnValueUtil;
 
 import org.apache.log4j.Logger;
 
@@ -167,6 +174,7 @@ public class ApplicationSchema {
 		createNavigation();
 		initializeSearchStrategies();
 		initializeAutoformMetadata();
+		initializeSpecificCodeMapping();
 	}
 
 	/**
@@ -213,7 +221,7 @@ public class ApplicationSchema {
 						properties.add(propertyDescriptor);
 						logger.debug("-> type: " + propertyDescriptor.getType());
 					}
-					entityDescriptor.initializeProperties(properties);
+					entityDescriptor.setProperties(new EntityProperties(entityDescriptor, properties));
 					
 					// initialize ID property information
 					// note: we cannot handle entities without a primary key or with a multi-column primary key yet
@@ -221,7 +229,7 @@ public class ApplicationSchema {
 						continue;
 					}
 					String idColumnName = table.getPrimaryKeyElements().get(0).getSelector().getColumn();
-					final EntityPropertyDescriptor idPropertyDescriptor = entityDescriptor.getPropertiesByName().get(idColumnName);
+					final EntityPropertyDescriptor idPropertyDescriptor = entityDescriptor.getProperties().get(idColumnName);
 					if (idPropertyDescriptor == null) {
 						throw new IllegalStateException("table meta-data of table " + entityDescriptor.getTableName() + " specified column " + idColumnName + " as its ID column, but no such column exists in the property descriptors");
 					}
@@ -244,15 +252,29 @@ public class ApplicationSchema {
 					final Statement statement = connection.createStatement();
 					for (final EntityDescriptor entityDescriptor : currentDatabaseEntities) {
 						final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + entityDescriptor.getTableName() + " LIMIT 1");
-						entityDescriptor.setDataRowMeta(new DataRowMeta(resultSet.getMetaData()));
-						entityDescriptor.initializeDataRowTypes();
+						final DataRowMeta meta = new DataRowMeta(resultSet.getMetaData());
+						entityDescriptor.setDataRowMeta(meta);
+						String[] dataRowNames = meta.getNames();
+						int width = dataRowNames.length;
+						ISqlTypeInfo[] dataRowTypes = new ISqlTypeInfo[width];
+						for (int i=0; i<width; i++) {
+							EntityPropertyDescriptor property = entityDescriptor.getProperties().get(dataRowNames[i]);
+							dataRowTypes[i] = property.getType();
+						}
+						entityDescriptor.setDataRowTypes(dataRowTypes);
 						resultSet.close();
 					}
 				}
 				
 				// map the table names to entity names and display names
+				IEntityNameMappingStrategy entityNameMapping = IEntityNameMappingStrategy.PARAMETER_KEY.get();
+				if (entityNameMapping == null) {
+					entityNameMapping = new DefaultEntityNameMappingStrategy();
+				}
 				for (final EntityDescriptor entity : currentDatabaseEntities) {
-					entity.mapNames();
+					entity.setName(entityNameMapping.determineEntityName(entity));
+					entity.setDisplayName(entityNameMapping.determineEntityDisplayName(entity));
+					logger.info("entity name mapped: table = " + entity.getTableName() + ", name = " + entity.getName() + ", display = " + entity.getDisplayName());
 				}
 				
 				connection.close();
@@ -287,8 +309,9 @@ public class ApplicationSchema {
 	 */
 	private void detectEntityReferences() {
 		for (final EntityDescriptor entity : entityDescriptors) {
+			entity.setReferenceEndpoints(new ArrayList<EntityReferenceEndpoint>());
 			ILowlevelDatabaseStructure lowlevelStructure = databaseStructures.get(entity.getDatabase());
-			for (final EntityPropertyDescriptor property : entity.getPropertiesInDatabaseOrder()) {
+			for (final EntityPropertyDescriptor property : entity.getProperties()) {
 				final String propertyName = property.getName();
 				for (final IEntityReferenceDetector detector : EntityCapabilities.entityReferenceDetectorCapability) {
 					detector.detectEntityReference(this, lowlevelStructure, entity, propertyName);
@@ -348,7 +371,7 @@ public class ApplicationSchema {
 			final String entityName = entity.getName();
 			final NavigationNode canonicalEntityListNode = canonicalEntityListNodes.get(entityName);
 			final NavigationNode entityInstanceRootNode = canonicalEntityListNode.getChildFactory().createNavigationFolderChild("${id}", "Entity Instance");
-			entity.setInstanceNavigationRootNode(entityInstanceRootNode);
+			entity.setNavigation(new EntityNavigation(entity, entityInstanceRootNode));
 			for (final IEntityNavigationContributor contributor : EntityCapabilities.entityNavigationContributorCapability) {
 				contributor.contributeNavigationNodes(entity, entityInstanceRootNode);
 			}
@@ -371,7 +394,7 @@ public class ApplicationSchema {
 	 */
 	private void initializeSearchStrategies() {
 		for (final EntityDescriptor entity : entityDescriptors) {
-			entity.initializeSearchStrategy();
+			entity.setSearcher(new EntitySearcher(entity));
 		}
 	}
 
@@ -381,6 +404,19 @@ public class ApplicationSchema {
 	private void initializeAutoformMetadata() {
 		for (IEntityAnnotationContributor contributor : EntityCapabilities.entityAnnotationContributorCapability) {
 			contributor.contributeEntityAnnotations(this);
+		}
+	}
+
+	/**
+	 * Initializes the mapping to specific entity handling code.
+	 */
+	private void initializeSpecificCodeMapping() {
+		IEntityOrmMapper mapper = IEntityOrmMapper.PARAMETER_KEY.get();
+		if (mapper == null) {
+			mapper = new DefaultEntitySpecificCodeMapper();
+		}
+		for (final EntityDescriptor entity : entityDescriptors) {
+			entity.setSpecificCodeMapping(ReturnValueUtil.nullNotAllowed(mapper.map(entity), "IEntitySpecificCodeMapper.map()"));
 		}
 	}
 	

@@ -11,6 +11,12 @@ import name.martingeisse.admin.entity.schema.ApplicationSchema;
 
 /**
  * This strategy contributes entity annotations at startup.
+ * 
+ * Annotations cannot be stored with entity bean classes because
+ * these classes are generated from the database schema. Instead,
+ * one or more contributors using this interface provide the
+ * annotations. This also allows to contribute annotations in a
+ * more modular way than simply enumerating them all.
  */
 public interface IEntityAnnotationContributor {
 

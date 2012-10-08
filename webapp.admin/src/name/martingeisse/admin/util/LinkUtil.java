@@ -48,7 +48,7 @@ public class LinkUtil {
 	 * @return the link
 	 */
 	public static BookmarkablePageLink<?> createSingleEntityLink(final String wicketId, final EntityDescriptor entity, final Object entityId, final String... subpathSegments) {
-		final BookmarkablePageLink<?> link = (BookmarkablePageLink<?>)entity.getInstanceNavigationNode(subpathSegments).createLink(wicketId);
+		final BookmarkablePageLink<?> link = (BookmarkablePageLink<?>)entity.getNavigation().getInstanceNavigationNode(subpathSegments).createLink(wicketId);
 		if (entityId != null) {
 			link.getPageParameters().add("id", entityId);
 		}

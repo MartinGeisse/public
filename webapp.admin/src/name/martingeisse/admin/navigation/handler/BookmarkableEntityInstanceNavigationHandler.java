@@ -27,7 +27,9 @@ import org.apache.wicket.util.string.StringValue;
  * navigation trees, and especially to build generic
  * nodes for multiple entities. This handler stores the
  * entity name, so mounted page can obtain the node and then
- * the entity name.
+ * the entity name. The entity name is set automatically
+ * by the framework when this handler is mounted within
+ * entity-local navigation.
  * 
  * Note: The entity name is not directly stored as a page
  * parameter since only the navigation path is secured against
