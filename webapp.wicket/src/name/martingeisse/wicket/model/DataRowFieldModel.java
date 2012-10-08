@@ -7,16 +7,17 @@
 package name.martingeisse.wicket.model;
 
 import name.martingeisse.common.datarow.DataRow;
+import name.martingeisse.common.datarow.IDataRow;
 import name.martingeisse.common.util.GenericTypeUtil;
 
 import org.apache.wicket.model.IModel;
 
 /**
- * This model represents a single field from a {@link DataRow}.
+ * This model represents a single field from a {@link IDataRow}.
  * @param <R> the row type
  * @param <F> the field type
  */
-public class DataRowFieldModel<R extends DataRow, F> implements IModel<F> {
+public class DataRowFieldModel<R extends IDataRow, F> implements IModel<F> {
 
 	/**
 	 * the container
@@ -64,12 +65,12 @@ public class DataRowFieldModel<R extends DataRow, F> implements IModel<F> {
 	 */
 	@Override
 	public F getObject() {
-		DataRow row;
+		IDataRow row;
 		if (container instanceof IModel<?>) {
 			IModel<?> containerAsModel = (IModel<?>)container;
-			row = (DataRow)containerAsModel.getObject();
+			row = (IDataRow)containerAsModel.getObject();
 		} else {
-			row = (DataRow)container;
+			row = (IDataRow)container;
 		}
 		return GenericTypeUtil.unsafeCast(row.getDataRowFieldValue(fieldName));
 	}
@@ -79,12 +80,12 @@ public class DataRowFieldModel<R extends DataRow, F> implements IModel<F> {
 	 */
 	@Override
 	public void setObject(F fieldValue) {
-		DataRow row;
+		IDataRow row;
 		if (container instanceof IModel<?>) {
 			IModel<?> containerAsModel = (IModel<?>)container;
-			row = (DataRow)containerAsModel.getObject();
+			row = (IDataRow)containerAsModel.getObject();
 		} else {
-			row = (DataRow)container;
+			row = (IDataRow)container;
 		}
 		row.setDataRowFieldValue(fieldName, fieldValue);
 	}

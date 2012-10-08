@@ -7,6 +7,7 @@
 package name.martingeisse.wicket.populator;
 
 import name.martingeisse.common.datarow.DataRow;
+import name.martingeisse.common.datarow.IDataRow;
 import name.martingeisse.wicket.model.DataRowFieldModel;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -15,13 +16,13 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 
 /**
- * This populator creates a label for a field from a {@link DataRow}.
+ * This populator creates a label for a field from a {@link IDataRow}.
  * TODO: Create a subclass called EntityPropertyPopulator in the
  * admin project, mostly because devs are gonna look for that and
  * not think of RowFieldPopulator... but may be useful for added features.
  * @param <T> the row type
  */
-public class RowFieldPopulator<T extends DataRow> implements ICellPopulator<T> {
+public class RowFieldPopulator<T extends IDataRow> implements ICellPopulator<T> {
 
 	/**
 	 * the fieldName

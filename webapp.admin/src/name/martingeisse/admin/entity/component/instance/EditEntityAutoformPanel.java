@@ -127,7 +127,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 		
 		// prepare an "empty" update clause for the entity instance being edited
 		SQLUpdateClause update = entity.createUpdate(entity.getTableName());
-		update.where(EntityExpressionUtil.fieldEquals(entity.getTableName(), entity.getIdColumnName(), bean.getId()));
+		update.where(EntityExpressionUtil.fieldEquals(entity.getTableName(), entity.getIdColumnName(), bean.getEntityId()));
 
 		// add "set" clauses for each property that is writable in this autoform
 		List<IAutoformPropertyDescriptor> writableProperties = AutoformUtil.getPropertiesByReadOnlyFlag(beanDescriptor, false);

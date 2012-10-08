@@ -113,7 +113,7 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 			assembler.appendStringLiteral(valueText);
 		}
 		assembler.prepareListElement();
-		assembler.appendStringLiteral(entityInstance.getId() == null ? null : LinkUtil.getSingleEntityLinkUrl(getEntityDescriptor(), entityInstance.getId()));
+		assembler.appendStringLiteral(entityInstance.getEntityId() == null ? null : LinkUtil.getSingleEntityLinkUrl(getEntityDescriptor(), entityInstance.getEntityId()));
 	}
 
 }
