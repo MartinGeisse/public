@@ -245,10 +245,10 @@ public class EntityDescriptor {
 	 * Setter method for the properties.
 	 * @param properties the properties to set
 	 */
-	void setProperties(EntityProperties properties) {
+	void setProperties(final EntityProperties properties) {
 		this.properties = properties;
 	}
-	
+
 	/**
 	 * Getter method for the referenceEndpoints.
 	 * @return the referenceEndpoints
