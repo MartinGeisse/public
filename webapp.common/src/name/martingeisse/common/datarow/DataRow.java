@@ -14,13 +14,9 @@ import java.sql.SQLException;
 import name.martingeisse.common.database.IDatabaseDescriptor;
 
 /**
- * Represents a row of data as well as meta-data to which it conforms.
- * 
- * Note that this class does not ensure that either meta-data or data
- * are present, and does not ensure that the data actually conforms
- * to the meta-data. It is up to the caller to ensure that.
+ * Default implementation of {@link IDataRow} based on an array.
  */
-public class DataRow extends AbstractDataRowMetaHolder implements Serializable {
+public class DataRow extends AbstractDataRowMetaHolder implements Serializable, IDataRow {
 
 	/**
 	 * the data
@@ -38,7 +34,7 @@ public class DataRow extends AbstractDataRowMetaHolder implements Serializable {
 	 * @param meta the meta-data to set
 	 */
 	public DataRow(DataRowMeta meta) {
-		setMeta(meta);
+		setDataRowMeta(meta);
 	}
 
 	/**
@@ -51,7 +47,7 @@ public class DataRow extends AbstractDataRowMetaHolder implements Serializable {
 		if (resultSetMetaData == null) {
 			throw new IllegalArgumentException("resultSetMetaData argument is null");
 		}
-		setMeta(new DataRowMeta(resultSetMetaData));
+		setDataRowMeta(new DataRowMeta(resultSetMetaData));
 	}
 
 	/**
@@ -65,7 +61,7 @@ public class DataRow extends AbstractDataRowMetaHolder implements Serializable {
 	 */
 	public DataRow(ResultSet resultSet, IDataRowTypeConverter[] typeConverters, IDatabaseDescriptor databaseDescriptor) throws SQLException {
 		argumentCheck(resultSet, typeConverters);
-		setMeta(new DataRowMeta(resultSet.getMetaData()));
+		setDataRowMeta(new DataRowMeta(resultSet.getMetaData()));
 		data = createDataForCurrentRow(resultSet, typeConverters, databaseDescriptor);
 	}
 
@@ -85,21 +81,27 @@ public class DataRow extends AbstractDataRowMetaHolder implements Serializable {
 		this.data = data;
 	}
 
-	/**
-	 * Returns the value of the specified field.
-	 * @param fieldName the name of the field whose value to return
-	 * @return the field value
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.datarow.IDataRow#getDataRowFields()
 	 */
-	public final Object getFieldValue(final String fieldName) {
+	@Override
+	public Object[] getDataRowFields() {
+		return data;
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.datarow.IDataRow#getDataRowFieldValue(java.lang.String)
+	 */
+	@Override
+	public Object getDataRowFieldValue(String fieldName) {
 		return getFieldValue(getData(), fieldName);
 	}
 
-	/**
-	 * Sets the value of the specified field.
-	 * @param fieldName the name of the field whose value to set
-	 * @param fieldValue the value to set
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.datarow.IDataRow#setDataRowFieldValue(java.lang.String, java.lang.Object)
 	 */
-	public final void setFieldValue(final String fieldName, final Object fieldValue) {
+	@Override
+	public void setDataRowFieldValue(String fieldName, Object fieldValue) {
 		setFieldValue(getData(), fieldName, fieldValue);
 	}
 

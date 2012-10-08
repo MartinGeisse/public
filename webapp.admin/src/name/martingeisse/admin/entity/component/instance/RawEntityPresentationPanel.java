@@ -46,7 +46,7 @@ public class RawEntityPresentationPanel extends Panel {
 			protected void populateItem(final LoopItem item) {
 
 				// create the name label
-				final String fieldName = entityInstance.getMeta().getNames()[item.getIndex()];
+				final String fieldName = entityInstance.getDataRowMeta().getNames()[item.getIndex()];
 				item.add(new Label("name", fieldName));
 
 				// create the value label / link
@@ -74,7 +74,7 @@ public class RawEntityPresentationPanel extends Panel {
 	 * @return the row width, i.e. the number of fields
 	 */
 	public int getWidth() {
-		return entityInstance.getMeta().getNames().length;
+		return entityInstance.getDataRowMeta().getNames().length;
 	}
 
 	/* (non-Javadoc)

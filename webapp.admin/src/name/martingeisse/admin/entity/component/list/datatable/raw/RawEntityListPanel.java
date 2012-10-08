@@ -107,7 +107,7 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 	@Override
 	protected void assembleRowFields(final EntityInstance entityInstance, final JavascriptAssembler assembler) {
 		for (int i = 0; i < getColumnCount(); i++) {
-			Object value = entityInstance.getFieldValue(getColumnDescriptor(i).getFieldName());
+			Object value = entityInstance.getDataRowFieldValue(getColumnDescriptor(i).getFieldName());
 			String valueText = WicketConverterUtil.convertValueToString(value, this, MAX_TEXT_LENGTH);
 			assembler.prepareListElement();
 			assembler.appendStringLiteral(valueText);

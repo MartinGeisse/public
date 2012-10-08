@@ -71,7 +71,7 @@ public class DataRowFieldModel<R extends DataRow, F> implements IModel<F> {
 		} else {
 			row = (DataRow)container;
 		}
-		return GenericTypeUtil.unsafeCast(row.getFieldValue(fieldName));
+		return GenericTypeUtil.unsafeCast(row.getDataRowFieldValue(fieldName));
 	}
 
 	/* (non-Javadoc)
@@ -86,7 +86,7 @@ public class DataRowFieldModel<R extends DataRow, F> implements IModel<F> {
 		} else {
 			row = (DataRow)container;
 		}
-		row.setFieldValue(fieldName, fieldValue);
+		row.setDataRowFieldValue(fieldName, fieldValue);
 	}
 
 }

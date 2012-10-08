@@ -39,7 +39,7 @@ public class SettingPanel extends AbstractEntityInstancePanel {
 		add(new Label("group", new EntityInstanceFieldModel<String>(groupModel, "name")));
 
 		final EntityConditions notesPredicate = new EntityConditions();
-		notesPredicate.addFieldEquals("setting_name", instanceModel.getObject().getFieldValue("name"));
+		notesPredicate.addFieldEquals("setting_name", instanceModel.getObject().getDataRowFieldValue("name"));
 		final RawEntityListPanel notesPanel = new RawEntityListPanel("notes", "settings_notes");
 		notesPanel.acceptEntityListFilter(notesPredicate);
 		add(notesPanel);

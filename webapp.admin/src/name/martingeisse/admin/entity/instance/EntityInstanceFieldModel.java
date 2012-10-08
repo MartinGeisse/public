@@ -94,7 +94,7 @@ public class EntityInstanceFieldModel<T> implements IModel<T> {
 	@Override
 	public T getObject() {
 		EntityInstance instance = resolveInstance();
-		return (instance == null ? null : (T)instance.getFieldValue(fieldName));
+		return (instance == null ? null : (T)instance.getDataRowFieldValue(fieldName));
 	}
 
 	/* (non-Javadoc)
@@ -106,7 +106,7 @@ public class EntityInstanceFieldModel<T> implements IModel<T> {
 		if (instance == null) {
 			throw new RuntimeException("cannot set entity instance field: no entity instance found");
 		}
-		instance.setFieldValue(fieldName, object);
+		instance.setDataRowFieldValue(fieldName, object);
 	}
 
 	/**

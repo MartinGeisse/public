@@ -39,6 +39,7 @@ public final class CakephpJsonUtil {
 	 * @param modelName to key of the inner object in the outer object, or null
 	 * to just assembles the inner object.
 	 * @param resultSet the result set to read from
+	 * @throws SQLException on SQL errors
 	 */
 	public static void generateModelEntry(JavascriptAssembler assembler, String modelName, ResultSet resultSet) throws SQLException {
 		
@@ -90,7 +91,7 @@ public final class CakephpJsonUtil {
 	
 	/**
 	 * Assembles all rows from the specified resultSet, not including the current
-	 * row (if any), using {{@link #generateModelEntry(ResultSet, String)}
+	 * row (if any), using {{@link #generateModelEntry(JavascriptAssembler, String, ResultSet)}
 	 * and wrapped in a JSON array.
 	 * 
 	 * This method is intended primarily for use with a fresh {@link ResultSet}
@@ -100,6 +101,7 @@ public final class CakephpJsonUtil {
 	 * @param modelName to key of the inner object in the outer object, or null
 	 * to just return the inner object.
 	 * @param resultSet the result set to read from
+	 * @throws SQLException on SQL errors
 	 */
 	public static void generateModelList(JavascriptAssembler assembler, String modelName, ResultSet resultSet) throws SQLException {
 		assembler.beginList();

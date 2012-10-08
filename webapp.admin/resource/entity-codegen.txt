@@ -82,9 +82,35 @@ Nächste Schritte:
   spezfisch/beans/q-klassen) statt drei Fälle (generisch, spezifisch,
   gen/spez mix in verschiedenen Codeteilen).
 
+-------
 
-  
-  
-  
-  
-  
+Aktuelle Überlegung ist sogar, ob man auf die DataRow-Implementierung für Entities
+komplett verzichten kann, also nur Entities mit generierten Klassen nimmt.
+Überlegungen dazu:
+
+- IDataRow macht weiterhin Sinn für generische Tabellen, kann aber auch durch
+  Reflection ersetzt werden.
+- DataRow macht weiterhin Sinn für ResultSets aus Queries für einzelne Felder
+  statt ganzer Entities. 
+- Queries mit einzelnen Feldern machen auch für generische Tabellen Sinn.
+  Da werden die Felder aber aufgezählt, d.h. DataRow-Implementierung für
+  Entities auch hier nicht sinnvoll.
+- wegfallen würde die Klasse EntityInstance. Die generierten Bean-Klassen
+  würden direkt IDataRow implementieren (oder halt Reflection).
+
+Gefühl sagt: die Frage ist falsch gestellt. Wenn die einzelnen Komponenten erst
+mal richtig mit IDataRow u.ä. abgekoppelt sind, dann hat DataRow vs. Bean nur
+noch auf wenige Codestücke Auswirkungen. Dann könnte man DataRows auch ermöglichen,
+einfach weil es geht, oder weglassen um den EntityDescriptor zu vereinfachen.
+
+Außer dem Raw-INSTANCE-Panel greift aktuell kein Code auf die Felder per eigener
+Reihenfolge zu, nur per Name. Das RawTablePanel geht auch über den Namen (wie
+in der Raw-Table-Property-Order definiert). Die DB-Reihenfolge könnte der Codegen
+auch noch hinterlegen. Einziger Grund, den Codegen zu umgehen, wäre also, um
+den Aufwand für Codegen zu sparen und um Änderungen "direkt" zu sehen ohne den
+Codegen zu starten. Trotzdem natürlich cool wenn es gehen würde.
+
+Erst mal die Interfaces bauen und alles umstellen.
+
+
+

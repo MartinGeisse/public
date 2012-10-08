@@ -79,11 +79,11 @@ public class EntityInstance extends DataRow {
 	 * @see name.martingeisse.common.datarow.AbstractDataRowMetaHolder#setMeta(name.martingeisse.common.datarow.DataRowMeta)
 	 */
 	@Override
-	public void setMeta(final DataRowMeta meta) {
+	public void setDataRowMeta(final DataRowMeta meta) {
 		if (entityName != null) {
 			throw new UnsupportedOperationException("cannot change meta-data after construction");
 		}
-		super.setMeta(meta);
+		super.setDataRowMeta(meta);
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class EntityInstance extends DataRow {
 		if (idColumnName == null) {
 			throw new IllegalStateException("entity " + entityName + " has no primary key and cannot be viewed");
 		}
-		return getFieldValue(idColumnName);
+		return getDataRowFieldValue(idColumnName);
 	}
 
 }

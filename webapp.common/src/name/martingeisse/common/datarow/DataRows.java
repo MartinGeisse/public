@@ -40,7 +40,7 @@ public class DataRows extends AbstractDataRowMetaHolder implements Serializable 
 	 * @param meta the meta-data to set
 	 */
 	public DataRows(DataRowMeta meta) {
-		setMeta(meta);
+		setDataRowMeta(meta);
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class DataRows extends AbstractDataRowMetaHolder implements Serializable 
 	 * @throws SQLException on SQL errors
 	 */
 	public DataRows(ResultSetMetaData resultSetMetaData) throws SQLException {
-		setMeta(new DataRowMeta(resultSetMetaData));
+		setDataRowMeta(new DataRowMeta(resultSetMetaData));
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class DataRows extends AbstractDataRowMetaHolder implements Serializable 
 	 */
 	public DataRows(ResultSet resultSet, IDataRowTypeConverter[] typeConverters, IDatabaseDescriptor databaseDescriptor) throws SQLException {
 		argumentCheck(resultSet, typeConverters);
-		setMeta(new DataRowMeta(resultSet.getMetaData()));
+		setDataRowMeta(new DataRowMeta(resultSet.getMetaData()));
 		readMoreRows(resultSet, typeConverters, databaseDescriptor);
 	}
 
@@ -82,7 +82,7 @@ public class DataRows extends AbstractDataRowMetaHolder implements Serializable 
 	 */
 	public DataRows(ResultSet resultSet, IDataRowTypeConverter[] typeConverters, IDatabaseDescriptor databaseDescriptor, int rowCount) throws SQLException {
 		argumentCheck(resultSet, typeConverters);
-		setMeta(new DataRowMeta(resultSet.getMetaData()));
+		setDataRowMeta(new DataRowMeta(resultSet.getMetaData()));
 		readMoreRows(resultSet, typeConverters, databaseDescriptor, rowCount);
 	}
 	

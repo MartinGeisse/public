@@ -187,7 +187,7 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	/**
 	 * Uses the specified Joda-Time instant and formatter to append a string literal.
 	 * 
-	 * @param instant the instant to append
+	 * @param value the instant to append
 	 * @param formatter the formatter used to turn the instant into a string
 	 */
 	public final void appendJodaLiteral(ReadableInstant value, DateTimeFormatter formatter) {
@@ -218,7 +218,7 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	/**
 	 * Uses the specified Joda-Time partial and formatter to append a string literal.
 	 * 
-	 * @param partial the partial to append
+	 * @param value the partial to append
 	 * @param formatter the formatter used to turn the partial into a string
 	 */
 	public final void appendJodaLiteral(ReadablePartial value, DateTimeFormatter formatter) {

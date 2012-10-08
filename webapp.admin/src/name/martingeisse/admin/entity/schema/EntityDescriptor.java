@@ -524,7 +524,7 @@ public class EntityDescriptor {
 	 * @return the meta-data
 	 */
 	public DataRowMeta checkDataRowMeta(final AbstractDataRowMetaHolder metaHolder) {
-		return checkDataRowMeta(metaHolder.getMeta());
+		return checkDataRowMeta(metaHolder.getDataRowMeta());
 	}
 
 	/**

@@ -100,6 +100,7 @@ public class SourceCodeAssembler {
 	 * writer. This sets the current contents of the assembler to
 	 * the empty string but retains the indentation level.
 	 * @param w the writer
+	 * @throws IOException on I/O errors
 	 */
 	public void flushTo(Writer w) throws IOException {
 		w.write(builder.toString());

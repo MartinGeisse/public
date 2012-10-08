@@ -98,7 +98,7 @@ public class AbstractEntityInstancePanel extends Panel {
 		}
 		
 		// TODO unpack the entity instance for this panel to obtain the value of the key property
-		final Object keyValue = getEntityInstance().getFieldValue(nearPropertyName);
+		final Object keyValue = getEntityInstance().getDataRowFieldValue(nearPropertyName);
 		
 		// TODO see comment, this value should come from the endpoint (and be the same in both endpoints of any reference)
 		boolean nullIsReference = false;

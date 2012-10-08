@@ -15,7 +15,7 @@ import name.martingeisse.common.util.ParameterUtil;
 /**
  * Common base class for {@link DataRow} and {@link DataRows}.
  */
-public abstract class AbstractDataRowMetaHolder {
+public abstract class AbstractDataRowMetaHolder implements IDataRowMetaHolder {
 
 	/**
 	 * the meta
@@ -28,19 +28,19 @@ public abstract class AbstractDataRowMetaHolder {
 	public AbstractDataRowMetaHolder() {
 	}
 
-	/**
-	 * Getter method for the meta.
-	 * @return the meta
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.datarow.IDataRowMetaHolder#getDataRowMeta()
 	 */
-	public DataRowMeta getMeta() {
+	@Override
+	public DataRowMeta getDataRowMeta() {
 		return meta;
 	}
 
 	/**
-	 * Setter method for the meta.
-	 * @param meta the meta to set
+	 * Setter method for the meta-data.
+	 * @param meta the meta-data to set
 	 */
-	public void setMeta(final DataRowMeta meta) {
+	public void setDataRowMeta(final DataRowMeta meta) {
 		this.meta = meta;
 	}
 	
@@ -86,7 +86,7 @@ public abstract class AbstractDataRowMetaHolder {
 	 * @return the field value
 	 */
 	protected final Object getFieldValue(final Object[] data, final String fieldName) {
-		String[] fieldNames = getMeta().getNames();
+		String[] fieldNames = getDataRowMeta().getNames();
 		for (int i = 0; i < fieldNames.length; i++) {
 			if (fieldNames[i].equals(fieldName)) {
 				return data[i];
@@ -101,7 +101,7 @@ public abstract class AbstractDataRowMetaHolder {
 	 * @param fieldValue the value to set
 	 */
 	protected final void setFieldValue(final Object[] data, final String fieldName, final Object fieldValue) {
-		String[] fieldNames = getMeta().getNames();
+		String[] fieldNames = getDataRowMeta().getNames();
 		for (int i = 0; i < fieldNames.length; i++) {
 			if (fieldNames[i].equals(fieldName)) {
 				data[i] = fieldValue;

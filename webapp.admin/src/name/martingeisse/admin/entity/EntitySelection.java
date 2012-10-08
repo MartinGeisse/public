@@ -83,7 +83,7 @@ public final class EntitySelection {
 		if (referrer.getEntity() != nearReferenceEndpoint.getEntity()) {
 			throw new IllegalArgumentException("EntitySelection (from reference): referrer instance is an instance of entity " + referrer.getEntityName() + ", but reference source is " + nearReferenceEndpoint.getEntity().getName());
 		}
-		final Object referrerKey = referrer.getFieldValue(nearReferenceEndpoint.getPropertyName());
+		final Object referrerKey = referrer.getDataRowFieldValue(nearReferenceEndpoint.getPropertyName());
 		// TODO: what if referrerKey is null? check if null means "no reference" or "reference by null"? or is that clear in this context?
 
 		// build a condition object for the query
