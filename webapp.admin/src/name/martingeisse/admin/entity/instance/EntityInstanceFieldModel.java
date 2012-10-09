@@ -10,9 +10,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 
 /**
- * This model refers to a field of an {@link RawEntityInstance}.
+ * This model refers to a field of an {@link IEntityInstance}.
  * It works similar to a {@link PropertyModel}, with the 'container'
- * being either an {@link RawEntityInstance} or an appropriate
+ * being either an {@link IEntityInstance} or an appropriate
  * {@link IModel}.
  * @param <T> the field type
  */
@@ -93,7 +93,7 @@ public class EntityInstanceFieldModel<T> implements IModel<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public T getObject() {
-		RawEntityInstance instance = resolveInstance();
+		IEntityInstance instance = resolveInstance();
 		return (instance == null ? null : (T)instance.getDataRowFieldValue(fieldName));
 	}
 
@@ -102,7 +102,7 @@ public class EntityInstanceFieldModel<T> implements IModel<T> {
 	 */
 	@Override
 	public void setObject(final T object) {
-		RawEntityInstance instance = resolveInstance();
+		IEntityInstance instance = resolveInstance();
 		if (instance == null) {
 			throw new RuntimeException("cannot set entity instance field: no entity instance found");
 		}
@@ -112,12 +112,12 @@ public class EntityInstanceFieldModel<T> implements IModel<T> {
 	/**
 	 * @return the entity instance
 	 */
-	private RawEntityInstance resolveInstance() {
+	private IEntityInstance resolveInstance() {
 		if (container instanceof IModel<?>) {
 			final IModel<?> containerModel = (IModel<?>)container;
-			return (RawEntityInstance)containerModel.getObject();
+			return (IEntityInstance)containerModel.getObject();
 		} else {
-			return (RawEntityInstance)container;
+			return (IEntityInstance)container;
 		}
 	}
 

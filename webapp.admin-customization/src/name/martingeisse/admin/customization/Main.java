@@ -15,6 +15,7 @@ import java.lang.annotation.Target;
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
+import name.martingeisse.admin.application.hooks.ISchemaAwareContributor;
 import name.martingeisse.admin.application.security.SecurityConfiguration;
 import name.martingeisse.admin.component.page.login.NopLoginPage;
 import name.martingeisse.admin.customization.incubator.NavigationTabBarFactory;
@@ -25,10 +26,11 @@ import name.martingeisse.admin.entity.EntityConfiguration;
 import name.martingeisse.admin.entity.component.instance.NavigationMountedEntityAutoformPanel;
 import name.martingeisse.admin.entity.component.instance.RawEntityPresentationPanel;
 import name.martingeisse.admin.entity.component.list.datatable.populator.PopulatorColumnDescriptor;
-import name.martingeisse.admin.entity.instance.RawEntityInstance;
+import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.list.EntityConditions;
 import name.martingeisse.admin.entity.property.ExplicitEntityPropertyFilter;
 import name.martingeisse.admin.entity.property.SingleEntityPropertyFilter;
+import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.admin.entity.schema.IEntityListFieldOrder;
@@ -47,7 +49,9 @@ import name.martingeisse.admin.navigation.handler.PanelPageNavigationHandler;
 import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.common.database.EntityConnectionManager;
+import name.martingeisse.common.database.JdbcEntityDatabaseConnection;
 import name.martingeisse.common.database.MysqlDatabaseDescriptor;
+import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.wicket.autoform.AutoformPanel;
 import name.martingeisse.wicket.autoform.annotation.structure.AutoformPropertyOrder;
 import name.martingeisse.wicket.autoform.annotation.validation.AutoformAssociatedValidator;
@@ -56,10 +60,19 @@ import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropert
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
 import name.martingeisse.wicket.populator.RowFieldPopulator;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTimeZone;
 
+import com.mysema.commons.lang.CloseableIterator;
+import com.mysema.query.sql.RelationalPath;
+import com.mysema.query.sql.RelationalPathBase;
+import com.mysema.query.support.Expressions;
+import com.mysema.query.types.Expression;
 import com.mysema.query.types.Ops;
+import com.mysema.query.types.Path;
 import com.mysema.query.types.Predicate;
+import com.mysema.query.types.PredicateOperation;
+import com.mysema.query.types.expr.Wildcard;
 
 /**
  * The main class.
@@ -150,6 +163,27 @@ public class Main {
 		EntityConnectionManager.initializeDatabaseDescriptors(phorumDatabase);
 		
 		// test
+		JdbcEntityDatabaseConnection connection = phorumDatabase.createConnection();
+
+//		CloseableIterator<PhorumSettings> it = connection.createQuery().from(QPhorumSettings.phorumSettings).iterate(QPhorumSettings.phorumSettings);
+//		while (it.hasNext()) {
+//			System.out.println("* " + it.next().getName());
+//		}
+		
+		RelationalPathBase<?> path = new RelationalPathBase<Object>(Object.class, "e", null, "phorum_settings");
+		Path<String> namePath = Expressions.path(String.class, path, "name");
+		Expression<String> pattern = Expressions.constant("d%");
+		Predicate predicate = new PredicateOperation(Ops.LIKE, namePath, pattern);
+		CloseableIterator<Object[]> it = connection.createQuery().from(path).where(predicate).iterate(Wildcard.all);
+		while (it.hasNext()) {
+			Object[] data = it.next();
+			System.out.println("* " + StringUtils.join(data, ", "));
+		}
+		
+		connection.dispose();
+		System.exit(0);
+		
+		// test
 //		JdbcSchemaStructure schema = new JdbcSchemaStructure(phorumDatabase.createJdbcConnection());
 //		schema.dump();
 //		System.exit(0);
@@ -221,7 +255,7 @@ public class Main {
 				return new IEntitySearchStrategy() {
 					@Override
 					public Predicate createFilter(EntityDescriptor entity, String searchTerm) {
-						EntityConditions conditions = new EntityConditions();
+						EntityConditions conditions = new EntityConditions(entity);
 						conditions.addFieldComparison("name", Ops.LIKE, "%" + searchTerm.replace("%", "") + "%");
 						return conditions;
 					}
@@ -243,8 +277,15 @@ public class Main {
 		IEntityAnnotatedClassResolver classResolver = new EntityAutoformAnnotatedClassResolver("name.martingeisse.admin.customization.entity");
 		EntityCapabilities.entityAnnotationContributorCapability.add(new AnnotatedClassEntityAnnotationContributor(classResolver));
 		
+		// initialize navigation only after the application schema has been built
+		ISchemaAwareContributor.CAPABILITY_KEY.add(new ISchemaAwareContributor() {
+			@Override
+			public void contribute() {
+				buildNavigation();
+			}
+		});
+		
 		// run
-		buildNavigation();
 		Launcher.launch();
 
 	}
@@ -334,8 +375,11 @@ public class Main {
 		root.getChildFactory().createChild("tabletest", "TableTest", new EntityListPanelHandler(RenderedEntityDataTablePanelTest.class, "settings"));
 		
 		{
-			PopulatorColumnDescriptor column1 = new PopulatorColumnDescriptor("name", "name", new RowFieldPopulator<RawEntityInstance>("name"));
-			PopulatorColumnDescriptor column2 = new PopulatorColumnDescriptor("value", new RowFieldPopulator<RawEntityInstance>("data"));
+			RelationalPath<?> entityPath = ApplicationSchema.instance.findRequiredEntity("settings").getQueryBuilder().getDefaultPath();
+			Path<Comparable<?>> namePath = GenericTypeUtil.unsafeCast(Expressions.path(String.class, entityPath, "name"));
+			
+			PopulatorColumnDescriptor column1 = new PopulatorColumnDescriptor("name", namePath, new RowFieldPopulator<IEntityInstance>("name"));
+			PopulatorColumnDescriptor column2 = new PopulatorColumnDescriptor("value", new RowFieldPopulator<IEntityInstance>("data"));
 			PopulatorColumnDescriptor[] columns = new PopulatorColumnDescriptor[] {column1, column2};
 			root.getChildFactory().createChild("tabletest2", "TableTest2", new PopulatorBasedEntityListHandler("settings", columns));
 		}

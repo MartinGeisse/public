@@ -7,13 +7,10 @@
 package name.martingeisse.admin.entity.schema;
 
 import java.lang.annotation.Annotation;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.util.List;
 
 import name.martingeisse.admin.entity.EntitySelection;
-import name.martingeisse.admin.entity.instance.RawEntityInstance;
+import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.schema.orm.EntitySpecificCodeMapping;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.entity.schema.search.EntitySearcher;
@@ -23,20 +20,8 @@ import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.database.IEntityDatabaseConnection;
-import name.martingeisse.common.datarow.AbstractDataRowMetaHolder;
 import name.martingeisse.common.datarow.DataRowMeta;
 import name.martingeisse.common.util.ClassKeyedContainer;
-import name.martingeisse.common.util.ParameterUtil;
-
-import com.mysema.query.sql.RelationalPath;
-import com.mysema.query.sql.RelationalPathBase;
-import com.mysema.query.sql.SQLQuery;
-import com.mysema.query.sql.dml.SQLDeleteClause;
-import com.mysema.query.sql.dml.SQLInsertClause;
-import com.mysema.query.sql.dml.SQLUpdateClause;
-import com.mysema.query.support.Expressions;
-import com.mysema.query.types.Path;
-import com.mysema.query.types.Predicate;
 
 /**
  * This class captures a descriptor for a database entity (table).
@@ -49,12 +34,6 @@ import com.mysema.query.types.Predicate;
  * key). Currently only single-column IDs are supported.
  */
 public class EntityDescriptor {
-
-	/**
-	 * The default alias used for the entity in database queries.
-	 * Filter predicates should use this to access fields of the entity being filtered.
-	 */
-	public static final String ALIAS = "e";
 
 	/**
 	 * the name
@@ -130,6 +109,11 @@ public class EntityDescriptor {
 	 * the specificCodeMapping
 	 */
 	private EntitySpecificCodeMapping specificCodeMapping;
+	
+	/**
+	 * the queryBuilder
+	 */
+	private final EntityQueryBuilder queryBuilder = new EntityQueryBuilder(this);
 
 	/**
 	 * Constructor.
@@ -369,11 +353,27 @@ public class EntityDescriptor {
 		this.specificCodeMapping = specificCodeMapping;
 	}
 
-	// ----------------------------------------
-	// TODO: clean up the code below this line
+	/**
+	 * Returns a connection for this entity. The connection is shared within
+	 * the same HTTP request and created on-demand. The connection should not
+	 * be disposed manually; this is done by a servlet filter.
+	 * 
+	 * @return the database connection for the database that contains this entity.
+	 */
+	public IEntityDatabaseConnection getConnection() {
+		return EntityConnectionManager.getConnection(getDatabase());
+	}
 
 	/**
-	 * Fetches a single instance of this entity.
+	 * Getter method for the queryBuilder.
+	 * @return the queryBuilder
+	 */
+	public EntityQueryBuilder getQueryBuilder() {
+		return queryBuilder;
+	}
+	
+	/**
+	 * Fetches a single instance of this entity using its ID.
 	 * 
 	 * The 'optional' flag specifies what happens if no instance can be found.
 	 * If the flag is true, then the instance is optional, and this method
@@ -384,7 +384,7 @@ public class EntityDescriptor {
 	 * @param optional whether the existence of the instance is optional
 	 * @return the fields
 	 */
-	public RawEntityInstance fetchSingleInstance(final Object id, final boolean optional) {
+	public IEntityInstance fetchById(final Object id, final boolean optional) {
 		return EntitySelection.forId(this, id).fetchSingleInstance(optional);
 	}
 
@@ -401,154 +401,5 @@ public class EntityDescriptor {
 		}
 		return null;
 	}
-
-	/**
-	 * Creates and returns a {@link RelationalPath} to fetch this entity.
-	 * @param alias the alias to use
-	 * @return the relational path
-	 */
-	public RelationalPath<Object> createRelationalPath(final String alias) {
-		ParameterUtil.ensureNotNull(alias, "alias");
-		return new RelationalPathBase<Object>(Object.class, alias, null, tableName);
-	}
-
-	/**
-	 * Queries this entity using the specified connection and alias.
-	 * @param alias the alias for this entity
-	 * @return the query
-	 */
-	public SQLQuery createQuery(final String alias) {
-		ParameterUtil.ensureNotNull(alias, "alias");
-		return getConnection().createQuery().from(createRelationalPath(alias));
-	}
-
-	/**
-	 * Queries for the number of instances of this entity, or the number of
-	 * instances accepted by the specified filter predicate.
-	 * @param filterPredicate the filter predicate
-	 * @return the number of instances
-	 */
-	public long count(final Predicate filterPredicate) {
-		SQLQuery countQuery = createQuery(ALIAS);
-		if (filterPredicate != null) {
-			countQuery = countQuery.where(filterPredicate);
-		}
-		return countQuery.count();
-	}
-
-	/**
-	 * Creates an {@link SQLInsertClause} for this entity.
-	 * 
-	 * @param alias the alias for this entity
-	 * @return the insert clause
-	 */
-	public SQLInsertClause createInsert(final String alias) {
-		ParameterUtil.ensureNotNull(alias, "alias");
-		return getConnection().createInsert(createRelationalPath(alias));
-	}
-
-	/**
-	 * Creates an {@link SQLInsertClause} for this entity using the specified
-	 * columns. This is a convenience method to allow specifying the column
-	 * names as strings instead of {@link Path}s.
-	 * 
-	 * @param alias the alias for this entity
-	 * @param columns the column names
-	 * @return the insert clause
-	 */
-	public SQLInsertClause createInsert(final String alias, final String... columns) {
-		ParameterUtil.ensureNotNull(alias, "alias");
-		ParameterUtil.ensureNotNull(columns, "columns");
-		ParameterUtil.ensureNoNullElement(columns, "columns");
-		final Path<?>[] paths = new Path<?>[columns.length];
-		for (int i = 0; i < paths.length; i++) {
-			paths[i] = Expressions.path(Object.class, columns[i]);
-		}
-		return createInsert(alias).columns(paths);
-	}
-
-	/**
-	 * Creates an {@link SQLUpdateClause} for this entity.
-	 * 
-	 * @param alias the alias for this entity
-	 * @return the update clause
-	 */
-	public SQLUpdateClause createUpdate(final String alias) {
-		ParameterUtil.ensureNotNull(alias, "alias");
-		return getConnection().createUpdate(createRelationalPath(alias));
-	}
-
-	/**
-	 * Creates an {@link SQLDeleteClause} for this entity.
-	 * 
-	 * @param alias the alias for this entity
-	 * @return the delete clause
-	 */
-	public SQLDeleteClause createDelete(final String alias) {
-		ParameterUtil.ensureNotNull(alias, "alias");
-		return getConnection().createDelete(createRelationalPath(alias));
-	}
-
-	/**
-	 * This method delegates to checkDataRowMeta(resultSet.getMetaData()).
-	 * @param resultSet the result set
-	 * @return the meta-data
-	 * @throws SQLException on SQL errors
-	 */
-	public DataRowMeta checkDataRowMeta(final ResultSet resultSet) throws SQLException {
-		return checkDataRowMeta(resultSet.getMetaData());
-	}
-
-	/**
-	 * Ensures that the data row meta-data for this entity is equal to the one
-	 * for the specified result set meta-data. Throws an {@link IllegalStateException}
-	 * if that is not the case. This indicates that the table schema is no longer
-	 * the same as when this {@link EntityDescriptor} was created, i.e. that the
-	 * table schema has been changed while the admin application was running.
-	 * Otherwise returns the shared row meta-data object.
-	 * 
-	 * @param resultSetMetaData the meta-data to check
-	 * @return the shared meta-data
-	 * @throws SQLException on SQL errors
-	 */
-	public DataRowMeta checkDataRowMeta(final ResultSetMetaData resultSetMetaData) throws SQLException {
-		if (!dataRowMeta.equals(new DataRowMeta(resultSetMetaData))) {
-			throw new IllegalStateException("data row schema for entity " + getName() + " does not match");
-		}
-		return dataRowMeta;
-	}
-
-	/**
-	 * This method delegates to checkDataRowMeta(metaHolder.getMeta()).
-	 * @param metaHolder the meta-data holder
-	 * @return the meta-data
-	 */
-	public DataRowMeta checkDataRowMeta(final AbstractDataRowMetaHolder metaHolder) {
-		return checkDataRowMeta(metaHolder.getDataRowMeta());
-	}
-
-	/**
-	 * Ensures that the data row meta-data for this entity is equal to the specified one.
-	 * Throws an {@link IllegalStateException} if that is not the case. This indicates
-	 * that the table schema is no longer the same as when this {@link EntityDescriptor}
-	 * was created, i.e. that the table schema has been changed while the admin
-	 * application was running. Otherwise returns the shared row meta-data object.
-	 * 
-	 * @param meta the meta-data to check
-	 * @return the shared meta-data
-	 */
-	public DataRowMeta checkDataRowMeta(final DataRowMeta meta) {
-		if (!dataRowMeta.equals(meta)) {
-			throw new IllegalStateException("data row schema for entity " + getName() + " does not match");
-		}
-		return dataRowMeta;
-	}
-
-	/**
-	 * @return the database connection for the database that contains this entity.
-	 */
-	public IEntityDatabaseConnection getConnection() {
-		return EntityConnectionManager.getConnection(getDatabase());
-	}
-
+	
 }

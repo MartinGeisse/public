@@ -7,7 +7,7 @@
 package name.martingeisse.admin.entity.component.instance.page;
 
 import name.martingeisse.admin.component.page.AbstractAdminPage;
-import name.martingeisse.admin.entity.instance.RawEntityInstance;
+import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.type.IEntityIdTypeInfo;
 import name.martingeisse.common.util.ParameterUtil;
@@ -29,7 +29,7 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 	/**
 	 * the instance
 	 */
-	private transient RawEntityInstance instance;
+	private transient IEntityInstance instance;
 
 	/**
 	 * Constructor.
@@ -48,7 +48,7 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 	protected void onInitialize() {
 		super.onInitialize();
 		final Class<? extends Panel> panelClass = determinePanelClass();
-		final IModel<RawEntityInstance> instanceModel = new PropertyModel<RawEntityInstance>(this, "instance");
+		final IModel<IEntityInstance> instanceModel = new PropertyModel<IEntityInstance>(this, "instance");
 		try {
 			getMainContainer().add(panelClass.getConstructor(String.class, IModel.class).newInstance("panel", instanceModel));
 		} catch (final NoSuchMethodException e) {
@@ -71,9 +71,9 @@ public abstract class AbstractEntityInstancePanelPage extends AbstractAdminPage 
 	 * Getter method for the instance.
 	 * @return the instance
 	 */
-	public final RawEntityInstance getInstance() {
+	public final IEntityInstance getInstance() {
 		if (instance == null) {
-			instance = ReturnValueUtil.nullMeansMissing(determineEntityType(), "entity descriptor").fetchSingleInstance(determineId(), false);
+			instance = ReturnValueUtil.nullMeansMissing(determineEntityType(), "entity descriptor").fetchById(determineId(), false);
 		}
 		return instance;
 	}

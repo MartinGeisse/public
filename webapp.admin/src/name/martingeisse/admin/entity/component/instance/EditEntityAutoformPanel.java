@@ -9,8 +9,7 @@ package name.martingeisse.admin.entity.component.instance;
 import java.util.List;
 
 import name.martingeisse.admin.entity.EntityConfiguration;
-import name.martingeisse.admin.entity.instance.RawEntityInstance;
-import name.martingeisse.admin.entity.list.EntityExpressionUtil;
+import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.autoform.EntityAutoformDescriber;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
@@ -26,9 +25,12 @@ import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor;
 
 import org.apache.wicket.model.IModel;
 
+import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.support.Expressions;
+import com.mysema.query.types.Ops;
 import com.mysema.query.types.Path;
+import com.mysema.query.types.PredicateOperation;
 
 /**
  * This autoform allows editing an entity instance.
@@ -53,7 +55,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 	 * @param id the wicket id
 	 * @param model the entity instance model
 	 */
-	public EditEntityAutoformPanel(final String id, final IModel<RawEntityInstance> model) {
+	public EditEntityAutoformPanel(final String id, final IModel<IEntityInstance> model) {
 		this(id, ParameterUtil.ensureNotNull(model, "model").getObject(), EntityAutoformDescriber.instance, EntityConfiguration.parameterKey.get().getAutoformPropertyComponentFactory());
 	}
 
@@ -64,7 +66,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 	 * @param beanDescriber the bean describer that extracts meta-data from the bean
 	 * @param propertyComponentFactory the factory used to create components for the bean properties
 	 */
-	public EditEntityAutoformPanel(String id, RawEntityInstance bean, IAutoformBeanDescriber beanDescriber, IAutoformPropertyComponentFactory propertyComponentFactory) {
+	public EditEntityAutoformPanel(String id, IEntityInstance bean, IAutoformBeanDescriber beanDescriber, IAutoformPropertyComponentFactory propertyComponentFactory) {
 		super(id, ParameterUtil.ensureNotNull(bean, "bean"), ParameterUtil.ensureNotNull(beanDescriber, "beanDescriber"), ParameterUtil.ensureNotNull(propertyComponentFactory, "propertyComponentFactory"));
 	}
 	
@@ -72,7 +74,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 	 * Getter method for the model.
 	 * @return the model
 	 */
-	public final IModel<RawEntityInstance> getModel() {
+	public final IModel<IEntityInstance> getModel() {
 		return GenericTypeUtil.unsafeCast(ReturnValueUtil.nullMeansMissing(getDefaultModel(), "model"));
 	}
 
@@ -84,7 +86,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 	 *  
 	 * @param model the model to set
 	 */
-	public final void setModel(final IModel<RawEntityInstance> model) {
+	public final void setModel(final IModel<IEntityInstance> model) {
 		// setDefaultModel(model);
 		throw new UnsupportedOperationException();
 	}
@@ -93,7 +95,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 	 * Getter method for the entityInstance.
 	 * @return the entityInstance
 	 */
-	public final RawEntityInstance getEntityInstance() {
+	public final IEntityInstance getEntityInstance() {
 		return ReturnValueUtil.nullMeansMissing(getModel().getObject(), "entity instance");
 	}
 	
@@ -123,15 +125,16 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 		// collect some objects we will need
 		EntityDescriptor entity = getEntityDescriptor();
 		IAutoformBeanDescriptor beanDescriptor = getBeanDescriptor();
-		RawEntityInstance bean = (RawEntityInstance)beanDescriptor.getBean();
+		IEntityInstance bean = (IEntityInstance)beanDescriptor.getBean();
 		
 		// prepare an "empty" update clause for the entity instance being edited
-		SQLUpdateClause update = entity.createUpdate(entity.getTableName());
-		update.where(EntityExpressionUtil.fieldEquals(entity.getTableName(), entity.getIdColumnName(), bean.getEntityId()));
+		RelationalPath<?> entityPath = entity.getQueryBuilder().getDefaultPath();
+		SQLUpdateClause update = entity.getQueryBuilder().createUpdate(entityPath);
+		Path<?> idPath = Expressions.path(Object.class, entityPath, entity.getIdColumnName());
+		update.where(new PredicateOperation(Ops.EQ, idPath, Expressions.constant(bean.getEntityId())));
 
 		// add "set" clauses for each property that is writable in this autoform
 		List<IAutoformPropertyDescriptor> writableProperties = AutoformUtil.getPropertiesByReadOnlyFlag(beanDescriptor, false);
-		Path<Object> entityPath = EntityExpressionUtil.entityPath();
 		for (IAutoformPropertyDescriptor property : writableProperties) {
 			Object workObject = property.getModel().getObject();
 			Object databaseObject = entity.getProperties().get(property.getName()).getType().convertForSave(workObject, entity.getDatabase());

@@ -6,7 +6,6 @@
 
 package name.martingeisse.common.datarow;
 
-import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -16,7 +15,7 @@ import name.martingeisse.common.database.IDatabaseDescriptor;
 /**
  * Default implementation of {@link IDataRow} based on an array.
  */
-public class DataRow extends AbstractDataRowMetaHolder implements Serializable, IDataRow {
+public class DataRow extends AbstractDataRowMetaHolder implements IDataRow {
 
 	/**
 	 * the data

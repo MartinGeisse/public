@@ -6,12 +6,11 @@
 
 package name.martingeisse.admin.entity;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import name.martingeisse.admin.entity.component.list.EntityInstanceDataProvider;
-import name.martingeisse.admin.entity.instance.RawEntityInstance;
+import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.list.EntityConditions;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
@@ -22,7 +21,6 @@ import org.apache.wicket.model.IModel;
 
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.types.Predicate;
-import com.mysema.query.types.expr.Wildcard;
 import com.mysema.query.types.template.BooleanTemplate;
 
 /**
@@ -73,13 +71,13 @@ public final class EntitySelection {
 	 * @param referrerInstanceModel the referrer model
 	 * @param nearReferenceEndpoint the near endpoint of the reference
 	 */
-	public EntitySelection(final IModel<RawEntityInstance> referrerInstanceModel, final EntityReferenceEndpoint nearReferenceEndpoint) {
+	public EntitySelection(final IModel<IEntityInstance> referrerInstanceModel, final EntityReferenceEndpoint nearReferenceEndpoint) {
 		ParameterUtil.ensureNotNull(referrerInstanceModel, "referrerInstanceModel");
 		ParameterUtil.ensureNotNull(nearReferenceEndpoint, "nearReferenceEndpoint");
 		final EntityReferenceEndpoint farReferenceEndpoint = nearReferenceEndpoint.getOther();
 		
 		// obtain the value of the key property in the referrer
-		final RawEntityInstance referrer = ObjectStateUtil.nullMeansMissing(referrerInstanceModel.getObject(), "referrer (entity instance)") ;
+		final IEntityInstance referrer = ObjectStateUtil.nullMeansMissing(referrerInstanceModel.getObject(), "referrer (entity instance)") ;
 		if (referrer.getEntity() != nearReferenceEndpoint.getEntity()) {
 			throw new IllegalArgumentException("EntitySelection (from reference): referrer instance is an instance of entity " + referrer.getEntityName() + ", but reference source is " + nearReferenceEndpoint.getEntity().getName());
 		}
@@ -87,7 +85,7 @@ public final class EntitySelection {
 		// TODO: what if referrerKey is null? check if null means "no reference" or "reference by null"? or is that clear in this context?
 
 		// build a condition object for the query
-		final EntityConditions conditions = new EntityConditions();
+		final EntityConditions conditions = new EntityConditions(farReferenceEndpoint.getEntity());
 		conditions.addFieldEquals(farReferenceEndpoint.getPropertyName(), referrerKey);
 
 		// initialize this entity selection
@@ -194,7 +192,7 @@ public final class EntitySelection {
 		if (propertyValue == null && !nullIsReference) {
 			return new EntitySelection(entityModel, BooleanTemplate.FALSE);
 		} else {
-			final EntityConditions conditions = new EntityConditions();
+			final EntityConditions conditions = new EntityConditions(entity);
 			conditions.addFieldEquals(propertyName, propertyValue);
 			return new EntitySelection(entityModel, conditions);
 		}
@@ -215,44 +213,10 @@ public final class EntitySelection {
 	public Predicate getPredicate() {
 		return predicate;
 	}
-
-	/**
-	 * Executes a query using the entity and (optionally) the predicate from this selection
-	 * and returns a {@link ResultSet} for it.
-	 * @return the result set
-	 */
-	public ResultSet executeQuery() {
-		return executeQueryFor(entityModel, predicate);
-	}
-
-	/**
-	 * Static version of executeQuery().
-	 * @param entityModel the model for the entity descriptor
-	 * @param predicate the filter predicate
-	 * @return the result set
-	 */
-	public static ResultSet executeQueryFor(IModel<EntityDescriptor> entityModel, Predicate predicate) {
-		ParameterUtil.ensureNotNull(entityModel, "entityModel");
-		return executeQueryFor(entityModel.getObject(), predicate);
-	}
-
-	/**
-	 * Static version of executeQuery().
-	 * @param entity the entity descriptor
-	 * @param predicate the filter predicate
-	 * @return the result set
-	 */
-	public static ResultSet executeQueryFor(EntityDescriptor entity, Predicate predicate) {
-		ParameterUtil.ensureNotNull(entity, "entity");
-		SQLQuery query = entity.createQuery(EntityDescriptor.ALIAS);
-		if (predicate != null) {
-			query = query.where(predicate);
-		}
-		return query.getResults(Wildcard.all);
-	}
 	
 	/**
-	 * Executes a query using the entity and (optionally) the predicate from this selection.
+	 * Executes a query using the entity and (optionally) the predicate from this selection
+	 * to fetch a single instance.
 	 * 
 	 * If no such instance was found in the database, then the "optional" flag determines
 	 * what happens: If this flag is set, then this method returns null. Otherwise this
@@ -261,7 +225,7 @@ public final class EntitySelection {
 	 * @param optional whether the entity instance is optional
 	 * @return the instance
 	 */
-	public RawEntityInstance fetchSingleInstance(final boolean optional) {
+	public IEntityInstance fetchSingleInstance(final boolean optional) {
 		return fetchSingleInstanceFor(entityModel, predicate, optional);
 	}
 
@@ -272,7 +236,7 @@ public final class EntitySelection {
 	 * @param optional whether the entity instance is optional
 	 * @return the instance
 	 */
-	public static RawEntityInstance fetchSingleInstanceFor(IModel<EntityDescriptor> entityModel, Predicate predicate, final boolean optional) {
+	public static IEntityInstance fetchSingleInstanceFor(IModel<EntityDescriptor> entityModel, Predicate predicate, final boolean optional) {
 		ParameterUtil.ensureNotNull(entityModel, "entityModel");
 		return fetchSingleInstanceFor(entityModel.getObject(), predicate, optional);
 	}
@@ -284,22 +248,65 @@ public final class EntitySelection {
 	 * @param optional whether the entity instance is optional
 	 * @return the instance
 	 */
-	public static RawEntityInstance fetchSingleInstanceFor(EntityDescriptor entity, Predicate predicate, final boolean optional) {
+	public static IEntityInstance fetchSingleInstanceFor(EntityDescriptor entity, Predicate predicate, final boolean optional) {
 		ParameterUtil.ensureNotNull(entity, "entity");
-		try {
-			final ResultSet resultSet = executeQueryFor(entity, predicate);
-			entity.checkDataRowMeta(resultSet);
-			if (resultSet.next()) {
-				return new RawEntityInstance(entity, resultSet);
-			} else if (optional) {
-				return null;
-			} else {
-				throw new NoSuchElementException("no instance of entity '" + entity.getName() + "' with conditions: " + predicate);
-			}
-		} catch (final SQLException e) {
-			throw new RuntimeException(e);
+		
+		// build the query
+		SQLQuery query = entity.getQueryBuilder().createQuery();
+		if (predicate != null) {
+			query = query.where(predicate);
 		}
+		query = query.limit(1);
+		
+		// fetch the row
+		IEntityInstance result = entity.getQueryBuilder().getSingle(query);
+		if (result == null && !optional) {
+			throw new NoSuchElementException("no instance of entity '" + entity.getName() + "' with conditions: " + predicate);
+		}
+		return result;
+		
 	}
+	
+	/**
+	 * Executes a query using the entity and (optionally) the predicate from this selection
+	 * to fetch all instances.
+	 * 
+	 * @return the instance
+	 */
+	public List<IEntityInstance> fetchAllInstances() {
+		return fetchAllInstancesFor(entityModel, predicate);
+	}
+
+	/**
+	 * Static version of fetchAllInstances().
+	 * @param entityModel the model for the entity descriptor
+	 * @param predicate the filter predicate
+	 * @return the instance
+	 */
+	public static List<IEntityInstance> fetchAllInstancesFor(IModel<EntityDescriptor> entityModel, Predicate predicate) {
+		ParameterUtil.ensureNotNull(entityModel, "entityModel");
+		return fetchAllInstancesFor(entityModel.getObject(), predicate);
+	}
+	
+	/**
+	 * Static version of fetchAllInstances().
+	 * @param entity the entity descriptor
+	 * @param predicate the filter predicate
+	 * @return the instance
+	 */
+	public static List<IEntityInstance> fetchAllInstancesFor(EntityDescriptor entity, Predicate predicate) {
+		ParameterUtil.ensureNotNull(entity, "entity");
+		
+		// build the query
+		SQLQuery query = entity.getQueryBuilder().createQuery();
+		if (predicate != null) {
+			query = query.where(predicate);
+		}
+		
+		// fetch the rows
+		return entity.getQueryBuilder().getAll(query);
+		
+	}	
 	
 	/**
 	 * Creates a Wicket {@link IModel} that has the same effect as fetchSingleInstance(optional).

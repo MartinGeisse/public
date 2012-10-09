@@ -47,9 +47,11 @@ public class RawEntityInstance extends DataRow implements IEntityInstance {
 	 */
 	public RawEntityInstance(final EntityDescriptor entity, final ResultSet resultSet) throws SQLException {
 		super(ParameterUtil.ensureNotNull(resultSet, "resultSet"), ParameterUtil.ensureNotNull(entity, "entity").getDataRowTypes(), entity.getDatabase());
-		entity.checkDataRowMeta(this);
 		this.entityName = entity.getName();
 		this.entity = entity;
+		if (!entity.getDataRowMeta().equals(getDataRowMeta())) {
+			throw new IllegalStateException("data row schema for entity " + entity.getName() + " does not match");
+		}
 	}
 
 	/**

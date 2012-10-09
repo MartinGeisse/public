@@ -9,7 +9,7 @@ package name.martingeisse.admin.entity.component.list.datatable.raw;
 import name.martingeisse.admin.entity.EntityDescriptorModel;
 import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel;
-import name.martingeisse.admin.entity.instance.RawEntityInstance;
+import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.util.IGetPageable;
 import name.martingeisse.admin.util.LinkUtil;
@@ -19,9 +19,9 @@ import name.martingeisse.wicket.util.WicketConverterUtil;
 
 import org.apache.wicket.model.IModel;
 
+import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.support.Expressions;
 import com.mysema.query.types.Expression;
-import com.mysema.query.types.Path;
 
 /**
  * Raw presentation of entities, using JQuery DataTables. This class does not
@@ -97,7 +97,7 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 	 */
 	@Override
 	protected Expression<Comparable<?>> getColumnSortExpression(final int columnIndex) {
-		final Path<?> entityPath = Expressions.path(Object.class, EntityDescriptor.ALIAS);
+		final RelationalPath<?> entityPath = getEntityDescriptor().getQueryBuilder().getDefaultPath();
 		return GenericTypeUtil.unsafeCast(Expressions.path(Comparable.class, entityPath, getColumnDescriptor(columnIndex).getFieldName()));
 	}
 
@@ -105,7 +105,7 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel#assembleRowFields(name.martingeisse.admin.entity.instance.EntityInstance, name.martingeisse.common.javascript.JavascriptAssembler)
 	 */
 	@Override
-	protected void assembleRowFields(final RawEntityInstance entityInstance, final JavascriptAssembler assembler) {
+	protected void assembleRowFields(final IEntityInstance entityInstance, final JavascriptAssembler assembler) {
 		for (int i = 0; i < getColumnCount(); i++) {
 			Object value = entityInstance.getDataRowFieldValue(getColumnDescriptor(i).getFieldName());
 			String valueText = WicketConverterUtil.convertValueToString(value, this, MAX_TEXT_LENGTH);

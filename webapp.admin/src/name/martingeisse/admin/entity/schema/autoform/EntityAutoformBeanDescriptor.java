@@ -10,7 +10,7 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 
-import name.martingeisse.admin.entity.instance.RawEntityInstance;
+import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.common.util.ClassKeyedContainer;
 import name.martingeisse.wicket.autoform.describe.AbstractAutoformBeanDescriptor;
 import name.martingeisse.wicket.autoform.describe.IAutoformBeanDescriptor;
@@ -19,14 +19,14 @@ import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor;
 /**
  * {@link IAutoformBeanDescriptor} implementation for entity instances.
  */
-public class EntityAutoformBeanDescriptor extends AbstractAutoformBeanDescriptor<RawEntityInstance> {
+public class EntityAutoformBeanDescriptor extends AbstractAutoformBeanDescriptor<IEntityInstance> {
 
 	/**
 	 * Constructor.
 	 * @param entityInstance the entity instance
 	 * @param propertyDescriptors the property descriptors
 	 */
-	public EntityAutoformBeanDescriptor(final RawEntityInstance entityInstance, final List<IAutoformPropertyDescriptor> propertyDescriptors) {
+	public EntityAutoformBeanDescriptor(final IEntityInstance entityInstance, final List<IAutoformPropertyDescriptor> propertyDescriptors) {
 		super(entityInstance, propertyDescriptors);
 	}
 
