@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.RawEntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.common.computation.operation.AbstractForeachOperation;
 import name.martingeisse.common.computation.operation.ForeachHandlingMode;
@@ -37,7 +37,7 @@ import com.mysema.query.types.expr.Wildcard;
  * @param <P> internal per-call parameter type. This type is typically decided
  * on by the concrete subclass since it knows which data to pass around.
  */
-public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachOperation<EntityInstance, P> {
+public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachOperation<RawEntityInstance, P> {
 
 	/**
 	 * the logger
@@ -129,7 +129,7 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	 * @see name.martingeisse.common.computation.operation.AbstractForeachOperation#determineList(java.lang.Object)
 	 */
 	@Override
-	protected List<EntityInstance> determineList(final P parameter) {
+	protected List<RawEntityInstance> determineList(final P parameter) {
 		try {
 
 			// obtain a ResultSet
@@ -139,7 +139,7 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 
 			// fetch rows
 			entityDescriptor.checkDataRowMeta(resultSet);
-			final List<EntityInstance> rows = new ArrayList<EntityInstance>();
+			final List<RawEntityInstance> rows = new ArrayList<RawEntityInstance>();
 			while (resultSet.next()) {
 				rows.add(ReturnValueUtil.nullNotAllowed(convertRow(parameter, resultSet), "convertRow()"));
 			}
@@ -173,24 +173,24 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	/**
 	 * Converts the current row from the specified result set to an entity instance.
 	 * Overriding this method basically allows subclasses of this class to use
-	 * subclasses of {@link EntityInstance}. Operations need not override this
-	 * method if {@link EntityInstance} fits their needs.
+	 * subclasses of {@link RawEntityInstance}. Operations need not override this
+	 * method if {@link RawEntityInstance} fits their needs.
 	 * 
 	 * @param parameter internal per-call parameter
 	 * @param resultSet the result set
 	 * @return the entity instance
 	 * @throws SQLException on SQL errors
 	 */
-	protected EntityInstance convertRow(final P parameter, final ResultSet resultSet) throws SQLException {
+	protected RawEntityInstance convertRow(final P parameter, final ResultSet resultSet) throws SQLException {
 		ParameterUtil.ensureNotNull(resultSet, "resultSet");
-		return new EntityInstance(entityDescriptor, resultSet);
+		return new RawEntityInstance(entityDescriptor, resultSet);
 	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.common.computation.operation.AbstractForeachOperation#onListObtained(java.lang.Object, java.util.List)
 	 */
 	@Override
-	protected void onListObtained(final P parameter, final List<EntityInstance> list) {
+	protected void onListObtained(final P parameter, final List<RawEntityInstance> list) {
 		super.onListObtained(parameter, list);
 		logger.debug(this.getClass().getName() + ": " + list.size() + " rows found");
 	}
@@ -226,7 +226,7 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	 * @see name.martingeisse.common.computation.operation.AbstractForeachOperation#handleElementAndContextWork(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	protected void handleElementAndContextWork(final P parameter, final EntityInstance element) {
+	protected void handleElementAndContextWork(final P parameter, final RawEntityInstance element) {
 		IEntityDatabaseConnection connection = getConnection();
 		if (transactionMode.isIncludesLocal()) {
 			connection.begin();
@@ -241,7 +241,7 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	 * @see name.martingeisse.common.computation.operation.AbstractForeachOperation#onLocalException(java.lang.Object, java.lang.Object, java.lang.Exception)
 	 */
 	@Override
-	protected void onLocalException(final P parameter, final EntityInstance element, final Exception e) {
+	protected void onLocalException(final P parameter, final RawEntityInstance element, final Exception e) {
 		super.onLocalException(parameter, element, e);
 		IEntityDatabaseConnection connection = getConnection();
 		if (transactionMode.isIncludesLocal()) {

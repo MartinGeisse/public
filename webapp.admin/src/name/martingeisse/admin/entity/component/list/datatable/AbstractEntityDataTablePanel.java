@@ -10,7 +10,7 @@ import java.util.Iterator;
 
 import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.component.list.EntityInstanceDataProvider;
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.RawEntityInstance;
 import name.martingeisse.admin.entity.list.IEntityPredicateAcceptor;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.util.IGetPageable;
@@ -281,17 +281,17 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 	 * @param entityInstance the entity instance to assembler data for
 	 * @param assembler the assembler to use
 	 */
-	protected abstract void assembleRowFields(EntityInstance entityInstance, JavascriptAssembler assembler);
+	protected abstract void assembleRowFields(RawEntityInstance entityInstance, JavascriptAssembler assembler);
 
 	/**
 	 * Generates an array of arrays for the rows from the specified iterator.
 	 * @param iterator the iterator to take data from
 	 * @param assembler the assembler used to assemble JSON code
 	 */
-	protected void assembleRows(final Iterator<? extends EntityInstance> iterator, final JavascriptAssembler assembler) {
+	protected void assembleRows(final Iterator<? extends RawEntityInstance> iterator, final JavascriptAssembler assembler) {
 		assembler.beginList();
 		while (iterator.hasNext()) {
-			final EntityInstance entityInstance = iterator.next();
+			final RawEntityInstance entityInstance = iterator.next();
 			assembler.prepareListElement();
 			assembler.beginList();
 			assembleRowFields(entityInstance, assembler);
@@ -353,7 +353,7 @@ public abstract class AbstractEntityDataTablePanel<CD extends DataTableColumnDes
 		// fetch data
 		final EntityInstanceDataProvider dataProvider = new EntityInstanceDataProvider(getEntityDescriptorModel(), actualPredicate, orderSpecifiers);
 		final long sizeWithBothFilters = dataProvider.size();
-		final Iterator<? extends EntityInstance> iterator = dataProvider.iterator(offset, count);
+		final Iterator<? extends RawEntityInstance> iterator = dataProvider.iterator(offset, count);
 
 		// determine the number of entries with only the implied filter (DataTables wants to show this).
 		long sizeWithImpliedFilter;

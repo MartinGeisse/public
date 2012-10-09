@@ -9,7 +9,7 @@ package name.martingeisse.admin.entity.component.list.datatable.raw;
 import name.martingeisse.admin.entity.EntityDescriptorModel;
 import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel;
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.RawEntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.util.IGetPageable;
 import name.martingeisse.admin.util.LinkUtil;
@@ -105,7 +105,7 @@ public class RawEntityListPanel extends AbstractEntityDataTablePanel<RawDataTabl
 	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel#assembleRowFields(name.martingeisse.admin.entity.instance.EntityInstance, name.martingeisse.common.javascript.JavascriptAssembler)
 	 */
 	@Override
-	protected void assembleRowFields(final EntityInstance entityInstance, final JavascriptAssembler assembler) {
+	protected void assembleRowFields(final RawEntityInstance entityInstance, final JavascriptAssembler assembler) {
 		for (int i = 0; i < getColumnCount(); i++) {
 			Object value = entityInstance.getDataRowFieldValue(getColumnDescriptor(i).getFieldName());
 			String valueText = WicketConverterUtil.convertValueToString(value, this, MAX_TEXT_LENGTH);

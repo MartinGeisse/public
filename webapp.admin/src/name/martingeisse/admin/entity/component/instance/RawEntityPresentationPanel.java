@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.entity.component.instance;
 
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.RawEntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.util.LinkUtil;
@@ -31,14 +31,14 @@ public class RawEntityPresentationPanel extends Panel {
 	/**
 	 * the entityInstance
 	 */
-	private transient EntityInstance entityInstance;
+	private transient RawEntityInstance entityInstance;
 
 	/**
 	 * Constructor.
 	 * @param id the wicket id
 	 * @param model the entity instance model
 	 */
-	public RawEntityPresentationPanel(final String id, final IModel<EntityInstance> model) {
+	public RawEntityPresentationPanel(final String id, final IModel<RawEntityInstance> model) {
 		super(id, ParameterUtil.ensureNotNull(model, "model"));
 				
 		add(new Loop("fields", new PropertyModel<Integer>(this, "width")) {
@@ -82,7 +82,7 @@ public class RawEntityPresentationPanel extends Panel {
 	 */
 	@Override
 	protected void onBeforeRender() {
-		entityInstance = ReturnValueUtil.nullMeansMissing((EntityInstance)getDefaultModelObject(), "entity instance");
+		entityInstance = ReturnValueUtil.nullMeansMissing((RawEntityInstance)getDefaultModelObject(), "entity instance");
 		super.onBeforeRender();
 	}
 

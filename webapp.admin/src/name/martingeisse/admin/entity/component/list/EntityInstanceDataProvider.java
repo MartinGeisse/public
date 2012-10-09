@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.RawEntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
@@ -29,9 +29,9 @@ import com.mysema.query.types.expr.Wildcard;
 
 /**
  * An {@link IDataProvider} that fetches entity instances and returns
- * them as {@link EntityInstance} objects.
+ * them as {@link RawEntityInstance} objects.
  */
-public class EntityInstanceDataProvider implements IDataProvider<EntityInstance> {
+public class EntityInstanceDataProvider implements IDataProvider<RawEntityInstance> {
 
 	/**
 	 * the entityModel
@@ -129,7 +129,7 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	 * @see org.apache.wicket.markup.repeater.data.IDataProvider#iterator(long, long)
 	 */
 	@Override
-	public Iterator<? extends EntityInstance> iterator(final long first, final long count) {
+	public Iterator<? extends RawEntityInstance> iterator(final long first, final long count) {
 		try {
 			
 			// obtain a ResultSet
@@ -145,9 +145,9 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 			
 			// fetch rows
 			entity.checkDataRowMeta(resultSet);
-			final List<EntityInstance> rows = new ArrayList<EntityInstance>();
+			final List<RawEntityInstance> rows = new ArrayList<RawEntityInstance>();
 			while (resultSet.next()) {
-				rows.add(new EntityInstance(entity, resultSet));
+				rows.add(new RawEntityInstance(entity, resultSet));
 			}
 			
 			// additional client-specific behavior
@@ -168,7 +168,7 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	 * @see org.apache.wicket.markup.repeater.data.IDataProvider#model(java.lang.Object)
 	 */
 	@Override
-	public IModel<EntityInstance> model(final EntityInstance object) {
+	public IModel<RawEntityInstance> model(final RawEntityInstance object) {
 		return Model.of(object);
 	}
 

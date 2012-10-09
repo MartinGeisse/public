@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import name.martingeisse.admin.entity.EntitySelection;
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.RawEntityInstance;
 import name.martingeisse.admin.entity.schema.orm.EntitySpecificCodeMapping;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.entity.schema.search.EntitySearcher;
@@ -384,7 +384,7 @@ public class EntityDescriptor {
 	 * @param optional whether the existence of the instance is optional
 	 * @return the fields
 	 */
-	public EntityInstance fetchSingleInstance(final Object id, final boolean optional) {
+	public RawEntityInstance fetchSingleInstance(final Object id, final boolean optional) {
 		return EntitySelection.forId(this, id).fetchSingleInstance(optional);
 	}
 

@@ -25,7 +25,7 @@ import name.martingeisse.admin.entity.EntityConfiguration;
 import name.martingeisse.admin.entity.component.instance.NavigationMountedEntityAutoformPanel;
 import name.martingeisse.admin.entity.component.instance.RawEntityPresentationPanel;
 import name.martingeisse.admin.entity.component.list.datatable.populator.PopulatorColumnDescriptor;
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.RawEntityInstance;
 import name.martingeisse.admin.entity.list.EntityConditions;
 import name.martingeisse.admin.entity.property.ExplicitEntityPropertyFilter;
 import name.martingeisse.admin.entity.property.SingleEntityPropertyFilter;
@@ -334,8 +334,8 @@ public class Main {
 		root.getChildFactory().createChild("tabletest", "TableTest", new EntityListPanelHandler(RenderedEntityDataTablePanelTest.class, "settings"));
 		
 		{
-			PopulatorColumnDescriptor column1 = new PopulatorColumnDescriptor("name", "name", new RowFieldPopulator<EntityInstance>("name"));
-			PopulatorColumnDescriptor column2 = new PopulatorColumnDescriptor("value", new RowFieldPopulator<EntityInstance>("data"));
+			PopulatorColumnDescriptor column1 = new PopulatorColumnDescriptor("name", "name", new RowFieldPopulator<RawEntityInstance>("name"));
+			PopulatorColumnDescriptor column2 = new PopulatorColumnDescriptor("value", new RowFieldPopulator<RawEntityInstance>("data"));
 			PopulatorColumnDescriptor[] columns = new PopulatorColumnDescriptor[] {column1, column2};
 			root.getChildFactory().createChild("tabletest2", "TableTest2", new PopulatorBasedEntityListHandler("settings", columns));
 		}

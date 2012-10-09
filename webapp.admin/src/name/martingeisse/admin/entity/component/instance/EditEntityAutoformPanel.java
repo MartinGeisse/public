@@ -9,7 +9,7 @@ package name.martingeisse.admin.entity.component.instance;
 import java.util.List;
 
 import name.martingeisse.admin.entity.EntityConfiguration;
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.RawEntityInstance;
 import name.martingeisse.admin.entity.list.EntityExpressionUtil;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.autoform.EntityAutoformDescriber;
@@ -53,7 +53,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 	 * @param id the wicket id
 	 * @param model the entity instance model
 	 */
-	public EditEntityAutoformPanel(final String id, final IModel<EntityInstance> model) {
+	public EditEntityAutoformPanel(final String id, final IModel<RawEntityInstance> model) {
 		this(id, ParameterUtil.ensureNotNull(model, "model").getObject(), EntityAutoformDescriber.instance, EntityConfiguration.parameterKey.get().getAutoformPropertyComponentFactory());
 	}
 
@@ -64,7 +64,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 	 * @param beanDescriber the bean describer that extracts meta-data from the bean
 	 * @param propertyComponentFactory the factory used to create components for the bean properties
 	 */
-	public EditEntityAutoformPanel(String id, EntityInstance bean, IAutoformBeanDescriber beanDescriber, IAutoformPropertyComponentFactory propertyComponentFactory) {
+	public EditEntityAutoformPanel(String id, RawEntityInstance bean, IAutoformBeanDescriber beanDescriber, IAutoformPropertyComponentFactory propertyComponentFactory) {
 		super(id, ParameterUtil.ensureNotNull(bean, "bean"), ParameterUtil.ensureNotNull(beanDescriber, "beanDescriber"), ParameterUtil.ensureNotNull(propertyComponentFactory, "propertyComponentFactory"));
 	}
 	
@@ -72,7 +72,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 	 * Getter method for the model.
 	 * @return the model
 	 */
-	public final IModel<EntityInstance> getModel() {
+	public final IModel<RawEntityInstance> getModel() {
 		return GenericTypeUtil.unsafeCast(ReturnValueUtil.nullMeansMissing(getDefaultModel(), "model"));
 	}
 
@@ -84,7 +84,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 	 *  
 	 * @param model the model to set
 	 */
-	public final void setModel(final IModel<EntityInstance> model) {
+	public final void setModel(final IModel<RawEntityInstance> model) {
 		// setDefaultModel(model);
 		throw new UnsupportedOperationException();
 	}
@@ -93,7 +93,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 	 * Getter method for the entityInstance.
 	 * @return the entityInstance
 	 */
-	public final EntityInstance getEntityInstance() {
+	public final RawEntityInstance getEntityInstance() {
 		return ReturnValueUtil.nullMeansMissing(getModel().getObject(), "entity instance");
 	}
 	
@@ -123,7 +123,7 @@ public class EditEntityAutoformPanel extends AutoformPanel {
 		// collect some objects we will need
 		EntityDescriptor entity = getEntityDescriptor();
 		IAutoformBeanDescriptor beanDescriptor = getBeanDescriptor();
-		EntityInstance bean = (EntityInstance)beanDescriptor.getBean();
+		RawEntityInstance bean = (RawEntityInstance)beanDescriptor.getBean();
 		
 		// prepare an "empty" update clause for the entity instance being edited
 		SQLUpdateClause update = entity.createUpdate(entity.getTableName());

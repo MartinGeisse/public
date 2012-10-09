@@ -11,7 +11,7 @@ import java.util.List;
 
 import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.component.list.datatable.AbstractEntityDataTablePanel;
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.RawEntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.common.javascript.JavascriptAssembler;
 
@@ -58,7 +58,7 @@ public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends Rende
 	/**
 	 * the entityInstances
 	 */
-	private transient List<EntityInstance> entityInstances;
+	private transient List<RawEntityInstance> entityInstances;
 
 	/**
 	 * Constructor.
@@ -82,7 +82,7 @@ public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends Rende
 	 * Getter method for the entityInstances.
 	 * @return the entityInstances
 	 */
-	public List<EntityInstance> getEntityInstances() {
+	public List<RawEntityInstance> getEntityInstances() {
 		return entityInstances;
 	}
 
@@ -106,13 +106,13 @@ public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends Rende
 		contentRenderArea.setVisible(false);
 		add(contentRenderArea);
 
-		final ListView<EntityInstance> entityInstancesListView = new ListView<EntityInstance>("rows", new PropertyModel<List<EntityInstance>>(this, "entityInstances")) {
+		final ListView<RawEntityInstance> entityInstancesListView = new ListView<RawEntityInstance>("rows", new PropertyModel<List<RawEntityInstance>>(this, "entityInstances")) {
 
 			/* (non-Javadoc)
 			 * @see org.apache.wicket.markup.html.list.ListView#populateItem(org.apache.wicket.markup.html.list.ListItem)
 			 */
 			@Override
-			protected void populateItem(final ListItem<EntityInstance> item) {
+			protected void populateItem(final ListItem<RawEntityInstance> item) {
 				AbstractJsonRenderingEntityDataTablePanel.this.populateRowItem(item);
 			}
 
@@ -135,13 +135,13 @@ public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends Rende
 	 * Subclasses must implement this method to add components to data rows.
 	 * @param item the row item
 	 */
-	protected abstract void populateRowItem(ListItem<EntityInstance> item);
+	protected abstract void populateRowItem(ListItem<RawEntityInstance> item);
 
 	/**
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	private void setEntityInstances(final Iterator<? extends EntityInstance> iterator) {
+	private void setEntityInstances(final Iterator<? extends RawEntityInstance> iterator) {
 		entityInstances = IteratorUtils.toList(iterator);
 	}
 
@@ -149,7 +149,7 @@ public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends Rende
 	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel#assembleRows(java.util.Iterator, name.martingeisse.common.javascript.JavascriptAssembler)
 	 */
 	@Override
-	protected void assembleRows(final Iterator<? extends EntityInstance> iterator, final JavascriptAssembler assembler) {
+	protected void assembleRows(final Iterator<? extends RawEntityInstance> iterator, final JavascriptAssembler assembler) {
 
 		// replace the current response by a fake response to capture the rendering output
 		final Response previousResponse = RequestCycle.get().getResponse();
@@ -177,7 +177,7 @@ public abstract class AbstractJsonRenderingEntityDataTablePanel<CD extends Rende
 	 * @see name.martingeisse.admin.entity.component.list.AbstractEntityDataTablePanel#assembleRowFields(name.martingeisse.admin.entity.instance.EntityInstance, name.martingeisse.common.javascript.JavascriptAssembler)
 	 */
 	@Override
-	protected void assembleRowFields(final EntityInstance entityInstance, final JavascriptAssembler assembler) {
+	protected void assembleRowFields(final RawEntityInstance entityInstance, final JavascriptAssembler assembler) {
 		throw new UnsupportedOperationException();
 	}
 

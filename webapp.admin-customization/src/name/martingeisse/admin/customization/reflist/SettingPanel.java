@@ -8,7 +8,7 @@ package name.martingeisse.admin.customization.reflist;
 
 import name.martingeisse.admin.entity.component.instance.AbstractEntityInstancePanel;
 import name.martingeisse.admin.entity.component.list.datatable.raw.RawEntityListPanel;
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.RawEntityInstance;
 import name.martingeisse.admin.entity.instance.EntityInstanceFieldModel;
 import name.martingeisse.admin.entity.list.EntityConditions;
 import name.martingeisse.admin.util.LinkUtil;
@@ -27,7 +27,7 @@ public class SettingPanel extends AbstractEntityInstancePanel {
 	 * @param id the wicket id
 	 * @param instanceModel the model
 	 */
-	public SettingPanel(final String id, final IModel<EntityInstance> instanceModel) {
+	public SettingPanel(final String id, final IModel<RawEntityInstance> instanceModel) {
 		super(id, instanceModel);
 		add(new Label("name", new EntityInstanceFieldModel<String>(instanceModel, "name")));
 		add(new Label("type", new EntityInstanceFieldModel<String>(instanceModel, "type")));
@@ -35,7 +35,7 @@ public class SettingPanel extends AbstractEntityInstancePanel {
 
 		add(LinkUtil.createSingleEntityLink("editLink", "settings", null, "edit"));
 
-		IModel<EntityInstance> groupModel = createModelForRelatedSingleEntityInstance("group_id");
+		IModel<RawEntityInstance> groupModel = createModelForRelatedSingleEntityInstance("group_id");
 		add(new Label("group", new EntityInstanceFieldModel<String>(groupModel, "name")));
 
 		final EntityConditions notesPredicate = new EntityConditions();

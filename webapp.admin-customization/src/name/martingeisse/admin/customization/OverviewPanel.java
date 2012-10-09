@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.customization;
 
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.RawEntityInstance;
 import name.martingeisse.admin.entity.instance.EntityInstanceFieldModel;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -23,7 +23,7 @@ public class OverviewPanel extends Panel {
 	 * @param id the wicket id
 	 * @param model the entity instance model
 	 */
-	public OverviewPanel(final String id, final IModel<EntityInstance> model) {
+	public OverviewPanel(final String id, final IModel<RawEntityInstance> model) {
 		super(id, model);
 		add(new Label("id", new EntityInstanceFieldModel<Integer>(model, "id")));
 		add(new Label("active", new EntityInstanceFieldModel<Boolean>(model, "active")));

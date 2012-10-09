@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.NoSuchElementException;
 
 import name.martingeisse.admin.entity.component.list.EntityInstanceDataProvider;
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.RawEntityInstance;
 import name.martingeisse.admin.entity.list.EntityConditions;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
@@ -73,13 +73,13 @@ public final class EntitySelection {
 	 * @param referrerInstanceModel the referrer model
 	 * @param nearReferenceEndpoint the near endpoint of the reference
 	 */
-	public EntitySelection(final IModel<EntityInstance> referrerInstanceModel, final EntityReferenceEndpoint nearReferenceEndpoint) {
+	public EntitySelection(final IModel<RawEntityInstance> referrerInstanceModel, final EntityReferenceEndpoint nearReferenceEndpoint) {
 		ParameterUtil.ensureNotNull(referrerInstanceModel, "referrerInstanceModel");
 		ParameterUtil.ensureNotNull(nearReferenceEndpoint, "nearReferenceEndpoint");
 		final EntityReferenceEndpoint farReferenceEndpoint = nearReferenceEndpoint.getOther();
 		
 		// obtain the value of the key property in the referrer
-		final EntityInstance referrer = ObjectStateUtil.nullMeansMissing(referrerInstanceModel.getObject(), "referrer (entity instance)") ;
+		final RawEntityInstance referrer = ObjectStateUtil.nullMeansMissing(referrerInstanceModel.getObject(), "referrer (entity instance)") ;
 		if (referrer.getEntity() != nearReferenceEndpoint.getEntity()) {
 			throw new IllegalArgumentException("EntitySelection (from reference): referrer instance is an instance of entity " + referrer.getEntityName() + ", but reference source is " + nearReferenceEndpoint.getEntity().getName());
 		}
@@ -261,7 +261,7 @@ public final class EntitySelection {
 	 * @param optional whether the entity instance is optional
 	 * @return the instance
 	 */
-	public EntityInstance fetchSingleInstance(final boolean optional) {
+	public RawEntityInstance fetchSingleInstance(final boolean optional) {
 		return fetchSingleInstanceFor(entityModel, predicate, optional);
 	}
 
@@ -272,7 +272,7 @@ public final class EntitySelection {
 	 * @param optional whether the entity instance is optional
 	 * @return the instance
 	 */
-	public static EntityInstance fetchSingleInstanceFor(IModel<EntityDescriptor> entityModel, Predicate predicate, final boolean optional) {
+	public static RawEntityInstance fetchSingleInstanceFor(IModel<EntityDescriptor> entityModel, Predicate predicate, final boolean optional) {
 		ParameterUtil.ensureNotNull(entityModel, "entityModel");
 		return fetchSingleInstanceFor(entityModel.getObject(), predicate, optional);
 	}
@@ -284,13 +284,13 @@ public final class EntitySelection {
 	 * @param optional whether the entity instance is optional
 	 * @return the instance
 	 */
-	public static EntityInstance fetchSingleInstanceFor(EntityDescriptor entity, Predicate predicate, final boolean optional) {
+	public static RawEntityInstance fetchSingleInstanceFor(EntityDescriptor entity, Predicate predicate, final boolean optional) {
 		ParameterUtil.ensureNotNull(entity, "entity");
 		try {
 			final ResultSet resultSet = executeQueryFor(entity, predicate);
 			entity.checkDataRowMeta(resultSet);
 			if (resultSet.next()) {
-				return new EntityInstance(entity, resultSet);
+				return new RawEntityInstance(entity, resultSet);
 			} else if (optional) {
 				return null;
 			} else {

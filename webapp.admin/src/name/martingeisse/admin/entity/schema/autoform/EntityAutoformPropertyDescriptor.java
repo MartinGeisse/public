@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.RawEntityInstance;
 import name.martingeisse.admin.entity.instance.EntityInstanceFieldModel;
 import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.common.util.ClassKeyedContainer;
@@ -25,7 +25,7 @@ public class EntityAutoformPropertyDescriptor extends AbstractAutoformPropertyDe
 	/**
 	 * the entityInstance
 	 */
-	private final EntityInstance entityInstance;
+	private final RawEntityInstance entityInstance;
 	
 	/**
 	 * the propertyDescriptor
@@ -37,7 +37,7 @@ public class EntityAutoformPropertyDescriptor extends AbstractAutoformPropertyDe
 	 * @param entityInstance the entity instance
 	 * @param propertyDescriptor the property descriptor
 	 */
-	public EntityAutoformPropertyDescriptor(EntityInstance entityInstance, EntityPropertyDescriptor propertyDescriptor) {
+	public EntityAutoformPropertyDescriptor(RawEntityInstance entityInstance, EntityPropertyDescriptor propertyDescriptor) {
 		super(propertyDescriptor.getName(), propertyDescriptor.getType().getJavaWorkType(), new EntityInstanceFieldModel<Object>(entityInstance, propertyDescriptor.getName()));
 		this.entityInstance = entityInstance;
 		this.propertyDescriptor = propertyDescriptor;

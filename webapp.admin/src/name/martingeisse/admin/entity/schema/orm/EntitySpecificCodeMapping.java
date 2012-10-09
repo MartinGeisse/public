@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.entity.schema.orm;
 
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.RawEntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.common.util.ParameterUtil;
 
@@ -43,7 +43,7 @@ public final class EntitySpecificCodeMapping {
 	 * @param relationalPath the {@link RelationalPath} used to fetch the entity, or null to use
 	 * the default "data row" fetching
 	 * @param entityInstanceClass the class used for entity instances, or null to use the
-	 * default {@link EntityInstance}.
+	 * default {@link RawEntityInstance}.
 	 */
 	public EntitySpecificCodeMapping(final EntityDescriptor entity, final RelationalPath<?> relationalPath,
 		final Class<?> entityInstanceClass) {

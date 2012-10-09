@@ -8,7 +8,7 @@ package name.martingeisse.admin.customization;
 
 import name.martingeisse.admin.entity.component.list.datatable.render.AbstractJsonRenderingEntityDataTablePanel;
 import name.martingeisse.admin.entity.component.list.datatable.render.RenderingColumnDescriptor;
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.RawEntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
 import org.apache.wicket.markup.html.list.ListItem;
@@ -47,7 +47,7 @@ public class RenderedEntityDataTablePanelTest extends AbstractJsonRenderingEntit
 	 * @see name.martingeisse.admin.entity.component.list.datatable.render.AbstractJsonRenderingEntityDataTablePanel#populateRowItem(org.apache.wicket.markup.repeater.Item)
 	 */
 	@Override
-	protected void populateRowItem(ListItem<EntityInstance> item) {
+	protected void populateRowItem(ListItem<RawEntityInstance> item) {
 	}
 
 	/* (non-Javadoc)
