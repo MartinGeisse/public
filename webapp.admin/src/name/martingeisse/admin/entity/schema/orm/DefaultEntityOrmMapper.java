@@ -12,14 +12,14 @@ import name.martingeisse.admin.entity.schema.EntityDescriptor;
  * The default implementation for {@link IEntityOrmMapper}.
  * Returns an empty mapping for all entities.
  */
-public class DefaultEntitySpecificCodeMapper implements IEntityOrmMapper {
+public class DefaultEntityOrmMapper implements IEntityOrmMapper {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.entity.schema.codemapping.IEntitySpecificCodeMapper#map(name.martingeisse.admin.entity.schema.EntityDescriptor)
+	 * @see name.martingeisse.admin.entity.schema.orm.IEntityOrmMapper#map(name.martingeisse.admin.entity.schema.EntityDescriptor)
 	 */
 	@Override
-	public EntitySpecificCodeMapping map(final EntityDescriptor entityDescriptor) {
-		return new EntitySpecificCodeMapping(entityDescriptor, null);
+	public EntityOrmMapping map(final EntityDescriptor entityDescriptor) {
+		return new EntityOrmMapping(entityDescriptor, null, null);
 	}
 
 }

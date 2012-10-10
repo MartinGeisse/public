@@ -11,7 +11,7 @@ import java.util.List;
 
 import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.instance.IEntityInstance;
-import name.martingeisse.admin.entity.schema.orm.EntitySpecificCodeMapping;
+import name.martingeisse.admin.entity.schema.orm.EntityOrmMapping;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.entity.schema.search.EntitySearcher;
 import name.martingeisse.admin.entity.schema.type.IEntityIdTypeInfo;
@@ -108,7 +108,7 @@ public class EntityDescriptor {
 	/**
 	 * the specificCodeMapping
 	 */
-	private EntitySpecificCodeMapping specificCodeMapping;
+	private EntityOrmMapping specificCodeMapping;
 	
 	/**
 	 * the queryBuilder
@@ -341,7 +341,7 @@ public class EntityDescriptor {
 	 * Getter method for the specificCodeMapping.
 	 * @return the specificCodeMapping
 	 */
-	public EntitySpecificCodeMapping getSpecificCodeMapping() {
+	public EntityOrmMapping getSpecificCodeMapping() {
 		return specificCodeMapping;
 	}
 
@@ -349,7 +349,7 @@ public class EntityDescriptor {
 	 * Setter method for the specificCodeMapping.
 	 * @param specificCodeMapping the specificCodeMapping to set
 	 */
-	void setSpecificCodeMapping(final EntitySpecificCodeMapping specificCodeMapping) {
+	void setSpecificCodeMapping(final EntityOrmMapping specificCodeMapping) {
 		this.specificCodeMapping = specificCodeMapping;
 	}
 

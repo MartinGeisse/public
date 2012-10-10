@@ -10,7 +10,7 @@ import java.util.List;
 
 import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.instance.RawEntityInstance;
-import name.martingeisse.admin.entity.schema.orm.EntitySpecificCodeMapping;
+import name.martingeisse.admin.entity.schema.orm.EntityOrmMapping;
 import name.martingeisse.common.util.ParameterUtil;
 
 import com.mysema.query.sql.RelationalPath;
@@ -25,7 +25,7 @@ import com.mysema.query.types.Predicate;
 /**
  * This class encapsulates entity methods for building QueryDSL queries.
  * 
- * Internally this class relies on the entity's {@link EntitySpecificCodeMapping}
+ * Internally this class relies on the entity's {@link EntityOrmMapping}
  * to generate {@link RelationalPath} instances.
  */
 public final class EntityQueryBuilder {

@@ -3,16 +3,24 @@
  */
 package phorum;
 
+import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
 
 /**
  * This class represents rows from table 'phorum_pm_folders'.
  */
-public class PhorumPmFolders {
+public class PhorumPmFolders extends AbstractSpecificEntityInstance {
+
+    /**
+     * Meta-data about this class for the admin framework
+     */
+    public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(PhorumPmFolders.class);
 
     /**
      * Constructor.
      */
     public PhorumPmFolders() {
+        super(GENERATED_CLASS_META_DATA);
     }
 
     /**

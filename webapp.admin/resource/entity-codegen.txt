@@ -153,6 +153,10 @@ also mal einbauen und umstellen.
 
 Ein weiterer Ansatzpunkt ist dann, den Codegen auf IEntityInstance umzustellen.
 
+WICHTIG: Wenn generierter Code vorliegt, dann muss die Query auch die _ECHTE_
+Q-Klasse benutzen und nicht nur einen RelationalPath mit derselben Tabelle
+und demselben Typ. QueryDSL greift per Reflection auf die static-Felder dieser
+Klasse zu!!!
 
 
 

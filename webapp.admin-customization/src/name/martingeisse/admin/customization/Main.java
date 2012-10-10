@@ -23,6 +23,8 @@ import name.martingeisse.admin.customization.pagebar.BasicPageBarFactory;
 import name.martingeisse.admin.customization.reflist.SettingPanel;
 import name.martingeisse.admin.entity.EntityCapabilities;
 import name.martingeisse.admin.entity.EntityConfiguration;
+import name.martingeisse.admin.entity.EntityDescriptorModel;
+import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.component.instance.NavigationMountedEntityAutoformPanel;
 import name.martingeisse.admin.entity.component.instance.RawEntityPresentationPanel;
 import name.martingeisse.admin.entity.component.list.datatable.populator.PopulatorColumnDescriptor;
@@ -39,6 +41,8 @@ import name.martingeisse.admin.entity.schema.annotation.AnnotatedClassEntityAnno
 import name.martingeisse.admin.entity.schema.annotation.IEntityAnnotatedClassResolver;
 import name.martingeisse.admin.entity.schema.naming.IEntityNameMappingStrategy;
 import name.martingeisse.admin.entity.schema.naming.PrefixEliminatingEntityNameMappingStrategy;
+import name.martingeisse.admin.entity.schema.orm.EntityOrmMapping;
+import name.martingeisse.admin.entity.schema.orm.IEntityOrmMapper;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
 import name.martingeisse.admin.navigation.NavigationConfiguration;
@@ -49,7 +53,6 @@ import name.martingeisse.admin.navigation.handler.PanelPageNavigationHandler;
 import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler;
 import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
 import name.martingeisse.common.database.EntityConnectionManager;
-import name.martingeisse.common.database.JdbcEntityDatabaseConnection;
 import name.martingeisse.common.database.MysqlDatabaseDescriptor;
 import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.wicket.autoform.AutoformPanel;
@@ -60,19 +63,14 @@ import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropert
 import name.martingeisse.wicket.autoform.describe.DefaultAutoformBeanDescriber;
 import name.martingeisse.wicket.populator.RowFieldPopulator;
 
-import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTimeZone;
 
-import com.mysema.commons.lang.CloseableIterator;
+import com.google.common.base.CaseFormat;
 import com.mysema.query.sql.RelationalPath;
-import com.mysema.query.sql.RelationalPathBase;
 import com.mysema.query.support.Expressions;
-import com.mysema.query.types.Expression;
 import com.mysema.query.types.Ops;
 import com.mysema.query.types.Path;
 import com.mysema.query.types.Predicate;
-import com.mysema.query.types.PredicateOperation;
-import com.mysema.query.types.expr.Wildcard;
 
 /**
  * The main class.
@@ -94,7 +92,7 @@ public class Main {
 		exporter.setTargetFolder(new File("generated"));
 		exporter.setPackageName("phorum");
 		exporter.setSerializerClass(MetaDataSerializer.class);
-		exporter.setBeanSerializer(new BeanSerializer());
+		exporter.setBeanSerializer(new BeanSerializer(true));
 		exporter.export(connection.getMetaData());
 		connection.close();
 		System.exit(0);
@@ -161,32 +159,6 @@ public class Main {
 		// phorumDatabase.setDefaultTimeZone(DateTimeZone.forID("Europe/London"));
 		ApplicationConfiguration.get().addDatabase(phorumDatabase);
 		EntityConnectionManager.initializeDatabaseDescriptors(phorumDatabase);
-		
-		// test
-		JdbcEntityDatabaseConnection connection = phorumDatabase.createConnection();
-
-//		CloseableIterator<PhorumSettings> it = connection.createQuery().from(QPhorumSettings.phorumSettings).iterate(QPhorumSettings.phorumSettings);
-//		while (it.hasNext()) {
-//			System.out.println("* " + it.next().getName());
-//		}
-		
-		RelationalPathBase<?> path = new RelationalPathBase<Object>(Object.class, "e", null, "phorum_settings");
-		Path<String> namePath = Expressions.path(String.class, path, "name");
-		Expression<String> pattern = Expressions.constant("d%");
-		Predicate predicate = new PredicateOperation(Ops.LIKE, namePath, pattern);
-		CloseableIterator<Object[]> it = connection.createQuery().from(path).where(predicate).iterate(Wildcard.all);
-		while (it.hasNext()) {
-			Object[] data = it.next();
-			System.out.println("* " + StringUtils.join(data, ", "));
-		}
-		
-		connection.dispose();
-		System.exit(0);
-		
-		// test
-//		JdbcSchemaStructure schema = new JdbcSchemaStructure(phorumDatabase.createJdbcConnection());
-//		schema.dump();
-//		System.exit(0);
 		
 		// plugins / capabilities
 		ApplicationConfiguration.get().addPlugin(new DefaultPlugin());
@@ -285,6 +257,22 @@ public class Main {
 			}
 		});
 		
+		// initialize specific entity code mapping
+		IEntityOrmMapper.PARAMETER_KEY.set(new IEntityOrmMapper() {
+			@Override
+			public EntityOrmMapping map(EntityDescriptor entityDescriptor) {
+				try {
+					String baseName = entityDescriptor.getName();
+					String suffix = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, baseName);
+					String className = "phorum.Phorum" + suffix;
+					String qclassName = "phorum.QPhorum" + suffix;
+					return new EntityOrmMapping(entityDescriptor, Class.forName(className), GenericTypeUtil.<Class<? extends RelationalPath<?>>> unsafeCast(Class.forName(qclassName)));
+				} catch (ClassNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		});
+		
 		// run
 		Launcher.launch();
 
@@ -302,6 +290,14 @@ public class Main {
 		sub1.getChildFactory().createNavigationFolderChild("s1-sub-two", "s1 Sub Two");
 		sub1.getChildFactory().createNavigationFolderChild("s1-sub-three", "s1 Sub Three");
 		
+		try {
+//			MySQLQuery query = new MySQLQuery(EntityConnectionManager.getDefaultDatabaseDescriptor().createJdbcConnection());
+//			Object entityInstance = query.from(QPhorumSettings.phorumSettings).singleResult(QPhorumSettings.phorumSettings);
+			IEntityInstance entityInstance = new EntitySelection(new EntityDescriptorModel("settings")).fetchSingleInstance(false);
+			System.out.println("*** RESULT: " + entityInstance.getClass());
+		} catch (Exception e) {
+			System.out.println("*** ERROR: " + e);
+		}
 		
 //		sub1sub1.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "acl_roles").setId("roles").setTitle("ACL: Roles"));
 //		sub1.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "acl_users").setId("users").setTitle("ACL: Users"));

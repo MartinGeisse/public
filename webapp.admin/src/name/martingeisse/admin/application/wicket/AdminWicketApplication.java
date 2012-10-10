@@ -100,16 +100,16 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		logger.trace("initializing ApplicationConfiguration...");
 		ApplicationConfiguration.get().initialize();
 		logger.trace("ApplicationConfiguration initialized");
-
-		// run schema-aware contributors
-		for (ISchemaAwareContributor contributor : ISchemaAwareContributor.CAPABILITY_KEY) {
-			contributor.contribute();
-		}
 		
 		// initialize the application schema from the database
 		logger.trace("initializing ApplicationSchema...");
 		ApplicationSchema.initialize();
 		logger.trace("ApplicationSchema initialized");
+
+		// run schema-aware contributors
+		for (ISchemaAwareContributor contributor : ISchemaAwareContributor.CAPABILITY_KEY) {
+			contributor.contribute();
+		}
 
 		// initialize module-specific data
 		logger.trace("running post-schema initialization...");

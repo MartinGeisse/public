@@ -29,7 +29,7 @@ import name.martingeisse.admin.entity.schema.lowlevel.JdbcSchemaStructure;
 import name.martingeisse.admin.entity.schema.lowlevel.JdbcTableStructure;
 import name.martingeisse.admin.entity.schema.naming.DefaultEntityNameMappingStrategy;
 import name.martingeisse.admin.entity.schema.naming.IEntityNameMappingStrategy;
-import name.martingeisse.admin.entity.schema.orm.DefaultEntitySpecificCodeMapper;
+import name.martingeisse.admin.entity.schema.orm.DefaultEntityOrmMapper;
 import name.martingeisse.admin.entity.schema.orm.IEntityOrmMapper;
 import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
@@ -415,7 +415,7 @@ public class ApplicationSchema {
 	private void initializeSpecificCodeMapping() {
 		IEntityOrmMapper mapper = IEntityOrmMapper.PARAMETER_KEY.get();
 		if (mapper == null) {
-			mapper = new DefaultEntitySpecificCodeMapper();
+			mapper = new DefaultEntityOrmMapper();
 		}
 		for (final EntityDescriptor entity : entityDescriptors) {
 			entity.setSpecificCodeMapping(ReturnValueUtil.nullNotAllowed(mapper.map(entity), "IEntitySpecificCodeMapper.map()"));

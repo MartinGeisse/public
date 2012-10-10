@@ -3,16 +3,24 @@
  */
 package phorum;
 
+import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
 
 /**
  * This class represents rows from table 'phorum_subscribers'.
  */
-public class PhorumSubscribers {
+public class PhorumSubscribers extends AbstractSpecificEntityInstance {
+
+    /**
+     * Meta-data about this class for the admin framework
+     */
+    public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(PhorumSubscribers.class);
 
     /**
      * Constructor.
      */
     public PhorumSubscribers() {
+        super(GENERATED_CLASS_META_DATA);
     }
 
     /**
