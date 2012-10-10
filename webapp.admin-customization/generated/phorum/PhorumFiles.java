@@ -4,11 +4,14 @@
 package phorum;
 
 import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
 import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_files'.
  */
+@GeneratedFromTable("phorum_files")
 public class PhorumFiles extends AbstractSpecificEntityInstance {
 
     /**
@@ -67,6 +70,7 @@ public class PhorumFiles extends AbstractSpecificEntityInstance {
      * Getter method for the addDatetime.
      * @return the addDatetime
      */
+    @GeneratedFromColumn("add_datetime")
     public Integer getAddDatetime() {
         return addDatetime;
     }
@@ -83,6 +87,7 @@ public class PhorumFiles extends AbstractSpecificEntityInstance {
      * Getter method for the fileData.
      * @return the fileData
      */
+    @GeneratedFromColumn("file_data")
     public String getFileData() {
         return fileData;
     }
@@ -99,6 +104,7 @@ public class PhorumFiles extends AbstractSpecificEntityInstance {
      * Getter method for the fileId.
      * @return the fileId
      */
+    @GeneratedFromColumn("file_id")
     public Integer getFileId() {
         return fileId;
     }
@@ -115,6 +121,7 @@ public class PhorumFiles extends AbstractSpecificEntityInstance {
      * Getter method for the filename.
      * @return the filename
      */
+    @GeneratedFromColumn("filename")
     public String getFilename() {
         return filename;
     }
@@ -131,6 +138,7 @@ public class PhorumFiles extends AbstractSpecificEntityInstance {
      * Getter method for the filesize.
      * @return the filesize
      */
+    @GeneratedFromColumn("filesize")
     public Integer getFilesize() {
         return filesize;
     }
@@ -147,6 +155,7 @@ public class PhorumFiles extends AbstractSpecificEntityInstance {
      * Getter method for the link.
      * @return the link
      */
+    @GeneratedFromColumn("link")
     public String getLink() {
         return link;
     }
@@ -163,6 +172,7 @@ public class PhorumFiles extends AbstractSpecificEntityInstance {
      * Getter method for the messageId.
      * @return the messageId
      */
+    @GeneratedFromColumn("message_id")
     public Integer getMessageId() {
         return messageId;
     }
@@ -179,6 +189,7 @@ public class PhorumFiles extends AbstractSpecificEntityInstance {
      * Getter method for the userId.
      * @return the userId
      */
+    @GeneratedFromColumn("user_id")
     public Integer getUserId() {
         return userId;
     }

@@ -4,11 +4,14 @@
 package phorum;
 
 import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
 import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_messages'.
  */
+@GeneratedFromTable("phorum_messages")
 public class PhorumMessages extends AbstractSpecificEntityInstance {
 
     /**
@@ -152,6 +155,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the author.
      * @return the author
      */
+    @GeneratedFromColumn("author")
     public String getAuthor() {
         return author;
     }
@@ -168,6 +172,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the body.
      * @return the body
      */
+    @GeneratedFromColumn("body")
     public String getBody() {
         return body;
     }
@@ -184,6 +189,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the closed.
      * @return the closed
      */
+    @GeneratedFromColumn("closed")
     public Boolean getClosed() {
         return closed;
     }
@@ -200,6 +206,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the datestamp.
      * @return the datestamp
      */
+    @GeneratedFromColumn("datestamp")
     public Integer getDatestamp() {
         return datestamp;
     }
@@ -216,6 +223,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the email.
      * @return the email
      */
+    @GeneratedFromColumn("email")
     public String getEmail() {
         return email;
     }
@@ -232,6 +240,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the forumId.
      * @return the forumId
      */
+    @GeneratedFromColumn("forum_id")
     public Integer getForumId() {
         return forumId;
     }
@@ -248,6 +257,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the ip.
      * @return the ip
      */
+    @GeneratedFromColumn("ip")
     public String getIp() {
         return ip;
     }
@@ -264,6 +274,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the messageId.
      * @return the messageId
      */
+    @GeneratedFromColumn("message_id")
     public Integer getMessageId() {
         return messageId;
     }
@@ -280,6 +291,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the meta.
      * @return the meta
      */
+    @GeneratedFromColumn("meta")
     public String getMeta() {
         return meta;
     }
@@ -296,6 +308,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the moderatorPost.
      * @return the moderatorPost
      */
+    @GeneratedFromColumn("moderator_post")
     public Boolean getModeratorPost() {
         return moderatorPost;
     }
@@ -312,6 +325,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the modifystamp.
      * @return the modifystamp
      */
+    @GeneratedFromColumn("modifystamp")
     public Integer getModifystamp() {
         return modifystamp;
     }
@@ -328,6 +342,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the moved.
      * @return the moved
      */
+    @GeneratedFromColumn("moved")
     public Boolean getMoved() {
         return moved;
     }
@@ -344,6 +359,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the msgid.
      * @return the msgid
      */
+    @GeneratedFromColumn("msgid")
     public String getMsgid() {
         return msgid;
     }
@@ -360,6 +376,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the parentId.
      * @return the parentId
      */
+    @GeneratedFromColumn("parent_id")
     public Integer getParentId() {
         return parentId;
     }
@@ -376,6 +393,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the recentAuthor.
      * @return the recentAuthor
      */
+    @GeneratedFromColumn("recent_author")
     public String getRecentAuthor() {
         return recentAuthor;
     }
@@ -392,6 +410,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the recentMessageId.
      * @return the recentMessageId
      */
+    @GeneratedFromColumn("recent_message_id")
     public Integer getRecentMessageId() {
         return recentMessageId;
     }
@@ -408,6 +427,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the recentUserId.
      * @return the recentUserId
      */
+    @GeneratedFromColumn("recent_user_id")
     public Integer getRecentUserId() {
         return recentUserId;
     }
@@ -424,6 +444,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the sort.
      * @return the sort
      */
+    @GeneratedFromColumn("sort")
     public Byte getSort() {
         return sort;
     }
@@ -440,6 +461,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the status.
      * @return the status
      */
+    @GeneratedFromColumn("status")
     public Byte getStatus() {
         return status;
     }
@@ -456,6 +478,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the subject.
      * @return the subject
      */
+    @GeneratedFromColumn("subject")
     public String getSubject() {
         return subject;
     }
@@ -472,6 +495,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the thread.
      * @return the thread
      */
+    @GeneratedFromColumn("thread")
     public Integer getThread() {
         return thread;
     }
@@ -488,6 +512,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the threadCount.
      * @return the threadCount
      */
+    @GeneratedFromColumn("thread_count")
     public Integer getThreadCount() {
         return threadCount;
     }
@@ -504,6 +529,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the threadviewcount.
      * @return the threadviewcount
      */
+    @GeneratedFromColumn("threadviewcount")
     public Integer getThreadviewcount() {
         return threadviewcount;
     }
@@ -520,6 +546,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the userId.
      * @return the userId
      */
+    @GeneratedFromColumn("user_id")
     public Integer getUserId() {
         return userId;
     }
@@ -536,6 +563,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      * Getter method for the viewcount.
      * @return the viewcount
      */
+    @GeneratedFromColumn("viewcount")
     public Integer getViewcount() {
         return viewcount;
     }

@@ -4,11 +4,14 @@
 package phorum;
 
 import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
 import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_user_custom_fields'.
  */
+@GeneratedFromTable("phorum_user_custom_fields")
 public class PhorumUserCustomFields extends AbstractSpecificEntityInstance {
 
     /**
@@ -42,6 +45,7 @@ public class PhorumUserCustomFields extends AbstractSpecificEntityInstance {
      * Getter method for the data.
      * @return the data
      */
+    @GeneratedFromColumn("data")
     public String getData() {
         return data;
     }
@@ -58,6 +62,7 @@ public class PhorumUserCustomFields extends AbstractSpecificEntityInstance {
      * Getter method for the type.
      * @return the type
      */
+    @GeneratedFromColumn("type")
     public Integer getType() {
         return type;
     }
@@ -74,6 +79,7 @@ public class PhorumUserCustomFields extends AbstractSpecificEntityInstance {
      * Getter method for the userId.
      * @return the userId
      */
+    @GeneratedFromColumn("user_id")
     public Integer getUserId() {
         return userId;
     }

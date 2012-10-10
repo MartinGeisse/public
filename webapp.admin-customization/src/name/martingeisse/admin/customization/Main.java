@@ -23,8 +23,6 @@ import name.martingeisse.admin.customization.pagebar.BasicPageBarFactory;
 import name.martingeisse.admin.customization.reflist.SettingPanel;
 import name.martingeisse.admin.entity.EntityCapabilities;
 import name.martingeisse.admin.entity.EntityConfiguration;
-import name.martingeisse.admin.entity.EntityDescriptorModel;
-import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.component.instance.NavigationMountedEntityAutoformPanel;
 import name.martingeisse.admin.entity.component.instance.RawEntityPresentationPanel;
 import name.martingeisse.admin.entity.component.list.datatable.populator.PopulatorColumnDescriptor;
@@ -289,15 +287,6 @@ public class Main {
 		sub1.getChildFactory().createNavigationFolderChild("s1-sub-one", "s1 Sub One");
 		sub1.getChildFactory().createNavigationFolderChild("s1-sub-two", "s1 Sub Two");
 		sub1.getChildFactory().createNavigationFolderChild("s1-sub-three", "s1 Sub Three");
-		
-		try {
-//			MySQLQuery query = new MySQLQuery(EntityConnectionManager.getDefaultDatabaseDescriptor().createJdbcConnection());
-//			Object entityInstance = query.from(QPhorumSettings.phorumSettings).singleResult(QPhorumSettings.phorumSettings);
-			IEntityInstance entityInstance = new EntitySelection(new EntityDescriptorModel("settings")).fetchSingleInstance(false);
-			System.out.println("*** RESULT: " + entityInstance.getClass());
-		} catch (Exception e) {
-			System.out.println("*** ERROR: " + e);
-		}
 		
 //		sub1sub1.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "acl_roles").setId("roles").setTitle("ACL: Roles"));
 //		sub1.createChild(new BookmarkableEntityListNavigationHandler(TODO_REMOVE_RawEntityListPage.class, "acl_users").setId("users").setTitle("ACL: Users"));

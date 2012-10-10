@@ -4,11 +4,14 @@
 package phorum;
 
 import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
 import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_messages_edittrack'.
  */
+@GeneratedFromTable("phorum_messages_edittrack")
 public class PhorumMessagesEdittrack extends AbstractSpecificEntityInstance {
 
     /**
@@ -57,6 +60,7 @@ public class PhorumMessagesEdittrack extends AbstractSpecificEntityInstance {
      * Getter method for the diffBody.
      * @return the diffBody
      */
+    @GeneratedFromColumn("diff_body")
     public String getDiffBody() {
         return diffBody;
     }
@@ -73,6 +77,7 @@ public class PhorumMessagesEdittrack extends AbstractSpecificEntityInstance {
      * Getter method for the diffSubject.
      * @return the diffSubject
      */
+    @GeneratedFromColumn("diff_subject")
     public String getDiffSubject() {
         return diffSubject;
     }
@@ -89,6 +94,7 @@ public class PhorumMessagesEdittrack extends AbstractSpecificEntityInstance {
      * Getter method for the messageId.
      * @return the messageId
      */
+    @GeneratedFromColumn("message_id")
     public Integer getMessageId() {
         return messageId;
     }
@@ -105,6 +111,7 @@ public class PhorumMessagesEdittrack extends AbstractSpecificEntityInstance {
      * Getter method for the time.
      * @return the time
      */
+    @GeneratedFromColumn("time")
     public Integer getTime() {
         return time;
     }
@@ -121,6 +128,7 @@ public class PhorumMessagesEdittrack extends AbstractSpecificEntityInstance {
      * Getter method for the trackId.
      * @return the trackId
      */
+    @GeneratedFromColumn("track_id")
     public Integer getTrackId() {
         return trackId;
     }
@@ -137,6 +145,7 @@ public class PhorumMessagesEdittrack extends AbstractSpecificEntityInstance {
      * Getter method for the userId.
      * @return the userId
      */
+    @GeneratedFromColumn("user_id")
     public Integer getUserId() {
         return userId;
     }

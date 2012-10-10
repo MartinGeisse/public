@@ -4,11 +4,14 @@
 package phorum;
 
 import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
 import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_settings_notes'.
  */
+@GeneratedFromTable("phorum_settings_notes")
 public class PhorumSettingsNotes extends AbstractSpecificEntityInstance {
 
     /**
@@ -37,6 +40,7 @@ public class PhorumSettingsNotes extends AbstractSpecificEntityInstance {
      * Getter method for the note.
      * @return the note
      */
+    @GeneratedFromColumn("note")
     public String getNote() {
         return note;
     }
@@ -53,6 +57,7 @@ public class PhorumSettingsNotes extends AbstractSpecificEntityInstance {
      * Getter method for the settingName.
      * @return the settingName
      */
+    @GeneratedFromColumn("setting_name")
     public String getSettingName() {
         return settingName;
     }

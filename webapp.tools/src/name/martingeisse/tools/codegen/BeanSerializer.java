@@ -56,6 +56,7 @@ public class BeanSerializer extends AbstractSerializer {
 	 */
 	@Override
 	public void serialize(final EntityType entityType, final SerializerConfig config, final CodeWriter w) throws IOException {
+		String tableName = entityType.getData().get("table").toString();
 
 		// file comment
 		printFileComment(w);
@@ -73,14 +74,18 @@ public class BeanSerializer extends AbstractSerializer {
 
 		// class annotations
 		printAnnotations(entityType.getAnnotations(), w);
+		if (forAdmin) {
+			w.line("@GeneratedFromTable(\"" + tableName + "\")");
+		}
 
 		// begin writing the class itself
 		w.beginClass(entityType, entityType.getSuperType() != null ? entityType.getSuperType().getType() : forAdmin ? new SimpleType("AbstractSpecificEntityInstance") : null);
 
 		// add the meta-data class constant for the admin framework
 		if (forAdmin) {
+			String className = w.getGenericName(true, entityType);
 			w.javadoc("Meta-data about this class for the admin framework");
-			w.line("public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(" + w.getGenericName(true, entityType) + ".class);");
+			w.line("public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(" + className + ".class);");
 			w.nl();
 		}
 		
@@ -107,6 +112,9 @@ public class BeanSerializer extends AbstractSerializer {
 
 			// getter method
 			w.javadoc("Getter method for the " + propertyName + ".", "@return the " + propertyName);
+			if (forAdmin) {
+				w.line("@GeneratedFromColumn(\"" + property.getName() + "\")");
+			}
 			w.beginPublicMethod(propertyType, "get" + capitalizedPropertyName);
 			w.line("return ", propertyName, ";");
 			w.end();
@@ -172,6 +180,8 @@ public class BeanSerializer extends AbstractSerializer {
 		addIf(imports, Arrays.class.getName(), entityType.hasArrays());
 		addIf(imports, "name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance", forAdmin);
 		addIf(imports, "name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta", forAdmin);
+		addIf(imports, "name.martingeisse.admin.entity.schema.orm.GeneratedFromTable", forAdmin);
+		addIf(imports, "name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn", forAdmin);
 
 		// actually write the imports
 		printImports(w, imports);

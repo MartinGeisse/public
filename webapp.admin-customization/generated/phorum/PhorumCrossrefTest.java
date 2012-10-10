@@ -4,11 +4,14 @@
 package phorum;
 
 import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
 import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_crossref_test'.
  */
+@GeneratedFromTable("phorum_crossref_test")
 public class PhorumCrossrefTest extends AbstractSpecificEntityInstance {
 
     /**
@@ -42,6 +45,7 @@ public class PhorumCrossrefTest extends AbstractSpecificEntityInstance {
      * Getter method for the alias.
      * @return the alias
      */
+    @GeneratedFromColumn("alias")
     public String getAlias() {
         return alias;
     }
@@ -58,6 +62,7 @@ public class PhorumCrossrefTest extends AbstractSpecificEntityInstance {
      * Getter method for the id.
      * @return the id
      */
+    @GeneratedFromColumn("id")
     public Integer getId() {
         return id;
     }
@@ -74,6 +79,7 @@ public class PhorumCrossrefTest extends AbstractSpecificEntityInstance {
      * Getter method for the name.
      * @return the name
      */
+    @GeneratedFromColumn("name")
     public String getName() {
         return name;
     }

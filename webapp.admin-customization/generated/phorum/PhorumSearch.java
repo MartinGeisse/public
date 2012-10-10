@@ -4,11 +4,14 @@
 package phorum;
 
 import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
 import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_search'.
  */
+@GeneratedFromTable("phorum_search")
 public class PhorumSearch extends AbstractSpecificEntityInstance {
 
     /**
@@ -52,6 +55,7 @@ public class PhorumSearch extends AbstractSpecificEntityInstance {
      * Getter method for the dateTest.
      * @return the dateTest
      */
+    @GeneratedFromColumn("date_test")
     public java.sql.Date getDateTest() {
         return dateTest;
     }
@@ -68,6 +72,7 @@ public class PhorumSearch extends AbstractSpecificEntityInstance {
      * Getter method for the datetimeTest.
      * @return the datetimeTest
      */
+    @GeneratedFromColumn("datetime_test")
     public java.sql.Timestamp getDatetimeTest() {
         return datetimeTest;
     }
@@ -84,6 +89,7 @@ public class PhorumSearch extends AbstractSpecificEntityInstance {
      * Getter method for the forumId.
      * @return the forumId
      */
+    @GeneratedFromColumn("forum_id")
     public Integer getForumId() {
         return forumId;
     }
@@ -100,6 +106,7 @@ public class PhorumSearch extends AbstractSpecificEntityInstance {
      * Getter method for the messageId.
      * @return the messageId
      */
+    @GeneratedFromColumn("message_id")
     public Integer getMessageId() {
         return messageId;
     }
@@ -116,6 +123,7 @@ public class PhorumSearch extends AbstractSpecificEntityInstance {
      * Getter method for the searchText.
      * @return the searchText
      */
+    @GeneratedFromColumn("search_text")
     public String getSearchText() {
         return searchText;
     }
