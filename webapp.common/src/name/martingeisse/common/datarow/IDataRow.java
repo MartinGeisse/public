@@ -6,6 +6,8 @@
 
 package name.martingeisse.common.datarow;
 
+import java.io.Serializable;
+
 
 /**
  * Represents a row of data as well as meta-data to which it conforms.
@@ -14,7 +16,7 @@ package name.martingeisse.common.datarow;
  * are present, and does not ensure that the data actually conforms
  * to the meta-data. It is up to the caller to ensure that.
  */
-public interface IDataRow extends IDataRowMetaHolder {
+public interface IDataRow extends IDataRowMetaHolder, Serializable {
 
 	/**
 	 * Getter method for the data. Note that this method does not

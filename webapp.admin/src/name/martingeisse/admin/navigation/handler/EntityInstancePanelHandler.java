@@ -7,13 +7,13 @@
 package name.martingeisse.admin.navigation.handler;
 
 import name.martingeisse.admin.entity.component.instance.page.NavigationMountedEntityInstancePanelPage;
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.IEntityInstance;
 
 import org.apache.wicket.markup.html.panel.Panel;
 
 /**
  * This handler allows to mount arbitrary panel classes that accept
- * a model of type {@link EntityInstance} in the navigation. This
+ * a model of type {@link IEntityInstance} in the navigation. This
  * handler must only be used in entity-local navigation.
  */
 public class EntityInstancePanelHandler extends BookmarkableEntityInstanceNavigationHandler {

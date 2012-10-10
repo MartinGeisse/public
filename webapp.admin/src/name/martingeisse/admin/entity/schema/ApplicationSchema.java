@@ -310,6 +310,8 @@ public class ApplicationSchema {
 	private void detectEntityReferences() {
 		for (final EntityDescriptor entity : entityDescriptors) {
 			entity.setReferenceEndpoints(new ArrayList<EntityReferenceEndpoint>());
+		}
+		for (final EntityDescriptor entity : entityDescriptors) {
 			ILowlevelDatabaseStructure lowlevelStructure = databaseStructures.get(entity.getDatabase());
 			for (final EntityPropertyDescriptor property : entity.getProperties()) {
 				final String propertyName = property.getName();

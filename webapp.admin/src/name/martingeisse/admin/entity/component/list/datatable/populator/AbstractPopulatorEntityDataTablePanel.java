@@ -11,7 +11,7 @@ import java.util.List;
 
 import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.component.list.datatable.render.AbstractJsonRenderingEntityDataTablePanel;
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.wicket.util.json.JsonEncodingContainer;
 
@@ -38,7 +38,7 @@ public abstract class AbstractPopulatorEntityDataTablePanel<CD extends Populator
 	/**
 	 * the populatorListModel
 	 */
-	private transient IModel<List<ICellPopulator<EntityInstance>>> populatorListModel;
+	private transient IModel<List<ICellPopulator<IEntityInstance>>> populatorListModel;
 	
 	/**
 	 * Constructor.
@@ -71,33 +71,33 @@ public abstract class AbstractPopulatorEntityDataTablePanel<CD extends Populator
 	 * @see name.martingeisse.admin.entity.component.list.datatable.render.AbstractJsonRenderingEntityDataTablePanel#populateRowItem(org.apache.wicket.markup.repeater.Item)
 	 */
 	@Override
-	protected void populateRowItem(ListItem<EntityInstance> item) {
+	protected void populateRowItem(ListItem<IEntityInstance> item) {
 		
 		// use a list model for the cell populators that is shared between all rows
 		if (populatorListModel == null) {
-			populatorListModel = new AbstractReadOnlyModel<List<ICellPopulator<EntityInstance>>>() {
+			populatorListModel = new AbstractReadOnlyModel<List<ICellPopulator<IEntityInstance>>>() {
 				@Override
-				public List<ICellPopulator<EntityInstance>> getObject() {
-					ICellPopulator<EntityInstance>[] populators = getColumnDescriptors();
+				public List<ICellPopulator<IEntityInstance>> getObject() {
+					ICellPopulator<IEntityInstance>[] populators = getColumnDescriptors();
 					return Arrays.asList(populators);
 				}
 			};
 		}
 		
 		// pass the model for the entity instance to the cell items
-		final IModel<EntityInstance> instanceModel = item.getModel();
+		final IModel<IEntityInstance> instanceModel = item.getModel();
 		
 		// create a list view for the cells
-		item.add(new ListView<ICellPopulator<EntityInstance>>("cells", populatorListModel) {
+		item.add(new ListView<ICellPopulator<IEntityInstance>>("cells", populatorListModel) {
 			
 			@Override
-			protected ListItem<ICellPopulator<EntityInstance>> newItem(int index, IModel<ICellPopulator<EntityInstance>> itemModel) {
+			protected ListItem<ICellPopulator<IEntityInstance>> newItem(int index, IModel<ICellPopulator<IEntityInstance>> itemModel) {
 				return new JsonCellItem(Integer.toString(index), index, itemModel);
 			}
 			
 			@Override
-			protected void populateItem(ListItem<ICellPopulator<EntityInstance>> item) {
-				item.getModelObject().populateItem((Item<ICellPopulator<EntityInstance>>)item, "contents", instanceModel);
+			protected void populateItem(ListItem<ICellPopulator<IEntityInstance>> item) {
+				item.getModelObject().populateItem((Item<ICellPopulator<IEntityInstance>>)item, "contents", instanceModel);
 			}
 			
 			@Override
@@ -116,9 +116,9 @@ public abstract class AbstractPopulatorEntityDataTablePanel<CD extends Populator
 	 * This class has a {@link JsonEncodingContainer} child and delegates the add()
 	 * method for new components to that child.
 	 */
-	private static class JsonCellItem extends Item<ICellPopulator<EntityInstance>> {
+	private static class JsonCellItem extends Item<ICellPopulator<IEntityInstance>> {
 
-		JsonCellItem(String id, int index, IModel<ICellPopulator<EntityInstance>> model) {
+		JsonCellItem(String id, int index, IModel<ICellPopulator<IEntityInstance>> model) {
 			super(id, index, model);
 			super.add(new JsonEncodingContainer("jsonEncoder"));
 		}

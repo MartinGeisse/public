@@ -8,7 +8,7 @@ package name.martingeisse.admin.entity;
 
 import java.util.NoSuchElementException;
 
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.wicket.model.IModel;
@@ -20,7 +20,7 @@ import org.apache.wicket.model.IModel;
  * you must create instances of one of its subclasses, {@link Required} and
  * {@link Optional}.
  */
-public class EntityInstanceModel implements IModel<EntityInstance> {
+public class EntityInstanceModel implements IModel<IEntityInstance> {
 
 	/**
 	 * the selection
@@ -56,7 +56,7 @@ public class EntityInstanceModel implements IModel<EntityInstance> {
 	 * @see org.apache.wicket.model.IModel#getObject()
 	 */
 	@Override
-	public EntityInstance getObject() {
+	public IEntityInstance getObject() {
 		throw new RuntimeException("this code should not be reachable");
 	}
 
@@ -64,7 +64,7 @@ public class EntityInstanceModel implements IModel<EntityInstance> {
 	 * @see org.apache.wicket.model.IModel#setObject(java.lang.Object)
 	 */
 	@Override
-	public void setObject(final EntityInstance object) {
+	public void setObject(final IEntityInstance object) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -86,7 +86,7 @@ public class EntityInstanceModel implements IModel<EntityInstance> {
 		 * @see name.martingeisse.admin.entity.EntityInstanceModel#getObject()
 		 */
 		@Override
-		public EntityInstance getObject() {
+		public IEntityInstance getObject() {
 			return selection.fetchSingleInstance(false);
 		}
 	}
@@ -108,7 +108,7 @@ public class EntityInstanceModel implements IModel<EntityInstance> {
 		 * @see name.martingeisse.admin.entity.EntityInstanceModel#getObject()
 		 */
 		@Override
-		public EntityInstance getObject() {
+		public IEntityInstance getObject() {
 			return selection.fetchSingleInstance(true);
 		}
 

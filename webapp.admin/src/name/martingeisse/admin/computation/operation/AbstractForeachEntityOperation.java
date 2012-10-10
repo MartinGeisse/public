@@ -6,12 +6,9 @@
 
 package name.martingeisse.admin.computation.operation;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.common.computation.operation.AbstractForeachOperation;
 import name.martingeisse.common.computation.operation.ForeachHandlingMode;
@@ -23,7 +20,6 @@ import name.martingeisse.common.util.ReturnValueUtil;
 import org.apache.log4j.Logger;
 
 import com.mysema.query.sql.SQLQuery;
-import com.mysema.query.types.expr.Wildcard;
 
 /**
  * Base class for operations that fetch a list of entity instances,
@@ -31,13 +27,15 @@ import com.mysema.query.types.expr.Wildcard;
  * instance. This class provides exception handling, transactions,
  * and logging, all of them per-list and per-element.
  * 
+ * The entity query uses the default path for the entity.
+ * 
  * Automatic logging is performed on DEBUG and TRACE levels. Add your
  * own logging calls if you need logging on higher levels.
  * 
  * @param <P> internal per-call parameter type. This type is typically decided
  * on by the concrete subclass since it knows which data to pass around.
  */
-public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachOperation<EntityInstance, P> {
+public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachOperation<IEntityInstance, P> {
 
 	/**
 	 * the logger
@@ -129,28 +127,10 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	 * @see name.martingeisse.common.computation.operation.AbstractForeachOperation#determineList(java.lang.Object)
 	 */
 	@Override
-	protected List<EntityInstance> determineList(final P parameter) {
-		try {
-
-			// obtain a ResultSet
-			final SQLQuery query = entityDescriptor.createQuery(EntityDescriptor.ALIAS);
-			configureQuery(parameter, query);
-			final ResultSet resultSet = query.getResults(Wildcard.all);
-
-			// fetch rows
-			entityDescriptor.checkDataRowMeta(resultSet);
-			final List<EntityInstance> rows = new ArrayList<EntityInstance>();
-			while (resultSet.next()) {
-				rows.add(ReturnValueUtil.nullNotAllowed(convertRow(parameter, resultSet), "convertRow()"));
-			}
-
-			// clean up
-			resultSet.close();
-			return rows;
-
-		} catch (final SQLException e) {
-			throw new RuntimeException(e);
-		}
+	protected List<IEntityInstance> determineList(final P parameter) {
+		final SQLQuery query = entityDescriptor.getQueryBuilder().createQuery();
+		configureQuery(parameter, query);
+		return entityDescriptor.getQueryBuilder().getAll(query);
 	}
 
 	/**
@@ -159,8 +139,8 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	 * or OFFSET/LIMIT. By default, the query contains nothing but
 	 * the FROM clause.
 	 * 
-	 * Query clauses should refer to the entity being fetched as
-	 * {@link IEntityListFilter#ALIAS}.
+	 * Query clauses should refer to the entity being fetched using
+	 * its default path.
 	 * 
 	 * The default implementation does nothing.
 	 * 
@@ -170,27 +150,11 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	protected void configureQuery(final P parameter, final SQLQuery query) {
 	}
 
-	/**
-	 * Converts the current row from the specified result set to an entity instance.
-	 * Overriding this method basically allows subclasses of this class to use
-	 * subclasses of {@link EntityInstance}. Operations need not override this
-	 * method if {@link EntityInstance} fits their needs.
-	 * 
-	 * @param parameter internal per-call parameter
-	 * @param resultSet the result set
-	 * @return the entity instance
-	 * @throws SQLException on SQL errors
-	 */
-	protected EntityInstance convertRow(final P parameter, final ResultSet resultSet) throws SQLException {
-		ParameterUtil.ensureNotNull(resultSet, "resultSet");
-		return new EntityInstance(entityDescriptor, resultSet);
-	}
-
 	/* (non-Javadoc)
 	 * @see name.martingeisse.common.computation.operation.AbstractForeachOperation#onListObtained(java.lang.Object, java.util.List)
 	 */
 	@Override
-	protected void onListObtained(final P parameter, final List<EntityInstance> list) {
+	protected void onListObtained(final P parameter, final List<IEntityInstance> list) {
 		super.onListObtained(parameter, list);
 		logger.debug(this.getClass().getName() + ": " + list.size() + " rows found");
 	}
@@ -226,7 +190,7 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	 * @see name.martingeisse.common.computation.operation.AbstractForeachOperation#handleElementAndContextWork(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	protected void handleElementAndContextWork(final P parameter, final EntityInstance element) {
+	protected void handleElementAndContextWork(final P parameter, final IEntityInstance element) {
 		IEntityDatabaseConnection connection = getConnection();
 		if (transactionMode.isIncludesLocal()) {
 			connection.begin();
@@ -241,7 +205,7 @@ public abstract class AbstractForeachEntityOperation<P> extends AbstractForeachO
 	 * @see name.martingeisse.common.computation.operation.AbstractForeachOperation#onLocalException(java.lang.Object, java.lang.Object, java.lang.Exception)
 	 */
 	@Override
-	protected void onLocalException(final P parameter, final EntityInstance element, final Exception e) {
+	protected void onLocalException(final P parameter, final IEntityInstance element, final Exception e) {
 		super.onLocalException(parameter, element, e);
 		IEntityDatabaseConnection connection = getConnection();
 		if (transactionMode.isIncludesLocal()) {

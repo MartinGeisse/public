@@ -7,6 +7,7 @@
 package name.martingeisse.admin.application.wicket;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
+import name.martingeisse.admin.application.hooks.ISchemaAwareContributor;
 import name.martingeisse.admin.application.security.SecurityConfiguration;
 import name.martingeisse.admin.application.wicket.converter.DateTimeConverter;
 import name.martingeisse.admin.application.wicket.converter.LocalDateConverter;
@@ -100,6 +101,11 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		ApplicationConfiguration.get().initialize();
 		logger.trace("ApplicationConfiguration initialized");
 
+		// run schema-aware contributors
+		for (ISchemaAwareContributor contributor : ISchemaAwareContributor.CAPABILITY_KEY) {
+			contributor.contribute();
+		}
+		
 		// initialize the application schema from the database
 		logger.trace("initializing ApplicationSchema...");
 		ApplicationSchema.initialize();

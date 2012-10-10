@@ -9,7 +9,6 @@ package name.martingeisse.admin.entity.list;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.common.database.QueryConditions;
 
-import com.mysema.query.support.Expressions;
 import com.mysema.query.types.Operator;
 import com.mysema.query.types.Ops;
 import com.mysema.query.types.Path;
@@ -21,10 +20,11 @@ import com.mysema.query.types.Path;
 public class EntityConditions extends QueryConditions {
 
 	/**
-	 * Constructor using the default entity filter alias ({@link EntityDescriptor#ALIAS}).
+	 * Constructor using the default entity path for the specified entity.
+	 * @param entity the entity
 	 */
-	public EntityConditions() {
-		this(Expressions.path(Object.class, EntityDescriptor.ALIAS), Ops.AND);
+	public EntityConditions(final EntityDescriptor entity) {
+		this(entity.getQueryBuilder().getDefaultPath(), Ops.AND);
 	}
 
 	/**
@@ -36,11 +36,12 @@ public class EntityConditions extends QueryConditions {
 	}
 
 	/**
-	 * Constructor using the default entity filter alias ({@link EntityDescriptor#ALIAS}).
+	 * Constructor using the default entity path.
+	 * @param entity the entity
 	 * @param buildOperator the operator used to combine expressions
 	 */
-	public EntityConditions(final Operator<Boolean> buildOperator) {
-		this(Expressions.path(Object.class, EntityDescriptor.ALIAS), buildOperator);
+	public EntityConditions(final EntityDescriptor entity, final Operator<Boolean> buildOperator) {
+		this(entity.getQueryBuilder().getDefaultPath(), buildOperator);
 	}
 
 	/**

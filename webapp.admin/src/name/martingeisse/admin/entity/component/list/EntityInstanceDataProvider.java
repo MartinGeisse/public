@@ -6,14 +6,10 @@
 
 package name.martingeisse.admin.entity.component.list;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
@@ -25,13 +21,16 @@ import org.apache.wicket.model.Model;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.types.OrderSpecifier;
 import com.mysema.query.types.Predicate;
-import com.mysema.query.types.expr.Wildcard;
 
 /**
  * An {@link IDataProvider} that fetches entity instances and returns
- * them as {@link EntityInstance} objects.
+ * them as {@link IEntityInstance} objects.
+ * 
+ * This class assumes that the filter predicate and order specifiers
+ * use the default relational path (i.e. the table name, also used
+ * implicitly by the default instance of the generated query classes).
  */
-public class EntityInstanceDataProvider implements IDataProvider<EntityInstance> {
+public class EntityInstanceDataProvider implements IDataProvider<IEntityInstance> {
 
 	/**
 	 * the entityModel
@@ -105,9 +104,9 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	/**
 	 * This method can be implemented by subclasses to trigger additional behavior
 	 * when the fetch result is available. The default implementation does nothing.
-	 * @param resultSetMetaData the result set meta-data
+	 * @param entityInstances the entity instances
 	 */
-	protected void onResultAvailable(final ResultSetMetaData resultSetMetaData) throws SQLException {
+	protected void onResultAvailable(final List<IEntityInstance> entityInstances) {
 	}
 
 	/* (non-Javadoc)
@@ -122,53 +121,42 @@ public class EntityInstanceDataProvider implements IDataProvider<EntityInstance>
 	 */
 	@Override
 	public long size() {
-		return getEntity().count(filter);
+		return getEntity().getQueryBuilder().count(filter);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.markup.repeater.data.IDataProvider#iterator(long, long)
 	 */
 	@Override
-	public Iterator<? extends EntityInstance> iterator(final long first, final long count) {
-		try {
-			
-			// obtain a ResultSet
-			final EntityDescriptor entity = getEntity();
-			SQLQuery query = entity.createQuery(EntityDescriptor.ALIAS);
-			if (filter != null) {
-				query = query.where(filter);
-			}
-			if (orderSpecifiers != null) {
-				query = query.orderBy(orderSpecifiers);
-			}
-			final ResultSet resultSet = query.limit(count).offset(first).getResults(Wildcard.all);
-			
-			// fetch rows
-			entity.checkDataRowMeta(resultSet);
-			final List<EntityInstance> rows = new ArrayList<EntityInstance>();
-			while (resultSet.next()) {
-				rows.add(new EntityInstance(entity, resultSet));
-			}
-			
-			// additional client-specific behavior
-			onResultAvailable(resultSet.getMetaData());
-			
-			// clean up
-			resultSet.close();
-			
-			// return the rows as an iterator
-			return rows.iterator();
+	public Iterator<? extends IEntityInstance> iterator(final long first, final long count) {
 		
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
+		// build the query
+		final EntityDescriptor entity = getEntity();
+		SQLQuery query = entity.getQueryBuilder().createQuery();
+		if (filter != null) {
+			query = query.where(filter);
 		}
+		if (orderSpecifiers != null) {
+			query = query.orderBy(orderSpecifiers);
+		}
+		query = query.limit(count).offset(first);
+		
+		// fetch the rows
+		List<IEntityInstance> entityInstances = entity.getQueryBuilder().getAll(query);
+			
+		// additional client-specific behavior
+		onResultAvailable(entityInstances);
+			
+		// return the rows as an iterator
+		return entityInstances.iterator();
+		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.markup.repeater.data.IDataProvider#model(java.lang.Object)
 	 */
 	@Override
-	public IModel<EntityInstance> model(final EntityInstance object) {
+	public IModel<IEntityInstance> model(final IEntityInstance object) {
 		return Model.of(object);
 	}
 

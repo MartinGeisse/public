@@ -19,7 +19,7 @@ public class DefaultEntitySpecificCodeMapper implements IEntityOrmMapper {
 	 */
 	@Override
 	public EntitySpecificCodeMapping map(final EntityDescriptor entityDescriptor) {
-		return new EntitySpecificCodeMapping(entityDescriptor, null, null);
+		return new EntitySpecificCodeMapping(entityDescriptor, null);
 	}
 
 }

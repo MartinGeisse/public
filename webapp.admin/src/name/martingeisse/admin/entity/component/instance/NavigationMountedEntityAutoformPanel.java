@@ -7,7 +7,7 @@
 package name.martingeisse.admin.entity.component.instance;
 
 import name.martingeisse.admin.entity.EntityConfiguration;
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.schema.autoform.EntityAutoformDescriber;
 import name.martingeisse.admin.navigation.NavigationUtil;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
@@ -27,7 +27,7 @@ public class NavigationMountedEntityAutoformPanel extends EditEntityAutoformPane
 	 * @param id the wicket id
 	 * @param model the entity instance model
 	 */
-	public NavigationMountedEntityAutoformPanel(final String id, final IModel<EntityInstance> model) {
+	public NavigationMountedEntityAutoformPanel(final String id, final IModel<IEntityInstance> model) {
 		super(id, ParameterUtil.ensureNotNull(model.getObject(), "model"), EntityAutoformDescriber.instance, EntityConfiguration.parameterKey.get().getAutoformPropertyComponentFactory());
 	}
 

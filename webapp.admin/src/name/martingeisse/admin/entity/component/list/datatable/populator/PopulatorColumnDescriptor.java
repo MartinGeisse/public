@@ -7,9 +7,7 @@
 package name.martingeisse.admin.entity.component.list.datatable.populator;
 
 import name.martingeisse.admin.entity.component.list.datatable.render.RenderingColumnDescriptor;
-import name.martingeisse.admin.entity.instance.EntityInstance;
-import name.martingeisse.admin.entity.list.EntityExpressionUtil;
-import name.martingeisse.common.util.GenericTypeUtil;
+import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -21,19 +19,19 @@ import com.mysema.query.types.Expression;
 /**
  * Customized column descriptor type for {@link PopulatorEntityDataTablePanel}.
  */
-public class PopulatorColumnDescriptor extends RenderingColumnDescriptor implements ICellPopulator<EntityInstance> {
+public class PopulatorColumnDescriptor extends RenderingColumnDescriptor implements ICellPopulator<IEntityInstance> {
 
 	/**
 	 * the cellPopulator
 	 */
-	private final ICellPopulator<EntityInstance> cellPopulator;
+	private final ICellPopulator<IEntityInstance> cellPopulator;
 
 	/**
 	 * Constructor.
 	 * @param title the column title
 	 * @param cellPopulator the cell populator used to fill table cells in this column
 	 */
-	public PopulatorColumnDescriptor(final String title, final ICellPopulator<EntityInstance> cellPopulator) {
+	public PopulatorColumnDescriptor(final String title, final ICellPopulator<IEntityInstance> cellPopulator) {
 		super(title);
 		ParameterUtil.ensureNotNull(cellPopulator, "cellPopulator");
 		this.cellPopulator = cellPopulator;
@@ -42,32 +40,12 @@ public class PopulatorColumnDescriptor extends RenderingColumnDescriptor impleme
 	/**
 	 * Constructor.
 	 * @param title the column title
-	 * @param sortField the field used to sort this column
-	 * @param cellPopulator the cell populator used to fill table cells in this column
-	 */
-	public PopulatorColumnDescriptor(final String title, String sortField, final ICellPopulator<EntityInstance> cellPopulator) {
-		super(title, sortFieldToSortExpression(sortField));
-		ParameterUtil.ensureNotNull(cellPopulator, "cellPopulator");
-		this.cellPopulator = cellPopulator;
-	}
-	
-	/**
-	 * Converts a field name to a QueryDSL expression of type {@link Comparable}, used for sorting.
-	 * @param sortField the field name
-	 * @return the expression
-	 */
-	private static Expression<Comparable<?>> sortFieldToSortExpression(String sortField) {
-		return GenericTypeUtil.unsafeCast(EntityExpressionUtil.fieldPath(Comparable.class, sortField));
-	}
-
-	/**
-	 * Constructor.
-	 * @param title the column title
 	 * @param sortExpression the expression used to sort rows
 	 * @param cellPopulator the cell populator used to fill table cells in this column
 	 */
-	public PopulatorColumnDescriptor(final String title, final Expression<Comparable<?>> sortExpression, final ICellPopulator<EntityInstance> cellPopulator) {
+	public PopulatorColumnDescriptor(final String title, final Expression<Comparable<?>> sortExpression, final ICellPopulator<IEntityInstance> cellPopulator) {
 		super(title, sortExpression);
+		ParameterUtil.ensureNotNull(cellPopulator, "cellPopulator");
 		this.cellPopulator = cellPopulator;
 	}
 
@@ -75,7 +53,7 @@ public class PopulatorColumnDescriptor extends RenderingColumnDescriptor impleme
 	 * Getter method for the cellPopulator.
 	 * @return the cellPopulator
 	 */
-	public ICellPopulator<EntityInstance> getCellPopulator() {
+	public ICellPopulator<IEntityInstance> getCellPopulator() {
 		return cellPopulator;
 	}
 
@@ -90,7 +68,7 @@ public class PopulatorColumnDescriptor extends RenderingColumnDescriptor impleme
 	 * @see org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator#populateItem(org.apache.wicket.markup.repeater.Item, java.lang.String, org.apache.wicket.model.IModel)
 	 */
 	@Override
-	public void populateItem(final Item<ICellPopulator<EntityInstance>> cellItem, final String componentId, final IModel<EntityInstance> rowModel) {
+	public void populateItem(final Item<ICellPopulator<IEntityInstance>> cellItem, final String componentId, final IModel<IEntityInstance> rowModel) {
 		cellPopulator.populateItem(cellItem, componentId, rowModel);
 	}
 

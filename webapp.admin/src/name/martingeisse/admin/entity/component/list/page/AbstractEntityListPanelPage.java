@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.entity.component.list.page;
 
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.list.IEntityPredicateAcceptor;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.util.IGetPageable;
@@ -21,7 +21,7 @@ import com.mysema.query.types.Predicate;
 
 /**
  * This class allows to display an entity list using an existing panel
- * class that takes a model of type {@link EntityInstance}. The concrete
+ * class that takes a model of type {@link IEntityInstance}. The concrete
  * subclass must supply the panel class and strategies for the panel
  * (such as an entity list filter).
  * 

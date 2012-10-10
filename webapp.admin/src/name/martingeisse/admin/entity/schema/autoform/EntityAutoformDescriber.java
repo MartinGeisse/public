@@ -8,7 +8,7 @@ package name.martingeisse.admin.entity.schema.autoform;
 
 import java.util.List;
 
-import name.martingeisse.admin.entity.instance.EntityInstance;
+import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
 import name.martingeisse.wicket.autoform.describe.AbstractAutoformBeanDescriber;
@@ -22,9 +22,9 @@ import name.martingeisse.wicket.autoform.describe.IAutoformPropertyDescriptor;
  * properties from entity descriptors and annotations from the
  * autoform meta-data stored in those descriptors.
  * 
- * The "beans" described by this object are {@link EntityInstance} objects.
+ * The "beans" described by this object are {@link IEntityInstance} objects.
  */
-public class EntityAutoformDescriber extends AbstractAutoformBeanDescriber<EntityDescriptor, EntityPropertyDescriptor, EntityInstance> {
+public class EntityAutoformDescriber extends AbstractAutoformBeanDescriber<EntityDescriptor, EntityPropertyDescriptor, IEntityInstance> {
 
 	/**
 	 * the default instance of this class
@@ -35,14 +35,14 @@ public class EntityAutoformDescriber extends AbstractAutoformBeanDescriber<Entit
 	 * Constructor.
 	 */
 	public EntityAutoformDescriber() {
-		super(EntityInstance.class);
+		super(IEntityInstance.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformBeanDescriber#createHelper(java.lang.Object)
 	 */
 	@Override
-	protected AbstractAutoformBeanDescriberHelper<EntityDescriptor, EntityPropertyDescriptor, ?> createHelper(final EntityInstance entityInstance) {
+	protected AbstractAutoformBeanDescriberHelper<EntityDescriptor, EntityPropertyDescriptor, ?> createHelper(final IEntityInstance entityInstance) {
 		return new EntityAutoformDescriberHelper(this, entityInstance.getEntity());
 	}
 
@@ -50,7 +50,7 @@ public class EntityAutoformDescriber extends AbstractAutoformBeanDescriber<Entit
 	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformBeanDescriber#createBeanDescriptor(java.lang.Object, java.util.List)
 	 */
 	@Override
-	protected AbstractAutoformBeanDescriptor<EntityInstance> createBeanDescriptor(final EntityInstance entityInstance, final List<IAutoformPropertyDescriptor> propertyDescriptors) {
+	protected AbstractAutoformBeanDescriptor<IEntityInstance> createBeanDescriptor(final IEntityInstance entityInstance, final List<IAutoformPropertyDescriptor> propertyDescriptors) {
 		return new EntityAutoformBeanDescriptor(entityInstance, propertyDescriptors);
 	}
 
@@ -58,7 +58,7 @@ public class EntityAutoformDescriber extends AbstractAutoformBeanDescriber<Entit
 	 * @see name.martingeisse.wicket.autoform.describe.AbstractAutoformBeanDescriber#createPropertyDescriptor(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	protected IAutoformPropertyDescriptor createPropertyDescriptor(final EntityInstance entityInstance, final EntityPropertyDescriptor propertyDescriptor) {
+	protected IAutoformPropertyDescriptor createPropertyDescriptor(final IEntityInstance entityInstance, final EntityPropertyDescriptor propertyDescriptor) {
 		return new EntityAutoformPropertyDescriptor(entityInstance, propertyDescriptor);
 	}
 

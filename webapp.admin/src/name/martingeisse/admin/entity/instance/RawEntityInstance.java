@@ -18,13 +18,13 @@ import name.martingeisse.common.datarow.DataRowMeta;
 import name.martingeisse.common.util.ParameterUtil;
 
 /**
- * Represents a single entity instance fetched from the database. This is
- * simply a {@link DataRow} that knows the entity from which it comes.
+ * Raw implementation of {@link IEntityInstance} based on a data array.
+ * This is simply a {@link DataRow} that knows the entity from which it comes.
  * 
  * The entity and the meta-data cannot be changed after construction.
  * Trying to do so results in an {@link UnsupportedOperationException}.
  */
-public class EntityInstance extends DataRow {
+public class RawEntityInstance extends DataRow implements IEntityInstance {
 
 	/**
 	 * the entityName -- stored to make the entity itself detachable (transient)
@@ -45,11 +45,13 @@ public class EntityInstance extends DataRow {
 	 * @param resultSet the result set
 	 * @throws SQLException on SQL errors
 	 */
-	public EntityInstance(final EntityDescriptor entity, final ResultSet resultSet) throws SQLException {
+	public RawEntityInstance(final EntityDescriptor entity, final ResultSet resultSet) throws SQLException {
 		super(ParameterUtil.ensureNotNull(resultSet, "resultSet"), ParameterUtil.ensureNotNull(entity, "entity").getDataRowTypes(), entity.getDatabase());
-		entity.checkDataRowMeta(this);
 		this.entityName = entity.getName();
 		this.entity = entity;
+		if (!entity.getDataRowMeta().equals(getDataRowMeta())) {
+			throw new IllegalStateException("data row schema for entity " + entity.getName() + " does not match");
+		}
 	}
 
 	/**
@@ -59,18 +61,18 @@ public class EntityInstance extends DataRow {
 		this.entity = ApplicationSchema.instance.findOptionalEntity(entityName);
 	}
 
-	/**
-	 * Getter method for the entityName.
-	 * @return the entityName
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.instance.IEntityInstance#getEntityName()
 	 */
+	@Override
 	public String getEntityName() {
 		return entityName;
 	}
 
-	/**
-	 * Getter method for the entity.
-	 * @return the entity
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.instance.IEntityInstance#getEntity()
 	 */
+	@Override
 	public final EntityDescriptor getEntity() {
 		return entity;
 	}
@@ -86,10 +88,10 @@ public class EntityInstance extends DataRow {
 		super.setDataRowMeta(meta);
 	}
 
-	/**
-	 * Getter method for the id.
-	 * @return the id
+	/* (non-Javadoc)
+	 * @see name.martingeisse.admin.entity.instance.IEntityInstance#getEntityId()
 	 */
+	@Override
 	public final Object getEntityId() {
 		final String idColumnName = getEntity().getIdColumnName();
 		if (idColumnName == null) {
