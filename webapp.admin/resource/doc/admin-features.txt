@@ -17,3 +17,9 @@ Warum generisches Datensammeln? Warum nicht Basisklassen für eine spezifische A
 Basisklassen liefert! Zum Beispiel liefern "bekannte" Datentypen der Entity-Properties, im
 Gegensatz zu den Typen die SQL liefert, gleich die Darstellung, die man haben will, ohne dass
 man diese immer explizit angeben muss.
+
+---
+
+Generierte Klassen können sich nicht automatisch an DB-Änderungen anpassen. Sie
+müssen neu generiert werden. Entities ohne generierten Code passen sich automatisch
+an.

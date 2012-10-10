@@ -1,5 +1,0 @@
-
-- ReferenceInfo: beliebige destination keys erlauben, nicht nur ID
-
-- EntityDataSource aus Referenzen (foreign keys) erzeugen
-
