@@ -19,7 +19,9 @@ import name.martingeisse.common.servlet.SideEffectsOriginRestrictionFilter;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ssl.SslSocketConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
  * This class starts the admin system and is typically invoked by the
@@ -69,13 +71,13 @@ public class Launcher {
 		context.addServlet(RestfulServlet.class, "/*");
 
 		// configure SSL / HTTPS
-		//		SslContextFactory sslContextFactory = new SslContextFactory("/Users/martin/.keystore");
-		//		sslContextFactory.setKeyStorePassword("changeit");
-		//		SslSocketConnector sslSocketConnector = new SslSocketConnector(sslContextFactory);
-		//		sslSocketConnector.setPort(8443);
+//		SslContextFactory sslContextFactory = new SslContextFactory("/Users/geisse/.keystore");
+//		sslContextFactory.setKeyStorePassword("changeit");
+//		SslSocketConnector sslSocketConnector = new SslSocketConnector(sslContextFactory);
+//		sslSocketConnector.setPort(8889);
 
 		final Server server = new Server(8888);
-		//		server.addConnector(sslSocketConnector);
+//		server.addConnector(sslSocketConnector);
 		server.setHandler(context);
 		server.start();
 		server.join();

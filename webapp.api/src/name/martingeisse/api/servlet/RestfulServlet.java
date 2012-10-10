@@ -82,6 +82,8 @@ public class RestfulServlet extends HttpServlet {
 		} catch (RequestParametersException e) {
 			ServletUtil.emitParameterErrorResponse(response, e.getMessage());
 		} catch (Exception e) {
+			System.out.println("* Exception: " + e);
+			e.printStackTrace(System.out);
 			ServletUtil.emitInternalServerErrorResponse(response);
 			e.printStackTrace();
 			return;
