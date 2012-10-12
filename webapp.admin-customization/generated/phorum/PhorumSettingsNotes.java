@@ -3,16 +3,27 @@
  */
 package phorum;
 
+import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
+import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_settings_notes'.
  */
-public class PhorumSettingsNotes {
+@GeneratedFromTable("phorum_settings_notes")
+public class PhorumSettingsNotes extends AbstractSpecificEntityInstance {
+
+    /**
+     * Meta-data about this class for the admin framework
+     */
+    public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(PhorumSettingsNotes.class);
 
     /**
      * Constructor.
      */
     public PhorumSettingsNotes() {
+        super(GENERATED_CLASS_META_DATA);
     }
 
     /**
@@ -29,6 +40,7 @@ public class PhorumSettingsNotes {
      * Getter method for the note.
      * @return the note
      */
+    @GeneratedFromColumn("note")
     public String getNote() {
         return note;
     }
@@ -45,6 +57,7 @@ public class PhorumSettingsNotes {
      * Getter method for the settingName.
      * @return the settingName
      */
+    @GeneratedFromColumn("setting_name")
     public String getSettingName() {
         return settingName;
     }

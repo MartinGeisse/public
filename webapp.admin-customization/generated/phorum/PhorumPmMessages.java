@@ -3,16 +3,27 @@
  */
 package phorum;
 
+import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
+import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_pm_messages'.
  */
-public class PhorumPmMessages {
+@GeneratedFromTable("phorum_pm_messages")
+public class PhorumPmMessages extends AbstractSpecificEntityInstance {
+
+    /**
+     * Meta-data about this class for the admin framework
+     */
+    public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(PhorumPmMessages.class);
 
     /**
      * Constructor.
      */
     public PhorumPmMessages() {
+        super(GENERATED_CLASS_META_DATA);
     }
 
     /**
@@ -54,6 +65,7 @@ public class PhorumPmMessages {
      * Getter method for the author.
      * @return the author
      */
+    @GeneratedFromColumn("author")
     public String getAuthor() {
         return author;
     }
@@ -70,6 +82,7 @@ public class PhorumPmMessages {
      * Getter method for the datestamp.
      * @return the datestamp
      */
+    @GeneratedFromColumn("datestamp")
     public Integer getDatestamp() {
         return datestamp;
     }
@@ -86,6 +99,7 @@ public class PhorumPmMessages {
      * Getter method for the message.
      * @return the message
      */
+    @GeneratedFromColumn("message")
     public String getMessage() {
         return message;
     }
@@ -102,6 +116,7 @@ public class PhorumPmMessages {
      * Getter method for the meta.
      * @return the meta
      */
+    @GeneratedFromColumn("meta")
     public String getMeta() {
         return meta;
     }
@@ -118,6 +133,7 @@ public class PhorumPmMessages {
      * Getter method for the pmMessageId.
      * @return the pmMessageId
      */
+    @GeneratedFromColumn("pm_message_id")
     public Integer getPmMessageId() {
         return pmMessageId;
     }
@@ -134,6 +150,7 @@ public class PhorumPmMessages {
      * Getter method for the subject.
      * @return the subject
      */
+    @GeneratedFromColumn("subject")
     public String getSubject() {
         return subject;
     }
@@ -150,6 +167,7 @@ public class PhorumPmMessages {
      * Getter method for the userId.
      * @return the userId
      */
+    @GeneratedFromColumn("user_id")
     public Integer getUserId() {
         return userId;
     }

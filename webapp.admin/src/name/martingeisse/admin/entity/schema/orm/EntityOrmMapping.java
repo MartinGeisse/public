@@ -31,7 +31,7 @@ import com.mysema.query.types.expr.Wildcard;
  * for that class. In any case, this class is used to build {@link RelationalPath}
  * instances for database queries.
  */
-public final class EntitySpecificCodeMapping {
+public final class EntityOrmMapping {
 
 	/**
 	 * the entity
@@ -42,22 +42,28 @@ public final class EntitySpecificCodeMapping {
 	 * the entityInstanceClass
 	 */
 	private final Class<?> entityInstanceClass;
+
+	/**
+	 * the queryClass
+	 */
+	private final Class<? extends RelationalPath<?>> queryClass;
 	
 	/**
 	 * the defaultPath
 	 */
 	private final RelationalPath<?> defaultPath;
-
+	
 	/**
 	 * Constructor.
 	 * @param entity the parent entity (must not be null)
 	 * @param entityInstanceClass the class used for entity instances, or null to use the
 	 * default {@link RawEntityInstance}.
+	 * @param queryClass the QueryDSL Q-class for the entity
 	 */
-	public EntitySpecificCodeMapping(final EntityDescriptor entity, final Class<?> entityInstanceClass) {
-		ParameterUtil.ensureNotNull(entity, "entity");
-		this.entity = entity;
+	public EntityOrmMapping(final EntityDescriptor entity, final Class<?> entityInstanceClass, final Class<? extends RelationalPath<?>> queryClass) {
+		this.entity = ParameterUtil.ensureNotNull(entity, "entity");
 		this.entityInstanceClass = entityInstanceClass;
+		this.queryClass = queryClass;
 		this.defaultPath = createRelationalPath();
 	}
 
@@ -75,6 +81,14 @@ public final class EntitySpecificCodeMapping {
 	 */
 	public Class<?> getEntityInstanceClass() {
 		return entityInstanceClass;
+	}
+	
+	/**
+	 * Getter method for the queryClass.
+	 * @return the queryClass
+	 */
+	public Class<? extends RelationalPath<?>> getQueryClass() {
+		return queryClass;
 	}
 	
 	/**
@@ -99,8 +113,18 @@ public final class EntitySpecificCodeMapping {
 	 * @return the {@link RelationalPath}
 	 */
 	public RelationalPath<?> createRelationalPath(String variable) {
-		Class<?> pathType = (entityInstanceClass == null ? Object.class : entityInstanceClass);
-		return new RelationalPathBase<Object>(pathType, forVariable(variable), "null", entity.getTableName());
+		// implementation note: QueryDSL scans the Q-classes for their static fields,
+		// so if we have Q-classes, we *must* pass *them* and not just a RelationalPath
+		// with the same type and table.
+		if (queryClass == null) {
+			return new RelationalPathBase<Object>(Object.class, forVariable(variable), "null", entity.getTableName());
+		} else {
+			try {
+				return queryClass.getConstructor(String.class).newInstance(variable);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 
 	/**

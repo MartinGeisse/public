@@ -3,16 +3,27 @@
  */
 package phorum;
 
+import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
+import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_pm_xref'.
  */
-public class PhorumPmXref {
+@GeneratedFromTable("phorum_pm_xref")
+public class PhorumPmXref extends AbstractSpecificEntityInstance {
+
+    /**
+     * Meta-data about this class for the admin framework
+     */
+    public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(PhorumPmXref.class);
 
     /**
      * Constructor.
      */
     public PhorumPmXref() {
+        super(GENERATED_CLASS_META_DATA);
     }
 
     /**
@@ -54,6 +65,7 @@ public class PhorumPmXref {
      * Getter method for the pmFolderId.
      * @return the pmFolderId
      */
+    @GeneratedFromColumn("pm_folder_id")
     public Integer getPmFolderId() {
         return pmFolderId;
     }
@@ -70,6 +82,7 @@ public class PhorumPmXref {
      * Getter method for the pmMessageId.
      * @return the pmMessageId
      */
+    @GeneratedFromColumn("pm_message_id")
     public Integer getPmMessageId() {
         return pmMessageId;
     }
@@ -86,6 +99,7 @@ public class PhorumPmXref {
      * Getter method for the pmXrefId.
      * @return the pmXrefId
      */
+    @GeneratedFromColumn("pm_xref_id")
     public Integer getPmXrefId() {
         return pmXrefId;
     }
@@ -102,6 +116,7 @@ public class PhorumPmXref {
      * Getter method for the readFlag.
      * @return the readFlag
      */
+    @GeneratedFromColumn("read_flag")
     public Boolean getReadFlag() {
         return readFlag;
     }
@@ -118,6 +133,7 @@ public class PhorumPmXref {
      * Getter method for the replyFlag.
      * @return the replyFlag
      */
+    @GeneratedFromColumn("reply_flag")
     public Boolean getReplyFlag() {
         return replyFlag;
     }
@@ -134,6 +150,7 @@ public class PhorumPmXref {
      * Getter method for the specialFolder.
      * @return the specialFolder
      */
+    @GeneratedFromColumn("special_folder")
     public String getSpecialFolder() {
         return specialFolder;
     }
@@ -150,6 +167,7 @@ public class PhorumPmXref {
      * Getter method for the userId.
      * @return the userId
      */
+    @GeneratedFromColumn("user_id")
     public Integer getUserId() {
         return userId;
     }

@@ -3,16 +3,27 @@
  */
 package phorum;
 
+import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
+import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_crossref_test'.
  */
-public class PhorumCrossrefTest {
+@GeneratedFromTable("phorum_crossref_test")
+public class PhorumCrossrefTest extends AbstractSpecificEntityInstance {
+
+    /**
+     * Meta-data about this class for the admin framework
+     */
+    public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(PhorumCrossrefTest.class);
 
     /**
      * Constructor.
      */
     public PhorumCrossrefTest() {
+        super(GENERATED_CLASS_META_DATA);
     }
 
     /**
@@ -34,6 +45,7 @@ public class PhorumCrossrefTest {
      * Getter method for the alias.
      * @return the alias
      */
+    @GeneratedFromColumn("alias")
     public String getAlias() {
         return alias;
     }
@@ -50,6 +62,7 @@ public class PhorumCrossrefTest {
      * Getter method for the id.
      * @return the id
      */
+    @GeneratedFromColumn("id")
     public Integer getId() {
         return id;
     }
@@ -66,6 +79,7 @@ public class PhorumCrossrefTest {
      * Getter method for the name.
      * @return the name
      */
+    @GeneratedFromColumn("name")
     public String getName() {
         return name;
     }

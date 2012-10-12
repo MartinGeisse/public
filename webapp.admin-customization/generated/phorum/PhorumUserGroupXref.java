@@ -3,16 +3,27 @@
  */
 package phorum;
 
+import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
+import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_user_group_xref'.
  */
-public class PhorumUserGroupXref {
+@GeneratedFromTable("phorum_user_group_xref")
+public class PhorumUserGroupXref extends AbstractSpecificEntityInstance {
+
+    /**
+     * Meta-data about this class for the admin framework
+     */
+    public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(PhorumUserGroupXref.class);
 
     /**
      * Constructor.
      */
     public PhorumUserGroupXref() {
+        super(GENERATED_CLASS_META_DATA);
     }
 
     /**
@@ -34,6 +45,7 @@ public class PhorumUserGroupXref {
      * Getter method for the groupId.
      * @return the groupId
      */
+    @GeneratedFromColumn("group_id")
     public Integer getGroupId() {
         return groupId;
     }
@@ -50,6 +62,7 @@ public class PhorumUserGroupXref {
      * Getter method for the status.
      * @return the status
      */
+    @GeneratedFromColumn("status")
     public Byte getStatus() {
         return status;
     }
@@ -66,6 +79,7 @@ public class PhorumUserGroupXref {
      * Getter method for the userId.
      * @return the userId
      */
+    @GeneratedFromColumn("user_id")
     public Integer getUserId() {
         return userId;
     }

@@ -3,16 +3,27 @@
  */
 package phorum;
 
+import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
+import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_users'.
  */
-public class PhorumUsers {
+@GeneratedFromTable("phorum_users")
+public class PhorumUsers extends AbstractSpecificEntityInstance {
+
+    /**
+     * Meta-data about this class for the admin framework
+     */
+    public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(PhorumUsers.class);
 
     /**
      * Constructor.
      */
     public PhorumUsers() {
+        super(GENERATED_CLASS_META_DATA);
     }
 
     /**
@@ -179,6 +190,7 @@ public class PhorumUsers {
      * Getter method for the active.
      * @return the active
      */
+    @GeneratedFromColumn("active")
     public Boolean getActive() {
         return active;
     }
@@ -195,6 +207,7 @@ public class PhorumUsers {
      * Getter method for the admin.
      * @return the admin
      */
+    @GeneratedFromColumn("admin")
     public Boolean getAdmin() {
         return admin;
     }
@@ -211,6 +224,7 @@ public class PhorumUsers {
      * Getter method for the dateAdded.
      * @return the dateAdded
      */
+    @GeneratedFromColumn("date_added")
     public Integer getDateAdded() {
         return dateAdded;
     }
@@ -227,6 +241,7 @@ public class PhorumUsers {
      * Getter method for the dateLastActive.
      * @return the dateLastActive
      */
+    @GeneratedFromColumn("date_last_active")
     public Integer getDateLastActive() {
         return dateLastActive;
     }
@@ -243,6 +258,7 @@ public class PhorumUsers {
      * Getter method for the displayName.
      * @return the displayName
      */
+    @GeneratedFromColumn("display_name")
     public String getDisplayName() {
         return displayName;
     }
@@ -259,6 +275,7 @@ public class PhorumUsers {
      * Getter method for the email.
      * @return the email
      */
+    @GeneratedFromColumn("email")
     public String getEmail() {
         return email;
     }
@@ -275,6 +292,7 @@ public class PhorumUsers {
      * Getter method for the emailNotify.
      * @return the emailNotify
      */
+    @GeneratedFromColumn("email_notify")
     public Boolean getEmailNotify() {
         return emailNotify;
     }
@@ -291,6 +309,7 @@ public class PhorumUsers {
      * Getter method for the emailTemp.
      * @return the emailTemp
      */
+    @GeneratedFromColumn("email_temp")
     public String getEmailTemp() {
         return emailTemp;
     }
@@ -307,6 +326,7 @@ public class PhorumUsers {
      * Getter method for the hideActivity.
      * @return the hideActivity
      */
+    @GeneratedFromColumn("hide_activity")
     public Boolean getHideActivity() {
         return hideActivity;
     }
@@ -323,6 +343,7 @@ public class PhorumUsers {
      * Getter method for the hideEmail.
      * @return the hideEmail
      */
+    @GeneratedFromColumn("hide_email")
     public Boolean getHideEmail() {
         return hideEmail;
     }
@@ -339,6 +360,7 @@ public class PhorumUsers {
      * Getter method for the isDst.
      * @return the isDst
      */
+    @GeneratedFromColumn("is_dst")
     public Boolean getIsDst() {
         return isDst;
     }
@@ -355,6 +377,7 @@ public class PhorumUsers {
      * Getter method for the lastActiveForum.
      * @return the lastActiveForum
      */
+    @GeneratedFromColumn("last_active_forum")
     public Integer getLastActiveForum() {
         return lastActiveForum;
     }
@@ -371,6 +394,7 @@ public class PhorumUsers {
      * Getter method for the moderationEmail.
      * @return the moderationEmail
      */
+    @GeneratedFromColumn("moderation_email")
     public Boolean getModerationEmail() {
         return moderationEmail;
     }
@@ -387,6 +411,7 @@ public class PhorumUsers {
      * Getter method for the moderatorData.
      * @return the moderatorData
      */
+    @GeneratedFromColumn("moderator_data")
     public String getModeratorData() {
         return moderatorData;
     }
@@ -403,6 +428,7 @@ public class PhorumUsers {
      * Getter method for the password.
      * @return the password
      */
+    @GeneratedFromColumn("password")
     public String getPassword() {
         return password;
     }
@@ -419,6 +445,7 @@ public class PhorumUsers {
      * Getter method for the passwordTemp.
      * @return the passwordTemp
      */
+    @GeneratedFromColumn("password_temp")
     public String getPasswordTemp() {
         return passwordTemp;
     }
@@ -435,6 +462,7 @@ public class PhorumUsers {
      * Getter method for the pmEmailNotify.
      * @return the pmEmailNotify
      */
+    @GeneratedFromColumn("pm_email_notify")
     public Boolean getPmEmailNotify() {
         return pmEmailNotify;
     }
@@ -451,6 +479,7 @@ public class PhorumUsers {
      * Getter method for the posts.
      * @return the posts
      */
+    @GeneratedFromColumn("posts")
     public Integer getPosts() {
         return posts;
     }
@@ -467,6 +496,7 @@ public class PhorumUsers {
      * Getter method for the realName.
      * @return the realName
      */
+    @GeneratedFromColumn("real_name")
     public String getRealName() {
         return realName;
     }
@@ -483,6 +513,7 @@ public class PhorumUsers {
      * Getter method for the sessidLt.
      * @return the sessidLt
      */
+    @GeneratedFromColumn("sessid_lt")
     public String getSessidLt() {
         return sessidLt;
     }
@@ -499,6 +530,7 @@ public class PhorumUsers {
      * Getter method for the sessidSt.
      * @return the sessidSt
      */
+    @GeneratedFromColumn("sessid_st")
     public String getSessidSt() {
         return sessidSt;
     }
@@ -515,6 +547,7 @@ public class PhorumUsers {
      * Getter method for the sessidStTimeout.
      * @return the sessidStTimeout
      */
+    @GeneratedFromColumn("sessid_st_timeout")
     public Integer getSessidStTimeout() {
         return sessidStTimeout;
     }
@@ -531,6 +564,7 @@ public class PhorumUsers {
      * Getter method for the settingsData.
      * @return the settingsData
      */
+    @GeneratedFromColumn("settings_data")
     public String getSettingsData() {
         return settingsData;
     }
@@ -547,6 +581,7 @@ public class PhorumUsers {
      * Getter method for the showSignature.
      * @return the showSignature
      */
+    @GeneratedFromColumn("show_signature")
     public Boolean getShowSignature() {
         return showSignature;
     }
@@ -563,6 +598,7 @@ public class PhorumUsers {
      * Getter method for the signature.
      * @return the signature
      */
+    @GeneratedFromColumn("signature")
     public String getSignature() {
         return signature;
     }
@@ -579,6 +615,7 @@ public class PhorumUsers {
      * Getter method for the threadedList.
      * @return the threadedList
      */
+    @GeneratedFromColumn("threaded_list")
     public Boolean getThreadedList() {
         return threadedList;
     }
@@ -595,6 +632,7 @@ public class PhorumUsers {
      * Getter method for the threadedRead.
      * @return the threadedRead
      */
+    @GeneratedFromColumn("threaded_read")
     public Boolean getThreadedRead() {
         return threadedRead;
     }
@@ -611,6 +649,7 @@ public class PhorumUsers {
      * Getter method for the tzOffset.
      * @return the tzOffset
      */
+    @GeneratedFromColumn("tz_offset")
     public Float getTzOffset() {
         return tzOffset;
     }
@@ -627,6 +666,7 @@ public class PhorumUsers {
      * Getter method for the userId.
      * @return the userId
      */
+    @GeneratedFromColumn("user_id")
     public Integer getUserId() {
         return userId;
     }
@@ -643,6 +683,7 @@ public class PhorumUsers {
      * Getter method for the userLanguage.
      * @return the userLanguage
      */
+    @GeneratedFromColumn("user_language")
     public String getUserLanguage() {
         return userLanguage;
     }
@@ -659,6 +700,7 @@ public class PhorumUsers {
      * Getter method for the userTemplate.
      * @return the userTemplate
      */
+    @GeneratedFromColumn("user_template")
     public String getUserTemplate() {
         return userTemplate;
     }
@@ -675,6 +717,7 @@ public class PhorumUsers {
      * Getter method for the username.
      * @return the username
      */
+    @GeneratedFromColumn("username")
     public String getUsername() {
         return username;
     }

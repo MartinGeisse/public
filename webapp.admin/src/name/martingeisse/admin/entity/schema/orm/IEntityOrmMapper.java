@@ -25,6 +25,6 @@ public interface IEntityOrmMapper {
 	 * @param entityDescriptor the entity to map
 	 * @return the mapping (never null)
 	 */
-	public EntitySpecificCodeMapping map(EntityDescriptor entityDescriptor);
+	public EntityOrmMapping map(EntityDescriptor entityDescriptor);
 
 }

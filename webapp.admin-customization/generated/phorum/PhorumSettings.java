@@ -3,16 +3,27 @@
  */
 package phorum;
 
+import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
+import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_settings'.
  */
-public class PhorumSettings {
+@GeneratedFromTable("phorum_settings")
+public class PhorumSettings extends AbstractSpecificEntityInstance {
+
+    /**
+     * Meta-data about this class for the admin framework
+     */
+    public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(PhorumSettings.class);
 
     /**
      * Constructor.
      */
     public PhorumSettings() {
+        super(GENERATED_CLASS_META_DATA);
     }
 
     /**
@@ -39,6 +50,7 @@ public class PhorumSettings {
      * Getter method for the data.
      * @return the data
      */
+    @GeneratedFromColumn("data")
     public String getData() {
         return data;
     }
@@ -55,6 +67,7 @@ public class PhorumSettings {
      * Getter method for the groupId.
      * @return the groupId
      */
+    @GeneratedFromColumn("group_id")
     public Integer getGroupId() {
         return groupId;
     }
@@ -71,6 +84,7 @@ public class PhorumSettings {
      * Getter method for the name.
      * @return the name
      */
+    @GeneratedFromColumn("name")
     public String getName() {
         return name;
     }
@@ -87,6 +101,7 @@ public class PhorumSettings {
      * Getter method for the type.
      * @return the type
      */
+    @GeneratedFromColumn("type")
     public String getType() {
         return type;
     }

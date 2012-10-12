@@ -3,16 +3,27 @@
  */
 package phorum;
 
+import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
+import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_search'.
  */
-public class PhorumSearch {
+@GeneratedFromTable("phorum_search")
+public class PhorumSearch extends AbstractSpecificEntityInstance {
+
+    /**
+     * Meta-data about this class for the admin framework
+     */
+    public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(PhorumSearch.class);
 
     /**
      * Constructor.
      */
     public PhorumSearch() {
+        super(GENERATED_CLASS_META_DATA);
     }
 
     /**
@@ -44,6 +55,7 @@ public class PhorumSearch {
      * Getter method for the dateTest.
      * @return the dateTest
      */
+    @GeneratedFromColumn("date_test")
     public java.sql.Date getDateTest() {
         return dateTest;
     }
@@ -60,6 +72,7 @@ public class PhorumSearch {
      * Getter method for the datetimeTest.
      * @return the datetimeTest
      */
+    @GeneratedFromColumn("datetime_test")
     public java.sql.Timestamp getDatetimeTest() {
         return datetimeTest;
     }
@@ -76,6 +89,7 @@ public class PhorumSearch {
      * Getter method for the forumId.
      * @return the forumId
      */
+    @GeneratedFromColumn("forum_id")
     public Integer getForumId() {
         return forumId;
     }
@@ -92,6 +106,7 @@ public class PhorumSearch {
      * Getter method for the messageId.
      * @return the messageId
      */
+    @GeneratedFromColumn("message_id")
     public Integer getMessageId() {
         return messageId;
     }
@@ -108,6 +123,7 @@ public class PhorumSearch {
      * Getter method for the searchText.
      * @return the searchText
      */
+    @GeneratedFromColumn("search_text")
     public String getSearchText() {
         return searchText;
     }

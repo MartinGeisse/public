@@ -3,16 +3,27 @@
  */
 package phorum;
 
+import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
+import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_banlists'.
  */
-public class PhorumBanlists {
+@GeneratedFromTable("phorum_banlists")
+public class PhorumBanlists extends AbstractSpecificEntityInstance {
+
+    /**
+     * Meta-data about this class for the admin framework
+     */
+    public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(PhorumBanlists.class);
 
     /**
      * Constructor.
      */
     public PhorumBanlists() {
+        super(GENERATED_CLASS_META_DATA);
     }
 
     /**
@@ -49,6 +60,7 @@ public class PhorumBanlists {
      * Getter method for the comments.
      * @return the comments
      */
+    @GeneratedFromColumn("comments")
     public String getComments() {
         return comments;
     }
@@ -65,6 +77,7 @@ public class PhorumBanlists {
      * Getter method for the forumId.
      * @return the forumId
      */
+    @GeneratedFromColumn("forum_id")
     public Integer getForumId() {
         return forumId;
     }
@@ -81,6 +94,7 @@ public class PhorumBanlists {
      * Getter method for the id.
      * @return the id
      */
+    @GeneratedFromColumn("id")
     public Integer getId() {
         return id;
     }
@@ -97,6 +111,7 @@ public class PhorumBanlists {
      * Getter method for the pcre.
      * @return the pcre
      */
+    @GeneratedFromColumn("pcre")
     public Boolean getPcre() {
         return pcre;
     }
@@ -113,6 +128,7 @@ public class PhorumBanlists {
      * Getter method for the string.
      * @return the string
      */
+    @GeneratedFromColumn("string")
     public String getString() {
         return string;
     }
@@ -129,6 +145,7 @@ public class PhorumBanlists {
      * Getter method for the type.
      * @return the type
      */
+    @GeneratedFromColumn("type")
     public Byte getType() {
         return type;
     }

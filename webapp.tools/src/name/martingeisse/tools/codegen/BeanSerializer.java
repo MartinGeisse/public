@@ -17,6 +17,7 @@ import java.util.Set;
 
 import com.mysema.codegen.CodeWriter;
 import com.mysema.codegen.model.Parameter;
+import com.mysema.codegen.model.SimpleType;
 import com.mysema.codegen.model.Type;
 import com.mysema.codegen.model.TypeCategory;
 import com.mysema.codegen.model.Types;
@@ -28,13 +29,26 @@ import com.mysema.util.BeanUtils;
 /**
  * Customized bean serializer that creates the Java beans (not the
  * query classes) from the database schema.
+ * 
+ * This class has a central 'forAdmin' flag that determines whether
+ * the generated classes are intended for use in the admin framework
+ * or without it. The latter is very close to how QueryDSL originally
+ * generated bean classes, while the former adds an implementation
+ * for the IEntityInstance interface of the admin framework.
  */
 public class BeanSerializer extends AbstractSerializer {
 
 	/**
-	 * Constructor.
+	 * the forAdmin
 	 */
-	public BeanSerializer() {
+	private final boolean forAdmin;
+	
+	/**
+	 * Constructor.
+	 * @param forAdmin whether the generated classes are intended for use in the admin framework
+	 */
+	public BeanSerializer(boolean forAdmin) {
+		this.forAdmin = forAdmin;
 	}
 
 	/* (non-Javadoc)
@@ -42,6 +56,7 @@ public class BeanSerializer extends AbstractSerializer {
 	 */
 	@Override
 	public void serialize(final EntityType entityType, final SerializerConfig config, final CodeWriter w) throws IOException {
+		String tableName = entityType.getData().get("table").toString();
 
 		// file comment
 		printFileComment(w);
@@ -59,13 +74,27 @@ public class BeanSerializer extends AbstractSerializer {
 
 		// class annotations
 		printAnnotations(entityType.getAnnotations(), w);
+		if (forAdmin) {
+			w.line("@GeneratedFromTable(\"" + tableName + "\")");
+		}
 
 		// begin writing the class itself
-		w.beginClass(entityType, entityType.getSuperType() == null ? null : entityType.getSuperType().getType());
+		w.beginClass(entityType, entityType.getSuperType() != null ? entityType.getSuperType().getType() : forAdmin ? new SimpleType("AbstractSpecificEntityInstance") : null);
 
-		// add an explicit empty constructor because it looks nicer
+		// add the meta-data class constant for the admin framework
+		if (forAdmin) {
+			String className = w.getGenericName(true, entityType);
+			w.javadoc("Meta-data about this class for the admin framework");
+			w.line("public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(" + className + ".class);");
+			w.nl();
+		}
+		
+		// add an explicit empty constructor because it looks nicer and to support meta-data in the admin framework
 		w.javadoc("Constructor.");
 		w.beginConstructor();
+		if (forAdmin) {
+			w.line("super(GENERATED_CLASS_META_DATA);");
+		}
 		w.end();
 
 		// generate the data fields
@@ -83,6 +112,9 @@ public class BeanSerializer extends AbstractSerializer {
 
 			// getter method
 			w.javadoc("Getter method for the " + propertyName + ".", "@return the " + propertyName);
+			if (forAdmin) {
+				w.line("@GeneratedFromColumn(\"" + property.getName() + "\")");
+			}
 			w.beginPublicMethod(propertyType, "get" + capitalizedPropertyName);
 			w.line("return ", propertyName, ";");
 			w.end();
@@ -146,6 +178,10 @@ public class BeanSerializer extends AbstractSerializer {
 
 		// utility classes
 		addIf(imports, Arrays.class.getName(), entityType.hasArrays());
+		addIf(imports, "name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance", forAdmin);
+		addIf(imports, "name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta", forAdmin);
+		addIf(imports, "name.martingeisse.admin.entity.schema.orm.GeneratedFromTable", forAdmin);
+		addIf(imports, "name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn", forAdmin);
 
 		// actually write the imports
 		printImports(w, imports);

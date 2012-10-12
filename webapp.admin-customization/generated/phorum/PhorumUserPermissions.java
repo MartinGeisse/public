@@ -3,16 +3,27 @@
  */
 package phorum;
 
+import name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromTable;
+import name.martingeisse.admin.entity.instance.AbstractSpecificEntityInstance;
+import name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn;
 
 /**
  * This class represents rows from table 'phorum_user_permissions'.
  */
-public class PhorumUserPermissions {
+@GeneratedFromTable("phorum_user_permissions")
+public class PhorumUserPermissions extends AbstractSpecificEntityInstance {
+
+    /**
+     * Meta-data about this class for the admin framework
+     */
+    public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(PhorumUserPermissions.class);
 
     /**
      * Constructor.
      */
     public PhorumUserPermissions() {
+        super(GENERATED_CLASS_META_DATA);
     }
 
     /**
@@ -34,6 +45,7 @@ public class PhorumUserPermissions {
      * Getter method for the forumId.
      * @return the forumId
      */
+    @GeneratedFromColumn("forum_id")
     public Integer getForumId() {
         return forumId;
     }
@@ -50,6 +62,7 @@ public class PhorumUserPermissions {
      * Getter method for the permission.
      * @return the permission
      */
+    @GeneratedFromColumn("permission")
     public Integer getPermission() {
         return permission;
     }
@@ -66,6 +79,7 @@ public class PhorumUserPermissions {
      * Getter method for the userId.
      * @return the userId
      */
+    @GeneratedFromColumn("user_id")
     public Integer getUserId() {
         return userId;
     }
