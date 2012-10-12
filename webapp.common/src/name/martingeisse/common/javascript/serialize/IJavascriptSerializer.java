@@ -10,6 +10,7 @@ import name.martingeisse.common.javascript.JavascriptAssembler;
 
 /**
  * This class is able to turn Java values into Javascript values.
+ * @param <T> the type of values this serializer can handle
  */
 public interface IJavascriptSerializer<T> {
 

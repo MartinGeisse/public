@@ -20,6 +20,11 @@ import name.martingeisse.common.javascript.JavascriptAssembler;
 public class ResultSetRowToJavascriptObjectSerializer implements IJavascriptSerializer<ResultSet> {
 	
 	/**
+	 * The shared instance of this class.
+	 */
+	public static final ResultSetRowToJavascriptObjectSerializer instance = new ResultSetRowToJavascriptObjectSerializer();
+	
+	/**
 	 * Constructor.
 	 */
 	public ResultSetRowToJavascriptObjectSerializer() {

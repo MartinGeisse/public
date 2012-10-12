@@ -13,6 +13,7 @@ import org.apache.commons.beanutils.PropertyUtils;
  * serializes specific fields, and optionally allows subclasses to add
  * custom generated fields that are not actually present in the object being
  * serialized.
+ * @param <T> the type of values this serializer can handle
  */
 public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerializer<T> {
 

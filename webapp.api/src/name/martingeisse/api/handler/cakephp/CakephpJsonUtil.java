@@ -29,34 +29,32 @@ public final class CakephpJsonUtil {
 	 */
 	private CakephpJsonUtil() {
 	}
-	
+
 	// --- entry handling methods ---------------------------------------------------------------------
-	
+
 	/**
 	 * Assembles a JSON object from a Java object using the specified serializer.
 	 * 
-	 * If modelName is null, then this method simply assembles the fields of the
-	 * bean as a JSON object. Otherwise, the same object is wrapped
-	 * in another object using modelName as the key.
+	 * If modelName is null, then this method simply applies the serializer.
+	 * Otherwise, the result is wrapped in another object using modelName as the key.
 	 * 
 	 * @param assembler the Javascript assembler
 	 * @param modelName to key of the inner object in the outer object, or null
-	 * to just assembles the inner object.
-	 * @param bean the bean that contains field values
-	 * @param fieldNames the field names
-	 * @throws SQLException on SQL errors
+	 * to just assemble the inner object.
+	 * @param serializer the serializer that generates a Javascript object from the Java object
+	 * @param object the object to serialize
 	 */
-	public static <T> void generateModelEntry(JavascriptAssembler assembler, String modelName, T bean, IJavascriptSerializer<T> serializer) throws SQLException {
+	public static <T> void generateModelEntry(final JavascriptAssembler assembler, final String modelName, final IJavascriptSerializer<T> serializer, final T object) {
 		if (modelName == null) {
-			serializer.serialize(bean, assembler);
+			serializer.serialize(object, assembler);
 		} else {
 			assembler.beginObject();
 			assembler.prepareObjectProperty(modelName);
-			generateModelEntry(assembler, null, bean, serializer);
+			serializer.serialize(object, assembler);
 			assembler.endObject();
 		}
 	}
-	
+
 	/**
 	 * Assembles a JSON object from the current row of the specified result set.
 	 * 
@@ -70,35 +68,36 @@ public final class CakephpJsonUtil {
 	 * @param resultSet the result set to read from
 	 * @throws SQLException on SQL errors
 	 */
-	public static void generateModelEntry(JavascriptAssembler assembler, String modelName, ResultSet resultSet) throws SQLException {
-		generateModelEntry(assembler, modelName, resultSet, new ResultSetRowToJavascriptObjectSerializer());
+	public static void generateModelEntry(final JavascriptAssembler assembler, final String modelName, final ResultSet resultSet) throws SQLException {
+		generateModelEntry(assembler, modelName, ResultSetRowToJavascriptObjectSerializer.instance, resultSet);
 	}
-	
+
 	/**
-	 * Assembles a JSON object from the first row returned by the specified query. Throws a
-	 * {@link NoSuchElementException} if the query does not return any results.
+	 * Assembles a JSON object from the first row returned by the specified query,
+	 * using the serializer. Throws a {@link NoSuchElementException} if the query
+	 * does not return any results.
 	 * 
-	 * If modelName is null, then this method simply assembles the fields of the
-	 * row as a JSON object. Otherwise, the same object is wrapped
-	 * in another object using modelName as the key.
+	 * If modelName is null, then this method simply applies the serializer.
+	 * Otherwise, the same object is wrapped in another object using modelName as the key.
 	 * 
 	 * @param assembler the Javascript assembler
 	 * @param modelName to key of the inner object in the outer object, or null
 	 * to just assembles the inner object.
+	 * @param serializer the serializer that generates a Javascript object from the result set row
 	 * @param query the query
 	 * @param parentPath the parent path for field paths
 	 * @param fieldNames the field names
 	 * @throws SQLException on SQL errors
 	 */
-	public static void generateModelEntry(JavascriptAssembler assembler, String modelName, SQLQuery query, Path<?> parentPath, IJavascriptSerializer<ResultSet> serializer, String... fieldNames) throws SQLException {
-		ResultSet resultSet = QueryUtil.getFieldsResultSet(query, parentPath, fieldNames);
+	public static void generateModelEntry(final JavascriptAssembler assembler, final String modelName, final IJavascriptSerializer<ResultSet> serializer, final SQLQuery query, final Path<?> parentPath, final String... fieldNames) throws SQLException {
+		final ResultSet resultSet = QueryUtil.getFieldsResultSet(query, parentPath, fieldNames);
 		if (!resultSet.next()) {
 			throw new NoSuchElementException();
 		}
-		generateModelEntry(assembler, modelName, resultSet);
+		generateModelEntry(assembler, modelName, serializer, resultSet);
 		resultSet.close();
 	}
-	
+
 	/**
 	 * Assembles a JSON object from the first row returned by the specified query. Throws a
 	 * {@link NoSuchElementException} if the query does not return any results.
@@ -115,11 +114,10 @@ public final class CakephpJsonUtil {
 	 * @param fieldNames the field names
 	 * @throws SQLException on SQL errors
 	 */
-	public static void generateModelEntry(JavascriptAssembler assembler, String modelName, SQLQuery query, Path<?> parentPath, String... fieldNames) throws SQLException {
-		generateModelEntry(assembler, modelName, query, parentPath, new ResultSetRowToJavascriptObjectSerializer(), fieldNames);
+	public static void generateModelEntry(final JavascriptAssembler assembler, final String modelName, final SQLQuery query, final Path<?> parentPath, final String... fieldNames) throws SQLException {
+		generateModelEntry(assembler, modelName, ResultSetRowToJavascriptObjectSerializer.instance, query, parentPath, fieldNames);
 	}
-	
-	
+
 	/**
 	 * Assembles a JSON object from the properties of the specified Java bean.
 	 * 
@@ -132,18 +130,60 @@ public final class CakephpJsonUtil {
 	 * to just assembles the inner object.
 	 * @param bean the bean that contains field values
 	 * @param fieldNames the field names
+	 */
+	public static <T> void generateModelEntry(final JavascriptAssembler assembler, final String modelName, final T bean, final String... fieldNames) {
+		generateModelEntry(assembler, modelName, new BeanToJavascriptObjectSerializer<T>(fieldNames), bean);
+	}
+
+	// --- collection/iterable handling methods ---------------------------------------------------------------------
+
+	/**
+	 * Assembles an array of JSON objects from an {@link Iterable} of Java objects using the specified serializer.
+	 * 
+	 * If modelName is null, then this method simply applies the serializer to each element.
+	 * Otherwise, each result is wrapped in another object using modelName as the key.
+	 * 
+	 * @param assembler the Javascript assembler
+	 * @param modelName to key of the inner object in the outer object, or null
+	 * to just assembles the inner object.
+	 * @param serializer the serializer that generates a Javascript object from the Java object
+	 * @param iterable the iterable of objects to serialize
+	 */
+	public static <T> void generateModelList(final JavascriptAssembler assembler, final String modelName, final IJavascriptSerializer<T> serializer, final Iterable<T> iterable) {
+		assembler.beginList();
+		for (T element : iterable) {
+			assembler.prepareListElement();
+			generateModelEntry(assembler, modelName, serializer, element);
+		}
+		assembler.endList();
+	}
+
+	/**
+	 * Assembles all remaining rows from the specified resultSet, not including the current
+	 * row (if any), using the serializer and wrapped in a JSON array.
+	 * 
+	 * This method is intended primarily for use with a fresh {@link ResultSet}
+	 * from which no rows have been fetched yet.
+	 * 
+	 * @param assembler the Javascript assembler
+	 * @param modelName to key of the inner object in the outer object, or null
+	 * to just return the inner object.
+	 * @param serializer the serializer that generates a Javascript object from each result set row
+	 * @param resultSet the result set to read from
 	 * @throws SQLException on SQL errors
 	 */
-	public static <T> void generateModelEntry(JavascriptAssembler assembler, String modelName, T bean, String... fieldNames) throws SQLException {
-		generateModelEntry(assembler, modelName, bean, new BeanToJavascriptObjectSerializer<T>(fieldNames));
+	public static void generateModelList(final JavascriptAssembler assembler, final String modelName, final IJavascriptSerializer<ResultSet> serializer, final ResultSet resultSet) throws SQLException {
+		assembler.beginList();
+		while (resultSet.next()) {
+			assembler.prepareListElement();
+			generateModelEntry(assembler, modelName, serializer, resultSet);
+		}
+		assembler.endList();
 	}
 	
-	// --- list handling methods ---------------------------------------------------------------------
-	
 	/**
-	 * Assembles all rows from the specified resultSet, not including the current
-	 * row (if any), using {{@link #generateModelEntry(JavascriptAssembler, String, ResultSet)}
-	 * and wrapped in a JSON array.
+	 * Assembles all remaining rows from the specified resultSet, not including the current
+	 * row (if any), wrapped in a JSON array.
 	 * 
 	 * This method is intended primarily for use with a fresh {@link ResultSet}
 	 * from which no rows have been fetched yet.
@@ -154,15 +194,33 @@ public final class CakephpJsonUtil {
 	 * @param resultSet the result set to read from
 	 * @throws SQLException on SQL errors
 	 */
-	public static void generateModelList(JavascriptAssembler assembler, String modelName, ResultSet resultSet) throws SQLException {
-		assembler.beginList();
-		while (resultSet.next()) {
-			assembler.prepareListElement();
-			generateModelEntry(assembler, modelName, resultSet);
-		}
-		assembler.endList();
+	public static void generateModelList(final JavascriptAssembler assembler, final String modelName, final ResultSet resultSet) throws SQLException {
+		generateModelList(assembler, modelName, ResultSetRowToJavascriptObjectSerializer.instance, resultSet);
 	}
 
+	/**
+	 * Assembles an array of JSON objects from all rows returned by the specified query
+	 * using the serializer.
+	 * 
+	 * If modelName is null, then this method simply assembles the fields of each
+	 * row as a JSON object. Otherwise, the same object is wrapped
+	 * in another object using modelName as the key.
+	 * 
+	 * @param assembler the Javascript assembler
+	 * @param modelName to key of the inner object in the outer object, or null
+	 * to just assembles the inner object.
+	 * @param serializer the serializer that generates a Javascript object from each result set row
+	 * @param query the query
+	 * @param parentPath the parent path for field paths
+	 * @param fieldNames the field names
+	 * @throws SQLException on SQL errors
+	 */
+	public static void generateModelList(final JavascriptAssembler assembler, final String modelName, final IJavascriptSerializer<ResultSet> serializer, final SQLQuery query, final Path<?> parentPath, final String... fieldNames) throws SQLException {
+		final ResultSet resultSet = QueryUtil.getFieldsResultSet(query, parentPath, fieldNames);
+		generateModelList(assembler, modelName, serializer, resultSet);
+		resultSet.close();
+	}
+	
 	/**
 	 * Assembles an array of JSON objects from all rows returned by the specified query.
 	 * 
@@ -178,10 +236,8 @@ public final class CakephpJsonUtil {
 	 * @param fieldNames the field names
 	 * @throws SQLException on SQL errors
 	 */
-	public static void generateModelList(JavascriptAssembler assembler, String modelName, SQLQuery query, Path<?> parentPath, String... fieldNames) throws SQLException {
-		ResultSet resultSet = QueryUtil.getFieldsResultSet(query, parentPath, fieldNames);
-		generateModelList(assembler, modelName, resultSet);
-		resultSet.close();
+	public static void generateModelList(final JavascriptAssembler assembler, final String modelName, final SQLQuery query, final Path<?> parentPath, final String... fieldNames) throws SQLException {
+		generateModelList(assembler, modelName, ResultSetRowToJavascriptObjectSerializer.instance, query, parentPath, fieldNames);
 	}
 
 	/**
@@ -196,15 +252,9 @@ public final class CakephpJsonUtil {
 	 * to just assembles the inner object.
 	 * @param beans the beans that contain field values
 	 * @param fieldNames the field names
-	 * @throws SQLException on SQL errors
 	 */
-	public static void generateModelList(JavascriptAssembler assembler, String modelName, Iterable<?> beans, String... fieldNames) throws SQLException {
-		assembler.beginList();
-		for (Object bean : beans) {
-			assembler.prepareListElement();
-			generateModelEntry(assembler, modelName, bean, fieldNames);
-		}
-		assembler.endList();
+	public static <T> void generateModelList(final JavascriptAssembler assembler, final String modelName, final Iterable<T> beans, final String... fieldNames) {
+		generateModelList(assembler, modelName, new BeanToJavascriptObjectSerializer<T>(fieldNames), beans);
 	}
-	
+
 }
