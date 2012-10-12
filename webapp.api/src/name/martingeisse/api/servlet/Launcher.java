@@ -71,13 +71,13 @@ public class Launcher {
 		context.addServlet(RestfulServlet.class, "/*");
 
 		// configure SSL / HTTPS
-//		SslContextFactory sslContextFactory = new SslContextFactory("/Users/geisse/.keystore");
-//		sslContextFactory.setKeyStorePassword("changeit");
-//		SslSocketConnector sslSocketConnector = new SslSocketConnector(sslContextFactory);
-//		sslSocketConnector.setPort(8889);
+		SslContextFactory sslContextFactory = new SslContextFactory("/Users/geisse/.keystore");
+		sslContextFactory.setKeyStorePassword("changeit");
+		SslSocketConnector sslSocketConnector = new SslSocketConnector(sslContextFactory);
+		sslSocketConnector.setPort(8889);
 
 		final Server server = new Server(8888);
-//		server.addConnector(sslSocketConnector);
+		server.addConnector(sslSocketConnector);
 		server.setHandler(context);
 		server.start();
 		server.join();

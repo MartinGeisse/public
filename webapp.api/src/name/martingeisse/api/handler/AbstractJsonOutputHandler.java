@@ -25,6 +25,7 @@ public abstract class AbstractJsonOutputHandler implements IRequestHandler {
 	public void handle(RequestCycle requestCycle, RequestPathChain path) throws Exception {
 		JavascriptAssembler assembler = new JavascriptAssembler();
 		handle(requestCycle, path, assembler);
+		requestCycle.preparePlainTextResponse();
 		PrintWriter w = requestCycle.getResponse().getWriter();
 		w.println(assembler.getAssembledCode());
 		w.flush();
