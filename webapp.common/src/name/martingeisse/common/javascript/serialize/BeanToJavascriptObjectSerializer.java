@@ -6,6 +6,8 @@
 
 package name.martingeisse.common.javascript.serialize;
 
+import java.beans.PropertyDescriptor;
+
 import name.martingeisse.common.javascript.JavascriptAssembler;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -77,7 +79,11 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 	 * 
 	 */
 	private void serializeAllFields(T bean, JavascriptAssembler assembler) throws Exception {
-		throw new RuntimeException("NOT YET IMPLEMENTED"); // TODO
+		for (PropertyDescriptor property : PropertyUtils.getPropertyDescriptors(bean)) {
+			Object value = property.getReadMethod().invoke(bean);
+			assembler.prepareObjectProperty(property.getName());
+			assembler.appendPrimitive(value);
+		}
 	}
 	
 	/**

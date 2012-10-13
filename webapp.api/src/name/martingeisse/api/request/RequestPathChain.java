@@ -13,9 +13,19 @@ import name.martingeisse.common.util.ParameterUtil;
 
 /**
  * The request path is decoded into a chain of segments.
+ * 
+ * The empty chain is represented by the special value EMPTY
+ * which is a singleton (i.e. no other code can create an empty
+ * chain). The empty chain is the only chain whose head
+ * segment is null.
  */
 public final class RequestPathChain implements Iterable<String> {
 
+	/**
+	 * The empty chain.
+	 */
+	public static final RequestPathChain EMPTY = new RequestPathChain();
+	
 	/**
 	 * the head
 	 */
@@ -28,18 +38,24 @@ public final class RequestPathChain implements Iterable<String> {
 	
 	/**
 	 * Constructor.
+	 */
+	private RequestPathChain() {
+		this.head = null;
+		this.tail = null;
+	}
+	
+	/**
+	 * Constructor.
 	 * @param head the first segment of the chain
 	 * @param tail the remaining segments of the chain
 	 */
 	public RequestPathChain(String head, RequestPathChain tail) {
-		ParameterUtil.ensureNotNull(head, "head");
-		this.head = head;
-		this.tail = tail;
+		this.head = ParameterUtil.ensureNotNull(head, "head");
+		this.tail = ParameterUtil.ensureNotNull(tail, "tail");
 	}
 	
 	/**
-	 * Parses a textual request path. Note that this method returns null
-	 * for the empty path, since an empty chain is represented by null.
+	 * Parses a textual request path.
 	 * @param requestPath the request path to parse
 	 * @return the request path chain
 	 * @throws MalformedRequestPathException if the path contains a leading slash or a double-slash
@@ -48,13 +64,13 @@ public final class RequestPathChain implements Iterable<String> {
 		
 		// special case: empty path
 		if (requestPath.isEmpty()) {
-			return null;
+			return EMPTY;
 		}
 		
 		// special case: single-segment path
 		int firstSlash = requestPath.indexOf('/');
 		if (firstSlash == -1) {
-			return new RequestPathChain(requestPath, null);
+			return new RequestPathChain(requestPath, EMPTY);
 		}
 		if (firstSlash == 0) {
 			throw new MalformedRequestPathException("leading slash or double-slash in request path");
@@ -89,6 +105,15 @@ public final class RequestPathChain implements Iterable<String> {
 		return new MyIterator(this);
 	}
 	
+	/**
+	 * Returns null if this chain is empty, false if nonempty. Note that EMPTY
+	 * is the only empty chain, i.e. it is a singleton.
+	 * @return the empty
+	 */
+	public boolean isEmpty() {
+		return (head == null);
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -108,19 +133,9 @@ public final class RequestPathChain implements Iterable<String> {
 		builder.append(']');
 		return builder.toString();
 	}
-	
-	/**
-	 * Null-safe version of toString(). Needed since the empty chain
-	 * is represented by null.
-	 * @param chain the chain
-	 * @return the string
-	 */
-	public static String toString(RequestPathChain chain) {
-		return (chain == null ? "[]" : chain.toString());
-	}
 
 	/**
-	 * An interator for the segments in a request path chain.
+	 * An iterator for the segments in a request path chain.
 	 */
 	private static class MyIterator implements Iterator<String> {
 		
@@ -134,6 +149,7 @@ public final class RequestPathChain implements Iterable<String> {
 		 * @param firstNode the first not of the chain
 		 */
 		public MyIterator(RequestPathChain firstNode) {
+			ParameterUtil.ensureNotNull(firstNode, "firstNode");
 			this.nextNode = firstNode;
 		}
 
@@ -142,7 +158,7 @@ public final class RequestPathChain implements Iterable<String> {
 		 */
 		@Override
 		public boolean hasNext() {
-			return (nextNode != null);
+			return !nextNode.isEmpty();
 		}
 
 		/* (non-Javadoc)
@@ -150,11 +166,11 @@ public final class RequestPathChain implements Iterable<String> {
 		 */
 		@Override
 		public String next() {
-			if (nextNode == null) {
+			if (nextNode.isEmpty()) {
 				throw new NoSuchElementException();
 			}
 			String result = nextNode.head;
-			nextNode = nextNode.tail;
+			nextNode = ParameterUtil.ensureNotNull(nextNode.tail, "tail");
 			return result;
 		}
 

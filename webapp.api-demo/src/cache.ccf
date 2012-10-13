@@ -1,0 +1,11 @@
+jcs.region.myregion=
+jcs.region.myregion.cacheattributes=org.apache.jcs.engine.CompositeCacheAttributes
+jcs.region.myregion.cacheattributes.MaxObjects=1000
+jcs.region.myregion.cacheattributes.MemoryCacheName=org.apache.jcs.engine.memory.lru.LRUMemoryCache
+jcs.region.myregion.cacheattributes.UseMemoryShrinker=false
+jcs.region.myregion.cacheattributes.MaxMemoryIdleTimeSeconds=3600
+jcs.region.myregion.cacheattributes.ShrinkerIntervalSeconds=60
+jcs.region.myregion.cacheattributes.MaxSpoolPerRun=500
+jcs.region.myregion.elementattributes=org.apache.jcs.engine.ElementAttributes
+jcs.region.myregion.elementattributes.IsEternal=false
+jcs.region.myregion.elementattributes.MaxLifeSeconds=5

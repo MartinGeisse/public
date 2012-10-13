@@ -32,7 +32,7 @@ public class RequestPathNotFoundException extends RuntimeException {
 	 * @param path the path that was not found
 	 */
 	public RequestPathNotFoundException(RequestPathChain path) {
-		super("path not found: " + RequestPathChain.toString(path));
+		super("path not found: " + path.toString());
 	}
 	
 }

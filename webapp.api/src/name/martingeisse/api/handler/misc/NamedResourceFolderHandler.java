@@ -49,7 +49,7 @@ public class NamedResourceFolderHandler implements IRequestHandler {
 	 */
 	@Override
 	public void handle(RequestCycle requestCycle, RequestPathChain path) throws Exception {
-		if (path == null) {
+		if (path.isEmpty()) {
 			listContents(requestCycle);
 			return;
 		}

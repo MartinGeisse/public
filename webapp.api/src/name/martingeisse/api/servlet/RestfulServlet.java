@@ -74,7 +74,11 @@ public class RestfulServlet extends HttpServlet {
 			try {
 				applicationRequestHandler.handle(requestCycle, requestCycle.getRequestPath());
 			} catch (RequestPathNotFoundException e) {
-				notFoundRequestHandler.handle(requestCycle, requestCycle.getRequestPath());
+				if (notFoundRequestHandler == null) {
+					throw e;
+				} else {
+					notFoundRequestHandler.handle(requestCycle, requestCycle.getRequestPath());
+				}
 			}
 		} catch (RequestHandlingFinishedException e) {
 		} catch (RequestPathNotFoundException e) {

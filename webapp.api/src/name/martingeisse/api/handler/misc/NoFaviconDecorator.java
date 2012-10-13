@@ -31,7 +31,7 @@ public class NoFaviconDecorator extends AbstractDecoratingHandler {
 	 */
 	@Override
 	public void handle(RequestCycle requestCycle, RequestPathChain path) throws Exception {
-		if (path != null && path.getHead().equals("favicon.ico")) {
+		if ("favicon.ico".equals(path.getHead())) {
 			// we cannot use RequestPathNotFoundException here since that would pass the request to the old API
 			ServletUtil.emitResourceNotFoundResponse(requestCycle.getRequest(), requestCycle.getResponse());
 		} else {
