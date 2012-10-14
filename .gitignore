@@ -1,6 +1,8 @@
-/webapp.common/bin/
-/webapp.wicket/bin/
 /webapp.admin/bin/
 /webapp.admin-customization/bin/
+/webapp.api/bin/
+/webapp.api-demo/bin/
+/webapp.common/bin/
 /webapp.reporting/bin/
 /webapp.tools/bin/
+/webapp.wicket/bin/
