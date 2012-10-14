@@ -21,6 +21,7 @@ public class ApplicationHandler extends NamedResourceFolderHandler {
 		getResources().put("foo", new RequestDumpHandler());
 		getResources().put("bar", new RequestDumpHandler());
 		getResources().put("cache", new CacheTestHandler());
+		getResources().put("query", new QueryCacheTestHandler());
 	}
 	
 }

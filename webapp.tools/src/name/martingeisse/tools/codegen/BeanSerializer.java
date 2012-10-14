@@ -79,7 +79,15 @@ public class BeanSerializer extends AbstractSerializer {
 		}
 
 		// begin writing the class itself
-		w.beginClass(entityType, entityType.getSuperType() != null ? entityType.getSuperType().getType() : forAdmin ? new SimpleType("AbstractSpecificEntityInstance") : null);
+		if (forAdmin) {
+			if (entityType.getSuperType() != null) {
+				w.beginClass(entityType, entityType.getSuperType().getType());
+			} else {
+				w.beginClass(entityType, new SimpleType("AbstractSpecificEntityInstance"));
+			}
+		} else {
+			w.beginClass(entityType, null, new SimpleType("Serializable"));
+		}
 
 		// add the meta-data class constant for the admin framework
 		if (forAdmin) {
@@ -182,6 +190,7 @@ public class BeanSerializer extends AbstractSerializer {
 		addIf(imports, "name.martingeisse.admin.entity.instance.SpecificEntityInstanceMeta", forAdmin);
 		addIf(imports, "name.martingeisse.admin.entity.schema.orm.GeneratedFromTable", forAdmin);
 		addIf(imports, "name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn", forAdmin);
+		addIf(imports, "java.io.Serializable", !forAdmin);
 
 		// actually write the imports
 		printImports(w, imports);
