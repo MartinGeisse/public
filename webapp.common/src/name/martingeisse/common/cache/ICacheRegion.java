@@ -7,6 +7,7 @@
 package name.martingeisse.common.cache;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * This interface is intended for singleton objects that provide
@@ -49,6 +50,15 @@ public interface ICacheRegion<K extends Serializable, V> {
 	 * @return the cached value or null
 	 */
 	public V getCachedValue(K key);
+	
+	/**
+	 * This method is equivalent to calling {@link #getCachedValue(Serializable)}
+	 * for each of the specified keys. It returns a list containing the cached values.
+	 * @param keys the keys (neither the iterable nor any key may be null)
+	 * @return the values (null for each key whose value is missing or is
+	 * actually null)
+	 */
+	public List<V> getCachedValues(Iterable<K> keys);
 
 	/**
 	 * This method is similar to {@link #getCachedValue(Serializable)},
@@ -60,6 +70,15 @@ public interface ICacheRegion<K extends Serializable, V> {
 	 * @return the cached value or {@link CachedNull#INSTANCE}
 	 */
 	public Object getInternalValue(K key);
+	
+	/**
+	 * This method is equivalent to calling {@link #getInternalValue(Serializable)}
+	 * for each of the specified keys. It returns a list containing the internal values.
+	 * @param keys the keys (neither the iterable nor any key may be null)
+	 * @return the values (null for each key whose value is missing;
+	 * {@link CachedNull#INSTANCE} for each key whose value is actually null)
+	 */
+	public List<Object> getInternalValues(Iterable<K> keys);
 	
 	/**
 	 * Sets the value cached for the specified key.
@@ -85,11 +104,37 @@ public interface ICacheRegion<K extends Serializable, V> {
 	public V get(K key) throws UnsupportedOperationException;
 
 	/**
+	 * This method is equivalent to calling {@link #get(Serializable)}
+	 * for each of the specified keys. It returns a list containing the
+	 * values.
+	 * 
+	 * Note that, if more than one value is not currently cached, this
+	 * method attempts to fetch multiple values at once. This makes
+	 * typical implementations much more efficient than actually calling
+	 * {@link #get(Iterable)} for each key.
+	 * 
+	 * @param keys the keys (neither the iterable nor any key may be null)
+	 * @return the values (contains null if and only if the cached value is
+	 * actually null).
+	 * 
+	 * @throws UnsupportedOperationException if any value is missing and this
+	 * implementation does not know how to fetch values
+	 */
+	public List<V> get(Iterable<K> keys) throws UnsupportedOperationException;
+
+	/**
 	 * Removes the cached value for the specified key.
 	 * 
 	 * @param key the key (must not be null)
 	 */
 	public void remove(K key);
+
+	/**
+	 * Removes the cached values for the specified keys.
+	 * 
+	 * @param keys the keys (neither the iterable nor any key may be null)
+	 */
+	public void remove(Iterable<K> keys);
 	
 	/**
 	 * Removes all cached values.

@@ -8,11 +8,16 @@ package name.martingeisse.common.cache;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
 
+import com.mysema.commons.lang.CloseableIterator;
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.support.Expressions;
@@ -84,6 +89,38 @@ public abstract class AbstractQuerydslTableCacheRegion<K extends Serializable, V
 		query.from(path).where(new PredicateOperation(Ops.EQ, keyExpression, Expressions.constant(key)));
 		query.where(additionalPredicates).limit(1);
 		return query.singleResult(path);
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.cache.AbstractCacheRegion#fetchMultiple(java.util.List)
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	protected List<V> fetchMultiple(List<K> keys) throws UnsupportedOperationException {
+		
+		// build the query
+		ParameterUtil.ensureNotNull(keys, "keys");
+		ParameterUtil.ensureNoNullElement(keys, "keys");
+		SQLQuery query = ReturnValueUtil.nullNotAllowed(createQuery(), "createQuery()");
+		query.from(path).where(new PredicateOperation(Ops.IN, keyExpression, Expressions.constant(keys)));
+		query.where(additionalPredicates);
+		
+		// fetch results and store them in a map, indexed by value of the key expression
+		CloseableIterator<Object[]> iterator = query.iterate(keyExpression, path);
+		Map<K, V> foundValues = new HashMap<K, V>();
+		while (iterator.hasNext()) {
+			Object[] entry = iterator.next();
+			foundValues.put((K)entry[0], (V)entry[1]);
+		}
+		iterator.close();
+		
+		// create the result list, using null for missing keys
+		List<V> result = new ArrayList<V>();
+		for (K key : keys) {
+			result.add(foundValues.get(key));
+		}
+		return result;
+		
 	}
 
 	/**
