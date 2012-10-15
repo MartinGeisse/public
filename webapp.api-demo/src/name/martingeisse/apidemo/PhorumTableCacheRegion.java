@@ -8,7 +8,7 @@ package name.martingeisse.apidemo;
 
 import java.io.Serializable;
 
-import name.martingeisse.common.cache.AbstractQuerydslTableCacheRegion;
+import name.martingeisse.common.cache.AbstractQuerydslSingleResultTableCacheRegion;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.JdbcEntityDatabaseConnection;
 
@@ -25,7 +25,7 @@ import com.mysema.query.types.Predicate;
  * @param <K> the type of cache keys
  * @param <V> the type of cached values
  */
-public class PhorumTableCacheRegion<K extends Serializable, V> extends AbstractQuerydslTableCacheRegion<K, V> {
+public class PhorumTableCacheRegion<K extends Serializable, V> extends AbstractQuerydslSingleResultTableCacheRegion<K, V> {
 
 	/**
 	 * Constructor.

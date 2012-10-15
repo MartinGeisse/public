@@ -24,6 +24,7 @@ import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.support.Expressions;
 import com.mysema.query.types.Expression;
 import com.mysema.query.types.Ops;
+import com.mysema.query.types.OrderSpecifier;
 import com.mysema.query.types.Predicate;
 import com.mysema.query.types.PredicateOperation;
 
@@ -72,6 +73,11 @@ public abstract class AbstractQuerydslListResultTableBasedCacheRegion<K extends 
 	private final Expression<?> keyExpression;
 	
 	/**
+	 * the orderSpecifiers
+	 */
+	private final OrderSpecifier<?>[] orderSpecifiers;
+	
+	/**
 	 * the additionalPredicates
 	 */
 	private final Predicate[] additionalPredicates;
@@ -84,9 +90,32 @@ public abstract class AbstractQuerydslListResultTableBasedCacheRegion<K extends 
 	 * @param additionalPredicates additional predicates (if any)
 	 */
 	public AbstractQuerydslListResultTableBasedCacheRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, Predicate... additionalPredicates) {
+		this(regionName, path, keyExpression, new OrderSpecifier<?>[0], additionalPredicates);
+	}
+	
+	/**
+	 * Constructor.
+	 * @param regionName the name of the region represented by this object
+	 * @param path the table path
+	 * @param keyExpression the key expression
+	 * @param additionalPredicates additional predicates (if any)
+	 */
+	public AbstractQuerydslListResultTableBasedCacheRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, OrderSpecifier<?> orderSpecifier, Predicate... additionalPredicates) {
+		this(regionName, path, keyExpression, new OrderSpecifier<?>[] {orderSpecifier}, additionalPredicates);
+	}
+	
+	/**
+	 * Constructor.
+	 * @param regionName the name of the region represented by this object
+	 * @param path the table path
+	 * @param keyExpression the key expression
+	 * @param additionalPredicates additional predicates (if any)
+	 */
+	public AbstractQuerydslListResultTableBasedCacheRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, OrderSpecifier<?>[] orderSpecifiers, Predicate... additionalPredicates) {
 		super(regionName);
 		this.path = ParameterUtil.ensureNotNull(path, "path");
 		this.keyExpression = ParameterUtil.ensureNotNull(keyExpression, "keyExpression");
+		this.orderSpecifiers = orderSpecifiers;
 		this.additionalPredicates = ParameterUtil.ensureNotNull(additionalPredicates, "additionalPredicates");
 	}
 
@@ -98,7 +127,7 @@ public abstract class AbstractQuerydslListResultTableBasedCacheRegion<K extends 
 		ParameterUtil.ensureNotNull(key, "key");
 		SQLQuery query = ReturnValueUtil.nullNotAllowed(createQuery(), "createQuery()");
 		query.from(path).where(new PredicateOperation(Ops.EQ, keyExpression, Expressions.constant(key)));
-		query.where(additionalPredicates);
+		query.where(additionalPredicates).orderBy(orderSpecifiers);
 		return transformValue(key, query.list(path));
 	}
 	
@@ -114,7 +143,7 @@ public abstract class AbstractQuerydslListResultTableBasedCacheRegion<K extends 
 		ParameterUtil.ensureNoNullElement(keys, "keys");
 		SQLQuery query = ReturnValueUtil.nullNotAllowed(createQuery(), "createQuery()");
 		query.from(path).where(new PredicateOperation(Ops.IN, keyExpression, Expressions.constant(keys)));
-		query.where(additionalPredicates);
+		query.where(additionalPredicates).orderBy(orderSpecifiers);
 
 		// fetch results and store them in a map, indexed by value of the key expression
 		CloseableIterator<Object[]> iterator = query.iterate(keyExpression, path);
