@@ -61,6 +61,10 @@ import com.mysema.query.types.PredicateOperation;
 public abstract class AbstractQuerydslSetResultTableBasedCacheRegion<K extends Serializable, R, V> extends AbstractCacheRegion<K, V> {
 
 	TODO
+	
+	EVTL. NUR LIST-VERSION, KEINE SET-VERSION (EINFACHER) !?
+	
+	TODO
 
 	/**
 	 * the path
