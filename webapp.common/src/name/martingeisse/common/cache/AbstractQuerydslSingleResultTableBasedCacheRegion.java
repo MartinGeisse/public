@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -61,17 +62,17 @@ public abstract class AbstractQuerydslSingleResultTableBasedCacheRegion<K extend
 	/**
 	 * the path
 	 */
-	private RelationalPath<R> path;
+	private final RelationalPath<R> path;
 	
 	/**
 	 * the keyExpression
 	 */
-	private Expression<?> keyExpression;
+	private final Expression<?> keyExpression;
 	
 	/**
 	 * the additionalPredicates
 	 */
-	private Predicate[] additionalPredicates;
+	private final Predicate[] additionalPredicates;
 	
 	/**
 	 * Constructor.
@@ -96,7 +97,7 @@ public abstract class AbstractQuerydslSingleResultTableBasedCacheRegion<K extend
 		SQLQuery query = ReturnValueUtil.nullNotAllowed(createQuery(), "createQuery()");
 		query.from(path).where(new PredicateOperation(Ops.EQ, keyExpression, Expressions.constant(key)));
 		query.where(additionalPredicates).limit(1);
-		return transformValue(query.singleResult(path));
+		return transformValue(key, query.singleResult(path));
 	}
 	
 	/* (non-Javadoc)
@@ -129,7 +130,7 @@ public abstract class AbstractQuerydslSingleResultTableBasedCacheRegion<K extend
 		}
 		
 		// transform the result list
-		return transformValues(preTransformationResult);
+		return transformValues(keys, preTransformationResult);
 		
 	}
 
@@ -144,11 +145,11 @@ public abstract class AbstractQuerydslSingleResultTableBasedCacheRegion<K extend
 	 * @param row the row to transform (may be null if no row was found)
 	 * @return the value (may be null to store a null value in the cache)
 	 */
-	protected abstract V transformValue(R row);
+	protected abstract V transformValue(K key, R row);
 
 	/**
 	 * Transforms multiple rows. This method provides a default implementation that
-	 * invokes {@link #transformValue(Object)} on each element. Subclasses are encouraged
+	 * invokes {@link #transformValue(Serializable, Object)} on each element. Subclasses are encouraged
 	 * to provide a more efficient implementation where possible.
 	 * 
 	 * @param rows the rows to transform. The list itself is never null, but may contain null elements
@@ -158,10 +159,12 @@ public abstract class AbstractQuerydslSingleResultTableBasedCacheRegion<K extend
 	 * @return the values. The list must not be null but may contain null elements to store null
 	 * values in the cache.
 	 */
-	protected List<V> transformValues(List<R> rows) {
+	protected List<V> transformValues(List<K> keys, List<R> rows) {
 		List<V> result = new ArrayList<V>();
-		for (R row : rows) {
-			result.add(transformValue(row));
+		Iterator<K> keyIterator = keys.iterator();
+		Iterator<R> rowIterator = rows.iterator();
+		while (keyIterator.hasNext()) {
+			result.add(transformValue(keyIterator.next(), rowIterator.next()));
 		}
 		return result;
 	}

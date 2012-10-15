@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -27,31 +28,31 @@ import com.mysema.query.types.Predicate;
 import com.mysema.query.types.PredicateOperation;
 
 /**
+ * TODO order
+ * 
  * This cache implementation automatically fetches values using
  * QueryDSL queries. The whole region represents a database table;
  * cached values are lists of database rows which are optionally
  * transformed via a method provided by the concrete subclass.
- * See also {@link TODO} for a
- * simplified non-transformed version, and
- * {@link AbstractQuerydslSetResultTableBasedCacheRegion} for a 
- * version based on (unordered) sets.
+ * See also {@link AbstractQuerydslListResultTableCacheRegion} for a
+ * simplified non-transformed version.
  * 
  * Apart from the {@link RelationalPath} that specifies the table to fetch
  * from, fetching is based on a key expression, a set of additional predicates,
- * and an order specifier. The value fetched for the cache key 'cacheKey' is
- * the list of rows (in the specified order) that satisfy the condition:
+ * and an optional order specifier. The value fetched for the cache key 'cacheKey'
+ * is the list of rows (in the specified order, if any) that satisfy the condition:
  * 
  *   ((cacheKey == keyExpression) && additionalPredicates)
  * 
- * For example, to cache sets of non-deleted users by home city, the
+ * For example, to cache lists of non-deleted users by home city, the
  * keyExpression would be the QueryDSL path for the city column and
  * the additionalPredicates would be (NOT deleted).
  * 
  * This class is abstract since it cannot connect to a database in a generic
  * way; subclasses must provide a mechanism to create a fresh QueryDSL
  * {@link SQLQuery} (this object wraps a JDBC {@link Connection}).
- * Subclasses must also provide a transformation from sets of database row
- * beans to cached values. Use {@link TODO} to
+ * Subclasses must also provide a transformation from lists of database row
+ * beans to cached values. Use {@link AbstractQuerydslListResultTableCacheRegion} to
  * skip that transformation.
  * 
  * @param <K> the type of cache keys
@@ -60,22 +61,20 @@ import com.mysema.query.types.PredicateOperation;
  */
 public abstract class AbstractQuerydslListResultTableBasedCacheRegion<K extends Serializable, R, V> extends AbstractCacheRegion<K, V> {
 
-	TODO
-	
 	/**
 	 * the path
 	 */
-	private RelationalPath<R> path;
+	private final RelationalPath<R> path;
 	
 	/**
 	 * the keyExpression
 	 */
-	private Expression<?> keyExpression;
+	private final Expression<?> keyExpression;
 	
 	/**
 	 * the additionalPredicates
 	 */
-	private Predicate[] additionalPredicates;
+	private final Predicate[] additionalPredicates;
 	
 	/**
 	 * Constructor.
@@ -96,12 +95,11 @@ public abstract class AbstractQuerydslListResultTableBasedCacheRegion<K extends 
 	 */
 	@Override
 	protected V fetch(K key) throws NoSuchElementException {
-		// TODO
 		ParameterUtil.ensureNotNull(key, "key");
 		SQLQuery query = ReturnValueUtil.nullNotAllowed(createQuery(), "createQuery()");
 		query.from(path).where(new PredicateOperation(Ops.EQ, keyExpression, Expressions.constant(key)));
-		query.where(additionalPredicates).limit(1);
-		return transformValue(query.singleResult(path));
+		query.where(additionalPredicates);
+		return transformValue(key, query.list(path));
 	}
 	
 	/* (non-Javadoc)
@@ -110,7 +108,6 @@ public abstract class AbstractQuerydslListResultTableBasedCacheRegion<K extends 
 	@Override
 	@SuppressWarnings("unchecked")
 	protected List<V> fetchMultiple(List<K> keys) throws UnsupportedOperationException {
-		// TODO
 		
 		// build the query
 		ParameterUtil.ensureNotNull(keys, "keys");
@@ -118,24 +115,32 @@ public abstract class AbstractQuerydslListResultTableBasedCacheRegion<K extends 
 		SQLQuery query = ReturnValueUtil.nullNotAllowed(createQuery(), "createQuery()");
 		query.from(path).where(new PredicateOperation(Ops.IN, keyExpression, Expressions.constant(keys)));
 		query.where(additionalPredicates);
-		
+
 		// fetch results and store them in a map, indexed by value of the key expression
 		CloseableIterator<Object[]> iterator = query.iterate(keyExpression, path);
-		Map<K, R> foundValues = new HashMap<K, R>();
+		Map<K, List<R>> foundValues = new HashMap<K, List<R>>();
 		while (iterator.hasNext()) {
 			Object[] entry = iterator.next();
-			foundValues.put((K)entry[0], (R)entry[1]);
+			K key = (K)entry[0];
+			R row = (R)entry[1];
+			List<R> rowList = foundValues.get(key);
+			if (rowList == null) {
+				rowList = new ArrayList<R>();
+				foundValues.put(key, rowList);
+			}
+			rowList.add(row);
 		}
 		iterator.close();
 
 		// create the result list, using null for missing keys
-		List<R> preTransformationResult = new ArrayList<R>();
+		List<List<R>> preTransformationResult = new ArrayList<List<R>>();
 		for (K key : keys) {
-			preTransformationResult.add(foundValues.get(key));
+			List<R> foundList = foundValues.get(key);
+			preTransformationResult.add(foundList == null ? new ArrayList<R>() : foundList);
 		}
 		
 		// transform the result list
-		return transformValues(preTransformationResult);
+		return transformValues(keys, preTransformationResult);
 		
 	}
 
@@ -145,29 +150,32 @@ public abstract class AbstractQuerydslListResultTableBasedCacheRegion<K extends 
 	protected abstract SQLQuery createQuery();
 	
 	/**
-	 * Transforms a single row.
+	 * Transforms a list of rows for a single key.
 	 * 
-	 * @param row the row to transform (may be null if no row was found)
+	 * @param rows the row list to transform (empty if no row was found for that key; never null)
 	 * @return the value (may be null to store a null value in the cache)
 	 */
-	protected abstract V transformValue(R row);
+	protected abstract V transformValue(K key, List<R> rows);
 
 	/**
-	 * Transforms multiple rows. This method provides a default implementation that
-	 * invokes {@link #transformValue(Object)} on each element. Subclasses are encouraged
+	 * Transforms row lists for multiple keys. This method provides a default implementation that
+	 * invokes {@link #transformValue(Serializable, List)} on each element. Subclasses are encouraged
 	 * to provide a more efficient implementation where possible.
 	 * 
-	 * @param rows the rows to transform. The list itself is never null, but may contain null elements
-	 * whenever no row was found for a key. This method can assume that the argument list is not used
-	 * by the caller after this method is invoked, so the list may, for example, be modified or
-	 * re-used for the result list.
+	 * @param rowLists the row lists to transform. The list itself is never null, nor are its element
+	 * lists null. Element lists may be empty whenever no row was found for a key. This method can
+	 * assume that neither the argument list nor any of its element lists is used by the caller
+	 * after this method is invoked, so the lists may, for example, be modified or re-used for the
+	 * result list.
 	 * @return the values. The list must not be null but may contain null elements to store null
 	 * values in the cache.
 	 */
-	protected List<V> transformValues(List<R> rows) {
+	protected List<V> transformValues(List<K> keys, List<List<R>> rowLists) {
 		List<V> result = new ArrayList<V>();
-		for (R row : rows) {
-			result.add(transformValue(row));
+		Iterator<K> keyIterator = keys.iterator();
+		Iterator<List<R>> rowListIterator = rowLists.iterator();
+		while (keyIterator.hasNext()) {
+			result.add(transformValue(keyIterator.next(), rowListIterator.next()));
 		}
 		return result;
 	}
