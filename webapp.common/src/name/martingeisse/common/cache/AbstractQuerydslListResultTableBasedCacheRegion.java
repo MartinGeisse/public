@@ -29,8 +29,6 @@ import com.mysema.query.types.Predicate;
 import com.mysema.query.types.PredicateOperation;
 
 /**
- * TODO order
- * 
  * This cache implementation automatically fetches values using
  * QueryDSL queries. The whole region represents a database table;
  * cached values are lists of database rows which are optionally
@@ -98,6 +96,7 @@ public abstract class AbstractQuerydslListResultTableBasedCacheRegion<K extends 
 	 * @param regionName the name of the region represented by this object
 	 * @param path the table path
 	 * @param keyExpression the key expression
+	 * @param orderSpecifier the result order
 	 * @param additionalPredicates additional predicates (if any)
 	 */
 	public AbstractQuerydslListResultTableBasedCacheRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, OrderSpecifier<?> orderSpecifier, Predicate... additionalPredicates) {
@@ -109,6 +108,7 @@ public abstract class AbstractQuerydslListResultTableBasedCacheRegion<K extends 
 	 * @param regionName the name of the region represented by this object
 	 * @param path the table path
 	 * @param keyExpression the key expression
+	 * @param orderSpecifiers the result order
 	 * @param additionalPredicates additional predicates (if any)
 	 */
 	public AbstractQuerydslListResultTableBasedCacheRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, OrderSpecifier<?>[] orderSpecifiers, Predicate... additionalPredicates) {

@@ -32,8 +32,8 @@ import com.mysema.query.types.PredicateOperation;
  * QueryDSL queries. The whole region represents a database table;
  * cached values are database rows which are optionally transformed
  * via a method provided by the concrete subclass. See also
- * {@link AbstractQuerydslTableCacheRegion} for a simplified
- * non-transformed version.
+ * {@link AbstractQuerydslSingleResultTableCacheRegion} for a
+ * simplified, non-transformed version.
  * 
  * Apart from the {@link RelationalPath} that specifies the table to fetch
  * from, fetching is based on a key expression and a set of additional predicates.
@@ -50,8 +50,8 @@ import com.mysema.query.types.PredicateOperation;
  * way; subclasses must provide a mechanism to create a fresh QueryDSL
  * {@link SQLQuery} (this object wraps a JDBC {@link Connection}).
  * Subclasses must also provide a transformation from database row beans
- * to cached values. Use {@link AbstractQuerydslTableCacheRegion} to
- * skip that transformation.
+ * to cached values. Use {@link AbstractQuerydslSingleResultTableCacheRegion}
+ * to skip that transformation.
  * 
  * @param <K> the type of cache keys
  * @param <R> the table row bean type

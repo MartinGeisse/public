@@ -6,7 +6,6 @@
 
 package name.martingeisse.wicket.model;
 
-import name.martingeisse.common.datarow.DataRow;
 import name.martingeisse.common.datarow.IDataRow;
 import name.martingeisse.common.util.GenericTypeUtil;
 

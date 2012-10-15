@@ -14,8 +14,9 @@ import com.mysema.query.types.Expression;
 import com.mysema.query.types.Predicate;
 
 /**
- * Specialization of {@link AbstractQuerydslTableBasedCacheRegion} that skips the
- * transformation and just stores the table row beans directly in the cache.
+ * Specialization of {@link AbstractQuerydslSingleResultTableBasedCacheRegion}
+ * that skips the transformation and just stores the table row beans directly
+ * in the cache.
  * 
  * @param <K> the type of cache keys
  * @param <R> the table row bean type (which is also the type of cached values)
