@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
 import name.martingeisse.common.database.QueryUtil;
 import name.martingeisse.common.javascript.JavascriptAssembler;
 import name.martingeisse.common.javascript.serialize.BeanToJavascriptObjectSerializer;
+import name.martingeisse.common.javascript.serialize.IJavascriptSerializable;
 import name.martingeisse.common.javascript.serialize.IJavascriptSerializer;
 import name.martingeisse.common.javascript.serialize.ResultSetRowToJavascriptObjectSerializer;
 
@@ -55,6 +56,21 @@ public final class CakephpJsonUtil {
 		}
 	}
 
+	/**
+	 * Assembles a JSON object from an {@link IJavascriptSerializable}.
+	 * 
+	 * If modelName is null, then this method simply serializes the object.
+	 * Otherwise, the result is wrapped in another object using modelName as the key.
+	 * 
+	 * @param assembler the Javascript assembler
+	 * @param modelName to key of the inner object in the outer object, or null
+	 * to just assemble the inner object.
+	 * @param object the object to serialize
+	 */
+	public static <T> void generateModelEntry(final JavascriptAssembler assembler, final String modelName, final IJavascriptSerializable object) {
+		generateModelEntry(assembler, modelName, IJavascriptSerializable.Serializer.instance, object);
+	}
+	
 	/**
 	 * Assembles a JSON object from the current row of the specified result set.
 	 * 
@@ -149,7 +165,7 @@ public final class CakephpJsonUtil {
 	 * @param serializer the serializer that generates a Javascript object from the Java object
 	 * @param iterable the iterable of objects to serialize
 	 */
-	public static <T> void generateModelList(final JavascriptAssembler assembler, final String modelName, final IJavascriptSerializer<T> serializer, final Iterable<T> iterable) {
+	public static <T> void generateModelList(final JavascriptAssembler assembler, final String modelName, final IJavascriptSerializer<T> serializer, final Iterable<? extends T> iterable) {
 		assembler.beginList();
 		for (T element : iterable) {
 			assembler.prepareListElement();
@@ -158,6 +174,21 @@ public final class CakephpJsonUtil {
 		assembler.endList();
 	}
 
+	/**
+	 * Assembles an array of JSON objects from an {@link Iterable} of IJavascriptSerializable objects.
+	 * 
+	 * If modelName is null, then this method simply serializes each element.
+	 * Otherwise, each result is wrapped in another object using modelName as the key.
+	 * 
+	 * @param assembler the Javascript assembler
+	 * @param modelName to key of the inner object in the outer object, or null
+	 * to just assembles the inner object.
+	 * @param iterable the iterable of objects to serialize
+	 */
+	public static <T> void generateModelList(final JavascriptAssembler assembler, final String modelName, final Iterable<? extends IJavascriptSerializable> iterable) {
+		generateModelList(assembler, modelName, IJavascriptSerializable.Serializer.instance, iterable);
+	}
+	
 	/**
 	 * Assembles all remaining rows from the specified resultSet, not including the current
 	 * row (if any), using the serializer and wrapped in a JSON array.

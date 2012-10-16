@@ -19,7 +19,7 @@ import com.mysema.query.types.Predicate;
  * transformation and just stores the lists of table row beans directly in the cache.
  * 
  * @param <K> the type of cache keys
- * @param <R> the table row bean type
+ * @param <R> the table row bean type (which is also the type of cached values)
  */
 public abstract class AbstractQuerydslListResultTableCacheRegion<K extends Serializable, R> extends AbstractQuerydslListResultTableBasedCacheRegion<K, R, List<R>> {
 
