@@ -40,46 +40,6 @@ public final class SingleValueCacheRegion<K extends Serializable, V> {
 	}
 	
 	/**
-	 * Checks whether a value is currently cached.
-	 * @return true if cached, false if not
-	 */
-	public boolean isCached() {
-		return region.isCached(key);
-	}
-	
-	/**
-	 * Returns the cached value, or null if no value is currently cached.
-	 * Use {@link #isCached()} or {@link #getInternalValue()} to distinguish
-	 * a cached null value from a missing value.
-	 * 
-	 * @return the cached value or null
-	 */
-	public V getCachedValue() {
-		return region.getCachedValue(key);
-	}
-	
-	/**
-	 * This method is similar to {@link #getCachedValue()}, except how if
-	 * treats null values: This method returns null if and only if no value
-	 * is stored in the cache. If a null value is stored in the cache, this
-	 * method returns {@link CachedNull#INSTANCE}.
-	 * 
-	 * @return the cached value or {@link CachedNull#INSTANCE}
-	 */
-	public Object getInternalValue() {
-		return region.getInternalValue(key);
-	}
-	
-	/**
-	 * Sets the cached value.
-	 * @param value the value. Pass null to store a null value in the
-	 * cache; passing {@link CachedNull#INSTANCE} is not allowed.
-	 */
-	public void setCachedValue(V value) {
-		region.setCachedValue(key, value);
-	}
-
-	/**
 	 * This method returns the value, fetching it if not yet cached.
 	 * This requires that the implementation knows how to fetch missing
 	 * values. Cached values are returned directly, whether the
@@ -92,13 +52,6 @@ public final class SingleValueCacheRegion<K extends Serializable, V> {
 	 */
 	public V get() throws UnsupportedOperationException {
 		return region.get(key);
-	}
-
-	/**
-	 * Removes the cached value.
-	 */
-	public void remove() {
-		region.remove(key);
 	}
 	
 }

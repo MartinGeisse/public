@@ -25,21 +25,21 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 	 * the fieldNames
 	 */
 	private String[] fieldNames;
-	
+
 	/**
 	 * Constructor.
 	 */
 	public BeanToJavascriptObjectSerializer() {
 	}
-	
+
 	/**
 	 * Constructor.
 	 * @param fieldNames the fields to serialize
 	 */
-	public BeanToJavascriptObjectSerializer(String... fieldNames) {
+	public BeanToJavascriptObjectSerializer(final String... fieldNames) {
 		this.fieldNames = fieldNames;
 	}
-	
+
 	/**
 	 * Getter method for the fieldNames.
 	 * @return the fieldNames
@@ -47,12 +47,12 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 	public final String[] getFieldNames() {
 		return fieldNames;
 	}
-	
+
 	/**
 	 * Setter method for the fieldNames.
 	 * @param fieldNames the fieldNames to set
 	 */
-	public final void setFieldNames(String... fieldNames) {
+	public final void setFieldNames(final String... fieldNames) {
 		this.fieldNames = fieldNames;
 	}
 
@@ -60,7 +60,7 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 	 * @see name.martingeisse.common.javascript.serialize.IJavascriptSerializer#serialize(java.lang.Object, name.martingeisse.common.javascript.JavascriptAssembler)
 	 */
 	@Override
-	public void serialize(T bean, JavascriptAssembler assembler) {
+	public void serialize(final T bean, final JavascriptAssembler assembler) {
 		try {
 			assembler.beginObject();
 			if (fieldNames == null) {
@@ -70,33 +70,33 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 			}
 			serializeGeneratedFields(bean, assembler);
 			assembler.endObject();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
-	private void serializeAllFields(T bean, JavascriptAssembler assembler) throws Exception {
-		for (PropertyDescriptor property : PropertyUtils.getPropertyDescriptors(bean)) {
-			Object value = property.getReadMethod().invoke(bean);
+	private void serializeAllFields(final T bean, final JavascriptAssembler assembler) throws Exception {
+		for (final PropertyDescriptor property : PropertyUtils.getPropertyDescriptors(bean)) {
+			final Object value = property.getReadMethod().invoke(bean);
 			assembler.prepareObjectProperty(property.getName());
 			assembler.appendPrimitive(value);
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
-	private void serializeSpecificFields(T bean, JavascriptAssembler assembler) throws Exception {
-		for (String fieldName : fieldNames) {
-			Object value = PropertyUtils.getPropertyDescriptor(bean, fieldName).getReadMethod().invoke(bean);
+	private void serializeSpecificFields(final T bean, final JavascriptAssembler assembler) throws Exception {
+		for (final String fieldName : fieldNames) {
+			final Object value = PropertyUtils.getPropertyDescriptor(bean, fieldName).getReadMethod().invoke(bean);
 			assembler.prepareObjectProperty(fieldName);
 			assembler.appendPrimitive(value);
 		}
 	}
-	
+
 	/**
 	 * This method is a stub that allows subclasses to add custom generated fields not
 	 * actually present in the object being serialized. The default implementation does nothing.
@@ -104,7 +104,25 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 	 * @param bean the bean being serialized
 	 * @param assembler the assembler
 	 */
-	protected void serializeGeneratedFields(T bean, JavascriptAssembler assembler) {
+	protected void serializeGeneratedFields(final T bean, final JavascriptAssembler assembler) {
 	}
-	
+
+	/**
+	 * Serializes the specified bean fields.
+	 * @param bean the bean to get values from
+	 * @param assembler the Javascript assembler to use
+	 * @param fieldNames the names of the fields to serialize
+	 */
+	public static void serializeFields(final Object bean, final JavascriptAssembler assembler, final String... fieldNames) {
+		try {
+			for (final String fieldName : fieldNames) {
+				final Object value = PropertyUtils.getPropertyDescriptor(bean, fieldName).getReadMethod().invoke(bean);
+				assembler.prepareObjectProperty(fieldName);
+				assembler.appendPrimitive(value);
+			}
+		} catch (final Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }

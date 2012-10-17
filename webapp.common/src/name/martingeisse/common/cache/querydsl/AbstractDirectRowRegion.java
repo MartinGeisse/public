@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.common.cache;
+package name.martingeisse.common.cache.querydsl;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,14 +14,12 @@ import com.mysema.query.types.Expression;
 import com.mysema.query.types.Predicate;
 
 /**
- * Specialization of {@link AbstractQuerydslSingleResultTableBasedCacheRegion}
- * that skips the transformation and just stores the table row beans directly
- * in the cache.
+ * Cache implementation for a single-row, non-transformed cache.
  * 
  * @param <K> the type of cache keys
  * @param <R> the table row bean type (which is also the type of cached values)
  */
-public abstract class AbstractQuerydslSingleResultTableCacheRegion<K extends Serializable, R> extends AbstractQuerydslSingleResultTableBasedCacheRegion<K, R, R> {
+public abstract class AbstractDirectRowRegion<K extends Serializable, R> extends AbstractTransformedRowRegion<K, R, R> {
 
 	/**
 	 * Constructor.
@@ -30,7 +28,7 @@ public abstract class AbstractQuerydslSingleResultTableCacheRegion<K extends Ser
 	 * @param keyExpression the key expression
 	 * @param additionalPredicates additional predicates (if any)
 	 */
-	public AbstractQuerydslSingleResultTableCacheRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, Predicate... additionalPredicates) {
+	public AbstractDirectRowRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, Predicate... additionalPredicates) {
 		super(regionName, path, keyExpression, additionalPredicates);
 	}
 

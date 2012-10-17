@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.common.cache;
+package name.martingeisse.common.cache.querydsl;
 
 import java.io.Serializable;
 import java.util.List;
@@ -15,13 +15,12 @@ import com.mysema.query.types.OrderSpecifier;
 import com.mysema.query.types.Predicate;
 
 /**
- * Specialization of {@link AbstractQuerydslListResultTableBasedCacheRegion} that skips the
- * transformation and just stores the lists of table row beans directly in the cache.
+ * Cache implementation for a multi-row, non-transformed cache.
  * 
  * @param <K> the type of cache keys
  * @param <R> the table row bean type (which is also the type of cached values)
  */
-public abstract class AbstractQuerydslListResultTableCacheRegion<K extends Serializable, R> extends AbstractQuerydslListResultTableBasedCacheRegion<K, R, List<R>> {
+public abstract class AbstractDirectRowListRegion<K extends Serializable, R> extends AbstractTransformedRowListRegion<K, R, List<R>> {
 
 	/**
 	 * Constructor.
@@ -30,7 +29,7 @@ public abstract class AbstractQuerydslListResultTableCacheRegion<K extends Seria
 	 * @param keyExpression the key expression
 	 * @param additionalPredicates additional predicates (if any)
 	 */
-	public AbstractQuerydslListResultTableCacheRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, Predicate... additionalPredicates) {
+	public AbstractDirectRowListRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, Predicate... additionalPredicates) {
 		this(regionName, path, keyExpression, new OrderSpecifier<?>[0], additionalPredicates);
 	}
 
@@ -42,7 +41,7 @@ public abstract class AbstractQuerydslListResultTableCacheRegion<K extends Seria
 	 * @param orderSpecifier the result order
 	 * @param additionalPredicates additional predicates (if any)
 	 */
-	public AbstractQuerydslListResultTableCacheRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, OrderSpecifier<?> orderSpecifier, Predicate... additionalPredicates) {
+	public AbstractDirectRowListRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, OrderSpecifier<?> orderSpecifier, Predicate... additionalPredicates) {
 		this(regionName, path, keyExpression, new OrderSpecifier<?>[] {orderSpecifier}, additionalPredicates);
 	}
 
@@ -54,7 +53,7 @@ public abstract class AbstractQuerydslListResultTableCacheRegion<K extends Seria
 	 * @param orderSpecifiers the result order
 	 * @param additionalPredicates additional predicates (if any)
 	 */
-	public AbstractQuerydslListResultTableCacheRegion(String regionName, RelationalPath<R> path, Expression<?> keyExpression, OrderSpecifier<?>[] orderSpecifiers, Predicate... additionalPredicates) {
+	public AbstractDirectRowListRegion(String regionName, RelationalPath<R> path, Expression<?> keyExpression, OrderSpecifier<?>[] orderSpecifiers, Predicate... additionalPredicates) {
 		super(regionName, path, keyExpression, orderSpecifiers, additionalPredicates);
 	}
 

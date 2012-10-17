@@ -49,65 +49,87 @@ public abstract class AbstractCacheRegion<K extends Serializable, V> implements 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.common.cache.ICacheRegion#isCached(java.lang.String)
+	/**
+	 * Checks whether a value with the specified key is currently cached.
+	 * Returns true if a null value is cached.
+	 * 
+	 * @param key the key
+	 * @return true if cached, false if not
 	 */
-	@Override
 	public boolean isCached(final K key) {
 		ParameterUtil.ensureNotNull(key, "key");
 		return (cache.get(key) != null);
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.common.cache.ICacheRegion#getCachedValue(java.lang.String)
+	/**
+	 * Returns the value cached for the specified key, or null if no
+	 * such value is currently cached. Use {@link #isCached(Serializable)}
+	 * or {@link #getInternalValue(Serializable)} to distinguish a cached
+	 * null value from a missing value.
+	 * 
+	 * @param key the key (must not be null)
+	 * @return the cached value or null
 	 */
-	@Override
 	@SuppressWarnings("unchecked")
 	public V getCachedValue(final K key) {
 		ParameterUtil.ensureNotNull(key, "key");
-		Object value = cache.get(key);
+		final Object value = cache.get(key);
 		return (value == CachedNull.INSTANCE ? null : (V)value);
 	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.common.cache.ICacheRegion#getCachedValues(java.lang.Iterable)
+
+	/**
+	 * This method is equivalent to calling {@link #getCachedValue(Serializable)}
+	 * for each of the specified keys. It returns a list containing the cached values.
+	 * @param keys the keys (neither the iterable nor any key may be null)
+	 * @return the values (null for each key whose value is missing or is
+	 * actually null)
 	 */
-	@Override
-	public List<V> getCachedValues(Iterable<K> keys) {
+	public List<V> getCachedValues(final Iterable<K> keys) {
 		ParameterUtil.ensureNotNull(keys, "keys");
-		List<V> values = new ArrayList<V>();
-		for (K key : keys) {
+		final List<V> values = new ArrayList<V>();
+		for (final K key : keys) {
 			values.add(getCachedValue(key));
 		}
 		return values;
 	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.common.cache.ICacheRegion#getInternalValue(java.io.Serializable)
+
+	/**
+	 * This method is similar to {@link #getCachedValue(Serializable)},
+	 * except how if treats null values: This method returns null if
+	 * and only if no value is stored in the cache. If a null value
+	 * is stored in the cache, this method returns {@link CachedNull#INSTANCE}.
+	 * 
+	 * @param key the key (must not be null)
+	 * @return the cached value or {@link CachedNull#INSTANCE}
 	 */
-	@Override
-	public Object getInternalValue(K key) {
+	public Object getInternalValue(final K key) {
 		ParameterUtil.ensureNotNull(key, "key");
 		return cache.get(key);
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.common.cache.ICacheRegion#getInternalValues(java.lang.Iterable)
+	/**
+	 * This method is equivalent to calling {@link #getInternalValue(Serializable)}
+	 * for each of the specified keys. It returns a list containing the internal values.
+	 * @param keys the keys (neither the iterable nor any key may be null)
+	 * @return the values (null for each key whose value is missing;
+	 * {@link CachedNull#INSTANCE} for each key whose value is actually null)
 	 */
-	@Override
-	public List<Object> getInternalValues(Iterable<K> keys) {
+	public List<Object> getInternalValues(final Iterable<K> keys) {
 		ParameterUtil.ensureNotNull(keys, "keys");
-		List<Object> values = new ArrayList<Object>();
-		for (K key : keys) {
+		final List<Object> values = new ArrayList<Object>();
+		for (final K key : keys) {
 			values.add(getInternalValue(key));
 		}
 		return values;
 	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.common.cache.ICacheRegion#setCachedValue(java.lang.String, java.lang.Object)
+
+	/**
+	 * Sets the value cached for the specified key.
+	 * 
+	 * @param key the key (must not be null)
+	 * @param value the value. Pass null to store a null value in the
+	 * cache; passing {@link CachedNull#INSTANCE} is not allowed.
 	 */
-	@Override
 	public void setCachedValue(final K key, final V value) {
 		ParameterUtil.ensureNotNull(key, "key");
 		if (value == CachedNull.INSTANCE) {
@@ -125,42 +147,43 @@ public abstract class AbstractCacheRegion<K extends Serializable, V> implements 
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public V get(K key) throws UnsupportedOperationException, NoSuchElementException {
+	public V get(final K key) throws UnsupportedOperationException, NoSuchElementException {
 		ParameterUtil.ensureNotNull(key, "key");
-		Object internalValue = cache.get(key);
+		final Object internalValue = cache.get(key);
 		if (internalValue == CachedNull.INSTANCE) {
 			return null;
 		} else if (internalValue != null) {
 			return (V)internalValue;
 		} else {
-			V value = fetch(key);
+			final V value = fetch(key);
 			if (value == CachedNull.INSTANCE) {
-				throw new IllegalReturnValueException("cache fetch() implementations should return null (not CachedNull.INSTANCE) to store a null value in the cache");
+				throw new IllegalReturnValueException(
+					"cache fetch() implementations should return null (not CachedNull.INSTANCE) to store a null value in the cache");
 			}
 			setCachedValue(key, value);
 			return value;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.common.cache.ICacheRegion#get(java.lang.Iterable)
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<V> get(Iterable<K> keys) throws UnsupportedOperationException {
+	public List<V> get(final Iterable<K> keys) throws UnsupportedOperationException {
 
 		// scan the cache for the specified keys
-		List<Object> internalValues = new ArrayList<Object>();
-		List<K> missingKeys = new ArrayList<K>();
-		for (K key : keys) {
+		final List<Object> internalValues = new ArrayList<Object>();
+		final List<K> missingKeys = new ArrayList<K>();
+		for (final K key : keys) {
 			ParameterUtil.ensureNotNull(key, "key");
-			Object internalValue = cache.get(key);
+			final Object internalValue = cache.get(key);
 			internalValues.add(internalValue);
 			if (internalValue == null) {
 				missingKeys.add(key);
 			}
 		}
-		
+
 		// fetch missing values and store them in the cache
 		List<V> fetchedValues;
 		if (missingKeys.isEmpty()) {
@@ -168,20 +191,21 @@ public abstract class AbstractCacheRegion<K extends Serializable, V> implements 
 		} else {
 			fetchedValues = ReturnValueUtil.nullNotAllowed(fetchMultiple(missingKeys), "fetchMultiple()");
 			if (fetchedValues.size() != missingKeys.size()) {
-				throw new IllegalReturnValueException("fetchMultiple() returned " + fetchedValues.size() + " values for " + missingKeys.size() + " keys");
+				throw new IllegalReturnValueException("fetchMultiple() returned " + fetchedValues.size() + " values for "
+					+ missingKeys.size() + " keys");
 			}
 			{
-				Iterator<V> fetchedValueIterator = fetchedValues.iterator();
-				for (K key : missingKeys) {
+				final Iterator<V> fetchedValueIterator = fetchedValues.iterator();
+				for (final K key : missingKeys) {
 					setCachedValue(key, fetchedValueIterator.next());
 				}
 			}
 		}
-		
+
 		// merge cached and fetched values
-		List<V> result = new ArrayList<V>();
-		Iterator<V> fetchedValueIterator = fetchedValues.iterator();
-		for (Object internalValue : internalValues) {
+		final List<V> result = new ArrayList<V>();
+		final Iterator<V> fetchedValueIterator = fetchedValues.iterator();
+		for (final Object internalValue : internalValues) {
 			if (internalValue == null) {
 				result.add(fetchedValueIterator.next());
 			} else if (internalValue == CachedNull.INSTANCE) {
@@ -191,13 +215,14 @@ public abstract class AbstractCacheRegion<K extends Serializable, V> implements 
 			}
 		}
 		return result;
-		
+
 	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.common.cache.ICacheRegion#remove(java.lang.String)
+
+	/**
+	 * Removes the cached value for the specified key.
+	 * 
+	 * @param key the key (must not be null)
 	 */
-	@Override
 	public void remove(final K key) {
 		ParameterUtil.ensureNotNull(key, "key");
 		try {
@@ -206,22 +231,22 @@ public abstract class AbstractCacheRegion<K extends Serializable, V> implements 
 			throw new RuntimeException(e);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.common.cache.ICacheRegion#remove(java.lang.Iterable)
+
+	/**
+	 * Removes the cached values for the specified keys.
+	 * 
+	 * @param keys the keys (neither the iterable nor any key may be null)
 	 */
-	@Override
-	public void remove(Iterable<K> keys) {
+	public void remove(final Iterable<K> keys) {
 		ParameterUtil.ensureNotNull(keys, "keys");
-		for (K key : keys) {
+		for (final K key : keys) {
 			remove(key);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.common.cache.ICacheRegion#clear()
+	/**
+	 * Removes all cached values.
 	 */
-	@Override
 	public void clear() {
 		try {
 			cache.clear();
@@ -251,13 +276,13 @@ public abstract class AbstractCacheRegion<K extends Serializable, V> implements 
 	 * @throws UnsupportedOperationException if the value is missing and this
 	 * implementation does not know how to fetch values
 	 */
-	protected List<V> fetchMultiple(List<K> keys) throws UnsupportedOperationException {
+	protected List<V> fetchMultiple(final List<K> keys) throws UnsupportedOperationException {
 		ParameterUtil.ensureNotNull(keys, "keys");
-		List<V> values = new ArrayList<V>();
-		for (K key : keys) {
+		final List<V> values = new ArrayList<V>();
+		for (final K key : keys) {
 			values.add(fetch(key));
 		}
 		return values;
 	}
-	
+
 }
