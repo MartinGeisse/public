@@ -5,6 +5,8 @@ package name.martingeisse.apidemo.phorum;
 
 import java.io.Serializable;
 
+import org.joda.time.DateTime;
+
 /**
  * This class represents rows from table 'phorum_search'.
  */
@@ -24,7 +26,7 @@ public class PhorumSearch implements Serializable {
     /**
      * the datetimeTest
      */
-    private java.sql.Timestamp datetimeTest;
+    private DateTime datetimeTest;
 
     /**
      * the forumId
@@ -61,7 +63,7 @@ public class PhorumSearch implements Serializable {
      * Getter method for the datetimeTest.
      * @return the datetimeTest
      */
-    public java.sql.Timestamp getDatetimeTest() {
+    public DateTime getDatetimeTest() {
         return datetimeTest;
     }
 
@@ -69,7 +71,7 @@ public class PhorumSearch implements Serializable {
      * Setter method for the datetimeTest.
      * @param datetimeTest the datetimeTest to set
      */
-    public void setDatetimeTest(java.sql.Timestamp datetimeTest) {
+    public void setDatetimeTest(DateTime datetimeTest) {
         this.datetimeTest = datetimeTest;
     }
 
