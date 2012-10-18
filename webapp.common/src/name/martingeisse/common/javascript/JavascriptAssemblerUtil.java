@@ -69,7 +69,7 @@ public class JavascriptAssemblerUtil {
 					// ignore the rest
 				}
 			} else {
-				if (c == '\\' || c == '\"') {
+				if (c == '\\' || c == '\"' || c == '/') {
 					builder.append('\\');
 				}
 				builder.append(c);

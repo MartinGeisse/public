@@ -380,6 +380,34 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	protected final IllegalArgumentException unknownPrimitiveTypeException(Object value) {
 		return new IllegalArgumentException("not a JSON-compatible primitive value: " + value);
 	}
+	
+	/**
+	 * Appends an array of primitive values as a Javascript array, using
+	 * {@link #appendPrimitive(Object)} for each element.
+	 * @param value the array to append
+	 */
+	public final void appendPrimitiveArray(Object[] value) {
+		beginList();
+		for (Object element : value) {
+			prepareListElement();
+			appendPrimitive(element);
+		}
+		endList();
+	}
+	
+	/**
+	 * Appends an {@link Iterable} of primitive values as a Javascript array, using
+	 * {@link #appendPrimitive(Object)} for each element.
+	 * @param value the iterable to append
+	 */
+	public final void appendPrimitiveArray(Iterable<?> value) {
+		beginList();
+		for (Object element : value) {
+			prepareListElement();
+			appendPrimitive(element);
+		}
+		endList();
+	}
 
 	/**
 	 * Begins a nested variable scope by using an anonymous function.
