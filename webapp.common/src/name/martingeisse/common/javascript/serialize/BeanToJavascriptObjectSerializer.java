@@ -90,11 +90,7 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 	 * 
 	 */
 	private void serializeSpecificFields(final T bean, final JavascriptAssembler assembler) throws Exception {
-		for (final String fieldName : fieldNames) {
-			final Object value = PropertyUtils.getPropertyDescriptor(bean, fieldName).getReadMethod().invoke(bean);
-			assembler.prepareObjectProperty(fieldName);
-			assembler.appendPrimitive(value);
-		}
+		serializeFields(bean, assembler, fieldNames);
 	}
 
 	/**

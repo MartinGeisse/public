@@ -6,6 +6,10 @@
 
 package name.martingeisse.common.database.config;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
+
 import com.mysema.query.sql.Configuration;
 import com.mysema.query.sql.SQLTemplates;
 
@@ -34,9 +38,18 @@ public class CustomMysqlQuerydslConfiguration extends Configuration {
 	/**
 	 * Constructor.
 	 * @param templates the SQL templates
+	 * @param timeZone the default time zone; used to convert SQL DATETIME
+	 * values (which are, by themselves, equivalent to {@link LocalDateTime}s)
+	 * to {@link DateTime} instants.
 	 */
-	public CustomMysqlQuerydslConfiguration(SQLTemplates templates) {
+	public CustomMysqlQuerydslConfiguration(SQLTemplates templates, DateTimeZone timeZone) {
 		super(templates);
+		if (timeZone != null) {
+			register(new CustomMysqlDateTimeType(timeZone));
+		}
+		register(new CustomMysqlLocalDateTimeType());
+		register(new CustomMysqlLocalDateType());
+		throw new RuntimeException("test this class!");
 	}
 	
 }
