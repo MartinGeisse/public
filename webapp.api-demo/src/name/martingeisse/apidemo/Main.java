@@ -23,7 +23,7 @@ public class Main {
 	 * @param args ...
 	 * @throws Exception on errors
 	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(final String[] args) throws Exception {
 
 		final MysqlDatabaseDescriptor phorumDatabase = new MysqlDatabaseDescriptor();
 		phorumDatabase.setDisplayName("Phorum database");
@@ -32,8 +32,8 @@ public class Main {
 		phorumDatabase.setPassword("");
 		phorumDatabase.setDefaultTimeZone(DateTimeZone.forID("Europe/Berlin"));
 		EntityConnectionManager.initializeDatabaseDescriptors(phorumDatabase);
-		
+
 		Launcher.launch(new NoFaviconDecorator(new ApplicationHandler()), null);
 	}
-	
+
 }

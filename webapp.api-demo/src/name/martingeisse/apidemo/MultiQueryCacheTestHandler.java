@@ -15,6 +15,7 @@ import name.martingeisse.api.request.RequestPathChain;
 import name.martingeisse.apidemo.phorum.PhorumSettings;
 import name.martingeisse.apidemo.phorum.QPhorumSettings;
 import name.martingeisse.common.cache.ICacheRegion;
+import name.martingeisse.common.cache.querydsl.RowRegion;
 
 /**
  * Apache commons cache test.
@@ -24,7 +25,7 @@ public class MultiQueryCacheTestHandler implements IRequestHandler {
 	/**
 	 * the settingsCache
 	 */
-	private static final ICacheRegion<String, PhorumSettings> settingsCache = new PhorumTableCacheRegion<String, PhorumSettings>("table.settings", QPhorumSettings.phorumSettings, QPhorumSettings.phorumSettings.name);
+	private static final ICacheRegion<String, PhorumSettings> settingsCache = new RowRegion<String, PhorumSettings>("table.settings", QPhorumSettings.phorumSettings, QPhorumSettings.phorumSettings.name);
 	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.api.handler.IRequestHandler#handle(name.martingeisse.api.request.RequestCycle, name.martingeisse.api.request.RequestPathChain)

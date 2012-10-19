@@ -59,7 +59,10 @@ public class JdbcEntityDatabaseConnection implements IEntityDatabaseConnection {
 	}
 
 	/**
-	 * Getter method for the jdbcConnection.
+	 * Getter method for the jdbcConnection. NOTE: Do NOT use this method to build a
+	 * QueryDSL query (e.g. {@link SQLQuery}) manually. Such a query must be built by
+	 * this connection in a database-specific way.
+	 * 
 	 * @return the jdbcConnection
 	 */
 	public Connection getJdbcConnection() {

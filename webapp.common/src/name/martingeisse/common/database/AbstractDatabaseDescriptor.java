@@ -10,8 +10,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import name.martingeisse.common.database.config.CustomMysqlQuerydslConfiguration;
+
 import org.joda.time.DateTimeZone;
 
+import com.mysema.query.sql.Configuration;
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.SQLQueryImpl;
@@ -159,12 +162,22 @@ public abstract class AbstractDatabaseDescriptor implements IDatabaseDescriptor 
 	@Override
 	public abstract SQLTemplates createSqlTemplates();
 
+	/**
+	 * Creates a QueryDSL {@link Configuration}. This configuration uses the SQL templates returned
+	 * by {@link #createSqlTemplates()}. It also uses custom handlers to convert temporal values
+	 * to Joda-time values (QueryDSL itself uses JDBC temporal support, which is horribly buggy).
+	 * @return the configuration
+	 */
+	public Configuration createQuerydslConfiguration() {
+		return new CustomMysqlQuerydslConfiguration(createSqlTemplates(), defaultTimeZone);
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.schema.database.IDatabaseDescriptor#createQuery(java.sql.Connection)
 	 */
 	@Override
 	public SQLQuery createQuery(final Connection connection) {
-		return new SQLQueryImpl(connection, createSqlTemplates());
+		return new SQLQueryImpl(connection, createQuerydslConfiguration());
 	}
 
 	/* (non-Javadoc)
@@ -172,7 +185,7 @@ public abstract class AbstractDatabaseDescriptor implements IDatabaseDescriptor 
 	 */
 	@Override
 	public SQLInsertClause createInsert(final Connection connection, final RelationalPath<?> entityPath) {
-		return new SQLInsertClause(connection, createSqlTemplates(), entityPath);
+		return new SQLInsertClause(connection, createQuerydslConfiguration(), entityPath);
 	}
 
 	/* (non-Javadoc)
@@ -180,7 +193,7 @@ public abstract class AbstractDatabaseDescriptor implements IDatabaseDescriptor 
 	 */
 	@Override
 	public SQLUpdateClause createUpdate(final Connection connection, final RelationalPath<?> entityPath) {
-		return new SQLUpdateClause(connection, createSqlTemplates(), entityPath);
+		return new SQLUpdateClause(connection, createQuerydslConfiguration(), entityPath);
 	}
 
 	/* (non-Javadoc)
@@ -188,7 +201,7 @@ public abstract class AbstractDatabaseDescriptor implements IDatabaseDescriptor 
 	 */
 	@Override
 	public SQLDeleteClause createDelete(final Connection connection, final RelationalPath<?> entityPath) {
-		return new SQLDeleteClause(connection, createSqlTemplates(), entityPath);
+		return new SQLDeleteClause(connection, createQuerydslConfiguration(), entityPath);
 	}
 
 }

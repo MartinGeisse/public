@@ -14,15 +14,11 @@ import name.martingeisse.api.request.RequestPathChain;
 import name.martingeisse.apidemo.phorum.PhorumSearch;
 import name.martingeisse.apidemo.phorum.QPhorumSearch;
 import name.martingeisse.common.database.EntityConnectionManager;
-import name.martingeisse.common.database.JdbcEntityDatabaseConnection;
-import name.martingeisse.common.database.config.CustomMysqlQuerydslConfiguration;
 
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 
-import com.mysema.query.sql.MySQLTemplates;
 import com.mysema.query.sql.SQLQuery;
-import com.mysema.query.sql.SQLQueryImpl;
 
 /**
  *
@@ -34,18 +30,16 @@ public class TimeTestHandler implements IRequestHandler {
 	 */
 	@Override
 	public void handle(RequestCycle requestCycle, RequestPathChain path) throws Exception {
-
-		// TODO: does not work yet (does not use configuration timezone)
-		// but at least uses Joda classes
-		
-		JdbcEntityDatabaseConnection entityConnection = (JdbcEntityDatabaseConnection)EntityConnectionManager.getConnection();
-		SQLQuery query = new SQLQueryImpl(entityConnection.getJdbcConnection(), new CustomMysqlQuerydslConfiguration(new MySQLTemplates(), DateTimeZone.forID("Europe/Moscow")));
-		
+		SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		QPhorumSearch qSearch = QPhorumSearch.phorumSearch;
 		List<PhorumSearch> results = query.from(qSearch).list(qSearch);
 		PhorumSearch entry = results.get(0);
-		System.out.println("* " + entry.getDatetimeTest().getClass());
-		System.out.println("* " + DateTimeFormat.fullDateTime().print(entry.getDatetimeTest()));
-		
+		requestCycle.preparePlainTextResponse();
+		requestCycle.getWriter().println("* " + entry.getDatetimeTest().getClass());
+		requestCycle.getWriter().println("* " + DateTimeFormat.fullDateTime().print(entry.getDatetimeTest()));
+		requestCycle.getWriter().println("* " + DateTimeFormat.fullDateTime().withZone(DateTimeZone.forID("Europe/Berlin")).print(entry.getDatetimeTest()));
+		requestCycle.getWriter().println("* " + DateTimeFormat.fullDateTime().withZone(DateTimeZone.forID("Asia/Aden")).print(entry.getDatetimeTest()));
+		requestCycle.getWriter().println("* " + DateTimeFormat.fullDateTime().withZone(DateTimeZone.forID("Europe/Moscow")).print(entry.getDatetimeTest()));
 	}
+	
 }

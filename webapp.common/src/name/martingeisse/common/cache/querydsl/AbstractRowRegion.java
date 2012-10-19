@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import name.martingeisse.common.cache.AbstractCacheRegion;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
 
@@ -35,7 +34,7 @@ import com.mysema.query.types.PredicateOperation;
  * @param <R> the table row bean type
  * @param <V> the type of cached values
  */
-public abstract class AbstractTransformedRowRegion<K extends Serializable, R, V> extends AbstractCacheRegion<K, V> {
+public abstract class AbstractRowRegion<K extends Serializable, R, V> extends AbstractDatabaseCacheRegion<K, V> {
 
 	/**
 	 * the path
@@ -59,7 +58,7 @@ public abstract class AbstractTransformedRowRegion<K extends Serializable, R, V>
 	 * @param keyExpression the key expression
 	 * @param additionalPredicates additional predicates (if any)
 	 */
-	public AbstractTransformedRowRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, Predicate... additionalPredicates) {
+	public AbstractRowRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, Predicate... additionalPredicates) {
 		super(regionName);
 		this.path = ParameterUtil.ensureNotNull(path, "path");
 		this.keyExpression = ParameterUtil.ensureNotNull(keyExpression, "keyExpression");
@@ -112,11 +111,6 @@ public abstract class AbstractTransformedRowRegion<K extends Serializable, R, V>
 		
 	}
 
-	/**
-	 * @return a new {@link SQLQuery}
-	 */
-	protected abstract SQLQuery createQuery();
-	
 	/**
 	 * Transforms a single row.
 	 * 

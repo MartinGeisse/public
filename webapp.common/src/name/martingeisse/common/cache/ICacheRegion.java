@@ -25,6 +25,9 @@ import java.util.List;
  * the instance of this interface. If two such instances use the
  * same name, they access the same region.
  * 
+ * Instances are often immutable singleton objects that are shared
+ * by all threads, but this is not a requirement.
+ * 
  * @param <K> the type of cache keys
  * @param <V> the type of cached values
  */

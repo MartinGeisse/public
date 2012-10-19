@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import name.martingeisse.common.cache.AbstractCacheRegion;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
 
@@ -39,7 +38,7 @@ import com.mysema.query.types.PredicateOperation;
  * @param <R> the table row bean type
  * @param <V> the type of cached values
  */
-public abstract class AbstractTransformedRowListRegion<K extends Serializable, R, V> extends AbstractCacheRegion<K, V> {
+public abstract class AbstractRowListRegion<K extends Serializable, R, V> extends AbstractDatabaseCacheRegion<K, V> {
 
 	/**
 	 * the path
@@ -68,7 +67,7 @@ public abstract class AbstractTransformedRowListRegion<K extends Serializable, R
 	 * @param keyExpression the key expression
 	 * @param additionalPredicates additional predicates (if any)
 	 */
-	public AbstractTransformedRowListRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, Predicate... additionalPredicates) {
+	public AbstractRowListRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, Predicate... additionalPredicates) {
 		this(regionName, path, keyExpression, new OrderSpecifier<?>[0], additionalPredicates);
 	}
 	
@@ -80,7 +79,7 @@ public abstract class AbstractTransformedRowListRegion<K extends Serializable, R
 	 * @param orderSpecifier the result order
 	 * @param additionalPredicates additional predicates (if any)
 	 */
-	public AbstractTransformedRowListRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, OrderSpecifier<?> orderSpecifier, Predicate... additionalPredicates) {
+	public AbstractRowListRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, OrderSpecifier<?> orderSpecifier, Predicate... additionalPredicates) {
 		this(regionName, path, keyExpression, new OrderSpecifier<?>[] {orderSpecifier}, additionalPredicates);
 	}
 	
@@ -92,7 +91,7 @@ public abstract class AbstractTransformedRowListRegion<K extends Serializable, R
 	 * @param orderSpecifiers the result order
 	 * @param additionalPredicates additional predicates (if any)
 	 */
-	public AbstractTransformedRowListRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, OrderSpecifier<?>[] orderSpecifiers, Predicate... additionalPredicates) {
+	public AbstractRowListRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, OrderSpecifier<?>[] orderSpecifiers, Predicate... additionalPredicates) {
 		super(regionName);
 		this.path = ParameterUtil.ensureNotNull(path, "path");
 		this.keyExpression = ParameterUtil.ensureNotNull(keyExpression, "keyExpression");
@@ -154,11 +153,6 @@ public abstract class AbstractTransformedRowListRegion<K extends Serializable, R
 		
 	}
 
-	/**
-	 * @return a new {@link SQLQuery}
-	 */
-	protected abstract SQLQuery createQuery();
-	
 	/**
 	 * Transforms a list of rows for a single key.
 	 * 

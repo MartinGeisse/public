@@ -19,7 +19,7 @@ import com.mysema.query.types.Predicate;
  * @param <K> the type of cache keys
  * @param <R> the table row bean type (which is also the type of cached values)
  */
-public abstract class AbstractDirectRowRegion<K extends Serializable, R> extends AbstractTransformedRowRegion<K, R, R> {
+public class RowRegion<K extends Serializable, R> extends AbstractRowRegion<K, R, R> {
 
 	/**
 	 * Constructor.
@@ -28,7 +28,7 @@ public abstract class AbstractDirectRowRegion<K extends Serializable, R> extends
 	 * @param keyExpression the key expression
 	 * @param additionalPredicates additional predicates (if any)
 	 */
-	public AbstractDirectRowRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, Predicate... additionalPredicates) {
+	public RowRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, Predicate... additionalPredicates) {
 		super(regionName, path, keyExpression, additionalPredicates);
 	}
 

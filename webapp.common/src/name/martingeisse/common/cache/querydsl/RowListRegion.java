@@ -20,7 +20,7 @@ import com.mysema.query.types.Predicate;
  * @param <K> the type of cache keys
  * @param <R> the table row bean type (which is also the type of cached values)
  */
-public abstract class AbstractDirectRowListRegion<K extends Serializable, R> extends AbstractTransformedRowListRegion<K, R, List<R>> {
+public class RowListRegion<K extends Serializable, R> extends AbstractRowListRegion<K, R, List<R>> {
 
 	/**
 	 * Constructor.
@@ -29,7 +29,7 @@ public abstract class AbstractDirectRowListRegion<K extends Serializable, R> ext
 	 * @param keyExpression the key expression
 	 * @param additionalPredicates additional predicates (if any)
 	 */
-	public AbstractDirectRowListRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, Predicate... additionalPredicates) {
+	public RowListRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, Predicate... additionalPredicates) {
 		this(regionName, path, keyExpression, new OrderSpecifier<?>[0], additionalPredicates);
 	}
 
@@ -41,7 +41,7 @@ public abstract class AbstractDirectRowListRegion<K extends Serializable, R> ext
 	 * @param orderSpecifier the result order
 	 * @param additionalPredicates additional predicates (if any)
 	 */
-	public AbstractDirectRowListRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, OrderSpecifier<?> orderSpecifier, Predicate... additionalPredicates) {
+	public RowListRegion(final String regionName, RelationalPath<R> path, Expression<?> keyExpression, OrderSpecifier<?> orderSpecifier, Predicate... additionalPredicates) {
 		this(regionName, path, keyExpression, new OrderSpecifier<?>[] {orderSpecifier}, additionalPredicates);
 	}
 
@@ -53,7 +53,7 @@ public abstract class AbstractDirectRowListRegion<K extends Serializable, R> ext
 	 * @param orderSpecifiers the result order
 	 * @param additionalPredicates additional predicates (if any)
 	 */
-	public AbstractDirectRowListRegion(String regionName, RelationalPath<R> path, Expression<?> keyExpression, OrderSpecifier<?>[] orderSpecifiers, Predicate... additionalPredicates) {
+	public RowListRegion(String regionName, RelationalPath<R> path, Expression<?> keyExpression, OrderSpecifier<?>[] orderSpecifiers, Predicate... additionalPredicates) {
 		super(regionName, path, keyExpression, orderSpecifiers, additionalPredicates);
 	}
 
