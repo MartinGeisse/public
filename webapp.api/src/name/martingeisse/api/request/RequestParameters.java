@@ -6,6 +6,9 @@
 
 package name.martingeisse.api.request;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -25,11 +28,17 @@ public final class RequestParameters {
 	private final HttpServletRequest request;
 	
 	/**
+	 * the customParameters
+	 */
+	private final Map<String, String> customParameters;
+	
+	/**
 	 * Constructor.
 	 * @param request the request
 	 */
 	public RequestParameters(final HttpServletRequest request) {
 		this.request = request;
+		this.customParameters = new HashMap<String, String>();
 	}
 
 	/**
@@ -38,6 +47,23 @@ public final class RequestParameters {
 	 */
 	public HttpServletRequest getRequest() {
 		return request;
+	}
+	
+	/**
+	 * Getter method for the customParameters.
+	 * @return the customParameters
+	 */
+	public Map<String, String> getCustomParameters() {
+		return customParameters;
+	}
+	
+	/**
+	 * Sets a custom parameter, possibly overriding a request parameter.
+	 * @param name the name of the parameter to set
+	 * @param value the value to set
+	 */
+	public void set(String name, String value) {
+		customParameters.put(name, value);
 	}
 
 	/**
@@ -48,7 +74,10 @@ public final class RequestParameters {
 	 * @return the parameter value
 	 */
 	public String getString(String name, boolean required) {
-		String value = request.getParameter(name);
+		String value = customParameters.get(name);
+		if (value == null) {
+			value = request.getParameter(name);;
+		}
 		if (required && value == null) {
 			throw new MissingRequestParameterException(name);
 		}

@@ -62,6 +62,13 @@ public final class RequestCycle {
 		final String requestPathText = (uri.startsWith("/") ? uri.substring(1) : uri);
 		this.requestPath = RequestPathChain.parse(requestPathText);
 		this.parameters = new RequestParameters(request);
+		
+		String userAgent = request.getHeader("User-Agent");
+		boolean noBrowserModeRequested = (parameters.getString("__nobrowser", false) != null);
+		if (userAgent != null && userAgent.contains("Mozilla") && parameters.getString("__nobrowser", false) == null) {
+			
+		}
+		
 	}
 
 	/**
