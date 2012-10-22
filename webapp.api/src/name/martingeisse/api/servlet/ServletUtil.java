@@ -18,6 +18,14 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ServletUtil {
 
+	/*
+	 * TODO: Das HTML-UI-Frontend bringt es überhaupt nicht!
+	 * 1. Sehr viel zusätzlcihe Komplexität
+	 * 2. Noch mehr davon wenn Formulare dazukommen (mehr als es wert ist)
+	 * 3. Nicht mal die Folder-Navi geht richtig, noch mehr Komplexität.
+	 * -> lieber wieder raus.
+	 */
+	
 	/**
 	 * Prepares a plain-text response (text/plain, utf-8). Leaves the status code of the response alone.
 	 * @param response the response to write to
