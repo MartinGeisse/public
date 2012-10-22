@@ -11,7 +11,6 @@ import java.util.EnumSet;
 import javax.servlet.DispatcherType;
 
 import name.martingeisse.api.handler.IRequestHandler;
-import name.martingeisse.api.request.RequestPathNotFoundException;
 import name.martingeisse.common.database.EntityConnectionServletFilter;
 import name.martingeisse.common.servlet.AntiJsessionidUrlFilter;
 import name.martingeisse.common.servlet.GlobalServletContext;
@@ -37,12 +36,10 @@ public class Launcher {
 	/**
 	 * Launches the server.
 	 * 
-	 * @param applicationHandler the main application handler
-	 * @param notFoundHandler the fallback handler that is used if the main handler
-	 * throws a {@link RequestPathNotFoundException}.
+	 * @param masterRequestHandler the master request handler
 	 * @throws Exception on errors
 	 */
-	public static void launch(IRequestHandler applicationHandler, IRequestHandler notFoundHandler) throws Exception {
+	public static void launch(IRequestHandler masterRequestHandler) throws Exception {
 		logger.debug("Launcher.launch(): begin");
 
 		final EnumSet<DispatcherType> allDispatcherTypes = EnumSet.allOf(DispatcherType.class);
@@ -66,8 +63,7 @@ public class Launcher {
 		context.addFilter(EntityConnectionServletFilter.class, "/*", allDispatcherTypes);
 
 		// add the API Servlet
-		RestfulServlet.applicationRequestHandler = applicationHandler;
-		RestfulServlet.notFoundRequestHandler = notFoundHandler;
+		RestfulServlet.masterRequestHandler = masterRequestHandler;
 		context.addServlet(RestfulServlet.class, "/*");
 
 		// configure SSL / HTTPS

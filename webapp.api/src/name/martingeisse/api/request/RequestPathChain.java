@@ -96,7 +96,7 @@ public final class RequestPathChain implements Iterable<String> {
 	public RequestPathChain getTail() {
 		return tail;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
 	 */
@@ -112,6 +112,22 @@ public final class RequestPathChain implements Iterable<String> {
 	 */
 	public boolean isEmpty() {
 		return (head == null);
+	}
+	
+	/**
+	 * Converts this path back to a URI.
+	 * @return the URI
+	 */
+	public String getUri() {
+		if (isEmpty()) {
+			return "/";
+		} else {
+			StringBuilder builder = new StringBuilder();
+			for (String segment : this) {
+				builder.append('/').append(segment);
+			}
+			return builder.toString();
+		}
 	}
 	
 	/* (non-Javadoc)

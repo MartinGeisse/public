@@ -7,6 +7,7 @@
 package name.martingeisse.api.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Writer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,33 @@ public class ServletUtil {
 	}
 
 	/**
+	 * Prepares an HTML response (text/html, utf-8). Leaves the status code of the response alone.
+	 * @param response the response to write to
+	 * @throws IOException on I/O errors
+	 */
+	public static void prepareHtmlResponse(HttpServletResponse response) throws IOException {
+		response.setCharacterEncoding("utf-8");
+		response.setContentType("text/html");
+		PrintWriter w = response.getWriter();
+		w.println("<html><head>");
+		w.println("<style type=\"text/css\">");
+		w.println("  body {");
+		w.println("    font-family: monospace; ");
+		w.println("  }");
+		w.println("  a {");
+		w.println("    color: blue; ");
+		w.println("    text-decoration: none; ");
+		w.println("  }");
+		w.println("  .decorated {");
+		w.println("    font-family: serif; ");
+		w.println("    color: red; ");
+		w.println("  }");
+		w.println("</style>");
+		w.println("<script type=\"text/javascript\" src=\"/jquery.js\"></script>");
+		w.println("</head><body>");
+	}
+	
+	/**
 	 * Prepares a plain-text response (text/plain, utf-8), using the specified status code.
 	 * @param response the response to write to
 	 * @param statusCode the HTTP status code to use
@@ -40,14 +68,29 @@ public class ServletUtil {
 	}
 	
 	/**
+	 * Prepares an HTML response (text/html, utf-8), using the specified status code.
+	 * @param response the response to write to
+	 * @param statusCode the HTTP status code to use
+	 * @throws IOException on I/O errors
+	 */
+	public static void prepareHtmlResponse(HttpServletResponse response, int statusCode) throws IOException {
+		response.setStatus(statusCode);
+		prepareHtmlResponse(response);
+	}
+	
+	/**
 	 * Finishes a text-based response. This method can be used for any response the uses
 	 * the {@link HttpServletResponse}'s {@link Writer}.
 	 * @param response the response to write to
 	 * @throws IOException on I/O errors
 	 */
 	public static void finishTextResponse(HttpServletResponse response) throws IOException {
-		response.getWriter().flush();
-		response.getWriter().close();
+		PrintWriter w = response.getWriter();
+		if (response.getContentType().startsWith("text/html")) {
+			w.println("</body></html>");
+		}
+		w.flush();
+		w.close();
 	}
 	
 	/**
@@ -91,6 +134,17 @@ public class ServletUtil {
 	 */
 	public static void emitInternalServerErrorResponse(HttpServletResponse response) throws IOException {
 		emitMessageResponse(response, 500, "Internal server error.");
+	}
+	
+	/**
+	 * Prints a line about a handler decorator to the response. Only useful for upgraded HTML
+	 * responses.
+	 * @param response the response to write to
+	 * @param text the text line to print
+	 * @throws IOException on I/O errors
+	 */
+	public static void printDecoratorInfoLine(HttpServletResponse response, String text) throws IOException {
+		response.getWriter().println("<div class=\"decorated\">" + text + "</div>");
 	}
 	
 }

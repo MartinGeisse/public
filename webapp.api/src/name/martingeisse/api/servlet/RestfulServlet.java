@@ -26,14 +26,9 @@ import name.martingeisse.api.request.RequestPathNotFoundException;
 public class RestfulServlet extends HttpServlet {
 
 	/**
-	 * the applicationRequestHandler
+	 * the masterRequestHandler
 	 */
-	static IRequestHandler applicationRequestHandler;
-
-	/**
-	 * the notFoundRequestHandler
-	 */
-	static IRequestHandler notFoundRequestHandler;
+	static IRequestHandler masterRequestHandler;
 	
 	/* (non-Javadoc)
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -71,25 +66,15 @@ public class RestfulServlet extends HttpServlet {
 		
 		// invoke the application's main handler
 		try {
-			try {
-				applicationRequestHandler.handle(requestCycle, requestCycle.getRequestPath());
-			} catch (RequestPathNotFoundException e) {
-				if (notFoundRequestHandler == null) {
-					throw e;
-				} else {
-					notFoundRequestHandler.handle(requestCycle, requestCycle.getRequestPath());
-				}
-			}
+			masterRequestHandler.handle(requestCycle, requestCycle.getRequestPath());
 		} catch (RequestHandlingFinishedException e) {
 		} catch (RequestPathNotFoundException e) {
 			ServletUtil.emitResourceNotFoundResponse(requestCycle.getRequest(), requestCycle.getResponse());
 		} catch (RequestParametersException e) {
 			ServletUtil.emitParameterErrorResponse(response, e.getMessage());
 		} catch (Exception e) {
-			System.out.println("* Exception: " + e);
 			e.printStackTrace(System.out);
 			ServletUtil.emitInternalServerErrorResponse(response);
-			e.printStackTrace();
 			return;
 		}
 		

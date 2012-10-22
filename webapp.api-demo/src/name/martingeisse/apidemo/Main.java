@@ -6,7 +6,7 @@
 
 package name.martingeisse.apidemo;
 
-import name.martingeisse.api.handler.misc.NoFaviconDecorator;
+import name.martingeisse.api.handler.DefaultMasterHandler;
 import name.martingeisse.api.servlet.Launcher;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.MysqlDatabaseDescriptor;
@@ -33,7 +33,11 @@ public class Main {
 		phorumDatabase.setDefaultTimeZone(DateTimeZone.forID("Europe/Berlin"));
 		EntityConnectionManager.initializeDatabaseDescriptors(phorumDatabase);
 
-		Launcher.launch(new NoFaviconDecorator(new ApplicationHandler()), null);
+		DefaultMasterHandler masterHandler = new DefaultMasterHandler();
+		masterHandler.setApplicationRequestHandler(new ApplicationHandler());
+		// TODO: no favicon
+		Launcher.launch(masterHandler);
+		
 	}
 
 }
