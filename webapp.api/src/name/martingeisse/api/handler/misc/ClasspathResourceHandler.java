@@ -11,7 +11,7 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import name.martingeisse.api.handler.ISelfDescribingRequestHandler;
+import name.martingeisse.api.handler.IRequestHandler;
 import name.martingeisse.api.request.RequestCycle;
 import name.martingeisse.api.request.RequestPathChain;
 
@@ -34,7 +34,7 @@ import org.apache.commons.io.IOUtils;
  *
  * The filename must be specified.
  */
-public class ClasspathResourceHandler implements ISelfDescribingRequestHandler {
+public class ClasspathResourceHandler implements IRequestHandler {
 
 	/**
 	 * the contentType
@@ -136,14 +136,6 @@ public class ClasspathResourceHandler implements ISelfDescribingRequestHandler {
 		outputStream.flush();
 		outputStream.close();
 
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.api.handler.ISelfDescribingRequestHandler#getShortDescription()
-	 */
-	@Override
-	public String getShortDescription() {
-		return "file";
 	}
 
 }

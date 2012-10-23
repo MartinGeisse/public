@@ -9,8 +9,7 @@ package name.martingeisse.api.handler.intercept;
 import name.martingeisse.api.handler.misc.ClasspathResourceHandler;
 
 /**
- * TODO: document me
- *
+ * This handler mounts JQuery as "jquery.js" in the root path.
  */
 public class JqueryHandler extends ClasspathResourceHandler {
 

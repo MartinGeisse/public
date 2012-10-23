@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import name.martingeisse.api.handler.IRequestHandler;
-import name.martingeisse.api.handler.ISelfDescribingRequestHandler;
-import name.martingeisse.api.handler.RequestHandlerUtil;
 import name.martingeisse.api.request.RequestCycle;
 import name.martingeisse.api.request.RequestPathChain;
 import name.martingeisse.api.request.RequestPathNotFoundException;
@@ -24,7 +22,7 @@ import name.martingeisse.api.request.RequestPathNotFoundException;
  * 
  * Initialization: Just add request handlers to the resource map.
  */
-public class NamedResourceFolderHandler implements ISelfDescribingRequestHandler {
+public class NamedResourceFolderHandler implements IRequestHandler {
 
 	/**
 	 * the resources
@@ -66,26 +64,13 @@ public class NamedResourceFolderHandler implements ISelfDescribingRequestHandler
 	 * @param requestCycle
 	 */
 	private void listContents(RequestCycle requestCycle) throws IOException {
-		requestCycle.prepareUpgradablePlainTextResponse();
+		requestCycle.preparePlainTextResponse();
 		PrintWriter w = requestCycle.getWriter();
 		for (Map.Entry<String, IRequestHandler> entry : resources.entrySet()) {
 			String name = entry.getKey();
-			if (requestCycle.isPlainRequest()) {
-				w.println(name);
-			} else {
-				String description = RequestHandlerUtil.getShortDescription(entry.getValue());
-				w.println("<a href=\"" + name + "\">" + name + "</a> (" + description + ")<br />");
-			}
+			w.println(name);
 		}
 		requestCycle.finishTextResponse();
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.api.handler.ISelfDescribingRequestHandler#getShortDescription()
-	 */
-	@Override
-	public String getShortDescription() {
-		return "folder";
 	}
 
 }

@@ -20,16 +20,6 @@ import name.martingeisse.api.servlet.ServletUtil;
  * Stores information about a request cycle, such as {@link HttpServletRequest},
  * {@link HttpServletResponse}, decoded request data, etc.
  * 
- * This class distinguishes "plain" requests -- the normal usage mode for
- * a service API -- and "user interface" requests.  The latter are useful
- * when the service API is called directly through a browser, and are
- * intended to "upgrade" the API result from a plain-text data structure
- * (such as JSON) to a full interactive HTML response. Such an upgraded
- * response is obviously useless to an API client. Therefore, this class
- * assumes "user interface" mode only if a normal browser is recognized
- * through the User-Agent HTTP header AND the user does not explicitly
- * request plain mode through the "__plain" request parameter.
- * 
  * The request cycle is able to store an exception. This is useful when
  * delegating to another handler for caught exceptions since request
  * parameters can only hold strings.
@@ -60,11 +50,6 @@ public final class RequestCycle {
 	 * the parameters
 	 */
 	private final RequestParameters parameters;
-
-	/**
-	 * the plainRequest
-	 */
-	private final boolean plainRequest;
 	
 	/**
 	 * the exception
@@ -86,14 +71,6 @@ public final class RequestCycle {
 		final String requestPathText = (uri.startsWith("/") ? uri.substring(1) : uri);
 		this.requestPath = RequestPathChain.parse(requestPathText);
 		this.parameters = new RequestParameters(request);
-
-		final Boolean plainParameter = parameters.getBoolean("__plain", false);
-		if (plainParameter != null) {
-			this.plainRequest = plainParameter;
-		} else {
-			final String userAgent = request.getHeader("User-Agent");
-			this.plainRequest = (userAgent == null || !userAgent.contains("Mozilla"));
-		}
 
 	}
 
@@ -152,14 +129,6 @@ public final class RequestCycle {
 	public OutputStream getOutputStream() throws IOException {
 		return response.getOutputStream();
 	}
-
-	/**
-	 * Getter method for the plainRequest.
-	 * @return the plainRequest
-	 */
-	public boolean isPlainRequest() {
-		return plainRequest;
-	}
 	
 	/**
 	 * Getter method for the exception.
@@ -186,58 +155,12 @@ public final class RequestCycle {
 	}
 
 	/**
-	 * Prepares an HTML response (text/html, utf-8). Leaves the status code of the response alone.
-	 * @throws IOException on I/O errors
-	 */
-	public void prepareHtmlResponse() throws IOException {
-		ServletUtil.prepareHtmlResponse(response);
-	}
-
-	/**
-	 * Prepares either a plain-text response (text/plain, utf-8) or a HTML response (text/html, utf-8),
-	 * depending on whether this request is in plain mode or user interface mode.
-	 * Leaves the status code of the response alone.
-	 * @throws IOException on I/O errors
-	 */
-	public void prepareUpgradablePlainTextResponse() throws IOException {
-		if (plainRequest) {
-			preparePlainTextResponse();
-		} else {
-			prepareHtmlResponse();
-		}
-	}
-
-	/**
 	 * Prepares a plain-text response (text/plain, utf-8), using the specified status code.
 	 * @param statusCode the HTTP status code to use
 	 * @throws IOException on I/O errors
 	 */
 	public void preparePlainTextResponse(final int statusCode) throws IOException {
 		ServletUtil.preparePlainTextResponse(response, statusCode);
-	}
-
-	/**
-	 * Prepares an HTML response (text/html, utf-8), using the specified status code.
-	 * @param statusCode the HTTP status code to use
-	 * @throws IOException on I/O errors
-	 */
-	public void prepareHtmlResponse(final int statusCode) throws IOException {
-		ServletUtil.prepareHtmlResponse(response, statusCode);
-	}
-
-	/**
-	 * Prepares either a plain-text response (text/plain, utf-8) or a HTML response (text/html, utf-8),
-	 * depending on whether this request is in plain mode or user interface mode.
-	 * Uses the specified status code.
-	 * @param statusCode the HTTP status code to use
-	 * @throws IOException on I/O errors
-	 */
-	public void prepareUpgradablePlainTextResponse(final int statusCode) throws IOException {
-		if (plainRequest) {
-			preparePlainTextResponse(statusCode);
-		} else {
-			prepareHtmlResponse(statusCode);
-		}
 	}
 
 	/**
@@ -258,18 +181,6 @@ public final class RequestCycle {
 	 */
 	public void emitMessageResponse(final int statusCode, final String message) throws IOException {
 		ServletUtil.emitMessageResponse(response, statusCode, message);
-	}
-
-	/**
-	 * Prints a line about a handler decorator to the response. Since this method is only useful
-	 * for upgraded HTML responses, this method does nothing in plain mode.
-	 * @param text the text line to print
-	 * @throws IOException on I/O errors
-	 */
-	public void printDecoratorInfoLine(String text) throws IOException {
-		if (!plainRequest) {
-			response.getWriter().println("<div class=\"decorated\">" + text + "</div>");
-		}
 	}
 	
 }

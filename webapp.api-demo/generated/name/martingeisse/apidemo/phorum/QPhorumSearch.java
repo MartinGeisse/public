@@ -3,18 +3,12 @@
  */
 package name.martingeisse.apidemo.phorum;
 
-import static com.mysema.query.types.PathMetadataFactory.forVariable;
-
 import javax.annotation.Generated;
 
-import org.joda.time.DateTime;
+import com.mysema.query.types.*;
+import com.mysema.query.types.path.*;
 
-import com.mysema.query.types.Path;
-import com.mysema.query.types.PathMetadata;
-import com.mysema.query.types.path.DatePath;
-import com.mysema.query.types.path.DateTimePath;
-import com.mysema.query.types.path.NumberPath;
-import com.mysema.query.types.path.StringPath;
+import static com.mysema.query.types.PathMetadataFactory.*;
 
 /**
  * QPhorumSearch is a Querydsl query type for PhorumSearch
@@ -32,12 +26,12 @@ public class QPhorumSearch extends com.mysema.query.sql.RelationalPathBase<Phoru
     /**
      * Metamodel property for property 'date_test'
      */
-    public final DatePath<java.sql.Date> dateTest = createDate("date_test", java.sql.Date.class);
+    public final DatePath<org.joda.time.LocalDate> dateTest = createDate("date_test", org.joda.time.LocalDate.class);
 
     /**
      * Metamodel property for property 'datetime_test'
      */
-    public final DateTimePath<DateTime> datetimeTest = createDateTime("datetime_test", DateTime.class);
+    public final DateTimePath<org.joda.time.DateTime> datetimeTest = createDateTime("datetime_test", org.joda.time.DateTime.class);
 
     /**
      * Metamodel property for property 'forum_id'

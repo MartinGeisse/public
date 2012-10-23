@@ -10,9 +10,13 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+import org.joda.time.DateTimeZone;
+
+import name.martingeisse.common.database.config.CustomMysqlQuerydslConfiguration;
 import name.martingeisse.tools.codegen.BeanSerializer;
 import name.martingeisse.tools.codegen.MetaDataSerializer;
 
+import com.mysema.query.sql.MySQLTemplates;
 import com.mysema.query.sql.codegen.MetaDataExporter;
 
 /**
@@ -32,6 +36,8 @@ public class CodeGenerator {
 		exporter.setPackageName("name.martingeisse.apidemo.phorum");
 		exporter.setSerializerClass(MetaDataSerializer.class);
 		exporter.setBeanSerializer(new BeanSerializer(false));
+		// exporter.setConfiguration(new CustomMysqlQuerydslConfiguration(new MySQLTemplates(), null));
+		exporter.setConfiguration(new CustomMysqlQuerydslConfiguration(new MySQLTemplates(), DateTimeZone.forID("Europe/Moscow")));
 		exporter.export(connection.getMetaData());
 		connection.close();
 	}

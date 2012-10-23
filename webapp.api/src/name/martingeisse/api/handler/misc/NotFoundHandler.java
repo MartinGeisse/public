@@ -6,7 +6,7 @@
 
 package name.martingeisse.api.handler.misc;
 
-import name.martingeisse.api.handler.ISelfDescribingRequestHandler;
+import name.martingeisse.api.handler.IRequestHandler;
 import name.martingeisse.api.request.RequestCycle;
 import name.martingeisse.api.request.RequestPathChain;
 import name.martingeisse.api.request.RequestPathNotFoundException;
@@ -15,7 +15,7 @@ import name.martingeisse.api.servlet.ServletUtil;
 /**
  * This handler throws a {@link RequestPathNotFoundException} for all requests.
  */
-public class NotFoundHandler implements ISelfDescribingRequestHandler {
+public class NotFoundHandler implements IRequestHandler {
 
 	/**
 	 * the passToNotFoundHandler
@@ -41,14 +41,6 @@ public class NotFoundHandler implements ISelfDescribingRequestHandler {
 		} else {
 			ServletUtil.emitResourceNotFoundResponse(requestCycle.getRequest(), requestCycle.getResponse());
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.api.handler.ISelfDescribingRequestHandler#getShortDescription()
-	 */
-	@Override
-	public String getShortDescription() {
-		return "404";
 	}
 	
 }

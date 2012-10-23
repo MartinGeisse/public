@@ -48,11 +48,23 @@ public class CustomMysqlQuerydslConfiguration extends Configuration {
 	 */
 	public CustomMysqlQuerydslConfiguration(SQLTemplates templates, DateTimeZone timeZone) {
 		super(templates);
-		if (timeZone != null) {
-			register(new CustomMysqlDateTimeType(timeZone));
+		
+		/* If multiple Java types are registered for the same SQL type then QueryDSL will give
+		 * the latter type precedence over the former. We make use of this so we can
+		 * (1) register a fake DateTime mapping if no default time zone is available, so
+		 *     application code doesn't accidentally use QueryDSL's buggy implementation, and
+		 * (2) give the LocalDateTime implementation precedence over the fake implementation, and
+		 * (3) give the real DateTime implementation over the LocalDateTime one
+		 */
+		if (timeZone == null) {
+			register(new ExceptionThrowingDateTimeType());
 		}
 		register(new CustomMysqlLocalDateTimeType());
 		register(new CustomMysqlLocalDateType());
+		if (timeZone != null) {
+			register(new CustomMysqlDateTimeType(timeZone));
+		}
+		
 	}
 	
 }
