@@ -666,6 +666,10 @@ public class MetaDataSerializer extends AbstractSerializer {
 		}
 		for (PrimaryKeyData primaryKey : keys) {
 			String fieldName = namingStrategy.getPropertyNameForPrimaryKey(primaryKey.getName(), entityType);
+			
+			// TODO: use a custom naming strategy
+			fieldName = "pk_" + fieldName;
+			
 			StringBuilder value = new StringBuilder("createPrimaryKey(");
 			boolean first = true;
 			for (String column : primaryKey.getColumns()) {
@@ -701,6 +705,9 @@ public class MetaDataSerializer extends AbstractSerializer {
 				fieldName = namingStrategy.getPropertyNameForForeignKey(foreignKey.getName(), entityType);
 			}
 
+			// TODO: use a custom naming strategy
+			fieldName = "fk_" + fieldName;
+			
 			// build the field value
 			StringBuilder value = new StringBuilder();
 			value.append(reverse ? "createInvForeignKey(" : "createForeignKey(");

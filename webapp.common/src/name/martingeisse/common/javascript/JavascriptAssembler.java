@@ -167,6 +167,19 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	}
 
 	/**
+	 * Appends the specified numeric literal to the builder, or the null literal if
+	 * the argument is null.
+	 * @param value the value of the literal to append (may be null)
+	 */
+	public final void appendNumericLiteralOrNull(Number value) {
+		if (value == null) {
+			appendNullLiteral();
+		} else {
+			appendNumericLiteral(value);
+		}
+	}
+	
+	/**
 	 * Appends the date contained in the specified instant according
 	 * to the date formatter that is set for this assembler.
 	 * @param value the instant to extract the date from
@@ -176,12 +189,32 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	}
 
 	/**
+	 * Appends the date contained in the specified instant according
+	 * to the date formatter that is set for this assembler,
+	 * or the null literal if the argument is null.
+	 * @param value the instant to extract the date from (may be null)
+	 */
+	public final void appendDateLiteralOrNull(ReadableInstant value) {
+		appendJodaLiteralOrNull(value, dateFormatter);
+	}
+	
+	/**
 	 * Appends the datetime contained in the specified instant according
 	 * to the datetime formatter that is set for this assembler.
 	 * @param value the instant to extract the datetime from
 	 */
 	public final void appendDateTimeLiteral(ReadableInstant value) {
 		appendJodaLiteral(value, dateTimeFormatter);
+	}
+	
+	/**
+	 * Appends the datetime contained in the specified instant according
+	 * to the datetime formatter that is set for this assembler,
+	 * or the null literal if the argument is null.
+	 * @param value the instant to extract the datetime from (may be null)
+	 */
+	public final void appendDateTimeLiteralOrNull(ReadableInstant value) {
+		appendJodaLiteralOrNull(value, dateTimeFormatter);
 	}
 
 	/**
@@ -198,12 +231,37 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	}
 
 	/**
+	 * Uses the specified Joda-Time instant and formatter to append a string literal,
+	 * or the null literal if the argument is null.
+	 * 
+	 * @param value the instant to append (may be null)
+	 * @param formatter the formatter used to turn the instant into a string
+	 */
+	public final void appendJodaLiteralOrNull(ReadableInstant value, DateTimeFormatter formatter) {
+		if (value == null) {
+			appendNullLiteral();
+		} else {
+			appendStringLiteral(formatter.print(value));
+		}
+	}
+	
+	/**
 	 * Appends the specified date according to the date formatter
 	 * that is set for this assembler.
 	 * @param value the date
 	 */
 	public final void appendDateLiteral(ReadablePartial value) {
 		appendJodaLiteral(value, dateFormatter);
+	}
+	
+	/**
+	 * Appends the specified date according to the date formatter
+	 * that is set for this assembler,
+	 * or the null literal if the argument is null.
+	 * @param value the date (may be null)
+	 */
+	public final void appendDateLiteralOrNull(ReadablePartial value) {
+		appendJodaLiteralOrNull(value, dateFormatter);
 	}
 
 	/**
@@ -213,6 +271,16 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 */
 	public final void appendDateTimeLiteral(ReadablePartial value) {
 		appendJodaLiteral(value, dateTimeFormatter);
+	}
+	
+	/**
+	 * Appends the specified datetime according to the datetime formatter
+	 * that is set for this assembler,
+	 * or the null literal if the argument is null.
+	 * @param value the datetime (may be null)
+	 */
+	public final void appendDateTimeLiteralOrNull(ReadablePartial value) {
+		appendJodaLiteralOrNull(value, dateTimeFormatter);
 	}
 
 	/**
@@ -226,6 +294,21 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 			throw new IllegalArgumentException("value argument is null");
 		}
 		appendStringLiteral(formatter.print(value));
+	}
+
+	/**
+	 * Uses the specified Joda-Time partial and formatter to append a string literal,
+	 * or the null literal if the argument is null.
+	 * 
+	 * @param value the partial to append (may be null)
+	 * @param formatter the formatter used to turn the partial into a string
+	 */
+	public final void appendJodaLiteralOrNull(ReadablePartial value, DateTimeFormatter formatter) {
+		if (value == null) {
+			appendNullLiteral();
+		} else {
+			appendStringLiteral(formatter.print(value));
+		}
 	}
 
 	/**
