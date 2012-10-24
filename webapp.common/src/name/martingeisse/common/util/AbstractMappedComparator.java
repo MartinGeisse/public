@@ -11,6 +11,9 @@ import java.util.Comparator;
 /**
  * A comparator that maps the values to compare to other values which are
  * comparable by themselves.
+ * @param <T> the type of values being compared by this comparator
+ * @param <M> the type of values being compared internally, for example
+ * the type of a field of type T
  */
 public abstract class AbstractMappedComparator<T, M extends Comparable<? super M>> implements Comparator<T> {
 	
