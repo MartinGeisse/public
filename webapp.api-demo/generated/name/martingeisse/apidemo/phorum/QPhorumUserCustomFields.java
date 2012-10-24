@@ -41,7 +41,7 @@ public class QPhorumUserCustomFields extends com.mysema.query.sql.RelationalPath
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PhorumUserCustomFields> primary = createPrimaryKey(type, userId);
+    public final com.mysema.query.sql.PrimaryKey<PhorumUserCustomFields> pk_primary = createPrimaryKey(type, userId);
 
     /**
      * Path-variable based constructor.

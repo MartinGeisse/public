@@ -189,7 +189,7 @@ public class PhorumFiles implements Serializable {
      */
     @Override
     public String toString() {
-        return "addDatetime = " + addDatetime + ", fileData = " + fileData + ", fileId = " + fileId + ", filename = " + filename + ", filesize = " + filesize + ", link = " + link + ", messageId = " + messageId + ", userId = " + userId;
+        return "{PhorumFiles. addDatetime = " + addDatetime + ", fileData = " + fileData + ", fileId = " + fileId + ", filename = " + filename + ", filesize = " + filesize + ", link = " + link + ", messageId = " + messageId + ", userId = " + userId + "}";
     }
 
 }

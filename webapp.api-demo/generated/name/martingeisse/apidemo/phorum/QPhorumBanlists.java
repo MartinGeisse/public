@@ -56,7 +56,7 @@ public class QPhorumBanlists extends com.mysema.query.sql.RelationalPathBase<Pho
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PhorumBanlists> primary = createPrimaryKey(id);
+    public final com.mysema.query.sql.PrimaryKey<PhorumBanlists> pk_primary = createPrimaryKey(id);
 
     /**
      * Path-variable based constructor.

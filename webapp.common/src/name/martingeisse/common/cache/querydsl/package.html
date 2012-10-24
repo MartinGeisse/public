@@ -1,6 +1,6 @@
 
-This package contains cache implementations that fetch values using QueryDSL queries.
-For each implementation, the whole cache region is associated with a database table.
+This package contains cache loader implementations that fetch values using QueryDSL queries.
+For each implementation, the whole cache loader is associated with a database table.
 
 Features provided by these classes include:
 - cache entries may represent single rows or row lists. Lists accept an order specifier.
@@ -9,7 +9,8 @@ Features provided by these classes include:
   abstract classes in this package. For row list based caches, the transformation
   may map a row list to an output value list, but may also add global information
   that applies to all rows reutrned for a specific cache key.
-- row list based caches may provide a "window" into the list of (direct or transformed)
+- NOT YET:
+  row list based caches may provide a "window" into the list of (direct or transformed)
   rows, i.e. limit and offset parameters. In this case, the cache value must be a
   list of values -- otherwise, limit/offset do not make sense -- that is, no global
   information outside the transformed row list may be added to cache values).
@@ -30,12 +31,4 @@ many systems support a "soft delete" flag that marks rows as deleted while still
 them in the database, for example to avoid foreign key violations. The additionalPredicates
 would then exclude soft-deleted rows from the cache.
 
-The classes in this package are abstract since they cannot connect to a database in a generic
-way; subclasses must provide a mechanism to create a fresh QueryDSL {@link SQLQuery}
-(this object wraps a JDBC {@link Connection}).
-
-Caches support fetching the direct/transformed rows/values/row lists for multiple keys
-at once to improve performance. This depends on subclasses to implement such fetch methods.
-The classes in this package provide default implementations that fetch for each key
-separately so a working implementation is available, but without improved performance.
-
+The classes in this package connect to the database using the {@link EntityConnectionManager}.

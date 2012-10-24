@@ -51,7 +51,7 @@ public class QPhorumSearch extends com.mysema.query.sql.RelationalPathBase<Phoru
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PhorumSearch> primary = createPrimaryKey(messageId);
+    public final com.mysema.query.sql.PrimaryKey<PhorumSearch> pk_primary = createPrimaryKey(messageId);
 
     /**
      * Path-variable based constructor.

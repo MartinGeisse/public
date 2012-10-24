@@ -84,7 +84,7 @@ public class PhorumPmBuddies implements Serializable {
      */
     @Override
     public String toString() {
-        return "buddyUserId = " + buddyUserId + ", pmBuddyId = " + pmBuddyId + ", userId = " + userId;
+        return "{PhorumPmBuddies. buddyUserId = " + buddyUserId + ", pmBuddyId = " + pmBuddyId + ", userId = " + userId + "}";
     }
 
 }

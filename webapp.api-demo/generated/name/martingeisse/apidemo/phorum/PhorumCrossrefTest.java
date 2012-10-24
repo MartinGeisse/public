@@ -84,7 +84,7 @@ public class PhorumCrossrefTest implements Serializable {
      */
     @Override
     public String toString() {
-        return "alias = " + alias + ", id = " + id + ", name = " + name;
+        return "{PhorumCrossrefTest. alias = " + alias + ", id = " + id + ", name = " + name + "}";
     }
 
 }

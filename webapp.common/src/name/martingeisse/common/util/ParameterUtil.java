@@ -6,7 +6,6 @@
 
 package name.martingeisse.common.util;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -95,12 +94,13 @@ public class ParameterUtil {
 	 * This method does not ensure that the collection itself is a non-null reference;
 	 * instead, it will simply skip the element check if the collection itself is null.
 	 * 
-	 * @param <T> the static collection element type
+	 * @param <T> the element type
+	 * @param <I> the iterable type
 	 * @param argument the argument value (may be null)
 	 * @param name the argument name (for error messages)
 	 * @return the argument value for convenience
 	 */
-	public static <T> Collection<T> ensureNoNullElement(final Collection<T> argument, final String name) {
+	public static <T, I extends Iterable<T>> I ensureNoNullElement(final I argument, final String name) {
 		if (argument != null) {
 			for (T element : argument) {
 				if (element == null) {

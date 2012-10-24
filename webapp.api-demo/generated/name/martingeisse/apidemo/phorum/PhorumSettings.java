@@ -105,7 +105,7 @@ public class PhorumSettings implements Serializable {
      */
     @Override
     public String toString() {
-        return "data = " + data + ", groupId = " + groupId + ", name = " + name + ", type = " + type;
+        return "{PhorumSettings. data = " + data + ", groupId = " + groupId + ", name = " + name + ", type = " + type + "}";
     }
 
 }

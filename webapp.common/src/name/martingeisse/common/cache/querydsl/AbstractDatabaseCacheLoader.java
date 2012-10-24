@@ -6,23 +6,21 @@
 
 package name.martingeisse.common.cache.querydsl;
 
-import java.io.Serializable;
-
-import com.mysema.query.sql.SQLQuery;
-
-import name.martingeisse.common.cache.AbstractCacheRegion;
-import name.martingeisse.common.cache.ICacheRegion;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.IDatabaseDescriptor;
 
+import com.google.common.cache.CacheLoader;
+import com.mysema.query.sql.SQLQuery;
+
 /**
- * This class provides basic support for database / QueryDSL
- * based cache regions.
+ * This class provides basic support for database / QueryDSL based cache loaders.
+ * 
+ * TODO remove cloneable, apply builder pattern
  * 
  * @param <K> the type of cache keys
  * @param <V> the type of cached values
  */
-public abstract class AbstractDatabaseCacheRegion<K extends Serializable, V> extends AbstractCacheRegion<K, V> implements Cloneable {
+public abstract class AbstractDatabaseCacheLoader<K, V> extends CacheLoader<K, V> implements Cloneable {
 
 	/**
 	 * the databaseDescriptor
@@ -31,20 +29,16 @@ public abstract class AbstractDatabaseCacheRegion<K extends Serializable, V> ext
 	
 	/**
 	 * Constructor.
-	 * @param regionName the cache region name
 	 */
-	public AbstractDatabaseCacheRegion(String regionName) {
-		super(regionName);
+	public AbstractDatabaseCacheLoader() {
 		this.databaseDescriptor = null;
 	}
 
 	/**
 	 * Constructor.
-	 * @param regionName the cache region name
 	 * @param databaseDescriptor the database to use
 	 */
-	public AbstractDatabaseCacheRegion(String regionName, IDatabaseDescriptor databaseDescriptor) {
-		super(regionName);
+	public AbstractDatabaseCacheLoader(IDatabaseDescriptor databaseDescriptor) {
 		this.databaseDescriptor = databaseDescriptor;
 	}
 	
@@ -73,10 +67,10 @@ public abstract class AbstractDatabaseCacheRegion<K extends Serializable, V> ext
 	 * @param databaseDescriptor the new database descriptor to use for the clone
 	 * @return the new region
 	 */
-	public ICacheRegion<K, V> withDatabase(IDatabaseDescriptor databaseDescriptor) {
+	public AbstractDatabaseCacheLoader<K, V> withDatabase(IDatabaseDescriptor databaseDescriptor) {
 		try {
 			@SuppressWarnings("unchecked")
-			AbstractDatabaseCacheRegion<K, V> clone = (AbstractDatabaseCacheRegion<K, V>)clone();
+			AbstractDatabaseCacheLoader<K, V> clone = (AbstractDatabaseCacheLoader<K, V>)clone();
 			clone.databaseDescriptor = databaseDescriptor;
 			return clone;
 		} catch (CloneNotSupportedException e) {

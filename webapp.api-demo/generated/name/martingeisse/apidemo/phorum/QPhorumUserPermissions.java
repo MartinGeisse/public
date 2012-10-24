@@ -41,7 +41,7 @@ public class QPhorumUserPermissions extends com.mysema.query.sql.RelationalPathB
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PhorumUserPermissions> primary = createPrimaryKey(forumId, userId);
+    public final com.mysema.query.sql.PrimaryKey<PhorumUserPermissions> pk_primary = createPrimaryKey(forumId, userId);
 
     /**
      * Path-variable based constructor.

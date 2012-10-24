@@ -84,7 +84,7 @@ public class PhorumUserCustomFields implements Serializable {
      */
     @Override
     public String toString() {
-        return "data = " + data + ", type = " + type + ", userId = " + userId;
+        return "{PhorumUserCustomFields. data = " + data + ", type = " + type + ", userId = " + userId + "}";
     }
 
 }

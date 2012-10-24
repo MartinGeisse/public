@@ -84,7 +84,7 @@ public class PhorumUserPermissions implements Serializable {
      */
     @Override
     public String toString() {
-        return "forumId = " + forumId + ", permission = " + permission + ", userId = " + userId;
+        return "{PhorumUserPermissions. forumId = " + forumId + ", permission = " + permission + ", userId = " + userId + "}";
     }
 
 }

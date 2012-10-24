@@ -168,7 +168,7 @@ public class PhorumPmXref implements Serializable {
      */
     @Override
     public String toString() {
-        return "pmFolderId = " + pmFolderId + ", pmMessageId = " + pmMessageId + ", pmXrefId = " + pmXrefId + ", readFlag = " + readFlag + ", replyFlag = " + replyFlag + ", specialFolder = " + specialFolder + ", userId = " + userId;
+        return "{PhorumPmXref. pmFolderId = " + pmFolderId + ", pmMessageId = " + pmMessageId + ", pmXrefId = " + pmXrefId + ", readFlag = " + readFlag + ", replyFlag = " + replyFlag + ", specialFolder = " + specialFolder + ", userId = " + userId + "}";
     }
 
 }

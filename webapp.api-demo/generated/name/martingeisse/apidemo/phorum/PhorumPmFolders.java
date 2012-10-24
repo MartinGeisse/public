@@ -84,7 +84,7 @@ public class PhorumPmFolders implements Serializable {
      */
     @Override
     public String toString() {
-        return "foldername = " + foldername + ", pmFolderId = " + pmFolderId + ", userId = " + userId;
+        return "{PhorumPmFolders. foldername = " + foldername + ", pmFolderId = " + pmFolderId + ", userId = " + userId + "}";
     }
 
 }

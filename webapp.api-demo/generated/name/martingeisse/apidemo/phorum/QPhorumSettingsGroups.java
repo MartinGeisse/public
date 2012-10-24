@@ -42,17 +42,17 @@ public class QPhorumSettingsGroups extends com.mysema.query.sql.RelationalPathBa
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PhorumSettingsGroups> primary = createPrimaryKey(id);
+    public final com.mysema.query.sql.PrimaryKey<PhorumSettingsGroups> pk_primary = createPrimaryKey(id);
 
     /**
      * Metamodel property for reverse foreign key 'phorum_crossref_test_ibfk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<PhorumCrossrefTest> _phorumCrossrefTestIbfk1 = createInvForeignKey(Arrays.asList(name, name), Arrays.asList("name", "name"));
+    public final com.mysema.query.sql.ForeignKey<PhorumCrossrefTest> fk__phorumCrossrefTestIbfk1 = createInvForeignKey(Arrays.asList(name, name), Arrays.asList("name", "name"));
 
     /**
      * Metamodel property for reverse foreign key 'phorum_settings_ibfk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<PhorumSettings> _phorumSettingsIbfk1 = createInvForeignKey(id, "group_id");
+    public final com.mysema.query.sql.ForeignKey<PhorumSettings> fk__phorumSettingsIbfk1 = createInvForeignKey(id, "group_id");
 
     /**
      * Path-variable based constructor.

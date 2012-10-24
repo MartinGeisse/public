@@ -147,7 +147,7 @@ public class PhorumMessagesEdittrack implements Serializable {
      */
     @Override
     public String toString() {
-        return "diffBody = " + diffBody + ", diffSubject = " + diffSubject + ", messageId = " + messageId + ", time = " + time + ", trackId = " + trackId + ", userId = " + userId;
+        return "{PhorumMessagesEdittrack. diffBody = " + diffBody + ", diffSubject = " + diffSubject + ", messageId = " + messageId + ", time = " + time + ", trackId = " + trackId + ", userId = " + userId + "}";
     }
 
 }

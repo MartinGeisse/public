@@ -84,7 +84,7 @@ public class PhorumUserGroupXref implements Serializable {
      */
     @Override
     public String toString() {
-        return "groupId = " + groupId + ", status = " + status + ", userId = " + userId;
+        return "{PhorumUserGroupXref. groupId = " + groupId + ", status = " + status + ", userId = " + userId + "}";
     }
 
 }

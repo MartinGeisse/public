@@ -63,7 +63,7 @@ public class PhorumSettingsNotes implements Serializable {
      */
     @Override
     public String toString() {
-        return "note = " + note + ", settingName = " + settingName;
+        return "{PhorumSettingsNotes. note = " + note + ", settingName = " + settingName + "}";
     }
 
 }

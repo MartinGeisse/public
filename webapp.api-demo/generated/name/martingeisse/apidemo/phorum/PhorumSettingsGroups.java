@@ -84,7 +84,7 @@ public class PhorumSettingsGroups implements Serializable {
      */
     @Override
     public String toString() {
-        return "alias = " + alias + ", id = " + id + ", name = " + name;
+        return "{PhorumSettingsGroups. alias = " + alias + ", id = " + id + ", name = " + name + "}";
     }
 
 }

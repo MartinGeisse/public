@@ -126,7 +126,7 @@ public class PhorumSearch implements Serializable {
      */
     @Override
     public String toString() {
-        return "dateTest = " + dateTest + ", datetimeTest = " + datetimeTest + ", forumId = " + forumId + ", messageId = " + messageId + ", searchText = " + searchText;
+        return "{PhorumSearch. dateTest = " + dateTest + ", datetimeTest = " + datetimeTest + ", forumId = " + forumId + ", messageId = " + messageId + ", searchText = " + searchText + "}";
     }
 
 }

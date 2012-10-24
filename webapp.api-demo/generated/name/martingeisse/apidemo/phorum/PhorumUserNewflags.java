@@ -84,7 +84,7 @@ public class PhorumUserNewflags implements Serializable {
      */
     @Override
     public String toString() {
-        return "forumId = " + forumId + ", messageId = " + messageId + ", userId = " + userId;
+        return "{PhorumUserNewflags. forumId = " + forumId + ", messageId = " + messageId + ", userId = " + userId + "}";
     }
 
 }

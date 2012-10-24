@@ -146,7 +146,7 @@ public class BeanSerializer extends AbstractSerializer {
 			final StringBuilder builder = new StringBuilder();
 			for (final Property property : entityType.getProperties()) {
 				final String propertyName = property.getEscapedName();
-				builder.append(builder.length() == 0 ? "\"" : " + \", ");
+				builder.append(builder.length() == 0 ? ("\"{" + entityType.getSimpleName() + ". ") : " + \", ");
 				builder.append(propertyName);
 				builder.append(" = \" + ");
 				if (property.getType().getCategory() == TypeCategory.ARRAY) {
@@ -155,7 +155,7 @@ public class BeanSerializer extends AbstractSerializer {
 					builder.append(propertyName);
 				}
 			}
-			w.line("return ", builder.toString(), ";");
+			w.line("return ", builder.toString(), " + \"}\";");
 		}
 		w.end();
 
