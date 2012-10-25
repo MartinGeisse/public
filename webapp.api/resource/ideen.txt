@@ -1,34 +1,3 @@
-Another interesting and light-weight option would be to have Java generate PHP code and then use PHP include()
-directive to fetch that over HTTP and execute it. I haven't tried this though.
-->
-When Java generates you're PHP code, the resulting PHP code will be different each time it run's.
-Thus depending how PHP opcode caching exactly works, this solution has a high change of disables
-PHP caching (APC, eAccelerator, etc) and thus degrading performance for all scripts that include
-this java generated PHP code.
-
----
-
-Ein erster Schritt ist, das iPhone-Backend aufzuräumen. Unit-Tests werden leider
-wegen der sich ändernden Datenbank nicht gut gehen, also nur manuelle Tests.
-Dieser Schritt ist in jedem Fall sinnvoll, selbst wenn alles bei dem alten
-PHP Kram bleibt.
-
-Nächster Schritt ist, eine "saubere" Version der App-Api zu bauen, also
-aufräumen MIT nach außen sichtbaren Änderungen. Dazu evtl. eine zweite
-Komponente neben der IphoneAppComponent: CommonAppComponent, die von
-ersterer und der aufgeräumten Api benutzt wird und sauber und flexibel
-ist, dafür evtl. komplizierter zu benutzen. Die verschiedenen API-Komponenten
-mappen dann darauf. Die neue API ist auch flexibel, allerdings sind
-nach außen sichtbare Funktionen ggf. in der Komplexität eingeschränkt
-im Vergleich zur CommonAppComponent (z.B. weil keine komplexen Parameter
-angegeben werden können).
-
-Danach können die einzelnen Stücke in Java nachgebaut werden. Parallel dazu
-kann es jetzt eine Wicket-WebApp geben, die die flexiblere neue API
-benutzt. Die iPhone-API ist evtl. zu eingeschränkt dafür (könnte gehen,
-ist aber nicht sicher).
-
----
 
 Ansatz: In den von QueryDSL generierten Klassen auch gleich die Caches mit generieren.
 Das kann z.B. anhand einer einfachen Konfig-Datei gehen (Java Properties). Annotations
