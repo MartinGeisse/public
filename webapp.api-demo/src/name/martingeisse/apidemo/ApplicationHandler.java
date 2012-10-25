@@ -23,6 +23,7 @@ public class ApplicationHandler extends NamedResourceFolderHandler {
 		getResources().put("query", new QueryCacheTestHandler());
 		getResources().put("multi", new MultiQueryCacheTestHandler());
 		getResources().put("time", new TimeTestHandler());
+		getResources().put("keys", new MultiKeyCacheTestHandler());
 	}
 	
 }

@@ -27,3 +27,47 @@ Danach können die einzelnen Stücke in Java nachgebaut werden. Parallel dazu
 kann es jetzt eine Wicket-WebApp geben, die die flexiblere neue API
 benutzt. Die iPhone-API ist evtl. zu eingeschränkt dafür (könnte gehen,
 ist aber nicht sicher).
+
+---
+
+Ansatz: In den von QueryDSL generierten Klassen auch gleich die Caches mit generieren.
+Das kann z.B. anhand einer einfachen Konfig-Datei gehen (Java Properties). Annotations
+leider nicht, weil keine Klasse da ist, wo man A. dranschreiben könnte.
+
+Außerdem: Generierte statische Methoden in den generierten Klassen, die auf
+vorhandene statische Methoden in einer manuell geschriebenen Klasse delegieren.
+
+-----
+
+Multi-key-cache:
+
+- Klasse AlternativeCacheKeyGroup(Cache) implements removal listener
+- Methode createAlternativeKeyCache (manually managed; hält sich über den
+  removal listener aktuell).
+
+1. Group erzeugen
+2. Loader erzeugen
+3. Main Cache erzeugen
+4. Alternative caches erzeugen
+
+Removal schön und gut, aber wie funktioniert das jetzt konkret?
+
+-----
+
+Ein zentraler Cache mit Maps außenrum -> Race Conditions ahoi!
+
+Anderer Ansatz: N Caches, die sich gegenseitig Update-Notifications zusenden. Dabei sind
+die Removal Notifications fast egal, wenn man davon ausgeht, dass auch der N-fache
+Speicher gebraucht wird (bei sharing weniger), wobei auch Removal eine Notification
+auslösen kann. Die Caches selbst brauchen eh nicht so viel Speicher, große Values sind
+viel kritischer.
+
+Also Idee: Jedesmal, wenn ein Cache einen Wert einlagert, wird dieser auf alle Key-Types
+gemappt und an alle Caches gesendet. Das ist in diesem Sinne weniger eine Framework-
+Funktionalität als ein Design Pattern.
+
+
+
+
+
+
