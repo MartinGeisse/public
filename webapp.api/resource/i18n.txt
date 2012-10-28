@@ -1,0 +1,50 @@
+
+
+Vorrangregelung wie in Wicket erst mal ein guter Ansatz:
+
+Fallback für nicht gefundene Strings:
+- subclass -> base class
+- specific container -> generic element
+- specific handler -> generic container
+- partial locale -> base locale (de-AT -> de-DE -> en-US)
+	Zwei verschiedene Arten von Fallback:
+	de-AT -> de-DE: Hat Vorrang vor (fast?) allen anderen
+		Fallbacks. Dieser Fallback hat den Hintergrund, dass die
+		beiden Sprachen fast identisch sind. Deshalb sollen die
+		Strings aus de-DE so behandelt werden, als wären sie in
+		de-AT. Das hat z.B. Vorrang vor dem Fallback zur Baseclass.
+	nl-NL -> de-DE: Dieser Fallback hat den Hintergrund, dass
+		nl-NL ggf. nicht fertig übersetzt ist und dann wenigstens
+		irgendwas angezeigt werden soll. Fraglich, ob das so
+		nötig ist; es kann auch einfach ein Fallback der gesamten
+		Sprache geben und de-DE wird dann gar nicht genutzt.
+		Allerdings wird es bei Umbauten immer neue, noch nicht
+		übersetzte Strings geben, von daher eher sinnvoll dass
+		ein solcher Fallback mit niedrigster Prio, aber trotzdem
+		auf Property- und nicht auf Sprachebene passiert.
+		Ein Fallback auf Sprachebene kann es ja noch zusätzlich geben.	
+	Nur eines der beiden Fallbacks ist gleichzeitig sinnvoll.
+
+Ablauf:
+1. Schritte 2+ wird für die angeforderte Sprache durchgeführt. Wenn das zu keinem
+   Ergebnis führt und ein Sprach-Level-Fallback definiert ist, geht es mit
+   diesem bei 1 wieder los.
+
+2. Schritt 3+ wird für jedes Element einer i18n-Chain durchgeführt. Erstes Element
+   ist der Handler, gefolgt von Parent-Handlern (Delegate oder Resource Folder)
+   bis hin zur Application als ganzes. (Hintergrund: Handler sind keine
+   wiederverwendbaren Komponenten, daher ist der Konkrete Handler spezifischer als
+   die Parent-Handler, anders als beim Wicket Component Tree).
+   
+3. Schritt 4+ wird erst für die jeweilige Klasse, dann für alle Basisklassen
+   durchgeführt.
+
+4. In der .properties wird ein entsprechender Key gesucht. Wird keiner gefunden und
+   es ist eine Property-Level-Fallback-Sprache definiert, so dieser Schritt in dieser
+   Sprache wiederholt.
+
+5. Wenn dann kein Text gefunden wurde, wird ein Fehler geloggt und der
+   Key als Text genommen.
+
+   
+TODO: ist der Ablauf so ok? Vor allem die Reihenfolge in Schritt 2 und die Reihenfolge von 2/3/4.

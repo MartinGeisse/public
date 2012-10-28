@@ -73,7 +73,31 @@ public final class RequestParameters {
 	public void set(String name, String value) {
 		customParameters.put(name, value);
 	}
+	
+	/**
+	 * Ensures that the specified parameter is present: If it isn't, this method
+	 * throws a {@link MissingRequestParameterException}.
+	 * @param name the name of the parameter
+	 */
+	public void ensurePresent(String name) {
+		getString(name, true);
+	}
+	
+	/**
+	 * Ensures that the specified parameter is absent: If it isn't, this method
+	 * throws a {@link UnexpectedRequestParameterException}.
+	 * @param name the name of the parameter
+	 */
+	public void ensureAbsent(String name) {
+		if (getString(name, false) != null) {
+			throw new UnexpectedRequestParameterException(name);
+		}
+	}
 
+	// ------------------------------------------------------------------------------------------------
+	// --- string-valued parameters
+	// ------------------------------------------------------------------------------------------------
+	
 	/**
 	 * Obtains the string value of a request parameter.
 	 *  
@@ -107,6 +131,10 @@ public final class RequestParameters {
 		return (value == null ? defaultValue : value);
 	}
 
+	// ------------------------------------------------------------------------------------------------
+	// --- integer-valued parameters
+	// ------------------------------------------------------------------------------------------------
+	
 	/**
 	 * Obtains the integer value of a request parameter.
 	 * 
@@ -138,6 +166,46 @@ public final class RequestParameters {
 		Integer value = getInteger(name, false);
 		return (value == null ? defaultValue : value);
 	}
+	
+	// ------------------------------------------------------------------------------------------------
+	// --- long-valued parameters
+	// ------------------------------------------------------------------------------------------------
+	
+	/**
+	 * Obtains the long value of a request parameter.
+	 * 
+	 * @param name the parameter name
+	 * @param required whether the parameter is required
+	 * @return the parameter value, or null if the parameter is
+	 * missing and the 'required' argument is false.
+	 */
+	public Long getLong(String name, boolean required) {
+		String value = getString(name, required);
+		try {
+			return (value == null ? null : Long.parseLong(value));
+		} catch (NumberFormatException e) {
+			throw new InvalidRequestParameterException(name, "could not parse long");
+		}
+	}
+
+	/**
+	 * This method is similar to {@link #getLong(String, boolean)} with
+	 * the 'required' flag set to false, except that this method returns
+	 * the specified default value instead of null if the parameter is
+	 * missing.
+	 * 
+	 * @param name the parameter name
+	 * @param defaultValue the default value in case the parameter is missing
+	 * @return the parameter value or the default value
+	 */
+	public long getLongOrDefault(String name, long defaultValue) {
+		Long value = getLong(name, false);
+		return (value == null ? defaultValue : value);
+	}
+	
+	// ------------------------------------------------------------------------------------------------
+	// --- boolean-valued parameters
+	// ------------------------------------------------------------------------------------------------
 	
 	/**
 	 * Obtains the boolean value of a request parameter. Allowed values
