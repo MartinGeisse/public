@@ -24,6 +24,7 @@ public class ApplicationHandler extends NamedResourceFolderHandler {
 		getResources().put("multi", new MultiQueryCacheTestHandler());
 		getResources().put("time", new TimeTestHandler());
 		getResources().put("keys", new MultiKeyCacheTestHandler());
+		getResources().put("counter", new SessionCounterHandler());
 	}
 	
 }

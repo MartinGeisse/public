@@ -9,6 +9,7 @@ package name.martingeisse.api.request;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.Writer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -181,6 +182,25 @@ public final class RequestCycle {
 	 */
 	public void emitMessageResponse(final int statusCode, final String message) throws IOException {
 		ServletUtil.emitMessageResponse(response, statusCode, message);
+	}
+	
+	/**
+	 * Sets the session object for the specified key.
+	 * @param key the session key
+	 * @param value the value to set
+	 */
+	public <T extends Serializable> void setSessionValue(SessionKey<T> key, T value) {
+		request.getSession().setAttribute(key.getInternalKey(), value);
+	}
+
+	/**
+	 * Obtains the session object for the specified key
+	 * @param key the session key
+	 * @return the value for the specified key
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends Serializable> T getSessionValue(SessionKey<T> key) {
+		return (T)request.getSession().getAttribute(key.getInternalKey());
 	}
 	
 }
