@@ -6,6 +6,7 @@
 
 package name.martingeisse.api.handler.delegate;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -27,12 +28,19 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
 
 /**
  * This handler delegates requests to another (remote) API.
  */
 public abstract class AbstractDelegateApiHandler implements IRequestHandler {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(AbstractDelegateApiHandler.class);
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.api.handler.IRequestHandler#handle(name.martingeisse.api.request.RequestCycle, name.martingeisse.api.request.RequestPathChain)
 	 */
@@ -41,14 +49,15 @@ public abstract class AbstractDelegateApiHandler implements IRequestHandler {
 		HttpServletRequest originalRequest = requestCycle.getRequest();
 		HttpServletResponse originalResponse = requestCycle.getResponse();
 		
-		// TODO use log4j
-		System.out.println("------------------------------------------");
-		System.out.println();
-		System.out.println("incoming " + originalRequest.getMethod() + " request");
-		System.out.println("path info: " + originalRequest.getPathInfo());
-		System.out.println("query string: " + originalRequest.getQueryString());
-		System.out.println("context path: " + originalRequest.getContextPath());
-		System.out.println("servlet path: " + originalRequest.getServletPath());
+		// log the request
+		if (logger.isDebugEnabled()) {
+			logger.debug("----- sending request to delegate API -----");
+			logger.debug("incoming " + originalRequest.getMethod() + " request");
+			logger.debug("path info: " + originalRequest.getPathInfo());
+			logger.debug("query string: " + originalRequest.getQueryString());
+			logger.debug("context path: " + originalRequest.getContextPath());
+			logger.debug("servlet path: " + originalRequest.getServletPath());
+		}
 
 		// build the URL to send the delegate request to
 		String url = buildUrl(requestCycle, path);
@@ -71,22 +80,25 @@ public abstract class AbstractDelegateApiHandler implements IRequestHandler {
 		// get the current time for profiling of the delegate API
 		long endTime = System.nanoTime();
 		long deltaTime = (endTime - startTime);
+		logger.debug("delta time: " + ((endTime - startTime) / 1000000) + " ms");
 		consumeTiming(requestCycle, path, url, delegateRequest, delegateResponse, deltaTime);
-		// TODO use log4j
-		System.out.println("delta time: " + ((endTime - startTime) / 1000000) + " ms");
 
 		// copy response headers from the delegate response to the original response
 		copyResponseHeaders(requestCycle, path, url, delegateRequest, delegateResponse);
 
-		// copy the response body to the original response and also to System.out TODO use log4j
-		System.out.println("response body:");
-		InputStream subResponseBodyStream = delegateResponse.getEntity().getContent();
-		OutputStream responseBodyStream = originalResponse.getOutputStream();
-		OutputStream teeOutputStream = new TeeOutputStream(responseBodyStream, System.out);
-		IOUtils.copy(subResponseBodyStream, teeOutputStream);
+		// copy the response body to the original response and log it
+		InputStream delegateResponseBodyStream = delegateResponse.getEntity().getContent();
+		OutputStream originalResponseBodyStream = originalResponse.getOutputStream();
+		ByteArrayOutputStream captureStream = new ByteArrayOutputStream();
+		OutputStream teeOutputStream = new TeeOutputStream(originalResponseBodyStream, captureStream);
+		IOUtils.copy(delegateResponseBodyStream, teeOutputStream);
 		originalResponse.getOutputStream().flush();
 		originalResponse.getOutputStream().close();
-		System.out.println();
+		String charset = EntityUtils.getContentCharSet(delegateResponse.getEntity());
+		if (charset == null) {
+			charset = "ISO-8859-1";
+		}
+		logger.debug("response body: " + captureStream.toString(charset));
 		
 	}
 
@@ -166,12 +178,7 @@ public abstract class AbstractDelegateApiHandler implements IRequestHandler {
 		String requestBody = IOUtils.toString(originalRequest.getInputStream());
 		HttpPost subRequest = new HttpPost(url);
 		subRequest.setEntity(new StringEntity(requestBody, originalRequest.getContentType(), "utf-8"));
-		
-		// TODO use log4j
-		System.out.println("request body:");
-		System.out.println(requestBody);
-		System.out.println();
-		
+		logger.debug("request body:\n" + requestBody);
 		return subRequest;
 	}
 	
