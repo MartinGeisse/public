@@ -3,10 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/webapp.common"/>
-	<classpathentry exported="true" kind="lib" path="lib/java/httpclient-4.1.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/java/httpcore-4.1.2.jar"/>
-	<classpathentry kind="lib" path="lib/java/codegen/codegen-0.5.1.jar"/>
-	<classpathentry kind="lib" path="lib/java/codegen/querydsl-codegen-2.7.0.jar"/>
-	<classpathentry kind="lib" path="lib/java/codegen/querydsl-sql-codegen-2.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/java/fluent-hc-4.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/java/httpclient-4.2.2.jar" sourcepath="resource/libsrc/httpclient"/>
+	<classpathentry kind="lib" path="lib/java/httpclient-cache-4.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/java/httpcore-4.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/java/httpmime-4.2.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
