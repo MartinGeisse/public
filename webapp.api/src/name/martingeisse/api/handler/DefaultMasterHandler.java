@@ -16,6 +16,8 @@ import name.martingeisse.api.request.RequestParametersException;
 import name.martingeisse.api.request.RequestPathChain;
 import name.martingeisse.api.request.RequestPathNotFoundException;
 
+import org.apache.log4j.Logger;
+
 /**
  * The default implementation for the master handler.
  * This handler basically stores multiple handlers to which it
@@ -48,6 +50,11 @@ import name.martingeisse.api.request.RequestPathNotFoundException;
  */
 public class DefaultMasterHandler implements IRequestHandler {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(DefaultMasterHandler.class);
+	
 	/**
 	 * the interceptHandlers
 	 */
@@ -137,31 +144,44 @@ public class DefaultMasterHandler implements IRequestHandler {
 	 */
 	@Override
 	public void handle(RequestCycle requestCycle, RequestPathChain path) throws Exception {
+		logger.debug("DefaultMasterHandler: dispatching request");
 		try {
 			try {
 				IRequestHandler interceptHandler = interceptHandlers.get(path.getUri());
 				if (interceptHandler == null) {
+					logger.debug("DefaultMasterHandler: invoking application handler");
 					applicationRequestHandler.handle(requestCycle, path);
+					logger.debug("DefaultMasterHandler: application handler finished normally");
 				} else {
+					logger.debug("DefaultMasterHandler: invoking intercept handler " + interceptHandler);
 					interceptHandler.handle(requestCycle, path);
+					logger.debug("DefaultMasterHandler: intercept handler finished normally");
 				}
 				return;
 			} catch (RequestPathNotFoundException e) {
+				logger.debug("DefaultMasterHandler: caught RequestPathNotFoundException");
 				if (notFoundRequestHandler == null) {
+					logger.debug("DefaultMasterHandler: no notFoundRequestHandler -- rethrowing");
 					throw e;
 				} else {
 					requestCycle.setException(e);
+					logger.debug("DefaultMasterHandler: invoking notFoundRequestHandler handler");
 					notFoundRequestHandler.handle(requestCycle, path);
+					logger.debug("DefaultMasterHandler: notFoundRequestHandler finished normally");
 					requestCycle.setException(null);
 					return;
 				}
 			}
 		} catch (Exception e) {
+			logger.debug("DefaultMasterHandler: caught exception: " + e);
 			if (exceptionHandler == null) {
+				logger.debug("DefaultMasterHandler: no exceptionHandler -- rethrowing");
 				throw e;
 			} else {
 				requestCycle.setException(e);
+				logger.debug("DefaultMasterHandler: invoking exceptionHandler handler");
 				exceptionHandler.handle(requestCycle, path);
+				logger.debug("DefaultMasterHandler: exceptionHandler finished normally");
 				requestCycle.setException(null);
 				return;
 			}
