@@ -45,6 +45,3 @@ Ablauf:
 
 5. Wenn dann kein Text gefunden wurde, wird ein Fehler geloggt und der
    Key als Text genommen.
-
-   
-TODO: ist der Ablauf so ok? Vor allem die Reihenfolge in Schritt 2 und die Reihenfolge von 2/3/4.

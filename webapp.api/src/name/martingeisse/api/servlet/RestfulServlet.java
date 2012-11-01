@@ -7,6 +7,7 @@
 package name.martingeisse.api.servlet;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import name.martingeisse.api.handler.IRequestHandler;
+import name.martingeisse.api.i18n.LocalizationUtil;
 import name.martingeisse.api.request.MalformedRequestPathException;
 import name.martingeisse.api.request.RequestCycle;
 import name.martingeisse.api.request.RequestHandlingFinishedException;
@@ -64,19 +66,28 @@ public class RestfulServlet extends HttpServlet {
 			return;
 		}
 		
-		// invoke the application's main handler
+		// set up localization for this thread
 		try {
-			masterRequestHandler.handle(requestCycle, requestCycle.getRequestPath());
-		} catch (RequestHandlingFinishedException e) {
-		} catch (RequestPathNotFoundException e) {
-			ServletUtil.emitResourceNotFoundResponse(requestCycle.getRequest(), requestCycle.getResponse());
-		} catch (RequestParametersException e) {
-			ServletUtil.emitParameterErrorResponse(response, e.getMessage());
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			ServletUtil.emitInternalServerErrorResponse(response);
-			return;
+			LocalizationUtil.createContextStack(Locale.US);
+
+			// invoke the application's main handler
+			try {
+				masterRequestHandler.handle(requestCycle, requestCycle.getRequestPath());
+			} catch (RequestHandlingFinishedException e) {
+			} catch (RequestPathNotFoundException e) {
+				ServletUtil.emitResourceNotFoundResponse(requestCycle.getRequest(), requestCycle.getResponse());
+			} catch (RequestParametersException e) {
+				ServletUtil.emitParameterErrorResponse(response, e.getMessage());
+			} catch (Exception e) {
+				e.printStackTrace(System.out);
+				ServletUtil.emitInternalServerErrorResponse(response);
+				return;
+			}
+			
+		} finally {
+			LocalizationUtil.removeContextStack();
 		}
+		
 		
 	}
 	
