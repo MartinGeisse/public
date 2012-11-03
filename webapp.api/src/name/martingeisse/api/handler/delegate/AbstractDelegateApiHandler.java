@@ -9,6 +9,7 @@ package name.martingeisse.api.handler.delegate;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,22 +18,32 @@ import name.martingeisse.api.handler.IRequestHandler;
 import name.martingeisse.api.request.RequestCycle;
 import name.martingeisse.api.request.RequestMethod;
 import name.martingeisse.api.request.RequestPathChain;
+import name.martingeisse.api.request.SessionKey;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.TeeOutputStream;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 /**
  * This handler delegates requests to another (remote) API.
+ * 
+ * Cookie handling: This class uses the default cookie store, but creates a new
+ * HTTP client for each request. Cookies won't persist across requests because
+ * of this. You can install a persistent {@link CookieStore} in
+ * configureHttpClient(HttpClient) to change this behavior, for example using
+ * configureCookieStoreInLocalSession(RequestCycle, RequestPathChain, HttpClient).
  */
 public abstract class AbstractDelegateApiHandler implements IRequestHandler {
 
@@ -66,7 +77,7 @@ public abstract class AbstractDelegateApiHandler implements IRequestHandler {
 		// bugs in many CGI scripts; it forces the HttpClient to send all cookies in a single header.
 		HttpClient httpClient = new DefaultHttpClient();
 		httpClient.getParams().setParameter("http.protocol.single-cookie-header", true);
-		configureHttpClient(httpClient);
+		configureHttpClient(requestCycle, path, httpClient);
 
 		// create the request
 		HttpUriRequest delegateRequest = buildRequest(requestCycle, path, url);
@@ -94,11 +105,8 @@ public abstract class AbstractDelegateApiHandler implements IRequestHandler {
 		IOUtils.copy(delegateResponseBodyStream, teeOutputStream);
 		originalResponse.getOutputStream().flush();
 		originalResponse.getOutputStream().close();
-		String charset = EntityUtils.getContentCharSet(delegateResponse.getEntity());
-		if (charset == null) {
-			charset = "ISO-8859-1";
-		}
-		logger.debug("response body: " + captureStream.toString(charset));
+		Charset charset = ContentType.getOrDefault(delegateResponse.getEntity()).getCharset();
+		logger.debug("response body: " + captureStream.toString(charset.name()));
 		
 	}
 
@@ -130,7 +138,29 @@ public abstract class AbstractDelegateApiHandler implements IRequestHandler {
 	 * {@link HttpClient}. The default implementation does nothing.
 	 * @param httpClient the client to configure
 	 */
-	protected void configureHttpClient(HttpClient httpClient) throws Exception {
+	protected void configureHttpClient(RequestCycle requestCycle, RequestPathChain path, HttpClient httpClient) throws Exception {
+	}
+	
+	/**
+	 * Sets a {@link CookieStore} in the specified HTTP client that stores cookies in the local session.
+	 * 
+	 * Subclasses must define a session key to store cookies. This is so it is possible to use two
+	 * different delegate APIs using different cookie stores (which would not be possible if this
+	 * class defined the session key itself).
+	 * 
+	 * @param requestCycle the request cycle
+	 * @param path the request path
+	 * @param httpClient the HTTP client whose cookie store to set
+	 * @param localSessionCookieStoreKey the session key used to store cookies
+	 * @throws Exception on errors
+	 */
+	protected final void configureCookieStoreInLocalSession(RequestCycle requestCycle, RequestPathChain path, HttpClient httpClient, SessionKey<BasicCookieStore> localSessionCookieStoreKey) throws Exception {
+		BasicCookieStore existingStore = localSessionCookieStoreKey.get(requestCycle);
+		if (existingStore == null) {
+			localSessionCookieStoreKey.set(requestCycle, (BasicCookieStore)httpClient.getParams().getParameter(ClientContext.COOKIE_STORE));
+		} else {
+			httpClient.getParams().setParameter(ClientContext.COOKIE_STORE, existingStore);
+		}
 	}
 
 	/**
@@ -177,7 +207,7 @@ public abstract class AbstractDelegateApiHandler implements IRequestHandler {
 		HttpServletRequest originalRequest = requestCycle.getRequest();
 		String requestBody = IOUtils.toString(originalRequest.getInputStream());
 		HttpPost subRequest = new HttpPost(url);
-		subRequest.setEntity(new StringEntity(requestBody, originalRequest.getContentType(), "utf-8"));
+		subRequest.setEntity(new StringEntity(requestBody, ContentType.create(originalRequest.getContentType(), "utf-8")));
 		logger.debug("request body:\n" + requestBody);
 		return subRequest;
 	}
