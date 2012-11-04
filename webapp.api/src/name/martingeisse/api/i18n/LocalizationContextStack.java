@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Locale;
 
+import name.martingeisse.api.servlet.RestfulServlet;
 import name.martingeisse.common.util.ParameterUtil;
 
 /**
@@ -31,7 +32,7 @@ final class LocalizationContextStack extends LinkedList<ILocalizationContext> {
 	 * @param locale the locale
 	 */
 	public LocalizationContextStack(final Locale locale) {
-		this.locale = ParameterUtil.ensureNotNull(locale, "locale");;
+		this.locale = ParameterUtil.ensureNotNull(locale, "locale");
 	}
 
 	/**
@@ -47,7 +48,7 @@ final class LocalizationContextStack extends LinkedList<ILocalizationContext> {
 	 * @param locale the locale to set
 	 */
 	public void setLocale(final Locale locale) {
-		this.locale = ParameterUtil.ensureNotNull(locale, "locale");;
+		this.locale = ParameterUtil.ensureNotNull(locale, "locale");
 	}
 
 	/**
@@ -57,15 +58,7 @@ final class LocalizationContextStack extends LinkedList<ILocalizationContext> {
 	 */
 	public String getLocalizationProperty(String key) {
 		ParameterUtil.ensureNotNull(key, "key");
-		Iterator<ILocalizationContext> iterator = descendingIterator();
-		while (iterator.hasNext()) {
-			ILocalizationContext context = iterator.next();
-			String property = context.getLocalizationProperty(key, locale);
-			if (property != null) {
-				return property;
-			}
-		}
-		return key;
+		return getLocalizationProperty((ILocalizationContext)null, key);
 	}
 	
 	/**
@@ -78,8 +71,52 @@ final class LocalizationContextStack extends LinkedList<ILocalizationContext> {
 	 */
 	public String getLocalizationProperty(ILocalizationContext additionalContext, String key) {
 		ParameterUtil.ensureNotNull(key, "key");
-		String property = additionalContext.getLocalizationProperty(key, locale);
-		return (property != null ? property : getLocalizationProperty(key));
+		LocalizationConfiguration configuration = RestfulServlet.getConfiguration().getLocalizationConfiguration();
+		Locale currentLocale = locale;
+
+		while (currentLocale != null) {
+			String property = getLocalizationPropertyForLocale(additionalContext, key, currentLocale);
+			if (property != null) {
+				return property;
+			}
+			currentLocale = configuration.getLanguageLevelFallbackMap().get(currentLocale);
+		}
+		
+		Locale globalFallbackLocale = configuration.getGlobalFallback();
+		if (globalFallbackLocale != null) {
+			String property = getLocalizationPropertyForLocale(additionalContext, key, globalFallbackLocale);
+			if (property != null) {
+				return property;
+			}
+		}
+		
+		return key;
+	}
+	
+	/**
+	 * Helper method that ignores language-level fallback locales.
+	 */
+	private String getLocalizationPropertyForLocale(ILocalizationContext additionalContext, String key, Locale currentLocale) {
+		
+		// try the additional context, if any
+		if (additionalContext != null) {
+			String additionalContextProperty = additionalContext.getLocalizationProperty(key, currentLocale);
+			if (additionalContextProperty != null) {
+				return additionalContextProperty;
+			}
+		}
+		
+		// try the context stack
+		Iterator<ILocalizationContext> iterator = descendingIterator();
+		while (iterator.hasNext()) {
+			ILocalizationContext context = iterator.next();
+			String property = context.getLocalizationProperty(key, currentLocale);
+			if (property != null) {
+				return property;
+			}
+		}
+	
+		return null;
 	}
 	
 	/**

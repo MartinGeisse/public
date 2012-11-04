@@ -10,7 +10,6 @@ import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
 
-import name.martingeisse.api.handler.IRequestHandler;
 import name.martingeisse.common.database.EntityConnectionServletFilter;
 import name.martingeisse.common.servlet.AntiJsessionidUrlFilter;
 import name.martingeisse.common.servlet.GlobalServletContext;
@@ -36,10 +35,10 @@ public class Launcher {
 	/**
 	 * Launches the server.
 	 * 
-	 * @param masterRequestHandler the master request handler
+	 * @param configuration the configuration for the API
 	 * @throws Exception on errors
 	 */
-	public static void launch(IRequestHandler masterRequestHandler) throws Exception {
+	public static void launch(ApiConfiguration configuration) throws Exception {
 		logger.debug("Launcher.launch(): begin");
 
 		final EnumSet<DispatcherType> allDispatcherTypes = EnumSet.allOf(DispatcherType.class);
@@ -63,7 +62,7 @@ public class Launcher {
 		context.addFilter(EntityConnectionServletFilter.class, "/*", allDispatcherTypes);
 
 		// add the API Servlet
-		RestfulServlet.masterRequestHandler = masterRequestHandler;
+		RestfulServlet.configuration = configuration;
 		context.addServlet(RestfulServlet.class, "/*");
 
 		// configure SSL / HTTPS

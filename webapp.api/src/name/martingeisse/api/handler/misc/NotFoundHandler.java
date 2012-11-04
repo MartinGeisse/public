@@ -13,7 +13,12 @@ import name.martingeisse.api.request.RequestPathNotFoundException;
 import name.martingeisse.api.servlet.ServletUtil;
 
 /**
- * This handler throws a {@link RequestPathNotFoundException} for all requests.
+ * This handler never finds any resource. It can either throw a
+ * {@link RequestPathNotFoundException} or directly emit a 404 error,
+ * depending on a flag specified at construction. The difference is that
+ * a 404 response will be sent directly to the client, while an
+ * exception can be caught by the master handler and passed to
+ * a fallback handler.
  */
 public class NotFoundHandler implements IRequestHandler {
 

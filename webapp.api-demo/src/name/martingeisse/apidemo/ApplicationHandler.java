@@ -12,6 +12,7 @@ import name.martingeisse.api.i18n.LocalizationUtil;
 import name.martingeisse.api.request.RequestCycle;
 import name.martingeisse.api.request.RequestPathChain;
 import name.martingeisse.apidemo.localization.LocalizationHandler;
+import name.martingeisse.apidemo.localization.SetLocaleHandler;
 
 /**
  * The main application handler.
@@ -30,6 +31,7 @@ public class ApplicationHandler extends NamedResourceFolderHandler {
 		getResources().put("keys", new MultiKeyCacheTestHandler());
 		getResources().put("counter", new SessionCounterHandler());
 		getResources().put("localization", new LocalizationHandler());
+		getResources().put("setlocale", new SetLocaleHandler());
 	}
 	
 	/* (non-Javadoc)

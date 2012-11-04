@@ -49,6 +49,22 @@ public final class LocalizationUtil {
 	public static void removeContextStack() {
 		contextStackContainer.remove();
 	}
+	
+	/**
+	 * Getter method for the locale.
+	 * @return the locale
+	 */
+	public static Locale getLocale() {
+		return contextStackContainer.get().getLocale();
+	}
+	
+	/**
+	 * Setter method for the locale.
+	 * @param locale the locale to set
+	 */
+	public static void setLocale(Locale locale) {
+		contextStackContainer.get().setLocale(locale);
+	}
 
 	/**
 	 * Pushes the specified context on the context stack for the

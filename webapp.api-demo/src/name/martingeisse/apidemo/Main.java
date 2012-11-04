@@ -6,7 +6,11 @@
 
 package name.martingeisse.apidemo;
 
+import java.util.Locale;
+
 import name.martingeisse.api.handler.DefaultMasterHandler;
+import name.martingeisse.api.handler.misc.NotFoundHandler;
+import name.martingeisse.api.servlet.ApiConfiguration;
 import name.martingeisse.api.servlet.Launcher;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.MysqlDatabaseDescriptor;
@@ -35,8 +39,12 @@ public class Main {
 
 		DefaultMasterHandler masterHandler = new DefaultMasterHandler();
 		masterHandler.setApplicationRequestHandler(new ApplicationHandler());
-		// TODO: no favicon
-		Launcher.launch(masterHandler);
+		masterHandler.getInterceptHandlers().put("/favicon.ico", new NotFoundHandler(false));
+		
+		ApiConfiguration configuration = new ApiConfiguration();
+		configuration.setMasterRequestHandler(masterHandler);
+		configuration.getLocalizationConfiguration().setGlobalFallback(Locale.US);
+		Launcher.launch(configuration);
 		
 	}
 
