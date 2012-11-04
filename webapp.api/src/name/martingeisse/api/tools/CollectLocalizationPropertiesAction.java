@@ -48,13 +48,7 @@ public class CollectLocalizationPropertiesAction extends LocalizationFileAction 
 			for (Map.Entry<String, String> textEntry : localeEntry.getValue().entrySet()) {
 				properties.put(textEntry.getKey(), textEntry.getValue());
 			}
-			try {
-				FileOutputStream fileOutputStream = new FileOutputStream(getOutputFileForLocale(localeName));
-				properties.store(fileOutputStream, null);
-				fileOutputStream.close();
-			} catch (IOException e) {
-				throw new RuntimeException();
-			}
+			writeOutputFileForLocale(localeName, properties);
 		}
 	}
 	
@@ -105,12 +99,19 @@ public class CollectLocalizationPropertiesAction extends LocalizationFileAction 
 	}
 
 	/**
-	 * Returns the output file for the specified locale name.
+	 * Writes the output file for the specified locale name.
 	 * @param localeName the locale name
-	 * @return the output file
+	 * @param properties the properties to write
 	 */
-	protected File getOutputFileForLocale(String localeName) {
-		return new File("localization_" + localeName + ".properties");
+	protected void writeOutputFileForLocale(String localeName, Properties properties) {
+		try {
+			File file = new File("localization_" + localeName + ".properties");
+			FileOutputStream fileOutputStream = new FileOutputStream(file);
+			properties.store(fileOutputStream, null);
+			fileOutputStream.close();
+		} catch (IOException e) {
+			throw new RuntimeException();
+		}
 	}
 	
 }
