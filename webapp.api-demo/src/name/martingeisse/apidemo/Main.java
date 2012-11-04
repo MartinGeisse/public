@@ -6,12 +6,14 @@
 
 package name.martingeisse.apidemo;
 
+import java.io.File;
 import java.util.Locale;
 
 import name.martingeisse.api.handler.DefaultMasterHandler;
 import name.martingeisse.api.handler.misc.NotFoundHandler;
 import name.martingeisse.api.servlet.ApiConfiguration;
 import name.martingeisse.api.servlet.Launcher;
+import name.martingeisse.api.tools.CollectLocalizationPropertiesAction;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.MysqlDatabaseDescriptor;
 
@@ -29,6 +31,11 @@ public class Main {
 	 */
 	public static void main(final String[] args) throws Exception {
 
+		/*
+		new CollectLocalizationPropertiesAction().run(new File("src"));
+		System.exit(0);
+		*/
+		
 		final MysqlDatabaseDescriptor phorumDatabase = new MysqlDatabaseDescriptor();
 		phorumDatabase.setDisplayName("Phorum database");
 		phorumDatabase.setUrl("jdbc:mysql://localhost/phorum?zeroDateTimeBehavior=convertToNull&useTimezone=false");
