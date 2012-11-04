@@ -8,12 +8,15 @@ package name.martingeisse.api.i18n;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 import name.martingeisse.common.util.ParameterUtil;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -38,7 +41,15 @@ public final class ClassHierarchyLocalizationContext implements ILocalizationCon
 	/**
 	 * the cachedProperties
 	 */
-	private static final ConcurrentHashMap<Class<?>, ClassHierarchyLocalizationContext> cachedInstances = new ConcurrentHashMap<Class<?>, ClassHierarchyLocalizationContext>();
+	private static final ConcurrentHashMap<Class<?>, ILocalizationContext> cachedInstances = new ConcurrentHashMap<Class<?>, ILocalizationContext>();
+	
+	// static initializer
+	static {
+		
+		// this saves ourselves a HashMap read for every localized property
+		cachedInstances.put(Object.class, new EmptyLocalizationContext());
+
+	}
 	
 	/**
 	 * Returns the instance of this class for the specified origin class.
@@ -51,11 +62,11 @@ public final class ClassHierarchyLocalizationContext implements ILocalizationCon
 	 * @param c the class
 	 * @return the instance of this class
 	 */
-	public static ClassHierarchyLocalizationContext getForClass(Class<?> c) {
+	public static ILocalizationContext getForClass(Class<?> c) {
 		if (c == null) {
 			return null;
 		}
-		ClassHierarchyLocalizationContext instance = cachedInstances.get(c);
+		ILocalizationContext instance = cachedInstances.get(c);
 		if (instance != null) {
 			return instance;
 		}
@@ -72,7 +83,12 @@ public final class ClassHierarchyLocalizationContext implements ILocalizationCon
 	/**
 	 * the parentClassContext
 	 */
-	private final ClassHierarchyLocalizationContext parentClassContext;
+	private final ILocalizationContext parentClassContext;
+	
+	/**
+	 * the localizationProperties
+	 */
+	private final HashMap<Locale, Map<String, String>> localizationProperties; 
 	
 	/**
 	 * Constructor.
@@ -81,6 +97,7 @@ public final class ClassHierarchyLocalizationContext implements ILocalizationCon
 	public ClassHierarchyLocalizationContext(Class<?> origin) {
 		this.origin = ParameterUtil.ensureNotNull(origin, "origin");
 		this.parentClassContext = getForClass(origin.getSuperclass());
+		this.localizationProperties = new HashMap<Locale, Map<String, String>>();
 	}
 
 	/* (non-Javadoc)
@@ -103,20 +120,56 @@ public final class ClassHierarchyLocalizationContext implements ILocalizationCon
 	 * not taking base classes into account.
 	 */
 	private String getOriginLocalizationProperty(String key, Locale locale) {
+		Map<String, String> properties;
+
+		// look for cached properties
+		properties = localizationProperties.get(locale);
+		if (properties != null) {
+			return properties.get(key);
+		}
+		
+		// try to load a .properties file, using EMPTY_MAP as a fallback if none exists
+		properties = loadProperties(origin, locale);
+		localizationProperties.put(locale, properties);
+		return properties.get(key);
+		
+	}
+
+	/**
+	 * Loads the .properties file for the origin class and the specified locale and returns
+	 * either its contents as a map, or an empty map if the file cannot be found.
+	 * 
+	 * This method is static to emphasize that it does not use or affect the calling instance
+	 * in any other way.
+	 * 
+	 * @param origin the origin class
+	 * @param locale the locale
+	 * @return the properties
+	 */
+	private static Map<String, String> loadProperties(Class<?> origin, Locale locale) {
+		String filename = origin.getSimpleName() + '_' + locale + ".properties";
 		try {
-			String filename = origin.getSimpleName() + '_' + locale + ".properties";
+			
+			// try to open the file, and fall back to an empty map if that fails
 			InputStream inputStream = origin.getResourceAsStream(filename);
 			if (inputStream == null) {
-				return null;
+				@SuppressWarnings("unchecked")
+				Map<String, String> emptyMap = MapUtils.EMPTY_MAP;
+				return emptyMap;
 			}
+			
+			// load the properties
 			Properties properties = new Properties();
 			properties.load(inputStream);
 			inputStream.close();
-			return properties.getProperty(key);
+			@SuppressWarnings("unchecked")
+			Map<String, String> typedProperties = (Map<String, String>)(Map<?, ?>)properties;
+			return typedProperties;
+			
 		} catch (IOException e) {
 			logger.error("could not load i18n property file", e);
 			return null;
-		}
+		}		
 	}
-
+	
 }
