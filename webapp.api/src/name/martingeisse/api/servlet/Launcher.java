@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ssl.SslSocketConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlets.GzipFilter;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
@@ -57,6 +58,7 @@ public class Launcher {
 		// the GZIP filter seems to cause problems on Jetty. The HTTP response either has
 		// an incorrect or duplicate Content-Length header (my tools won't tell me...)
 		//context.addFilter(GzipFilter.class, "/*", allDispatcherTypes);
+		context.addFilter(GzipFilter.class, "/*", allDispatcherTypes);
 
 		// JDBC connection-closing filter
 		context.addFilter(EntityConnectionServletFilter.class, "/*", allDispatcherTypes);

@@ -1,5 +1,7 @@
 /**
- * Copyright (c) 2012 Shopgate GmbH
+ * Copyright (c) 2010 Martin Geisse
+ *
+ * This file is distributed under the terms of the MIT license.
  */
 
 package name.martingeisse.common.cache.group;
@@ -24,6 +26,8 @@ import com.mysema.query.types.Predicate;
  * same values using different keys. Whenever a value is stored in one of the caches,
  * it is also stored in the other caches. They are not guaranteed to *contain* the
  * same values since they may evict values independently.
+ * 
+ * @param <V> the cache value type
  */
 public class RowCacheGroup<V> {
 
@@ -86,14 +90,22 @@ public class RowCacheGroup<V> {
 	 * @param origin the origin of the value
 	 */
 	public void distribute(Wrapper<V> wrapper, LoadingCache<?, ?> origin) {
+		distributeHelper(wrapper, origin, false);
+	}
+
+	/**
+	 * 
+	 */
+	private void distributeHelper(Wrapper<V> wrapper, LoadingCache<?, ?> origin, boolean external) {
 		for (LoadingCache<?, Wrapper<V>> cache : caches) {
 			if (cache != origin) {
 				IMapping<?, ?> valueToKeyMapping = cacheToValueToKeyMapping.get(cache);
 				distributeHelper(wrapper, valueToKeyMapping, cache);
+				prepareCachedValue(wrapper, external);
 			}
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -119,7 +131,7 @@ public class RowCacheGroup<V> {
 			protected Wrapper<V> transformValue(K key, V row) {
 				Wrapper<V> wrapper = super.transformValue(key, row);
 				if (wrapper.getValue() != null) {
-					distribute(wrapper, loaderToCache.get(this));
+					distributeHelper(wrapper, loaderToCache.get(this), true);
 				}
 				return wrapper;
 			}
@@ -140,12 +152,11 @@ public class RowCacheGroup<V> {
 	 * This method can be used to prepare cached values for use. The default implementation
 	 * does nothing.
 	 *  
-	 * @param value the cached value (never null)
+	 * @param wrapper the cached wrapper (never null)
 	 * @param external whether the value comes from an external source via one of the
 	 * distribute() methods.
 	 */
-	protected void prepareCachedValue(V value, boolean external) {
-		TODO distribute()
+	protected void prepareCachedValue(Wrapper<V> wrapper, boolean external) {
 	}
 
 }
