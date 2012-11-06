@@ -81,4 +81,13 @@ public final class Wrapper<T> {
 		return (value == null ? "null" : value.toString());
 	}
 	
+	/**
+	 * Factory method to avoid specifying the type parameter.
+	 * @param value the value to wrap
+	 * @return the wrapper
+	 */
+	public static <T> Wrapper<T> of(T value) {
+		return new Wrapper<T>(value);
+	}
+	
 }

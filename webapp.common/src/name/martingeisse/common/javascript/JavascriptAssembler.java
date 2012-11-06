@@ -151,6 +151,14 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * Appends the specified numeric literal to the builder.
 	 * @param value the value of the literal to append
 	 */
+	public final void appendNumericLiteral(long value) {
+		getBuilder().append(value);
+	}
+
+	/**
+	 * Appends the specified numeric literal to the builder.
+	 * @param value the value of the literal to append
+	 */
 	public final void appendNumericLiteral(double value) {
 		getBuilder().append(value);
 	}

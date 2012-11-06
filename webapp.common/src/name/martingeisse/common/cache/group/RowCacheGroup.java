@@ -70,12 +70,22 @@ public class RowCacheGroup<V> {
 	}
 
 	/**
+	 * This method is a shortcut for distribute(wrapper, null).
+	 * @param wrapper the wrapper to distribute
+	 */
+	public void distribute(Wrapper<V> wrapper) {
+		distribute(wrapper, null);
+	}
+
+	/**
 	 * Distributes the specified value to all caches. This adds the value to all
 	 * caches except the origin, because the origin will store the value itself.
+	 * Specify null for the origin to distribute the value to all caches.
+	 * 
 	 * @param wrapper the wrapper to distribute
 	 * @param origin the origin of the value
 	 */
-	private void distribute(Wrapper<V> wrapper, LoadingCache<?, ?> origin) {
+	public void distribute(Wrapper<V> wrapper, LoadingCache<?, ?> origin) {
 		for (LoadingCache<?, Wrapper<V>> cache : caches) {
 			if (cache != origin) {
 				IMapping<?, ?> valueToKeyMapping = cacheToValueToKeyMapping.get(cache);
