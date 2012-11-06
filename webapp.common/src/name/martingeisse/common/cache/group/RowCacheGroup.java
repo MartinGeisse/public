@@ -135,5 +135,17 @@ public class RowCacheGroup<V> {
 		return cache;
 
 	}
+	
+	/**
+	 * This method can be used to prepare cached values for use. The default implementation
+	 * does nothing.
+	 *  
+	 * @param value the cached value (never null)
+	 * @param external whether the value comes from an external source via one of the
+	 * distribute() methods.
+	 */
+	protected void prepareCachedValue(V value, boolean external) {
+		TODO distribute()
+	}
 
 }
