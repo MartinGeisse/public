@@ -11,6 +11,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,9 +23,14 @@ import name.martingeisse.api.servlet.ServletUtil;
  * Stores information about a request cycle, such as {@link HttpServletRequest},
  * {@link HttpServletResponse}, decoded request data, etc.
  * 
+ * The request cycle is able to store arbitrary attributes in addition to
+ * the request parameters. The difference is that attributes are always
+ * set programmatically (never by the client), but can store values of
+ * arbitrary type, not just strings.
+ * 
  * The request cycle is able to store an exception. This is useful when
  * delegating to another handler for caught exceptions since request
- * parameters can only hold strings.
+ * parameters can only hold strings. TODO use attribtues for this
  */
 public final class RequestCycle {
 
@@ -51,7 +58,12 @@ public final class RequestCycle {
 	 * the parameters
 	 */
 	private final RequestParameters parameters;
-	
+
+	/**
+	 * the attributes
+	 */
+	private final Map<RequestAttributeKey<?>, Object> attributes;
+
 	/**
 	 * the exception
 	 */
@@ -72,6 +84,7 @@ public final class RequestCycle {
 		final String requestPathText = (uri.startsWith("/") ? uri.substring(1) : uri);
 		this.requestPath = RequestPathChain.parse(requestPathText);
 		this.parameters = new RequestParameters(request);
+		this.attributes = new HashMap<RequestAttributeKey<?>, Object>();
 
 	}
 
@@ -116,6 +129,24 @@ public final class RequestCycle {
 	}
 
 	/**
+	 * Returns the value of a request attribute.
+	 * @param key the attribute key
+	 * @return the attribute value
+	 */
+	public <T> T getAttribute(RequestAttributeKey<T> key) {
+		return key.cast(attributes.get(key));
+	}
+
+	/**
+	 * Sets the value of a request attribute.
+	 * @param key the attribute key
+	 * @param value the attribute value
+	 */
+	public <T> void setAttribute(RequestAttributeKey<T> key, T value) {
+		attributes.put(key, value);
+	}
+
+	/**
 	 * @return the writer of the response
 	 * @throws IOException on I/O errors
 	 */
@@ -130,7 +161,7 @@ public final class RequestCycle {
 	public OutputStream getOutputStream() throws IOException {
 		return response.getOutputStream();
 	}
-	
+
 	/**
 	 * Getter method for the exception.
 	 * @return the exception
@@ -138,7 +169,7 @@ public final class RequestCycle {
 	public Exception getException() {
 		return exception;
 	}
-	
+
 	/**
 	 * Setter method for the exception.
 	 * @param exception the exception to set
@@ -183,7 +214,7 @@ public final class RequestCycle {
 	public void emitMessageResponse(final int statusCode, final String message) throws IOException {
 		ServletUtil.emitMessageResponse(response, statusCode, message);
 	}
-	
+
 	/**
 	 * Sets the session object for the specified key.
 	 * @param key the session key
@@ -202,5 +233,5 @@ public final class RequestCycle {
 	public <T extends Serializable> T getSessionValue(SessionKey<T> key) {
 		return (T)request.getSession().getAttribute(key.getInternalKey());
 	}
-	
+
 }

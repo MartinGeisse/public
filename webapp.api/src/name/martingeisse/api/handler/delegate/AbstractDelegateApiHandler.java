@@ -106,7 +106,7 @@ public abstract class AbstractDelegateApiHandler implements IRequestHandler {
 		originalResponse.getOutputStream().flush();
 		originalResponse.getOutputStream().close();
 		Charset charset = ContentType.getOrDefault(delegateResponse.getEntity()).getCharset();
-		logger.debug("response body: " + captureStream.toString(charset.name()));
+		logger.debug("response body: " + captureStream.toString(charset != null ? charset.name() : "ISO-8859-1"));
 		
 	}
 

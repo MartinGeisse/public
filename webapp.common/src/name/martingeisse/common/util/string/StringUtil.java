@@ -43,10 +43,24 @@ public final class StringUtil {
 	 * Converts an underscored name to an upper-camel-case name like
 	 * this: "my_foo_bar" -> "MyFooBar".
 	 * @param s the string to convert
-	 * @return the underscored string
+	 * @return the upper camel case string
 	 */
 	public static String convertUnderscoresToUpperCamelCase(String s) {
 		return StringUtils.remove(WordUtils.capitalizeFully(s, UNDERSCORE_ARRAY), '_');
+	}
+
+	/**
+	 * Converts an underscored name to an lower-camel-case name like
+	 * this: "my_foo_bar" -> "myFooBar".
+	 * @param s the string to convert
+	 * @return the lower camel case string
+	 */
+	public static String convertUnderscoresToLowerCamelCase(String s) {
+		if (s.isEmpty()) {
+			return s;
+		}
+		char firstCharacterLowerCase = Character.toLowerCase(s.charAt(0));
+		return firstCharacterLowerCase + StringUtils.remove(WordUtils.capitalizeFully(s, UNDERSCORE_ARRAY), '_').substring(1);
 	}
 	
 	/**

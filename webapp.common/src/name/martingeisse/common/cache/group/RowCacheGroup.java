@@ -11,8 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import name.martingeisse.common.cache.querydsl.AbstractDatabaseCacheLoader;
 import name.martingeisse.common.cache.querydsl.RowLoader;
 import name.martingeisse.common.computation.mapping.IMapping;
+import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.util.Wrapper;
 
 import com.google.common.cache.CacheBuilder;
@@ -42,6 +44,11 @@ public class RowCacheGroup<V> {
 	private final CacheBuilder<?, ?> cacheBuilder;
 
 	/**
+	 * the database
+	 */
+	private final IDatabaseDescriptor database;
+	
+	/**
 	 * the path
 	 */
 	private final RelationalPath<V> path;
@@ -54,7 +61,7 @@ public class RowCacheGroup<V> {
 	/**
 	 * the loaderToCache
 	 */
-	private final Map<RowLoader<?, V>, LoadingCache<?, Wrapper<V>>> loaderToCache = new HashMap<RowLoader<?, V>, LoadingCache<?, Wrapper<V>>>();
+	private final Map<AbstractDatabaseCacheLoader<?, Wrapper<V>>, LoadingCache<?, Wrapper<V>>> loaderToCache = new HashMap<AbstractDatabaseCacheLoader<?, Wrapper<V>>, LoadingCache<?, Wrapper<V>>>();
 	
 	/**
 	 * the cacheToValueToKeyMapping
@@ -69,10 +76,25 @@ public class RowCacheGroup<V> {
 	 */
 	public RowCacheGroup(CacheBuilder<?, ?> cacheBuilder, RelationalPath<V> path, Predicate... additionalPredicates) {
 		this.cacheBuilder = cacheBuilder;
+		this.database = null;
 		this.path = path;
 		this.additionalPredicates = additionalPredicates;
 	}
 
+	/**
+	 * Constructor.
+	 * @param cacheBuilder the cache builder to use
+	 * @param database the database to query from
+	 * @param path the table path
+	 * @param additionalPredicates additional predicates (if any)
+	 */
+	public RowCacheGroup(CacheBuilder<?, ?> cacheBuilder, IDatabaseDescriptor database, RelationalPath<V> path, Predicate... additionalPredicates) {
+		this.cacheBuilder = cacheBuilder;
+		this.database = database;
+		this.path = path;
+		this.additionalPredicates = additionalPredicates;
+	}
+	
 	/**
 	 * This method is a shortcut for distribute(wrapper, null).
 	 * @param wrapper the wrapper to distribute
@@ -112,7 +134,9 @@ public class RowCacheGroup<V> {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	private void distributeHelper(Wrapper wrapper, IMapping valueToKeyMapping, LoadingCache cache) {
 		Object key = valueToKeyMapping.map(wrapper.getValue());
-		cache.put(key, wrapper);
+		if (key != null) {
+			cache.put(key, wrapper);
+		}
 	}
 
 	/**
@@ -126,7 +150,7 @@ public class RowCacheGroup<V> {
 	public <K> LoadingCache<K, Wrapper<V>> addCache(Expression<?> keyExpression, IMapping<V, K> valueToKeyMapping) {
 
 		// create the loader
-		RowLoader<K, V> rowLoader = new RowLoader<K, V>(path, keyExpression, additionalPredicates) {
+		AbstractDatabaseCacheLoader<K, Wrapper<V>> rowLoader = new RowLoader<K, V>(path, keyExpression, additionalPredicates) {
 			@Override
 			protected Wrapper<V> transformValue(K key, V row) {
 				Wrapper<V> wrapper = super.transformValue(key, row);
@@ -136,6 +160,9 @@ public class RowCacheGroup<V> {
 				return wrapper;
 			}
 		};
+		if (database != null) {
+			rowLoader = rowLoader.withDatabase(database);
+		}
 
 		// create the cache
 		@SuppressWarnings("unchecked")
