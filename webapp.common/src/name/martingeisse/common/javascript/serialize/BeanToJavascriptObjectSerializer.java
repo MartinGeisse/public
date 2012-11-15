@@ -86,9 +86,11 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 	 */
 	private void serializeAllFields(final T bean, final JavascriptAssembler assembler) throws Exception {
 		for (final PropertyDescriptor property : PropertyUtils.getPropertyDescriptors(bean)) {
+			final String beanPropertyName = property.getName();
+			final String serializedFieldName = mapPropertyNameToSerializedName(beanPropertyName);
 			final Object value = property.getReadMethod().invoke(bean);
-			assembler.prepareObjectProperty(mapPropertyNameToSerializedName(property.getName()));
-			assembler.appendPrimitive(value);
+			assembler.prepareObjectProperty(serializedFieldName);
+			serializeFieldValue(bean, assembler, beanPropertyName, serializedFieldName, value);
 		}
 	}
 
@@ -126,11 +128,25 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 				final Method readMethod = propertyDescriptor.getReadMethod();
 				final Object value = readMethod.invoke(bean);
 				assembler.prepareObjectProperty(serializedName);
-				assembler.appendPrimitive(value);
+				serializeFieldValue(bean, assembler, beanPropertyName, serializedName, value);
 			}
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	/**
+	 * This method is used to serialize a single field value. The default implementation
+	 * uses {@link JavascriptAssembler#appendPrimitive(Object)}.
+	 * 
+	 * @param bean the bean
+	 * @param assembler the Javascript assembler
+	 * @param beanPropertyName the bean property name of the field
+	 * @param serializedFieldName the serialized name of the field
+	 * @param value the field value
+	 */
+	protected void serializeFieldValue(final Object bean, final JavascriptAssembler assembler, final String beanPropertyName, final String serializedFieldName, final Object value) {
+		assembler.appendPrimitive(value);
 	}
 
 	/**

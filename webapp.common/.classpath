@@ -47,5 +47,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/java/jetty-webapp-8.1.7.v20120910.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/jetty-websocket-8.1.7.v20120910.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/jetty-xml-8.1.7.v20120910.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
