@@ -127,7 +127,7 @@ public abstract class AbstractStructuralEqualityJsonEquivalence extends Abstract
 		/**
 		 * Constructor.
 		 */
-		public StructuralObjectDifferenceMessage(Map<?, ?> x, Map<?, ?> y) {
+		StructuralObjectDifferenceMessage(Map<?, ?> x, Map<?, ?> y) {
 			this.x = x;
 			this.y = y;
 		}

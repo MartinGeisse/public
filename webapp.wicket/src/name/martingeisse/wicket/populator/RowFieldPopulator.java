@@ -6,7 +6,6 @@
 
 package name.martingeisse.wicket.populator;
 
-import name.martingeisse.common.datarow.DataRow;
 import name.martingeisse.common.datarow.IDataRow;
 import name.martingeisse.wicket.model.DataRowFieldModel;
 

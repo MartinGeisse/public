@@ -10,7 +10,7 @@ import org.junit.Assert;
 
 /**
  * Provides a simple default implementation for 
- * {@link IJsonEquivalence#assertEquivalent(Object, Object)}.
+ * {@link IJsonEquivalence#assertEquivalent(Object, Object, LinkedList)}.
  */
 public abstract class AbstractJsonEquivalence implements IJsonEquivalence {
 
