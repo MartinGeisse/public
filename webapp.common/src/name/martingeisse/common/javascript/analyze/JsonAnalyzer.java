@@ -6,6 +6,7 @@
 
 package name.martingeisse.common.javascript.analyze;
 
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,7 @@ import org.json.simple.JSONValue;
  * value parsed by JSON-Simple.
  */
 public final class JsonAnalyzer {
-	
+
 	/**
 	 * the value
 	 */
@@ -28,17 +29,17 @@ public final class JsonAnalyzer {
 	 * the parent
 	 */
 	private final JsonAnalyzer parent;
-	
+
 	/**
 	 * the contextName
 	 */
 	private final String contextName;
-	
+
 	/**
 	 * Constructor.
 	 * @param value the value to analyze
 	 */
-	public JsonAnalyzer(Object value) {
+	public JsonAnalyzer(final Object value) {
 		this(value, null, null);
 	}
 
@@ -48,19 +49,28 @@ public final class JsonAnalyzer {
 	 * @param parent the parent value
 	 * @param contextName the name of this field in the parent value
 	 */
-	private JsonAnalyzer(Object value, JsonAnalyzer parent, String contextName) {
+	private JsonAnalyzer(final Object value, final JsonAnalyzer parent, final String contextName) {
 		this.value = value;
 		this.parent = parent;
 		this.contextName = contextName;
 	}
-	
+
 	/**
 	 * Parses a JSON-encoded string and analyzes the result.
 	 * @param json the JSON-encoded string
 	 * @return the analyzer
 	 */
-	public static JsonAnalyzer parse(String json) {
+	public static JsonAnalyzer parse(final String json) {
 		return new JsonAnalyzer(JSONValue.parse(json));
+	}
+	
+	/**
+	 * Parses a JSON-encoded string and analyzes the result.
+	 * @param jsonReader the reader for the JSON-encoded string
+	 * @return the analyzer
+	 */
+	public static JsonAnalyzer parse(final Reader jsonReader) {
+		return new JsonAnalyzer(JSONValue.parse(jsonReader));
 	}
 
 	/**
@@ -70,18 +80,18 @@ public final class JsonAnalyzer {
 	public Object getValue() {
 		return value;
 	}
-	
+
 	/**
 	 * 
 	 */
-	private void buildContextDescription(StringBuilder builder) {
+	private void buildContextDescription(final StringBuilder builder) {
 		if (parent != null) {
 			parent.buildContextDescription(builder);
 			builder.append('.');
 		}
 		builder.append(contextName);
 	}
-	
+
 	/**
 	 * Checks if the value is null.
 	 * @return true if null, false otherwise
@@ -89,14 +99,14 @@ public final class JsonAnalyzer {
 	public boolean isNull() {
 		return (value == null);
 	}
-	
+
 	/**
 	 * Returns a new analyzer that contains either this value or, if
 	 * this value is null, the specified fallback value.
 	 * @param fallbackValue the fallback value
 	 * @return the new analyzer
 	 */
-	public JsonAnalyzer fallback(Object fallbackValue) {
+	public JsonAnalyzer fallback(final Object fallbackValue) {
 		return new JsonAnalyzer(value == null ? fallbackValue : value);
 	}
 
@@ -108,7 +118,7 @@ public final class JsonAnalyzer {
 	public Boolean tryBoolean() {
 		return (value instanceof Boolean) ? (Boolean)value : null;
 	}
-	
+
 	/**
 	 * Expects the value to be of boolean type and returns its value.
 	 * Throws a {@link JsonAnalysisException} for non-boolean values.
@@ -129,7 +139,7 @@ public final class JsonAnalyzer {
 	public Integer tryInteger() {
 		return (value instanceof Integer) ? (Integer)value : null;
 	}
-	
+
 	/**
 	 * Expects the value to be of integer type and returns its value.
 	 * Throws a {@link JsonAnalysisException} for non-integer values.
@@ -141,7 +151,7 @@ public final class JsonAnalyzer {
 		}
 		throw exception("expected integer");
 	}
-	
+
 	/**
 	 * Returns null if the value is null. Otherwise turns the value
 	 * into a string using {@link Object#toString()}, then parses
@@ -155,7 +165,7 @@ public final class JsonAnalyzer {
 		} else {
 			try {
 				return new Integer(value.toString());
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				throw exception("expected integer");
 			}
 		}
@@ -170,11 +180,65 @@ public final class JsonAnalyzer {
 	public int toInt() {
 		try {
 			return Integer.parseInt(value.toString());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw exception("expected integer");
 		}
 	}
-	
+
+	/**
+	 * Tries to cast the value to {@link Long}. Returns the value
+	 * if the cast succeeds, null otherwise.
+	 * @return the long value or null
+	 */
+	public Long tryLong() {
+		return (value instanceof Long) ? (Long)value : null;
+	}
+
+	/**
+	 * Expects the value to be of long type and returns its value.
+	 * Throws a {@link JsonAnalysisException} for non-long values.
+	 * @return the long value
+	 */
+	public long expectLong() {
+		if (value instanceof Long) {
+			return (Long)value;
+		}
+		throw exception("expected long");
+	}
+
+	/**
+	 * Returns null if the value is null. Otherwise turns the value
+	 * into a string using {@link Object#toString()}, then parses
+	 * it as an long. Throws a {@link JsonAnalysisException}
+	 * if parsing fails.
+	 * @return the parsed long or null
+	 */
+	public Long toLongOrNull() {
+		if (value == null) {
+			return null;
+		} else {
+			try {
+				return new Long(value.toString());
+			} catch (final NumberFormatException e) {
+				throw exception("expected long");
+			}
+		}
+	}
+
+	/**
+	 * Turns the value into a string using {@link Object#toString()},
+	 * then parses it as an long. Throws a {@link JsonAnalysisException}
+	 * if parsing fails.
+	 * @return the parsed long
+	 */
+	public long toLong() {
+		try {
+			return Long.parseLong(value.toString());
+		} catch (final Exception e) {
+			throw exception("expected long");
+		}
+	}
+
 	/**
 	 * Tries to cast the value to {@link String}. Returns the value
 	 * if the cast succeeds, null otherwise.
@@ -183,7 +247,7 @@ public final class JsonAnalyzer {
 	public String tryString() {
 		return (value instanceof String) ? (String)value : null;
 	}
-	
+
 	/**
 	 * Expects the value to be of string type and returns its value.
 	 * Throws a {@link JsonAnalysisException} for non-string values.
@@ -195,7 +259,7 @@ public final class JsonAnalyzer {
 		}
 		throw exception("expected string");
 	}
-	
+
 	/**
 	 * Returns null if the value is null. Otherwise turns the value
 	 * into a string using {@link Object#toString()}.
@@ -217,7 +281,7 @@ public final class JsonAnalyzer {
 			return value.toString();
 		}
 	}
-	
+
 	/**
 	 * Tries to cast the value to {@link List}. Returns the value
 	 * if the cast succeeds, null otherwise.
@@ -227,7 +291,7 @@ public final class JsonAnalyzer {
 	public List<Object> tryList() {
 		return (value instanceof List) ? (List<Object>)value : null;
 	}
-	
+
 	/**
 	 * Expects the value to be of list type and returns its value.
 	 * Throws a {@link JsonAnalysisException} for non-list values.
@@ -240,7 +304,7 @@ public final class JsonAnalyzer {
 		}
 		throw exception("expected list");
 	}
-	
+
 	/**
 	 * Expects the value to be of list type, wraps each element in
 	 * a {@link JsonAnalyzer}, and returns the analyzers in a list.
@@ -248,9 +312,9 @@ public final class JsonAnalyzer {
 	 */
 	public List<JsonAnalyzer> analyzeList() {
 		if (value instanceof List) {
-			List<?> list = (List<?>)value;
-			List<JsonAnalyzer> result = new ArrayList<JsonAnalyzer>();
-			for (Object element : list) {
+			final List<?> list = (List<?>)value;
+			final List<JsonAnalyzer> result = new ArrayList<JsonAnalyzer>();
+			for (final Object element : list) {
 				result.add(new JsonAnalyzer(element));
 			}
 			return result;
@@ -267,7 +331,7 @@ public final class JsonAnalyzer {
 	public Map<String, Object> tryMap() {
 		return (value instanceof Map) ? (Map<String, Object>)value : null;
 	}
-	
+
 	/**
 	 * Expects the value to be of map type and returns its value.
 	 * Throws a {@link JsonAnalysisException} for non-map values.
@@ -291,35 +355,35 @@ public final class JsonAnalyzer {
 	 */
 	public Map<String, JsonAnalyzer> analyzeMap() {
 		if (value instanceof Map) {
-			Map<?, ?> map = (Map<?, ?>)value;
-			Map<String, JsonAnalyzer> result = new HashMap<String, JsonAnalyzer>();
-			for (Map.Entry<?, ?> entry : map.entrySet()) {
+			final Map<?, ?> map = (Map<?, ?>)value;
+			final Map<String, JsonAnalyzer> result = new HashMap<String, JsonAnalyzer>();
+			for (final Map.Entry<?, ?> entry : map.entrySet()) {
 				result.put(entry.getKey().toString(), new JsonAnalyzer(entry.getValue()));
 			}
 			return result;
 		}
 		throw exception("expected map");
 	}
-	
+
 	/**
 	 * Expects the value to be of map type, obtains the specified
 	 * element, and wraps it in a new instance of this class.
 	 * @param key the key to read from
 	 * @return the analyzer for the map element
 	 */
-	public JsonAnalyzer analyzeMapElement(String key) {
+	public JsonAnalyzer analyzeMapElement(final String key) {
 		if (value instanceof Map) {
-			Map<?, ?> map = (Map<?, ?>)value;
+			final Map<?, ?> map = (Map<?, ?>)value;
 			return new JsonAnalyzer(map.get(key));
 		}
 		throw exception("expected map");
 	}
-	
+
 	/**
 	 * Helper method to create {@link JsonAnalysisException}s.
 	 */
-	private JsonAnalysisException exception(String message) {
-		StringBuilder builder = new StringBuilder();
+	private JsonAnalysisException exception(final String message) {
+		final StringBuilder builder = new StringBuilder();
 		buildContextDescription(builder);
 		builder.append(": ").append(message);
 		return new JsonAnalysisException(builder.toString());
