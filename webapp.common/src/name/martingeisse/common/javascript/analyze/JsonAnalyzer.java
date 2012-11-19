@@ -323,6 +323,24 @@ public final class JsonAnalyzer {
 	}
 
 	/**
+	 * Expects the value to be of list type, obtains the specified
+	 * element, and wraps it in a new instance of this class. Unlike
+	 * {@link #analyzeMapElement(String)}, this method will throw an
+	 * exception if the index is out of range.
+	 * 
+	 * @param index the index to read from
+	 * @return the analyzer for the list element
+	 * @throws IndexOutOfBoundsException if the index is out of range
+	 */
+	public JsonAnalyzer analyzeListElement(final int index) throws IndexOutOfBoundsException {
+		if (value instanceof List) {
+			final List<?> list = (List<?>)value;
+			return new JsonAnalyzer(list.get(index));
+		}
+		throw exception("expected list");
+	}
+	
+	/**
 	 * Tries to cast the value to {@link Map}. Returns the value
 	 * if the cast succeeds, null otherwise.
 	 * @return the map value or null
