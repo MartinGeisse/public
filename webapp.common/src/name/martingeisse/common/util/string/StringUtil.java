@@ -89,4 +89,20 @@ public final class StringUtil {
 		}
 	}
 	
+	/**
+	 * Splits the specified string as {@link StringUtils#split(String, char)}
+	 * does, then trims the resulting segments.
+	 * 
+	 * @param s the string to split
+	 * @param separator the separator character
+	 * @return the trimmed segments
+	 */
+	public static String[] splitAndTrim(String s, char separator) {
+		String[] result = StringUtils.split(s, separator);
+		for (int i=0; i<result.length; i++) {
+			result[i] = result[i].trim();
+		}
+		return result;
+	}
+	
 }
