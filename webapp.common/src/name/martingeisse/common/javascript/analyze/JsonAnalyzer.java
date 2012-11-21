@@ -50,6 +50,9 @@ public final class JsonAnalyzer {
 	 * @param contextName the name of this field in the parent value
 	 */
 	private JsonAnalyzer(final Object value, final JsonAnalyzer parent, final String contextName) {
+		if ((parent == null) != (contextName == null)) {
+			throw new IllegalArgumentException("must either pass both parent and context name or none");
+		}
 		this.value = value;
 		this.parent = parent;
 		this.contextName = contextName;
@@ -87,9 +90,11 @@ public final class JsonAnalyzer {
 	private void buildContextDescription(final StringBuilder builder) {
 		if (parent != null) {
 			parent.buildContextDescription(builder);
-			builder.append('.');
+			if (parent.parent != null) {
+				builder.append('.');
+			}
+			builder.append(contextName);
 		}
-		builder.append(contextName);
 	}
 
 	/**
@@ -107,7 +112,7 @@ public final class JsonAnalyzer {
 	 * @return the new analyzer
 	 */
 	public JsonAnalyzer fallback(final Object fallbackValue) {
-		return new JsonAnalyzer(value == null ? fallbackValue : value);
+		return new JsonAnalyzer(value == null ? fallbackValue : value, parent, contextName);
 	}
 
 	/**
@@ -128,7 +133,7 @@ public final class JsonAnalyzer {
 		if (value instanceof Boolean) {
 			return (Boolean)value;
 		}
-		throw exception("expected boolean");
+		throw expectedException("boolean");
 	}
 
 	/**
@@ -149,7 +154,7 @@ public final class JsonAnalyzer {
 		if (value instanceof Integer) {
 			return (Integer)value;
 		}
-		throw exception("expected integer");
+		throw expectedException("integer");
 	}
 
 	/**
@@ -166,7 +171,7 @@ public final class JsonAnalyzer {
 			try {
 				return new Integer(value.toString());
 			} catch (final NumberFormatException e) {
-				throw exception("expected integer");
+				throw expectedException("integer");
 			}
 		}
 	}
@@ -181,7 +186,7 @@ public final class JsonAnalyzer {
 		try {
 			return Integer.parseInt(value.toString());
 		} catch (final Exception e) {
-			throw exception("expected integer");
+			throw expectedException("integer");
 		}
 	}
 
@@ -203,7 +208,7 @@ public final class JsonAnalyzer {
 		if (value instanceof Long) {
 			return (Long)value;
 		}
-		throw exception("expected long");
+		throw expectedException("long");
 	}
 
 	/**
@@ -220,7 +225,7 @@ public final class JsonAnalyzer {
 			try {
 				return new Long(value.toString());
 			} catch (final NumberFormatException e) {
-				throw exception("expected long");
+				throw expectedException("long");
 			}
 		}
 	}
@@ -235,7 +240,7 @@ public final class JsonAnalyzer {
 		try {
 			return Long.parseLong(value.toString());
 		} catch (final Exception e) {
-			throw exception("expected long");
+			throw expectedException("long");
 		}
 	}
 
@@ -257,7 +262,7 @@ public final class JsonAnalyzer {
 		if (value instanceof String) {
 			return (String)value;
 		}
-		throw exception("expected string");
+		throw expectedException("string");
 	}
 
 	/**
@@ -302,7 +307,7 @@ public final class JsonAnalyzer {
 		if (value instanceof List) {
 			return (List<Object>)value;
 		}
-		throw exception("expected list");
+		throw expectedException("list");
 	}
 
 	/**
@@ -314,12 +319,14 @@ public final class JsonAnalyzer {
 		if (value instanceof List) {
 			final List<?> list = (List<?>)value;
 			final List<JsonAnalyzer> result = new ArrayList<JsonAnalyzer>();
+			int i = 0;
 			for (final Object element : list) {
-				result.add(new JsonAnalyzer(element));
+				result.add(new JsonAnalyzer(element, this, Integer.toString(i)));
+				i++;
 			}
 			return result;
 		}
-		throw exception("expected list");
+		throw expectedException("list");
 	}
 
 	/**
@@ -335,9 +342,9 @@ public final class JsonAnalyzer {
 	public JsonAnalyzer analyzeListElement(final int index) throws IndexOutOfBoundsException {
 		if (value instanceof List) {
 			final List<?> list = (List<?>)value;
-			return new JsonAnalyzer(list.get(index));
+			return new JsonAnalyzer(list.get(index), this, Integer.toString(index));
 		}
-		throw exception("expected list");
+		throw expectedException("list");
 	}
 	
 	/**
@@ -360,7 +367,7 @@ public final class JsonAnalyzer {
 		if (value instanceof Map) {
 			return (Map<String, Object>)value;
 		}
-		throw exception("expected map");
+		throw expectedException("map");
 	}
 
 	/**
@@ -376,11 +383,12 @@ public final class JsonAnalyzer {
 			final Map<?, ?> map = (Map<?, ?>)value;
 			final Map<String, JsonAnalyzer> result = new HashMap<String, JsonAnalyzer>();
 			for (final Map.Entry<?, ?> entry : map.entrySet()) {
-				result.put(entry.getKey().toString(), new JsonAnalyzer(entry.getValue()));
+				String key = entry.getKey().toString();
+				result.put(key, new JsonAnalyzer(entry.getValue(), this, key));
 			}
 			return result;
 		}
-		throw exception("expected map");
+		throw expectedException("map");
 	}
 
 	/**
@@ -392,18 +400,28 @@ public final class JsonAnalyzer {
 	public JsonAnalyzer analyzeMapElement(final String key) {
 		if (value instanceof Map) {
 			final Map<?, ?> map = (Map<?, ?>)value;
-			return new JsonAnalyzer(map.get(key));
+			return new JsonAnalyzer(map.get(key), this, key);
 		}
-		throw exception("expected map");
+		throw expectedException("map");
 	}
 
+	/**
+	 * Helper method to create {@link JsonAnalysisException}s.
+	 */
+	private JsonAnalysisException expectedException(String what) {
+		return exception("expected " + what + ", found " + value + (value == null ? "" : " (" + value.getClass().getSimpleName() + ")"));
+	}
+	
 	/**
 	 * Helper method to create {@link JsonAnalysisException}s.
 	 */
 	private JsonAnalysisException exception(final String message) {
 		final StringBuilder builder = new StringBuilder();
 		buildContextDescription(builder);
-		builder.append(": ").append(message);
+		if (parent != null) {
+			builder.append(": ");
+		}
+		builder.append(message);
 		return new JsonAnalysisException(builder.toString());
 	}
 

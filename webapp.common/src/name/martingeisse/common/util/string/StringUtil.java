@@ -105,4 +105,30 @@ public final class StringUtil {
 		return result;
 	}
 	
+	/**
+	 * Joins the specified segments with the separator, but allows segments to be null in
+	 * which case they are omitted. If this leaves no segments, this method returns
+	 * the empty string.
+	 * 
+	 * @param separator the separator
+	 * @param segments the segments
+	 * @return the joined string
+	 */
+	public static String joinWithHoles(char separator, String... segments) {
+		StringBuilder builder = new StringBuilder();
+		boolean first = true;
+		for (String segment : segments) {
+			if (segment == null) {
+				continue;
+			}
+			if (first) {
+				first = false;
+			} else {
+				builder.append(separator);
+			}
+			builder.append(segment);
+		}
+		return builder.toString();
+	}
+	
 }

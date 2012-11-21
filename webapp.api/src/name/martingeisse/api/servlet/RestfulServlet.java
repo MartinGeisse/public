@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import name.martingeisse.api.i18n.LocalizationUtil;
 import name.martingeisse.api.request.MalformedRequestPathException;
 import name.martingeisse.api.request.RequestCycle;
+import name.martingeisse.api.request.RequestException;
 import name.martingeisse.api.request.RequestHandlingFinishedException;
 import name.martingeisse.api.request.RequestParametersException;
 import name.martingeisse.api.request.RequestPathNotFoundException;
@@ -93,7 +94,7 @@ public class RestfulServlet extends HttpServlet {
 			} catch (RequestHandlingFinishedException e) {
 			} catch (RequestPathNotFoundException e) {
 				ServletUtil.emitResourceNotFoundResponse(requestCycle.getRequest(), requestCycle.getResponse());
-			} catch (RequestParametersException e) {
+			} catch (RequestException e) {
 				ServletUtil.emitParameterErrorResponse(response, e.getMessage());
 			} catch (Exception e) {
 				e.printStackTrace(System.out);

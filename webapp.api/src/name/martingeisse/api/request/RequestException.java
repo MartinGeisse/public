@@ -5,7 +5,8 @@
 package name.martingeisse.api.request;
 
 /**
- * This exception type indicates a problem with the request.
+ * This exception type indicates a problem with the request. The message
+ * of this exception will be sent to the client.
  */
 public class RequestException extends RuntimeException {
 
