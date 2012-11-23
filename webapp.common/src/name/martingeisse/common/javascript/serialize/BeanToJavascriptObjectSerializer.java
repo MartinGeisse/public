@@ -17,7 +17,8 @@ import org.apache.commons.beanutils.PropertyUtils;
  * This class turns Java beans into Javascript objects. It optionally only
  * serializes specific fields, and optionally allows subclasses to add
  * custom generated fields that are not actually present in the object being
- * serialized.
+ * serialized. Calling code may also specify a list of requested generated
+ * fields which subclasses should honor.
  * 
  * Subclasses may distinguish bean property names (used to read properties)
  * and serialized property names (used in the JSON output). Whenever property
@@ -31,6 +32,11 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 	 * the fieldNames
 	 */
 	private String[] fieldNames;
+
+	/**
+	 * the requestedGeneratedFieldNames
+	 */
+	private String[] requestedGeneratedFieldNames;
 
 	/**
 	 * Constructor.
@@ -47,6 +53,16 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 	}
 
 	/**
+	 * Constructor.
+	 * @param fieldNames the fields to serialize
+	 * @param requestedGeneratedFieldNames the fields to generate
+	 */
+	public BeanToJavascriptObjectSerializer(String[] fieldNames, String[] requestedGeneratedFieldNames) {
+		this.fieldNames = fieldNames;
+		this.requestedGeneratedFieldNames = requestedGeneratedFieldNames;
+	}
+
+	/**
 	 * Getter method for the fieldNames.
 	 * @return the fieldNames
 	 */
@@ -60,6 +76,22 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 	 */
 	public final void setFieldNames(final String... fieldNames) {
 		this.fieldNames = fieldNames;
+	}
+
+	/**
+	 * Getter method for the requestedGeneratedFieldNames.
+	 * @return the requestedGeneratedFieldNames
+	 */
+	public String[] getRequestedGeneratedFieldNames() {
+		return requestedGeneratedFieldNames;
+	}
+
+	/**
+	 * Setter method for the requestedGeneratedFieldNames.
+	 * @param requestedGeneratedFieldNames the requestedGeneratedFieldNames to set
+	 */
+	public void setRequestedGeneratedFieldNames(String[] requestedGeneratedFieldNames) {
+		this.requestedGeneratedFieldNames = requestedGeneratedFieldNames;
 	}
 
 	/* (non-Javadoc)
@@ -134,7 +166,7 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/**
 	 * This method is used to serialize a single field value. The default implementation
 	 * uses {@link JavascriptAssembler#appendPrimitive(Object)}.
@@ -159,7 +191,7 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 	protected String mapSerializedNameToPropertyName(String serializedName) {
 		return serializedName;
 	}
-	
+
 	/**
 	 * Maps the bean property name of a property to its serialized
 	 * property name. The default implementation just returns the bean property name.
@@ -170,5 +202,5 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 	protected String mapPropertyNameToSerializedName(String propertyName) {
 		return propertyName;
 	}
-	
+
 }

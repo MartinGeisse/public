@@ -32,6 +32,15 @@ public class CakephpBeanToJavascriptObjectSerializer<T> extends BeanToJavascript
 
 	}
 
+	/**
+	 * Constructor.
+	 * @param fieldNames the fields to serialize
+	 * @param requestedGeneratedFieldNames the fields to generate
+	 */
+	public CakephpBeanToJavascriptObjectSerializer(String[] fieldNames, String[] requestedGeneratedFieldNames) {
+		super(fieldNames, requestedGeneratedFieldNames);
+	}
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.common.javascript.serialize.BeanToJavascriptObjectSerializer#mapPropertyNameToSerializedName(java.lang.String)
 	 */
