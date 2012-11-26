@@ -13,6 +13,8 @@ import java.util.Comparator;
  * ordering is by ascending score, reversed ordering by descending score.
  * 
  * Shared instances are available for ascending and descending comparison.
+ * 
+ * TODO: parameter check / return value check: bis einschl. dieser klasse prüfen 
  */
 public class ScoreComparator implements Comparator<IGetScore> {
 
