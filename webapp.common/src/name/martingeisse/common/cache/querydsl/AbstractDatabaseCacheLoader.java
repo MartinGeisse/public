@@ -10,7 +10,13 @@ import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.IDatabaseDescriptor;
 
 import com.google.common.cache.CacheLoader;
+import com.mysema.commons.lang.Pair;
+import com.mysema.query.group.QPair;
 import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.support.Expressions;
+import com.mysema.query.types.Expression;
+import com.mysema.query.types.Ops;
+import com.mysema.query.types.PredicateOperation;
 
 /**
  * This class provides basic support for database / QueryDSL based cache loaders.
@@ -75,6 +81,42 @@ public abstract class AbstractDatabaseCacheLoader<K, V> extends CacheLoader<K, V
 			return clone;
 		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
+	 * Creates a (keyExpression == keyConstantValue) predicate. This allows subclasses to intercept
+	 * the process and create custom predicates (currently needed to work around QueryDSL's missing
+	 * support for {@link Pair} constants and {@link QPair} syntax errors).
+	 * @param keyExpression the expression for the key column (never null)
+	 * @param keyConstantValue the constant value to compare with
+	 * @return the predicate
+	 */
+	protected PredicateOperation createKeyEqualsPredicate(Expression<?> keyExpression, K keyConstantValue) {
+		if (keyExpression instanceof QPair) {
+			QPair<?, ?> keyPair = (QPair<?, ?>)keyExpression;
+			Pair<?, ?> valuePair = (Pair<?, ?>)keyConstantValue;
+			PredicateOperation op1 = new PredicateOperation(Ops.EQ, keyPair.getArgs().get(0), Expressions.constant(valuePair.getFirst()));
+			PredicateOperation op2 = new PredicateOperation(Ops.EQ, keyPair.getArgs().get(1), Expressions.constant(valuePair.getSecond()));
+			return new PredicateOperation(Ops.AND, op1, op2);
+		} else {
+			return new PredicateOperation(Ops.EQ, keyExpression, Expressions.constant(keyConstantValue));
+		}
+	}
+	
+	/**
+	 * Creates a (keyExpression IN (keyConstantValues, ...)) predicate. This allows subclasses to intercept
+	 * the process and create custom predicates (currently needed to work around QueryDSL's missing
+	 * support for {@link Pair} constants and {@link QPair} syntax errors).
+	 * @param keyExpression the expression for the key column (never null)
+	 * @param keyConstantValues the constant values to search
+	 * @return the predicate
+	 */
+	protected PredicateOperation createKeyInPredicate(Expression<?> keyExpression, Iterable<? extends K> keyConstantValues) {
+		if (keyExpression instanceof QPair) {
+			throw new RuntimeException("<pair> IN (...) not yet supported");
+		} else {
+			return new PredicateOperation(Ops.IN, keyExpression, Expressions.constant(keyConstantValues));
 		}
 	}
 	

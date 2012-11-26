@@ -21,11 +21,8 @@ import com.google.common.cache.CacheLoader;
 import com.mysema.commons.lang.CloseableIterator;
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.SQLQuery;
-import com.mysema.query.support.Expressions;
 import com.mysema.query.types.Expression;
-import com.mysema.query.types.Ops;
 import com.mysema.query.types.Predicate;
-import com.mysema.query.types.PredicateOperation;
 
 /**
  * Cache loader implementation for a single-row, transformed cache.
@@ -74,7 +71,7 @@ public abstract class AbstractRowLoader<K, R, V> extends AbstractDatabaseCacheLo
 	public V load(K key) throws Exception {
 		ParameterUtil.ensureNotNull(key, "key");
 		SQLQuery query = ReturnValueUtil.nullNotAllowed(createQuery(), "createQuery()");
-		query.from(path).where(new PredicateOperation(Ops.EQ, keyExpression, Expressions.constant(key)));
+		query.from(path).where(createKeyEqualsPredicate(keyExpression, key));
 		query.where(additionalPredicates).limit(1);
 		return transformValue(key, query.singleResult(path));
 	}
@@ -90,7 +87,7 @@ public abstract class AbstractRowLoader<K, R, V> extends AbstractDatabaseCacheLo
 		ParameterUtil.ensureNotNull(keys, "keys");
 		ParameterUtil.ensureNoNullElement(keys, "keys");
 		SQLQuery query = ReturnValueUtil.nullNotAllowed(createQuery(), "createQuery()");
-		query.from(path).where(new PredicateOperation(Ops.IN, keyExpression, Expressions.constant(keys)));
+		query.from(path).where(createKeyInPredicate(keyExpression, keys));
 		query.where(additionalPredicates);
 		
 		// fetch results and store them in a map, indexed by value of the key expression
