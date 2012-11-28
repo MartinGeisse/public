@@ -10,12 +10,14 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-import org.joda.time.DateTimeZone;
-
 import name.martingeisse.common.database.config.CustomMysqlQuerydslConfiguration;
 import name.martingeisse.tools.codegen.BeanSerializer;
 import name.martingeisse.tools.codegen.MetaDataSerializer;
 
+import org.joda.time.DateTimeZone;
+
+import com.mysema.query.codegen.EntityType;
+import com.mysema.query.codegen.SerializerConfig;
 import com.mysema.query.sql.MySQLTemplates;
 import com.mysema.query.sql.codegen.MetaDataExporter;
 
@@ -30,12 +32,25 @@ public class CodeGenerator {
 	 * @throws Exception on errors
 	 */
 	public static void main(String[] args) throws Exception {
+		
+		BeanSerializer beanSerializer = new BeanSerializer(false) {
+			@Override
+			protected String getSimplifiedAccessDatabaseExpression(com.mysema.query.codegen.EntityType entityType, com.mysema.query.codegen.SerializerConfig config) {
+				return "Databases.phorumDatabase";
+			};
+			@Override
+			protected String getSimplifiedAccessDatabaseImport(EntityType entityType, SerializerConfig config) {
+				return "name.martingeisse.apidemo.Databases";
+			}
+		};
+		
+		
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/phorum?zeroDateTimeBehavior=convertToNull&useTimezone=false", "root", "");
 		MetaDataExporter exporter = new MetaDataExporter();
 		exporter.setTargetFolder(new File("generated"));
 		exporter.setPackageName("name.martingeisse.apidemo.phorum");
 		exporter.setSerializerClass(MetaDataSerializer.class);
-		exporter.setBeanSerializer(new BeanSerializer(false));
+		exporter.setBeanSerializer(beanSerializer);
 		// exporter.setConfiguration(new CustomMysqlQuerydslConfiguration(new MySQLTemplates(), null));
 		exporter.setConfiguration(new CustomMysqlQuerydslConfiguration(new MySQLTemplates(), DateTimeZone.forID("Europe/Moscow")));
 		exporter.export(connection.getMetaData());

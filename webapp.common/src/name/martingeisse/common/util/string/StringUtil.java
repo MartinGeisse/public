@@ -131,4 +131,20 @@ public final class StringUtil {
 		return builder.toString();
 	}
 	
+	/**
+	 * Returns the specified string, with the first character capitalized.
+	 * Returns null/empty if the argument is null/empty.
+	 * @param s the input string
+	 * @return the output string
+	 */
+	public static String capitalizeFirst(String s) {
+		if (s == null) {
+			return null;
+		} else if (s.isEmpty()) {
+			return s;
+		} else {
+			return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+		}
+	}
+	
 }

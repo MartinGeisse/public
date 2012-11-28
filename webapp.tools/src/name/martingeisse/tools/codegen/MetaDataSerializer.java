@@ -126,7 +126,7 @@ public class MetaDataSerializer extends AbstractSerializer {
 
 		// preparation
 		Type rawQueryType = typeMappings.getPathType(entityType, entityType, true);
-		Type nonrawQueryType = typeMappings.getPathType(entityType, entityType, true);
+		Type nonrawQueryType = typeMappings.getPathType(entityType, entityType, false);
 
 		// file comment
 		printFileComment(w);
