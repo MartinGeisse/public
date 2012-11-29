@@ -65,6 +65,9 @@ public class CustomMysqlQuerydslConfiguration extends Configuration {
 			register(new CustomMysqlDateTimeType(timeZone));
 		}
 		
+		// Register a "Pair" type so QueryDSL can convert Pair instances to constant expressions
+		// register(new PairType(this));
+		
 	}
 	
 }
