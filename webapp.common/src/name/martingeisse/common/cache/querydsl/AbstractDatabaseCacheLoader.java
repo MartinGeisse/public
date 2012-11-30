@@ -93,6 +93,9 @@ public abstract class AbstractDatabaseCacheLoader<K, V> extends CacheLoader<K, V
 	 * @return the predicate
 	 */
 	protected PredicateOperation createKeyEqualsPredicate(Expression<?> keyExpression, K keyConstantValue) {
+		// try Pair support in WHERE clause
+		// TODO either revert or remove
+		/* 
 		if (keyExpression instanceof QPair) {
 			QPair<?, ?> keyPair = (QPair<?, ?>)keyExpression;
 			Pair<?, ?> valuePair = (Pair<?, ?>)keyConstantValue;
@@ -102,6 +105,8 @@ public abstract class AbstractDatabaseCacheLoader<K, V> extends CacheLoader<K, V
 		} else {
 			return new PredicateOperation(Ops.EQ, keyExpression, Expressions.constant(keyConstantValue));
 		}
+		 */
+		return new PredicateOperation(Ops.EQ, keyExpression, Expressions.constant(keyConstantValue));
 	}
 	
 	/**
@@ -113,11 +118,16 @@ public abstract class AbstractDatabaseCacheLoader<K, V> extends CacheLoader<K, V
 	 * @return the predicate
 	 */
 	protected PredicateOperation createKeyInPredicate(Expression<?> keyExpression, Iterable<? extends K> keyConstantValues) {
+		// try Pair support in WHERE clause
+		// TODO either revert or remove
+		/* 
 		if (keyExpression instanceof QPair) {
 			throw new RuntimeException("<pair> IN (...) not yet supported");
 		} else {
 			return new PredicateOperation(Ops.IN, keyExpression, Expressions.constant(keyConstantValues));
 		}
+		 */
+		return new PredicateOperation(Ops.IN, keyExpression, Expressions.constant(keyConstantValues));
 	}
 	
 }
