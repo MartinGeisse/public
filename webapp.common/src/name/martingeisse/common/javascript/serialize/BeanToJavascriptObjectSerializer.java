@@ -100,6 +100,7 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 	@Override
 	public void serialize(final T bean, final JavascriptAssembler assembler) {
 		try {
+			onBeforeSerialize();
 			assembler.beginObject();
 			if (fieldNames == null) {
 				serializeAllFields(bean, assembler);
@@ -108,6 +109,7 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 			}
 			serializeGeneratedFields(bean, assembler);
 			assembler.endObject();
+			onAfterSerialize();
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -203,4 +205,20 @@ public class BeanToJavascriptObjectSerializer<T> implements IJavascriptSerialize
 		return propertyName;
 	}
 
+	/**
+	 * This method allows subclasses to prepare serialization. It is invoked directly
+	 * at the beginning of the {@link #serialize(Object, JavascriptAssembler)} method.
+	 * The default implementation does nothing.
+	 */
+	protected void onBeforeSerialize() {
+	}
+
+	/**
+	 * This method allows subclasses to clean up after serialization. It is invoked directly
+	 * at the end of the {@link #serialize(Object, JavascriptAssembler)} method.
+	 * The default implementation does nothing.
+	 */
+	protected void onAfterSerialize() {
+	}
+	
 }

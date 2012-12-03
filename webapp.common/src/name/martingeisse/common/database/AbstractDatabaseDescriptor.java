@@ -9,6 +9,7 @@ package name.martingeisse.common.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
 import name.martingeisse.common.database.config.CustomMysqlQuerydslConfiguration;
@@ -28,6 +29,8 @@ import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.support.Expressions;
 import com.mysema.query.types.Constant;
 import com.mysema.query.types.FactoryExpression;
+import com.mysema.query.types.Operation;
+import com.mysema.query.types.Ops;
 
 /**
  * This class describes a database used by the application.
@@ -230,6 +233,27 @@ public abstract class AbstractDatabaseDescriptor implements IDatabaseDescriptor 
 						} else {
 							return super.visit(constant, context);
 						}
+					}
+					
+					/* (non-Javadoc)
+					 * @see com.mysema.query.support.SerializerBase#visit(com.mysema.query.types.Operation, java.lang.Void)
+					 */
+					@Override
+					public Void visit(Operation<?> expr, Void context) {
+						
+						// handle IN with empty collections (QueryDSL chokes on this)
+						if (expr.getOperator() == Ops.IN && expr.getArg(1) instanceof Constant) {
+							Constant<?> constant = (Constant<?>)expr.getArg(1);
+							Object constantValue = constant.getConstant();
+							if (constantValue instanceof Collection) {
+								Collection<?> collection = (Collection<?>)constantValue;
+								if (collection.isEmpty()) {
+									return super.visit((Constant<Boolean>)Expressions.constant(false), context);
+								}
+							}
+						}
+						
+						return super.visit(expr, context);
 					}
 
 				};
