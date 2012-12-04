@@ -25,7 +25,7 @@ public interface IJavascriptSerializable {
 	 * {@link IJavascriptSerializable#serialize(JavascriptAssembler)}
 	 * method.
 	 */
-	public static final class Serializer implements IJavascriptSerializer<IJavascriptSerializable> {
+	public static final class Serializer extends AbstractJavascriptSerializer<IJavascriptSerializable> {
 
 		/**
 		 * The shared instance of this class.

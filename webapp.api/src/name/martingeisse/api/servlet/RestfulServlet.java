@@ -19,7 +19,6 @@ import name.martingeisse.api.request.MalformedRequestPathException;
 import name.martingeisse.api.request.RequestCycle;
 import name.martingeisse.api.request.RequestException;
 import name.martingeisse.api.request.RequestHandlingFinishedException;
-import name.martingeisse.api.request.RequestParametersException;
 import name.martingeisse.api.request.RequestPathNotFoundException;
 import name.martingeisse.api.request.SessionKey;
 

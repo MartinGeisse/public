@@ -19,7 +19,7 @@ import name.martingeisse.common.javascript.JavascriptAssembler;
  * custom generated fields that are not actually present in the row being
  * serialized.
  */
-public class ResultSetRowToJavascriptObjectSerializer implements IJavascriptSerializer<ResultSet> {
+public class ResultSetRowToJavascriptObjectSerializer extends AbstractJavascriptSerializer<ResultSet> {
 	
 	/**
 	 * The shared instance of this class.

@@ -18,6 +18,9 @@ import com.mysema.query.types.Expression;
  * each object using either a sub-mapping or a subclass method, and stores
  * the objects in a map of lists using that key. That is, for each key,
  * the value stored in the map is a list of objects with that key.
+ * 
+ * @param <K> the key type
+ * @param <V> the value (bean) type
  */
 public class QueryToListMapMapping<K, V> implements IMapping<SQLQuery, Map<K, List<V>>> {
 
@@ -33,6 +36,7 @@ public class QueryToListMapMapping<K, V> implements IMapping<SQLQuery, Map<K, Li
 
 	/**
 	 * Constructor.
+	 * @param beanExpression the expression for the bean to fetch
 	 */
 	public QueryToListMapMapping(Expression<V> beanExpression) {
 		this.beanExpression = beanExpression;

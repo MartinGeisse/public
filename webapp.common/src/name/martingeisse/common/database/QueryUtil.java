@@ -94,9 +94,9 @@ public class QueryUtil {
 	}
 	
 	/**
-	 * TODO
-	 * @param value
-	 * @return
+	 * Like {@link Expressions#constant(Object)}, but unwraps {@link Pair} objects.
+	 * @param value the constant value
+	 * @return the constant expression
 	 */
 	public static <T> Expression<T> constant(T value) {
 		if (value instanceof Pair) {

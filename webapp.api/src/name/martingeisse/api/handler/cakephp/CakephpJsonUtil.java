@@ -15,6 +15,7 @@ import name.martingeisse.common.javascript.JavascriptAssembler;
 import name.martingeisse.common.javascript.serialize.BeanToJavascriptObjectSerializer;
 import name.martingeisse.common.javascript.serialize.IJavascriptSerializable;
 import name.martingeisse.common.javascript.serialize.IJavascriptSerializer;
+import name.martingeisse.common.javascript.serialize.NoCallbackSerializerDecorator;
 import name.martingeisse.common.javascript.serialize.ResultSetRowToJavascriptObjectSerializer;
 
 import com.mysema.query.sql.SQLQuery;
@@ -47,11 +48,15 @@ public final class CakephpJsonUtil {
 	 */
 	public static <T> void generateModelEntry(final JavascriptAssembler assembler, final String modelName, final IJavascriptSerializer<T> serializer, final T object) {
 		if (modelName == null) {
+			serializer.onBeforeSerialize(object);
 			serializer.serialize(object, assembler);
+			serializer.onAfterSerialize(object);
 		} else {
 			assembler.beginObject();
 			assembler.prepareObjectProperty(modelName);
+			serializer.onBeforeSerialize(object);
 			serializer.serialize(object, assembler);
+			serializer.onAfterSerialize(object);
 			assembler.endObject();
 		}
 	}
@@ -166,12 +171,15 @@ public final class CakephpJsonUtil {
 	 * @param iterable the iterable of objects to serialize
 	 */
 	public static <T> void generateModelList(final JavascriptAssembler assembler, final String modelName, final IJavascriptSerializer<T> serializer, final Iterable<? extends T> iterable) {
+		IJavascriptSerializer<T> decorator = new NoCallbackSerializerDecorator<T>(serializer);
+		serializer.onBeforeSerializeMultiple(iterable);
 		assembler.beginList();
 		for (T element : iterable) {
 			assembler.prepareListElement();
-			generateModelEntry(assembler, modelName, serializer, element);
+			generateModelEntry(assembler, modelName, decorator, element);
 		}
 		assembler.endList();
+		serializer.onAfterSerializeMultiple(iterable);
 	}
 
 	/**

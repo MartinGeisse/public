@@ -16,6 +16,9 @@ import com.mysema.query.types.Expression;
  * each object using either a sub-mapping or a subclass method, and stores
  * the objects in a map using that key. Each key should occur only once,
  * otherwise the last object for each key overwrites the previous ones.
+ * 
+ * @param <K> the key type
+ * @param <V> the value (bean) type
  */
 public class QueryToSingleMapMapping<K, V> implements IMapping<SQLQuery, Map<K, V>> {
 
@@ -31,6 +34,7 @@ public class QueryToSingleMapMapping<K, V> implements IMapping<SQLQuery, Map<K, 
 
 	/**
 	 * Constructor.
+	 * @param beanExpression the expression for the bean to fetch
 	 */
 	public QueryToSingleMapMapping(Expression<V> beanExpression) {
 		this.beanExpression = beanExpression;
