@@ -28,9 +28,9 @@ import name.martingeisse.api.request.SessionKey;
 public class RestfulServlet extends HttpServlet {
 
 	/**
-	 * the LOCALE_SESSION_KEY
+	 * The session key for the locale setting.
 	 */
-	private static SessionKey<Locale> LOCALE_SESSION_KEY = new SessionKey<Locale>();
+	public static final SessionKey<Locale> LOCALE_SESSION_KEY = new SessionKey<Locale>();
 	
 	/**
 	 * the configuration
@@ -78,10 +78,21 @@ public class RestfulServlet extends HttpServlet {
 			return;
 		}
 		
-		// set up localization for this thread
 		try {
 			
-			Locale locale = LOCALE_SESSION_KEY.get(requestCycle);
+			// set up localization for this thread
+			Locale locale = null;
+			String explicitLocaleId = request.getParameter("locale");
+			if (explicitLocaleId != null) {
+				if (explicitLocaleId.length() != 5 || explicitLocaleId.charAt(2) != '_') {
+					ServletUtil.emitParameterErrorResponse(response, "invalid locale identifier: " + explicitLocaleId);
+					return;
+				}
+				locale = new Locale(explicitLocaleId.substring(0, 2), explicitLocaleId.substring(3, 5));
+			}
+			if (locale == null) {
+				locale = LOCALE_SESSION_KEY.get(requestCycle);
+			}
 			if (locale == null) {
 				locale = Locale.US;
 			}
@@ -102,7 +113,6 @@ public class RestfulServlet extends HttpServlet {
 			}
 			
 		} finally {
-			LOCALE_SESSION_KEY.set(requestCycle, LocalizationUtil.getLocale());
 			LocalizationUtil.removeContextStack();
 		}
 		
