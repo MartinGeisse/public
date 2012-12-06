@@ -21,8 +21,6 @@ import com.mysema.query.types.PredicateOperation;
 /**
  * This class provides basic support for database / QueryDSL based cache loaders.
  * 
- * TODO remove cloneable, apply builder pattern
- * 
  * @param <K> the type of cache keys
  * @param <V> the type of cached values
  */
@@ -93,19 +91,6 @@ public abstract class AbstractDatabaseCacheLoader<K, V> extends CacheLoader<K, V
 	 * @return the predicate
 	 */
 	protected PredicateOperation createKeyEqualsPredicate(Expression<?> keyExpression, K keyConstantValue) {
-		// try Pair support in WHERE clause
-		// TODO either revert or remove
-		/* 
-		if (keyExpression instanceof QPair) {
-			QPair<?, ?> keyPair = (QPair<?, ?>)keyExpression;
-			Pair<?, ?> valuePair = (Pair<?, ?>)keyConstantValue;
-			PredicateOperation op1 = new PredicateOperation(Ops.EQ, keyPair.getArgs().get(0), Expressions.constant(valuePair.getFirst()));
-			PredicateOperation op2 = new PredicateOperation(Ops.EQ, keyPair.getArgs().get(1), Expressions.constant(valuePair.getSecond()));
-			return new PredicateOperation(Ops.AND, op1, op2);
-		} else {
-			return new PredicateOperation(Ops.EQ, keyExpression, Expressions.constant(keyConstantValue));
-		}
-		 */
 		return new PredicateOperation(Ops.EQ, keyExpression, Expressions.constant(keyConstantValue));
 	}
 	
@@ -118,15 +103,6 @@ public abstract class AbstractDatabaseCacheLoader<K, V> extends CacheLoader<K, V
 	 * @return the predicate
 	 */
 	protected PredicateOperation createKeyInPredicate(Expression<?> keyExpression, Iterable<? extends K> keyConstantValues) {
-		// try Pair support in WHERE clause
-		// TODO either revert or remove
-		/* 
-		if (keyExpression instanceof QPair) {
-			throw new RuntimeException("<pair> IN (...) not yet supported");
-		} else {
-			return new PredicateOperation(Ops.IN, keyExpression, Expressions.constant(keyConstantValues));
-		}
-		 */
 		return new PredicateOperation(Ops.IN, keyExpression, Expressions.constant(keyConstantValues));
 	}
 	
