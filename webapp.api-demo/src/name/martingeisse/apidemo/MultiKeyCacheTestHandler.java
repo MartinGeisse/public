@@ -72,7 +72,7 @@ public class MultiKeyCacheTestHandler implements IRequestHandler {
 		final boolean prefixed = (requestCycle.getParameters().getBooleanOrDefault("prefixed", false));
 		
 		final LoadingCache<String, Wrapper<PhorumSettings>> cache = (prefixed ? prefixedSettingsCache : unprefixedSettingsCache);
-		final PhorumSettings value = cache.get(key).getValue();
+		final PhorumSettings value = cache.getUnchecked(key).getValue();
 		requestCycle.preparePlainTextResponse();
 		if (value == null) {
 			requestCycle.getWriter().println(key + " -> null");

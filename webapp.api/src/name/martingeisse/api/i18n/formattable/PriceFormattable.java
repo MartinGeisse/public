@@ -4,6 +4,7 @@
 
 package name.martingeisse.api.i18n.formattable;
 
+import java.io.IOException;
 import java.util.Formattable;
 import java.util.Formatter;
 
@@ -19,10 +20,16 @@ public final class PriceFormattable implements Formattable {
 	private final long amount;
 	
 	/**
+	 * the currencySymbol
+	 */
+	private final String currencySymbol;
+	
+	/**
 	 * Constructor.
 	 */
-	public PriceFormattable(final long amount) {
+	public PriceFormattable(final long amount, String currencySymbol) {
 		this.amount = amount;
+		this.currencySymbol = currencySymbol;
 	}
 	
 	/* (non-Javadoc)
@@ -30,8 +37,12 @@ public final class PriceFormattable implements Formattable {
 	 */
 	@Override
 	public void formatTo(Formatter formatter, int flags, int width, int precision) {
-		// TODO currencies
-		formatter.format("%.2f", amount / 100.0);
+		try {
+			formatter.out().append(currencySymbol).append(' ');
+			formatter.format("%.2f", amount / 100.0);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

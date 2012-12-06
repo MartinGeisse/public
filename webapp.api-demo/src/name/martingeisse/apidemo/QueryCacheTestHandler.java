@@ -40,7 +40,7 @@ public class QueryCacheTestHandler implements IRequestHandler {
 	public void handle(final RequestCycle requestCycle, final RequestPathChain path) throws Exception {
 		final String headSegment = path.getHead();
 		final String key = (headSegment == null ? "default" : headSegment);
-		final PhorumSettings value = settingsCache.get(key).getValue();
+		final PhorumSettings value = settingsCache.getUnchecked(key).getValue();
 		requestCycle.preparePlainTextResponse();
 		if (value == null) {
 			requestCycle.getWriter().println(key + " -> null");
