@@ -27,13 +27,14 @@ import name.martingeisse.api.servlet.ServletUtil;
  * the request parameters. The difference is that attributes are always
  * set programmatically (never by the client), but can store values of
  * arbitrary type, not just strings.
- * 
- * The request cycle is able to store an exception. This is useful when
- * delegating to another handler for caught exceptions since request
- * parameters can only hold strings. TODO use attribtues for this
  */
 public final class RequestCycle {
 
+	/**
+	 * the EXCEPTION_REQUEST_ATTRIBUTE_KEY
+	 */
+	public static final RequestAttributeKey<Throwable> EXCEPTION_REQUEST_ATTRIBUTE_KEY = new RequestAttributeKey<Throwable>(Throwable.class);
+	
 	/**
 	 * the request
 	 */
@@ -63,11 +64,6 @@ public final class RequestCycle {
 	 * the attributes
 	 */
 	private final Map<RequestAttributeKey<?>, Object> attributes;
-
-	/**
-	 * the exception
-	 */
-	private Exception exception;
 
 	/**
 	 * Constructor.
@@ -160,22 +156,6 @@ public final class RequestCycle {
 	 */
 	public OutputStream getOutputStream() throws IOException {
 		return response.getOutputStream();
-	}
-
-	/**
-	 * Getter method for the exception.
-	 * @return the exception
-	 */
-	public Exception getException() {
-		return exception;
-	}
-
-	/**
-	 * Setter method for the exception.
-	 * @param exception the exception to set
-	 */
-	public void setException(Exception exception) {
-		this.exception = exception;
 	}
 
 	/**

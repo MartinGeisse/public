@@ -164,11 +164,11 @@ public class DefaultMasterHandler implements IRequestHandler {
 					logger.debug("DefaultMasterHandler: no notFoundRequestHandler -- rethrowing");
 					throw e;
 				} else {
-					requestCycle.setException(e);
+					requestCycle.setAttribute(RequestCycle.EXCEPTION_REQUEST_ATTRIBUTE_KEY, e);
 					logger.debug("DefaultMasterHandler: invoking notFoundRequestHandler handler");
 					notFoundRequestHandler.handle(requestCycle, path);
 					logger.debug("DefaultMasterHandler: notFoundRequestHandler finished normally");
-					requestCycle.setException(null);
+					requestCycle.setAttribute(RequestCycle.EXCEPTION_REQUEST_ATTRIBUTE_KEY, null);
 					return;
 				}
 			}
@@ -178,11 +178,11 @@ public class DefaultMasterHandler implements IRequestHandler {
 				logger.debug("DefaultMasterHandler: no exceptionHandler -- rethrowing");
 				throw e;
 			} else {
-				requestCycle.setException(e);
+				requestCycle.setAttribute(RequestCycle.EXCEPTION_REQUEST_ATTRIBUTE_KEY, e);
 				logger.debug("DefaultMasterHandler: invoking exceptionHandler handler");
 				exceptionHandler.handle(requestCycle, path);
 				logger.debug("DefaultMasterHandler: exceptionHandler finished normally");
-				requestCycle.setException(null);
+				requestCycle.setAttribute(RequestCycle.EXCEPTION_REQUEST_ATTRIBUTE_KEY, null);
 				return;
 			}
 		}

@@ -22,11 +22,19 @@ import name.martingeisse.api.request.RequestHandlingFinishedException;
 import name.martingeisse.api.request.RequestPathNotFoundException;
 import name.martingeisse.api.request.SessionKey;
 
+import org.apache.log4j.Logger;
+
 /**
  * The servlet that handles all requests.
  */
 public class RestfulServlet extends HttpServlet {
 
+	/**
+	 * the logger
+	 */
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(RestfulServlet.class);
+	
 	/**
 	 * The session key for the locale setting.
 	 */
@@ -64,10 +72,8 @@ public class RestfulServlet extends HttpServlet {
 	 * 
 	 */
 	private void handle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		// TODO remove
-		System.out.println("-------------------------------------");
-		System.out.println(request.getRequestURI());
+		logger.debug("----- new request -----------------------------");
+		logger.debug(request.getRequestURI());
 		
 		// prepare the request cycle object
 		RequestCycle requestCycle;
