@@ -6,6 +6,8 @@ package name.martingeisse.common.computation.mapping;
 
 /**
  * This mapping always returns the same result.
+ * @param <IN> the input type
+ * @param <OUT> the output type
  */
 public final class ConstantMapping<IN, OUT> implements IMapping<IN, OUT> {
 
@@ -43,6 +45,7 @@ public final class ConstantMapping<IN, OUT> implements IMapping<IN, OUT> {
 	 * specifying type parameters explicitly.
 	 * 
 	 * @param value the constant value to return
+	 * @return the mapping
 	 */
 	public static <IN, OUT> IMapping<IN, OUT> of(OUT value) {
 		return new ConstantMapping<IN, OUT>(value);

@@ -119,7 +119,7 @@ public class PhorumSubscribers extends AbstractSpecificEntityInstance {
      */
     @Override
     public String toString() {
-        return "forumId = " + forumId + ", subType = " + subType + ", thread = " + thread + ", userId = " + userId;
+        return "{PhorumSubscribers. forumId = " + forumId + ", subType = " + subType + ", thread = " + thread + ", userId = " + userId + "}";
     }
 
 }

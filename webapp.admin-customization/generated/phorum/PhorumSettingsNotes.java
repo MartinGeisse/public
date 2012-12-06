@@ -75,7 +75,7 @@ public class PhorumSettingsNotes extends AbstractSpecificEntityInstance {
      */
     @Override
     public String toString() {
-        return "note = " + note + ", settingName = " + settingName;
+        return "{PhorumSettingsNotes. note = " + note + ", settingName = " + settingName + "}";
     }
 
 }

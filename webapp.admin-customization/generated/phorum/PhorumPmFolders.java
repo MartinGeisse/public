@@ -97,7 +97,7 @@ public class PhorumPmFolders extends AbstractSpecificEntityInstance {
      */
     @Override
     public String toString() {
-        return "foldername = " + foldername + ", pmFolderId = " + pmFolderId + ", userId = " + userId;
+        return "{PhorumPmFolders. foldername = " + foldername + ", pmFolderId = " + pmFolderId + ", userId = " + userId + "}";
     }
 
 }

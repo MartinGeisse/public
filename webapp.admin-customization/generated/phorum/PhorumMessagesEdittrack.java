@@ -163,7 +163,7 @@ public class PhorumMessagesEdittrack extends AbstractSpecificEntityInstance {
      */
     @Override
     public String toString() {
-        return "diffBody = " + diffBody + ", diffSubject = " + diffSubject + ", messageId = " + messageId + ", time = " + time + ", trackId = " + trackId + ", userId = " + userId;
+        return "{PhorumMessagesEdittrack. diffBody = " + diffBody + ", diffSubject = " + diffSubject + ", messageId = " + messageId + ", time = " + time + ", trackId = " + trackId + ", userId = " + userId + "}";
     }
 
 }

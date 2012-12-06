@@ -46,17 +46,17 @@ public class QPhorumSettings extends com.mysema.query.sql.RelationalPathBase<Pho
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PhorumSettings> primary = createPrimaryKey(name);
+    public final com.mysema.query.sql.PrimaryKey<PhorumSettings> pk_primary = createPrimaryKey(name);
 
     /**
      * Metamodel property for foreign key 'phorum_settings_ibfk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<PhorumSettingsGroups> phorumSettingsIbfk1 = createForeignKey(groupId, "id");
+    public final com.mysema.query.sql.ForeignKey<PhorumSettingsGroups> fk_phorumSettingsIbfk1 = createForeignKey(groupId, "id");
 
     /**
      * Metamodel property for reverse foreign key 'phorum_settings_notes_ibfk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<PhorumSettingsNotes> _phorumSettingsNotesIbfk1 = createInvForeignKey(name, "setting_name");
+    public final com.mysema.query.sql.ForeignKey<PhorumSettingsNotes> fk__phorumSettingsNotesIbfk1 = createInvForeignKey(name, "setting_name");
 
     /**
      * Path-variable based constructor.

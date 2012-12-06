@@ -34,6 +34,7 @@ public final class PassthroughCache<K, V> implements LoadingCache<K, V> {
 
 	/**
 	 * Constructor.
+	 * @param loader the cache loader
 	 */
 	public PassthroughCache(CacheLoader<K, V> loader) {
 		this.loader = loader;

@@ -41,7 +41,7 @@ public class QPhorumUserNewflags extends com.mysema.query.sql.RelationalPathBase
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PhorumUserNewflags> primary = createPrimaryKey(forumId, messageId, userId);
+    public final com.mysema.query.sql.PrimaryKey<PhorumUserNewflags> pk_primary = createPrimaryKey(forumId, messageId, userId);
 
     /**
      * Path-variable based constructor.

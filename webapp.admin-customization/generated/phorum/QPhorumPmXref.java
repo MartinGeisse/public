@@ -61,7 +61,7 @@ public class QPhorumPmXref extends com.mysema.query.sql.RelationalPathBase<Phoru
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PhorumPmXref> primary = createPrimaryKey(pmXrefId);
+    public final com.mysema.query.sql.PrimaryKey<PhorumPmXref> pk_primary = createPrimaryKey(pmXrefId);
 
     /**
      * Path-variable based constructor.

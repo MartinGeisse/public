@@ -97,7 +97,7 @@ public class PhorumGroups extends AbstractSpecificEntityInstance {
      */
     @Override
     public String toString() {
-        return "groupId = " + groupId + ", name = " + name + ", open = " + open;
+        return "{PhorumGroups. groupId = " + groupId + ", name = " + name + ", open = " + open + "}";
     }
 
 }

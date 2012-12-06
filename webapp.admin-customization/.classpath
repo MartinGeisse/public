@@ -6,11 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/webapp.admin"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/webapp.common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/webapp.wicket"/>
-	<classpathentry kind="lib" path="lib/java/codegen/ant-1.8.1.jar"/>
-	<classpathentry kind="lib" path="lib/java/codegen/ant-launcher-1.8.1.jar"/>
-	<classpathentry kind="lib" path="lib/java/codegen/codegen-0.5.1.jar"/>
-	<classpathentry kind="lib" path="lib/java/codegen/querydsl-codegen-2.7.0.jar" sourcepath="/querydsl-codegen/src/main/java"/>
-	<classpathentry kind="lib" path="lib/java/codegen/querydsl-sql-codegen-2.7.0.jar" sourcepath="/webapp.tools/resource/libsrc/querydsl-sql-codegen-2.7.0-sources.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/webapp.tools"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

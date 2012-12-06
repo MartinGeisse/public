@@ -26,6 +26,8 @@ public final class PriceFormattable implements Formattable {
 	
 	/**
 	 * Constructor.
+	 * @param amount the amount
+	 * @param currencySymbol the currency symbol
 	 */
 	public PriceFormattable(final long amount, String currencySymbol) {
 		this.amount = amount;

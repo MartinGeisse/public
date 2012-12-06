@@ -97,7 +97,7 @@ public class PhorumUserCustomFields extends AbstractSpecificEntityInstance {
      */
     @Override
     public String toString() {
-        return "data = " + data + ", type = " + type + ", userId = " + userId;
+        return "{PhorumUserCustomFields. data = " + data + ", type = " + type + ", userId = " + userId + "}";
     }
 
 }

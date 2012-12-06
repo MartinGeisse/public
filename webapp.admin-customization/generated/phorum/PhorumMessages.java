@@ -581,7 +581,7 @@ public class PhorumMessages extends AbstractSpecificEntityInstance {
      */
     @Override
     public String toString() {
-        return "author = " + author + ", body = " + body + ", closed = " + closed + ", datestamp = " + datestamp + ", email = " + email + ", forumId = " + forumId + ", ip = " + ip + ", messageId = " + messageId + ", meta = " + meta + ", moderatorPost = " + moderatorPost + ", modifystamp = " + modifystamp + ", moved = " + moved + ", msgid = " + msgid + ", parentId = " + parentId + ", recentAuthor = " + recentAuthor + ", recentMessageId = " + recentMessageId + ", recentUserId = " + recentUserId + ", sort = " + sort + ", status = " + status + ", subject = " + subject + ", thread = " + thread + ", threadCount = " + threadCount + ", threadviewcount = " + threadviewcount + ", userId = " + userId + ", viewcount = " + viewcount;
+        return "{PhorumMessages. author = " + author + ", body = " + body + ", closed = " + closed + ", datestamp = " + datestamp + ", email = " + email + ", forumId = " + forumId + ", ip = " + ip + ", messageId = " + messageId + ", meta = " + meta + ", moderatorPost = " + moderatorPost + ", modifystamp = " + modifystamp + ", moved = " + moved + ", msgid = " + msgid + ", parentId = " + parentId + ", recentAuthor = " + recentAuthor + ", recentMessageId = " + recentMessageId + ", recentUserId = " + recentUserId + ", sort = " + sort + ", status = " + status + ", subject = " + subject + ", thread = " + thread + ", threadCount = " + threadCount + ", threadviewcount = " + threadviewcount + ", userId = " + userId + ", viewcount = " + viewcount + "}";
     }
 
 }

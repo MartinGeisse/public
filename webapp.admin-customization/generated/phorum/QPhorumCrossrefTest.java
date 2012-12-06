@@ -42,12 +42,12 @@ public class QPhorumCrossrefTest extends com.mysema.query.sql.RelationalPathBase
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PhorumCrossrefTest> primary = createPrimaryKey(id);
+    public final com.mysema.query.sql.PrimaryKey<PhorumCrossrefTest> pk_primary = createPrimaryKey(id);
 
     /**
      * Metamodel property for foreign key 'phorum_crossref_test_ibfk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<PhorumSettingsGroups> phorumCrossrefTestIbfk1 = createForeignKey(Arrays.asList(name, name), Arrays.asList("name", "name"));
+    public final com.mysema.query.sql.ForeignKey<PhorumSettingsGroups> fk_phorumCrossrefTestIbfk1 = createForeignKey(Arrays.asList(name, name), Arrays.asList("name", "name"));
 
     /**
      * Path-variable based constructor.

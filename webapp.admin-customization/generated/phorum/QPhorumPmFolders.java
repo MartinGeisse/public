@@ -41,7 +41,7 @@ public class QPhorumPmFolders extends com.mysema.query.sql.RelationalPathBase<Ph
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PhorumPmFolders> primary = createPrimaryKey(pmFolderId);
+    public final com.mysema.query.sql.PrimaryKey<PhorumPmFolders> pk_primary = createPrimaryKey(pmFolderId);
 
     /**
      * Path-variable based constructor.

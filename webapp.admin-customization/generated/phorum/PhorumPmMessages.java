@@ -185,7 +185,7 @@ public class PhorumPmMessages extends AbstractSpecificEntityInstance {
      */
     @Override
     public String toString() {
-        return "author = " + author + ", datestamp = " + datestamp + ", message = " + message + ", meta = " + meta + ", pmMessageId = " + pmMessageId + ", subject = " + subject + ", userId = " + userId;
+        return "{PhorumPmMessages. author = " + author + ", datestamp = " + datestamp + ", message = " + message + ", meta = " + meta + ", pmMessageId = " + pmMessageId + ", subject = " + subject + ", userId = " + userId + "}";
     }
 
 }

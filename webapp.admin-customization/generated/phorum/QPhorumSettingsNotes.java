@@ -36,12 +36,12 @@ public class QPhorumSettingsNotes extends com.mysema.query.sql.RelationalPathBas
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PhorumSettingsNotes> primary = createPrimaryKey(settingName);
+    public final com.mysema.query.sql.PrimaryKey<PhorumSettingsNotes> pk_primary = createPrimaryKey(settingName);
 
     /**
      * Metamodel property for foreign key 'phorum_settings_notes_ibfk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<PhorumSettings> phorumSettingsNotesIbfk1 = createForeignKey(settingName, "name");
+    public final com.mysema.query.sql.ForeignKey<PhorumSettings> fk_phorumSettingsNotesIbfk1 = createForeignKey(settingName, "name");
 
     /**
      * Path-variable based constructor.

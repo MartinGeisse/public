@@ -97,7 +97,7 @@ public class PhorumCrossrefTest extends AbstractSpecificEntityInstance {
      */
     @Override
     public String toString() {
-        return "alias = " + alias + ", id = " + id + ", name = " + name;
+        return "{PhorumCrossrefTest. alias = " + alias + ", id = " + id + ", name = " + name + "}";
     }
 
 }

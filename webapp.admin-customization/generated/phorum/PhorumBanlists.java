@@ -163,7 +163,7 @@ public class PhorumBanlists extends AbstractSpecificEntityInstance {
      */
     @Override
     public String toString() {
-        return "comments = " + comments + ", forumId = " + forumId + ", id = " + id + ", pcre = " + pcre + ", string = " + string + ", type = " + type;
+        return "{PhorumBanlists. comments = " + comments + ", forumId = " + forumId + ", id = " + id + ", pcre = " + pcre + ", string = " + string + ", type = " + type + "}";
     }
 
 }

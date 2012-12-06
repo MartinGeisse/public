@@ -97,7 +97,7 @@ public class PhorumUserNewflags extends AbstractSpecificEntityInstance {
      */
     @Override
     public String toString() {
-        return "forumId = " + forumId + ", messageId = " + messageId + ", userId = " + userId;
+        return "{PhorumUserNewflags. forumId = " + forumId + ", messageId = " + messageId + ", userId = " + userId + "}";
     }
 
 }

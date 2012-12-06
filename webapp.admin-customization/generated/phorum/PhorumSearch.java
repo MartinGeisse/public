@@ -29,12 +29,12 @@ public class PhorumSearch extends AbstractSpecificEntityInstance {
     /**
      * the dateTest
      */
-    private java.sql.Date dateTest;
+    private org.joda.time.LocalDate dateTest;
 
     /**
      * the datetimeTest
      */
-    private java.sql.Timestamp datetimeTest;
+    private org.joda.time.DateTime datetimeTest;
 
     /**
      * the forumId
@@ -56,7 +56,7 @@ public class PhorumSearch extends AbstractSpecificEntityInstance {
      * @return the dateTest
      */
     @GeneratedFromColumn("date_test")
-    public java.sql.Date getDateTest() {
+    public org.joda.time.LocalDate getDateTest() {
         return dateTest;
     }
 
@@ -64,7 +64,7 @@ public class PhorumSearch extends AbstractSpecificEntityInstance {
      * Setter method for the dateTest.
      * @param dateTest the dateTest to set
      */
-    public void setDateTest(java.sql.Date dateTest) {
+    public void setDateTest(org.joda.time.LocalDate dateTest) {
         this.dateTest = dateTest;
     }
 
@@ -73,7 +73,7 @@ public class PhorumSearch extends AbstractSpecificEntityInstance {
      * @return the datetimeTest
      */
     @GeneratedFromColumn("datetime_test")
-    public java.sql.Timestamp getDatetimeTest() {
+    public org.joda.time.DateTime getDatetimeTest() {
         return datetimeTest;
     }
 
@@ -81,7 +81,7 @@ public class PhorumSearch extends AbstractSpecificEntityInstance {
      * Setter method for the datetimeTest.
      * @param datetimeTest the datetimeTest to set
      */
-    public void setDatetimeTest(java.sql.Timestamp datetimeTest) {
+    public void setDatetimeTest(org.joda.time.DateTime datetimeTest) {
         this.datetimeTest = datetimeTest;
     }
 
@@ -141,7 +141,7 @@ public class PhorumSearch extends AbstractSpecificEntityInstance {
      */
     @Override
     public String toString() {
-        return "dateTest = " + dateTest + ", datetimeTest = " + datetimeTest + ", forumId = " + forumId + ", messageId = " + messageId + ", searchText = " + searchText;
+        return "{PhorumSearch. dateTest = " + dateTest + ", datetimeTest = " + datetimeTest + ", forumId = " + forumId + ", messageId = " + messageId + ", searchText = " + searchText + "}";
     }
 
 }

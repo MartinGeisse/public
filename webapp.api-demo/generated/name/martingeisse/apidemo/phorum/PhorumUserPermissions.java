@@ -3,15 +3,7 @@
  */
 package name.martingeisse.apidemo.phorum;
 
-import java.util.ArrayList;
-import com.mysema.query.support.Expressions;
-import com.mysema.query.sql.SQLQuery;
-import com.mysema.query.types.Predicate;
-import name.martingeisse.common.database.EntityConnectionManager;
-import name.martingeisse.apidemo.Databases;
-import com.mysema.commons.lang.CloseableIterator;
 import java.io.Serializable;
-import java.util.HashMap;
 
 /**
  * This class represents rows from table 'phorum_user_permissions'.

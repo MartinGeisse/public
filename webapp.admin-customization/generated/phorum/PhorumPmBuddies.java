@@ -97,7 +97,7 @@ public class PhorumPmBuddies extends AbstractSpecificEntityInstance {
      */
     @Override
     public String toString() {
-        return "buddyUserId = " + buddyUserId + ", pmBuddyId = " + pmBuddyId + ", userId = " + userId;
+        return "{PhorumPmBuddies. buddyUserId = " + buddyUserId + ", pmBuddyId = " + pmBuddyId + ", userId = " + userId + "}";
     }
 
 }

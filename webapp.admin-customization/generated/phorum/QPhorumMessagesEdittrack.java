@@ -56,7 +56,7 @@ public class QPhorumMessagesEdittrack extends com.mysema.query.sql.RelationalPat
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PhorumMessagesEdittrack> primary = createPrimaryKey(trackId);
+    public final com.mysema.query.sql.PrimaryKey<PhorumMessagesEdittrack> pk_primary = createPrimaryKey(trackId);
 
     /**
      * Path-variable based constructor.

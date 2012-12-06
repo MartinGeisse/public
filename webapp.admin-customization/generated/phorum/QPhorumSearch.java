@@ -26,12 +26,12 @@ public class QPhorumSearch extends com.mysema.query.sql.RelationalPathBase<Phoru
     /**
      * Metamodel property for property 'date_test'
      */
-    public final DatePath<java.sql.Date> dateTest = createDate("date_test", java.sql.Date.class);
+    public final DatePath<org.joda.time.LocalDate> dateTest = createDate("date_test", org.joda.time.LocalDate.class);
 
     /**
      * Metamodel property for property 'datetime_test'
      */
-    public final DateTimePath<java.sql.Timestamp> datetimeTest = createDateTime("datetime_test", java.sql.Timestamp.class);
+    public final DateTimePath<org.joda.time.DateTime> datetimeTest = createDateTime("datetime_test", org.joda.time.DateTime.class);
 
     /**
      * Metamodel property for property 'forum_id'
@@ -51,7 +51,7 @@ public class QPhorumSearch extends com.mysema.query.sql.RelationalPathBase<Phoru
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PhorumSearch> primary = createPrimaryKey(messageId);
+    public final com.mysema.query.sql.PrimaryKey<PhorumSearch> pk_primary = createPrimaryKey(messageId);
 
     /**
      * Path-variable based constructor.

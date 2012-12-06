@@ -226,7 +226,7 @@ public class QPhorumForums extends com.mysema.query.sql.RelationalPathBase<Phoru
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PhorumForums> primary = createPrimaryKey(forumId);
+    public final com.mysema.query.sql.PrimaryKey<PhorumForums> pk_primary = createPrimaryKey(forumId);
 
     /**
      * Path-variable based constructor.

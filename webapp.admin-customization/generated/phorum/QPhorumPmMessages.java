@@ -61,7 +61,7 @@ public class QPhorumPmMessages extends com.mysema.query.sql.RelationalPathBase<P
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PhorumPmMessages> primary = createPrimaryKey(pmMessageId);
+    public final com.mysema.query.sql.PrimaryKey<PhorumPmMessages> pk_primary = createPrimaryKey(pmMessageId);
 
     /**
      * Path-variable based constructor.
