@@ -110,9 +110,6 @@ public interface IDatabaseDescriptor {
 	 * to be precise -- since even in combination with a time zone do they not represent
 	 * an instant in the first place. 
 	 * 
-	 * TODO: The application should be able to override the time zone (including override
-	 * with null) for any entity or entity property.
-	 * 
 	 * @return the default time zone to receive instants from queries, or null to
 	 * receive local date/time values.
 	 */

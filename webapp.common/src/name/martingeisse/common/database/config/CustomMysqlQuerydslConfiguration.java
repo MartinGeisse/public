@@ -32,10 +32,6 @@ import com.mysema.query.sql.SQLTemplates;
  * This configuration directly reflects this situation: It accepts
  * a default time zone to construct instants from the values returned
  * by the database, and supports partials out-of-the-box.
- * 
- * TODO: Make sure that this configuration is used! When a QueryDSL
- * query is created without explicitly passing this configuration,
- * QueryDSL falls back to its own time implementation based on JDBC!
  */
 public class CustomMysqlQuerydslConfiguration extends Configuration {
 
@@ -66,7 +62,7 @@ public class CustomMysqlQuerydslConfiguration extends Configuration {
 		}
 		
 		// Register a "Pair" type so QueryDSL can convert Pair instances to constant expressions
-		// register(new PairType(this));
+		register(new PairType(this));
 		
 	}
 	

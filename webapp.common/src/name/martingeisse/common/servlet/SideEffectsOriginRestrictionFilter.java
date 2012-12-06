@@ -17,14 +17,20 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 /**
  * Prevents POST, PUT, DELETE requests from other domains to protect
  * against CSRF attacks.
- * 
- * TODO: log CSRF requests! This may lead us to the attacker.
  */
 public class SideEffectsOriginRestrictionFilter implements Filter {
 
+	/**
+	 * the logger
+	 */
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(SideEffectsOriginRestrictionFilter.class);
+	
 	/* (non-Javadoc)
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
 	 */
@@ -63,6 +69,7 @@ public class SideEffectsOriginRestrictionFilter implements Filter {
 			// an empty referrer may come from a downloaded HTML file -- protect against these
 			String referrer = httpRequest.getHeader("Referer");
 			if (referrer == null) {
+				logger.error("received POST request without Referer header field");
 				httpResponse.setStatus(400);
 				return;
 			}
@@ -70,11 +77,13 @@ public class SideEffectsOriginRestrictionFilter implements Filter {
 			// an empty host header field means we cannot check the referrer
 			String host = httpRequest.getHeader("Host");
 			if (host == null) {
+				logger.error("received POST request without Host header field");
 				httpResponse.setStatus(400);
 				return;
 			}
 			
 			// the referrer must be our domain
+			logger.error("received POST request with different Host (" + host + ") and Referer (" + referrer + ") header fields");
 			if (!host.equals(extractRefererDomain(referrer))) {
 				httpResponse.setStatus(400);
 				return;
