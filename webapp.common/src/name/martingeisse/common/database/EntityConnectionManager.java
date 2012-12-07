@@ -104,6 +104,7 @@ public class EntityConnectionManager {
 	 * @return the connection for the current thread and specified database
 	 */
 	public static IEntityDatabaseConnection getConnection(final IDatabaseDescriptor database) {
+		logger.trace("getting database connection ...");
 		Map<IDatabaseDescriptor, IEntityDatabaseConnection> connections = connectionContainer.get();
 		if (connections == null) {
 			connections = new HashMap<IDatabaseDescriptor, IEntityDatabaseConnection>();
@@ -111,9 +112,12 @@ public class EntityConnectionManager {
 		}
 		IEntityDatabaseConnection connection = connections.get(database);
 		if (connection == null) {
+			logger.trace("no connection existing for this database yet ...");
 			connection = database.createConnection();
 			connections.put(database, connection);
+			logger.trace("connection created");
 		}
+		logger.trace("returning database connection");
 		return connection;
 	}
 
