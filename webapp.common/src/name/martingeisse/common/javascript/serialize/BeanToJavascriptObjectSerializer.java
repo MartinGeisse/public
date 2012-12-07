@@ -119,6 +119,9 @@ public class BeanToJavascriptObjectSerializer<T> extends AbstractJavascriptSeria
 	private void serializeAllFields(final T bean, final JavascriptAssembler assembler) throws Exception {
 		for (final PropertyDescriptor property : PropertyUtils.getPropertyDescriptors(bean)) {
 			final String beanPropertyName = property.getName();
+			if (beanPropertyName.equals("class")) {
+				continue;
+			}
 			final String serializedFieldName = mapPropertyNameToSerializedName(beanPropertyName);
 			final Object value = property.getReadMethod().invoke(bean);
 			assembler.prepareObjectProperty(serializedFieldName);
