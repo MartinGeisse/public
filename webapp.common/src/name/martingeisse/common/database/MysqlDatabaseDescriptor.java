@@ -15,6 +15,12 @@ import com.mysema.query.sql.SQLTemplates;
  */
 public class MysqlDatabaseDescriptor extends AbstractDatabaseDescriptor {
 
+	/**
+	 * Constructor.
+	 */
+	public MysqlDatabaseDescriptor() {
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.schema.database.AbstractDatabaseDescriptor#createSqlTemplates()
 	 */

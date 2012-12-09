@@ -7,7 +7,6 @@
 package name.martingeisse.common.database;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
@@ -16,6 +15,8 @@ import name.martingeisse.common.database.config.CustomMysqlQuerydslConfiguration
 
 import org.joda.time.DateTimeZone;
 
+import com.jolbox.bonecp.BoneCP;
+import com.jolbox.bonecp.BoneCPConfig;
 import com.mysema.commons.lang.Pair;
 import com.mysema.query.sql.Configuration;
 import com.mysema.query.sql.RelationalPath;
@@ -61,6 +62,11 @@ public abstract class AbstractDatabaseDescriptor implements IDatabaseDescriptor 
 	 * the defaultTimeZone
 	 */
 	private DateTimeZone defaultTimeZone;
+	
+	/**
+	 * the connectionPool
+	 */
+	private BoneCP connectionPool;
 
 	/**
 	 * Constructor.
@@ -149,12 +155,38 @@ public abstract class AbstractDatabaseDescriptor implements IDatabaseDescriptor 
 		this.defaultTimeZone = defaultTimeZone;
 	}
 
+	/**
+	 * Initializes this database descriptor.
+	 */
+	public void initialize() {
+		try {
+			connectionPool = createConnectionPool();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
+	 * Creates the connection pool. This method is invoked by
+	 * {@link #initialize()}.
+	 */
+	protected BoneCP createConnectionPool() throws SQLException {
+		BoneCPConfig config = new BoneCPConfig();
+		config.setJdbcUrl(url);
+		config.setUsername(username); 
+		config.setPassword(password);
+		config.setMinConnectionsPerPartition(5);
+		config.setMaxConnectionsPerPartition(10);
+		config.setPartitionCount(1);
+		return new BoneCP(config);
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.entity.schema.database.IDatabaseDescriptor#createJdbcConnection()
 	 */
 	@Override
 	public Connection createJdbcConnection() throws SQLException {
-		return DriverManager.getConnection(url, username, password);
+		return connectionPool.getConnection();
 	}
 
 	/* (non-Javadoc)

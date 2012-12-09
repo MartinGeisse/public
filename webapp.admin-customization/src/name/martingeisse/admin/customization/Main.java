@@ -155,6 +155,7 @@ public class Main {
 		phorumDatabase.setPassword("");
 		phorumDatabase.setDefaultTimeZone(DateTimeZone.forID("Europe/Berlin"));
 		// phorumDatabase.setDefaultTimeZone(DateTimeZone.forID("Europe/London"));
+		phorumDatabase.initialize();
 		ApplicationConfiguration.get().addDatabase(phorumDatabase);
 		EntityConnectionManager.initializeDatabaseDescriptors(phorumDatabase);
 		

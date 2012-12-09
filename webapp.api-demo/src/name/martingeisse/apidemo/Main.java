@@ -35,6 +35,7 @@ public class Main {
 		phorumDatabase.setUsername("root");
 		phorumDatabase.setPassword("");
 		phorumDatabase.setDefaultTimeZone(DateTimeZone.forID("Europe/Berlin"));
+		phorumDatabase.initialize();
 		EntityConnectionManager.initializeDatabaseDescriptors(phorumDatabase);
 		
 		DefaultMasterHandler masterHandler = new DefaultMasterHandler();
