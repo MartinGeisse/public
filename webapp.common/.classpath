@@ -50,7 +50,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/java/querydsl/querydsl-core-2.9.0.jar" sourcepath="resource/libsrc/querydsl-core-2.9.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/querydsl/querydsl-sql-2.9.0-javadoc.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/querydsl/querydsl-sql-2.9.0.jar" sourcepath="resource/libsrc/querydsl-sql-2.9.0-sources.jar"/>
-	<classpathentry kind="lib" path="lib/java/bonecp-0.7.1.RELEASE.jar" sourcepath="resource/libsrc/bonecp-0.7.1.RELEASE-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/bonecp-0.7.1.RELEASE.jar" sourcepath="resource/libsrc/bonecp-0.7.1.RELEASE-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
