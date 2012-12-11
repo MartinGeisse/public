@@ -7,6 +7,7 @@ package name.martingeisse.wicket.component.form;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -87,7 +88,7 @@ public abstract class AbstractSelectableCheckboxListPanel<T> extends Panel {
 	 * @return the selection status
 	 */
 	public Map<T, Boolean> copySelectionStatus() {
-		
+		throw new NotImplementedException();
 	}
 	
 }

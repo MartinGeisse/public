@@ -279,5 +279,14 @@ public final class RequestParameters {
 		Boolean value = getBoolean(name, false);
 		return (value == null ? defaultValue : value);
 	}
+
+	/**
+	 * extract offset, page, limit
+	 * chainable setters in the extractor: default limit, max limit, parameter name prefix
+	 * @return
+	 */
+	public PaginationParameterExtractor getPagination() {
+		
+	}
 	
 }
