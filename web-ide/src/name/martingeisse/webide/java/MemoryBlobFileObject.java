@@ -71,6 +71,14 @@ public class MemoryBlobFileObject extends AbstractMemoryFileObject {
 	public CharSequence getCharContent(final boolean ignoreEncodingErrors) throws IOException {
 		return new String(contents, CHARSET);
 	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.webide.java.IMemoryFileObject#getBinaryContent()
+	 */
+	@Override
+	public byte[] getBinaryContent() {
+		return contents;
+	}
 
 	/* (non-Javadoc)
 	 * @see javax.tools.FileObject#openInputStream()

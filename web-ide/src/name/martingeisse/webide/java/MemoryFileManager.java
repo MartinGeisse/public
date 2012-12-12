@@ -35,12 +35,12 @@ public class MemoryFileManager implements JavaFileManager {
 	/**
 	 * the inputFiles
 	 */
-	private final Map<String, FileObject> inputFiles = new HashMap<String, FileObject>();
+	private final Map<String, IMemoryFileObject> inputFiles = new HashMap<String, IMemoryFileObject>();
 	
 	/**
 	 * the outputFiles
 	 */
-	private final Map<String, FileObject> outputFiles = new HashMap<String, FileObject>();
+	private final Map<String, IMemoryFileObject> outputFiles = new HashMap<String, IMemoryFileObject>();
 	
 	/**
 	 * Constructor.
@@ -55,7 +55,7 @@ public class MemoryFileManager implements JavaFileManager {
 	 * Getter method for the inputFiles.
 	 * @return the inputFiles
 	 */
-	public Map<String, FileObject> getInputFiles() {
+	public Map<String, IMemoryFileObject> getInputFiles() {
 		return inputFiles;
 	}
 	
@@ -63,7 +63,7 @@ public class MemoryFileManager implements JavaFileManager {
 	 * Getter method for the outputFiles.
 	 * @return the outputFiles
 	 */
-	public Map<String, FileObject> getOutputFiles() {
+	public Map<String, IMemoryFileObject> getOutputFiles() {
 		return outputFiles;
 	}
 	
@@ -126,7 +126,7 @@ public class MemoryFileManager implements JavaFileManager {
 			return null;
 		}
 		String key = packageName + '.' + relativeName;
-		FileObject fileObject = outputFiles.get(key);
+		IMemoryFileObject fileObject = outputFiles.get(key);
 		if (fileObject == null) {
 			fileObject = new MemoryBlobFileObject(key);
 			outputFiles.put(key, fileObject);
@@ -146,7 +146,7 @@ public class MemoryFileManager implements JavaFileManager {
 			return null;
 		}
 		String key = className + (kind == Kind.SOURCE ? ".java" : kind == Kind.CLASS ? ".class" : "");
-		FileObject fileObject = inputFiles.get(key);
+		IMemoryFileObject fileObject = inputFiles.get(key);
 		if (fileObject instanceof JavaFileObject) {
 			return (JavaFileObject)fileObject;
 		} else {
@@ -166,11 +166,11 @@ public class MemoryFileManager implements JavaFileManager {
 			return null;
 		}
 		String key = className + (kind == Kind.SOURCE ? ".java" : kind == Kind.CLASS ? ".class" : "");
-		FileObject fileObject = outputFiles.get(key);
+		IMemoryFileObject fileObject = outputFiles.get(key);
 		if (fileObject instanceof JavaFileObject) {
 			return (JavaFileObject)fileObject;
 		} else {
-			JavaFileObject javaFileObject = (kind == Kind.SOURCE ? new MemoryJavaFileObject(key) : new MemoryClassFileObject(key));
+			IMemoryJavaFileObject javaFileObject = (kind == Kind.SOURCE ? new MemoryJavaFileObject(key) : new MemoryClassFileObject(key));
 			outputFiles.put(key, javaFileObject);
 			return javaFileObject;
 		}

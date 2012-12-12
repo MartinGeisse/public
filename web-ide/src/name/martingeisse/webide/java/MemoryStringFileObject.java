@@ -67,6 +67,14 @@ public class MemoryStringFileObject extends AbstractMemoryFileObject {
 	public CharSequence getCharContent(final boolean ignoreEncodingErrors) throws IOException {
 		return contents;
 	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.webide.java.IMemoryFileObject#getBinaryContent()
+	 */
+	@Override
+	public byte[] getBinaryContent() {
+		return contents.getBytes(Charset.forName("utf-8"));
+	}
 
 	/* (non-Javadoc)
 	 * @see javax.tools.FileObject#openInputStream()

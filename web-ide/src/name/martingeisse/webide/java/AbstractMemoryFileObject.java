@@ -7,13 +7,14 @@
 package name.martingeisse.webide.java;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.tools.FileObject;
 
 /**
  * Base class for in-memory implementations of {@link FileObject}.
  */
-public abstract class AbstractMemoryFileObject implements FileObject {
+public abstract class AbstractMemoryFileObject implements IMemoryFileObject {
 
 	/**
 	 * the name
@@ -65,7 +66,11 @@ public abstract class AbstractMemoryFileObject implements FileObject {
 	 */
 	@Override
 	public URI toUri() {
-		throw new UnsupportedOperationException();
+		try {
+			return new URI("webide", "/" + name, null);
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

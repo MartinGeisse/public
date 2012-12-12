@@ -1,5 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <html>
+	<head>
+		<style type="text/css">
+			
+			div.CodeMirror {
+				border: 1px solid #aaa;
+			}
+			
+		</style>
+		<script type="text/javascript">
+
+			function saveEditor() {
+				var cursor = codeMirror.getCursor();
+				codeMirror.save();
+				$('#save-button').click();
+				codeMirror.setCursor(cursor);
+			}
+			$(document).bind("keydown keypress", function(e) {
+				if (e.which == 8) {
+					var doPrevent = true;
+					var element = (event.srcElement || event.target);
+					var elementName = element.tagName.toLowerCase();
+					if ((elementName === 'input' || elementName === 'textarea') && !element.disabled && !element.readOnly) {
+						var type = element.type.toLowerCase();
+						if (type === 'text' || type === 'password' || elementName === 'textarea') {
+							doPrevent = false;
+						}
+					}
+					if (doPrevent) {
+						e.preventDefault();
+					}
+				}
+			});
+			
+		</script>
+	</head>
 	<body>
 		<div style="position: fixed; top: 0px; left: 0px; width: 400px; padding: 10px;">
 			<div wicket:id="files">
@@ -10,15 +45,17 @@
 			<hr />
 			<div wicket:id="log" />
 		</div>
-		<div style="margin-left: 400px; ">
-			<form wicket:id="editorForm">
-				<textarea wicket:id="editorArea" rows="30" cols="80" style="font-family: monospace;">
+		<div style="margin-left: 410px; ">
+			<form wicket:id="editorForm" id="editor-form">
+				<textarea wicket:id="editorArea" rows="30" cols="80">
 				</textarea>
-				<div><input type="submit" value="save" /></div>
+				<br />
+				<input type="submit" value="do not press -- save via Cmd+S !!!" id="save-button" wicket:id="submit" />
 			</form>
 			<form wicket:id="runForm">
 				<input type="submit" value="run" />
 			</form>
 		</div>
+		<input type="text" />
 	</body>
 </html>

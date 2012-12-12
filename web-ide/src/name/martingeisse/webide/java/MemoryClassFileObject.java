@@ -13,7 +13,7 @@ import javax.tools.JavaFileObject;
 /**
  * In-memory implementation of {@link JavaFileObject} for Java source files.
  */
-public class MemoryClassFileObject extends MemoryBlobFileObject implements JavaFileObject {
+public class MemoryClassFileObject extends MemoryBlobFileObject implements IMemoryJavaFileObject {
 
 	/**
 	 * Constructor.

@@ -22,24 +22,29 @@ import javax.tools.ToolProvider;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.webide.entity.Files;
 import name.martingeisse.webide.entity.QFiles;
+import name.martingeisse.webide.java.IMemoryFileObject;
+import name.martingeisse.webide.java.IMemoryJavaFileObject;
 import name.martingeisse.webide.java.MemoryFileManager;
 import name.martingeisse.webide.java.MemoryJavaFileObject;
+import name.martingeisse.webide.java.codemirror.JavaTextArea;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
 import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.dml.SQLDeleteClause;
+import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 
 /**
@@ -102,7 +107,9 @@ public class WorkbenchPage extends WebPage {
 				update.execute();
 			}
 		};
-		editorForm.add(new TextArea<String>("editorArea", new PropertyModel<String>(this, "editorContents")));
+		editorForm.add(new AjaxButton("submit", editorForm) {});
+		editorForm.add(new JavaTextArea("editorArea", new PropertyModel<String>(this, "editorContents")));
+		// editorForm.add(new TextArea<String>("editorArea", new PropertyModel<String>(this, "editorContents")));
 		add(editorForm);
 
 		final Form<Void> runForm = new Form<Void>("runForm") {
@@ -119,9 +126,9 @@ public class WorkbenchPage extends WebPage {
 				final List<JavaFileObject> javaFiles = new ArrayList<JavaFileObject>();
 				final MemoryFileManager fileManager = new MemoryFileManager(standardFileManager);
 				final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-				for (final Files fileRecord : query.from(QFiles.files).list(QFiles.files)) {
+				for (final Files fileRecord : query.from(QFiles.files).where(QFiles.files.name.like("%.java")).list(QFiles.files)) {
 					String name = fileRecord.getName();
-					JavaFileObject fileObject = new MemoryJavaFileObject(name, fileRecord.getContents());
+					IMemoryJavaFileObject fileObject = new MemoryJavaFileObject(name, fileRecord.getContents());
 					javaFiles.add(fileObject);				
 					fileManager.getInputFiles().put(name, fileObject);
 				}
@@ -129,6 +136,17 @@ public class WorkbenchPage extends WebPage {
 				// run the java compiler
 				final CompilationTask task = compiler.getTask(null, fileManager, diagnosticListener, null, null, javaFiles);
 				final boolean success = task.call();
+				
+				// save the class files in the database
+				for (IMemoryFileObject file : fileManager.getOutputFiles().values()) {
+					String filename = file.getName();
+					SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QFiles.files);
+					delete.where(QFiles.files.name.eq(filename)).execute();
+					SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QFiles.files);
+					insert.set(QFiles.files.name, filename);
+					insert.set(QFiles.files.contents, file.getBinaryContent());
+					insert.execute();
+				}
 
 				// write the compilation log
 				final StringBuilder builder = new StringBuilder();
@@ -142,12 +160,13 @@ public class WorkbenchPage extends WebPage {
 				builder.append("success: ").append(success).append('\n');
 
 				// run the generated application
+				String className = (selectedFilename.endsWith(".java") ? selectedFilename.substring(0, selectedFilename.length() - 5) : selectedFilename);
 				String[] commandTokens = new String[] {
 					"java",
 					"-cp",
 					"lib/applauncher/code:lib/applauncher/lib/mysql-connector-java-5.1.20-bin.jar",
 					"name.martingeisse.webide.tools.AppLauncher",
-					selectedFilename,
+					className,
 				};
 				try {
 					Process process = Runtime.getRuntime().exec(commandTokens);
