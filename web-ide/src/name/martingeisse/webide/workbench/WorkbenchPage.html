@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+	<body>
+		<div style="position: fixed; top: 0px; left: 0px; width: 400px; padding: 10px;">
+			<div wicket:id="files">
+				<div wicket:id="file">
+					<div wicket:id="name">name</div>
+				</div>
+			</div>
+			<hr />
+			<div wicket:id="log" />
+		</div>
+		<div style="margin-left: 400px; ">
+			<form wicket:id="editorForm">
+				<textarea wicket:id="editorArea" rows="30" cols="80" style="font-family: monospace;">
+				</textarea>
+				<div><input type="submit" value="save" /></div>
+			</form>
+			<form wicket:id="runForm">
+				<input type="submit" value="run" />
+			</form>
+		</div>
+	</body>
+</html>

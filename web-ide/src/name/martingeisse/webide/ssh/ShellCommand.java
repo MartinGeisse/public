@@ -8,11 +8,7 @@ package name.martingeisse.webide.ssh;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.Environment;
@@ -95,7 +91,7 @@ public class ShellCommand implements Command, Runnable {
 	 */
 	@Override
 	public void run() {
-		
+		/*
 		TODO: LF -> CR LF, am besten direkt im charset oder streamreader/writer (wie macht "in" das genau,
 		"out" erwartet scheinbar CRLF
 		
@@ -117,6 +113,7 @@ public class ShellCommand implements Command, Runnable {
         if (exitCallback != null) {
         	exitCallback.onExit(0, "ok");
         }
+        */
 	}
 	
 }
