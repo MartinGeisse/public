@@ -44,6 +44,11 @@ public class QFiles extends com.mysema.query.sql.RelationalPathBase<Files> {
     public final com.mysema.query.sql.PrimaryKey<Files> pk_primary = createPrimaryKey(id);
 
     /**
+     * Metamodel property for reverse foreign key 'markers_ibfk_1'
+     */
+    public final com.mysema.query.sql.ForeignKey<Markers> fk__markersIbfk1 = createInvForeignKey(id, "file_id");
+
+    /**
      * Path-variable based constructor.
      * @param variable the path variable for this entity
      */
