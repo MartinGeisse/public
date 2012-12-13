@@ -26,7 +26,7 @@ public class QMarkers extends com.mysema.query.sql.RelationalPathBase<Markers> {
     /**
      * Metamodel property for property 'column'
      */
-    public final NumberPath<Integer> column = createNumber("column", Integer.class);
+    public final NumberPath<Long> column = createNumber("column", Long.class);
 
     /**
      * Metamodel property for property 'file_id'
@@ -41,7 +41,7 @@ public class QMarkers extends com.mysema.query.sql.RelationalPathBase<Markers> {
     /**
      * Metamodel property for property 'line'
      */
-    public final NumberPath<Integer> line = createNumber("line", Integer.class);
+    public final NumberPath<Long> line = createNumber("line", Long.class);
 
     /**
      * Metamodel property for property 'meaning'

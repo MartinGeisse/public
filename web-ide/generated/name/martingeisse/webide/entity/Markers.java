@@ -19,7 +19,7 @@ public class Markers implements Serializable {
     /**
      * the column
      */
-    private Integer column;
+    private Long column;
 
     /**
      * the fileId
@@ -34,7 +34,7 @@ public class Markers implements Serializable {
     /**
      * the line
      */
-    private Integer line;
+    private Long line;
 
     /**
      * the meaning
@@ -55,7 +55,7 @@ public class Markers implements Serializable {
      * Getter method for the column.
      * @return the column
      */
-    public Integer getColumn() {
+    public Long getColumn() {
         return column;
     }
 
@@ -63,7 +63,7 @@ public class Markers implements Serializable {
      * Setter method for the column.
      * @param column the column to set
      */
-    public void setColumn(Integer column) {
+    public void setColumn(Long column) {
         this.column = column;
     }
 
@@ -103,7 +103,7 @@ public class Markers implements Serializable {
      * Getter method for the line.
      * @return the line
      */
-    public Integer getLine() {
+    public Long getLine() {
         return line;
     }
 
@@ -111,7 +111,7 @@ public class Markers implements Serializable {
      * Setter method for the line.
      * @param line the line to set
      */
-    public void setLine(Integer line) {
+    public void setLine(Long line) {
         this.line = line;
     }
 

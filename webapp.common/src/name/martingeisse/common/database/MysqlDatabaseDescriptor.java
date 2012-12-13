@@ -26,7 +26,7 @@ public class MysqlDatabaseDescriptor extends AbstractDatabaseDescriptor {
 	 */
 	@Override
 	public SQLTemplates createSqlTemplates() {
-		return new MySQLTemplates();
+		return new MySQLTemplates(true);
 	}
 
 	/* (non-Javadoc)

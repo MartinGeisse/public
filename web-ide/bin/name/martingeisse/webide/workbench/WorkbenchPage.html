@@ -3,8 +3,34 @@
 	<head>
 		<style type="text/css">
 			
+			body {
+				background-color: #eee;
+			}
+			
 			div.CodeMirror {
 				border: 1px solid #aaa;
+				background-color: #fff;
+			}
+			
+			div.view-box {
+				background-color: #fff;
+				border-radius: 8px; 
+				padding: 5px;
+				box-shadow: 2px 2px 5px -1px #000;
+				margin: 5px;
+			}
+			
+			.selected {
+				background-color: #cdf;
+			}
+			
+			h1 {
+			}
+			
+			h2 {
+				margin: 0px;
+				font-size: 15px;
+				border-bottom: 1px solid #888;
 			}
 			
 		</style>
@@ -37,13 +63,26 @@
 	</head>
 	<body>
 		<div style="position: fixed; top: 0px; left: 0px; width: 400px; padding: 10px;">
-			<div wicket:id="files">
-				<div wicket:id="file">
-					<div wicket:id="name">name</div>
+			<div class="view-box">
+				<h2>Files</h2>
+				<div wicket:id="files">
+					<div wicket:id="file">
+						<div wicket:id="name">name</div>
+					</div>
 				</div>
 			</div>
-			<hr />
-			<div wicket:id="log" />
+			<div class="view-box">
+				<h2>Markers</h2>
+				<ul>
+					<li wicket:id="markers">
+						<span wicket:id="meaning">meaning</span>: <span wicket:id="message">message</span>
+					</li>
+				</ul>
+			</div>
+			<div class="view-box">
+				<h2>Output</h2>
+				<div wicket:id="log" />
+			</div>
 		</div>
 		<div style="margin-left: 410px; ">
 			<form wicket:id="editorForm" id="editor-form">

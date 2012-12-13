@@ -8,10 +8,13 @@ package name.martingeisse.webide.workbench;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.tools.Diagnostic;
+import javax.tools.Diagnostic.Kind;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
@@ -27,6 +30,11 @@ import name.martingeisse.webide.java.IMemoryJavaFileObject;
 import name.martingeisse.webide.java.MemoryFileManager;
 import name.martingeisse.webide.java.MemoryJavaFileObject;
 import name.martingeisse.webide.java.codemirror.JavaTextArea;
+import name.martingeisse.webide.resources.MarkerData;
+import name.martingeisse.webide.resources.MarkerDatabaseUtil;
+import name.martingeisse.webide.resources.MarkerListView;
+import name.martingeisse.webide.resources.MarkerMeaning;
+import name.martingeisse.webide.resources.MarkerOrigin;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -80,7 +88,7 @@ public class WorkbenchPage extends WebPage {
 				final WebMarkupContainer container = new WebMarkupContainer("file");
 				container.add(new Label("name", filename));
 				if (filename.equals(selectedFilename)) {
-					item.add(new AttributeAppender("style", Model.of("background-color: #88f"), ", "));
+					item.add(new AttributeAppender("class", Model.of("selected"), " "));
 				}
 				item.add(container);
 
@@ -98,6 +106,14 @@ public class WorkbenchPage extends WebPage {
 		add(filesList);
 		setOutputMarkupId(true);
 
+		add(new MarkerListView("markers", null, 30) {
+			@Override
+			protected void populateItem(ListItem<MarkerData> item) {
+				addMeaningLabel(item, "meaning", item.getModel());
+				addMessageLabel(item, "message", item.getModel());
+			}
+		});
+		
 		final Form<Void> editorForm = new Form<Void>("editorForm") {
 			@Override
 			protected void onSubmit() {
@@ -123,10 +139,14 @@ public class WorkbenchPage extends WebPage {
 				StandardJavaFileManager standardFileManager = compiler.getStandardFileManager(diagnosticListener, locale, Charset.forName("utf-8"));
 				
 				// fetch and wrap source code files as JavaFileObjects
+				final List<Long> sourceFileIds = new ArrayList<Long>();
+				final Map<String, Long> sourceFileNameToId = new HashMap<String, Long>();
 				final List<JavaFileObject> javaFiles = new ArrayList<JavaFileObject>();
 				final MemoryFileManager fileManager = new MemoryFileManager(standardFileManager);
 				final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 				for (final Files fileRecord : query.from(QFiles.files).where(QFiles.files.name.like("%.java")).list(QFiles.files)) {
+					sourceFileIds.add(fileRecord.getId());
+					sourceFileNameToId.put(fileRecord.getName(), fileRecord.getId());
 					String name = fileRecord.getName();
 					IMemoryJavaFileObject fileObject = new MemoryJavaFileObject(name, fileRecord.getContents());
 					javaFiles.add(fileObject);				
@@ -147,17 +167,62 @@ public class WorkbenchPage extends WebPage {
 					insert.set(QFiles.files.contents, file.getBinaryContent());
 					insert.execute();
 				}
+				
+				// collect diagnostic messages per source file
+				final List<Diagnostic<? extends JavaFileObject>> diagnostics = diagnosticListener.getDiagnostics();
+				final Map<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>> sourceFileToDiagnostics = new HashMap<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>>();
+				for (final Diagnostic<? extends JavaFileObject> diagnostic : diagnostics) {
+					JavaFileObject currentFile = diagnostic.getSource();
+					List<Diagnostic<? extends JavaFileObject>> currentFileDiagnostics = sourceFileToDiagnostics.get(currentFile);
+					if (currentFileDiagnostics == null) {
+						currentFileDiagnostics = new ArrayList<Diagnostic<? extends JavaFileObject>>();
+						sourceFileToDiagnostics.put(currentFile, currentFileDiagnostics);
+					}
+					currentFileDiagnostics.add(diagnostic);
+				}
+				
+				// generate markers for the diagnostic messages
+				MarkerDatabaseUtil.removeMarkersForFile(sourceFileIds, MarkerOrigin.JAVAC);
+				for (Map.Entry<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>> fileEntry : sourceFileToDiagnostics.entrySet()) {
+					String filename = fileEntry.getKey().getName();
+					long fileId = sourceFileNameToId.get(filename);
+					for (Diagnostic<? extends JavaFileObject> diagnostic : fileEntry.getValue()) {
+						
+						// convert the diagnostic kind to a marker meaning (skip this diagnostic if the kind is unknown)
+						Kind diagnosticKind = diagnostic.getKind();
+						MarkerMeaning meaning;
+						if (diagnosticKind == Kind.ERROR) {
+							meaning = MarkerMeaning.ERROR;
+						} else if (diagnosticKind == Kind.WARNING || diagnosticKind == Kind.MANDATORY_WARNING) {
+							meaning = MarkerMeaning.WARNING;
+						} else {
+							continue;
+						}
+						
+						// create the marker
+						MarkerData markerData = new MarkerData();
+						markerData.setOrigin(MarkerOrigin.JAVAC);
+						markerData.setMeaning(meaning);
+						markerData.setLine(diagnostic.getLineNumber());
+						markerData.setColumn(diagnostic.getColumnNumber());
+						markerData.setMessage(diagnostic.getMessage(null));
+						markerData.insertIntoDatabase(fileId);
+						
+					}
+				}
+				
 
 				// write the compilation log
 				final StringBuilder builder = new StringBuilder();
-				final List<Diagnostic<? extends JavaFileObject>> diagnostics = diagnosticListener.getDiagnostics();
+				/*
 				for (final Diagnostic<? extends JavaFileObject> diagnostic : diagnostics) {
 					builder.append("in line ").append(diagnostic.getLineNumber()).append(", column ").append(diagnostic.getColumnNumber())
 						.append(": \n");
 					builder.append(diagnostic.getMessage(locale)).append('\n');
 					builder.append('\n');
 				}
-				builder.append("success: ").append(success).append('\n');
+				*/
+				builder.append("builder success: ").append(success).append('\n');
 
 				// run the generated application
 				String className = (selectedFilename.endsWith(".java") ? selectedFilename.substring(0, selectedFilename.length() - 5) : selectedFilename);

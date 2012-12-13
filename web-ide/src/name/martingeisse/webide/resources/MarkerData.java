@@ -28,7 +28,7 @@ public final class MarkerData implements Serializable {
 	 */
 	public MarkerData() {
 	}
-	
+
 	/**
 	 * Constructor.
 	 * @param marker the marker to create this object from
@@ -54,12 +54,12 @@ public final class MarkerData implements Serializable {
 	/**
 	 * the line
 	 */
-	private Integer line;
+	private Long line;
 
 	/**
 	 * the column
 	 */
-	private Integer column;
+	private Long column;
 
 	/**
 	 * the message
@@ -102,7 +102,7 @@ public final class MarkerData implements Serializable {
 	 * Getter method for the line.
 	 * @return the line
 	 */
-	public Integer getLine() {
+	public Long getLine() {
 		return line;
 	}
 
@@ -110,7 +110,7 @@ public final class MarkerData implements Serializable {
 	 * Setter method for the line.
 	 * @param line the line to set
 	 */
-	public void setLine(final Integer line) {
+	public void setLine(final Long line) {
 		this.line = line;
 	}
 
@@ -118,7 +118,7 @@ public final class MarkerData implements Serializable {
 	 * Getter method for the column.
 	 * @return the column
 	 */
-	public Integer getColumn() {
+	public Long getColumn() {
 		return column;
 	}
 
@@ -126,7 +126,7 @@ public final class MarkerData implements Serializable {
 	 * Setter method for the column.
 	 * @param column the column to set
 	 */
-	public void setColumn(final Integer column) {
+	public void setColumn(final Long column) {
 		this.column = column;
 	}
 
@@ -151,10 +151,9 @@ public final class MarkerData implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "{MarkerData. origin = " + origin + ", meaning = " + meaning + ", line = " + line + ", column = " + column + ", message = "
-			+ message + "}";
+		return "{MarkerData. origin = " + origin + ", meaning = " + meaning + ", line = " + line + ", column = " + column + ", message = " + message + "}";
 	}
-	
+
 	/**
 	 * Inserts a marker for the specified file with this data into the database.
 	 * @param fileId the file to insert the marker for
@@ -162,7 +161,7 @@ public final class MarkerData implements Serializable {
 	public void insertIntoDatabase(long fileId) {
 		MarkerDatabaseUtil.insertMarker(fileId, origin.toString(), meaning.toString(), line, column, message);
 	}
-	
+
 	/**
 	 * Creates a list of {@link MarkerData} objects from a collection of {@link Markers} objects.
 	 * @param markers the marker records
@@ -175,27 +174,40 @@ public final class MarkerData implements Serializable {
 		}
 		return result;
 	}
-	
+
+	/**
+	 * Fetches all markers for the specified file.
+	 * @param meaningFilter optional list of accepted marker meanings. If null is
+	 * passed for this parameter then all markers are fetched.
+	 * @param limit the maximum number of markers to fetch
+	 * @return the markers
+	 */
+	public static List<MarkerData> fetchMarkerData(MarkerMeaning[] meaningFilter, long limit) {
+		return createMarkerDataList(MarkerDatabaseUtil.fetchAllMarkers(meaningFilter, limit));
+	}
+
 	/**
 	 * Fetches all markers for the specified file.
 	 * @param fileId the file ID
 	 * @param meaningFilter optional list of accepted marker meanings. If null is
 	 * passed for this parameter then all markers are fetched.
+	 * @param limit the maximum number of markers to fetch
 	 * @return the markers
 	 */
-	public static List<MarkerData> fetchMarkerDataForFile(long fileId, MarkerMeaning[] meaningFilter) {
-		return createMarkerDataList(MarkerDatabaseUtil.fetchMarkersForFile(fileId, meaningFilter));
+	public static List<MarkerData> fetchMarkerDataForFile(long fileId, MarkerMeaning[] meaningFilter, long limit) {
+		return createMarkerDataList(MarkerDatabaseUtil.fetchMarkersForFile(fileId, meaningFilter, limit));
 	}
-	
+
 	/**
 	 * Fetches all markers for the specified file.
 	 * @param fileName the file name
 	 * @param meaningFilter optional list of accepted marker meanings. If null is
 	 * passed for this parameter then all markers are fetched.
+	 * @param limit the maximum number of markers to fetch
 	 * @return the markers
 	 */
-	public static List<MarkerData> fetchMarkerDataForFile(String fileName, MarkerMeaning[] meaningFilter) {
-		return createMarkerDataList(MarkerDatabaseUtil.fetchMarkersForFile(fileName, meaningFilter));
+	public static List<MarkerData> fetchMarkerDataForFile(String fileName, MarkerMeaning[] meaningFilter, long limit) {
+		return createMarkerDataList(MarkerDatabaseUtil.fetchMarkersForFile(fileName, meaningFilter, limit));
 	}
-	
+
 }
