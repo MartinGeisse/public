@@ -4,6 +4,12 @@
 
 package name.martingeisse.webide.resources;
 
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+
+import name.martingeisse.webide.entity.Markers;
+import name.martingeisse.wicket.icons.silk.Dummy;
+
 /**
  * This enum type selects an icon for a marker.
  */
@@ -13,22 +19,22 @@ public enum MarkerIconSelector {
 	 * used for warning markers
 	 */
 	WARNING("error.png"),
-	
+
 	/**
 	 * used for error markers
 	 */
 	ERROR("exclamation.png"),
-	
+
 	/**
 	 * used if no other icon is appropriate
 	 */
 	MISSING_ICON("tag_blue.png");
-	
+
 	/**
 	 * the filename
 	 */
 	private final String filename;
-	
+
 	/**
 	 * Constructor.
 	 * @param filename the simple icon filename
@@ -45,4 +51,44 @@ public enum MarkerIconSelector {
 		return filename;
 	}
 	
+	/**
+	 * @return a resource reference for the icon
+	 */
+	public ResourceReference getResourceReference() {
+		return new PackageResourceReference(Dummy.class, filename);
+	}
+
+	/**
+	 * Returns the appropriate icon selector for the specified marker.
+	 * @param marker the marker
+	 * @return the icon selector
+	 */
+	public static MarkerIconSelector get(Markers marker) {
+		return get(MarkerMeaning.valueOf(marker.getMeaning()));
+	}
+
+	/**
+	 * Returns the appropriate icon selector for the specified marker.
+	 * @param marker the marker
+	 * @return the icon selector
+	 */
+	public static MarkerIconSelector get(MarkerData marker) {
+		return get(marker.getMeaning());
+	}
+
+	/**
+	 * Returns the appropriate icon selector for the specified marker meaning.
+	 * @param meaning the marker meaning
+	 * @return the icon selector
+	 */
+	public static MarkerIconSelector get(MarkerMeaning meaning) {
+		if (meaning == MarkerMeaning.WARNING) {
+			return WARNING;
+		} else if (meaning == MarkerMeaning.ERROR) {
+			return ERROR;
+		} else {
+			return MISSING_ICON;
+		}
+	}
+
 }

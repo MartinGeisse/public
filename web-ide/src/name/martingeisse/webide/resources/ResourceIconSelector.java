@@ -4,6 +4,11 @@
 
 package name.martingeisse.webide.resources;
 
+import name.martingeisse.wicket.icons.silk.Dummy;
+
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+
 /**
  * This enum type selects an icon for a resource.
  */
@@ -66,13 +71,20 @@ public enum ResourceIconSelector {
 	}
 	
 	/**
+	 * @return a resource reference for the icon
+	 */
+	public ResourceReference getResourceReference() {
+		return new PackageResourceReference(Dummy.class, filename);
+	}
+	
+	/**
 	 * Chosses an icon for a resource.
 	 * @param type the resource type
 	 * @param hasErrors whether the resource has errors
 	 * @param hasWarnings whether the resource has warnings (ignored if hasErrors is true)
 	 * @return the icon selector
 	 */
-	public static ResourceIconSelector choose(ResourceType type, boolean hasErrors, boolean hasWarnings) {
+	public static ResourceIconSelector get(ResourceType type, boolean hasErrors, boolean hasWarnings) {
 		switch (type) {
 		
 		case MOUNT_SPACE:

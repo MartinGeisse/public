@@ -5,11 +5,12 @@
 			
 			body {
 				background-color: #eee;
+				margin: 0px;
+				padding: 0px;
 			}
 			
-			div.CodeMirror {
-				border: 1px solid #aaa;
-				background-color: #fff;
+			div.layout-box {
+				padding: 5px;
 			}
 			
 			div.view-box {
@@ -17,7 +18,15 @@
 				border-radius: 8px; 
 				padding: 5px;
 				box-shadow: 2px 2px 5px -1px #000;
-				margin: 5px;
+			}
+			
+			div.CodeMirror {
+				border: 1px solid #aaa;
+				background-color: #fff;
+			}
+
+			div.CodeMirror-scroll {
+				height: 80%;
 			}
 			
 			.selected {
@@ -62,39 +71,47 @@
 		</script>
 	</head>
 	<body>
-		<div style="position: fixed; top: 0px; left: 0px; width: 400px; padding: 10px;">
-			<div class="view-box">
-				<h2>Files</h2>
-				<div wicket:id="files">
-					<div wicket:id="file">
-						<div wicket:id="name">name</div>
+		<div style="position: absolute; top: 0px; left: 0px; width: 400px; height: 85%; padding: 0px;">
+			<div class="layout-box">
+				<div class="view-box">
+					<h2>Files</h2>
+					<div style="overflow: scroll; height: 33%;">
+						<div wicket:id="files">
+							<div wicket:id="file" style="white-space: nowrap;">
+								<img wicket:id="icon" style="vertical-align: sub;" /> <span wicket:id="name">name</span>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
-			<div class="view-box">
-				<h2>Markers</h2>
-				<ul>
-					<li wicket:id="markers">
-						<span wicket:id="meaning">meaning</span>: <span wicket:id="message">message</span>
-					</li>
-				</ul>
+			<div class="layout-box">
+				<div class="view-box">
+					<h2>Markers</h2>
+					<div style="overflow: scroll; height: 33%;">
+						<div wicket:id="markers" style="margin: 3px; ">
+							<img wicket:id="icon" /> <span wicket:id="meaning">meaning</span>: <span wicket:id="message">message</span>
+						</div>
+					</div>
+				</div>
 			</div>
-			<div class="view-box">
-				<h2>Output</h2>
-				<div wicket:id="log" />
+			<div class="layout-box">
+				<div class="view-box">
+					<h2>Output</h2>
+					<div style="overflow: scroll; height: 33%; font-family: monospace; white-space: pre;"><div wicket:id="log" /></div>
+				</div>
 			</div>
 		</div>
-		<div style="margin-left: 410px; ">
-			<form wicket:id="editorForm" id="editor-form">
-				<textarea wicket:id="editorArea" rows="30" cols="80">
-				</textarea>
-				<br />
-				<input type="submit" value="do not press -- save via Cmd+S !!!" id="save-button" wicket:id="submit" />
-			</form>
-			<form wicket:id="runForm">
-				<input type="submit" value="run" />
-			</form>
+		<div class="layout-box" style="margin-left: 400px;">
+			<div class="view-box" style="background-color: #fff; height: 95%;">
+				<form wicket:id="editorForm" id="editor-form">
+					<textarea wicket:id="editorArea" rows="20" cols="80">
+					</textarea>
+					<input type="submit" value="do not press -- save via Cmd+S !!!" id="save-button" wicket:id="submit" />
+				</form>
+				<form wicket:id="runForm">
+					<input type="submit" value="run" />
+				</form>
+			</div>
 		</div>
-		<input type="text" />
 	</body>
 </html>
