@@ -37,11 +37,11 @@ import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.MarkerOrigin;
 import name.martingeisse.webide.resources.ResourceIconSelector;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -50,8 +50,9 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 
 import com.mysema.query.sql.SQLQuery;
@@ -63,11 +64,6 @@ import com.mysema.query.sql.dml.SQLUpdateClause;
  * The main workbench page.
  */
 public class WorkbenchPage extends WebPage {
-
-	/**
-	 * the selectedFilename
-	 */
-	private String selectedFilename;
 
 	/**
 	 * the editorContents
@@ -83,7 +79,22 @@ public class WorkbenchPage extends WebPage {
 	 * Constructor.
 	 */
 	public WorkbenchPage() {
+		setOutputMarkupId(true);
 
+		final WebMarkupContainer filesContainer = new WebMarkupContainer("filesContainer");
+		filesContainer.add(new SelectableElementsBehavior(".file", "$('.name', element).text()") {
+			@Override
+			protected void onInteraction(AjaxRequestTarget target, String interaction, List<?> selectedValues) {
+				if (interaction.equals("dblclick")) {
+					if (!selectedValues.isEmpty()) {
+						loadEditorContents(selectedValues.get(0).toString());
+					}
+					target.add(WorkbenchPage.this);
+				}
+			}
+		});
+		add(filesContainer);
+		
 		final ListView<String> filesList = new ListView<String>("files", new PropertyModel<List<String>>(this, "filenames")) {
 			@Override
 			protected void populateItem(final ListItem<String> item) {
@@ -97,28 +108,15 @@ public class WorkbenchPage extends WebPage {
 					}
 				}));
 				container.add(new Label("name", filename));
-				if (filename.equals(selectedFilename)) {
-					item.add(new AttributeAppender("class", Model.of("selected"), " "));
-				}
 				item.add(container);
-
-				container.add(new AjaxEventBehavior("click") {
-					@Override
-					protected void onEvent(final AjaxRequestTarget target) {
-						selectedFilename = filename;
-						loadEditorContents();
-						target.add(WorkbenchPage.this);
-					}
-				});
-
+				
 			}
 		};
-		add(filesList);
-		setOutputMarkupId(true);
+		filesContainer.add(filesList);
 
 		add(new MarkerListView("markers", null, 30) {
 			@Override
-			protected void populateItem(ListItem<MarkerData> item) {
+			protected void populateItem(final ListItem<MarkerData> item) {
 				addMeaningIcon(item, "icon", item.getModel());
 				addMeaningLabel(item, "meaning", item.getModel());
 				addMessageLabel(item, "message", item.getModel());
@@ -129,7 +127,7 @@ public class WorkbenchPage extends WebPage {
 			@Override
 			protected void onSubmit() {
 				final SQLUpdateClause update = EntityConnectionManager.getConnection().createUpdate(QFiles.files);
-				update.where(QFiles.files.name.eq(selectedFilename));
+				// update.where(QFiles.files.name.eq(selectedFilename)); TODO
 				update.set(QFiles.files.contents, (editorContents == null ? "" : editorContents).getBytes(Charset.forName("utf-8")));
 				update.execute();
 			}
@@ -148,7 +146,8 @@ public class WorkbenchPage extends WebPage {
 				final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 				final DiagnosticCollector<JavaFileObject> diagnosticListener = new DiagnosticCollector<JavaFileObject>();
 				final Locale locale = null;
-				StandardJavaFileManager standardFileManager = compiler.getStandardFileManager(diagnosticListener, locale, Charset.forName("utf-8"));
+				final StandardJavaFileManager standardFileManager = compiler.getStandardFileManager(diagnosticListener, locale,
+					Charset.forName("utf-8"));
 
 				// fetch and wrap source code files as JavaFileObjects
 				final List<Long> sourceFileIds = new ArrayList<Long>();
@@ -159,8 +158,8 @@ public class WorkbenchPage extends WebPage {
 				for (final Files fileRecord : query.from(QFiles.files).where(QFiles.files.name.like("%.java")).list(QFiles.files)) {
 					sourceFileIds.add(fileRecord.getId());
 					sourceFileNameToId.put(fileRecord.getName(), fileRecord.getId());
-					String name = fileRecord.getName();
-					IMemoryJavaFileObject fileObject = new MemoryJavaFileObject(name, fileRecord.getContents());
+					final String name = fileRecord.getName();
+					final IMemoryJavaFileObject fileObject = new MemoryJavaFileObject(name, fileRecord.getContents());
 					javaFiles.add(fileObject);
 					fileManager.getInputFiles().put(name, fileObject);
 				}
@@ -170,11 +169,11 @@ public class WorkbenchPage extends WebPage {
 				final boolean success = task.call();
 
 				// save the class files in the database
-				for (IMemoryFileObject file : fileManager.getOutputFiles().values()) {
-					String filename = file.getName();
-					SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QFiles.files);
+				for (final IMemoryFileObject file : fileManager.getOutputFiles().values()) {
+					final String filename = file.getName();
+					final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QFiles.files);
 					delete.where(QFiles.files.name.eq(filename)).execute();
-					SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QFiles.files);
+					final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QFiles.files);
 					insert.set(QFiles.files.name, filename);
 					insert.set(QFiles.files.contents, file.getBinaryContent());
 					insert.execute();
@@ -184,7 +183,7 @@ public class WorkbenchPage extends WebPage {
 				final List<Diagnostic<? extends JavaFileObject>> diagnostics = diagnosticListener.getDiagnostics();
 				final Map<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>> sourceFileToDiagnostics = new HashMap<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>>();
 				for (final Diagnostic<? extends JavaFileObject> diagnostic : diagnostics) {
-					JavaFileObject currentFile = diagnostic.getSource();
+					final JavaFileObject currentFile = diagnostic.getSource();
 					List<Diagnostic<? extends JavaFileObject>> currentFileDiagnostics = sourceFileToDiagnostics.get(currentFile);
 					if (currentFileDiagnostics == null) {
 						currentFileDiagnostics = new ArrayList<Diagnostic<? extends JavaFileObject>>();
@@ -195,13 +194,14 @@ public class WorkbenchPage extends WebPage {
 
 				// generate markers for the diagnostic messages
 				MarkerDatabaseUtil.removeMarkersForFile(sourceFileIds, MarkerOrigin.JAVAC);
-				for (Map.Entry<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>> fileEntry : sourceFileToDiagnostics.entrySet()) {
-					String filename = fileEntry.getKey().getName();
-					long fileId = sourceFileNameToId.get(filename);
-					for (Diagnostic<? extends JavaFileObject> diagnostic : fileEntry.getValue()) {
+				for (final Map.Entry<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>> fileEntry : sourceFileToDiagnostics
+					.entrySet()) {
+					final String filename = fileEntry.getKey().getName();
+					final long fileId = sourceFileNameToId.get(filename);
+					for (final Diagnostic<? extends JavaFileObject> diagnostic : fileEntry.getValue()) {
 
 						// convert the diagnostic kind to a marker meaning (skip this diagnostic if the kind is unknown)
-						Kind diagnosticKind = diagnostic.getKind();
+						final Kind diagnosticKind = diagnostic.getKind();
 						MarkerMeaning meaning;
 						if (diagnosticKind == Kind.ERROR) {
 							meaning = MarkerMeaning.ERROR;
@@ -212,7 +212,7 @@ public class WorkbenchPage extends WebPage {
 						}
 
 						// create the marker
-						MarkerData markerData = new MarkerData();
+						final MarkerData markerData = new MarkerData();
 						markerData.setOrigin(MarkerOrigin.JAVAC);
 						markerData.setMeaning(meaning);
 						markerData.setLine(diagnostic.getLineNumber());
@@ -229,19 +229,24 @@ public class WorkbenchPage extends WebPage {
 
 				// if the build was successful, run the generated application
 				if (success) {
-					String className = (selectedFilename.endsWith(".java") ? selectedFilename.substring(0, selectedFilename.length() - 5) : selectedFilename);
-					String[] commandTokens = new String[] {
-						"java", "-cp", "lib/applauncher/code:lib/applauncher/lib/mysql-connector-java-5.1.20-bin.jar", "name.martingeisse.webide.tools.AppLauncher", className,
+					/*
+					 * TODO
+					final String className = (selectedFilename.endsWith(".java") ? selectedFilename.substring(0,
+						selectedFilename.length() - 5) : selectedFilename);
+					final String[] commandTokens = new String[] {
+						"java", "-cp", "lib/applauncher/code:lib/applauncher/lib/mysql-connector-java-5.1.20-bin.jar",
+						"name.martingeisse.webide.tools.AppLauncher", className,
 					};
 					try {
-						Process process = Runtime.getRuntime().exec(commandTokens);
+						final Process process = Runtime.getRuntime().exec(commandTokens);
 						process.getOutputStream().close();
 						builder.append(IOUtils.toString(process.getInputStream()));
 						builder.append(IOUtils.toString(process.getErrorStream()));
 						process.waitFor();
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						builder.append(e.toString());
 					}
+					 */
 				}
 
 				// store the log for rendering
@@ -266,27 +271,12 @@ public class WorkbenchPage extends WebPage {
 	/**
 	 * 
 	 */
-	private void loadEditorContents() {
+	private void loadEditorContents(String filename) {
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-		final Object resultObject = query.from(QFiles.files).where(QFiles.files.name.eq(selectedFilename)).singleResult(QFiles.files.contents);
+		final Object resultObject = query.from(QFiles.files).where(QFiles.files.name.eq(filename))
+			.singleResult(QFiles.files.contents);
 		final byte[] encodedContents = (byte[])(((Object[])resultObject)[0]);
 		editorContents = new String(encodedContents, Charset.forName("utf-8"));
-	}
-
-	/**
-	 * Getter method for the selectedFilename.
-	 * @return the selectedFilename
-	 */
-	public String getSelectedFilename() {
-		return selectedFilename;
-	}
-
-	/**
-	 * Setter method for the selectedFilename.
-	 * @param selectedFilename the selectedFilename to set
-	 */
-	public void setSelectedFilename(final String selectedFilename) {
-		this.selectedFilename = selectedFilename;
 	}
 
 	/**
@@ -321,4 +311,14 @@ public class WorkbenchPage extends WebPage {
 		this.log = log;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.Component#renderHead(org.apache.wicket.markup.head.IHeaderResponse)
+	 */
+	@Override
+	public void renderHead(final IHeaderResponse response) {
+		super.renderHead(response);
+		response.render(CssHeaderItem.forReference(new CssResourceReference(WorkbenchPage.class, "jquery.contextMenu.css")));
+		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkbenchPage.class, "common.js")));
+	}
+	
 }

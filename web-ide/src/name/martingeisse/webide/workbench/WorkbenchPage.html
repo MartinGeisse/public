@@ -9,11 +9,11 @@
 				padding: 0px;
 			}
 			
-			div.layout-box {
+			div.LayoutBox {
 				padding: 5px;
 			}
 			
-			div.view-box {
+			div.ViewBox {
 				background-color: #fff;
 				border-radius: 8px; 
 				padding: 5px;
@@ -29,10 +29,6 @@
 				height: 80%;
 			}
 			
-			.selected {
-				background-color: #cdf;
-			}
-			
 			h1 {
 			}
 			
@@ -40,6 +36,10 @@
 				margin: 0px;
 				font-size: 15px;
 				border-bottom: 1px solid #888;
+			}
+			
+			#filesContainer * {
+				cursor: default;
 			}
 			
 		</style>
@@ -51,41 +51,42 @@
 				$('#save-button').click();
 				codeMirror.setCursor(cursor);
 			}
-			$(document).bind("keydown keypress", function(e) {
-				if (e.which == 8) {
-					var doPrevent = true;
-					var element = (event.srcElement || event.target);
-					var elementName = element.tagName.toLowerCase();
-					if ((elementName === 'input' || elementName === 'textarea') && !element.disabled && !element.readOnly) {
-						var type = element.type.toLowerCase();
-						if (type === 'text' || type === 'password' || elementName === 'textarea') {
-							doPrevent = false;
-						}
-					}
-					if (doPrevent) {
-						e.preventDefault();
-					}
-				}
+
+			
+			$(document).ready(function() {
+				$.contextMenu({
+			        selector: '#filesContainer', 
+			        callback: function(key, options) {
+			            var m = "clicked: " + key;
+			            window.console && console.log(m) || alert(m); 
+			        },
+			        items: {
+			            "new": {name: "New..."},
+			            "open": {name: "Open"},
+			            "rename": {name: "Rename..."},
+			            "delete": {name: "Delete"},
+			        }
+			    });
 			});
 			
 		</script>
 	</head>
 	<body>
 		<div style="position: absolute; top: 0px; left: 0px; width: 400px; height: 85%; padding: 0px;">
-			<div class="layout-box">
-				<div class="view-box">
+			<div class="LayoutBox">
+				<div class="ViewBox">
 					<h2>Files</h2>
-					<div style="overflow: scroll; height: 33%;">
+					<div style="overflow: scroll; height: 33%;" id="filesContainer" wicket:id="filesContainer">
 						<div wicket:id="files">
-							<div wicket:id="file" style="white-space: nowrap;">
-								<img wicket:id="icon" style="vertical-align: sub;" /> <span wicket:id="name">name</span>
+							<div wicket:id="file" style="white-space: nowrap;" class="file">
+								<img wicket:id="icon" style="vertical-align: sub;" /> <span wicket:id="name" class="name">name</span>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="layout-box">
-				<div class="view-box">
+			<div class="LayoutBox">
+				<div class="ViewBox">
 					<h2>Markers</h2>
 					<div style="overflow: scroll; height: 33%;">
 						<div wicket:id="markers" style="margin: 3px; ">
@@ -94,15 +95,15 @@
 					</div>
 				</div>
 			</div>
-			<div class="layout-box">
-				<div class="view-box">
+			<div class="LayoutBox">
+				<div class="ViewBox">
 					<h2>Output</h2>
 					<div style="overflow: scroll; height: 33%; font-family: monospace; white-space: pre;"><div wicket:id="log" /></div>
 				</div>
 			</div>
 		</div>
-		<div class="layout-box" style="margin-left: 400px;">
-			<div class="view-box" style="background-color: #fff; height: 95%;">
+		<div class="LayoutBox" style="margin-left: 400px;">
+			<div class="ViewBox" style="background-color: #fff; height: 95%;">
 				<form wicket:id="editorForm" id="editor-form">
 					<textarea wicket:id="editorArea" rows="20" cols="80">
 					</textarea>
