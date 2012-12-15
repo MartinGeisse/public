@@ -36,6 +36,7 @@ import name.martingeisse.webide.resources.MarkerListView;
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.MarkerOrigin;
 import name.martingeisse.webide.resources.ResourceIconSelector;
+import name.martingeisse.webide.workbench.components.SelectableElementsBehavior;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;

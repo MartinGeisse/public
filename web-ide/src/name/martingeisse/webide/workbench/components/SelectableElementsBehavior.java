@@ -4,9 +4,11 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.workbench;
+package name.martingeisse.webide.workbench.components;
 
 import java.util.List;
+
+import name.martingeisse.webide.workbench.components.contextmenu.ContextMenu;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -36,8 +38,12 @@ import org.json.simple.JSONValue;
  *   then sent to the server. Such values must be JSON-encodable (they
  *   will be passed to JSON.stringify()).
  * 
+ * This class supports a context menu, with the list of selected elements
+ * as the anchor.
+ * 
+ * @param <T> the internal representation type of selectable elements
  */
-public abstract class SelectableElementsBehavior extends AbstractDefaultAjaxBehavior {
+public abstract class SelectableElementsBehavior<T> extends AbstractDefaultAjaxBehavior {
 
 	/**
 	 * the elementSelector
@@ -48,7 +54,14 @@ public abstract class SelectableElementsBehavior extends AbstractDefaultAjaxBeha
 	 * the valueExpression
 	 */
 	private String valueExpression;
+	
+	/**
+	 * the contextMenu
+	 */
+	private ContextMenu<List<T>> contextMenu;
 
+	TODO: pass Class<T> in the constructor, cast & pass typed to onInteraction and to the context menu
+	
 	/**
 	 * Constructor.
 	 * @param elementSelector the jQuery selector for selectable elements
@@ -57,6 +70,18 @@ public abstract class SelectableElementsBehavior extends AbstractDefaultAjaxBeha
 	public SelectableElementsBehavior(final String elementSelector, final String valueExpression) {
 		this.elementSelector = elementSelector;
 		this.valueExpression = valueExpression;
+	}
+	
+	/**
+	 * Constructor.
+	 * @param elementSelector the jQuery selector for selectable elements
+	 * @param valueExpression an expression for the value of a selectable element
+	 * @param contextMenu the context menu
+	 */
+	public SelectableElementsBehavior(final String elementSelector, final String valueExpression, ContextMenu contextMenu) {
+		this.elementSelector = elementSelector;
+		this.valueExpression = valueExpression;
+		this.contextMenu = contextMenu;
 	}
 
 	/**
