@@ -21,6 +21,7 @@ public class JavaTextArea extends TextArea<String> {
 	/**
 	 * Constructor.
 	 * @param id the wicket id
+	 * @param model the model for the edited contents
 	 */
 	public JavaTextArea(String id, IModel<String> model) {
 		super(id, model);

@@ -52,14 +52,14 @@ public abstract class SimpleContextMenuItem<A> extends ContextMenuItem<A> {
 	/**
 	 * This method is invoked when the menu item is selected.
 	 */
-	protected abstract void onSelect();
+	protected abstract void onSelect(A anchor);
 	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.webide.workbench.components.contextmenu.ContextMenuItem#notifySelectedInternal(java.lang.Object)
 	 */
 	@Override
 	final void notifySelectedInternal(A anchor) {
-		onSelect();
+		onSelect(anchor);
 	}
 
 	/* (non-Javadoc)

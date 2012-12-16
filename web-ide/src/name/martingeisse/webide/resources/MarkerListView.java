@@ -19,9 +19,8 @@ import org.apache.wicket.request.resource.ResourceReference;
  * General-purpose list view to display a list of markers.
  * 
  * Client code must subclass this view and implement the
- * {@link #populateItem(org.apache.wicket.markup.html.list.ListItem)}
- * method. This class provides helper methods to create
- * common marker-related components.
+ * populateItem method. This class provides helper methods
+ * to create common marker-related components.
  */
 public abstract class MarkerListView extends ListView<MarkerData> {
 

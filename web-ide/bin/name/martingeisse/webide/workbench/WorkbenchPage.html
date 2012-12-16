@@ -26,7 +26,7 @@
 			}
 
 			div.CodeMirror-scroll {
-				height: 80%;
+				height: 100%;
 			}
 			
 			h1 {
@@ -52,23 +52,6 @@
 				codeMirror.setCursor(cursor);
 			}
 
-			
-			$(document).ready(function() {
-				$.contextMenu({
-			        selector: '#filesContainer', 
-			        callback: function(key, options) {
-			            var m = "clicked: " + key;
-			            window.console && console.log(m) || alert(m); 
-			        },
-			        items: {
-			            "new": {name: "New..."},
-			            "open": {name: "Open"},
-			            "rename": {name: "Rename..."},
-			            "delete": {name: "Delete"},
-			        }
-			    });
-			});
-			
 		</script>
 	</head>
 	<body>
@@ -107,10 +90,7 @@
 				<form wicket:id="editorForm" id="editor-form">
 					<textarea wicket:id="editorArea" rows="20" cols="80">
 					</textarea>
-					<input type="submit" value="do not press -- save via Cmd+S !!!" id="save-button" wicket:id="submit" />
-				</form>
-				<form wicket:id="runForm">
-					<input type="submit" value="run" />
+					<input type="submit" value="do not press -- save via Cmd+S !!!" id="save-button" wicket:id="submit" style="display: none; " />
 				</form>
 			</div>
 		</div>

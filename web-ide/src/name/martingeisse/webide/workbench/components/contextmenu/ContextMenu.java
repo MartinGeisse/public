@@ -77,18 +77,34 @@ public class ContextMenu<A> {
 	 * Builds a Javascript instruction that creates this menu using the jQuery context menu plugin.
 	 * @param builder the string builder to append to
 	 * @param selector the jQuery selector for the menu trigger element
+	 * @param callbackBuilder an object that knows how to generate callback requests
+	 * to the server and route them to the appropriate menu item
 	 */
-	public void buildCreateInstruction(StringBuilder builder, String selector) {
-		builder.append("$.contextMenu({selector: '").append(selector).append("', callback: function(key, options) {alert(key);}, items: [");
+	public void buildCreateInstruction(StringBuilder builder, String selector, IContextMenuCallbackBuilder callbackBuilder) {
+		builder.append("$(document).ready(function() {\n");
+		builder.append("	$.contextMenu({\n");
+		builder.append("		selector: '").append(selector).append("',\n");
+		builder.append("		build: function() {\n");
+		builder.append("			return {\n");
+		builder.append("				callback: function(key /*, options*/) {\n");
+		callbackBuilder.buildContextMenuCallback(builder);
+		builder.append("				},\n");
+		builder.append("				items: {\n");
 		int i=0;
 		for (ContextMenuItem<? super A> item : items) {
 			if (i > 0) {
 				builder.append(", ");
 			}
-			builder.append("item").append(i).append(": ");
+			builder.append("					item").append(i).append(": ");
 			item.buildItem(builder);
+			builder.append("\n");
+			i++;
 		}
-		builder.append("]});\n");
+		builder.append("				}\n");
+		builder.append("			};\n");
+		builder.append("		}\n");
+		builder.append("	});\n");
+		builder.append("});\n");
 	}
 	
 }

@@ -21,12 +21,8 @@ import com.mysema.query.sql.dml.SQLInsertClause;
 /**
  * TODO: document me
  *
-	ListView zum anzeigen (Icon, Texte)
-	setzen beim compile
-	anzeigen per ListView/Model
 	compile bei save
 	run getrennt per button
-
  */
 public class MarkerDatabaseUtil {
 

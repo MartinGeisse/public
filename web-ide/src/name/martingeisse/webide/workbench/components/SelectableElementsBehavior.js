@@ -37,7 +37,7 @@ $.fn.selectableElements = function(options) {
 			getSelectedValues : getSelectedValues,
 			sendAjaxRequest : sendAjaxRequest,
 		};
-		$this.data('selectableElements', selected);
+		$this.data('selectableElements', storedData);
 
 		// helper functions for event handlers
 		function selectSingleElementForEvent(event) {
@@ -83,15 +83,15 @@ $.fn.selectableElements = function(options) {
 	return this;
 }
 
-$.fn.selectableElements.get = function() {
-	return $this.data('selectableElements').getSelectedValues();
+$.fn.selectableElements_get = function() {
+	return this.data('selectableElements').getSelectedValues();
 };
 
-$.fn.selectableElements.getElements = function() {
-	return $this.data('selectableElements').selected;
+$.fn.selectableElements_getElements = function() {
+	return this.data('selectableElements').selected;
 };
 
-$.fn.selectableElements.ajax = function(interaction) {
-	$this.data('selectableElements').sendAjaxRequest(interaction);
+$.fn.selectableElements_ajax = function(interaction) {
+	this.data('selectableElements').sendAjaxRequest(interaction);
 	return this;
 };

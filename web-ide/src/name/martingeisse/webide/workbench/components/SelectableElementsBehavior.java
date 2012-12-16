@@ -6,9 +6,11 @@
 
 package name.martingeisse.webide.workbench.components;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import name.martingeisse.webide.workbench.components.contextmenu.ContextMenu;
+import name.martingeisse.webide.workbench.components.contextmenu.IContextMenuCallbackBuilder;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -43,8 +45,13 @@ import org.json.simple.JSONValue;
  * 
  * @param <T> the internal representation type of selectable elements
  */
-public abstract class SelectableElementsBehavior<T> extends AbstractDefaultAjaxBehavior {
+public abstract class SelectableElementsBehavior<T> extends AbstractDefaultAjaxBehavior implements IContextMenuCallbackBuilder {
 
+	/**
+	 * the CONTEXT_MENU_INTERACTION_PREFIX
+	 */
+	private static final String CONTEXT_MENU_INTERACTION_PREFIX = "contextMenu.";
+	
 	/**
 	 * the elementSelector
 	 */
@@ -60,8 +67,6 @@ public abstract class SelectableElementsBehavior<T> extends AbstractDefaultAjaxB
 	 */
 	private ContextMenu<List<T>> contextMenu;
 
-	TODO: pass Class<T> in the constructor, cast & pass typed to onInteraction and to the context menu
-	
 	/**
 	 * Constructor.
 	 * @param elementSelector the jQuery selector for selectable elements
@@ -78,7 +83,7 @@ public abstract class SelectableElementsBehavior<T> extends AbstractDefaultAjaxB
 	 * @param valueExpression an expression for the value of a selectable element
 	 * @param contextMenu the context menu
 	 */
-	public SelectableElementsBehavior(final String elementSelector, final String valueExpression, ContextMenu contextMenu) {
+	public SelectableElementsBehavior(final String elementSelector, final String valueExpression, ContextMenu<List<T>> contextMenu) {
 		this.elementSelector = elementSelector;
 		this.valueExpression = valueExpression;
 		this.contextMenu = contextMenu;
@@ -135,7 +140,10 @@ public abstract class SelectableElementsBehavior<T> extends AbstractDefaultAjaxB
 		builder.append("\t\tajaxCallback: ").append(getCallbackFunction(parameters).toString().replace("\n", " ")).append(",");
 		builder.append("\t\tnotSelectedStyle: {'background-color': ''},\n");
 		builder.append("\t\tselectedStyle: {'background-color': '#f00'}\n");
-		builder.append("\t})");
+		builder.append("\t});\n");
+		if (contextMenu != null) {
+			contextMenu.buildCreateInstruction(builder, "#" + component.getMarkupId(), this);
+		}
 
 		final AjaxRequestTarget target = component.getRequestCycle().find(AjaxRequestTarget.class);
 		if (target == null) {
@@ -161,18 +169,56 @@ public abstract class SelectableElementsBehavior<T> extends AbstractDefaultAjaxB
 			}
 			final Object selectedValues = JSONValue.parse(encodedSelectedValues);
 			if (selectedValues instanceof List) {
-				onInteraction(target, interaction, (List<?>)selectedValues);
+				List<T> convertedValues = convertSelectedValues((List<?>)selectedValues);
+				if (interaction.startsWith(CONTEXT_MENU_INTERACTION_PREFIX)) {
+					if (contextMenu != null) {
+						String menuItemKey = interaction.substring(CONTEXT_MENU_INTERACTION_PREFIX.length());
+						contextMenu.notifySelected(menuItemKey, convertedValues);
+					}
+				} else {
+					onInteraction(target, interaction, convertedValues);
+				}
 			}
 		}
 	}
 
+	/**
+	 * Converts a list of values from JSON to the internal value type T.
+	 * @param jsonValues the JSON values
+	 * @return the internal values
+	 */
+	protected List<T> convertSelectedValues(List<?> jsonValues) {
+		List<T> result = new ArrayList<T>();
+		for (Object jsonValue : jsonValues) {
+			result.add(convertSelectedValue(jsonValue));
+		}
+		return result;
+	}
+	
+	/**
+	 * Converts a single value from JSON to the internal value type T.
+	 * @param jsonValue the JSON value
+	 * @return the internal value
+	 */
+	protected abstract T convertSelectedValue(Object jsonValue);
+	
 	/**
 	 * This method is invoked when the client-side scripts notify the server about
 	 * a user interaction.
 	 * @param target the ART
 	 * @param interaction a string describing the interaction, e.g. "dblclick"
 	 * for a double-click
+	 * @param selectedValues the selected values
 	 */
-	protected abstract void onInteraction(AjaxRequestTarget target, String interaction, List<?> selectedValues);
+	protected abstract void onInteraction(AjaxRequestTarget target, String interaction, List<T> selectedValues);
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.webide.workbench.components.contextmenu.IContextMenuCallbackBuilder#buildContextMenuCallback(java.lang.StringBuilder)
+	 */
+	@Override
+	public void buildContextMenuCallback(StringBuilder builder) {
+		builder.append("var interaction = '" + CONTEXT_MENU_INTERACTION_PREFIX + "' + key;");
+		builder.append("\t$('#").append(getComponent().getMarkupId()).append("').selectableElements_ajax(interaction);\n");
+	}
 
 }

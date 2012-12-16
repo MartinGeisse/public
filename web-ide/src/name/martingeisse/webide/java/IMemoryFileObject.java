@@ -4,8 +4,6 @@
 
 package name.martingeisse.webide.java;
 
-import java.io.IOException;
-
 import javax.tools.FileObject;
 
 /**
@@ -15,7 +13,6 @@ public interface IMemoryFileObject extends FileObject {
 
 	/**
 	 * @return the binary contents of this file
-	 * @throws IOException on I/O errors
 	 */
 	public byte[] getBinaryContent();
 	
