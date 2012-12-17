@@ -3,16 +3,17 @@ $.fn.selectableElements = function(options) {
 
 	// apply default options
 	options = $.extend({
-		elementSelector : null,
-		valueExtractor : function(element) {
+		elementSelector: null,
+		valueExtractor: function(element) {
 			return element;
 		},
-		ajaxCallback : function() {
+		ajaxCallback: function() {
 		},
-		notSelectedClass : null,
-		selectedClass : null,
-		notSelectedStyle : null,
-		selectedStyle : null
+		notSelectedClass: null,
+		selectedClass: null,
+		notSelectedStyle: null,
+		selectedStyle: null,
+		hasContextMenu: false,
 	}, options);
 
 	// handle each selection context separately
@@ -53,13 +54,13 @@ $.fn.selectableElements = function(options) {
 			var index = $.inArray(element, selected);
 			if (index == -1) {
 				selected.push(element);
-				$element.applyStyle(options.notSelectedClass,
-						options.selectedClass, options.selectedStyle);
+				$element.applyStyle(options.notSelectedClass, options.selectedClass, options.selectedStyle);
 			} else {
 				selected.splice(index, 1);
-				$element.applyStyle(options.selectedClass,
-						options.notSelectedClass, options.notSelectedStyle);
+				$element.applyStyle(options.selectedClass, options.notSelectedClass, options.notSelectedStyle);
 			}
+		}
+		function selectForContextMenu(event) {
 		}
 
 		// add event handlers
@@ -77,6 +78,15 @@ $.fn.selectableElements = function(options) {
 			selectSingleElementForEvent(event);
 			sendAjaxRequest('dblclick', null);
 		});
+		if (options.hasContextMenu) {
+			$allElements.bind('contextmenu', function(event) {
+				console.log(event);
+				selectForContextMenu(event);
+				// $this.contextMenu();
+				// TODO: .contextMenu() just fires the contextmenu event -- can we actually open
+				// the menu manually?
+			});
+		}
 	});
 
 	return this;
