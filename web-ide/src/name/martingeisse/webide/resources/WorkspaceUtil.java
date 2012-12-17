@@ -13,6 +13,7 @@ import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.webide.entity.QFiles;
 
 import com.mysema.query.sql.dml.SQLDeleteClause;
+import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 
 /**
@@ -26,6 +27,19 @@ public class WorkspaceUtil {
 	private WorkspaceUtil() {
 	}
 
+	/**
+	 * Creates a file with the specified contents. No file with the same name may
+	 * exist yet.
+	 * @param filename the filename
+	 * @param contents the file contents
+	 */
+	public static void createFile(String filename, String contents) {
+		final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QFiles.files);
+		insert.set(QFiles.files.name, filename);
+		insert.set(QFiles.files.contents, (contents == null ? "" : contents).getBytes(Charset.forName("utf-8")));
+		insert.execute();
+	}
+	
 	/**
 	 * Replaces the contents of the specified file with the specified contents.
 	 * Has no effect if the file does not exist.

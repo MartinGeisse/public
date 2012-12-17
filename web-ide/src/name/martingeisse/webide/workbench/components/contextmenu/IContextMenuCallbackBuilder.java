@@ -34,7 +34,8 @@ public interface IContextMenuCallbackBuilder {
 	 * Writes the method body of the callback method (as defined by
 	 * the jQuery context menu plugin) to the specified string builder.
 	 * The generated code has access to the menu item key in the
-	 * variable "key".
+	 * variable "key", and to additional client-side data in the
+	 * variable "data".
 	 * 
 	 * @param builder the string builder
 	 */

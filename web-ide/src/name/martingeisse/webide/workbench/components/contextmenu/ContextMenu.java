@@ -9,6 +9,10 @@ package name.martingeisse.webide.workbench.components.contextmenu;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.martingeisse.wicket.util.WicketHeadUtil;
+
+import org.apache.wicket.markup.head.IHeaderResponse;
+
 /**
  * This class describes the structure of a context menu. It is not
  * itself a component or behavior; rather, it is used by such.
@@ -23,10 +27,28 @@ import java.util.List;
  * but typically *created* once for a whole list of anchors. This means
  * that the anchor isn't yet available at construction time.
  * 
+ * In addition to the anchor, individual menu items may generate 
+ * additional data on the client-side and pass it to the server-side
+ * handling methods. This data is passed in a format that is specific
+ * to where the context menu is attached (though parsed JSON is a
+ * typical format). The structure of this data is totally dependent
+ * on the menu item that generates it. An example for such additional
+ * data is a menu item that asks the user for an input string in a
+ * pop-up dialog before sending the context menu request to the server.
+ * 
  * @param <A> the anchor type
  */
 public class ContextMenu<A> {
 
+	/**
+	 * Renders head items needed by context menus. This method should be used
+	 * by components and behaviors when they want to use a context menu.
+	 * @param response the header response
+	 */
+	public static void renderHead(IHeaderResponse response) {
+		WicketHeadUtil.includeClassJavascript(response, ContextMenu.class);
+	}
+	
 	/**
 	 * the items
 	 */
@@ -50,13 +72,14 @@ public class ContextMenu<A> {
 	 * Triggers the effect of the menu item with the specified key.
 	 * @param key the key
 	 * @param anchor the anchor
+	 * @param data additional data from the client-side code for this menu item
 	 */
-	public final void notifySelected(String key, A anchor) {
+	public final void notifySelected(String key, A anchor, Object data) {
 		int index = extractIndexFromKey(key);
 		if (index < 0 || index >= items.size()) {
 			throw new RuntimeException("invalid context menu item key: " + key);
 		}
-		items.get(index).notifySelected(anchor);
+		items.get(index).notifySelected(anchor, data);
 	}
 	
 	/**
@@ -81,30 +104,20 @@ public class ContextMenu<A> {
 	 * to the server and route them to the appropriate menu item
 	 */
 	public void buildCreateInstruction(StringBuilder builder, String selector, IContextMenuCallbackBuilder callbackBuilder) {
-		builder.append("$(document).ready(function() {\n");
-		builder.append("	$.contextMenu({\n");
-		builder.append("		selector: '").append(selector).append("',\n");
-		builder.append("		build: function() {\n");
-		builder.append("			return {\n");
-		builder.append("				callback: function(key /*, options*/) {\n");
+		builder.append("createContextMenu('").append(selector).append("', function(key, options) {var data = null; \n");
 		callbackBuilder.buildContextMenuCallback(builder);
-		builder.append("				},\n");
-		builder.append("				items: {\n");
+		builder.append("}, {");
 		int i=0;
 		for (ContextMenuItem<? super A> item : items) {
 			if (i > 0) {
 				builder.append(", ");
 			}
 			builder.append("					item").append(i).append(": ");
-			item.buildItem(builder);
+			item.buildItem(builder, callbackBuilder);
 			builder.append("\n");
 			i++;
 		}
-		builder.append("				}\n");
-		builder.append("			};\n");
-		builder.append("		}\n");
-		builder.append("	});\n");
-		builder.append("});\n");
+		builder.append("});");
 	}
 	
 }

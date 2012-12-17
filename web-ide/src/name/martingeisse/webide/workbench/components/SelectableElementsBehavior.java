@@ -11,17 +11,16 @@ import java.util.List;
 
 import name.martingeisse.webide.workbench.components.contextmenu.ContextMenu;
 import name.martingeisse.webide.workbench.components.contextmenu.IContextMenuCallbackBuilder;
+import name.martingeisse.wicket.util.WicketHeadUtil;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.json.simple.JSONValue;
 
 /**
@@ -127,10 +126,12 @@ public abstract class SelectableElementsBehavior<T> extends AbstractDefaultAjaxB
 	@Override
 	public void renderHead(final Component component, final IHeaderResponse response) {
 		super.renderHead(component, response);
-		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(SelectableElementsBehavior.class, SelectableElementsBehavior.class.getSimpleName().toString() + ".js")));
+		WicketHeadUtil.includeClassJavascript(response, SelectableElementsBehavior.class);
 
 		final CallbackParameter[] parameters = new CallbackParameter[] {
-			CallbackParameter.explicit("interaction"), CallbackParameter.explicit("selectedValues"),
+			CallbackParameter.explicit("interaction"),
+			CallbackParameter.explicit("selectedValues"),
+			CallbackParameter.explicit("data"),
 		};
 
 		final StringBuilder builder = new StringBuilder();
@@ -142,6 +143,7 @@ public abstract class SelectableElementsBehavior<T> extends AbstractDefaultAjaxB
 		builder.append("\t\tselectedStyle: {'background-color': '#f00'}\n");
 		builder.append("\t});\n");
 		if (contextMenu != null) {
+			ContextMenu.renderHead(response);
 			contextMenu.buildCreateInstruction(builder, "#" + component.getMarkupId(), this);
 		}
 
@@ -163,23 +165,31 @@ public abstract class SelectableElementsBehavior<T> extends AbstractDefaultAjaxB
 		final IRequestParameters parameters = requestCycle.getRequest().getRequestParameters();
 		final String interaction = parameters.getParameterValue("interaction").toString();
 		if (interaction != null) {
-			String encodedSelectedValues = parameters.getParameterValue("selectedValues").toString();
-			if (encodedSelectedValues == null) {
-				encodedSelectedValues = "[]";
-			}
-			final Object selectedValues = JSONValue.parse(encodedSelectedValues);
+			final Object selectedValues = getJsonParameter(parameters, "selectedValues", "[]");
+			final Object data = getJsonParameter(parameters, "data", "null");
 			if (selectedValues instanceof List) {
 				List<T> convertedValues = convertSelectedValues((List<?>)selectedValues);
 				if (interaction.startsWith(CONTEXT_MENU_INTERACTION_PREFIX)) {
 					if (contextMenu != null) {
 						String menuItemKey = interaction.substring(CONTEXT_MENU_INTERACTION_PREFIX.length());
-						contextMenu.notifySelected(menuItemKey, convertedValues);
+						contextMenu.notifySelected(menuItemKey, convertedValues, data);
 					}
 				} else {
 					onInteraction(target, interaction, convertedValues);
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 
+	 */
+	private static Object getJsonParameter(IRequestParameters parameters, String name, String encodedDefaultValue) {
+		String encodedValue = parameters.getParameterValue(name).toString();
+		if (encodedValue == null) {
+			encodedValue = encodedDefaultValue;
+		}
+		return JSONValue.parse(encodedValue);
 	}
 
 	/**
@@ -218,7 +228,7 @@ public abstract class SelectableElementsBehavior<T> extends AbstractDefaultAjaxB
 	@Override
 	public void buildContextMenuCallback(StringBuilder builder) {
 		builder.append("var interaction = '" + CONTEXT_MENU_INTERACTION_PREFIX + "' + key;");
-		builder.append("\t$('#").append(getComponent().getMarkupId()).append("').selectableElements_ajax(interaction);\n");
+		builder.append("\t$('#").append(getComponent().getMarkupId()).append("').selectableElements_ajax(interaction, data);\n");
 	}
 
 }

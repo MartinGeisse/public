@@ -40,6 +40,7 @@ import name.martingeisse.webide.resources.WorkspaceUtil;
 import name.martingeisse.webide.workbench.components.SelectableElementsBehavior;
 import name.martingeisse.webide.workbench.components.contextmenu.ContextMenu;
 import name.martingeisse.webide.workbench.components.contextmenu.SimpleContextMenuItem;
+import name.martingeisse.webide.workbench.components.contextmenu.SimpleContextMenuItemWithTextInput;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 
 import org.apache.commons.io.IOUtils;
@@ -92,9 +93,11 @@ public class WorkbenchPage extends WebPage {
 		setOutputMarkupId(true);
 
 		final ContextMenu<List<String>> filesContextMenu = new ContextMenu<List<String>>();
-		filesContextMenu.getItems().add(new SimpleContextMenuItem<List<String>>("New...") {
+		filesContextMenu.getItems().add(new SimpleContextMenuItemWithTextInput<List<String>>("New...", "File name:") {
 			@Override
-			protected void onSelect(final List<String> anchor) {
+			protected void onSelect(final List<String> anchor, String filename) {
+				WorkspaceUtil.createFile(filename, "");
+				loadEditorContents(filename);
 			}
 		});
 		filesContextMenu.getItems().add(new SimpleContextMenuItem<List<String>>("Open") {

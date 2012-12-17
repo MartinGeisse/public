@@ -26,9 +26,8 @@ $.fn.selectableElements = function(options) {
 		}
 
 		// function to send an AJAX request using the supplied callback
-		function sendAjaxRequest(interaction) {
-			options.ajaxCallback(interaction, JSON
-					.stringify(getSelectedValues()));
+		function sendAjaxRequest(interaction, data) {
+			options.ajaxCallback(interaction, JSON.stringify(getSelectedValues()), data);
 		}
 
 		// the data object used to communicate with other sub-functions
@@ -76,7 +75,7 @@ $.fn.selectableElements = function(options) {
 		});
 		$allElements.dblclick(function(event) {
 			selectSingleElementForEvent(event);
-			sendAjaxRequest('dblclick');
+			sendAjaxRequest('dblclick', null);
 		});
 	});
 
@@ -91,7 +90,7 @@ $.fn.selectableElements_getElements = function() {
 	return this.data('selectableElements').selected;
 };
 
-$.fn.selectableElements_ajax = function(interaction) {
-	this.data('selectableElements').sendAjaxRequest(interaction);
+$.fn.selectableElements_ajax = function(interaction, data) {
+	this.data('selectableElements').sendAjaxRequest(interaction, data);
 	return this;
 };
