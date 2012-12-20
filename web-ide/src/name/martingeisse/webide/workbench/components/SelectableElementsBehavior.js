@@ -13,7 +13,7 @@ $.fn.selectableElements = function(options) {
 		selectedClass: null,
 		notSelectedStyle: null,
 		selectedStyle: null,
-		hasContextMenu: false,
+		contextMenuData: null,
 	}, options);
 
 	// handle each selection context separately
@@ -40,27 +40,41 @@ $.fn.selectableElements = function(options) {
 		$this.data('selectableElements', storedData);
 
 		// helper functions for event handlers
+		function selectNewElement(element) {
+			selected.push(element);
+			$(element).applyStyle(options.notSelectedClass, options.selectedClass, options.selectedStyle);
+		}
+		function deselectSelectedElement(element, index) {
+			selected.splice(index, 1);
+			$(element).applyStyle(options.selectedClass, options.notSelectedClass, options.notSelectedStyle);
+		}
+		function deselectAllElements() {
+			$(selected).applyStyle(options.selectedClass, options.notSelectedClass, options.notSelectedStyle);
+			selected = [];
+		}
 		function selectSingleElementForEvent(event) {
 			var element = event.delegateTarget;
-			$(selected).applyStyle(options.selectedClass,
-					options.notSelectedClass, options.notSelectedStyle);
-			$(element).applyStyle(options.notSelectedClass,
-					options.selectedClass, options.selectedStyle);
-			selected = [ element ];
+			deselectAllElements();
+			selectNewElement(element);
 		}
 		function toggleSingleElementForEvent(event) {
 			var element = event.delegateTarget;
-			var $element = $(element);
 			var index = $.inArray(element, selected);
 			if (index == -1) {
-				selected.push(element);
-				$element.applyStyle(options.notSelectedClass, options.selectedClass, options.selectedStyle);
+				selectNewElement(element);
 			} else {
-				selected.splice(index, 1);
-				$element.applyStyle(options.selectedClass, options.notSelectedClass, options.notSelectedStyle);
+				deselectSelectedElement(element, index);
 			}
 		}
 		function selectForContextMenu(event) {
+			var element = event.delegateTarget;
+			var index = $.inArray(element, selected);
+			if (index == -1) {
+				if (!event.metaKey) {
+					deselectAllElements();
+				}
+				selectNewElement(element);
+			}
 		}
 
 		// add event handlers
@@ -78,13 +92,20 @@ $.fn.selectableElements = function(options) {
 			selectSingleElementForEvent(event);
 			sendAjaxRequest('dblclick', null);
 		});
-		if (options.hasContextMenu) {
+		if (options.contextMenuData != null) {
 			$allElements.bind('contextmenu', function(event) {
-				console.log(event);
 				selectForContextMenu(event);
-				// $this.contextMenu();
-				// TODO: .contextMenu() just fires the contextmenu event -- can we actually open
-				// the menu manually?
+				var handlers = $(this).contextMenu('handlers');
+				var fakeEvent = {
+					preventDefault: function() {},	
+					stopImmediatePropagation: function() {},
+					data: options.contextMenuData.options,
+					originalEvent: null,
+					pageX: event.pageX,
+					pageY: event.pageY,
+				};
+				var trigger = $(options.contextMenuData.options.selector)[0];
+				handlers.contextmenu.call(trigger, fakeEvent);
 			});
 		}
 	});

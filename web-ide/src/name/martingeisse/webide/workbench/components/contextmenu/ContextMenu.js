@@ -1,6 +1,6 @@
 
 function createContextMenu(selector, callback, items) {
-	$.contextMenu({
+	var options = {
 		trigger: 'none',
 		selector: selector,
 		build: function() {
@@ -12,7 +12,9 @@ function createContextMenu(selector, callback, items) {
 				}
 			};
 		}
-	});
+	};
+	$.contextMenu(options);
+	return {options: options};
 }
 
 function createContextMenuItemWithPrompt(name, promptText, callback) {

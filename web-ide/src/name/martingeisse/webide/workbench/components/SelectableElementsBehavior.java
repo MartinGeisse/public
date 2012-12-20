@@ -141,12 +141,15 @@ public abstract class SelectableElementsBehavior<T> extends AbstractDefaultAjaxB
 		builder.append("\t\tajaxCallback: ").append(getCallbackFunction(parameters).toString().replace("\n", " ")).append(",");
 		builder.append("\t\tnotSelectedStyle: {'background-color': ''},\n");
 		builder.append("\t\tselectedStyle: {'background-color': '#f00'},\n");
-		builder.append("\t\thasContextMenu: ").append(contextMenu != null).append(",\n");
-		builder.append("\t});\n");
+		builder.append("\t\tcontextMenuData: ");
 		if (contextMenu != null) {
 			ContextMenu.renderHead(response);
-			contextMenu.buildCreateInstruction(builder, "#" + component.getMarkupId(), this);
+			contextMenu.buildCreateExpression(builder, "#" + component.getMarkupId(), this);
+		} else {
+			builder.append("null");
 		}
+		builder.append(",\n");
+		builder.append("\t});\n");
 
 		final AjaxRequestTarget target = component.getRequestCycle().find(AjaxRequestTarget.class);
 		if (target == null) {

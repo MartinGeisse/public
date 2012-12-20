@@ -1,0 +1,5 @@
+
+In function $.fn.contextMenu = function(operation) {...}:
+
+    } else if (operation == 'handlers') {
+    	return handle;

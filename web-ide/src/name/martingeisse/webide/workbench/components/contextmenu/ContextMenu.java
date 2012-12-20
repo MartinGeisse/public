@@ -103,7 +103,7 @@ public class ContextMenu<A> {
 	 * @param callbackBuilder an object that knows how to generate callback requests
 	 * to the server and route them to the appropriate menu item
 	 */
-	public void buildCreateInstruction(StringBuilder builder, String selector, IContextMenuCallbackBuilder callbackBuilder) {
+	public void buildCreateExpression(StringBuilder builder, String selector, IContextMenuCallbackBuilder callbackBuilder) {
 		builder.append("createContextMenu('").append(selector).append("', function(key, options) {var data = null; \n");
 		callbackBuilder.buildContextMenuCallback(builder);
 		builder.append("}, {");
@@ -117,7 +117,7 @@ public class ContextMenu<A> {
 			builder.append("\n");
 			i++;
 		}
-		builder.append("});");
+		builder.append("})");
 	}
 	
 }

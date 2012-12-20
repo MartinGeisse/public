@@ -1180,6 +1180,8 @@ $.fn.contextMenu = function(operation) {
     } else if (operation === "hide") {
         var $menu = this.data('contextMenu').$menu;
         $menu && $menu.trigger('contextmenu:hide');
+    } else if (operation == 'handlers') {
+    	return handle;
     } else if (operation) {
         this.removeClass('context-menu-disabled');
     } else if (!operation) {
