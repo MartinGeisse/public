@@ -23,6 +23,7 @@
 			div.CodeMirror {
 				border: 1px solid #aaa;
 				background-color: #fff;
+				height: auto;
 			}
 
 			div.CodeMirror-scroll {
@@ -44,14 +45,6 @@
 			
 		</style>
 		<script type="text/javascript">
-
-			function saveEditor() {
-				var cursor = codeMirror.getCursor();
-				codeMirror.save();
-				$('#save-button').click();
-				codeMirror.setCursor(cursor);
-			}
-
 		</script>
 	</head>
 	<body>
@@ -87,11 +80,7 @@
 		</div>
 		<div class="LayoutBox" style="margin-left: 400px;">
 			<div class="ViewBox" style="background-color: #fff; height: 95%;">
-				<form wicket:id="editorForm" id="editor-form">
-					<textarea wicket:id="editorArea" rows="20" cols="80">
-					</textarea>
-					<input type="submit" value="do not press -- save via Cmd+S !!!" id="save-button" wicket:id="submit" style="display: none; " />
-				</form>
+				<div wicket:id="editor" />
 			</div>
 		</div>
 	</body>

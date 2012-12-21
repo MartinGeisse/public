@@ -6,13 +6,11 @@
 
 package name.martingeisse.webide.workbench;
 
-import java.nio.charset.Charset;
 import java.util.List;
 
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.webide.entity.QFiles;
-import name.martingeisse.webide.java.JavaCompilerFacade;
-import name.martingeisse.webide.java.codemirror.JavaTextArea;
+import name.martingeisse.webide.java.editor.JavaEditor;
 import name.martingeisse.webide.resources.MarkerData;
 import name.martingeisse.webide.resources.MarkerListView;
 import name.martingeisse.webide.resources.ResourceIconSelector;
@@ -26,17 +24,16 @@ import name.martingeisse.wicket.util.AjaxRequestUtil;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
@@ -49,16 +46,6 @@ import com.mysema.query.sql.SQLQuery;
  * The main workbench page.
  */
 public class WorkbenchPage extends WebPage {
-
-	/**
-	 * the editorFilename
-	 */
-	private String editorFilename;
-
-	/**
-	 * the editorContents
-	 */
-	private String editorContents;
 
 	/**
 	 * the log
@@ -161,29 +148,7 @@ public class WorkbenchPage extends WebPage {
 			}
 		});
 
-		final Form<Void> editorForm = new Form<Void>("editorForm") {
-			@Override
-			protected void onSubmit() {
-				if (editorFilename != null) {
-					WorkspaceUtil.replaceContents(editorFilename, editorContents);
-					JavaCompilerFacade.requestCompilation();
-					IClientFuture.Behavior.get(WorkbenchPage.this).addFuture(new IClientFuture() {
-						@Override
-						public boolean check(Behavior behavior) {
-							boolean compiled = JavaCompilerFacade.isCompilationFinished();
-							if (compiled) {
-								AjaxRequestUtil.markForRender(WorkbenchPage.this.get("markersContainer"));
-							}
-							return compiled;
-						}
-					});
-				}
-			}
-		};
-		editorForm.add(new AjaxButton("submit", editorForm) {});
-		editorForm.add(new JavaTextArea("editorArea", new PropertyModel<String>(this, "editorContents")));
-		add(editorForm);
-
+		add(new EmptyPanel("editor"));
 		add(new Label("log", new PropertyModel<String>(this, "log")));
 	}
 
@@ -200,44 +165,10 @@ public class WorkbenchPage extends WebPage {
 	 * 
 	 */
 	private void loadEditorContents(final String filename) {
-		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-		final Object resultObject = query.from(QFiles.files).where(QFiles.files.name.eq(filename)).singleResult(QFiles.files.contents);
-		final byte[] encodedContents = (byte[])(((Object[])resultObject)[0]);
-		editorContents = new String(encodedContents, Charset.forName("utf-8"));
-		editorFilename = filename;
+		IEditor editor = new JavaEditor();
+		editor.initialize(filename);
+		replace(editor.createComponent("editor"));
 		AjaxRequestUtil.markForRender(this);
-	}
-
-	/**
-	 * Getter method for the editorFilename.
-	 * @return the editorFilename
-	 */
-	public String getEditorFilename() {
-		return editorFilename;
-	}
-
-	/**
-	 * Setter method for the editorFilename.
-	 * @param editorFilename the editorFilename to set
-	 */
-	public void setEditorFilename(final String editorFilename) {
-		this.editorFilename = editorFilename;
-	}
-
-	/**
-	 * Getter method for the editorContents.
-	 * @return the editorContents
-	 */
-	public String getEditorContents() {
-		return editorContents;
-	}
-
-	/**
-	 * Setter method for the editorContents.
-	 * @param editorContents the editorContents to set
-	 */
-	public void setEditorContents(final String editorContents) {
-		this.editorContents = editorContents;
 	}
 
 	/**
