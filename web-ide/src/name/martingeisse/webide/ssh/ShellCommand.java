@@ -8,7 +8,15 @@ package name.martingeisse.webide.ssh;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.PushbackReader;
+import java.util.LinkedList;
+
+import name.martingeisse.common.database.EntityConnectionManager;
+import name.martingeisse.webide.ssh.IShellContext.ExecuteStatus;
 
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.Environment;
@@ -38,6 +46,31 @@ public class ShellCommand implements Command, Runnable {
 	 * the exitCallback
 	 */
 	private ExitCallback exitCallback;
+	
+	/**
+	 * the inputReader
+	 */
+	private PushbackReader inputReader;
+	
+	/**
+	 * the outputWriter
+	 */
+	private PrintWriter outputWriter;
+	
+	/**
+	 * the errorWriter
+	 */
+	private PrintWriter errorWriter;
+	
+	/**
+	 * the commandLineBuilder
+	 */
+	private StringBuilder commandLineBuilder;
+	
+	/**
+	 * the contextStack
+	 */
+	private LinkedList<IShellContext> contextStack;
 	
 	/* (non-Javadoc)
 	 * @see org.apache.sshd.server.Command#setInputStream(java.io.InputStream)
@@ -91,29 +124,90 @@ public class ShellCommand implements Command, Runnable {
 	 */
 	@Override
 	public void run() {
-		/*
-		TODO: LF -> CR LF, am besten direkt im charset oder streamreader/writer (wie macht "in" das genau,
-		"out" erwartet scheinbar CRLF
-		
 		try {
-			LineNumberReader reader = new LineNumberReader(new InputStreamReader(in, "utf-8"));
-			PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "utf-8"));
-			while (true) {
-				String line = reader.readLine();
-				if (line == null || line.equals("exit")) {
-					writer.println("exit.");
-					writer.flush();
-					break;
+			inputReader = new PushbackReader(new InputStreamReader(in, "utf-8"));
+			outputWriter = new PrintWriter(new OutputStreamWriter(out, "utf-8"));
+			errorWriter = new PrintWriter(new OutputStreamWriter(err, "utf-8"));
+			commandLineBuilder = new StringBuilder();
+			contextStack = new LinkedList<IShellContext>();
+			contextStack.push(new WorkspaceContext());
+			while (!contextStack.isEmpty()) {
+				try {
+					int c = inputReader.read();
+					if (c == '\r' || c == '\n') {
+						executeCommand();
+					} else if (c == '\t') {
+						autocomplete();
+					} else if (c == '\b') {
+						erase();
+					} else if (c >= 32) {
+						typeRegular(c);
+					}
+					outputWriter.flush();
+					errorWriter.flush();
+				} finally {
+					EntityConnectionManager.disposeConnections();
 				}
-				writer.println("echo: " + line);
-				writer.flush();
 			}
 		} catch (Exception e) {
 		}
         if (exitCallback != null) {
         	exitCallback.onExit(0, "ok");
         }
-        */
 	}
 	
+	/**
+	 * 
+	 */
+	private void executeCommand() {
+		
+		// obtain the command
+		String command = commandLineBuilder.toString();
+		commandLineBuilder.setLength(0);
+		outputWriter.print("\r\n");
+		
+		// pass the command to the TOS context
+		ExecuteStatus status = contextStack.getFirst().execute(command, outputWriter, errorWriter);
+		if (status == ExecuteStatus.ENTER) {
+			contextStack.push(contextStack.getFirst().getSubContext());
+		} else if (status == ExecuteStatus.TERMINATE) {
+			contextStack.pop();
+		}
+		
+	}
+	
+	/**
+	 * 
+	 */
+	private void autocomplete() {
+		beep();
+	}
+	
+	/**
+	 * 
+	 */
+	private void erase() {
+		if (commandLineBuilder.length() > 0) {
+			commandLineBuilder.setLength(commandLineBuilder.length() - 1);
+			outputWriter.print('\b');
+		} else {
+			beep();
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private void typeRegular(int c) {
+		commandLineBuilder.append((char)c);
+		outputWriter.print((char)c);
+	}
+
+	/**
+	 * 
+	 */
+	private void beep() {
+		outputWriter.print((char)7);
+	}
+
 }

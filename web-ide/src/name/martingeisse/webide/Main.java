@@ -14,7 +14,12 @@ import javax.servlet.Filter;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.MysqlDatabaseDescriptor;
 import name.martingeisse.common.javascript.JavascriptAssembler;
+import name.martingeisse.webide.ssh.ShellFactory;
 
+import org.apache.sshd.SshServer;
+import org.apache.sshd.server.PasswordAuthenticator;
+import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
+import org.apache.sshd.server.session.ServerSession;
 import org.apache.wicket.protocol.http.WicketFilter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
@@ -50,9 +55,17 @@ public class Main {
 		mainDatabase.initialize();
 		EntityConnectionManager.initializeDatabaseDescriptors(mainDatabase);
 		
-		/*
+		launchSsh();
+		launchWeb();
+	}
+
+	/**
+	 * Launches the SSH user interface.
+	 */
+	private static void launchSsh() throws Exception {
+
 		final SshServer sshd = SshServer.setUpDefaultServer();
-		sshd.setPort(9001);
+		sshd.setPort(9090);
 		final PasswordAuthenticator auth = new PasswordAuthenticator() {
 			@Override
 			public boolean authenticate(final String username, final String password, final ServerSession session) {
@@ -63,11 +76,9 @@ public class Main {
 		sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider("hostkey.ser"));
 		sshd.setShellFactory(new ShellFactory());
 		sshd.start();
-		*/
-	
-		launchWeb();
+		
 	}
-
+	
 	/**
 	 * Launches the web user interface.
 	 */
