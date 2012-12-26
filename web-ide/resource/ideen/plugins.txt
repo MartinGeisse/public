@@ -1,0 +1,148 @@
+
+PluginBundle: JAR-file, entspricht "Plugin" in Eclipse
+Plugin: Sammlung von PluginBundles, entspricht (glaub ich) "Feature" in Eclipse
+	+ Name, Doku usw.
+
+Ein Plugin kann sein:
+- Ergebnis eines Auto-Build eines Plugin-Projekts
+	(je Build entsteht ein "Plugin" und N Bundles)
+- Von einem User veröffentlichtes Plugin
+	(je Release entsteht ein "Plugin" und N Bundles)
+- Zentral veröffentlichtes Plugin
+	(je Release entsteht ein "Plugin" und N Bundles,
+	gemeinsamer Release-Prozess mit vorherigem Punkt)
+
+Plugin und Bundles sind die Quelle, aus der ein Plugin-Classloader seine
+Klassen lädt. Entspricht N JAR-files. Plugin-Datensätze und Bundle-Datensätze
+sind immutable und werden, soweit machbar, gemeinsam benutzt. (Gerade für
+Autobuild sollten dann auch die nicht mehr benutzten Datensätze aufgeräumt
+werden). Die verschiedenen Arten, wie Plugins in Erscheinung treten
+(Veröffentluchung, Autobuild, ...) sind dann verschiedene Arten, wie die
+Plugin/Bundle Datensätze *benutzt* werden, aber entsprechen keinen Unterschieden
+in den Datensätzen selbst. (Einzige Ausnahme: Die Datensätze können die Art der
+Verwendung in einem Feld speichern, um das Refcounting und Aufräumen zu
+optimieren, sowie als zusätzliche Sicherheitsprüfung -- es ändert aber nichts
+am Verhalten des Plugins). 
+
+Die verschiedenen Verwendungen sind dann in anderen Datensätzen festgehalten:
+- PluginRelease (user, plugin, releaseDate, comment)
+- PluginAutobuild (workspace, plugin, buildDate)
+
+-----------------------------------
+
+Implementierung:
+
+ClassLoader.findClass() ruft ClassLoader.defineClass() mit eigens erzeugter
+ProtectionDomain. Bisher unklar, ob die Permissions direkt in der ProtectionDomain
+gepsichert werden sollen oder aus der Policy kommen sollen. Vermutlich
+einfacher, indem in der ProtectionDomain eingespeichert, weil das System
+nicht sehr dynamisch sein muss. ClassLoader ist bekannt, keine Principals.
+CodeSource: Keine Zertifikate; URL könnte nach einem einheitlichen Schema für
+Plugin-Bundle-URLs gebaut sein.
+
+URLs:
+	webide-resource:bar
+		relativer Pfad
+	webide-resource:/foo/bar
+		absoluter Pfad innerhalb eines Workspace
+	webide-resource://12/foo/bar
+		absoluter Pfad inkl. Workspace-DB-ID
+	webide-plugin://55
+		für ein Plugin; 55 = Plugin-DB-ID
+	webide-plugin://55/com.foobar.myplugin
+		für ein Bundle; 55 = Plugin-DB-ID, com.foobar.myplugin = bundle name
+	webide-plugin-bundle://123
+		für ein Bundle; 123 = PluginBundle-DB-ID
+
+ClassLoader.findClass() bekommt den ClassFile über einen PluginClassFileFetcher.
+Einfache Impl. reicht, aber später kann da der gesamte JAR-File gecached werden
+(zeitlich unbegrenzt, aber max. Speicherverbrauch für den gesamten Cache).
+
+Angepeilter Test: Plugin mit MenuItem -> System.out.println("Hello World");
+
+Wann und wie werden Plugins aktiv? Dazu müssen an geeigneter Stelle alle Plugins
+des aktuellen Benutzers "gefragt" werden, z.B. beim Aufbau eines Context Menu.
+-> Extension Points, Extensions. Also müssen an geeigneter Stelle alle Extensions
+gefunden werden. Anders als bei Eclipse lassen sich die Extensions zu einem EP
+nicht zentral Speichern (zig Benutzer). Eher müssten in der DB die Zuordnung
+(User, EP -> Extensions) festgehalten werden. Diese wird dann aus den installierten
+Plugins (User -> Plugins) erzeugt.
+
+Dazu die Überlegung:
+(1) werden Extensions, EPs, EP names in der DB gespeichert?
+(2) wird die Zuordnung in der DB gespeichert? Wäre vermutlich sinnvoll, aber je
+    nach (1) werden hier Namen oder IDs gespeichert:
+    
+    Table extension_bindings
+    	Col user_id: long
+    	Col extension_point_name: varchar(255)
+    	Col extension: (?)
+
+	EP-Plugins wollen vermutlich zu den Extensions auch Daten dazu speichern.
+	Dann könnten allgemeinere Plugin-Data-Stores verwendet werden (Plugin-State-
+	Store, wie in Eclipse .metadata) und darin auch Informationen über
+	Extensions aufgehoben werden, genau so wie das Plugin sie braucht.
+	
+	Um nicht jedesmal den kompletten Plugin State laden zu müssen, kann dieser
+	in Plugin State Sections aufgeteilt werden. Diese müssen oft gematcht
+	werden -> durchnummeriert:
+	
+	Table plugin_bundle_states:
+		Col user_id: long
+		Col plugin_bundle_id: long
+		Col section: int
+		Col data: blob
+
+	Framework-Code (z.B. abstrakte Plugin-Basisklassen) benutzen negative
+	Section-Nummern, der eigentliche Plugin-Code benutzt positive Nummern.
+	
+	Problem: Es können beim *Aufbau* der PluginBundleStates nicht ohne weiteres
+	alle Ext. zu einem EP gefunden werden, da dazu die Extensions *aller*
+	Plugins dieses Benutzers bekannt sein müssten.
+		Teilproblem 1: Die Daten müssen dem EP-Plugin abrufbar sein. Dazu könnten
+		sie in einen Bundle-State geschrieben werden, dessen Format dem 
+		Framework bekannt ist (z.B. negativer Section-Index).
+		Teilproblem 2: Welche Daten machen eigentlich eine Extension aus?
+		Das, was bei Eclipse in der plugin.xml steht, also XML oder JSON.
+		Dies sind die Daten, die dann in die Entsprechende State-Section
+		übertragen werden müssten. Oder in die extension_points / extensions /
+		extension_bindings Tabelle.
+		
+		Wie würde letztere denn Aussehen?
+		
+	Tabelle declared_extension_points:
+		Col plugin_bundle_id: long
+		Col name: varchar(255)
+		
+	Tabelle declared_extensions:
+		Col plugin_bundle_id: long
+		Col extension_point_name: varchar(255)
+		Col data: text/JSON
+
+	Tabelle extension_bindings:
+		Col user_id: long
+		Col declared_extension_point_id: long
+		Col declared_extension_id: long
+
+	Nach dem Installieren / Deinstallieren von Plugins in die plugins / plugin_bundles
+	Tabelle würden alle drei, nach dem (de-)installieren von Plugins für einen
+	konkreten Benutzer die dritte Tabelle neu erstellt. Die Daten dazu kommen aus den
+	Plugin Bundles und der user_plugins (für einen Benutzer installierte Plugins) kommen.
+	Die o.g. 3 Tabellen speichern also nur redundante Daten. Danach würden die betroffenen
+	Plugins benachrichtigt (welche sind das? Nur die "owner" der EPs? oder auch andere?
+	-> neben Ext und EP könnten Plugins auch EP-Listener bereitstellen. EP impliziert
+	Listener, ggf. per Flag einstellbar)
+	
+	Flag in plugin_bundles, ob declared_extension_points und declared_extensions stimmen.
+	-> lazy init. Da plugin_bundles immutable sind, kann sich das nicht "zurück" ändern.
+	
+	Flag in users, ob extension_bindings (noch) stimmen. Da plugins und plugin_bundles
+	immutable sind, kann das nur durch Änderungen in der user_plugins zustandekommen.
+	
+	Extension-Data in plugin_bundles getrennt vom Jarfile speichern? Wird eh nur zur
+	Initialisierung der declared_* gebraucht.
+	
+	Einfache users-Tabelle (id, name) wenigstens damit die Datenstruktur schon mal
+	stimmt.
+
+
