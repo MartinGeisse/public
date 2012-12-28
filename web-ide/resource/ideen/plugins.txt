@@ -149,37 +149,7 @@ Dazu die Überlegung:
 
 Nächste Schritte:
 
-Test-Extension in Test-Plugin-Bundle in Test-Plugin
--> Format für EPs und Extensions festlegen und im Test-Plugin-Bundle benutzen
-	XML oder JSON?
--> Extractor für dieses Format schreiben
-	updateDeclaredExtensionPointsAndExtensionsForPlugin(pluginId)
-	updateDeclaredExtensionPointsAndExtensionsForPlugins(pluginIds)
-	updateDeclaredExtensionPointsAndExtensionsForPluginBundle(pluginBundleId)
-	updateDeclaredExtensionPointsAndExtensionsForPluginBundles(pluginBundleIds)
-	->
-	Da die Plugins immutable sein sollen, können diese Methoden später private sein
-	und z.B. beim Installieren des Plugins, oder auch lazy, aufgerufen werden.
-	->
-	folgende Methoden reichen:
-		updateDeclaredExtensionPointsAndExtensionsForPlugin(pluginId)
-		updateDeclaredExtensionPointsAndExtensionsForPlugins(pluginIds)
-	(da man keine einzelnen Bundles installieren kann) und werden bei der
-	Installation eines oder mehrerer Plugins aufgerufen. Letzteres erstmal
-	per For-Schleife.
-
-getBoundExtensions(user id, ext point name)
-	-> muss String-Vergleiche machen, da es nicht vorher den EP per Namen finden kann,
-	-> da dieser nicht auf einen User beschränkt ist. Es bräuchte dazu eine Art
-		user_extension_points Tabelle, die auch erzeugt wird.
-	-> erst mal per Stringvergleich, und hinter Util-Funktionen verstecken.
-	-> Klasse ExtensionQuery. setUserId, setExtensionPointName, fetch. Die kann dann (per invalidate / lazy init)
-		intern alle Daten so cachen wie von der Optimierung gebraucht.
-
-updateExtensionBindingsForUser
-updateExtensionBindingsForAllUsers (muss nicht schnell sein, da eigentlich so nicht gebraucht -> for-Schleife um ...ForUser)
-	-> Klasse ExtensionRegistry mit diesen beiden Methoden.
-	Auch: createExtensionQuery(user_id) und user ID als final?
+TODO-Marker
 
 Hello World kann jetzt getestet werden, auch ohne Plugin State.
 
