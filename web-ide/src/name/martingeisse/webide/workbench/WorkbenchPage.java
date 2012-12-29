@@ -28,7 +28,6 @@ import name.martingeisse.wicket.util.AjaxRequestUtil;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -40,7 +39,6 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 
@@ -212,11 +210,8 @@ public class WorkbenchPage extends WebPage {
 	 */
 	@Override
 	public void renderHead(final IHeaderResponse response) {
-		super.renderHead(response);
-		response.render(CssHeaderItem.forReference(new CssResourceReference(WorkbenchPage.class, "common.css"), null, "screen, projection"));
-		response.render(CssHeaderItem.forReference(new CssResourceReference(WorkbenchPage.class, "ie.css"), null, "screen, projection", "IE"));
-		response.render(CssHeaderItem.forReference(new CssResourceReference(WorkbenchPage.class, "jquery.contextMenu.css")));
 		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkbenchPage.class, "common.js")));
+		super.renderHead(response);
 	}
 
 	/**

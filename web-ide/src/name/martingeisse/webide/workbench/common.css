@@ -1,0 +1,277 @@
+/* line 17, ../../../../../../../../.gem/ruby/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/* line 22, ../../../../../../../../.gem/ruby/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html {
+  line-height: 1;
+}
+
+/* line 24, ../../../../../../../../.gem/ruby/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 26, ../../../../../../../../.gem/ruby/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 28, ../../../../../../../../.gem/ruby/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 30, ../../../../../../../../.gem/ruby/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 103, ../../../../../../../../.gem/ruby/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 32, ../../../../../../../../.gem/ruby/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 116, ../../../../../../../../.gem/ruby/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
+  display: block;
+}
+
+/* line 7, ../../../../../resource/stylesheet/sass/common.scss */
+body {
+  background-color: #eee;
+  margin: 0px;
+  padding: 0px;
+}
+
+/* line 13, ../../../../../resource/stylesheet/sass/common.scss */
+div.LayoutBox {
+  padding: 5px;
+}
+
+/* line 17, ../../../../../resource/stylesheet/sass/common.scss */
+div.ViewBox, .FileViewBox {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 5px;
+  box-shadow: 2px 2px 5px -1px black;
+}
+
+/* line 24, ../../../../../resource/stylesheet/sass/common.scss */
+div.CodeMirror {
+  border: 1px solid #aaaaaa;
+  background-color: #fff;
+  height: auto;
+}
+
+/* line 30, ../../../../../resource/stylesheet/sass/common.scss */
+div.CodeMirror-scroll {
+  height: 100%;
+}
+
+/* line 34, ../../../../../resource/stylesheet/sass/common.scss */
+.FileViewBox {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+/* line 43, ../../../../../resource/stylesheet/sass/common.scss */
+h2 {
+  margin: 0px;
+  font-size: 15px;
+  border-bottom: 1px solid #888888;
+}
+
+/* line 53, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-list {
+  display: inline-block;
+  position: absolute;
+  list-style-type: none;
+  -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  margin: 0;
+  border: 1px solid #dddddd;
+  padding: 0;
+  background: #EEE;
+  min-width: 120px;
+  max-width: 500px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 11px;
+}
+
+/* line 71, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-item {
+  padding: 2px 2px 2px 24px;
+  background-color: #EEE;
+  position: relative;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+/* line 78, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-separator {
+  padding-bottom: 0;
+  border-bottom: 1px solid #dddddd;
+}
+
+/* line 83, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-item.hover {
+  cursor: pointer;
+  background-color: #39F;
+}
+
+/* line 88, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-item.disabled {
+  color: #666;
+}
+
+/* line 93, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-input.hover,
+.context-menu-item.disabled.hover {
+  cursor: default;
+  background-color: #EEE;
+}
+
+/* line 98, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-submenu:after {
+  content: ">";
+  color: #666;
+  position: absolute;
+  top: 0;
+  right: 3px;
+  z-index: 1;
+}
+
+/* icons
+    #protip:
+    In case you want to use sprites for icons (which I would suggest you do) have a look at
+    http://css-tricks.com/13224-pseudo-spriting/ to get an idea of how to implement 
+    .context-menu-item.icon:before {}
+ */
+/* line 113, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-item.icon {
+  min-height: 18px;
+  background-repeat: no-repeat;
+  background-position: 4px 2px;
+}
+
+/* line 114, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-item.icon-edit {
+  background-image: url(images/page_white_edit.png);
+}
+
+/* line 115, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-item.icon-cut {
+  background-image: url(images/cut.png);
+}
+
+/* line 116, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-item.icon-copy {
+  background-image: url(images/page_white_copy.png);
+}
+
+/* line 117, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-item.icon-paste {
+  background-image: url(images/page_white_paste.png);
+}
+
+/* line 118, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-item.icon-delete {
+  background-image: url(images/page_white_delete.png);
+}
+
+/* line 119, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-item.icon-add {
+  background-image: url(images/page_white_add.png);
+}
+
+/* line 120, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-item.icon-quit {
+  background-image: url(images/door.png);
+}
+
+/* line 128, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-input > label {
+  display: block;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+/* line 132, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-input > label > * {
+  vertical-align: top;
+}
+/* line 137, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-input > label > input[type="checkbox"], .context-menu-input > label > input[type="radio"] {
+  margin-left: -17px;
+}
+/* line 142, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-input > label > span {
+  margin-left: 5px;
+}
+/* line 147, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-input > label > input[type="text"], .context-menu-input > label > textarea, .context-menu-input > label > select {
+  display: block;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+/* line 152, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-input > label > textarea {
+  height: 100px;
+}
+/* line 157, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-input > label > input, .context-menu-input > label > textarea {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+}
+
+/* line 163, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-item > .context-menu-list {
+  display: none;
+  /* re-positioned by js */
+  right: -5px;
+  top: 5px;
+}
+
+/* line 170, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-item.hover > .context-menu-list {
+  display: block;
+}
+
+/* line 174, ../../../../../resource/stylesheet/sass/common.scss */
+.context-menu-accesskey {
+  text-decoration: underline;
+}

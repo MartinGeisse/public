@@ -7,6 +7,7 @@
 package name.martingeisse.webide;
 
 import name.martingeisse.common.util.TemporaryFolder;
+import name.martingeisse.webide.util.MyHeaderResponseDecorator;
 import name.martingeisse.webide.workbench.WorkbenchPage;
 
 import org.apache.wicket.Page;
@@ -24,6 +25,7 @@ public class WebIdeApplication extends WebApplication {
 	protected void init() {
 		super.init();
 		TemporaryFolder.initialize("web-ide");
+		setHeaderResponseDecorator(new MyHeaderResponseDecorator());
 	}
 	
 	/* (non-Javadoc)

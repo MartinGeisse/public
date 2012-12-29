@@ -3,51 +3,6 @@
 	<head>
 		<style type="text/css">
 			
-			body {
-				background-color: #eee;
-				margin: 0px;
-				padding: 0px;
-			}
-			
-			div.LayoutBox {
-				padding: 5px;
-			}
-			
-			div.ViewBox {
-				background-color: #fff;
-				border-radius: 8px; 
-				padding: 5px;
-				box-shadow: 2px 2px 5px -1px #000;
-			}
-			
-			div.CodeMirror {
-				border: 1px solid #aaa;
-				background-color: #fff;
-				height: auto;
-			}
-
-			div.CodeMirror-scroll {
-				height: 100%;
-			}
-			
-			.NoSelect {
-				-webkit-touch-callout: none;
-				-webkit-user-select: none;
-				-khtml-user-select: none;
-				-moz-user-select: none;
-				-ms-user-select: none;
-				user-select: none;			
-			}
-			
-			h1 {
-			}
-			
-			h2 {
-				margin: 0px;
-				font-size: 15px;
-				border-bottom: 1px solid #888;
-			}
-			
 			#filesContainer * {
 				cursor: default;
 			}
@@ -59,7 +14,7 @@
 	<body>
 		<div style="position: absolute; top: 0px; left: 0px; width: 400px; height: 85%; padding: 0px;">
 			<div class="LayoutBox">
-				<div class="ViewBox NoSelect">
+				<div class="FileViewBox">
 					<h2>Files</h2>
 					<div style="overflow: scroll; height: 33%;" id="filesContainer" wicket:id="filesContainer">
 						<div wicket:id="files">
