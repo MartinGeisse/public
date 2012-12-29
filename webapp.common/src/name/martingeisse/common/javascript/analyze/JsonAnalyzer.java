@@ -330,6 +330,23 @@ public final class JsonAnalyzer {
 	}
 
 	/**
+	 * Expects the value to be either of list type, or to represent a
+	 * single-element list; wraps each element in a {@link JsonAnalyzer},
+	 * and returns the analyzers in a list.
+	 * 
+	 * @return the list of analyzers
+	 */
+	public List<JsonAnalyzer> analyzeListOrSingle() {
+		if (value instanceof List) {
+			return analyzeList();
+		} else {
+			List<JsonAnalyzer> list = new ArrayList<JsonAnalyzer>();
+			list.add(this);
+			return list;
+		}
+	}
+	
+	/**
 	 * Expects the value to be of list type, obtains the specified
 	 * element, and wraps it in a new instance of this class. Unlike
 	 * {@link #analyzeMapElement(String)}, this method will throw an

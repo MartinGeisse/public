@@ -60,96 +60,34 @@ Einfache Impl. reicht, aber später kann da der gesamte JAR-File gecached werden
 
 Angepeilter Test: Plugin mit MenuItem -> System.out.println("Hello World");
 
-Wann und wie werden Plugins aktiv? Dazu müssen an geeigneter Stelle alle Plugins
-des aktuellen Benutzers "gefragt" werden, z.B. beim Aufbau eines Context Menu.
--> Extension Points, Extensions. Also müssen an geeigneter Stelle alle Extensions
-gefunden werden. Anders als bei Eclipse lassen sich die Extensions zu einem EP
-nicht zentral Speichern (zig Benutzer). Eher müssten in der DB die Zuordnung
-(User, EP -> Extensions) festgehalten werden. Diese wird dann aus den installierten
-Plugins (User -> Plugins) erzeugt.
+-----------------------------------
 
-Dazu die Überlegung:
-(1) werden Extensions, EPs, EP names in der DB gespeichert?
-(2) wird die Zuordnung in der DB gespeichert? Wäre vermutlich sinnvoll, aber je
-    nach (1) werden hier Namen oder IDs gespeichert:
-    
-    Table extension_bindings
-    	Col user_id: long
-    	Col extension_point_name: varchar(255)
-    	Col extension: (?)
+Wofür wird jeweils ein eigener ClassLoader und wofür eine ProtectionDomain gebaut?
 
-	EP-Plugins wollen vermutlich zu den Extensions auch Daten dazu speichern.
-	Dann könnten allgemeinere Plugin-Data-Stores verwendet werden (Plugin-State-
-	Store, wie in Eclipse .metadata) und darin auch Informationen über
-	Extensions aufgehoben werden, genau so wie das Plugin sie braucht.
-	
-	Um nicht jedesmal den kompletten Plugin State laden zu müssen, kann dieser
-	in Plugin State Sections aufgeteilt werden. Diese müssen oft gematcht
-	werden -> durchnummeriert:
-	
-	Table plugin_bundle_states:
-		Col user_id: long
-		Col plugin_bundle_id: long
-		Col section: int
-		Col data: blob
+CL:
+- für separate JAR-Files, um diese gegeneinander abzuschirmen
+- für separate Benutzer? Wäre von daher doof, weil dann derselbe Code für verschiedene
+  User mehrfach geladen werden muss. Vorteil wären die mehrfach vorhandenen Static
+  Variables -> Abschirmung. Wobei sich Plugins wegen Clustering eh nicht auf Static
+  Vars verlassen sollten. Geheimhaltung ist zwar "gefährdet", aber an dieser Stelle
+  eh nicht mehr garantiert. Letztendlich wird jedes Plugin irgendwie Daten "durchsickern"
+  lassen können, zumindest nach dem ersten Design, also sollte man sich wenn man
+  Geheimhaltung will nur vertrauenswürdige Plugins installieren. Zum Beispiel müssen Plugins
+  ja auch die Möglichkeit haben, zu Dritt-Webseiten Kontakt aufzunehmen, wegen ihren
+  Features.
 
-	Framework-Code (z.B. abstrakte Plugin-Basisklassen) benutzen negative
-	Section-Nummern, der eigentliche Plugin-Code benutzt positive Nummern.
-	
-	Problem: Es können beim *Aufbau* der PluginBundleStates nicht ohne weiteres
-	alle Ext. zu einem EP gefunden werden, da dazu die Extensions *aller*
-	Plugins dieses Benutzers bekannt sein müssten.
-		Teilproblem 1: Die Daten müssen dem EP-Plugin abrufbar sein. Dazu könnten
-		sie in einen Bundle-State geschrieben werden, dessen Format dem 
-		Framework bekannt ist (z.B. negativer Section-Index).
-		Teilproblem 2: Welche Daten machen eigentlich eine Extension aus?
-		Das, was bei Eclipse in der plugin.xml steht, also XML oder JSON.
-		Dies sind die Daten, die dann in die Entsprechende State-Section
-		übertragen werden müssten. Oder in die extension_points / extensions /
-		extension_bindings Tabelle.
-		
-		Wie würde letztere denn Aussehen?
-		
-	Tabelle declared_extension_points:
-		Col plugin_bundle_id: long
-		Col name: varchar(255)
-		
-	Tabelle declared_extensions:
-		Col plugin_bundle_id: long
-		Col extension_point_name: varchar(255)
-		Col data: text/JSON
+Also: Ein ClassLoader je Eintrag in der plugin_bundles Tabelle.
 
-	Tabelle extension_bindings:
-		Col user_id: long
-		Col declared_extension_point_id: long
-		Col declared_extension_id: long
+Vorerst aber der Einfachheit halber mit wegwerf-Classloders.
 
-	Nach dem Installieren / Deinstallieren von Plugins in die plugins / plugin_bundles
-	Tabelle würden alle drei, nach dem (de-)installieren von Plugins für einen
-	konkreten Benutzer die dritte Tabelle neu erstellt. Die Daten dazu kommen aus den
-	Plugin Bundles und der user_plugins (für einen Benutzer installierte Plugins) kommen.
-	Die o.g. 3 Tabellen speichern also nur redundante Daten. Danach würden die betroffenen
-	Plugins benachrichtigt (welche sind das? Nur die "owner" der EPs? oder auch andere?
-	-> neben Ext und EP könnten Plugins auch EP-Listener bereitstellen. EP impliziert
-	Listener, ggf. per Flag einstellbar)
-	
-	Flag in plugin_bundles, ob declared_extension_points und declared_extensions stimmen.
-	-> lazy init. Da plugin_bundles immutable sind, kann sich das nicht "zurück" ändern.
-	
-	Flag in users, ob extension_bindings (noch) stimmen. Da plugins und plugin_bundles
-	immutable sind, kann das nur durch Änderungen in der user_plugins zustandekommen.
-	
-	Extension-Data in plugin_bundles getrennt vom Jarfile speichern? Wird eh nur zur
-	Initialisierung der declared_* gebraucht.
-	
-	Einfache users-Tabelle (id, name) wenigstens damit die Datenstruktur schon mal
-	stimmt.
+-----------------------------------
+
+Flag in users, ob extension_bindings (noch) stimmen. Da plugins und plugin_bundles
+immutable sind, kann das nur durch Änderungen in der user_plugins zustandekommen.
 
 -----------------------------------
 
 Nächste Schritte:
-
-TODO-Marker
 
 Hello World kann jetzt getestet werden, auch ohne Plugin State.
 

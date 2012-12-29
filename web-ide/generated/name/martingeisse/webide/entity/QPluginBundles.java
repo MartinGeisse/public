@@ -34,6 +34,11 @@ public class QPluginBundles extends com.mysema.query.sql.RelationalPathBase<Plug
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     /**
+     * Metamodel property for property 'jarfile'
+     */
+    public final SimplePath<byte[]> jarfile = createSimple("jarfile", byte[].class);
+
+    /**
      * Metamodel property for property 'plugin_id'
      */
     public final NumberPath<Long> pluginId = createNumber("plugin_id", Long.class);

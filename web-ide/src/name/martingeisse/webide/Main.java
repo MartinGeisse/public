@@ -11,9 +11,6 @@ import java.util.EnumSet;
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 
-import name.martingeisse.common.database.EntityConnectionManager;
-import name.martingeisse.common.database.MysqlDatabaseDescriptor;
-import name.martingeisse.common.javascript.JavascriptAssembler;
 import name.martingeisse.webide.ssh.ShellFactory;
 
 import org.apache.sshd.SshServer;
@@ -25,8 +22,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
 
 /**
  * The main class.
@@ -39,22 +34,7 @@ public class Main {
 	 * @throws Exception on errors
 	 */
 	public static void main(final String[] args) throws Exception {
-		
-		// initialize time zone
-		DateTimeZone timeZone = DateTimeZone.forID("Europe/Berlin");
-		JavascriptAssembler.defaultDateFormatter = DateTimeFormat.forPattern("YYYY-MM-dd").withZone(timeZone);
-		JavascriptAssembler.defaultDateTimeFormatter = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss").withZone(timeZone);
-		
-		// initialize database
-		MysqlDatabaseDescriptor mainDatabase = new MysqlDatabaseDescriptor();
-		mainDatabase.setDisplayName("Local database");
-		mainDatabase.setUrl("jdbc:mysql://localhost/webide?zeroDateTimeBehavior=convertToNull&useTimezone=false&characterEncoding=utf8&characterSetResults=utf8");
-		mainDatabase.setUsername("root");
-		mainDatabase.setPassword("");
-		mainDatabase.setDefaultTimeZone(timeZone);
-		mainDatabase.initialize();
-		EntityConnectionManager.initializeDatabaseDescriptors(mainDatabase);
-		
+		IdeLauncher.initialize();
 		launchSsh();
 		launchWeb();
 	}

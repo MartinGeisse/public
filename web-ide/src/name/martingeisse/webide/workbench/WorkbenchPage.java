@@ -11,6 +11,9 @@ import java.util.List;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.webide.entity.QFiles;
 import name.martingeisse.webide.java.editor.JavaEditor;
+import name.martingeisse.webide.plugin.ExtensionQuery;
+import name.martingeisse.webide.plugin.ExtensionQuery.Result;
+import name.martingeisse.webide.plugin.PluginBundleHandle;
 import name.martingeisse.webide.resources.MarkerData;
 import name.martingeisse.webide.resources.MarkerListView;
 import name.martingeisse.webide.resources.ResourceIconSelector;
@@ -18,6 +21,7 @@ import name.martingeisse.webide.resources.WorkspaceUtil;
 import name.martingeisse.webide.workbench.components.IClientFuture;
 import name.martingeisse.webide.workbench.components.SelectableElementsBehavior;
 import name.martingeisse.webide.workbench.components.contextmenu.ContextMenu;
+import name.martingeisse.webide.workbench.components.contextmenu.ContextMenuSeparator;
 import name.martingeisse.webide.workbench.components.contextmenu.SimpleContextMenuItem;
 import name.martingeisse.webide.workbench.components.contextmenu.SimpleContextMenuItemWithTextInput;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
@@ -95,6 +99,22 @@ public class WorkbenchPage extends WebPage {
 				}
 			}
 		});
+		filesContextMenu.getItems().add(new ContextMenuSeparator<List<String>>());
+		for (Result extension : ExtensionQuery.fetch(1, "webide.context_menu.resource")) { // TODO userId
+			final String className = extension.getDescriptor().toString();
+			final PluginBundleHandle bundleHandle = extension.getBundleHandle();
+			filesContextMenu.getItems().add(new SimpleContextMenuItem<List<String>>("Message from " + className) {
+				@Override
+				protected void onSelect(final List<String> anchor) {
+					try {
+						final Runnable runnable = bundleHandle.createObject(Runnable.class, className);
+						runnable.run();
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}
+			});
+		}
 
 		final WebMarkupContainer filesContainer = new WebMarkupContainer("filesContainer");
 		filesContainer.add(new SelectableElementsBehavior<String>(".file", "$('.name', element).text()", filesContextMenu) {
@@ -193,6 +213,8 @@ public class WorkbenchPage extends WebPage {
 	@Override
 	public void renderHead(final IHeaderResponse response) {
 		super.renderHead(response);
+		response.render(CssHeaderItem.forReference(new CssResourceReference(WorkbenchPage.class, "common.css"), null, "screen, projection"));
+		response.render(CssHeaderItem.forReference(new CssResourceReference(WorkbenchPage.class, "ie.css"), null, "screen, projection", "IE"));
 		response.render(CssHeaderItem.forReference(new CssResourceReference(WorkbenchPage.class, "jquery.contextMenu.css")));
 		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkbenchPage.class, "common.js")));
 	}

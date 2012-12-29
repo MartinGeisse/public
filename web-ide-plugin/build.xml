@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project" default="jar">
+    
+	<target name="jar">
+    	<jar destfile="plugin.jar" basedir="bin">
+    		<manifest>
+    		</manifest>
+    	</jar>
+    </target>
+	
+</project>

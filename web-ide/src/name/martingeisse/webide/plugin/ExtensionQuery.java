@@ -43,7 +43,7 @@ public final class ExtensionQuery {
 	 * @param userId the ID of the user
 	 * @param extensionPointName the name of the extension point
 	 */
-	public ExtensionQuery(long userId, String extensionPointName) {
+	public ExtensionQuery(final long userId, final String extensionPointName) {
 		this.userId = userId;
 		this.extensionPointName = extensionPointName;
 	}
@@ -60,7 +60,7 @@ public final class ExtensionQuery {
 	 * Setter method for the userId.
 	 * @param userId the userId to set
 	 */
-	public void setUserId(long userId) {
+	public void setUserId(final long userId) {
 		this.userId = userId;
 	}
 
@@ -76,7 +76,7 @@ public final class ExtensionQuery {
 	 * Setter method for the extensionPointName.
 	 * @param extensionPointName the extensionPointName to set
 	 */
-	public void setExtensionPointName(String extensionPointName) {
+	public void setExtensionPointName(final String extensionPointName) {
 		this.extensionPointName = extensionPointName;
 	}
 
@@ -86,22 +86,78 @@ public final class ExtensionQuery {
 	 * 
 	 * @return the extension descriptors (parsed JSON)
 	 */
-	public List<Object> fetch() {
+	public List<Result> fetch() {
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		query.from(QExtensionBindings.extensionBindings, QDeclaredExtensions.declaredExtensions);
 		query.where(QExtensionBindings.extensionBindings.declaredExtensionId.eq(QDeclaredExtensions.declaredExtensions.id));
 		query.where(QExtensionBindings.extensionBindings.userId.eq(userId));
 		query.where(QDeclaredExtensions.declaredExtensions.extensionPointName.eq(extensionPointName));
-		CloseableIterator<String> iterator = query.iterate(QDeclaredExtensions.declaredExtensions.descriptor);
+		final CloseableIterator<Object[]> iterator = query.iterate(QDeclaredExtensions.declaredExtensions.descriptor, QDeclaredExtensions.declaredExtensions.pluginBundleId);
 		try {
-			List<Object> result = new ArrayList<Object>();
+			final List<Result> results = new ArrayList<Result>();
 			while (iterator.hasNext()) {
-				result.add(JSONValue.parse(iterator.next()));
+				Object[] row = iterator.next();
+				String rawDescriptor = (String)row[0];
+				long pluginBundleId = (Long)row[1];
+				results.add(new Result(JSONValue.parse(rawDescriptor), new PluginBundleHandle(pluginBundleId)));
 			}
-			return result;
+			return results;
 		} finally {
 			iterator.close();
 		}
 	}
-	
+
+	/**
+	 * Fetches the extensions bound to the extension point for the user, and
+	 * returns the descriptors for them.
+	 * 
+	 * @param userId the user ID
+	 * @param extensionPointName the name of the extension point
+	 * @return the extension descriptors (parsed JSON)
+	 */
+	public static List<Result> fetch(final long userId, final String extensionPointName) {
+		return new ExtensionQuery(userId, extensionPointName).fetch();
+	}
+
+	/**
+	 * Represents a single extension that was found by an extension query.
+	 */
+	public static final class Result {
+
+		/**
+		 * the descriptor
+		 */
+		private final Object descriptor;
+
+		/**
+		 * the bundleHandle
+		 */
+		private final PluginBundleHandle bundleHandle;
+
+		/**
+		 * Constructor.
+		 */
+		Result(final Object descriptor, final PluginBundleHandle bundleHandle) {
+			this.descriptor = descriptor;
+			this.bundleHandle = bundleHandle;
+		}
+		
+		/**
+		 * Getter method for the descriptor.
+		 * @return the descriptor
+		 */
+		public Object getDescriptor() {
+			return descriptor;
+		}
+		
+		/**
+		 * Getter method for the bundleHandle.
+		 * @return the bundleHandle
+		 */
+		public PluginBundleHandle getBundleHandle() {
+			return bundleHandle;
+		}
+
+	}
+
 }

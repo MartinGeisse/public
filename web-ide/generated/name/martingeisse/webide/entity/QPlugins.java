@@ -29,6 +29,11 @@ public class QPlugins extends com.mysema.query.sql.RelationalPathBase<Plugins> {
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     /**
+     * Metamodel property for property 'is_unpacked'
+     */
+    public final BooleanPath isUnpacked = createBoolean("is_unpacked");
+
+    /**
      * Metamodel property for primary key 'PRIMARY'
      */
     public final com.mysema.query.sql.PrimaryKey<Plugins> pk_primary = createPrimaryKey(id);
