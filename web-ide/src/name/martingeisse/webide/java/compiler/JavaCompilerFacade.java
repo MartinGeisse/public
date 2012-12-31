@@ -35,80 +35,14 @@ import com.mysema.query.sql.dml.SQLDeleteClause;
 import com.mysema.query.sql.dml.SQLInsertClause;
 
 /**
- * TODO: document me
- *
+ * This façade is used by the builder thread to invoke the Java compiler.
  */
 public class JavaCompilerFacade {
 
 	/**
-	 * the synchronizationKey
+	 * This method is run by the builder thread.
 	 */
-	private static final Object synchronizationKey = new Object();
-	
-	/**
-	 * the compilationRequested
-	 */
-	private static volatile boolean compilationRequested = true;
-
-	/**
-	 * the compilationFinished
-	 */
-	private static volatile boolean compilationFinished = false;
-	
-	/**
-	 * Requests compilation of .java files to .class files.
-	 */
-	public static void requestCompilation() {
-		synchronized(synchronizationKey) {
-			compilationRequested = true;
-			compilationFinished = false;
-			synchronizationKey.notify();
-		}
-	}
-	
-	/**
-	 * Checks whether compilation is finished.
-	 * @return true if finished, false if running
-	 */
-	public static boolean isCompilationFinished() {
-		return compilationFinished;
-	}
-
-	/**
-	 * static initializer
-	 */
-	static {
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					while (true) {
-						
-						// wait until requested, then mark as no longer requested to detect subsequent requests
-						synchronized(synchronizationKey) {
-							if (!compilationRequested) {
-								synchronizationKey.wait();
-							}
-							compilationRequested = false;
-						}
-
-						// actually compile
-						performCompilation();
-						
-						// mark as finished unless subsequent requests have arrived
-						compilationFinished = !compilationRequested;
-						
-					}
-				} catch (InterruptedException e) {
-				}
-			}
-		}.start();
-	}
-
-	/**
-	 * This method is run in the compiler thread when requested.
-	 */
-	private static void performCompilation() {
+	public static void performCompilation() {
 
 		// obtain the standard file manager so we can include the boot classpath
 		final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();

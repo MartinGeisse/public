@@ -1,0 +1,104 @@
+
+1. Schritt: Globale Builder (solange es noch keine PRojekte gibt -> betreffen
+   alle Files).
+
+Java Builder (Listener: Source Files; -> Class Files)
+Plugin Builder (Listener: Class Files; -> JAR File; upload plugin; unpack
+	plugin; install plugin for user; update bindings)
+
+Java Compiler Background Thread -> Builder Thread. Ruft hardcoded den Java
+Compiler und den Plugin Builder auf. Wichtig ist hier vor allem, dass letzterer
+den Plugin Bundle Descriptor einliest, ein JAR baut und installiert.
+Außerdem sollen "Builder" wenigstens als Konzept schon mal vorkommen,
+auch wenn alles hardcoded ist. im Builder-Thread 
+
+------------------------------------------------------------------------------------------------------------
+
+Was ist der Unterschied zwischen Resource Change Listeners und Builders? Was
+ist bei Eclipse der Unterschied?
++ Möglichkeit eines Clean Build
+	Sollte hier aber vereinfacht werden. Das ist in Eclipse zu umständlich:
+	- Standard ist incremental, automatisch bei Ressourcen-Änderungen, nicht
+		abschaltbar (letzteres würde nur andere Probleme nach sich ziehen;
+		besser, man fixt die Builders).
+	- Es gibt einen Button für "clean" -> zieht clean build nach sich. Zur
+		Sicherheit, falls doch mal was schiefgeht.
+	Wenn das nicht reicht, dann ist was bei den Buildern faul und sollte
+	auch da gefixt werden.
+- Wie man sie einrichtet -> kein Unterschied, denn beides würde indirekt
+	über eine Project Facet / Nature gehen, nur diese bekommt man zu sehen.
+- Reihenfolge, in der sie laufen -> das soll bei Buildern keinen Unterschied
+	machen! Wenn das einen Unterschied macht, dann ist was falsch und
+	muss da gefixt werden. Eigentlich sollen beide direkt auf einzelne
+	Ressourcenänderungen reagieren, wobei ein Builder erst mal high-prio
+	auf die changes reagieren kann, nötige Aktionen vormerkt und dann
+	low-prio buildet. Dadurch werden bei zig Änderungen nur ein inkr.
+	Rebuild angestoßen.
++ Einhängen in den "Building Workspace..." progress bar
++ Verzögernde Wirkung auf "Run Application"-Aktionen des Users
++ Möglicherweise ein einheitliches Framework zum Konfigurieren der Builder
+	- Debug / Release
+	- Targets
+	- ... (mal in einen typischen C-Compiler schauen, z.B. Xcode)
+	-> vereinfachung: Es gibt N Build-Configs, und man wählt eine davon
+		in einem Dropdown aus. Alles andere sind Eigenschaften dieser
+		Configs. So wie IDEs das traditionell machen blick ja keiner
+		wirklich durch.
+	Das macht evtl. Sinn, wenn incr. nicht so gut möglich. Ansonsten
+	sollte einfach immer *alles* gebuildet werden und man sucht sich
+	beim Starten aus, welche Variante man ausführt.
+	Eclipse: "Note builders needn't necessarily care about build configurations.
+		IncrementalProjectBuilder#getDelta(IProject) will continue to return the
+		resource changes since the builder was last run for the current build
+		configuration." --> cool für den, der den Builder schreibt.
++ gemeinsames Build-Log, soweit das für den jeweiligen Builder nötig ist.
+	Bei C ist es z.B. sinnvoll. Bei Java eher egal, da reichen Error-Marker
+	i.A. aus.
++ Builder haben oft ein bestimmtes Vorgehen, was sie von anderen Listenern
+	unterscheidet. Unklar, wie sich das in der API niederschlägt / sollte.
+	- achtet nur auf ganz bestimmte Ressourcen (Source Files)
+	- Löscht Ausgabefiles, erzeugt neue Ausgabefiles, erzeugt Source-Marker
+		auf denselben Files, auf denen der Listener sitzt
+	- o.g. High-Prio / Low-Prio Verarbeitung von Ressource Deltas
+	-> Rohbau für "gewöhnliche" Builder, der aber nicht benutzt werden muss
+
++ Listener: Workspace Lock während ein Delta verarbeitet wird; Builder läuft
+	nebenher. Listeners sind in diesem Sinne "Interrupts", die "schnell"
+	laufen müssen. Vielleicht ist das sogar der wesentliche Unterschied.
+	-> Auch Listener können in verschiedenen Stufen laufen, je nach Listener:
+		- Sofort bei Änderungen
+		- Bei Checkpoints nach den Änderungen (Änderungen sammeln, bevor die
+			Listener aufgerufen werden)
+	IWorkspaceRunnable ist ein Mechanismus, um Batch-Changes auszuführen und
+	nur einmal die Listener anzustoßen.
+	-> Listener laufen bei Eclipse, soweit ich das verstehe, im "Main Thread"
+		während Builders im "Background Thread" laufen.
+
+Artikel:
+	Builders are always allowed to modify the workspace.
+	Builders have support for progress monitoring, cancellation, and
+		error reporting.
+	Listeners operate on the entire workspace; builders are installed on a
+		per-project basis.
+	Builders are run in a concrete order that can be specified individually
+		on each project. Builders can enforce dependency relationships with
+		other builders (my builder must run after the "Foo" builder). Projects
+		are also built in a specified order. With resource change listeners,
+		there is no way to ensure or even discover the order in which
+		listeners receive the change events.
+	There are different build policies: incremental build, full build,
+		and auto-build.
+	Builder lifecycle and persistence is managed by the platform. Once a builder
+		is installed on a project, it will remain on that project across sessions.
+	Builder configurations can easily be shared with other users, since the
+		information is contained in the shareable project description file
+		(called ".project").
+
+Die umgekehrte Frage ist: Reicht das, um einen Unterschied zwischen Buildern und
+Listenern zu machen? Oder sind das alles Features, die ein verallgemeinertes
+Listener-System haben soll?
+
+
+   
+   
+  

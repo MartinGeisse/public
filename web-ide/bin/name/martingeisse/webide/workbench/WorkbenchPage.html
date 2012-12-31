@@ -16,7 +16,7 @@
 			<div class="LayoutBox">
 				<div class="FileViewBox">
 					<h2>Files</h2>
-					<div style="overflow: scroll; height: 33%;" id="filesContainer" wicket:id="filesContainer">
+					<div style="overflow: scroll; height: 31%;" id="filesContainer" wicket:id="filesContainer">
 						<div wicket:id="files">
 							<div wicket:id="file" style="white-space: nowrap;" class="file">
 								<img wicket:id="icon" style="vertical-align: sub;" /> <span wicket:id="name" class="name">name</span>
@@ -28,7 +28,7 @@
 			<div class="LayoutBox">
 				<div class="ViewBox" wicket:id="markersContainer">
 					<h2>Markers</h2>
-					<div style="overflow: scroll; height: 33%;">
+					<div style="overflow: scroll; height: 31%;">
 						<div wicket:id="markers" style="margin: 3px; ">
 							<img wicket:id="icon" /> <span wicket:id="meaning">meaning</span>: <span wicket:id="message">message</span>
 						</div>
@@ -38,13 +38,20 @@
 			<div class="LayoutBox">
 				<div class="ViewBox">
 					<h2>Output</h2>
-					<div style="overflow: scroll; height: 33%; font-family: monospace; white-space: pre;"><div wicket:id="log" /></div>
+					<div style="overflow: scroll; height: 31%; font-family: monospace; white-space: pre;"><div wicket:id="log" /></div>
 				</div>
 			</div>
 		</div>
 		<div class="LayoutBox" style="margin-left: 400px;">
-			<div class="ViewBox" style="background-color: #fff; height: 95%;">
+			<div class="ViewBox" style="background-color: #fff; height: 90%;">
 				<div wicket:id="editor" />
+			</div>
+		</div>
+		<div class="LayoutBox">
+			<div class="ViewBox" style="height: 16px; ">
+				<span wicket:id="buildingWorkspaceIndicator">
+					Building workspace: <img src="/wicket/resource/name.martingeisse.wicket.icons.other.Dummy/BusyIndicatorBar.gif" height="14" style="vertical-align: top" />
+				</span>
 			</div>
 		</div>
 	</body>

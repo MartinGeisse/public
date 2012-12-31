@@ -6,6 +6,8 @@
 
 package name.martingeisse.webide.plugin;
 
+import java.io.Serializable;
+
 /**
  * This class represents a plugin bundle. It is only a "handle" in the
  * sense that multiple instances may refer to the same plugin bundle.
@@ -13,7 +15,7 @@ package name.martingeisse.webide.plugin;
  * The main purpose of this class is to allow plugins to obtain classes
  * from other bundles.
  */
-public final class PluginBundleHandle {
+public final class PluginBundleHandle implements Serializable {
 
 	/**
 	 * the pluginBundleId
@@ -23,7 +25,7 @@ public final class PluginBundleHandle {
 	/**
 	 * the classLoader
 	 */
-	private ClassLoader classLoader;
+	private transient ClassLoader classLoader;
 	
 	/**
 	 * Constructor.

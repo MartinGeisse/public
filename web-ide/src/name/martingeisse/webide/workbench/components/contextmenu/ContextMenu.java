@@ -6,6 +6,7 @@
 
 package name.martingeisse.webide.workbench.components.contextmenu;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +39,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
  * 
  * @param <A> the anchor type
  */
-public class ContextMenu<A> {
+public class ContextMenu<A> implements Serializable {
 
 	/**
 	 * Renders head items needed by context menus. This method should be used

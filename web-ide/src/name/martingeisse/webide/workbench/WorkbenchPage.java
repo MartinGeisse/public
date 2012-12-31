@@ -14,20 +14,24 @@ import name.martingeisse.webide.java.editor.JavaEditor;
 import name.martingeisse.webide.plugin.ExtensionQuery;
 import name.martingeisse.webide.plugin.ExtensionQuery.Result;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
+import name.martingeisse.webide.resources.BuilderService;
 import name.martingeisse.webide.resources.MarkerData;
 import name.martingeisse.webide.resources.MarkerListView;
 import name.martingeisse.webide.resources.ResourceIconSelector;
 import name.martingeisse.webide.resources.WorkspaceUtil;
+import name.martingeisse.webide.resources.WorkspaceWicketResourceReference;
 import name.martingeisse.webide.workbench.components.IClientFuture;
 import name.martingeisse.webide.workbench.components.SelectableElementsBehavior;
 import name.martingeisse.webide.workbench.components.contextmenu.ContextMenu;
 import name.martingeisse.webide.workbench.components.contextmenu.ContextMenuSeparator;
+import name.martingeisse.webide.workbench.components.contextmenu.DownloadMenuItem;
 import name.martingeisse.webide.workbench.components.contextmenu.SimpleContextMenuItem;
 import name.martingeisse.webide.workbench.components.contextmenu.SimpleContextMenuItemWithTextInput;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -87,6 +91,16 @@ public class WorkbenchPage extends WebPage {
 			protected void onSelect(final List<String> anchor) {
 				WorkspaceUtil.delete(anchor);
 				AjaxRequestUtil.markForRender(WorkbenchPage.this);
+			}
+		});
+		filesContextMenu.getItems().add(new DownloadMenuItem<List<String>>("Download") {
+			@Override
+			protected String determineUrl(final List<String> anchor) {
+				if (!anchor.isEmpty()) {
+					return urlFor(new WorkspaceWicketResourceReference(anchor.get(0)), null).toString();
+				} else {
+					return "";
+				}
 			}
 		});
 		filesContextMenu.getItems().add(new SimpleContextMenuItem<List<String>>("Run") {
@@ -168,8 +182,21 @@ public class WorkbenchPage extends WebPage {
 
 		add(new EmptyPanel("editor"));
 		add(new Label("log", new PropertyModel<String>(this, "log")));
+		add(new WebMarkupContainer("buildingWorkspaceIndicator") {
+			@Override
+			public boolean isVisible() {
+				return !BuilderService.isBuildFinished();
+			}
+			@Override
+			public void onEvent(IEvent<?> event) {
+				if (event.getPayload() instanceof AjaxRequestTarget) {
+					AjaxRequestTarget ajaxRequestTarget = (AjaxRequestTarget)event.getPayload();
+					ajaxRequestTarget.add(this);
+				}
+			}
+		}.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true));
 	}
-
+	
 	/**
 	 * Returns the file names.
 	 * @return the file names.

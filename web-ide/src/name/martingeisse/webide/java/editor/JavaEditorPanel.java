@@ -6,7 +6,7 @@
 
 package name.martingeisse.webide.java.editor;
 
-import name.martingeisse.webide.java.compiler.JavaCompilerFacade;
+import name.martingeisse.webide.resources.BuilderService;
 import name.martingeisse.webide.resources.WorkspaceUtil;
 import name.martingeisse.webide.workbench.components.IClientFuture;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
@@ -40,11 +40,11 @@ public class JavaEditorPanel extends Panel {
 			@Override
 			protected void onSubmit() {
 				WorkspaceUtil.replaceContents(JavaEditorPanel.this.workspaceResourcePath, (String)JavaEditorPanel.this.getDefaultModelObject());
-				JavaCompilerFacade.requestCompilation();
+				BuilderService.requestBuild();
 				IClientFuture.Behavior.get(getWebPage()).addFuture(new IClientFuture() {
 					@Override
 					public boolean check(Behavior behavior) {
-						boolean compiled = JavaCompilerFacade.isCompilationFinished();
+						boolean compiled = BuilderService.isBuildFinished();
 						if (compiled) {
 							AjaxRequestUtil.markForRender(getWebPage().get("markersContainer"));
 						}

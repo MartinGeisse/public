@@ -6,12 +6,14 @@
 
 package name.martingeisse.webide.workbench.components.contextmenu;
 
+import java.io.Serializable;
+
 /**
  * Base class for context menu items.
  * 
  * @param <A> the anchor type (see {@link ContextMenu} for explanation)
  */
-public abstract class ContextMenuItem<A> {
+public abstract class ContextMenuItem<A> implements Serializable {
 
 	/**
 	 * Constructor.

@@ -14,12 +14,7 @@ package name.martingeisse.webide.workbench.components.contextmenu;
  * 
  * @param <A> the anchor type (see {@link ContextMenu} for explanation)
  */
-public abstract class SimpleContextMenuItemWithTextInput<A> extends ContextMenuItem<A> {
-
-	/**
-	 * the name
-	 */
-	private String name;
+public abstract class SimpleContextMenuItemWithTextInput<A> extends AbstractNamedContextMenuItem<A> {
 
 	/**
 	 * the prompt
@@ -38,24 +33,8 @@ public abstract class SimpleContextMenuItemWithTextInput<A> extends ContextMenuI
 	 * @param prompt the prompt to show
 	 */
 	public SimpleContextMenuItemWithTextInput(final String name, String prompt) {
-		this.name = name;
+		super(name);
 		this.prompt = prompt;
-	}
-
-	/**
-	 * Getter method for the name.
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * Setter method for the name.
-	 * @param name the name to set
-	 */
-	public void setName(final String name) {
-		this.name = name;
 	}
 
 	/**
@@ -94,7 +73,7 @@ public abstract class SimpleContextMenuItemWithTextInput<A> extends ContextMenuI
 	 */
 	@Override
 	void buildItem(final StringBuilder builder, final IContextMenuCallbackBuilder callbackBuilder) {
-		builder.append("createContextMenuItemWithPrompt('").append(name).append("', '").append(prompt);
+		builder.append("createContextMenuItemWithPrompt('").append(getName()).append("', '").append(prompt);
 		builder.append("', function(key, data, options) {");
 		callbackBuilder.buildContextMenuCallback(builder);
 		builder.append("})");

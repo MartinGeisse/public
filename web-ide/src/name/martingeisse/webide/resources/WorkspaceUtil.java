@@ -12,6 +12,7 @@ import java.util.Collection;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.webide.entity.QFiles;
 
+import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.dml.SQLDeleteClause;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
@@ -37,6 +38,19 @@ public class WorkspaceUtil {
 		final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QFiles.files);
 		insert.set(QFiles.files.name, filename);
 		insert.set(QFiles.files.contents, (contents == null ? "" : contents).getBytes(Charset.forName("utf-8")));
+		insert.execute();
+	}
+	
+	/**
+	 * Creates a file with the specified contents. No file with the same name may
+	 * exist yet.
+	 * @param filename the filename
+	 * @param contents the file contents
+	 */
+	public static void createFile(String filename, byte[] contents) {
+		final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QFiles.files);
+		insert.set(QFiles.files.name, filename);
+		insert.set(QFiles.files.contents, (contents == null ? new byte[0] : contents));
 		insert.execute();
 	}
 	
@@ -77,6 +91,18 @@ public class WorkspaceUtil {
 		final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QFiles.files);
 		delete.where(QFiles.files.name.in(filenames));
 		delete.execute();
+	}
+	
+	/**
+	 * Returns the contents of the specified file.
+	 * @param filename the name of the file
+	 * @return the contents, or null if the file does not exist
+	 */
+	public static byte[] getContents(String filename) {
+		// this looks like a bug in QueryDSL...
+		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
+		Object[] row = (Object[])(Object)query.from(QFiles.files).where(QFiles.files.name.eq(filename)).singleResult(QFiles.files.contents);
+		return (row == null ? null : (byte[])row[0]);
 	}
 	
 }
