@@ -9,7 +9,7 @@ package name.martingeisse.webide.workbench;
 import java.util.List;
 
 import name.martingeisse.common.database.EntityConnectionManager;
-import name.martingeisse.webide.entity.QFiles;
+import name.martingeisse.webide.entity.QWorkspaceResources;
 import name.martingeisse.webide.java.editor.JavaEditor;
 import name.martingeisse.webide.plugin.ExtensionQuery;
 import name.martingeisse.webide.plugin.ExtensionQuery.Result;
@@ -18,6 +18,7 @@ import name.martingeisse.webide.resources.BuilderService;
 import name.martingeisse.webide.resources.MarkerData;
 import name.martingeisse.webide.resources.MarkerListView;
 import name.martingeisse.webide.resources.ResourceIconSelector;
+import name.martingeisse.webide.resources.ResourceType;
 import name.martingeisse.webide.resources.WorkspaceUtil;
 import name.martingeisse.webide.resources.WorkspaceWicketResourceReference;
 import name.martingeisse.webide.workbench.components.IClientFuture;
@@ -203,7 +204,9 @@ public class WorkbenchPage extends WebPage {
 	 */
 	public List<String> getFilenames() {
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-		return query.from(QFiles.files).list(QFiles.files.name);
+		query.from(QWorkspaceResources.workspaceResources);
+		query.where(QWorkspaceResources.workspaceResources.type.eq(ResourceType.FILE.name()));
+		return query.list(QWorkspaceResources.workspaceResources.name);
 	}
 
 	/**

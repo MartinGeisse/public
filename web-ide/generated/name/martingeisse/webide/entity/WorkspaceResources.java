@@ -6,14 +6,14 @@ package name.martingeisse.webide.entity;
 import java.io.Serializable;
 
 /**
- * This class represents rows from table 'files'.
+ * This class represents rows from table 'workspace_resources'.
  */
-public class Files implements Serializable {
+public class WorkspaceResources implements Serializable {
 
     /**
      * Constructor.
      */
-    public Files() {
+    public WorkspaceResources() {
     }
 
     /**
@@ -30,6 +30,16 @@ public class Files implements Serializable {
      * the name
      */
     private String name;
+
+    /**
+     * the parentId
+     */
+    private Long parentId;
+
+    /**
+     * the type
+     */
+    private String type;
 
     /**
      * Getter method for the contents.
@@ -79,12 +89,44 @@ public class Files implements Serializable {
         this.name = name;
     }
 
+    /**
+     * Getter method for the parentId.
+     * @return the parentId
+     */
+    public Long getParentId() {
+        return parentId;
+    }
+
+    /**
+     * Setter method for the parentId.
+     * @param parentId the parentId to set
+     */
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+    /**
+     * Getter method for the type.
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Setter method for the type.
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "{Files. contents = " + contents + ", id = " + id + ", name = " + name + "}";
+        return "{WorkspaceResources. contents = " + contents + ", id = " + id + ", name = " + name + ", parentId = " + parentId + ", type = " + type + "}";
     }
 
 }

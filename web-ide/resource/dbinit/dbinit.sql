@@ -8,23 +8,26 @@ USE `webide`;
 -- - structure
 -- -------------------------------------------------------------------------
 
-CREATE TABLE IF NOT EXISTS `files` (
+CREATE TABLE IF NOT EXISTS `workspace_resources` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255)  NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `parent_id` bigint(20) NULL,
   `contents` blob NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `workspace_resources_parent_id` (`parent_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `markers` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `origin` varchar(255)  NOT NULL,
   `meaning` varchar(255)  NOT NULL,
-  `file_id` bigint(20) NOT NULL,
+  `workspace_resource_id` bigint(20) NOT NULL,
   `line` bigint(20) NOT NULL COMMENT '1-based',
   `column` bigint(20) NOT NULL COMMENT '1-based',
   `message` varchar(4096)  NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `markers_file_id` (`file_id`)
+  KEY `markers_workspace_resource_id` (`workspace_resource_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `users` (
@@ -103,9 +106,13 @@ CREATE TABLE IF NOT EXISTS `plugin_bundle_states` (
 INSERT INTO  `users` (`id`, `login_name`) VALUES
 (NULL,  'martin');
 
-INSERT INTO `files` (`id`, `name`, `contents`) VALUES
-(NULL, 'Helper.java', 0x7075626c696320636c6173732048656c706572207b0d0a0d0a20207075626c69632073746174696320766f69642068656c702829207b0d0a2020202053797374656d2e6f75742e7072696e746c6e282248656c7065722069732068656c70696e672122293b0d0a20207d0d0a0d0a7d),
-(NULL, 'Main.java', 0x0d0a7075626c696320636c617373204d61696e207b0d0a20207075626c69632073746174696320766f6964206d61696e28537472696e675b5d206172677329207b0d0a2020202053797374656d2e6f75742e7072696e746c6e282248656c6c6f20576f726c642122293b0d0a2020202048656c7065722e68656c7028293b0d0a20207d0d0a7d0d0a);
+INSERT INTO `workspace_resources` (`id`, `name`, `type`, `parent_id`, `contents`) VALUES
+(NULL, '', 'MOUNT_SPACE', NULL, 0),
+(NULL, '', 'WORKSPACE_ROOT', 1, 0),
+(NULL, 'test-project', 'PROJECT', 2, 0),
+(NULL, 'src', 'FOLDER', 3, 0),
+(NULL, 'Helper.java', 'FILE', 4, 0x7075626c696320636c6173732048656c706572207b0d0a0d0a20207075626c69632073746174696320766f69642068656c702829207b0d0a2020202053797374656d2e6f75742e7072696e746c6e282248656c7065722069732068656c70696e672122293b0d0a20207d0d0a0d0a7d),
+(NULL, 'Main.java', 'FILE', 4, 0x0d0a7075626c696320636c617373204d61696e207b0d0a20207075626c69632073746174696320766f6964206d61696e28537472696e675b5d206172677329207b0d0a2020202053797374656d2e6f75742e7072696e746c6e282248656c6c6f20576f726c642122293b0d0a2020202048656c7065722e68656c7028293b0d0a20207d0d0a7d0d0a);
 
 INSERT INTO `declared_extension_points` (`id`, `plugin_bundle_id`, `name`) VALUES
 (NULL, NULL ,  'webide.context_menu.resource');
@@ -123,7 +130,8 @@ INSERT INTO  `user_plugins` (`id`, `user_id`, `plugin_id`) VALUES
 -- - constraints
 -- -------------------------------------------------------------------------
 
-ALTER TABLE `markers` ADD CONSTRAINT `markers_ibfk_1` FOREIGN KEY (`file_id`) REFERENCES `files` (`id`) ON DELETE CASCADE;
+ALTER TABLE `workspace_resources` ADD CONSTRAINT `workspace_resources_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `workspace_resources` (`id`) ON DELETE CASCADE;
+ALTER TABLE `markers` ADD CONSTRAINT `markers_ibfk_1` FOREIGN KEY (`workspace_resource_id`) REFERENCES `workspace_resources` (`id`) ON DELETE CASCADE;
 ALTER TABLE `plugin_bundles` ADD CONSTRAINT `plugin_bundles_ibfk_1` FOREIGN KEY (`plugin_id`) REFERENCES `plugins` (`id`) ON DELETE CASCADE;
 ALTER TABLE `declared_extension_points` ADD CONSTRAINT `declared_extension_points_ibfk_1` FOREIGN KEY (`plugin_bundle_id`) REFERENCES `plugin_bundles` (`id`) ON DELETE CASCADE;
 ALTER TABLE `declared_extensions` ADD CONSTRAINT `declared_extensions_ibfk_1` FOREIGN KEY (`plugin_bundle_id`) REFERENCES `plugin_bundles` (`id`) ON DELETE CASCADE;

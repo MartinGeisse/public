@@ -90,7 +90,7 @@ public enum ResourceIconSelector {
 		switch (type) {
 		
 		case MOUNT_SPACE:
-		case WORKSPACE:
+		case WORKSPACE_ROOT:
 		case PROJECT:
 			return MISSING_ICON;
 			

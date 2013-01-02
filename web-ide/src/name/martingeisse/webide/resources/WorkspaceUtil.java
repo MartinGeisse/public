@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.util.Collection;
 
 import name.martingeisse.common.database.EntityConnectionManager;
+import name.martingeisse.webide.entity.Files;
 import name.martingeisse.webide.entity.QFiles;
 
 import com.mysema.query.sql.SQLQuery;
@@ -91,6 +92,16 @@ public class WorkspaceUtil {
 		final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QFiles.files);
 		delete.where(QFiles.files.name.in(filenames));
 		delete.execute();
+	}
+	
+	/**
+	 * Returns the record for the specified file.
+	 * @param filename the name of the file
+	 * @return the record, or null if the file does not exist
+	 */
+	public static Files getFile(String filename) {
+		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
+		return query.from(QFiles.files).where(QFiles.files.name.eq(filename)).singleResult(QFiles.files);
 	}
 	
 	/**

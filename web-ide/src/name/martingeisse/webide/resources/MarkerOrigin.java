@@ -20,6 +20,11 @@ public enum MarkerOrigin {
 	/**
 	 * Indicates that the marker originates from the Java compiler.
 	 */
-	JAVAC;
+	JAVAC,
+	
+	/**
+	 * Indicates that the marker originates from the plugin development environment.
+	 */
+	PDE;
 	
 }

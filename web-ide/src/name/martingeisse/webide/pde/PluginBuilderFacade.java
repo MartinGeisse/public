@@ -13,12 +13,18 @@ import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 
 import name.martingeisse.common.database.EntityConnectionManager;
+import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.webide.entity.Files;
 import name.martingeisse.webide.entity.QFiles;
 import name.martingeisse.webide.entity.QPluginBundles;
 import name.martingeisse.webide.entity.QPlugins;
 import name.martingeisse.webide.entity.QUserPlugins;
+import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.plugin.InternalPluginUtil;
+import name.martingeisse.webide.resources.MarkerData;
+import name.martingeisse.webide.resources.MarkerDatabaseUtil;
+import name.martingeisse.webide.resources.MarkerMeaning;
+import name.martingeisse.webide.resources.MarkerOrigin;
 import name.martingeisse.webide.resources.WorkspaceUtil;
 
 import com.mysema.commons.lang.CloseableIterator;
@@ -36,26 +42,50 @@ public class PluginBuilderFacade {
 	 */
 	public static void performBuild() {
 		WorkspaceUtil.delete("plugin.jar");
-		byte[] pluginBundleDescriptorFileContents = WorkspaceUtil.getContents("plugin.json");
-		if (pluginBundleDescriptorFileContents == null) {
+		WorkspaceResources pluginBundleDescriptorFile = WorkspaceUtil.getFile("plugin.json");
+		if (pluginBundleDescriptorFile == null) {
 			return;
 		}
-		String pluginBundleDescriptorSourceCode = new String(pluginBundleDescriptorFileContents, Charset.forName("utf-8"));
-		if (!validateDescriptor(pluginBundleDescriptorSourceCode)) {
+		MarkerDatabaseUtil.removeMarkersForFile(pluginBundleDescriptorFile.getId(), MarkerOrigin.PDE);
+		String pluginBundleDescriptorSourceCode = new String(pluginBundleDescriptorFile.getContents(), Charset.forName("utf-8"));
+		if (!validateDescriptor(pluginBundleDescriptorFile.getId(), pluginBundleDescriptorSourceCode)) {
 			return;
 		}
+		System.out.println("a");
 		byte[] jarFile = generateJarFile();
+		System.out.println("b");
 		long pluginId = uploadPlugin(pluginBundleDescriptorSourceCode, jarFile);
+		System.out.println("c");
 		updateUsersPlugins(pluginId);
+		System.out.println("d");
 	}
 	
 	/**
 	 * Validates the specified plugin bundle descriptor.
 	 * Returns true on success, false on failure.
 	 */
-	private static boolean validateDescriptor(String pluginBundleDescriptorSourceCode) {
-		// TODO
-		return true;
+	private static boolean validateDescriptor(long fileId, String pluginBundleDescriptorSourceCode) {
+		try {
+			final JsonAnalyzer analyzer = JsonAnalyzer.parse(pluginBundleDescriptorSourceCode);
+			final JsonAnalyzer extensionPoints = analyzer.analyzeMapElement("extension_points");
+			if (!extensionPoints.isNull()) {
+				extensionPoints.expectMap();
+			}
+			final JsonAnalyzer extensions = analyzer.analyzeMapElement("extensions");
+			if (!extensions.isNull()) {
+				extensions.expectMap();
+			}
+			return true;
+		} catch (Exception e) {
+			MarkerData marker = new MarkerData();
+			marker.setOrigin(MarkerOrigin.PDE);
+			marker.setMeaning(MarkerMeaning.ERROR);
+			marker.setLine(1L);
+			marker.setColumn(1L);
+			marker.setMessage(e.toString());
+			marker.insertIntoDatabase(fileId);
+			return false;
+		}
 	}
 
 	/**
@@ -67,7 +97,7 @@ public class PluginBuilderFacade {
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			JarOutputStream jarOutputStream = new JarOutputStream(byteArrayOutputStream);
 			final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-			query.from(QFiles.files).where(QFiles.files.name.endsWith(".jar"));
+			query.from(QFiles.files).where(QFiles.files.name.endsWith(".class"));
 			CloseableIterator<Files> iterator = query.iterate(QFiles.files);
 			try {
 				while (iterator.hasNext()) {
@@ -120,6 +150,9 @@ public class PluginBuilderFacade {
 		insert.set(QUserPlugins.userPlugins.pluginId, pluginId);
 		insert.execute();
 		InternalPluginUtil.updateExtensionBindingsForUser(userId);
+		// TODO: die Plugins müssen noch zum Browser! Einfach die komplette Seite neuladen ist Shit,
+		// da geht dann zu vieles verloren. Außerdem reicht es nicht, die Seite neu zu rendern,
+		// aktuell muss eine neue Seiteninstanz erzeugt werden.
 	}
 	
 }

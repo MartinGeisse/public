@@ -22,11 +22,6 @@ public class Markers implements Serializable {
     private Long column;
 
     /**
-     * the fileId
-     */
-    private Long fileId;
-
-    /**
      * the id
      */
     private Long id;
@@ -52,6 +47,11 @@ public class Markers implements Serializable {
     private String origin;
 
     /**
+     * the workspaceResourceId
+     */
+    private Long workspaceResourceId;
+
+    /**
      * Getter method for the column.
      * @return the column
      */
@@ -65,22 +65,6 @@ public class Markers implements Serializable {
      */
     public void setColumn(Long column) {
         this.column = column;
-    }
-
-    /**
-     * Getter method for the fileId.
-     * @return the fileId
-     */
-    public Long getFileId() {
-        return fileId;
-    }
-
-    /**
-     * Setter method for the fileId.
-     * @param fileId the fileId to set
-     */
-    public void setFileId(Long fileId) {
-        this.fileId = fileId;
     }
 
     /**
@@ -163,12 +147,28 @@ public class Markers implements Serializable {
         this.origin = origin;
     }
 
+    /**
+     * Getter method for the workspaceResourceId.
+     * @return the workspaceResourceId
+     */
+    public Long getWorkspaceResourceId() {
+        return workspaceResourceId;
+    }
+
+    /**
+     * Setter method for the workspaceResourceId.
+     * @param workspaceResourceId the workspaceResourceId to set
+     */
+    public void setWorkspaceResourceId(Long workspaceResourceId) {
+        this.workspaceResourceId = workspaceResourceId;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "{Markers. column = " + column + ", fileId = " + fileId + ", id = " + id + ", line = " + line + ", meaning = " + meaning + ", message = " + message + ", origin = " + origin + "}";
+        return "{Markers. column = " + column + ", id = " + id + ", line = " + line + ", meaning = " + meaning + ", message = " + message + ", origin = " + origin + ", workspaceResourceId = " + workspaceResourceId + "}";
     }
 
 }

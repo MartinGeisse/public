@@ -7,9 +7,11 @@
 package name.martingeisse.webide.ssh;
 
 import java.io.PrintWriter;
+import java.util.List;
 
 import name.martingeisse.common.database.EntityConnectionManager;
-import name.martingeisse.webide.entity.QFiles;
+import name.martingeisse.webide.entity.QWorkspaceResources;
+import name.martingeisse.webide.resources.ResourceType;
 
 import com.mysema.query.sql.SQLQuery;
 
@@ -49,8 +51,7 @@ public class WorkspaceContext implements IShellContext {
 
 		// regular commands
 		if (command.equals("ls")) {
-			final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-			for (String filename : query.from(QFiles.files).list(QFiles.files.name)) {
+			for (String filename : getFilenames()) {
 				out.print(filename);
 				out.print("\r\n");
 			}
@@ -61,6 +62,17 @@ public class WorkspaceContext implements IShellContext {
 		return ExecuteStatus.OK;
 	}
 
+	/**
+	 * Returns the file names.
+	 * @return the file names.
+	 */
+	private List<String> getFilenames() {
+		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
+		query.from(QWorkspaceResources.workspaceResources);
+		query.where(QWorkspaceResources.workspaceResources.type.eq(ResourceType.FILE.name()));
+		return query.list(QWorkspaceResources.workspaceResources.name);
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.webide.ssh.IShellContext#getSubContext()
 	 */

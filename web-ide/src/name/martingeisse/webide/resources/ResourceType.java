@@ -12,14 +12,15 @@ package name.martingeisse.webide.resources;
 public enum ResourceType {
 
 	/**
-	 * used for a user's root node ("mount space") to mount workspaces
+	 * used for a user's root node ("mount space") to mount workspaces. Not used
+	 * in the workspace_resources database table.
 	 */
 	MOUNT_SPACE,
 	
 	/**
-	 * a workspace
+	 * the root node of a workspace
 	 */
-	WORKSPACE,
+	WORKSPACE_ROOT,
 	
 	/**
 	 * a project within a workspace
