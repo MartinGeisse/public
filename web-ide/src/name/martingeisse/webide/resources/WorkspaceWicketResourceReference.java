@@ -27,7 +27,7 @@ public final class WorkspaceWicketResourceReference extends ResourceReference {
 	 */
 	@Override
 	public IResource getResource() {
-		return new WorkspaceWicketResource(getName());
+		return new WorkspaceWicketResource(new ResourcePath(getName()));
 	}
 
 }

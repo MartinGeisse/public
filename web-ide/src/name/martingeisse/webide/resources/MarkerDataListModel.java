@@ -16,14 +16,9 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 public class MarkerDataListModel extends AbstractReadOnlyModel<List<MarkerData>> {
 
 	/**
-	 * the fileId
+	 * the path
 	 */
-	private Long fileId;
-	
-	/**
-	 * the fileName
-	 */
-	private String fileName;
+	private ResourcePath path;
 	
 	/**
 	 * the meaningFilter
@@ -42,32 +37,20 @@ public class MarkerDataListModel extends AbstractReadOnlyModel<List<MarkerData>>
 	 * @param limit the maximum number of markers to fetch
 	 */
 	public MarkerDataListModel(MarkerMeaning[] meaningFilter, long limit) {
+		this.path = null;
 		this.meaningFilter = meaningFilter;
 		this.limit = limit;
 	}
 	
 	/**
-	 * Constructor used to fetch markers for a single file.
-	 * @param fileId the database ID of the file
+	 * Constructor used to fetch markers for a single resource.
+	 * @param path the path of the resource
 	 * @param meaningFilter optional list of accepted marker meanings. If null is
 	 * passed for this parameter then all markers are fetched.
 	 * @param limit the maximum number of markers to fetch
 	 */
-	public MarkerDataListModel(long fileId, MarkerMeaning[] meaningFilter, long limit) {
-		this.fileId = fileId;
-		this.meaningFilter = meaningFilter;
-		this.limit = limit;
-	}
-	
-	/**
-	 * Constructor used to fetch markers for a single file.
-	 * @param fileName the file name
-	 * @param meaningFilter optional list of accepted marker meanings. If null is
-	 * passed for this parameter then all markers are fetched.
-	 * @param limit the maximum number of markers to fetch
-	 */
-	public MarkerDataListModel(String fileName, MarkerMeaning[] meaningFilter, long limit) {
-		this.fileName = fileName;
+	public MarkerDataListModel(ResourcePath path, MarkerMeaning[] meaningFilter, long limit) {
+		this.path = path;
 		this.meaningFilter = meaningFilter;
 		this.limit = limit;
 	}
@@ -77,10 +60,8 @@ public class MarkerDataListModel extends AbstractReadOnlyModel<List<MarkerData>>
 	 */
 	@Override
 	public List<MarkerData> getObject() {
-		if (fileId != null) {
-			return MarkerData.fetchMarkerDataForFile(fileId, meaningFilter, limit);
-		} else if (fileName != null) {
-			return MarkerData.fetchMarkerDataForFile(fileName, meaningFilter, limit);
+		if (path != null) {
+			return MarkerData.fetchMarkerDataForResource(path, meaningFilter, limit);
 		} else {
 			return MarkerData.fetchMarkerData(meaningFilter, limit);
 		}

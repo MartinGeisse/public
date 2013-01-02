@@ -6,6 +6,8 @@
 
 package name.martingeisse.webide.resources.handle;
 
+import name.martingeisse.webide.resources.ResourcePath;
+
 /**
  * Base type for resource handles. Each instance represents an existing
  * or potential workspace resource. Instances are handles in the sense
@@ -28,11 +30,27 @@ package name.martingeisse.webide.resources.handle;
  * such a replacement as a remove/add pair of different resources that
  * happen to have the same name).
  * 
- * Handles are immutable: They will always refer to the same resource
- * after creation. The {@link #equals(Object)} and {@link #hashCode()}
- * methods are implemented accordingly. Methods that return other
- * handles may or may not return the same handle on multiple invocations.
+ * Each resource has a path that specifies its location within its
+ * workspace. The workspace root has the absolute path "/". Workspaces
+ * themselves are not addressed by a path within the mount space;
+ * this makes paths independent of mounting.
+ * 
+ * Handles are immutable: They will always refer to the same path and
+ * resource type after creation. The {@link #equals(Object)} and
+ * {@link #hashCode()} methods are implemented accordingly. This
+ * implies that "moving" this resource actually results in deletion
+ * of this resource and creation of another resource. Methods that
+ * return other handles may or may not return the same handle on
+ * multiple invocations.
  */
 public interface IResourceHandle {
 
+	/**
+	 * Returns the path for this resource.
+	 * @return the path
+	 */
+	public ResourcePath getPath();
+	
+	// TODO: probably remove in favor of operations
+	
 }

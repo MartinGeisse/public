@@ -66,25 +66,13 @@ public abstract class MarkerListView extends ListView<MarkerData> {
 	/**
 	 * Constructor.
 	 * @param id the wicket id
-	 * @param fileId the ID of the file to show markers for
+	 * @param path the path of the resource to show markers for
 	 * @param meaningFilter optional list of accepted marker meanings. If null is
 	 * passed for this parameter then all markers are fetched and displayed.
 	 * @param limit the maximum number of markers to fetch
 	 */
-	public MarkerListView(String id, long fileId, MarkerMeaning[] meaningFilter, long limit) {
-		super(id, new MarkerDataListModel(fileId, meaningFilter, limit));
-	}
-
-	/**
-	 * Constructor.
-	 * @param id the wicket id
-	 * @param fileName the file name
-	 * @param meaningFilter optional list of accepted marker meanings. If null is
-	 * passed for this parameter then all markers are fetched and displayed.
-	 * @param limit the maximum number of markers to fetch
-	 */
-	public MarkerListView(String id, String fileName, MarkerMeaning[] meaningFilter, long limit) {
-		super(id, new MarkerDataListModel(fileName, meaningFilter, limit));
+	public MarkerListView(String id, ResourcePath path, MarkerMeaning[] meaningFilter, long limit) {
+		super(id, new MarkerDataListModel(path, meaningFilter, limit));
 	}
 
 	/**

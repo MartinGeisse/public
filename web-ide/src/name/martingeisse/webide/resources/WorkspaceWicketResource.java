@@ -8,6 +8,9 @@ package name.martingeisse.webide.resources;
 
 import java.io.IOException;
 
+import name.martingeisse.webide.resources.operation.FetchSingleResourceOperation;
+import name.martingeisse.webide.resources.operation.WorkspaceResourceNotFoundException;
+
 import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.util.time.Duration;
@@ -18,36 +21,38 @@ import org.apache.wicket.util.time.Duration;
 public class WorkspaceWicketResource extends AbstractResource {
 
 	/**
-	 * the filename
+	 * the path
 	 */
-	private final String filename;
+	private final ResourcePath path;
 
 	/**
 	 * Constructor.
-	 * @param filename the filename
+	 * @param path the path
 	 */
-	public WorkspaceWicketResource(final String filename) {
-		this.filename = filename;
+	public WorkspaceWicketResource(final ResourcePath path) {
+		this.path = path;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.request.resource.AbstractResource#newResourceResponse(org.apache.wicket.request.resource.IResource.Attributes)
 	 */
 	@Override
-	protected ResourceResponse newResourceResponse(Attributes attributes) {
-		final byte[] contents = WorkspaceUtil.getContents(filename);
-		ResourceResponse response = new ResourceResponse();
-		response.setCacheDuration(Duration.NONE);
-		response.setContentDisposition(ContentDisposition.ATTACHMENT);
-		response.setFileName(filename);
-		if (contents == null) {
+	protected ResourceResponse newResourceResponse(final Attributes attributes) {
+		final ResourceResponse response = new ResourceResponse();
+		final FetchSingleResourceOperation operation = new FetchSingleResourceOperation(path);
+		try {
+			operation.run();
+		} catch (final WorkspaceResourceNotFoundException e) {
 			response.setError(404);
 			return response;
 		}
+		response.setCacheDuration(Duration.NONE);
+		response.setContentDisposition(ContentDisposition.ATTACHMENT);
+		response.setFileName(path.getLastSegment());
 		response.setWriteCallback(new WriteCallback() {
 			@Override
-			public void writeData(Attributes attributes) throws IOException {
-				attributes.getResponse().write(contents);
+			public void writeData(final Attributes attributes) throws IOException {
+				attributes.getResponse().write(operation.getContents());
 			}
 		});
 		return response;

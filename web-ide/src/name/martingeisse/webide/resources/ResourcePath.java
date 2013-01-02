@@ -4,16 +4,14 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.resources.handle;
+package name.martingeisse.webide.resources;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
@@ -122,35 +120,22 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 		}
 		
 		// parse segments
-		...
-		
-		// no segments at this point means we have something like "//"
-		if (segmentCount == 0) {
+		leadingSeparator = (pathToParse.charAt(0) == '/');
+		trailingSeparator = (pathToParse.charAt(pathToParse.length() - 1) == '/');
+		String stripped = pathToParse.substring(leadingSeparator ? 1 : 0, pathToParse.length() - (trailingSeparator ? 1 : 0));
+		if (stripped.isEmpty()) {
 			throw new IllegalArgumentException("invalid path: " + pathToParse);
 		}
+		segmentStorage = StringUtils.split(stripped, '/');
+		firstSegmentIndex = 0;
+		segmentCount = segmentStorage.length;
 		
-		/*
-	public static String[] splitIntoSegments(String textual, final String separator) {
-		if (textual.length() == 0) {
-			return new String[0];
-		}
-		final int sepLength = separator.length();
-		final List<String> newSegments = new ArrayList<String>();
-
-		while (true) {
-			final int index = textual.indexOf(separator);
-			if (index == -1) {
-				break;
+		// check for empty segments
+		for (String segment : segmentStorage) {
+			if (segment.isEmpty()) {
+				throw new IllegalArgumentException("invalid path: " + pathToParse);
 			}
-			newSegments.add(textual.substring(0, index));
-			textual = textual.substring(index + sepLength);
 		}
-
-		newSegments.add(textual);
-		return newSegments.toArray(new String[newSegments.size()]);
-	}
-			 * 
-		 */
 		
 	}
 
@@ -271,6 +256,9 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	 * @return the new path
 	 */
 	public ResourcePath prependSegment(String segment, boolean withLeadingSeparator) {
+		String[] result = extendSegments(1, 0);
+		result[0] = segment;
+		return new ResourcePath(withLeadingSeparator, trailingSeparator, result, 0, result.length, false);
 	}
 	
 	/**
@@ -282,6 +270,9 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	 * @return the new path
 	 */
 	public ResourcePath prependSegments(String[] segments, boolean withLeadingSeparator) {
+		String[] result = extendSegments(segments.length, 0);
+		System.arraycopy(segments, 0, segmentStorage, 0, segments.length);
+		return new ResourcePath(withLeadingSeparator, trailingSeparator, result, 0, result.length, false);
 	}
 
 	/**
@@ -317,6 +308,9 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	 * @return the new path
 	 */
 	public ResourcePath appendSegment(String segment, boolean withTrailingSeparator) {
+		String[] result = extendSegments(0, 1);
+		result[result.length - 1] = segment;
+		return new ResourcePath(leadingSeparator, withTrailingSeparator, result, 0, result.length, false);
 	}
 	
 	/**
@@ -328,6 +322,9 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	 * @return the new path
 	 */
 	public ResourcePath appendSegments(String[] segments, boolean withTrailingSeparator) {
+		String[] result = extendSegments(0, segments.length);
+		System.arraycopy(segments, 0, segmentStorage, segmentCount, segments.length);
+		return new ResourcePath(leadingSeparator, withTrailingSeparator, result, 0, result.length, false);
 	}
 
 	/**
@@ -519,6 +516,16 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 		if (first + count > segmentCount) {
 			throw new IndexOutOfBoundsException("end of range is greater than the number of segments");
 		}
+	}
+
+	/**
+	 * Returns a copy of this path's segments, with extra room for the
+	 * specified number of segments before and after this path.
+	 */
+	private String[] extendSegments(int before, int after) {
+		String[] result = new String[segmentCount + before + after];
+		System.arraycopy(segmentStorage, firstSegmentIndex, result, before, segmentCount);
+		return result;
 	}
 	
 }
