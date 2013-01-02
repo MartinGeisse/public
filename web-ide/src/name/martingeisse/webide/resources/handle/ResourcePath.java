@@ -7,7 +7,10 @@
 package name.martingeisse.webide.resources.handle;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -51,6 +54,11 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 public final class ResourcePath implements Serializable, Iterable<String>, Comparable<ResourcePath> {
 
 	/**
+	 * the emptySegments
+	 */
+	private static String[] emptySegments = new String[0];
+	
+	/**
 	 * the leadingSeparator
 	 */
 	private final boolean leadingSeparator;
@@ -78,12 +86,72 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	/**
 	 * Internal Constructor.
 	 */
-	ResourcePath(final boolean leadingSeparator, final boolean trailingSeparator, final String[] segmentStorage, final int firstSegmentIndex, final int segmentCount) {
+	ResourcePath(final boolean leadingSeparator, final boolean trailingSeparator, final String[] segmentStorage, final int firstSegmentIndex, final int segmentCount, boolean copy) {
 		this.leadingSeparator = leadingSeparator;
 		this.trailingSeparator = trailingSeparator;
-		this.segmentStorage = segmentStorage;
-		this.firstSegmentIndex = firstSegmentIndex;
-		this.segmentCount = segmentCount;
+		if (copy) {
+			this.segmentStorage = Arrays.copyOfRange(segmentStorage, firstSegmentIndex, segmentCount);
+			this.firstSegmentIndex = 0;
+			this.segmentCount = segmentCount;
+		} else {
+			this.segmentStorage = segmentStorage;
+			this.firstSegmentIndex = firstSegmentIndex;
+			this.segmentCount = segmentCount;
+		}
+	}
+	
+	/**
+	 * Constructor.
+	 * @param pathToParse the textual representation of a path to parse
+	 */
+	public ResourcePath(String pathToParse) {
+
+		// some special cases
+		if (pathToParse.isEmpty()) {
+			leadingSeparator = trailingSeparator = false;
+			segmentStorage = emptySegments;
+			firstSegmentIndex = segmentCount = 0;
+			return;
+		}
+		if (pathToParse.equals("/")) {
+			leadingSeparator = true;
+			trailingSeparator = false;
+			segmentStorage = emptySegments;
+			firstSegmentIndex = segmentCount = 0;
+			return;
+		}
+		
+		// parse segments
+		...
+		
+		// no segments at this point means we have something like "//"
+		if (segmentCount == 0) {
+			throw new IllegalArgumentException("invalid path: " + pathToParse);
+		}
+		
+		/*
+	public static String[] splitIntoSegments(String textual, final String separator) {
+		if (textual.length() == 0) {
+			return new String[0];
+		}
+		final int sepLength = separator.length();
+		final List<String> newSegments = new ArrayList<String>();
+
+		while (true) {
+			final int index = textual.indexOf(separator);
+			if (index == -1) {
+				break;
+			}
+			newSegments.add(textual.substring(0, index));
+			textual = textual.substring(index + sepLength);
+		}
+
+		newSegments.add(textual);
+		return newSegments.toArray(new String[newSegments.size()]);
+	}
+			 * 
+		 */
+		
 	}
 
 	/**
@@ -121,7 +189,23 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 		}
 		return segmentStorage[firstSegmentIndex + index];
 	}
+
+	/**
+	 * Getter method for the first segment.
+	 * @return the first segment
+	 */
+	public String getFirstSegment() {
+		return getSegment(0);
+	}
 	
+	/**
+	 * Getter method for the last segment.
+	 * @return the last segment
+	 */
+	public String getLastSegment() {
+		return getSegment(segmentCount - 1);
+	}
+
 	/**
 	 * Getter method for all segments.
 	 * @return the segments
@@ -130,6 +214,15 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 		String[] result = new String[segmentCount];
 		System.arraycopy(segmentStorage, firstSegmentIndex, result, 0, segmentCount);
 		return result;
+	}
+	
+	/**
+	 * Getter method for a range of segments. The range ends at the end of this path.
+	 * @param first the index of the first segment to return
+	 * @return the segments
+	 */
+	public String[] getSegments(int first) {
+		return getSegments(first, segmentCount - first);
 	}
 	
 	/**
@@ -145,21 +238,123 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 		return result;
 	}
 
+	/**
+	 * Returns a resource path that has the same segments as this path except for
+	 * the first segment being removed.
+	 * 
+	 * @param withLeadingSeparator whether the returned path should have a leading separator
+	 * @return the new path
+	 */
+	public ResourcePath removeFirstSegment(boolean withLeadingSeparator) {
+		return removeFirstSegments(1, withLeadingSeparator);
+	}
+	
+	/**
+	 * Returns a resource path that has the same segments as this path except for
+	 * the first n segments being removed.
+	 * 
+	 * @param n the number of segments to remove
+	 * @param withLeadingSeparator whether the returned path should have a leading separator
+	 * @return the new path
+	 */
+	public ResourcePath removeFirstSegments(int n, boolean withLeadingSeparator) {
+		validateRange(n, segmentCount - n);
+		return new ResourcePath(withLeadingSeparator, trailingSeparator, segmentStorage, firstSegmentIndex + n, segmentCount - n, false);
+	}
 
+	/**
+	 * Returns a resource path that has the same segments as this path except for
+	 * the specified segment being prepended. 
+	 * 
+	 * @param segment the segment to prepend
+	 * @param withLeadingSeparator whether the returned path should have a leading separator
+	 * @return the new path
+	 */
+	public ResourcePath prependSegment(String segment, boolean withLeadingSeparator) {
+	}
+	
+	/**
+	 * Returns a resource path that has the same segments as this path except for
+	 * the specified segments being prepended. 
+	 * 
+	 * @param segments the segments to prepend
+	 * @param withLeadingSeparator whether the returned path should have a leading separator
+	 * @return the new path
+	 */
+	public ResourcePath prependSegments(String[] segments, boolean withLeadingSeparator) {
+	}
 
+	/**
+	 * Returns a resource path that has the same segments as this path except for
+	 * the last segment being removed.
+	 * 
+	 * @param withTrailingSeparator whether the returned path should have a trailing separator
+	 * @return the new path
+	 */
+	public ResourcePath removeLastSegment(boolean withTrailingSeparator) {
+		return removeLastSegments(1, withTrailingSeparator);
+	}
+	
+	/**
+	 * Returns a resource path that has the same segments as this path except for
+	 * the last n segments being removed.
+	 * 
+	 * @param n the number of segments to remove
+	 * @param withTrailingSeparator whether the returned path should have a trailing separator
+	 * @return the new path
+	 */
+	public ResourcePath removeLastSegments(int n, boolean withTrailingSeparator) {
+		validateRange(0, segmentCount - n);
+		return new ResourcePath(leadingSeparator, withTrailingSeparator, segmentStorage, firstSegmentIndex, segmentCount - 1, false);
+	}
 
+	/**
+	 * Returns a resource path that has the same segments as this path except for
+	 * the specified segment being appended. 
+	 * 
+	 * @param segment the segment to append
+	 * @param withTrailingSeparator whether the returned path should have a trailing separator
+	 * @return the new path
+	 */
+	public ResourcePath appendSegment(String segment, boolean withTrailingSeparator) {
+	}
+	
+	/**
+	 * Returns a resource path that has the same segments as this path except for
+	 * the specified segment being appended. 
+	 * 
+	 * @param segments the segments to append
+	 * @param withTrailingSeparator whether the returned path should have a trailing separator
+	 * @return the new path
+	 */
+	public ResourcePath appendSegments(String[] segments, boolean withTrailingSeparator) {
+	}
 
+	/**
+	 * Returns a resource path that has the same segments as this path except for
+	 * the specified segment being replaced. The index must be valid according to the
+	 * number of segments in this path.
+	 * 
+	 * @param index the index of the segment to replace
+	 * @param segment the new segment
+	 * @return the new path
+	 */
+	public ResourcePath replaceSegment(int index, String segment) {
+		String[] newSegments = getSegments();
+		newSegments[index] = segment;
+		return new ResourcePath(leadingSeparator, trailingSeparator, newSegments, 0, segmentCount, false);
+	}
 
-
-
-
-
-
-
-
-
-
-
+	/**
+	 * Returns a resource path that has the same segments as this path except for
+	 * the last segment being replaced. The number of segments must be greater than 0.
+	 * 
+	 * @param segment the new segment
+	 * @return the new path
+	 */
+	public ResourcePath replaceLastSegment(String segment) {
+		return replaceSegment(segmentCount - 1, segment);
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
