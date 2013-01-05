@@ -18,9 +18,11 @@ import name.martingeisse.webide.resources.BuilderService;
 import name.martingeisse.webide.resources.MarkerData;
 import name.martingeisse.webide.resources.MarkerListView;
 import name.martingeisse.webide.resources.ResourceIconSelector;
+import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
-import name.martingeisse.webide.resources.WorkspaceUtil;
 import name.martingeisse.webide.resources.WorkspaceWicketResourceReference;
+import name.martingeisse.webide.resources.operation.CreateFileOperation;
+import name.martingeisse.webide.resources.operation.DeleteResourcesOperation;
 import name.martingeisse.webide.workbench.components.IClientFuture;
 import name.martingeisse.webide.workbench.components.SelectableElementsBehavior;
 import name.martingeisse.webide.workbench.components.contextmenu.ContextMenu;
@@ -70,7 +72,8 @@ public class WorkbenchPage extends WebPage {
 		filesContextMenu.getItems().add(new SimpleContextMenuItemWithTextInput<List<String>>("New...", "File name:") {
 			@Override
 			protected void onSelect(final List<String> anchor, String filename) {
-				WorkspaceUtil.createFile(filename, "");
+				ResourcePath path = new ResourcePath(true, false, new String[] {filename});
+				new CreateFileOperation(path, "").run();
 				loadEditorContents(filename);
 			}
 		});
@@ -90,7 +93,13 @@ public class WorkbenchPage extends WebPage {
 		filesContextMenu.getItems().add(new SimpleContextMenuItem<List<String>>("Delete") {
 			@Override
 			protected void onSelect(final List<String> anchor) {
-				WorkspaceUtil.delete(anchor);
+				ResourcePath[] paths = new ResourcePath[anchor.size()];
+				int i = 0;
+				for (String anchorElement : anchor) {
+					paths[i] = new ResourcePath(true, false, new String[] {anchorElement});
+					i++;
+				}
+				new DeleteResourcesOperation(paths).run();
 				AjaxRequestUtil.markForRender(WorkbenchPage.this);
 			}
 		});
@@ -213,8 +222,9 @@ public class WorkbenchPage extends WebPage {
 	 * 
 	 */
 	private void loadEditorContents(final String filename) {
+		ResourcePath path = new ResourcePath(true, false, new String[] {filename});
 		IEditor editor = new JavaEditor();
-		editor.initialize(filename);
+		editor.initialize(path);
 		replace(editor.createComponent("editor"));
 		AjaxRequestUtil.markForRender(this);
 	}

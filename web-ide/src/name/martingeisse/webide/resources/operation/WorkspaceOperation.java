@@ -37,7 +37,7 @@ public abstract class WorkspaceOperation {
 	 * Runs this operation by creating a new operation context for
 	 * this operation and all operations it delegates to.
 	 */
-	public void run() {
+	public final void run() {
 		WorkspaceOperationContext context = new WorkspaceOperationContext();
 		perform(context);
 		context.dispose();

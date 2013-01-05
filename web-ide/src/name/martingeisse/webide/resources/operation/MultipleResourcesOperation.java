@@ -51,13 +51,13 @@ public abstract class MultipleResourcesOperation extends WorkspaceOperation {
 	 * Obtains and returns the ID of the resource, possibly querying the database.
 	 */
 	List<Long> fetchResourceIds(IWorkspaceOperationContext context) {
-		return fetchResourceId(context, paths);
+		return fetchResourceIds(context, paths);
 	}
 
 	/**
 	 * Obtains and returns the ID of the resource, possibly querying the database.
 	 */
-	static List<Long> fetchResourceId(IWorkspaceOperationContext context, ResourcePath[] paths) {
+	static List<Long> fetchResourceIds(IWorkspaceOperationContext context, ResourcePath[] paths) {
 		
 	}
 
@@ -65,13 +65,13 @@ public abstract class MultipleResourcesOperation extends WorkspaceOperation {
 	 * Obtains and returns the resource from the database.
 	 */
 	List<WorkspaceResources> fetchResource(IWorkspaceOperationContext context) {
-		return fetchResource(context, paths);
+		return fetchResources(context, paths);
 	}
 	
 	/**
 	 * Obtains and returns the resource from the database.
 	 */
-	static List<WorkspaceResources> fetchResource(IWorkspaceOperationContext context, ResourcePath[] paths) {
+	static List<WorkspaceResources> fetchResources(IWorkspaceOperationContext context, ResourcePath[] paths) {
 		
 	}
 	

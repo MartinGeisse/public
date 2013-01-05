@@ -45,20 +45,23 @@ public abstract class SingleResourceOperation extends WorkspaceOperation {
 
 	/**
 	 * Obtains and returns the ID of the resource, possibly querying the database.
+	 * Returns -1 if the resource cannot be found.
 	 */
 	static long fetchResourceId(IWorkspaceOperationContext context, ResourcePath path) {
 		
 	}
 
 	/**
-	 * Obtains and returns the resource from the database.
+	 * Obtains and returns the resource from the database, or null if the resource
+	 * cannot be found.
 	 */
 	WorkspaceResources fetchResource(IWorkspaceOperationContext context) {
 		return fetchResource(context, path);
 	}
 	
 	/**
-	 * Obtains and returns the resource from the database.
+	 * Obtains and returns the resource from the database, or null if the resource
+	 * cannot be found.
 	 */
 	static WorkspaceResources fetchResource(IWorkspaceOperationContext context, ResourcePath path) {
 		

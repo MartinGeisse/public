@@ -8,23 +8,18 @@ package name.martingeisse.webide.resources.operation;
 
 import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.ResourceType;
 
 /**
- * Fetches the resource type and contents for a single resource and
- * makes them available through a getter method.
+ * Fetches resource information for a single resource and makes them
+ * available as a {@link FetchResourceResult}. The result is null if
+ * the resource was not found.
  */
 public final class FetchSingleResourceOperation extends SingleResourceOperation {
 
 	/**
-	 * the type
+	 * the result
 	 */
-	private ResourceType type;
-	
-	/**
-	 * the contents
-	 */
-	private byte[] contents;
+	private FetchResourceResult result;
 	
 	/**
 	 * Constructor.
@@ -35,19 +30,11 @@ public final class FetchSingleResourceOperation extends SingleResourceOperation 
 	}
 
 	/**
-	 * Getter method for the type.
-	 * @return the type
+	 * Getter method for the result.
+	 * @return the result
 	 */
-	public ResourceType getType() {
-		return type;
-	}
-	
-	/**
-	 * Getter method for the contents.
-	 * @return the contents
-	 */
-	public byte[] getContents() {
-		return contents;
+	public FetchResourceResult getResult() {
+		return result;
 	}
 	
 	/* (non-Javadoc)
@@ -56,8 +43,7 @@ public final class FetchSingleResourceOperation extends SingleResourceOperation 
 	@Override
 	protected void perform(IWorkspaceOperationContext context) {
 		WorkspaceResources resource = fetchResource(context);
-		this.type = ResourceType.valueOf(resource.getType());
-		this.contents = resource.getContents();
+		this.result = (resource == null ? null : new FetchResourceResult(getPath(), resource));
 	}
 	
 }

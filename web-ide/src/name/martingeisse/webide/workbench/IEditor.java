@@ -9,6 +9,7 @@ package name.martingeisse.webide.workbench;
 import java.util.List;
 
 import name.martingeisse.webide.resources.MarkerData;
+import name.martingeisse.webide.resources.ResourcePath;
 
 import org.apache.wicket.Component;
 
@@ -25,7 +26,7 @@ public interface IEditor {
 	 * 
 	 * @param workspaceResourcePath the path to the workspace resource to load
 	 */
-	public void initialize(String workspaceResourcePath);
+	public void initialize(final ResourcePath workspaceResourcePath);
 	
 	/**
 	 * Creates a user interface component for this editor.
@@ -40,7 +41,7 @@ public interface IEditor {
 	 * 
 	 * @return the workspace resource path
 	 */
-	public String getWorkspaceResourcePath();
+	public ResourcePath getWorkspaceResourcePath();
 	
 	/**
 	 * Returns the document being edited.

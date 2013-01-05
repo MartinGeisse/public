@@ -9,15 +9,13 @@ package name.martingeisse.webide.java.editor;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import name.martingeisse.common.database.EntityConnectionManager;
-import name.martingeisse.webide.entity.QFiles;
 import name.martingeisse.webide.resources.MarkerData;
+import name.martingeisse.webide.resources.ResourcePath;
+import name.martingeisse.webide.resources.operation.FetchSingleResourceOperation;
 import name.martingeisse.webide.workbench.IEditor;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.model.PropertyModel;
-
-import com.mysema.query.sql.SQLQuery;
 
 /**
  * {@link IEditor} implementation for the Java source code editor.
@@ -27,7 +25,7 @@ public class JavaEditor implements IEditor {
 	/**
 	 * the workspaceResourcePath
 	 */
-	private String workspaceResourcePath;
+	private ResourcePath workspaceResourcePath;
 	
 	/**
 	 * the contents
@@ -38,12 +36,11 @@ public class JavaEditor implements IEditor {
 	 * @see name.martingeisse.webide.workbench.IEditor#initialize(java.lang.String)
 	 */
 	@Override
-	public void initialize(final String workspaceResourcePath) {
-		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-		final Object resultObject = query.from(QFiles.files).where(QFiles.files.name.eq(workspaceResourcePath)).singleResult(QFiles.files.contents);
-		final byte[] encodedContents = (byte[])(((Object[])resultObject)[0]);
+	public void initialize(final ResourcePath workspaceResourcePath) {
+		FetchSingleResourceOperation operation = new FetchSingleResourceOperation(workspaceResourcePath);
+		operation.run();
 		this.workspaceResourcePath = workspaceResourcePath;
-		this.contents = new String(encodedContents, Charset.forName("utf-8"));
+		this.contents = new String(operation.getContents(), Charset.forName("utf-8"));
 	}
 
 	/**
@@ -74,7 +71,7 @@ public class JavaEditor implements IEditor {
 	 * @see name.martingeisse.webide.workbench.IEditor#getWorkspaceResourcePath()
 	 */
 	@Override
-	public String getWorkspaceResourcePath() {
+	public ResourcePath getWorkspaceResourcePath() {
 		return workspaceResourcePath;
 	}
 

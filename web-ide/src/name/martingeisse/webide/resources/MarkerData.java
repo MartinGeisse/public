@@ -4,8 +4,6 @@
 package name.martingeisse.webide.resources;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import name.martingeisse.webide.entity.Markers;
 
@@ -152,62 +150,6 @@ public final class MarkerData implements Serializable {
 	@Override
 	public String toString() {
 		return "{MarkerData. origin = " + origin + ", meaning = " + meaning + ", line = " + line + ", column = " + column + ", message = " + message + "}";
-	}
-
-	/**
-	 * Inserts a marker for the specified file with this data into the database.
-	 * @param fileId the file to insert the marker for
-	 */
-	public void insertIntoDatabase(long fileId) {
-		MarkerDatabaseUtil.insertMarker(fileId, origin.toString(), meaning.toString(), line, column, message);
-	}
-
-	/**
-	 * Creates a list of {@link MarkerData} objects from a collection of {@link Markers} objects.
-	 * @param markers the marker records
-	 * @return the marker data objects
-	 */
-	public static List<MarkerData> createMarkerDataList(Iterable<Markers> markers) {
-		List<MarkerData> result = new ArrayList<MarkerData>();
-		for (Markers marker : markers) {
-			result.add(new MarkerData(marker));
-		}
-		return result;
-	}
-
-	/**
-	 * Fetches all markers for the specified file.
-	 * @param meaningFilter optional list of accepted marker meanings. If null is
-	 * passed for this parameter then all markers are fetched.
-	 * @param limit the maximum number of markers to fetch
-	 * @return the markers
-	 */
-	public static List<MarkerData> fetchMarkerData(MarkerMeaning[] meaningFilter, long limit) {
-		return createMarkerDataList(MarkerDatabaseUtil.fetchAllMarkers(meaningFilter, limit));
-	}
-
-	/**
-	 * Fetches all markers for the specified file.
-	 * @param fileId the file ID
-	 * @param meaningFilter optional list of accepted marker meanings. If null is
-	 * passed for this parameter then all markers are fetched.
-	 * @param limit the maximum number of markers to fetch
-	 * @return the markers
-	 */
-	public static List<MarkerData> fetchMarkerDataForFile(long fileId, MarkerMeaning[] meaningFilter, long limit) {
-		return createMarkerDataList(MarkerDatabaseUtil.fetchMarkersForFile(fileId, meaningFilter, limit));
-	}
-
-	/**
-	 * Fetches all markers for the specified file.
-	 * @param fileName the file name
-	 * @param meaningFilter optional list of accepted marker meanings. If null is
-	 * passed for this parameter then all markers are fetched.
-	 * @param limit the maximum number of markers to fetch
-	 * @return the markers
-	 */
-	public static List<MarkerData> fetchMarkerDataForFile(String fileName, MarkerMeaning[] meaningFilter, long limit) {
-		return createMarkerDataList(MarkerDatabaseUtil.fetchMarkersForFile(fileName, meaningFilter, limit));
 	}
 
 }

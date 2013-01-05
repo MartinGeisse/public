@@ -9,26 +9,28 @@ package name.martingeisse.webide.pde;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
-import name.martingeisse.webide.entity.Files;
-import name.martingeisse.webide.entity.QFiles;
 import name.martingeisse.webide.entity.QPluginBundles;
 import name.martingeisse.webide.entity.QPlugins;
 import name.martingeisse.webide.entity.QUserPlugins;
-import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.plugin.InternalPluginUtil;
-import name.martingeisse.webide.resources.MarkerData;
-import name.martingeisse.webide.resources.MarkerDatabaseUtil;
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.MarkerOrigin;
-import name.martingeisse.webide.resources.WorkspaceUtil;
+import name.martingeisse.webide.resources.ResourcePath;
+import name.martingeisse.webide.resources.ResourceType;
+import name.martingeisse.webide.resources.operation.CreateFileOperation;
+import name.martingeisse.webide.resources.operation.CreateResourceMarkerOperation;
+import name.martingeisse.webide.resources.operation.DeleteResourceOperation;
+import name.martingeisse.webide.resources.operation.DeleteSingleResourceMarkersOperation;
+import name.martingeisse.webide.resources.operation.FetchResourceResult;
+import name.martingeisse.webide.resources.operation.FetchSingleResourceOperation;
+import name.martingeisse.webide.resources.operation.RecursiveResourceOperation;
 
-import com.mysema.commons.lang.CloseableIterator;
-import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.dml.SQLDeleteClause;
 import com.mysema.query.sql.dml.SQLInsertClause;
 
@@ -41,30 +43,40 @@ public class PluginBuilderFacade {
 	 * This method is invoked by the builder thread to perform a plugin build.
 	 */
 	public static void performBuild() {
-		WorkspaceUtil.delete("plugin.jar");
-		WorkspaceResources pluginBundleDescriptorFile = WorkspaceUtil.getFile("plugin.json");
-		if (pluginBundleDescriptorFile == null) {
+		
+		// prepare
+		ResourcePath descriptorFilePath = new ResourcePath("/plugin.json");
+		
+		// clean previous build
+		new DeleteSingleResourceMarkersOperation(descriptorFilePath, MarkerOrigin.PDE);
+		new DeleteResourceOperation(new ResourcePath("/plugin.jar")).run();
+		
+		// fetch the plugin descriptor, stop if not found
+		FetchSingleResourceOperation fetchDescriptorFileOperation = new FetchSingleResourceOperation(descriptorFilePath);
+		fetchDescriptorFileOperation.run();
+		FetchResourceResult fetchDescriptorResult = fetchDescriptorFileOperation.getResult();
+		if (fetchDescriptorResult == null || fetchDescriptorResult.getType() != ResourceType.FILE) {
 			return;
 		}
-		MarkerDatabaseUtil.removeMarkersForFile(pluginBundleDescriptorFile.getId(), MarkerOrigin.PDE);
-		String pluginBundleDescriptorSourceCode = new String(pluginBundleDescriptorFile.getContents(), Charset.forName("utf-8"));
-		if (!validateDescriptor(pluginBundleDescriptorFile.getId(), pluginBundleDescriptorSourceCode)) {
+		
+		// validate the descriptor
+		String pluginBundleDescriptorSourceCode = new String(fetchDescriptorResult.getContents(), Charset.forName("utf-8"));
+		if (!validateDescriptor(descriptorFilePath, pluginBundleDescriptorSourceCode)) {
 			return;
 		}
-		System.out.println("a");
+		
+		// build and install the plugin
 		byte[] jarFile = generateJarFile();
-		System.out.println("b");
 		long pluginId = uploadPlugin(pluginBundleDescriptorSourceCode, jarFile);
-		System.out.println("c");
 		updateUsersPlugins(pluginId);
-		System.out.println("d");
+		
 	}
 	
 	/**
 	 * Validates the specified plugin bundle descriptor.
 	 * Returns true on success, false on failure.
 	 */
-	private static boolean validateDescriptor(long fileId, String pluginBundleDescriptorSourceCode) {
+	private static boolean validateDescriptor(ResourcePath descriptorFilePath, String pluginBundleDescriptorSourceCode) {
 		try {
 			final JsonAnalyzer analyzer = JsonAnalyzer.parse(pluginBundleDescriptorSourceCode);
 			final JsonAnalyzer extensionPoints = analyzer.analyzeMapElement("extension_points");
@@ -77,13 +89,8 @@ public class PluginBuilderFacade {
 			}
 			return true;
 		} catch (Exception e) {
-			MarkerData marker = new MarkerData();
-			marker.setOrigin(MarkerOrigin.PDE);
-			marker.setMeaning(MarkerMeaning.ERROR);
-			marker.setLine(1L);
-			marker.setColumn(1L);
-			marker.setMessage(e.toString());
-			marker.insertIntoDatabase(fileId);
+			CreateResourceMarkerOperation operation = new CreateResourceMarkerOperation(descriptorFilePath, MarkerOrigin.PDE, MarkerMeaning.ERROR, 1L, 1L, e.toString());
+			operation.run();
 			return false;
 		}
 	}
@@ -94,23 +101,31 @@ public class PluginBuilderFacade {
 	 */
 	private static byte[] generateJarFile() {
 		try {
-			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-			JarOutputStream jarOutputStream = new JarOutputStream(byteArrayOutputStream);
-			final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-			query.from(QFiles.files).where(QFiles.files.name.endsWith(".class"));
-			CloseableIterator<Files> iterator = query.iterate(QFiles.files);
-			try {
-				while (iterator.hasNext()) {
-					Files file = iterator.next();
-					jarOutputStream.putNextEntry(new ZipEntry(file.getName()));
-					jarOutputStream.write(file.getContents());
+			final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			final JarOutputStream jarOutputStream = new JarOutputStream(byteArrayOutputStream);
+			final ResourcePath binFolderPath = new ResourcePath("/bin");
+			new RecursiveResourceOperation(binFolderPath) {
+				@Override
+				protected void onLevelFetched(List<FetchResourceResult> fetchResults) {
+					try {
+						for (FetchResourceResult fetchResult : fetchResults) {
+							if (fetchResult.getType() == ResourceType.FILE) {
+								String extension = fetchResult.getPath().getExtension();
+								if (extension != null && extension.equals("class")) {
+									final ResourcePath zipEntryPath = fetchResult.getPath().removeFirstSegments(binFolderPath.getSegmentCount(), true);
+									jarOutputStream.putNextEntry(new ZipEntry(zipEntryPath.toString()));
+									jarOutputStream.write(fetchResult.getContents());
+								}
+							}
+						}
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
 				}
-			} finally {
-				iterator.close();
-			}
+			}.run();
 			jarOutputStream.close();
 			byte[] contents = byteArrayOutputStream.toByteArray();
-			WorkspaceUtil.createFile("plugin.jar", contents);
+			new CreateFileOperation(new ResourcePath("/plugin.jar"), contents).run();
 			return contents;
 		} catch (IOException e) {
 			throw new RuntimeException(e);

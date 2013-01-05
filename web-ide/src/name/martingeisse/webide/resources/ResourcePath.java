@@ -97,6 +97,28 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 			this.segmentCount = segmentCount;
 		}
 	}
+
+	/**
+	 * Constructor that takes segments from a string array.
+	 * @param leadingSeparator whether the path should have a leading separator
+	 * @param trailingSeparator whether the path should have a trailing separator
+	 * @param segments the array to take segments from
+	 */
+	public ResourcePath(final boolean leadingSeparator, final boolean trailingSeparator, final String[] segments) {
+		this(leadingSeparator, trailingSeparator, segments, 0, segments.length);
+	}
+
+	/**
+	 * Constructor that takes a range of segments from a string array.
+	 * @param leadingSeparator whether the path should have a leading separator
+	 * @param trailingSeparator whether the path should have a trailing separator
+	 * @param segments the array to take segments from
+	 * @param firstSegmentIndex the index of the first segment in the array
+	 * @param segmentCount the number of segments
+	 */
+	public ResourcePath(final boolean leadingSeparator, final boolean trailingSeparator, final String[] segments, final int firstSegmentIndex, final int segmentCount) {
+		this(leadingSeparator, trailingSeparator, segments, firstSegmentIndex, segmentCount, true);
+	}
 	
 	/**
 	 * Constructor.
@@ -189,6 +211,22 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	 */
 	public String getLastSegment() {
 		return getSegment(segmentCount - 1);
+	}
+	
+	/**
+	 * Returns the substring of the last segment after the last dot character.
+	 * Returns null if the last segment does not contain a dot character
+	 * or if this path does not have any segments.
+	 * 
+	 * @return the extension
+	 */
+	public String getExtension() {
+		if (segmentCount == 0) {
+			return null;
+		}
+		String lastSegment = getLastSegment();
+		int lastDotIndex = lastSegment.lastIndexOf('.');
+		return (lastDotIndex == -1 ? null : lastSegment.substring(lastDotIndex + 1));
 	}
 
 	/**

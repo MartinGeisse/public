@@ -7,7 +7,8 @@
 package name.martingeisse.webide.java.editor;
 
 import name.martingeisse.webide.resources.BuilderService;
-import name.martingeisse.webide.resources.WorkspaceUtil;
+import name.martingeisse.webide.resources.ResourcePath;
+import name.martingeisse.webide.resources.operation.ReplaceFileContentsOperation;
 import name.martingeisse.webide.workbench.components.IClientFuture;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 
@@ -24,7 +25,7 @@ public class JavaEditorPanel extends Panel {
 	/**
 	 * the workspaceResourcePath
 	 */
-	private String workspaceResourcePath;
+	private ResourcePath workspaceResourcePath;
 	
 	/**
 	 * Constructor.
@@ -32,14 +33,15 @@ public class JavaEditorPanel extends Panel {
 	 * @param contentsModel the model
 	 * @param workspaceResourcePath the path of the workspace resource being edited
 	 */
-	public JavaEditorPanel(String id, IModel<String> contentsModel, String workspaceResourcePath) {
+	public JavaEditorPanel(String id, IModel<String> contentsModel, ResourcePath workspaceResourcePath) {
 		super(id, contentsModel);
 		this.workspaceResourcePath = workspaceResourcePath;
 		
 		final Form<Void> editorForm = new Form<Void>("form") {
 			@Override
 			protected void onSubmit() {
-				WorkspaceUtil.replaceContents(JavaEditorPanel.this.workspaceResourcePath, (String)JavaEditorPanel.this.getDefaultModelObject());
+				ReplaceFileContentsOperation operation = new ReplaceFileContentsOperation(JavaEditorPanel.this.workspaceResourcePath, (String)JavaEditorPanel.this.getDefaultModelObject());
+				operation.run();
 				BuilderService.requestBuild();
 				IClientFuture.Behavior.get(getWebPage()).addFuture(new IClientFuture() {
 					@Override
