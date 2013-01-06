@@ -17,6 +17,7 @@ import java.util.LinkedList;
 
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.webide.ssh.IShellContext.ExecuteStatus;
+import name.martingeisse.webide.ssh.workspace.WorkspaceContext;
 
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.Environment;
@@ -24,6 +25,10 @@ import org.apache.sshd.server.ExitCallback;
 
 /**
  * The shell command.
+ * 
+ * Note: This class does not use the stderr stream passed to it.
+ * When used interactively, the streams do not get transmitted
+ * synchronously, so stdout and stderr end up mixed the wrong way.
  */
 public class ShellCommand implements Command, Runnable {
 
@@ -36,11 +41,6 @@ public class ShellCommand implements Command, Runnable {
 	 * the out
 	 */
 	private OutputStream out;
-	
-	/**
-	 * the err
-	 */
-	private OutputStream err;
 	
 	/**
 	 * the exitCallback
@@ -56,11 +56,6 @@ public class ShellCommand implements Command, Runnable {
 	 * the outputWriter
 	 */
 	private PrintWriter outputWriter;
-	
-	/**
-	 * the errorWriter
-	 */
-	private PrintWriter errorWriter;
 	
 	/**
 	 * the commandLineBuilder
@@ -93,7 +88,6 @@ public class ShellCommand implements Command, Runnable {
 	 */
 	@Override
 	public void setErrorStream(final OutputStream err) {
-		this.err = err;
 	}
 
 	/* (non-Javadoc)
@@ -127,15 +121,16 @@ public class ShellCommand implements Command, Runnable {
 		try {
 			inputReader = new PushbackReader(new InputStreamReader(in, "utf-8"));
 			outputWriter = new PrintWriter(new OutputStreamWriter(out, "utf-8"));
-			errorWriter = new PrintWriter(new OutputStreamWriter(err, "utf-8"));
 			commandLineBuilder = new StringBuilder();
 			contextStack = new LinkedList<IShellContext>();
 			contextStack.push(new WorkspaceContext());
+			printPrompt();
 			while (!contextStack.isEmpty()) {
 				try {
 					int c = inputReader.read();
 					if (c == '\r' || c == '\n') {
 						executeCommand();
+						printPrompt();
 					} else if (c == '\t') {
 						autocomplete();
 					} else if (c == '\b') {
@@ -144,7 +139,6 @@ public class ShellCommand implements Command, Runnable {
 						typeRegular(c);
 					}
 					outputWriter.flush();
-					errorWriter.flush();
 				} finally {
 					EntityConnectionManager.disposeConnections();
 				}
@@ -159,6 +153,14 @@ public class ShellCommand implements Command, Runnable {
 	/**
 	 * 
 	 */
+	private void printPrompt() {
+		contextStack.getFirst().printPrompt(outputWriter);
+		outputWriter.flush();
+	}
+	
+	/**
+	 * 
+	 */
 	private void executeCommand() {
 		
 		// obtain the command
@@ -167,7 +169,10 @@ public class ShellCommand implements Command, Runnable {
 		outputWriter.print("\r\n");
 		
 		// pass the command to the TOS context
-		ExecuteStatus status = contextStack.getFirst().execute(command, outputWriter, errorWriter);
+		ExecuteStatus status = contextStack.getFirst().execute(command, outputWriter, outputWriter);
+		outputWriter.flush();
+		
+		// modify the context stack as needed
 		if (status == ExecuteStatus.ENTER) {
 			contextStack.push(contextStack.getFirst().getSubContext());
 		} else if (status == ExecuteStatus.TERMINATE) {

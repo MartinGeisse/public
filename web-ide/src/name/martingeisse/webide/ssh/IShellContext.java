@@ -16,6 +16,12 @@ import java.io.PrintWriter;
 public interface IShellContext {
 
 	/**
+	 * Prints the prompt to the specified {@link PrintWriter}.
+	 * @param w the writer to print to
+	 */
+	public void printPrompt(PrintWriter w);
+	
+	/**
 	 * Attempts to auto-complete a command. May fail either because there is
 	 * no known auto-completion
 	 * @param commandLineBuilder the command line builder

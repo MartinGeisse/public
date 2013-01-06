@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.common.util;
+package name.martingeisse.common.util.iterator;
 
 import java.util.Iterator;
 

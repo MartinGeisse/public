@@ -14,27 +14,24 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.tools.Diagnostic;
+import javax.tools.Diagnostic.Kind;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
+import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
-import javax.tools.Diagnostic.Kind;
-import javax.tools.JavaCompiler.CompilationTask;
 
-import name.martingeisse.common.database.EntityConnectionManager;
-import name.martingeisse.webide.entity.Files;
-import name.martingeisse.webide.entity.QFiles;
-import name.martingeisse.webide.resources.MarkerData;
-import name.martingeisse.webide.resources.MarkerDatabaseUtil;
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.MarkerOrigin;
+import name.martingeisse.webide.resources.ResourcePath;
+import name.martingeisse.webide.resources.ResourceType;
+import name.martingeisse.webide.resources.operation.CreateFileOperation;
 import name.martingeisse.webide.resources.operation.CreateResourceMarkerOperation;
-import name.martingeisse.webide.resources.operation.DeleteMultipleResourcesMarkersOperation;
-
-import com.mysema.query.sql.SQLQuery;
-import com.mysema.query.sql.dml.SQLDeleteClause;
-import com.mysema.query.sql.dml.SQLInsertClause;
+import name.martingeisse.webide.resources.operation.DeleteResourceOperation;
+import name.martingeisse.webide.resources.operation.FetchResourceResult;
+import name.martingeisse.webide.resources.operation.RecursiveDeleteMarkersOperation;
+import name.martingeisse.webide.resources.operation.RecursiveResourceOperation;
 
 /**
  * This façade is used by the builder thread to invoke the Java compiler.
@@ -46,27 +43,35 @@ public class JavaCompilerFacade {
 	 */
 	public static void performCompilation() {
 
+		// preparation
+		final ResourcePath sourcePath = new ResourcePath("/src");
+		final ResourcePath binaryPath = new ResourcePath("/bin");
+		
+		// delete binary files from previous builds
+		new DeleteResourceOperation(binaryPath).run();
+
 		// obtain the standard file manager so we can include the boot classpath
 		final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		final DiagnosticCollector<JavaFileObject> diagnosticListener = new DiagnosticCollector<JavaFileObject>();
 		final Locale locale = null;
-		final StandardJavaFileManager standardFileManager = compiler.getStandardFileManager(diagnosticListener, locale,
-			Charset.forName("utf-8"));
+		final StandardJavaFileManager standardFileManager = compiler.getStandardFileManager(diagnosticListener, locale, Charset.forName("utf-8"));
 
 		// fetch and wrap source code files as JavaFileObjects
-		final List<Long> sourceFileIds = new ArrayList<Long>();
-		final Map<String, Long> sourceFileNameToId = new HashMap<String, Long>();
-		final List<JavaFileObject> javaFiles = new ArrayList<JavaFileObject>();
 		final MemoryFileManager fileManager = new MemoryFileManager(standardFileManager);
-		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-		for (final Files fileRecord : query.from(QFiles.files).where(QFiles.files.name.like("%.java")).list(QFiles.files)) {
-			sourceFileIds.add(fileRecord.getId());
-			sourceFileNameToId.put(fileRecord.getName(), fileRecord.getId());
-			final String name = fileRecord.getName();
-			final IMemoryJavaFileObject fileObject = new MemoryJavaFileObject(name, fileRecord.getContents());
-			javaFiles.add(fileObject);
-			fileManager.getInputFiles().put(name, fileObject);
-		}
+		final List<JavaFileObject> javaFiles = new ArrayList<JavaFileObject>();
+		new RecursiveResourceOperation(sourcePath) {
+			@Override
+			protected void onLevelFetched(List<FetchResourceResult> fetchResults) {
+				for (FetchResourceResult fetchResult : fetchResults) {
+					if (fetchResult.getType() == ResourceType.FILE && "java".equals(fetchResult.getPath().getExtension())) {
+						final String key = fetchResult.getPath().removeFirstSegments(sourcePath.getSegmentCount(), true).toString();
+						final IMemoryJavaFileObject fileObject = new MemoryJavaFileObject(key, fetchResult.getContents());
+						javaFiles.add(fileObject);
+						fileManager.getInputFiles().put(key, fileObject);
+					}
+				}
+			}
+		}.run();
 
 		// run the java compiler
 		final CompilationTask task = compiler.getTask(null, fileManager, diagnosticListener, null, null, javaFiles);
@@ -74,13 +79,8 @@ public class JavaCompilerFacade {
 
 		// save the class files in the database
 		for (final IMemoryFileObject file : fileManager.getOutputFiles().values()) {
-			final String filename = file.getName();
-			final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QFiles.files);
-			delete.where(QFiles.files.name.eq(filename)).execute();
-			final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QFiles.files);
-			insert.set(QFiles.files.name, filename);
-			insert.set(QFiles.files.contents, file.getBinaryContent());
-			insert.execute();
+			final ResourcePath path = new ResourcePath("/bin" + file.getName());
+			new CreateFileOperation(path, file.getBinaryContent(), true).run();
 		}
 
 		// collect diagnostic messages per source file
@@ -97,10 +97,9 @@ public class JavaCompilerFacade {
 		}
 
 		// generate markers for the diagnostic messages
-		MarkerDatabaseUtil.removeMarkersForFile(sourceFileIds, MarkerOrigin.JAVAC);
+		new RecursiveDeleteMarkersOperation(binaryPath, MarkerOrigin.JAVAC).run();
 		for (final Map.Entry<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>> fileEntry : sourceFileToDiagnostics.entrySet()) {
-			final String filename = fileEntry.getKey().getName();
-			final long fileId = sourceFileNameToId.get(filename);
+			final ResourcePath filePath = new ResourcePath(fileEntry.getKey().getName());
 			for (final Diagnostic<? extends JavaFileObject> diagnostic : fileEntry.getValue()) {
 
 				// convert the diagnostic kind to a marker meaning (skip this diagnostic if the kind is unknown)
@@ -119,15 +118,15 @@ public class JavaCompilerFacade {
 				if (meaning == MarkerMeaning.WARNING && messageText.equals("warning: [package-info] a package-info.java file has already been seen for package unnamed package")) {
 					continue;
 				}
-				
+
 				// create the marker
 				long line = diagnostic.getLineNumber();
 				long column = diagnostic.getColumnNumber();
-				new CreateResourceMarkerOperation(path, MarkerOrigin.JAVAC, meaning, line, column, messageText).run();
+				new CreateResourceMarkerOperation(filePath, MarkerOrigin.JAVAC, meaning, line, column, messageText).run();
 
 			}
 		}
-		
+
 	}
-	
+
 }

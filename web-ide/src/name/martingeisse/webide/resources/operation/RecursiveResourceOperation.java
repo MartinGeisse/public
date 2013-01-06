@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.NotImplementedException;
+
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.webide.entity.QWorkspaceResources;
 import name.martingeisse.webide.entity.WorkspaceResources;
@@ -95,7 +97,9 @@ public abstract class RecursiveResourceOperation extends WorkspaceOperation {
 	private List<FetchResourceResult> createFetchResourceResults(List<WorkspaceResources> resources) {
 		List<FetchResourceResult> results = new ArrayList<FetchResourceResult>(resources.size());
 		for (WorkspaceResources resource : resources) {
-			results.add(new FetchResourceResult(path, resource));
+			// TODO
+			throw new NotImplementedException();
+//			results.add(new FetchResourceResult(path, resource));
 		}
 		return results;
 	}

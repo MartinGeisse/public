@@ -39,8 +39,11 @@ public class JavaEditor implements IEditor {
 	public void initialize(final ResourcePath workspaceResourcePath) {
 		FetchSingleResourceOperation operation = new FetchSingleResourceOperation(workspaceResourcePath);
 		operation.run();
+		if (operation.getResult() == null) {
+			throw new IllegalArgumentException("file not found: " + workspaceResourcePath);
+		}
 		this.workspaceResourcePath = workspaceResourcePath;
-		this.contents = new String(operation.getContents(), Charset.forName("utf-8"));
+		this.contents = new String(operation.getResult().getContents(), Charset.forName("utf-8"));
 	}
 
 	/**

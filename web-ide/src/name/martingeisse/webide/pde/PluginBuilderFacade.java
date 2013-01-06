@@ -109,13 +109,10 @@ public class PluginBuilderFacade {
 				protected void onLevelFetched(List<FetchResourceResult> fetchResults) {
 					try {
 						for (FetchResourceResult fetchResult : fetchResults) {
-							if (fetchResult.getType() == ResourceType.FILE) {
-								String extension = fetchResult.getPath().getExtension();
-								if (extension != null && extension.equals("class")) {
-									final ResourcePath zipEntryPath = fetchResult.getPath().removeFirstSegments(binFolderPath.getSegmentCount(), true);
-									jarOutputStream.putNextEntry(new ZipEntry(zipEntryPath.toString()));
-									jarOutputStream.write(fetchResult.getContents());
-								}
+							if (fetchResult.getType() == ResourceType.FILE && "class".equals(fetchResult.getPath().getExtension())) {
+								final ResourcePath zipEntryPath = fetchResult.getPath().removeFirstSegments(binFolderPath.getSegmentCount(), true);
+								jarOutputStream.putNextEntry(new ZipEntry(zipEntryPath.toString()));
+								jarOutputStream.write(fetchResult.getContents());
 							}
 						}
 					} catch (IOException e) {
@@ -125,7 +122,7 @@ public class PluginBuilderFacade {
 			}.run();
 			jarOutputStream.close();
 			byte[] contents = byteArrayOutputStream.toByteArray();
-			new CreateFileOperation(new ResourcePath("/plugin.jar"), contents).run();
+			new CreateFileOperation(new ResourcePath("/plugin.jar"), contents, true).run();
 			return contents;
 		} catch (IOException e) {
 			throw new RuntimeException(e);

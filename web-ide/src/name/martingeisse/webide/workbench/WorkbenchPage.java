@@ -73,7 +73,7 @@ public class WorkbenchPage extends WebPage {
 			@Override
 			protected void onSelect(final List<String> anchor, String filename) {
 				ResourcePath path = new ResourcePath(true, false, new String[] {filename});
-				new CreateFileOperation(path, "").run();
+				new CreateFileOperation(path, "", true).run();
 				loadEditorContents(filename);
 			}
 		});

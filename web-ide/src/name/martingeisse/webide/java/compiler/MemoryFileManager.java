@@ -12,15 +12,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.tools.FileObject;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
 import javax.tools.JavaFileObject.Kind;
+import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 
-import name.martingeisse.common.util.TypeFilteredIterable;
+import name.martingeisse.common.util.iterator.AbstractIterableWrapper;
 
 /**
  * In-memory file manager. The "names" used by this file manager
@@ -228,16 +229,31 @@ public class MemoryFileManager implements JavaFileManager {
 		if (location == StandardLocation.PLATFORM_CLASS_PATH) {
 			return standardFileManager.list(location, packageName, kinds, recurse);
 		}
-		TODO
-		if (packageName.isEmpty()) {
-			if (location == StandardLocation.SOURCE_PATH && kinds.contains(Kind.SOURCE)) {
-				return new TypeFilteredIterable<JavaFileObject>(inputFiles.values(), JavaFileObject.class);
-			}
-			if (location == StandardLocation.CLASS_OUTPUT && kinds.contains(Kind.CLASS)) {
-				return new TypeFilteredIterable<JavaFileObject>(outputFiles.values(), JavaFileObject.class);
-			}
+		
+		// determine the file map to use
+		final Map<String, IMemoryFileObject> fileMap;
+		if (location == StandardLocation.SOURCE_PATH && kinds.contains(Kind.SOURCE)) {
+			fileMap = inputFiles;
+		} else if (location == StandardLocation.CLASS_OUTPUT && kinds.contains(Kind.CLASS)) {
+			fileMap = outputFiles;
+		} else {
+			return new ArrayList<JavaFileObject>();
 		}
-		return new ArrayList<JavaFileObject>();
+
+		// create a filtered iterator
+		final Pattern namePattern = Pattern.compile("\\/" + (packageName.replace(".", "\\/")) + "\\/[^\\/]+");
+		return new AbstractIterableWrapper<IMemoryFileObject, JavaFileObject>(fileMap.values()) {
+			@Override
+			protected JavaFileObject handleElement(IMemoryFileObject element) {
+				if (element instanceof JavaFileObject) {
+					if (namePattern.matcher(element.getName()).matches()) {
+						return (JavaFileObject)element;
+					}
+				}
+				return null;
+			}
+		};
+		
 	}
 
 	private static String getPackageFileName(String packageName, String localFileName) {

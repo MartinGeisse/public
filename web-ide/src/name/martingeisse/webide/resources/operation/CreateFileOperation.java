@@ -19,7 +19,7 @@ import name.martingeisse.webide.resources.ResourceType;
 /**
  * This operation creates a file in the workspace.
  */
-public final class CreateFileOperation extends SingleResourceOperation {
+public final class CreateFileOperation extends AbstractCreateResourceOperation {
 
 	/**
 	 * the contents
@@ -30,18 +30,22 @@ public final class CreateFileOperation extends SingleResourceOperation {
 	 * Constructor.
 	 * @param path the path of the file
 	 * @param contents the text contents (assuming UTF-8 encoding)
+	 * @param createEnclosingFolders whether enclosing folders shall be
+	 * created as required
 	 */
-	public CreateFileOperation(final ResourcePath path, final String contents) {
-		this(path, contents == null ? null : contents.getBytes(Charset.forName("utf-8")));
+	public CreateFileOperation(final ResourcePath path, final String contents, boolean createEnclosingFolders) {
+		this(path, contents == null ? null : contents.getBytes(Charset.forName("utf-8")), createEnclosingFolders);
 	}
 
 	/**
 	 * Constructor.
 	 * @param path the path of the file
 	 * @param contents the binary contents
+	 * @param createEnclosingFolders whether enclosing folders shall be
+	 * created as required
 	 */
-	public CreateFileOperation(final ResourcePath path, final byte[] contents) {
-		super(path);
+	public CreateFileOperation(final ResourcePath path, final byte[] contents, boolean createEnclosingFolders) {
+		super(path, createEnclosingFolders);
 		this.contents = contents;
 	}
 
@@ -58,11 +62,7 @@ public final class CreateFileOperation extends SingleResourceOperation {
 	 */
 	@Override
 	protected void perform(final IWorkspaceOperationContext context) {
-		WorkspaceResources parentResource = fetchResource(context, getPath().removeLastSegment(false));
-		ResourceType parentType = ResourceType.valueOf(parentResource.getType());
-		if (parentType != ResourceType.PROJECT && parentType != ResourceType.FOLDER) {
-			throw new WorkspaceOperationException("invalid parent resource type for creating a file: " + parentType);
-		}
+		WorkspaceResources parentResource = createEnclosingFoldersIfNeeded(context);
 		final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QWorkspaceResources.workspaceResources);
 		insert.set(QWorkspaceResources.workspaceResources.name, getPath().getLastSegment());
 		insert.set(QWorkspaceResources.workspaceResources.contents, (contents == null ? new byte[0] : contents));

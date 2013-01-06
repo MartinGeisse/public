@@ -38,9 +38,10 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * methods are implemented accordingly. All methods used to modify paths return
  * a new path object.
  * 
- * Paths can be concatenated: The right-hand path must be relative; the resulting
- * path is relative if the left-hand path is. Trying to use an absolute path as
- * the right-hand path results in an exception, since it is likely a bug.
+ * Paths can be concatenated in the following way:
+ * - if the right-hand path is absolute, then it is the result of the concatenation. Otherwise,
+ * - the resulting path has the segments of both paths concatenated and is relative if the
+ *   left-hand path is. The trailing separator flag is taken from the right-hand path.
  * 
  * Absolute paths can be used to locate workspace resources. Again, using a
  * relative path for this results in an exception, since it is likely a bug.
@@ -309,7 +310,7 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	 */
 	public ResourcePath prependSegments(String[] segments, boolean withLeadingSeparator) {
 		String[] result = extendSegments(segments.length, 0);
-		System.arraycopy(segments, 0, segmentStorage, 0, segments.length);
+		System.arraycopy(segments, 0, result, 0, segments.length);
 		return new ResourcePath(withLeadingSeparator, trailingSeparator, result, 0, result.length, false);
 	}
 
@@ -361,7 +362,7 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	 */
 	public ResourcePath appendSegments(String[] segments, boolean withTrailingSeparator) {
 		String[] result = extendSegments(0, segments.length);
-		System.arraycopy(segments, 0, segmentStorage, segmentCount, segments.length);
+		System.arraycopy(segments, 0, result, segmentCount, segments.length);
 		return new ResourcePath(leadingSeparator, withTrailingSeparator, result, 0, result.length, false);
 	}
 
@@ -389,6 +390,75 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	 */
 	public ResourcePath replaceLastSegment(String segment) {
 		return replaceSegment(segmentCount - 1, segment);
+	}
+	
+	/**
+	 * Concatenates this path (as the left-hand path) and the specified right-hand path,
+	 * as described in the class description. This method allows to prohibit absolute
+	 * right-hand paths; whether absolute right-hand paths are sensible depends highly
+	 * on the context.
+	 * 
+	 * @param rightHandPath the right-hand path
+	 * @param allowAbsoluteRightHandPath whether absolute right-hand paths are allowed.
+	 * If this flag is false and the right-hand path is absolute, this method throws
+	 * an {@link IllegalArgumentException}.
+	 * @return the concatenated paths
+	 */
+	public ResourcePath concat(ResourcePath rightHandPath, boolean allowAbsoluteRightHandPath) {
+		
+		// handle absolute right-hand paths
+		if (rightHandPath.isLeadingSeparator()) {
+			if (allowAbsoluteRightHandPath) {
+				return rightHandPath;
+			} else {
+				throw new IllegalArgumentException("absolute path not allowed at this point");
+			}
+		}
+		
+		// concatenate with a relative right-hand path
+		return appendSegments(rightHandPath.getSegments(), rightHandPath.isTrailingSeparator());
+		
+	}
+	
+	/**
+	 * This method is used when the path may contain "." or ".." segments. It collapses the
+	 * path by removing those segments and normal segments as needed.
+	 * 
+	 * Collapsing may cause the path to escape its origin. This is allowed for relative paths and
+	 * causes the remaining ".." segments to be moved to the beginning. For absolute paths
+	 * this causes an exception.
+	 * 
+	 * @return the collapsed path
+	 */
+	public ResourcePath collapse() {
+		String[] remainingNormalSegments = new String[segmentCount];
+		int remainingNormalSegmentCount = 0;
+		int escapeSegmentCount = 0;
+		for (String segment : this) {
+			if (segment.equals(".")) {
+				continue;
+			} else if (segment.equals("..")) {
+				if (remainingNormalSegmentCount > 0) {
+					remainingNormalSegmentCount--;
+				} else {
+					escapeSegmentCount++;
+				}
+			} else {
+				remainingNormalSegments[remainingNormalSegmentCount] = segment;
+				remainingNormalSegmentCount++;
+			}
+		}
+		if (leadingSeparator && escapeSegmentCount > 0) {
+			throw new IllegalStateException("cannot escape the root path");
+		}
+		String[] resultSegments = new String[escapeSegmentCount + remainingNormalSegmentCount];
+		for (int i=0; i<escapeSegmentCount; i++) {
+			resultSegments[i] = "..";
+		}
+		for (int i=0; i<remainingNormalSegmentCount; i++) {
+			resultSegments[escapeSegmentCount + i] = remainingNormalSegments[i];
+		}
+		return new ResourcePath(leadingSeparator, trailingSeparator, resultSegments, 0, resultSegments.length, false);
 	}
 
 	/* (non-Javadoc)
@@ -503,7 +573,7 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 		if (trailingSeparator) {
 			builder.append('/');
 		}
-		return super.toString();
+		return builder.toString();
 	}
 	
 	/* (non-Javadoc)

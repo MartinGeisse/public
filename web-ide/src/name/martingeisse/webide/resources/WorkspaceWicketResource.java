@@ -52,7 +52,7 @@ public class WorkspaceWicketResource extends AbstractResource {
 		response.setWriteCallback(new WriteCallback() {
 			@Override
 			public void writeData(final Attributes attributes) throws IOException {
-				attributes.getResponse().write(operation.getContents());
+				attributes.getResponse().write(operation.getResult().getContents());
 			}
 		});
 		return response;
