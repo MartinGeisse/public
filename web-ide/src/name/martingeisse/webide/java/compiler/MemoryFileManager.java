@@ -23,7 +23,9 @@ import javax.tools.StandardLocation;
 import name.martingeisse.common.util.TypeFilteredIterable;
 
 /**
- * In-memory file manager.
+ * In-memory file manager. The "names" used by this file manager
+ * are stringified resource paths (with a leading separator, without
+ * a trailing separator).
  */
 public class MemoryFileManager implements JavaFileManager {
 
@@ -110,8 +112,7 @@ public class MemoryFileManager implements JavaFileManager {
 		if (location != StandardLocation.SOURCE_PATH) {
 			return null;
 		}
-		String key = packageName + '.' + relativeName;
-		return inputFiles.get(key);
+		return inputFiles.get(getPackageFileName(packageName, relativeName));
 	}
 
 	/* (non-Javadoc)
@@ -125,7 +126,7 @@ public class MemoryFileManager implements JavaFileManager {
 		if (location != StandardLocation.CLASS_OUTPUT) {
 			return null;
 		}
-		String key = packageName + '.' + relativeName;
+		String key = getPackageFileName(packageName, relativeName);
 		IMemoryFileObject fileObject = outputFiles.get(key);
 		if (fileObject == null) {
 			fileObject = new MemoryBlobFileObject(key);
@@ -145,7 +146,7 @@ public class MemoryFileManager implements JavaFileManager {
 		if (location != StandardLocation.SOURCE_PATH) {
 			return null;
 		}
-		String key = className + (kind == Kind.SOURCE ? ".java" : kind == Kind.CLASS ? ".class" : "");
+		String key = getJavaFileName(className, kind);
 		IMemoryFileObject fileObject = inputFiles.get(key);
 		if (fileObject instanceof JavaFileObject) {
 			return (JavaFileObject)fileObject;
@@ -165,7 +166,7 @@ public class MemoryFileManager implements JavaFileManager {
 		if (location != StandardLocation.CLASS_OUTPUT) {
 			return null;
 		}
-		String key = className + (kind == Kind.SOURCE ? ".java" : kind == Kind.CLASS ? ".class" : "");
+		String key = getJavaFileName(className, kind);
 		IMemoryFileObject fileObject = outputFiles.get(key);
 		if (fileObject instanceof JavaFileObject) {
 			return (JavaFileObject)fileObject;
@@ -227,6 +228,7 @@ public class MemoryFileManager implements JavaFileManager {
 		if (location == StandardLocation.PLATFORM_CLASS_PATH) {
 			return standardFileManager.list(location, packageName, kinds, recurse);
 		}
+		TODO
 		if (packageName.isEmpty()) {
 			if (location == StandardLocation.SOURCE_PATH && kinds.contains(Kind.SOURCE)) {
 				return new TypeFilteredIterable<JavaFileObject>(inputFiles.values(), JavaFileObject.class);
@@ -236,6 +238,14 @@ public class MemoryFileManager implements JavaFileManager {
 			}
 		}
 		return new ArrayList<JavaFileObject>();
+	}
+
+	private static String getPackageFileName(String packageName, String localFileName) {
+		return "/" + packageName.replace('.', '/') + '/' + localFileName;
+	}
+
+	private static String getJavaFileName(String className, Kind kind) {
+		return "/" + className.replace('.', '/') + (kind == Kind.SOURCE ? ".java" : kind == Kind.CLASS ? ".class" : "");
 	}
 
 }

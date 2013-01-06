@@ -29,6 +29,8 @@ import name.martingeisse.webide.resources.MarkerData;
 import name.martingeisse.webide.resources.MarkerDatabaseUtil;
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.MarkerOrigin;
+import name.martingeisse.webide.resources.operation.CreateResourceMarkerOperation;
+import name.martingeisse.webide.resources.operation.DeleteMultipleResourcesMarkersOperation;
 
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.dml.SQLDeleteClause;
@@ -119,13 +121,9 @@ public class JavaCompilerFacade {
 				}
 				
 				// create the marker
-				final MarkerData markerData = new MarkerData();
-				markerData.setOrigin(MarkerOrigin.JAVAC);
-				markerData.setMeaning(meaning);
-				markerData.setLine(diagnostic.getLineNumber());
-				markerData.setColumn(diagnostic.getColumnNumber());
-				markerData.setMessage(messageText);
-				markerData.insertIntoDatabase(fileId);
+				long line = diagnostic.getLineNumber();
+				long column = diagnostic.getColumnNumber();
+				new CreateResourceMarkerOperation(path, MarkerOrigin.JAVAC, meaning, line, column, messageText).run();
 
 			}
 		}

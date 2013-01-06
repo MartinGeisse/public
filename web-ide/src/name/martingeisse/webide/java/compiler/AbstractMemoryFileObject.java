@@ -67,7 +67,7 @@ public abstract class AbstractMemoryFileObject implements IMemoryFileObject {
 	@Override
 	public URI toUri() {
 		try {
-			return new URI("webide", "/" + name, null);
+			return new URI("webide", name, null);
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
