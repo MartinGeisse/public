@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project" default="build">
+
+	<property name="destination">../../../webide</property>
+	
+    <target name="prepare">
+    	<delete dir="${destination}" />
+    	<mkdir dir="${destination}" />
+    	<mkdir dir="${destination}/jars" />
+    </target>
+
+    <target name="compile-common">
+    	<copy todir="${destination}/jars">
+    		<fileset dir="../webapp.common/lib/java" includes="*.jar" />
+    		<fileset dir="../webapp.common/lib/java/querydsl" includes="*.jar" />
+    	</copy>
+    </target>
+	
+    <target name="compile-wicket">
+    </target>
+	
+    <target name="compile-webide">
+    </target>
+	
+    <target name="build" depends="prepare, compile-common, compile-wicket, compile-webide">
+    </target>
+
+    <target name="run">
+    </target>
+
+</project>
