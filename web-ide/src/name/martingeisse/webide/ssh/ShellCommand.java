@@ -133,7 +133,7 @@ public class ShellCommand implements Command, Runnable {
 						printPrompt();
 					} else if (c == '\t') {
 						autocomplete();
-					} else if (c == '\b') {
+					} else if (c == 127) {
 						erase();
 					} else if (c >= 32) {
 						typeRegular(c);
@@ -194,7 +194,7 @@ public class ShellCommand implements Command, Runnable {
 	private void erase() {
 		if (commandLineBuilder.length() > 0) {
 			commandLineBuilder.setLength(commandLineBuilder.length() - 1);
-			outputWriter.print('\b');
+			outputWriter.print("\b \b");
 		} else {
 			beep();
 		}

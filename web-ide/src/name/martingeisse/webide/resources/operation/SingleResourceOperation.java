@@ -86,6 +86,7 @@ public abstract class SingleResourceOperation extends WorkspaceOperation {
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		query.from(QWorkspaceResources.workspaceResources);
 		query.where(QWorkspaceResources.workspaceResources.parentId.eq(parent.getId()));
+		query.where(QWorkspaceResources.workspaceResources.name.eq(path.getLastSegment()));
 		return query.singleResult(QWorkspaceResources.workspaceResources);
 	}
 	

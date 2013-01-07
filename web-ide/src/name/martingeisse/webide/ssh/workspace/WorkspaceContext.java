@@ -35,6 +35,7 @@ public class WorkspaceContext implements IShellContext {
 	public WorkspaceContext() {
 		this.tools = new HashMap<String, IWorkspaceTool>();
 		this.tools.put("ls", new LsTool());
+		this.tools.put("rls", new RlsTool());
 		this.tools.put("cd", new CdTool());
 		this.tools.put("pwd", new PwdTool());
 		this.currentWorkingDirectory = new ResourcePath("/");

@@ -7,15 +7,16 @@
 package name.martingeisse.webide.ssh.workspace;
 
 import java.io.PrintWriter;
+import java.util.List;
 
 import name.martingeisse.webide.resources.operation.FetchResourceResult;
-import name.martingeisse.webide.resources.operation.ListResourcesOperation;
+import name.martingeisse.webide.resources.operation.RecursiveResourceOperation;
 import name.martingeisse.webide.resources.operation.WorkspaceResourceNotFoundException;
 
 /**
- * Implements the "ls" command.
+ * Implements the "rls" (recursive "ls") command.
  */
-public final class LsTool implements IWorkspaceTool {
+public final class RlsTool implements IWorkspaceTool {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.webide.ssh.workspace.IWorkspaceTool#execute(java.lang.String[])
@@ -25,17 +26,21 @@ public final class LsTool implements IWorkspaceTool {
 		if (arguments.length > 0) {
 			err.print("this tool does not understand any arguments\r\n");
 		}
-		ListResourcesOperation operation = new ListResourcesOperation(context.getCurrentWorkingDirectory());
+		RecursiveResourceOperation operation = new RecursiveResourceOperation(context.getCurrentWorkingDirectory()) {
+			@Override
+			protected void onLevelFetched(List<FetchResourceResult> fetchResults) {
+				for (FetchResourceResult result : fetchResults) {
+					out.print(result.getPath().toString());
+					out.print("\r\n");
+				}
+			}
+		};
 		try {
 			operation.run();
 		} catch (WorkspaceResourceNotFoundException e) {
 			err.print(e.getMessage());
 			err.print("\r\n");
 			return;
-		}
-		for (FetchResourceResult result : operation.getChildren()) {
-			out.print(result.getPath().getLastSegment());
-			out.print("\r\n");
 		}
 	}
 	

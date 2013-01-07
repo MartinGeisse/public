@@ -15,7 +15,7 @@ public class WorkspaceResourceNotFoundException extends WorkspaceOperationExcept
 	 * Constructor.
 	 */
 	public WorkspaceResourceNotFoundException() {
-		super();
+		super("resource not found");
 	}
 
 	/**
@@ -31,7 +31,7 @@ public class WorkspaceResourceNotFoundException extends WorkspaceOperationExcept
 	 * @param cause the exception that caused this exception
 	 */
 	public WorkspaceResourceNotFoundException(Throwable cause) {
-		super(cause);
+		super("resource not found", cause);
 	}
 
 	/**
