@@ -8,8 +8,10 @@ package name.martingeisse.webide.resources.operation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import name.martingeisse.common.database.EntityConnectionManager;
@@ -17,8 +19,6 @@ import name.martingeisse.webide.entity.QWorkspaceResources;
 import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
-
-import org.apache.commons.lang.NotImplementedException;
 
 import com.mysema.query.sql.SQLQuery;
 
@@ -75,31 +75,65 @@ public abstract class RecursiveResourceOperation extends WorkspaceOperation {
 	 */
 	@Override
 	protected void perform(final IWorkspaceOperationContext context) {
-		List<WorkspaceResources> currentResources = fetchRootResources(context);
+		
+		// prepare -- the special case for a single root is needed to avoid infinite recursion since
+		// MultipleResourcesOperation.fetchResources uses a RecursiveResourceOperation too!
+		List<WorkspaceResources> currentResources;
+		Map<Long, ResourcePath> pathById;
+		if (rootPaths.length == 0) {
+			return;
+		} else if (rootPaths.length == 1) {
+			WorkspaceResources rootResource = SingleResourceOperation.fetchResource(context, rootPaths[0]);
+			currentResources = new ArrayList<WorkspaceResources>();
+			currentResources.add(rootResource);
+			pathById = new HashMap<Long, ResourcePath>();
+			pathById.put(rootResource.getId(), rootPaths[0]);
+		} else {
+			currentResources = MultipleResourcesOperation.fetchResources(context, rootPaths);
+			pathById = associateRootPaths(currentResources);
+		}
+		
+		// recursive handling
 		while (!currentResources.isEmpty()) {
-			List<FetchResourceResult> fetchResults = createFetchResourceResults(currentResources);
+			List<FetchResourceResult> fetchResults = createFetchResourceResults(currentResources, pathById);
 			onLevelFetched(fetchResults);
 			Set<Long> parentIdsForNextLevel = getContainerResourceIds(fetchResults);
 			currentResources = fetchNextLevel(parentIdsForNextLevel);
 		}
-	}
-
-	/**
-	 * Fetches the resources denoted by the root paths.
-	 */
-	private List<WorkspaceResources> fetchRootResources(final IWorkspaceOperationContext context) {
-		return MultipleResourcesOperation.fetchResources(context, rootPaths);
+		
 	}
 	
 	/**
-	 * Creates FetchResourceResult instances for subclass code.
+	 * Creates a id-to-path map from the root resources (assumed to be in exactly
+	 * the same order as the root paths).
 	 */
-	private List<FetchResourceResult> createFetchResourceResults(List<WorkspaceResources> resources) {
+	private Map<Long, ResourcePath> associateRootPaths(List<WorkspaceResources> rootResources) {
+		Map<Long, ResourcePath> pathById = new HashMap<Long, ResourcePath>();
+		int i = 0;
+		for (WorkspaceResources resource : rootResources) {
+			pathById.put(resource.getId(), rootPaths[i]);
+			i++;
+		}
+		return pathById;
+	}
+	
+	/**
+	 * Creates FetchResourceResult instances for subclass code. Expects the parent resources to
+	 * be present in the pathById map and inserts the specified resources into that map.
+	 */
+	private List<FetchResourceResult> createFetchResourceResults(List<WorkspaceResources> resources, Map<Long, ResourcePath> pathById) {
 		List<FetchResourceResult> results = new ArrayList<FetchResourceResult>(resources.size());
 		for (WorkspaceResources resource : resources) {
-			// TODO
-			throw new NotImplementedException();
-//			results.add(new FetchResourceResult(path, resource));
+			ResourcePath resourcePath = pathById.get(resource.getId());
+			if (resourcePath == null) {
+				ResourcePath parentPath = pathById.get(resource.getParentId());
+				if (parentPath == null) {
+					throw new RuntimeException("pathById contains no path for id " + resource.getId() + " nor parent id " + resource.getParentId());
+				}
+				resourcePath = parentPath.appendSegment(resource.getName(), false);
+				pathById.put(resource.getId(), resourcePath);
+			}
+			results.add(new FetchResourceResult(resourcePath, resource));
 		}
 		return results;
 	}

@@ -6,6 +6,8 @@
 
 package name.martingeisse.webide.resources.operation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,31 +52,41 @@ public abstract class MultipleResourcesOperation extends WorkspaceOperation {
 	}
 	
 	/**
-	 * Obtains and returns the ID of the resource, possibly querying the database.
+	 * Obtains and returns the ID of the resources, possibly querying the database.
+	 * IDs are returned in exactly the same order as the paths.
 	 */
 	List<Long> fetchResourceIds(IWorkspaceOperationContext context) {
 		return fetchResourceIds(context, paths);
 	}
 
 	/**
-	 * Obtains and returns the ID of the resource, possibly querying the database.
+	 * Obtains and returns the ID of the resources, possibly querying the database.
+	 * IDs are returned in exactly the same order as the paths.
 	 */
 	static List<Long> fetchResourceIds(IWorkspaceOperationContext context, ResourcePath[] paths) {
-		// TODO
-		throw new NotImplementedException();
+		ArrayList<Long> ids = new ArrayList<Long>();
+		for (WorkspaceResources resource : fetchResources(context, paths)) {
+			ids.add(resource.getId());
+		}
+		return ids;
 	}
 
 	/**
-	 * Obtains and returns the resource from the database.
+	 * Obtains and returns the resources from the database.
+	 * Resources are returned in exactly the same order as the paths.
 	 */
 	List<WorkspaceResources> fetchResource(IWorkspaceOperationContext context) {
 		return fetchResources(context, paths);
 	}
 	
 	/**
-	 * Obtains and returns the resource from the database.
+	 * Obtains and returns the resources from the database.
+	 * Resources are returned in exactly the same order as the paths.
 	 */
 	static List<WorkspaceResources> fetchResources(IWorkspaceOperationContext context, ResourcePath[] paths) {
+		// ResourcePath[] remainingPaths = Arrays.copyOf(paths, paths.length);
+		// WorkspaceResources[] resources = new WorkspaceResources[paths.length];
+	
 		// TODO
 		throw new NotImplementedException();
 	}
