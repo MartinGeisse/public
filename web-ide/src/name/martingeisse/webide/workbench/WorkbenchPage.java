@@ -251,6 +251,7 @@ public class WorkbenchPage extends WebPage {
 	@Override
 	public void renderHead(final IHeaderResponse response) {
 		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkbenchPage.class, "common.js")));
+		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkbenchPage.class, "jquery.jstree.js")));
 		super.renderHead(response);
 	}
 
