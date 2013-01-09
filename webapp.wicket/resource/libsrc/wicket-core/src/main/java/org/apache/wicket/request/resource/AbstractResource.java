@@ -90,6 +90,7 @@ public abstract class AbstractResource implements IResource
 	public static class ResourceResponse
 	{
 		private Integer errorCode;
+		private Integer statusCode;
 		private String errorMessage;
 		private String fileName = null;
 		private ContentDisposition contentDisposition = ContentDisposition.INLINE;
@@ -149,6 +150,25 @@ public abstract class AbstractResource implements IResource
 		public Integer getErrorCode()
 		{
 			return errorCode;
+		}
+
+		/**
+		 * Sets the status code for resource.
+		 *
+		 * @param statusCode
+		 *            status code
+		 */
+		public void setStatusCode(Integer statusCode)
+		{
+			this.statusCode = statusCode;
+		}
+
+		/**
+		 * @return status code or <code>null</code>
+		 */
+		public Integer getStatusCode()
+		{
+			return statusCode;
 		}
 
 		/**
@@ -492,7 +512,8 @@ public abstract class AbstractResource implements IResource
 		// set response header
 		setResponseHeaders(data, attributes);
 
-		if (!data.dataNeedsToBeWritten(attributes) || data.getErrorCode() != null)
+		if (!data.dataNeedsToBeWritten(attributes) || data.getErrorCode() != null
+				|| needsBody(data.getStatusCode()) == false)
 		{
 			return;
 		}
@@ -510,6 +531,22 @@ public abstract class AbstractResource implements IResource
 		{
 			throw new WicketRuntimeException(iox);
 		}
+	}
+
+	/**
+	 * Decides whether a response body should be written back to the client depending
+	 * on the set status code
+	 *
+	 * @param statusCode
+	 *      the status code set by the application
+	 * @return {@code true} if the status code allows response body, {@code false} - otherwise
+	 */
+	private boolean needsBody(Integer statusCode)
+	{
+		return statusCode == null ||
+					(statusCode < 300 &&
+					statusCode != HttpServletResponse.SC_NO_CONTENT &&
+					statusCode != HttpServletResponse.SC_RESET_CONTENT);
 	}
 
 	/**
@@ -563,6 +600,12 @@ public abstract class AbstractResource implements IResource
 			if (data.getErrorCode() != null)
 			{
 				webResponse.sendError(data.getErrorCode(), data.getErrorMessage());
+				return;
+			}
+
+			if (data.getStatusCode() != null)
+			{
+				webResponse.setStatus(data.getStatusCode());
 				return;
 			}
 

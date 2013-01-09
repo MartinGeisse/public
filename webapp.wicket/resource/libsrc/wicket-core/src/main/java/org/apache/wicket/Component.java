@@ -437,7 +437,7 @@ public abstract class Component
 
 	/** Component flags. See FLAG_* for possible non-exclusive flag values. */
 	private int flags = FLAG_VISIBLE | FLAG_ESCAPE_MODEL_STRINGS | FLAG_VERSIONED | FLAG_ENABLED |
-		FLAG_IS_RENDER_ALLOWED | FLAG_VISIBILITY_ALLOWED;
+		FLAG_IS_RENDER_ALLOWED | FLAG_VISIBILITY_ALLOWED | FLAG_RESERVED5 /* page's stateless hint */;
 
 	private static final short RFLAG_ENABLED_IN_HIERARCHY_VALUE = 0x1;
 	private static final short RFLAG_ENABLED_IN_HIERARCHY_SET = 0x2;
@@ -2219,7 +2219,11 @@ public abstract class Component
 				Component[] feedbacksCopy = feedbacks.toArray(new Component[feedbacks.size()]);
 				for (Component feedback : feedbacksCopy)
 				{
-					feedback.internalBeforeRender();
+					// render it only if it is still in the page hierarchy (WICKET-4895)
+					if (feedback.findPage() != null)
+					{
+						feedback.internalBeforeRender();
+					}
 				}
 			}
 			getRequestCycle().setMetaData(FEEDBACK_LIST, null);

@@ -24,6 +24,8 @@ import java.util.Map;
 import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.string.PrependingStringBuffer;
 import org.apache.wicket.util.string.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Takes care of rendering URLs.
@@ -37,6 +39,8 @@ import org.apache.wicket.util.string.Strings;
  */
 public class UrlRenderer
 {
+	private static final Logger LOG = LoggerFactory.getLogger(UrlRenderer.class);
+
 	private static final Map<String, Integer> PROTO_TO_PORT = new HashMap<String, Integer>();
 	static
 	{
@@ -99,6 +103,8 @@ public class UrlRenderer
 			{
 				String relativeUrl = renderRelativeUrl(url);
 				Url relative = Url.parse(relativeUrl, url.getCharset());
+				relative.setPort(url.getPort());
+				relative.setProtocol(url.getProtocol());
 				renderedUrl = renderFullUrl(relative);
 			}
 			else
@@ -199,7 +205,7 @@ public class UrlRenderer
 	 * This method is only intended for Wicket URLs, because the {@link Url} object represents part
 	 * of URL after Wicket Filter.
 	 * 
-	 * For general URLs within context use {@link #renderContextPathRelativeUrl(String)}
+	 * For general URLs within context use {@link #renderContextRelativeUrl(String)}
 	 * 
 	 * @param url
 	 * @return Url rendered as string
@@ -208,67 +214,105 @@ public class UrlRenderer
 	{
 		Args.notNull(url, "url");
 
-		if (url.isAbsolute())
+		List<String> baseUrlSegments = getBaseUrl().getSegments();
+		List<String> urlSegments = new ArrayList<String>(url.getSegments());
+
+		removeCommonPrefixes(request, baseUrlSegments);
+		removeCommonPrefixes(request, urlSegments);
+
+		List<String> newSegments = new ArrayList<String>();
+
+		int common = 0;
+
+		String last = null;
+
+		for (String s : baseUrlSegments)
 		{
-			return url.toString();
-		}
-		else
-		{
-			List<String> baseUrlSegments = getBaseUrl().getSegments();
-			List<String> urlSegments = new ArrayList<String>(url.getSegments());
-
-			List<String> newSegments = new ArrayList<String>();
-
-			int common = 0;
-
-			String last = null;
-
-			for (String s : baseUrlSegments)
+			if (!urlSegments.isEmpty() && s.equals(urlSegments.get(0)))
 			{
-				if (!urlSegments.isEmpty() && s.equals(urlSegments.get(0)))
-				{
-					++common;
-					last = urlSegments.remove(0);
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			// we want the new URL to have at least one segment (other than possible ../)
-			if ((last != null) && (urlSegments.isEmpty() || (baseUrlSegments.size() == common)))
-			{
-				--common;
-				urlSegments.add(0, last);
-			}
-
-			int baseUrlSize = baseUrlSegments.size();
-			if (common + 1 == baseUrlSize && urlSegments.isEmpty())
-			{
-				newSegments.add(".");
+				++common;
+				last = urlSegments.remove(0);
 			}
 			else
 			{
-				for (int i = common + 1; i < baseUrlSize; ++i)
-				{
-					newSegments.add("..");
-				}
+				break;
 			}
-			newSegments.addAll(urlSegments);
+		}
 
-			String renderedUrl = new Url(newSegments, url.getQueryParameters()).toString();
-			if (!renderedUrl.startsWith(".."))
+		// we want the new URL to have at least one segment (other than possible ../)
+		if ((last != null) && (urlSegments.isEmpty() || (baseUrlSegments.size() == common)))
+		{
+			--common;
+			urlSegments.add(0, last);
+		}
+
+		int baseUrlSize = baseUrlSegments.size();
+		if (common + 1 == baseUrlSize && urlSegments.isEmpty())
+		{
+			newSegments.add(".");
+		}
+		else
+		{
+			for (int i = common + 1; i < baseUrlSize; ++i)
 			{
-				// WICKET-4260
-				renderedUrl = "./" + renderedUrl;
+				newSegments.add("..");
 			}
-			if (renderedUrl.endsWith(".."))
+		}
+		newSegments.addAll(urlSegments);
+
+		// sanitize start
+		String renderedUrl = new Url(newSegments, url.getQueryParameters()).toString();
+		if (renderedUrl.startsWith("/"))
+		{
+			// WICKET-4920
+			renderedUrl = "." + renderedUrl;
+		}
+		else if (!renderedUrl.startsWith(".."))
+		{
+			// WICKET-4260
+			renderedUrl = "./" + renderedUrl;
+		}
+
+		// sanitize end
+		if (renderedUrl.endsWith(".."))
+		{
+			// WICKET-4401
+			renderedUrl = renderedUrl + '/';
+		}
+		return renderedUrl;
+	}
+
+	/**
+	 * Removes common prefixes like empty first segment, context path and filter path.
+	 * 
+	 * @param request
+	 *            the current web request
+	 * @param segments
+	 *            the segments to clean
+	 */
+	private void removeCommonPrefixes(Request request, List<String> segments)
+	{
+		// try to remove context/filter path only if the Url starts with '/',
+		// i.e. has an empty segment in the beginning
+		if (segments.isEmpty() || "".equals(segments.get(0)) == false)
+		{
+			return;
+		}
+
+		Url commonPrefix = Url.parse(request.getContextPath() + request.getFilterPath());
+
+		for (int i = 0; i < commonPrefix.getSegments().size() && i < segments.size(); i++)
+		{
+			if (commonPrefix.getSegments().get(i).equals(segments.get(i)) == false)
 			{
-				// WICKET-4401
-				renderedUrl = renderedUrl + '/';
+				LOG.debug("Segments '{}' do not start with common prefix '{}'", segments, commonPrefix);
+				return;
 			}
-			return renderedUrl;
+		}
+
+		for (int i = 0; i < commonPrefix.getSegments().size(); i++)
+		{
+			segments.remove(0);
 		}
 	}
 

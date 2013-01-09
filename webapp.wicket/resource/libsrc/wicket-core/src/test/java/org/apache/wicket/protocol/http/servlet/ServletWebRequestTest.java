@@ -17,17 +17,17 @@
 package org.apache.wicket.protocol.http.servlet;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.IMarkupResourceStreamProvider;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.protocol.http.MultiPartTestApplication;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.mock.MockHttpServletRequest;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.http.WebRequest;
+import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.StringResourceStream;
 import org.apache.wicket.util.tester.WicketTester;
@@ -132,28 +132,39 @@ public class ServletWebRequestTest extends Assert
 		};
 
 		WicketTester tester = new WicketTester(application);
-		tester.startPage(new CustomRequestPage());
+		try
+		{
+			tester.startPage(new CustomRequestPage());
+		}
+		finally
+		{
+			tester.destroy();
+		}
 	}
 
 	/**
-	 * https://issues.apache.org/jira/browse/WICKET-4715
+	 * Assert that ServletWebRequest#getClientUrl() will throw an AbortWithHttpErrorCodeException
+	 * with error code 400 (Bad Request) when an Ajax request doesn't provide the base url.
+	 *
+	 * https://issues.apache.org/jira/browse/WICKET-4841
 	 */
 	@Test
-	public void multiPartWebRequest()
+	public void getClientUrlAjaxWithoutBaseUrl()
 	{
-		MultiPartTestApplication application = new MultiPartTestApplication();
-		new WicketTester(application); // inits the app
 
 		MockHttpServletRequest httpRequest = new MockHttpServletRequest(null, null, null);
-		httpRequest.setURL("/");
-		httpRequest.setParameter("some", "parameter");
-		httpRequest.setMethod(Form.METHOD_POST);
-		httpRequest.setUseMultiPartContentType(true);
-
-		WebRequest webRequest = application.createWebRequest(httpRequest, "/");
-		assertTrue(webRequest instanceof MultipartServletWebRequest);
+		httpRequest.setHeader(ServletWebRequest.HEADER_AJAX, "true");
+		ServletWebRequest webRequest = new ServletWebRequest(httpRequest, "");
+		try
+		{
+			webRequest.getClientUrl();
+			fail("Should not be possible to get the request client url in Ajax request without base url");
+		}
+		catch (AbortWithHttpErrorCodeException awhex)
+		{
+			assertEquals(HttpServletResponse.SC_BAD_REQUEST, awhex.getErrorCode());
+		}
 	}
-
 
 	private static class CustomRequestPage extends WebPage implements IMarkupResourceStreamProvider
 	{

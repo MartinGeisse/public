@@ -703,9 +703,9 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 	 */
 	private void init()
 	{
-		if (isBookmarkable())
+		if (isBookmarkable() == false)
 		{
-			setStatelessHint(true);
+			setStatelessHint(false);
 		}
 
 		// Set versioning of page based on default
@@ -853,7 +853,7 @@ public abstract class Page extends MarkupContainer implements IRedirectListener,
 			}
 			getResponse().write("<!-- Page Class ");
 			getResponse().write(klass.getName());
-			getResponse().write(" -->\n");
+			getResponse().write(" END -->\n");
 		}
 	}
 

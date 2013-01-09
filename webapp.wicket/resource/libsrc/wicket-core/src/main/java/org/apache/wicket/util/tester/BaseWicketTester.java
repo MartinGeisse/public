@@ -41,14 +41,12 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import junit.framework.AssertionFailedError;
-
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.IPageManagerProvider;
 import org.apache.wicket.IPageRendererProvider;
 import org.apache.wicket.IRequestCycleProvider;
 import org.apache.wicket.IRequestListener;
-import org.apache.wicket.IResourceListener;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestListenerInterface;
@@ -431,7 +429,10 @@ public class BaseWicketTester
 			{
 				for (Cookie cookie : cookies)
 				{
-					if (cookie.getMaxAge() > 0)
+					// maxAge == -1 -> means session cookie
+					// maxAge == 0 -> delete the cookie
+					// maxAge > 0 -> the cookie will expire after this age
+					if (cookie.getMaxAge() != 0)
 					{
 						request.addCookie(cookie);
 					}
@@ -1476,6 +1477,7 @@ public class BaseWicketTester
 	 */
 	public Component startComponent(final Component component)
 	{
+		component.internalInitialize();
 		if (component instanceof FormComponent)
 		{
 			((FormComponent<?>)component).processInput();
@@ -1801,14 +1803,22 @@ public class BaseWicketTester
 					"not be invoked when AJAX (javascript) is disabled.");
 			}
 
-			executeBehavior(WicketTesterHelper.findAjaxEventBehavior(linkComponent, "onclick"));
+			List<AjaxEventBehavior> behaviors = WicketTesterHelper.findAjaxEventBehaviors(linkComponent, "onclick");
+			for (AjaxEventBehavior behavior : behaviors)
+			{
+				executeBehavior(behavior);
+			}
 		}
 		// AjaxFallbackLinks is processed like an AjaxLink if isAjax is true
 		// If it's not handling of the linkComponent is passed through to the
 		// Link.
 		else if (linkComponent instanceof AjaxFallbackLink && isAjax)
 		{
-			executeBehavior(WicketTesterHelper.findAjaxEventBehavior(linkComponent, "onclick"));
+			List<AjaxEventBehavior> behaviors = WicketTesterHelper.findAjaxEventBehaviors(linkComponent, "onclick");
+			for (AjaxEventBehavior behavior : behaviors)
+			{
+				executeBehavior(behavior);
+			}
 		}
 		// if the link is an AjaxSubmitLink, we need to find the form
 		// from it using reflection so we know what to submit.
@@ -1855,7 +1865,6 @@ public class BaseWicketTester
 				BookmarkablePageLink<?> bookmarkablePageLink = (BookmarkablePageLink<?>)link;
 				try
 				{
-					BookmarkablePageLink.class.getDeclaredField("parameters");
 					Method getParametersMethod = BookmarkablePageLink.class.getDeclaredMethod(
 						"getPageParameters", (Class<?>[])null);
 					getParametersMethod.setAccessible(true);
@@ -1873,7 +1882,17 @@ public class BaseWicketTester
 			}
 			else if (link instanceof ResourceLink)
 			{
-				executeListener(link, IResourceListener.INTERFACE);
+				try
+				{
+					Method getURL = ResourceLink.class.getDeclaredMethod("getURL", new Class[0]);
+					getURL.setAccessible(true);
+					CharSequence url = (CharSequence) getURL.invoke(link);
+					executeUrl(url.toString());
+				}
+				catch (Exception x)
+				{
+					throw new RuntimeException("An error occurred while clicking on a ResourceLink", x);
+				}
 			}
 			else
 			{
@@ -2252,9 +2271,12 @@ public class BaseWicketTester
 
 		checkUsability(component, true);
 
-		AjaxEventBehavior ajaxEventBehavior = WicketTesterHelper.findAjaxEventBehavior(component,
-			event);
-		executeBehavior(ajaxEventBehavior);
+		List<AjaxEventBehavior> ajaxEventBehaviors = WicketTesterHelper.findAjaxEventBehaviors(component,
+				event);
+		for (AjaxEventBehavior ajaxEventBehavior : ajaxEventBehaviors)
+		{
+			executeBehavior(ajaxEventBehavior);
+		}
 	}
 
 	/**

@@ -223,6 +223,18 @@ public class UrlTest extends Assert
 	}
 
 	/**
+	 * https://issues.apache.org/jira/browse/WICKET-4877
+	 */
+	@Test
+	public void testParse15()
+	{
+		String s = "http://localhost:56704;jsessionid=8kxeo3reannw1qjtxgkju8yiu";
+		Url url = Url.parse(s);
+		assertEquals(Integer.valueOf(56704), url.getPort());
+		checkSegments(url, ";jsessionid=8kxeo3reannw1qjtxgkju8yiu");
+	}
+
+	/**
 	 * 
 	 */
 	@Test
@@ -491,6 +503,32 @@ public class UrlTest extends Assert
 	}
 
 	/**
+	 * @see <a href="https://issues.apache.org/jira/browse/WICKET-4789">WICKET-4789</a>
+	 */
+	@Test
+	public void resolveRelative_EmptyTrailingSegmentInBase()
+	{
+		Url relative = Url.parse("./?0-1.ILinkListener-link");
+		Url baseUrl = Url.parse("Home/");
+		baseUrl.resolveRelative(relative);
+
+		assertEquals("Home/?0-1.ILinkListener-link", baseUrl.toString());
+	}
+
+	/**
+	 * @see <a href="https://issues.apache.org/jira/browse/WICKET-4789">WICKET-4789</a>
+	 */
+	@Test
+	public void resolveRelative_EmptyTrailingSegmentInBase2()
+	{
+		Url relative = Url.parse("./foo/?0-1.ILinkListener-link");
+		Url baseUrl = Url.parse("Home/");
+		baseUrl.resolveRelative(relative);
+
+		assertEquals("Home/foo/?0-1.ILinkListener-link", baseUrl.toString());
+	}
+
+	/**
 	 * Tries to resolve a relative url against a base that has no segments
 	 */
 	@Test
@@ -544,8 +582,7 @@ public class UrlTest extends Assert
 		Url baseUrl = Url.parse("bar/baz");
 		baseUrl.resolveRelative(relative);
 
-		assertEquals("bar?a=b", baseUrl.toString());
-		assertEquals("no empty segment", 1, baseUrl.getSegments().size());
+		assertEquals("bar/?a=b", baseUrl.toString());
 	}
 
 	/**

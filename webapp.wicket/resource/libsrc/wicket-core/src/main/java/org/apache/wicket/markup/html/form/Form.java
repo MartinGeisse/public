@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.IGenericComponent;
 import org.apache.wicket.Page;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.behavior.Behavior;
@@ -142,13 +143,10 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  *            The model object type
  */
-public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
+public class Form<T> extends WebMarkupContainer implements IFormSubmitListener, IGenericComponent<T>
 {
 	private static final String HIDDEN_DIV_START = "<div style=\"width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden\">";
 
-	/**
-	 * The value of HTMLFormElement's <code>enctype</code> attribute needed for file uploading.
-	 */
 	public static final String ENCTYPE_MULTIPART_FORM_DATA = "multipart/form-data";
 
 	/**
@@ -170,8 +168,7 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 				return;
 			}
 
-			if (formComponent.isVisibleInHierarchy() && formComponent.isValid() &&
-				formComponent.isEnabledInHierarchy())
+			if (formComponent.isVisibleInHierarchy() && formComponent.isEnabledInHierarchy())
 			{
 				validate(formComponent);
 			}
@@ -1976,43 +1973,27 @@ public class Form<T> extends WebMarkupContainer implements IFormSubmitListener
 		return "";
 	}
 
-	/**
-	 * Gets model
-	 * 
-	 * @return model
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public final IModel<T> getModel()
 	{
 		return (IModel<T>)getDefaultModel();
 	}
 
-	/**
-	 * Sets model
-	 * 
-	 * @param model
-	 */
+	@Override
 	public final void setModel(IModel<T> model)
 	{
 		setDefaultModel(model);
 	}
 
-	/**
-	 * Gets model object
-	 * 
-	 * @return model object
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public final T getModelObject()
 	{
 		return (T)getDefaultModelObject();
 	}
 
-	/**
-	 * Sets model object
-	 * 
-	 * @param object
-	 */
+	@Override
 	public final void setModelObject(T object)
 	{
 		setDefaultModelObject(object);

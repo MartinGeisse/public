@@ -14,36 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.wicket.protocol.http;
+package org.apache.wicket.resource;
 
-import javax.servlet.http.HttpServletRequest;
+import static org.junit.Assert.assertEquals;
 
-import org.apache.wicket.Page;
-import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.util.tester.DummyHomePage;
 
 /**
- * An extension of WebApplication just to make its #createWebRequest() public
+ * Test page for UtfPropertiesFilePropertiesLoader.
  */
-public class MultiPartTestApplication extends WebApplication
+public class PageWithUTF8Properties extends DummyHomePage
 {
-	/**
-	 * Extend #createWebRequest() just to make it public
-	 * @param servletRequest
-	 *            the current HTTP Sservlet request
-	 * @param filterPath
-	 *            the filter mapping read from web.xml
-	 * @return
-	 */
-	@Override
-	public WebRequest createWebRequest(HttpServletRequest servletRequest, String filterPath)
-	{
-		return super.createWebRequest(servletRequest, filterPath);
-	}
+	private static final long serialVersionUID = 1L;
 
-	@Override
-	public Class<? extends Page> getHomePage()
+	/***/
+	public PageWithUTF8Properties()
 	{
-		return DummyHomePage.class;
+		String actual = getString("testProperty");
+		assertEquals("enc\u00f6ding", actual);
 	}
-};
+}

@@ -640,6 +640,7 @@
 
 					// In case the page isn't really redirected. For example say the redirect is to an octet-stream.
 					// A file download popup will appear but the page in the browser won't change.
+					this.success(context);
 					this.done();
 
 					var rhttp  = /^http:\/\//,  // checks whether the string starts with http://
@@ -677,7 +678,7 @@
 				else {
 					// no redirect, just regular response
 					if (Wicket.Log.enabled()) {
-						var responseAsText = jQuery(data).text();
+						var responseAsText = jqXHR.responseText;
 						Wicket.Log.info("Received ajax response (" + responseAsText.length + " characters)");
 						Wicket.Log.info("\n" + responseAsText);
 					}
@@ -1248,7 +1249,7 @@
 				if (select) {
 					var $select = jQuery(select);
 					if ($select.length > 0 && $select.prop('disabled') === false) {
-						var name = $select.attr('name');
+						var name = $select.prop('name');
 						var values = $select.val();
 						if (jQuery.isArray(values)) {
 							for (var v = 0; v < values.length; v++) {
@@ -2101,38 +2102,32 @@
 
 				var element = this;
 
-				// HACK - for safari stopPropagation doesn't work well because
-				// it also prevents scrollbars and form components getting the
-				// event. Therefore for safari the 'ignore' flag is set on event.
-				if (typeof(e.ignore) === "undefined") {
+				Wicket.Event.stop(e);
 
-					Wicket.Event.stop(e);
-
-					if (e.preventDefault) {
-						e.preventDefault();
-					}
-
-					element.wicketOnDragBegin(element);
-
-					element.lastMouseX = e.clientX;
-					element.lastMouseY = e.clientY;
-
-					element.old_onmousemove = document.onmousemove;
-					element.old_onmouseup = document.onmouseup;
-					element.old_onselectstart = document.onselectstart;
-					element.old_onmouseout = document.onmouseout;
-
-					document.onselectstart = function () {
-						return false;
-					};
-					document.onmousemove = Wicket.Drag.mouseMove;
-					document.onmouseup = Wicket.Drag.mouseUp;
-					document.onmouseout = Wicket.Drag.mouseOut;
-
-					Wicket.Drag.current = element;
-
-					return false;
+				if (e.preventDefault) {
+					e.preventDefault();
 				}
+
+				element.wicketOnDragBegin(element);
+
+				element.lastMouseX = e.clientX;
+				element.lastMouseY = e.clientY;
+
+				element.old_onmousemove = document.onmousemove;
+				element.old_onmouseup = document.onmouseup;
+				element.old_onselectstart = document.onselectstart;
+				element.old_onmouseout = document.onmouseout;
+
+				document.onselectstart = function () {
+					return false;
+				};
+				document.onmousemove = Wicket.Drag.mouseMove;
+				document.onmouseup = Wicket.Drag.mouseUp;
+				document.onmouseout = Wicket.Drag.mouseOut;
+
+				Wicket.Drag.current = element;
+
+				return false;
 			},
 
 			/**

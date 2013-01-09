@@ -26,15 +26,12 @@
 	Wicket.WUPB.prototype = {
 
 		initialize : function(formid, statusid, barid, url, fileid, initialStatus) {
-			this.formid = formid;
 			this.statusid = statusid;
 			this.barid = barid;
 			this.url = url;
 			this.fileid = fileid;
 			this.initialStatus = initialStatus;
-		},
 
-		bind : function(formid) {
 			var formElement = Wicket.$(formid);
 			this.originalCallback = formElement.onsubmit;
 			formElement.onsubmit = Wicket.bind(this.submitCallback, this);
@@ -82,10 +79,16 @@
 			window.setTimeout(Wicket.bind(this.load, this), 1000);
 		},
 
+		_createIFrame : function (iframeName) {
+			var $iframe = jQuery('<iframe name="'+iframeName+'" id="'+iframeName+
+				'" src="about:blank" style="position: absolute; top: -9999px; left: -9999px;">');
+			return $iframe[0];
+		},
+
 		load : function() {
 			var URL = this.url;
 
-	        this.iframe = Wicket._createIFrame(""+Math.random());
+	        this.iframe = this._createIFrame(""+Math.random());
 
 	        document.body.appendChild(this.iframe);
 
@@ -113,7 +116,7 @@
 			this.iframe.parentNode.removeChild(this.iframe);
 			this.iframe = null;
 
-			if (progressPercent === 100) {
+			if (progressPercent === '100') {
 				Wicket.DOM.hide(this.statusid);
 				Wicket.DOM.hide(this.barid);
 			} else {

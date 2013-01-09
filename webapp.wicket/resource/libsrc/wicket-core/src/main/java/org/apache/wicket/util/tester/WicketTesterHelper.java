@@ -27,6 +27,7 @@ import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
@@ -164,33 +165,65 @@ public class WicketTesterHelper
 	}
 
 	/**
+	 * Finds the first AjaxEventBehavior attached to the specified component with the
+	 * specified event.
+	 *
 	 * @param component
 	 * @param event
-	 * @return AjaxEventBehavior or null
+	 * @return the first behavior for this event, or {@code null}
 	 */
 	public static AjaxEventBehavior findAjaxEventBehavior(Component component, String event)
 	{
-		if (event.startsWith("on"))
+		List<AjaxEventBehavior> behaviors = findAjaxEventBehaviors(component, event);
+		AjaxEventBehavior behavior = null;
+		if (behaviors != null && behaviors.isEmpty() == false)
 		{
-			event = event.substring(2);
+			behavior = behaviors.get(0);
 		}
+		return behavior;
+	}
 
-		for (Behavior behavior : component.getBehaviors())
+	/**
+	 * Finds all AjaxEventBehavior's attached  to the specified component with
+	 * the specified event.
+	 *
+	 * @param component
+	 * @param event
+	 * @return a list of all found AjaxEventBehavior or an empty list
+	 */
+	public static List<AjaxEventBehavior> findAjaxEventBehaviors(Component component, String event)
+	{
+		Args.notEmpty(event, "event");
+		List<AjaxEventBehavior> behaviors = new ArrayList<AjaxEventBehavior>();
+		String[] eventNames = Strings.split(event, ' ');
+		for (String eventName : eventNames)
 		{
-			if (behavior instanceof AjaxEventBehavior)
+			if (eventName.startsWith("on"))
 			{
-				String behaviorEvent = ((AjaxEventBehavior)behavior).getEvent();
-				if (behaviorEvent.startsWith("on"))
+				eventName = eventName.substring(2);
+			}
+
+			for (Behavior behavior : component.getBehaviors())
+			{
+				if (behavior instanceof AjaxEventBehavior)
 				{
-					behaviorEvent = behaviorEvent.substring(2);
-				}
-				if (event.equalsIgnoreCase(behaviorEvent))
-				{
-					return (AjaxEventBehavior)behavior;
+					String behaviorEvent = ((AjaxEventBehavior)behavior).getEvent();
+					String[] behaviorEventNames = Strings.split(behaviorEvent, ' ');
+					for (String behaviorEventName : behaviorEventNames)
+					{
+						if (behaviorEventName.startsWith("on"))
+						{
+							behaviorEventName = behaviorEventName.substring(2);
+						}
+						if (eventName.equalsIgnoreCase(behaviorEventName))
+						{
+							behaviors.add((AjaxEventBehavior)behavior);
+						}
+					}
 				}
 			}
 		}
-		return null;
+		return behaviors;
 	}
 
 	/**
