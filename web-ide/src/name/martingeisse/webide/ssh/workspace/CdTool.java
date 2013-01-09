@@ -9,6 +9,7 @@ package name.martingeisse.webide.ssh.workspace;
 import java.io.PrintWriter;
 
 import name.martingeisse.webide.resources.ResourcePath;
+import name.martingeisse.webide.resources.operation.FetchSingleResourceOperation;
 
 /**
  * Implements the "cd" command.
@@ -24,10 +25,16 @@ public final class CdTool implements IWorkspaceTool {
 			err.println("usage: cd <path>\r\n");
 			return;
 		}
-		ResourcePath targetPath;
 		try {
-			targetPath = new ResourcePath(arguments[0]);
-			context.setCurrentWorkingDirectory(context.getCurrentWorkingDirectory().concat(targetPath, true).collapse());
+			ResourcePath specifiedTargetPath = new ResourcePath(arguments[0]);
+			ResourcePath resolvedTargetPath = context.getCurrentWorkingDirectory().concat(specifiedTargetPath, true).collapse();
+			FetchSingleResourceOperation fetchOperation = new FetchSingleResourceOperation(resolvedTargetPath);
+			fetchOperation.run();
+			if (fetchOperation.getResult() == null) {
+				err.print("No such folder.\r\n");
+				return;
+			}
+			context.setCurrentWorkingDirectory(resolvedTargetPath);
 		} catch (Exception e) {
 			err.print(e.getMessage() + "\r\n");
 			return;
