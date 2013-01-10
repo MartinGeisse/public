@@ -15,6 +15,8 @@ import name.martingeisse.common.util.GenericTypeUtil;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ITreeProvider;
 import org.apache.wicket.markup.IMarkupFragment;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
@@ -51,6 +53,7 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	public JsTree(String id, ITreeProvider<T> treeProvider) {
 		super(id);
 		this.treeProvider = treeProvider;
+		setOutputMarkupId(true);
 	}
 
 	/**
@@ -104,11 +107,36 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.apache.wicket.Component#renderHead(org.apache.wicket.markup.head.IHeaderResponse)
+	 */
+	@Override
+	public void renderHead(IHeaderResponse response) {
+		super.renderHead(response);
+		
+		StringBuilder builder = new StringBuilder();
+		builder.append("$('#").append(getMarkupId()).append("').jstree({\n");
+		builder.append("	plugins: ['themes', 'html_data'],\n");
+		builder.append("	core: {\n");
+		builder.append("		animation: 0\n");
+		builder.append("	},\n");
+		builder.append("	themes: {\n");
+		builder.append("		'theme': 'default',\n");
+		builder.append("		'url': '/wicket/resource/name.martingeisse.webide.workbench.WorkbenchPage/jstree.css',\n");
+		builder.append("	}\n");
+		builder.append("});\n");
+		response.render(OnDomReadyHeaderItem.forScript(builder.toString()));
+		
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.apache.wicket.MarkupContainer#onRender()
 	 */
 	@Override
 	protected void onRender() {
+		Response response = getResponse();
+		response.write("<div id=\"" + getMarkupId() + "\">");
 		renderNodes(rootInfos);
+		response.write("</div>");
 	}
 	
 	/**
