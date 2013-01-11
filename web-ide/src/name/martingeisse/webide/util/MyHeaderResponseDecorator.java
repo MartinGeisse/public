@@ -12,7 +12,9 @@ import name.martingeisse.wicket.util.AjaxRequestUtil;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderResponseDecorator;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.resource.CoreLibrariesContributor;
 
 /**
  * This decorator renders a reference to common.css (and if needed, ie.css)
@@ -29,6 +31,7 @@ public class MyHeaderResponseDecorator implements IHeaderResponseDecorator {
 		if (AjaxRequestUtil.getAjaxRequestTarget() == null) {
 			response.render(CssHeaderItem.forReference(new CssResourceReference(WorkbenchPage.class, "common.css"), null, "screen, projection"));
 			response.render(CssHeaderItem.forReference(new CssResourceReference(WorkbenchPage.class, "ie.css"), null, "screen, projection", "IE"));
+			CoreLibrariesContributor.contributeAjax(WebApplication.get(), response);
 		}
 		return response;
 	}

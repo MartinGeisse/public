@@ -50,7 +50,7 @@ public class ListResourcesOperation extends SingleResourceOperation {
 		children = null;
 		final long parentId = fetchResourceId(context);
 		if (parentId == -1) {
-			throw new WorkspaceResourceNotFoundException();
+			throw new WorkspaceResourceNotFoundException(getPath());
 		}
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		query.from(QWorkspaceResources.workspaceResources);

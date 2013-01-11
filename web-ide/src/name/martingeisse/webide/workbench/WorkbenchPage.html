@@ -17,11 +17,9 @@
 				<div class="FileViewBox">
 					<h2>Files</h2>
 					<div style="overflow: scroll; height: 31%;" id="filesContainer" wicket:id="filesContainer">
-						<div wicket:id="files">
-							<div wicket:id="file" style="white-space: nowrap;" class="file">
-								<img wicket:id="icon" style="vertical-align: sub;" /> <span wicket:id="name" class="name">name</span>
-							</div>
-						</div>
+						<a wicket:id="resources" style="white-space: nowrap;" class="file" href="#">
+							<img wicket:id="icon" style="vertical-align: sub;" /> <span wicket:id="name" class="name">name</span>
+						</a>
 					</div>
 				</div>
 			</div>
@@ -38,38 +36,7 @@
 			<div class="LayoutBox">
 				<div class="ViewBox">
 					<h2>Output</h2>
-					<div style="overflow: scroll; height: 31%; font-family: monospace; white-space: pre; display: none;"><div wicket:id="log" /></div>
-					
-					<div id="test-tree">
-						<ul>
-							<li class="jstree-open">
-								<span><img src="./wicket/resource/name.martingeisse.wicket.icons.silk.Dummy/folder-ver-1336675889000.png" style="vertical-align: sub;" />
-									<span href="a">node a</span>
-								</span>
-								<ul>
-									<li class="jstree-open">
-										<span>
-											<img src="./wicket/resource/name.martingeisse.wicket.icons.silk.Dummy/brick-ver-1336675889000.png" style="vertical-align: sub;" />
-											<span href="b">node b</span>
-										</span>
-									</li>
-									<li class="jstree-open">
-										<span>
-											<img src="./wicket/resource/name.martingeisse.wicket.icons.silk.Dummy/brick-ver-1336675889000.png" style="vertical-align: sub;" />
-											<span href="c">node c</span>
-										</span>
-									</li>
-									<li class="jstree-open">
-										<span>
-											<img src="./wicket/resource/name.martingeisse.wicket.icons.silk.Dummy/brick-ver-1336675889000.png" style="vertical-align: sub;" />
-											<span href="d">node d</span>
-										</span>
-									</li>
-								</ul>
-							</li>
-						</ul>
-					</div>
-					
+					<div style="overflow: scroll; height: 31%; font-family: monospace; white-space: pre; "><div wicket:id="log" /></div>
 				</div>
 			</div>
 		</div>
@@ -85,17 +52,5 @@
 				</span>
 			</div>
 		</div>
-		<script type="text/javascript">
-			$('#test-tree').jstree({
-				plugins: ['themes', 'html_data'],
-				core: {
-					animation: 0
-				},
-				themes: {
-					'theme': 'default',
-					'url': '/wicket/resource/name.martingeisse.webide.workbench.WorkbenchPage/jstree.css',
-				}
-			});
-		</script>
 	</body>
 </html>

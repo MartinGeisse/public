@@ -6,6 +6,7 @@
 
 package name.martingeisse.webide.workbench;
 
+import java.util.Iterator;
 import java.util.List;
 
 import name.martingeisse.common.database.EntityConnectionManager;
@@ -23,18 +24,21 @@ import name.martingeisse.webide.resources.ResourceType;
 import name.martingeisse.webide.resources.WorkspaceWicketResourceReference;
 import name.martingeisse.webide.resources.operation.CreateFileOperation;
 import name.martingeisse.webide.resources.operation.DeleteResourcesOperation;
+import name.martingeisse.webide.resources.operation.FetchResourceResult;
+import name.martingeisse.webide.resources.operation.ListResourcesOperation;
 import name.martingeisse.webide.workbench.components.IClientFuture;
-import name.martingeisse.webide.workbench.components.SelectableElementsBehavior;
 import name.martingeisse.webide.workbench.components.contextmenu.ContextMenu;
 import name.martingeisse.webide.workbench.components.contextmenu.ContextMenuSeparator;
 import name.martingeisse.webide.workbench.components.contextmenu.DownloadMenuItem;
 import name.martingeisse.webide.workbench.components.contextmenu.SimpleContextMenuItem;
 import name.martingeisse.webide.workbench.components.contextmenu.SimpleContextMenuItemWithTextInput;
+import name.martingeisse.wicket.component.tree.JsTree;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.event.IEvent;
+import org.apache.wicket.extensions.markup.html.repeater.tree.ITreeProvider;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -42,9 +46,11 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -139,6 +145,7 @@ public class WorkbenchPage extends WebPage {
 		}
 
 		final WebMarkupContainer filesContainer = new WebMarkupContainer("filesContainer");
+		/*
 		filesContainer.add(new SelectableElementsBehavior<String>(".file", "$('.name', element).text()", filesContextMenu) {
 
 			@Override
@@ -157,26 +164,62 @@ public class WorkbenchPage extends WebPage {
 			}
 
 		});
+		*/
 		add(filesContainer);
 
-		final ListView<String> filesList = new ListView<String>("files", new PropertyModel<List<String>>(this, "filenames")) {
+		final ITreeProvider<FetchResourceResult> resourceTreeProvider = new ITreeProvider<FetchResourceResult>() {
+			
 			@Override
-			protected void populateItem(final ListItem<String> item) {
-				final String filename = item.getModelObject();
+			public void detach() {
+			}
+			
+			@Override
+			public IModel<FetchResourceResult> model(FetchResourceResult object) {
+				return Model.of(object);
+			}
+			
+			@Override
+			public Iterator<? extends FetchResourceResult> getRoots() {
+				ResourcePath path = new ResourcePath("/");
+				FetchResourceResult fakeResult = new FetchResourceResult(0, path, null, null);
+				return getChildren(fakeResult);
+			}
+			
+			@Override
+			public boolean hasChildren(FetchResourceResult node) {
+				return (node.getType() != ResourceType.FILE);
+			}
+			
+			@Override
+			public Iterator<? extends FetchResourceResult> getChildren(FetchResourceResult node) {
+				ListResourcesOperation operation = new ListResourcesOperation(node.getPath());
+				operation.run();
+				return operation.getChildren().iterator();
+			}
+			
+		};
+		final JsTree<FetchResourceResult> resourceTree = new JsTree<FetchResourceResult>("resources", resourceTreeProvider) {
 
-				final WebMarkupContainer container = new WebMarkupContainer("file");
-				container.add(new Image("icon", new AbstractReadOnlyModel<ResourceReference>() {
+			@Override
+			protected void populateItem(Item<FetchResourceResult> item) {
+				final FetchResourceResult fetchResult = item.getModelObject();
+				item.add(new Image("icon", new AbstractReadOnlyModel<ResourceReference>() {
 					@Override
 					public ResourceReference getObject() {
-						return ResourceIconSelector.FILE_OK.getResourceReference();
+						ResourceIconSelector icon = (fetchResult.getType() == ResourceType.FILE ? ResourceIconSelector.FILE_OK : ResourceIconSelector.FOLDER_OK);
+						return icon.getResourceReference();
 					}
 				}));
-				container.add(new Label("name", filename));
-				item.add(container);
-
+				item.add(new Label("name", fetchResult.getPath().getLastSegment()));
 			}
+			
+			@Override
+			protected String getNodeType(FetchResourceResult node) {
+				return (node.getType() == ResourceType.FILE ? "file" : "folder");
+			}
+
 		};
-		filesContainer.add(filesList);
+		filesContainer.add(resourceTree);		
 
 		WebMarkupContainer markersContainer = new WebMarkupContainer("markersContainer");
 		markersContainer.setOutputMarkupId(true);

@@ -84,6 +84,9 @@ public abstract class RecursiveResourceOperation extends WorkspaceOperation {
 			return;
 		} else if (rootPaths.length == 1) {
 			WorkspaceResources rootResource = SingleResourceOperation.fetchResource(context, rootPaths[0]);
+			if (rootResource == null) {
+				throw new WorkspaceResourceNotFoundException(rootPaths[0]);
+			}
 			currentResources = new ArrayList<WorkspaceResources>();
 			currentResources.add(rootResource);
 			pathById = new HashMap<Long, ResourcePath>();

@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import name.martingeisse.common.util.GenericTypeUtil;
+import name.martingeisse.wicket.util.WicketHeadUtil;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ITreeProvider;
@@ -28,7 +29,7 @@ import org.apache.wicket.request.Response;
  * The markup element for this component should contain
  * the markup for each tree node. The tree backbone
  * is generated automatically outside that markup.
- * The {@link #populateItem(Item)} method is called to
+ * The populateItem(Item) method is called to
  * generate components for each node.
  * 
  * @param <T> the underlying node type
@@ -112,20 +113,8 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	@Override
 	public void renderHead(IHeaderResponse response) {
 		super.renderHead(response);
-		
-		StringBuilder builder = new StringBuilder();
-		builder.append("$('#").append(getMarkupId()).append("').jstree({\n");
-		builder.append("	plugins: ['themes', 'html_data'],\n");
-		builder.append("	core: {\n");
-		builder.append("		animation: 0\n");
-		builder.append("	},\n");
-		builder.append("	themes: {\n");
-		builder.append("		'theme': 'default',\n");
-		builder.append("		'url': '/wicket/resource/name.martingeisse.webide.workbench.WorkbenchPage/jstree.css',\n");
-		builder.append("	}\n");
-		builder.append("});\n");
-		response.render(OnDomReadyHeaderItem.forScript(builder.toString()));
-		
+		WicketHeadUtil.includeClassJavascript(response, JsTree.class);
+		response.render(OnDomReadyHeaderItem.forScript("$('#" + getMarkupId() + "').createJsTree();"));
 	}
 	
 	/* (non-Javadoc)
@@ -177,4 +166,14 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 		Item<T> item;
 	}
 
+	/**
+	 * Returns the JsTree node type for the specified node. The node type determines
+	 * things such as the icon.
+	 * @param node the node
+	 * @return the node type, or null to use the default
+	 */
+	protected String getNodeType(T node) {
+		return null;
+	}
+	
 }

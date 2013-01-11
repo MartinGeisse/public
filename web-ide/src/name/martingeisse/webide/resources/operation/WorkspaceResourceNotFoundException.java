@@ -6,6 +6,8 @@
 
 package name.martingeisse.webide.resources.operation;
 
+import name.martingeisse.webide.resources.ResourcePath;
+
 /**
  * An exception that indicates a missing workspace resource.
  */
@@ -13,34 +15,38 @@ public class WorkspaceResourceNotFoundException extends WorkspaceOperationExcept
 
 	/**
 	 * Constructor.
+	 * @param path the path of the missing resource
 	 */
-	public WorkspaceResourceNotFoundException() {
-		super("resource not found");
+	public WorkspaceResourceNotFoundException(ResourcePath path) {
+		super("resource not found: " + path);
 	}
 
 	/**
 	 * Constructor.
+	 * @param path the path of the missing resource
 	 * @param message the exception message
 	 */
-	public WorkspaceResourceNotFoundException(String message) {
-		super(message);
+	public WorkspaceResourceNotFoundException(ResourcePath path, String message) {
+		super("resource not found: " + path + ": " + message);
 	}
 
 	/**
 	 * Constructor.
+	 * @param path the path of the missing resource
 	 * @param cause the exception that caused this exception
 	 */
-	public WorkspaceResourceNotFoundException(Throwable cause) {
-		super("resource not found", cause);
+	public WorkspaceResourceNotFoundException(ResourcePath path, Throwable cause) {
+		super("resource not found: " + path, cause);
 	}
 
 	/**
 	 * Constructor.
+	 * @param path the path of the missing resource
 	 * @param message the exception message
 	 * @param cause the exception that caused this exception
 	 */
-	public WorkspaceResourceNotFoundException(String message, Throwable cause) {
-		super(message, cause);
+	public WorkspaceResourceNotFoundException(ResourcePath path, String message, Throwable cause) {
+		super("resource not found: " + path + ": " + message, cause);
 	}
 
 }

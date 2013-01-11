@@ -7,7 +7,6 @@
 package name.martingeisse.webide;
 
 import name.martingeisse.common.util.TemporaryFolder;
-import name.martingeisse.webide.experiment.ExperimentPage;
 import name.martingeisse.webide.util.MyHeaderResponseDecorator;
 import name.martingeisse.webide.util.MyResourceReferenceRegistry;
 import name.martingeisse.webide.workbench.WorkbenchPage;
@@ -44,8 +43,7 @@ public class WebIdeApplication extends WebApplication {
 	 */
 	@Override
 	public Class<? extends Page> getHomePage() {
-//		return WorkbenchPage.class;
-		return ExperimentPage.class;
+		return WorkbenchPage.class;
 	}
 
 }

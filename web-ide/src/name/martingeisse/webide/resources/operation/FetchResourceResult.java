@@ -6,6 +6,8 @@
 
 package name.martingeisse.webide.resources.operation;
 
+import java.io.Serializable;
+
 import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
@@ -20,7 +22,7 @@ import name.martingeisse.webide.resources.ResourceType;
  * but subsequent operations may return another ID for the resource and/or
  * another resource with that ID.
  */
-public final class FetchResourceResult {
+public final class FetchResourceResult implements Serializable {
 
 	/**
 	 * the id

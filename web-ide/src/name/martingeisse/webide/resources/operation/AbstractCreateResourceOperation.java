@@ -98,6 +98,7 @@ public abstract class AbstractCreateResourceOperation extends SingleResourceOper
 		insert.set(QWorkspaceResources.workspaceResources.parentId, folder.getParentId());
 		insert.set(QWorkspaceResources.workspaceResources.type, folder.getType());
 		insert.set(QWorkspaceResources.workspaceResources.name, folder.getName());
+		insert.set(QWorkspaceResources.workspaceResources.contents, new byte[0]);
 		long id = insert.executeWithKey(Long.class);
 		
 		// return the resource object

@@ -30,6 +30,7 @@ import name.martingeisse.webide.resources.operation.CreateFileOperation;
 import name.martingeisse.webide.resources.operation.CreateResourceMarkerOperation;
 import name.martingeisse.webide.resources.operation.DeleteResourceOperation;
 import name.martingeisse.webide.resources.operation.FetchResourceResult;
+import name.martingeisse.webide.resources.operation.ListResourcesOperation;
 import name.martingeisse.webide.resources.operation.RecursiveDeleteMarkersOperation;
 import name.martingeisse.webide.resources.operation.RecursiveResourceOperation;
 
@@ -42,10 +43,21 @@ public class JavaCompilerFacade {
 	 * This method is run by the builder thread.
 	 */
 	public static void performCompilation() {
-
+		ListResourcesOperation list = new ListResourcesOperation(new ResourcePath("/"));
+		list.run();
+		for (FetchResourceResult fetchResult : list.getChildren()) {
+			performCompilation(fetchResult.getPath());
+		}
+	}
+	
+	/**
+	 * Compiles a single Java project.
+	 */
+	private static void performCompilation(ResourcePath basePath) {
+		
 		// preparation
-		final ResourcePath sourcePath = new ResourcePath("/src");
-		final ResourcePath binaryPath = new ResourcePath("/bin");
+		final ResourcePath sourcePath = basePath.appendSegment("src", false);
+		final ResourcePath binaryPath = basePath.appendSegment("bin", false);
 		
 		// delete binary files from previous builds
 		new DeleteResourceOperation(binaryPath).run();
@@ -59,19 +71,24 @@ public class JavaCompilerFacade {
 		// fetch and wrap source code files as JavaFileObjects
 		final MemoryFileManager fileManager = new MemoryFileManager(standardFileManager);
 		final List<JavaFileObject> javaFiles = new ArrayList<JavaFileObject>();
-		new RecursiveResourceOperation(sourcePath) {
-			@Override
-			protected void onLevelFetched(List<FetchResourceResult> fetchResults) {
-				for (FetchResourceResult fetchResult : fetchResults) {
-					if (fetchResult.getType() == ResourceType.FILE && "java".equals(fetchResult.getPath().getExtension())) {
-						final String key = fetchResult.getPath().removeFirstSegments(sourcePath.getSegmentCount(), true).toString();
-						final IMemoryJavaFileObject fileObject = new MemoryJavaFileObject(key, fetchResult.getContents());
-						javaFiles.add(fileObject);
-						fileManager.getInputFiles().put(key, fileObject);
+//		try {
+			new RecursiveResourceOperation(sourcePath) {
+				@Override
+				protected void onLevelFetched(List<FetchResourceResult> fetchResults) {
+					for (FetchResourceResult fetchResult : fetchResults) {
+						if (fetchResult.getType() == ResourceType.FILE && "java".equals(fetchResult.getPath().getExtension())) {
+							final String key = fetchResult.getPath().removeFirstSegments(sourcePath.getSegmentCount(), true).toString();
+							final IMemoryJavaFileObject fileObject = new MemoryJavaFileObject(key, fetchResult.getContents());
+							javaFiles.add(fileObject);
+							fileManager.getInputFiles().put(key, fileObject);
+						}
 					}
 				}
-			}
-		}.run();
+			}.run();
+//		} catch (WorkspaceResourceNotFoundException e) {
+//			// src folder doesn't exist
+//			return;
+//		}
 
 		// run the java compiler
 		final CompilationTask task = compiler.getTask(null, fileManager, diagnosticListener, null, null, javaFiles);
@@ -79,7 +96,7 @@ public class JavaCompilerFacade {
 
 		// save the class files in the database
 		for (final IMemoryFileObject file : fileManager.getOutputFiles().values()) {
-			final ResourcePath path = new ResourcePath("/bin" + file.getName());
+			final ResourcePath path = new ResourcePath(binaryPath.toString() + file.getName());
 			new CreateFileOperation(path, file.getBinaryContent(), true).run();
 		}
 
