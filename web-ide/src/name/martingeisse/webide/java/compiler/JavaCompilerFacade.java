@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.jar.JarFile;
 
 import javax.tools.Diagnostic;
 import javax.tools.Diagnostic.Kind;
@@ -24,6 +25,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import name.martingeisse.webide.java.compiler.classpath.JarFileManager;
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.MarkerOrigin;
 import name.martingeisse.webide.resources.ResourcePath;
@@ -105,7 +107,14 @@ public class JavaCompilerFacade {
 		// such that the shield still prevents non-standard classes from the standard manager leaking
 		// through, but the memory file manager allowing non-standard classes from libs to be visible.
 		JavaFileManager fileManager = memoryFileManager;
-		// fileManager = new JarFileManager(jarFile, fileManager);
+		try {
+			fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-util-6.4.0.jar"), fileManager);
+			fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-core-6.4.0.jar"), fileManager);
+			fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-request-6.4.0.jar"), fileManager);
+			fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-extensions-6.4.0.jar"), fileManager);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
 		// run the java compiler
 		final CompilationTask task = compiler.getTask(null, fileManager, diagnosticListener, null, null, javaFiles);
@@ -137,9 +146,10 @@ public class JavaCompilerFacade {
 		}
 
 		// generate markers for the diagnostic messages
-		new RecursiveDeleteMarkersOperation(binaryPath, MarkerOrigin.JAVAC).run();
+		new RecursiveDeleteMarkersOperation(sourcePath, MarkerOrigin.JAVAC).run();
 		for (final Map.Entry<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>> fileEntry : sourceFileToDiagnostics.entrySet()) {
-			final ResourcePath filePath = new ResourcePath(fileEntry.getKey().getName());
+			ResourcePath filePath = new ResourcePath(fileEntry.getKey().getName());
+			filePath = sourcePath.concat(filePath.withLeadingSeparator(false), false);
 			for (final Diagnostic<? extends JavaFileObject> diagnostic : fileEntry.getValue()) {
 
 				// convert the diagnostic kind to a marker meaning (skip this diagnostic if the kind is unknown)

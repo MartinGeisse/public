@@ -6,6 +6,7 @@
 
 package name.martingeisse.wicket.util;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +30,7 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
  * A finished future delivery its value by adding Javascript code to the
  * {@link AjaxRequestTarget}.
  */
-public interface IClientFuture {
+public interface IClientFuture extends Serializable {
 
 	/**
 	 * Checks for any necessary action for this future. This may add further

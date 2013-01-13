@@ -67,8 +67,12 @@ public final class CreateResourceMarkerOperation extends SingleResourceOperation
 	 */
 	@Override
 	protected void perform(final IWorkspaceOperationContext context) {
+		long resourceId = fetchResourceId(context);
+		if (resourceId == -1) {
+			throw new WorkspaceResourceNotFoundException(getPath());
+		}
 		SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QMarkers.markers);
-		insert.set(QMarkers.markers.workspaceResourceId, fetchResourceId(context));
+		insert.set(QMarkers.markers.workspaceResourceId, resourceId);
 		insert.set(QMarkers.markers.origin, origin.toString());
 		insert.set(QMarkers.markers.meaning, meaning.toString());
 		insert.set(QMarkers.markers.line, line);
