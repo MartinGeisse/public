@@ -6,6 +6,7 @@
 
 package name.martingeisse.webide.java.editor;
 
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import org.apache.wicket.model.PropertyModel;
 /**
  * {@link IEditor} implementation for the Java source code editor.
  */
-public class JavaEditor implements IEditor {
+public class JavaEditor implements IEditor, Serializable {
 
 	/**
 	 * the workspaceResourcePath

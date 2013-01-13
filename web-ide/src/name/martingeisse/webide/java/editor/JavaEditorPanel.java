@@ -9,8 +9,8 @@ package name.martingeisse.webide.java.editor;
 import name.martingeisse.webide.resources.BuilderService;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.operation.ReplaceFileContentsOperation;
-import name.martingeisse.webide.workbench.components.IClientFuture;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
+import name.martingeisse.wicket.util.IClientFuture;
 
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Form;

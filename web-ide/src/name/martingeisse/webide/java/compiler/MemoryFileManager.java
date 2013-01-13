@@ -18,7 +18,6 @@ import javax.tools.FileObject;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
-import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 
 import name.martingeisse.common.util.iterator.AbstractIterableWrapper;
@@ -33,7 +32,7 @@ public class MemoryFileManager implements JavaFileManager {
 	/**
 	 * the standardFileManager
 	 */
-	private final StandardJavaFileManager standardFileManager;
+	private final JavaFileManager standardFileManager;
 	
 	/**
 	 * the inputFiles
@@ -50,7 +49,7 @@ public class MemoryFileManager implements JavaFileManager {
 	 * @param standardFileManager the standard file manager, needed to access
 	 * the boot classpath
 	 */
-	public MemoryFileManager(StandardJavaFileManager standardFileManager) {
+	public MemoryFileManager(JavaFileManager standardFileManager) {
 		this.standardFileManager = standardFileManager;
 	}
 	

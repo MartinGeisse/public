@@ -26,14 +26,14 @@ import name.martingeisse.webide.resources.operation.CreateFileOperation;
 import name.martingeisse.webide.resources.operation.DeleteResourcesOperation;
 import name.martingeisse.webide.resources.operation.FetchResourceResult;
 import name.martingeisse.webide.resources.operation.ListResourcesOperation;
-import name.martingeisse.webide.workbench.components.IClientFuture;
-import name.martingeisse.webide.workbench.components.contextmenu.ContextMenu;
-import name.martingeisse.webide.workbench.components.contextmenu.ContextMenuSeparator;
-import name.martingeisse.webide.workbench.components.contextmenu.DownloadMenuItem;
-import name.martingeisse.webide.workbench.components.contextmenu.SimpleContextMenuItem;
-import name.martingeisse.webide.workbench.components.contextmenu.SimpleContextMenuItemWithTextInput;
+import name.martingeisse.wicket.component.contextmenu.ContextMenu;
+import name.martingeisse.wicket.component.contextmenu.ContextMenuSeparator;
+import name.martingeisse.wicket.component.contextmenu.DownloadMenuItem;
+import name.martingeisse.wicket.component.contextmenu.SimpleContextMenuItem;
+import name.martingeisse.wicket.component.contextmenu.SimpleContextMenuItemWithTextInput;
 import name.martingeisse.wicket.component.tree.JsTree;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
+import name.martingeisse.wicket.util.IClientFuture;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -74,66 +74,71 @@ public class WorkbenchPage extends WebPage {
 		setOutputMarkupId(true);
 		add(new IClientFuture.Behavior());
 
-		final ContextMenu<List<String>> filesContextMenu = new ContextMenu<List<String>>();
-		filesContextMenu.getItems().add(new SimpleContextMenuItemWithTextInput<List<String>>("New...", "File name:") {
+		final ContextMenu<List<FetchResourceResult>> filesContextMenu = new ContextMenu<List<FetchResourceResult>>();
+		filesContextMenu.getItems().add(new SimpleContextMenuItemWithTextInput<List<FetchResourceResult>>("New...", "File name:") {
 			@Override
-			protected void onSelect(final List<String> anchor, String filename) {
-				ResourcePath path = new ResourcePath(true, false, new String[] {filename});
-				new CreateFileOperation(path, "", true).run();
-				loadEditorContents(filename);
-			}
-		});
-		filesContextMenu.getItems().add(new SimpleContextMenuItem<List<String>>("Open") {
-			@Override
-			protected void onSelect(final List<String> anchor) {
+			protected void onSelect(final List<FetchResourceResult> anchor, String filename) {
 				if (!anchor.isEmpty()) {
-					loadEditorContents(anchor.get(0).toString());
+					FetchResourceResult element = anchor.get(0);
+					ResourcePath elementPath = element.getPath();
+					ResourcePath parentPath = (element.getType() == ResourceType.FILE ? elementPath.removeLastSegment(false) : elementPath);
+					ResourcePath path = parentPath.appendSegment(filename, false);
+					new CreateFileOperation(path, "", true).run();
+					loadEditorContents(path);
 				}
 			}
 		});
-		filesContextMenu.getItems().add(new SimpleContextMenuItem<List<String>>("Rename...") {
+		filesContextMenu.getItems().add(new SimpleContextMenuItem<List<FetchResourceResult>>("Open") {
 			@Override
-			protected void onSelect(final List<String> anchor) {
+			protected void onSelect(final List<FetchResourceResult> anchor) {
+				if (!anchor.isEmpty()) {
+					loadEditorContents(anchor.get(0).getPath());
+				}
 			}
 		});
-		filesContextMenu.getItems().add(new SimpleContextMenuItem<List<String>>("Delete") {
+		filesContextMenu.getItems().add(new SimpleContextMenuItem<List<FetchResourceResult>>("Rename...") {
 			@Override
-			protected void onSelect(final List<String> anchor) {
+			protected void onSelect(final List<FetchResourceResult> anchor) {
+			}
+		});
+		filesContextMenu.getItems().add(new SimpleContextMenuItem<List<FetchResourceResult>>("Delete") {
+			@Override
+			protected void onSelect(final List<FetchResourceResult> anchor) {
 				ResourcePath[] paths = new ResourcePath[anchor.size()];
 				int i = 0;
-				for (String anchorElement : anchor) {
-					paths[i] = new ResourcePath(true, false, new String[] {anchorElement});
+				for (FetchResourceResult anchorElement : anchor) {
+					paths[i] = anchorElement.getPath();
 					i++;
 				}
 				new DeleteResourcesOperation(paths).run();
 				AjaxRequestUtil.markForRender(WorkbenchPage.this);
 			}
 		});
-		filesContextMenu.getItems().add(new DownloadMenuItem<List<String>>("Download") {
+		filesContextMenu.getItems().add(new DownloadMenuItem<List<FetchResourceResult>>("Download") {
 			@Override
-			protected String determineUrl(final List<String> anchor) {
+			protected String determineUrl(final List<FetchResourceResult> anchor) {
 				if (!anchor.isEmpty()) {
-					return urlFor(new WorkspaceWicketResourceReference(anchor.get(0)), null).toString();
+					return urlFor(new WorkspaceWicketResourceReference(anchor.get(0).getPath()), null).toString();
 				} else {
 					return "";
 				}
 			}
 		});
-		filesContextMenu.getItems().add(new SimpleContextMenuItem<List<String>>("Run") {
+		filesContextMenu.getItems().add(new SimpleContextMenuItem<List<FetchResourceResult>>("Run") {
 			@Override
-			protected void onSelect(final List<String> anchor) {
+			protected void onSelect(final List<FetchResourceResult> anchor) {
 				if (!anchor.isEmpty()) {
-					runApplication(anchor.get(0).toString());
+					runApplication(anchor.get(0).getPath());
 				}
 			}
 		});
-		filesContextMenu.getItems().add(new ContextMenuSeparator<List<String>>());
+		filesContextMenu.getItems().add(new ContextMenuSeparator<List<FetchResourceResult>>());
 		for (Result extension : ExtensionQuery.fetch(1, "webide.context_menu.resource")) { // TODO userId
 			final String className = extension.getDescriptor().toString();
 			final PluginBundleHandle bundleHandle = extension.getBundleHandle();
-			filesContextMenu.getItems().add(new SimpleContextMenuItem<List<String>>("Message from " + className) {
+			filesContextMenu.getItems().add(new SimpleContextMenuItem<List<FetchResourceResult>>("Message from " + className) {
 				@Override
-				protected void onSelect(final List<String> anchor) {
+				protected void onSelect(final List<FetchResourceResult> anchor) {
 					try {
 						final Runnable runnable = bundleHandle.createObject(Runnable.class, className);
 						runnable.run();
@@ -145,26 +150,6 @@ public class WorkbenchPage extends WebPage {
 		}
 
 		final WebMarkupContainer filesContainer = new WebMarkupContainer("filesContainer");
-		/*
-		filesContainer.add(new SelectableElementsBehavior<String>(".file", "$('.name', element).text()", filesContextMenu) {
-
-			@Override
-			protected String convertSelectedValue(final Object jsonValue) {
-				return (String)jsonValue;
-			}
-
-			@Override
-			protected void onInteraction(final AjaxRequestTarget target, final String interaction, final List<String> selectedValues) {
-				if (interaction.equals("dblclick")) {
-					if (!selectedValues.isEmpty()) {
-						loadEditorContents(selectedValues.get(0).toString());
-					}
-					target.add(WorkbenchPage.this);
-				}
-			}
-
-		});
-		*/
 		add(filesContainer);
 
 		final ITreeProvider<FetchResourceResult> resourceTreeProvider = new ITreeProvider<FetchResourceResult>() {
@@ -198,7 +183,7 @@ public class WorkbenchPage extends WebPage {
 			}
 			
 		};
-		final JsTree<FetchResourceResult> resourceTree = new JsTree<FetchResourceResult>("resources", resourceTreeProvider) {
+		final JsTree<FetchResourceResult> resourceTree = new JsTree<FetchResourceResult>("resources", resourceTreeProvider, filesContextMenu) {
 
 			@Override
 			protected void populateItem(Item<FetchResourceResult> item) {
@@ -213,9 +198,17 @@ public class WorkbenchPage extends WebPage {
 				item.add(new Label("name", fetchResult.getPath().getLastSegment()));
 			}
 			
+			/* (non-Javadoc)
+			 * @see name.martingeisse.wicket.component.tree.JsTree#onInteraction(org.apache.wicket.ajax.AjaxRequestTarget, java.lang.String, java.util.List)
+			 */
 			@Override
-			protected String getNodeType(FetchResourceResult node) {
-				return (node.getType() == ResourceType.FILE ? "file" : "folder");
+			protected void onInteraction(AjaxRequestTarget target, String interaction, List<FetchResourceResult> selectedNodes) {
+				if ("dblclick".equals(interaction)) {
+					if (!selectedNodes.isEmpty()) {
+						loadEditorContents(selectedNodes.get(0).getPath());
+					}
+					target.add(WorkbenchPage.this);
+				}
 			}
 
 		};
@@ -264,8 +257,7 @@ public class WorkbenchPage extends WebPage {
 	/**
 	 * 
 	 */
-	private void loadEditorContents(final String filename) {
-		ResourcePath path = new ResourcePath(true, false, new String[] {filename});
+	private void loadEditorContents(final ResourcePath path) {
 		IEditor editor = new JavaEditor();
 		editor.initialize(path);
 		replace(editor.createComponent("editor"));
@@ -300,9 +292,9 @@ public class WorkbenchPage extends WebPage {
 
 	/**
 	 * Runs the user-written application.
-	 * @param selectedFilename the filename for the main class (selected by the user)
+	 * @param selectedPath the file path for the main class (selected by the user)
 	 */
-	public void runApplication(final String selectedFilename) {
+	public void runApplication(ResourcePath selectedPath) {
 
 		// this method has vast consequences on the rendered page, so just re-render the whole page
 		AjaxRequestUtil.markForRender(this);
@@ -311,11 +303,16 @@ public class WorkbenchPage extends WebPage {
 		final StringBuilder builder = new StringBuilder();
 
 		// if the build was successful, run the generated application
-		final String className = (selectedFilename.endsWith(".java") ? selectedFilename.substring(0, selectedFilename.length() - 5)
-			: selectedFilename);
+		if ("java".equals(selectedPath.getExtension())) {
+			String lastSegment = selectedPath.getLastSegment();
+			lastSegment = lastSegment.substring(0, lastSegment.length() - 5);
+			selectedPath = selectedPath.replaceLastSegment(lastSegment);
+		}
+		final String classpath = selectedPath.withLeadingSeparator(false).retainFirstSegments(1, false).appendSegment("bin", false).toString();
+		final String className = selectedPath.removeFirstSegments(2, false).toString().replace('/', '.');
 		final String[] commandTokens = new String[] {
 			"java", "-cp", "lib/applauncher/code:lib/applauncher/lib/mysql-connector-java-5.1.20-bin.jar",
-			"name.martingeisse.webide.tools.AppLauncher", className,
+			"name.martingeisse.webide.tools.AppLauncher", classpath, className,
 		};
 		try {
 			final Process process = Runtime.getRuntime().exec(commandTokens);

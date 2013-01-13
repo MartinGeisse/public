@@ -6,6 +6,7 @@
 
 package name.martingeisse.webide.java.compiler;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import javax.tools.Diagnostic.Kind;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
+import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
@@ -33,6 +35,7 @@ import name.martingeisse.webide.resources.operation.FetchResourceResult;
 import name.martingeisse.webide.resources.operation.ListResourcesOperation;
 import name.martingeisse.webide.resources.operation.RecursiveDeleteMarkersOperation;
 import name.martingeisse.webide.resources.operation.RecursiveResourceOperation;
+import name.martingeisse.webide.resources.operation.WorkspaceResourceNotFoundException;
 
 /**
  * This façade is used by the builder thread to invoke the Java compiler.
@@ -69,9 +72,9 @@ public class JavaCompilerFacade {
 		final StandardJavaFileManager standardFileManager = compiler.getStandardFileManager(diagnosticListener, locale, Charset.forName("utf-8"));
 
 		// fetch and wrap source code files as JavaFileObjects
-		final MemoryFileManager fileManager = new MemoryFileManager(standardFileManager);
+		final MemoryFileManager memoryFileManager = new MemoryFileManager(standardFileManager);
 		final List<JavaFileObject> javaFiles = new ArrayList<JavaFileObject>();
-//		try {
+		try {
 			new RecursiveResourceOperation(sourcePath) {
 				@Override
 				protected void onLevelFetched(List<FetchResourceResult> fetchResults) {
@@ -80,26 +83,46 @@ public class JavaCompilerFacade {
 							final String key = fetchResult.getPath().removeFirstSegments(sourcePath.getSegmentCount(), true).toString();
 							final IMemoryJavaFileObject fileObject = new MemoryJavaFileObject(key, fetchResult.getContents());
 							javaFiles.add(fileObject);
-							fileManager.getInputFiles().put(key, fileObject);
+							memoryFileManager.getInputFiles().put(key, fileObject);
 						}
 					}
 				}
 			}.run();
-//		} catch (WorkspaceResourceNotFoundException e) {
-//			// src folder doesn't exist
-//			return;
-//		}
+		} catch (WorkspaceResourceNotFoundException e) {
+			// src folder doesn't exist
+			try {
+				memoryFileManager.close();
+			} catch (IOException e2) {
+			}
+			return;
+		}
+		
+		// TODO: We should actually not wrap the memory file manager with library JAR managers. This is
+		// currently done because the memory file manager only passes boot classpath requests to its
+		// underlying manager. Instead, memory file object and "shielding" should be separated into two
+		// different classes, and file managers put in the following order:
+		//   memory - lib - lib - ... - lib - shield - standard
+		// such that the shield still prevents non-standard classes from the standard manager leaking
+		// through, but the memory file manager allowing non-standard classes from libs to be visible.
+		JavaFileManager fileManager = memoryFileManager;
+		// fileManager = new JarFileManager(jarFile, fileManager);
 
 		// run the java compiler
 		final CompilationTask task = compiler.getTask(null, fileManager, diagnosticListener, null, null, javaFiles);
 		/* final boolean success = */task.call();
 
 		// save the class files in the database
-		for (final IMemoryFileObject file : fileManager.getOutputFiles().values()) {
+		for (final IMemoryFileObject file : memoryFileManager.getOutputFiles().values()) {
 			final ResourcePath path = new ResourcePath(binaryPath.toString() + file.getName());
 			new CreateFileOperation(path, file.getBinaryContent(), true).run();
 		}
 
+		// dispose of the file manager
+		try {
+			fileManager.close();
+		} catch (IOException e) {
+		}
+		
 		// collect diagnostic messages per source file
 		final List<Diagnostic<? extends JavaFileObject>> diagnostics = diagnosticListener.getDiagnostics();
 		final Map<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>> sourceFileToDiagnostics = new HashMap<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>>();

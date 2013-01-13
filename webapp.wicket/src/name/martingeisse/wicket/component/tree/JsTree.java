@@ -11,9 +11,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import name.martingeisse.common.util.GenericTypeUtil;
+import name.martingeisse.wicket.component.contextmenu.ContextMenu;
 import name.martingeisse.wicket.util.WicketHeadUtil;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ITreeProvider;
 import org.apache.wicket.markup.IMarkupFragment;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -45,6 +47,11 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	 * the rootInfos
 	 */
 	private transient NodeInfo<T>[] rootInfos;
+	
+	/**
+	 * the contextMenu
+	 */
+	private final ContextMenu<List<T>> contextMenu;
 
 	/**
 	 * Constructor.
@@ -52,9 +59,21 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	 * @param treeProvider the tree provider
 	 */
 	public JsTree(String id, ITreeProvider<T> treeProvider) {
+		this(id, treeProvider, null);
+	}
+	
+	/**
+	 * Constructor.
+	 * @param id the wicket id
+	 * @param treeProvider the tree provider
+	 * @param contextMenu the context menu, or null for none
+	 */
+	public JsTree(String id, ITreeProvider<T> treeProvider, ContextMenu<List<T>> contextMenu) {
 		super(id);
 		this.treeProvider = treeProvider;
 		setOutputMarkupId(true);
+		this.contextMenu = contextMenu;
+		add(new TreeAjaxBehavior<T>(this));
 	}
 
 	/**
@@ -64,14 +83,22 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	public ITreeProvider<T> getTreeProvider() {
 		return treeProvider;
 	}
+	
+	/**
+	 * Getter method for the contextMenu.
+	 * @return the contextMenu
+	 */
+	public ContextMenu<List<T>> getContextMenu() {
+		return contextMenu;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Component#onBeforeRender()
 	 */
 	@Override
 	protected void onBeforeRender() {
-		rootInfos = generateNodeInfos(treeProvider.getRoots());
 		removeAll();
+		rootInfos = generateNodeInfos(treeProvider.getRoots());
 		generateItems(rootInfos, 0);
 		super.onBeforeRender();
 	}
@@ -93,14 +120,15 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	}
 
 	/**
-	 * Generates item components for all node infos.
+	 * Generates item components for all node infos and returns the new item counter.
 	 */
 	private int generateItems(NodeInfo<T>[] nodeInfos, int counter) {
 		for (NodeInfo<T> nodeInfo : nodeInfos) {
-			Item<T> item = new Item<T>(Long.toString(counter), counter, nodeInfo.model);
+			Item<T> item = new Item<T>(Integer.toString(counter), counter, nodeInfo.model);
 			add(item);
 			populateItem(item);
 			nodeInfo.item = item;
+			nodeInfo.index = counter;
 			counter++;
 			counter += generateItems(nodeInfo.children, counter);
 		}
@@ -114,7 +142,23 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	public void renderHead(IHeaderResponse response) {
 		super.renderHead(response);
 		WicketHeadUtil.includeClassJavascript(response, JsTree.class);
-		response.render(OnDomReadyHeaderItem.forScript("$('#" + getMarkupId() + "').createJsTree();"));
+		
+		@SuppressWarnings("unchecked")
+		TreeAjaxBehavior<T> behavior = getBehaviors(TreeAjaxBehavior.class).get(0);
+		StringBuilder builder = new StringBuilder();
+		builder.append("$('#").append(getMarkupId()).append("').createJsTree({\n");
+		builder.append("	ajaxCallback: ").append(behavior.getCallbackSpecifier()).append(",\n");
+		builder.append("	contextMenuData: ");
+		if (contextMenu != null) {
+			ContextMenu.renderHead(response);
+			contextMenu.buildCreateExpression(builder, "#" + getMarkupId(), behavior);
+		} else {
+			builder.append("null");
+		}
+		builder.append(",\n");
+		
+		builder.append("});\n");
+		response.render(OnDomReadyHeaderItem.forScript(builder.toString()));
 	}
 	
 	/* (non-Javadoc)
@@ -138,6 +182,7 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 			response.write("<li class=\"jstree-open\">");
 			nodeInfo.item.render();
 			renderNodes(nodeInfo.children);
+			response.write("<div style=\"display: none\">" + nodeInfo.index + "</div>");
 			response.write("</li>");
 		}
 		response.write("</ul>");
@@ -164,16 +209,19 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 		IModel<T> model;
 		NodeInfo<T>[] children;
 		Item<T> item;
+		int index;
 	}
 
 	/**
-	 * Returns the JsTree node type for the specified node. The node type determines
-	 * things such as the icon.
-	 * @param node the node
-	 * @return the node type, or null to use the default
+	 * This method is invoked when the client-side scripts notify the server about
+	 * a user interaction. The default implementation does nothing.
+	 * 
+	 * @param target the ART
+	 * @param interaction a string describing the interaction, e.g. "dblclick"
+	 * for a double-click
+	 * @param selectedNodes the selected tree nodes
 	 */
-	protected String getNodeType(T node) {
-		return null;
+	protected void onInteraction(AjaxRequestTarget target, String interaction, List<T> selectedNodes) {
 	}
 	
 }

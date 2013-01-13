@@ -7,11 +7,8 @@
 package name.martingeisse.webide.resources.operation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import org.apache.commons.lang.NotImplementedException;
 
 import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
@@ -84,11 +81,15 @@ public abstract class MultipleResourcesOperation extends WorkspaceOperation {
 	 * Resources are returned in exactly the same order as the paths.
 	 */
 	static List<WorkspaceResources> fetchResources(IWorkspaceOperationContext context, ResourcePath[] paths) {
+		List<WorkspaceResources> results = new ArrayList<WorkspaceResources>();
+		for (ResourcePath path : paths) {
+			results.add(SingleResourceOperation.fetchResource(context, path));
+		}
+		return results;
+
+		// TODO: optimize!!!
 		// ResourcePath[] remainingPaths = Arrays.copyOf(paths, paths.length);
 		// WorkspaceResources[] resources = new WorkspaceResources[paths.length];
-	
-		// TODO
-		throw new NotImplementedException();
 	}
 	
 }

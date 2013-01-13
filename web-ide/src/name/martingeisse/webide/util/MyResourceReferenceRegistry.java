@@ -6,6 +6,7 @@
 
 package name.martingeisse.webide.util;
 
+import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.WorkspaceWicketResourceReference;
 
 import org.apache.wicket.request.resource.ResourceReference;
@@ -24,7 +25,7 @@ public class MyResourceReferenceRegistry extends ResourceReferenceRegistry {
 	@Override
 	protected ResourceReference createDefaultResourceReference(final Key key) {
 		if (key.getScope().equals(WorkspaceWicketResourceReference.class.getName())) {
-			return new WorkspaceWicketResourceReference(key.getName());
+			return new WorkspaceWicketResourceReference(new ResourcePath("/" + key.getName()));
 		}
 		return super.createDefaultResourceReference(key);
 	}

@@ -1,5 +1,13 @@
 
-$.fn.createJsTree = function() {
+$.fn.createJsTree = function(options) {
+	
+	// apply default options
+	options = $.extend({
+		ajaxCallback: function() {},
+		contextMenuData: null,
+	}, options);
+	
+	// handle each tree separately
 	this.each(function() {
 		$this = $(this);
 		
@@ -20,6 +28,21 @@ $.fn.createJsTree = function() {
 				select_range_modifier: false,
 			},
 		});
+
+		// function to send an AJAX request using the supplied callback
+		function sendAjaxRequest(interaction, data) {
+			var selectedNodes = $this.jstree('get_selected');
+			var selectedNodeIndices = $.map(selectedNodes.children('div'), function(x) {
+				return $(x).text();
+			});
+			options.ajaxCallback(interaction, selectedNodeIndices.join(':'), data);
+		}
+
+		// the data object used to communicate with other sub-functions
+		var storedData = {
+			sendAjaxRequest : sendAjaxRequest,
+		};
+		$this.data('jstree', storedData);
 		
 		// node select helpers
 		function selectSingleElement(element) {
@@ -28,6 +51,14 @@ $.fn.createJsTree = function() {
 		}
 		function toggleSingleElement(element) {
 			$this.jstree('toggle_select', element);
+		}
+		function selectForContextMenu(element, metaKeyPressed) {
+			if (!$this.jstree('is_selected', element)) {
+				if (!metaKeyPressed) {
+					$this.jstree('deselect_all');
+				}
+				$this.jstree('select_node', element, false);
+			}
 		}
 		
 		// event handlers
@@ -41,6 +72,32 @@ $.fn.createJsTree = function() {
 				selectSingleElement(event.currentTarget);
 			}
 		}, $this));
+		$this.delegate('a', 'dblclick.jstree', $.proxy(function(event) {
+			selectSingleElement(event.currentTarget);
+			sendAjaxRequest('dblclick', null);
+		}));
+		if (options.contextMenuData != null) {
+			$this.delegate('a', 'contextmenu.jstree', $.proxy(function(event) {
+				selectForContextMenu(event.currentTarget, event.metaKey);
+				var handlers = $(this).contextMenu('handlers');
+				var fakeEvent = {
+					preventDefault: function() {},	
+					stopImmediatePropagation: function() {},
+					data: options.contextMenuData.options,
+					originalEvent: null,
+					pageX: event.pageX,
+					pageY: event.pageY,
+				};
+				var trigger = $(options.contextMenuData.options.selector)[0];
+				handlers.contextmenu.call(trigger, fakeEvent);
+			}));
+		}
 		
 	});
+	
 }
+
+$.fn.jstree_ajax = function(interaction, data) {
+	this.data('jstree').sendAjaxRequest(interaction, data);
+	return this;
+};

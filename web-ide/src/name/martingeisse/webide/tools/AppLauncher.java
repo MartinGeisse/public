@@ -12,6 +12,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Launcher class for user-written applications. This launcher will
@@ -26,6 +28,16 @@ public class AppLauncher extends ClassLoader {
 	private static Connection databaseConnection;
 	
 	/**
+	 * the classPath
+	 */
+	private static String classPath;
+	
+	/**
+	 * the resourceCache
+	 */
+	private Map<String, Object[]> resourceCache = new HashMap<String, Object[]>();
+	
+	/**
 	 * Main method.
 	 * @param launcherArgs command-line arguments. The first argument must be
 	 * the name of the main class to launch; remaining arguments will
@@ -35,13 +47,14 @@ public class AppLauncher extends ClassLoader {
 	public static void main(final String[] launcherArgs) throws Exception {
 
 		// handle command-line arguments
-		if (launcherArgs.length == 0) {
-			System.err.println("main class name missing");
+		if (launcherArgs.length < 2) {
+			System.err.println("wrong command-line arguments, expected <classpath> <main-class> ...");
 			return;
 		}
-		final String mainClassName = launcherArgs[0];
-		final String[] applicationArgs = new String[launcherArgs.length - 1];
-		System.arraycopy(launcherArgs, 0, applicationArgs, 0, applicationArgs.length);
+		classPath = launcherArgs[0];
+		final String mainClassName = launcherArgs[1];
+		final String[] applicationArgs = new String[launcherArgs.length - 2];
+		System.arraycopy(launcherArgs, 2, applicationArgs, 0, applicationArgs.length);
 
 		// prepare database access
 		String databaseUrl = "jdbc:mysql://localhost/webide?zeroDateTimeBehavior=convertToNull&useTimezone=false&characterEncoding=utf8&characterSetResults=utf8";
@@ -50,6 +63,8 @@ public class AppLauncher extends ClassLoader {
 		} catch (final SQLException e) {
 			throw new RuntimeException(e);
 		}
+		
+		// find the resource record for the class path root
 		
 		// load the main class using a class loader that accesses the database
 		try {
@@ -76,16 +91,42 @@ public class AppLauncher extends ClassLoader {
 	 * 
 	 */
 	private byte[] loadClassData(final String name) throws ClassNotFoundException {
+		String classFilePath = classPath + '/' + name.replace('.', '/') + ".class";
+		Object[] file = loadResource(classFilePath);
+		return (byte[])(file[3]);
+	}
+
+	/**
+	 * 
+	 */
+	private Object[] loadResource(final String path) throws ClassNotFoundException {
+		Object[] cached = resourceCache.get(path);
+		if (cached == null) {
+			if (path.equals("/")) {
+				cached = loadResourceInternal("`type` = 'WORKSPACE_ROOT'");
+			} else {
+				int slashIndex = path.lastIndexOf('/');
+				Object[] parentResource = loadResource(slashIndex == -1 ? "/" : path.substring(0, slashIndex));
+				String name = (slashIndex == -1 ? path : path.substring(slashIndex + 1));
+				cached = loadResourceInternal("`parent_id` = " + parentResource[0] + " AND `name` = '" + name + "'"); // TODO injection
+			}
+			resourceCache.put(path, cached);
+		}
+		return cached;
+	}
+
+	/**
+	 * 
+	 */
+	private Object[] loadResourceInternal(String whereCondition) throws ClassNotFoundException {
 		Statement statement = null;
 		try {
-			String classFileName = name + ".class";
 			statement = databaseConnection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECT contents FROM files WHERE name = '" + classFileName + "'");
+			ResultSet resultSet = statement.executeQuery("SELECT `id`, `name`, `type`, `contents` FROM `workspace_resources` WHERE " + whereCondition);
 			if (!resultSet.next()) {
-				throw new ClassNotFoundException("could not find database class file: " + classFileName);
+				throw new ClassNotFoundException("could not find workspace resource WHERE " + whereCondition);
 			}
-			byte[] contents = resultSet.getBytes(1);
-			return contents;
+			return new Object[] {resultSet.getLong(1), resultSet.getString(2), resultSet.getString(3), resultSet.getBytes(4)};
 		} catch (SQLException e) {
 			throw new ClassNotFoundException("SQL error", e);
 		} finally {
@@ -95,7 +136,7 @@ public class AppLauncher extends ClassLoader {
 				} catch (SQLException e) {
 				}
 			}
-		}
+		}		
 	}
-
+	
 }

@@ -263,6 +263,30 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	}
 
 	/**
+	 * Returns a resource path that has the same segments as this path, but
+	 * with the leading separator added or removed. The trailing separator
+	 * is not affected.
+	 * @param withLeadingSeparator whether the returned path should have a
+	 * leading separator
+	 * @return the new path
+	 */
+	public ResourcePath withLeadingSeparator(boolean withLeadingSeparator) {
+		return new ResourcePath(withLeadingSeparator, trailingSeparator, segmentStorage, firstSegmentIndex, segmentCount, false);
+	}
+	
+	/**
+	 * Returns a resource path that has the same segments as this path, but
+	 * with the trailing separator added or removed. The leading separator
+	 * is not affected.
+	 * @param withTrailingSeparator whether the returned path should have a
+	 * trailing separator
+	 * @return the new path
+	 */
+	public ResourcePath withTrailingSeparator(boolean withTrailingSeparator) {
+		return new ResourcePath(leadingSeparator, withTrailingSeparator, segmentStorage, firstSegmentIndex, segmentCount, false);
+	}
+	
+	/**
 	 * Returns a resource path that has the same segments as this path except for
 	 * the first segment being removed.
 	 * 
@@ -286,6 +310,17 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 		return new ResourcePath(withLeadingSeparator, trailingSeparator, segmentStorage, firstSegmentIndex + n, segmentCount - n, false);
 	}
 
+	/**
+	 * Returns a resource path containing the n last segments of this path.
+	 * 
+	 * @param n the number of segments to retain
+	 * @param withLeadingSeparator whether the returned path should have a leading separator
+	 * @return the new path
+	 */
+	public ResourcePath retainLastSegments(int n, boolean withLeadingSeparator) {
+		return removeFirstSegments(segmentCount - n, withLeadingSeparator);
+	}
+	
 	/**
 	 * Returns a resource path that has the same segments as this path except for
 	 * the specified segment being prepended. 
@@ -335,9 +370,20 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	 */
 	public ResourcePath removeLastSegments(int n, boolean withTrailingSeparator) {
 		validateRange(0, segmentCount - n);
-		return new ResourcePath(leadingSeparator, withTrailingSeparator, segmentStorage, firstSegmentIndex, segmentCount - 1, false);
+		return new ResourcePath(leadingSeparator, withTrailingSeparator, segmentStorage, firstSegmentIndex, segmentCount - n, false);
 	}
 
+	/**
+	 * Returns a resource path containing the n first segments of this path.
+	 * 
+	 * @param n the number of segments to retain
+	 * @param withTrailingSeparator whether the returned path should have a trailing separator
+	 * @return the new path
+	 */
+	public ResourcePath retainFirstSegments(int n, boolean withTrailingSeparator) {
+		return removeLastSegments(segmentCount - n, withTrailingSeparator);
+	}
+	
 	/**
 	 * Returns a resource path that has the same segments as this path except for
 	 * the specified segment being appended. 
