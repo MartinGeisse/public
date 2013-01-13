@@ -22,6 +22,8 @@ import org.apache.wicket.model.Model;
  * 
  * The model for this component is of type List<T> and should provide
  * entries to populate the list.
+ * 
+ * @param <T> the element type
  */
 public abstract class AbstractSelectableCheckboxListPanel<T> extends Panel {
 
