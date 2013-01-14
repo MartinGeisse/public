@@ -9,12 +9,12 @@ package name.martingeisse.webide.java.compiler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.tools.FileObject;
+import javax.tools.ForwardingJavaFileManager;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -22,37 +22,39 @@ import javax.tools.StandardLocation;
 
 import name.martingeisse.common.util.iterator.AbstractIterableWrapper;
 
+import org.apache.log4j.Logger;
+
 /**
  * In-memory file manager. The "names" used by this file manager
  * are stringified resource paths (with a leading separator, without
  * a trailing separator).
  */
-public class MemoryFileManager implements JavaFileManager {
+public class MemoryFileManager extends ForwardingJavaFileManager<JavaFileManager> {
 
 	/**
-	 * the standardFileManager
+	 * the logger
 	 */
-	private final JavaFileManager standardFileManager;
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(MemoryFileManager.class);
 	
 	/**
 	 * the inputFiles
 	 */
 	private final Map<String, IMemoryFileObject> inputFiles = new HashMap<String, IMemoryFileObject>();
-	
+
 	/**
 	 * the outputFiles
 	 */
 	private final Map<String, IMemoryFileObject> outputFiles = new HashMap<String, IMemoryFileObject>();
-	
+
 	/**
 	 * Constructor.
-	 * @param standardFileManager the standard file manager, needed to access
-	 * the boot classpath
+	 * @param next the next file manager to search
 	 */
-	public MemoryFileManager(JavaFileManager standardFileManager) {
-		this.standardFileManager = standardFileManager;
+	public MemoryFileManager(final JavaFileManager next) {
+		super(next);
 	}
-	
+
 	/**
 	 * Getter method for the inputFiles.
 	 * @return the inputFiles
@@ -60,7 +62,7 @@ public class MemoryFileManager implements JavaFileManager {
 	public Map<String, IMemoryFileObject> getInputFiles() {
 		return inputFiles;
 	}
-	
+
 	/**
 	 * Getter method for the outputFiles.
 	 * @return the outputFiles
@@ -68,51 +70,25 @@ public class MemoryFileManager implements JavaFileManager {
 	public Map<String, IMemoryFileObject> getOutputFiles() {
 		return outputFiles;
 	}
-	
-	/* (non-Javadoc)
-	 * @see javax.tools.OptionChecker#isSupportedOption(java.lang.String)
-	 */
-	@Override
-	public int isSupportedOption(final String option) {
-		return standardFileManager.isSupportedOption(option);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.tools.JavaFileManager#close()
-	 */
-	@Override
-	public void close() throws IOException {
-		standardFileManager.close();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.tools.JavaFileManager#flush()
-	 */
-	@Override
-	public void flush() throws IOException {
-		standardFileManager.flush();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.tools.JavaFileManager#getClassLoader(javax.tools.JavaFileManager.Location)
-	 */
-	@Override
-	public ClassLoader getClassLoader(final Location location) {
-		return standardFileManager.getClassLoader(location);
-	}
 
 	/* (non-Javadoc)
 	 * @see javax.tools.JavaFileManager#getFileForInput(javax.tools.JavaFileManager.Location, java.lang.String, java.lang.String)
 	 */
 	@Override
 	public FileObject getFileForInput(final Location location, final String packageName, final String relativeName) throws IOException {
-		if (location == StandardLocation.PLATFORM_CLASS_PATH) {
-			return standardFileManager.getFileForInput(location, packageName, relativeName);
+		String loggingName = "input file; location [" + location + "], package [" + packageName + "], name [" + relativeName + "]";
+		if (location == StandardLocation.SOURCE_PATH) {
+			logger.trace("searching memory files: " + loggingName);
+			final String key = getPackageFileName(packageName, relativeName);
+			FileObject file = inputFiles.get(key);
+			logger.trace("result for key [" + key + "]: " + file);
+			if (file != null) {
+				return file;
+			}
+		} else {
+			logger.trace("skipping memory files for " + loggingName);
 		}
-		if (location != StandardLocation.SOURCE_PATH) {
-			return null;
-		}
-		return inputFiles.get(getPackageFileName(packageName, relativeName));
+		return super.getFileForInput(location, packageName, relativeName);
 	}
 
 	/* (non-Javadoc)
@@ -120,19 +96,23 @@ public class MemoryFileManager implements JavaFileManager {
 	 */
 	@Override
 	public FileObject getFileForOutput(final Location location, final String packageName, final String relativeName, final FileObject sibling) throws IOException {
-		if (location == StandardLocation.PLATFORM_CLASS_PATH) {
-			return standardFileManager.getFileForOutput(location, packageName, relativeName, sibling);
+		String loggingName = "output file; location [" + location + "], package [" + packageName + "], name [" + relativeName + "], sibling [" + sibling + "]";
+		if (location == StandardLocation.CLASS_OUTPUT) {
+			logger.trace("searching memory files: " + loggingName);
+			final String key = getPackageFileName(packageName, relativeName);
+			IMemoryFileObject file = outputFiles.get(key);
+			if (file == null) {
+				logger.trace("key [" + key + "] not found, creating");
+				file = new MemoryBlobFileObject(key);
+				outputFiles.put(key, file);
+			} else {
+				logger.trace("key [" + key + "] found");
+			}
+			return file;
+		} else {
+			logger.trace("skipping memory files for " + loggingName);
 		}
-		if (location != StandardLocation.CLASS_OUTPUT) {
-			return null;
-		}
-		String key = getPackageFileName(packageName, relativeName);
-		IMemoryFileObject fileObject = outputFiles.get(key);
-		if (fileObject == null) {
-			fileObject = new MemoryBlobFileObject(key);
-			outputFiles.put(key, fileObject);
-		}
-		return fileObject;
+		return super.getFileForOutput(location, packageName, relativeName, sibling);
 	}
 
 	/* (non-Javadoc)
@@ -140,19 +120,24 @@ public class MemoryFileManager implements JavaFileManager {
 	 */
 	@Override
 	public JavaFileObject getJavaFileForInput(final Location location, final String className, final Kind kind) throws IOException {
-		if (location == StandardLocation.PLATFORM_CLASS_PATH) {
-			return standardFileManager.getJavaFileForInput(location, className, kind);
-		}
-		if (location != StandardLocation.SOURCE_PATH) {
-			return null;
-		}
-		String key = getJavaFileName(className, kind);
-		IMemoryFileObject fileObject = inputFiles.get(key);
-		if (fileObject instanceof JavaFileObject) {
-			return (JavaFileObject)fileObject;
+		String loggingName = "java input file; location [" + location + "], class [" + className + "], kind [" + kind + "]";
+		if (location == StandardLocation.SOURCE_PATH) {
+			logger.trace("searching memory files: " + loggingName);
+			final String key = getJavaFileName(className, kind);
+			FileObject file = inputFiles.get(key);
+			logger.trace("result for key [" + key + "]: " + file);
+			if (file != null) {
+				if (file instanceof JavaFileObject) {
+					return (JavaFileObject)file;
+				} else {
+					logger.trace("file is not a JavaFileObject, returning 'not found'");
+					return null;
+				}
+			}
 		} else {
-			return null;
+			logger.trace("skipping memory files for " + loggingName);
 		}
+		return super.getJavaFileForInput(location, className, kind);
 	}
 
 	/* (non-Javadoc)
@@ -160,29 +145,24 @@ public class MemoryFileManager implements JavaFileManager {
 	 */
 	@Override
 	public JavaFileObject getJavaFileForOutput(final Location location, final String className, final Kind kind, final FileObject sibling) throws IOException {
-		if (location == StandardLocation.PLATFORM_CLASS_PATH) {
-			return standardFileManager.getJavaFileForOutput(location, className, kind, sibling);
-		}
-		if (location != StandardLocation.CLASS_OUTPUT) {
-			return null;
-		}
-		String key = getJavaFileName(className, kind);
-		IMemoryFileObject fileObject = outputFiles.get(key);
-		if (fileObject instanceof JavaFileObject) {
-			return (JavaFileObject)fileObject;
+		String loggingName = "java output file; location [" + location + "], class [" + className + "], kind [" + kind + "], sibling [" + sibling + "]";
+		if (location == StandardLocation.SOURCE_PATH) {
+			logger.trace("searching memory files: " + loggingName);
+			final String key = getJavaFileName(className, kind);
+			FileObject file = outputFiles.get(key);
+			if (file instanceof JavaFileObject) {
+				logger.trace("key [" + key + "] found");
+				return (JavaFileObject)file;
+			} else {
+				logger.trace("key [" + key + "] " + (file == null ? "not found, creating" : "found but not a java file, replacing"));
+				final IMemoryJavaFileObject javaFileObject = (kind == Kind.SOURCE ? new MemoryJavaFileObject(key) : new MemoryClassFileObject(key));
+				outputFiles.put(key, javaFileObject);
+				return javaFileObject;
+			}
 		} else {
-			IMemoryJavaFileObject javaFileObject = (kind == Kind.SOURCE ? new MemoryJavaFileObject(key) : new MemoryClassFileObject(key));
-			outputFiles.put(key, javaFileObject);
-			return javaFileObject;
+			logger.trace("skipping memory files for " + loggingName);
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.tools.JavaFileManager#handleOption(java.lang.String, java.util.Iterator)
-	 */
-	@Override
-	public boolean handleOption(final String current, final Iterator<String> remaining) {
-		return standardFileManager.handleOption(current, remaining);
+		return super.getJavaFileForOutput(location, className, kind, sibling);
 	}
 
 	/* (non-Javadoc)
@@ -190,6 +170,9 @@ public class MemoryFileManager implements JavaFileManager {
 	 */
 	@Override
 	public boolean hasLocation(final Location location) {
+		
+		TODO AB HIER, OBEN NOCH MAL DRÜBERSEHEN
+		
 		if (location == StandardLocation.PLATFORM_CLASS_PATH) {
 			return standardFileManager.hasLocation(location);
 		} else {
@@ -207,7 +190,7 @@ public class MemoryFileManager implements JavaFileManager {
 		}
 		String filename = file.getName();
 		if (filename.endsWith(".java")) {
-			filename = filename.substring(0, filename.length() - 5); 
+			filename = filename.substring(0, filename.length() - 5);
 		}
 		return filename + ".class";
 	}
@@ -217,6 +200,7 @@ public class MemoryFileManager implements JavaFileManager {
 	 */
 	@Override
 	public boolean isSameFile(final FileObject a, final FileObject b) {
+		TODO
 		return (a == b);
 	}
 
@@ -228,7 +212,7 @@ public class MemoryFileManager implements JavaFileManager {
 		if (location == StandardLocation.PLATFORM_CLASS_PATH) {
 			return standardFileManager.list(location, packageName, kinds, recurse);
 		}
-		
+
 		// determine the file map to use
 		final Map<String, IMemoryFileObject> fileMap;
 		if (location == StandardLocation.SOURCE_PATH && kinds.contains(Kind.SOURCE)) {
@@ -243,7 +227,7 @@ public class MemoryFileManager implements JavaFileManager {
 		final Pattern namePattern = Pattern.compile("\\/" + (packageName.replace(".", "\\/")) + "\\/[^\\/]+");
 		return new AbstractIterableWrapper<IMemoryFileObject, JavaFileObject>(fileMap.values()) {
 			@Override
-			protected JavaFileObject handleElement(IMemoryFileObject element) {
+			protected JavaFileObject handleElement(final IMemoryFileObject element) {
 				if (element instanceof JavaFileObject) {
 					if (namePattern.matcher(element.getName()).matches()) {
 						return (JavaFileObject)element;
@@ -252,14 +236,20 @@ public class MemoryFileManager implements JavaFileManager {
 				return null;
 			}
 		};
-		
+
 	}
 
-	private static String getPackageFileName(String packageName, String localFileName) {
+	/**
+	 * Maps the name of a package-local file to the name of a memory file.
+	 */
+	private static String getPackageFileName(final String packageName, final String localFileName) {
 		return "/" + packageName.replace('.', '/') + '/' + localFileName;
 	}
 
-	private static String getJavaFileName(String className, Kind kind) {
+	/**
+	 * Maps the name of a class to the name of a memory file.
+	 */
+	private static String getJavaFileName(final String className, final Kind kind) {
 		return "/" + className.replace('.', '/') + (kind == Kind.SOURCE ? ".java" : kind == Kind.CLASS ? ".class" : "");
 	}
 

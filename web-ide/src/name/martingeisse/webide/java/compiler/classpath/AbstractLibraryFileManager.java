@@ -16,16 +16,17 @@ import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardLocation;
-import javax.tools.JavaFileManager.Location;
 
 import name.martingeisse.common.util.GenericTypeUtil;
 
 import org.apache.commons.collections.iterators.IteratorChain;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Base class for {@link JavaFileManager} implementations for
  * class libraries. Such implementations handle only specific
- * {@link Location}s, and do not accept output files.
+ * locations, and do not accept output files.
  * 
  * This class implements {@link ForwardingJavaFileManager} for
  * file manager chaining.
@@ -33,13 +34,34 @@ import org.apache.commons.collections.iterators.IteratorChain;
 public abstract class AbstractLibraryFileManager extends ForwardingJavaFileManager<JavaFileManager> {
 
 	/**
+	 * the logger
+	 */
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(AbstractLibraryFileManager.class);
+	
+	/**
+	 * the libraryNameForLogging
+	 */
+	private final String libraryNameForLogging;
+	
+	/**
 	 * Constructor.
+	 * @param libraryNameForLogging the name used for this library in log messages
 	 * @param next the next file manager to search
 	 */
-	public AbstractLibraryFileManager(final JavaFileManager next) {
+	public AbstractLibraryFileManager(final String libraryNameForLogging, final JavaFileManager next) {
 		super(next);
+		this.libraryNameForLogging = libraryNameForLogging;
 	}
 
+	/**
+	 * Getter method for the libraryNameForLogging.
+	 * @return the libraryNameForLogging
+	 */
+	public String getLibraryNameForLogging() {
+		return libraryNameForLogging;
+	}
+	
 	/* (non-Javadoc)
 	 * @see javax.tools.ForwardingJavaFileManager#flush()
 	 */
@@ -53,11 +75,16 @@ public abstract class AbstractLibraryFileManager extends ForwardingJavaFileManag
 	 */
 	@Override
 	public final FileObject getFileForInput(final Location location, final String packageName, final String relativeName) throws IOException {
+		String loggingName = "library [" + libraryNameForLogging + "] package [" + packageName + "], name [" + relativeName + "]";
 		if (location == StandardLocation.CLASS_PATH) {
+			logger.trace("searching library for file: " + loggingName);
 			final FileObject file = getLibraryFile(packageName, relativeName);
 			if (file != null) {
+				logger.trace("found file in library: " + loggingName);
 				return file;
 			}
+		} else {
+			logger.trace("skipping library for non-classpath file: " + loggingName);
 		}
 		return super.getFileForInput(location, packageName, relativeName);
 	}
@@ -85,11 +112,16 @@ public abstract class AbstractLibraryFileManager extends ForwardingJavaFileManag
 	 */
 	@Override
 	public final JavaFileObject getJavaFileForInput(final Location location, final String className, final Kind kind) throws IOException {
+		String loggingName = "library [" + libraryNameForLogging + "] class [" + className + "], kind [" + kind + "]";
 		if (location == StandardLocation.CLASS_PATH && kind == Kind.CLASS) {
+			logger.trace("searching library for class " + loggingName);
 			final JavaFileObject file = getLibraryClassFile(className);
 			if (file != null) {
+				logger.trace("found class in library: " + loggingName);
 				return file;
 			}
+		} else {
+			logger.trace("skipping library for non-class or non-classpath class: " + loggingName);
 		}
 		return super.getJavaFileForInput(location, className, kind);
 	}
@@ -116,7 +148,9 @@ public abstract class AbstractLibraryFileManager extends ForwardingJavaFileManag
 	 */
 	@Override
 	public final boolean hasLocation(final Location location) {
-		return (location == StandardLocation.CLASS_PATH) || super.hasLocation(location);
+		boolean result = (location == StandardLocation.CLASS_PATH) || super.hasLocation(location);
+		logger.trace("library has location [" + location + "]: " + result);
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -132,9 +166,11 @@ public abstract class AbstractLibraryFileManager extends ForwardingJavaFileManag
 	 */
 	@Override
 	public final Iterable<JavaFileObject> list(final Location location, final String packageName, final Set<Kind> kinds, final boolean recurse) throws IOException {
+		logger.trace("listing files for location [" + location + "], package [" + packageName + "], kinds [" + StringUtils.join(kinds, ", ") + "], recurse [" + recurse + "]");
 		final Iterable<JavaFileObject> superIterable = super.list(location, packageName, kinds, recurse);
 		if (location == StandardLocation.CLASS_PATH && kinds.contains(Kind.CLASS)) {
 			final Iterable<JavaFileObject> libraryIterable = listLibraryClassFiles(packageName, recurse);
+			logger.trace("contributed files from this library: " + StringUtils.join(libraryIterable.iterator(), ", "));
 			return new Iterable<JavaFileObject>() {
 				@Override
 				public Iterator<JavaFileObject> iterator() {
@@ -142,6 +178,7 @@ public abstract class AbstractLibraryFileManager extends ForwardingJavaFileManag
 				}
 			};
 		} else {
+			logger.trace("no contribution from this library because of location/kinds");
 			return superIterable;
 		}
 	}

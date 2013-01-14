@@ -17,11 +17,19 @@ import javax.tools.FileObject;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 
+import org.apache.log4j.Logger;
+
 /**
  * {@link JavaFileManager} implementation based on JAR files.
  */
 public class JarFileManager extends AbstractLibraryFileManager {
 
+	/**
+	 * the logger
+	 */
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(JarFileManager.class);
+	
 	/**
 	 * the jarFile
 	 */
@@ -33,7 +41,7 @@ public class JarFileManager extends AbstractLibraryFileManager {
 	 * @param next the next file manager to search
 	 */
 	public JarFileManager(final JarFile jarFile, final JavaFileManager next) {
-		super(next);
+		super(jarFile.getName(), next);
 		this.jarFile = jarFile;
 	}
 
@@ -51,6 +59,7 @@ public class JarFileManager extends AbstractLibraryFileManager {
 	@Override
 	protected FileObject getLibraryFile(final String packageName, final String relativeName) throws IOException {
 		String entryName = (packageName.isEmpty() ? relativeName : (packageName.replace('.', '/') + '/' + relativeName));
+		logger.trace("looking for JAR entry [" + entryName + "] in library [" + getLibraryNameForLogging() + "]");
 		JarEntry entry = jarFile.getJarEntry(entryName);
 		if (entry == null) {
 			return null;
@@ -64,7 +73,9 @@ public class JarFileManager extends AbstractLibraryFileManager {
 	 */
 	@Override
 	protected JavaFileObject getLibraryClassFile(final String className) throws IOException {
-		JarEntry entry = jarFile.getJarEntry(className.replace('.', '/') + ".class");
+		String entryName = className.replace('.', '/') + ".class";
+		logger.trace("looking for JAR entry [" + entryName + "] in library [" + getLibraryNameForLogging() + "]");
+		JarEntry entry = jarFile.getJarEntry(entryName);
 		if (entry == null) {
 			return null;
 		} else {
@@ -83,15 +94,20 @@ public class JarFileManager extends AbstractLibraryFileManager {
 		List<JavaFileObject> files = new ArrayList<JavaFileObject>();
 		while (jarEntries.hasMoreElements()) {
 			JarEntry entry = jarEntries.nextElement();
-			if (entry.getName().startsWith(prefix) && entry.getName().endsWith(suffix)) {
+			String entryName = entry.getName();
+			if (entryName.startsWith(prefix) && entryName.endsWith(suffix)) {
+				logger.trace("entry [" + entryName + "] matches");
 				if (!recurse) {
-					String localName = entry.getName().substring(prefix.length());
+					String localName = entryName.substring(prefix.length());
 					localName = localName.substring(0, localName.length() - suffix.length());
 					if (localName.indexOf('/') != -1) {
+						logger.trace("entry is in subfolder, skipping because this is not a recursive lookup");
 						continue;
 					}
 				}
 				files.add(new JarJavaFileObject(this, entry));
+			} else {
+				logger.trace("entry [" + entryName + "] doesn't match");
 			}
 		}
 		return files;
@@ -115,6 +131,7 @@ public class JarFileManager extends AbstractLibraryFileManager {
 	 */
 	@Override
 	public void close() throws IOException {
+		logger.trace("closing JAR file [" + getLibraryNameForLogging() + "]");
 		jarFile.close();
 		super.close();
 	}
