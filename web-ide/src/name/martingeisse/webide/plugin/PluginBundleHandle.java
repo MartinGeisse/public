@@ -41,6 +41,7 @@ public final class PluginBundleHandle implements Serializable {
 	public ClassLoader getClassLoader() {
 		if (classLoader == null) {
 			classLoader = InternalPluginUtil.getPluginBundleClassLoader(pluginBundleId);
+			System.out.println("InternalPluginUtil.getPluginBundleClassLoader(" + pluginBundleId + ");");
 		}
 		return classLoader;
 	}

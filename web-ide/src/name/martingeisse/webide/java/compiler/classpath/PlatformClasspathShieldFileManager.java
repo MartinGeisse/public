@@ -169,10 +169,16 @@ public class PlatformClasspathShieldFileManager extends ForwardingJavaFileManage
 	 */
 	@Override
 	public String inferBinaryName(final Location location, final JavaFileObject file) {
-		logger.trace("standard file manager inferring binary name for location [" + location + "], file [" + file + "] / [" + file.getName() + "]");
-		final String result = super.inferBinaryName(location, file);
-		logger.trace("binary name: " + result);
-		return result;
+		String loggingName = "location [" + location + "], file [" + file + "] / [" + file.getName() + "]";
+		if (location == StandardLocation.PLATFORM_CLASS_PATH) {
+			logger.trace("standard file manager inferring binary name for " + loggingName);
+			final String result = super.inferBinaryName(location, file);
+			logger.trace("binary name: " + result);
+			return result;
+		} else {
+			logger.trace("inferring binary name skipped for standard file manager for " + loggingName);
+			return null;
+		}
 	}
 
 	/* (non-Javadoc)

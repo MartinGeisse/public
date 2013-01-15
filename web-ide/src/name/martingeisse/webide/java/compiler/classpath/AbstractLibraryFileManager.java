@@ -149,7 +149,7 @@ public abstract class AbstractLibraryFileManager extends ForwardingJavaFileManag
 	@Override
 	public final boolean hasLocation(final Location location) {
 		boolean result = (location == StandardLocation.CLASS_PATH) || super.hasLocation(location);
-		logger.trace("library has location [" + location + "]: " + result);
+		logger.trace("library [" + libraryNameForLogging + "] has location [" + location + "]: " + result);
 		return result;
 	}
 
@@ -157,16 +157,32 @@ public abstract class AbstractLibraryFileManager extends ForwardingJavaFileManag
 	 * @see javax.tools.ForwardingJavaFileManager#inferBinaryName(javax.tools.JavaFileManager.Location, javax.tools.JavaFileObject)
 	 */
 	@Override
-	public final String inferBinaryName(final Location location, final JavaFileObject file) {
+	public final String inferBinaryName(Location location, JavaFileObject file) {
+		String loggingName = "location [" + location + "], file [" + file + "]";
+		if (location == StandardLocation.CLASS_PATH) {
+			logger.trace("trying to infer binary name in library for " + loggingName);
+			String result = inferLibraryBinaryName(file);
+			logger.trace("result: " + result);
+			if (result != null) {
+				return result;
+			}
+		}
 		return super.inferBinaryName(location, file);
 	}
 
+	/**
+	 * Tries to infer the binary name for the specified file.
+	 * @param file the file
+	 * @return the binary name, or null if not known
+	 */
+	public abstract String inferLibraryBinaryName(JavaFileObject file);
+	
 	/* (non-Javadoc)
 	 * @see javax.tools.ForwardingJavaFileManager#list(javax.tools.JavaFileManager.Location, java.lang.String, java.util.Set, boolean)
 	 */
 	@Override
 	public final Iterable<JavaFileObject> list(final Location location, final String packageName, final Set<Kind> kinds, final boolean recurse) throws IOException {
-		logger.trace("listing files for location [" + location + "], package [" + packageName + "], kinds [" + StringUtils.join(kinds, ", ") + "], recurse [" + recurse + "]");
+		logger.trace("listing library [" + libraryNameForLogging + "] files for location [" + location + "], package [" + packageName + "], kinds [" + StringUtils.join(kinds, ", ") + "], recurse [" + recurse + "]");
 		final Iterable<JavaFileObject> superIterable = super.list(location, packageName, kinds, recurse);
 		if (location == StandardLocation.CLASS_PATH && kinds.contains(Kind.CLASS)) {
 			final Iterable<JavaFileObject> libraryIterable = listLibraryClassFiles(packageName, recurse);

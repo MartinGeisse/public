@@ -29,6 +29,7 @@ import name.martingeisse.webide.resources.operation.DeleteResourceOperation;
 import name.martingeisse.webide.resources.operation.DeleteSingleResourceMarkersOperation;
 import name.martingeisse.webide.resources.operation.FetchResourceResult;
 import name.martingeisse.webide.resources.operation.FetchSingleResourceOperation;
+import name.martingeisse.webide.resources.operation.ListResourcesOperation;
 import name.martingeisse.webide.resources.operation.RecursiveResourceOperation;
 
 import com.mysema.query.sql.dml.SQLDeleteClause;
@@ -43,40 +44,53 @@ public class PluginBuilderFacade {
 	 * This method is invoked by the builder thread to perform a plugin build.
 	 */
 	public static void performBuild() {
-		
+		final ListResourcesOperation list = new ListResourcesOperation(new ResourcePath("/"));
+		list.run();
+		for (final FetchResourceResult fetchResult : list.getChildren()) {
+			performBuild(fetchResult.getPath());
+		}
+	}
+
+	/**
+	 * Builds a single plugin project.
+	 */
+	private static void performBuild(final ResourcePath basePath) {
+
 		// prepare
-		ResourcePath descriptorFilePath = new ResourcePath("/plugin.json");
-		
+		final ResourcePath descriptorFilePath = basePath.appendSegment("plugin.json", false);
+		final ResourcePath bundleFilePath = basePath.appendSegment("plugin.jar", false);
+		final ResourcePath binPath = basePath.appendSegment("bin", false);
+
 		// clean previous build
 		new DeleteSingleResourceMarkersOperation(descriptorFilePath, MarkerOrigin.PDE);
-		new DeleteResourceOperation(new ResourcePath("/plugin.jar")).run();
-		
+		new DeleteResourceOperation(bundleFilePath).run();
+
 		// fetch the plugin descriptor, stop if not found
-		FetchSingleResourceOperation fetchDescriptorFileOperation = new FetchSingleResourceOperation(descriptorFilePath);
+		final FetchSingleResourceOperation fetchDescriptorFileOperation = new FetchSingleResourceOperation(descriptorFilePath);
 		fetchDescriptorFileOperation.run();
-		FetchResourceResult fetchDescriptorResult = fetchDescriptorFileOperation.getResult();
+		final FetchResourceResult fetchDescriptorResult = fetchDescriptorFileOperation.getResult();
 		if (fetchDescriptorResult == null || fetchDescriptorResult.getType() != ResourceType.FILE) {
 			return;
 		}
-		
+
 		// validate the descriptor
-		String pluginBundleDescriptorSourceCode = new String(fetchDescriptorResult.getContents(), Charset.forName("utf-8"));
+		final String pluginBundleDescriptorSourceCode = new String(fetchDescriptorResult.getContents(), Charset.forName("utf-8"));
 		if (!validateDescriptor(descriptorFilePath, pluginBundleDescriptorSourceCode)) {
 			return;
 		}
-		
+
 		// build and install the plugin
-		byte[] jarFile = generateJarFile();
-		long pluginId = uploadPlugin(pluginBundleDescriptorSourceCode, jarFile);
+		final byte[] jarFile = generateJarFile(binPath, bundleFilePath);
+		final long pluginId = uploadPlugin(pluginBundleDescriptorSourceCode, jarFile);
 		updateUsersPlugins(pluginId);
-		
+
 	}
-	
+
 	/**
 	 * Validates the specified plugin bundle descriptor.
 	 * Returns true on success, false on failure.
 	 */
-	private static boolean validateDescriptor(ResourcePath descriptorFilePath, String pluginBundleDescriptorSourceCode) {
+	private static boolean validateDescriptor(final ResourcePath descriptorFilePath, final String pluginBundleDescriptorSourceCode) {
 		try {
 			final JsonAnalyzer analyzer = JsonAnalyzer.parse(pluginBundleDescriptorSourceCode);
 			final JsonAnalyzer extensionPoints = analyzer.analyzeMapElement("extension_points");
@@ -88,8 +102,8 @@ public class PluginBuilderFacade {
 				extensions.expectMap();
 			}
 			return true;
-		} catch (Exception e) {
-			CreateResourceMarkerOperation operation = new CreateResourceMarkerOperation(descriptorFilePath, MarkerOrigin.PDE, MarkerMeaning.ERROR, 1L, 1L, e.toString());
+		} catch (final Exception e) {
+			final CreateResourceMarkerOperation operation = new CreateResourceMarkerOperation(descriptorFilePath, MarkerOrigin.PDE, MarkerMeaning.ERROR, 1L, 1L, e.toString());
 			operation.run();
 			return false;
 		}
@@ -99,72 +113,73 @@ public class PluginBuilderFacade {
 	 * Generates a JAR file from the compiled classes and also returns the
 	 * contents of the file.
 	 */
-	private static byte[] generateJarFile() {
+	private static byte[] generateJarFile(final ResourcePath binPath, final ResourcePath jarPath) {
 		try {
 			final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			final JarOutputStream jarOutputStream = new JarOutputStream(byteArrayOutputStream);
-			final ResourcePath binFolderPath = new ResourcePath("/bin");
-			new RecursiveResourceOperation(binFolderPath) {
+			new RecursiveResourceOperation(binPath) {
 				@Override
-				protected void onLevelFetched(List<FetchResourceResult> fetchResults) {
+				protected void onLevelFetched(final List<FetchResourceResult> fetchResults) {
 					try {
-						for (FetchResourceResult fetchResult : fetchResults) {
+						for (final FetchResourceResult fetchResult : fetchResults) {
 							if (fetchResult.getType() == ResourceType.FILE && "class".equals(fetchResult.getPath().getExtension())) {
-								final ResourcePath zipEntryPath = fetchResult.getPath().removeFirstSegments(binFolderPath.getSegmentCount(), true);
+								final ResourcePath zipEntryPath = fetchResult.getPath().removeFirstSegments(binPath.getSegmentCount(), true);
 								jarOutputStream.putNextEntry(new ZipEntry(zipEntryPath.toString()));
 								jarOutputStream.write(fetchResult.getContents());
 							}
 						}
-					} catch (IOException e) {
+					} catch (final IOException e) {
 						throw new RuntimeException(e);
 					}
 				}
 			}.run();
 			jarOutputStream.close();
-			byte[] contents = byteArrayOutputStream.toByteArray();
-			new CreateFileOperation(new ResourcePath("/plugin.jar"), contents, true).run();
+			final byte[] contents = byteArrayOutputStream.toByteArray();
+			new CreateFileOperation(jarPath, contents, true).run();
 			return contents;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/**
 	 * Uploads the JAR file build by the previous step and the plugin bundle descriptor
 	 * as a single-bundle plugin into the plugins and plugin_bundles tables.
 	 * Returns the plugin id.
 	 */
-	private static long uploadPlugin(String descriptor, byte[] jarFile) {
-		
-		SQLInsertClause pluginInsert = EntityConnectionManager.getConnection().createInsert(QPlugins.plugins);
+	private static long uploadPlugin(final String descriptor, final byte[] jarFile) {
+
+		final SQLInsertClause pluginInsert = EntityConnectionManager.getConnection().createInsert(QPlugins.plugins);
 		pluginInsert.set(QPlugins.plugins.isUnpacked, false);
-		long pluginId = pluginInsert.executeWithKey(Long.class);
-		
-		SQLInsertClause bundleInsert = EntityConnectionManager.getConnection().createInsert(QPluginBundles.pluginBundles);
+		final long pluginId = pluginInsert.executeWithKey(Long.class);
+
+		final SQLInsertClause bundleInsert = EntityConnectionManager.getConnection().createInsert(QPluginBundles.pluginBundles);
 		bundleInsert.set(QPluginBundles.pluginBundles.pluginId, pluginId);
 		bundleInsert.set(QPluginBundles.pluginBundles.descriptor, descriptor);
 		bundleInsert.set(QPluginBundles.pluginBundles.jarfile, jarFile);
 		bundleInsert.execute();
-		
+
 		InternalPluginUtil.generateDeclaredExtensionPointsAndExtensionsForPlugin(pluginId);
 		return pluginId;
 	}
-	
+
 	/**
 	 * Updates the user's plugins, currently to include only the specified plugin.
 	 */
-	private static void updateUsersPlugins(long pluginId) {
-		long userId = 1;
-		SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QUserPlugins.userPlugins);
+	private static void updateUsersPlugins(final long pluginId) {
+		final long userId = 1;
+		final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QUserPlugins.userPlugins);
 		delete.where(QUserPlugins.userPlugins.userId.eq(userId)).execute();
-		SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QUserPlugins.userPlugins);
+		final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QUserPlugins.userPlugins);
 		insert.set(QUserPlugins.userPlugins.userId, userId);
 		insert.set(QUserPlugins.userPlugins.pluginId, pluginId);
 		insert.execute();
+		
+		// TODO: das hier geht noch nicht!
 		InternalPluginUtil.updateExtensionBindingsForUser(userId);
 		// TODO: die Plugins müssen noch zum Browser! Einfach die komplette Seite neuladen ist Shit,
 		// da geht dann zu vieles verloren. Außerdem reicht es nicht, die Seite neu zu rendern,
 		// aktuell muss eine neue Seiteninstanz erzeugt werden.
 	}
-	
+
 }

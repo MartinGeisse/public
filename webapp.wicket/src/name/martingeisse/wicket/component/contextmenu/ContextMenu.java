@@ -51,23 +51,67 @@ public class ContextMenu<A> implements Serializable {
 	}
 	
 	/**
-	 * the items
+	 * the declaredItems
 	 */
-	private final List<ContextMenuItem<? super A>> items = new ArrayList<ContextMenuItem<? super A>>();
+	private final List<ContextMenuItem<? super A>> declaredItems = new ArrayList<ContextMenuItem<? super A>>();
+
+	/**
+	 * the effectiveItems
+	 */
+	private final List<ContextMenuItem<? super A>> effectiveItems = new ArrayList<ContextMenuItem<? super A>>();
+	
+	/**
+	 * the dirty
+	 */
+	private boolean dirty;
 	
 	/**
 	 * Constructor.
 	 */
 	public ContextMenu() {
+		dirty = false;
 	}
 
 	/**
-	 * Getter method for the items.
-	 * @return the items
+	 * Adds the specified item to this context menu.
+	 * @param item the item to add
 	 */
-	public final List<ContextMenuItem<? super A>> getItems() {
-		return items;
+	public void add(ContextMenuItem<? super A> item) {
+		declaredItems.add(item);
+		dirty = true;
 	}
+	
+	/**
+	 * Getter method for the effectiveItems.
+	 * @return the effectiveItems
+	 */
+	private List<ContextMenuItem<? super A>> getEffectiveItems() {
+		if (dirty) {
+			effectiveItems.clear();
+			for (ContextMenuItem<? super A> declaredItem : declaredItems) {
+				addItemOrReplacement(declaredItem);
+			}
+			dirty = false;
+		}
+		return effectiveItems;
+	}
+
+	/**
+	 * Adds either the specified item (if it has no replacement items), or its
+	 * replacement items. Replacement happens recursively, so the replacement
+	 * items can be replaced again.
+	 */
+	private void addItemOrReplacement(ContextMenuItem<? super A> item) {
+		ContextMenuItem<? super A>[] replacementItems = item.getReplacementItems();
+		if (replacementItems == null) {
+			effectiveItems.add(item);
+		} else {
+			for (ContextMenuItem<? super A> replacementItem : replacementItems) {
+				addItemOrReplacement(replacementItem);
+			}
+		}
+	}
+	
 	
 	/**
 	 * Triggers the effect of the menu item with the specified key.
@@ -76,6 +120,7 @@ public class ContextMenu<A> implements Serializable {
 	 * @param data additional data from the client-side code for this menu item
 	 */
 	public final void notifySelected(String key, A anchor, Object data) {
+		List<ContextMenuItem<? super A>> items = getEffectiveItems();
 		int index = extractIndexFromKey(key);
 		if (index < 0 || index >= items.size()) {
 			throw new RuntimeException("invalid context menu item key: " + key);
@@ -105,6 +150,7 @@ public class ContextMenu<A> implements Serializable {
 	 * to the server and route them to the appropriate menu item
 	 */
 	public void buildCreateExpression(StringBuilder builder, String selector, IContextMenuCallbackBuilder callbackBuilder) {
+		List<ContextMenuItem<? super A>> items = getEffectiveItems();
 		builder.append("createContextMenu('").append(selector).append("', function(key, options) {var data = null; \n");
 		callbackBuilder.buildContextMenuCallback(builder);
 		builder.append("}, {");

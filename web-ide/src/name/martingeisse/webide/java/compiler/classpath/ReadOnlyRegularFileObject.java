@@ -6,6 +6,8 @@
 
 package name.martingeisse.webide.java.compiler.classpath;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,51 +17,35 @@ import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.util.jar.JarEntry;
 
 import javax.tools.FileObject;
 
 import org.apache.commons.io.IOUtils;
 
 /**
- * {@link FileObject} implementation based on JAR entries.
+ * Read-only {@link FileObject} implementation based on regular files.
  */
-public class JarFileObject implements FileObject {
+public class ReadOnlyRegularFileObject implements FileObject {
 
 	/**
-	 * the fileManager
+	 * the file
 	 */
-	private final JarFileManager fileManager;
-	
-	/**
-	 * the jarEntry
-	 */
-	private final JarEntry jarEntry;
+	private final File file;
 
 	/**
 	 * Constructor.
-	 * @param fileManager the file manager that owns this file
-	 * @param jarEntry the JAR entry to wrap
+	 * @param file the file
 	 */
-	public JarFileObject(final JarFileManager fileManager, final JarEntry jarEntry) {
-		this.fileManager = fileManager;
-		this.jarEntry = jarEntry;
+	public ReadOnlyRegularFileObject(final File file) {
+		this.file = file;
 	}
-	
+
 	/**
-	 * Getter method for the fileManager.
-	 * @return the fileManager
+	 * Getter method for the file.
+	 * @return the file
 	 */
-	public JarFileManager getFileManager() {
-		return fileManager;
-	}
-	
-	/**
-	 * Getter method for the jarEntry.
-	 * @return the jarEntry
-	 */
-	public JarEntry getJarEntry() {
-		return jarEntry;
+	public File getFile() {
+		return file;
 	}
 
 	/* (non-Javadoc)
@@ -75,8 +61,8 @@ public class JarFileObject implements FileObject {
 	 */
 	@Override
 	public CharSequence getCharContent(final boolean ignoreEncodingErrors) throws IOException {
-		Reader r = openReader(ignoreEncodingErrors);
-		String content = IOUtils.toString(r);
+		final Reader r = openReader(ignoreEncodingErrors);
+		final String content = IOUtils.toString(r);
 		r.close();
 		return content;
 	}
@@ -86,7 +72,7 @@ public class JarFileObject implements FileObject {
 	 */
 	@Override
 	public long getLastModified() {
-		return jarEntry.getTime();
+		return file.lastModified();
 	}
 
 	/* (non-Javadoc)
@@ -94,7 +80,7 @@ public class JarFileObject implements FileObject {
 	 */
 	@Override
 	public String getName() {
-		return jarEntry.getName();
+		return file.getPath();
 	}
 
 	/* (non-Javadoc)
@@ -102,7 +88,7 @@ public class JarFileObject implements FileObject {
 	 */
 	@Override
 	public InputStream openInputStream() throws IOException {
-		return fileManager.getJarFile().getInputStream(jarEntry);
+		return new FileInputStream(file);
 	}
 
 	/* (non-Javadoc)
@@ -135,8 +121,8 @@ public class JarFileObject implements FileObject {
 	@Override
 	public URI toUri() {
 		try {
-			return new URI("library", null, "/" + getName(), null);
-		} catch (URISyntaxException e) {
+			return new URI("library", null, getName(), null);
+		} catch (final URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -146,7 +132,7 @@ public class JarFileObject implements FileObject {
 	 */
 	@Override
 	public String toString() {
-		return "{JAR-file " + fileManager.getLibraryNameForLogging() + " " + jarEntry.getName() + "}";
+		return "{file " + file.getPath() + "}";
 	}
 	
 }

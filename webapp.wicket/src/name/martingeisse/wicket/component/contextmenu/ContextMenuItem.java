@@ -22,6 +22,17 @@ public abstract class ContextMenuItem<A> implements Serializable {
 	}
 
 	/**
+	 * Allows context menu items to replace themselves on-the-fly by any number
+	 * of items that are actually used. The default implementation
+	 * returns null, causing this item to be used.
+	 * 
+	 * @return the items to actually use, or null to just use this item
+	 */
+	protected ContextMenuItem<? super A>[] getReplacementItems() {
+		return null;
+	}
+	
+	/**
 	 * Triggers the effect of this menu item.
 	 * @param anchor the anchor
 	 * @param data additional data from the client-side code for this menu item

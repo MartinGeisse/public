@@ -6,6 +6,7 @@
 
 package name.martingeisse.webide.java.compiler;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -25,7 +26,9 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import name.martingeisse.webide.java.compiler.classpath.ClassFolderLibraryFileManager;
 import name.martingeisse.webide.java.compiler.classpath.JarFileManager;
+import name.martingeisse.webide.java.compiler.classpath.PlatformClasspathShieldFileManager;
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.MarkerOrigin;
 import name.martingeisse.webide.resources.ResourcePath;
@@ -72,9 +75,24 @@ public class JavaCompilerFacade {
 		final DiagnosticCollector<JavaFileObject> diagnosticListener = new DiagnosticCollector<JavaFileObject>();
 		final Locale locale = null;
 		final StandardJavaFileManager standardFileManager = compiler.getStandardFileManager(diagnosticListener, locale, Charset.forName("utf-8"));
+		final PlatformClasspathShieldFileManager wrappedStandardFileManager = new PlatformClasspathShieldFileManager(standardFileManager);
+		
+		// create library file managers
+		JavaFileManager fileManager = wrappedStandardFileManager;
+		try {
+			fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-util-6.4.0.jar"), fileManager);
+			fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-core-6.4.0.jar"), fileManager);
+			fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-request-6.4.0.jar"), fileManager);
+			fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-extensions-6.4.0.jar"), fileManager);
+			fileManager = new ClassFolderLibraryFileManager(new File("bin"), fileManager);
+			fileManager = new ClassFolderLibraryFileManager(new File("../webapp.wicket/bin"), fileManager);
+			fileManager = new ClassFolderLibraryFileManager(new File("../webapp.common/bin"), fileManager);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
 		// fetch and wrap source code files as JavaFileObjects
-		final MemoryFileManager memoryFileManager = new MemoryFileManager(standardFileManager);
+		final MemoryFileManager memoryFileManager = new MemoryFileManager(fileManager);
 		final List<JavaFileObject> javaFiles = new ArrayList<JavaFileObject>();
 		try {
 			new RecursiveResourceOperation(sourcePath) {
@@ -98,6 +116,7 @@ public class JavaCompilerFacade {
 			}
 			return;
 		}
+
 		
 		// TODO: We should actually not wrap the memory file manager with library JAR managers. This is
 		// currently done because the memory file manager only passes boot classpath requests to its
@@ -106,18 +125,9 @@ public class JavaCompilerFacade {
 		//   memory - lib - lib - ... - lib - shield - standard
 		// such that the shield still prevents non-standard classes from the standard manager leaking
 		// through, but the memory file manager allowing non-standard classes from libs to be visible.
-		JavaFileManager fileManager = memoryFileManager;
-		try {
-			fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-util-6.4.0.jar"), fileManager);
-			fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-core-6.4.0.jar"), fileManager);
-			fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-request-6.4.0.jar"), fileManager);
-			fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-extensions-6.4.0.jar"), fileManager);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 
 		// run the java compiler
-		final CompilationTask task = compiler.getTask(null, fileManager, diagnosticListener, null, null, javaFiles);
+		final CompilationTask task = compiler.getTask(null, memoryFileManager, diagnosticListener, null, null, javaFiles);
 		/* final boolean success = */task.call();
 
 		// save the class files in the database
@@ -128,7 +138,7 @@ public class JavaCompilerFacade {
 
 		// dispose of the file manager
 		try {
-			fileManager.close();
+			memoryFileManager.close();
 		} catch (IOException e) {
 		}
 		

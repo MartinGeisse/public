@@ -6,10 +6,12 @@
 
 package name.martingeisse.webide.workbench;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import name.martingeisse.common.database.EntityConnectionManager;
+import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.webide.entity.QWorkspaceResources;
 import name.martingeisse.webide.java.editor.JavaEditor;
 import name.martingeisse.webide.plugin.ExtensionQuery;
@@ -27,8 +29,10 @@ import name.martingeisse.webide.resources.operation.DeleteResourcesOperation;
 import name.martingeisse.webide.resources.operation.FetchResourceResult;
 import name.martingeisse.webide.resources.operation.ListResourcesOperation;
 import name.martingeisse.wicket.component.contextmenu.ContextMenu;
+import name.martingeisse.wicket.component.contextmenu.ContextMenuItem;
 import name.martingeisse.wicket.component.contextmenu.ContextMenuSeparator;
 import name.martingeisse.wicket.component.contextmenu.DownloadMenuItem;
+import name.martingeisse.wicket.component.contextmenu.DynamicContextMenuItems;
 import name.martingeisse.wicket.component.contextmenu.SimpleContextMenuItem;
 import name.martingeisse.wicket.component.contextmenu.SimpleContextMenuItemWithTextInput;
 import name.martingeisse.wicket.component.tree.JsTree;
@@ -75,7 +79,7 @@ public class WorkbenchPage extends WebPage {
 		add(new IClientFuture.Behavior());
 
 		final ContextMenu<List<FetchResourceResult>> filesContextMenu = new ContextMenu<List<FetchResourceResult>>();
-		filesContextMenu.getItems().add(new SimpleContextMenuItemWithTextInput<List<FetchResourceResult>>("New...", "File name:") {
+		filesContextMenu.add(new SimpleContextMenuItemWithTextInput<List<FetchResourceResult>>("New...", "File name:") {
 			@Override
 			protected void onSelect(final List<FetchResourceResult> anchor, String filename) {
 				if (!anchor.isEmpty()) {
@@ -88,7 +92,7 @@ public class WorkbenchPage extends WebPage {
 				}
 			}
 		});
-		filesContextMenu.getItems().add(new SimpleContextMenuItem<List<FetchResourceResult>>("Open") {
+		filesContextMenu.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Open") {
 			@Override
 			protected void onSelect(final List<FetchResourceResult> anchor) {
 				if (!anchor.isEmpty()) {
@@ -96,12 +100,12 @@ public class WorkbenchPage extends WebPage {
 				}
 			}
 		});
-		filesContextMenu.getItems().add(new SimpleContextMenuItem<List<FetchResourceResult>>("Rename...") {
+		filesContextMenu.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Rename...") {
 			@Override
 			protected void onSelect(final List<FetchResourceResult> anchor) {
 			}
 		});
-		filesContextMenu.getItems().add(new SimpleContextMenuItem<List<FetchResourceResult>>("Delete") {
+		filesContextMenu.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Delete") {
 			@Override
 			protected void onSelect(final List<FetchResourceResult> anchor) {
 				ResourcePath[] paths = new ResourcePath[anchor.size()];
@@ -114,7 +118,7 @@ public class WorkbenchPage extends WebPage {
 				AjaxRequestUtil.markForRender(WorkbenchPage.this);
 			}
 		});
-		filesContextMenu.getItems().add(new DownloadMenuItem<List<FetchResourceResult>>("Download") {
+		filesContextMenu.add(new DownloadMenuItem<List<FetchResourceResult>>("Download") {
 			@Override
 			protected String determineUrl(final List<FetchResourceResult> anchor) {
 				if (!anchor.isEmpty()) {
@@ -124,7 +128,7 @@ public class WorkbenchPage extends WebPage {
 				}
 			}
 		});
-		filesContextMenu.getItems().add(new SimpleContextMenuItem<List<FetchResourceResult>>("Run") {
+		filesContextMenu.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Run") {
 			@Override
 			protected void onSelect(final List<FetchResourceResult> anchor) {
 				if (!anchor.isEmpty()) {
@@ -132,22 +136,30 @@ public class WorkbenchPage extends WebPage {
 				}
 			}
 		});
-		filesContextMenu.getItems().add(new ContextMenuSeparator<List<FetchResourceResult>>());
-		for (Result extension : ExtensionQuery.fetch(1, "webide.context_menu.resource")) { // TODO userId
-			final String className = extension.getDescriptor().toString();
-			final PluginBundleHandle bundleHandle = extension.getBundleHandle();
-			filesContextMenu.getItems().add(new SimpleContextMenuItem<List<FetchResourceResult>>("Message from " + className) {
-				@Override
-				protected void onSelect(final List<FetchResourceResult> anchor) {
-					try {
-						final Runnable runnable = bundleHandle.createObject(Runnable.class, className);
-						runnable.run();
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
+		filesContextMenu.add(new ContextMenuSeparator<List<FetchResourceResult>>());
+		filesContextMenu.add(new DynamicContextMenuItems<List<FetchResourceResult>>() {
+			@Override
+			protected ContextMenuItem<? super List<FetchResourceResult>>[] getReplacementItems() {
+				List<ContextMenuItem<? super List<FetchResourceResult>>> replacementItems = new ArrayList<ContextMenuItem<? super List<FetchResourceResult>>>();
+				for (Result extension : ExtensionQuery.fetch(1, "webide.context_menu.resource")) { // TODO userId
+					final String className = extension.getDescriptor().toString();
+					final PluginBundleHandle bundleHandle = extension.getBundleHandle();
+					replacementItems.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Message from " + className) {
+						@Override
+						protected void onSelect(final List<FetchResourceResult> anchor) {
+							try {
+								final Runnable runnable = bundleHandle.createObject(Runnable.class, className);
+								runnable.run();
+							} catch (Exception e) {
+								throw new RuntimeException(e);
+							}
+						}
+					});
 				}
-			});
-		}
+				ContextMenuItem<? super List<FetchResourceResult>>[] array = GenericTypeUtil.unsafeCast(new ContextMenuItem<?>[replacementItems.size()]);
+				return replacementItems.toArray(array);
+			}
+		});
 
 		final WebMarkupContainer filesContainer = new WebMarkupContainer("filesContainer");
 		add(filesContainer);

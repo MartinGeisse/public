@@ -33,6 +33,16 @@ public class TestMain {
 		final DiagnosticCollector<JavaFileObject> diagnosticListener = new DiagnosticCollector<JavaFileObject>();
 		final Locale locale = null;
 		final StandardJavaFileManager standardFileManager = compiler.getStandardFileManager(diagnosticListener, locale, Charset.forName("utf-8"));
+		JavaFileObject file = standardFileManager.getJavaFileForInput(StandardLocation.PLATFORM_CLASS_PATH, "java.lang.String", Kind.CLASS);
+		String binaryName = standardFileManager.inferBinaryName(StandardLocation.PLATFORM_CLASS_PATH, file);
+		System.out.println("* " + file);
+		System.out.println("* " + binaryName);
+		
+		/*
+		final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		final DiagnosticCollector<JavaFileObject> diagnosticListener = new DiagnosticCollector<JavaFileObject>();
+		final Locale locale = null;
+		final StandardJavaFileManager standardFileManager = compiler.getStandardFileManager(diagnosticListener, locale, Charset.forName("utf-8"));
 		final MemoryFileManager memoryFileManager = new MemoryFileManager(standardFileManager);
 		
 		HashSet<Kind> kinds  = new HashSet<Kind>();
@@ -42,6 +52,7 @@ public class TestMain {
 		for (JavaFileObject file : man.list(StandardLocation.CLASS_PATH, "org.apache.mina.util", kinds, true)) {
 			System.out.println(file.toUri());
 		}
+		*/
 		
 		/*
 		JarFile jar = new JarFile("lib/java/mina-core-2.0.5.jar");

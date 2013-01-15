@@ -112,7 +112,23 @@ public class JarFileManager extends AbstractLibraryFileManager {
 		}
 		return files;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.webide.java.compiler.classpath.AbstractLibraryFileManager#inferLibraryBinaryName(javax.tools.JavaFileObject)
+	 */
+	@Override
+	public String inferLibraryBinaryName(JavaFileObject file) {
+		if (file instanceof JarJavaFileObject) {
+			String name = file.getName();
+			if (name.endsWith(".class")) {
+				name = name.substring(0, name.length() - ".class".length());
+			}
+			return name.replace('/', '.');
+		} else {
+			return null;
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see javax.tools.ForwardingJavaFileManager#isSameFile(javax.tools.FileObject, javax.tools.FileObject)
 	 */

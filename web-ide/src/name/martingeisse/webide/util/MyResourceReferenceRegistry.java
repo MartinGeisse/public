@@ -6,6 +6,7 @@
 
 package name.martingeisse.webide.util;
 
+import name.martingeisse.webide.plugin.PluginBundleWicketResourceReference;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.WorkspaceWicketResourceReference;
 
@@ -26,6 +27,9 @@ public class MyResourceReferenceRegistry extends ResourceReferenceRegistry {
 	protected ResourceReference createDefaultResourceReference(final Key key) {
 		if (key.getScope().equals(WorkspaceWicketResourceReference.class.getName())) {
 			return new WorkspaceWicketResourceReference(new ResourcePath("/" + key.getName()));
+		}
+		if (key.getScope().equals(PluginBundleWicketResourceReference.class.getName())) {
+			return new PluginBundleWicketResourceReference(Long.parseLong(key.getName()));
 		}
 		return super.createDefaultResourceReference(key);
 	}
