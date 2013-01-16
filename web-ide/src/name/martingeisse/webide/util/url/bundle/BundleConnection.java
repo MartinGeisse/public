@@ -58,6 +58,7 @@ public class BundleConnection extends URLConnection {
 			throw new MalformedURLException("the 'file' part of the URL must be the plugin bundle id but is: " + url.getFile());
 		}
 
+		System.out.println("*** create bundle connection to: " + url);
 	}
 
 	/* (non-Javadoc)
@@ -72,6 +73,7 @@ public class BundleConnection extends URLConnection {
 			data = query.singleResult(QPluginBundles.pluginBundles).getJarfile();
 			inputStream = new ByteArrayInputStream(data);
 		}
+		System.out.println("*** open bundle connection to: " + url + " / data size: " + data.length);
 	}
 
 	/* (non-Javadoc)

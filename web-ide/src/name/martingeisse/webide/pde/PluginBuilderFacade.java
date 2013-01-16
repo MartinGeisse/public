@@ -115,15 +115,23 @@ public class PluginBuilderFacade {
 	 */
 	private static byte[] generateJarFile(final ResourcePath binPath, final ResourcePath jarPath) {
 		try {
+			
+			// start writing a JAR file to a byte array
 			final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			final JarOutputStream jarOutputStream = new JarOutputStream(byteArrayOutputStream);
+			
+			// add manifest
+			jarOutputStream.putNextEntry(new ZipEntry("META-INF/MANIFEST.MF"));
+			jarOutputStream.write("Manifest-Version: 1.0\n".getBytes(Charset.forName("utf-8")));
+			
+			// add class files
 			new RecursiveResourceOperation(binPath) {
 				@Override
 				protected void onLevelFetched(final List<FetchResourceResult> fetchResults) {
 					try {
 						for (final FetchResourceResult fetchResult : fetchResults) {
-							if (fetchResult.getType() == ResourceType.FILE && "class".equals(fetchResult.getPath().getExtension())) {
-								final ResourcePath zipEntryPath = fetchResult.getPath().removeFirstSegments(binPath.getSegmentCount(), true);
+							String zipEntryPath = fetchResult.getPath().removeFirstSegments(binPath.getSegmentCount(), false).toString();
+							if (fetchResult.getType() == ResourceType.FILE) {
 								jarOutputStream.putNextEntry(new ZipEntry(zipEntryPath.toString()));
 								jarOutputStream.write(fetchResult.getContents());
 							}
@@ -133,10 +141,13 @@ public class PluginBuilderFacade {
 					}
 				}
 			}.run();
+			
+			// finish the JAR file and write it to the workspace
 			jarOutputStream.close();
 			final byte[] contents = byteArrayOutputStream.toByteArray();
 			new CreateFileOperation(jarPath, contents, true).run();
 			return contents;
+			
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -174,8 +185,6 @@ public class PluginBuilderFacade {
 		insert.set(QUserPlugins.userPlugins.userId, userId);
 		insert.set(QUserPlugins.userPlugins.pluginId, pluginId);
 		insert.execute();
-		
-		// TODO: das hier geht noch nicht!
 		InternalPluginUtil.updateExtensionBindingsForUser(userId);
 		// TODO: die Plugins müssen noch zum Browser! Einfach die komplette Seite neuladen ist Shit,
 		// da geht dann zu vieles verloren. Außerdem reicht es nicht, die Seite neu zu rendern,
