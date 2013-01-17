@@ -13,7 +13,6 @@ import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.util.ArrayUtil;
 import name.martingeisse.webide.entity.Markers;
 import name.martingeisse.webide.entity.QMarkers;
-import name.martingeisse.webide.resources.MarkerData;
 import name.martingeisse.webide.resources.MarkerMeaning;
 
 import com.mysema.query.sql.SQLQuery;
@@ -37,7 +36,7 @@ public final class FetchAllMarkersOperation extends WorkspaceOperation {
 	/**
 	 * the markers
 	 */
-	private List<MarkerData> markers;
+	private List<FetchMarkerResult> markers;
 	
 	/**
 	 * Constructor.
@@ -72,7 +71,7 @@ public final class FetchAllMarkersOperation extends WorkspaceOperation {
 	@Override
 	protected void perform(IWorkspaceOperationContext context) {
 		if (meaningFilter != null && meaningFilter.length == 0) {
-			this.markers = new ArrayList<MarkerData>();
+			this.markers = new ArrayList<FetchMarkerResult>();
 			return;
 		}
 		SQLQuery query = EntityConnectionManager.getConnection().createQuery();
@@ -82,9 +81,9 @@ public final class FetchAllMarkersOperation extends WorkspaceOperation {
 		}
 		query.limit(limit);
 		List<Markers> rawMarkers = query.list(QMarkers.markers);
-		this.markers = new ArrayList<MarkerData>();
+		this.markers = new ArrayList<FetchMarkerResult>();
 		for (Markers marker : rawMarkers) {
-			this.markers.add(new MarkerData(marker));
+			this.markers.add(new FetchMarkerResult(marker));
 		}
 	}
 
@@ -92,7 +91,7 @@ public final class FetchAllMarkersOperation extends WorkspaceOperation {
 	 * Getter method for the markers.
 	 * @return the markers
 	 */
-	public List<MarkerData> getMarkers() {
+	public List<FetchMarkerResult> getMarkers() {
 		return markers;
 	}
 	

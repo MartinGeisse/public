@@ -8,8 +8,8 @@ package name.martingeisse.webide.workbench;
 
 import java.util.List;
 
-import name.martingeisse.webide.resources.MarkerData;
 import name.martingeisse.webide.resources.ResourcePath;
+import name.martingeisse.webide.resources.operation.FetchMarkerResult;
 
 import org.apache.wicket.Component;
 
@@ -56,6 +56,6 @@ public interface IEditor {
 	 * 
 	 * @param markers the markers for the resource being edited
 	 */
-	public void updateMarkers(List<MarkerData> markers);
+	public void updateMarkers(List<FetchMarkerResult> markers);
 	
 }

@@ -10,8 +10,8 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import name.martingeisse.webide.resources.MarkerData;
 import name.martingeisse.webide.resources.ResourcePath;
+import name.martingeisse.webide.resources.operation.FetchMarkerResult;
 import name.martingeisse.webide.resources.operation.FetchSingleResourceOperation;
 import name.martingeisse.webide.workbench.IEditor;
 
@@ -91,7 +91,7 @@ public class JavaEditor implements IEditor, Serializable {
 	 * @see name.martingeisse.webide.workbench.IEditor#updateMarkers(java.util.List)
 	 */
 	@Override
-	public void updateMarkers(final List<MarkerData> markers) {
+	public void updateMarkers(final List<FetchMarkerResult> markers) {
 		// TODO: not yet needed -- the java editor panel adds a future for the compilation result and markers itself
 	}
 

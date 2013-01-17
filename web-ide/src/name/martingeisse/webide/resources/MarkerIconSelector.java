@@ -10,6 +10,7 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 
 import name.martingeisse.webide.entity.Markers;
+import name.martingeisse.webide.resources.operation.FetchMarkerResult;
 import name.martingeisse.wicket.icons.silk.Dummy;
 
 /**
@@ -74,7 +75,7 @@ public enum MarkerIconSelector {
 	 * @param marker the marker
 	 * @return the icon selector
 	 */
-	public static MarkerIconSelector get(MarkerData marker) {
+	public static MarkerIconSelector get(FetchMarkerResult marker) {
 		return get(marker.getMeaning());
 	}
 

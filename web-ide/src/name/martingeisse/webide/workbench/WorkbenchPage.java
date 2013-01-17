@@ -18,7 +18,6 @@ import name.martingeisse.webide.plugin.ExtensionQuery;
 import name.martingeisse.webide.plugin.ExtensionQuery.Result;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
 import name.martingeisse.webide.resources.BuilderService;
-import name.martingeisse.webide.resources.MarkerData;
 import name.martingeisse.webide.resources.MarkerListView;
 import name.martingeisse.webide.resources.ResourceIconSelector;
 import name.martingeisse.webide.resources.ResourcePath;
@@ -26,6 +25,7 @@ import name.martingeisse.webide.resources.ResourceType;
 import name.martingeisse.webide.resources.WorkspaceWicketResourceReference;
 import name.martingeisse.webide.resources.operation.CreateFileOperation;
 import name.martingeisse.webide.resources.operation.DeleteResourcesOperation;
+import name.martingeisse.webide.resources.operation.FetchMarkerResult;
 import name.martingeisse.webide.resources.operation.FetchResourceResult;
 import name.martingeisse.webide.resources.operation.ListResourcesOperation;
 import name.martingeisse.wicket.component.contextmenu.ContextMenu;
@@ -49,6 +49,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.Item;
@@ -231,7 +232,7 @@ public class WorkbenchPage extends WebPage {
 		add(markersContainer);
 		markersContainer.add(new MarkerListView("markers", null, 30) {
 			@Override
-			protected void populateItem(final ListItem<MarkerData> item) {
+			protected void populateItem(final ListItem<FetchMarkerResult> item) {
 				addMeaningIcon(item, "icon", item.getModel());
 				addMeaningLabel(item, "meaning", item.getModel());
 				addMessageLabel(item, "message", item.getModel());
@@ -253,6 +254,16 @@ public class WorkbenchPage extends WebPage {
 				}
 			}
 		}.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true));
+		add(new Link<Void>("refreshPluginsButton") {
+			/* (non-Javadoc)
+			 * @see org.apache.wicket.markup.html.link.Link#onClick()
+			 */
+			@Override
+			public void onClick() {
+				System.out.println("***");
+				setResponsePage(new WorkbenchPage());
+			}
+		});
 	}
 	
 	/**

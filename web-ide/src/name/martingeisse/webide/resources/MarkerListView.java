@@ -8,6 +8,8 @@ package name.martingeisse.webide.resources;
 
 import java.util.List;
 
+import name.martingeisse.webide.resources.operation.FetchMarkerResult;
+
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
@@ -24,7 +26,7 @@ import org.apache.wicket.request.resource.ResourceReference;
  * populateItem method. This class provides helper methods
  * to create common marker-related components.
  */
-public abstract class MarkerListView extends ListView<MarkerData> {
+public abstract class MarkerListView extends ListView<FetchMarkerResult> {
 
 	/**
 	 * Constructor.
@@ -39,7 +41,7 @@ public abstract class MarkerListView extends ListView<MarkerData> {
 	 * @param id the wicket id
 	 * @param model the marker list model
 	 */
-	public MarkerListView(String id, IModel<? extends List<? extends MarkerData>> model) {
+	public MarkerListView(String id, IModel<? extends List<? extends FetchMarkerResult>> model) {
 		super(id, model);
 	}
 
@@ -48,7 +50,7 @@ public abstract class MarkerListView extends ListView<MarkerData> {
 	 * @param id the wicket id
 	 * @param list the marker list
 	 */
-	public MarkerListView(String id, List<? extends MarkerData> list) {
+	public MarkerListView(String id, List<? extends FetchMarkerResult> list) {
 		super(id, list);
 	}
 
@@ -82,7 +84,7 @@ public abstract class MarkerListView extends ListView<MarkerData> {
 	 * @param markerModel the model for the marker
 	 * @return the label
 	 */
-	protected final Label addMeaningLabel(WebMarkupContainer parent, String id, IModel<MarkerData> markerModel) {
+	protected final Label addMeaningLabel(WebMarkupContainer parent, String id, IModel<FetchMarkerResult> markerModel) {
 		Label label = new Label(id, new PropertyModel<String>(markerModel, "meaning"));
 		parent.add(label);
 		return label;
@@ -95,7 +97,7 @@ public abstract class MarkerListView extends ListView<MarkerData> {
 	 * @param markerModel the model for the marker
 	 * @return the image component
 	 */
-	protected final Image addMeaningIcon(WebMarkupContainer parent, String id, final IModel<MarkerData> markerModel) {
+	protected final Image addMeaningIcon(WebMarkupContainer parent, String id, final IModel<FetchMarkerResult> markerModel) {
 		Image image = new Image(id, new AbstractReadOnlyModel<ResourceReference>() {
 			@Override
 			public ResourceReference getObject() {
@@ -113,7 +115,7 @@ public abstract class MarkerListView extends ListView<MarkerData> {
 	 * @param markerModel the model for the marker
 	 * @return the label
 	 */
-	protected final Label addMessageLabel(WebMarkupContainer parent, String id, IModel<MarkerData> markerModel) {
+	protected final Label addMessageLabel(WebMarkupContainer parent, String id, IModel<FetchMarkerResult> markerModel) {
 		Label label = new Label(id, new PropertyModel<String>(markerModel, "message"));
 		parent.add(label);
 		return label;

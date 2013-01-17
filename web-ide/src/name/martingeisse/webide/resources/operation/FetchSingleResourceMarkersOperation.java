@@ -15,7 +15,6 @@ import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.util.ArrayUtil;
 import name.martingeisse.webide.entity.Markers;
 import name.martingeisse.webide.entity.QMarkers;
-import name.martingeisse.webide.resources.MarkerData;
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.ResourcePath;
 
@@ -38,7 +37,7 @@ public final class FetchSingleResourceMarkersOperation extends SingleResourceOpe
 	/**
 	 * the markers
 	 */
-	private List<MarkerData> markers;
+	private List<FetchMarkerResult> markers;
 	
 	/**
 	 * Constructor.
@@ -75,7 +74,7 @@ public final class FetchSingleResourceMarkersOperation extends SingleResourceOpe
 	@Override
 	protected void perform(IWorkspaceOperationContext context) {
 		if (meaningFilter != null && meaningFilter.length == 0) {
-			this.markers = new ArrayList<MarkerData>();
+			this.markers = new ArrayList<FetchMarkerResult>();
 			return;
 		}
 		SQLQuery query = EntityConnectionManager.getConnection().createQuery();
@@ -86,9 +85,9 @@ public final class FetchSingleResourceMarkersOperation extends SingleResourceOpe
 		}
 		query.limit(limit);
 		List<Markers> rawMarkers = query.list(QMarkers.markers);
-		this.markers = new ArrayList<MarkerData>();
+		this.markers = new ArrayList<FetchMarkerResult>();
 		for (Markers marker : rawMarkers) {
-			this.markers.add(new MarkerData(marker));
+			this.markers.add(new FetchMarkerResult(getPath(), marker));
 		}
 	}
 
@@ -96,7 +95,7 @@ public final class FetchSingleResourceMarkersOperation extends SingleResourceOpe
 	 * Getter method for the markers.
 	 * @return the markers
 	 */
-	public List<MarkerData> getMarkers() {
+	public List<FetchMarkerResult> getMarkers() {
 		return markers;
 	}
 	

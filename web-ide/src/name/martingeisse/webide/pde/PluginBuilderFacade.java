@@ -186,9 +186,6 @@ public class PluginBuilderFacade {
 		insert.set(QUserPlugins.userPlugins.pluginId, pluginId);
 		insert.execute();
 		InternalPluginUtil.updateExtensionBindingsForUser(userId);
-		// TODO: die Plugins müssen noch zum Browser! Einfach die komplette Seite neuladen ist Shit,
-		// da geht dann zu vieles verloren. Außerdem reicht es nicht, die Seite neu zu rendern,
-		// aktuell muss eine neue Seiteninstanz erzeugt werden.
 	}
 
 }

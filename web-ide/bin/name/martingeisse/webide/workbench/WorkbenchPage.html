@@ -47,9 +47,14 @@
 		</div>
 		<div class="LayoutBox">
 			<div class="ViewBox" style="height: 16px; ">
-				<span wicket:id="buildingWorkspaceIndicator">
-					Building workspace: <img src="/wicket/resource/name.martingeisse.wicket.icons.other.Dummy/BusyIndicatorBar.gif" height="14" style="vertical-align: top" />
-				</span>
+				<div style="float: left;">
+					<span wicket:id="buildingWorkspaceIndicator">
+						Building workspace: <img src="/wicket/resource/name.martingeisse.wicket.icons.other.Dummy/BusyIndicatorBar.gif" height="14" style="vertical-align: top" />
+					</span>
+				</div>
+				<div style="float: right; padding-right: 200px; ">
+					<button wicket:id="refreshPluginsButton">Refresh Plugins</button>
+				</div>
 			</div>
 		</div>
 	</body>

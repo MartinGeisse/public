@@ -9,6 +9,7 @@ package name.martingeisse.webide.resources;
 import java.util.List;
 
 import name.martingeisse.webide.resources.operation.FetchAllMarkersOperation;
+import name.martingeisse.webide.resources.operation.FetchMarkerResult;
 import name.martingeisse.webide.resources.operation.FetchSingleResourceMarkersOperation;
 
 import org.apache.wicket.model.AbstractReadOnlyModel;
@@ -16,7 +17,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 /**
  * Model that dynamically fetches marker lists from the database.
  */
-public class MarkerDataListModel extends AbstractReadOnlyModel<List<MarkerData>> {
+public class MarkerDataListModel extends AbstractReadOnlyModel<List<FetchMarkerResult>> {
 
 	/**
 	 * the path
@@ -62,7 +63,7 @@ public class MarkerDataListModel extends AbstractReadOnlyModel<List<MarkerData>>
 	 * @see org.apache.wicket.model.AbstractReadOnlyModel#getObject()
 	 */
 	@Override
-	public List<MarkerData> getObject() {
+	public List<FetchMarkerResult> getObject() {
 		if (path != null) {
 			FetchSingleResourceMarkersOperation operation = new FetchSingleResourceMarkersOperation(path, meaningFilter, limit);
 			operation.run();
