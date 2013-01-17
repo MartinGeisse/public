@@ -7,13 +7,17 @@
 package name.martingeisse.webide.resources.operation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.util.ArrayUtil;
 import name.martingeisse.webide.entity.Markers;
 import name.martingeisse.webide.entity.QMarkers;
 import name.martingeisse.webide.resources.MarkerMeaning;
+import name.martingeisse.webide.resources.ResourcePath;
 
 import com.mysema.query.sql.SQLQuery;
 
@@ -70,10 +74,14 @@ public final class FetchAllMarkersOperation extends WorkspaceOperation {
 	 */
 	@Override
 	protected void perform(IWorkspaceOperationContext context) {
+		
+		// if no meaning is accepted, the result must be empty
 		if (meaningFilter != null && meaningFilter.length == 0) {
 			this.markers = new ArrayList<FetchMarkerResult>();
 			return;
 		}
+		
+		// fetch markers
 		SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		query = query.from(QMarkers.markers);
 		if (meaningFilter != null) {
@@ -81,10 +89,22 @@ public final class FetchAllMarkersOperation extends WorkspaceOperation {
 		}
 		query.limit(limit);
 		List<Markers> rawMarkers = query.list(QMarkers.markers);
+		
+		// lookup paths
+		Set<Long> markerResourceIds = new HashSet<Long>();
+		for (Markers marker : rawMarkers) {
+			markerResourceIds.add(marker.getWorkspaceResourceId());
+		}
+		ReversePathLookupOperation reversePathLookupOperation = new ReversePathLookupOperation(markerResourceIds);
+		reversePathLookupOperation.run();
+		Map<Long, ResourcePath> pathMap = reversePathLookupOperation.getResult();
+		
+		// build FetchMarkerResult objects
 		this.markers = new ArrayList<FetchMarkerResult>();
 		for (Markers marker : rawMarkers) {
-			this.markers.add(new FetchMarkerResult(marker));
+			this.markers.add(new FetchMarkerResult(pathMap.get(marker.getWorkspaceResourceId()), marker));
 		}
+		
 	}
 
 	/**

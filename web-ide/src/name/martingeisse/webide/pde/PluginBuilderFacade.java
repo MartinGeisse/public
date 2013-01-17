@@ -178,6 +178,8 @@ public class PluginBuilderFacade {
 	 * Updates the user's plugins, currently to include only the specified plugin.
 	 */
 	private static void updateUsersPlugins(final long pluginId) {
+		
+		// TODO: fetch workspace staging plugins; move this block to InternalPluginUtil.updateStagingPluginsForUser
 		final long userId = 1;
 		final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QUserPlugins.userPlugins);
 		delete.where(QUserPlugins.userPlugins.userId.eq(userId)).execute();
@@ -185,7 +187,14 @@ public class PluginBuilderFacade {
 		insert.set(QUserPlugins.userPlugins.userId, userId);
 		insert.set(QUserPlugins.userPlugins.pluginId, pluginId);
 		insert.execute();
+		// TODO end
+		
+		// TODO do this in response to the "Refresh Plugins" button in the workbench page
+		InternalPluginUtil.updateStagingPluginsForUser(userId);
+
+		// TODO this will be the only thing left here, so move to performBuild above
 		InternalPluginUtil.updateExtensionBindingsForUser(userId);
+		
 	}
 
 }

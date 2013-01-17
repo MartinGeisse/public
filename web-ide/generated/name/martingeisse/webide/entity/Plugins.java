@@ -22,6 +22,11 @@ public class Plugins implements Serializable {
     private Long id;
 
     /**
+     * the isStaging
+     */
+    private Boolean isStaging;
+
+    /**
      * the isUnpacked
      */
     private Boolean isUnpacked;
@@ -40,6 +45,22 @@ public class Plugins implements Serializable {
      */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * Getter method for the isStaging.
+     * @return the isStaging
+     */
+    public Boolean getIsStaging() {
+        return isStaging;
+    }
+
+    /**
+     * Setter method for the isStaging.
+     * @param isStaging the isStaging to set
+     */
+    public void setIsStaging(Boolean isStaging) {
+        this.isStaging = isStaging;
     }
 
     /**
@@ -63,7 +84,7 @@ public class Plugins implements Serializable {
      */
     @Override
     public String toString() {
-        return "{Plugins. id = " + id + ", isUnpacked = " + isUnpacked + "}";
+        return "{Plugins. id = " + id + ", isStaging = " + isStaging + ", isUnpacked = " + isUnpacked + "}";
     }
 
 }

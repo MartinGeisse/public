@@ -16,6 +16,7 @@ import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.webide.entity.QWorkspaceResources;
 import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
+import name.martingeisse.webide.resources.ResourceType;
 
 import com.mysema.query.sql.SQLQuery;
 
@@ -31,7 +32,7 @@ import com.mysema.query.sql.SQLQuery;
  * resources specified at construction, as well as all ancestor
  * resources.
  */
-class ReversePathLookupOperations extends WorkspaceOperation {
+class ReversePathLookupOperation extends WorkspaceOperation {
 
 	/**
 	 * the originIds
@@ -51,14 +52,14 @@ class ReversePathLookupOperations extends WorkspaceOperation {
 	/**
 	 * Constructor.
 	 */
-	public ReversePathLookupOperations() {
+	public ReversePathLookupOperation() {
 	}
 
 	/**
 	 * Constructor.
 	 * @param originIds the IDs of the resources to find the paths for
 	 */
-	public ReversePathLookupOperations(final Collection<Long> originIds) {
+	public ReversePathLookupOperation(final Collection<Long> originIds) {
 		this.originIds = originIds;
 	}
 
@@ -66,7 +67,7 @@ class ReversePathLookupOperations extends WorkspaceOperation {
 	 * Constructor.
 	 * @param originIds the IDs of the resources to find the paths for
 	 */
-	public ReversePathLookupOperations(final long... originIds) {
+	public ReversePathLookupOperation(final long... originIds) {
 		setOriginIds(originIds);
 	}
 
@@ -112,25 +113,22 @@ class ReversePathLookupOperations extends WorkspaceOperation {
 	 */
 	private void collectResources() {
 		this.resourcesById = new HashMap<Long, WorkspaceResources>();
-		Collection<Long> missingResourceIds = originIds;
-		TODO
-	}
-	
-	/**
-	 * Takes the resource information from resourcesById, generates the paths,
-	 * and stores them in the result map.
-	 */
-	private void buildPaths() {
-		TODO
-	}
-	
-	/**
-	 * Builds the path for the specified id, stores it in the result map,
-	 * and returns it. Ancestor paths are also built. Any paths that
-	 * are already in the result map are just returned.
-	 */
-	private ResourcePath buildPath(long id) {
-		TODO
+		Collection<Long> missingResourceIds = new ArrayList<Long>(originIds);
+		while (!missingResourceIds.isEmpty()) {
+			List<WorkspaceResources> resources = fetchResources(missingResourceIds);
+			for (WorkspaceResources resource : resources) {
+				resourcesById.put(resource.getId(), resource);
+			}
+			missingResourceIds.clear();
+			for (WorkspaceResources resource : resources) {
+				if (!resource.getType().equals(ResourceType.WORKSPACE_ROOT.name())) {
+					long parentId = resource.getParentId();
+					if (resourcesById.get(parentId) == null) {
+						missingResourceIds.add(parentId);
+					}
+				}
+			}
+		}
 	}
 	
 	/**
@@ -141,6 +139,40 @@ class ReversePathLookupOperations extends WorkspaceOperation {
 		query.from(QWorkspaceResources.workspaceResources);
 		query.where(QWorkspaceResources.workspaceResources.id.in(ids));
 		return query.list(QWorkspaceResources.workspaceResources);
+	}
+	
+	/**
+	 * Takes the resource information from resourcesById, generates the paths,
+	 * and stores them in the result map.
+	 */
+	private void buildPaths() {
+		result = new HashMap<Long, ResourcePath>();
+		for (long originId : originIds) {
+			buildPath(originId);
+		}
+	}
+	
+	/**
+	 * Builds the path for the specified id, stores it in the result map,
+	 * and returns it. Ancestor paths are also built. Any paths that
+	 * are already in the result map are just returned.
+	 */
+	private ResourcePath buildPath(long id) {
+		ResourcePath path = result.get(id);
+		if (path == null) {
+			WorkspaceResources resource = resourcesById.get(id);
+			if (resource == null) {
+				throw new RuntimeException("internal error -- previously fetched resource not found");
+			}
+			if (resource.getType().equals(ResourceType.WORKSPACE_ROOT.name())) {
+				path = ResourcePath.ROOT;
+			} else {
+				ResourcePath parentPath = buildPath(resource.getParentId());
+				path = parentPath.appendSegment(resource.getName(), false);
+			}
+			result.put(resource.getId(), path);
+		}
+		return path;
 	}
 
 	/**

@@ -233,9 +233,11 @@ public class WorkbenchPage extends WebPage {
 		markersContainer.add(new MarkerListView("markers", null, 30) {
 			@Override
 			protected void populateItem(final ListItem<FetchMarkerResult> item) {
-				addMeaningIcon(item, "icon", item.getModel());
-				addMeaningLabel(item, "meaning", item.getModel());
-				addMessageLabel(item, "message", item.getModel());
+				IModel<FetchMarkerResult> model = item.getModel();
+				addResourcePathLabel(item, "resource", model);
+				addMeaningIcon(item, "icon", model);
+				addMeaningLabel(item, "meaning", model);
+				addMessageLabel(item, "message", model);
 			}
 		});
 

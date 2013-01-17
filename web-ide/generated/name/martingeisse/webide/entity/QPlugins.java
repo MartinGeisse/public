@@ -29,6 +29,11 @@ public class QPlugins extends com.mysema.query.sql.RelationalPathBase<Plugins> {
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     /**
+     * Metamodel property for property 'is_staging'
+     */
+    public final BooleanPath isStaging = createBoolean("is_staging");
+
+    /**
      * Metamodel property for property 'is_unpacked'
      */
     public final BooleanPath isUnpacked = createBoolean("is_unpacked");
@@ -37,6 +42,11 @@ public class QPlugins extends com.mysema.query.sql.RelationalPathBase<Plugins> {
      * Metamodel property for primary key 'PRIMARY'
      */
     public final com.mysema.query.sql.PrimaryKey<Plugins> pk_primary = createPrimaryKey(id);
+
+    /**
+     * Metamodel property for reverse foreign key 'workspace_staging_plugins_ibfk_2'
+     */
+    public final com.mysema.query.sql.ForeignKey<WorkspaceStagingPlugins> fk__workspaceStagingPluginsIbfk2 = createInvForeignKey(id, "plugin_id");
 
     /**
      * Metamodel property for reverse foreign key 'plugin_bundles_ibfk_1'

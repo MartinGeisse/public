@@ -78,6 +78,32 @@ public abstract class MarkerListView extends ListView<FetchMarkerResult> {
 	}
 
 	/**
+	 * Creates, adds and returns a new {@link Label} for the path of the resource the marker is attached to.
+	 * @param parent the parent component
+	 * @param id the wicket id
+	 * @param markerModel the model for the marker
+	 * @return the label
+	 */
+	protected final Label addResourcePathLabel(WebMarkupContainer parent, String id, IModel<FetchMarkerResult> markerModel) {
+		Label label = new Label(id, new PropertyModel<String>(markerModel, "resourcePath"));
+		parent.add(label);
+		return label;
+	}
+
+	/**
+	 * Creates, adds and returns a new {@link Label} for the name of the resource the marker is attached to.
+	 * @param parent the parent component
+	 * @param id the wicket id
+	 * @param markerModel the model for the marker
+	 * @return the label
+	 */
+	protected final Label addResourceNameLabel(WebMarkupContainer parent, String id, IModel<FetchMarkerResult> markerModel) {
+		Label label = new Label(id, new PropertyModel<String>(markerModel, "resourcePath.lastSegment"));
+		parent.add(label);
+		return label;
+	}
+	
+	/**
 	 * Creates, adds and returns a new {@link Label} for the marker meaning.
 	 * @param parent the parent component
 	 * @param id the wicket id

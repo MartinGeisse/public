@@ -103,6 +103,17 @@ public class InternalPluginUtil {
 	}
 
 	/**
+	 * Rebuilds the set of installed staging plugins for the specified user
+	 * by fetching the set of staging plugins for the current workspace.
+	 * Non-staging plugins are not affected.
+	 * 
+	 * @param userId the user ID
+	 */
+	public static void updateStagingPluginsForUser(final long userId) {
+		
+	}
+	
+	/**
 	 * Clears, then regenerates the extension bindings for the specified user.
 	 * This method assumes that the declared extension points and extensions
 	 * are available for all plugins the user has added to his/her user account.

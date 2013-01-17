@@ -58,6 +58,11 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	private static String[] emptySegments = new String[0];
 	
 	/**
+	 * The root path, represented as "/", using a leading but no trailing separator and no segments.
+	 */
+	public static final ResourcePath ROOT = new ResourcePath(true, false, emptySegments, 0, 0, false);
+	
+	/**
 	 * the leadingSeparator
 	 */
 	private final boolean leadingSeparator;
