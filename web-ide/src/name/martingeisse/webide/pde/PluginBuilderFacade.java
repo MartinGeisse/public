@@ -62,7 +62,7 @@ public class PluginBuilderFacade {
 		final ResourcePath binPath = basePath.appendSegment("bin", false);
 
 		// clean previous build
-		new DeleteSingleResourceMarkersOperation(descriptorFilePath, MarkerOrigin.PDE);
+		new DeleteSingleResourceMarkersOperation(descriptorFilePath, MarkerOrigin.PDE).run();
 		new DeleteResourceOperation(bundleFilePath).run();
 
 		// fetch the plugin descriptor, stop if not found
@@ -162,6 +162,7 @@ public class PluginBuilderFacade {
 
 		final SQLInsertClause pluginInsert = EntityConnectionManager.getConnection().createInsert(QPlugins.plugins);
 		pluginInsert.set(QPlugins.plugins.isUnpacked, false);
+		pluginInsert.set(QPlugins.plugins.isStaging, true);
 		final long pluginId = pluginInsert.executeWithKey(Long.class);
 
 		final SQLInsertClause bundleInsert = EntityConnectionManager.getConnection().createInsert(QPluginBundles.pluginBundles);
