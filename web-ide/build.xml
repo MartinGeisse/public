@@ -17,6 +17,9 @@
     	<javac srcdir="../webapp.common/src" destdir="${destination}" encoding="utf-8" fork="false" includeAntRuntime="false">
     		<classpath><fileset dir="${destination}/jars" includes="*.jar" /></classpath>
     	</javac>
+    	<copy todir="${destination}">
+    		<fileset dir="../webapp.common/src" excludes="**/*.java" />
+    	</copy>
     </target>
 	
     <target name="compile-wicket">
@@ -26,6 +29,9 @@
     	<javac srcdir="../webapp.wicket/src" destdir="${destination}" encoding="utf-8" fork="false" includeAntRuntime="false">
     		<classpath><fileset dir="${destination}/jars" includes="*.jar" /></classpath>
     	</javac>
+    	<copy todir="${destination}">
+    		<fileset dir="../webapp.wicket/src" excludes="**/*.java" />
+    	</copy>
     </target>
 	
     <target name="compile-webide">
@@ -36,6 +42,9 @@
     		<exclude name="name/martingeisse/webide/tools/**/*" />
     		<classpath><fileset dir="${destination}/jars" includes="*.jar" /></classpath>
     	</javac>
+    	<copy todir="${destination}">
+    		<fileset dir="src" excludes="**/*.java" />
+    	</copy>
     </target>
 	
     <target name="build" depends="prepare, compile-common, compile-wicket, compile-webide">
