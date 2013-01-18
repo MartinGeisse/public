@@ -7,5 +7,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/java/wicket-extensions-6.4.0.jar" sourcepath="resource/libsrc/wicket-extensions/src/main/java"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/wicket-request-6.4.0.jar" sourcepath="resource/libsrc/wicket-request/src/main/java"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/wicket-util-6.4.0.jar" sourcepath="resource/libsrc/wicket-util/src/main/java"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/wicket-native-websocket-core-0.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/wicket-native-websocket-jetty-0.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

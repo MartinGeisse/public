@@ -18,6 +18,7 @@ import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.apache.sshd.server.session.ServerSession;
 import org.apache.wicket.protocol.http.WicketFilter;
+import org.apache.wicket.protocol.ws.jetty.Jetty7WebSocketFilter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -71,7 +72,8 @@ public class Main {
 		context.getSessionHandler().getSessionManager().setMaxInactiveInterval(30 * 60);
 		
 		// add the Wicket filter
-		final Filter wicketFilter = new WicketFilter();
+		// final Filter wicketFilter = new WicketFilter();
+		final Filter wicketFilter = new Jetty7WebSocketFilter();
 		FilterHolder wicketFilterHolder = new FilterHolder(wicketFilter);
 		wicketFilterHolder.setInitParameter(WicketFilter.FILTER_MAPPING_PARAM, "/*");
 		wicketFilterHolder.setInitParameter("applicationClassName", WebIdeApplication.class.getCanonicalName());

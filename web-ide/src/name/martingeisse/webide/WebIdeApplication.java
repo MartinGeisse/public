@@ -27,7 +27,7 @@ public class WebIdeApplication extends WebApplication {
 	protected void init() {
 		super.init();
 		TemporaryFolder.initialize("web-ide");
-		setHeaderResponseDecorator(new MyHeaderResponseDecorator());
+		// setHeaderResponseDecorator(new MyHeaderResponseDecorator());
 	}
 
 	/* (non-Javadoc)
@@ -43,8 +43,8 @@ public class WebIdeApplication extends WebApplication {
 	 */
 	@Override
 	public Class<? extends Page> getHomePage() {
-		return WorkbenchPage.class;
-		// return PushTestPage.class;
+		// return WorkbenchPage.class;
+		return PushTestPage.class;
 	}
 
 }
