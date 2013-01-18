@@ -15,7 +15,7 @@
     		<fileset dir="../webapp.common/lib/java/querydsl" includes="*.jar" />
     	</copy>
     	<javac srcdir="../webapp.common/src" destdir="${destination}" encoding="utf-8" fork="false" includeAntRuntime="false">
-    		<classpath><fileset dir="${destination}/jars" includes="*.jar"></fileset></classpath>
+    		<classpath><fileset dir="${destination}/jars" includes="*.jar" /></classpath>
     	</javac>
     </target>
 	
@@ -24,7 +24,7 @@
     		<fileset dir="../webapp.wicket/lib/java" includes="*.jar" />
     	</copy>
     	<javac srcdir="../webapp.wicket/src" destdir="${destination}" encoding="utf-8" fork="false" includeAntRuntime="false">
-    		<classpath><fileset dir="${destination}/jars" includes="*.jar"></fileset></classpath>
+    		<classpath><fileset dir="${destination}/jars" includes="*.jar" /></classpath>
     	</javac>
     </target>
 	
@@ -32,15 +32,14 @@
     	<copy todir="${destination}/jars">
     		<fileset dir="lib/java" includes="*.jar" />
     	</copy>
-    	<javac srcdir="src" destdir="${destination}" encoding="utf-8" fork="false" includeAntRuntime="false">
-    		<classpath><fileset dir="${destination}/jars" includes="*.jar"></fileset></classpath>
+    	<javac srcdir="src:generated" destdir="${destination}" encoding="utf-8" fork="false" includeAntRuntime="false">
+    		<exclude name="name/martingeisse/webide/tools/**/*" />
+    		<classpath><fileset dir="${destination}/jars" includes="*.jar" /></classpath>
     	</javac>
     </target>
 	
     <target name="build" depends="prepare, compile-common, compile-wicket, compile-webide">
-    </target>
-
-    <target name="run">
+    	<copy file="run.xml" tofile="${destination}/build.xml" />
     </target>
 
 </project>

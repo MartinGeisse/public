@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project" default="run">
+
+    <target name="run">
+    	<java classname="name.martingeisse.webide.Main" fork="true" spawn="true">
+    		<classpath>
+    			<pathelement location="." />
+    			<fileset dir="jars" includes="*.jar" />
+    		</classpath>
+    	</java>
+    </target>
+
+</project>
