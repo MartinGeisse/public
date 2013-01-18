@@ -20,6 +20,8 @@ import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
 
+import org.apache.log4j.Logger;
+
 import com.mysema.query.sql.SQLQuery;
 
 /**
@@ -29,6 +31,12 @@ import com.mysema.query.sql.SQLQuery;
  */
 public abstract class RecursiveResourceOperation extends WorkspaceOperation {
 
+	/**
+	 * the logger
+	 */
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(RecursiveResourceOperation.class);
+	
 	/**
 	 * the rootPaths
 	 */
@@ -71,37 +79,53 @@ public abstract class RecursiveResourceOperation extends WorkspaceOperation {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.IWorkspaceOperationContext)
+	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.WorkspaceOperationContext)
 	 */
 	@Override
-	protected void perform(final IWorkspaceOperationContext context) {
+	protected void perform(final WorkspaceOperationContext context) {
+		
+		// logging
+		if (isDebugEnabled()) {
+			debug(getClass().getSimpleName() + " begin", rootPaths);
+		}
 		
 		// prepare -- the special case for a single root is needed to avoid infinite recursion since
 		// MultipleResourcesOperation.fetchResources uses a RecursiveResourceOperation too!
-		List<WorkspaceResources> currentResources;
+		logger.trace("fetching root resources ...");
+		List<FetchResourceResult> currentResources;
 		Map<Long, ResourcePath> pathById;
 		if (rootPaths.length == 0) {
 			return;
 		} else if (rootPaths.length == 1) {
-			WorkspaceResources rootResource = SingleResourceOperation.fetchResource(context, rootPaths[0]);
+			FetchResourceResult rootResource = context.fetchResource(rootPaths[0]);
 			if (rootResource == null) {
 				throw new WorkspaceResourceNotFoundException(rootPaths[0]);
 			}
-			currentResources = new ArrayList<WorkspaceResources>();
+			currentResources = new ArrayList<FetchResourceResult>();
 			currentResources.add(rootResource);
 			pathById = new HashMap<Long, ResourcePath>();
 			pathById.put(rootResource.getId(), rootPaths[0]);
 		} else {
-			currentResources = MultipleResourcesOperation.fetchResources(context, rootPaths);
+			currentResources = context.fetchResources(rootPaths);
 			pathById = associateRootPaths(currentResources);
 		}
+		logger.trace("root resources fetched.");
 		
 		// recursive handling
 		while (!currentResources.isEmpty()) {
-			List<FetchResourceResult> fetchResults = createFetchResourceResults(currentResources, pathById);
-			onLevelFetched(fetchResults);
-			Set<Long> parentIdsForNextLevel = getContainerResourceIds(fetchResults);
-			currentResources = fetchNextLevel(parentIdsForNextLevel);
+			logger.trace("will now call onLevelFetched() ...");
+			onLevelFetched(currentResources);
+			logger.trace("onLevelFetched() returned, fetching resources for next level ...");
+			Set<Long> parentIdsForNextLevel = getContainerResourceIds(currentResources);
+			List<WorkspaceResources> nextLevelRecords = fetchNextLevel(parentIdsForNextLevel);
+			logger.trace("building fetch results for the next level ...");
+			currentResources = createFetchResourceResults(nextLevelRecords, pathById);
+			logger.trace("resource level finished.");
+		}
+		
+		// logging
+		if (isDebugEnabled()) {
+			debug(getClass().getSimpleName() + " end", rootPaths);
 		}
 		
 	}
@@ -110,10 +134,10 @@ public abstract class RecursiveResourceOperation extends WorkspaceOperation {
 	 * Creates a id-to-path map from the root resources (assumed to be in exactly
 	 * the same order as the root paths).
 	 */
-	private Map<Long, ResourcePath> associateRootPaths(List<WorkspaceResources> rootResources) {
+	private Map<Long, ResourcePath> associateRootPaths(List<FetchResourceResult> rootResources) {
 		Map<Long, ResourcePath> pathById = new HashMap<Long, ResourcePath>();
 		int i = 0;
-		for (WorkspaceResources resource : rootResources) {
+		for (FetchResourceResult resource : rootResources) {
 			pathById.put(resource.getId(), rootPaths[i]);
 			i++;
 		}

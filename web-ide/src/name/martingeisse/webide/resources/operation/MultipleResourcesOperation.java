@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
 
 /**
@@ -48,21 +47,27 @@ public abstract class MultipleResourcesOperation extends WorkspaceOperation {
 		return paths;
 	}
 	
-	/**
-	 * Obtains and returns the ID of the resources, possibly querying the database.
-	 * IDs are returned in exactly the same order as the paths.
+	/* (non-Javadoc)
+	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#logAndPerform(name.martingeisse.webide.resources.operation.WorkspaceOperationContext)
 	 */
-	List<Long> fetchResourceIds(IWorkspaceOperationContext context) {
-		return fetchResourceIds(context, paths);
+	@Override
+	void logAndPerform(WorkspaceOperationContext context) {
+		if (isDebugEnabled()) {
+			debug(getClass().getSimpleName() + " begin", paths);
+		}
+		perform(context);
+		if (isDebugEnabled()) {
+			debug(getClass().getSimpleName() + " end", paths);
+		}
 	}
-
+	
 	/**
 	 * Obtains and returns the ID of the resources, possibly querying the database.
 	 * IDs are returned in exactly the same order as the paths.
 	 */
-	static List<Long> fetchResourceIds(IWorkspaceOperationContext context, ResourcePath[] paths) {
+	protected final List<Long> fetchResourceIds(WorkspaceOperationContext context) {
 		ArrayList<Long> ids = new ArrayList<Long>();
-		for (WorkspaceResources resource : fetchResources(context, paths)) {
+		for (FetchResourceResult resource : fetchResources(context)) {
 			ids.add(resource.getId());
 		}
 		return ids;
@@ -72,24 +77,8 @@ public abstract class MultipleResourcesOperation extends WorkspaceOperation {
 	 * Obtains and returns the resources from the database.
 	 * Resources are returned in exactly the same order as the paths.
 	 */
-	List<WorkspaceResources> fetchResource(IWorkspaceOperationContext context) {
-		return fetchResources(context, paths);
-	}
-	
-	/**
-	 * Obtains and returns the resources from the database.
-	 * Resources are returned in exactly the same order as the paths.
-	 */
-	static List<WorkspaceResources> fetchResources(IWorkspaceOperationContext context, ResourcePath[] paths) {
-		List<WorkspaceResources> results = new ArrayList<WorkspaceResources>();
-		for (ResourcePath path : paths) {
-			results.add(SingleResourceOperation.fetchResource(context, path));
-		}
-		return results;
-
-		// TODO: optimize!!!
-		// ResourcePath[] remainingPaths = Arrays.copyOf(paths, paths.length);
-		// WorkspaceResources[] resources = new WorkspaceResources[paths.length];
+	protected final List<FetchResourceResult> fetchResources(WorkspaceOperationContext context) {
+		return context.fetchResources(paths);
 	}
 	
 }

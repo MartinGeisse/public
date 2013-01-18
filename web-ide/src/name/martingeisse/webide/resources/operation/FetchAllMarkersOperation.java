@@ -19,6 +19,9 @@ import name.martingeisse.webide.entity.QMarkers;
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.ResourcePath;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
 import com.mysema.query.sql.SQLQuery;
 
 /**
@@ -27,6 +30,12 @@ import com.mysema.query.sql.SQLQuery;
  */
 public final class FetchAllMarkersOperation extends WorkspaceOperation {
 
+	/**
+	 * the logger
+	 */
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(FetchAllMarkersOperation.class);
+	
 	/**
 	 * the meaningFilter
 	 */
@@ -70,18 +79,22 @@ public final class FetchAllMarkersOperation extends WorkspaceOperation {
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.IWorkspaceOperationContext)
+	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.WorkspaceOperationContext)
 	 */
 	@Override
-	protected void perform(IWorkspaceOperationContext context) {
+	protected void perform(WorkspaceOperationContext context) {
 		
 		// if no meaning is accepted, the result must be empty
 		if (meaningFilter != null && meaningFilter.length == 0) {
 			this.markers = new ArrayList<FetchMarkerResult>();
+			logger.debug("FetchAllMarkersOperation: no accepted meaning -> no markers");
 			return;
 		}
 		
 		// fetch markers
+		if (logger.isTraceEnabled()) {
+			logger.trace("fetching markers, meaning: [" + (meaningFilter == null ? "*" : StringUtils.join(meaningFilter, ", ")) + "] ...");
+		}
 		SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		query = query.from(QMarkers.markers);
 		if (meaningFilter != null) {
@@ -89,8 +102,10 @@ public final class FetchAllMarkersOperation extends WorkspaceOperation {
 		}
 		query.limit(limit);
 		List<Markers> rawMarkers = query.list(QMarkers.markers);
+		logger.trace("markers fetched.");
 		
 		// lookup paths
+		logger.trace("fetching marker resource paths...");
 		Set<Long> markerResourceIds = new HashSet<Long>();
 		for (Markers marker : rawMarkers) {
 			markerResourceIds.add(marker.getWorkspaceResourceId());
@@ -98,6 +113,7 @@ public final class FetchAllMarkersOperation extends WorkspaceOperation {
 		ReversePathLookupOperation reversePathLookupOperation = new ReversePathLookupOperation(markerResourceIds);
 		reversePathLookupOperation.run();
 		Map<Long, ResourcePath> pathMap = reversePathLookupOperation.getResult();
+		logger.trace("marker resource paths fetched.");
 		
 		// build FetchMarkerResult objects
 		this.markers = new ArrayList<FetchMarkerResult>();

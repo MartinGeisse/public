@@ -6,7 +6,6 @@
 
 package name.martingeisse.webide.resources.operation;
 
-import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
 
 /**
@@ -38,12 +37,11 @@ public final class FetchSingleResourceOperation extends SingleResourceOperation 
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.IWorkspaceOperationContext)
+	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.WorkspaceOperationContext)
 	 */
 	@Override
-	protected void perform(IWorkspaceOperationContext context) {
-		WorkspaceResources resource = fetchResource(context);
-		this.result = (resource == null ? null : new FetchResourceResult(getPath(), resource));
+	protected void perform(WorkspaceOperationContext context) {
+		this.result = fetchResource(context);
 	}
 	
 }

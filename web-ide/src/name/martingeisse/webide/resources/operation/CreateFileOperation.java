@@ -8,13 +8,12 @@ package name.martingeisse.webide.resources.operation;
 
 import java.nio.charset.Charset;
 
-import com.mysema.query.sql.dml.SQLInsertClause;
-
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.webide.entity.QWorkspaceResources;
-import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
+
+import com.mysema.query.sql.dml.SQLInsertClause;
 
 /**
  * This operation creates a file in the workspace.
@@ -58,11 +57,12 @@ public final class CreateFileOperation extends AbstractCreateResourceOperation {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.IWorkspaceOperationContext)
+	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.WorkspaceOperationContext)
 	 */
 	@Override
-	protected void perform(final IWorkspaceOperationContext context) {
-		WorkspaceResources parentResource = createEnclosingFoldersIfNeeded(context);
+	protected void perform(final WorkspaceOperationContext context) {
+		FetchResourceResult parentResource = createEnclosingFoldersIfNeeded(context);
+		trace("will create file now", getPath());
 		final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QWorkspaceResources.workspaceResources);
 		insert.set(QWorkspaceResources.workspaceResources.name, getPath().getLastSegment());
 		insert.set(QWorkspaceResources.workspaceResources.contents, (contents == null ? new byte[0] : contents));

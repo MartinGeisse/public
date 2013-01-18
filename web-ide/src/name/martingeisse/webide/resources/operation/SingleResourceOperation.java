@@ -6,13 +6,9 @@
 
 package name.martingeisse.webide.resources.operation;
 
-import name.martingeisse.common.database.EntityConnectionManager;
-import name.martingeisse.webide.entity.QWorkspaceResources;
-import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.ResourceType;
 
-import com.mysema.query.sql.SQLQuery;
+import org.apache.log4j.Logger;
 
 /**
  * Internal base implementation for operations that affect a single resource
@@ -20,6 +16,12 @@ import com.mysema.query.sql.SQLQuery;
  */
 public abstract class SingleResourceOperation extends WorkspaceOperation {
 
+	/**
+	 * the logger
+	 */
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(SingleResourceOperation.class);
+	
 	/**
 	 * the path
 	 */
@@ -41,53 +43,35 @@ public abstract class SingleResourceOperation extends WorkspaceOperation {
 		return path;
 	}
 	
-	/**
-	 * Obtains and returns the ID of the resource, possibly querying the database.
+	/* (non-Javadoc)
+	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#logAndPerform(name.martingeisse.webide.resources.operation.WorkspaceOperationContext)
 	 */
-	final long fetchResourceId(IWorkspaceOperationContext context) {
-		return fetchResourceId(context, path);
+	@Override
+	void logAndPerform(WorkspaceOperationContext context) {
+		if (isDebugEnabled()) {
+			debug(getClass().getSimpleName() + " begin", path);
+		}
+		perform(context);
+		if (isDebugEnabled()) {
+			debug(getClass().getSimpleName() + " end", path);
+		}
 	}
-
+	
 	/**
 	 * Obtains and returns the ID of the resource, possibly querying the database.
 	 * Returns -1 if the resource cannot be found.
 	 */
-	static long fetchResourceId(IWorkspaceOperationContext context, ResourcePath path) {
-		WorkspaceResources resource = fetchResource(context, path);
-		return (resource == null ? -1 : resource.getId());
+	protected final long fetchResourceId(WorkspaceOperationContext context) {
+		FetchResourceResult result = context.fetchResource(path);
+		return (result == null ? -1 : result.getId());
 	}
 
 	/**
 	 * Obtains and returns the resource from the database, or null if the resource
 	 * cannot be found.
 	 */
-	final WorkspaceResources fetchResource(IWorkspaceOperationContext context) {
-		return fetchResource(context, path);
-	}
-	
-	/**
-	 * Obtains and returns the resource from the database, or null if the resource
-	 * cannot be found.
-	 */
-	static WorkspaceResources fetchResource(IWorkspaceOperationContext context, ResourcePath path) {
-		if (!path.isLeadingSeparator()) {
-			throw new WorkspaceOperationException("cannot fetch resource using a relative path: " + path);
-		}
-		if (path.getSegmentCount() == 0) {
-			final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-			query.from(QWorkspaceResources.workspaceResources);
-			query.where(QWorkspaceResources.workspaceResources.type.eq(ResourceType.WORKSPACE_ROOT.name()));
-			return query.singleResult(QWorkspaceResources.workspaceResources);
-		}
-		WorkspaceResources parent = fetchResource(context, path.removeLastSegment(false));
-		if (parent == null) {
-			return null;
-		}
-		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-		query.from(QWorkspaceResources.workspaceResources);
-		query.where(QWorkspaceResources.workspaceResources.parentId.eq(parent.getId()));
-		query.where(QWorkspaceResources.workspaceResources.name.eq(path.getLastSegment()));
-		return query.singleResult(QWorkspaceResources.workspaceResources);
+	protected final FetchResourceResult fetchResource(WorkspaceOperationContext context) {
+		return context.fetchResource(path);
 	}
 	
 }

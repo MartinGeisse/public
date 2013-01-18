@@ -28,6 +28,11 @@ public final class FetchResourceResult implements Serializable {
 	 * the id
 	 */
 	private final long id;
+	
+	/**
+	 * the parentId
+	 */
+	private final Long parentId;
 
 	/**
 	 * the path
@@ -45,26 +50,32 @@ public final class FetchResourceResult implements Serializable {
 	private final byte[] contents;
 
 	/**
+	 * TODO: remove
+	 * This constructor is currently needed by the workspace implementation. It should not exist.
+	 * @return the fake root
+	 */
+	public static FetchResourceResult createFakeRoot() {
+		ResourcePath path = new ResourcePath("/");
+		WorkspaceResources fakeResource = new WorkspaceResources();
+		fakeResource.setId(0L);
+		fakeResource.setParentId(null);
+		fakeResource.setName("");
+		fakeResource.setType(ResourceType.WORKSPACE_ROOT.name());
+		fakeResource.setContents(null);
+		return new FetchResourceResult(path, fakeResource);
+	}
+	
+	/**
 	 * Constructor.
 	 * @param path the path
 	 * @param resource the database record for the resource
 	 */
 	FetchResourceResult(final ResourcePath path, final WorkspaceResources resource) {
-		this(resource.getId(), path, ResourceType.valueOf(resource.getType()), resource.getContents());
-	}
-	
-	/**
-	 * Constructor.
-	 * @param id the ID
-	 * @param path the path
-	 * @param type the resource type
-	 * @param contents the contents (only for files)
-	 */
-	public FetchResourceResult(final long id, final ResourcePath path, final ResourceType type, final byte[] contents) {
-		this.id = id;
+		this.id = resource.getId();
+		this.parentId = resource.getParentId();
 		this.path = path;
-		this.type = type;
-		this.contents = contents;
+		this.type = ResourceType.valueOf(resource.getType());
+		this.contents = resource.getContents();
 	}
 
 	/**
@@ -73,6 +84,14 @@ public final class FetchResourceResult implements Serializable {
 	 */
 	public long getId() {
 		return id;
+	}
+	
+	/**
+	 * Getter method for the parentId.
+	 * @return the parentId
+	 */
+	public Long getParentId() {
+		return parentId;
 	}
 	
 	/**

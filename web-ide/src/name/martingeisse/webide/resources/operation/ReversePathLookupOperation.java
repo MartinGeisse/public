@@ -18,6 +18,8 @@ import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
 
+import org.apache.log4j.Logger;
+
 import com.mysema.query.sql.SQLQuery;
 
 /**
@@ -34,6 +36,12 @@ import com.mysema.query.sql.SQLQuery;
  */
 class ReversePathLookupOperation extends WorkspaceOperation {
 
+	/**
+	 * the logger
+	 */
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(ReversePathLookupOperation.class);
+	
 	/**
 	 * the originIds
 	 */
@@ -99,10 +107,10 @@ class ReversePathLookupOperation extends WorkspaceOperation {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.IWorkspaceOperationContext)
+	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.WorkspaceOperationContext)
 	 */
 	@Override
-	protected void perform(final IWorkspaceOperationContext context) {
+	protected void perform(final WorkspaceOperationContext context) {
 		collectResources();
 		buildPaths();
 	}
@@ -112,9 +120,11 @@ class ReversePathLookupOperation extends WorkspaceOperation {
 	 * resources and stores them in the resourcesById map.
 	 */
 	private void collectResources() {
+		logger.trace("collecting resources ...");
 		this.resourcesById = new HashMap<Long, WorkspaceResources>();
 		Collection<Long> missingResourceIds = new ArrayList<Long>(originIds);
 		while (!missingResourceIds.isEmpty()) {
+			logger.trace("fetching resource level ...");
 			List<WorkspaceResources> resources = fetchResources(missingResourceIds);
 			for (WorkspaceResources resource : resources) {
 				resourcesById.put(resource.getId(), resource);
@@ -128,7 +138,9 @@ class ReversePathLookupOperation extends WorkspaceOperation {
 					}
 				}
 			}
+			logger.trace("resource level fetched...");
 		}
+		logger.trace("resources collected.");
 	}
 	
 	/**
@@ -146,10 +158,12 @@ class ReversePathLookupOperation extends WorkspaceOperation {
 	 * and stores them in the result map.
 	 */
 	private void buildPaths() {
+		logger.trace("building paths ...");
 		result = new HashMap<Long, ResourcePath>();
 		for (long originId : originIds) {
 			buildPath(originId);
 		}
+		logger.trace("paths built.");
 	}
 	
 	/**

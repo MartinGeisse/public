@@ -35,15 +35,16 @@ public final class DeleteSingleResourceMarkersOperation extends SingleResourceOp
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.IWorkspaceOperationContext)
+	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.WorkspaceOperationContext)
 	 */
 	@Override
-	protected void perform(final IWorkspaceOperationContext context) {
+	protected void perform(final WorkspaceOperationContext context) {
 		SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QMarkers.markers);
 		delete.where(QMarkers.markers.workspaceResourceId.eq(fetchResourceId(context)));
 		if (origin != null) {
 			delete.where(QMarkers.markers.origin.eq(origin.toString()));
 		}
+		trace("will delete resource markers now", getPath());
 		delete.execute();
 	}
 

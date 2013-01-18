@@ -16,6 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import name.martingeisse.test.json.IJsonEquivalence;
+import name.martingeisse.test.json.JsonEquality;
+
 import org.junit.Test;
 
 /**

@@ -43,15 +43,16 @@ public class ListResourcesOperation extends SingleResourceOperation {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.IWorkspaceOperationContext)
+	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.WorkspaceOperationContext)
 	 */
 	@Override
-	protected void perform(final IWorkspaceOperationContext context) {
+	protected void perform(final WorkspaceOperationContext context) {
 		children = null;
 		final long parentId = fetchResourceId(context);
 		if (parentId == -1) {
 			throw new WorkspaceResourceNotFoundException(getPath());
 		}
+		trace("will list resources now", getPath());
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		query.from(QWorkspaceResources.workspaceResources);
 		query.where(QWorkspaceResources.workspaceResources.parentId.eq(parentId));

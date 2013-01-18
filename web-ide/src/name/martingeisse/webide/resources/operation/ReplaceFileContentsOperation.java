@@ -10,7 +10,6 @@ import java.nio.charset.Charset;
 
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.webide.entity.QWorkspaceResources;
-import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
 
@@ -54,16 +53,17 @@ public final class ReplaceFileContentsOperation extends SingleResourceOperation 
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.IWorkspaceOperationContext)
+	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.WorkspaceOperationContext)
 	 */
 	@Override
-	protected void perform(final IWorkspaceOperationContext context) {
-		WorkspaceResources resource = fetchResource(context);
-		if (ResourceType.valueOf(resource.getType()) != ResourceType.FILE) {
-			throw new WorkspaceOperationException("cannot replace the contents of a resource of type: " + resource.getType());
+	protected void perform(final WorkspaceOperationContext context) {
+		FetchResourceResult fetchResourceResult = fetchResource(context);
+		if (fetchResourceResult.getType() != ResourceType.FILE) {
+			throw new WorkspaceOperationException("cannot replace the contents of a resource of type: " + fetchResourceResult.getType());
 		}
+		trace("will replace file contents now", getPath());
 		final SQLUpdateClause update = EntityConnectionManager.getConnection().createUpdate(QWorkspaceResources.workspaceResources);
-		update.where(QWorkspaceResources.workspaceResources.id.eq(resource.getId()));
+		update.where(QWorkspaceResources.workspaceResources.id.eq(fetchResourceResult.getId()));
 		update.set(QWorkspaceResources.workspaceResources.contents, (contents == null ? new byte[0] : contents));
 		update.execute();
 	}

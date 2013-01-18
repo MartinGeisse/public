@@ -178,9 +178,7 @@ public class WorkbenchPage extends WebPage {
 			
 			@Override
 			public Iterator<? extends FetchResourceResult> getRoots() {
-				ResourcePath path = new ResourcePath("/");
-				FetchResourceResult fakeResult = new FetchResourceResult(0, path, null, null);
-				return getChildren(fakeResult);
+				return getChildren(FetchResourceResult.createFakeRoot());
 			}
 			
 			@Override
@@ -220,7 +218,6 @@ public class WorkbenchPage extends WebPage {
 					if (!selectedNodes.isEmpty()) {
 						loadEditorContents(selectedNodes.get(0).getPath());
 					}
-					target.add(WorkbenchPage.this);
 				}
 			}
 
@@ -241,7 +238,11 @@ public class WorkbenchPage extends WebPage {
 			}
 		});
 
-		add(new EmptyPanel("editor"));
+		WebMarkupContainer editorContainer = new WebMarkupContainer("editorContainer");
+		editorContainer.add(new EmptyPanel("editor"));
+		editorContainer.setOutputMarkupId(true);
+		add(editorContainer);
+		
 		add(new Label("log", new PropertyModel<String>(this, "log")));
 		add(new WebMarkupContainer("buildingWorkspaceIndicator") {
 			@Override
@@ -285,8 +286,8 @@ public class WorkbenchPage extends WebPage {
 	private void loadEditorContents(final ResourcePath path) {
 		IEditor editor = new JavaEditor();
 		editor.initialize(path);
-		replace(editor.createComponent("editor"));
-		AjaxRequestUtil.markForRender(this);
+		((WebMarkupContainer)get("editorContainer")).replace(editor.createComponent("editor"));
+		AjaxRequestUtil.markForRender(WorkbenchPage.this.get("editorContainer"));
 	}
 
 	/**

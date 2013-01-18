@@ -38,10 +38,10 @@ public final class DeleteResourcesOperation extends MultipleResourcesOperation {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.IWorkspaceOperationContext)
+	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.WorkspaceOperationContext)
 	 */
 	@Override
-	protected void perform(final IWorkspaceOperationContext context) {
+	protected void perform(final WorkspaceOperationContext context) {
 		// Child resources are deleted by the SQL cascade settings. Note that we
 		// specify the resources to be deleted by id rather than by parent id and
 		// name -- although this causes an extra SELECT, it ensures that the
@@ -52,6 +52,7 @@ public final class DeleteResourcesOperation extends MultipleResourcesOperation {
 		}
 		SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QWorkspaceResources.workspaceResources);
 		delete.where(QWorkspaceResources.workspaceResources.id.in(resourceIds));
+		trace("will delete resources now", getPaths());
 		delete.execute();
 	}
 

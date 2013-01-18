@@ -26,16 +26,17 @@ public final class DeleteResourceOperation extends SingleResourceOperation {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.IWorkspaceOperationContext)
+	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.WorkspaceOperationContext)
 	 */
 	@Override
-	protected void perform(final IWorkspaceOperationContext context) {
+	protected void perform(final WorkspaceOperationContext context) {
 		// Child resources are deleted by the SQL cascade settings. Note that we
 		// specify the resource to be deleted by id rather than by parent id and
 		// name -- although this causes an extra SELECT, it ensures that the
 		// resource exists rather than fail silently for missing resources.
 		SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QWorkspaceResources.workspaceResources);
 		delete.where(QWorkspaceResources.workspaceResources.id.eq(fetchResourceId(context)));
+		trace("will delete resource now", getPath());
 		delete.execute();
 	}
 

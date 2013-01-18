@@ -11,8 +11,8 @@ import static org.junit.Assert.assertEquals;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import name.martingeisse.common.util.test.PreparedStatementDouble;
-import name.martingeisse.common.util.test.ResultSetDouble;
+import name.martingeisse.test.PreparedStatementDouble;
+import name.martingeisse.test.ResultSetDouble;
 
 /**
  *

@@ -63,14 +63,15 @@ public final class CreateResourceMarkerOperation extends SingleResourceOperation
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.IWorkspaceOperationContext)
+	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.WorkspaceOperationContext)
 	 */
 	@Override
-	protected void perform(final IWorkspaceOperationContext context) {
+	protected void perform(final WorkspaceOperationContext context) {
 		long resourceId = fetchResourceId(context);
 		if (resourceId == -1) {
 			throw new WorkspaceResourceNotFoundException(getPath());
 		}
+		trace("will create resource marker now", getPath());
 		SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QMarkers.markers);
 		insert.set(QMarkers.markers.workspaceResourceId, resourceId);
 		insert.set(QMarkers.markers.origin, origin.toString());

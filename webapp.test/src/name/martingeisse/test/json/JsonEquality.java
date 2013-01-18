@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.common.util.test.json;
+package name.martingeisse.test.json;
 
 import java.util.LinkedList;
 

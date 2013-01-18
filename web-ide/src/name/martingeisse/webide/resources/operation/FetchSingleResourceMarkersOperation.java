@@ -9,8 +9,6 @@ package name.martingeisse.webide.resources.operation;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mysema.query.sql.SQLQuery;
-
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.util.ArrayUtil;
 import name.martingeisse.webide.entity.Markers;
@@ -18,12 +16,23 @@ import name.martingeisse.webide.entity.QMarkers;
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.ResourcePath;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import com.mysema.query.sql.SQLQuery;
+
 /**
  * Fetches the markers for a single resource and makes them
  * available through a getter method.
  */
 public final class FetchSingleResourceMarkersOperation extends SingleResourceOperation {
 
+	/**
+	 * the logger
+	 */
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(FetchSingleResourceMarkersOperation.class);
+	
 	/**
 	 * the meaningFilter
 	 */
@@ -69,13 +78,21 @@ public final class FetchSingleResourceMarkersOperation extends SingleResourceOpe
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.IWorkspaceOperationContext)
+	 * @see name.martingeisse.webide.resources.operation.WorkspaceOperation#perform(name.martingeisse.webide.resources.operation.WorkspaceOperationContext)
 	 */
 	@Override
-	protected void perform(IWorkspaceOperationContext context) {
+	protected void perform(WorkspaceOperationContext context) {
+
+		// if no meaning is accepted, the result must be empty
 		if (meaningFilter != null && meaningFilter.length == 0) {
 			this.markers = new ArrayList<FetchMarkerResult>();
+			logger.debug("FetchAllMarkersOperation: no accepted meaning -> no markers");
 			return;
+		}
+		
+		// fetch markers
+		if (logger.isTraceEnabled()) {
+			logger.trace("fetching markers, meaning: [" + (meaningFilter == null ? "*" : StringUtils.join(meaningFilter, ", ")) + "] ...");
 		}
 		SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		query = query.from(QMarkers.markers);
@@ -85,10 +102,14 @@ public final class FetchSingleResourceMarkersOperation extends SingleResourceOpe
 		}
 		query.limit(limit);
 		List<Markers> rawMarkers = query.list(QMarkers.markers);
+		logger.trace("markers fetched.");
+		
+		// build FetchMarkerResult objects
 		this.markers = new ArrayList<FetchMarkerResult>();
 		for (Markers marker : rawMarkers) {
 			this.markers.add(new FetchMarkerResult(getPath(), marker));
 		}
+		
 	}
 
 	/**

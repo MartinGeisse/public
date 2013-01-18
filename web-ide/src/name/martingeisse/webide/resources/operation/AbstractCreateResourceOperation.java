@@ -12,6 +12,8 @@ import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
 
+import org.apache.log4j.Logger;
+
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.dml.SQLInsertClause;
 
@@ -20,6 +22,12 @@ import com.mysema.query.sql.dml.SQLInsertClause;
  */
 public abstract class AbstractCreateResourceOperation extends SingleResourceOperation {
 
+	/**
+	 * the logger
+	 */
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(AbstractCreateResourceOperation.class);
+	
 	/**
 	 * the createEnclosingFolders
 	 */
@@ -41,18 +49,20 @@ public abstract class AbstractCreateResourceOperation extends SingleResourceOper
 	 * Otherwise just fetches the enclosing folder for the path.
 	 * Returns the {@link WorkspaceResources} object for the parent container.
 	 */
-	protected final WorkspaceResources createEnclosingFoldersIfNeeded(final IWorkspaceOperationContext context) {
+	protected final FetchResourceResult createEnclosingFoldersIfNeeded(final WorkspaceOperationContext context) {
 		ResourcePath parentPath = getPath().removeLastSegment(false);
+		debug("enclosing folder (autocreate = " + createEnclosingFolders + ")", parentPath);
 		if (createEnclosingFolders) {
 			return createFolders(context, parentPath);
 		} else {
-			WorkspaceResources enclosingFolder = fetchResource(context, parentPath);
+			FetchResourceResult enclosingFolder = context.fetchResource(parentPath);
 			if (enclosingFolder == null) {
 				throw new WorkspaceOperationException("parent folder of path " + getPath() + " does not exist");
 			}
 			if (enclosingFolder.getType().equals(ResourceType.FILE.name())) {
 				throw new WorkspaceOperationException("parent resource of path " + getPath() + " is a file, not a folder");
 			}
+			trace("enclosing folder exists", parentPath);
 			return enclosingFolder;
 		}
 	}
@@ -60,19 +70,20 @@ public abstract class AbstractCreateResourceOperation extends SingleResourceOper
 	/**
 	 * Creates the specified folder and all enclosing folders recursively.
 	 */
-	private WorkspaceResources createFolders(final IWorkspaceOperationContext context, ResourcePath path) {
+	private FetchResourceResult createFolders(final WorkspaceOperationContext context, ResourcePath path) {
 		
 		// check for workspace root paths, project paths
 		if (path.getSegmentCount() < 2) {
-			WorkspaceResources container = fetchResource(context, path);
+			FetchResourceResult container = context.fetchResource(path);
 			if (container == null) {
 				throw new RuntimeException("container resource " + path + " does not exist and cannot be created automatically");
 			}
+			trace("enclosing container exists", path);
 			return container;
 		}
 		
 		// first create the parent recursively
-		WorkspaceResources parent = createFolders(context, path.removeLastSegment(false));
+		FetchResourceResult parent = createFolders(context, path.removeLastSegment(false));
 		
 		// check for an existing folder
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
@@ -84,7 +95,7 @@ public abstract class AbstractCreateResourceOperation extends SingleResourceOper
 			if (existing.getType().equals(ResourceType.FILE.name())) {
 				throw new RuntimeException("resource " + path + " is a file, not a folder");
 			}
-			return existing;
+			return new FetchResourceResult(path, existing);
 		}
 		
 		// create a new object to collect data and for the return value
@@ -94,6 +105,7 @@ public abstract class AbstractCreateResourceOperation extends SingleResourceOper
 		folder.setName(path.getLastSegment());
 
 		// persist the new folder in the database
+		trace("will create enclosing folder now", path);
 		SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QWorkspaceResources.workspaceResources);
 		insert.set(QWorkspaceResources.workspaceResources.parentId, folder.getParentId());
 		insert.set(QWorkspaceResources.workspaceResources.type, folder.getType());
@@ -103,7 +115,7 @@ public abstract class AbstractCreateResourceOperation extends SingleResourceOper
 		
 		// return the resource object
 		folder.setId(id);
-		return folder;
+		return new FetchResourceResult(path, folder);
 		
 	}
 

@@ -10,12 +10,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.mysema.query.sql.dml.SQLDeleteClause;
-
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.webide.entity.QMarkers;
 import name.martingeisse.webide.resources.MarkerOrigin;
 import name.martingeisse.webide.resources.ResourcePath;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import com.mysema.query.sql.dml.SQLDeleteClause;
 
 /**
  * Recursively deletes all markers (optionally only markers of a specific origin)
@@ -23,6 +26,12 @@ import name.martingeisse.webide.resources.ResourcePath;
  */
 public final class RecursiveDeleteMarkersOperation extends RecursiveResourceOperation {
 
+	/**
+	 * the logger
+	 */
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(RecursiveDeleteMarkersOperation.class);
+	
 	/**
 	 * the origin
 	 */
@@ -71,6 +80,9 @@ public final class RecursiveDeleteMarkersOperation extends RecursiveResourceOper
 		List<Long> resourceIds = new ArrayList<Long>();
 		for (FetchResourceResult fetchResult : fetchResults) {
 			resourceIds.add(fetchResult.getId());
+		}
+		if (logger.isTraceEnabled()) {
+			logger.trace("deleting markers for resources with IDs: " + StringUtils.join(resourceIds, ", "));
 		}
 		SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QMarkers.markers);
 		delete.where(QMarkers.markers.workspaceResourceId.in(resourceIds));
