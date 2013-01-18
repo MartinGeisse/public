@@ -22,8 +22,8 @@ import name.martingeisse.common.util.ReturnValueUtil;
 import name.martingeisse.wicket.util.ISimpleCallbackListener;
 import name.martingeisse.wicket.util.StringValueUtil;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;

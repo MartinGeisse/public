@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang.NotImplementedException;
+import name.martingeisse.common.util.NotImplementedException;
 
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.CacheStats;

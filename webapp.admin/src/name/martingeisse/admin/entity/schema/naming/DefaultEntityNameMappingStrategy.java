@@ -9,7 +9,7 @@ package name.martingeisse.admin.entity.schema.naming;
 
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
 
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.text.WordUtils;
 
 /**
  * This name mapping strategy checks if the name begins with

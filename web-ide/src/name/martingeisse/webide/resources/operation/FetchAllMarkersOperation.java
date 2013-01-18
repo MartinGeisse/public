@@ -19,7 +19,7 @@ import name.martingeisse.webide.entity.QMarkers;
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.ResourcePath;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.mysema.query.sql.SQLQuery;

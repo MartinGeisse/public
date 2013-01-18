@@ -6,8 +6,8 @@
 
 package name.martingeisse.admin.entity.schema.lowlevel;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Selects a JDBC column by catalog name, schema name, table name, and column name.

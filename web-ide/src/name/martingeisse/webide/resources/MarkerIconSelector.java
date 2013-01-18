@@ -6,12 +6,12 @@
 
 package name.martingeisse.webide.resources;
 
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
-
 import name.martingeisse.webide.entity.Markers;
 import name.martingeisse.webide.resources.operation.FetchMarkerResult;
 import name.martingeisse.wicket.icons.silk.Dummy;
+
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 
 /**
  * This enum type selects an icon for a marker.

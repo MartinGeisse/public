@@ -8,7 +8,7 @@ package name.martingeisse.webide.resources.operation;
 
 import name.martingeisse.webide.resources.ResourcePath;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**

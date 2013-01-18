@@ -28,7 +28,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
-import org.apache.commons.lang.NotImplementedException;
+import name.martingeisse.common.util.NotImplementedException;
 
 /**
  * Base class for {@link ResultSet} doubles.

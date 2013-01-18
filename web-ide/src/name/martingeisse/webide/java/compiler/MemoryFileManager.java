@@ -25,7 +25,7 @@ import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.common.util.iterator.AbstractIterableWrapper;
 
 import org.apache.commons.collections.iterators.IteratorChain;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**

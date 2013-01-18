@@ -6,10 +6,10 @@
 
 package name.martingeisse.admin.entity.schema.search;
 
-import com.mysema.query.types.Predicate;
-
 import name.martingeisse.admin.entity.EntityCapabilities;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
+
+import com.mysema.query.types.Predicate;
 
 /**
  * This class wraps the code that invokes an {@link IEntitySearchStrategy}.

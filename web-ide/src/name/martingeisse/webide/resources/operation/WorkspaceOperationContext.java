@@ -15,7 +15,7 @@ import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.mysema.query.sql.SQLQuery;

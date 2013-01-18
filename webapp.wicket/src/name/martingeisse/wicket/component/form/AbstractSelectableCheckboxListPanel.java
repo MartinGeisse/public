@@ -9,7 +9,8 @@ package name.martingeisse.wicket.component.form;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.NotImplementedException;
+import name.martingeisse.common.util.NotImplementedException;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;

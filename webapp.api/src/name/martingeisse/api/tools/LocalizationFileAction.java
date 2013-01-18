@@ -9,7 +9,7 @@ package name.martingeisse.api.tools;
 import java.io.File;
 import java.util.LinkedList;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This class iterates over all localization files in one or multiple

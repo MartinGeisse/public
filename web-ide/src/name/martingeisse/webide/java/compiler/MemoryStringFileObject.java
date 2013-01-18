@@ -17,7 +17,7 @@ import java.nio.charset.Charset;
 
 import javax.tools.FileObject;
 
-import org.apache.tools.ant.util.ReaderInputStream;
+import org.apache.commons.io.input.ReaderInputStream;
 import org.eclipse.jetty.io.WriterOutputStream;
 
 /**

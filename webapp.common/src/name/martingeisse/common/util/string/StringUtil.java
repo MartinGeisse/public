@@ -6,8 +6,8 @@
 
 package name.martingeisse.common.util.string;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 
 /**
  * Additional string utils not present in Apache Commons-Lang.

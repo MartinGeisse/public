@@ -29,7 +29,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
-import org.apache.commons.lang.NotImplementedException;
+import name.martingeisse.common.util.NotImplementedException;
 
 /**
  * Base class for {@link PreparedStatement} doubles.

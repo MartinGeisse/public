@@ -7,7 +7,6 @@
 package name.martingeisse.webide.policytest;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.security.CodeSource;
 import java.security.Permission;
 import java.security.PermissionCollection;
