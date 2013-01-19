@@ -2,7 +2,7 @@
 <project name="project" default="run">
 
     <target name="run">
-    	<java classname="name.martingeisse.webide.Main" fork="true" spawn="true">
+    	<java classname="name.martingeisse.webide.Main">
     		<classpath>
     			<pathelement location="." />
     			<fileset dir="jars" includes="*.jar" />
