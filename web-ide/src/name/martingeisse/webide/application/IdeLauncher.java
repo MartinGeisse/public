@@ -4,7 +4,9 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide;
+package name.martingeisse.webide.application;
+
+import java.io.IOException;
 
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.MysqlDatabaseDescriptor;
@@ -20,9 +22,13 @@ public class IdeLauncher {
 
 	/**
 	 * Initializes URL handlers, time zones and the database.
+	 * @throws IOException on I/O errors
 	 */
-	public static void initialize() {
+	public static void initialize() throws IOException {
 	
+		// read the configuration
+		Configuration.initialize();
+		
 		// initialize URL handlers
         System.setProperty("java.protocol.handler.pkgs", "name.martingeisse.webide.util.url");
 		
@@ -34,9 +40,9 @@ public class IdeLauncher {
 		// initialize database
 		MysqlDatabaseDescriptor mainDatabase = new MysqlDatabaseDescriptor();
 		mainDatabase.setDisplayName("Local database");
-		mainDatabase.setUrl("jdbc:mysql://localhost/webide?zeroDateTimeBehavior=convertToNull&useTimezone=false&characterEncoding=utf8&characterSetResults=utf8");
-		mainDatabase.setUsername("root");
-		mainDatabase.setPassword("");
+		mainDatabase.setUrl(Configuration.getMainDatabaseUrl());
+		mainDatabase.setUsername(Configuration.getMainDatabaseUsername());
+		mainDatabase.setPassword(Configuration.getMainDatabasePassword());
 		mainDatabase.setDefaultTimeZone(timeZone);
 		mainDatabase.initialize();
 		EntityConnectionManager.initializeDatabaseDescriptors(mainDatabase);

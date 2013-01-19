@@ -26,6 +26,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import name.martingeisse.webide.application.Configuration;
 import name.martingeisse.webide.java.compiler.classpath.ClassFolderLibraryFileManager;
 import name.martingeisse.webide.java.compiler.classpath.JarFileManager;
 import name.martingeisse.webide.java.compiler.classpath.PlatformClasspathShieldFileManager;
@@ -80,13 +81,21 @@ public class JavaCompilerFacade {
 		// create library file managers
 		JavaFileManager fileManager = wrappedStandardFileManager;
 		try {
-			fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-util-6.4.0.jar"), fileManager);
-			fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-core-6.4.0.jar"), fileManager);
-			fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-request-6.4.0.jar"), fileManager);
-			fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-extensions-6.4.0.jar"), fileManager);
-			fileManager = new ClassFolderLibraryFileManager(new File("bin"), fileManager);
-			fileManager = new ClassFolderLibraryFileManager(new File("../webapp.wicket/bin"), fileManager);
-			fileManager = new ClassFolderLibraryFileManager(new File("../webapp.common/bin"), fileManager);
+			if (Configuration.isDeployedFolderLayout()) {
+				fileManager = new JarFileManager(new JarFile("jars/wicket-util-6.4.0.jar"), fileManager);
+				fileManager = new JarFileManager(new JarFile("jars/wicket-core-6.4.0.jar"), fileManager);
+				fileManager = new JarFileManager(new JarFile("jars/wicket-request-6.4.0.jar"), fileManager);
+				fileManager = new JarFileManager(new JarFile("jars/wicket-extensions-6.4.0.jar"), fileManager);
+				fileManager = new ClassFolderLibraryFileManager(new File("."), fileManager);
+			} else {
+				fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-util-6.4.0.jar"), fileManager);
+				fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-core-6.4.0.jar"), fileManager);
+				fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-request-6.4.0.jar"), fileManager);
+				fileManager = new JarFileManager(new JarFile("../webapp.wicket/lib/java/wicket-extensions-6.4.0.jar"), fileManager);
+				fileManager = new ClassFolderLibraryFileManager(new File("bin"), fileManager);
+				fileManager = new ClassFolderLibraryFileManager(new File("../webapp.wicket/bin"), fileManager);
+				fileManager = new ClassFolderLibraryFileManager(new File("../webapp.common/bin"), fileManager);
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

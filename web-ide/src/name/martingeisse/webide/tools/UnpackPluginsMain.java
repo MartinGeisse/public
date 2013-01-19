@@ -7,7 +7,7 @@
 package name.martingeisse.webide.tools;
 
 import name.martingeisse.common.database.EntityConnectionManager;
-import name.martingeisse.webide.IdeLauncher;
+import name.martingeisse.webide.application.IdeLauncher;
 import name.martingeisse.webide.entity.QPlugins;
 import name.martingeisse.webide.plugin.InternalPluginUtil;
 

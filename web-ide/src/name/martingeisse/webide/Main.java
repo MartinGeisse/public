@@ -11,6 +11,8 @@ import java.util.EnumSet;
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 
+import name.martingeisse.webide.application.IdeLauncher;
+import name.martingeisse.webide.application.WebIdeApplication;
 import name.martingeisse.webide.ssh.ShellFactory;
 
 import org.apache.sshd.SshServer;

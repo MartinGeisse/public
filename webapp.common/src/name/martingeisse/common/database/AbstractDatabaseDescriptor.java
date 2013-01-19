@@ -178,6 +178,7 @@ public abstract class AbstractDatabaseDescriptor implements IDatabaseDescriptor 
 		config.setMinConnectionsPerPartition(5);
 		config.setMaxConnectionsPerPartition(10);
 		config.setPartitionCount(1);
+		config.setDisableJMX(true);
 		return new BoneCP(config);
 	}
 	

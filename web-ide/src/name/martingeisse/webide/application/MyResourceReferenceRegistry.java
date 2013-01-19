@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.util;
+package name.martingeisse.webide.application;
 
 import name.martingeisse.webide.plugin.PluginBundleWicketResourceReference;
 import name.martingeisse.webide.resources.ResourcePath;
