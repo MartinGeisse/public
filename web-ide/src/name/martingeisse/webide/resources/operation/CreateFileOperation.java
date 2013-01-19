@@ -68,7 +68,8 @@ public final class CreateFileOperation extends AbstractCreateResourceOperation {
 		insert.set(QWorkspaceResources.workspaceResources.contents, (contents == null ? new byte[0] : contents));
 		insert.set(QWorkspaceResources.workspaceResources.parentId, parentResource.getId());
 		insert.set(QWorkspaceResources.workspaceResources.type, ResourceType.FILE.name());
-		insert.execute();
+		long id = insert.executeWithKey(Long.class);
+		WorkspaceCache.onCreate(id, parentResource.getId(), getPath());
 	}
 
 }

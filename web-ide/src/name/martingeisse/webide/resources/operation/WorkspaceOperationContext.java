@@ -111,6 +111,11 @@ public final class WorkspaceOperationContext {
 	 */
 	public FetchResourceResult fetchResource(ResourcePath path) {
 		trace("fetching resource ...", path);
+		FetchResourceResult cachedResult = WorkspaceCache.getResourceByPath(path);
+		if (cachedResult != null) {
+			trace("resource was cached", path);
+			return cachedResult;
+		}
 		if (!path.isLeadingSeparator()) {
 			throw new WorkspaceOperationException("cannot fetch resource using a relative path: " + path);
 		}
@@ -119,7 +124,11 @@ public final class WorkspaceOperationContext {
 			final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 			query.from(QWorkspaceResources.workspaceResources);
 			query.where(QWorkspaceResources.workspaceResources.type.eq(ResourceType.WORKSPACE_ROOT.name()));
-			return createResult(path, query.singleResult(QWorkspaceResources.workspaceResources));
+			FetchResourceResult result = createResult(path, query.singleResult(QWorkspaceResources.workspaceResources));
+			if (result != null) {
+				WorkspaceCache.onLoad(result);
+			}
+			return result;
 		}
 		trace("fetching parent", path);
 		FetchResourceResult parent = fetchResource(path.removeLastSegment(false));
@@ -132,7 +141,11 @@ public final class WorkspaceOperationContext {
 		query.from(QWorkspaceResources.workspaceResources);
 		query.where(QWorkspaceResources.workspaceResources.parentId.eq(parent.getId()));
 		query.where(QWorkspaceResources.workspaceResources.name.eq(path.getLastSegment()));
-		return createResult(path, query.singleResult(QWorkspaceResources.workspaceResources));
+		FetchResourceResult result = createResult(path, query.singleResult(QWorkspaceResources.workspaceResources));
+		if (result != null) {
+			WorkspaceCache.onLoad(result);
+		}
+		return result;
 	}
 
 	/**

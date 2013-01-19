@@ -71,6 +71,11 @@ public class WorkbenchPage extends WebPage {
 	 * the log
 	 */
 	private String log;
+	
+	/**
+	 * the buildingWorkspaceIndicateWasVisible
+	 */
+	private Boolean buildingWorkspaceIndicateWasVisible = null;
 
 	/**
 	 * Constructor.
@@ -89,6 +94,7 @@ public class WorkbenchPage extends WebPage {
 					ResourcePath parentPath = (element.getType() == ResourceType.FILE ? elementPath.removeLastSegment(false) : elementPath);
 					ResourcePath path = parentPath.appendSegment(filename, false);
 					new CreateFileOperation(path, "", true).run();
+					AjaxRequestUtil.markForRender(WorkbenchPage.this.get("filesContainer"));
 					loadEditorContents(path);
 				}
 			}
@@ -116,7 +122,7 @@ public class WorkbenchPage extends WebPage {
 					i++;
 				}
 				new DeleteResourcesOperation(paths).run();
-				AjaxRequestUtil.markForRender(WorkbenchPage.this);
+				AjaxRequestUtil.markForRender(WorkbenchPage.this.get("filesContainer"));
 			}
 		});
 		filesContextMenu.add(new DownloadMenuItem<List<FetchResourceResult>>("Download") {
@@ -163,6 +169,7 @@ public class WorkbenchPage extends WebPage {
 		});
 
 		final WebMarkupContainer filesContainer = new WebMarkupContainer("filesContainer");
+		filesContainer.setOutputMarkupId(true);
 		add(filesContainer);
 
 		final ITreeProvider<FetchResourceResult> resourceTreeProvider = new ITreeProvider<FetchResourceResult>() {
@@ -245,17 +252,23 @@ public class WorkbenchPage extends WebPage {
 		
 		add(new Label("log", new PropertyModel<String>(this, "log")));
 		add(new WebMarkupContainer("buildingWorkspaceIndicator") {
+			
 			@Override
 			public boolean isVisible() {
 				return !BuilderService.isBuildFinished();
 			}
+			
 			@Override
 			public void onEvent(IEvent<?> event) {
 				if (event.getPayload() instanceof AjaxRequestTarget) {
-					AjaxRequestTarget ajaxRequestTarget = (AjaxRequestTarget)event.getPayload();
-					ajaxRequestTarget.add(this);
+					if (buildingWorkspaceIndicateWasVisible == null || buildingWorkspaceIndicateWasVisible != isVisible()) {
+						AjaxRequestTarget ajaxRequestTarget = (AjaxRequestTarget)event.getPayload();
+						ajaxRequestTarget.add(this);
+						buildingWorkspaceIndicateWasVisible = isVisible();
+					}
 				}
 			}
+			
 		}.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true));
 		add(new Link<Void>("refreshPluginsButton") {
 			/* (non-Javadoc)
@@ -263,7 +276,6 @@ public class WorkbenchPage extends WebPage {
 			 */
 			@Override
 			public void onClick() {
-				System.out.println("***");
 				setResponsePage(new WorkbenchPage());
 			}
 		});

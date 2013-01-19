@@ -54,6 +54,7 @@ public final class DeleteResourcesOperation extends MultipleResourcesOperation {
 		delete.where(QWorkspaceResources.workspaceResources.id.in(resourceIds));
 		trace("will delete resources now", getPaths());
 		delete.execute();
+		WorkspaceCache.invalidate();
 	}
 
 }

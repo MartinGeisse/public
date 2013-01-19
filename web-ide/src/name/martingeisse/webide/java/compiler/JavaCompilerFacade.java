@@ -126,15 +126,6 @@ public class JavaCompilerFacade {
 			return;
 		}
 
-		
-		// TODO: We should actually not wrap the memory file manager with library JAR managers. This is
-		// currently done because the memory file manager only passes boot classpath requests to its
-		// underlying manager. Instead, memory file object and "shielding" should be separated into two
-		// different classes, and file managers put in the following order:
-		//   memory - lib - lib - ... - lib - shield - standard
-		// such that the shield still prevents non-standard classes from the standard manager leaking
-		// through, but the memory file manager allowing non-standard classes from libs to be visible.
-
 		// run the java compiler
 		final CompilationTask task = compiler.getTask(null, memoryFileManager, diagnosticListener, null, null, javaFiles);
 		/* final boolean success = */task.call();

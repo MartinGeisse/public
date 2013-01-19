@@ -45,6 +45,7 @@ public class IdeLauncher {
 		mainDatabase.setPassword(Configuration.getMainDatabasePassword());
 		mainDatabase.setDefaultTimeZone(timeZone);
 		mainDatabase.initialize();
+		Databases.main = mainDatabase;
 		EntityConnectionManager.initializeDatabaseDescriptors(mainDatabase);
 		
 	}
