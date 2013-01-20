@@ -175,7 +175,7 @@ public class JavaCompilerFacade {
 
 				// skip erroneous markers
 				String messageText = diagnostic.getMessage(null);
-				if (meaning == MarkerMeaning.WARNING && messageText.equals("warning: [package-info] a package-info.java file has already been seen for package unnamed package")) {
+				if (meaning == MarkerMeaning.WARNING && messageText.equalsIgnoreCase("warning: [package-info] a package-info.java file has already been seen for package unnamed package")) {
 					continue;
 				}
 
