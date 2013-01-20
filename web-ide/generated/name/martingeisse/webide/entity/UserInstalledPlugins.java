@@ -6,14 +6,14 @@ package name.martingeisse.webide.entity;
 import java.io.Serializable;
 
 /**
- * This class represents rows from table 'user_plugins'.
+ * This class represents rows from table 'user_installed_plugins'.
  */
-public class UserPlugins implements Serializable {
+public class UserInstalledPlugins implements Serializable {
 
     /**
      * Constructor.
      */
-    public UserPlugins() {
+    public UserInstalledPlugins() {
     }
 
     /**
@@ -84,7 +84,7 @@ public class UserPlugins implements Serializable {
      */
     @Override
     public String toString() {
-        return "{UserPlugins. id = " + id + ", pluginId = " + pluginId + ", userId = " + userId + "}";
+        return "{UserInstalledPlugins. id = " + id + ", pluginId = " + pluginId + ", userId = " + userId + "}";
     }
 
 }

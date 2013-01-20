@@ -16,6 +16,7 @@ import name.martingeisse.webide.entity.QWorkspaceResources;
 import name.martingeisse.webide.java.editor.JavaEditor;
 import name.martingeisse.webide.plugin.ExtensionQuery;
 import name.martingeisse.webide.plugin.ExtensionQuery.Result;
+import name.martingeisse.webide.plugin.InternalPluginUtil;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
 import name.martingeisse.webide.resources.BuilderService;
 import name.martingeisse.webide.resources.MarkerListView;
@@ -276,6 +277,7 @@ public class WorkbenchPage extends WebPage {
 			 */
 			@Override
 			public void onClick() {
+				InternalPluginUtil.updateUsersPlugins();
 				setResponsePage(new WorkbenchPage());
 			}
 		});

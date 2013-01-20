@@ -6,40 +6,19 @@
 
 package name.martingeisse.common.database;
 
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.CallableStatement;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.NClob;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLClientInfoException;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Savepoint;
-import java.sql.Statement;
-import java.sql.Struct;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import name.martingeisse.common.util.ParameterUtil;
 
 import com.mysema.commons.lang.CloseableIterator;
 import com.mysema.commons.lang.Pair;
 import com.mysema.query.Projectable;
 import com.mysema.query.group.QPair;
-import com.mysema.query.sql.MySQLTemplates;
+import com.mysema.query.sql.RelationalPathBase;
 import com.mysema.query.sql.SQLQuery;
-import com.mysema.query.sql.SQLQueryImpl;
 import com.mysema.query.support.Expressions;
 import com.mysema.query.types.Expression;
-import com.mysema.query.types.ParamExpression;
 import com.mysema.query.types.Path;
-import com.mysema.query.types.expr.Wildcard;
+import com.mysema.query.types.Predicate;
 
 /**
  * Utility methods to deal with QueryDSL queries.
@@ -111,438 +90,97 @@ public class QueryUtil {
 		}
 	}
 
+	// ----------------------------------------------------------------------------------------------------------------
+	// shortcut methods for common queries
+	// ----------------------------------------------------------------------------------------------------------------
+	
 	/**
-	 * Dumps the query text and parameters from the specified query.
-	 * @param query the query to dump
+	 * Fetches all rows from a table.
+	 * 
+	 * This method uses the default database connection.
+	 * 
+	 * @param qpath the QueryDSL relational path for the table, e.g. QMyTable.myTable
+	 * @return the rows
 	 */
-	public static void dumpQuery(final SQLQueryImpl query) {
-		ParameterUtil.ensureNotNull(query, "query");
-
-		final Connection connection = new MyConnection();
-		final SQLQuery clone = new SQLQueryImpl(connection, new MySQLTemplates(), query.getMetadata()) {
-
-			/* (non-Javadoc)
-			 * @see com.mysema.query.sql.AbstractSQLQuery#setParameters(java.sql.PreparedStatement, java.util.List, java.util.List, java.util.Map)
-			 */
-			@Override
-			protected void setParameters(final PreparedStatement stmt, final List<?> objects, final List<Path<?>> constantPaths, final Map<ParamExpression<?>, ?> params) {
-
-				System.out.println("objects: ");
-				for (final Object o : objects) {
-					System.out.println("* " + o);
-				}
-
-				System.out.println("constant paths: ");
-				for (final Path<?> path : constantPaths) {
-					System.out.println("* " + path);
-				}
-
-				System.out.println("params: ");
-				for (final Map.Entry<ParamExpression<?>, ?> param : params.entrySet()) {
-					System.out.println("* " + param.getKey() + " -> " + param.getValue());
-				}
-
-				throw new MyAbortException();
-			}
-
-		};
-
-		try {
-			clone.getResults(Wildcard.all);
-		} catch (final MyAbortException e) {
-		}
-
+	public static <ROW> List<ROW> fetchAll(RelationalPathBase<ROW> qpath) {
+		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
+		return query.from(qpath).list(qpath);
 	}
-
+	
 	/**
-	 * This exception type is used to return directly after dumping parameters.
+	 * Fetches a single field of all rows from a table.
+	 * 
+	 * This method uses the default database connection.
+	 * 
+	 * @param qpath the QueryDSL relational path for the table, e.g. QMyTable.myTable
+	 * @param fieldPath the path of the field to return
+	 * @return the fields
 	 */
-	private static class MyAbortException extends RuntimeException {
+	public static <ROW, FIELD> List<FIELD> fetchAll(RelationalPathBase<ROW> qpath, Path<FIELD> fieldPath) {
+		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
+		return query.from(qpath).list(fieldPath);
 	}
-
+	
 	/**
-	 * Fake {@link Connection} implementation.
+	 * Fetches the first row from a table that satisfies a specific predicate.
+	 * This method implements the common case: SELECT * FROM [row] WHERE [predicates] LIMIT 1
+	 * 
+	 * This method uses the default database connection.
+	 * 
+	 * @param qpath the QueryDSL relational path for the table, e.g. QMyTable.myTable
+	 * @param predicates the predicates
+	 * @return the row, or null if not found
 	 */
-	private static class MyConnection implements Connection {
-
-		/* (non-Javadoc)
-		 * @see java.sql.Wrapper#isWrapperFor(java.lang.Class)
-		 */
-		@Override
-		public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-			return false;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Wrapper#unwrap(java.lang.Class)
-		 */
-		@Override
-		public <T> T unwrap(final Class<T> iface) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#clearWarnings()
-		 */
-		@Override
-		public void clearWarnings() throws SQLException {
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#close()
-		 */
-		@Override
-		public void close() throws SQLException {
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#commit()
-		 */
-		@Override
-		public void commit() throws SQLException {
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#createArrayOf(java.lang.String, java.lang.Object[])
-		 */
-		@Override
-		public Array createArrayOf(final String typeName, final Object[] elements) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#createBlob()
-		 */
-		@Override
-		public Blob createBlob() throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#createClob()
-		 */
-		@Override
-		public Clob createClob() throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#createNClob()
-		 */
-		@Override
-		public NClob createNClob() throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#createSQLXML()
-		 */
-		@Override
-		public SQLXML createSQLXML() throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#createStatement()
-		 */
-		@Override
-		public Statement createStatement() throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#createStatement(int, int, int)
-		 */
-		@Override
-		public Statement createStatement(final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#createStatement(int, int)
-		 */
-		@Override
-		public Statement createStatement(final int resultSetType, final int resultSetConcurrency) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#createStruct(java.lang.String, java.lang.Object[])
-		 */
-		@Override
-		public Struct createStruct(final String typeName, final Object[] attributes) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#getAutoCommit()
-		 */
-		@Override
-		public boolean getAutoCommit() throws SQLException {
-			return false;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#getCatalog()
-		 */
-		@Override
-		public String getCatalog() throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#getClientInfo()
-		 */
-		@Override
-		public Properties getClientInfo() throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#getClientInfo(java.lang.String)
-		 */
-		@Override
-		public String getClientInfo(final String name) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#getHoldability()
-		 */
-		@Override
-		public int getHoldability() throws SQLException {
-			return 0;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#getMetaData()
-		 */
-		@Override
-		public DatabaseMetaData getMetaData() throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#getTransactionIsolation()
-		 */
-		@Override
-		public int getTransactionIsolation() throws SQLException {
-			return 0;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#getTypeMap()
-		 */
-		@Override
-		public Map<String, Class<?>> getTypeMap() throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#getWarnings()
-		 */
-		@Override
-		public SQLWarning getWarnings() throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#isClosed()
-		 */
-		@Override
-		public boolean isClosed() throws SQLException {
-			return false;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#isReadOnly()
-		 */
-		@Override
-		public boolean isReadOnly() throws SQLException {
-			return false;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#isValid(int)
-		 */
-		@Override
-		public boolean isValid(final int timeout) throws SQLException {
-			return false;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#nativeSQL(java.lang.String)
-		 */
-		@Override
-		public String nativeSQL(final String sql) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#prepareCall(java.lang.String, int, int, int)
-		 */
-		@Override
-		public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#prepareCall(java.lang.String, int, int)
-		 */
-		@Override
-		public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#prepareCall(java.lang.String)
-		 */
-		@Override
-		public CallableStatement prepareCall(final String sql) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#prepareStatement(java.lang.String, int, int, int)
-		 */
-		@Override
-		public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#prepareStatement(java.lang.String, int, int)
-		 */
-		@Override
-		public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#prepareStatement(java.lang.String, int)
-		 */
-		@Override
-		public PreparedStatement prepareStatement(final String sql, final int autoGeneratedKeys) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#prepareStatement(java.lang.String, int[])
-		 */
-		@Override
-		public PreparedStatement prepareStatement(final String sql, final int[] columnIndexes) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#prepareStatement(java.lang.String, java.lang.String[])
-		 */
-		@Override
-		public PreparedStatement prepareStatement(final String sql, final String[] columnNames) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#prepareStatement(java.lang.String)
-		 */
-		@Override
-		public PreparedStatement prepareStatement(final String sql) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#releaseSavepoint(java.sql.Savepoint)
-		 */
-		@Override
-		public void releaseSavepoint(final Savepoint savepoint) throws SQLException {
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#rollback()
-		 */
-		@Override
-		public void rollback() throws SQLException {
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#rollback(java.sql.Savepoint)
-		 */
-		@Override
-		public void rollback(final Savepoint savepoint) throws SQLException {
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#setAutoCommit(boolean)
-		 */
-		@Override
-		public void setAutoCommit(final boolean autoCommit) throws SQLException {
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#setCatalog(java.lang.String)
-		 */
-		@Override
-		public void setCatalog(final String catalog) throws SQLException {
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#setClientInfo(java.util.Properties)
-		 */
-		@Override
-		public void setClientInfo(final Properties properties) throws SQLClientInfoException {
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#setClientInfo(java.lang.String, java.lang.String)
-		 */
-		@Override
-		public void setClientInfo(final String name, final String value) throws SQLClientInfoException {
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#setHoldability(int)
-		 */
-		@Override
-		public void setHoldability(final int holdability) throws SQLException {
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#setReadOnly(boolean)
-		 */
-		@Override
-		public void setReadOnly(final boolean readOnly) throws SQLException {
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#setSavepoint()
-		 */
-		@Override
-		public Savepoint setSavepoint() throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#setSavepoint(java.lang.String)
-		 */
-		@Override
-		public Savepoint setSavepoint(final String name) throws SQLException {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#setTransactionIsolation(int)
-		 */
-		@Override
-		public void setTransactionIsolation(final int level) throws SQLException {
-		}
-
-		/* (non-Javadoc)
-		 * @see java.sql.Connection#setTypeMap(java.util.Map)
-		 */
-		@Override
-		public void setTypeMap(final Map<String, Class<?>> map) throws SQLException {
-		}
-
+	public static <ROW> ROW fetchSingle(RelationalPathBase<ROW> qpath, Predicate... predicates) {
+		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
+		return query.from(qpath).where(predicates).singleResult(qpath);
+	}
+	
+	/**
+	 * Fetches a single field of the first row from a table that satisfies a specific predicate.
+	 * This method implements the common case: SELECT [field] FROM [row] WHERE [predicates] LIMIT 1
+	 * 
+	 * This method uses the default database connection.
+	 * 
+	 * @param qpath the QueryDSL relational path for the table, e.g. QMyTable.myTable
+	 * @param fieldPath the path of the field to return
+	 * @param predicates the predicates
+	 * @return the field, or null if not found
+	 */
+	public static <ROW, FIELD> FIELD fetchSingle(RelationalPathBase<ROW> qpath, Path<FIELD> fieldPath, Predicate... predicates) {
+		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
+		return query.from(qpath).where(predicates).singleResult(fieldPath);
+	}
+	
+	/**
+	 * Fetches all rows from a table that satisfy a specific predicate.
+	 * This method implements the common case: SELECT * FROM [row] WHERE [predicates]
+	 * 
+	 * This method uses the default database connection.
+	 * 
+	 * @param qpath the QueryDSL relational path for the table, e.g. QMyTable.myTable
+	 * @param predicates the predicates
+	 * @return the rows
+	 */
+	public static <ROW> List<ROW> fetchMultiple(RelationalPathBase<ROW> qpath, Predicate... predicates) {
+		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
+		return query.from(qpath).where(predicates).list(qpath);
+	}
+	
+	/**
+	 * Fetches a single field of all rows from a table that satisfy a specific predicate.
+	 * This method implements the common case: SELECT * FROM [row] WHERE [predicates]
+	 * 
+	 * This method uses the default database connection.
+	 * 
+	 * @param qpath the QueryDSL relational path for the table, e.g. QMyTable.myTable
+	 * @param fieldPath the path of the field to return
+	 * @param predicates the predicates
+	 * @return the fields
+	 */
+	public static <ROW, FIELD> List<FIELD> fetchMultiple(RelationalPathBase<ROW> qpath, Path<FIELD> fieldPath, Predicate... predicates) {
+		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
+		return query.from(qpath).where(predicates).list(fieldPath);
 	}
 	
 }

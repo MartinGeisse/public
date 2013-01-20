@@ -17,7 +17,7 @@ import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.webide.entity.QPluginBundles;
 import name.martingeisse.webide.entity.QPlugins;
-import name.martingeisse.webide.entity.QUserPlugins;
+import name.martingeisse.webide.entity.QWorkspaceStagingPlugins;
 import name.martingeisse.webide.plugin.InternalPluginUtil;
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.MarkerOrigin;
@@ -44,6 +44,7 @@ public class PluginBuilderFacade {
 	 * This method is invoked by the builder thread to perform a plugin build.
 	 */
 	public static void performBuild() {
+		clearStagingPlugins();
 		final ListResourcesOperation list = new ListResourcesOperation(new ResourcePath("/"));
 		list.run();
 		for (final FetchResourceResult fetchResult : list.getChildren()) {
@@ -51,6 +52,15 @@ public class PluginBuilderFacade {
 		}
 	}
 
+	/**
+	 * 
+	 */
+	private static void clearStagingPlugins() {
+		SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QWorkspaceStagingPlugins.workspaceStagingPlugins);
+		delete.where(QWorkspaceStagingPlugins.workspaceStagingPlugins.workspaceResourceId.eq(findWorkspaceRoot()));
+		delete.execute();
+	}
+	
 	/**
 	 * Builds a single plugin project.
 	 */
@@ -81,8 +91,7 @@ public class PluginBuilderFacade {
 
 		// build and install the plugin
 		final byte[] jarFile = generateJarFile(binPath, bundleFilePath);
-		final long pluginId = uploadPlugin(pluginBundleDescriptorSourceCode, jarFile);
-		updateUsersPlugins(pluginId);
+		uploadPlugin(pluginBundleDescriptorSourceCode, jarFile, findWorkspaceRoot());
 
 	}
 
@@ -154,47 +163,40 @@ public class PluginBuilderFacade {
 	}
 
 	/**
+	 * Finds the workspace resource id of the workspace root.
+	 */
+	private static long findWorkspaceRoot() {
+		FetchSingleResourceOperation operation = new FetchSingleResourceOperation(ResourcePath.ROOT);
+		operation.run();
+		return operation.getResult().getId();
+	}
+	
+	/**
 	 * Uploads the JAR file build by the previous step and the plugin bundle descriptor
 	 * as a single-bundle plugin into the plugins and plugin_bundles tables.
-	 * Returns the plugin id.
 	 */
-	private static long uploadPlugin(final String descriptor, final byte[] jarFile) {
+	private static void uploadPlugin(final String descriptor, final byte[] jarFile, long workspaceRootId) {
 
+		// plugin
 		final SQLInsertClause pluginInsert = EntityConnectionManager.getConnection().createInsert(QPlugins.plugins);
 		pluginInsert.set(QPlugins.plugins.isUnpacked, false);
-		pluginInsert.set(QPlugins.plugins.isStaging, true);
 		final long pluginId = pluginInsert.executeWithKey(Long.class);
 
+		// plugin bundle
 		final SQLInsertClause bundleInsert = EntityConnectionManager.getConnection().createInsert(QPluginBundles.pluginBundles);
 		bundleInsert.set(QPluginBundles.pluginBundles.pluginId, pluginId);
 		bundleInsert.set(QPluginBundles.pluginBundles.descriptor, descriptor);
 		bundleInsert.set(QPluginBundles.pluginBundles.jarfile, jarFile);
 		bundleInsert.execute();
 
+		// extension points / extensions
 		InternalPluginUtil.generateDeclaredExtensionPointsAndExtensionsForPlugin(pluginId);
-		return pluginId;
-	}
-
-	/**
-	 * Updates the user's plugins, currently to include only the specified plugin.
-	 */
-	private static void updateUsersPlugins(final long pluginId) {
 		
-		// TODO: fetch workspace staging plugins; move this block to InternalPluginUtil.updateStagingPluginsForUser
-		final long userId = 1;
-		final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QUserPlugins.userPlugins);
-		delete.where(QUserPlugins.userPlugins.userId.eq(userId)).execute();
-		final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QUserPlugins.userPlugins);
-		insert.set(QUserPlugins.userPlugins.userId, userId);
-		insert.set(QUserPlugins.userPlugins.pluginId, pluginId);
-		insert.execute();
-		// TODO end
-		
-		// TODO do this in response to the "Refresh Plugins" button in the workbench page
-		InternalPluginUtil.updateStagingPluginsForUser(userId);
-
-		// TODO this will be the only thing left here, so move to performBuild above
-		InternalPluginUtil.updateExtensionBindingsForUser(userId);
+		// (workspace - staging plugin) relation
+		final SQLInsertClause workspaceStagingPluginsInsert = EntityConnectionManager.getConnection().createInsert(QWorkspaceStagingPlugins.workspaceStagingPlugins);
+		workspaceStagingPluginsInsert.set(QWorkspaceStagingPlugins.workspaceStagingPlugins.workspaceResourceId, workspaceRootId);
+		workspaceStagingPluginsInsert.set(QWorkspaceStagingPlugins.workspaceStagingPlugins.pluginId, pluginId);
+		workspaceStagingPluginsInsert.execute();
 		
 	}
 

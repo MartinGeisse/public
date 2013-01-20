@@ -9,7 +9,8 @@ function createContextMenu(selector, callback, items) {
 				items: items,
 				position: function(options, x, y) {
 					options.$menu.css({left: x + 2, top: y + 2});
-				}
+				},
+				zIndex: 10,
 			};
 		}
 	};

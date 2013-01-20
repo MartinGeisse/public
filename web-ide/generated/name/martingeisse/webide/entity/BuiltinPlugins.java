@@ -6,14 +6,14 @@ package name.martingeisse.webide.entity;
 import java.io.Serializable;
 
 /**
- * This class represents rows from table 'plugins'.
+ * This class represents rows from table 'builtin_plugins'.
  */
-public class Plugins implements Serializable {
+public class BuiltinPlugins implements Serializable {
 
     /**
      * Constructor.
      */
-    public Plugins() {
+    public BuiltinPlugins() {
     }
 
     /**
@@ -22,9 +22,9 @@ public class Plugins implements Serializable {
     private Long id;
 
     /**
-     * the isUnpacked
+     * the pluginId
      */
-    private Boolean isUnpacked;
+    private Long pluginId;
 
     /**
      * Getter method for the id.
@@ -43,19 +43,19 @@ public class Plugins implements Serializable {
     }
 
     /**
-     * Getter method for the isUnpacked.
-     * @return the isUnpacked
+     * Getter method for the pluginId.
+     * @return the pluginId
      */
-    public Boolean getIsUnpacked() {
-        return isUnpacked;
+    public Long getPluginId() {
+        return pluginId;
     }
 
     /**
-     * Setter method for the isUnpacked.
-     * @param isUnpacked the isUnpacked to set
+     * Setter method for the pluginId.
+     * @param pluginId the pluginId to set
      */
-    public void setIsUnpacked(Boolean isUnpacked) {
-        this.isUnpacked = isUnpacked;
+    public void setPluginId(Long pluginId) {
+        this.pluginId = pluginId;
     }
 
     /* (non-Javadoc)
@@ -63,7 +63,7 @@ public class Plugins implements Serializable {
      */
     @Override
     public String toString() {
-        return "{Plugins. id = " + id + ", isUnpacked = " + isUnpacked + "}";
+        return "{BuiltinPlugins. id = " + id + ", pluginId = " + pluginId + "}";
     }
 
 }

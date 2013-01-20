@@ -11,17 +11,17 @@ import com.mysema.query.types.path.*;
 import static com.mysema.query.types.PathMetadataFactory.*;
 
 /**
- * QUserPlugins is a Querydsl query type for UserPlugins
+ * QUserInstalledPlugins is a Querydsl query type for UserInstalledPlugins
  */
 @Generated("name.martingeisse.tools.codegen.MetaDataSerializer")
-public class QUserPlugins extends com.mysema.query.sql.RelationalPathBase<UserPlugins> {
+public class QUserInstalledPlugins extends com.mysema.query.sql.RelationalPathBase<UserInstalledPlugins> {
 
-    private static final long serialVersionUID = -1131189524;
+    private static final long serialVersionUID = 2071551226;
 
     /**
      * The default instance of this class.
      */
-    public static final QUserPlugins userPlugins = new QUserPlugins("user_plugins");
+    public static final QUserInstalledPlugins userInstalledPlugins = new QUserInstalledPlugins("user_installed_plugins");
 
     /**
      * Metamodel property for property 'id'
@@ -41,7 +41,7 @@ public class QUserPlugins extends com.mysema.query.sql.RelationalPathBase<UserPl
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<UserPlugins> pk_primary = createPrimaryKey(id);
+    public final com.mysema.query.sql.PrimaryKey<UserInstalledPlugins> pk_primary = createPrimaryKey(id);
 
     /**
      * Metamodel property for foreign key 'user_plugins_ibfk_2'
@@ -57,24 +57,24 @@ public class QUserPlugins extends com.mysema.query.sql.RelationalPathBase<UserPl
      * Path-variable based constructor.
      * @param variable the path variable for this entity
      */
-    public QUserPlugins(String variable) {
-        super(UserPlugins.class, forVariable(variable), "null", "user_plugins");
+    public QUserInstalledPlugins(String variable) {
+        super(UserInstalledPlugins.class, forVariable(variable), "null", "user_installed_plugins");
     }
 
     /**
      * Path based constructor
      * @param path the path for this entity
      */
-    public QUserPlugins(Path<? extends UserPlugins> path) {
-        super(path.getType(), path.getMetadata(), "null", "user_plugins");
+    public QUserInstalledPlugins(Path<? extends UserInstalledPlugins> path) {
+        super(path.getType(), path.getMetadata(), "null", "user_installed_plugins");
     }
 
     /**
      * Path metadata based constructor
      * @param metadata the path metadata for this entity
      */
-    public QUserPlugins(PathMetadata<?> metadata) {
-        super(UserPlugins.class, metadata, "null", "user_plugins");
+    public QUserInstalledPlugins(PathMetadata<?> metadata) {
+        super(UserInstalledPlugins.class, metadata, "null", "user_installed_plugins");
     }
 
 }

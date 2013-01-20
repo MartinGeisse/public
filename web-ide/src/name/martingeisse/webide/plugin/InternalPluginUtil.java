@@ -6,26 +6,33 @@ package name.martingeisse.webide.plugin;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import name.martingeisse.common.database.EntityConnectionManager;
+import name.martingeisse.common.database.QueryUtil;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.webide.entity.DeclaredExtensionPoints;
 import name.martingeisse.webide.entity.DeclaredExtensions;
 import name.martingeisse.webide.entity.PluginBundles;
 import name.martingeisse.webide.entity.Plugins;
+import name.martingeisse.webide.entity.QBuiltinPlugins;
 import name.martingeisse.webide.entity.QDeclaredExtensionPoints;
 import name.martingeisse.webide.entity.QDeclaredExtensions;
 import name.martingeisse.webide.entity.QExtensionBindings;
 import name.martingeisse.webide.entity.QPluginBundles;
 import name.martingeisse.webide.entity.QPlugins;
-import name.martingeisse.webide.entity.QUserPlugins;
+import name.martingeisse.webide.entity.QUserInstalledPlugins;
+import name.martingeisse.webide.entity.QWorkspaceStagingPlugins;
+import name.martingeisse.webide.resources.ResourcePath;
+import name.martingeisse.webide.resources.operation.FetchSingleResourceOperation;
 
 import org.json.simple.JSONValue;
 
-import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.dml.SQLDeleteClause;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
@@ -92,42 +99,22 @@ public class InternalPluginUtil {
 	}
 
 	/**
-	 * Like updateExtensionBindingsForUser(userId) for all the specified IDs.
-	 * 
-	 * @param userIds the IDs of the users
+	 * Updates the user's plugin run-time data from the sets of built-in plugins, installed plugins for that
+	 * user, and currently available workspace staging plugins for the current workspace.
 	 */
-	public static void updateExtensionBindingsForUsers(final Iterable<Long> userIds) {
-		for (final long userId : userIds) {
-			updateExtensionBindingsForUser(userId);
-		}
-	}
-
-	/**
-	 * Rebuilds the set of installed staging plugins for the specified user
-	 * by fetching the set of staging plugins for the current workspace.
-	 * Non-staging plugins are not affected.
-	 * 
-	 * @param userId the user ID
-	 */
-	public static void updateStagingPluginsForUser(final long userId) {
+	public static void updateUsersPlugins() {
 		
-	}
-	
-	/**
-	 * Clears, then regenerates the extension bindings for the specified user.
-	 * This method assumes that the declared extension points and extensions
-	 * are available for all plugins the user has added to his/her user account.
-	 * 
-	 * Generated bindings will have newly allocated database IDs, even if they
-	 * correspond to previously existing bindings. Binding IDs should not be
-	 * linked to for this reason.
-	 * 
-	 * @param userId the ID of the user
-	 */
-	public static void updateExtensionBindingsForUser(final long userId) {
+		// TODO: support multiple users, multiple workspaces
+		final long userId = 1;
+		final long workspaceRootId = findWorkspaceRoot();
 
-		// fetch data
-		final List<Long> pluginIds = fetchInstalledPluginIdsForUser(userId);
+		// determine the set of active plugins
+		Set<Long> pluginIds = new HashSet<Long>();
+		pluginIds.addAll(fetchBuiltinPluginIds());
+		pluginIds.addAll(fetchUserInstalledPluginIds(userId));
+		pluginIds.addAll(fetchWorkspaceStagingPluginIds(workspaceRootId));
+		
+		// fetch plug-in data
 		final List<Long> pluginBundleIds = fetchPluginBundleIds(pluginIds);
 		final List<DeclaredExtensionPoints> declaredExtensionPoints = fetchDeclaredExtensionPoints(pluginBundleIds);
 		final List<DeclaredExtensions> declaredExtensions = fetchDeclaredExtensions(pluginBundleIds);
@@ -182,10 +169,7 @@ public class InternalPluginUtil {
 	 * Returns the plugin with the specified ID.
 	 */
 	private static Plugins fetchPluginById(long pluginId) {
-		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-		query.from(QPlugins.plugins);
-		query.where(QPlugins.plugins.id.eq(pluginId));
-		return query.singleResult(QPlugins.plugins);
+		return QueryUtil.fetchSingle(QPlugins.plugins, QPlugins.plugins.id.eq(pluginId));
 	}
 	
 	/**
@@ -202,10 +186,7 @@ public class InternalPluginUtil {
 	 * Returns the plugin bundles that belong to the specified plugin.
 	 */
 	private static List<PluginBundles> fetchPluginBundlesByPluginId(long pluginId) {
-		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-		query.from(QPluginBundles.pluginBundles);
-		query.where(QPluginBundles.pluginBundles.pluginId.eq(pluginId));
-		return query.list(QPluginBundles.pluginBundles);
+		return QueryUtil.fetchMultiple(QPluginBundles.pluginBundles, QPluginBundles.pluginBundles.pluginId.eq(pluginId));
 	}
 
 	/**
@@ -217,49 +198,60 @@ public class InternalPluginUtil {
 	}
 
 	/**
-	 * Returns the pluginIds of the plugins the specified user has added.
-	 * 
-	 * TODO: the word "installed" could mean "added to the plugins table" or
-	 * "linked with a user account" -> use different terms!
+	 * Returns the pluginIds of all built-in plugins.
 	 */
-	private static List<Long> fetchInstalledPluginIdsForUser(final long userId) {
-		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-		query.from(QUserPlugins.userPlugins);
-		query.where(QUserPlugins.userPlugins.userId.eq(userId));
-		return query.list(QUserPlugins.userPlugins.pluginId);
+	private static List<Long> fetchBuiltinPluginIds() {
+		return QueryUtil.fetchAll(QBuiltinPlugins.builtinPlugins, QBuiltinPlugins.builtinPlugins.pluginId);
+	}
+
+	/**
+	 * Returns the pluginIds of all user-installed plugins.
+	 */
+	private static List<Long> fetchUserInstalledPluginIds(long userId) {
+		QUserInstalledPlugins qpath = QUserInstalledPlugins.userInstalledPlugins;
+		return QueryUtil.fetchMultiple(qpath, qpath.pluginId, qpath.userId.eq(userId));
+	}
+
+	/**
+	 * Returns the pluginIds of all workspace staging plugins.
+	 */
+	private static List<Long> fetchWorkspaceStagingPluginIds(long workspaceRootId) {
+		QWorkspaceStagingPlugins qpath = QWorkspaceStagingPlugins.workspaceStagingPlugins;
+		return QueryUtil.fetchMultiple(qpath, qpath.pluginId, qpath.workspaceResourceId.eq(workspaceRootId));
 	}
 
 	/**
 	 * Returns the plugin bundle IDs for all bundles that belong to any of
 	 * the specified plugins.
 	 */
-	private static List<Long> fetchPluginBundleIds(final List<Long> pluginIds) {
-		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-		query.from(QPluginBundles.pluginBundles);
-		query.where(QPluginBundles.pluginBundles.pluginId.in(pluginIds));
-		return query.list(QPluginBundles.pluginBundles.id);
+	private static List<Long> fetchPluginBundleIds(final Collection<Long> pluginIds) {
+		return QueryUtil.fetchMultiple(QPluginBundles.pluginBundles, QPluginBundles.pluginBundles.id, QPluginBundles.pluginBundles.pluginId.in(pluginIds));
 	}
 
 	/**
-	 * Returns the declared extension points that belong to any of the specified plugin bundles.
+	 * Returns the declared extension points that belong to any of the specified plugin bundles
+	 * or are provided by the system.
 	 */
 	private static List<DeclaredExtensionPoints> fetchDeclaredExtensionPoints(final List<Long> pluginBundleIds) {
-		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-		query.from(QDeclaredExtensionPoints.declaredExtensionPoints);
 		BooleanExpression inSpecifiedBundles = QDeclaredExtensionPoints.declaredExtensionPoints.pluginBundleId.in(pluginBundleIds);
 		BooleanExpression isSystemExtensionPoint = QDeclaredExtensionPoints.declaredExtensionPoints.pluginBundleId.isNull();
-		query.where(inSpecifiedBundles.or(isSystemExtensionPoint));
-		return query.list(QDeclaredExtensionPoints.declaredExtensionPoints);
+		return QueryUtil.fetchMultiple(QDeclaredExtensionPoints.declaredExtensionPoints, inSpecifiedBundles.or(isSystemExtensionPoint));
 	}
 
 	/**
 	 * Returns the declared extensions that belong to any of the specified plugin bundles.
 	 */
 	private static List<DeclaredExtensions> fetchDeclaredExtensions(final List<Long> pluginBundleIds) {
-		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-		query.from(QDeclaredExtensions.declaredExtensions);
-		query.where(QDeclaredExtensions.declaredExtensions.pluginBundleId.in(pluginBundleIds));
-		return query.list(QDeclaredExtensions.declaredExtensions);
+		return QueryUtil.fetchMultiple(QDeclaredExtensions.declaredExtensions, QDeclaredExtensions.declaredExtensions.pluginBundleId.in(pluginBundleIds));
 	}
 
+	/**
+	 * Finds the workspace resource id of the workspace root.
+	 */
+	private static long findWorkspaceRoot() {
+		FetchSingleResourceOperation operation = new FetchSingleResourceOperation(ResourcePath.ROOT);
+		operation.run();
+		return operation.getResult().getId();
+	}
+	
 }
