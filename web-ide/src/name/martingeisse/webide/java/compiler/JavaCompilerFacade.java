@@ -11,9 +11,11 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.jar.JarFile;
 
 import javax.tools.Diagnostic;
@@ -155,6 +157,11 @@ public class JavaCompilerFacade {
 			currentFileDiagnostics.add(diagnostic);
 		}
 
+		// these warnings will be ignored because they're nonsense
+		Set<String> ignoredWarnings = new HashSet<String>();
+		ignoredWarnings.add("warning: [package-info] a package-info.java file has already been seen for package unnamed package");
+		ignoredWarnings.add("[package-info] a package-info.java file has already been seen for package unnamed package");
+		
 		// generate markers for the diagnostic messages
 		new RecursiveDeleteMarkersOperation(sourcePath, MarkerOrigin.JAVAC).run();
 		for (final Map.Entry<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>> fileEntry : sourceFileToDiagnostics.entrySet()) {
@@ -175,7 +182,7 @@ public class JavaCompilerFacade {
 
 				// skip erroneous markers
 				String messageText = diagnostic.getMessage(null);
-				if (meaning == MarkerMeaning.WARNING && messageText.equalsIgnoreCase("warning: [package-info] a package-info.java file has already been seen for package unnamed package")) {
+				if (meaning == MarkerMeaning.WARNING && ignoredWarnings.contains(messageText)) {
 					continue;
 				}
 
