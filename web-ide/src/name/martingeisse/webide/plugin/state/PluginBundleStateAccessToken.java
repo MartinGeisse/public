@@ -4,7 +4,7 @@
 
 package name.martingeisse.webide.plugin.state;
 
-import name.martingeisse.webide.plugin.PluginBundleClassLoaderRegistry;
+import name.martingeisse.webide.plugin.InternalPluginBundleClassLoaderRegistry;
 
 
 /**
@@ -42,7 +42,7 @@ public final class PluginBundleStateAccessToken {
 	 */
 	public PluginBundleStateAccessToken() {
 		Class<?> callerClass = mySecurityManager.getCallerClass();
-		this.pluginBundleId = PluginBundleClassLoaderRegistry.getPluginBundleId(callerClass.getClassLoader());
+		this.pluginBundleId = InternalPluginBundleClassLoaderRegistry.getPluginBundleId(callerClass.getClassLoader());
 	}
 
 	/**

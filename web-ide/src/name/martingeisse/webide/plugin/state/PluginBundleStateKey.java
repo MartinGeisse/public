@@ -114,9 +114,9 @@ public final class PluginBundleStateKey {
 	}
 
 	/**
-	 * Loads plugin bundle state for this key.
+	 * Loads plugin bundle state for this key. Returns null if the state was not found.
 	 * @param serializer the serializer
-	 * @return the state data
+	 * @return the state data or null
 	 */
 	public <T> T load(IPluginBundleStateSerializer<T> serializer) {
 		return PluginStateCache.load(this, serializer);

@@ -14,8 +14,6 @@ import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.webide.entity.QWorkspaceResources;
 import name.martingeisse.webide.java.editor.JavaEditor;
-import name.martingeisse.webide.plugin.ExtensionQuery;
-import name.martingeisse.webide.plugin.ExtensionQuery.Result;
 import name.martingeisse.webide.plugin.InternalPluginUtil;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
 import name.martingeisse.webide.resources.BuilderService;
@@ -149,13 +147,14 @@ public class WorkbenchPage extends WebPage {
 			@Override
 			protected ContextMenuItem<? super List<FetchResourceResult>>[] getReplacementItems() {
 				List<ContextMenuItem<? super List<FetchResourceResult>>> replacementItems = new ArrayList<ContextMenuItem<? super List<FetchResourceResult>>>();
-				for (Result extension : ExtensionQuery.fetch(1, "webide.context_menu.resource")) { // TODO userId
-					final String className = extension.getDescriptor().toString();
-					final PluginBundleHandle bundleHandle = extension.getBundleHandle();
+				for (ContextMenuStateAccess.Entry entry : ContextMenuStateAccess.get()) {
+					final String className = entry.getClassName();
+					final long pluginBundleId = entry.getPluginBundleId();
 					replacementItems.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Message from " + className) {
 						@Override
 						protected void onSelect(final List<FetchResourceResult> anchor) {
 							try {
+								PluginBundleHandle bundleHandle = new PluginBundleHandle(pluginBundleId);
 								final Runnable runnable = bundleHandle.createObject(Runnable.class, className);
 								runnable.run();
 							} catch (Exception e) {

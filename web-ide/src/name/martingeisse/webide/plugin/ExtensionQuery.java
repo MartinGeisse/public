@@ -99,7 +99,7 @@ public final class ExtensionQuery {
 				Object[] row = iterator.next();
 				String rawDescriptor = (String)row[0];
 				long pluginBundleId = (Long)row[1];
-				results.add(new Result(JSONValue.parse(rawDescriptor), new PluginBundleHandle(pluginBundleId)));
+				results.add(new Result(JSONValue.parse(rawDescriptor), pluginBundleId));
 			}
 			return results;
 		} finally {
@@ -130,16 +130,16 @@ public final class ExtensionQuery {
 		private final Object descriptor;
 
 		/**
-		 * the bundleHandle
+		 * the pluginBundleId
 		 */
-		private final PluginBundleHandle bundleHandle;
+		private final long pluginBundleId;
 
 		/**
 		 * Constructor.
 		 */
-		Result(final Object descriptor, final PluginBundleHandle bundleHandle) {
+		Result(final Object descriptor, final long pluginBundleId) {
 			this.descriptor = descriptor;
-			this.bundleHandle = bundleHandle;
+			this.pluginBundleId = pluginBundleId;
 		}
 		
 		/**
@@ -149,13 +149,13 @@ public final class ExtensionQuery {
 		public Object getDescriptor() {
 			return descriptor;
 		}
-		
+
 		/**
-		 * Getter method for the bundleHandle.
-		 * @return the bundleHandle
+		 * Getter method for the pluginBundleId.
+		 * @return the pluginBundleId
 		 */
-		public PluginBundleHandle getBundleHandle() {
-			return bundleHandle;
+		public long getPluginBundleId() {
+			return pluginBundleId;
 		}
 
 	}

@@ -20,7 +20,7 @@ public final class PluginBundleHandle implements Serializable {
 	/**
 	 * the pluginBundleId
 	 */
-	private long pluginBundleId;
+	private final long pluginBundleId;
 	
 	/**
 	 * the classLoader
@@ -29,9 +29,18 @@ public final class PluginBundleHandle implements Serializable {
 	
 	/**
 	 * Constructor.
+	 * @param pluginBundleId the plugin bundle id
 	 */
-	PluginBundleHandle(long pluginBundleId) {
+	public PluginBundleHandle(long pluginBundleId) {
 		this.pluginBundleId = pluginBundleId;
+	}
+	
+	/**
+	 * Getter method for the pluginBundleId.
+	 * @return the pluginBundleId
+	 */
+	public long getPluginBundleId() {
+		return pluginBundleId;
 	}
 	
 	/**
@@ -40,7 +49,7 @@ public final class PluginBundleHandle implements Serializable {
 	 */
 	public ClassLoader getClassLoader() {
 		if (classLoader == null) {
-			classLoader = PluginBundleClassLoaderRegistry.getOrCreateClassLoader(pluginBundleId);
+			classLoader = InternalPluginBundleClassLoaderRegistry.getOrCreateClassLoader(pluginBundleId);
 		}
 		return classLoader;
 	}

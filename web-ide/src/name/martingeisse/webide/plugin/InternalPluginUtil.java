@@ -4,6 +4,7 @@
 
 package name.martingeisse.webide.plugin;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,17 +72,31 @@ public class InternalPluginUtil {
 		if (fetchPluginById(pluginId).getIsUnpacked()) {
 			return;
 		}
+		final List<JsonAnalyzer> emptyList = new ArrayList<JsonAnalyzer>();
+		final Map<String, JsonAnalyzer> emptyMap = new HashMap<String, JsonAnalyzer>();
 		final List<PluginBundles> bundles = fetchPluginBundlesByPluginId(pluginId);
 		for (final PluginBundles bundle : bundles) {
 			final String descriptor = bundle.getDescriptor();
 			final JsonAnalyzer analyzer = JsonAnalyzer.parse(descriptor);
 			
+			// syntax check
+			if (analyzer.isNull()) {
+				throw new RuntimeException("invalid bundle descriptor syntax for plugin bundle id " + bundle.getId());
+			}
+			
 			// extension points
-			// TODO
-			// final JsonAnalyzer extensionPointsAnalyzer = analyzer.analyzeMapElement("extension_points");
+			for (JsonAnalyzer entry : analyzer.analyzeMapElement("extension_points").fallback(emptyList).analyzeList()) {
+				String name = entry.analyzeMapElement("name").expectString();
+				Integer onChangeClearedSection = entry.analyzeMapElement("on_change_cleared_section").tryInteger();
+				SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QDeclaredExtensionPoints.declaredExtensionPoints);
+				insert.set(QDeclaredExtensionPoints.declaredExtensionPoints.pluginBundleId, bundle.getId());
+				insert.set(QDeclaredExtensionPoints.declaredExtensionPoints.name, name);
+				insert.set(QDeclaredExtensionPoints.declaredExtensionPoints.onChangeClearedSection, onChangeClearedSection);
+				insert.execute();
+			}
 			
 			// extensions
-			for (Map.Entry<String, JsonAnalyzer> entry : analyzer.analyzeMapElement("extensions").analyzeMap().entrySet()) {
+			for (Map.Entry<String, JsonAnalyzer> entry : analyzer.analyzeMapElement("extensions").fallback(emptyMap).analyzeMap().entrySet()) {
 				String extensionPointName = entry.getKey();
 				for (JsonAnalyzer extensionAnalyzer : entry.getValue().analyzeListOrSingle()) {
 					SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QDeclaredExtensions.declaredExtensions);
@@ -141,6 +156,9 @@ public class InternalPluginUtil {
 			insert.set(QExtensionBindings.extensionBindings.declaredExtensionId, extension.getId());
 			insert.execute();
 		}
+		
+		// clear appropriate state of plugin bundles with extension points
+		TODO
 
 	}
 	

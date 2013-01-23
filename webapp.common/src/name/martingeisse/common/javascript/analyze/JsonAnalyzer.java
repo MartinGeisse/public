@@ -142,7 +142,7 @@ public final class JsonAnalyzer {
 	 * @return the integer value or null
 	 */
 	public Integer tryInteger() {
-		return (value instanceof Integer) ? (Integer)value : null;
+		return (value instanceof Number) ? ((Number)value).intValue() : null;
 	}
 
 	/**
@@ -151,8 +151,8 @@ public final class JsonAnalyzer {
 	 * @return the integer value
 	 */
 	public int expectInteger() {
-		if (value instanceof Integer) {
-			return (Integer)value;
+		if (value instanceof Number) {
+			return ((Number)value).intValue();
 		}
 		throw expectedException("integer");
 	}
@@ -196,7 +196,7 @@ public final class JsonAnalyzer {
 	 * @return the long value or null
 	 */
 	public Long tryLong() {
-		return (value instanceof Long) ? (Long)value : null;
+		return (value instanceof Number) ? ((Number)value).longValue() : null;
 	}
 
 	/**
@@ -205,8 +205,8 @@ public final class JsonAnalyzer {
 	 * @return the long value
 	 */
 	public long expectLong() {
-		if (value instanceof Long) {
-			return (Long)value;
+		if (value instanceof Number) {
+			return ((Number)value).longValue();
 		}
 		throw expectedException("long");
 	}

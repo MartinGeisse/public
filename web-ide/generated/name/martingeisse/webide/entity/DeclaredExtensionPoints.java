@@ -27,6 +27,11 @@ public class DeclaredExtensionPoints implements Serializable {
     private String name;
 
     /**
+     * the onChangeClearedSection
+     */
+    private Integer onChangeClearedSection;
+
+    /**
      * the pluginBundleId
      */
     private Long pluginBundleId;
@@ -64,6 +69,22 @@ public class DeclaredExtensionPoints implements Serializable {
     }
 
     /**
+     * Getter method for the onChangeClearedSection.
+     * @return the onChangeClearedSection
+     */
+    public Integer getOnChangeClearedSection() {
+        return onChangeClearedSection;
+    }
+
+    /**
+     * Setter method for the onChangeClearedSection.
+     * @param onChangeClearedSection the onChangeClearedSection to set
+     */
+    public void setOnChangeClearedSection(Integer onChangeClearedSection) {
+        this.onChangeClearedSection = onChangeClearedSection;
+    }
+
+    /**
      * Getter method for the pluginBundleId.
      * @return the pluginBundleId
      */
@@ -84,7 +105,7 @@ public class DeclaredExtensionPoints implements Serializable {
      */
     @Override
     public String toString() {
-        return "{DeclaredExtensionPoints. id = " + id + ", name = " + name + ", pluginBundleId = " + pluginBundleId + "}";
+        return "{DeclaredExtensionPoints. id = " + id + ", name = " + name + ", onChangeClearedSection = " + onChangeClearedSection + ", pluginBundleId = " + pluginBundleId + "}";
     }
 
 }

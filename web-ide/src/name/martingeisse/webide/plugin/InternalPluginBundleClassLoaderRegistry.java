@@ -11,8 +11,10 @@ import java.util.Map;
 
 /**
  * This class keeps the class loaders of all loaded plugin bundles.
+ * 
+ * It should be considered internal to the plugin system.
  */
-public class PluginBundleClassLoaderRegistry {
+public class InternalPluginBundleClassLoaderRegistry {
 
 	/**
 	 * the classLoaderByBundleId
@@ -23,11 +25,20 @@ public class PluginBundleClassLoaderRegistry {
 	 * the bundleIdByClassLoader
 	 */
 	private static final Map<ClassLoader, Long> bundleIdByClassLoader = new HashMap<ClassLoader, Long>();
+	
+	/**
+	 * Static initializer: Associates plugin bundle ID 1 with the application class loader.
+	 */
+	static {
+		ClassLoader classLoader = InternalPluginBundleClassLoaderRegistry.class.getClassLoader();
+		classLoaderByBundleId.put(1L, classLoader);
+		bundleIdByClassLoader.put(classLoader, 1L);
+	}
 
 	/**
 	 * Prevent instantiation.
 	 */
-	private PluginBundleClassLoaderRegistry() {
+	private InternalPluginBundleClassLoaderRegistry() {
 	}
 
 	/**
