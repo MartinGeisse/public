@@ -10,7 +10,7 @@ import java.nio.charset.Charset;
  * Expects the state value to be a string, and serializes it
  * by UTF-8 encoding it.
  */
-public final class StringSerializer implements IPluginStateSerializer<String> {
+public final class StringSerializer implements IPluginBundleStateSerializer<String> {
 
 	//
 	private static final Charset charset = Charset.forName("utf-8");

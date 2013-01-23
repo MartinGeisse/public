@@ -12,7 +12,7 @@ import org.json.simple.JSONValue;
  * Serializes a structure of JSON-compatible values to
  * JSON text.
  */
-public final class JsonSerializer implements IPluginStateSerializer<Object> {
+public final class JsonSerializer implements IPluginBundleStateSerializer<Object> {
 
 	//
 	private static final Charset charset = Charset.forName("utf-8");

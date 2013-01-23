@@ -4,8 +4,6 @@
 
 package name.martingeisse.webide.plugin;
 
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -144,21 +142,6 @@ public class InternalPluginUtil {
 			insert.execute();
 		}
 
-	}
-	
-	/**
-	 * Returns a class loader for the JAR file of the specified plugin bundle.
-	 * 
-	 * @param pluginBundleId the ID of the plugin bundle
-	 * @return the class loader
-	 */
-	public static ClassLoader getPluginBundleClassLoader(final long pluginBundleId) {
-		try {
-			final URL url = new URL("bundle", null, Long.toString(pluginBundleId));
-			return new URLClassLoader(new URL[] {url});
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
 	}
 	
 	

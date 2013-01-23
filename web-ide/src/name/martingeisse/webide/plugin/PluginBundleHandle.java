@@ -40,7 +40,7 @@ public final class PluginBundleHandle implements Serializable {
 	 */
 	public ClassLoader getClassLoader() {
 		if (classLoader == null) {
-			classLoader = InternalPluginUtil.getPluginBundleClassLoader(pluginBundleId);
+			classLoader = PluginBundleClassLoaderRegistry.getOrCreateClassLoader(pluginBundleId);
 		}
 		return classLoader;
 	}

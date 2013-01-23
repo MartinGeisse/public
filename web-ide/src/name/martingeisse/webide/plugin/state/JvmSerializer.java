@@ -10,9 +10,9 @@ import org.apache.commons.lang3.SerializationUtils;
 
 /**
  * Uses the JVM serialization mechanism to serialize
- * arbitrary objects.
+ * arbitrary {@link Serializable} objects.
  */
-public final class JvmSerializer implements IPluginStateSerializer<Serializable> {
+public final class JvmSerializer implements IPluginBundleStateSerializer<Serializable> {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.webide.plugin.state.IPluginStateSerializer#serialize(java.lang.Object)

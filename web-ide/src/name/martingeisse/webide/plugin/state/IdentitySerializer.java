@@ -8,7 +8,7 @@ package name.martingeisse.webide.plugin.state;
  * This serializer does not convert anything. It just passes
  * state values that already are byte arrays.
  */
-public final class IdentitySerializer implements IPluginStateSerializer<byte[]> {
+public final class IdentitySerializer implements IPluginBundleStateSerializer<byte[]> {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.webide.plugin.state.IPluginStateSerializer#serialize(java.lang.Object)
