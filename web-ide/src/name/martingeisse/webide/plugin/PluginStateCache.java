@@ -10,6 +10,8 @@ import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.webide.entity.QPluginBundleStates;
 import name.martingeisse.webide.plugin.serializer.IPluginBundleStateSerializer;
 
+import org.apache.log4j.Logger;
+
 import com.mysema.commons.lang.Pair;
 import com.mysema.query.FilteredClause;
 import com.mysema.query.group.QPair;
@@ -28,6 +30,11 @@ import com.mysema.query.types.PredicateOperation;
  */
 class PluginStateCache {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(PluginStateCache.class);
+	
 	/**
 	 * Prevent instantiation.
 	 */
@@ -85,7 +92,8 @@ class PluginStateCache {
 			delete.where(QPluginBundleStates.pluginBundleStates.userId.eq(userId));
 			QPair<Long, Integer> qpair = QPair.create(QPluginBundleStates.pluginBundleStates.pluginBundleId, QPluginBundleStates.pluginBundleStates.section);
 			delete.where(new PredicateOperation(Ops.IN, qpair, Expressions.constant(bundleSections)));
-			delete.execute();
+			long affected = delete.execute();
+			logger.trace("state rows deleted: " + affected);
 		}
 	}
 	
