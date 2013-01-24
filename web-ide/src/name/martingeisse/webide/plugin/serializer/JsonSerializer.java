@@ -2,7 +2,7 @@
  * Copyright (c) 2012 Shopgate GmbH
  */
 
-package name.martingeisse.webide.plugin.state;
+package name.martingeisse.webide.plugin.serializer;
 
 import java.nio.charset.Charset;
 

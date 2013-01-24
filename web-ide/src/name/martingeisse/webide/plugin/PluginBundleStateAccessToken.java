@@ -2,9 +2,8 @@
  * Copyright (c) 2012 Shopgate GmbH
  */
 
-package name.martingeisse.webide.plugin.state;
+package name.martingeisse.webide.plugin;
 
-import name.martingeisse.webide.plugin.InternalPluginBundleClassLoaderRegistry;
 
 
 /**

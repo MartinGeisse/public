@@ -2,15 +2,24 @@
  * Copyright (c) 2012 Shopgate GmbH
  */
 
-package name.martingeisse.webide.plugin.state;
+package name.martingeisse.webide.plugin;
+
+import java.util.List;
 
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.webide.entity.QPluginBundleStates;
+import name.martingeisse.webide.plugin.serializer.IPluginBundleStateSerializer;
 
+import com.mysema.commons.lang.Pair;
 import com.mysema.query.FilteredClause;
+import com.mysema.query.group.QPair;
 import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.dml.SQLDeleteClause;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
+import com.mysema.query.support.Expressions;
+import com.mysema.query.types.Ops;
+import com.mysema.query.types.PredicateOperation;
 
 
 
@@ -61,6 +70,22 @@ class PluginStateCache {
 			return null;
 		} else {
 			return serializer.deserialize((byte[])row[0]);
+		}
+	}
+	
+	/**
+	 * This method is called when the set of activated plugins changes for a user,
+	 * and after the user's extension bindings have been updated. It deletes state
+	 * for the specified user/bundl/section triples, which in turn are the sections
+	 * to be cleared upon activation changes as specified in the extension points.
+	 */
+	static void onActivationChange(long userId, List<Pair<Long, Integer>> bundleSections) {
+		if (!bundleSections.isEmpty()) {
+			SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QPluginBundleStates.pluginBundleStates);
+			delete.where(QPluginBundleStates.pluginBundleStates.userId.eq(userId));
+			QPair<Long, Integer> qpair = QPair.create(QPluginBundleStates.pluginBundleStates.pluginBundleId, QPluginBundleStates.pluginBundleStates.section);
+			delete.where(new PredicateOperation(Ops.IN, qpair, Expressions.constant(bundleSections)));
+			delete.execute();
 		}
 	}
 	

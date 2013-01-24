@@ -32,10 +32,10 @@ import name.martingeisse.webide.resources.operation.FetchSingleResourceOperation
 
 import org.json.simple.JSONValue;
 
+import com.mysema.commons.lang.Pair;
 import com.mysema.query.sql.dml.SQLDeleteClause;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
-import com.mysema.query.types.expr.BooleanExpression;
 
 /**
  * This class contains internal plugin handling utility methods.
@@ -134,10 +134,12 @@ public class InternalPluginUtil {
 
 		// map extension points by name
 		final Map<String, DeclaredExtensionPoints> declaredExtensionPointsByName = new HashMap<String, DeclaredExtensionPoints>();
+		final List<Pair<Long, Integer>> sectionsToDelete = new ArrayList<Pair<Long,Integer>>();
 		for (final DeclaredExtensionPoints extensionPoint : declaredExtensionPoints) {
 			if (declaredExtensionPointsByName.put(extensionPoint.getName(), extensionPoint) != null) {
 				throw new RuntimeException("duplicate extension point: " + extensionPoint.getName());
 			}
+			sectionsToDelete.add(new Pair<Long, Integer>(extensionPoint.getPluginBundleId(), extensionPoint.getOnChangeClearedSection()));
 		}
 
 		// delete any previously existing bindings
@@ -158,7 +160,7 @@ public class InternalPluginUtil {
 		}
 		
 		// clear appropriate state of plugin bundles with extension points
-		TODO
+		PluginStateCache.onActivationChange(userId, sectionsToDelete);
 
 	}
 	
@@ -236,9 +238,7 @@ public class InternalPluginUtil {
 	 * or are provided by the system.
 	 */
 	private static List<DeclaredExtensionPoints> fetchDeclaredExtensionPoints(final List<Long> pluginBundleIds) {
-		BooleanExpression inSpecifiedBundles = QDeclaredExtensionPoints.declaredExtensionPoints.pluginBundleId.in(pluginBundleIds);
-		BooleanExpression isSystemExtensionPoint = QDeclaredExtensionPoints.declaredExtensionPoints.pluginBundleId.isNull();
-		return QueryUtil.fetchMultiple(QDeclaredExtensionPoints.declaredExtensionPoints, inSpecifiedBundles.or(isSystemExtensionPoint));
+		return QueryUtil.fetchMultiple(QDeclaredExtensionPoints.declaredExtensionPoints, QDeclaredExtensionPoints.declaredExtensionPoints.pluginBundleId.in(pluginBundleIds));
 	}
 
 	/**

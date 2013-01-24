@@ -10,7 +10,7 @@ import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.request.resource.ResourceReference;
 
 /**
- * A Wicket resource reference for workspace resources.
+ * A Wicket resource reference for plugin bundle JARs.
  */
 public final class PluginBundleWicketResourceReference extends ResourceReference {
 

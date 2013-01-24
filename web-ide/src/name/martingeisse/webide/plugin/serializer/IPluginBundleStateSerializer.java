@@ -2,7 +2,7 @@
  * Copyright (c) 2012 Shopgate GmbH
  */
 
-package name.martingeisse.webide.plugin.state;
+package name.martingeisse.webide.plugin.serializer;
 
 /**
  * An instance of this interface is used whenever plugin bundle state

@@ -18,7 +18,7 @@ import org.apache.wicket.util.time.Duration;
 import com.mysema.query.sql.SQLQuery;
 
 /**
- * A Wicket resource that represents a workspace resource.
+ * A Wicket resource that represents a plugin bundle JAR.
  */
 public class PluginBundleWicketResource extends AbstractResource {
 

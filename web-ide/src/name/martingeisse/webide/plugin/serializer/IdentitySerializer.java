@@ -2,7 +2,7 @@
  * Copyright (c) 2012 Shopgate GmbH
  */
 
-package name.martingeisse.webide.plugin.state;
+package name.martingeisse.webide.plugin.serializer;
 
 /**
  * This serializer does not convert anything. It just passes
