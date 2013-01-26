@@ -8,7 +8,6 @@ package name.martingeisse.webide.features.html.editor;
 
 import name.martingeisse.webide.editor.codemirror.AbstractCodeMirrorEditorPanel;
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.wicket.util.WicketHeadUtil;
 
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -41,8 +40,8 @@ public class HtmlEditorPanel extends AbstractCodeMirrorEditorPanel {
 		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(HtmlEditorPanel.class, "javascript.js")));
 		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(HtmlEditorPanel.class, "css.js")));
 		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(HtmlEditorPanel.class, "htmlmixed.js")));
-		WicketHeadUtil.includeClassJavascript(response, HtmlEditorPanel.class);
-		response.render(OnDomReadyHeaderItem.forScript("$('#" + get("form").get("textarea").getMarkupId() + "').createHtmlTextArea();"));
+		// WicketHeadUtil.includeClassJavascript(response, HtmlEditorPanel.class);
+		response.render(OnDomReadyHeaderItem.forScript("$('#" + get("form").get("textarea").getMarkupId() + "').createCodeMirrorWorkbenchEditor('text/html');"));
 	}
 	
 }

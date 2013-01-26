@@ -12,6 +12,7 @@ import name.martingeisse.webide.resources.operation.ReplaceFileContentsOperation
 import name.martingeisse.webide.util.NoTrimTextArea;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 import name.martingeisse.wicket.util.IClientFuture;
+import name.martingeisse.wicket.util.WicketHeadUtil;
 
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -82,6 +83,7 @@ public class AbstractCodeMirrorEditorPanel extends Panel {
 		super.renderHead(response);
 		response.render(CssHeaderItem.forReference(new CssResourceReference(AbstractCodeMirrorEditorPanel.class, "codemirror.css")));
 		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(AbstractCodeMirrorEditorPanel.class, "codemirror.js")));
+		WicketHeadUtil.includeClassJavascript(response, AbstractCodeMirrorEditorPanel.class);
 	}
 	
 }
