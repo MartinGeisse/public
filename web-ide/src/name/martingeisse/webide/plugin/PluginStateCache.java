@@ -83,7 +83,7 @@ class PluginStateCache {
 	/**
 	 * This method is called when the set of activated plugins changes for a user,
 	 * and after the user's extension bindings have been updated. It deletes state
-	 * for the specified user/bundl/section triples, which in turn are the sections
+	 * for the specified user/bundle/section triples, which in turn are the sections
 	 * to be cleared upon activation changes as specified in the extension points.
 	 */
 	static void onActivationChange(long userId, List<Pair<Long, Integer>> bundleSections) {

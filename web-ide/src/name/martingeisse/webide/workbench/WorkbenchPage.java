@@ -13,7 +13,6 @@ import java.util.List;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.webide.entity.QWorkspaceResources;
-import name.martingeisse.webide.java.editor.JavaEditor;
 import name.martingeisse.webide.plugin.InternalPluginUtil;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
 import name.martingeisse.webide.resources.BuilderService;
@@ -27,6 +26,8 @@ import name.martingeisse.webide.resources.operation.DeleteResourcesOperation;
 import name.martingeisse.webide.resources.operation.FetchMarkerResult;
 import name.martingeisse.webide.resources.operation.FetchResourceResult;
 import name.martingeisse.webide.resources.operation.ListResourcesOperation;
+import name.martingeisse.webide.workbench.services.IWorkbenchEditorService;
+import name.martingeisse.webide.workbench.services.IWorkbenchServicesProvider;
 import name.martingeisse.wicket.component.contextmenu.ContextMenu;
 import name.martingeisse.wicket.component.contextmenu.ContextMenuItem;
 import name.martingeisse.wicket.component.contextmenu.ContextMenuSeparator;
@@ -64,8 +65,13 @@ import com.mysema.query.sql.SQLQuery;
 /**
  * The main workbench page.
  */
-public class WorkbenchPage extends WebPage {
+public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider {
 
+	/**
+	 * the servicesImplementation
+	 */
+	private WorkbenchPageServicesImpl servicesImplementation;
+	
 	/**
 	 * the log
 	 */
@@ -80,6 +86,7 @@ public class WorkbenchPage extends WebPage {
 	 * Constructor.
 	 */
 	public WorkbenchPage() {
+		this.servicesImplementation = new WorkbenchPageServicesImpl(this);
 		setOutputMarkupId(true);
 		add(new IClientFuture.Behavior());
 
@@ -94,7 +101,7 @@ public class WorkbenchPage extends WebPage {
 					ResourcePath path = parentPath.appendSegment(filename, false);
 					new CreateFileOperation(path, "", true).run();
 					AjaxRequestUtil.markForRender(WorkbenchPage.this.get("filesContainer"));
-					loadEditorContents(path);
+					getEditorService().openDefaultEditor(path);
 				}
 			}
 		});
@@ -102,7 +109,7 @@ public class WorkbenchPage extends WebPage {
 			@Override
 			protected void onSelect(final List<FetchResourceResult> anchor) {
 				if (!anchor.isEmpty()) {
-					loadEditorContents(anchor.get(0).getPath());
+					getEditorService().openDefaultEditor(anchor.get(0).getPath());
 				}
 			}
 		});
@@ -223,7 +230,7 @@ public class WorkbenchPage extends WebPage {
 			protected void onInteraction(AjaxRequestTarget target, String interaction, List<FetchResourceResult> selectedNodes) {
 				if ("dblclick".equals(interaction)) {
 					if (!selectedNodes.isEmpty()) {
-						loadEditorContents(selectedNodes.get(0).getPath());
+						getEditorService().openDefaultEditor(selectedNodes.get(0).getPath());
 					}
 				}
 			}
@@ -294,11 +301,10 @@ public class WorkbenchPage extends WebPage {
 	}
 
 	/**
-	 * 
+	 * This method is used by the editor service to replace the current editor
+	 * with a new one. This happens when the user opens a file.
 	 */
-	private void loadEditorContents(final ResourcePath path) {
-		IEditor editor = new JavaEditor();
-		editor.initialize(path);
+	void replaceEditor(IEditor editor) {
 		((WebMarkupContainer)get("editorContainer")).replace(editor.createComponent("editor"));
 		AjaxRequestUtil.markForRender(WorkbenchPage.this.get("editorContainer"));
 	}
@@ -368,4 +374,12 @@ public class WorkbenchPage extends WebPage {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.webide.workbench.services.IWorkbenchServicesProvider#getEditorService()
+	 */
+	@Override
+	public IWorkbenchEditorService getEditorService() {
+		return servicesImplementation.getEditorService();
+	}
+	
 }

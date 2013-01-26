@@ -6,7 +6,7 @@
 
 package name.martingeisse.webide.resources;
 
-import name.martingeisse.webide.java.compiler.JavaCompilerFacade;
+import name.martingeisse.webide.features.java.compiler.JavaCompilerFacade;
 import name.martingeisse.webide.pde.PluginBuilderFacade;
 
 /**

@@ -139,7 +139,9 @@ public class InternalPluginUtil {
 			if (declaredExtensionPointsByName.put(extensionPoint.getName(), extensionPoint) != null) {
 				throw new RuntimeException("duplicate extension point: " + extensionPoint.getName());
 			}
-			sectionsToDelete.add(new Pair<Long, Integer>(extensionPoint.getPluginBundleId(), extensionPoint.getOnChangeClearedSection()));
+			if (extensionPoint.getOnChangeClearedSection() != null) {
+				sectionsToDelete.add(new Pair<Long, Integer>(extensionPoint.getPluginBundleId(), extensionPoint.getOnChangeClearedSection()));
+			}
 		}
 
 		// delete any previously existing bindings
