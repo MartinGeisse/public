@@ -13,9 +13,9 @@ import java.util.Map;
 
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.webide.plugin.ExtensionQuery;
+import name.martingeisse.webide.plugin.ExtensionQuery.Result;
 import name.martingeisse.webide.plugin.PluginBundleStateAccessToken;
 import name.martingeisse.webide.plugin.PluginBundleStateKey;
-import name.martingeisse.webide.plugin.ExtensionQuery.Result;
 import name.martingeisse.webide.plugin.serializer.IPluginBundleStateSerializer;
 import name.martingeisse.webide.plugin.serializer.JsonSerializer;
 

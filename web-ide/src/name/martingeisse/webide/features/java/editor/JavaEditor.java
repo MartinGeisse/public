@@ -7,6 +7,8 @@
 package name.martingeisse.webide.features.java.editor;
 
 import name.martingeisse.webide.editor.codemirror.AbstractCodeMirrorEditor;
+import name.martingeisse.webide.editor.codemirror.modes.StandardCodeMirrorModes;
+import name.martingeisse.webide.editor.codemirror.panel.CodeMirrorEditorPanel;
 import name.martingeisse.webide.workbench.IEditor;
 
 import org.apache.wicket.Component;
@@ -22,7 +24,7 @@ public class JavaEditor extends AbstractCodeMirrorEditor {
 	 */
 	@Override
 	public Component createComponent(final String id) {
-		return new JavaEditorPanel(id, new PropertyModel<String>(this, "document"), getWorkspaceResourcePath());
+		return new CodeMirrorEditorPanel(id, new PropertyModel<String>(this, "document"), getWorkspaceResourcePath(), StandardCodeMirrorModes.JAVA);
 	}
 
 }

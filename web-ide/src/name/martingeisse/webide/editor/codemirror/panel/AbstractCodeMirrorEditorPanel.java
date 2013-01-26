@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.editor.codemirror;
+package name.martingeisse.webide.editor.codemirror.panel;
 
 import name.martingeisse.webide.resources.BuilderService;
 import name.martingeisse.webide.resources.ResourcePath;
@@ -19,13 +19,16 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 /**
- * Base class for CodeMirror based editor panels.
+ * Base class for CodeMirror based editor panels. Subclasses must
+ * provide Javascript code to actually create the CodeMirror instance
+ * for the text area.
  */
 public class AbstractCodeMirrorEditorPanel extends Panel {
 
@@ -84,6 +87,15 @@ public class AbstractCodeMirrorEditorPanel extends Panel {
 		response.render(CssHeaderItem.forReference(new CssResourceReference(AbstractCodeMirrorEditorPanel.class, "codemirror.css")));
 		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(AbstractCodeMirrorEditorPanel.class, "codemirror.js")));
 		WicketHeadUtil.includeClassJavascript(response, AbstractCodeMirrorEditorPanel.class);
+	}
+	
+	/**
+	 * Returns the text area for which subclasses must create a CodeMirror instance.
+	 * @return the text area
+	 */
+	@SuppressWarnings("unchecked")
+	public final TextArea<String> getTextArea() {
+		return (TextArea<String>)get("form").get("textarea");
 	}
 	
 }
