@@ -10,17 +10,12 @@ $.fn.createHtmlTextArea = function() {
 			gutter: true,
 			matchBrackets: true,
 			extraKeys: {
-				// 'Cmd-S': saveEditor, TODO
+				'Cmd-S': function() {},
 			},
 		};
 		
 		// create the CodeMirror instance
 		var codeMirror = CodeMirror.fromTextArea(this, options);
-		
-		// save DOM data (currently not needed -- TODO might be needed for marker update)
-		// var data = {
-		// };
-		// $(this).data('HtmlTextArea', data);
 		
 		// this function actually sends a save request to the server
 		function saveEditor() {
