@@ -4,6 +4,7 @@ $.fn.createHtmlTextArea = function() {
 		
 		// determine CodeMirror creation options
 		var options = {
+			mode: 'text/html',
 			indentWithTabs: true,
 			indentUnit: 4,
 			lineNumbers: true,

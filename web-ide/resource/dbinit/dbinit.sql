@@ -194,7 +194,7 @@ INSERT INTO `plugin_bundles` (`id`, `plugin_id`, `descriptor`, `jarfile`) VALUES
 	],
 	"webide.editor.codemirror.mode": [
 		{"id": "text/x-csrc", "anchor": "name.martingeisse.webide.FooClass", "path": "modes/clike.js"},
-		{"id": "text/html", "anchor": "name.martingeisse.webide.FooClass", "path": "modes/htmlmixed.js"}
+		{"id": "text/html", "anchor": "name.martingeisse.webide.FooClass", "path": ["modes/css.js", "modes/javascript.js", "modes/xml.js", "modes/htmlmixed.js"]}
 	],
 	"webide.editor": [
 		{"id": "webide.editors.java", "family": "codemirror", "mode": "text/x-csrc"},

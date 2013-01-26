@@ -4,23 +4,19 @@ $.fn.createJavaTextArea = function() {
 		
 		// determine CodeMirror creation options
 		var options = {
+			mode: 'text/x-csrc',
 			indentWithTabs: true,
 			indentUnit: 4,
 			lineNumbers: true,
 			gutter: true,
 			matchBrackets: true,
 			extraKeys: {
-				// 'Cmd-S': saveEditor, TODO
+				'Cmd-S': function() {},
 			},
 		};
 		
 		// create the CodeMirror instance
 		var codeMirror = CodeMirror.fromTextArea(this, options);
-		
-		// save DOM data (currently not needed -- TODO might be needed for marker update)
-		// var data = {
-		// };
-		// $(this).data('javaTextArea', data);
 		
 		// this function actually sends a save request to the server
 		function saveEditor() {
