@@ -8,6 +8,7 @@ package name.martingeisse.webide.workbench;
 
 import java.io.Serializable;
 
+import name.martingeisse.webide.editor.IEditorFactory;
 import name.martingeisse.webide.features.html.editor.HtmlEditor;
 import name.martingeisse.webide.features.java.editor.JavaEditor;
 import name.martingeisse.webide.resources.ResourcePath;
@@ -46,13 +47,13 @@ public class WorkbenchPageServicesImpl implements IWorkbenchServicesProvider, IW
 	 */
 	@Override
 	public void openDefaultEditor(final ResourcePath path) {
-		openEditor(path, getEditorIdFromExtension(path.getExtension()));
+		openEditor(path, getDefaultEditorIdFromExtension(path.getExtension()));
 	}
 	
 	/**
 	 * 
 	 */
-	private String getEditorIdFromExtension(String extension) {
+	private String getDefaultEditorIdFromExtension(String extension) {
 		if (extension == null) {
 			return "webide.editors.java";
 		} else if (extension.equals("java")) {
@@ -71,7 +72,7 @@ public class WorkbenchPageServicesImpl implements IWorkbenchServicesProvider, IW
 	public void openEditor(final ResourcePath path, final String editorId) {
 		
 		// create the editor
-		IEditor editor;
+		IEditor editor = getEditorFactoryForId(editorId).createEditor();
 		if (editorId.equals("webide.editors.java")) {
 			editor = new JavaEditor();
 		} else if (editorId.equals("webide.editors.html")) {
@@ -85,6 +86,30 @@ public class WorkbenchPageServicesImpl implements IWorkbenchServicesProvider, IW
 		
 		// replace the workbench editor
 		page.replaceEditor(editor);
+		
+	}
+	
+	/**
+	 * 
+	 */
+	private IEditorFactory getEditorFactoryForId(String editorId) {
+		if (editorId.equals("webide.editors.java")) {
+			return new IEditorFactory() {
+				@Override
+				public IEditor createEditor() {
+					return new JavaEditor();
+				}
+			};
+		} else if (editorId.equals("webide.editors.html")) {
+			return new IEditorFactory() {
+				@Override
+				public IEditor createEditor() {
+					return new HtmlEditor();
+				}
+			};
+		} else {
+			throw new UnknownEditorIdException(editorId);
+		}
 		
 	}
 
