@@ -34,6 +34,6 @@ public class StandardCodeMirrorModes {
 	/**
 	 * Java mode.
 	 */
-	public static final CodeMirrorMode JAVA = create("text/x-csrc", "clike.js");
+	public static final CodeMirrorMode CLIKE = create("text/x-csrc", "clike.js");
 	
 }

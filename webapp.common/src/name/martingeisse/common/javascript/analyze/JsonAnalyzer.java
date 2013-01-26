@@ -423,9 +423,12 @@ public final class JsonAnalyzer {
 	}
 
 	/**
-	 * Helper method to create {@link JsonAnalysisException}s.
+	 * Helper method to create {@link JsonAnalysisException}s for
+	 * unexpected values.
+	 * @param what a description of what was expected
+	 * @return the exception
 	 */
-	private JsonAnalysisException expectedException(String what) {
+	public JsonAnalysisException expectedException(String what) {
 		return exception("expected " + what + ", found " + value + (value == null ? "" : " (" + value.getClass().getSimpleName() + ")"));
 	}
 	
