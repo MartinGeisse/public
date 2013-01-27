@@ -104,7 +104,7 @@ public class PluginBuilderFacade {
 			final JsonAnalyzer analyzer = JsonAnalyzer.parse(pluginBundleDescriptorSourceCode);
 			final JsonAnalyzer extensionPoints = analyzer.analyzeMapElement("extension_points");
 			if (!extensionPoints.isNull()) {
-				extensionPoints.expectMap();
+				extensionPoints.expectList();
 			}
 			final JsonAnalyzer extensions = analyzer.analyzeMapElement("extensions");
 			if (!extensions.isNull()) {
