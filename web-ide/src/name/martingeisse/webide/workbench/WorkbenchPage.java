@@ -41,6 +41,7 @@ import name.martingeisse.wicket.util.IClientFuture;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ITreeProvider;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -48,6 +49,7 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -139,6 +141,12 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 				} else {
 					return "";
 				}
+			}
+		});
+		filesContextMenu.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Upload") {
+			@Override
+			protected void onSelect(List<FetchResourceResult> anchor) {
+				AjaxRequestUtil.getAjaxRequestTarget().appendJavaScript("TODO");
 			}
 		});
 		filesContextMenu.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Run") {
@@ -236,7 +244,13 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 			}
 
 		};
-		filesContainer.add(resourceTree);		
+		filesContainer.add(resourceTree);
+		
+		WebMarkupContainer fileUploadForm = new WebMarkupContainer("uploadForm");
+		add(fileUploadForm);
+		fileUploadForm.add(new FileUploadField("file"));
+		// fileUploadForm.add(new AjaxSubmitLink("submit") {
+		//});
 
 		WebMarkupContainer markersContainer = new WebMarkupContainer("markersContainer");
 		markersContainer.setOutputMarkupId(true);
