@@ -6,14 +6,15 @@
 
 package name.martingeisse.webide.application;
 
-import name.martingeisse.webide.workbench.WorkbenchPage;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.IHeaderResponseDecorator;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.resource.CoreLibrariesContributor;
 
 /**
@@ -29,9 +30,10 @@ public class MyHeaderResponseDecorator implements IHeaderResponseDecorator {
 	@Override
 	public IHeaderResponse decorate(final IHeaderResponse response) {
 		if (AjaxRequestUtil.getAjaxRequestTarget() == null) {
-			response.render(CssHeaderItem.forReference(new CssResourceReference(WorkbenchPage.class, "common.css"), null, "screen, projection"));
-			response.render(CssHeaderItem.forReference(new CssResourceReference(WorkbenchPage.class, "ie.css"), null, "screen, projection", "IE"));
+			response.render(CssHeaderItem.forReference(new CssResourceReference(MyHeaderResponseDecorator.class, "common.css"), null, "screen, projection"));
+			response.render(CssHeaderItem.forReference(new CssResourceReference(MyHeaderResponseDecorator.class, "ie.css"), null, "screen, projection", "IE"));
 			CoreLibrariesContributor.contributeAjax(WebApplication.get(), response);
+			response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(MyHeaderResponseDecorator.class, "common.js")));
 		}
 		return response;
 	}

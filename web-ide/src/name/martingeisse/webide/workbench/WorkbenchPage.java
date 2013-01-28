@@ -28,6 +28,7 @@ import name.martingeisse.webide.resources.operation.FetchResourceResult;
 import name.martingeisse.webide.resources.operation.ListResourcesOperation;
 import name.martingeisse.webide.workbench.services.IWorkbenchEditorService;
 import name.martingeisse.webide.workbench.services.IWorkbenchServicesProvider;
+import name.martingeisse.wicket.component.contextmenu.AbstractMarkupMenuItem;
 import name.martingeisse.wicket.component.contextmenu.ContextMenu;
 import name.martingeisse.wicket.component.contextmenu.ContextMenuItem;
 import name.martingeisse.wicket.component.contextmenu.ContextMenuSeparator;
@@ -36,12 +37,12 @@ import name.martingeisse.wicket.component.contextmenu.DynamicContextMenuItems;
 import name.martingeisse.wicket.component.contextmenu.SimpleContextMenuItem;
 import name.martingeisse.wicket.component.contextmenu.SimpleContextMenuItemWithTextInput;
 import name.martingeisse.wicket.component.tree.JsTree;
+import name.martingeisse.wicket.component.upload.AbstractAjaxFileUploadField;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 import name.martingeisse.wicket.util.IClientFuture;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ITreeProvider;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -49,7 +50,6 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -157,6 +157,12 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 				}
 			}
 		});
+		filesContextMenu.add(new AbstractMarkupMenuItem<List<FetchResourceResult>>() {
+			@Override
+			protected String getMarkup() {
+				return "<button onclick=\"alert('abcdef')\">click me</button>";
+			}
+		});
 		filesContextMenu.add(new ContextMenuSeparator<List<FetchResourceResult>>());
 		filesContextMenu.add(new DynamicContextMenuItems<List<FetchResourceResult>>() {
 			@Override
@@ -246,11 +252,8 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 		};
 		filesContainer.add(resourceTree);
 		
-		WebMarkupContainer fileUploadForm = new WebMarkupContainer("uploadForm");
-		add(fileUploadForm);
-		fileUploadForm.add(new FileUploadField("file"));
-		// fileUploadForm.add(new AjaxSubmitLink("submit") {
-		//});
+		add(new AbstractAjaxFileUploadField("fileUploadField") {
+		});
 
 		WebMarkupContainer markersContainer = new WebMarkupContainer("markersContainer");
 		markersContainer.setOutputMarkupId(true);
@@ -344,7 +347,6 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 	 */
 	@Override
 	public void renderHead(final IHeaderResponse response) {
-		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkbenchPage.class, "common.js")));
 		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkbenchPage.class, "jquery.jstree.js")));
 		super.renderHead(response);
 	}

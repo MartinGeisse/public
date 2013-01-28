@@ -30,3 +30,11 @@ function createContextMenuItemWithPrompt(name, promptText, callback) {
 		}
 	};
 }
+
+function createContextMenuItemWithCustomMarkup(markup) {
+	return {
+		name: 'foo',
+		type: 'html',
+		html: markup,
+	};
+}
