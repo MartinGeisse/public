@@ -28,7 +28,7 @@ import name.martingeisse.webide.resources.operation.FetchResourceResult;
 import name.martingeisse.webide.resources.operation.ListResourcesOperation;
 import name.martingeisse.webide.workbench.services.IWorkbenchEditorService;
 import name.martingeisse.webide.workbench.services.IWorkbenchServicesProvider;
-import name.martingeisse.wicket.component.contextmenu.AbstractMarkupMenuItem;
+import name.martingeisse.wicket.component.contextmenu.ComponentMenuItem;
 import name.martingeisse.wicket.component.contextmenu.ContextMenu;
 import name.martingeisse.wicket.component.contextmenu.ContextMenuItem;
 import name.martingeisse.wicket.component.contextmenu.ContextMenuSeparator;
@@ -157,12 +157,8 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 				}
 			}
 		});
-		filesContextMenu.add(new AbstractMarkupMenuItem<List<FetchResourceResult>>() {
-			@Override
-			protected String getMarkup() {
-				return "<button onclick=\"alert('abcdef')\">click me</button>";
-			}
-		});
+		add(new WebMarkupContainer("customMenuItem"));
+		filesContextMenu.add(new ComponentMenuItem<List<FetchResourceResult>>(get("customMenuItem")));
 		filesContextMenu.add(new ContextMenuSeparator<List<FetchResourceResult>>());
 		filesContextMenu.add(new DynamicContextMenuItems<List<FetchResourceResult>>() {
 			@Override
