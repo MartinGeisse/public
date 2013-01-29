@@ -21,11 +21,12 @@
 							<img wicket:id="icon" style="vertical-align: sub;" /> <span wicket:id="name" class="name">name</span>
 						</a>
 					</div>
-					<div style="display: block">
-						<input type="file" wicket:id="fileUploadField">
-					</div>
-					<div style="display: block">
-						<span wicket:id="customMenuItem"><i>foobar</i></span>
+					<div style="display: none">
+						<div wicket:id="fileUploadMenuItem" style="position: relative">
+							Upload...
+							TODO context menu fängt click events, deshalb öffnet ein click auf den text nicht den file chooser
+							<input type="file" wicket:id="fileUploadField" style="position: absolute; top: 0px; right: 0px; -webkit-user-select: text; opacity: 0.5; z-index: 5">
+						</div>
 					</div>
 				</div>
 			</div>

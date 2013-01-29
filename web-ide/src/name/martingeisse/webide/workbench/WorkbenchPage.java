@@ -157,8 +157,11 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 				}
 			}
 		});
-		add(new WebMarkupContainer("customMenuItem"));
-		filesContextMenu.add(new ComponentMenuItem<List<FetchResourceResult>>(get("customMenuItem")));
+		WebMarkupContainer fileUploadMenuItem = new WebMarkupContainer("fileUploadMenuItem");
+		add(fileUploadMenuItem);
+		fileUploadMenuItem.add(new AbstractAjaxFileUploadField("fileUploadField") {
+		});
+		filesContextMenu.add(new ComponentMenuItem<List<FetchResourceResult>>(fileUploadMenuItem));
 		filesContextMenu.add(new ContextMenuSeparator<List<FetchResourceResult>>());
 		filesContextMenu.add(new DynamicContextMenuItems<List<FetchResourceResult>>() {
 			@Override
@@ -248,9 +251,6 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 		};
 		filesContainer.add(resourceTree);
 		
-		add(new AbstractAjaxFileUploadField("fileUploadField") {
-		});
-
 		WebMarkupContainer markersContainer = new WebMarkupContainer("markersContainer");
 		markersContainer.setOutputMarkupId(true);
 		add(markersContainer);

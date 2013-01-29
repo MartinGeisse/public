@@ -12,14 +12,17 @@ function createContextMenu(selector, callback, items) {
 				},
 				zIndex: 10,
 				events: {
+					show: function(currentOptions) {
+						currentOptions.$menu.children('.context-menu-html').removeClass('not-selectable');
+					},
 					hide: function(currentOptions) {
-						console.log(currentOptions.$menu);
-						for (var i in items) {
-							var item = items[i];
-							if (item.onHide) {
-								item.onHide(item);
+						currentOptions.$menu.children('.context-menu-item').each(function() {
+							var $this = $(this);
+							var itemOptions = currentOptions.items[$this.data().contextMenuKey];
+							if (itemOptions.onHide) {
+								itemOptions.onHide.call($this);
 							}
-						}
+						});
 					}
 				},
 			};
@@ -49,7 +52,7 @@ function createComponentMenuItem(selector) {
 		type: 'html',
 		html: selector,
 		onHide: function(item) {
-			console.log(item);
+			$originalParent.append(this.children());
 		},
 	};
 }
