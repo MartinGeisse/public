@@ -232,7 +232,7 @@ public abstract class SelectableElementsBehavior<T> extends AbstractDefaultAjaxB
 	@Override
 	public void buildContextMenuCallback(StringBuilder builder) {
 		builder.append("var interaction = '" + CONTEXT_MENU_INTERACTION_PREFIX + "' + key;");
-		builder.append("\t$('#").append(getComponent().getMarkupId()).append("').selectableElements_ajax(interaction, data);\n");
+		builder.append("\t$('#").append(getComponent().getMarkupId()).append("').selectableElementsAjax(interaction, data);\n");
 	}
 
 }

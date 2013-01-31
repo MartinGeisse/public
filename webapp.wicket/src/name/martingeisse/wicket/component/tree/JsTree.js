@@ -5,6 +5,7 @@ $.fn.createJsTree = function(options) {
 	options = $.extend({
 		ajaxCallback: function() {},
 		contextMenuData: null,
+		interactions: {},
 	}, options);
 	
 	// handle each tree separately
@@ -37,13 +38,20 @@ $.fn.createJsTree = function(options) {
 			});
 			return selectedNodeIndices.join(':');
 		}
-		function sendAjaxRequest(interaction, data) {
-			options.ajaxCallback(interaction, getAjaxNodeIndexList(), data);
+		function interact(interaction, data) {
+			function doAjaxCall() {
+				options.ajaxCallback(interaction, getAjaxNodeIndexList(), data);
+			}
+			if (options.interactions[interaction]) {
+				options.interactions[interaction](doAjaxCall);
+			} else {
+				doAjaxCall();
+			}
 		}
 
 		// the data object used to communicate with other sub-functions
 		var storedData = {
-			sendAjaxRequest: sendAjaxRequest,
+			interact: interact,
 			getAjaxNodeIndexList: getAjaxNodeIndexList,
 		};
 		$this.data('jstree', storedData);
@@ -78,7 +86,7 @@ $.fn.createJsTree = function(options) {
 		}, $this));
 		$this.delegate('a', 'dblclick.jstree', $.proxy(function(event) {
 			selectSingleElement(event.currentTarget);
-			sendAjaxRequest('dblclick', null);
+			interact('dblclick', null);
 		}));
 		if (options.contextMenuData != null) {
 			$this.delegate('a', 'contextmenu.jstree', $.proxy(function(event) {
@@ -101,11 +109,11 @@ $.fn.createJsTree = function(options) {
 	
 }
 
-$.fn.jstree_ajax = function(interaction, data) {
-	this.data('jstree').sendAjaxRequest(interaction, data);
+$.fn.jstreeInteract = function(interaction, data) {
+	this.data('jstree').interact(interaction, data);
 	return this;
 };
 
-$.fn.jstree_ajax_node_index_list = function(interaction, data) {
+$.fn.jstreeAjaxNodeIndexList = function() {
 	return this.data('jstree').getAjaxNodeIndexList();
 };

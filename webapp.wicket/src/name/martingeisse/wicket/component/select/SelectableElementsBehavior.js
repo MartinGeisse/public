@@ -113,15 +113,15 @@ $.fn.selectableElements = function(options) {
 	return this;
 }
 
-$.fn.selectableElements_get = function() {
+$.fn.selectableElementsGet = function() {
 	return this.data('selectableElements').getSelectedValues();
 };
 
-$.fn.selectableElements_getElements = function() {
+$.fn.selectableElementsGetElements = function() {
 	return this.data('selectableElements').selected;
 };
 
-$.fn.selectableElements_ajax = function(interaction, data) {
+$.fn.selectableElementsAjax = function(interaction, data) {
 	this.data('selectableElements').sendAjaxRequest(interaction, data);
 	return this;
 };

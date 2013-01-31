@@ -122,7 +122,7 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 	@Override
 	public void buildContextMenuCallback(final StringBuilder builder) {
 		builder.append("var interaction = '" + CONTEXT_MENU_INTERACTION_PREFIX + "' + key;");
-		builder.append("\t$('#").append(tree.getMarkupId()).append("').jstree_ajax(interaction, data);\n");
+		builder.append("\t$('#").append(tree.getMarkupId()).append("').jstreeInteract(interaction, data);\n");
 	}
 
 }

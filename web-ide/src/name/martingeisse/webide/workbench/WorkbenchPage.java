@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.util.GenericTypeUtil;
-import name.martingeisse.webide.entity.QWorkspaceResources;
 import name.martingeisse.webide.plugin.InternalPluginUtil;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
 import name.martingeisse.webide.resources.BuilderService;
@@ -65,8 +63,6 @@ import org.apache.wicket.protocol.http.servlet.MultipartServletWebRequestImpl;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.upload.FileItem;
-
-import com.mysema.query.sql.SQLQuery;
 
 /**
  * The main workbench page.
@@ -156,7 +152,7 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 			@Override
 			protected String renderOptions() {
 				String resourceTreeMarkupId = WorkbenchPage.this.get("filesContainer").get("resources").getMarkupId();
-				return "{formData: function() {return [{name: 'resources', value: $('#" + resourceTreeMarkupId + "').jstree_ajax_node_index_list()}]; }, done: rerenderResources}";
+				return "{formData: function() {return [{name: 'resources', value: $('#" + resourceTreeMarkupId + "').jstreeAjaxNodeIndexList()}]; }, done: rerenderResources}";
 			}
 			
 			/* (non-Javadoc)
