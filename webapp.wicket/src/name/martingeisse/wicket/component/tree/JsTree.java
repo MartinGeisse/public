@@ -91,6 +91,14 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	public ContextMenu<List<T>> getContextMenu() {
 		return contextMenu;
 	}
+	
+	/**
+	 * @return the AJAX behavior
+	 */
+	@SuppressWarnings("unchecked")
+	protected TreeAjaxBehavior<T> getBehavior() {
+		return getBehaviors(TreeAjaxBehavior.class).get(0);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Component#onBeforeRender()
@@ -143,8 +151,7 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 		super.renderHead(response);
 		WicketHeadUtil.includeClassJavascript(response, JsTree.class);
 		
-		@SuppressWarnings("unchecked")
-		TreeAjaxBehavior<T> behavior = getBehaviors(TreeAjaxBehavior.class).get(0);
+		TreeAjaxBehavior<T> behavior = getBehavior();
 		StringBuilder builder = new StringBuilder();
 		builder.append("$('#").append(getMarkupId()).append("').createJsTree({\n");
 		builder.append("	ajaxCallback: ").append(behavior.getCallbackSpecifier()).append(",\n");
@@ -222,6 +229,18 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	 * @param selectedNodes the selected tree nodes
 	 */
 	protected void onInteraction(AjaxRequestTarget target, String interaction, List<T> selectedNodes) {
+	}
+	
+	/**
+	 * Converts a list of node indices from JSON to the node type T. This method is mainly useful
+	 * if a node list specifier has been submitted by other means than normal tree / context menu
+	 * interaction (e.g. as a parameter during a file upload).
+	 * 
+	 * @param specifier specifier the node index list
+	 * @return the nodes
+	 */
+	public List<T> lookupSelectedNodes(String specifier) {
+		return getBehavior().lookupSelectedNodes(specifier);
 	}
 	
 }

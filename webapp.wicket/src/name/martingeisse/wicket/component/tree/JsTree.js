@@ -30,17 +30,21 @@ $.fn.createJsTree = function(options) {
 		});
 
 		// function to send an AJAX request using the supplied callback
-		function sendAjaxRequest(interaction, data) {
+		function getAjaxNodeIndexList() {
 			var selectedNodes = $this.jstree('get_selected');
 			var selectedNodeIndices = $.map(selectedNodes.children('div'), function(x) {
 				return $(x).text();
 			});
-			options.ajaxCallback(interaction, selectedNodeIndices.join(':'), data);
+			return selectedNodeIndices.join(':');
+		}
+		function sendAjaxRequest(interaction, data) {
+			options.ajaxCallback(interaction, getAjaxNodeIndexList(), data);
 		}
 
 		// the data object used to communicate with other sub-functions
 		var storedData = {
-			sendAjaxRequest : sendAjaxRequest,
+			sendAjaxRequest: sendAjaxRequest,
+			getAjaxNodeIndexList: getAjaxNodeIndexList,
 		};
 		$this.data('jstree', storedData);
 		
@@ -100,4 +104,8 @@ $.fn.createJsTree = function(options) {
 $.fn.jstree_ajax = function(interaction, data) {
 	this.data('jstree').sendAjaxRequest(interaction, data);
 	return this;
+};
+
+$.fn.jstree_ajax_node_index_list = function(interaction, data) {
+	return this.data('jstree').getAjaxNodeIndexList();
 };

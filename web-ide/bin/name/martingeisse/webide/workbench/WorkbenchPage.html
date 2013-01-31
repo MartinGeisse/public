@@ -24,8 +24,7 @@
 					<div style="display: none">
 						<div wicket:id="fileUploadMenuItem" style="position: relative">
 							Upload...
-							TODO context menu fängt click events, deshalb öffnet ein click auf den text nicht den file chooser
-							<input type="file" wicket:id="fileUploadField" style="position: absolute; top: 0px; right: 0px; -webkit-user-select: text; opacity: 0.5; z-index: 5">
+							<input type="file" wicket:id="fileUploadField" class="absolute-cover" style="opacity: 0;" onclick="$('.context-menu-root').hide()">
 						</div>
 					</div>
 				</div>

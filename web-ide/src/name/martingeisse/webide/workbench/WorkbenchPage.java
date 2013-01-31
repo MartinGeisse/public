@@ -6,6 +6,7 @@
 
 package name.martingeisse.webide.workbench;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -42,6 +43,7 @@ import name.martingeisse.wicket.util.AjaxRequestUtil;
 import name.martingeisse.wicket.util.IClientFuture;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ITreeProvider;
@@ -59,8 +61,10 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.protocol.http.servlet.MultipartServletWebRequestImpl;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.upload.FileItem;
 
 import com.mysema.query.sql.SQLQuery;
 
@@ -73,12 +77,12 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 	 * the servicesImplementation
 	 */
 	private WorkbenchPageServicesImpl servicesImplementation;
-	
+
 	/**
 	 * the log
 	 */
 	private String log;
-	
+
 	/**
 	 * the buildingWorkspaceIndicateWasVisible
 	 */
@@ -91,16 +95,17 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 		this.servicesImplementation = new WorkbenchPageServicesImpl(this);
 		setOutputMarkupId(true);
 		add(new IClientFuture.Behavior());
-
+		add(new RerenderResourcesBehavior());
+		
 		final ContextMenu<List<FetchResourceResult>> filesContextMenu = new ContextMenu<List<FetchResourceResult>>();
 		filesContextMenu.add(new SimpleContextMenuItemWithTextInput<List<FetchResourceResult>>("New...", "File name:") {
 			@Override
-			protected void onSelect(final List<FetchResourceResult> anchor, String filename) {
+			protected void onSelect(final List<FetchResourceResult> anchor, final String filename) {
 				if (!anchor.isEmpty()) {
-					FetchResourceResult element = anchor.get(0);
-					ResourcePath elementPath = element.getPath();
-					ResourcePath parentPath = (element.getType() == ResourceType.FILE ? elementPath.removeLastSegment(false) : elementPath);
-					ResourcePath path = parentPath.appendSegment(filename, false);
+					final FetchResourceResult element = anchor.get(0);
+					final ResourcePath elementPath = element.getPath();
+					final ResourcePath parentPath = (element.getType() == ResourceType.FILE ? elementPath.removeLastSegment(false) : elementPath);
+					final ResourcePath path = parentPath.appendSegment(filename, false);
 					new CreateFileOperation(path, "", true).run();
 					AjaxRequestUtil.markForRender(WorkbenchPage.this.get("filesContainer"));
 					getEditorService().openDefaultEditor(path);
@@ -123,9 +128,9 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 		filesContextMenu.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Delete") {
 			@Override
 			protected void onSelect(final List<FetchResourceResult> anchor) {
-				ResourcePath[] paths = new ResourcePath[anchor.size()];
+				final ResourcePath[] paths = new ResourcePath[anchor.size()];
 				int i = 0;
-				for (FetchResourceResult anchorElement : anchor) {
+				for (final FetchResourceResult anchorElement : anchor) {
 					paths[i] = anchorElement.getPath();
 					i++;
 				}
@@ -143,13 +148,46 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 				}
 			}
 		});
-		filesContextMenu.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Upload") {
+		final WebMarkupContainer fileUploadMenuItem = new WebMarkupContainer("fileUploadMenuItem");
+		fileUploadMenuItem.setMarkupId("fileUploadMenuItem");
+		add(fileUploadMenuItem);
+		fileUploadMenuItem.add(new AbstractAjaxFileUploadField("fileUploadField") {
+			
 			@Override
-			protected void onSelect(List<FetchResourceResult> anchor) {
-				AjaxRequestUtil.getAjaxRequestTarget().appendJavaScript("TODO");
+			protected String renderOptions() {
+				String resourceTreeMarkupId = WorkbenchPage.this.get("filesContainer").get("resources").getMarkupId();
+				return "{formData: function() {return [{name: 'resources', value: $('#" + resourceTreeMarkupId + "').jstree_ajax_node_index_list()}]; }, done: rerenderResources}";
 			}
+			
+			/* (non-Javadoc)
+			 * @see name.martingeisse.wicket.component.upload.AbstractAjaxFileUploadField#onFileUploaded(org.apache.wicket.protocol.http.servlet.MultipartServletWebRequestImpl, org.apache.wicket.util.upload.FileItem)
+			 */
+			@Override
+			protected void onFileUploaded(MultipartServletWebRequestImpl multipartRequest, FileItem fileItem) {
+
+				// find the selected nodes
+				String resourceListSpecifier = multipartRequest.getPostParameters().getParameterValue("resources").toString();
+				if (resourceListSpecifier == null) {
+					return;
+				}
+				@SuppressWarnings("unchecked")
+				JsTree<FetchResourceResult> resourceTree = (JsTree<FetchResourceResult>)(WorkbenchPage.this.get("filesContainer").get("resources"));
+				List<FetchResourceResult> resources = resourceTree.lookupSelectedNodes(resourceListSpecifier);
+				if (resources.size() > 0) {
+					try {
+						final FetchResourceResult element = resources.get(0);
+						final ResourcePath elementPath = element.getPath();
+						final ResourcePath parentPath = (element.getType() == ResourceType.FILE ? elementPath.removeLastSegment(false) : elementPath);
+						storeUploadedFile(fileItem, parentPath);
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}
+				
+			}
+			
 		});
-		filesContextMenu.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Run") {
+		filesContextMenu.add(new ComponentMenuItem<List<FetchResourceResult>>(fileUploadMenuItem));		filesContextMenu.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Run") {
 			@Override
 			protected void onSelect(final List<FetchResourceResult> anchor) {
 				if (!anchor.isEmpty()) {
@@ -157,33 +195,28 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 				}
 			}
 		});
-		WebMarkupContainer fileUploadMenuItem = new WebMarkupContainer("fileUploadMenuItem");
-		add(fileUploadMenuItem);
-		fileUploadMenuItem.add(new AbstractAjaxFileUploadField("fileUploadField") {
-		});
-		filesContextMenu.add(new ComponentMenuItem<List<FetchResourceResult>>(fileUploadMenuItem));
 		filesContextMenu.add(new ContextMenuSeparator<List<FetchResourceResult>>());
 		filesContextMenu.add(new DynamicContextMenuItems<List<FetchResourceResult>>() {
 			@Override
 			protected ContextMenuItem<? super List<FetchResourceResult>>[] getReplacementItems() {
-				List<ContextMenuItem<? super List<FetchResourceResult>>> replacementItems = new ArrayList<ContextMenuItem<? super List<FetchResourceResult>>>();
-				for (ContextMenuStateAccess.Entry entry : ContextMenuStateAccess.get()) {
+				final List<ContextMenuItem<? super List<FetchResourceResult>>> replacementItems = new ArrayList<ContextMenuItem<? super List<FetchResourceResult>>>();
+				for (final ContextMenuStateAccess.Entry entry : ContextMenuStateAccess.get()) {
 					final String className = entry.getClassName();
 					final long pluginBundleId = entry.getPluginBundleId();
 					replacementItems.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Message from " + className) {
 						@Override
 						protected void onSelect(final List<FetchResourceResult> anchor) {
 							try {
-								PluginBundleHandle bundleHandle = new PluginBundleHandle(pluginBundleId);
+								final PluginBundleHandle bundleHandle = new PluginBundleHandle(pluginBundleId);
 								final Runnable runnable = bundleHandle.createObject(Runnable.class, className);
 								runnable.run();
-							} catch (Exception e) {
+							} catch (final Exception e) {
 								throw new RuntimeException(e);
 							}
 						}
 					});
 				}
-				ContextMenuItem<? super List<FetchResourceResult>>[] array = GenericTypeUtil.unsafeCast(new ContextMenuItem<?>[replacementItems.size()]);
+				final ContextMenuItem<? super List<FetchResourceResult>>[] array = GenericTypeUtil.unsafeCast(new ContextMenuItem<?>[replacementItems.size()]);
 				return replacementItems.toArray(array);
 			}
 		});
@@ -193,54 +226,54 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 		add(filesContainer);
 
 		final ITreeProvider<FetchResourceResult> resourceTreeProvider = new ITreeProvider<FetchResourceResult>() {
-			
+
 			@Override
 			public void detach() {
 			}
-			
+
 			@Override
-			public IModel<FetchResourceResult> model(FetchResourceResult object) {
+			public IModel<FetchResourceResult> model(final FetchResourceResult object) {
 				return Model.of(object);
 			}
-			
+
 			@Override
 			public Iterator<? extends FetchResourceResult> getRoots() {
 				return getChildren(FetchResourceResult.createFakeRoot());
 			}
-			
+
 			@Override
-			public boolean hasChildren(FetchResourceResult node) {
+			public boolean hasChildren(final FetchResourceResult node) {
 				return (node.getType() != ResourceType.FILE);
 			}
-			
+
 			@Override
-			public Iterator<? extends FetchResourceResult> getChildren(FetchResourceResult node) {
-				ListResourcesOperation operation = new ListResourcesOperation(node.getPath());
+			public Iterator<? extends FetchResourceResult> getChildren(final FetchResourceResult node) {
+				final ListResourcesOperation operation = new ListResourcesOperation(node.getPath());
 				operation.run();
 				return operation.getChildren().iterator();
 			}
-			
+
 		};
 		final JsTree<FetchResourceResult> resourceTree = new JsTree<FetchResourceResult>("resources", resourceTreeProvider, filesContextMenu) {
 
 			@Override
-			protected void populateItem(Item<FetchResourceResult> item) {
+			protected void populateItem(final Item<FetchResourceResult> item) {
 				final FetchResourceResult fetchResult = item.getModelObject();
 				item.add(new Image("icon", new AbstractReadOnlyModel<ResourceReference>() {
 					@Override
 					public ResourceReference getObject() {
-						ResourceIconSelector icon = (fetchResult.getType() == ResourceType.FILE ? ResourceIconSelector.FILE_OK : ResourceIconSelector.FOLDER_OK);
+						final ResourceIconSelector icon = (fetchResult.getType() == ResourceType.FILE ? ResourceIconSelector.FILE_OK : ResourceIconSelector.FOLDER_OK);
 						return icon.getResourceReference();
 					}
 				}));
 				item.add(new Label("name", fetchResult.getPath().getLastSegment()));
 			}
-			
+
 			/* (non-Javadoc)
 			 * @see name.martingeisse.wicket.component.tree.JsTree#onInteraction(org.apache.wicket.ajax.AjaxRequestTarget, java.lang.String, java.util.List)
 			 */
 			@Override
-			protected void onInteraction(AjaxRequestTarget target, String interaction, List<FetchResourceResult> selectedNodes) {
+			protected void onInteraction(final AjaxRequestTarget target, final String interaction, final List<FetchResourceResult> selectedNodes) {
 				if ("dblclick".equals(interaction)) {
 					if (!selectedNodes.isEmpty()) {
 						getEditorService().openDefaultEditor(selectedNodes.get(0).getPath());
@@ -249,15 +282,16 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 			}
 
 		};
+		resourceTree.setOutputMarkupId(true);
 		filesContainer.add(resourceTree);
-		
-		WebMarkupContainer markersContainer = new WebMarkupContainer("markersContainer");
+
+		final WebMarkupContainer markersContainer = new WebMarkupContainer("markersContainer");
 		markersContainer.setOutputMarkupId(true);
 		add(markersContainer);
 		markersContainer.add(new MarkerListView("markers", null, 30) {
 			@Override
 			protected void populateItem(final ListItem<FetchMarkerResult> item) {
-				IModel<FetchMarkerResult> model = item.getModel();
+				final IModel<FetchMarkerResult> model = item.getModel();
 				addResourcePathLabel(item, "resource", model);
 				addMeaningIcon(item, "icon", model);
 				addMeaningLabel(item, "meaning", model);
@@ -265,35 +299,32 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 			}
 		});
 
-		WebMarkupContainer editorContainer = new WebMarkupContainer("editorContainer");
+		final WebMarkupContainer editorContainer = new WebMarkupContainer("editorContainer");
 		editorContainer.add(new EmptyPanel("editor"));
 		editorContainer.setOutputMarkupId(true);
 		add(editorContainer);
-		
+
 		add(new Label("log", new PropertyModel<String>(this, "log")));
 		add(new WebMarkupContainer("buildingWorkspaceIndicator") {
-			
+
 			@Override
 			public boolean isVisible() {
 				return !BuilderService.isBuildFinished();
 			}
-			
+
 			@Override
-			public void onEvent(IEvent<?> event) {
+			public void onEvent(final IEvent<?> event) {
 				if (event.getPayload() instanceof AjaxRequestTarget) {
 					if (buildingWorkspaceIndicateWasVisible == null || buildingWorkspaceIndicateWasVisible != isVisible()) {
-						AjaxRequestTarget ajaxRequestTarget = (AjaxRequestTarget)event.getPayload();
+						final AjaxRequestTarget ajaxRequestTarget = (AjaxRequestTarget)event.getPayload();
 						ajaxRequestTarget.add(this);
 						buildingWorkspaceIndicateWasVisible = isVisible();
 					}
 				}
 			}
-			
+
 		}.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true));
 		add(new Link<Void>("refreshPluginsButton") {
-			/* (non-Javadoc)
-			 * @see org.apache.wicket.markup.html.link.Link#onClick()
-			 */
 			@Override
 			public void onClick() {
 				InternalPluginUtil.updateUsersPlugins();
@@ -301,23 +332,12 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 			}
 		});
 	}
-	
-	/**
-	 * Returns the file names.
-	 * @return the file names.
-	 */
-	public List<String> getFilenames() {
-		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-		query.from(QWorkspaceResources.workspaceResources);
-		query.where(QWorkspaceResources.workspaceResources.type.eq(ResourceType.FILE.name()));
-		return query.list(QWorkspaceResources.workspaceResources.name);
-	}
 
 	/**
 	 * This method is used by the editor service to replace the current editor
 	 * with a new one. This happens when the user opens a file.
 	 */
-	void replaceEditor(IEditor editor) {
+	void replaceEditor(final IEditor editor) {
 		((WebMarkupContainer)get("editorContainer")).replace(editor.createComponent("editor"));
 		AjaxRequestUtil.markForRender(WorkbenchPage.this.get("editorContainer"));
 	}
@@ -343,6 +363,8 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 	 */
 	@Override
 	public void renderHead(final IHeaderResponse response) {
+		CharSequence rerenderResources = getBehaviors(RerenderResourcesBehavior.class).get(0).getCallbackScript();
+		response.render(JavaScriptHeaderItem.forScript("window.rerenderResources = function() {" + rerenderResources + "}", null));
 		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkbenchPage.class, "jquery.jstree.js")));
 		super.renderHead(response);
 	}
@@ -368,8 +390,7 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 		final String classpath = selectedPath.withLeadingSeparator(false).retainFirstSegments(1, false).appendSegment("bin", false).toString();
 		final String className = selectedPath.removeFirstSegments(2, false).toString().replace('/', '.');
 		final String[] commandTokens = new String[] {
-			"java", "-cp", "lib/applauncher/code:lib/applauncher/lib/mysql-connector-java-5.1.20-bin.jar",
-			"name.martingeisse.webide.tools.AppLauncher", classpath, className,
+			"java", "-cp", "lib/applauncher/code:lib/applauncher/lib/mysql-connector-java-5.1.20-bin.jar", "name.martingeisse.webide.tools.AppLauncher", classpath, className,
 		};
 		try {
 			final Process process = Runtime.getRuntime().exec(commandTokens);
@@ -392,6 +413,39 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 	@Override
 	public IWorkbenchEditorService getEditorService() {
 		return servicesImplementation.getEditorService();
+	}
+
+	/**
+	 * Stores an uploaded file in the database.
+	 * 
+	 * @param fileItem the {@link FileItem} from the upload
+	 * @param destinationFolderPath the path of the intended parent folder. This must
+	 * not be a FILE type resource.
+	 */
+	private void storeUploadedFile(FileItem fileItem, ResourcePath destinationFolderPath) {
+		try {
+			ResourcePath path = destinationFolderPath.appendSegment(fileItem.getName(), false);
+			byte[] contents = IOUtils.toByteArray(fileItem.getInputStream());
+			new CreateFileOperation(path, contents, false).run();
+			AjaxRequestUtil.markForRender(WorkbenchPage.this.get("filesContainer"));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * The only purpose of this behavior is to have a callback URL to re-render the resource tree.
+	 */
+	class RerenderResourcesBehavior extends AbstractDefaultAjaxBehavior {
+
+		/* (non-Javadoc)
+		 * @see org.apache.wicket.ajax.AbstractDefaultAjaxBehavior#respond(org.apache.wicket.ajax.AjaxRequestTarget)
+		 */
+		@Override
+		protected void respond(AjaxRequestTarget target) {
+			target.add(WorkbenchPage.this.get("filesContainer"));
+		}
+		
 	}
 	
 }

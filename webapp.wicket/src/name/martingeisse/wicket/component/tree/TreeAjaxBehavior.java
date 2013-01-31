@@ -97,7 +97,7 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 
 	/**
 	 * Converts a list of node indices from JSON to the internal node type T.
-	 * @param jsonValues the JSON values
+	 * @param specifier specifier the node index list
 	 * @return the internal nodes
 	 */
 	protected List<T> lookupSelectedNodes(String specifier) {

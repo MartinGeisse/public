@@ -15,7 +15,8 @@ USE `webide`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `login_name` varchar(255)  NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX (`login_name`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 
@@ -31,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `workspace_resources` (
   `parent_id` bigint(20) NULL,
   `contents` blob NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `workspace_resources_parent_id` (`parent_id`)
+  UNIQUE INDEX `parent_id_name_unique` (`parent_id`, `name`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `markers` (
@@ -43,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `markers` (
   `column` bigint(20) NOT NULL COMMENT '1-based',
   `message` varchar(4096)  NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `markers_workspace_resource_id` (`workspace_resource_id`)
+  INDEX `markers_workspace_resource_id` (`workspace_resource_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 
@@ -64,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `plugin_bundles` (
   `descriptor` MEDIUMTEXT NOT NULL,
   `jarfile` LONGBLOB NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `plugin_bundles_plugin_id` (`plugin_id`)
+  INDEX `plugin_bundles_plugin_id` (`plugin_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `declared_extension_points` (
@@ -73,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `declared_extension_points` (
   `name` varchar(255)  NOT NULL,
   `on_change_cleared_section` INTEGER,
   PRIMARY KEY (`id`),
-  KEY `declared_extension_points_plugin_bundle_id` (`plugin_bundle_id`)
+  INDEX `declared_extension_points_plugin_bundle_id` (`plugin_bundle_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `declared_extensions` (
@@ -82,7 +83,8 @@ CREATE TABLE IF NOT EXISTS `declared_extensions` (
   `extension_point_name` varchar(255)  NOT NULL,
   `descriptor` MEDIUMTEXT NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `declared_extensions_plugin_bundle_id` (`plugin_bundle_id`)
+  INDEX `declared_extensions_plugin_bundle_id` (`plugin_bundle_id`),
+  INDEX (`id`, `extension_point_name`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 
@@ -95,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `builtin_plugins` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `plugin_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `user_plugins_plugin_id` (`plugin_id`)
+  INDEX `user_plugins_plugin_id` (`plugin_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `user_installed_plugins` (
@@ -103,8 +105,8 @@ CREATE TABLE IF NOT EXISTS `user_installed_plugins` (
   `user_id` bigint(20) NOT NULL,
   `plugin_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `user_plugins_user_id` (`user_id`),
-  KEY `user_plugins_plugin_id` (`plugin_id`)
+  INDEX `user_plugins_user_id` (`user_id`),
+  INDEX `user_plugins_plugin_id` (`plugin_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `workspace_staging_plugins` (
@@ -112,8 +114,8 @@ CREATE TABLE IF NOT EXISTS `workspace_staging_plugins` (
   `workspace_resource_id` bigint(20) NOT NULL,
   `plugin_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `workspace_staging_plugins_workspace_resource_id` (`workspace_resource_id`),
-  KEY `workspace_staging_plugins_plugin_id` (`plugin_id`)
+  INDEX `workspace_staging_plugins_workspace_resource_id` (`workspace_resource_id`),
+  INDEX `workspace_staging_plugins_plugin_id` (`plugin_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 
@@ -128,9 +130,9 @@ CREATE TABLE IF NOT EXISTS `extension_bindings` (
   `declared_extension_point_id` bigint(20) NOT NULL,
   `declared_extension_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `extension_bindings_user_id` (`user_id`),
-  KEY `extension_bindings_declared_extension_point_id` (`declared_extension_point_id`),
-  KEY `extension_bindings_declared_extension_id` (`declared_extension_id`)
+  INDEX `extension_bindings_user_id` (`user_id`),
+  INDEX `extension_bindings_declared_extension_point_id` (`declared_extension_point_id`),
+  INDEX `extension_bindings_declared_extension_id` (`declared_extension_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `plugin_bundle_states` (
@@ -140,8 +142,8 @@ CREATE TABLE IF NOT EXISTS `plugin_bundle_states` (
   `section` int NOT NULL,
   `data` LONGBLOB NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `plugin_bundle_states_user_id` (`user_id`),
-  KEY `plugin_bundle_states_plugin_bundle_id` (`plugin_bundle_id`)
+  INDEX `plugin_bundle_states_plugin_bundle_id` (`plugin_bundle_id`),
+  INDEX (`user_id`, `plugin_bundle_id`, `section`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 
