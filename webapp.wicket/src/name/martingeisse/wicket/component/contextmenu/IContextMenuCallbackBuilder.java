@@ -6,6 +6,7 @@
 
 package name.martingeisse.wicket.component.contextmenu;
 
+import name.martingeisse.common.terms.CommandVerb;
 import name.martingeisse.wicket.component.select.SelectableElementsBehavior;
 
 /**
@@ -40,5 +41,12 @@ public interface IContextMenuCallbackBuilder {
 	 * @param builder the string builder
 	 */
 	public void buildContextMenuCallback(StringBuilder builder);
-	
+
+	/**
+	 * TODO
+	 * @param builder
+	 * @param commandVerb
+	 */
+	public void buildContextMenuCallbackx(StringBuilder builder, CommandVerb commandVerb);
+
 }
