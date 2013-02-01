@@ -43,10 +43,15 @@ public interface IContextMenuCallbackBuilder {
 	public void buildContextMenuCallback(StringBuilder builder);
 
 	/**
-	 * TODO
-	 * @param builder
-	 * @param commandVerb
+	 * Writes one or more instructions to the specified string builder
+	 * to invoke a callback for the specified command verb. No
+	 * additional client-side data or context is available; this is
+	 * to allow invoking the same command verb by other means (e.g.
+	 * a keyboard shortcut).
+	 * 
+	 * @param builder the string builder
+	 * @param commandVerb the command verb
 	 */
-	public void buildContextMenuCallbackx(StringBuilder builder, CommandVerb commandVerb);
+	public void buildContextMenuCallback(StringBuilder builder, CommandVerb commandVerb);
 
 }

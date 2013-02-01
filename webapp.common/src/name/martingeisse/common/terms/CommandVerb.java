@@ -4,6 +4,8 @@
 
 package name.martingeisse.common.terms;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import name.martingeisse.common.util.ParameterUtil;
@@ -23,7 +25,7 @@ import name.martingeisse.common.util.ParameterUtil;
  * Command verbs are specified by a class object (to avoid collision) and
  * a name (string; to allow multiple verb definitions per class).
  */
-public final class CommandVerb {
+public final class CommandVerb implements Serializable {
 
 	/**
 	 * the definingClass
@@ -37,8 +39,8 @@ public final class CommandVerb {
 
 	/**
 	 * Constructor.
-	 * @param definingClass
-	 * @param name
+	 * @param definingClass the class that defines this command verb (to avoid collision)
+	 * @param name the name of this verb (to support multiple verbs per defining class)
 	 */
 	public CommandVerb(Class<?> definingClass, String name) {
 		this.definingClass = ParameterUtil.ensureNotNull(definingClass, "definingClass") ;
@@ -59,6 +61,19 @@ public final class CommandVerb {
 	 */
 	public String getName() {
 		return name;
+	}
+	
+	/**
+	 * Returns a canonical identifier, built as the canonical class name and the
+	 * verb name, separated by a colon character. Two command verbs are equal if
+	 * and only if their canonical identifiers are (a crucial point being that
+	 * the class name cannot contain a colon character, so the first colon
+	 * always the separates defining class and the verb name).
+	 * 
+	 * @return the canonical identifier
+	 */
+	public String getCanonicalIdentifier() {
+		return definingClass.getCanonicalName() + ':' + name;
 	}
 	
 	/* (non-Javadoc)

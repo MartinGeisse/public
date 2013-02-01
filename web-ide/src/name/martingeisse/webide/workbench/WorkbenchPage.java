@@ -134,6 +134,7 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 				AjaxRequestUtil.markForRender(WorkbenchPage.this.get("filesContainer"));
 			}
 		});
+		filesContextMenu.add("Delete2", CommandVerbs.DELETE);
 		filesContextMenu.add(new DownloadMenuItem<List<FetchResourceResult>>("Download") {
 			@Override
 			protected String determineUrl(final List<FetchResourceResult> anchor) {

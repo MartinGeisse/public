@@ -52,6 +52,15 @@ function createContextMenuItemWithPrompt(name, promptText, callback) {
 	};
 }
 
+function createCommandVerbContextMenuItem(name, callback) {
+	return {
+		name: name,
+		callback: function(key, options) {
+			callback();
+		},
+	};
+}
+
 function createComponentMenuItem(selector) {
 	var $selector = $(selector);
 	var $originalParent = $selector.parent();

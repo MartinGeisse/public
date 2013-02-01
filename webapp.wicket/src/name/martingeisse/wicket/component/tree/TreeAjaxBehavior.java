@@ -9,6 +9,8 @@ package name.martingeisse.wicket.component.tree;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.martingeisse.common.javascript.JavascriptAssemblerUtil;
+import name.martingeisse.common.terms.CommandVerb;
 import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.wicket.component.contextmenu.ContextMenu;
 import name.martingeisse.wicket.component.contextmenu.IContextMenuCallbackBuilder;
@@ -34,6 +36,11 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 	 */
 	private static final String CONTEXT_MENU_INTERACTION_PREFIX = "contextMenu.";
 
+	/**
+	 * the COMMAND_VERB_INTERACTION_PREFIX
+	 */
+	private static final String COMMAND_VERB_INTERACTION_PREFIX = "commandVerb.";
+	
 	/**
 	 * the tree
 	 */
@@ -66,9 +73,9 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 		final IRequestParameters parameters = requestCycle.getRequest().getRequestParameters();
 		final String interaction = parameters.getParameterValue("interaction").toString();
 		final String selectedNodeIndices = parameters.getParameterValue("selectedNodes").toString();
-		
+
 		System.out.println("* [" + interaction + "][" + selectedNodeIndices + "]");
-		
+
 		if (interaction != null && selectedNodeIndices != null) {
 			final List<T> selectedNodes = lookupSelectedNodes(selectedNodeIndices);
 			final Object data = getJsonParameter(parameters, "data", "null");
@@ -100,17 +107,17 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 	 * @param specifier specifier the node index list
 	 * @return the internal nodes
 	 */
-	protected List<T> lookupSelectedNodes(String specifier) {
+	protected List<T> lookupSelectedNodes(final String specifier) {
 		final List<T> result = new ArrayList<T>();
 		if (specifier.isEmpty()) {
 			return result;
 		}
-		for (String nodeSpec : StringUtils.split(specifier, ':')) {
+		for (final String nodeSpec : StringUtils.split(specifier, ':')) {
 			try {
-				int index = Integer.parseInt(nodeSpec);
+				final int index = Integer.parseInt(nodeSpec);
 				final Item<T> item = GenericTypeUtil.unsafeCast((Item<?>)tree.get(Integer.toString(index)));
 				result.add(item.getModelObject());
-			} catch (Exception e) {
+			} catch (final Exception e) {
 			}
 		}
 		return result;
@@ -123,6 +130,16 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 	public void buildContextMenuCallback(final StringBuilder builder) {
 		builder.append("var interaction = '" + CONTEXT_MENU_INTERACTION_PREFIX + "' + key;");
 		builder.append("\t$('#").append(tree.getMarkupId()).append("').jstreeInteract(interaction, data);\n");
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.component.contextmenu.IContextMenuCallbackBuilder#buildContextMenuCallback(java.lang.StringBuilder, name.martingeisse.common.terms.CommandVerb)
+	 */
+	@Override
+	public void buildContextMenuCallback(final StringBuilder builder, final CommandVerb commandVerb) {
+		String interactionId = (COMMAND_VERB_INTERACTION_PREFIX + commandVerb.getCanonicalIdentifier());
+		builder.append("var interaction = '" + JavascriptAssemblerUtil.escapeStringLiteralSpecialCharacters(interactionId) + "';");
+		builder.append("\t$('#").append(tree.getMarkupId()).append("').jstreeInteract(interaction, null);\n");
 	}
 
 }

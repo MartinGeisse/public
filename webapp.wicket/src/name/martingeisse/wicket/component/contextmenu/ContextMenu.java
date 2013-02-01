@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.martingeisse.common.terms.CommandVerb;
 import name.martingeisse.wicket.util.WicketHeadUtil;
 
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -76,11 +77,21 @@ public class ContextMenu<A> implements Serializable {
 	 * Adds the specified item to this context menu.
 	 * @param item the item to add
 	 */
-	public void add(ContextMenuItem<? super A> item) {
+	public final void add(ContextMenuItem<? super A> item) {
 		declaredItems.add(item);
 		dirty = true;
 	}
-	
+
+	/**
+	 * Adds the specified command verb as an item to this context menu.
+	 * This is a convenience method to add a {@link CommandVerbMenuItem}.
+	 * @param name the name of the menu item
+	 * @param commandVerb the command verb
+	 */
+	public final void add(String name, CommandVerb commandVerb) {
+		add(new CommandVerbMenuItem<A>(name, commandVerb));
+	}
+
 	/**
 	 * Getter method for the effectiveItems.
 	 * @return the effectiveItems
