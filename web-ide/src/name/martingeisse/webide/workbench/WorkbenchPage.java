@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import name.martingeisse.common.javascript.JavascriptAssemblerUtil;
 import name.martingeisse.common.terms.CommandVerb;
 import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.webide.plugin.InternalPluginUtil;
@@ -26,6 +27,7 @@ import name.martingeisse.webide.resources.operation.DeleteResourcesOperation;
 import name.martingeisse.webide.resources.operation.FetchMarkerResult;
 import name.martingeisse.webide.resources.operation.FetchResourceResult;
 import name.martingeisse.webide.resources.operation.ListResourcesOperation;
+import name.martingeisse.webide.resources.operation.WorkspaceResourceCollisionException;
 import name.martingeisse.webide.workbench.services.IWorkbenchEditorService;
 import name.martingeisse.webide.workbench.services.IWorkbenchServicesProvider;
 import name.martingeisse.wicket.component.contextmenu.ComponentMenuItem;
@@ -86,6 +88,11 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 	 * the buildingWorkspaceIndicateWasVisible
 	 */
 	private Boolean buildingWorkspaceIndicateWasVisible = null;
+	
+	/**
+	 * the uploadErrorMessage
+	 */
+	private String uploadErrorMessage = null;
 
 	/**
 	 * Constructor.
@@ -94,7 +101,7 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 		this.servicesImplementation = new WorkbenchPageServicesImpl(this);
 		setOutputMarkupId(true);
 		add(new IClientFuture.Behavior());
-		add(new RerenderResourcesBehavior());
+		add(new HandleUploadedFileBehavior());
 		
 		final ContextMenu<List<FetchResourceResult>> filesContextMenu = new ContextMenu<List<FetchResourceResult>>();
 		filesContextMenu.add(new SimpleContextMenuItemWithTextInput<List<FetchResourceResult>>("New...", "File name:") {
@@ -143,7 +150,7 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 			@Override
 			protected String renderOptions() {
 				String resourceTreeMarkupId = WorkbenchPage.this.get("filesContainer").get("resources").getMarkupId();
-				return "{formData: function() {return [{name: 'resources', value: $('#" + resourceTreeMarkupId + "').jstreeAjaxNodeIndexList()}]; }, done: rerenderResources}";
+				return "{formData: function() {return [{name: 'resources', value: $('#" + resourceTreeMarkupId + "').jstreeAjaxNodeIndexList()}]; }, done: handleUploadedFile}";
 			}
 			
 			/* (non-Javadoc)
@@ -151,26 +158,29 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 			 */
 			@Override
 			protected void onFileUploaded(MultipartServletWebRequestImpl multipartRequest, FileItem fileItem) {
-
-				// find the selected nodes
-				String resourceListSpecifier = multipartRequest.getPostParameters().getParameterValue("resources").toString();
-				if (resourceListSpecifier == null) {
-					return;
-				}
-				@SuppressWarnings("unchecked")
-				JsTree<FetchResourceResult> resourceTree = (JsTree<FetchResourceResult>)(WorkbenchPage.this.get("filesContainer").get("resources"));
-				List<FetchResourceResult> resources = resourceTree.lookupSelectedNodes(resourceListSpecifier);
-				if (resources.size() > 0) {
-					try {
-						final FetchResourceResult element = resources.get(0);
-						final ResourcePath elementPath = element.getPath();
-						final ResourcePath parentPath = (element.getType() == ResourceType.FILE ? elementPath.removeLastSegment(false) : elementPath);
-						storeUploadedFile(fileItem, parentPath);
-					} catch (Exception e) {
-						throw new RuntimeException(e);
+				uploadErrorMessage = null;
+				try {
+					String resourceListSpecifier = multipartRequest.getPostParameters().getParameterValue("resources").toString();
+					if (resourceListSpecifier == null) {
+						return;
 					}
+					@SuppressWarnings("unchecked")
+					JsTree<FetchResourceResult> resourceTree = (JsTree<FetchResourceResult>)(WorkbenchPage.this.get("filesContainer").get("resources"));
+					List<FetchResourceResult> resources = resourceTree.lookupSelectedNodes(resourceListSpecifier);
+					if (resources.size() > 0) {
+						try {
+							final FetchResourceResult element = resources.get(0);
+							final ResourcePath elementPath = element.getPath();
+							final ResourcePath parentPath = (element.getType() == ResourceType.FILE ? elementPath.removeLastSegment(false) : elementPath);
+							storeUploadedFile(fileItem, parentPath);
+						} catch (Exception e) {
+							throw new RuntimeException(e);
+						}
+					}
+				} catch (Exception e) {
+					uploadErrorMessage = "An internal error occurred.";
+					throw new RuntimeException(e);
 				}
-				
 			}
 			
 		});
@@ -364,8 +374,8 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 	 */
 	@Override
 	public void renderHead(final IHeaderResponse response) {
-		CharSequence rerenderResources = getBehaviors(RerenderResourcesBehavior.class).get(0).getCallbackScript();
-		response.render(JavaScriptHeaderItem.forScript("window.rerenderResources = function() {" + rerenderResources + "}", null));
+		CharSequence handleUploadedFile = getBehaviors(HandleUploadedFileBehavior.class).get(0).getCallbackScript();
+		response.render(JavaScriptHeaderItem.forScript("window.handleUploadedFile = function() {" + handleUploadedFile + "}", null));
 		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(WorkbenchPage.class, "jquery.jstree.js")));
 		super.renderHead(response);
 	}
@@ -425,19 +435,43 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 	 */
 	private void storeUploadedFile(FileItem fileItem, ResourcePath destinationFolderPath) {
 		try {
-			ResourcePath path = destinationFolderPath.appendSegment(fileItem.getName(), false);
 			byte[] contents = IOUtils.toByteArray(fileItem.getInputStream());
-			new CreateFileOperation(path, contents, false).run();
-			AjaxRequestUtil.markForRender(WorkbenchPage.this.get("filesContainer"));
+			for (int i = 0; i<20; i++) {
+				String name = modifyUploadedFileName(fileItem.getName(), i);
+				ResourcePath path = destinationFolderPath.appendSegment(name, false);
+				try {
+					new CreateFileOperation(path, contents, false).run();
+					return;
+				} catch (WorkspaceResourceCollisionException e) {
+				}
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		uploadErrorMessage = "Too many collisions with existing resources -- giving up.";
+	}
+	
+	/**
+	 * Creates an alternative file name in case of collision, or the original
+	 * file name if the counter is zero.
+	 */
+	private String modifyUploadedFileName(String name, int counter) {
+		if (counter == 0) {
+			return name;
+		}
+		int index = name.lastIndexOf('.');
+		if (index == -1) {
+			return name + '-' + counter;
+		}
+		String baseName = name.substring(0, index);
+		String extension = name.substring(index + 1);
+		return baseName + '-' + counter + '.' + extension;
 	}
 
 	/**
 	 * The only purpose of this behavior is to have a callback URL to re-render the resource tree.
 	 */
-	class RerenderResourcesBehavior extends AbstractDefaultAjaxBehavior {
+	class HandleUploadedFileBehavior extends AbstractDefaultAjaxBehavior {
 
 		/* (non-Javadoc)
 		 * @see org.apache.wicket.ajax.AbstractDefaultAjaxBehavior#respond(org.apache.wicket.ajax.AjaxRequestTarget)
@@ -445,6 +479,9 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 		@Override
 		protected void respond(AjaxRequestTarget target) {
 			target.add(WorkbenchPage.this.get("filesContainer"));
+			if (uploadErrorMessage != null) {
+				target.appendJavaScript("alert('" + JavascriptAssemblerUtil.escapeStringLiteralSpecialCharacters(uploadErrorMessage) + "');");
+			}
 		}
 		
 	}

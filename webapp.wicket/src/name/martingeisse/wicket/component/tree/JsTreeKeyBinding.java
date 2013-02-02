@@ -6,13 +6,15 @@
 
 package name.martingeisse.wicket.component.tree;
 
+import java.io.Serializable;
+
 import name.martingeisse.common.terms.CommandVerb;
 
 /**
  * An instance of this class represents a binding between a hotkey
  * and a command verb.
  */
-final class JsTreeKeyBinding {
+final class JsTreeKeyBinding implements Serializable {
 
 	/**
 	 * the hotkey

@@ -13,6 +13,7 @@ import name.martingeisse.webide.entity.QWorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
 
+import com.mysema.query.QueryException;
 import com.mysema.query.sql.dml.SQLInsertClause;
 
 /**
@@ -68,7 +69,18 @@ public final class CreateFileOperation extends AbstractCreateResourceOperation {
 		insert.set(QWorkspaceResources.workspaceResources.contents, (contents == null ? new byte[0] : contents));
 		insert.set(QWorkspaceResources.workspaceResources.parentId, parentResource.getId());
 		insert.set(QWorkspaceResources.workspaceResources.type, ResourceType.FILE.name());
-		long id = insert.executeWithKey(Long.class);
+		long id;
+		try {
+			id = insert.executeWithKey(Long.class);
+		} catch (QueryException e) {
+			if (e.getCause() instanceof com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException) {
+				throw new WorkspaceResourceCollisionException(getPath());
+			}
+			if (e.getCause() instanceof com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException) {
+				throw new WorkspaceResourceCollisionException(getPath());
+			}
+			throw e;
+		}
 		WorkspaceCache.onCreate(id, parentResource.getId(), getPath());
 	}
 
