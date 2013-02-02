@@ -211,6 +211,11 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 		}
 		builder.append("	,\n");
 		builder.append("	hotkeys: {\n");
+		for (JsTreeKeyBinding keyBinding : keyBindings) {
+			builder.append("		'").append(keyBinding.getHotkey()).append("': function() {\n");
+			getBehavior().buildCommandVerbInteraction(builder, keyBinding.getCommandVerb());
+			builder.append("		},\n");
+		}
 		builder.append("	},\n");
 		builder.append("});\n");
 		response.render(OnDomReadyHeaderItem.forScript(builder.toString()));

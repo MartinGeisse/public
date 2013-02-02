@@ -141,6 +141,14 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 	 */
 	@Override
 	public void buildContextMenuCallback(final StringBuilder builder, final CommandVerb commandVerb) {
+		buildCommandVerbInteraction(builder, commandVerb);
+	}
+
+	/**
+	 * Builds a Javascript fragment that sends a command verb to the tree component, respecting the
+	 * interceptor for that verb.
+	 */
+	void buildCommandVerbInteraction(final StringBuilder builder, final CommandVerb commandVerb) {
 		String interactionId = (COMMAND_VERB_INTERACTION_PREFIX + commandVerb.getCanonicalIdentifier());
 		IJavascriptInteractionInterceptor interceptor = tree.getInterceptor(commandVerb);
 		if (interceptor != null) {
@@ -156,5 +164,5 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 			builder.append("interceptor(onInterceptorPassed);\n");
 		}
 	}
-
+	
 }

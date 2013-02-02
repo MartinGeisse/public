@@ -282,6 +282,7 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 				AjaxRequestUtil.markForRender(WorkbenchPage.this.get("filesContainer"));
 			}
 		}, IJavascriptInteractionInterceptor.CONFIRM);
+		resourceTree.bindHotkey("del", CommandVerbs.DELETE);
 		resourceTree.setOutputMarkupId(true);
 		filesContainer.add(resourceTree);
 
