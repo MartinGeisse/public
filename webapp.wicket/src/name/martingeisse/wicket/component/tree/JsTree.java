@@ -7,15 +7,18 @@
 package name.martingeisse.wicket.component.tree;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import name.martingeisse.common.terms.CommandVerb;
 import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.wicket.component.contextmenu.ContextMenu;
+import name.martingeisse.wicket.javascript.IJavascriptInteractionInterceptor;
 import name.martingeisse.wicket.util.WicketHeadUtil;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ITreeProvider;
 import org.apache.wicket.markup.IMarkupFragment;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -52,6 +55,11 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	 * the contextMenu
 	 */
 	private final ContextMenu<List<T>> contextMenu;
+	
+	/**
+	 * the commandHandlerBindings
+	 */
+	private final Map<CommandVerb, JsTreeCommandHandlerBinding<T>> commandHandlerBindings;
 
 	/**
 	 * Constructor.
@@ -74,6 +82,7 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 		setOutputMarkupId(true);
 		this.contextMenu = contextMenu;
 		add(new TreeAjaxBehavior<T>(this));
+		this.commandHandlerBindings = new HashMap<CommandVerb, JsTreeCommandHandlerBinding<T>>();
 	}
 
 	/**
@@ -90,6 +99,27 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	 */
 	public ContextMenu<List<T>> getContextMenu() {
 		return contextMenu;
+	}
+	
+	/**
+	 * Binds a command verb to a handler.
+	 * @param commandVerb the command verb
+	 * @param handler the handler
+	 */
+	public void bindCommandHandler(CommandVerb commandVerb, IJsTreeCommandHandler<T> handler) {
+		JsTreeCommandHandlerBinding<T> binding = new JsTreeCommandHandlerBinding<T>(commandVerb, handler, null);
+		commandHandlerBindings.put(commandVerb, binding);
+	}
+	
+	/**
+	 * Binds a command verb to a handler, using the specified interceptor.
+	 * @param commandVerb the command verb
+	 * @param handler the handler
+	 * @param interceptor the interceptor, or null for none
+	 */
+	public void bindCommandHandler(CommandVerb commandVerb, IJsTreeCommandHandler<T> handler, IJavascriptInteractionInterceptor interceptor) {
+		JsTreeCommandHandlerBinding<T> binding = new JsTreeCommandHandlerBinding<T>(commandVerb, handler, interceptor);
+		commandHandlerBindings.put(commandVerb, binding);
 	}
 	
 	/**
@@ -228,7 +258,18 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	 * for a double-click
 	 * @param selectedNodes the selected tree nodes
 	 */
-	protected void onInteraction(AjaxRequestTarget target, String interaction, List<T> selectedNodes) {
+	protected void onInteraction(String interaction, List<T> selectedNodes) {
+	}
+	
+	/**
+	 * This method is invoked when the client-side scripts send a command verb
+	 * to the server. It looks up the appropriate command handler and invokes it.
+	 */
+	final void onCommandVerb(CommandVerb commandVerb, List<T> selectedNodes) {
+		JsTreeCommandHandlerBinding<T> binding = commandHandlerBindings.get(commandVerb);
+		if (binding != null) {
+			binding.getHandler().handleCommand(commandVerb, selectedNodes);
+		}
 	}
 	
 	/**
@@ -241,6 +282,14 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	 */
 	public List<T> lookupSelectedNodes(String specifier) {
 		return getBehavior().lookupSelectedNodes(specifier);
+	}
+	
+	/**
+	 * Returns the interceptor (if any) to use for the specified command verb.
+	 */
+	final IJavascriptInteractionInterceptor getInterceptor(CommandVerb commandVerb) {
+		JsTreeCommandHandlerBinding<T> binding = commandHandlerBindings.get(commandVerb);
+		return (binding == null ? null : binding.getInterceptor());
 	}
 	
 }

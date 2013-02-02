@@ -105,4 +105,42 @@ public final class CommandVerb implements Serializable {
 		return "{CommandVerb " + definingClass.getCanonicalName() + ": " + name + "}";
 	}
 	
+	/**
+	 * Builds a command verb from its canonical identifier. This method throws an
+	 * {@link IllegalArgumentException} if the identifier is malformed.
+	 * 
+	 * @param canonicalIdentifier the canonical identifier of the command verb
+	 * @return the command verb
+	 */
+	public static CommandVerb fromCanonicalIdentifier(String canonicalIdentifier) {
+		int index = canonicalIdentifier.indexOf(':');
+		if (index == -1) {
+			throw new IllegalArgumentException("malformed canonical command verb identifier: " + canonicalIdentifier);
+		}
+		String definingClassName = canonicalIdentifier.substring(0, index);
+		String verbName = canonicalIdentifier.substring(index + 1);
+		Class<?> definingClass;
+		try {
+			definingClass = Class.forName(definingClassName);
+		} catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException("unknown defining class in command verb identifier: " + canonicalIdentifier);
+		}
+		return new CommandVerb(definingClass, verbName);
+	}
+
+	/**
+	 * Builds a command verb from its canonical identifier. This method returns null
+	 * if the identifier is malformed.
+	 * 
+	 * @param canonicalIdentifier the canonical identifier of the command verb
+	 * @return the command verb or null
+	 */
+	public static CommandVerb fromCanonicalIdentifierSafe(String canonicalIdentifier) {
+		try {
+			return fromCanonicalIdentifier(canonicalIdentifier);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
 }

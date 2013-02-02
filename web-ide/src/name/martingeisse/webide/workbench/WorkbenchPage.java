@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import name.martingeisse.common.terms.CommandVerb;
 import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.webide.plugin.InternalPluginUtil;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
@@ -35,8 +36,10 @@ import name.martingeisse.wicket.component.contextmenu.DownloadMenuItem;
 import name.martingeisse.wicket.component.contextmenu.DynamicContextMenuItems;
 import name.martingeisse.wicket.component.contextmenu.SimpleContextMenuItem;
 import name.martingeisse.wicket.component.contextmenu.SimpleContextMenuItemWithTextInput;
+import name.martingeisse.wicket.component.tree.IJsTreeCommandHandler;
 import name.martingeisse.wicket.component.tree.JsTree;
 import name.martingeisse.wicket.component.upload.AbstractAjaxFileUploadField;
+import name.martingeisse.wicket.javascript.IJavascriptInteractionInterceptor;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 import name.martingeisse.wicket.util.IClientFuture;
 
@@ -121,20 +124,7 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 			protected void onSelect(final List<FetchResourceResult> anchor) {
 			}
 		});
-		filesContextMenu.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Delete") {
-			@Override
-			protected void onSelect(final List<FetchResourceResult> anchor) {
-				final ResourcePath[] paths = new ResourcePath[anchor.size()];
-				int i = 0;
-				for (final FetchResourceResult anchorElement : anchor) {
-					paths[i] = anchorElement.getPath();
-					i++;
-				}
-				new DeleteResourcesOperation(paths).run();
-				AjaxRequestUtil.markForRender(WorkbenchPage.this.get("filesContainer"));
-			}
-		});
-		filesContextMenu.add("Delete2", CommandVerbs.DELETE);
+		filesContextMenu.add("Delete", CommandVerbs.DELETE);
 		filesContextMenu.add(new DownloadMenuItem<List<FetchResourceResult>>("Download") {
 			@Override
 			protected String determineUrl(final List<FetchResourceResult> anchor) {
@@ -267,10 +257,10 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 			}
 
 			/* (non-Javadoc)
-			 * @see name.martingeisse.wicket.component.tree.JsTree#onInteraction(org.apache.wicket.ajax.AjaxRequestTarget, java.lang.String, java.util.List)
+			 * @see name.martingeisse.wicket.component.tree.JsTree#onInteraction(java.lang.String, java.util.List)
 			 */
 			@Override
-			protected void onInteraction(final AjaxRequestTarget target, final String interaction, final List<FetchResourceResult> selectedNodes) {
+			protected void onInteraction(String interaction, List<FetchResourceResult> selectedNodes) {
 				if ("dblclick".equals(interaction)) {
 					if (!selectedNodes.isEmpty()) {
 						getEditorService().openDefaultEditor(selectedNodes.get(0).getPath());
@@ -279,6 +269,19 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 			}
 
 		};
+		resourceTree.bindCommandHandler(CommandVerbs.DELETE, new IJsTreeCommandHandler<FetchResourceResult>() {
+			@Override
+			public void handleCommand(CommandVerb commandVerb, List<FetchResourceResult> selectedNodes) {
+				final ResourcePath[] paths = new ResourcePath[selectedNodes.size()];
+				int i = 0;
+				for (final FetchResourceResult anchorElement : selectedNodes) {
+					paths[i] = anchorElement.getPath();
+					i++;
+				}
+				new DeleteResourcesOperation(paths).run();
+				AjaxRequestUtil.markForRender(WorkbenchPage.this.get("filesContainer"));
+			}
+		}, IJavascriptInteractionInterceptor.CONFIRM);
 		resourceTree.setOutputMarkupId(true);
 		filesContainer.add(resourceTree);
 

@@ -14,6 +14,7 @@ import name.martingeisse.common.terms.CommandVerb;
 import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.wicket.component.contextmenu.ContextMenu;
 import name.martingeisse.wicket.component.contextmenu.IContextMenuCallbackBuilder;
+import name.martingeisse.wicket.javascript.IJavascriptInteractionInterceptor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -73,9 +74,6 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 		final IRequestParameters parameters = requestCycle.getRequest().getRequestParameters();
 		final String interaction = parameters.getParameterValue("interaction").toString();
 		final String selectedNodeIndices = parameters.getParameterValue("selectedNodes").toString();
-
-		System.out.println("* [" + interaction + "][" + selectedNodeIndices + "]");
-
 		if (interaction != null && selectedNodeIndices != null) {
 			final List<T> selectedNodes = lookupSelectedNodes(selectedNodeIndices);
 			final Object data = getJsonParameter(parameters, "data", "null");
@@ -85,8 +83,14 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 					final String menuItemKey = interaction.substring(CONTEXT_MENU_INTERACTION_PREFIX.length());
 					contextMenu.notifySelected(menuItemKey, selectedNodes, data);
 				}
+			} else if (interaction.startsWith(COMMAND_VERB_INTERACTION_PREFIX)) {
+				String commandVerbCanonicalId = interaction.substring(COMMAND_VERB_INTERACTION_PREFIX.length());
+				CommandVerb commandVerb = CommandVerb.fromCanonicalIdentifierSafe(commandVerbCanonicalId);
+				if (commandVerb != null) {
+					tree.onCommandVerb(commandVerb, selectedNodes);
+				}
 			} else {
-				tree.onInteraction(target, interaction, selectedNodes);
+				tree.onInteraction(interaction, selectedNodes);
 			}
 		}
 	}
@@ -138,8 +142,19 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 	@Override
 	public void buildContextMenuCallback(final StringBuilder builder, final CommandVerb commandVerb) {
 		String interactionId = (COMMAND_VERB_INTERACTION_PREFIX + commandVerb.getCanonicalIdentifier());
-		builder.append("var interaction = '" + JavascriptAssemblerUtil.escapeStringLiteralSpecialCharacters(interactionId) + "';");
+		IJavascriptInteractionInterceptor interceptor = tree.getInterceptor(commandVerb);
+		if (interceptor != null) {
+			builder.append("function onInterceptorPassed() {\n");
+		}
+		builder.append("var interaction = '" + JavascriptAssemblerUtil.escapeStringLiteralSpecialCharacters(interactionId) + "';\n");
 		builder.append("\t$('#").append(tree.getMarkupId()).append("').jstreeInteract(interaction, null);\n");
+		if (interceptor != null) {
+			builder.append("}\n");
+			builder.append("var interceptor = ");
+			interceptor.printInterceptorFunction(builder);
+			builder.append(";");
+			builder.append("interceptor(onInterceptorPassed);\n");
+		}
 	}
 
 }
