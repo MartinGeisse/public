@@ -572,9 +572,17 @@
 				if(!obj.length) { return false; }
 				if(strict) { return (obj.nextAll("li").size() > 0) ? obj.nextAll("li:eq(0)") : false; }
 
-				if(obj.hasClass("jstree-open")) { return obj.find("li:eq(0)"); }
-				else if(obj.nextAll("li").size() > 0) { return obj.nextAll("li:eq(0)"); }
-				else { return obj.parentsUntil(".jstree","li").next("li").eq(0); }
+				if (obj.hasClass("jstree-open")) {
+					var firstChildNode = obj.find("li:eq(0)");
+					if (firstChildNode.length) {
+						return firstChildNode;
+					}
+				}
+				if (obj.nextAll("li").size() > 0) {
+					return obj.nextAll("li:eq(0)");
+				}
+				return obj.parentsUntil(".jstree","li").next("li").eq(0);
+				
 			},
 			_get_prev		: function (obj, strict) {
 				obj = this._get_node(obj);
@@ -584,7 +592,13 @@
 
 				if(obj.prev("li").length) {
 					obj = obj.prev("li").eq(0);
-					while(obj.hasClass("jstree-open")) { obj = obj.children("ul:eq(0)").children("li:last"); }
+					while(obj.hasClass("jstree-open")) {
+						var lastChildNode = obj.children("ul:eq(0)").children("li:last");
+						if (!lastChildNode.length) {
+							break;
+						}
+						obj = lastChildNode;
+					}
 					return obj;
 				}
 				else { var o = obj.parentsUntil(".jstree","li:eq(0)"); return o.length ? o : false; }

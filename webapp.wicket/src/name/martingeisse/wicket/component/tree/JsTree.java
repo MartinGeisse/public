@@ -60,6 +60,11 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	 * the commandHandlerBindings
 	 */
 	private final Map<CommandVerb, JsTreeCommandHandlerBinding<T>> commandHandlerBindings;
+	
+	/**
+	 * the keyBindings
+	 */
+	private final List<JsTreeKeyBinding> keyBindings;
 
 	/**
 	 * Constructor.
@@ -83,6 +88,7 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 		this.contextMenu = contextMenu;
 		add(new TreeAjaxBehavior<T>(this));
 		this.commandHandlerBindings = new HashMap<CommandVerb, JsTreeCommandHandlerBinding<T>>();
+		this.keyBindings = new ArrayList<JsTreeKeyBinding>();
 	}
 
 	/**
@@ -120,6 +126,17 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	public void bindCommandHandler(CommandVerb commandVerb, IJsTreeCommandHandler<T> handler, IJavascriptInteractionInterceptor interceptor) {
 		JsTreeCommandHandlerBinding<T> binding = new JsTreeCommandHandlerBinding<T>(commandVerb, handler, interceptor);
 		commandHandlerBindings.put(commandVerb, binding);
+	}
+	
+	/**
+	 * Binds a key to a command verb. The command verb itself should be bound to a handler
+	 * to make the key have any effect.
+	 * 
+	 * @param hotkey the hotkey to bind (jQuery hotkey names)
+	 * @param commandVerb the command verb to issue by pressing the key
+	 */
+	public void bindHotkey(String hotkey, CommandVerb commandVerb) {
+		keyBindings.add(new JsTreeKeyBinding(hotkey, commandVerb));
 	}
 	
 	/**
@@ -192,8 +209,9 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 		} else {
 			builder.append("null");
 		}
-		builder.append(",\n");
-		
+		builder.append("	,\n");
+		builder.append("	hotkeys: {\n");
+		builder.append("	},\n");
 		builder.append("});\n");
 		response.render(OnDomReadyHeaderItem.forScript(builder.toString()));
 	}

@@ -6,15 +6,70 @@ $.fn.createJsTree = function(options) {
 		ajaxCallback: function() {},
 		contextMenuData: null,
 		interactions: {},
+		hotkeys: {},
 	}, options);
 	
 	// handle each tree separately
 	this.each(function() {
 		$this = $(this);
+
+		// helper functions for default hotkeys
+		function navigate(moveFunction) {
+			var currentNode = this.data.ui.last_selected || -1;
+			var newNode = moveFunction.call(this, currentNode);
+			if (newNode) {
+				this.hover_node(newNode);
+				newNode.children("a:eq(0)").click();
+			}
+			return false;
+		}
+		function makeNavigationHandler(navigatorName) {
+			return function() {
+				return navigate.call(this, this[navigatorName]);
+			};
+		}
+		var upHandler = makeNavigationHandler('_get_prev');
+		var downHandler = makeNavigationHandler('_get_next');
+		function openHandler() {
+			var o = this.data.ui.last_selected;
+			if (o && o.length && o.hasClass("jstree-closed")) {
+				this.open_node(o);
+			}
+			return false;
+		}
+		function closeHandler() {
+			var o = this.data.ui.last_selected;
+			if (o) {
+				if (o.hasClass("jstree-open")) {
+					this.close_node(o);
+				} else {
+					var newNode = this._get_parent(o);
+					this.hover_node(newNode);
+					newNode.children("a:eq(0)").click();
+				}
+			}
+			return false;
+		}
+		
+		// apply default hotkeys
+		var hotkeys = $.extend({
+			'up': upHandler,
+			'shift+up': upHandler,
+			'ctrl+up': upHandler,
+			'down': downHandler,
+			'shift+down': downHandler,
+			'ctrl+down': downHandler,
+			'left': closeHandler,
+			'shift+left': closeHandler,
+			'ctrl+left': closeHandler,
+			'right': openHandler,
+			'shift+right': openHandler,
+			'ctrl+right': openHandler,
+		}, options.hotkeys);
 		
 		// build the jsTree
 		$this.jstree({
-			plugins: ['themes', 'html_data', 'ui', 'dnd'],
+			plugins: ['themes', 'html_data', 'ui', 'dnd', 'hotkeys'],
 			core: {
 				animation: 0
 			},
@@ -28,6 +83,7 @@ $.fn.createJsTree = function(options) {
 				select_multiple_modifier: false,
 				select_range_modifier: false,
 			},
+			hotkeys: hotkeys,
 		});
 
 		// function to send an AJAX request using the supplied callback
