@@ -36,6 +36,19 @@ public final class PluginBundleHandle implements Serializable {
 	}
 	
 	/**
+	 * Constructor.
+	 * @param classLoader the plugin class loader
+	 */
+	public PluginBundleHandle(ClassLoader classLoader) {
+		Long pluginBundleId = InternalPluginBundleClassLoaderRegistry.getPluginBundleId(classLoader);
+		if (pluginBundleId == null) {
+			throw new IllegalArgumentException("not a plugin class loader: " + classLoader);
+		}
+		this.pluginBundleId = pluginBundleId;
+		this.classLoader = classLoader;
+	}
+	
+	/**
 	 * Getter method for the pluginBundleId.
 	 * @return the pluginBundleId
 	 */
@@ -52,6 +65,14 @@ public final class PluginBundleHandle implements Serializable {
 			classLoader = InternalPluginBundleClassLoaderRegistry.getOrCreateClassLoader(pluginBundleId);
 		}
 		return classLoader;
+	}
+	
+	/**
+	 * Checks if this handle uses the main class loader instead of a plugin bundle class loader.
+	 * @return true if using the main class loader, false if using a bundle class loader
+	 */
+	public boolean isUsingMainClassLoader() {
+		return (getClassLoader() == getClass().getClassLoader());
 	}
 
 	/**

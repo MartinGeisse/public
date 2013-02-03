@@ -4,50 +4,44 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.features.java.compiler;
+package name.martingeisse.webide.features.java.compiler.memfile;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 
 import javax.tools.FileObject;
 
-import org.apache.commons.io.input.ReaderInputStream;
-import org.eclipse.jetty.io.WriterOutputStream;
-
 /**
- * String based in-memory implementation of {@link FileObject}.
+ * Byte array based in-memory implementation of {@link FileObject}.
  * 
  * TODO: ignoreEncodingErrors
  */
-public class MemoryStringFileObject extends AbstractMemoryFileObject {
+public class MemoryBlobFileObject extends AbstractMemoryFileObject {
 
+	/**
+	 * the CHARSET
+	 */
+	private static Charset CHARSET = Charset.forName("utf-8");
+	
 	/**
 	 * the contents
 	 */
-	private String contents;
+	private byte[] contents;
 
 	/**
 	 * Constructor.
 	 * @param name the file name
 	 */
-	public MemoryStringFileObject(final String name) {
+	public MemoryBlobFileObject(final String name) {
 		super(name);
-	}
-	
-	/**
-	 * Constructor.
-	 * @param name the file name
-	 * @param contents the contents
-	 */
-	public MemoryStringFileObject(final String name, final byte[] contents) {
-		super(name);
-		this.contents = new String(contents, Charset.forName("utf-8"));
 	}
 
 	/**
@@ -55,17 +49,27 @@ public class MemoryStringFileObject extends AbstractMemoryFileObject {
 	 * @param name the file name
 	 * @param contents the contents
 	 */
-	public MemoryStringFileObject(final String name, final String contents) {
+	public MemoryBlobFileObject(final String name, final byte[] contents) {
 		super(name);
 		this.contents = contents;
 	}
 
+	/**
+	 * Constructor.
+	 * @param name the file name
+	 * @param contents the contents
+	 */
+	public MemoryBlobFileObject(final String name, final String contents) {
+		super(name);
+		this.contents = contents.getBytes(CHARSET);
+	}
+	
 	/* (non-Javadoc)
 	 * @see javax.tools.FileObject#getCharContent(boolean)
 	 */
 	@Override
 	public CharSequence getCharContent(final boolean ignoreEncodingErrors) throws IOException {
-		return contents;
+		return new String(contents, CHARSET);
 	}
 	
 	/* (non-Javadoc)
@@ -73,7 +77,7 @@ public class MemoryStringFileObject extends AbstractMemoryFileObject {
 	 */
 	@Override
 	public byte[] getBinaryContent() {
-		return contents.getBytes(Charset.forName("utf-8"));
+		return contents;
 	}
 
 	/* (non-Javadoc)
@@ -81,7 +85,7 @@ public class MemoryStringFileObject extends AbstractMemoryFileObject {
 	 */
 	@Override
 	public InputStream openInputStream() throws IOException {
-		return new ReaderInputStream(openReader(true), "utf-8");
+		return new ByteArrayInputStream(contents);
 	}
 
 	/* (non-Javadoc)
@@ -89,7 +93,13 @@ public class MemoryStringFileObject extends AbstractMemoryFileObject {
 	 */
 	@Override
 	public OutputStream openOutputStream() throws IOException {
-		return new WriterOutputStream(openWriter(), "utf-8");
+		return new ByteArrayOutputStream() {
+			@Override
+			public void close() throws IOException {
+				contents = toByteArray();
+				super.close();
+			}
+		};
 	}
 
 	/* (non-Javadoc)
@@ -97,7 +107,7 @@ public class MemoryStringFileObject extends AbstractMemoryFileObject {
 	 */
 	@Override
 	public Reader openReader(final boolean ignoreEncodingErrors) throws IOException {
-		return new StringReader(contents);
+		return new InputStreamReader(openInputStream(), CHARSET);
 	}
 
 	/* (non-Javadoc)
@@ -105,16 +115,7 @@ public class MemoryStringFileObject extends AbstractMemoryFileObject {
 	 */
 	@Override
 	public Writer openWriter() throws IOException {
-		return new StringWriter() {
-			/* (non-Javadoc)
-			 * @see java.io.StringWriter#close()
-			 */
-			@Override
-			public void close() throws IOException {
-				contents = toString();
-				super.close();
-			}
-		};
+		return new OutputStreamWriter(openOutputStream(), CHARSET);
 	}
 
 }

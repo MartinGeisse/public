@@ -9,6 +9,8 @@ package name.martingeisse.webide.editor.codemirror;
 import java.io.Serializable;
 
 import name.martingeisse.common.javascript.JavascriptAssemblerUtil;
+import name.martingeisse.webide.plugin.PluginBundleHandle;
+import name.martingeisse.webide.plugin.PluginBundleWicketResourceReference;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -73,7 +75,18 @@ public final class CodeMirrorMode implements Serializable {
 	 */
 	public void renderResourceReferences(IHeaderResponse response) {
 		for (String path : paths) {
-			response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(anchor, path)));
+			PluginBundleHandle handle = new PluginBundleHandle(anchor.getClassLoader());
+			if (handle.isUsingMainClassLoader()) {
+				response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(anchor, path)));
+			} else {
+				String bundleIdText = Long.toString(handle.getPluginBundleId());
+				String localPath = "/" + anchor.getCanonicalName().replace('.', '/');
+				System.out.println("***1: " + localPath);
+				localPath = localPath.substring(0, localPath.lastIndexOf('/') + 1) + path;
+				System.out.println("***2: " + localPath);
+				response.render(JavaScriptHeaderItem.forReference(new PluginBundleWicketResourceReference(bundleIdText + '/' + localPath)));
+				System.out.println("***3: " + new PluginBundleWicketResourceReference(bundleIdText + localPath));
+			}
 		}
 	}
 

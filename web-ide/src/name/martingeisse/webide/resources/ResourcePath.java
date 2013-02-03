@@ -132,6 +132,11 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	 */
 	public ResourcePath(String pathToParse) {
 
+		// argument check
+		if (pathToParse == null) {
+			throw new IllegalArgumentException("pathToParse is null");
+		}
+		
 		// some special cases
 		if (pathToParse.isEmpty()) {
 			leadingSeparator = trailingSeparator = false;

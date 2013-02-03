@@ -32,6 +32,10 @@ import name.martingeisse.webide.application.Configuration;
 import name.martingeisse.webide.features.java.compiler.classpath.ClassFolderLibraryFileManager;
 import name.martingeisse.webide.features.java.compiler.classpath.JarFileManager;
 import name.martingeisse.webide.features.java.compiler.classpath.PlatformClasspathShieldFileManager;
+import name.martingeisse.webide.features.java.compiler.memfile.IMemoryFileObject;
+import name.martingeisse.webide.features.java.compiler.memfile.IMemoryJavaFileObject;
+import name.martingeisse.webide.features.java.compiler.memfile.MemoryFileManager;
+import name.martingeisse.webide.features.java.compiler.memfile.MemoryJavaFileObject;
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.MarkerOrigin;
 import name.martingeisse.webide.resources.ResourcePath;
@@ -193,6 +197,19 @@ public class JavaCompilerFacade {
 
 			}
 		}
+		
+		// copy non-Java files over to the output folder
+		new RecursiveResourceOperation(sourcePath) {
+			@Override
+			protected void onLevelFetched(List<FetchResourceResult> fetchResults) {
+				for (FetchResourceResult fetchResult : fetchResults) {
+					if (fetchResult.getType() == ResourceType.FILE && !"java".equals(fetchResult.getPath().getExtension())) {
+						ResourcePath destinationPath = binaryPath.concat(fetchResult.getPath().removeFirstSegments(sourcePath.getSegmentCount(), false), false);
+						new CreateFileOperation(destinationPath, fetchResult.getContents(), true).run();
+					}
+				}
+			}
+		}.run();
 
 	}
 

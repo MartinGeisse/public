@@ -29,7 +29,7 @@ public class MyResourceReferenceRegistry extends ResourceReferenceRegistry {
 			return new WorkspaceWicketResourceReference(new ResourcePath("/" + key.getName()));
 		}
 		if (key.getScope().equals(PluginBundleWicketResourceReference.class.getName())) {
-			return new PluginBundleWicketResourceReference(Long.parseLong(key.getName()));
+			return new PluginBundleWicketResourceReference(key.getName());
 		}
 		return super.createDefaultResourceReference(key);
 	}

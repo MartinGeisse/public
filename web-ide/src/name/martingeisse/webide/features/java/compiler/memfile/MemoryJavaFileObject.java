@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.features.java.compiler;
+package name.martingeisse.webide.features.java.compiler.memfile;
 
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.NestingKind;
@@ -13,13 +13,13 @@ import javax.tools.JavaFileObject;
 /**
  * In-memory implementation of {@link JavaFileObject} for Java source files.
  */
-public class MemoryClassFileObject extends MemoryBlobFileObject implements IMemoryJavaFileObject {
+public class MemoryJavaFileObject extends MemoryStringFileObject implements IMemoryJavaFileObject {
 
 	/**
 	 * Constructor.
 	 * @param name the file name
 	 */
-	public MemoryClassFileObject(final String name) {
+	public MemoryJavaFileObject(final String name) {
 		super(name);
 	}
 
@@ -28,19 +28,19 @@ public class MemoryClassFileObject extends MemoryBlobFileObject implements IMemo
 	 * @param name the file name
 	 * @param contents the contents
 	 */
-	public MemoryClassFileObject(final String name, final byte[] contents) {
+	public MemoryJavaFileObject(final String name, final byte[] contents) {
 		super(name, contents);
 	}
-
+	
 	/**
 	 * Constructor.
 	 * @param name the file name
 	 * @param contents the contents
 	 */
-	public MemoryClassFileObject(final String name, final String contents) {
+	public MemoryJavaFileObject(final String name, final String contents) {
 		super(name, contents);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see javax.tools.JavaFileObject#getAccessLevel()
 	 */
@@ -54,7 +54,7 @@ public class MemoryClassFileObject extends MemoryBlobFileObject implements IMemo
 	 */
 	@Override
 	public Kind getKind() {
-		return Kind.CLASS;
+		return Kind.SOURCE;
 	}
 
 	/* (non-Javadoc)

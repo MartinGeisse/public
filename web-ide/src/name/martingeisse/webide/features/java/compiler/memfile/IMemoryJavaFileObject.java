@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.features.java.compiler;
+package name.martingeisse.webide.features.java.compiler.memfile;
 
 import javax.tools.JavaFileObject;
 
