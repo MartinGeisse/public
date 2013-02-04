@@ -14,6 +14,7 @@ import java.util.List;
 import name.martingeisse.common.javascript.JavascriptAssemblerUtil;
 import name.martingeisse.common.terms.CommandVerb;
 import name.martingeisse.common.util.GenericTypeUtil;
+import name.martingeisse.common.util.string.EmptyIterator;
 import name.martingeisse.webide.plugin.InternalPluginUtil;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
 import name.martingeisse.webide.resources.BuilderService;
@@ -23,10 +24,12 @@ import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
 import name.martingeisse.webide.resources.WorkspaceWicketResourceReference;
 import name.martingeisse.webide.resources.operation.CreateFileOperation;
+import name.martingeisse.webide.resources.operation.CreateFolderOperation;
 import name.martingeisse.webide.resources.operation.DeleteResourcesOperation;
 import name.martingeisse.webide.resources.operation.FetchMarkerResult;
 import name.martingeisse.webide.resources.operation.FetchResourceResult;
 import name.martingeisse.webide.resources.operation.ListResourcesOperation;
+import name.martingeisse.webide.resources.operation.WorkspaceOperationException;
 import name.martingeisse.webide.resources.operation.WorkspaceResourceCollisionException;
 import name.martingeisse.webide.workbench.services.IWorkbenchEditorService;
 import name.martingeisse.webide.workbench.services.IWorkbenchServicesProvider;
@@ -104,11 +107,14 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 		add(new HandleUploadedFileBehavior());
 		
 		final ContextMenu<List<FetchResourceResult>> filesContextMenu = new ContextMenu<List<FetchResourceResult>>();
-		filesContextMenu.add(new SimpleContextMenuItemWithTextInput<List<FetchResourceResult>>("New...", "File name:") {
+		filesContextMenu.add(new SimpleContextMenuItemWithTextInput<List<FetchResourceResult>>("New File...", "File name:") {
 			@Override
 			protected void onSelect(final List<FetchResourceResult> anchor, final String filename) {
 				if (!anchor.isEmpty()) {
 					final FetchResourceResult element = anchor.get(0);
+					if (element.getType() == ResourceType.MOUNT_SPACE || element.getType() == ResourceType.WORKSPACE_ROOT) {
+						AjaxRequestUtil.alert("Files can only be created inside a project.");
+					}
 					final ResourcePath elementPath = element.getPath();
 					final ResourcePath parentPath = (element.getType() == ResourceType.FILE ? elementPath.removeLastSegment(false) : elementPath);
 					final ResourcePath path = parentPath.appendSegment(filename, false);
@@ -118,14 +124,23 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 				}
 			}
 		});
-		filesContextMenu.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Open") {
+		filesContextMenu.add(new SimpleContextMenuItemWithTextInput<List<FetchResourceResult>>("New Folder...", "Folder name:") {
 			@Override
-			protected void onSelect(final List<FetchResourceResult> anchor) {
+			protected void onSelect(final List<FetchResourceResult> anchor, final String filename) {
 				if (!anchor.isEmpty()) {
-					getEditorService().openDefaultEditor(anchor.get(0).getPath());
+					final FetchResourceResult element = anchor.get(0);
+					if (element.getType() == ResourceType.MOUNT_SPACE || element.getType() == ResourceType.WORKSPACE_ROOT) {
+						AjaxRequestUtil.alert("Folders can only be created inside a project.");
+					}
+					final ResourcePath elementPath = element.getPath();
+					final ResourcePath parentPath = (element.getType() == ResourceType.FILE ? elementPath.removeLastSegment(false) : elementPath);
+					final ResourcePath path = parentPath.appendSegment(filename, false);
+					new CreateFolderOperation(path, true).run();
+					AjaxRequestUtil.markForRender(WorkbenchPage.this.get("filesContainer"));
 				}
 			}
 		});
+		filesContextMenu.add("Open", CommandVerbs.OPEN);
 		filesContextMenu.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Rename...") {
 			@Override
 			protected void onSelect(final List<FetchResourceResult> anchor) {
@@ -245,9 +260,13 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 
 			@Override
 			public Iterator<? extends FetchResourceResult> getChildren(final FetchResourceResult node) {
-				final ListResourcesOperation operation = new ListResourcesOperation(node.getPath());
-				operation.run();
-				return operation.getChildren().iterator();
+				try {
+					final ListResourcesOperation operation = new ListResourcesOperation(node.getPath());
+					operation.run();
+					return operation.getChildren().iterator();
+				} catch (WorkspaceOperationException e) {
+					return new EmptyIterator<FetchResourceResult>();
+				}
 			}
 
 		};
@@ -266,19 +285,17 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 				item.add(new Label("name", fetchResult.getPath().getLastSegment()));
 			}
 
-			/* (non-Javadoc)
-			 * @see name.martingeisse.wicket.component.tree.JsTree#onInteraction(java.lang.String, java.util.List)
-			 */
+		};
+		resourceTree.setDoubleClickCommandVerb(CommandVerbs.OPEN);
+		resourceTree.bindCommandHandler(CommandVerbs.OPEN, new IJsTreeCommandHandler<FetchResourceResult>() {
 			@Override
-			protected void onInteraction(String interaction, List<FetchResourceResult> selectedNodes) {
-				if ("dblclick".equals(interaction)) {
-					if (!selectedNodes.isEmpty()) {
-						getEditorService().openDefaultEditor(selectedNodes.get(0).getPath());
-					}
+			public void handleCommand(CommandVerb commandVerb, List<FetchResourceResult> selectedNodes) {
+				if (!selectedNodes.isEmpty()) {
+					getEditorService().openDefaultEditor(selectedNodes.get(0).getPath());
 				}
 			}
-
-		};
+		});
+		resourceTree.bindHotkey("return", CommandVerbs.OPEN);
 		resourceTree.bindCommandHandler(CommandVerbs.DELETE, new IJsTreeCommandHandler<FetchResourceResult>() {
 			@Override
 			public void handleCommand(CommandVerb commandVerb, List<FetchResourceResult> selectedNodes) {
@@ -289,6 +306,7 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 					i++;
 				}
 				new DeleteResourcesOperation(paths).run();
+				BuilderService.requestBuild();
 				AjaxRequestUtil.markForRender(WorkbenchPage.this.get("filesContainer"));
 			}
 		}, IJavascriptInteractionInterceptor.CONFIRM);
@@ -342,6 +360,7 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 				setResponsePage(new WorkbenchPage());
 			}
 		});
+		
 	}
 
 	/**
@@ -349,8 +368,9 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 	 * with a new one. This happens when the user opens a file.
 	 */
 	void replaceEditor(final IEditor editor) {
-		((WebMarkupContainer)get("editorContainer")).replace(editor.createComponent("editor"));
-		AjaxRequestUtil.markForRender(WorkbenchPage.this.get("editorContainer"));
+		WebMarkupContainer editorContainer = (WebMarkupContainer)get("editorContainer");
+		editorContainer.replace(editor.createComponent("editor"));
+		AjaxRequestUtil.markForRender(editorContainer);
 	}
 
 	/**

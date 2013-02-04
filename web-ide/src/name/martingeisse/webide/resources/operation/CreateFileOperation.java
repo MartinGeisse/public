@@ -8,13 +8,8 @@ package name.martingeisse.webide.resources.operation;
 
 import java.nio.charset.Charset;
 
-import name.martingeisse.common.database.EntityConnectionManager;
-import name.martingeisse.webide.entity.QWorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
-
-import com.mysema.query.QueryException;
-import com.mysema.query.sql.dml.SQLInsertClause;
 
 /**
  * This operation creates a file in the workspace.
@@ -64,23 +59,8 @@ public final class CreateFileOperation extends AbstractCreateResourceOperation {
 	protected void perform(final WorkspaceOperationContext context) {
 		FetchResourceResult parentResource = createEnclosingFoldersIfNeeded(context);
 		trace("will create file now", getPath());
-		final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QWorkspaceResources.workspaceResources);
-		insert.set(QWorkspaceResources.workspaceResources.name, getPath().getLastSegment());
-		insert.set(QWorkspaceResources.workspaceResources.contents, (contents == null ? new byte[0] : contents));
-		insert.set(QWorkspaceResources.workspaceResources.parentId, parentResource.getId());
-		insert.set(QWorkspaceResources.workspaceResources.type, ResourceType.FILE.name());
-		long id;
-		try {
-			id = insert.executeWithKey(Long.class);
-		} catch (QueryException e) {
-			if (e.getCause() instanceof com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException) {
-				throw new WorkspaceResourceCollisionException(getPath());
-			}
-			if (e.getCause() instanceof com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException) {
-				throw new WorkspaceResourceCollisionException(getPath());
-			}
-			throw e;
-		}
+
+		long id = insert(parentResource.getId(), getPath().getLastSegment(), ResourceType.FILE, (contents == null ? new byte[0] : contents));
 		WorkspaceCache.onCreate(id, parentResource.getId(), getPath());
 	}
 

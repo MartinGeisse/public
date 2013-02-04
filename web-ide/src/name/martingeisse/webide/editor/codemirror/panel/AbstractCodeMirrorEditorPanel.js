@@ -14,6 +14,7 @@ $.fn.createCodeMirrorWorkbenchEditor = function(mode, options) {
 				'Cmd-S': function() {},
 			},
 			autoSaveDelay: 1000,
+			autofocus: true,
 		}, options);
 		
 		// create the CodeMirror instance

@@ -20,6 +20,11 @@ public final class CommandVerbs {
 	}
 
 	/**
+	 * The "open" verb.
+	 */
+	public static final CommandVerb OPEN = new CommandVerb(CommandVerbs.class, "open");
+
+	/**
 	 * The "delete" verb.
 	 */
 	public static final CommandVerb DELETE = new CommandVerb(CommandVerbs.class, "delete");

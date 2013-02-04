@@ -160,6 +160,10 @@ $.fn.createJsTree = function(options) {
 				handlers.contextmenu.call(trigger, fakeEvent);
 			}));
 		}
+		$(document).on('click', '.jstree', function(e) {
+			$(e.currentTarget).focus();
+			console.log(e);
+		});
 		
 	});
 	

@@ -91,6 +91,9 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 				}
 			} else {
 				tree.onInteraction(interaction, selectedNodes);
+				if (interaction.equals("dblclick")) {
+					tree.onDoubleClick(selectedNodes);
+				}
 			}
 		}
 	}

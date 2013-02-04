@@ -14,6 +14,7 @@ import name.martingeisse.webide.resources.ResourceType;
 
 import org.apache.log4j.Logger;
 
+import com.mysema.query.QueryException;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.dml.SQLInsertClause;
 
@@ -118,6 +119,28 @@ public abstract class AbstractCreateResourceOperation extends SingleResourceOper
 		folder.setId(id);
 		return new FetchResourceResult(path, folder);
 		
+	}
+	
+	/**
+	 * Inserts a resource record into the database and returns its id.
+	 */
+	protected final long insert(long parentId, String name, ResourceType type, byte[] contents) {
+		final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QWorkspaceResources.workspaceResources);
+		insert.set(QWorkspaceResources.workspaceResources.name, name);
+		insert.set(QWorkspaceResources.workspaceResources.contents, contents);
+		insert.set(QWorkspaceResources.workspaceResources.parentId, parentId);
+		insert.set(QWorkspaceResources.workspaceResources.type, type.name());
+		try {
+			return insert.executeWithKey(Long.class);
+		} catch (QueryException e) {
+			if (e.getCause() instanceof com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException) {
+				throw new WorkspaceResourceCollisionException(getPath());
+			}
+			if (e.getCause() instanceof com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException) {
+				throw new WorkspaceResourceCollisionException(getPath());
+			}
+			throw e;
+		}
 	}
 
 }

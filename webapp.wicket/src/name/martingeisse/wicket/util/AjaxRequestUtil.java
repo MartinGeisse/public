@@ -6,6 +6,9 @@
 
 package name.martingeisse.wicket.util;
 
+import name.martingeisse.common.javascript.JavascriptAssemblerUtil;
+
+import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.request.IRequestHandler;
@@ -17,6 +20,12 @@ import org.apache.wicket.request.cycle.RequestCycle;
  */
 public class AjaxRequestUtil {
 
+	/**
+	 * the logger
+	 */
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(AjaxRequestUtil.class);
+	
 	/**
 	 * Prevent instantiation.
 	 */
@@ -51,6 +60,43 @@ public class AjaxRequestUtil {
 		AjaxRequestTarget art = getAjaxRequestTarget();
 		if (art != null) {
 			art.add(components);
+		}
+	}
+	
+	/**
+	 * Returns true if and only if the argument is not null.
+	 * Also outputs an error message if it is null.
+	 */
+	private static boolean checkTarget(AjaxRequestTarget target) {
+		if (target == null) {
+			logger.error("This method cannot be used in non-AJAX requests", new Exception());
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	/**
+	 * Opens a Javascript alert box with a fixed message. Does nothing visible
+	 * but logs an error in non-AJAX requests.
+	 * @param message the message to show
+	 */
+	public static void alert(String message) {
+		AjaxRequestTarget target = getAjaxRequestTarget();
+		if (checkTarget(target)) {
+			target.appendJavaScript("alert('" + JavascriptAssemblerUtil.escapeStringLiteralSpecialCharacters(message) + "');");
+		}
+	}
+
+	/**
+	 * Focuses a component via Javascript. Does nothing visible
+	 * but logs an error in non-AJAX requests.
+	 * @param component the component to focus
+	 */
+	public static void focus(Component component) {
+		AjaxRequestTarget target = getAjaxRequestTarget();
+		if (checkTarget(target)) {
+			target.focusComponent(component);
 		}
 	}
 	
