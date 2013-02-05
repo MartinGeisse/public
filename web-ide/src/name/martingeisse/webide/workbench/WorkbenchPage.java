@@ -39,6 +39,7 @@ import name.martingeisse.wicket.component.contextmenu.ContextMenuItem;
 import name.martingeisse.wicket.component.contextmenu.ContextMenuSeparator;
 import name.martingeisse.wicket.component.contextmenu.DownloadMenuItem;
 import name.martingeisse.wicket.component.contextmenu.DynamicContextMenuItems;
+import name.martingeisse.wicket.component.contextmenu.FileUploadMenuItem;
 import name.martingeisse.wicket.component.contextmenu.SimpleContextMenuItem;
 import name.martingeisse.wicket.component.contextmenu.SimpleContextMenuItemWithTextInput;
 import name.martingeisse.wicket.component.tree.IJsTreeCommandHandler;
@@ -199,7 +200,9 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 			}
 			
 		});
-		filesContextMenu.add(new ComponentMenuItem<List<FetchResourceResult>>(fileUploadMenuItem));		filesContextMenu.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Run") {
+		filesContextMenu.add(new ComponentMenuItem<List<FetchResourceResult>>(fileUploadMenuItem));
+		filesContextMenu.add(new FileUploadMenuItem<List<FetchResourceResult>>("Upload 2"));
+		filesContextMenu.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Run") {
 			@Override
 			protected void onSelect(final List<FetchResourceResult> anchor) {
 				if (!anchor.isEmpty()) {

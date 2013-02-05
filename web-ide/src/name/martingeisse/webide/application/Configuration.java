@@ -39,6 +39,26 @@ public class Configuration {
 	private static String mainDatabasePassword;
 	
 	/**
+	 * the stdinPath
+	 */
+	private static String stdinPath;
+	
+	/**
+	 * the stdoutPath
+	 */
+	private static String stdoutPath;
+	
+	/**
+	 * the stderrPath
+	 */
+	private static String stderrPath;
+	
+	/**
+	 * the iverilogPath
+	 */
+	private static String iverilogPath;
+	
+	/**
 	 * Prevent instantiation.
 	 */
 	private Configuration() {
@@ -60,6 +80,10 @@ public class Configuration {
 		mainDatabaseUrl = loadString(properties, "database.main.url");
 		mainDatabaseUsername = loadString(properties, "database.main.username");
 		mainDatabasePassword = loadString(properties, "database.main.password");
+		stdinPath = loadString(properties, "path.stdin");
+		stdoutPath = loadString(properties, "path.stdout");
+		stderrPath = loadString(properties, "path.stderr");
+		iverilogPath = loadString(properties, "path.tools.iverilog");
 	}
 	
 	/**
@@ -119,4 +143,36 @@ public class Configuration {
 		return mainDatabasePassword;
 	}
 	
+	/**
+	 * Getter method for the stdinPath.
+	 * @return the stdinPath
+	 */
+	public static String getStdinPath() {
+		return stdinPath;
+	}
+	
+	/**
+	 * Getter method for the stdoutPath.
+	 * @return the stdoutPath
+	 */
+	public static String getStdoutPath() {
+		return stdoutPath;
+	}
+	
+	/**
+	 * Getter method for the stderrPath.
+	 * @return the stderrPath
+	 */
+	public static String getStderrPath() {
+		return stderrPath;
+	}
+	
+	/**
+	 * Getter method for the iverilogPath.
+	 * @return the iverilogPath
+	 */
+	public static String getIverilogPath() {
+		return iverilogPath;
+	}
+
 }

@@ -9,6 +9,8 @@ package name.martingeisse.wicket.component.contextmenu;
 import name.martingeisse.common.terms.CommandVerb;
 import name.martingeisse.wicket.component.select.SelectableElementsBehavior;
 
+import org.apache.wicket.Page;
+
 /**
  * This interface is implemented by code that provides an anchor
  * for context menus, such as {@link SelectableElementsBehavior}.
@@ -31,6 +33,12 @@ import name.martingeisse.wicket.component.select.SelectableElementsBehavior;
  */
 public interface IContextMenuCallbackBuilder {
 
+	/**
+	 * Returns the page in which the context menu is used.
+	 * @return the page
+	 */
+	public Page getPage();
+	
 	/**
 	 * Writes the method body of the callback method (as defined by
 	 * the jQuery context menu plugin) to the specified string builder.

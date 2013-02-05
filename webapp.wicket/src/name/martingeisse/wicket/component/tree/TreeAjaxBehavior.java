@@ -17,6 +17,7 @@ import name.martingeisse.wicket.component.contextmenu.IContextMenuCallbackBuilde
 import name.martingeisse.wicket.javascript.IJavascriptInteractionInterceptor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
@@ -166,6 +167,14 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 			builder.append(";");
 			builder.append("interceptor(onInterceptorPassed);\n");
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.component.contextmenu.IContextMenuCallbackBuilder#getPage()
+	 */
+	@Override
+	public Page getPage() {
+		return getComponent().getPage();
 	}
 	
 }

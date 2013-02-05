@@ -7,6 +7,7 @@
 package name.martingeisse.webide.resources;
 
 import name.martingeisse.webide.features.java.compiler.JavaCompilerFacade;
+import name.martingeisse.webide.features.verilog.compiler.VerilogCompilerFacade;
 import name.martingeisse.webide.pde.PluginBuilderFacade;
 
 /**
@@ -85,6 +86,7 @@ public class BuilderService {
 	private static void performBuild() {
 		try {
 			JavaCompilerFacade.performCompilation();
+			VerilogCompilerFacade.performCompilation();
 			PluginBuilderFacade.performBuild();
 		} catch (Throwable e) {
 			System.err.println("exception in builder thread: " + e);
