@@ -113,9 +113,6 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 			protected void onSelect(final List<FetchResourceResult> anchor, final String filename) {
 				if (!anchor.isEmpty()) {
 					final FetchResourceResult element = anchor.get(0);
-					if (element.getType() == ResourceType.MOUNT_SPACE || element.getType() == ResourceType.WORKSPACE_ROOT) {
-						AjaxRequestUtil.alert("Files can only be created inside a project.");
-					}
 					final ResourcePath elementPath = element.getPath();
 					final ResourcePath parentPath = (element.getType() == ResourceType.FILE ? elementPath.removeLastSegment(false) : elementPath);
 					final ResourcePath path = parentPath.appendSegment(filename, false);
@@ -130,9 +127,6 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 			protected void onSelect(final List<FetchResourceResult> anchor, final String filename) {
 				if (!anchor.isEmpty()) {
 					final FetchResourceResult element = anchor.get(0);
-					if (element.getType() == ResourceType.MOUNT_SPACE || element.getType() == ResourceType.WORKSPACE_ROOT) {
-						AjaxRequestUtil.alert("Folders can only be created inside a project.");
-					}
 					final ResourcePath elementPath = element.getPath();
 					final ResourcePath parentPath = (element.getType() == ResourceType.FILE ? elementPath.removeLastSegment(false) : elementPath);
 					final ResourcePath path = parentPath.appendSegment(filename, false);

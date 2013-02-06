@@ -89,11 +89,6 @@ public enum ResourceIconSelector {
 	public static ResourceIconSelector get(ResourceType type, boolean hasErrors, boolean hasWarnings) {
 		switch (type) {
 		
-		case MOUNT_SPACE:
-		case WORKSPACE_ROOT:
-		case PROJECT:
-			return MISSING_ICON;
-			
 		case FOLDER:
 			return (hasErrors ? FOLDER_ERROR : hasWarnings ? FOLDER_WARNING : FOLDER_OK);
 			

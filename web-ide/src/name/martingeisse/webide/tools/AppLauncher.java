@@ -103,7 +103,7 @@ public class AppLauncher extends ClassLoader {
 		Object[] cached = resourceCache.get(path);
 		if (cached == null) {
 			if (path.equals("/")) {
-				cached = loadResourceInternal("`type` = 'WORKSPACE_ROOT'");
+				cached = loadResourceInternal("`parent_id` IS NULL");
 			} else {
 				int slashIndex = path.lastIndexOf('/');
 				Object[] parentResource = loadResource(slashIndex == -1 ? "/" : path.substring(0, slashIndex));

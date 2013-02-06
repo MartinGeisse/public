@@ -12,10 +12,10 @@ import name.martingeisse.wicket.util.ISimpleCallbackListener;
 import name.martingeisse.wicket.util.WicketHeadUtil;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.Page;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 /**
@@ -28,13 +28,19 @@ public class FileUploadMenuItem<A> extends AbstractNamedContextMenuItem<A> {
 	/**
 	 * the behavior
 	 */
-	private MyBehavior behavior = new MyBehavior();
+	private MyBehavior behavior;
+	
+	/**
+	 * the behaviorAddedToPage
+	 */
+	private boolean behaviorAddedToPage;
 	
 	/**
 	 * Constructor.
 	 */
 	public FileUploadMenuItem() {
 		this.behavior = new MyBehavior();
+		this.behaviorAddedToPage = false;
 	}
 
 	/**
@@ -43,8 +49,23 @@ public class FileUploadMenuItem<A> extends AbstractNamedContextMenuItem<A> {
 	 */
 	public FileUploadMenuItem(final String name) {
 		super(name);
+		this.behavior = new MyBehavior();
+		this.behaviorAddedToPage = false;
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.component.contextmenu.ContextMenuItem#onBeforeRender(org.apache.wicket.Component)
+	 */
+	@Override
+	protected void onConfigure(Component component) {
+		super.onConfigure(component);
+		if (!behaviorAddedToPage) {
+			Page page = component.getPage();
+			page.add(behavior);
+			behaviorAddedToPage = true;
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.wicket.component.contextmenu.ContextMenuItem#notifySelectedInternal(java.lang.Object, java.lang.Object)
 	 */
@@ -58,7 +79,6 @@ public class FileUploadMenuItem<A> extends AbstractNamedContextMenuItem<A> {
 	@Override
 	void buildItem(final StringBuilder builder, final IContextMenuCallbackBuilder callbackBuilder) {
 		Component component = callbackBuilder.getPage();
-		component.add(behavior); // TODO added multiple times?
 		final String url = component.urlFor(behavior, ISimpleCallbackListener.INTERFACE, null).toString();
 		
 		// TODO escape the name in all menu item classes

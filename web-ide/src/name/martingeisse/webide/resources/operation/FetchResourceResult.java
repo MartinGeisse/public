@@ -60,7 +60,7 @@ public final class FetchResourceResult implements Serializable {
 		fakeResource.setId(0L);
 		fakeResource.setParentId(null);
 		fakeResource.setName("");
-		fakeResource.setType(ResourceType.WORKSPACE_ROOT.name());
+		fakeResource.setType(ResourceType.FOLDER.name());
 		fakeResource.setContents(null);
 		return new FetchResourceResult(path, fakeResource);
 	}

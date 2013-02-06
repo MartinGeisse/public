@@ -123,7 +123,8 @@ public final class WorkspaceOperationContext {
 			trace("... is workspace root", path);
 			final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 			query.from(QWorkspaceResources.workspaceResources);
-			query.where(QWorkspaceResources.workspaceResources.type.eq(ResourceType.WORKSPACE_ROOT.name()));
+			query.where(QWorkspaceResources.workspaceResources.type.eq(ResourceType.FOLDER.name()));
+			query.where(QWorkspaceResources.workspaceResources.parentId.isNull());
 			FetchResourceResult result = createResult(path, query.singleResult(QWorkspaceResources.workspaceResources));
 			if (result != null) {
 				WorkspaceCache.onLoad(result);

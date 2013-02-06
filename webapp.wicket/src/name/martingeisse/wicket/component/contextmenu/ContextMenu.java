@@ -13,6 +13,7 @@ import java.util.List;
 import name.martingeisse.common.terms.CommandVerb;
 import name.martingeisse.wicket.util.WicketHeadUtil;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.IHeaderResponse;
 
 /**
@@ -123,6 +124,15 @@ public class ContextMenu<A> implements Serializable {
 		}
 	}
 	
+	/**
+	 * Called from Wicket's onConfigure().
+	 * @param component the Wicket component to which the menu belongs
+	 */
+	public void onConfigure(Component component) {
+		for (ContextMenuItem<? super A> item : getEffectiveItems()) {
+			item.onConfigure(component);
+		}
+	}
 	
 	/**
 	 * Triggers the effect of the menu item with the specified key.

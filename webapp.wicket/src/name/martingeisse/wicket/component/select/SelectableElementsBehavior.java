@@ -121,6 +121,15 @@ public abstract class SelectableElementsBehavior<T> extends AbstractDefaultAjaxB
 	}
 
 	/* (non-Javadoc)
+	 * @see org.apache.wicket.behavior.Behavior#onConfigure(org.apache.wicket.Component)
+	 */
+	@Override
+	public void onConfigure(Component component) {
+		super.onConfigure(component);
+		contextMenu.onConfigure(component);
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.apache.wicket.ajax.AbstractDefaultAjaxBehavior#renderHead(org.apache.wicket.Component, org.apache.wicket.markup.head.IHeaderResponse)
 	 */
 	@Override

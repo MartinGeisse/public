@@ -17,6 +17,7 @@ import name.martingeisse.wicket.component.contextmenu.IContextMenuCallbackBuilde
 import name.martingeisse.wicket.javascript.IJavascriptInteractionInterceptor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -56,6 +57,15 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 		this.tree = tree;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.behavior.Behavior#onConfigure(org.apache.wicket.Component)
+	 */
+	@Override
+	public void onConfigure(Component component) {
+		super.onConfigure(component);
+		tree.getContextMenu().onConfigure(component);
+	};
+	
 	/**
 	 * Returns a Javascript expression that specifies the AJAX callback function.
 	 */

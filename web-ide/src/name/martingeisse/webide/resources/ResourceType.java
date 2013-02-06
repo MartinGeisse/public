@@ -12,28 +12,14 @@ package name.martingeisse.webide.resources;
 public enum ResourceType {
 
 	/**
-	 * used for a user's root node ("mount space") to mount workspaces. Not used
-	 * in the workspace_resources database table.
-	 */
-	MOUNT_SPACE,
-	
-	/**
-	 * the root node of a workspace
-	 */
-	WORKSPACE_ROOT,
-	
-	/**
-	 * a project within a workspace
-	 */
-	PROJECT,
-	
-	/**
-	 * a folder within a project or other folder
+	 * A folder that contains other resources. The root resource of every workspace
+	 * must be a folder. Folders do not have binary contents.
 	 */
 	FOLDER,
 	
 	/**
-	 * a file within a project or folder
+	 * A file within a project or folder. A file does not contain resources but
+	 * has binary content.
 	 */
 	FILE;
 	

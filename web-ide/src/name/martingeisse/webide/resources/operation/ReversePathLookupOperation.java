@@ -131,8 +131,8 @@ class ReversePathLookupOperation extends WorkspaceOperation {
 			}
 			missingResourceIds.clear();
 			for (WorkspaceResources resource : resources) {
-				if (!resource.getType().equals(ResourceType.WORKSPACE_ROOT.name())) {
-					long parentId = resource.getParentId();
+				Long parentId = resource.getParentId();
+				if (parentId != null) {
 					if (resourcesById.get(parentId) == null) {
 						missingResourceIds.add(parentId);
 					}
@@ -178,7 +178,7 @@ class ReversePathLookupOperation extends WorkspaceOperation {
 			if (resource == null) {
 				throw new RuntimeException("internal error -- previously fetched resource not found");
 			}
-			if (resource.getType().equals(ResourceType.WORKSPACE_ROOT.name())) {
+			if (resource.getParentId() == null) {
 				path = ResourcePath.ROOT;
 			} else {
 				ResourcePath parentPath = buildPath(resource.getParentId());

@@ -8,6 +8,8 @@ package name.martingeisse.wicket.component.contextmenu;
 
 import java.io.Serializable;
 
+import org.apache.wicket.Component;
+
 /**
  * Base class for context menu items.
  * 
@@ -30,6 +32,13 @@ public abstract class ContextMenuItem<A> implements Serializable {
 	 */
 	protected ContextMenuItem<? super A>[] getReplacementItems() {
 		return null;
+	}
+	
+	/**
+	 * Called from Wicket's onConfigure().
+	 * @param component the Wicket component to which the menu belongs
+	 */
+	protected void onConfigure(Component component) {
 	}
 	
 	/**
