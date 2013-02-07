@@ -6,8 +6,8 @@
 
 package name.martingeisse.webide.editor.codemirror.panel;
 
-import name.martingeisse.webide.resources.BuilderService;
 import name.martingeisse.webide.resources.ResourcePath;
+import name.martingeisse.webide.resources.build.BuilderService;
 import name.martingeisse.webide.resources.operation.ReplaceFileContentsOperation;
 import name.martingeisse.webide.util.NoTrimTextArea;
 import name.martingeisse.wicket.util.AjaxRequestUtil;

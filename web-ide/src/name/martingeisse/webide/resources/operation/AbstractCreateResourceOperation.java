@@ -72,6 +72,7 @@ public abstract class AbstractCreateResourceOperation extends SingleResourceOper
 	 * Creates the specified folder and all enclosing folders recursively.
 	 */
 	private FetchResourceResult createFolders(final WorkspaceOperationContext context, ResourcePath path) {
+		long workspaceId = 1;
 		
 		// check for workspace root paths, project paths
 		if (path.getSegmentCount() < 2) {
@@ -108,12 +109,14 @@ public abstract class AbstractCreateResourceOperation extends SingleResourceOper
 		// persist the new folder in the database
 		trace("will create enclosing folder now", path);
 		SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QWorkspaceResources.workspaceResources);
+		insert.set(QWorkspaceResources.workspaceResources.workspaceId, workspaceId);
 		insert.set(QWorkspaceResources.workspaceResources.parentId, folder.getParentId());
 		insert.set(QWorkspaceResources.workspaceResources.type, folder.getType());
 		insert.set(QWorkspaceResources.workspaceResources.name, folder.getName());
 		insert.set(QWorkspaceResources.workspaceResources.contents, new byte[0]);
 		long id = insert.executeWithKey(Long.class);
 		WorkspaceCache.onCreate(id, folder.getParentId(), path);
+		WorkspaceResourceDeltaUtil.generateDeltas("auto-create enclosing folders", path);
 		
 		// return the resource object
 		folder.setId(id);
@@ -125,7 +128,9 @@ public abstract class AbstractCreateResourceOperation extends SingleResourceOper
 	 * Inserts a resource record into the database and returns its id.
 	 */
 	protected final long insert(long parentId, String name, ResourceType type, byte[] contents) {
+		long workspaceId = 1;
 		final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QWorkspaceResources.workspaceResources);
+		insert.set(QWorkspaceResources.workspaceResources.workspaceId, workspaceId);
 		insert.set(QWorkspaceResources.workspaceResources.name, name);
 		insert.set(QWorkspaceResources.workspaceResources.contents, contents);
 		insert.set(QWorkspaceResources.workspaceResources.parentId, parentId);

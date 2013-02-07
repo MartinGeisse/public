@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.resources;
+package name.martingeisse.webide.resources.build;
 
 import name.martingeisse.webide.features.java.compiler.JavaCompilerFacade;
 import name.martingeisse.webide.features.verilog.compiler.VerilogCompilerFacade;

@@ -49,6 +49,11 @@ public class QWorkspaceResources extends com.mysema.query.sql.RelationalPathBase
     public final StringPath type = createString("type");
 
     /**
+     * Metamodel property for property 'workspace_id'
+     */
+    public final NumberPath<Long> workspaceId = createNumber("workspace_id", Long.class);
+
+    /**
      * Metamodel property for primary key 'PRIMARY'
      */
     public final com.mysema.query.sql.PrimaryKey<WorkspaceResources> pk_primary = createPrimaryKey(id);
@@ -56,22 +61,22 @@ public class QWorkspaceResources extends com.mysema.query.sql.RelationalPathBase
     /**
      * Metamodel property for foreign key 'workspace_resources_ibfk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<WorkspaceResources> fk_workspaceResourcesIbfk1 = createForeignKey(parentId, "id");
+    public final com.mysema.query.sql.ForeignKey<Workspaces> fk_workspaceResourcesIbfk1 = createForeignKey(workspaceId, "id");
 
     /**
-     * Metamodel property for reverse foreign key 'workspace_staging_plugins_ibfk_1'
+     * Metamodel property for foreign key 'workspace_resources_ibfk_2'
      */
-    public final com.mysema.query.sql.ForeignKey<WorkspaceStagingPlugins> fk__workspaceStagingPluginsIbfk1 = createInvForeignKey(id, "workspace_resource_id");
+    public final com.mysema.query.sql.ForeignKey<WorkspaceResources> fk_workspaceResourcesIbfk2 = createForeignKey(parentId, "id");
 
     /**
-     * Metamodel property for reverse foreign key 'workspace_resources_ibfk_1'
+     * Metamodel property for reverse foreign key 'markers_ibfk_2'
      */
-    public final com.mysema.query.sql.ForeignKey<WorkspaceResources> fk__workspaceResourcesIbfk1 = createInvForeignKey(id, "parent_id");
+    public final com.mysema.query.sql.ForeignKey<Markers> fk__markersIbfk2 = createInvForeignKey(id, "workspace_resource_id");
 
     /**
-     * Metamodel property for reverse foreign key 'markers_ibfk_1'
+     * Metamodel property for reverse foreign key 'workspace_resources_ibfk_2'
      */
-    public final com.mysema.query.sql.ForeignKey<Markers> fk__markersIbfk1 = createInvForeignKey(id, "workspace_resource_id");
+    public final com.mysema.query.sql.ForeignKey<WorkspaceResources> fk__workspaceResourcesIbfk2 = createInvForeignKey(id, "parent_id");
 
     /**
      * Path-variable based constructor.

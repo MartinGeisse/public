@@ -16,7 +16,6 @@ import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.webide.entity.QWorkspaceResources;
 import name.martingeisse.webide.entity.WorkspaceResources;
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.ResourceType;
 
 import org.apache.log4j.Logger;
 

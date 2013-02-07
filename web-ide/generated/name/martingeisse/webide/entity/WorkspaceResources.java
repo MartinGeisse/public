@@ -42,6 +42,11 @@ public class WorkspaceResources implements Serializable {
     private String type;
 
     /**
+     * the workspaceId
+     */
+    private Long workspaceId;
+
+    /**
      * Getter method for the contents.
      * @return the contents
      */
@@ -121,12 +126,28 @@ public class WorkspaceResources implements Serializable {
         this.type = type;
     }
 
+    /**
+     * Getter method for the workspaceId.
+     * @return the workspaceId
+     */
+    public Long getWorkspaceId() {
+        return workspaceId;
+    }
+
+    /**
+     * Setter method for the workspaceId.
+     * @param workspaceId the workspaceId to set
+     */
+    public void setWorkspaceId(Long workspaceId) {
+        this.workspaceId = workspaceId;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "{WorkspaceResources. contents = " + contents + ", id = " + id + ", name = " + name + ", parentId = " + parentId + ", type = " + type + "}";
+        return "{WorkspaceResources. contents = " + contents + ", id = " + id + ", name = " + name + ", parentId = " + parentId + ", type = " + type + ", workspaceId = " + workspaceId + "}";
     }
 
 }

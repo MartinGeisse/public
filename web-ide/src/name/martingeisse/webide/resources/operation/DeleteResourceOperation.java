@@ -38,6 +38,7 @@ public final class DeleteResourceOperation extends SingleResourceOperation {
 		delete.where(QWorkspaceResources.workspaceResources.id.eq(fetchResourceId(context)));
 		trace("will delete resource now", getPath());
 		delete.execute();
+		WorkspaceResourceDeltaUtil.generateDeltas("delete resource", getPath());
 		WorkspaceCache.invalidate();
 	}
 

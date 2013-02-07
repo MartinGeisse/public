@@ -27,8 +27,6 @@ import name.martingeisse.webide.entity.QPluginBundles;
 import name.martingeisse.webide.entity.QPlugins;
 import name.martingeisse.webide.entity.QUserInstalledPlugins;
 import name.martingeisse.webide.entity.QWorkspaceStagingPlugins;
-import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.operation.FetchSingleResourceOperation;
 
 import org.json.simple.JSONValue;
 
@@ -119,13 +117,13 @@ public class InternalPluginUtil {
 		
 		// TODO: support multiple users, multiple workspaces
 		final long userId = 1;
-		final long workspaceRootId = findWorkspaceRoot();
+		final long workspaceId = 1;
 
 		// determine the set of active plugins
 		Set<Long> pluginIds = new HashSet<Long>();
 		pluginIds.addAll(fetchBuiltinPluginIds());
 		pluginIds.addAll(fetchUserInstalledPluginIds(userId));
-		pluginIds.addAll(fetchWorkspaceStagingPluginIds(workspaceRootId));
+		pluginIds.addAll(fetchWorkspaceStagingPluginIds(workspaceId));
 		
 		// fetch plug-in data
 		final List<Long> pluginBundleIds = fetchPluginBundleIds(pluginIds);
@@ -222,9 +220,9 @@ public class InternalPluginUtil {
 	/**
 	 * Returns the pluginIds of all workspace staging plugins.
 	 */
-	private static List<Long> fetchWorkspaceStagingPluginIds(long workspaceRootId) {
+	private static List<Long> fetchWorkspaceStagingPluginIds(long workspaceId) {
 		QWorkspaceStagingPlugins qpath = QWorkspaceStagingPlugins.workspaceStagingPlugins;
-		return QueryUtil.fetchMultiple(qpath, qpath.pluginId, qpath.workspaceResourceId.eq(workspaceRootId));
+		return QueryUtil.fetchMultiple(qpath, qpath.pluginId, qpath.workspaceId.eq(workspaceId));
 	}
 
 	/**
@@ -248,15 +246,6 @@ public class InternalPluginUtil {
 	 */
 	private static List<DeclaredExtensions> fetchDeclaredExtensions(final List<Long> pluginBundleIds) {
 		return QueryUtil.fetchMultiple(QDeclaredExtensions.declaredExtensions, QDeclaredExtensions.declaredExtensions.pluginBundleId.in(pluginBundleIds));
-	}
-
-	/**
-	 * Finds the workspace resource id of the workspace root.
-	 */
-	private static long findWorkspaceRoot() {
-		FetchSingleResourceOperation operation = new FetchSingleResourceOperation(ResourcePath.ROOT);
-		operation.run();
-		return operation.getResult().getId();
 	}
 	
 }

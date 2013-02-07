@@ -34,9 +34,9 @@ public class QWorkspaceStagingPlugins extends com.mysema.query.sql.RelationalPat
     public final NumberPath<Long> pluginId = createNumber("plugin_id", Long.class);
 
     /**
-     * Metamodel property for property 'workspace_resource_id'
+     * Metamodel property for property 'workspace_id'
      */
-    public final NumberPath<Long> workspaceResourceId = createNumber("workspace_resource_id", Long.class);
+    public final NumberPath<Long> workspaceId = createNumber("workspace_id", Long.class);
 
     /**
      * Metamodel property for primary key 'PRIMARY'
@@ -46,7 +46,7 @@ public class QWorkspaceStagingPlugins extends com.mysema.query.sql.RelationalPat
     /**
      * Metamodel property for foreign key 'workspace_staging_plugins_ibfk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<WorkspaceResources> fk_workspaceStagingPluginsIbfk1 = createForeignKey(workspaceResourceId, "id");
+    public final com.mysema.query.sql.ForeignKey<Workspaces> fk_workspaceStagingPluginsIbfk1 = createForeignKey(workspaceId, "id");
 
     /**
      * Metamodel property for foreign key 'workspace_staging_plugins_ibfk_2'

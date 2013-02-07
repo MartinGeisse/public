@@ -29,6 +29,11 @@ import com.mysema.query.sql.SQLQuery;
 public final class WorkspaceOperationContext {
 
 	/**
+	 * the workspaceId
+	 */
+	private final long workspaceId;
+	
+	/**
 	 * the logger
 	 */
 	@SuppressWarnings("unused")
@@ -36,10 +41,20 @@ public final class WorkspaceOperationContext {
 	
 	/**
 	 * Constructor.
+	 * @param workspaceId the ID of the workspace in which the operation(s) are performed
 	 */
-	WorkspaceOperationContext() {
+	WorkspaceOperationContext(long workspaceId) {
+		this.workspaceId = workspaceId;
 	}
 
+	/**
+	 * Getter method for the workspaceId.
+	 * @return the workspaceId
+	 */
+	long getWorkspaceId() {
+		return workspaceId;
+	}
+	
 	/**
 	 * Disposes of all resources held by this context.
 	 */

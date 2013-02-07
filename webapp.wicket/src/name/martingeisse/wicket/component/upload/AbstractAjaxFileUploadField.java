@@ -111,7 +111,6 @@ public abstract class AbstractAjaxFileUploadField extends WebComponent implement
 				logger.error(e);
 			}
 		}
-		
 	}
 	
 	/**

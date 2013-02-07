@@ -17,12 +17,12 @@ import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.common.util.string.EmptyIterator;
 import name.martingeisse.webide.plugin.InternalPluginUtil;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
-import name.martingeisse.webide.resources.BuilderService;
 import name.martingeisse.webide.resources.MarkerListView;
 import name.martingeisse.webide.resources.ResourceIconSelector;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
 import name.martingeisse.webide.resources.WorkspaceWicketResourceReference;
+import name.martingeisse.webide.resources.build.BuilderService;
 import name.martingeisse.webide.resources.operation.CreateFileOperation;
 import name.martingeisse.webide.resources.operation.CreateFolderOperation;
 import name.martingeisse.webide.resources.operation.DeleteResourcesOperation;
@@ -33,7 +33,6 @@ import name.martingeisse.webide.resources.operation.WorkspaceOperationException;
 import name.martingeisse.webide.resources.operation.WorkspaceResourceCollisionException;
 import name.martingeisse.webide.workbench.services.IWorkbenchEditorService;
 import name.martingeisse.webide.workbench.services.IWorkbenchServicesProvider;
-import name.martingeisse.wicket.component.contextmenu.ComponentMenuItem;
 import name.martingeisse.wicket.component.contextmenu.ContextMenu;
 import name.martingeisse.wicket.component.contextmenu.ContextMenuItem;
 import name.martingeisse.wicket.component.contextmenu.ContextMenuSeparator;
@@ -168,6 +167,21 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 			 */
 			@Override
 			protected void onFileUploaded(MultipartServletWebRequestImpl multipartRequest, FileItem fileItem) {
+			}
+			
+		});
+		filesContextMenu.add(new FileUploadMenuItem<List<FetchResourceResult>>("Upload") {
+			
+			@Override
+			protected String renderOptions() {
+				String resourceTreeMarkupId = WorkbenchPage.this.get("filesContainer").get("resources").getMarkupId();
+				return "{formData: function() {return [{name: 'resources', value: $('#" + resourceTreeMarkupId + "').jstreeAjaxNodeIndexList()}]; }, done: handleUploadedFile}";
+			}
+			
+			@Override
+			protected void onFileUploaded(MultipartServletWebRequestImpl multipartRequest, FileItem fileItem) throws IOException {
+				System.out.println("name: " + fileItem.getName());
+				
 				uploadErrorMessage = null;
 				try {
 					String resourceListSpecifier = multipartRequest.getPostParameters().getParameterValue("resources").toString();
@@ -194,8 +208,6 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 			}
 			
 		});
-		filesContextMenu.add(new ComponentMenuItem<List<FetchResourceResult>>(fileUploadMenuItem));
-		filesContextMenu.add(new FileUploadMenuItem<List<FetchResourceResult>>("Upload 2"));
 		filesContextMenu.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Run") {
 			@Override
 			protected void onSelect(final List<FetchResourceResult> anchor) {

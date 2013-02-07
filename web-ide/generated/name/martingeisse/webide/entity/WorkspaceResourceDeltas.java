@@ -6,14 +6,14 @@ package name.martingeisse.webide.entity;
 import java.io.Serializable;
 
 /**
- * This class represents rows from table 'workspace_staging_plugins'.
+ * This class represents rows from table 'workspace_resource_deltas'.
  */
-public class WorkspaceStagingPlugins implements Serializable {
+public class WorkspaceResourceDeltas implements Serializable {
 
     /**
      * Constructor.
      */
-    public WorkspaceStagingPlugins() {
+    public WorkspaceResourceDeltas() {
     }
 
     /**
@@ -22,9 +22,9 @@ public class WorkspaceStagingPlugins implements Serializable {
     private Long id;
 
     /**
-     * the pluginId
+     * the path
      */
-    private Long pluginId;
+    private String path;
 
     /**
      * the workspaceId
@@ -48,19 +48,19 @@ public class WorkspaceStagingPlugins implements Serializable {
     }
 
     /**
-     * Getter method for the pluginId.
-     * @return the pluginId
+     * Getter method for the path.
+     * @return the path
      */
-    public Long getPluginId() {
-        return pluginId;
+    public String getPath() {
+        return path;
     }
 
     /**
-     * Setter method for the pluginId.
-     * @param pluginId the pluginId to set
+     * Setter method for the path.
+     * @param path the path to set
      */
-    public void setPluginId(Long pluginId) {
-        this.pluginId = pluginId;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     /**
@@ -84,7 +84,7 @@ public class WorkspaceStagingPlugins implements Serializable {
      */
     @Override
     public String toString() {
-        return "{WorkspaceStagingPlugins. id = " + id + ", pluginId = " + pluginId + ", workspaceId = " + workspaceId + "}";
+        return "{WorkspaceResourceDeltas. id = " + id + ", path = " + path + ", workspaceId = " + workspaceId + "}";
     }
 
 }

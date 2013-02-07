@@ -47,6 +47,11 @@ public class Markers implements Serializable {
     private String origin;
 
     /**
+     * the workspaceId
+     */
+    private Long workspaceId;
+
+    /**
      * the workspaceResourceId
      */
     private Long workspaceResourceId;
@@ -148,6 +153,22 @@ public class Markers implements Serializable {
     }
 
     /**
+     * Getter method for the workspaceId.
+     * @return the workspaceId
+     */
+    public Long getWorkspaceId() {
+        return workspaceId;
+    }
+
+    /**
+     * Setter method for the workspaceId.
+     * @param workspaceId the workspaceId to set
+     */
+    public void setWorkspaceId(Long workspaceId) {
+        this.workspaceId = workspaceId;
+    }
+
+    /**
      * Getter method for the workspaceResourceId.
      * @return the workspaceResourceId
      */
@@ -168,7 +189,7 @@ public class Markers implements Serializable {
      */
     @Override
     public String toString() {
-        return "{Markers. column = " + column + ", id = " + id + ", line = " + line + ", meaning = " + meaning + ", message = " + message + ", origin = " + origin + ", workspaceResourceId = " + workspaceResourceId + "}";
+        return "{Markers. column = " + column + ", id = " + id + ", line = " + line + ", meaning = " + meaning + ", message = " + message + ", origin = " + origin + ", workspaceId = " + workspaceId + ", workspaceResourceId = " + workspaceResourceId + "}";
     }
 
 }

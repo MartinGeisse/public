@@ -56,8 +56,9 @@ public class PluginBuilderFacade {
 	 * 
 	 */
 	private static void clearStagingPlugins() {
+		long workspaceId = 1; // TODO
 		SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QWorkspaceStagingPlugins.workspaceStagingPlugins);
-		delete.where(QWorkspaceStagingPlugins.workspaceStagingPlugins.workspaceResourceId.eq(findWorkspaceRoot()));
+		delete.where(QWorkspaceStagingPlugins.workspaceStagingPlugins.workspaceId.eq(workspaceId));
 		delete.execute();
 	}
 	
@@ -66,6 +67,9 @@ public class PluginBuilderFacade {
 	 */
 	private static void performBuild(final ResourcePath basePath) {
 
+		// TODO
+		long workspaceId = 1;
+		
 		// prepare
 		final ResourcePath descriptorFilePath = basePath.appendSegment("plugin.json", false);
 		final ResourcePath bundleFilePath = basePath.appendSegment("plugin.jar", false);
@@ -91,7 +95,7 @@ public class PluginBuilderFacade {
 
 		// build and install the plugin
 		final byte[] jarFile = generateJarFile(binPath, bundleFilePath);
-		uploadPlugin(pluginBundleDescriptorSourceCode, jarFile, findWorkspaceRoot());
+		uploadPlugin(pluginBundleDescriptorSourceCode, jarFile, workspaceId);
 
 	}
 
@@ -161,21 +165,12 @@ public class PluginBuilderFacade {
 			throw new RuntimeException(e);
 		}
 	}
-
-	/**
-	 * Finds the workspace resource id of the workspace root.
-	 */
-	private static long findWorkspaceRoot() {
-		FetchSingleResourceOperation operation = new FetchSingleResourceOperation(ResourcePath.ROOT);
-		operation.run();
-		return operation.getResult().getId();
-	}
 	
 	/**
 	 * Uploads the JAR file build by the previous step and the plugin bundle descriptor
 	 * as a single-bundle plugin into the plugins and plugin_bundles tables.
 	 */
-	private static void uploadPlugin(final String descriptor, final byte[] jarFile, long workspaceRootId) {
+	private static void uploadPlugin(final String descriptor, final byte[] jarFile, long workspaceId) {
 
 		// plugin
 		final SQLInsertClause pluginInsert = EntityConnectionManager.getConnection().createInsert(QPlugins.plugins);
@@ -194,7 +189,7 @@ public class PluginBuilderFacade {
 		
 		// (workspace - staging plugin) relation
 		final SQLInsertClause workspaceStagingPluginsInsert = EntityConnectionManager.getConnection().createInsert(QWorkspaceStagingPlugins.workspaceStagingPlugins);
-		workspaceStagingPluginsInsert.set(QWorkspaceStagingPlugins.workspaceStagingPlugins.workspaceResourceId, workspaceRootId);
+		workspaceStagingPluginsInsert.set(QWorkspaceStagingPlugins.workspaceStagingPlugins.workspaceId, workspaceId);
 		workspaceStagingPluginsInsert.set(QWorkspaceStagingPlugins.workspaceStagingPlugins.pluginId, pluginId);
 		workspaceStagingPluginsInsert.execute();
 		

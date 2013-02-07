@@ -1,0 +1,802 @@
+2013-02-07 20:24:29,226 main org.apache.sshd.common.util.SecurityUtils INFO: Trying to register BouncyCastle as a JCE provider
+2013-02-07 20:24:29,707 main org.apache.sshd.common.util.SecurityUtils INFO: Registration succeeded
+2013-02-07 20:24:29,916 main org.eclipse.jetty.server.Server INFO: jetty-8.1.7.v20120910
+2013-02-07 20:24:30,189 main org.apache.wicket.Application INFO: [org.apache.wicket.protocol.ws.jetty.Jetty7WebSocketFilter-1741133836] init: Wicket core library initializer
+2013-02-07 20:24:30,191 main org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2013-02-07 20:24:30,192 main org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2013-02-07 20:24:30,192 main org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2013-02-07 20:24:30,192 main org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2013-02-07 20:24:30,192 main org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2013-02-07 20:24:30,193 main org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2013-02-07 20:24:30,193 main org.apache.wicket.Application INFO: [org.apache.wicket.protocol.ws.jetty.Jetty7WebSocketFilter-1741133836] init: Wicket extensions initializer
+2013-02-07 20:24:30,221 main org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.ws.jetty.Jetty7WebSocketFilter-1741133836] Started Wicket version 6.4.0 in DEVELOPMENT mode
+********************************************************************
+*** WARNING: Wicket is running in DEVELOPMENT mode.              ***
+***                               ^^^^^^^^^^^                    ***
+*** Do NOT deploy to your live server(s) without changing this.  ***
+*** See Application#getConfigurationType() for more information. ***
+********************************************************************
+2013-02-07 20:24:30,238 main org.eclipse.jetty.server.AbstractConnector INFO: Started SelectChannelConnector@0.0.0.0:8080
+2013-02-07 20:24:33,419 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,420 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: no connection existing for this database yet ...
+2013-02-07 20:24:33,421 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: connection created
+2013-02-07 20:24:33,421 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,565 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `plugin_bundle_states`.`data`
+from `plugin_bundle_states` `plugin_bundle_states`
+where `plugin_bundle_states`.`plugin_bundle_id` = ? and `plugin_bundle_states`.`user_id` = ? and `plugin_bundle_states`.`section` = ?
+limit ?
+2013-02-07 20:24:33,610 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation begin: /
+2013-02-07 20:24:33,610 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /
+2013-02-07 20:24:33,611 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: ... is workspace root: /
+2013-02-07 20:24:33,611 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,611 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,623 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`type` = ? and `workspace_resources`.`parent_id` is null
+limit ?
+2013-02-07 20:24:33,626 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will list resources now: /
+2013-02-07 20:24:33,626 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,626 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,630 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:33,632 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation end: /
+2013-02-07 20:24:33,634 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation begin: /test-project
+2013-02-07 20:24:33,634 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project
+2013-02-07 20:24:33,634 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project
+2013-02-07 20:24:33,634 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /
+2013-02-07 20:24:33,634 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /
+2013-02-07 20:24:33,634 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project
+2013-02-07 20:24:33,634 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,634 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,639 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:33,641 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will list resources now: /test-project
+2013-02-07 20:24:33,641 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,641 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,645 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:33,647 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation end: /test-project
+2013-02-07 20:24:33,647 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation begin: /test-project/bin
+2013-02-07 20:24:33,647 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/bin
+2013-02-07 20:24:33,647 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/bin
+2013-02-07 20:24:33,647 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project
+2013-02-07 20:24:33,647 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project
+2013-02-07 20:24:33,647 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/bin
+2013-02-07 20:24:33,647 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,647 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,652 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:33,656 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will list resources now: /test-project/bin
+2013-02-07 20:24:33,656 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,656 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,660 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:33,662 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation end: /test-project/bin
+2013-02-07 20:24:33,662 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation begin: /test-project/bin/Helper.class
+2013-02-07 20:24:33,662 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/bin/Helper.class
+2013-02-07 20:24:33,662 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/bin/Helper.class
+2013-02-07 20:24:33,662 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/bin
+2013-02-07 20:24:33,662 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project/bin
+2013-02-07 20:24:33,662 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/bin/Helper.class
+2013-02-07 20:24:33,662 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,662 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,667 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:33,671 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will list resources now: /test-project/bin/Helper.class
+2013-02-07 20:24:33,671 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,671 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,677 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:33,678 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation end: /test-project/bin/Helper.class
+2013-02-07 20:24:33,678 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation begin: /test-project/bin/index.html
+2013-02-07 20:24:33,679 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/bin/index.html
+2013-02-07 20:24:33,679 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/bin/index.html
+2013-02-07 20:24:33,679 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/bin
+2013-02-07 20:24:33,679 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project/bin
+2013-02-07 20:24:33,679 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/bin/index.html
+2013-02-07 20:24:33,679 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,679 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,683 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:33,685 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will list resources now: /test-project/bin/index.html
+2013-02-07 20:24:33,685 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,685 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,689 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:33,690 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation end: /test-project/bin/index.html
+2013-02-07 20:24:33,690 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation begin: /test-project/bin/Main.class
+2013-02-07 20:24:33,690 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/bin/Main.class
+2013-02-07 20:24:33,690 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/bin/Main.class
+2013-02-07 20:24:33,690 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/bin
+2013-02-07 20:24:33,690 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project/bin
+2013-02-07 20:24:33,690 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/bin/Main.class
+2013-02-07 20:24:33,690 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,690 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,694 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:33,695 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will list resources now: /test-project/bin/Main.class
+2013-02-07 20:24:33,695 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,695 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,706 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:33,708 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation end: /test-project/bin/Main.class
+2013-02-07 20:24:33,709 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation begin: /test-project/bin/MyMessage.class
+2013-02-07 20:24:33,709 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/bin/MyMessage.class
+2013-02-07 20:24:33,709 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/bin/MyMessage.class
+2013-02-07 20:24:33,709 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/bin
+2013-02-07 20:24:33,709 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project/bin
+2013-02-07 20:24:33,709 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/bin/MyMessage.class
+2013-02-07 20:24:33,709 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,709 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,712 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:33,714 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will list resources now: /test-project/bin/MyMessage.class
+2013-02-07 20:24:33,714 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,714 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,719 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:33,720 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation end: /test-project/bin/MyMessage.class
+2013-02-07 20:24:33,720 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation begin: /test-project/plugin.jar
+2013-02-07 20:24:33,720 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/plugin.jar
+2013-02-07 20:24:33,720 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/plugin.jar
+2013-02-07 20:24:33,720 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project
+2013-02-07 20:24:33,720 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project
+2013-02-07 20:24:33,720 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/plugin.jar
+2013-02-07 20:24:33,720 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,720 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,732 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:33,758 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will list resources now: /test-project/plugin.jar
+2013-02-07 20:24:33,758 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,758 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,761 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:33,765 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation end: /test-project/plugin.jar
+2013-02-07 20:24:33,765 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation begin: /test-project/plugin.json
+2013-02-07 20:24:33,765 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/plugin.json
+2013-02-07 20:24:33,765 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/plugin.json
+2013-02-07 20:24:33,765 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project
+2013-02-07 20:24:33,765 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project
+2013-02-07 20:24:33,765 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/plugin.json
+2013-02-07 20:24:33,765 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,766 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,772 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:33,774 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will list resources now: /test-project/plugin.json
+2013-02-07 20:24:33,774 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,774 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,778 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:33,781 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation end: /test-project/plugin.json
+2013-02-07 20:24:33,781 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation begin: /test-project/src
+2013-02-07 20:24:33,782 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/src
+2013-02-07 20:24:33,782 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/src
+2013-02-07 20:24:33,782 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project
+2013-02-07 20:24:33,782 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project
+2013-02-07 20:24:33,782 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/src
+2013-02-07 20:24:33,782 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,782 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,786 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:33,789 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will list resources now: /test-project/src
+2013-02-07 20:24:33,789 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,789 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,809 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:33,815 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation end: /test-project/src
+2013-02-07 20:24:33,815 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation begin: /test-project/src/Helper.java
+2013-02-07 20:24:33,815 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/src/Helper.java
+2013-02-07 20:24:33,815 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/src/Helper.java
+2013-02-07 20:24:33,815 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/src
+2013-02-07 20:24:33,815 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project/src
+2013-02-07 20:24:33,815 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/src/Helper.java
+2013-02-07 20:24:33,815 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,815 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,819 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:33,822 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will list resources now: /test-project/src/Helper.java
+2013-02-07 20:24:33,822 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,822 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,829 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:33,831 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation end: /test-project/src/Helper.java
+2013-02-07 20:24:33,831 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation begin: /test-project/src/index.html
+2013-02-07 20:24:33,831 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/src/index.html
+2013-02-07 20:24:33,831 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/src/index.html
+2013-02-07 20:24:33,831 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/src
+2013-02-07 20:24:33,831 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project/src
+2013-02-07 20:24:33,831 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/src/index.html
+2013-02-07 20:24:33,831 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,831 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,845 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:33,847 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will list resources now: /test-project/src/index.html
+2013-02-07 20:24:33,847 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,847 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,852 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:33,855 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation end: /test-project/src/index.html
+2013-02-07 20:24:33,855 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation begin: /test-project/src/Main.java
+2013-02-07 20:24:33,855 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/src/Main.java
+2013-02-07 20:24:33,855 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/src/Main.java
+2013-02-07 20:24:33,856 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/src
+2013-02-07 20:24:33,856 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project/src
+2013-02-07 20:24:33,856 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/src/Main.java
+2013-02-07 20:24:33,856 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,856 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,861 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:33,864 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will list resources now: /test-project/src/Main.java
+2013-02-07 20:24:33,864 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,864 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,872 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:33,873 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation end: /test-project/src/Main.java
+2013-02-07 20:24:33,873 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation begin: /test-project/src/MyMessage.java
+2013-02-07 20:24:33,873 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/src/MyMessage.java
+2013-02-07 20:24:33,873 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/src/MyMessage.java
+2013-02-07 20:24:33,873 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/src
+2013-02-07 20:24:33,873 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project/src
+2013-02-07 20:24:33,873 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/src/MyMessage.java
+2013-02-07 20:24:33,873 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,873 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,892 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:33,893 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will list resources now: /test-project/src/MyMessage.java
+2013-02-07 20:24:33,893 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,893 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,916 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:33,922 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation end: /test-project/src/MyMessage.java
+2013-02-07 20:24:33,934 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: FetchAllMarkersOperation begin
+2013-02-07 20:24:33,934 qtp1028076943-22 name.martingeisse.webide.resources.operation.FetchAllMarkersOperation TRACE: fetching markers, meaning: [*] ...
+2013-02-07 20:24:33,934 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,934 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,940 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `markers`.`message`, `markers`.`id`, `markers`.`column`, `markers`.`origin`, `markers`.`line`, `markers`.`meaning`, `markers`.`workspace_resource_id`
+from `markers` `markers`
+limit ?
+2013-02-07 20:24:33,941 qtp1028076943-22 name.martingeisse.webide.resources.operation.FetchAllMarkersOperation TRACE: markers fetched.
+2013-02-07 20:24:33,942 qtp1028076943-22 name.martingeisse.webide.resources.operation.FetchAllMarkersOperation TRACE: fetching marker resource paths...
+2013-02-07 20:24:33,942 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ReversePathLookupOperation begin
+2013-02-07 20:24:33,943 qtp1028076943-22 name.martingeisse.webide.resources.operation.ReversePathLookupOperation TRACE: collecting resources ...
+2013-02-07 20:24:33,943 qtp1028076943-22 name.martingeisse.webide.resources.operation.ReversePathLookupOperation TRACE: resources collected.
+2013-02-07 20:24:33,943 qtp1028076943-22 name.martingeisse.webide.resources.operation.ReversePathLookupOperation TRACE: building paths ...
+2013-02-07 20:24:33,943 qtp1028076943-22 name.martingeisse.webide.resources.operation.ReversePathLookupOperation TRACE: paths built.
+2013-02-07 20:24:33,943 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ReversePathLookupOperation end
+2013-02-07 20:24:33,943 qtp1028076943-22 name.martingeisse.webide.resources.operation.FetchAllMarkersOperation TRACE: marker resource paths fetched.
+2013-02-07 20:24:33,943 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: FetchAllMarkersOperation end
+2013-02-07 20:24:33,943 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: FetchAllMarkersOperation begin
+2013-02-07 20:24:33,943 qtp1028076943-22 name.martingeisse.webide.resources.operation.FetchAllMarkersOperation TRACE: fetching markers, meaning: [*] ...
+2013-02-07 20:24:33,943 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,943 qtp1028076943-22 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,946 qtp1028076943-22 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `markers`.`message`, `markers`.`id`, `markers`.`column`, `markers`.`origin`, `markers`.`line`, `markers`.`meaning`, `markers`.`workspace_resource_id`
+from `markers` `markers`
+limit ?
+2013-02-07 20:24:33,947 qtp1028076943-22 name.martingeisse.webide.resources.operation.FetchAllMarkersOperation TRACE: markers fetched.
+2013-02-07 20:24:33,948 qtp1028076943-22 name.martingeisse.webide.resources.operation.FetchAllMarkersOperation TRACE: fetching marker resource paths...
+2013-02-07 20:24:33,948 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ReversePathLookupOperation begin
+2013-02-07 20:24:33,948 qtp1028076943-22 name.martingeisse.webide.resources.operation.ReversePathLookupOperation TRACE: collecting resources ...
+2013-02-07 20:24:33,948 qtp1028076943-22 name.martingeisse.webide.resources.operation.ReversePathLookupOperation TRACE: resources collected.
+2013-02-07 20:24:33,948 qtp1028076943-22 name.martingeisse.webide.resources.operation.ReversePathLookupOperation TRACE: building paths ...
+2013-02-07 20:24:33,948 qtp1028076943-22 name.martingeisse.webide.resources.operation.ReversePathLookupOperation TRACE: paths built.
+2013-02-07 20:24:33,948 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ReversePathLookupOperation end
+2013-02-07 20:24:33,948 qtp1028076943-22 name.martingeisse.webide.resources.operation.FetchAllMarkersOperation TRACE: marker resource paths fetched.
+2013-02-07 20:24:33,948 qtp1028076943-22 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: FetchAllMarkersOperation end
+2013-02-07 20:24:33,951 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation begin: /
+2013-02-07 20:24:33,951 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /
+2013-02-07 20:24:33,951 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /
+2013-02-07 20:24:33,951 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will list resources now: /
+2013-02-07 20:24:33,951 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,951 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: no connection existing for this database yet ...
+2013-02-07 20:24:33,951 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: connection created
+2013-02-07 20:24:33,951 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,954 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:33,960 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation end: /
+2013-02-07 20:24:33,962 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: DeleteResourceOperation begin: /test-project/bin
+2013-02-07 20:24:33,962 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:33,962 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:33,966 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/bin
+2013-02-07 20:24:33,966 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project/bin
+2013-02-07 20:24:33,966 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will delete resource now: /test-project/bin
+2013-02-07 20:24:33,966 Thread-12 com.mysema.query.sql.dml.SQLDeleteClause DEBUG: delete from `workspace_resources`
+where `workspace_resources`.`id` = ?
+2013-02-07 20:24:34,053 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: delete resource: creating resource deltas ...
+2013-02-07 20:24:34,053 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: delete resource: finished creating resource deltas.
+2013-02-07 20:24:34,053 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: delete resource: creating resource delta consumption task ...
+2013-02-07 20:24:34,053 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:34,053 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:34,060 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `workspace_tasks` (`command`)
+values (?)
+2013-02-07 20:24:34,075 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: delete resource: finished creating resource delta consumption task.
+2013-02-07 20:24:34,075 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: DeleteResourceOperation end: /test-project/bin
+2013-02-07 20:24:34,105 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG:  begin
+2013-02-07 20:24:34,113 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG:  begin: /test-project/src
+2013-02-07 20:24:34,114 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: fetching root resources ...
+2013-02-07 20:24:34,114 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/src
+2013-02-07 20:24:34,114 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/src
+2013-02-07 20:24:34,114 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project
+2013-02-07 20:24:34,114 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project
+2013-02-07 20:24:34,114 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /
+2013-02-07 20:24:34,114 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: ... is workspace root: /
+2013-02-07 20:24:34,114 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:34,114 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:34,126 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`type` = ? and `workspace_resources`.`parent_id` is null
+limit ?
+2013-02-07 20:24:34,132 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project
+2013-02-07 20:24:34,132 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:34,132 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:34,145 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:34,147 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/src
+2013-02-07 20:24:34,147 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:34,147 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:34,149 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:34,151 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: root resources fetched.
+2013-02-07 20:24:34,151 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: will now call onLevelFetched() ...
+2013-02-07 20:24:34,151 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: onLevelFetched() returned, fetching resources for next level ...
+2013-02-07 20:24:34,151 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:34,151 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:34,155 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:34,157 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: building fetch results for the next level ...
+2013-02-07 20:24:34,157 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: resource level finished.
+2013-02-07 20:24:34,159 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: will now call onLevelFetched() ...
+2013-02-07 20:24:34,161 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: onLevelFetched() returned, fetching resources for next level ...
+2013-02-07 20:24:34,161 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:34,161 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:34,166 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where ?
+2013-02-07 20:24:34,167 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: building fetch results for the next level ...
+2013-02-07 20:24:34,168 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: resource level finished.
+2013-02-07 20:24:34,168 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG:  end: /test-project/src
+2013-02-07 20:24:34,168 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG:  end
+2013-02-07 20:24:34,452 qtp1028076943-22 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ISimpleCallbackListener, method=public abstract void name.martingeisse.wicket.util.ISimpleCallbackListener.onSimpleCallback()]
+2013-02-07 20:24:36,226 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: CreateFileOperation begin: /test-project/bin/Main.class
+2013-02-07 20:24:36,227 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: enclosing folder (autocreate = true): /test-project/bin
+2013-02-07 20:24:36,227 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project
+2013-02-07 20:24:36,227 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project
+2013-02-07 20:24:36,227 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: enclosing container exists: /test-project
+2013-02-07 20:24:36,227 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,227 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,280 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:36,334 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will create enclosing folder now: /test-project/bin
+2013-02-07 20:24:36,334 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,334 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,336 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `workspace_resources` (`parent_id`, `type`, `name`, `contents`)
+values (?, ?, ?, ?)
+2013-02-07 20:24:36,342 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: auto-create enclosing folders: creating resource deltas ...
+2013-02-07 20:24:36,342 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: auto-create enclosing folders: creating resource delta for path: /test-project/bin
+2013-02-07 20:24:36,342 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,342 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,345 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `workspace_resource_deltas` (`path`)
+values (?)
+2013-02-07 20:24:36,348 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: auto-create enclosing folders: finished creating resource deltas.
+2013-02-07 20:24:36,348 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will create file now: /test-project/bin/Main.class
+2013-02-07 20:24:36,348 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,348 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,350 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `workspace_resources` (`name`, `contents`, `parent_id`, `type`)
+values (?, ?, ?, ?)
+2013-02-07 20:24:36,351 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: creating resource deltas ...
+2013-02-07 20:24:36,351 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: finished creating resource deltas.
+2013-02-07 20:24:36,351 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: creating resource delta consumption task ...
+2013-02-07 20:24:36,351 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,352 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,353 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `workspace_tasks` (`command`)
+values (?)
+2013-02-07 20:24:36,452 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: finished creating resource delta consumption task.
+2013-02-07 20:24:36,452 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: CreateFileOperation end: /test-project/bin/Main.class
+2013-02-07 20:24:36,453 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: CreateFileOperation begin: /test-project/bin/MyMessage.class
+2013-02-07 20:24:36,453 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: enclosing folder (autocreate = true): /test-project/bin
+2013-02-07 20:24:36,453 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project
+2013-02-07 20:24:36,453 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project
+2013-02-07 20:24:36,453 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: enclosing container exists: /test-project
+2013-02-07 20:24:36,453 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,453 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,455 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:36,459 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will create file now: /test-project/bin/MyMessage.class
+2013-02-07 20:24:36,459 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,459 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,461 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `workspace_resources` (`name`, `contents`, `parent_id`, `type`)
+values (?, ?, ?, ?)
+2013-02-07 20:24:36,462 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: creating resource deltas ...
+2013-02-07 20:24:36,462 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: finished creating resource deltas.
+2013-02-07 20:24:36,462 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: creating resource delta consumption task ...
+2013-02-07 20:24:36,462 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,462 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,465 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `workspace_tasks` (`command`)
+values (?)
+2013-02-07 20:24:36,471 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: finished creating resource delta consumption task.
+2013-02-07 20:24:36,471 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: CreateFileOperation end: /test-project/bin/MyMessage.class
+2013-02-07 20:24:36,471 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: CreateFileOperation begin: /test-project/bin/Helper.class
+2013-02-07 20:24:36,471 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: enclosing folder (autocreate = true): /test-project/bin
+2013-02-07 20:24:36,471 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project
+2013-02-07 20:24:36,471 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project
+2013-02-07 20:24:36,471 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: enclosing container exists: /test-project
+2013-02-07 20:24:36,471 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,471 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,473 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:36,474 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will create file now: /test-project/bin/Helper.class
+2013-02-07 20:24:36,474 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,474 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,476 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `workspace_resources` (`name`, `contents`, `parent_id`, `type`)
+values (?, ?, ?, ?)
+2013-02-07 20:24:36,478 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: creating resource deltas ...
+2013-02-07 20:24:36,478 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: finished creating resource deltas.
+2013-02-07 20:24:36,478 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: creating resource delta consumption task ...
+2013-02-07 20:24:36,478 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,478 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,479 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `workspace_tasks` (`command`)
+values (?)
+2013-02-07 20:24:36,483 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: finished creating resource delta consumption task.
+2013-02-07 20:24:36,483 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: CreateFileOperation end: /test-project/bin/Helper.class
+2013-02-07 20:24:36,485 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: RecursiveDeleteMarkersOperation begin
+2013-02-07 20:24:36,485 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: RecursiveDeleteMarkersOperation begin: /test-project/src
+2013-02-07 20:24:36,485 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: fetching root resources ...
+2013-02-07 20:24:36,485 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/src
+2013-02-07 20:24:36,485 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project/src
+2013-02-07 20:24:36,485 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: root resources fetched.
+2013-02-07 20:24:36,485 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: will now call onLevelFetched() ...
+2013-02-07 20:24:36,486 Thread-12 name.martingeisse.webide.resources.operation.RecursiveDeleteMarkersOperation TRACE: deleting markers for resources with IDs: 3
+2013-02-07 20:24:36,486 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,486 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,487 Thread-12 com.mysema.query.sql.dml.SQLDeleteClause DEBUG: delete from `markers`
+where `markers`.`workspace_resource_id` = ? and `markers`.`origin` = ?
+2013-02-07 20:24:36,488 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: onLevelFetched() returned, fetching resources for next level ...
+2013-02-07 20:24:36,488 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,489 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,489 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:36,491 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: building fetch results for the next level ...
+2013-02-07 20:24:36,491 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: resource level finished.
+2013-02-07 20:24:36,491 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: will now call onLevelFetched() ...
+2013-02-07 20:24:36,491 Thread-12 name.martingeisse.webide.resources.operation.RecursiveDeleteMarkersOperation TRACE: deleting markers for resources with IDs: 4, 8, 5, 6
+2013-02-07 20:24:36,491 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,491 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,492 Thread-12 com.mysema.query.sql.dml.SQLDeleteClause DEBUG: delete from `markers`
+where `markers`.`workspace_resource_id` in (?, ?, ?, ?) and `markers`.`origin` = ?
+2013-02-07 20:24:36,492 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: onLevelFetched() returned, fetching resources for next level ...
+2013-02-07 20:24:36,493 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,493 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,493 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where ?
+2013-02-07 20:24:36,494 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: building fetch results for the next level ...
+2013-02-07 20:24:36,494 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: resource level finished.
+2013-02-07 20:24:36,494 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: RecursiveDeleteMarkersOperation end: /test-project/src
+2013-02-07 20:24:36,494 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: RecursiveDeleteMarkersOperation end
+2013-02-07 20:24:36,495 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG:  begin
+2013-02-07 20:24:36,496 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG:  begin: /test-project/src
+2013-02-07 20:24:36,496 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: fetching root resources ...
+2013-02-07 20:24:36,496 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/src
+2013-02-07 20:24:36,496 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project/src
+2013-02-07 20:24:36,496 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: root resources fetched.
+2013-02-07 20:24:36,496 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: will now call onLevelFetched() ...
+2013-02-07 20:24:36,496 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: onLevelFetched() returned, fetching resources for next level ...
+2013-02-07 20:24:36,496 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,496 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,497 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:36,498 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: building fetch results for the next level ...
+2013-02-07 20:24:36,498 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: resource level finished.
+2013-02-07 20:24:36,498 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: will now call onLevelFetched() ...
+2013-02-07 20:24:36,498 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: CreateFileOperation begin: /test-project/bin/index.html
+2013-02-07 20:24:36,498 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: enclosing folder (autocreate = true): /test-project/bin
+2013-02-07 20:24:36,498 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project
+2013-02-07 20:24:36,499 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project
+2013-02-07 20:24:36,499 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: enclosing container exists: /test-project
+2013-02-07 20:24:36,499 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,499 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,499 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:36,500 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will create file now: /test-project/bin/index.html
+2013-02-07 20:24:36,501 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,501 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,501 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `workspace_resources` (`name`, `contents`, `parent_id`, `type`)
+values (?, ?, ?, ?)
+2013-02-07 20:24:36,502 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: creating resource deltas ...
+2013-02-07 20:24:36,502 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: finished creating resource deltas.
+2013-02-07 20:24:36,502 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: creating resource delta consumption task ...
+2013-02-07 20:24:36,502 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,502 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,503 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `workspace_tasks` (`command`)
+values (?)
+2013-02-07 20:24:36,507 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: finished creating resource delta consumption task.
+2013-02-07 20:24:36,507 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: CreateFileOperation end: /test-project/bin/index.html
+2013-02-07 20:24:36,507 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: onLevelFetched() returned, fetching resources for next level ...
+2013-02-07 20:24:36,507 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,507 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,508 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where ?
+2013-02-07 20:24:36,509 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: building fetch results for the next level ...
+2013-02-07 20:24:36,509 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: resource level finished.
+2013-02-07 20:24:36,509 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG:  end: /test-project/src
+2013-02-07 20:24:36,509 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG:  end
+2013-02-07 20:24:36,512 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG:  begin
+2013-02-07 20:24:36,512 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG:  begin: /
+2013-02-07 20:24:36,512 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: fetching root resources ...
+2013-02-07 20:24:36,512 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /
+2013-02-07 20:24:36,512 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /
+2013-02-07 20:24:36,512 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: root resources fetched.
+2013-02-07 20:24:36,512 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: will now call onLevelFetched() ...
+2013-02-07 20:24:36,512 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: onLevelFetched() returned, fetching resources for next level ...
+2013-02-07 20:24:36,512 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,512 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,513 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:36,514 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: building fetch results for the next level ...
+2013-02-07 20:24:36,514 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: resource level finished.
+2013-02-07 20:24:36,514 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: will now call onLevelFetched() ...
+2013-02-07 20:24:36,514 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: onLevelFetched() returned, fetching resources for next level ...
+2013-02-07 20:24:36,514 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,514 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,515 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:36,517 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: building fetch results for the next level ...
+2013-02-07 20:24:36,517 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: resource level finished.
+2013-02-07 20:24:36,517 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: will now call onLevelFetched() ...
+2013-02-07 20:24:36,517 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: onLevelFetched() returned, fetching resources for next level ...
+2013-02-07 20:24:36,517 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,517 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,518 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` in (?, ?)
+2013-02-07 20:24:36,520 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: building fetch results for the next level ...
+2013-02-07 20:24:36,520 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: resource level finished.
+2013-02-07 20:24:36,520 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: will now call onLevelFetched() ...
+2013-02-07 20:24:36,520 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: onLevelFetched() returned, fetching resources for next level ...
+2013-02-07 20:24:36,520 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,520 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,521 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where ?
+2013-02-07 20:24:36,521 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: building fetch results for the next level ...
+2013-02-07 20:24:36,521 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: resource level finished.
+2013-02-07 20:24:36,521 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG:  end: /
+2013-02-07 20:24:36,521 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG:  end
+2013-02-07 20:24:36,522 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,522 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,524 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: FetchSingleResourceOperation begin: /
+2013-02-07 20:24:36,524 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /
+2013-02-07 20:24:36,524 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /
+2013-02-07 20:24:36,524 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: FetchSingleResourceOperation end: /
+2013-02-07 20:24:36,524 Thread-12 com.mysema.query.sql.dml.SQLDeleteClause DEBUG: delete from `workspace_staging_plugins`
+where `workspace_staging_plugins`.`workspace_resource_id` = ?
+2013-02-07 20:24:36,526 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation begin: /
+2013-02-07 20:24:36,526 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /
+2013-02-07 20:24:36,526 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /
+2013-02-07 20:24:36,526 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will list resources now: /
+2013-02-07 20:24:36,526 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,526 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,527 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:36,528 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: ListResourcesOperation end: /
+2013-02-07 20:24:36,528 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: DeleteSingleResourceMarkersOperation begin: /test-project/plugin.json
+2013-02-07 20:24:36,528 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,529 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,529 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/plugin.json
+2013-02-07 20:24:36,529 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/plugin.json
+2013-02-07 20:24:36,529 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project
+2013-02-07 20:24:36,529 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project
+2013-02-07 20:24:36,529 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/plugin.json
+2013-02-07 20:24:36,529 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,529 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,530 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:36,532 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will delete resource markers now: /test-project/plugin.json
+2013-02-07 20:24:36,532 Thread-12 com.mysema.query.sql.dml.SQLDeleteClause DEBUG: delete from `markers`
+where `markers`.`workspace_resource_id` = ? and `markers`.`origin` = ?
+2013-02-07 20:24:36,532 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: DeleteSingleResourceMarkersOperation end: /test-project/plugin.json
+2013-02-07 20:24:36,533 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: DeleteResourceOperation begin: /test-project/plugin.jar
+2013-02-07 20:24:36,533 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,533 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,533 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/plugin.jar
+2013-02-07 20:24:36,533 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/plugin.jar
+2013-02-07 20:24:36,533 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project
+2013-02-07 20:24:36,533 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project
+2013-02-07 20:24:36,533 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/plugin.jar
+2013-02-07 20:24:36,533 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,533 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,534 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:36,535 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will delete resource now: /test-project/plugin.jar
+2013-02-07 20:24:36,535 Thread-12 com.mysema.query.sql.dml.SQLDeleteClause DEBUG: delete from `workspace_resources`
+where `workspace_resources`.`id` = ?
+2013-02-07 20:24:36,537 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: delete resource: creating resource deltas ...
+2013-02-07 20:24:36,537 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: delete resource: finished creating resource deltas.
+2013-02-07 20:24:36,537 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: delete resource: creating resource delta consumption task ...
+2013-02-07 20:24:36,537 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,537 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,537 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `workspace_tasks` (`command`)
+values (?)
+2013-02-07 20:24:36,538 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: delete resource: finished creating resource delta consumption task.
+2013-02-07 20:24:36,538 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: DeleteResourceOperation end: /test-project/plugin.jar
+2013-02-07 20:24:36,538 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: FetchSingleResourceOperation begin: /test-project/plugin.json
+2013-02-07 20:24:36,538 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/plugin.json
+2013-02-07 20:24:36,538 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/plugin.json
+2013-02-07 20:24:36,538 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project
+2013-02-07 20:24:36,538 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project
+2013-02-07 20:24:36,538 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /
+2013-02-07 20:24:36,538 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: ... is workspace root: /
+2013-02-07 20:24:36,539 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,539 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,539 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`type` = ? and `workspace_resources`.`parent_id` is null
+limit ?
+2013-02-07 20:24:36,540 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project
+2013-02-07 20:24:36,540 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,540 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,541 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:36,542 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/plugin.json
+2013-02-07 20:24:36,542 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,542 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,543 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:36,544 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: FetchSingleResourceOperation end: /test-project/plugin.json
+2013-02-07 20:24:36,547 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG:  begin
+2013-02-07 20:24:36,547 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG:  begin: /test-project/bin
+2013-02-07 20:24:36,548 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: fetching root resources ...
+2013-02-07 20:24:36,548 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project/bin
+2013-02-07 20:24:36,548 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching parent: /test-project/bin
+2013-02-07 20:24:36,548 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project
+2013-02-07 20:24:36,548 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project
+2013-02-07 20:24:36,548 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching child: /test-project/bin
+2013-02-07 20:24:36,548 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,548 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,548 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ? and `workspace_resources`.`name` = ?
+limit ?
+2013-02-07 20:24:36,561 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: root resources fetched.
+2013-02-07 20:24:36,562 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: will now call onLevelFetched() ...
+2013-02-07 20:24:36,562 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: onLevelFetched() returned, fetching resources for next level ...
+2013-02-07 20:24:36,562 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,562 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,563 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where `workspace_resources`.`parent_id` = ?
+2013-02-07 20:24:36,610 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: building fetch results for the next level ...
+2013-02-07 20:24:36,610 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: resource level finished.
+2013-02-07 20:24:36,610 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: will now call onLevelFetched() ...
+2013-02-07 20:24:36,611 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: onLevelFetched() returned, fetching resources for next level ...
+2013-02-07 20:24:36,611 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,611 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,612 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `workspace_resources`.`id`, `workspace_resources`.`parent_id`, `workspace_resources`.`contents`, `workspace_resources`.`name`, `workspace_resources`.`type`
+from `workspace_resources` `workspace_resources`
+where ?
+2013-02-07 20:24:36,679 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: building fetch results for the next level ...
+2013-02-07 20:24:36,680 Thread-12 name.martingeisse.webide.resources.operation.RecursiveResourceOperation TRACE: resource level finished.
+2013-02-07 20:24:36,680 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG:  end: /test-project/bin
+2013-02-07 20:24:36,680 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG:  end
+2013-02-07 20:24:36,699 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: CreateFileOperation begin: /test-project/plugin.jar
+2013-02-07 20:24:36,699 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: enclosing folder (autocreate = true): /test-project
+2013-02-07 20:24:36,699 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /test-project
+2013-02-07 20:24:36,699 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /test-project
+2013-02-07 20:24:36,699 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: enclosing container exists: /test-project
+2013-02-07 20:24:36,699 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation TRACE: will create file now: /test-project/plugin.jar
+2013-02-07 20:24:36,699 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,699 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,702 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `workspace_resources` (`name`, `contents`, `parent_id`, `type`)
+values (?, ?, ?, ?)
+2013-02-07 20:24:36,750 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: creating resource deltas ...
+2013-02-07 20:24:36,750 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: finished creating resource deltas.
+2013-02-07 20:24:36,750 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: creating resource delta consumption task ...
+2013-02-07 20:24:36,750 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,750 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,750 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `workspace_tasks` (`command`)
+values (?)
+2013-02-07 20:24:36,766 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceResourceDeltaUtil TRACE: create file: finished creating resource delta consumption task.
+2013-02-07 20:24:36,766 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: CreateFileOperation end: /test-project/plugin.jar
+2013-02-07 20:24:36,766 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: FetchSingleResourceOperation begin: /
+2013-02-07 20:24:36,766 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: fetching resource ...: /
+2013-02-07 20:24:36,766 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperationContext TRACE: resource was cached: /
+2013-02-07 20:24:36,766 Thread-12 name.martingeisse.webide.resources.operation.WorkspaceOperation DEBUG: FetchSingleResourceOperation end: /
+2013-02-07 20:24:36,766 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,766 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,768 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `plugins` (`is_unpacked`)
+values (?)
+2013-02-07 20:24:36,770 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,770 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,771 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `plugin_bundles` (`plugin_id`, `descriptor`, `jarfile`)
+values (?, ?, ?)
+2013-02-07 20:24:36,776 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,776 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,781 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `plugins`.`id`, `plugins`.`is_unpacked`
+from `plugins` `plugins`
+where `plugins`.`id` = ?
+limit ?
+2013-02-07 20:24:36,788 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,788 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,804 Thread-12 com.mysema.query.sql.AbstractSQLQuery DEBUG: query : select `plugin_bundles`.`plugin_id`, `plugin_bundles`.`id`, `plugin_bundles`.`descriptor`, `plugin_bundles`.`jarfile`
+from `plugin_bundles` `plugin_bundles`
+where `plugin_bundles`.`plugin_id` = ?
+2013-02-07 20:24:36,813 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,813 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,819 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `declared_extensions` (`plugin_bundle_id`, `extension_point_name`, `descriptor`)
+values (?, ?, ?)
+2013-02-07 20:24:36,826 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,826 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,829 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: update `plugins`
+set `is_unpacked` = ?
+where `plugins`.`id` = ?
+2013-02-07 20:24:36,940 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: getting database connection ...
+2013-02-07 20:24:36,940 Thread-12 name.martingeisse.common.database.EntityConnectionManager TRACE: returning database connection
+2013-02-07 20:24:36,941 Thread-12 com.mysema.query.sql.dml.SQLInsertClause DEBUG: insert into `workspace_staging_plugins` (`workspace_resource_id`, `plugin_id`)
+values (?, ?)

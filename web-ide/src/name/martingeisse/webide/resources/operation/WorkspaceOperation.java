@@ -49,7 +49,8 @@ public abstract class WorkspaceOperation {
 	 * this operation and all operations it delegates to.
 	 */
 	public final void run() {
-		WorkspaceOperationContext context = new WorkspaceOperationContext();
+		long workspaceId = 1;
+		WorkspaceOperationContext context = new WorkspaceOperationContext(workspaceId);
 		logAndPerform(context);
 		context.dispose();
 	}
