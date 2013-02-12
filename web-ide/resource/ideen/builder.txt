@@ -1,19 +1,4 @@
 
-1. Schritt: Globale Builder (solange es noch keine PRojekte gibt -> betreffen
-   alle Files).
-
-Java Builder (Listener: Source Files; -> Class Files)
-Plugin Builder (Listener: Class Files; -> JAR File; upload plugin; unpack
-	plugin; install plugin for user; update bindings)
-
-Java Compiler Background Thread -> Builder Thread. Ruft hardcoded den Java
-Compiler und den Plugin Builder auf. Wichtig ist hier vor allem, dass letzterer
-den Plugin Bundle Descriptor einliest, ein JAR baut und installiert.
-Außerdem sollen "Builder" wenigstens als Konzept schon mal vorkommen,
-auch wenn alles hardcoded ist. im Builder-Thread 
-
-------------------------------------------------------------------------------------------------------------
-
 Was ist der Unterschied zwischen Resource Change Listeners und Builders? Was
 ist bei Eclipse der Unterschied?
 + Möglichkeit eines Clean Build
@@ -99,6 +84,276 @@ Listenern zu machen? Oder sind das alles Features, die ein verallgemeinertes
 Listener-System haben soll?
 
 
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+
+
+Builder System -- offene Fragen
+------------------------------------------------
+
+
+1. Resource Deltas -> erkennen, welche Builder betroffen sind
+	- reverse LIKE (Builder steht mit Pattern in der DB, Anfrage
+	  mit Path-String aus dem Delta, der gematcht werden soll)
+	- IN Parents: Für Delta mit Path /a/b/c ein
+	  FROM builders WHERE base_path IN ('/', '/a', '/a/b', '/a/b/c')
+	- Methode im Builder selbst
+	Probleme noch mit Deltas, die implizite unter-Deltas haben (z.B.
+	move/delete folder).
+
+2. Builder-Code laden. Hier ist das Problem, dass Buidlers erweiterbar sein sollen,
+   aber nicht einfach so aus Plugins kommen können, wegen Shared Workspaces:
+   Plugins werden je Benutzer installiert, aber bei mehreren Benutzern auf
+   einem Workspace ist dann unklar, woher der Builder kommt. Insbesondere
+   wenn das Installieren eines Builders keine "besondere" Aktion eines
+   Benutzers ist (dann hätt man noch sagen können: von dem Benutzer wird
+   er aus den Plugins genommen), sondern das Editieren einer JSON-Datei.
+   Idee: Einen Builder installieren sind zwei Schritte:
+   - Builder im Workspace selbst installieren. Der Builder kommt aus den
+     Plugins von dem Benutzer, der dies tut.
+   - durch JSON-Datei den Builder einbinden
+
+3. Resource Delta Ping-Pong: Betrifft vor allem Builder, die nach einem Delta
+   mehr Rebuilden als nur die betroffene Datei (ansonsten wären die Auswirkungen
+   nicht schlimmer als ohne Ping-Pong) [außer bei mehreren Deltas auf derselben
+   Datei, aber die hätten noch ganz andere Probleme]:
+   - Benutzer ändert Ressource A
+   - Builder 1 wird wegen A getriggert und macht einen "großen" Rebuild
+   - Builder 2 wird wegen A getriggert und macht einen Rebuild, ändert dabei B
+   - Builder 1 wird wegen B getriggert und macht einen weiteren "großen" Rebuild,
+     obwohl es gereicht hätte, wenn Builder 1 *nach* Builder 2 läuft.
+
+4. Meta-Builder: Erkennt Änderungen an den Build-Bind-Punkten (*.builder.json Datei).
+   Interessant ist vor allem, dass Änderungen an Parent-Ordnern (Delete, Move)
+   auch erkannt werden müssen.
    
-   
+5. Es muss klar definiert werden, was passiert, wenn ein Builder selbst einen
+   Bind-Punkt verändert. Soll heißen: Der erste Build-Schritt erzeugt das Buildscript
+   für den zweiten Schritt. Wäre cool, wenn das gehen würde (<- und das ist Grund
+   genug, es umzusetzen!). Genauer gesagt soll dieser Workflow unterstützt werden,
+   wofür aber ein einfacherer Fall reichen würde: Die erzeugten Buildscripte
+   werden *einmal* ausgeführt, müssen aber keine weiteren Deltas verarbeiten
+   können. Die Frage ist auch: Wenn ein Buildscript inmitten anderer Dateien
+   generiert wird -- ab welchem Punkt in der Liste von Deltas, die da anfallen,
+   werden die an das neue Script geleitet? Einfache Lösung: Der eigentliche Bindpunkt
+   wird erst ganz am Ende erzeugt, und Builders müssen eh die Situation behandeln,
+   dass ein neuer Bindpunkt erzeugt wird -- sie sollen sowieso einen Full (Re-)Build
+   unterstützen, und genau der passiert dann.
+   "am Ende" heißt: jeweils nachdem der aktuelle Builder (ggf. auch andere Builder
+   für dieselben Deltas -> einfacher aber evtl. langsamer) durchgelaufen sind.
+   Der Nachteil daran, wenn erzeugte Buildscripte anders funktionieren als selbst
+   geschriebene (z.B. nur 1x ausgeführt werden), ist halt, dass sie anders sind --
+   das System wird komplizierter. 
+
+6. Es klingt erst mal wie eine gute Idee, dass ein Buildscript nur auf Dateien im
+   selben Ordner und Unterordnern triggert und diese verändert, ist es aber nicht:
+   - andere Projekte als Dependencies einbinden -> externer Trigger
+   - Binaries "rauskopieren" -> externe Manipulation
+   Wenn ein Base-Folder her soll, dann muss der Builder selbst entscheiden, welcher
+   das ist. z.B. könnte ein Builder selbst einen oder mehrere Build-Trigger in der
+   DB ablegen, die dann einen Base-Path haben. 
+
+---
+
+Was ergibt sich daraus für ein Ablauf? Erster Versuch:
+
+DB:
+- Tabelle mit installierten Builders je Workspace (kommen aus Plugin des Benutzers,
+  der sie installiert hat).
   
+  `workspace_builders`
+  	- workspace_id
+  	- plugin_bundle_id
+  	- staging_path (Zweck: alte Builder mit demselben SP werden beim neu Compilen
+  	  des Builders ersetzt; der SP ist der Pfad zur plugin.json die den Builder
+  	  definiert).
+  	- builder_id (wird in der Builder-Extension angegeben; muss innerhalb der
+  	  plugin.json eindeutig sein)
+  	- builder_class (zum Starten)
+  
+- Tabelle mit Build-Triggern je Workspace (werden von Builders anhand der
+  .builder.json Dateien erzeugt). Entsprechen Resource Delta Listeners mit
+  angehängtem Builder.
+  
+  `workspace_build_triggers`
+  	- workspace_id
+  	- trigger_base_path (index!)
+  	- path_pattern (reverse like, index nicht möglich)
+  	- bind_path (Pfad des Ordners, in dem die build.json liegt -- oder die Datei selbst?
+	  wenn nur der Ordner dann müssen irgendwo die Inhalte der Datei liegen, der Builder
+	  selbst weiß ja nicht wie die Datei heißt. Besser: der Resource Cache hält den
+	  Inhalt, und hier steht der Pfad zum Build-Script selbst)
+  	- workspace_builder_id (eigentlich nicht unbedingt nötig, da die schon im Buildscript
+  	  steht und das auch eh geladen wird. Kommt mir aber trotzdem sauberer vor.)
+  	  -> steht sie nicht, aber da steht zumindest der Name. Wenn der eindeutig ist,
+  	     würde das reichen. builder ID ist aber alles in allem einfacher.
+
+1. Änderungen am Workspace haben Deltas erzeugt, Builder-Thread springt darauf an.
+	Zukunft: Einzelschritte = Lock Workspace gegen gleichzeitige Veränderungen;
+	außerdem die Einzelschritte möglichst klein halten. Beispiel:
+	
+		10 Resource Delta Tasks -> 2 Builder Run Tasks (ignorierte Deltas filtern)
+		10 Builder Run Tasks -> 3 Builder Run Tasks (Builder Runs mergen)
+		1 Builder Run -> N neue Deltas (lässt sich sicher auch noch weiter splitten)
+	
+2. Scan durch alle Builders; herausfinden, welche Builders getriggert werden.
+	siehe Notizen: IN parent paths + reverse LIKE + manuelle Filter
+3. Diese Builders starten (Code wird aus den Plugins geladen), erzeugen neue
+   Deltas, die erst mal nur gebuffert werden (sonst würden die Builders mit
+   verschiedenen Delta sets laufen, das würde alles nur komplizierter machen).
+--- Ablauf A ---
+4. Zurück zu Punkt 2 bis keine Deltas mehr anliegen
+5. Meta-Builder starten und ggf. einen Clean Build bei betroffenen Triggern auslösen
+   und mit den dadurch erzeugten Deltas zurück zu Punkt 1
+   
+   		Meta-Builder ist lower-prio-Task -> läuft nach den anderen
+   
+--- Ablauf B ---
+5. Meta-Builder starten, deltas sammeln
+6. Zurück zu Punkt 1
+
+Der Unterschied zwischen Ablauf A und B ist, ob die aktuell getriggerten Builder
+und der Meta-Builder bzw. die davon erzeugten Clean Builds "durcheinander"
+oder "nacheinander" laufen. Argumente:
+- die aktuell laufenden Builder könnten an den Inputs für die neu erzeugten
+  Builder beteiligt sein. Argument für Ablauf A, weil ansonsten die neu erzeugten
+  Builders mehrfach laufen müssten: erst clean, dann delta. Das ist bei generiertem
+  Code mit generiertem Buildscript gar nicht so unwahrscheinlich, da es
+  nur auf die Reihenfolge ankommt: Wird erst der Code oder erst das Buildscript
+  erzeugt? -> erzeugt "Ping-Pong"
+- Argument für B: Heuristiken hätten eine bessere Chance, "Ping-Pong" zu vermeiden.
+  Die müssten dann aber gut sein, weil wie oben geschrieben das "durcheinander"
+  auch Ping-Pong erzeugt.
+Da aktuell keine guten Heuristiken vorliegen: Ablauf A -> weniger Ping-Pong.
+Notiz über die Alternative im Kommentar!
+
+Notizen:
+
+- Beim installieren eines Builders werden die Builders aus installierten Plugins
+  angeboten, aber auch "früher" installierte Builders aus diesem Workspace
+  (für den Fall, dass ein Benutzer aus Versehen einen Builder löscht, und selbst
+  das entsprechende Plugin nicht hat). Eigentlich können allgemein auch Builders
+  aus nicht installierten Plugins angeboten werden -- Plugins wären also
+  keine "harte" Voraussetzung dafür, einen Builder zu installieren, sondern
+  würden nur Empfehlungen abgeben, welche Builders Sinn machen. Jedes Plugin
+  empfiehlt seine eigenen Builders und kann auch Builders aus anderen Plugins
+  empfehlen; beides jeweils über einen Extension Point.
+  
+- Reverse LIKE geht in MySQL, aber unklar ob Index benutzt werden kann. Starke
+  Vermutung dass nein --> IN parent paths + reverse LIKE, Treffer dann an
+  den Builder-Code weitergeben und der kann noch mal genauer filtern.
+  
+- Problem noch mit Builder-Code aus Plugins: Bei der Entwicklung würden
+  trotzdem die alten Builder bleiben, auch bei einem Plugin Refresh. Man müsste
+  dann mit dem neuen Plugin manuell den neuen Builder installieren.
+  -> das müsste halt Teil des Refresh sein. Aber dafür müsste der Refresh erst
+  mal zum Update werden, also nicht die installierten Plugins des Benutzers
+  refreshen sondern die Plugin-Projekte im Workspace bauen und installieren;
+  das refresh müsste davon automatisch getriggert werden. Wobei auch das wieder
+  Probleme macht wenn mehrere Benutzer vom Refresh betroffen sind.
+
+  Einfacher: die neuen Builder im WS installieren ist eine Funktion des PDE-Builders,
+  denn der erzeugt ja auch die neuen Builder. Der Refresh bleibt dann wie er ist.
+
+- Im Ablauf sollte ein Zähler drin sein: Nachdem 20 mal zurück zu Punkt 1
+  gesprungen wurde, bricht der Build für den Workspace ab ("build aborted
+  due to excessive resource delta ping-pong") -> sonst legt am Ende ein
+  Workspace durch Ping-Pong den Server lahm.
+
+---
+
+- Es kommt selten vor, dass ein Builder sich selbst baut (Java-Tools, advanced
+  Code-Gen). Für diesen Fall muss also nicht optimiert werden. Deshalb ist es
+  okay, wenn Änderungen am Code eines Staging Builders sofort aktiv werden (also
+  keinen eigenen Update-Button benötigen) -- wenn die Änderungen den Builder
+  kaputt machen, dann macht man sie halt wieder rückgängig. Anders als bei
+  Plugins (wo dabei das UI auseinanderfliegen kann) führen solche Änderungen
+  nur bei selbst-bauenden Buildern zu einem Henne-Ei-Problem bei der Behebung
+  des Bugs (Builder müsste sich neu bauen, um den Bug zu beheben, aber kann das
+  erst tun nachdem der Bug behoben wurde).
+  
+  Falls ein Builder sich selbst bauen muss, dann darf man halt für den
+  Buildprozess nicht die Staging-Version nehmen sondern muss an funktionierenden
+  Punkten eine Version festlegen, und diese weiterhin verwenden, bis der Code
+  wieder stabil ist. Wenn dabei doch mal ein Bug reinkommt kann man auf die
+  vorherige stabile Version zurückgehen, weil diese anders als bei Staging-
+  Versionen noch verfügbar ist.
+  
+- Änderungen am Code eines Staging-Builders könen dazu führen, dass dieser
+  andere Ergebnisse liefert. Daher müsste der Builder danach neu laufen.
+  Da solche Änderungen aber nicht erkennbar sind, müsste der Builder dann
+  nach jeder noch so kleinen Änderung neu laufen. Das ist vermutlich nicht
+  machbar. Alternative: Der Builder läuft nach Änderungen am eigenen Code
+  gar nicht neu; im Zweifel muss man manuell einen Rebuild auslösen.
+
+- Auch Builders müssen State speichern (z.B. Java Builder Search Index).
+  Idealerweise sollte der vom Plugin verwendet werden können (sonst müsste er
+  doppelt gebaut werden). Anders als Plugin State ist er nicht an einen
+  Benutzer gebunden, sondern an einen Workspace. Weiteres Problem: Hier
+  können Search Index Builder und Java Builder nicht einfach so getrennt
+  werden, auch wenn das für den Code sinnvoll wäre, weil der Benutzer dann
+  manuell beide installieren müsste. Eigentlich müsste der Indexer ein
+  Workspace Builder sein und der Compiler triggert auf Changes im Indexer
+  -- aber auch dann müsste man ja beide installieren, außer sie kommen
+  zusammen in einem Plugin. Vielleicht ist letzteres fürs erste besser.
+  
+  Builders als Plugins eines Fake Users ("Builder-User"): Das ist zu
+  kompliziert -- das System muss einfach genug sein, damit auch Anfänger
+  durchblicken.
+  
+  Builders als separate Module zu Plugins: Für den Anwender schon eher,
+  aber das ist für den Entwickler zu kompliziert. Insbesondere ist dann
+  die Frage, ob Code-Bibliotheken als Plugins oder Buildermodule vorliegen
+  (schlimmstenfalls sogar beides).
+  
+  Der Grundidee ist schon okay, dass ein installierter Builder auf ein
+  konkretes Plugin verweist, wo der Code herkommt. Dependency-System,
+  damit alle Code-Bibliotheken da sind, die der Builder verwendet.
+  Idee: Ein installierbarer Builder definiert selbst eine Reihe von
+  Sub-Buildern (in der Builder-Extension), welche automatisch getriggert
+  werden, aber welche auch nur 1x getriggert werden, selbst wenn sie
+  Sub-Builder von mehreren Buildern sind. Dann definiert der Javabuilder
+  den Indexer als Sub-Builder. Oder vielleicht als "builder dependency",
+  dann ist die Reihenfolge auch gleich definiert.
+  
+-----
+Plan
+-----
+
+* Wie genau funktioniert das Delta-Matching?
+	"IN parent paths + reverse LIKE + manuelle Filter"
+	Vor allem in Bezug auf Deltas mit impliziten Sub-Deltas (Folder Op)
+
+* Erst mal keine Staging Builders. Erst mal nicht manuell installieren.
+  Ein Satz von Standard-Builders, direkt in der Datenbank installiert,
+  definiert in Plugin 1 / Plugin Bundle 1.
+  
+* Meta-Builder schon jetzt nötig: Der behandelt änderungen an den
+  Bind-Punkten, nicht das builden der Builder selbst. Bessere Benennung
+  nötig! Buidler bauen: PDE. Bindpunkte Einlesen: Build Mapper.
+
+* Build Mapper mit Clean-Build und Delta-Build Funktion schreiben.
+  Bindpunkt: build.json
+
+* "normalen" Builder Code schreiben. Läuft wie auch der Build Mapper
+  zusammen im Builder Thread. Läuft wie oben beschrieben jeweils
+  *vor* dem Mapper, solange bis keine Deltas mehr vorliegen.
+  (Woran erkennt dann der Mapper, was er tun soll, wenn keine Deltas
+  mehr da sind? -> der normale Builder muss hier zusätzlich einen
+  low-prio Mapper Task anlgen.)
+
+* Zähler gegen excessive Ping-Pong
+
+* Erst mal keine Dependency-Builders (z.B. Java Indexer als
+  Dependency für Java Compiler)
+
+* Builder-State Tabelle
+
+	`workspace_builder_id`
+	`section`
+	`data`
+
+* Vorhandene Builder auf dieses System umstellen
+
+
+
