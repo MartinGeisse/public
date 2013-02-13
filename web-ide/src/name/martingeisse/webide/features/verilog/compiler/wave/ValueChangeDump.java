@@ -8,15 +8,9 @@ package name.martingeisse.webide.features.verilog.compiler.wave;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
 
 /**
  * This class represents the data from a value change dump (VCD) file.
@@ -87,9 +81,9 @@ public final class ValueChangeDump {
 		}
 		
 		// sort value changes
-		for (Variable variable : variables) {
-			Collections.sort(variable.getValueChanges(), ValueChange.TIME_COMPARATOR);
-		}
+//		for (Variable variable : variables) {
+//			Collections.sort(variable.getValueChanges(), ValueChange.TIME_COMPARATOR);
+//		}
 		
 	}
 	

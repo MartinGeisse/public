@@ -327,7 +327,21 @@ Plan
 * Erst mal keine Staging Builders. Erst mal nicht manuell installieren.
   Ein Satz von Standard-Builders, direkt in der Datenbank installiert,
   definiert in Plugin 1 / Plugin Bundle 1.
+
+* workspace_build_triggers erst mal manuell füllen, damit kein Build
+  Mapper nötig ist. Beispiel: Verilog.
+
+* "normalen" Builder Code schreiben. Läuft wie auch der Build Mapper
+  zusammen im Builder Thread.
   
+* Builder-State Tabelle
+
+	`workspace_builder_id`
+	`section`
+	`data`
+
+---
+
 * Meta-Builder schon jetzt nötig: Der behandelt änderungen an den
   Bind-Punkten, nicht das builden der Builder selbst. Bessere Benennung
   nötig! Buidler bauen: PDE. Bindpunkte Einlesen: Build Mapper.
@@ -346,12 +360,6 @@ Plan
 
 * Erst mal keine Dependency-Builders (z.B. Java Indexer als
   Dependency für Java Compiler)
-
-* Builder-State Tabelle
-
-	`workspace_builder_id`
-	`section`
-	`data`
 
 * Vorhandene Builder auf dieses System umstellen
 
