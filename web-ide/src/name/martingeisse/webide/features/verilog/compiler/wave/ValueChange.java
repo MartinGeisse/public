@@ -35,6 +35,11 @@ public class ValueChange {
 	 * This object is used to represent CHAOS values (see class comment).
 	 */
 	public static final Object CHAOS = new Object();
+
+	/**
+	 * This object is used to represent Z (high-impedance) values.
+	 */
+	public static final Object VALUE_Z = new Object();
 	
 	/**
 	 * Shared instance of the {@link TimeComparator} class.

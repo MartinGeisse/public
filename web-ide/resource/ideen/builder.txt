@@ -320,6 +320,8 @@ Notizen:
 Plan
 -----
 
++ workspace_builders, workspace_build_triggers sind angelegt.
+
 * Wie genau funktioniert das Delta-Matching?
 	"IN parent paths + reverse LIKE + manuelle Filter"
 	Vor allem in Bezug auf Deltas mit impliziten Sub-Deltas (Folder Op)

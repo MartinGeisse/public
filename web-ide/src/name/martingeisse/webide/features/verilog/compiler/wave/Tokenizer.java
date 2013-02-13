@@ -34,13 +34,12 @@ final class Tokenizer {
 	}
 	
 	/**
-	 * Reads the next token from the reader. The returned character sequence is only
-	 * valid until the next call to this method.
+	 * Reads the next token from the reader.
 	 * 
 	 * @return the token, or null if there are no more tokens
 	 * @throws IOException on I/O errors
 	 */
-	public CharSequence nextToken() throws IOException {
+	public String nextToken() throws IOException {
 		builder.setLength(0);
 		while (true) {
 			int c = reader.read();
@@ -48,12 +47,12 @@ final class Tokenizer {
 				if (builder.length() == 0) {
 					return null;
 				} else {
-					return builder;
+					return builder.toString();
 				}
 			}
 			if (c <= 32) {
 				if (builder.length() > 0) {
-					return builder;
+					return builder.toString();
 				}
 			} else {
 				builder.append((char)c);
@@ -69,8 +68,8 @@ final class Tokenizer {
 	 * @throws IOException on I/O errors
 	 * @throws SyntaxException on EOF
 	 */
-	public CharSequence expectToken() throws IOException, SyntaxException {
-		CharSequence token = nextToken();
+	public String expectToken() throws IOException, SyntaxException {
+		String token = nextToken();
 		if (token == null) {
 			throw new SyntaxException("unexpected EOF");
 		}
@@ -85,8 +84,8 @@ final class Tokenizer {
 	 * @throws IOException on I/O errors
 	 * @throws SyntaxException on EOF or a non-keyword token
 	 */
-	public CharSequence expectKeywordToken() throws IOException, SyntaxException {
-		CharSequence token = expectToken();
+	public String expectKeywordToken() throws IOException, SyntaxException {
+		String token = expectToken();
 		if (token.charAt(0) != '$') {
 			throw new SyntaxException("expected keyword");
 		}
@@ -126,7 +125,7 @@ final class Tokenizer {
 	 * @throws SyntaxException if EOF or a non-number value is found
 	 */
 	public int expectInt() throws IOException, SyntaxException {
-		String token = expectToken().toString();
+		String token = expectToken();
 		try {
 			return Integer.parseInt(token);
 		} catch (NumberFormatException e) {
@@ -142,7 +141,7 @@ final class Tokenizer {
 	 * @throws SyntaxException if EOF or a non-number value is found
 	 */
 	public long expectLong() throws IOException, SyntaxException {
-		String token = expectToken().toString();
+		String token = expectToken();
 		try {
 			return Long.parseLong(token);
 		} catch (NumberFormatException e) {

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -56,7 +57,7 @@ public final class ValueChangeDump {
 		String timescaleUnit = "ns";
 		this.variables = new ArrayList<ValueChangeDump.Variable>();
 		while (true) {
-			CharSequence token = tokenizer.expectKeywordToken();
+			String token = tokenizer.expectKeywordToken();
 			if ("$enddefinitions".contentEquals(token)) {
 				tokenizer.expectEnd();
 				break;
@@ -76,15 +77,89 @@ public final class ValueChangeDump {
 		this.timescaleUnit = timescaleUnit;
 		
 		// parse value changes
+		long currentTime = 0;
 		while (true) {
-			
+			String token = tokenizer.nextToken();
+			if (token == null) {
+				break;
+			}
+			char firstChar = token.charAt(0);
+			String rest = token.substring(1);
+			Object value;
+			String variableName;
+			if (firstChar == '#') {
+				try {
+					currentTime = Long.parseLong(rest);
+				} catch (NumberFormatException e) {
+					throw new SyntaxException("invalid time specifier: " + token);
+				}
+				continue;
+			} else if (firstChar == 'b') {
+				value = parseBinaryValue(rest);
+				variableName = tokenizer.expectToken();
+			} else if (firstChar == 'r') {
+				throw new SyntaxException("real-number values not yet supported");
+			} else {
+				if (firstChar == '0') {
+					value = false;
+				} else if (firstChar == '1') {
+					value = true;
+				} else if (firstChar == 'z' || firstChar == 'Z') {
+					value = ValueChange.VALUE_Z;
+				} else {
+					value = null;
+				}
+				variableName = rest;
+			}
+			Variable variable = findVariableByInternalIdentifier(variableName);
+			if (variable == null) {
+				throw new SyntaxException("unknown variable: " + variableName);
+			}
+			variable.getValueChanges().add(new ValueChange(currentTime, value));
 		}
 		
 		// sort value changes
-//		for (Variable variable : variables) {
-//			Collections.sort(variable.getValueChanges(), ValueChange.TIME_COMPARATOR);
-//		}
+		for (Variable variable : variables) {
+			Collections.sort(variable.getValueChanges(), ValueChange.TIME_COMPARATOR);
+		}
 		
+	}
+	
+	/**
+	 * 
+	 * @param rest
+	 * @return
+	 */
+	private static Object parseBinaryValue(String rest) {
+		
+	}
+	
+	/**
+	 * Returns the variable with the specified internal identifier, or null if not found.
+	 * @param internalIdentifier the internal identifier to look for
+	 * @return the variable or null
+	 */
+	public Variable findVariableByInternalIdentifier(String internalIdentifier) {
+		for (Variable variable : variables) {
+			if (variable.getInternalIdentifier().equals(internalIdentifier)) {
+				return variable;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the variable with the specified original identifier, or null if not found.
+	 * @param originalIdentifier the original identifier to look for
+	 * @return the variable or null
+	 */
+	public Variable findVariableByOriginalIdentifier(String originalIdentifier) {
+		for (Variable variable : variables) {
+			if (variable.getOriginalIdentifier().equals(originalIdentifier)) {
+				return variable;
+			}
+		}
+		return null;
 	}
 	
 	/**

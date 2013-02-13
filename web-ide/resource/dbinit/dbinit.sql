@@ -75,6 +75,31 @@ CREATE TABLE IF NOT EXISTS `workspace_tasks` (
   INDEX `workspace_id` (`workspace_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
+CREATE TABLE IF NOT EXISTS `workspace_builders` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `workspace_id` bigint(20) NOT NULL,
+  `plugin_bundle_id` bigint(20) NOT NULL,
+  `staging_path` varchar(4096) NULL,
+  `builder_name` varchar(255) NOT NULL,
+  `builder_class` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `workspace_id` (`workspace_id`),
+  INDEX `plugin_bundle_id` (`plugin_bundle_id`),
+  INDEX `staging_path` (`staging_path`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `workspace_build_triggers` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `workspace_id` bigint(20) NOT NULL,
+  `workspace_builder_id` bigint(20) NOT NULL,
+  `trigger_base_path` varchar(4096) NULL,
+  `path_pattern` varchar(255) NULL,
+  `buildscript_path` varchar(4096) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `workspace_id_and_base_path` (`workspace_id`, `trigger_base_path`),
+  INDEX `workspace_builder_id` (`workspace_builder_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
 
 
 
@@ -205,6 +230,13 @@ INSERT INTO `workspace_resources` (`id`, `workspace_id`, `name`, `type`, `parent
 (NULL, 1, 'plugin.json', 'FILE', 2, 0x7b0d0a0922657874656e73696f6e73223a207b0d0a0909227765626964652e636f6e746578745f6d656e752e7265736f75726365223a205b0d0a090909224d794d657373616765220d0a09095d0d0a097d0d0a7d0d0a),
 (NULL, 1, 'index.html', 'FILE', 3, 0x3c3f786d6c2076657273696f6e3d22312e302220656e636f64696e673d225554462d3822203f3e0d0a3c68746d6c3e0d0a093c686561643e0d0a093c2f686561643e0d0a093c626f64793e0d0a09093c68313e48656c6c6f20776f726c64213c2f68313e0d0a093c2f626f64793e0d0a3c2f68746d6c3e0d0a);
 
+INSERT INTO `webide`.`workspace_builders` (`id`, `workspace_id`, `plugin_bundle_id`, `staging_path`, `builder_name`, `builder_class`) VALUES
+(NULL, '1', '1', NULL, 'name.martingeisse.webide.features.verilog', 'name.martingeisse.webide.features.verilog');
+
+INSERT INTO `webide`.`workspace_build_triggers` (`id`, `workspace_id`, `workspace_builder_id`, `trigger_base_path`, `path_pattern`, `buildscript_path`) VALUES
+(NULL, '1', '1', '/verilog', '.*\\\\.v', '/verilog/build.json');
+
+
 
 -- available plugins
 -- --------------------------
@@ -272,6 +304,10 @@ ALTER TABLE `markers` ADD CONSTRAINT `markers_ibfk_1` FOREIGN KEY (`workspace_id
 ALTER TABLE `markers` ADD CONSTRAINT `markers_ibfk_2` FOREIGN KEY (`workspace_resource_id`) REFERENCES `workspace_resources` (`id`) ON DELETE CASCADE;
 ALTER TABLE `workspace_resource_deltas` ADD CONSTRAINT `workspace_resource_deltas_ibfk_1` FOREIGN KEY (`workspace_id`) REFERENCES `workspaces` (`id`) ON DELETE CASCADE;
 ALTER TABLE `workspace_tasks` ADD CONSTRAINT `workspace_tasks_ibfk_1` FOREIGN KEY (`workspace_id`) REFERENCES `workspaces` (`id`) ON DELETE CASCADE;
+ALTER TABLE `workspace_builders` ADD CONSTRAINT `workspace_builders_ibfk_1` FOREIGN KEY (`workspace_id`) REFERENCES `workspaces` (`id`) ON DELETE CASCADE;
+ALTER TABLE `workspace_builders` ADD CONSTRAINT `workspace_builders_ibfk_2` FOREIGN KEY (`plugin_bundle_id`) REFERENCES `plugin_bundles` (`id`) ON DELETE CASCADE;
+ALTER TABLE `workspace_build_triggers` ADD CONSTRAINT `workspace_build_triggers_ibfk_1` FOREIGN KEY (`workspace_id`) REFERENCES `workspaces` (`id`) ON DELETE CASCADE;
+ALTER TABLE `workspace_build_triggers` ADD CONSTRAINT `workspace_build_triggers_ibfk_2` FOREIGN KEY (`workspace_builder_id`) REFERENCES `workspace_builders` (`id`) ON DELETE CASCADE;
 
 -- available plugins
 ALTER TABLE `plugin_bundles` ADD CONSTRAINT `plugin_bundles_ibfk_1` FOREIGN KEY (`plugin_id`) REFERENCES `plugins` (`id`) ON DELETE CASCADE;
