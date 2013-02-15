@@ -116,7 +116,7 @@ public abstract class AbstractCreateResourceOperation extends SingleResourceOper
 		insert.set(QWorkspaceResources.workspaceResources.contents, new byte[0]);
 		long id = insert.executeWithKey(Long.class);
 		WorkspaceCache.onCreate(id, folder.getParentId(), path);
-		WorkspaceResourceDeltaUtil.generateDeltas("auto-create enclosing folders", path);
+		WorkspaceResourceDeltaUtil.generateDeltas("auto-create enclosing folders", true, path);
 		
 		// return the resource object
 		folder.setId(id);

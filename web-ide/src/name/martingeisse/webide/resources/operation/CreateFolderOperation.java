@@ -33,7 +33,7 @@ public final class CreateFolderOperation extends AbstractCreateResourceOperation
 		trace("will create folder now", getPath());
 		long id = insert(parentResource.getId(), getPath().getLastSegment(), ResourceType.FOLDER, new byte[0]);
 		WorkspaceCache.onCreate(id, parentResource.getId(), getPath());
-		WorkspaceResourceDeltaUtil.generateDeltas("create folder", getPath());
+		WorkspaceResourceDeltaUtil.generateDeltas("create folder", false, getPath());
 	}
 
 }

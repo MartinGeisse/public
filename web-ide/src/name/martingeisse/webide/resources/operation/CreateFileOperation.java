@@ -61,7 +61,7 @@ public final class CreateFileOperation extends AbstractCreateResourceOperation {
 		trace("will create file now", getPath());
 		long id = insert(parentResource.getId(), getPath().getLastSegment(), ResourceType.FILE, (contents == null ? new byte[0] : contents));
 		WorkspaceCache.onCreate(id, parentResource.getId(), getPath());
-		WorkspaceResourceDeltaUtil.generateDeltas("create file", getPath());
+		WorkspaceResourceDeltaUtil.generateDeltas("create file", false, getPath());
 	}
 
 }

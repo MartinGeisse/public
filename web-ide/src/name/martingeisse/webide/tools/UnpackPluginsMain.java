@@ -24,7 +24,7 @@ public class UnpackPluginsMain {
 	 * @throws Exception on errors
 	 */
 	public static void main(final String[] args) throws Exception {
-		IdeLauncher.initialize();
+		IdeLauncher.initialize(false);
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		InternalPluginUtil.generateDeclaredExtensionPointsAndExtensionsForPlugins(query.from(QPlugins.plugins).list(QPlugins.plugins.id));
 		InternalPluginUtil.updateUsersPlugins();

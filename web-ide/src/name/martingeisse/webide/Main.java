@@ -37,7 +37,7 @@ public class Main {
 	 * @throws Exception on errors
 	 */
 	public static void main(final String[] args) throws Exception {
-		IdeLauncher.initialize();
+		IdeLauncher.initialize(true);
 		launchSsh();
 		launchWeb();
 	}

@@ -131,7 +131,7 @@ public final class ValueChangeDump {
 	 * @return
 	 */
 	private static Object parseBinaryValue(String rest) {
-		
+		return null;
 	}
 	
 	/**

@@ -516,6 +516,32 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 		}
 		return new ResourcePath(leadingSeparator, trailingSeparator, resultSegments, 0, resultSegments.length, false);
 	}
+	
+	/**
+	 * Checks whether this path is a prefix of the specified other path. To be
+	 * a prefix, the paths must be either both absolute or both relative. To trailing
+	 * separator, if any, is ignored. If the leading separator matches, this method
+	 * checks whether the segments match to be a prefix. Note that the last segment
+	 * must match exactly, that is, the path "foo" is NOT a prefix of "foobar",
+	 * even though string-wise, it is.
+	 * 
+	 * @param other the path to compare with
+	 * @return true if this path is a prefix of the specified other path, false if not
+	 */
+	public boolean isPrefixOf(ResourcePath other) {
+		if (leadingSeparator != other.leadingSeparator) {
+			return false;
+		}
+		if (segmentCount > other.segmentCount) {
+			return false;
+		}
+		for (int i=0; i<segmentCount; i++) {
+			if (!getSegment(i).equals(other.getSegment(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

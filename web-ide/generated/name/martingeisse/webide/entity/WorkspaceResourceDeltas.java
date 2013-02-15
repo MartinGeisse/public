@@ -22,6 +22,11 @@ public class WorkspaceResourceDeltas implements Serializable {
     private Long id;
 
     /**
+     * the isDeep
+     */
+    private Boolean isDeep;
+
+    /**
      * the path
      */
     private String path;
@@ -45,6 +50,22 @@ public class WorkspaceResourceDeltas implements Serializable {
      */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * Getter method for the isDeep.
+     * @return the isDeep
+     */
+    public Boolean getIsDeep() {
+        return isDeep;
+    }
+
+    /**
+     * Setter method for the isDeep.
+     * @param isDeep the isDeep to set
+     */
+    public void setIsDeep(Boolean isDeep) {
+        this.isDeep = isDeep;
     }
 
     /**
@@ -84,7 +105,7 @@ public class WorkspaceResourceDeltas implements Serializable {
      */
     @Override
     public String toString() {
-        return "{WorkspaceResourceDeltas. id = " + id + ", path = " + path + ", workspaceId = " + workspaceId + "}";
+        return "{WorkspaceResourceDeltas. id = " + id + ", isDeep = " + isDeep + ", path = " + path + ", workspaceId = " + workspaceId + "}";
     }
 
 }

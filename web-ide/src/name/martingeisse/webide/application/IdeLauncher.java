@@ -11,6 +11,7 @@ import java.io.IOException;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.MysqlDatabaseDescriptor;
 import name.martingeisse.common.javascript.JavascriptAssembler;
+import name.martingeisse.webide.resources.build.BuilderThreadNew;
 
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -22,9 +23,10 @@ public class IdeLauncher {
 
 	/**
 	 * Initializes URL handlers, time zones and the database.
+	 * @param startBackgroundThreads whether IDE background threads such as the builder thread shall be started
 	 * @throws IOException on I/O errors
 	 */
-	public static void initialize() throws IOException {
+	public static void initialize(boolean startBackgroundThreads) throws IOException {
 	
 		// read the configuration
 		Configuration.initialize();
@@ -47,6 +49,11 @@ public class IdeLauncher {
 		mainDatabase.initialize();
 		Databases.main = mainDatabase;
 		EntityConnectionManager.initializeDatabaseDescriptors(mainDatabase);
+		
+		// initialize classes
+		if (startBackgroundThreads) {
+			BuilderThreadNew.initialize();
+		}
 		
 	}
 	

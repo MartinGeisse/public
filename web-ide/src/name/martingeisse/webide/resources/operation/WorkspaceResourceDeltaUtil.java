@@ -50,17 +50,20 @@ class WorkspaceResourceDeltaUtil {
 	 * and sets the workspace to "building" state.
 	 * 
 	 * @param callerForLogging the caller of this method (simple string used for logging)
+	 * @param deep whether to generate "deep" deltas for modified folders that also
+	 * affect folder contents
 	 * @param paths the paths
 	 */
-	public static void generateDeltas(String callerForLogging, ResourcePath... paths) {
+	public static void generateDeltas(String callerForLogging, boolean deep, ResourcePath... paths) {
 		long workspaceId = 1;
 		
-		logger.trace(callerForLogging + ": creating resource deltas ...");
+		logger.trace(callerForLogging + ": creating resource deltas (deep: " + deep + ") ...");
 		for (ResourcePath path : paths) {
 			logger.trace(callerForLogging + ": creating resource delta for path: " + path);
 			SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QWorkspaceResourceDeltas.workspaceResourceDeltas);
 			insert.set(QWorkspaceResourceDeltas.workspaceResourceDeltas.workspaceId, workspaceId);
 			insert.set(QWorkspaceResourceDeltas.workspaceResourceDeltas.path, path.toString());
+			insert.set(QWorkspaceResourceDeltas.workspaceResourceDeltas.isDeep, deep);
 			insert.execute();
 		}
 		logger.trace(callerForLogging + ": finished creating resource deltas.");

@@ -29,6 +29,11 @@ public class QWorkspaceResourceDeltas extends com.mysema.query.sql.RelationalPat
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     /**
+     * Metamodel property for property 'is_deep'
+     */
+    public final BooleanPath isDeep = createBoolean("is_deep");
+
+    /**
      * Metamodel property for property 'path'
      */
     public final StringPath path = createString("path");

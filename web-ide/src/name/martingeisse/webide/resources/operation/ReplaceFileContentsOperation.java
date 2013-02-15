@@ -66,7 +66,7 @@ public final class ReplaceFileContentsOperation extends SingleResourceOperation 
 		update.where(QWorkspaceResources.workspaceResources.id.eq(fetchResourceResult.getId()));
 		update.set(QWorkspaceResources.workspaceResources.contents, (contents == null ? new byte[0] : contents));
 		update.execute();
-		WorkspaceResourceDeltaUtil.generateDeltas("replace file contents", getPath());
+		WorkspaceResourceDeltaUtil.generateDeltas("replace file contents", false, getPath());
 		WorkspaceCache.invalidate();
 	}
 
