@@ -4,18 +4,16 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.features.verilog.compiler.wave;
+package name.martingeisse.webide.features.verilog.wave;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
 import name.martingeisse.common.image.IImageBackend;
 import name.martingeisse.common.image.IImageBackendType;
 import name.martingeisse.common.image.IImageRenderer;
-import name.martingeisse.common.image.PngImageBackendType;
 
 /**
  * Renders a list of value changes to a PNG image. The times of the
@@ -28,7 +26,7 @@ import name.martingeisse.common.image.PngImageBackendType;
  * The list of value changes must be pre-sorted for this class
  * to work correctly.
  */
-public class WaveRenderer implements IImageRenderer {
+public class WaveRenderer implements IImageRenderer, Serializable {
 
 	/**
 	 * the imageWidth
@@ -227,33 +225,6 @@ public class WaveRenderer implements IImageRenderer {
 			g.setColor(new Color(0, 128, 0));
 			g.fillRect(x1 + 1, y1 + 1, w - 1, h - 2);
 		}
-	}
-	
-	public static void main(String[] args) throws Exception {
-		
-		List<ValueChange> changes = new ArrayList<ValueChange>();
-		changes.add(new ValueChange(20, true));
-		changes.add(new ValueChange(100, false));
-		changes.add(new ValueChange(101, true));
-//		changes.add(new ValueChange(102, false));
-//		changes.add(new ValueChange(103, true));
-//		changes.add(new ValueChange(104, false));
-//		changes.add(new ValueChange(105, true));
-//		changes.add(new ValueChange(106, false));
-		// changes.add(new ValueChange(107, true));
-		changes.add(new ValueChange(150, false));
-		changes.add(new ValueChange(200, true));
-		
-		changes = ValueChangeUtil.prepareForDisplay(changes);
-		
-		WaveRenderer renderer = new WaveRenderer(400, 30, changes);
-		IImageBackend image = renderer.render(PngImageBackendType.instance);
-		image.finish();
-		
-		FileOutputStream fos = new FileOutputStream("test.png");
-		image.writeTo(fos);
-		fos.close();
-		
 	}
 	
 }

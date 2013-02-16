@@ -4,10 +4,12 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.features.verilog.compiler.wave;
+package name.martingeisse.webide.features.verilog.wave;
 
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +18,7 @@ import java.util.List;
 /**
  * This class represents the data from a value change dump (VCD) file.
  */
-public final class ValueChangeDump {
+public final class ValueChangeDump implements Serializable {
 
 	/**
 	 * the timescaleAmount
@@ -50,7 +52,9 @@ public final class ValueChangeDump {
 	 * @throws SyntaxException on syntax errors
 	 */
 	public ValueChangeDump(final Reader sourceCode) throws IOException, SyntaxException {
-		Tokenizer tokenizer = new Tokenizer(sourceCode);
+		
+		LineNumberReader lineNumberReader = new LineNumberReader(sourceCode);
+		Tokenizer tokenizer = new Tokenizer(lineNumberReader);
 		
 		// parse definitions
 		long timescaleAmount = 1;
@@ -61,16 +65,28 @@ public final class ValueChangeDump {
 			if ("$enddefinitions".contentEquals(token)) {
 				tokenizer.expectEnd();
 				break;
-			} else if ("$timescale".contentEquals(token)) {
-				timescaleAmount =  tokenizer.expectLong();
-				timescaleUnit = tokenizer.expectToken().toString();
-				tokenizer.expectEnd();
+
+				// TODO: Icarus generates nonstandard timescale values,
+				// merging amount and unit into a single token ("1s" instead of "1 s")
+//			} else if ("$timescale".contentEquals(token)) {
+//				timescaleAmount =  tokenizer.expectLong();
+//				timescaleUnit = tokenizer.expectToken().toString();
+//				tokenizer.expectEnd();
+				
 			} else if ("$var".contentEquals(token)) {
 				String type = tokenizer.expectToken().toString();
 				int size = tokenizer.expectInt();
 				String internalIdentifier = tokenizer.expectToken().toString();
 				String originalIdentifier = tokenizer.expectToken().toString();
 				variables.add(new Variable(type, size, internalIdentifier, originalIdentifier));
+				tokenizer.expectEnd();
+			} else {
+				while (true) {
+					token = tokenizer.expectToken();
+					if (token.equals("$end")) {
+						break;
+					}
+				}
 			}
 		}
 		this.timescaleAmount = timescaleAmount;
@@ -87,18 +103,26 @@ public final class ValueChangeDump {
 			String rest = token.substring(1);
 			Object value;
 			String variableName;
-			if (firstChar == '#') {
+			if (firstChar == '$') {
+				while (true) {
+					token = tokenizer.expectToken();
+					if (token.equals("$end")) {
+						break;
+					}
+				}
+				continue;
+			} else if (firstChar == '#') {
 				try {
 					currentTime = Long.parseLong(rest);
 				} catch (NumberFormatException e) {
-					throw new SyntaxException("invalid time specifier: " + token);
+					throw tokenizer.syntaxException("invalid time specifier: " + token);
 				}
 				continue;
 			} else if (firstChar == 'b') {
-				value = parseBinaryValue(rest);
+				value = rest;
 				variableName = tokenizer.expectToken();
 			} else if (firstChar == 'r') {
-				throw new SyntaxException("real-number values not yet supported");
+				throw tokenizer.syntaxException("real-number values not yet supported");
 			} else {
 				if (firstChar == '0') {
 					value = false;
@@ -113,7 +137,7 @@ public final class ValueChangeDump {
 			}
 			Variable variable = findVariableByInternalIdentifier(variableName);
 			if (variable == null) {
-				throw new SyntaxException("unknown variable: " + variableName);
+				throw tokenizer.syntaxException("unknown variable: " + variableName);
 			}
 			variable.getValueChanges().add(new ValueChange(currentTime, value));
 		}
@@ -123,15 +147,6 @@ public final class ValueChangeDump {
 			Collections.sort(variable.getValueChanges(), ValueChange.TIME_COMPARATOR);
 		}
 		
-	}
-	
-	/**
-	 * 
-	 * @param rest
-	 * @return
-	 */
-	private static Object parseBinaryValue(String rest) {
-		return null;
 	}
 	
 	/**
@@ -189,7 +204,7 @@ public final class ValueChangeDump {
 	/**
 	 * A VCD variable.
 	 */
-	public static final class Variable {
+	public static final class Variable implements Serializable {
 	
 		/**
 		 * the type
@@ -269,6 +284,18 @@ public final class ValueChangeDump {
 		 */
 		public List<ValueChange> getValueChanges() {
 			return valueChanges;
+		}
+		
+		/**
+		 * Returns the time of the last value change.
+		 * @return the time of the last value change.
+		 */
+		public long getLastChangeTime() {
+			if (valueChanges.isEmpty()) {
+				return 0;
+			} else {
+				return valueChanges.get(valueChanges.size() - 1).getTime();
+			}
 		}
 		
 	}

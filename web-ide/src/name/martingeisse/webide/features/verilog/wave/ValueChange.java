@@ -4,8 +4,9 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.features.verilog.compiler.wave;
+package name.martingeisse.webide.features.verilog.wave;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -29,7 +30,7 @@ import java.util.List;
  * This class is intended to be immutable; clients should use either
  * immutable values or respect immutability by not changing values.
  */
-public class ValueChange {
+public class ValueChange implements Serializable {
 
 	/**
 	 * This object is used to represent CHAOS values (see class comment).

@@ -4,9 +4,10 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.features.verilog.compiler.wave;
+package name.martingeisse.webide.features.verilog.wave;
 
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.io.Reader;
 
 /**
@@ -17,7 +18,7 @@ final class Tokenizer {
 	/**
 	 * the reader
 	 */
-	private final Reader reader;
+	private final LineNumberReader reader;
 	
 	/**
 	 * the builder
@@ -28,7 +29,7 @@ final class Tokenizer {
 	 * Constructor.
 	 * @param reader the reader to read from
 	 */
-	public Tokenizer(Reader reader) {
+	public Tokenizer(LineNumberReader reader) {
 		this.reader = reader;
 		this.builder = new StringBuilder();
 	}
@@ -71,7 +72,7 @@ final class Tokenizer {
 	public String expectToken() throws IOException, SyntaxException {
 		String token = nextToken();
 		if (token == null) {
-			throw new SyntaxException("unexpected EOF");
+			throw syntaxException("unexpected EOF");
 		}
 		return token;
 	}
@@ -87,7 +88,7 @@ final class Tokenizer {
 	public String expectKeywordToken() throws IOException, SyntaxException {
 		String token = expectToken();
 		if (token.charAt(0) != '$') {
-			throw new SyntaxException("expected keyword");
+			throw syntaxException("expected keyword, found " + token);
 		}
 		return token;
 	}
@@ -96,13 +97,14 @@ final class Tokenizer {
 	 * Reads a token and throws a {@link SyntaxException} if it is EOF or
 	 * another token than the specified one.
 	 * 
-	 * @param token the expected token
+	 * @param expectedToken the expected token
 	 * @throws IOException on I/O errors
 	 * @throws SyntaxException if something else than the specified token is found
 	 */
-	public void expectToken(String token) throws IOException, SyntaxException {
-		if (!token.contentEquals(expectToken())) {
-			throw new SyntaxException("expected: " + token);
+	public void expectToken(String expectedToken) throws IOException, SyntaxException {
+		String actualToken = expectToken();
+		if (!expectedToken.contentEquals(actualToken)) {
+			throw syntaxException("expected: " + expectedToken + ", found " + actualToken);
 		}
 	}
 	
@@ -129,7 +131,7 @@ final class Tokenizer {
 		try {
 			return Integer.parseInt(token);
 		} catch (NumberFormatException e) {
-			throw new SyntaxException("expected number");
+			throw syntaxException("expected number, found " + token);
 		}
 	}
 	
@@ -145,8 +147,18 @@ final class Tokenizer {
 		try {
 			return Long.parseLong(token);
 		} catch (NumberFormatException e) {
-			throw new SyntaxException("expected number");
+			throw syntaxException("expected number, found " + token);
 		}
+	}
+
+	/**
+	 * Creates a {@link SyntaxException} for the current position in the VCD file.
+	 * 
+	 * @param message the message for the exception
+	 * @return the exception
+	 */
+	public SyntaxException syntaxException(String message) {
+		return new SyntaxException(reader.getLineNumber(), 0, message);
 	}
 	
 }

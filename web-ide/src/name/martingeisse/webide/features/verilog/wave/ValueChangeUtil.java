@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.features.verilog.compiler.wave;
+package name.martingeisse.webide.features.verilog.wave;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
