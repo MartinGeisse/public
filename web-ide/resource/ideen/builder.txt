@@ -365,5 +365,17 @@ Plan
 
 * Vorhandene Builder auf dieses System umstellen
 
+---
 
+Problem: Nachdem die Deltas zu den Build Triggern zugeordnet sind, müssen
+die Builder laufen -- aber nur so oft wie nötig! Das betrifft z.B. den
+Java Builder: der soll 1x pro Source Path laufen. Sinnvoll wäre hier z.B.
+1x pro Trigger und der Builder selbst kann das wieder weiter aufteilen.
+Dazu müssen aber erst mal die Deltas aufgesammelt werden! Das ist der
+Punkt:
+- Deltas <-> Build Triggers matchen
+- Deltas je Trigger aufsammeln
+- jeden betroffenen Trigger 1x starten, dabei alle Deltas übergeben
 
+Erst mal Finger weg von HornetQ -- o.g. Prinzip ist einfach direkt
+umzusetzen, mit HornetQ wird es komplizierter.

@@ -19,9 +19,8 @@ import name.martingeisse.webide.entity.WorkspaceBuildTriggers;
 import name.martingeisse.webide.entity.WorkspaceResourceDeltas;
 import name.martingeisse.webide.entity.WorkspaceTasks;
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.operation.FetchResourceResult;
-import name.martingeisse.webide.resources.operation.RecursiveResourceOperation;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.mysema.query.sql.dml.SQLDeleteClause;
@@ -51,7 +50,6 @@ public class BuilderThreadNew {
 							executeTask(task);
 						}
 						Thread.sleep(1000);
-						System.out.println("* ");
 					}
 				} catch (final Exception e) {
 					logger.error("", e);
@@ -90,59 +88,53 @@ public class BuilderThreadNew {
 	/**
 	 * Executes the "consume workspace resource deltas" task.
 	 * 
-	 * TODO: Either fetch all build triggers in advance (for many deltas)
-	 * or select triggers by path prefix (for few deltas). Currently this method
-	 * always uses the "many deltas" way (a bit slow if few deltas occur in
-	 * a workspace with many triggers).
+	 * TODO: Dynamically either fetch all build triggers in advance (for many deltas)
+	 * or select triggers by path prefix (for few deltas).
 	 */
 	private static void executeConsumeDeltaTask() {
 		logger.trace("consuming workspace deltas...");
 		final List<WorkspaceBuildTriggers> triggers = fetchAllBuildTriggers();
-		for (final WorkspaceResourceDeltas delta : fetchDeltas()) {
-			logger.trace("delta: " + delta.getPath() + " (deep: " + delta.getIsDeep() + ")");
-			final ResourcePath deltaPath = new ResourcePath(delta.getPath());
-			for (final WorkspaceBuildTriggers trigger : triggers) {
-				final ResourcePath triggerBasePath = new ResourcePath(trigger.getTriggerBasePath());
-				logger.trace("matching against trigger with base path: " + triggerBasePath);
+		final List<WorkspaceResourceDeltas> allDeltas = fetchDeltas();
+		for (WorkspaceBuildTriggers trigger : triggers) {
+			logger.trace("collecting deltas for trigger " + trigger.getBuildscriptPath() + ", base path " + trigger.getTriggerBasePath());
+			final ResourcePath triggerBasePath = new ResourcePath(trigger.getTriggerBasePath());
+			List<BuilderResourceDelta> builderDeltas = new ArrayList<BuilderResourceDelta>();
+			for (final WorkspaceResourceDeltas delta : allDeltas) {
+				logger.trace("delta: " + delta.getPath() + " (deep: " + delta.getIsDeep() + ")");
+				final ResourcePath deltaPath = new ResourcePath(delta.getPath());
 				if (triggerBasePath.isPrefixOf(deltaPath) || (delta.getIsDeep() && deltaPath.isPrefixOf(triggerBasePath))) {
 					logger.trace("base path matches");
 					if (delta.getIsDeep()) {
-						logger.trace("is deep delta, performing recursive match");
-						new RecursiveResourceOperation(deltaPath) {
-							@Override
-							protected void onLevelFetched(final List<FetchResourceResult> fetchResults) {
-								for (final FetchResourceResult fetchResult : fetchResults) {
-									WorkspaceResourceDeltas subDelta = new WorkspaceResourceDeltas();
-									subDelta.setIsDeep(false);
-									subDelta.setWorkspaceId(delta.getWorkspaceId());
-									subDelta.setPath(fetchResult.getPath().toString());
-									logger.trace("matching sub-delta: " + subDelta.getPath());
-									matchBuildTriggerPattern(subDelta, trigger);
-								}
-							}
-						};
+						logger.trace("deep delta -- skipping path pattern check");
+						builderDeltas.add(new BuilderResourceDelta(delta));
 					} else {
-						matchBuildTriggerPattern(delta, trigger);
+						logger.trace("matching build trigger with pattern " + trigger.getPathPattern() + ", delta path: " + deltaPath);
+						boolean result = Pattern.matches(trigger.getPathPattern(), delta.getPath());
+						if (result) {
+							logger.error("pattern matched, remembering delta for builder invocation");						
+							builderDeltas.add(new BuilderResourceDelta(delta));
+						} else {
+							logger.error("pattern did not match");						
+						}
 					}
+				} else {
+					logger.trace("base path does not match");
 				}
 			}
-		}
-		logger.trace("finished consuming workspace deltas");
-	}
-
-	private static void matchBuildTriggerPattern(final WorkspaceResourceDeltas delta, final WorkspaceBuildTriggers trigger) {
-		logger.trace("matching build trigger with pattern " + trigger.getPathPattern() + ", flat delta path: " + delta.getPath());
-		if (!Pattern.matches(trigger.getPathPattern(), delta.getPath())) {
-			return;
-		}
-		
-		logger.error("*** rebuilding !!!");
-		
-		/*
-		 * TODO
+			if (builderDeltas.isEmpty()) {
+				logger.trace("no deltas left for this build trigger");
+				continue;
+			}
+			logger.trace("Paths for builder " + trigger.getWorkspaceBuilderId() + ", trigger " + trigger.getBuildscriptPath() + ": " + StringUtils.join(builderDeltas, ", "));
+			/*
+			 * TODO
 			private String buildscriptPath;
 			private Long workspaceBuilderId;
-		 */
+			 */
+			
+		}
+		
+		logger.trace("finished consuming workspace deltas");
 	}
 
 	/**
