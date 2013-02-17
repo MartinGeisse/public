@@ -96,6 +96,7 @@ CREATE TABLE IF NOT EXISTS `workspace_build_triggers` (
   `trigger_base_path` varchar(4096) NULL,
   `path_pattern` varchar(255) NULL,
   `buildscript_path` varchar(4096) NULL,
+  `descriptor` MEDIUMTEXT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `workspace_id_and_base_path` (`workspace_id`, `trigger_base_path`),
   INDEX `workspace_builder_id` (`workspace_builder_id`)
@@ -236,10 +237,10 @@ INSERT INTO `workspace_resources` (`id`, `workspace_id`, `name`, `type`, `parent
 (NULL, 1, 'dump.vcd', 'FILE', 9, 0x24646174650a09536174204665622031362031313a33343a303420323031330a24656e640a2476657273696f6e0a0949636172757320566572696c6f670a24656e640a2474696d657363616c650a0931730a24656e640a2473636f7065206d6f64756c6520546573742024656e640a24766172207265672031202120612024656e640a24766172207265672031202220622024656e640a24757073636f70652024656e640a24656e64646566696e6974696f6e732024656e640a23300a2464756d70766172730a78220a30210a24656e640a23350a31220a2331300a30220a2331350a31220a2332300a30220a2332350a31220a2333300a30220a2333350a31220a2334300a30220a2334350a31220a2335300a30220a2335350a31220a2336300a30220a2336350a31220a2337300a30220a233130300a31210a233130350a31220a233131300a30220a233131350a31220a233132300a30220a233132350a31220a233133300a30220a233137300a30210a233137350a31220a233138300a30220a233138350a31220a233139300a30220a233139350a31220a233230300a30220a233230350a31220a233231300a30220a233231350a31220a233232300a30220a233234300a31210a233239300a);
 
 INSERT INTO `webide`.`workspace_builders` (`id`, `workspace_id`, `plugin_bundle_id`, `staging_path`, `builder_name`, `builder_class`) VALUES
-(NULL, '1', '1', NULL, 'name.martingeisse.webide.features.verilog', 'name.martingeisse.webide.features.verilog');
+(NULL, '1', '1', NULL, 'name.martingeisse.webide.features.verilog', 'name.martingeisse.webide.features.verilog.compiler.VerilogBuilder');
 
-INSERT INTO `webide`.`workspace_build_triggers` (`id`, `workspace_id`, `workspace_builder_id`, `trigger_base_path`, `path_pattern`, `buildscript_path`) VALUES
-(NULL, '1', '1', '/verilog', '.*\\.v', '/verilog/build.json');
+INSERT INTO `webide`.`workspace_build_triggers` (`id`, `workspace_id`, `workspace_builder_id`, `trigger_base_path`, `path_pattern`, `buildscript_path`, `descriptor`) VALUES
+(NULL, '1', '1', '/verilog', '.*\\.v', '/verilog/build.json', 'null');
 
 
 

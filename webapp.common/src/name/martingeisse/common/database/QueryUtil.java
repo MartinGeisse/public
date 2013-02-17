@@ -8,6 +8,7 @@ package name.martingeisse.common.database;
 
 import java.sql.ResultSet;
 import java.util.List;
+import java.util.Map;
 
 import com.mysema.commons.lang.CloseableIterator;
 import com.mysema.commons.lang.Pair;
@@ -91,6 +92,29 @@ public class QueryUtil {
 	}
 
 	// ----------------------------------------------------------------------------------------------------------------
+	// query factories
+	// ----------------------------------------------------------------------------------------------------------------
+
+	/**
+	 * Creates a new query for the specified tables.
+	 * @param qpaths the table paths
+	 * @return the query
+	 */
+	public static SQLQuery from(Expression<?>... qpaths) {
+		return EntityConnectionManager.getConnection().createQuery().from(qpaths);
+	}
+	
+	/**
+	 * Creates a new query builder for the specified path and database.
+	 * @param qpaths the table paths
+	 * @param database the database to use
+	 * @return the query
+	 */
+	public static <T> SQLQuery from(IDatabaseDescriptor database, Expression<?>... qpaths) {
+		return EntityConnectionManager.getConnection(database).createQuery().from(qpaths);
+	}
+	
+	// ----------------------------------------------------------------------------------------------------------------
 	// shortcut methods for common queries
 	// ----------------------------------------------------------------------------------------------------------------
 	
@@ -119,6 +143,21 @@ public class QueryUtil {
 	public static <ROW, FIELD> List<FIELD> fetchAll(RelationalPathBase<ROW> qpath, Path<FIELD> fieldPath) {
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		return query.from(qpath).list(fieldPath);
+	}
+	
+	/**
+	 * Fetches all rows from a table and puts them in a map (key-to-single-row),
+	 * using the specified key field.
+	 * 
+	 * This method uses the default database connection.
+	 * 
+	 * @param qpath the QueryDSL relational path for the table, e.g. QMyTable.myTable
+	 * @param keyFieldPath the path of the field to use as the map key
+	 * @return the map
+	 */
+	public static <ROW, FIELD> Map<FIELD, ROW> mapAll(RelationalPathBase<ROW> qpath, Path<FIELD> keyFieldPath) {
+		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
+		return query.from(qpath).map(keyFieldPath, qpath);
 	}
 	
 	/**

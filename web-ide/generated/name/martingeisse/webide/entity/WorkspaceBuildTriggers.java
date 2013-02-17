@@ -22,6 +22,11 @@ public class WorkspaceBuildTriggers implements Serializable {
     private String buildscriptPath;
 
     /**
+     * the descriptor
+     */
+    private String descriptor;
+
+    /**
      * the id
      */
     private Long id;
@@ -60,6 +65,22 @@ public class WorkspaceBuildTriggers implements Serializable {
      */
     public void setBuildscriptPath(String buildscriptPath) {
         this.buildscriptPath = buildscriptPath;
+    }
+
+    /**
+     * Getter method for the descriptor.
+     * @return the descriptor
+     */
+    public String getDescriptor() {
+        return descriptor;
+    }
+
+    /**
+     * Setter method for the descriptor.
+     * @param descriptor the descriptor to set
+     */
+    public void setDescriptor(String descriptor) {
+        this.descriptor = descriptor;
     }
 
     /**
@@ -147,7 +168,7 @@ public class WorkspaceBuildTriggers implements Serializable {
      */
     @Override
     public String toString() {
-        return "{WorkspaceBuildTriggers. buildscriptPath = " + buildscriptPath + ", id = " + id + ", pathPattern = " + pathPattern + ", triggerBasePath = " + triggerBasePath + ", workspaceBuilderId = " + workspaceBuilderId + ", workspaceId = " + workspaceId + "}";
+        return "{WorkspaceBuildTriggers. buildscriptPath = " + buildscriptPath + ", descriptor = " + descriptor + ", id = " + id + ", pathPattern = " + pathPattern + ", triggerBasePath = " + triggerBasePath + ", workspaceBuilderId = " + workspaceBuilderId + ", workspaceId = " + workspaceId + "}";
     }
 
 }

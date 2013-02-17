@@ -52,7 +52,7 @@ public class IdeLauncher {
 		
 		// initialize classes
 		if (startBackgroundThreads) {
-			BuilderThreadNew.initialize();
+			BuilderThreadNew.createBuilderThread();
 		}
 		
 	}

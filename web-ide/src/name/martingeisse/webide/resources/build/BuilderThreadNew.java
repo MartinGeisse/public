@@ -7,17 +7,24 @@
 package name.martingeisse.webide.resources.build;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.QueryUtil;
+import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.webide.entity.QWorkspaceBuildTriggers;
+import name.martingeisse.webide.entity.QWorkspaceBuilders;
 import name.martingeisse.webide.entity.QWorkspaceResourceDeltas;
 import name.martingeisse.webide.entity.QWorkspaceTasks;
 import name.martingeisse.webide.entity.WorkspaceBuildTriggers;
+import name.martingeisse.webide.entity.WorkspaceBuilders;
 import name.martingeisse.webide.entity.WorkspaceResourceDeltas;
 import name.martingeisse.webide.entity.WorkspaceTasks;
+import name.martingeisse.webide.plugin.PluginBundleHandle;
 import name.martingeisse.webide.resources.ResourcePath;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,25 +35,20 @@ import com.mysema.query.sql.dml.SQLDeleteClause;
 /**
  * This is the new implementation of the builder thread.
  * It is is triggered by workspace tasks and executes them.
+ * Consuming resource deltas occurs in the "consume deltas" task.
  */
 public class BuilderThreadNew {
 
-	/**
-	 * the logger
-	 */
 	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(BuilderThreadNew.class);
 
-	/**
-	 * Creates the builder thread.
-	 */
-	public static void initialize() {
+	public static void createBuilderThread() {
 		new Thread(BuilderThreadNew.class.getSimpleName()) {
 			@Override
 			public void run() {
 				try {
 					while (true) {
-						for (final WorkspaceTasks task : fetchTasks()) {
+						for (final WorkspaceTasks task : fetchPendingTasks()) {
 							executeTask(task);
 						}
 						Thread.sleep(1000);
@@ -58,10 +60,7 @@ public class BuilderThreadNew {
 		}.start();
 	}
 	
-	/**
-	 * Fetches pending workspace tasks from the database.
-	 */
-	private static List<WorkspaceTasks> fetchTasks() {
+	private static List<WorkspaceTasks> fetchPendingTasks() {
 		final List<WorkspaceTasks> tasks = QueryUtil.fetchAll(QWorkspaceTasks.workspaceTasks);
 		final List<Long> taskIds = new ArrayList<Long>();
 		for (final WorkspaceTasks task : tasks) {
@@ -73,9 +72,6 @@ public class BuilderThreadNew {
 		return tasks;
 	}
 
-	/**
-	 * Executes a single task.
-	 */
 	private static void executeTask(final WorkspaceTasks task) {
 		final String command = task.getCommand();
 		if (command.equals("name.martingeisse.webide.resources.consume_deltas")) {
@@ -85,20 +81,18 @@ public class BuilderThreadNew {
 		}
 	}
 
-	/**
-	 * Executes the "consume workspace resource deltas" task.
-	 * 
-	 * TODO: Dynamically either fetch all build triggers in advance (for many deltas)
+	/* TODO: Dynamically either fetch all build triggers in advance (for many deltas)
 	 * or select triggers by path prefix (for few deltas).
 	 */
 	private static void executeConsumeDeltaTask() {
 		logger.trace("consuming workspace deltas...");
 		final List<WorkspaceBuildTriggers> triggers = fetchAllBuildTriggers();
+		final Map<Long, WorkspaceBuilders> workspaceBuildersById = fetchWorkspaceBuildersByIdForBuildTriggers(triggers);
 		final List<WorkspaceResourceDeltas> allDeltas = fetchDeltas();
 		for (WorkspaceBuildTriggers trigger : triggers) {
 			logger.trace("collecting deltas for trigger " + trigger.getBuildscriptPath() + ", base path " + trigger.getTriggerBasePath());
 			final ResourcePath triggerBasePath = new ResourcePath(trigger.getTriggerBasePath());
-			List<BuilderResourceDelta> builderDeltas = new ArrayList<BuilderResourceDelta>();
+			Set<BuilderResourceDelta> builderDeltas = new HashSet<BuilderResourceDelta>();
 			for (final WorkspaceResourceDeltas delta : allDeltas) {
 				logger.trace("delta: " + delta.getPath() + " (deep: " + delta.getIsDeep() + ")");
 				final ResourcePath deltaPath = new ResourcePath(delta.getPath());
@@ -126,29 +120,39 @@ public class BuilderThreadNew {
 				continue;
 			}
 			logger.trace("Paths for builder " + trigger.getWorkspaceBuilderId() + ", trigger " + trigger.getBuildscriptPath() + ": " + StringUtils.join(builderDeltas, ", "));
-			/*
-			 * TODO
-			private String buildscriptPath;
-			private Long workspaceBuilderId;
-			 */
-			
+			WorkspaceBuilders workspaceBuilder = workspaceBuildersById.get(trigger.getWorkspaceBuilderId());
+			PluginBundleHandle bundleHandle = new PluginBundleHandle(workspaceBuilder.getPluginBundleId());
+			IBuilder builder;
+			try {
+				logger.trace("creating builder " + workspaceBuilder.getBuilderClass() + " from plugin bundle " + workspaceBuilder.getPluginBundleId());
+				builder = bundleHandle.createObject(IBuilder.class, workspaceBuilder.getBuilderClass());
+				logger.trace("builder created: " + builder);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			logger.trace("starting incremental build step...");
+			builder.incrementalBuild(JsonAnalyzer.parse(trigger.getDescriptor()), builderDeltas);
+			logger.trace("incremental build step finished");
 		}
 		
 		logger.trace("finished consuming workspace deltas");
 	}
 
-	/**
-	 * Fetches pending workspace resource deltas from the database.
-	 */
 	private static List<WorkspaceBuildTriggers> fetchAllBuildTriggers() {
 		final long workspaceId = 1;
 		final QWorkspaceBuildTriggers qtrigger = QWorkspaceBuildTriggers.workspaceBuildTriggers;
 		return QueryUtil.fetchMultiple(qtrigger, qtrigger.workspaceId.eq(workspaceId));
 	}
-
-	/**
-	 * Fetches pending workspace resource deltas from the database.
-	 */
+	
+	private static Map<Long, WorkspaceBuilders> fetchWorkspaceBuildersByIdForBuildTriggers(Iterable<WorkspaceBuildTriggers> triggers) {
+		List<Long> workspaceBuilderIds = new ArrayList<Long>();
+		for (WorkspaceBuildTriggers trigger : triggers) {
+			workspaceBuilderIds.add(trigger.getWorkspaceBuilderId());
+		}
+		QWorkspaceBuilders qbuilder = QWorkspaceBuilders.workspaceBuilders;
+		return QueryUtil.from(qbuilder).where(qbuilder.id.in(workspaceBuilderIds)).map(qbuilder.id, qbuilder);
+	}
+	
 	private static List<WorkspaceResourceDeltas> fetchDeltas() {
 		final List<WorkspaceResourceDeltas> deltas = QueryUtil.fetchAll(QWorkspaceResourceDeltas.workspaceResourceDeltas);
 		final List<Long> deltaIds = new ArrayList<Long>();

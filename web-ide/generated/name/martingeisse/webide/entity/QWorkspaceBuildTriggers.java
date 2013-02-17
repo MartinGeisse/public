@@ -29,6 +29,11 @@ public class QWorkspaceBuildTriggers extends com.mysema.query.sql.RelationalPath
     public final StringPath buildscriptPath = createString("buildscript_path");
 
     /**
+     * Metamodel property for property 'descriptor'
+     */
+    public final StringPath descriptor = createString("descriptor");
+
+    /**
      * Metamodel property for property 'id'
      */
     public final NumberPath<Long> id = createNumber("id", Long.class);

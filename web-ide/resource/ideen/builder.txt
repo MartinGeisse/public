@@ -183,6 +183,13 @@ DB:
 	  wenn nur der Ordner dann müssen irgendwo die Inhalte der Datei liegen, der Builder
 	  selbst weiß ja nicht wie die Datei heißt. Besser: der Resource Cache hält den
 	  Inhalt, und hier steht der Pfad zum Build-Script selbst)
+	  --> NEIN! Es gibt zwei Probleme damit:
+	  	1. müsste dann max. 1 Build-Trigger pro Script definierbar sein, sonst weiß
+	  		der Builder gar nicht, welcher Trigger die aktuell ausgelöste ist.
+	  	2. kann dann nicht kontrolliert auf Änderungen im Buildscript selbst
+	  		reagiert werden (Mix aus Aublauf A und B, s.u.)
+	  --> Builder-Definition im Trigger speichern (ist meistens ein 1-3 Zeiler JSON)
+	  
   	- workspace_builder_id (eigentlich nicht unbedingt nötig, da die schon im Buildscript
   	  steht und das auch eh geladen wird. Kommt mir aber trotzdem sauberer vor.)
   	  -> steht sie nicht, aber da steht zumindest der Name. Wenn der eindeutig ist,
@@ -205,9 +212,7 @@ DB:
 4. Zurück zu Punkt 2 bis keine Deltas mehr anliegen
 5. Meta-Builder starten und ggf. einen Clean Build bei betroffenen Triggern auslösen
    und mit den dadurch erzeugten Deltas zurück zu Punkt 1
-   
-   		Meta-Builder ist lower-prio-Task -> läuft nach den anderen
-   
+      	Meta-Builder ist lower-prio-Task -> läuft nach den anderen
 --- Ablauf B ---
 5. Meta-Builder starten, deltas sammeln
 6. Zurück zu Punkt 1
