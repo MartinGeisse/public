@@ -46,15 +46,15 @@ public class BuilderThreadNew {
 		new Thread(BuilderThreadNew.class.getSimpleName()) {
 			@Override
 			public void run() {
-				try {
-					while (true) {
+				while (true) {
+					try {
 						for (final WorkspaceTasks task : fetchPendingTasks()) {
 							executeTask(task);
 						}
 						Thread.sleep(1000);
+					} catch (final Exception e) {
+						logger.error("", e);
 					}
-				} catch (final Exception e) {
-					logger.error("", e);
 				}
 			}
 		}.start();

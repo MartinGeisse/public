@@ -7,7 +7,6 @@
 package name.martingeisse.webide.editor.codemirror.panel;
 
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.build.BuilderService;
 import name.martingeisse.webide.resources.operation.ReplaceFileContentsOperation;
 import name.martingeisse.webide.util.NoTrimTextArea;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
@@ -57,12 +56,11 @@ public class AbstractCodeMirrorEditorPanel extends Panel {
 				ReplaceFileContentsOperation operation = new ReplaceFileContentsOperation(workspaceResourcePath, newContents);
 				operation.run();
 				
-				// request a rebuild and wait for it to finish. TODO: This should be decoupled from editors.
-				BuilderService.requestBuild();
+				// wait for the build to finish to clear the "workspace building" marker. TODO: This should be decoupled from editors.
 				IClientFuture.Behavior.get(getWebPage()).addFuture(new IClientFuture() {
 					@Override
 					public boolean check(Behavior behavior) {
-						boolean compiled = BuilderService.isBuildFinished();
+						boolean compiled = false; // TODO  BuilderService.isBuildFinished();
 						if (compiled) {
 							AjaxRequestUtil.markForRender(getWebPage().get("markersContainer"));
 						}

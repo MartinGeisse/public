@@ -22,7 +22,6 @@ import name.martingeisse.webide.resources.ResourceIconSelector;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
 import name.martingeisse.webide.resources.WorkspaceWicketResourceReference;
-import name.martingeisse.webide.resources.build.BuilderService;
 import name.martingeisse.webide.resources.operation.CreateFileOperation;
 import name.martingeisse.webide.resources.operation.CreateFolderOperation;
 import name.martingeisse.webide.resources.operation.DeleteResourcesOperation;
@@ -315,7 +314,6 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 					i++;
 				}
 				new DeleteResourcesOperation(paths).run();
-				BuilderService.requestBuild();
 				AjaxRequestUtil.markForRender(WorkbenchPage.this.get("filesContainer"));
 			}
 		}, IJavascriptInteractionInterceptor.CONFIRM);
@@ -347,7 +345,7 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 
 			@Override
 			public boolean isVisible() {
-				return !BuilderService.isBuildFinished();
+				return false; // TODO !BuilderService.isBuildFinished();
 			}
 
 			@Override

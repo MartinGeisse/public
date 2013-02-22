@@ -28,6 +28,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.webide.application.Configuration;
 import name.martingeisse.webide.features.java.compiler.classpath.ClassFolderLibraryFileManager;
 import name.martingeisse.webide.features.java.compiler.classpath.JarFileManager;
@@ -40,11 +41,12 @@ import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.MarkerOrigin;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
+import name.martingeisse.webide.resources.build.BuilderResourceDelta;
+import name.martingeisse.webide.resources.build.IBuilder;
 import name.martingeisse.webide.resources.operation.CreateFileOperation;
 import name.martingeisse.webide.resources.operation.CreateResourceMarkerOperation;
 import name.martingeisse.webide.resources.operation.DeleteResourceOperation;
 import name.martingeisse.webide.resources.operation.FetchResourceResult;
-import name.martingeisse.webide.resources.operation.ListResourcesOperation;
 import name.martingeisse.webide.resources.operation.RecursiveDeleteMarkersOperation;
 import name.martingeisse.webide.resources.operation.RecursiveResourceOperation;
 import name.martingeisse.webide.resources.operation.WorkspaceResourceNotFoundException;
@@ -52,28 +54,23 @@ import name.martingeisse.webide.resources.operation.WorkspaceResourceNotFoundExc
 /**
  * This façade is used by the builder thread to invoke the Java compiler.
  */
-public class JavaCompilerFacade {
+public class JavaBuilder implements IBuilder {
 
-	/**
-	 * This method is run by the builder thread.
+	/* (non-Javadoc)
+	 * @see name.martingeisse.webide.resources.build.IBuilder#incrementalBuild(name.martingeisse.common.javascript.analyze.JsonAnalyzer, java.util.Set)
 	 */
-	public static void performCompilation() {
-		ListResourcesOperation list = new ListResourcesOperation(new ResourcePath("/"));
-		list.run();
-		for (FetchResourceResult fetchResult : list.getChildren()) {
-			performCompilation(fetchResult.getPath());
-		}
+	@Override
+	public void incrementalBuild(final JsonAnalyzer descriptorAnalyzer, final Set<BuilderResourceDelta> deltas) {
+		ResourcePath sourcePath = new ResourcePath(descriptorAnalyzer.analyzeMapElement("sourcePath").expectString()); 
+		ResourcePath binaryPath = new ResourcePath(descriptorAnalyzer.analyzeMapElement("binaryPath").expectString()); 
+		performCompilation(sourcePath, binaryPath);
 	}
-	
+
 	/**
 	 * Compiles a single Java project.
 	 */
-	private static void performCompilation(ResourcePath basePath) {
-		
-		// preparation
-		final ResourcePath sourcePath = basePath.appendSegment("src", false);
-		final ResourcePath binaryPath = basePath.appendSegment("bin", false);
-		
+	private static void performCompilation(final ResourcePath sourcePath, final ResourcePath binaryPath) {
+
 		// delete binary files from previous builds
 		new DeleteResourceOperation(binaryPath).run();
 
@@ -83,7 +80,7 @@ public class JavaCompilerFacade {
 		final Locale locale = null;
 		final StandardJavaFileManager standardFileManager = compiler.getStandardFileManager(diagnosticListener, locale, Charset.forName("utf-8"));
 		final PlatformClasspathShieldFileManager wrappedStandardFileManager = new PlatformClasspathShieldFileManager(standardFileManager);
-		
+
 		// create library file managers
 		JavaFileManager fileManager = wrappedStandardFileManager;
 		try {
@@ -102,7 +99,7 @@ public class JavaCompilerFacade {
 				fileManager = new ClassFolderLibraryFileManager(new File("../webapp.wicket/bin"), fileManager);
 				fileManager = new ClassFolderLibraryFileManager(new File("../webapp.common/bin"), fileManager);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -112,8 +109,8 @@ public class JavaCompilerFacade {
 		try {
 			new RecursiveResourceOperation(sourcePath) {
 				@Override
-				protected void onLevelFetched(List<FetchResourceResult> fetchResults) {
-					for (FetchResourceResult fetchResult : fetchResults) {
+				protected void onLevelFetched(final List<FetchResourceResult> fetchResults) {
+					for (final FetchResourceResult fetchResult : fetchResults) {
 						if (fetchResult.getType() == ResourceType.FILE && "java".equals(fetchResult.getPath().getExtension())) {
 							final String key = fetchResult.getPath().removeFirstSegments(sourcePath.getSegmentCount(), true).toString();
 							final IMemoryJavaFileObject fileObject = new MemoryJavaFileObject(key, fetchResult.getContents());
@@ -123,11 +120,11 @@ public class JavaCompilerFacade {
 					}
 				}
 			}.run();
-		} catch (WorkspaceResourceNotFoundException e) {
+		} catch (final WorkspaceResourceNotFoundException e) {
 			// src folder doesn't exist
 			try {
 				memoryFileManager.close();
-			} catch (IOException e2) {
+			} catch (final IOException e2) {
 			}
 			return;
 		}
@@ -145,9 +142,9 @@ public class JavaCompilerFacade {
 		// dispose of the file manager
 		try {
 			memoryFileManager.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 		}
-		
+
 		// collect diagnostic messages per source file
 		final List<Diagnostic<? extends JavaFileObject>> diagnostics = diagnosticListener.getDiagnostics();
 		final Map<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>> sourceFileToDiagnostics = new HashMap<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>>();
@@ -162,10 +159,10 @@ public class JavaCompilerFacade {
 		}
 
 		// these warnings will be ignored because they're nonsense
-		Set<String> ignoredWarnings = new HashSet<String>();
+		final Set<String> ignoredWarnings = new HashSet<String>();
 		ignoredWarnings.add("warning: [package-info] a package-info.java file has already been seen for package unnamed package");
 		ignoredWarnings.add("[package-info] a package-info.java file has already been seen for package unnamed package");
-		
+
 		// generate markers for the diagnostic messages
 		new RecursiveDeleteMarkersOperation(sourcePath, MarkerOrigin.JAVAC).run();
 		for (final Map.Entry<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>> fileEntry : sourceFileToDiagnostics.entrySet()) {
@@ -185,26 +182,26 @@ public class JavaCompilerFacade {
 				}
 
 				// skip erroneous markers
-				String messageText = diagnostic.getMessage(null);
+				final String messageText = diagnostic.getMessage(null);
 				if (meaning == MarkerMeaning.WARNING && ignoredWarnings.contains(messageText)) {
 					continue;
 				}
 
 				// create the marker
-				long line = diagnostic.getLineNumber();
-				long column = diagnostic.getColumnNumber();
+				final long line = diagnostic.getLineNumber();
+				final long column = diagnostic.getColumnNumber();
 				new CreateResourceMarkerOperation(filePath, MarkerOrigin.JAVAC, meaning, line, column, messageText).run();
 
 			}
 		}
-		
+
 		// copy non-Java files over to the output folder
 		new RecursiveResourceOperation(sourcePath) {
 			@Override
-			protected void onLevelFetched(List<FetchResourceResult> fetchResults) {
-				for (FetchResourceResult fetchResult : fetchResults) {
+			protected void onLevelFetched(final List<FetchResourceResult> fetchResults) {
+				for (final FetchResourceResult fetchResult : fetchResults) {
 					if (fetchResult.getType() == ResourceType.FILE && !"java".equals(fetchResult.getPath().getExtension())) {
-						ResourcePath destinationPath = binaryPath.concat(fetchResult.getPath().removeFirstSegments(sourcePath.getSegmentCount(), false), false);
+						final ResourcePath destinationPath = binaryPath.concat(fetchResult.getPath().removeFirstSegments(sourcePath.getSegmentCount(), false), false);
 						new CreateFileOperation(destinationPath, fetchResult.getContents(), true).run();
 					}
 				}

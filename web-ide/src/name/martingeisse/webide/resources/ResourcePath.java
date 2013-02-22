@@ -525,6 +525,9 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	 * must match exactly, that is, the path "foo" is NOT a prefix of "foobar",
 	 * even though string-wise, it is.
 	 * 
+	 * This method checks for a "weak" prefix, i.e. it returns true if the
+	 * two paths are equal (ignoring the trailing separator for equality).
+	 * 
 	 * @param other the path to compare with
 	 * @return true if this path is a prefix of the specified other path, false if not
 	 */
@@ -558,13 +561,34 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 		if (!(untypedOther instanceof ResourcePath)) {
 			return false;
 		}
+
+		// delegate to common code
 		ResourcePath other = (ResourcePath)untypedOther;
-			
+		return equals(other, false);
+		
+	}
+	
+	/**
+	 * Compares this path for equality with another path. This method allows to
+	 * ignore the trailing separator in the comparison.
+	 * @param other the other path to compare with
+	 * @param ignoreTrailingSeparator whether to ignore the trailing separator in the comparison
+	 * @return true if equal, false if not equal
+	 */
+	public boolean equals(ResourcePath other, boolean ignoreTrailingSeparator) {
+		
+		// identity / null check
+		if (this == other) {
+			return true;
+		} else if (other == null) {
+			return false;
+		}
+		
 		// compare simple properties
 		if (leadingSeparator != other.leadingSeparator) {
 			return false;
 		}
-		if (trailingSeparator != other.trailingSeparator) {
+		if (trailingSeparator != other.trailingSeparator && !ignoreTrailingSeparator) {
 			return false;
 		}
 		if (segmentCount != other.segmentCount) {

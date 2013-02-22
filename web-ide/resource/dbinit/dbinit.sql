@@ -224,7 +224,7 @@ INSERT INTO `workspaces` (`id`, `name`, `is_building`) VALUES
 
 INSERT INTO `workspace_resources` (`id`, `workspace_id`, `name`, `type`, `parent_id`, `contents`) VALUES
 (NULL, 1, '', 'FOLDER', NULL, 0),
-(NULL, 1, 'test-project', 'FOLDER', 1, 0),
+(NULL, 1, 'myplugin', 'FOLDER', 1, 0),
 (NULL, 1, 'src', 'FOLDER', 2, 0),
 (NULL, 1, 'Helper.java', 'FILE', 3, 0x7075626c696320636c6173732048656c706572207b0d0a0d0a20207075626c69632073746174696320766f69642068656c702829207b0d0a2020202053797374656d2e6f75742e7072696e746c6e282248656c7065722069732068656c70696e672122293b0d0a20207d0d0a0d0a7d),
 (NULL, 1, 'Main.java', 'FILE', 3, 0x0d0a7075626c696320636c617373204d61696e207b0d0a20207075626c69632073746174696320766f6964206d61696e28537472696e675b5d206172677329207b0d0a2020202053797374656d2e6f75742e7072696e746c6e282248656c6c6f20576f726c642122293b0d0a2020202048656c7065722e68656c7028293b0d0a20207d0d0a7d0d0a),
@@ -237,10 +237,14 @@ INSERT INTO `workspace_resources` (`id`, `workspace_id`, `name`, `type`, `parent
 (NULL, 1, 'dump.vcd', 'FILE', 9, 0x24646174650a09536174204665622031362031313a33343a303420323031330a24656e640a2476657273696f6e0a0949636172757320566572696c6f670a24656e640a2474696d657363616c650a0931730a24656e640a2473636f7065206d6f64756c6520546573742024656e640a24766172207265672031202120612024656e640a24766172207265672031202220622024656e640a24757073636f70652024656e640a24656e64646566696e6974696f6e732024656e640a23300a2464756d70766172730a78220a30210a24656e640a23350a31220a2331300a30220a2331350a31220a2332300a30220a2332350a31220a2333300a30220a2333350a31220a2334300a30220a2334350a31220a2335300a30220a2335350a31220a2336300a30220a2336350a31220a2337300a30220a233130300a31210a233130350a31220a233131300a30220a233131350a31220a233132300a30220a233132350a31220a233133300a30220a233137300a30210a233137350a31220a233138300a30220a233138350a31220a233139300a30220a233139350a31220a233230300a30220a233230350a31220a233231300a30220a233231350a31220a233232300a30220a233234300a31210a233239300a);
 
 INSERT INTO `webide`.`workspace_builders` (`id`, `workspace_id`, `plugin_bundle_id`, `staging_path`, `builder_name`, `builder_class`) VALUES
+(NULL, '1', '1', NULL, 'name.martingeisse.webide.features.java', 'name.martingeisse.webide.features.java.compiler.JavaBuilder'),
+(NULL, '1', '1', NULL, 'name.martingeisse.webide.features.pde', 'name.martingeisse.webide.features.pde.PluginBuilder'),
 (NULL, '1', '1', NULL, 'name.martingeisse.webide.features.verilog', 'name.martingeisse.webide.features.verilog.compiler.VerilogBuilder');
 
 INSERT INTO `webide`.`workspace_build_triggers` (`id`, `workspace_id`, `workspace_builder_id`, `trigger_base_path`, `path_pattern`, `buildscript_path`, `descriptor`) VALUES
-(NULL, '1', '1', '/verilog', '.*\\.v', '/verilog/build.json', 'null');
+(NULL, '1', '1', '/myplugin/src', '.*', '/myplugin/build.json', '{"sourcePath": "/myplugin/src", "binaryPath": "/myplugin/bin"}'),
+(NULL, '1', '2', '/myplugin', '.*', '/myplugin/build.json', '{"descriptorFilePath": "/myplugin/plugin.json", "binPath": "/myplugin/bin", "bundleFilePath": "/myplugin/plugin.jar"}'),
+(NULL, '1', '3', '/verilog', '.*\\.v', '/verilog/build.json', 'null');
 
 
 
