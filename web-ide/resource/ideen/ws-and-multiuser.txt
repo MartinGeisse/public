@@ -1,0 +1,90 @@
+
+Problemstellung:
+
+- Benutzer gegeneinander abschirmen (sensible Daten; Workspace Permissions)
+
+- Plugins gegeneinander abschirmen (Benutzer vor den von ihnen installierten
+	Plugins schützen -- man kann nicht davon ausgehen, dass ein Benutzer
+	vor der Installation jedes Problem abcheckt)
+
+- Workspaces gegeneinander abschirmen
+
+- Workspace Storage, Caching, Change Notifications, History
+
+Mit betroffen ist die Frage, ob Workspaces weiterhin in der SQL-DB oder in
+einer anderen DB oder als Plain Files abgelegt werden sollen.
+
+---
+
+Das Ganze betrifft vor allem Plugins. Built-in Code kann auf üblichem
+Wege fehlerfrei gemacht werden, spielt also in derselben Liga wie der
+Webserver / die Hauptanwendung selbst. 
+
+Plugins sind, soweit die GUI betroffen ist, nicht unbedingt auf Abschirmung
+abgewiesen -> Lua oder ähnliches Scripting statt Java-Code. Wirklich
+problematisch sind externe Tools. Ansätze:
+
+- Temporäre "Toolspaces", die nur für die Dauer des Tools existieren. Das
+  läuft auf temporär existierende Unix-Benutzeraccounts hinaus.
+
+- Workspaces sind als Plain Files abgelegt und die Tools arbeiten darauf.
+  Dann wären vermutlich (IDE-User == Unix-User) und (IDE-Workspace == Unix-Group).
+
+--- Ansatz: Linux-Permissions
+
+Linux unterstützt 2^32 User-Accounts -> machbar. 
+
+- IDE-User =^= Linux-User
+- IDE-Workspace =^= Linux-Usergroup
+- Permissions für "public workspaces":
+	alle Ordner: rwxrwxr-x
+	ausfürbare Dateien: rwxrwxr--
+	normale Dateien: rw-rw-r--
+- Permissions für "private workspaces":
+	alle Ordner: rwxrwx---
+	ausfürbare Dateien: rwxrwx---
+	normale Dateien: rw-rw----
+- File System Listener ist zwingende Voraussetzung. Es soll keinen "Refresh" Button
+	wie im Eclipse geben!
+	-> Java 7 FS Listener; Polling Listener in Apache Commons
+	-> davon abstrahieren, so dass beide Implementierungen verwendet werden können!
+- Keine Unterscheidung zwischen Resource / File wie in Eclipse...?
+	Die Unterscheidung macht das API auf jeden Fall sehr viel komplexer. Wäre cool
+	wenn es ohne ginge! Netzwerk-basierte WS-Storage gibt es hier nicht. Den aktuellen
+	Stand abrufen geht jederzeit über das FS; Änderungen mitbekommen (vor allem Builder)
+	über FS-Listener (-> Delta-Tabelle würde evtl. wieder verschwinden. Die würde so nicht gehen,
+	denn nicht jede Änderung am WS passiert im Java-Code, also kann man auch nicht
+	überall eingreifen und Deltas erzeugen)
+	-> Variante #1: Die Delta-Tabelle verschwindet; Delta == FS-Listener-Event
+	-> Variante #2: Die Delta-Tabelle bleibt; Deltas werden vom FS-Listener erzeugt.
+	---
+	Die Entscheidung hängt vor allem davon ab, ob Builders in der Lage sind, auf isolierte
+	Deltas zu reagieren, da die FS-Listener immer nur ein Delta übergeben bekommen.
+	Im Prinzip wäre es aber simpler und cooler, wenn die Builder direkt auf
+	FS-Change-Events reagieren könnten, statt dass Deltas zwischengelagert werden.
+	Wobei im Task-Queue-Sinne auch die Deltas erzeugt und nachgelagert bearbeitet
+	werden könnten, aber das würde dann über eine echte Task-Queue gehen statt so
+	wie die Deltas jetzt (Vorteil: Der Builder müsste erst erzeugt werden und dazu
+	das Plugin Bundle geladen werden; Insert in die Task Queue geht schneller).
+	
+	???
+	Ansatz: Solange es keine echte Task Queue gibt, reagieren die Builder direkt
+	auf Change Events. -> Dazu müssten die Builder vorgehalten werden, erst noch
+	instanziieren geht zu weit
+
+Große Frage: Wie funktioniert die Trennung zwischen Plugins? Hier wären FreeBSD Jails
+hilfreich! In Linux auch ohne harte Trennung sollte es zumindest einfach sein, die
+Plugins zu trennen, und schwer, dass es Interferenzen gibt. Bausteine:
+
+- GUI darf nicht abstürzen: Auch wenn ein Plugin verrückt spielt, muss es immer
+  möglich sein, es wieder zu deaktivieren, selbst wenn sonst gar nichts geht.
+- Revert Workspace: Nachdem ein Plugin deaktiviert wurde, muss es möglich sein,
+  die Auswirkungen rückgängig zu machen.
+
+Von daher ist die Trennung per Jails zwar wünschenswert, aber nicht so wichtig wie
+die beiden o.g. Punkte.
+
+
+
+
+
