@@ -1,0 +1,24 @@
+
+
+is_building -> is_busy. Entspricht "es gibt noch unerledigte
+Tasks in workspace_tasks für diesen Workspace".
+
+workspace_tasks +short_description, z.B: "Building Workspace", zum Anzeigen,
+alternativ über die Task-Klasse. Darüber wird der Indicator angezeigt.
+
+Probleme: Wenn Tasks ausstehen, muss das Javascript über den Stand informiert
+werden, also Push oder AJAX. Problem: durch Änderungen von anderen Benutzern
+kann der WS auch "busy" sein. Weiteres Problem: "busy" interessiert einen
+nicht immer; was interessiert sind Änderungen im eigenen Bereich. Sonst
+sieht man ständig "busy" wegen Änderungen, die einen gar nicht betreffen.
+Evtl.
+
+Problem #1: Push.
+
+Problem #2: Globales "busy" Flag.
+
+Problem #3: Anzeige *vor* dem ersten AJAX Request (unsaved changes)
+
+
+
+

@@ -38,6 +38,7 @@ import name.martingeisse.wicket.component.contextmenu.ContextMenuSeparator;
 import name.martingeisse.wicket.component.contextmenu.DownloadMenuItem;
 import name.martingeisse.wicket.component.contextmenu.DynamicContextMenuItems;
 import name.martingeisse.wicket.component.contextmenu.FileUploadMenuItem;
+import name.martingeisse.wicket.component.contextmenu.IContextMenuDelegate;
 import name.martingeisse.wicket.component.contextmenu.SimpleContextMenuItem;
 import name.martingeisse.wicket.component.contextmenu.SimpleContextMenuItemWithTextInput;
 import name.martingeisse.wicket.component.tree.IJsTreeCommandHandler;
@@ -223,13 +224,15 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 				for (final ContextMenuStateAccess.Entry entry : ContextMenuStateAccess.get()) {
 					final String className = entry.getClassName();
 					final long pluginBundleId = entry.getPluginBundleId();
-					replacementItems.add(new SimpleContextMenuItem<List<FetchResourceResult>>("Message from " + className) {
+					replacementItems.add(new SimpleContextMenuItem<List<FetchResourceResult>>(entry.getMenuItemName()) {
 						@Override
 						protected void onSelect(final List<FetchResourceResult> anchor) {
 							try {
 								final PluginBundleHandle bundleHandle = new PluginBundleHandle(pluginBundleId);
-								final Runnable runnable = bundleHandle.createObject(Runnable.class, className);
-								runnable.run();
+								final IContextMenuDelegate<?, ?, ?> runnable = bundleHandle.createObject(IContextMenuDelegate.class, className);
+								@SuppressWarnings("unchecked")
+								final IContextMenuDelegate<?, List<FetchResourceResult>, ?> runnable2 = (IContextMenuDelegate<?, List<FetchResourceResult>, ?>)runnable;
+								runnable2.invoke(null, anchor, null);
 							} catch (final Exception e) {
 								throw new RuntimeException(e);
 							}

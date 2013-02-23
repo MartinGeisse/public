@@ -33,8 +33,9 @@ public class ContextMenuStateAccess {
 		List<Entry> entries = new ArrayList<Entry>();
 		for (JsonAnalyzer elementAnalyzer : analyzer.analyzeList()) {
 			long pluginBundleId = elementAnalyzer.analyzeMapElement("pluginBundleId").expectLong();
-			String className = elementAnalyzer.analyzeMapElement("className").expectString();
-			entries.add(new Entry(pluginBundleId, className));
+			String className = elementAnalyzer.analyzeMapElement("class").expectString();
+			String menuItemName = elementAnalyzer.analyzeMapElement("name").expectString();
+			entries.add(new Entry(pluginBundleId, className, menuItemName));
 		}
 		return entries;
 	}
@@ -52,9 +53,11 @@ public class ContextMenuStateAccess {
 		}
 		List<Object> jsonList = new ArrayList<Object>();
 		for (Result extension : ExtensionQuery.fetch(1, "webide.context_menu.resource")) {
+			JsonAnalyzer analyzer = new JsonAnalyzer(extension.getDescriptor());
 			Map<String, Object> jsonMap = new HashMap<String, Object>();
 			jsonMap.put("pluginBundleId", extension.getPluginBundleId());
-			jsonMap.put("className", extension.getDescriptor().toString());
+			jsonMap.put("class", analyzer.analyzeMapElement("class").expectString());
+			jsonMap.put("name", analyzer.analyzeMapElement("name").expectString());
 			jsonList.add(jsonMap);
 		}
 		key.save(jsonList, serializer);
@@ -75,15 +78,22 @@ public class ContextMenuStateAccess {
 		 * the className
 		 */
 		private final String className;
+		
+		/**
+		 * the menuItemName
+		 */
+		private final String menuItemName;
 
 		/**
 		 * Constructor.
 		 * @param pluginBundleId the plugin bundle id
 		 * @param className the class name
+		 * @param menuItemName the name to use for the menu item
 		 */
-		public Entry(final long pluginBundleId, final String className) {
+		public Entry(final long pluginBundleId, final String className, final String menuItemName) {
 			this.pluginBundleId = pluginBundleId;
 			this.className = className;
+			this.menuItemName = menuItemName;
 		}
 
 		/**
@@ -100,6 +110,14 @@ public class ContextMenuStateAccess {
 		 */
 		public String getClassName() {
 			return className;
+		}
+		
+		/**
+		 * Getter method for the menuItemName.
+		 * @return the menuItemName
+		 */
+		public String getMenuItemName() {
+			return menuItemName;
 		}
 		
 	}

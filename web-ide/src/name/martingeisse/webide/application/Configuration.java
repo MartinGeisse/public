@@ -54,6 +54,11 @@ public class Configuration {
 	private static String stderrPath;
 	
 	/**
+	 * the bashPath
+	 */
+	private static String bashPath;
+	
+	/**
 	 * the iverilogPath
 	 */
 	private static String iverilogPath;
@@ -83,6 +88,7 @@ public class Configuration {
 		stdinPath = loadString(properties, "path.stdin");
 		stdoutPath = loadString(properties, "path.stdout");
 		stderrPath = loadString(properties, "path.stderr");
+		bashPath = loadString(properties, "path.tools.bash");
 		iverilogPath = loadString(properties, "path.tools.iverilog");
 	}
 	
@@ -165,6 +171,14 @@ public class Configuration {
 	 */
 	public static String getStderrPath() {
 		return stderrPath;
+	}
+	
+	/**
+	 * Getter method for the bashPath.
+	 * @return the bashPath
+	 */
+	public static String getBashPath() {
+		return bashPath;
 	}
 	
 	/**

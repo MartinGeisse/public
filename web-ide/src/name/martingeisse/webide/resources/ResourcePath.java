@@ -447,6 +447,50 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	public ResourcePath replaceLastSegment(String segment) {
 		return replaceSegment(segmentCount - 1, segment);
 	}
+
+	/**
+	 * Returns a resource path that has the same segments as this path except for
+	 * the last segment. In that segment, the extension is replaced with the specified
+	 * extension. If the last segment did not have an extension, the new extension is added.
+	 * The number of segments must be greater than 0.
+	 * 
+	 * @param newExtension the new extension
+	 * @return the new path
+	 */
+	public ResourcePath replaceExtension(String newExtension) {
+		String oldLastSegment = getLastSegment();
+		int index = oldLastSegment.lastIndexOf('.');
+		String newLastSegment;
+		if (index == -1) {
+			newLastSegment = oldLastSegment + '.' + newExtension;
+		} else {
+			newLastSegment = oldLastSegment.substring(0, index) + '.' + newExtension;
+		}
+		return replaceLastSegment(newLastSegment);
+	}
+
+	/**
+	 * Returns a resource path that has the same segments as this path except for
+	 * the last segment. In that segment, the specified old extension is replaced with
+	 * the specified new extension. If the last segment did not have an extension, or
+	 * had a different extension than the expected old extension, the new extension is
+	 * simply added. The number of segments must be greater than 0.
+	 * 
+	 * @param oldExtension the old extension
+	 * @param newExtension the new extension
+	 * @return the new path
+	 */
+	public ResourcePath replaceExtension(String oldExtension, String newExtension) {
+		String oldLastSegment = getLastSegment();
+		int index = oldLastSegment.lastIndexOf('.');
+		String newLastSegment;
+		if (index == -1 || !oldLastSegment.substring(index + 1).equals(oldExtension)) {
+			newLastSegment = oldLastSegment + '.' + newExtension;
+		} else {
+			newLastSegment = oldLastSegment.substring(0, index) + '.' + newExtension;
+		}
+		return replaceLastSegment(newLastSegment);
+	}
 	
 	/**
 	 * Concatenates this path (as the left-hand path) and the specified right-hand path,

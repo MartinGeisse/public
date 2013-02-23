@@ -47,21 +47,45 @@ public class VerilogBuilder implements IBuilder {
 	 */
 	@Override
 	public void incrementalBuild(final JsonAnalyzer descriptorAnalyzer, final Set<BuilderResourceDelta> deltas) {
-		/* Since we compile each .v file to a .vvp sibling, and deep deltas affect all descendants alike,
-		 * we can treat deep deltas as flat and then filter by extension.
-		 */
+		ResourcePath sourcePath = new ResourcePath(descriptorAnalyzer.analyzeMapElement("sourcePath").expectString()); 
+		ResourcePath binaryPath = new ResourcePath(descriptorAnalyzer.analyzeMapElement("binaryPath").expectString());
 		for (final BuilderResourceDelta delta : deltas) {
-			final String extension = delta.getPath().getExtension();
-			if (extension != null && extension.equals("v")) {
-				compile(descriptorAnalyzer, delta.getPath());
+			
+			// TODO
+			/*
+			if (delta.isDeep()) {
+			} else {
 			}
+			*/
+			
+			ResourcePath deltaPath = delta.getPath();
+			if ("v".equals(deltaPath.getExtension()) && sourcePath.isPrefixOf(deltaPath)) {
+				ResourcePath relativeDeltaPath = deltaPath.removeFirstSegments(sourcePath.getSegmentCount(), false);
+				ResourcePath inputFilePath = sourcePath.concat(relativeDeltaPath, false);
+				ResourcePath outputFilePath = binaryPath.concat(relativeDeltaPath, false).replaceExtension("vvp");
+				
+				compile(descriptorAnalyzer, inputFilePath, outputFilePath);
+			}
+			
 		}
 	}
 
-	private void compile(final JsonAnalyzer descriptorAnalyzer, final ResourcePath path) {
+	@SuppressWarnings("unused")
+	private void cleanBuild(ResourcePath sourcePath, ResourcePath binaryPath) {
+		// TODO
+		// new DeleteResourceOperation(binaryPath).run();
+		// cleanBuildStep(sourcePath, binaryPath);
+	}
+
+	@SuppressWarnings("unused")
+	private void cleanBuildStep(ResourcePath sourcePath, ResourcePath binaryPath) {
+		// TODO
+	}
+
+	private void compile(final JsonAnalyzer descriptorAnalyzer, ResourcePath inputFilePath, ResourcePath outputFilePath) {
 		// System.out.println("Compiling verilog file: " + path);
 
-		final FetchSingleResourceOperation operation = new FetchSingleResourceOperation(path);
+		final FetchSingleResourceOperation operation = new FetchSingleResourceOperation(inputFilePath);
 		operation.run();
 		final FetchResourceResult inputFile = operation.getResult();
 		if (inputFile.getType() != ResourceType.FILE) {
@@ -70,12 +94,8 @@ public class VerilogBuilder implements IBuilder {
 		
 		try {
 			
-			// preparation
-			ResourcePath inputPath = inputFile.getPath();
-			String inputName = inputPath.getLastSegment();
-			String outputName = inputName.substring(0, inputName.length() - 2) + ".vvp";
-			final ResourcePath outputPath = inputPath.removeLastSegment(false).appendSegment(outputName, false);
-			new DeleteResourceOperation(outputPath).run();
+			// delete previous output file
+			new DeleteResourceOperation(outputFilePath).run();
 
 			// build the command line
 			CommandLine commandLine = new CommandLine(Configuration.getIverilogPath());
@@ -95,7 +115,7 @@ public class VerilogBuilder implements IBuilder {
 			executor.execute(commandLine);
 
 			// create the output file
-			new CreateFileOperation(outputPath, outputStream.toByteArray(), true).run();
+			new CreateFileOperation(outputFilePath, outputStream.toByteArray(), true).run();
 			
 		} catch (IOException e) {
 			// TODO error message
