@@ -77,15 +77,15 @@ public final class RecursiveDeleteMarkersOperation extends RecursiveResourceOper
 	 */
 	@Override
 	protected void onLevelFetched(List<FetchResourceResult> fetchResults) {
-		List<Long> resourceIds = new ArrayList<Long>();
+		List<String> pathStrings = new ArrayList<String>();
 		for (FetchResourceResult fetchResult : fetchResults) {
-			resourceIds.add(fetchResult.getId());
+			pathStrings.add(fetchResult.getPath().withTrailingSeparator(false).toString());
 		}
 		if (logger.isTraceEnabled()) {
-			logger.trace("deleting markers for resources with IDs: " + StringUtils.join(resourceIds, ", "));
+			logger.trace("deleting markers for resources with IDs: " + StringUtils.join(pathStrings, ", "));
 		}
 		SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QMarkers.markers);
-		delete.where(QMarkers.markers.workspaceResourceId.in(resourceIds));
+		delete.where(QMarkers.markers.path.in(pathStrings));
 		if (origin != null) {
 			delete.where(QMarkers.markers.origin.eq(origin.toString()));
 		}

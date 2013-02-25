@@ -47,14 +47,14 @@ public class Markers implements Serializable {
     private String origin;
 
     /**
+     * the path
+     */
+    private String path;
+
+    /**
      * the workspaceId
      */
     private Long workspaceId;
-
-    /**
-     * the workspaceResourceId
-     */
-    private Long workspaceResourceId;
 
     /**
      * Getter method for the column.
@@ -153,6 +153,22 @@ public class Markers implements Serializable {
     }
 
     /**
+     * Getter method for the path.
+     * @return the path
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * Setter method for the path.
+     * @param path the path to set
+     */
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    /**
      * Getter method for the workspaceId.
      * @return the workspaceId
      */
@@ -168,28 +184,12 @@ public class Markers implements Serializable {
         this.workspaceId = workspaceId;
     }
 
-    /**
-     * Getter method for the workspaceResourceId.
-     * @return the workspaceResourceId
-     */
-    public Long getWorkspaceResourceId() {
-        return workspaceResourceId;
-    }
-
-    /**
-     * Setter method for the workspaceResourceId.
-     * @param workspaceResourceId the workspaceResourceId to set
-     */
-    public void setWorkspaceResourceId(Long workspaceResourceId) {
-        this.workspaceResourceId = workspaceResourceId;
-    }
-
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "{Markers. column = " + column + ", id = " + id + ", line = " + line + ", meaning = " + meaning + ", message = " + message + ", origin = " + origin + ", workspaceId = " + workspaceId + ", workspaceResourceId = " + workspaceResourceId + "}";
+        return "{Markers. column = " + column + ", id = " + id + ", line = " + line + ", meaning = " + meaning + ", message = " + message + ", origin = " + origin + ", path = " + path + ", workspaceId = " + workspaceId + "}";
     }
 
 }

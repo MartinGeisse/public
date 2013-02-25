@@ -7,17 +7,13 @@
 package name.martingeisse.webide.resources.operation;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.util.ArrayUtil;
 import name.martingeisse.webide.entity.Markers;
 import name.martingeisse.webide.entity.QMarkers;
 import name.martingeisse.webide.resources.MarkerMeaning;
-import name.martingeisse.webide.resources.ResourcePath;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -104,21 +100,10 @@ public final class FetchAllMarkersOperation extends WorkspaceOperation {
 		List<Markers> rawMarkers = query.list(QMarkers.markers);
 		logger.trace("markers fetched.");
 		
-		// lookup paths
-		logger.trace("fetching marker resource paths...");
-		Set<Long> markerResourceIds = new HashSet<Long>();
-		for (Markers marker : rawMarkers) {
-			markerResourceIds.add(marker.getWorkspaceResourceId());
-		}
-		ReversePathLookupOperation reversePathLookupOperation = new ReversePathLookupOperation(markerResourceIds);
-		reversePathLookupOperation.run();
-		Map<Long, ResourcePath> pathMap = reversePathLookupOperation.getResult();
-		logger.trace("marker resource paths fetched.");
-		
 		// build FetchMarkerResult objects
 		this.markers = new ArrayList<FetchMarkerResult>();
 		for (Markers marker : rawMarkers) {
-			this.markers.add(new FetchMarkerResult(pathMap.get(marker.getWorkspaceResourceId()), marker));
+			this.markers.add(new FetchMarkerResult(marker));
 		}
 		
 	}

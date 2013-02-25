@@ -40,7 +40,7 @@ public final class DeleteSingleResourceMarkersOperation extends SingleResourceOp
 	@Override
 	protected void perform(final WorkspaceOperationContext context) {
 		SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QMarkers.markers);
-		delete.where(QMarkers.markers.workspaceResourceId.eq(fetchResourceId(context)));
+		delete.where(QMarkers.markers.path.eq(getPath().withTrailingSeparator(false).toString()));
 		if (origin != null) {
 			delete.where(QMarkers.markers.origin.eq(origin.toString()));
 		}

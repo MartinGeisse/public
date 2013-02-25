@@ -48,15 +48,14 @@ CREATE TABLE IF NOT EXISTS `workspace_resources` (
 CREATE TABLE IF NOT EXISTS `markers` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `workspace_id` bigint(20) NOT NULL,
+  `path` varchar(4096) NOT NULL,
   `origin` varchar(255)  NOT NULL,
   `meaning` varchar(255)  NOT NULL,
-  `workspace_resource_id` bigint(20) NOT NULL,
   `line` bigint(20) NOT NULL COMMENT '1-based',
   `column` bigint(20) NOT NULL COMMENT '1-based',
   `message` varchar(4096)  NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `workspace_id` (`workspace_id`),
-  INDEX `markers_workspace_resource_id` (`workspace_resource_id`)
+  INDEX `workspace_id` (`workspace_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `workspace_resource_deltas` (
@@ -318,7 +317,6 @@ INSERT INTO  `builtin_plugins` (`id`, `plugin_id`) VALUES
 ALTER TABLE `workspace_resources` ADD CONSTRAINT `workspace_resources_ibfk_1` FOREIGN KEY (`workspace_id`) REFERENCES `workspaces` (`id`) ON DELETE CASCADE;
 ALTER TABLE `workspace_resources` ADD CONSTRAINT `workspace_resources_ibfk_2` FOREIGN KEY (`parent_id`) REFERENCES `workspace_resources` (`id`) ON DELETE CASCADE;
 ALTER TABLE `markers` ADD CONSTRAINT `markers_ibfk_1` FOREIGN KEY (`workspace_id`) REFERENCES `workspaces` (`id`) ON DELETE CASCADE;
-ALTER TABLE `markers` ADD CONSTRAINT `markers_ibfk_2` FOREIGN KEY (`workspace_resource_id`) REFERENCES `workspace_resources` (`id`) ON DELETE CASCADE;
 ALTER TABLE `workspace_resource_deltas` ADD CONSTRAINT `workspace_resource_deltas_ibfk_1` FOREIGN KEY (`workspace_id`) REFERENCES `workspaces` (`id`) ON DELETE CASCADE;
 ALTER TABLE `workspace_tasks` ADD CONSTRAINT `workspace_tasks_ibfk_1` FOREIGN KEY (`workspace_id`) REFERENCES `workspaces` (`id`) ON DELETE CASCADE;
 ALTER TABLE `workspace_builders` ADD CONSTRAINT `workspace_builders_ibfk_1` FOREIGN KEY (`workspace_id`) REFERENCES `workspaces` (`id`) ON DELETE CASCADE;

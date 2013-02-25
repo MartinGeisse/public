@@ -96,7 +96,7 @@ public final class FetchSingleResourceMarkersOperation extends SingleResourceOpe
 		}
 		SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		query = query.from(QMarkers.markers);
-		query = query.where(QMarkers.markers.workspaceResourceId.eq(fetchResourceId(context)));
+		query = query.where(QMarkers.markers.path.eq(getPath().withTrailingSeparator(false).toString()));
 		if (meaningFilter != null) {
 			query = query.where(QMarkers.markers.meaning.in(ArrayUtil.toStringArray(meaningFilter)));
 		}
@@ -107,7 +107,7 @@ public final class FetchSingleResourceMarkersOperation extends SingleResourceOpe
 		// build FetchMarkerResult objects
 		this.markers = new ArrayList<FetchMarkerResult>();
 		for (Markers marker : rawMarkers) {
-			this.markers.add(new FetchMarkerResult(getPath(), marker));
+			this.markers.add(new FetchMarkerResult(marker));
 		}
 		
 	}

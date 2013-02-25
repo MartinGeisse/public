@@ -69,11 +69,6 @@ public class QWorkspaceResources extends com.mysema.query.sql.RelationalPathBase
     public final com.mysema.query.sql.ForeignKey<WorkspaceResources> fk_workspaceResourcesIbfk2 = createForeignKey(parentId, "id");
 
     /**
-     * Metamodel property for reverse foreign key 'markers_ibfk_2'
-     */
-    public final com.mysema.query.sql.ForeignKey<Markers> fk__markersIbfk2 = createInvForeignKey(id, "workspace_resource_id");
-
-    /**
      * Metamodel property for reverse foreign key 'workspace_resources_ibfk_2'
      */
     public final com.mysema.query.sql.ForeignKey<WorkspaceResources> fk__workspaceResourcesIbfk2 = createInvForeignKey(id, "parent_id");

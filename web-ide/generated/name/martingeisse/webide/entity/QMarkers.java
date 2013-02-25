@@ -54,24 +54,19 @@ public class QMarkers extends com.mysema.query.sql.RelationalPathBase<Markers> {
     public final StringPath origin = createString("origin");
 
     /**
+     * Metamodel property for property 'path'
+     */
+    public final StringPath path = createString("path");
+
+    /**
      * Metamodel property for property 'workspace_id'
      */
     public final NumberPath<Long> workspaceId = createNumber("workspace_id", Long.class);
 
     /**
-     * Metamodel property for property 'workspace_resource_id'
-     */
-    public final NumberPath<Long> workspaceResourceId = createNumber("workspace_resource_id", Long.class);
-
-    /**
      * Metamodel property for primary key 'PRIMARY'
      */
     public final com.mysema.query.sql.PrimaryKey<Markers> pk_primary = createPrimaryKey(id);
-
-    /**
-     * Metamodel property for foreign key 'markers_ibfk_2'
-     */
-    public final com.mysema.query.sql.ForeignKey<WorkspaceResources> fk_markersIbfk2 = createForeignKey(workspaceResourceId, "id");
 
     /**
      * Metamodel property for foreign key 'markers_ibfk_1'

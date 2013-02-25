@@ -6,6 +6,7 @@
 
 package name.martingeisse.webide.resources.operation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -51,13 +52,13 @@ public final class DeleteMultipleResourcesMarkersOperation extends MultipleResou
 	 */
 	@Override
 	protected void perform(final WorkspaceOperationContext context) {
-		List<Long> resourceIds = fetchResourceIds(context);
-		if (resourceIds.size() < getPaths().length) {
-			throw new WorkspaceOperationException("missing resource or duplicate path");
+		List<String> pathStrings = new ArrayList<String>();
+		for (ResourcePath path : getPaths()) {
+			pathStrings.add(path.withTrailingSeparator(false).toString());
 		}
 		trace("will delete resource markers now", getPaths());
 		SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QMarkers.markers);
-		delete.where(QMarkers.markers.workspaceResourceId.in(resourceIds));
+		delete.where(QMarkers.markers.path.in(pathStrings));
 		if (origin != null) {
 			delete.where(QMarkers.markers.origin.eq(origin.toString()));
 		}

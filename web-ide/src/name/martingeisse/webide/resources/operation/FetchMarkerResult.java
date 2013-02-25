@@ -49,11 +49,10 @@ public final class FetchMarkerResult implements Serializable {
 
 	/**
 	 * Constructor.
-	 * @param resourcePath the path of the resource that owns this marker
 	 * @param marker the marker to create this object from
 	 */
-	FetchMarkerResult(ResourcePath resourcePath, Markers marker) {
-		this.resourcePath = resourcePath;
+	FetchMarkerResult(Markers marker) {
+		this.resourcePath = new ResourcePath(marker.getPath());
 		this.origin = MarkerOrigin.valueOf(marker.getOrigin());
 		this.meaning = MarkerMeaning.valueOf(marker.getMeaning());
 		this.line = marker.getLine();

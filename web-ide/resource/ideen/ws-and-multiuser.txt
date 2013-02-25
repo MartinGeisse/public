@@ -34,8 +34,14 @@ problematisch sind externe Tools. Ansätze:
 
 Linux unterstützt 2^32 User-Accounts -> machbar. 
 
+1. Idee
 - IDE-User =^= Linux-User
 - IDE-Workspace =^= Linux-Usergroup
+ODER 2. Idee
+- IDE-User =^= (keine Linux-Entsprechung)
+- IDE-Workspace =^= Linux-User
+
+bei 1. Idee:
 - Permissions für "public workspaces":
 	alle Ordner: rwxrwxr-x
 	ausfürbare Dateien: rwxrwxr--
@@ -84,7 +90,10 @@ Plugins zu trennen, und schwer, dass es Interferenzen gibt. Bausteine:
 Von daher ist die Trennung per Jails zwar wünschenswert, aber nicht so wichtig wie
 die beiden o.g. Punkte.
 
+---
 
+bei 2. Idee ist zumindest klar, auf welchen User die WS-Ressourcen gemünzt werden
+(den WS-User / WS-Group). Mit diesem USer werden auch die Tools gestartet.
 
 
 
