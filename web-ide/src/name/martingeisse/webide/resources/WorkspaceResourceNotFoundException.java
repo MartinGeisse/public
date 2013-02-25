@@ -4,9 +4,8 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.resources.operation;
+package name.martingeisse.webide.resources;
 
-import name.martingeisse.webide.resources.ResourcePath;
 
 /**
  * An exception that indicates a missing workspace resource.

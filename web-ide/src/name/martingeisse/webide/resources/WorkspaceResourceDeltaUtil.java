@@ -4,13 +4,12 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.resources.operation;
+package name.martingeisse.webide.resources;
 
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.webide.entity.QWorkspaceResourceDeltas;
 import name.martingeisse.webide.entity.QWorkspaceTasks;
 import name.martingeisse.webide.entity.QWorkspaces;
-import name.martingeisse.webide.resources.ResourcePath;
 
 import org.apache.log4j.Logger;
 

@@ -6,10 +6,11 @@
 
 package name.martingeisse.webide.ssh.workspace;
 
+import java.io.File;
 import java.io.PrintWriter;
 
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.operation.FetchSingleResourceOperation;
+import name.martingeisse.webide.resources.Workspace;
 
 /**
  * Implements the "cd" command.
@@ -25,19 +26,17 @@ public final class CdTool implements IWorkspaceTool {
 			err.println("usage: cd <path>\r\n");
 			return;
 		}
-		try {
-			ResourcePath specifiedTargetPath = new ResourcePath(arguments[0]);
-			ResourcePath resolvedTargetPath = context.getCurrentWorkingDirectory().concat(specifiedTargetPath, true).collapse();
-			FetchSingleResourceOperation fetchOperation = new FetchSingleResourceOperation(resolvedTargetPath);
-			fetchOperation.run();
-			if (fetchOperation.getResult() == null) {
-				err.print("No such folder.\r\n");
-				return;
-			}
-			context.setCurrentWorkingDirectory(resolvedTargetPath);
-		} catch (Exception e) {
-			err.print(e.getMessage() + "\r\n");
+		ResourcePath specifiedTargetPath = new ResourcePath(arguments[0]);
+		ResourcePath resolvedTargetPath = context.getCurrentWorkingDirectory().concat(specifiedTargetPath, true).collapse();
+		File target = Workspace.map(resolvedTargetPath);
+		if (!target.exists()) {
+			err.print("No such folder.\r\n");
 			return;
+		} else if (!target.isDirectory()) {
+			err.print("Specified target is not a folder.\r\n");
+			return;
+		} else {
+			context.setCurrentWorkingDirectory(resolvedTargetPath);
 		}
 	}
 

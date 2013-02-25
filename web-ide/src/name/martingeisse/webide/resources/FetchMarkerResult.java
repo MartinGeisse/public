@@ -1,14 +1,11 @@
 /**
  * This file was generated from the database schema.
  */
-package name.martingeisse.webide.resources.operation;
+package name.martingeisse.webide.resources;
 
 import java.io.Serializable;
 
 import name.martingeisse.webide.entity.Markers;
-import name.martingeisse.webide.resources.MarkerMeaning;
-import name.martingeisse.webide.resources.MarkerOrigin;
-import name.martingeisse.webide.resources.ResourcePath;
 
 /**
  * This class keeps data fields for a marker fetched from

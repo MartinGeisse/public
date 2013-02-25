@@ -8,8 +8,8 @@ package name.martingeisse.webide.workbench;
 
 import java.util.List;
 
+import name.martingeisse.webide.resources.FetchMarkerResult;
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.operation.FetchMarkerResult;
 
 import org.apache.wicket.Component;
 

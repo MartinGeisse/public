@@ -8,10 +8,6 @@ package name.martingeisse.webide.resources;
 
 import java.util.List;
 
-import name.martingeisse.webide.resources.operation.FetchAllMarkersOperation;
-import name.martingeisse.webide.resources.operation.FetchMarkerResult;
-import name.martingeisse.webide.resources.operation.FetchSingleResourceMarkersOperation;
-
 import org.apache.wicket.model.AbstractReadOnlyModel;
 
 /**
@@ -65,13 +61,9 @@ public class MarkerDataListModel extends AbstractReadOnlyModel<List<FetchMarkerR
 	@Override
 	public List<FetchMarkerResult> getObject() {
 		if (path != null) {
-			FetchSingleResourceMarkersOperation operation = new FetchSingleResourceMarkersOperation(path, meaningFilter, limit);
-			operation.run();
-			return operation.getMarkers();
+			return Workspace.fetchSingleResourceMarkers(path, meaningFilter, limit);
 		} else {
-			FetchAllMarkersOperation operation = new FetchAllMarkersOperation(meaningFilter, limit);
-			operation.run();
-			return operation.getMarkers();
+			return Workspace.fetchAllMarkers(meaningFilter, limit);
 		}
 	}
 	

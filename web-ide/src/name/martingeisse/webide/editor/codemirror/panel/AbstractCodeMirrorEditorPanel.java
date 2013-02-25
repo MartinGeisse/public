@@ -7,7 +7,7 @@
 package name.martingeisse.webide.editor.codemirror.panel;
 
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.operation.ReplaceFileContentsOperation;
+import name.martingeisse.webide.resources.Workspace;
 import name.martingeisse.webide.util.NoTrimTextArea;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 import name.martingeisse.wicket.util.IClientFuture;
@@ -53,8 +53,7 @@ public class AbstractCodeMirrorEditorPanel extends Panel {
 				// save the resource
 				final ResourcePath workspaceResourcePath = AbstractCodeMirrorEditorPanel.this.workspaceResourcePath;
 				final String newContents = (String)AbstractCodeMirrorEditorPanel.this.getDefaultModelObject();
-				ReplaceFileContentsOperation operation = new ReplaceFileContentsOperation(workspaceResourcePath, newContents);
-				operation.run();
+				Workspace.createFile(workspaceResourcePath, newContents, true);
 				
 				// wait for the build to finish to clear the "workspace building" marker. TODO: This should be decoupled from editors.
 				IClientFuture.Behavior.get(getWebPage()).addFuture(new IClientFuture() {

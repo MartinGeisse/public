@@ -10,7 +10,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 import name.martingeisse.webide.editor.AbstractEditor;
-import name.martingeisse.webide.resources.operation.FetchMarkerResult;
+import name.martingeisse.webide.resources.FetchMarkerResult;
 import name.martingeisse.webide.workbench.IEditor;
 
 /**

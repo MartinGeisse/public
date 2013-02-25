@@ -39,17 +39,12 @@ import name.martingeisse.webide.features.java.compiler.memfile.MemoryFileManager
 import name.martingeisse.webide.features.java.compiler.memfile.MemoryJavaFileObject;
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.MarkerOrigin;
+import name.martingeisse.webide.resources.RecursiveResourceOperation;
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.ResourceType;
+import name.martingeisse.webide.resources.Workspace;
+import name.martingeisse.webide.resources.WorkspaceResourceNotFoundException;
 import name.martingeisse.webide.resources.build.BuilderResourceDelta;
 import name.martingeisse.webide.resources.build.IBuilder;
-import name.martingeisse.webide.resources.operation.CreateFileOperation;
-import name.martingeisse.webide.resources.operation.CreateResourceMarkerOperation;
-import name.martingeisse.webide.resources.operation.DeleteResourceOperation;
-import name.martingeisse.webide.resources.operation.FetchResourceResult;
-import name.martingeisse.webide.resources.operation.RecursiveDeleteMarkersOperation;
-import name.martingeisse.webide.resources.operation.RecursiveResourceOperation;
-import name.martingeisse.webide.resources.operation.WorkspaceResourceNotFoundException;
 
 /**
  * This façade is used by the builder thread to invoke the Java compiler.
@@ -72,7 +67,7 @@ public class JavaBuilder implements IBuilder {
 	private static void performCompilation(final ResourcePath sourcePath, final ResourcePath binaryPath) {
 
 		// delete binary files from previous builds
-		new DeleteResourceOperation(binaryPath).run();
+		Workspace.delete(binaryPath);
 
 		// obtain the standard file manager so we can include the boot classpath
 		final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -107,19 +102,17 @@ public class JavaBuilder implements IBuilder {
 		final MemoryFileManager memoryFileManager = new MemoryFileManager(fileManager);
 		final List<JavaFileObject> javaFiles = new ArrayList<JavaFileObject>();
 		try {
-			new RecursiveResourceOperation(sourcePath) {
+			new RecursiveResourceOperation() {
 				@Override
-				protected void onLevelFetched(final List<FetchResourceResult> fetchResults) {
-					for (final FetchResourceResult fetchResult : fetchResults) {
-						if (fetchResult.getType() == ResourceType.FILE && "java".equals(fetchResult.getPath().getExtension())) {
-							final String key = fetchResult.getPath().removeFirstSegments(sourcePath.getSegmentCount(), true).toString();
-							final IMemoryJavaFileObject fileObject = new MemoryJavaFileObject(key, fetchResult.getContents());
-							javaFiles.add(fileObject);
-							memoryFileManager.getInputFiles().put(key, fileObject);
-						}
+				protected void handleFile(ResourcePath path, File file) {
+					if ("java".equals(path.getExtension())) {
+						final String key = path.removeFirstSegments(sourcePath.getSegmentCount(), true).toString();
+						final IMemoryJavaFileObject fileObject = new MemoryJavaFileObject(key, Workspace.readBinaryFile(path, true));
+						javaFiles.add(fileObject);
+						memoryFileManager.getInputFiles().put(key, fileObject);
 					}
 				}
-			}.run();
+			}.handle(sourcePath);
 		} catch (final WorkspaceResourceNotFoundException e) {
 			// src folder doesn't exist
 			try {
@@ -134,9 +127,9 @@ public class JavaBuilder implements IBuilder {
 		/* final boolean success = */task.call();
 
 		// save the class files in the database
-		for (final IMemoryFileObject file : memoryFileManager.getOutputFiles().values()) {
-			final ResourcePath path = new ResourcePath(binaryPath.toString() + file.getName());
-			new CreateFileOperation(path, file.getBinaryContent(), true).run();
+		for (final IMemoryFileObject fileObject : memoryFileManager.getOutputFiles().values()) {
+			final ResourcePath path = new ResourcePath(binaryPath.toString() + fileObject.getName());
+			Workspace.createFile(path, fileObject.getBinaryContent(), true);
 		}
 
 		// dispose of the file manager
@@ -164,7 +157,7 @@ public class JavaBuilder implements IBuilder {
 		ignoredWarnings.add("[package-info] a package-info.java file has already been seen for package unnamed package");
 
 		// generate markers for the diagnostic messages
-		new RecursiveDeleteMarkersOperation(sourcePath, MarkerOrigin.JAVAC).run();
+		Workspace.deleteMarkersRecursively(sourcePath, MarkerOrigin.JAVAC);
 		for (final Map.Entry<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>> fileEntry : sourceFileToDiagnostics.entrySet()) {
 			ResourcePath filePath = new ResourcePath(fileEntry.getKey().getName());
 			filePath = sourcePath.concat(filePath.withLeadingSeparator(false), false);
@@ -190,24 +183,22 @@ public class JavaBuilder implements IBuilder {
 				// create the marker
 				final long line = diagnostic.getLineNumber();
 				final long column = diagnostic.getColumnNumber();
-				new CreateResourceMarkerOperation(filePath, MarkerOrigin.JAVAC, meaning, line, column, messageText).run();
+				Workspace.createMarker(filePath, MarkerOrigin.JAVAC, meaning, line, column, messageText);
 
 			}
 		}
 
 		// copy non-Java files over to the output folder
-		new RecursiveResourceOperation(sourcePath) {
+		new RecursiveResourceOperation() {
 			@Override
-			protected void onLevelFetched(final List<FetchResourceResult> fetchResults) {
-				for (final FetchResourceResult fetchResult : fetchResults) {
-					if (fetchResult.getType() == ResourceType.FILE && !"java".equals(fetchResult.getPath().getExtension())) {
-						final ResourcePath destinationPath = binaryPath.concat(fetchResult.getPath().removeFirstSegments(sourcePath.getSegmentCount(), false), false);
-						new CreateFileOperation(destinationPath, fetchResult.getContents(), true).run();
-					}
+			protected void handleFile(ResourcePath sourceFilePath, File sourceFile) {
+				if (!"java".equals(sourceFilePath.getExtension())) {
+					final ResourcePath destinationFilePath = binaryPath.concat(sourceFilePath.removeFirstSegments(sourcePath.getSegmentCount(), false), false);
+					Workspace.copyFile(sourceFilePath, destinationFilePath, true);
 				}
 			}
-		}.run();
-
+		}.handle(sourcePath);
+		
 	}
 
 }

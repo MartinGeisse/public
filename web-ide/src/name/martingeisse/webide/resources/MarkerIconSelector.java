@@ -7,7 +7,6 @@
 package name.martingeisse.webide.resources;
 
 import name.martingeisse.webide.entity.Markers;
-import name.martingeisse.webide.resources.operation.FetchMarkerResult;
 import name.martingeisse.wicket.icons.silk.Dummy;
 
 import org.apache.wicket.request.resource.PackageResourceReference;

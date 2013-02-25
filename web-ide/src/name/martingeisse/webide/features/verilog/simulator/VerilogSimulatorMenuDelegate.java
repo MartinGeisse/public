@@ -15,11 +15,12 @@ import java.util.List;
 
 import name.martingeisse.common.util.TemporaryFolder;
 import name.martingeisse.webide.application.Configuration;
+import name.martingeisse.webide.resources.FetchResourceResult;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
+import name.martingeisse.webide.resources.Workspace;
 import name.martingeisse.webide.resources.operation.CreateFileOperation;
 import name.martingeisse.webide.resources.operation.DeleteResourceOperation;
-import name.martingeisse.webide.resources.operation.FetchResourceResult;
 import name.martingeisse.wicket.component.contextmenu.IContextMenuDelegate;
 
 import org.apache.commons.exec.CommandLine;
@@ -97,8 +98,7 @@ public class VerilogSimulatorMenuDelegate implements IContextMenuDelegate<Object
 				if (file.isFile()) {
 					ResourcePath outputPath = outputFolderPath.appendSegment(file.getName(), false);
 					logger.trace("creating output file " + outputPath + " from " + file);
-					new DeleteResourceOperation(outputPath).run();
-					new CreateFileOperation(outputPath, FileUtils.readFileToByteArray(file), true).run();
+					FileUtils.copyFile(file, Workspace.map(outputPath));
 					logger.trace("output file created");
 				} else {
 					logger.trace("skipping (not a file): " + file);

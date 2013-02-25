@@ -6,11 +6,10 @@
 
 package name.martingeisse.webide.ssh.workspace;
 
+import java.io.File;
 import java.io.PrintWriter;
 
-import name.martingeisse.webide.resources.operation.FetchResourceResult;
-import name.martingeisse.webide.resources.operation.ListResourcesOperation;
-import name.martingeisse.webide.resources.operation.WorkspaceResourceNotFoundException;
+import name.martingeisse.webide.resources.Workspace;
 
 /**
  * Implements the "ls" command.
@@ -25,16 +24,9 @@ public final class LsTool implements IWorkspaceTool {
 		if (arguments.length > 0) {
 			err.print("this tool does not understand any arguments\r\n");
 		}
-		ListResourcesOperation operation = new ListResourcesOperation(context.getCurrentWorkingDirectory());
-		try {
-			operation.run();
-		} catch (WorkspaceResourceNotFoundException e) {
-			err.print(e.getMessage());
-			err.print("\r\n");
-			return;
-		}
-		for (FetchResourceResult result : operation.getChildren()) {
-			out.print(result.getPath().getLastSegment());
+		File currentFolder = Workspace.map(context.getCurrentWorkingDirectory());
+		for (File file : currentFolder.listFiles()) {
+			out.print(file.getName());
 			out.print("\r\n");
 		}
 	}

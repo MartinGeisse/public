@@ -1,0 +1,7 @@
+{
+	"extensions": {
+		"webide.context_menu.resource": [
+			"MyMessage"
+		]
+	}
+}

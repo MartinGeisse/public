@@ -7,9 +7,9 @@
 package name.martingeisse.webide.features.pde;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.List;
 import java.util.Set;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
@@ -22,17 +22,13 @@ import name.martingeisse.webide.entity.QWorkspaceStagingPlugins;
 import name.martingeisse.webide.plugin.InternalPluginUtil;
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.MarkerOrigin;
+import name.martingeisse.webide.resources.RecursiveResourceOperation;
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.ResourceType;
+import name.martingeisse.webide.resources.Workspace;
 import name.martingeisse.webide.resources.build.BuilderResourceDelta;
 import name.martingeisse.webide.resources.build.IBuilder;
-import name.martingeisse.webide.resources.operation.CreateFileOperation;
-import name.martingeisse.webide.resources.operation.CreateResourceMarkerOperation;
-import name.martingeisse.webide.resources.operation.DeleteResourceOperation;
-import name.martingeisse.webide.resources.operation.DeleteSingleResourceMarkersOperation;
-import name.martingeisse.webide.resources.operation.FetchResourceResult;
-import name.martingeisse.webide.resources.operation.FetchSingleResourceOperation;
-import name.martingeisse.webide.resources.operation.RecursiveResourceOperation;
+
+import org.apache.commons.io.FileUtils;
 
 import com.mysema.query.sql.dml.SQLDeleteClause;
 import com.mysema.query.sql.dml.SQLInsertClause;
@@ -94,19 +90,14 @@ public class PluginBuilder implements IBuilder {
 		final long workspaceId = 1;
 
 		// clean previous build
-		new DeleteSingleResourceMarkersOperation(descriptorFilePath, MarkerOrigin.PDE).run();
-		new DeleteResourceOperation(bundleFilePath).run();
+		Workspace.deleteMarkers(descriptorFilePath, MarkerOrigin.PDE);
+		Workspace.delete(bundleFilePath);
 
-		// fetch the plugin descriptor, stop if not found
-		final FetchSingleResourceOperation fetchDescriptorFileOperation = new FetchSingleResourceOperation(descriptorFilePath);
-		fetchDescriptorFileOperation.run();
-		final FetchResourceResult fetchDescriptorResult = fetchDescriptorFileOperation.getResult();
-		if (fetchDescriptorResult == null || fetchDescriptorResult.getType() != ResourceType.FILE) {
+		// fetch the plugin descriptor, stop if not found or invalid
+		final String pluginBundleDescriptorSourceCode = Workspace.readTextFile(descriptorFilePath, false);
+		if (pluginBundleDescriptorSourceCode == null) {
 			return;
 		}
-
-		// validate the descriptor
-		final String pluginBundleDescriptorSourceCode = new String(fetchDescriptorResult.getContents(), Charset.forName("utf-8"));
 		if (!validateDescriptor(descriptorFilePath, pluginBundleDescriptorSourceCode)) {
 			return;
 		}
@@ -114,7 +105,7 @@ public class PluginBuilder implements IBuilder {
 		// build and install the plugin
 		final byte[] jarFile = generateJarFile(binPath, bundleFilePath);
 		uploadPlugin(pluginBundleDescriptorSourceCode, jarFile, workspaceId);
-
+		
 	}
 
 	/**
@@ -134,8 +125,7 @@ public class PluginBuilder implements IBuilder {
 			}
 			return true;
 		} catch (final Exception e) {
-			final CreateResourceMarkerOperation operation = new CreateResourceMarkerOperation(descriptorFilePath, MarkerOrigin.PDE, MarkerMeaning.ERROR, 1L, 1L, e.toString());
-			operation.run();
+			Workspace.createMarker(descriptorFilePath, MarkerOrigin.PDE, MarkerMeaning.ERROR, 1L, 1L, e.toString());
 			return false;
 		}
 	}
@@ -156,27 +146,23 @@ public class PluginBuilder implements IBuilder {
 			jarOutputStream.write("Manifest-Version: 1.0\n".getBytes(Charset.forName("utf-8")));
 
 			// add class files
-			new RecursiveResourceOperation(binPath) {
+			new RecursiveResourceOperation() {
 				@Override
-				protected void onLevelFetched(final List<FetchResourceResult> fetchResults) {
+				protected void handleFile(ResourcePath path, File file) {
 					try {
-						for (final FetchResourceResult fetchResult : fetchResults) {
-							final String zipEntryPath = fetchResult.getPath().removeFirstSegments(binPath.getSegmentCount(), false).toString();
-							if (fetchResult.getType() == ResourceType.FILE) {
-								jarOutputStream.putNextEntry(new ZipEntry(zipEntryPath.toString()));
-								jarOutputStream.write(fetchResult.getContents());
-							}
-						}
+						final String zipEntryPath = path.removeFirstSegments(binPath.getSegmentCount(), false).toString();
+						jarOutputStream.putNextEntry(new ZipEntry(zipEntryPath.toString()));
+						FileUtils.copyFile(file, jarOutputStream);
 					} catch (final IOException e) {
 						throw new RuntimeException(e);
 					}
 				}
-			}.run();
+			}.handle(binPath);
 
 			// finish the JAR file and write it to the workspace
 			jarOutputStream.close();
 			final byte[] contents = byteArrayOutputStream.toByteArray();
-			new CreateFileOperation(jarPath, contents, true).run();
+			Workspace.createFile(jarPath, contents, true);
 			return contents;
 
 		} catch (final IOException e) {

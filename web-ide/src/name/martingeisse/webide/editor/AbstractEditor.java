@@ -9,8 +9,7 @@ package name.martingeisse.webide.editor;
 import java.io.Serializable;
 
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.operation.FetchSingleResourceOperation;
-import name.martingeisse.webide.resources.operation.WorkspaceResourceNotFoundException;
+import name.martingeisse.webide.resources.Workspace;
 import name.martingeisse.webide.workbench.IEditor;
 
 /**
@@ -35,13 +34,8 @@ public abstract class AbstractEditor<D extends Serializable> implements IEditor,
 	 */
 	@Override
 	public final void initialize(ResourcePath workspaceResourcePath) {
-		FetchSingleResourceOperation operation = new FetchSingleResourceOperation(workspaceResourcePath);
-		operation.run();
-		if (operation.getResult() == null) {
-			throw new WorkspaceResourceNotFoundException(workspaceResourcePath);
-		}
 		this.workspaceResourcePath = workspaceResourcePath;
-		this.document = createDocument(operation.getResult().getContents());
+		this.document = createDocument(Workspace.readBinaryFile(workspaceResourcePath, true));
 	}
 
 	/**

@@ -17,19 +17,20 @@ import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.common.util.string.EmptyIterator;
 import name.martingeisse.webide.plugin.InternalPluginUtil;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
+import name.martingeisse.webide.resources.FetchMarkerResult;
+import name.martingeisse.webide.resources.FetchResourceResult;
 import name.martingeisse.webide.resources.MarkerListView;
 import name.martingeisse.webide.resources.ResourceIconSelector;
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.ResourceType;
+import name.martingeisse.webide.resources.Workspace;
+import name.martingeisse.webide.resources.WorkspaceOperationException;
+import name.martingeisse.webide.resources.WorkspaceResourceCollisionException;
 import name.martingeisse.webide.resources.WorkspaceWicketResourceReference;
 import name.martingeisse.webide.resources.operation.CreateFileOperation;
 import name.martingeisse.webide.resources.operation.CreateFolderOperation;
 import name.martingeisse.webide.resources.operation.DeleteResourcesOperation;
-import name.martingeisse.webide.resources.operation.FetchMarkerResult;
-import name.martingeisse.webide.resources.operation.FetchResourceResult;
 import name.martingeisse.webide.resources.operation.ListResourcesOperation;
-import name.martingeisse.webide.resources.operation.WorkspaceOperationException;
-import name.martingeisse.webide.resources.operation.WorkspaceResourceCollisionException;
 import name.martingeisse.webide.workbench.services.IWorkbenchEditorService;
 import name.martingeisse.webide.workbench.services.IWorkbenchServicesProvider;
 import name.martingeisse.wicket.component.contextmenu.ContextMenu;
@@ -470,7 +471,7 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 				String name = modifyUploadedFileName(fileItem.getName(), i);
 				ResourcePath path = destinationFolderPath.appendSegment(name, false);
 				try {
-					new CreateFileOperation(path, contents, false).run();
+					Workspace.createFile(path, contents, false);
 					return;
 				} catch (WorkspaceResourceCollisionException e) {
 				}

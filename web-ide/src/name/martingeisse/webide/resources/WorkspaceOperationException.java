@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.resources.operation;
+package name.martingeisse.webide.resources;
 
 /**
  * An exception that can be thrown during workspace operations.

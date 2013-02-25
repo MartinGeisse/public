@@ -15,13 +15,9 @@ import java.util.Set;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.webide.application.Configuration;
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.ResourceType;
+import name.martingeisse.webide.resources.Workspace;
 import name.martingeisse.webide.resources.build.BuilderResourceDelta;
 import name.martingeisse.webide.resources.build.IBuilder;
-import name.martingeisse.webide.resources.operation.CreateFileOperation;
-import name.martingeisse.webide.resources.operation.DeleteResourceOperation;
-import name.martingeisse.webide.resources.operation.FetchResourceResult;
-import name.martingeisse.webide.resources.operation.FetchSingleResourceOperation;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -83,19 +79,16 @@ public class VerilogBuilder implements IBuilder {
 	}
 
 	private void compile(final JsonAnalyzer descriptorAnalyzer, ResourcePath inputFilePath, ResourcePath outputFilePath) {
-		// System.out.println("Compiling verilog file: " + path);
-
-		final FetchSingleResourceOperation operation = new FetchSingleResourceOperation(inputFilePath);
-		operation.run();
-		final FetchResourceResult inputFile = operation.getResult();
-		if (inputFile.getType() != ResourceType.FILE) {
-			return;
-		}
-		
 		try {
 			
+			// read the input file
+			byte[] inputData = Workspace.readBinaryFile(inputFilePath, false);
+			if (inputData == null) {
+				return;
+			}
+			
 			// delete previous output file
-			new DeleteResourceOperation(outputFilePath).run();
+			Workspace.delete(outputFilePath);
 
 			// build the command line
 			CommandLine commandLine = new CommandLine(Configuration.getIverilogPath());
@@ -104,7 +97,7 @@ public class VerilogBuilder implements IBuilder {
 			commandLine.addArgument(Configuration.getStdinPath());
 
 			// build I/O streams
-			ByteArrayInputStream inputStream = new ByteArrayInputStream(inputFile.getContents());
+			ByteArrayInputStream inputStream = new ByteArrayInputStream(inputData);
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			OutputStream errorStream = System.err;
 			ExecuteStreamHandler streamHandler = new PumpStreamHandler(outputStream, errorStream, inputStream);
@@ -115,7 +108,7 @@ public class VerilogBuilder implements IBuilder {
 			executor.execute(commandLine);
 
 			// create the output file
-			new CreateFileOperation(outputFilePath, outputStream.toByteArray(), true).run();
+			Workspace.createFile(outputFilePath, outputStream.toByteArray(), true);
 			
 		} catch (IOException e) {
 			// TODO error message

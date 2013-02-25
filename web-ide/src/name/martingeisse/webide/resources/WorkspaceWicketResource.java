@@ -7,15 +7,11 @@
 package name.martingeisse.webide.resources;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.jar.JarOutputStream;
 
-import name.martingeisse.webide.resources.operation.FetchResourceResult;
-import name.martingeisse.webide.resources.operation.FetchSingleResourceOperation;
-import name.martingeisse.webide.resources.operation.RecursiveResourceOperation;
-import name.martingeisse.webide.resources.operation.WorkspaceResourceNotFoundException;
-
+import org.apache.commons.io.FileUtils;
 import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.util.time.Duration;
@@ -50,29 +46,29 @@ public class WorkspaceWicketResource extends AbstractResource {
 		response.setContentDisposition(ContentDisposition.ATTACHMENT);
 
 		// fetch root resource
-		final FetchSingleResourceOperation operation = new FetchSingleResourceOperation(path);
-		try {
-			operation.run();
-		} catch (final WorkspaceResourceNotFoundException e) {
+		File resource = Workspace.map(path);
+		if (!resource.exists() || (!resource.isFile() && !resource.isDirectory())) {
 			response.setError(404);
 			return response;
 		}
 
 		final byte[] downloadData;
-		if (operation.getResult().getType() == ResourceType.FILE) {
-			downloadData = operation.getResult().getContents();
-			response.setFileName(path.getLastSegment());
+		if (resource.isFile()) {
+			try {
+				downloadData = FileUtils.readFileToByteArray(resource);
+				response.setFileName(path.getLastSegment());
+			} catch (IOException e) {
+				response.setError(500);
+				return response;
+			}
 		} else {
 			try {
 				final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 				final JarOutputStream jarOutputStream = new JarOutputStream(byteArrayOutputStream);
-				new RecursiveResourceOperation(path) {
-					@Override
-					protected void onLevelFetched(final List<FetchResourceResult> fetchResults) {
-						// TODO this method
-						// TODO handle "ZIP file must have at least one entry"
-					}
-				}.run();
+				new RecursiveResourceOperation() {
+					// TODO implement
+					// TODO handle "ZIP file must have at least one entry"
+				}.handle(resource);
 				jarOutputStream.close();
 				downloadData = byteArrayOutputStream.toByteArray();
 				response.setFileName(path.getSegmentCount() == 0 ? "workspace.zip" : (path.getLastSegment() + ".zip"));

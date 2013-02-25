@@ -8,7 +8,6 @@ package name.martingeisse.webide.resources;
 
 import java.util.List;
 
-import name.martingeisse.webide.resources.operation.FetchMarkerResult;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
