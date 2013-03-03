@@ -53,7 +53,7 @@ public class AbstractCodeMirrorEditorPanel extends Panel {
 				// save the resource
 				final ResourcePath workspaceResourcePath = AbstractCodeMirrorEditorPanel.this.workspaceResourcePath;
 				final String newContents = (String)AbstractCodeMirrorEditorPanel.this.getDefaultModelObject();
-				Workspace.createFile(workspaceResourcePath, newContents, true);
+				Workspace.writeFile(workspaceResourcePath, newContents, true, true);
 				
 				// wait for the build to finish to clear the "workspace building" marker. TODO: This should be decoupled from editors.
 				IClientFuture.Behavior.get(getWebPage()).addFuture(new IClientFuture() {

@@ -133,7 +133,66 @@ public class Workspace {
 		final ResourcePath parentPath = map(resource.getParentFile());
 		return parentPath.appendSegment(resource.getName(), false);
 	}
+	
+	/**
+	 * Returns true if the specified resource exists and is a regular file,
+	 * as defined by {@link File#isFile()}.
+	 * 
+	 * @param path the path of the resource to check
+	 * @return true for files, false for other and nonexisting resources
+	 */
+	public static boolean isFile(final ResourcePath path) {
+		return map(path).isFile();
+	}
+	
+	/**
+	 * Returns true if the specified resource exists and is a folder,
+	 * as defined by {@link File#isDirectory()}.
+	 * 
+	 * @param path the path of the resource to check
+	 * @return true for folders, false for other and nonexisting resources
+	 */
+	public static boolean isFolder(final ResourcePath path) {
+		return map(path).isDirectory();
+	}
 
+	/**
+	 * Uses the specified resource to locate a folder. If the resource itself
+	 * exists and is a folder, then its path is returned.
+	 * Otherwise, if the parent resource exists and is a folder, then that
+	 * path is returned. Otherwise, this method returns null.
+	 * 
+	 * @param path the path of the anchor resource
+	 * @return the path of an appropriate folder resource, or
+	 * null if none can be found
+	 */
+	public static ResourcePath getFolderPath(final ResourcePath path) {
+		File folder = getFolderResource(path);
+		return (folder == null ? null : map(folder));
+	}
+
+	/**
+	 * Uses the specified resource to locate a folder. If the resource itself
+	 * exists and is a folder, then its {@link File} object is returned.
+	 * Otherwise, if the parent resource exists and is a folder, then that
+	 * {@link File} object is returned. Otherwise, this method returns null.
+	 * 
+	 * @param path the path of the anchor resource
+	 * @return the {@link File} object of an appropriate folder resource, or
+	 * null if none can be found
+	 */
+	public static File getFolderResource(final ResourcePath path) {
+		File file = map(path);
+		if (file.isDirectory()) {
+			return file;
+		}
+		file = file.getParentFile();
+		if (file.isDirectory()) {
+			return file;
+		}
+		return null;
+	}
+	
 	/**
 	 * Creates the specified folder and all its enclosing folders, returning
 	 * without error if the folder already exists.
@@ -141,34 +200,48 @@ public class Workspace {
 	 * @return the {@link File} object for the folder
 	 */
 	public static File createEnclosingFolders(final ResourcePath enclosingPath) {
+		
+		// parameter check
 		if (!enclosingPath.isLeadingSeparator()) {
 			throw new IllegalArgumentException("cannot create a folder using a relative path");
 		}
+		
+		// handle already-existing folders
+		File folder = map(enclosingPath);
+		if (folder.exists()) {
+			if (!folder.isDirectory()) {
+				throw new WorkspaceOperationException("enclosing resource exists but is not a folder: " + enclosingPath);
+			}
+			return folder;
+		}
+		
+		// handle the root path -- if it doesn't already exist, there is an error
 		if (enclosingPath.getSegmentCount() == 0) {
-			return ROOT;
+			throw new WorkspaceOperationException("workspace root doesn't exist in the file system");
 		}
-		final ResourcePath parentPath = enclosingPath.removeLastSegment(false);
-		final File parent = createEnclosingFolders(parentPath);
-		if (!parent.isDirectory()) {
-			throw new WorkspaceOperationException("enclosing resource is not a folder: " + parentPath);
-		}
-		final File folder = new File(parent, enclosingPath.getLastSegment());
+		
+		// create the folder, including parent folders
+		createEnclosingFolders(enclosingPath.removeLastSegment(false));
 		if (!folder.mkdir()) {
 			throw new WorkspaceOperationException("could not create folder: " + enclosingPath);
 		}
+		
+		// create deltas for the modification
 		WorkspaceResourceDeltaUtil.generateDeltas("auto-create enclosing folders", false, enclosingPath);
+		
 		return folder;
 	}
 
 	/**
 	 * Helper method that creates enclosing folders only if requested so by the caller.
 	 * Otherwise it checks that the parent folder exists and is indeed a folder.
-	 * Then, this method ensures that the specified resource does not yet exist.
+	 * Then, this method ensures that the specified resource does not yet exist,
+	 * or if it exists, that it is a regular file and that the 'overwrite' flag is set.
 	 * Returns the {@link File} object for the resource to create.
 	 */
-	private static File prepareCreateResource(final ResourcePath path, final boolean createEnclosingFolders) {
+	private static File prepareCreateResource(final ResourcePath path, final boolean createEnclosingFolders, boolean overwrite) {
 
-		// checks
+		// parameter checks
 		debug("prepareCreateResource (autocreate = " + createEnclosingFolders + ")", path);
 		if (path.getSegmentCount() == 0) {
 			throw new IllegalArgumentException("cannot create a resource at the workspace root");
@@ -200,7 +273,9 @@ public class Workspace {
 		// check for collision
 		final File resource = new File(parent, path.getLastSegment());
 		if (resource.exists()) {
-			throw new WorkspaceOperationException("a workspace resource already exists at this path: " + path);
+			if (!(overwrite && resource.isFile())) {
+				throw new WorkspaceResourceCollisionException(path);
+			}
 		}
 
 		trace("prepareCreateResource finished", path);
@@ -215,8 +290,8 @@ public class Workspace {
 	 * @param path the path of the folder
 	 * @param createEnclosingFolders whether enclosing folders shall be created as required
 	 */
-	public static void createNewFolder(final ResourcePath path, final boolean createEnclosingFolders) {
-		final File folder = prepareCreateResource(path, createEnclosingFolders);
+	public static void createFolder(final ResourcePath path, final boolean createEnclosingFolders) {
+		final File folder = prepareCreateResource(path, createEnclosingFolders, false);
 		if (!folder.mkdir()) {
 			throw new WorkspaceOperationException("could not create folder: " + path);
 		}
@@ -234,9 +309,10 @@ public class Workspace {
 	 * @param path the path of the file
 	 * @param contents the text contents (assuming UTF-8 encoding)
 	 * @param createEnclosingFolders whether enclosing folders shall be created as required
+	 * @param overwrite whether to overwrite an existing file if present (folders are never overwritten)
 	 */
-	public static void createFile(final ResourcePath path, final String contents, final boolean createEnclosingFolders) {
-		createFile(path, contents == null ? null : contents.getBytes(Charset.forName("utf-8")), createEnclosingFolders);
+	public static void writeFile(final ResourcePath path, final String contents, final boolean createEnclosingFolders, boolean overwrite) {
+		writeFile(path, contents == null ? null : contents.getBytes(Charset.forName("utf-8")), createEnclosingFolders, overwrite);
 	}
 
 	/**
@@ -248,9 +324,10 @@ public class Workspace {
 	 * @param path the path of the file
 	 * @param contents the binary contents
 	 * @param createEnclosingFolders whether enclosing folders shall be created as required
+	 * @param overwrite whether to overwrite an existing file if present (folders are never overwritten)
 	 */
-	public static void createFile(final ResourcePath path, final byte[] contents, final boolean createEnclosingFolders) {
-		final File file = prepareCreateResource(path, createEnclosingFolders);
+	public static void writeFile(final ResourcePath path, final byte[] contents, final boolean createEnclosingFolders, boolean overwrite) {
+		final File file = prepareCreateResource(path, createEnclosingFolders, overwrite);
 		try {
 			FileUtils.writeByteArrayToFile(file, contents);
 			trace("file created", path);
@@ -270,9 +347,10 @@ public class Workspace {
 	 * @param path the path of the file
 	 * @param contentSource the source of the file contents
 	 * @param createEnclosingFolders whether enclosing folders shall be created as required
+	 * @param overwrite whether to overwrite an existing file if present (folders are never overwritten)
 	 */
-	public static void createFile(final ResourcePath path, final InputStream contentSource, final boolean createEnclosingFolders) {
-		final File file = prepareCreateResource(path, createEnclosingFolders);
+	public static void writeFile(final ResourcePath path, final InputStream contentSource, final boolean createEnclosingFolders, boolean overwrite) {
+		final File file = prepareCreateResource(path, createEnclosingFolders, overwrite);
 		try {
 			FileUtils.copyInputStreamToFile(contentSource, file);
 			trace("file created", path);
@@ -292,9 +370,10 @@ public class Workspace {
 	 * @param path the path of the file
 	 * @param contentSource the source of the file contents
 	 * @param createEnclosingFolders whether enclosing folders shall be created as required
+	 * @param overwrite whether to overwrite an existing file if present (folders are never overwritten)
 	 */
-	public static void createFile(final ResourcePath path, final File contentSource, final boolean createEnclosingFolders) {
-		final File file = prepareCreateResource(path, createEnclosingFolders);
+	public static void writeFile(final ResourcePath path, final File contentSource, final boolean createEnclosingFolders, boolean overwrite) {
+		final File file = prepareCreateResource(path, createEnclosingFolders, overwrite);
 		try {
 			FileUtils.copyFile(contentSource, file);
 			trace("file created", path);
@@ -404,22 +483,30 @@ public class Workspace {
 	
 	/**
 	 * Deletes the specified resource.
+	 * 
 	 * @param path the resource path
+	 * @return false if the resource did not exist, true if it existed and was deleted
+	 * @throws WorkspaceOperationException if the resource exists and could not be deleted
 	 */
-	public static void delete(final ResourcePath path) {
+	public static boolean delete(final ResourcePath path) throws WorkspaceOperationException {
+		trace("Workspace.delete starting for workspace resource", path);
 		final File resource = map(path);
 		if (!resource.exists()) {
-			throw new WorkspaceOperationException("resource does not exist: " + path);
+			logger.trace("resource did not exist");
+			return false;
 		}
-		delete(resource);
-		trace("finished deleting resource", path);
-		WorkspaceResourceDeltaUtil.generateDeltas("delete resource", true, path);
-		trace("delta created", path);
+		boolean result = deleteInternal(resource);
+		trace("Workspace.delete creating deltas for workspace resource", path);
+		WorkspaceResourceDeltaUtil.generateDeltas("delete workspace resource", true, path);
+		trace("Workspace.delete finished for workspace resource", path);
+		return result;
 	}
 
 	/**
 	 * Deletes the specified resources.
+	 * 
 	 * @param paths the resource paths
+	 * @throws WorkspaceOperationException if one of the resources exists but could not be deleted
 	 */
 	public static void delete(final Collection<? extends ResourcePath> paths) {
 		for (final ResourcePath path : paths) {
@@ -429,7 +516,9 @@ public class Workspace {
 
 	/**
 	 * Deletes the specified resources.
+	 * 
 	 * @param paths the resource paths
+	 * @throws WorkspaceOperationException if one of the resources exists but could not be deleted
 	 */
 	public static void delete(final ResourcePath[] paths) {
 		for (final ResourcePath path : paths) {
@@ -439,16 +528,45 @@ public class Workspace {
 
 	/**
 	 * Recursively deletes a file or folder.
+	 * 
 	 * @param resource the resource to delete
+	 * @return false if the resource did not exist, true if it existed and was deleted
+	 * @throws WorkspaceOperationException if the resource exists and could not be deleted
 	 */
-	public static void delete(final File resource) {
-		logger.trace("deleting resource recursively: " + resource);
-		if (resource.isDirectory()) {
-			for (final File child : resource.listFiles()) {
-				delete(child);
-			}
+	public static boolean delete(final File resource) {
+		logger.trace("Workspace.delete starting for resource: " + resource);
+		boolean result = deleteInternal(resource);
+		logger.trace("Workspace.delete creating deltas for resource: " + resource);
+		WorkspaceResourceDeltaUtil.generateDeltas("delete file system resource", true, map(resource));
+		logger.trace("Workspace.delete finished for resource: " + resource);
+		return result;
+	}
+
+	/**
+	 * Recursively deletes a file or folder, but does not generate deltas.
+	 * 
+	 * @param resource the resource to delete
+	 * @return false if the resource did not exist, true if it existed and was deleted
+	 * @throws WorkspaceOperationException if the resource exists and could not be deleted
+	 */
+	private static boolean deleteInternal(final File resource) {
+		logger.trace("deleting file system resource recursively: " + resource);
+		if (!resource.exists()) {
+			logger.trace("resource did not exist");
+			return false;
 		}
-		resource.delete();
+		if (resource.isDirectory()) {
+			logger.trace("deleting child resources of folder: " + resource);
+			for (final File child : resource.listFiles()) {
+				deleteInternal(child);
+			}
+			logger.trace("deleted child resources of folder: " + resource);
+		}
+		if (!resource.delete()) {
+			throw new WorkspaceOperationException("could not delete file system resource: " + resource);
+		}
+		logger.trace("file system resource deleted: " + resource);
+		return true;
 	}
 
 	/**

@@ -126,10 +126,10 @@ public class JavaBuilder implements IBuilder {
 		final CompilationTask task = compiler.getTask(null, memoryFileManager, diagnosticListener, null, null, javaFiles);
 		/* final boolean success = */task.call();
 
-		// save the class files in the database
+		// save the class files
 		for (final IMemoryFileObject fileObject : memoryFileManager.getOutputFiles().values()) {
 			final ResourcePath path = new ResourcePath(binaryPath.toString() + fileObject.getName());
-			Workspace.createFile(path, fileObject.getBinaryContent(), true);
+			Workspace.writeFile(path, fileObject.getBinaryContent(), true, true);
 		}
 
 		// dispose of the file manager

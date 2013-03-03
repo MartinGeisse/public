@@ -108,7 +108,7 @@ public class VerilogBuilder implements IBuilder {
 			executor.execute(commandLine);
 
 			// create the output file
-			Workspace.createFile(outputFilePath, outputStream.toByteArray(), true);
+			Workspace.writeFile(outputFilePath, outputStream.toByteArray(), true, true);
 			
 		} catch (IOException e) {
 			// TODO error message

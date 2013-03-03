@@ -162,7 +162,7 @@ public class PluginBuilder implements IBuilder {
 			// finish the JAR file and write it to the workspace
 			jarOutputStream.close();
 			final byte[] contents = byteArrayOutputStream.toByteArray();
-			Workspace.createFile(jarPath, contents, true);
+			Workspace.writeFile(jarPath, contents, true, true);
 			return contents;
 
 		} catch (final IOException e) {
