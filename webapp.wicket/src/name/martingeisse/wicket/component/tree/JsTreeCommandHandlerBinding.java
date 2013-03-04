@@ -7,6 +7,7 @@
 package name.martingeisse.wicket.component.tree;
 
 import java.io.Serializable;
+import java.util.List;
 
 import name.martingeisse.common.terms.CommandVerb;
 import name.martingeisse.wicket.javascript.IJavascriptInteractionInterceptor;
@@ -16,8 +17,9 @@ import name.martingeisse.wicket.javascript.IJavascriptInteractionInterceptor;
  * verb and its handler.
  *
  * @param <T> the tree node type
+ * @param <P> the type of an extra parameter from an interaction interceptor
  */
-final class JsTreeCommandHandlerBinding<T> implements Serializable {
+final class JsTreeCommandHandlerBinding<T, P> implements Serializable {
 
 	/**
 	 * the commandVerb
@@ -27,12 +29,12 @@ final class JsTreeCommandHandlerBinding<T> implements Serializable {
 	/**
 	 * the handler
 	 */
-	private final IJsTreeCommandHandler<T> handler;
+	private final IJsTreeCommandHandler<T, P> handler;
 	
 	/**
 	 * the interceptor
 	 */
-	private final IJavascriptInteractionInterceptor interceptor;
+	private final IJavascriptInteractionInterceptor<P> interceptor;
 
 	/**
 	 * Constructor.
@@ -40,7 +42,7 @@ final class JsTreeCommandHandlerBinding<T> implements Serializable {
 	 * @param handler the handler
 	 * @param interceptor the interceptor, or null for none
 	 */
-	JsTreeCommandHandlerBinding(final CommandVerb commandVerb, final IJsTreeCommandHandler<T> handler, IJavascriptInteractionInterceptor interceptor) {
+	JsTreeCommandHandlerBinding(final CommandVerb commandVerb, final IJsTreeCommandHandler<T, P> handler, IJavascriptInteractionInterceptor<P> interceptor) {
 		this.commandVerb = commandVerb;
 		this.handler = handler;
 		this.interceptor = interceptor;
@@ -58,7 +60,7 @@ final class JsTreeCommandHandlerBinding<T> implements Serializable {
 	 * Getter method for the handler.
 	 * @return the handler
 	 */
-	IJsTreeCommandHandler<T> getHandler() {
+	IJsTreeCommandHandler<T, P> getHandler() {
 		return handler;
 	}
 	
@@ -66,8 +68,17 @@ final class JsTreeCommandHandlerBinding<T> implements Serializable {
 	 * Getter method for the interceptor.
 	 * @return the interceptor
 	 */
-	IJavascriptInteractionInterceptor getInterceptor() {
+	IJavascriptInteractionInterceptor<P> getInterceptor() {
 		return interceptor;
+	}
+	
+	/**
+	 * This method is invoked when the client-side scripts send a command verb
+	 * to the server. It looks up the appropriate command handler and invokes it.
+	 * @param data the JSON-parsed extra input parameter, or null if not present in the request
+	 */
+	final void invoke(final List<T> selectedNodes, Object data) {
+		handler.handleCommand(commandVerb, selectedNodes, interceptor == null ? null : interceptor.convertParameter(data));
 	}
 	
 }

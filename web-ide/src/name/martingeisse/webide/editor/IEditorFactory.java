@@ -6,7 +6,6 @@
 
 package name.martingeisse.webide.editor;
 
-import name.martingeisse.webide.workbench.IEditor;
 
 /**
  * A factory for workbench editors. The factory is typically

@@ -13,8 +13,8 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 import name.martingeisse.webide.editor.AbstractEditor;
+import name.martingeisse.webide.editor.IEditor;
 import name.martingeisse.webide.resources.FetchMarkerResult;
-import name.martingeisse.webide.workbench.IEditor;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.model.PropertyModel;

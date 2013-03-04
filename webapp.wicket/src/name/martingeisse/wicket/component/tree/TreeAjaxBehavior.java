@@ -98,12 +98,12 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 				String commandVerbCanonicalId = interaction.substring(COMMAND_VERB_INTERACTION_PREFIX.length());
 				CommandVerb commandVerb = CommandVerb.fromCanonicalIdentifierSafe(commandVerbCanonicalId);
 				if (commandVerb != null) {
-					tree.onCommandVerb(commandVerb, selectedNodes);
+					tree.onCommandVerb(commandVerb, selectedNodes, data);
 				}
 			} else {
-				tree.onInteraction(interaction, selectedNodes);
+				tree.onInteraction(interaction, selectedNodes, data);
 				if (interaction.equals("dblclick")) {
-					tree.onDoubleClick(selectedNodes);
+					tree.onDoubleClick(selectedNodes, data);
 				}
 			}
 		}
@@ -164,12 +164,14 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 	 */
 	void buildCommandVerbInteraction(final StringBuilder builder, final CommandVerb commandVerb) {
 		String interactionId = (COMMAND_VERB_INTERACTION_PREFIX + commandVerb.getCanonicalIdentifier());
-		IJavascriptInteractionInterceptor interceptor = tree.getInterceptor(commandVerb);
+		IJavascriptInteractionInterceptor<?> interceptor = tree.getInterceptor(commandVerb);
 		if (interceptor != null) {
-			builder.append("function onInterceptorPassed() {\n");
+			builder.append("function onInterceptorPassed(data) {\n");
+		} else {
+			builder.append("var data = null;\n");
 		}
 		builder.append("var interaction = '" + JavascriptAssemblerUtil.escapeStringLiteralSpecialCharacters(interactionId) + "';\n");
-		builder.append("\t$('#").append(tree.getMarkupId()).append("').jstreeInteract(interaction, null);\n");
+		builder.append("\t$('#").append(tree.getMarkupId()).append("').jstreeInteract(interaction, data);\n");
 		if (interceptor != null) {
 			builder.append("}\n");
 			builder.append("var interceptor = ");

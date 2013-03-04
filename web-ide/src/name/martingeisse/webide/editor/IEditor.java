@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.workbench;
+package name.martingeisse.webide.editor;
 
 import java.util.List;
 

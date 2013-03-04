@@ -7,7 +7,6 @@
 package name.martingeisse.webide.editor;
 
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
-import name.martingeisse.webide.workbench.IEditor;
 
 /**
  * This editor family takes a class name in the editor specification.

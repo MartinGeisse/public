@@ -10,7 +10,6 @@ import java.io.Serializable;
 
 import name.martingeisse.webide.resources.ResourcePath;
 import name.martingeisse.webide.resources.Workspace;
-import name.martingeisse.webide.workbench.IEditor;
 
 /**
  * Base class for {@link IEditor} implementations.

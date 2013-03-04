@@ -17,14 +17,16 @@ import name.martingeisse.common.terms.CommandVerb;
  * receives the command verb.
  *
  * @param <T> the tree node type
+ * @param <P> the type of an extra parameter from an interaction interceptor
  */
-public interface IJsTreeCommandHandler<T> extends Serializable {
+public interface IJsTreeCommandHandler<T, P> extends Serializable {
 
 	/**
 	 * Handles a command verb.
 	 * @param commandVerb the command verb to handle
 	 * @param selectedNodes the selected tree nodes
+	 * @param parameter an extra parameter from the interaction interceptor, if any
 	 */
-	public void handleCommand(CommandVerb commandVerb, List<T> selectedNodes);
+	public void handleCommand(CommandVerb commandVerb, List<T> selectedNodes, P parameter);
 	
 }

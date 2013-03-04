@@ -6,8 +6,8 @@
 
 package name.martingeisse.webide.editor.codemirror;
 
+import name.martingeisse.webide.editor.IEditor;
 import name.martingeisse.webide.editor.IEditorFactory;
-import name.martingeisse.webide.workbench.IEditor;
 
 /**
  * Editor factory implementation for CodeMirror-based editors.

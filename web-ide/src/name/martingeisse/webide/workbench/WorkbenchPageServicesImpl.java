@@ -6,21 +6,27 @@
 
 package name.martingeisse.webide.workbench;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.regex.Pattern;
 
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.common.util.ReturnValueUtil;
+import name.martingeisse.webide.editor.IEditor;
 import name.martingeisse.webide.editor.IEditorFactory;
 import name.martingeisse.webide.editor.IEditorFamily;
 import name.martingeisse.webide.plugin.ExtensionQuery;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
 import name.martingeisse.webide.resources.ResourcePath;
+import name.martingeisse.webide.resources.Workspace;
+import name.martingeisse.webide.resources.WorkspaceResourceCollisionException;
 import name.martingeisse.webide.workbench.services.IWorkbenchEditorService;
 import name.martingeisse.webide.workbench.services.IWorkbenchServicesProvider;
 import name.martingeisse.webide.workbench.services.UnknownEditorIdException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.apache.wicket.util.upload.FileItem;
 
 /**
  * Implementation of {@link IWorkbenchServicesProvider} for a {@link WorkbenchPage}.
@@ -53,7 +59,7 @@ public class WorkbenchPageServicesImpl implements IWorkbenchServicesProvider, IW
 	public IWorkbenchEditorService getEditorService() {
 		return this;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.webide.workbench.services.IWorkbenchEditorService#openDefaultEditor(name.martingeisse.webide.resources.ResourcePath)
 	 */
@@ -148,4 +154,47 @@ public class WorkbenchPageServicesImpl implements IWorkbenchServicesProvider, IW
 		
 	}
 
+	/**
+	 * Creates a workspace resource for an uploaded file. If a file or folder
+	 * with the same name already exists, the uploaded file is renamed.
+	 * 
+	 * @param fileItem the {@link FileItem} that represents the uploaded file
+	 * @param destinationFolderPath the path to the folder into which the uploaded
+	 * file should be placed. The name of the file is taken from the upload request.
+	 */
+	public void storeUploadedFile(FileItem fileItem, ResourcePath destinationFolderPath) {
+		try {
+			byte[] contents = IOUtils.toByteArray(fileItem.getInputStream());
+			for (int i = 0; i<20; i++) {
+				String name = modifyUploadedFileName(fileItem.getName(), i);
+				ResourcePath path = destinationFolderPath.appendSegment(name, false);
+				try {
+					Workspace.writeFile(path, contents, false, false);
+					return;
+				} catch (WorkspaceResourceCollisionException e) {
+				}
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		page.setUploadErrorMessage("Too many collisions with existing resources -- giving up.");
+	}
+	
+	/**
+	 * Creates an alternative file name in case of collision, or the original
+	 * file name if the counter is zero.
+	 */
+	private static String modifyUploadedFileName(String name, int counter) {
+		if (counter == 0) {
+			return name;
+		}
+		int index = name.lastIndexOf('.');
+		if (index == -1) {
+			return name + '-' + counter;
+		}
+		String baseName = name.substring(0, index);
+		String extension = name.substring(index + 1);
+		return baseName + '-' + counter + '.' + extension;
+	}
+	
 }

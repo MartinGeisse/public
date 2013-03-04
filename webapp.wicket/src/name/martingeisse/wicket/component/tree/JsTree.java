@@ -59,7 +59,7 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	/**
 	 * the commandHandlerBindings
 	 */
-	private final Map<CommandVerb, JsTreeCommandHandlerBinding<T>> commandHandlerBindings;
+	private final Map<CommandVerb, JsTreeCommandHandlerBinding<T, ?>> commandHandlerBindings;
 
 	/**
 	 * the keyBindings
@@ -92,7 +92,7 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 		setOutputMarkupId(true);
 		this.contextMenu = contextMenu;
 		add(new TreeAjaxBehavior<T>(this));
-		this.commandHandlerBindings = new HashMap<CommandVerb, JsTreeCommandHandlerBinding<T>>();
+		this.commandHandlerBindings = new HashMap<CommandVerb, JsTreeCommandHandlerBinding<T, ?>>();
 		this.keyBindings = new ArrayList<JsTreeKeyBinding>();
 	}
 
@@ -117,8 +117,8 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	 * @param commandVerb the command verb
 	 * @param handler the handler
 	 */
-	public void bindCommandHandler(final CommandVerb commandVerb, final IJsTreeCommandHandler<T> handler) {
-		final JsTreeCommandHandlerBinding<T> binding = new JsTreeCommandHandlerBinding<T>(commandVerb, handler, null);
+	public <P> void bindCommandHandler(final CommandVerb commandVerb, final IJsTreeCommandHandler<T, P> handler) {
+		final JsTreeCommandHandlerBinding<T, P> binding = new JsTreeCommandHandlerBinding<T, P>(commandVerb, handler, null);
 		commandHandlerBindings.put(commandVerb, binding);
 	}
 
@@ -128,8 +128,8 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	 * @param handler the handler
 	 * @param interceptor the interceptor, or null for none
 	 */
-	public void bindCommandHandler(final CommandVerb commandVerb, final IJsTreeCommandHandler<T> handler, final IJavascriptInteractionInterceptor interceptor) {
-		final JsTreeCommandHandlerBinding<T> binding = new JsTreeCommandHandlerBinding<T>(commandVerb, handler, interceptor);
+	public <P> void bindCommandHandler(final CommandVerb commandVerb, final IJsTreeCommandHandler<T, P> handler, final IJavascriptInteractionInterceptor<P> interceptor) {
+		final JsTreeCommandHandlerBinding<T, P> binding = new JsTreeCommandHandlerBinding<T, P>(commandVerb, handler, interceptor);
 		commandHandlerBindings.put(commandVerb, binding);
 	}
 
@@ -301,28 +301,31 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	 * @param interaction a string describing the interaction, e.g. "dblclick"
 	 * for a double-click
 	 * @param selectedNodes the selected tree nodes
+	 * @param data the JSON-parsed extra input parameter, or null if not present in the request
 	 */
-	protected void onInteraction(final String interaction, final List<T> selectedNodes) {
+	protected void onInteraction(final String interaction, final List<T> selectedNodes, Object data) {
 	}
 
 	/**
 	 * This method is invoked when the client-side scripts send a command verb
 	 * to the server. It looks up the appropriate command handler and invokes it.
+	 * @param data the JSON-parsed extra input parameter, or null if not present in the request
 	 */
-	final void onCommandVerb(final CommandVerb commandVerb, final List<T> selectedNodes) {
-		final JsTreeCommandHandlerBinding<T> binding = commandHandlerBindings.get(commandVerb);
+	final void onCommandVerb(final CommandVerb commandVerb, final List<T> selectedNodes, Object data) {
+		final JsTreeCommandHandlerBinding<T, ?> binding = commandHandlerBindings.get(commandVerb);
 		if (binding != null) {
-			binding.getHandler().handleCommand(commandVerb, selectedNodes);
+			binding.invoke(selectedNodes, data);
 		}
 	}
 	
 	/**
 	 * Called for the "dblclick" interaction in addition to onInteraction(). Checks if a
 	 * double-click command verb is set, and if so, fires it.
+	 * @param data the JSON-parsed extra input parameter, or null if not present in the request
 	 */
-	final void onDoubleClick(final List<T> selectedNodes) {
+	final void onDoubleClick(final List<T> selectedNodes, Object data) {
 		if (doubleClickCommandVerb != null) {
-			onCommandVerb(doubleClickCommandVerb, selectedNodes);
+			onCommandVerb(doubleClickCommandVerb, selectedNodes, data);
 		}
 	}
 
@@ -341,8 +344,8 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	/**
 	 * Returns the interceptor (if any) to use for the specified command verb.
 	 */
-	final IJavascriptInteractionInterceptor getInterceptor(final CommandVerb commandVerb) {
-		final JsTreeCommandHandlerBinding<T> binding = commandHandlerBindings.get(commandVerb);
+	final IJavascriptInteractionInterceptor<?> getInterceptor(final CommandVerb commandVerb) {
+		final JsTreeCommandHandlerBinding<T, ?> binding = commandHandlerBindings.get(commandVerb);
 		return (binding == null ? null : binding.getInterceptor());
 	}
 
