@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +20,9 @@ import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.util.ArrayUtil;
 import name.martingeisse.webide.entity.Markers;
 import name.martingeisse.webide.entity.QMarkers;
+import name.martingeisse.webide.entity.QWorkspaceResourceDeltas;
+import name.martingeisse.webide.entity.QWorkspaceTasks;
+import name.martingeisse.webide.entity.QWorkspaces;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +32,7 @@ import org.apache.log4j.Logger;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.dml.SQLDeleteClause;
 import com.mysema.query.sql.dml.SQLInsertClause;
+import com.mysema.query.sql.dml.SQLUpdateClause;
 
 /**
  * This class represents workspace resources, both potential and
@@ -46,7 +51,7 @@ import com.mysema.query.sql.dml.SQLInsertClause;
  * by resource handles do not have a trailing separator; it is
  * removed automatically.
  */
-public final class ResourceHandle {
+public final class ResourceHandle implements Serializable {
 
 	/**
 	 * the logger
@@ -216,6 +221,24 @@ public final class ResourceHandle {
 	}
 
 	/**
+	 * Getter method for the name (the last segment of the path).
+	 * Returns null for the workspace root.
+	 * @return the name or null
+	 */
+	public String getName() {
+		return (path.getSegmentCount() == 0 ? null : path.getLastSegment());
+	}
+
+	/**
+	 * Getter method for the name extension.
+	 * Returns null if no extension is present.
+	 * @return the name extension
+	 */
+	public String getExtension() {
+		return (path.getSegmentCount() == 0 ? null : path.getExtension());
+	}
+
+	/**
 	 * Getter method for the resource.
 	 * @return the resource
 	 */
@@ -311,20 +334,50 @@ public final class ResourceHandle {
 	}
 
 	/**
+	 * Checks whether any child resources for this resource exist
+	 * in the file system.
+	 * @return true if child resources exist, false if not
+	 */
+	public boolean hasChildren() {
+		return resource.list().length > 0;
+	}
+
+	/**
 	 * Returns an array containing handles for all child resources that
-	 * actually exist in the file system.
+	 * actually exist in the file system, or null if this resource is not a folder.
 	 * 
 	 * @return the child handles
 	 */
-	public ResourceHandle[] listChildren() {
-		String[] names = resource.list();
-		ResourceHandle[] children = new ResourceHandle[names.length];
-		for (int i=0; i<names.length; i++) {
+	public ResourceHandle[] getChildrenArray() {
+		final String[] names = resource.list();
+		if (names == null) {
+			return null;
+		}
+		final ResourceHandle[] children = new ResourceHandle[names.length];
+		for (int i = 0; i < names.length; i++) {
 			children[i] = getChild(names[i]);
 		}
 		return children;
 	}
-	
+
+	/**
+	 * Returns a list containing handles for all child resources that
+	 * actually exist in the file system, or null if this resource is not a folder.
+	 * 
+	 * @return the child handles
+	 */
+	public List<ResourceHandle> getChildrenList() {
+		final ResourceHandle[] childrenArray = getChildrenArray();
+		if (childrenArray == null) {
+			return null;
+		}
+		final List<ResourceHandle> result = new ArrayList<ResourceHandle>();
+		for (final ResourceHandle child : childrenArray) {
+			result.add(child);
+		}
+		return result;
+	}
+
 	/**
 	 * Returns a resource handle for another resource with the specified path,
 	 * using this resource as the origin for relative paths.
@@ -378,7 +431,7 @@ public final class ResourceHandle {
 		}
 
 		// create deltas for the modification
-		WorkspaceResourceDeltaUtil.generateDeltas("auto-create enclosing folders", false, path);
+		generateDelta("auto-create enclosing folders", false);
 
 	}
 
@@ -430,7 +483,7 @@ public final class ResourceHandle {
 			throw new WorkspaceOperationException("could not create folder: " + path);
 		}
 		trace("folder created", path);
-		WorkspaceResourceDeltaUtil.generateDeltas("create folder", false, path);
+		generateDelta("create folder", false);
 		trace("delta created", path);
 	}
 
@@ -463,7 +516,7 @@ public final class ResourceHandle {
 		try {
 			FileUtils.writeByteArrayToFile(resource, contents);
 			trace("file created", path);
-			WorkspaceResourceDeltaUtil.generateDeltas("create file", false, path);
+			generateDelta("create file", false);
 			trace("delta created", path);
 		} catch (final IOException e) {
 			throw new WorkspaceOperationException("could not create file: " + path, e);
@@ -485,7 +538,7 @@ public final class ResourceHandle {
 		try {
 			FileUtils.copyInputStreamToFile(contentSource, resource);
 			trace("file created", path);
-			WorkspaceResourceDeltaUtil.generateDeltas("create file", false, path);
+			generateDelta("create file", false);
 			trace("delta created", path);
 		} catch (final IOException e) {
 			throw new WorkspaceOperationException("could not create file: " + path, e);
@@ -507,7 +560,7 @@ public final class ResourceHandle {
 		try {
 			FileUtils.copyFile(contentSource, resource);
 			trace("file created", path);
-			WorkspaceResourceDeltaUtil.generateDeltas("create file", false, path);
+			generateDelta("create file", false);
 			trace("delta created", path);
 		} catch (final IOException e) {
 			throw new WorkspaceOperationException("could not create file: " + path, e);
@@ -643,7 +696,7 @@ public final class ResourceHandle {
 		}
 		final boolean result = deleteInternal(resource);
 		trace("Workspace.delete creating deltas for workspace resource", path);
-		WorkspaceResourceDeltaUtil.generateDeltas("delete workspace resource", true, path);
+		generateDelta("delete workspace resource", true);
 		trace("Workspace.delete finished for workspace resource", path);
 		return result;
 	}
@@ -865,7 +918,7 @@ public final class ResourceHandle {
 	}
 
 	// ---------------------------------------------------------------------------------------------------------
-	// logging helper methods
+	// logging and other helper methods
 	// ---------------------------------------------------------------------------------------------------------
 
 	/**
@@ -873,7 +926,8 @@ public final class ResourceHandle {
 	 * @param prefix the prefix to log
 	 * @param path the path to log
 	 */
-	static final void debug(final String prefix, final ResourcePath path) {
+	@SuppressWarnings("unused")
+	private static final void debug(final String prefix, final ResourcePath path) {
 		if (logger.isDebugEnabled()) {
 			logger.debug(prefix + ": " + path);
 		}
@@ -884,7 +938,8 @@ public final class ResourceHandle {
 	 * @param prefix the prefix to log
 	 * @param paths the paths to log
 	 */
-	static final void debug(final String prefix, final ResourcePath[] paths) {
+	@SuppressWarnings("unused")
+	private static final void debug(final String prefix, final ResourcePath[] paths) {
 		if (logger.isDebugEnabled()) {
 			logger.debug(prefix + ": " + StringUtils.join(paths, ", "));
 		}
@@ -895,7 +950,8 @@ public final class ResourceHandle {
 	 * @param prefix the prefix to log
 	 * @param path the path to log
 	 */
-	static final void trace(final String prefix, final ResourcePath path) {
+	@SuppressWarnings("unused")
+	private static final void trace(final String prefix, final ResourcePath path) {
 		if (logger.isTraceEnabled()) {
 			logger.trace(prefix + ": " + path);
 		}
@@ -906,10 +962,56 @@ public final class ResourceHandle {
 	 * @param prefix the prefix to log
 	 * @param paths the paths to log
 	 */
-	static final void trace(final String prefix, final ResourcePath[] paths) {
+	@SuppressWarnings("unused")
+	private static final void trace(final String prefix, final ResourcePath[] paths) {
 		if (logger.isTraceEnabled()) {
 			logger.trace(prefix + ": " + StringUtils.join(paths, ", "));
 		}
+	}
+
+	/**
+	 * Generates resource deltas for the specified resources as well as a delta consumption task
+	 * and sets the workspace to "building" state.
+	 * 
+	 * Note: This class used to have a separate method that creates deltas without
+	 * also creating a delta consumption task. This method was intended for
+	 * the case that more deltas will follow, but is dangerous: At the time
+	 * the "last" deltas arrive and the caller intends to add a consumption
+	 * task, the set of "last" deltas might be empty and so no consumption
+	 * task is added, despite there being deltas from previous calls! Instead,
+	 * this class now still skips the task if no deltas are being added, but
+	 * always adds a task if at least one delta is being added, even if more
+	 * deltas will follow. The consumption task itself should merge with
+	 * subsequent tasks.
+	 * 
+	 * @param callerForLogging the caller of this method (simple string used for logging)
+	 * @param deep whether to generate "deep" deltas for modified folders that also
+	 * affect folder contents
+	 * @param resourceHandle the resource handle
+	 */
+	private void generateDelta(final String callerForLogging, final boolean deep) {
+		SQLInsertClause insert;
+
+		logger.trace(callerForLogging + ": creating resource delta for resource: " + this + " (deep: " + deep + ") ...");
+		insert = EntityConnectionManager.getConnection().createInsert(QWorkspaceResourceDeltas.workspaceResourceDeltas);
+		insert.set(QWorkspaceResourceDeltas.workspaceResourceDeltas.workspaceId, workspaceId);
+		insert.set(QWorkspaceResourceDeltas.workspaceResourceDeltas.path, path.toString());
+		insert.set(QWorkspaceResourceDeltas.workspaceResourceDeltas.isDeep, deep);
+		insert.execute();
+		logger.trace(callerForLogging + ": finished creating resource delta.");
+
+		logger.trace(callerForLogging + ": creating resource delta consumption task ...");
+		insert = EntityConnectionManager.getConnection().createInsert(QWorkspaceTasks.workspaceTasks);
+		insert.set(QWorkspaceResourceDeltas.workspaceResourceDeltas.workspaceId, workspaceId);
+		insert.set(QWorkspaceTasks.workspaceTasks.command, "name.martingeisse.webide.resources.consume_deltas");
+		insert.execute();
+		logger.trace(callerForLogging + ": finished creating resource delta consumption task, will set the workspace to 'building' state.");
+		final SQLUpdateClause update = EntityConnectionManager.getConnection().createUpdate(QWorkspaces.workspaces);
+		update.where(QWorkspaces.workspaces.id.eq(workspaceId));
+		update.set(QWorkspaces.workspaces.isBuilding, true);
+		update.execute();
+		logger.trace(callerForLogging + ": finished setting the workspace to 'building' state.");
+
 	}
 
 }

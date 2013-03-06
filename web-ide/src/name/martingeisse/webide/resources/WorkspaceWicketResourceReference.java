@@ -16,13 +16,10 @@ public final class WorkspaceWicketResourceReference extends ResourceReference {
 
 	/**
 	 * Constructor.
-	 * @param path the resource path
+	 * @param resourceHandle the resource handle
 	 */
-	public WorkspaceWicketResourceReference(final ResourcePath path) {
-		super(WorkspaceWicketResourceReference.class, path.withLeadingSeparator(false).toString());
-		if (!path.isLeadingSeparator()) {
-			throw new IllegalArgumentException("trying to build a resource reference from a relative path: [" + path.toString() + "]");
-		}
+	public WorkspaceWicketResourceReference(final ResourceHandle resourceHandle) {
+		super(WorkspaceWicketResourceReference.class, Long.toString(resourceHandle.getWorkspaceId()) + resourceHandle.getPath().toString());
 	}
 
 	/* (non-Javadoc)
@@ -30,7 +27,10 @@ public final class WorkspaceWicketResourceReference extends ResourceReference {
 	 */
 	@Override
 	public IResource getResource() {
-		return new WorkspaceWicketResource(new ResourcePath("/" + getName()));
+		ResourcePath pseudoPath = new ResourcePath(getName());
+		long workspaceId = Long.parseLong(pseudoPath.getFirstSegment());
+		ResourcePath path = pseudoPath.removeFirstSegment(true);
+		return new WorkspaceWicketResource(new ResourceHandle(workspaceId, path));
 	}
 
 }

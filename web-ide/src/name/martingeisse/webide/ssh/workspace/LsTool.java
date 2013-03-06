@@ -9,8 +9,6 @@ package name.martingeisse.webide.ssh.workspace;
 import java.io.File;
 import java.io.PrintWriter;
 
-import name.martingeisse.webide.resources.Workspace;
-
 /**
  * Implements the "ls" command.
  */
@@ -24,7 +22,7 @@ public final class LsTool implements IWorkspaceTool {
 		if (arguments.length > 0) {
 			err.print("this tool does not understand any arguments\r\n");
 		}
-		File currentFolder = Workspace.map(context.getCurrentWorkingDirectory());
+		File currentFolder = null; //Workspace.map(context.getCurrentWorkingDirectory());
 		for (File file : currentFolder.listFiles()) {
 			out.print(file.getName());
 			out.print("\r\n");

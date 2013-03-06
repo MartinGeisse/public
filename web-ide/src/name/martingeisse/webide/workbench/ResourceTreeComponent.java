@@ -13,8 +13,8 @@ import java.util.List;
 import name.martingeisse.common.terms.CommandVerb;
 import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
+import name.martingeisse.webide.resources.ResourceHandle;
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.Workspace;
 import name.martingeisse.webide.resources.WorkspaceWicketResourceReference;
 import name.martingeisse.wicket.component.contextmenu.ContextMenu;
 import name.martingeisse.wicket.component.contextmenu.ContextMenuItem;
@@ -37,7 +37,7 @@ import org.apache.wicket.util.upload.FileItem;
 /**
  * The tree component that visualizes the workspace resource tree.
  */
-public abstract class ResourceTreeComponent extends JsTree<ResourcePath> {
+public abstract class ResourceTreeComponent extends JsTree<ResourceHandle> {
 
 	/**
 	 * the workbenchPage
@@ -50,8 +50,8 @@ public abstract class ResourceTreeComponent extends JsTree<ResourcePath> {
 	 * @param treeProvider the tree structure provider
 	 * @param workbenchPage the workbench window that contains this component
 	 */
-	public ResourceTreeComponent(final String id, final ITreeProvider<ResourcePath> treeProvider, final WorkbenchPage workbenchPage) {
-		super(id, treeProvider, new ContextMenu<List<ResourcePath>>());
+	public ResourceTreeComponent(final String id, final ITreeProvider<ResourceHandle> treeProvider, final WorkbenchPage workbenchPage) {
+		super(id, treeProvider, new ContextMenu<List<ResourceHandle>>());
 		setOutputMarkupId(true);
 		this.workbenchPage = workbenchPage;
 
@@ -71,7 +71,7 @@ public abstract class ResourceTreeComponent extends JsTree<ResourcePath> {
 		// context menu
 		// TODO: There is a bug when performing an operation on resources that no longer exist
 		// reproduce: rename workspace, create folder -> NPE, should throw an appropriate WSException
-		ContextMenu<List<ResourcePath>> contextMenu = getContextMenu();
+		ContextMenu<List<ResourceHandle>> contextMenu = getContextMenu();
 		contextMenu.add("New File...", CommandVerbs.NEW_FILE);
 		contextMenu.add("New Folder...", CommandVerbs.NEW_FOLDER);
 		contextMenu.add("Open", CommandVerbs.OPEN);
@@ -80,7 +80,7 @@ public abstract class ResourceTreeComponent extends JsTree<ResourcePath> {
 		contextMenu.add(new MyDownloadMenuItem(workbenchPage));
 		contextMenu.add(new MyUploadMenuItem(workbenchPage));
 		contextMenu.add("Run", CommandVerbs.RUN);
-		contextMenu.add(new ContextMenuSeparator<List<ResourcePath>>());
+		contextMenu.add(new ContextMenuSeparator<List<ResourceHandle>>());
 		contextMenu.add(new DynamicPluginMenuItems());
 		
 	}
@@ -88,9 +88,9 @@ public abstract class ResourceTreeComponent extends JsTree<ResourcePath> {
 	/**
 	 * This handler opens the first selected resource in the editor.
 	 */
-	private class OpenHandler implements IJsTreeCommandHandler<ResourcePath, Void> {
+	private class OpenHandler implements IJsTreeCommandHandler<ResourceHandle, Void> {
 		@Override
-		public void handleCommand(final CommandVerb commandVerb, final List<ResourcePath> selectedNodes, Void ignored) {
+		public void handleCommand(final CommandVerb commandVerb, final List<ResourceHandle> selectedNodes, Void ignored) {
 			if (!selectedNodes.isEmpty()) {
 				workbenchPage.getEditorService().openDefaultEditor(selectedNodes.get(0));
 			}
@@ -100,10 +100,12 @@ public abstract class ResourceTreeComponent extends JsTree<ResourcePath> {
 	/**
 	 * This handler deletes all selected resources.
 	 */
-	private class DeleteHandler implements IJsTreeCommandHandler<ResourcePath, Void> {
+	private class DeleteHandler implements IJsTreeCommandHandler<ResourceHandle, Void> {
 		@Override
-		public void handleCommand(final CommandVerb commandVerb, final List<ResourcePath> selectedNodes, Void ignored) {
-			Workspace.delete(selectedNodes);
+		public void handleCommand(final CommandVerb commandVerb, final List<ResourceHandle> selectedNodes, Void ignored) {
+			for (ResourceHandle node : selectedNodes) {
+				node.delete();
+			}
 			AjaxRequestUtil.markForRender(workbenchPage.get("filesContainer"));
 		}
 	}
@@ -111,24 +113,24 @@ public abstract class ResourceTreeComponent extends JsTree<ResourcePath> {
 	/**
 	 * This handler renames the first selected resource
 	 */
-	private class RenameHandler implements IJsTreeCommandHandler<ResourcePath, Void> {
+	private class RenameHandler implements IJsTreeCommandHandler<ResourceHandle, Void> {
 		@Override
-		public void handleCommand(final CommandVerb commandVerb, final List<ResourcePath> selectedNodes, Void ignored) {
+		public void handleCommand(final CommandVerb commandVerb, final List<ResourceHandle> selectedNodes, Void ignored) {
 		}
 	}
 	
 	/**
 	 * This handler creates a new file.
 	 */
-	private class NewFileHandler implements IJsTreeCommandHandler<ResourcePath, String> {
+	private class NewFileHandler implements IJsTreeCommandHandler<ResourceHandle, String> {
 		@Override
-		public void handleCommand(final CommandVerb commandVerb, final List<ResourcePath> selectedNodes, String filename) {
+		public void handleCommand(final CommandVerb commandVerb, final List<ResourceHandle> selectedNodes, String filename) {
 			if (!selectedNodes.isEmpty()) {
-				final ResourcePath parentFolderPath = Workspace.getFolderPath(selectedNodes.get(0));
-				final ResourcePath newFilePath = parentFolderPath.appendSegment(filename, false);
-				Workspace.writeFile(newFilePath, "", true, false);
+				final ResourceHandle parentFolder = selectedNodes.get(0).getFolder();
+				final ResourceHandle newFile = parentFolder.getChild(filename);
+				newFile.writeFile("", true, false);
 				AjaxRequestUtil.markForRender(workbenchPage.get("filesContainer"));
-				workbenchPage.getEditorService().openDefaultEditor(newFilePath);
+				workbenchPage.getEditorService().openDefaultEditor(newFile);
 			}
 		}
 	}
@@ -136,13 +138,13 @@ public abstract class ResourceTreeComponent extends JsTree<ResourcePath> {
 	/**
 	 * This handler creates a new folder.
 	 */
-	private class NewFolderHandler implements IJsTreeCommandHandler<ResourcePath, String> {
+	private class NewFolderHandler implements IJsTreeCommandHandler<ResourceHandle, String> {
 		@Override
-		public void handleCommand(final CommandVerb commandVerb, final List<ResourcePath> selectedNodes, String filename) {
+		public void handleCommand(final CommandVerb commandVerb, final List<ResourceHandle> selectedNodes, String filename) {
 			if (!selectedNodes.isEmpty()) {
-				final ResourcePath parentFolderPath = Workspace.getFolderPath(selectedNodes.get(0));
-				final ResourcePath newFolderPath = parentFolderPath.appendSegment(filename, false);
-				Workspace.createFolder(newFolderPath, true);
+				final ResourceHandle parentFolder = selectedNodes.get(0).getFolder();
+				final ResourceHandle newFolder = parentFolder.getChild(filename);
+				newFolder.createFolder(true);
 				AjaxRequestUtil.markForRender(workbenchPage.get("filesContainer"));
 			}
 		}
@@ -151,11 +153,12 @@ public abstract class ResourceTreeComponent extends JsTree<ResourcePath> {
 	/**
 	 * This handler runs a Java program.
 	 */
-	private class RunHandler implements IJsTreeCommandHandler<ResourcePath, Void> {
+	private class RunHandler implements IJsTreeCommandHandler<ResourceHandle, Void> {
 		@Override
-		public void handleCommand(final CommandVerb commandVerb, final List<ResourcePath> selectedNodes, Void ignored) {
+		public void handleCommand(final CommandVerb commandVerb, final List<ResourceHandle> selectedNodes, Void ignored) {
 			if (!selectedNodes.isEmpty()) {
-				ResourcePath selectedPath = selectedNodes.get(0);
+				ResourceHandle selectedNode = selectedNodes.get(0);
+				ResourcePath selectedPath = selectedNode.getPath();
 				
 				// this method has vast consequences on the rendered page, so just re-render the whole page
 				AjaxRequestUtil.markForRender(workbenchPage);
@@ -196,7 +199,7 @@ public abstract class ResourceTreeComponent extends JsTree<ResourcePath> {
 	 * it cannot be mapped to a command verb "the simple way" (although with appropriate
 	 * client-side script generation features, this would be possible).
 	 */
-	private class MyDownloadMenuItem extends DownloadMenuItem<List<ResourcePath>> {
+	private class MyDownloadMenuItem extends DownloadMenuItem<List<ResourceHandle>> {
 
 		/**
 		 * the workbenchPage
@@ -215,7 +218,7 @@ public abstract class ResourceTreeComponent extends JsTree<ResourcePath> {
 		 * @see name.martingeisse.wicket.component.contextmenu.DownloadMenuItem#determineUrl(java.lang.Object)
 		 */
 		@Override
-		protected String determineUrl(final List<ResourcePath> anchor) {
+		protected String determineUrl(final List<ResourceHandle> anchor) {
 			if (!anchor.isEmpty()) {
 				return workbenchPage.urlFor(new WorkspaceWicketResourceReference(anchor.get(0)), null).toString();
 			} else {
@@ -229,7 +232,7 @@ public abstract class ResourceTreeComponent extends JsTree<ResourcePath> {
 	 * This menu item handles file uploads. Due to browser restrictions this cannot be
 	 * mapped to a command verb.
 	 */
-	private class MyUploadMenuItem extends FileUploadMenuItem<List<ResourcePath>> {
+	private class MyUploadMenuItem extends FileUploadMenuItem<List<ResourceHandle>> {
 
 		/**
 		 * the workbenchPage
@@ -267,12 +270,12 @@ public abstract class ResourceTreeComponent extends JsTree<ResourcePath> {
 					return;
 				}
 				@SuppressWarnings("unchecked")
-				final JsTree<ResourcePath> resourceTree = (JsTree<ResourcePath>)(workbenchPage.get("filesContainer").get("resources"));
-				final List<ResourcePath> selectedPaths = resourceTree.lookupSelectedNodes(resourceListSpecifier);
-				if (selectedPaths.size() > 0) {
+				final JsTree<ResourceHandle> resourceTree = (JsTree<ResourceHandle>)(workbenchPage.get("filesContainer").get("resources"));
+				final List<ResourceHandle> selectedResources = resourceTree.lookupSelectedNodes(resourceListSpecifier);
+				if (selectedResources.size() > 0) {
 					try {
-						final ResourcePath parentFolderPath = Workspace.getFolderPath(selectedPaths.get(0));
-						workbenchPage.getInternalService().storeUploadedFile(fileItem, parentFolderPath);
+						final ResourceHandle parentFolder = selectedResources.get(0).getFolder();
+						workbenchPage.getInternalService().storeUploadedFile(fileItem, parentFolder);
 					} catch (final Exception e) {
 						throw new RuntimeException(e);
 					}
@@ -288,21 +291,21 @@ public abstract class ResourceTreeComponent extends JsTree<ResourcePath> {
 	/**
 	 * This item expands to the set of all items contributed by plugins.
 	 */
-	private class DynamicPluginMenuItems extends DynamicContextMenuItems<List<ResourcePath>> {
+	private class DynamicPluginMenuItems extends DynamicContextMenuItems<List<ResourceHandle>> {
 		@Override
-		protected ContextMenuItem<? super List<ResourcePath>>[] getReplacementItems() {
-			final List<ContextMenuItem<? super List<ResourcePath>>> replacementItems = new ArrayList<ContextMenuItem<? super List<ResourcePath>>>();
+		protected ContextMenuItem<? super List<ResourceHandle>>[] getReplacementItems() {
+			final List<ContextMenuItem<? super List<ResourceHandle>>> replacementItems = new ArrayList<ContextMenuItem<? super List<ResourceHandle>>>();
 			for (final ContextMenuStateAccess.Entry entry : ContextMenuStateAccess.get()) {
 				final String className = entry.getClassName();
 				final long pluginBundleId = entry.getPluginBundleId();
-				replacementItems.add(new SimpleContextMenuItem<List<ResourcePath>>(entry.getMenuItemName()) {
+				replacementItems.add(new SimpleContextMenuItem<List<ResourceHandle>>(entry.getMenuItemName()) {
 					@Override
-					protected void onSelect(final List<ResourcePath> anchor) {
+					protected void onSelect(final List<ResourceHandle> anchor) {
 						try {
 							final PluginBundleHandle bundleHandle = new PluginBundleHandle(pluginBundleId);
 							final IContextMenuDelegate<?, ?, ?> runnable = bundleHandle.createObject(IContextMenuDelegate.class, className);
 							@SuppressWarnings("unchecked")
-							final IContextMenuDelegate<?, List<ResourcePath>, ?> runnable2 = (IContextMenuDelegate<?, List<ResourcePath>, ?>)runnable;
+							final IContextMenuDelegate<?, List<ResourceHandle>, ?> runnable2 = (IContextMenuDelegate<?, List<ResourceHandle>, ?>)runnable;
 							runnable2.invoke(null, anchor, null);
 						} catch (final Exception e) {
 							throw new RuntimeException(e);
@@ -310,7 +313,7 @@ public abstract class ResourceTreeComponent extends JsTree<ResourcePath> {
 					}
 				});
 			}
-			final ContextMenuItem<? super List<ResourcePath>>[] array = GenericTypeUtil.unsafeCast(new ContextMenuItem<?>[replacementItems.size()]);
+			final ContextMenuItem<? super List<ResourceHandle>>[] array = GenericTypeUtil.unsafeCast(new ContextMenuItem<?>[replacementItems.size()]);
 			return replacementItems.toArray(array);
 		}		
 	}

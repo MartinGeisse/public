@@ -7,7 +7,6 @@
 package name.martingeisse.webide.features.pde;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Set;
@@ -23,12 +22,10 @@ import name.martingeisse.webide.plugin.InternalPluginUtil;
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.MarkerOrigin;
 import name.martingeisse.webide.resources.RecursiveResourceOperation;
+import name.martingeisse.webide.resources.ResourceHandle;
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.Workspace;
 import name.martingeisse.webide.resources.build.BuilderResourceDelta;
 import name.martingeisse.webide.resources.build.IBuilder;
-
-import org.apache.commons.io.FileUtils;
 
 import com.mysema.query.sql.dml.SQLDeleteClause;
 import com.mysema.query.sql.dml.SQLInsertClause;
@@ -39,14 +36,17 @@ import com.mysema.query.sql.dml.SQLInsertClause;
 public class PluginBuilder implements IBuilder {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.resources.build.IBuilder#incrementalBuild(name.martingeisse.common.javascript.analyze.JsonAnalyzer, java.util.Set)
+	 * @see name.martingeisse.webide.resources.build.IBuilder#incrementalBuild(long, name.martingeisse.common.javascript.analyze.JsonAnalyzer, java.util.Set)
 	 */
 	@Override
-	public void incrementalBuild(final JsonAnalyzer descriptorAnalyzer, final Set<BuilderResourceDelta> deltas) {
-		clearStagingPlugins();
-		ResourcePath descriptorFilePath = new ResourcePath(descriptorAnalyzer.analyzeMapElement("descriptorFilePath").expectString()); 
-		ResourcePath binPath = new ResourcePath(descriptorAnalyzer.analyzeMapElement("binPath").expectString()); 
+	public void incrementalBuild(long workspaceId, JsonAnalyzer descriptorAnalyzer, Set<BuilderResourceDelta> deltas) {
+		clearStagingPlugins(workspaceId);
+		ResourcePath descriptorFilePath = new ResourcePath(descriptorAnalyzer.analyzeMapElement("descriptorFilePath").expectString());
+		ResourceHandle descriptorFile = new ResourceHandle(workspaceId, descriptorFilePath);
+		ResourcePath binPath = new ResourcePath(descriptorAnalyzer.analyzeMapElement("binPath").expectString());
+		ResourceHandle binFolder = new ResourceHandle(workspaceId, binPath);
 		ResourcePath bundleFilePath = new ResourcePath(descriptorAnalyzer.analyzeMapElement("bundleFilePath").expectString());
+		ResourceHandle bundleFile = new ResourceHandle(workspaceId, bundleFilePath);
 		
 		boolean mustBuild = false;
 		for (BuilderResourceDelta delta : deltas) {
@@ -67,15 +67,14 @@ public class PluginBuilder implements IBuilder {
 			}
 		}
 		if (mustBuild) {
-			performBuild(descriptorFilePath, binPath, bundleFilePath);
+			performBuild(workspaceId, descriptorFile, binFolder, bundleFile);
 		}
 	}
 
 	/**
 	 * 
 	 */
-	private static void clearStagingPlugins() {
-		final long workspaceId = 1; // TODO
+	private static void clearStagingPlugins(long workspaceId) {
 		final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QWorkspaceStagingPlugins.workspaceStagingPlugins);
 		delete.where(QWorkspaceStagingPlugins.workspaceStagingPlugins.workspaceId.eq(workspaceId));
 		delete.execute();
@@ -84,26 +83,23 @@ public class PluginBuilder implements IBuilder {
 	/**
 	 * Builds a single plugin project.
 	 */
-	private static void performBuild(final ResourcePath descriptorFilePath, final ResourcePath binPath, final ResourcePath bundleFilePath) {
-
-		// TODO
-		final long workspaceId = 1;
+	private static void performBuild(long workspaceId, final ResourceHandle descriptorFile, final ResourceHandle binFolder, final ResourceHandle bundleFile) {
 
 		// clean previous build
-		Workspace.deleteMarkers(descriptorFilePath, MarkerOrigin.PDE);
-		Workspace.delete(bundleFilePath);
+		descriptorFile.deleteMarkers(MarkerOrigin.PDE);
+		bundleFile.delete();
 
 		// fetch the plugin descriptor, stop if not found or invalid
-		final String pluginBundleDescriptorSourceCode = Workspace.readTextFile(descriptorFilePath, false);
+		final String pluginBundleDescriptorSourceCode = descriptorFile.readTextFile(false);
 		if (pluginBundleDescriptorSourceCode == null) {
 			return;
 		}
-		if (!validateDescriptor(descriptorFilePath, pluginBundleDescriptorSourceCode)) {
+		if (!validateDescriptor(descriptorFile, pluginBundleDescriptorSourceCode)) {
 			return;
 		}
 
 		// build and install the plugin
-		final byte[] jarFile = generateJarFile(binPath, bundleFilePath);
+		final byte[] jarFile = generateJarFile(binFolder, bundleFile);
 		uploadPlugin(pluginBundleDescriptorSourceCode, jarFile, workspaceId);
 		
 	}
@@ -112,7 +108,7 @@ public class PluginBuilder implements IBuilder {
 	 * Validates the specified plugin bundle descriptor.
 	 * Returns true on success, false on failure.
 	 */
-	private static boolean validateDescriptor(final ResourcePath descriptorFilePath, final String pluginBundleDescriptorSourceCode) {
+	private static boolean validateDescriptor(final ResourceHandle descriptorFile, final String pluginBundleDescriptorSourceCode) {
 		try {
 			final JsonAnalyzer analyzer = JsonAnalyzer.parse(pluginBundleDescriptorSourceCode);
 			final JsonAnalyzer extensionPoints = analyzer.analyzeMapElement("extension_points");
@@ -125,7 +121,7 @@ public class PluginBuilder implements IBuilder {
 			}
 			return true;
 		} catch (final Exception e) {
-			Workspace.createMarker(descriptorFilePath, MarkerOrigin.PDE, MarkerMeaning.ERROR, 1L, 1L, e.toString());
+			descriptorFile.createMarker(MarkerOrigin.PDE, MarkerMeaning.ERROR, 1L, 1L, e.toString());
 			return false;
 		}
 	}
@@ -134,7 +130,7 @@ public class PluginBuilder implements IBuilder {
 	 * Generates a JAR file from the compiled classes and also returns the
 	 * contents of the file.
 	 */
-	private static byte[] generateJarFile(final ResourcePath binPath, final ResourcePath jarPath) {
+	private static byte[] generateJarFile(final ResourceHandle binFolder, final ResourceHandle bundleFile) {
 		try {
 
 			// start writing a JAR file to a byte array
@@ -148,21 +144,21 @@ public class PluginBuilder implements IBuilder {
 			// add class files
 			new RecursiveResourceOperation() {
 				@Override
-				protected void handleFile(ResourcePath path, File file) {
+				protected void handleFile(ResourceHandle resourceHandle) {
 					try {
-						final String zipEntryPath = path.removeFirstSegments(binPath.getSegmentCount(), false).toString();
+						final String zipEntryPath = resourceHandle.getPath().removeFirstSegments(binFolder.getPath().getSegmentCount(), false).toString();
 						jarOutputStream.putNextEntry(new ZipEntry(zipEntryPath.toString()));
-						FileUtils.copyFile(file, jarOutputStream);
+						resourceHandle.copyFileTo(jarOutputStream, true);
 					} catch (final IOException e) {
 						throw new RuntimeException(e);
 					}
 				}
-			}.handle(binPath);
+			}.handle(binFolder);
 
 			// finish the JAR file and write it to the workspace
 			jarOutputStream.close();
 			final byte[] contents = byteArrayOutputStream.toByteArray();
-			Workspace.writeFile(jarPath, contents, true, true);
+			bundleFile.writeFile(contents, true, true);
 			return contents;
 
 		} catch (final IOException e) {

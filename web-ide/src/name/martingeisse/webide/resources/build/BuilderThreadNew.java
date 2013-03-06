@@ -75,7 +75,7 @@ public class BuilderThreadNew {
 	private static void executeTask(final WorkspaceTasks task) {
 		final String command = task.getCommand();
 		if (command.equals("name.martingeisse.webide.resources.consume_deltas")) {
-			executeConsumeDeltaTask();
+			executeConsumeDeltaTask(task.getWorkspaceId());
 		} else {
 			logger.error("Unknown workspace task command: " + command);
 		}
@@ -84,9 +84,9 @@ public class BuilderThreadNew {
 	/* TODO: Dynamically either fetch all build triggers in advance (for many deltas)
 	 * or select triggers by path prefix (for few deltas).
 	 */
-	private static void executeConsumeDeltaTask() {
+	private static void executeConsumeDeltaTask(long workspaceId) {
 		logger.trace("consuming workspace deltas...");
-		final List<WorkspaceBuildTriggers> triggers = fetchAllBuildTriggers();
+		final List<WorkspaceBuildTriggers> triggers = fetchAllBuildTriggers(workspaceId);
 		final Map<Long, WorkspaceBuilders> workspaceBuildersById = fetchWorkspaceBuildersByIdForBuildTriggers(triggers);
 		final List<WorkspaceResourceDeltas> allDeltas = fetchDeltas();
 		for (WorkspaceBuildTriggers trigger : triggers) {
@@ -131,15 +131,14 @@ public class BuilderThreadNew {
 				throw new RuntimeException(e);
 			}
 			logger.trace("starting incremental build step...");
-			builder.incrementalBuild(JsonAnalyzer.parse(trigger.getDescriptor()), builderDeltas);
+			builder.incrementalBuild(workspaceId, JsonAnalyzer.parse(trigger.getDescriptor()), builderDeltas);
 			logger.trace("incremental build step finished");
 		}
 		
 		logger.trace("finished consuming workspace deltas");
 	}
 
-	private static List<WorkspaceBuildTriggers> fetchAllBuildTriggers() {
-		final long workspaceId = 1;
+	private static List<WorkspaceBuildTriggers> fetchAllBuildTriggers(long workspaceId) {
 		final QWorkspaceBuildTriggers qtrigger = QWorkspaceBuildTriggers.workspaceBuildTriggers;
 		return QueryUtil.fetchMultiple(qtrigger, qtrigger.workspaceId.eq(workspaceId));
 	}

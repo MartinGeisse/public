@@ -6,16 +6,13 @@
 
 package name.martingeisse.webide.workbench;
 
-import java.io.File;
-
 import name.martingeisse.common.javascript.JavascriptAssemblerUtil;
 import name.martingeisse.webide.editor.IEditor;
 import name.martingeisse.webide.plugin.InternalPluginUtil;
 import name.martingeisse.webide.resources.FetchMarkerResult;
 import name.martingeisse.webide.resources.MarkerListView;
+import name.martingeisse.webide.resources.ResourceHandle;
 import name.martingeisse.webide.resources.ResourceIconSelector;
-import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.Workspace;
 import name.martingeisse.webide.workbench.services.IWorkbenchEditorService;
 import name.martingeisse.webide.workbench.services.IWorkbenchServicesProvider;
 import name.martingeisse.wicket.component.tree.JsTree;
@@ -71,6 +68,10 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 	 * Constructor.
 	 */
 	public WorkbenchPage() {
+		
+		// TODO
+		long workspaceId = 1;
+		
 		this.servicesImplementation = new WorkbenchPageServicesImpl(this);
 		setOutputMarkupId(true);
 		add(new IClientFuture.Behavior());
@@ -80,25 +81,24 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 		filesContainer.setOutputMarkupId(true);
 		add(filesContainer);
 
-		final ITreeProvider<ResourcePath> resourceTreeProvider = new ResourceTreeProvider(true);
-		final JsTree<ResourcePath> resourceTree = new ResourceTreeComponent("resources", resourceTreeProvider, this) {
+		final ITreeProvider<ResourceHandle> resourceTreeProvider = new ResourceTreeProvider(workspaceId, true);
+		final JsTree<ResourceHandle> resourceTree = new ResourceTreeComponent("resources", resourceTreeProvider, this) {
 			@Override
-			protected void populateItem(final Item<ResourcePath> item) {
-				final ResourcePath path = item.getModelObject();
+			protected void populateItem(final Item<ResourceHandle> item) {
+				final ResourceHandle resource = item.getModelObject();
 				item.add(new Image("icon", new AbstractReadOnlyModel<ResourceReference>() {
 					@Override
 					public ResourceReference getObject() {
-						final File file = Workspace.map(path);
-						if (file.isFile()) {
+						if (resource.isFile()) {
 							return ResourceIconSelector.FILE_OK.getResourceReference();
-						} else if (file.isDirectory()) {
+						} else if (resource.isFolder()) {
 							return ResourceIconSelector.FOLDER_OK.getResourceReference();
 						} else {
 							return ResourceIconSelector.MISSING_ICON.getResourceReference();
 						}
 					}
 				}));
-				item.add(new Label("name", path.getLastSegment()));
+				item.add(new Label("name", resource.getName()));
 			}
 		};
 

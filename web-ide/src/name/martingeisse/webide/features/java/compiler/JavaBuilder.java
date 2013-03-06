@@ -40,8 +40,8 @@ import name.martingeisse.webide.features.java.compiler.memfile.MemoryJavaFileObj
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.MarkerOrigin;
 import name.martingeisse.webide.resources.RecursiveResourceOperation;
+import name.martingeisse.webide.resources.ResourceHandle;
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.Workspace;
 import name.martingeisse.webide.resources.WorkspaceResourceNotFoundException;
 import name.martingeisse.webide.resources.build.BuilderResourceDelta;
 import name.martingeisse.webide.resources.build.IBuilder;
@@ -52,22 +52,22 @@ import name.martingeisse.webide.resources.build.IBuilder;
 public class JavaBuilder implements IBuilder {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.resources.build.IBuilder#incrementalBuild(name.martingeisse.common.javascript.analyze.JsonAnalyzer, java.util.Set)
+	 * @see name.martingeisse.webide.resources.build.IBuilder#incrementalBuild(long, name.martingeisse.common.javascript.analyze.JsonAnalyzer, java.util.Set)
 	 */
 	@Override
-	public void incrementalBuild(final JsonAnalyzer descriptorAnalyzer, final Set<BuilderResourceDelta> deltas) {
-		ResourcePath sourcePath = new ResourcePath(descriptorAnalyzer.analyzeMapElement("sourcePath").expectString()); 
-		ResourcePath binaryPath = new ResourcePath(descriptorAnalyzer.analyzeMapElement("binaryPath").expectString()); 
-		performCompilation(sourcePath, binaryPath);
+	public void incrementalBuild(long workspaceId, JsonAnalyzer descriptorAnalyzer, Set<BuilderResourceDelta> deltas) {
+		ResourceHandle sourceFolder = new ResourceHandle(workspaceId, new ResourcePath(descriptorAnalyzer.analyzeMapElement("sourcePath").expectString())); 
+		ResourceHandle binaryFolder = new ResourceHandle(workspaceId, new ResourcePath(descriptorAnalyzer.analyzeMapElement("binaryPath").expectString())); 
+		performCompilation(sourceFolder, binaryFolder);
 	}
 
 	/**
 	 * Compiles a single Java project.
 	 */
-	private static void performCompilation(final ResourcePath sourcePath, final ResourcePath binaryPath) {
+	private static void performCompilation(final ResourceHandle sourceFolder, final ResourceHandle binaryFolder) {
 
 		// delete binary files from previous builds
-		Workspace.delete(binaryPath);
+		binaryFolder.delete();
 
 		// obtain the standard file manager so we can include the boot classpath
 		final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -104,15 +104,16 @@ public class JavaBuilder implements IBuilder {
 		try {
 			new RecursiveResourceOperation() {
 				@Override
-				protected void handleFile(ResourcePath path, File file) {
-					if ("java".equals(path.getExtension())) {
-						final String key = path.removeFirstSegments(sourcePath.getSegmentCount(), true).toString();
-						final IMemoryJavaFileObject fileObject = new MemoryJavaFileObject(key, Workspace.readBinaryFile(path, true));
+				protected void handleFile(ResourceHandle resourceHandle) {
+					if ("java".equals(resourceHandle.getExtension())) {
+						ResourcePath path = resourceHandle.getPath();
+						final String key = path.removeFirstSegments(sourceFolder.getPath().getSegmentCount(), true).toString();
+						final IMemoryJavaFileObject fileObject = new MemoryJavaFileObject(key, resourceHandle.readBinaryFile(true));
 						javaFiles.add(fileObject);
 						memoryFileManager.getInputFiles().put(key, fileObject);
 					}
 				}
-			}.handle(sourcePath);
+			}.handle(sourceFolder);
 		} catch (final WorkspaceResourceNotFoundException e) {
 			// src folder doesn't exist
 			try {
@@ -128,8 +129,9 @@ public class JavaBuilder implements IBuilder {
 
 		// save the class files
 		for (final IMemoryFileObject fileObject : memoryFileManager.getOutputFiles().values()) {
-			final ResourcePath path = new ResourcePath(binaryPath.toString() + fileObject.getName());
-			Workspace.writeFile(path, fileObject.getBinaryContent(), true, true);
+			final ResourcePath path = new ResourcePath(binaryFolder.getPath().toString() + fileObject.getName());
+			final ResourceHandle handle = new ResourceHandle(binaryFolder.getWorkspaceId(), path);
+			handle.writeFile(fileObject.getBinaryContent(), true, true);
 		}
 
 		// dispose of the file manager
@@ -157,10 +159,10 @@ public class JavaBuilder implements IBuilder {
 		ignoredWarnings.add("[package-info] a package-info.java file has already been seen for package unnamed package");
 
 		// generate markers for the diagnostic messages
-		Workspace.deleteMarkersRecursively(sourcePath, MarkerOrigin.JAVAC);
+		sourceFolder.deleteMarkersRecursively(MarkerOrigin.JAVAC);
 		for (final Map.Entry<JavaFileObject, List<Diagnostic<? extends JavaFileObject>>> fileEntry : sourceFileToDiagnostics.entrySet()) {
 			ResourcePath filePath = new ResourcePath(fileEntry.getKey().getName());
-			filePath = sourcePath.concat(filePath.withLeadingSeparator(false), false);
+			ResourceHandle fileHandle = sourceFolder.get(filePath.withLeadingSeparator(false));
 			for (final Diagnostic<? extends JavaFileObject> diagnostic : fileEntry.getValue()) {
 
 				// convert the diagnostic kind to a marker meaning (skip this diagnostic if the kind is unknown)
@@ -183,7 +185,7 @@ public class JavaBuilder implements IBuilder {
 				// create the marker
 				final long line = diagnostic.getLineNumber();
 				final long column = diagnostic.getColumnNumber();
-				Workspace.createMarker(filePath, MarkerOrigin.JAVAC, meaning, line, column, messageText);
+				fileHandle.createMarker(MarkerOrigin.JAVAC, meaning, line, column, messageText);
 
 			}
 		}
@@ -191,13 +193,13 @@ public class JavaBuilder implements IBuilder {
 		// copy non-Java files over to the output folder
 		new RecursiveResourceOperation() {
 			@Override
-			protected void handleFile(ResourcePath sourceFilePath, File sourceFile) {
-				if (!"java".equals(sourceFilePath.getExtension())) {
-					final ResourcePath destinationFilePath = binaryPath.concat(sourceFilePath.removeFirstSegments(sourcePath.getSegmentCount(), false), false);
-					Workspace.copyFile(sourceFilePath, destinationFilePath, true);
+			protected void handleFile(ResourceHandle sourceFile) {
+				if (!"java".equals(sourceFile.getExtension())) {
+					ResourcePath relativePath = sourceFile.getPath().removeFirstSegments(sourceFolder.getPath().getSegmentCount(), false);
+					sourceFile.copyFileTo(binaryFolder.get(relativePath), true);
 				}
 			}
-		}.handle(sourcePath);
+		}.handle(sourceFolder);
 		
 	}
 

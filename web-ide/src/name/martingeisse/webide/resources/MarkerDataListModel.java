@@ -16,9 +16,9 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 public class MarkerDataListModel extends AbstractReadOnlyModel<List<FetchMarkerResult>> {
 
 	/**
-	 * the path
+	 * the resourceHandle
 	 */
-	private ResourcePath path;
+	private ResourceHandle resourceHandle;
 	
 	/**
 	 * the meaningFilter
@@ -32,25 +32,27 @@ public class MarkerDataListModel extends AbstractReadOnlyModel<List<FetchMarkerR
 	
 	/**
 	 * Constructor used to fetch markers for all files.
+	 * 
 	 * @param meaningFilter optional list of accepted marker meanings. If null is
 	 * passed for this parameter then all markers are fetched.
 	 * @param limit the maximum number of markers to fetch
 	 */
 	public MarkerDataListModel(MarkerMeaning[] meaningFilter, long limit) {
-		this.path = null;
+		this.resourceHandle = null;
 		this.meaningFilter = meaningFilter;
 		this.limit = limit;
 	}
 	
 	/**
 	 * Constructor used to fetch markers for a single resource.
-	 * @param path the path of the resource
+	 * 
+	 * @param resourceHandle the handle for the resource
 	 * @param meaningFilter optional list of accepted marker meanings. If null is
 	 * passed for this parameter then all markers are fetched.
 	 * @param limit the maximum number of markers to fetch
 	 */
-	public MarkerDataListModel(ResourcePath path, MarkerMeaning[] meaningFilter, long limit) {
-		this.path = path;
+	public MarkerDataListModel(ResourceHandle resourceHandle, MarkerMeaning[] meaningFilter, long limit) {
+		this.resourceHandle = resourceHandle;
 		this.meaningFilter = meaningFilter;
 		this.limit = limit;
 	}
@@ -60,10 +62,10 @@ public class MarkerDataListModel extends AbstractReadOnlyModel<List<FetchMarkerR
 	 */
 	@Override
 	public List<FetchMarkerResult> getObject() {
-		if (path != null) {
-			return Workspace.fetchSingleResourceMarkers(path, meaningFilter, limit);
+		if (resourceHandle != null) {
+			return resourceHandle.fetchMarkers(meaningFilter, limit);
 		} else {
-			return Workspace.fetchAllMarkers(meaningFilter, limit);
+			return ResourceHandle.fetchAllMarkers(meaningFilter, limit);
 		}
 	}
 	

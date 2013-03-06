@@ -15,9 +15,9 @@ import name.martingeisse.webide.entity.Markers;
 public final class FetchMarkerResult implements Serializable {
 
 	/**
-	 * the resourcePath
+	 * the resourceHandle
 	 */
-	private final ResourcePath resourcePath;
+	private final ResourceHandle resourceHandle;
 	
 	/**
 	 * the origin
@@ -49,7 +49,7 @@ public final class FetchMarkerResult implements Serializable {
 	 * @param marker the marker to create this object from
 	 */
 	FetchMarkerResult(Markers marker) {
-		this.resourcePath = new ResourcePath(marker.getPath());
+		this.resourceHandle = new ResourceHandle(marker.getWorkspaceId(), new ResourcePath(marker.getPath()));
 		this.origin = MarkerOrigin.valueOf(marker.getOrigin());
 		this.meaning = MarkerMeaning.valueOf(marker.getMeaning());
 		this.line = marker.getLine();
@@ -58,11 +58,11 @@ public final class FetchMarkerResult implements Serializable {
 	}
 
 	/**
-	 * Getter method for the resourcePath.
-	 * @return the resourcePath
+	 * Getter method for the resourceHandle.
+	 * @return the resourceHandle
 	 */
-	public ResourcePath getResourcePath() {
-		return resourcePath;
+	public ResourceHandle getResourceHandle() {
+		return resourceHandle;
 	}
 	
 	/**
@@ -110,7 +110,7 @@ public final class FetchMarkerResult implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "{MarkerData. origin = " + origin + ", meaning = " + meaning + ", line = " + line + ", column = " + column + ", message = " + message + "}";
+		return "{FetchMarkerResult. resource = " + resourceHandle + ", origin = " + origin + ", meaning = " + meaning + ", line = " + line + ", column = " + column + ", message = " + message + "}";
 	}
 
 }

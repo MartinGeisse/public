@@ -7,7 +7,7 @@
 package name.martingeisse.webide.editor.codemirror.panel;
 
 import name.martingeisse.webide.editor.codemirror.CodeMirrorMode;
-import name.martingeisse.webide.resources.ResourcePath;
+import name.martingeisse.webide.resources.ResourceHandle;
 
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.IModel;
@@ -25,15 +25,15 @@ public final class CodeMirrorEditorPanel extends AbstractCodeMirrorEditorPanel {
 	/**
 	 * Constructor.
 	 * 
-	 * TODO: should not get the resource path; should save through an interface
+	 * TODO: should not get the resource handle; should save through an interface
 	 * 
 	 * @param id the wicket id
 	 * @param contentsModel the model
-	 * @param workspaceResourcePath the path of the workspace resource being edited
+	 * @param resourceHandle the handle of the workspace resource being edited
 	 * @param mode the CodeMirror mode
 	 */
-	public CodeMirrorEditorPanel(final String id, final IModel<String> contentsModel, final ResourcePath workspaceResourcePath, final CodeMirrorMode mode) {
-		super(id, contentsModel, workspaceResourcePath);
+	public CodeMirrorEditorPanel(final String id, final IModel<String> contentsModel, final ResourceHandle resourceHandle, final CodeMirrorMode mode) {
+		super(id, contentsModel, resourceHandle);
 		this.mode = mode;
 	}
 

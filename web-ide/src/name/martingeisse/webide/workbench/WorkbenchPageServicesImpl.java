@@ -17,8 +17,7 @@ import name.martingeisse.webide.editor.IEditorFactory;
 import name.martingeisse.webide.editor.IEditorFamily;
 import name.martingeisse.webide.plugin.ExtensionQuery;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
-import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.Workspace;
+import name.martingeisse.webide.resources.ResourceHandle;
 import name.martingeisse.webide.resources.WorkspaceResourceCollisionException;
 import name.martingeisse.webide.workbench.services.IWorkbenchEditorService;
 import name.martingeisse.webide.workbench.services.IWorkbenchServicesProvider;
@@ -61,11 +60,11 @@ public class WorkbenchPageServicesImpl implements IWorkbenchServicesProvider, IW
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.workbench.services.IWorkbenchEditorService#openDefaultEditor(name.martingeisse.webide.resources.ResourcePath)
+	 * @see name.martingeisse.webide.workbench.services.IWorkbenchEditorService#openDefaultEditor(name.martingeisse.webide.resources.ResourceHandle)
 	 */
 	@Override
-	public void openDefaultEditor(final ResourcePath path) {
-		openEditor(path, getDefaultEditorIdFromFilename(path.getLastSegment()));
+	public void openDefaultEditor(ResourceHandle resourceHandle) {
+		openEditor(resourceHandle, getDefaultEditorIdFromFilename(resourceHandle.getName()));
 	}
 	
 	/**
@@ -95,13 +94,13 @@ public class WorkbenchPageServicesImpl implements IWorkbenchServicesProvider, IW
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.workbench.services.IWorkbenchEditorService#openEditor(name.martingeisse.webide.resources.ResourcePath, java.lang.String)
+	 * @see name.martingeisse.webide.workbench.services.IWorkbenchEditorService#openEditor(name.martingeisse.webide.resources.ResourceHandle, java.lang.String)
 	 */
 	@Override
-	public void openEditor(final ResourcePath path, final String editorId) {
+	public void openEditor(ResourceHandle resourceHandle, String editorId) {
 		try {
 			IEditor editor = ReturnValueUtil.nullNotAllowed(getEditorFactoryForId(editorId).createEditor(), "editorFactory.createEditor");
-			editor.initialize(path);
+			editor.initialize(resourceHandle);
 			page.replaceEditor(editor);
 		} catch (RuntimeException e) {
 			throw e;
@@ -159,17 +158,17 @@ public class WorkbenchPageServicesImpl implements IWorkbenchServicesProvider, IW
 	 * with the same name already exists, the uploaded file is renamed.
 	 * 
 	 * @param fileItem the {@link FileItem} that represents the uploaded file
-	 * @param destinationFolderPath the path to the folder into which the uploaded
+	 * @param destinationFolder the folder into which the uploaded
 	 * file should be placed. The name of the file is taken from the upload request.
 	 */
-	public void storeUploadedFile(FileItem fileItem, ResourcePath destinationFolderPath) {
+	public void storeUploadedFile(FileItem fileItem, ResourceHandle destinationFolder) {
 		try {
 			byte[] contents = IOUtils.toByteArray(fileItem.getInputStream());
 			for (int i = 0; i<20; i++) {
 				String name = modifyUploadedFileName(fileItem.getName(), i);
-				ResourcePath path = destinationFolderPath.appendSegment(name, false);
+				ResourceHandle file = destinationFolder.getChild(name);
 				try {
-					Workspace.writeFile(path, contents, false, false);
+					file.writeFile(contents, false, false);
 					return;
 				} catch (WorkspaceResourceCollisionException e) {
 				}

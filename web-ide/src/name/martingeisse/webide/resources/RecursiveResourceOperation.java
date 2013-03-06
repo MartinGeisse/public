@@ -58,7 +58,7 @@ public class RecursiveResourceOperation {
 	 * @param resourceHandle the resource handle of the resource to handle
 	 */
 	protected final void handleChildren(ResourceHandle resourceHandle) {
-		for (ResourceHandle child : resourceHandle.listChildren()) {
+		for (ResourceHandle child : resourceHandle.getChildrenArray()) {
 			handle(child);
 		}
 	}

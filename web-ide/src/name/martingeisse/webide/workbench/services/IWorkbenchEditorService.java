@@ -6,7 +6,7 @@
 
 package name.martingeisse.webide.workbench.services;
 
-import name.martingeisse.webide.resources.ResourcePath;
+import name.martingeisse.webide.resources.ResourceHandle;
 
 /**
  * Allows to interact with workbench editors.
@@ -14,16 +14,16 @@ import name.martingeisse.webide.resources.ResourcePath;
 public interface IWorkbenchEditorService {
 
 	/**
-	 * Opens the default editor for the specified path.
-	 * @param path the path of the resource to edit.
+	 * Opens the default editor for the specified resource.
+	 * @param resourceHandle the handle for the resource to edit.
 	 */
-	public void openDefaultEditor(ResourcePath path);
+	public void openDefaultEditor(ResourceHandle resourceHandle);
 
 	/**
-	 * Opens a non-default editor for the specified path.
-	 * @param path the path of the resource to edit.
+	 * Opens a non-default editor for the specified resource.
+	 * @param resourceHandle the handle for the resource to edit.
 	 * @param editorId the ID of the editor extension to use
 	 */
-	public void openEditor(ResourcePath path, String editorId);
+	public void openEditor(ResourceHandle resourceHandle, String editorId);
 	
 }

@@ -8,8 +8,7 @@ package name.martingeisse.webide.editor;
 
 import java.io.Serializable;
 
-import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.Workspace;
+import name.martingeisse.webide.resources.ResourceHandle;
 
 /**
  * Base class for {@link IEditor} implementations.
@@ -19,9 +18,9 @@ import name.martingeisse.webide.resources.Workspace;
 public abstract class AbstractEditor<D extends Serializable> implements IEditor, Serializable {
 
 	/**
-	 * the workspaceResourcePath
+	 * the resourceHandle
 	 */
-	private ResourcePath workspaceResourcePath;
+	private ResourceHandle resourceHandle;
 	
 	/**
 	 * the document
@@ -29,12 +28,12 @@ public abstract class AbstractEditor<D extends Serializable> implements IEditor,
 	private D document;
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.workbench.IEditor#initialize(name.martingeisse.webide.resources.ResourcePath)
+	 * @see name.martingeisse.webide.editor.IEditor#initialize(name.martingeisse.webide.resources.ResourceHandle)
 	 */
 	@Override
-	public final void initialize(ResourcePath workspaceResourcePath) {
-		this.workspaceResourcePath = workspaceResourcePath;
-		this.document = createDocument(Workspace.readBinaryFile(workspaceResourcePath, true));
+	public void initialize(ResourceHandle resourceHandle) {
+		this.resourceHandle = resourceHandle;
+		this.document = createDocument(resourceHandle.readBinaryFile(true));
 	}
 
 	/**
@@ -45,11 +44,11 @@ public abstract class AbstractEditor<D extends Serializable> implements IEditor,
 	protected abstract D createDocument(byte[] resourceData);
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.workbench.IEditor#getWorkspaceResourcePath()
+	 * @see name.martingeisse.webide.workbench.IEditor#getWorkspaceResourceHandle()
 	 */
 	@Override
-	public final ResourcePath getWorkspaceResourcePath() {
-		return workspaceResourcePath;
+	public final ResourceHandle getWorkspaceResourceHandle() {
+		return resourceHandle;
 	}
 	
 	/* (non-Javadoc)

@@ -6,11 +6,7 @@
 
 package name.martingeisse.webide.ssh.workspace;
 
-import java.io.File;
 import java.io.PrintWriter;
-
-import name.martingeisse.webide.resources.RecursiveResourceOperation;
-import name.martingeisse.webide.resources.ResourcePath;
 
 /**
  * Implements the "rls" (recursive "ls") command.
@@ -25,6 +21,7 @@ public final class RlsTool implements IWorkspaceTool {
 		if (arguments.length > 0) {
 			err.print("this tool does not understand any arguments\r\n");
 		}
+		/*
 		new RecursiveResourceOperation() {
 			@Override
 			protected void handle(ResourcePath path, File resource) {
@@ -33,6 +30,7 @@ public final class RlsTool implements IWorkspaceTool {
 				super.handle(resource);
 			};
 		}.handle(context.getCurrentWorkingDirectory());
+		*/
 	}
 	
 }

@@ -14,8 +14,8 @@ import java.util.Set;
 
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.webide.application.Configuration;
+import name.martingeisse.webide.resources.ResourceHandle;
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.Workspace;
 import name.martingeisse.webide.resources.build.BuilderResourceDelta;
 import name.martingeisse.webide.resources.build.IBuilder;
 
@@ -39,10 +39,10 @@ public class VerilogBuilder implements IBuilder {
 	private static Logger logger = Logger.getLogger(VerilogBuilder.class);
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.resources.build.IBuilder#incrementalBuild(name.martingeisse.common.javascript.analyze.JsonAnalyzer, java.util.Set)
+	 * @see name.martingeisse.webide.resources.build.IBuilder#incrementalBuild(long, name.martingeisse.common.javascript.analyze.JsonAnalyzer, java.util.Set)
 	 */
 	@Override
-	public void incrementalBuild(final JsonAnalyzer descriptorAnalyzer, final Set<BuilderResourceDelta> deltas) {
+	public void incrementalBuild(long workspaceId, JsonAnalyzer descriptorAnalyzer, Set<BuilderResourceDelta> deltas) {
 		ResourcePath sourcePath = new ResourcePath(descriptorAnalyzer.analyzeMapElement("sourcePath").expectString()); 
 		ResourcePath binaryPath = new ResourcePath(descriptorAnalyzer.analyzeMapElement("binaryPath").expectString());
 		for (final BuilderResourceDelta delta : deltas) {
@@ -60,7 +60,7 @@ public class VerilogBuilder implements IBuilder {
 				ResourcePath inputFilePath = sourcePath.concat(relativeDeltaPath, false);
 				ResourcePath outputFilePath = binaryPath.concat(relativeDeltaPath, false).replaceExtension("vvp");
 				
-				compile(descriptorAnalyzer, inputFilePath, outputFilePath);
+				compile(workspaceId, descriptorAnalyzer, inputFilePath, outputFilePath);
 			}
 			
 		}
@@ -78,17 +78,21 @@ public class VerilogBuilder implements IBuilder {
 		// TODO
 	}
 
-	private void compile(final JsonAnalyzer descriptorAnalyzer, ResourcePath inputFilePath, ResourcePath outputFilePath) {
+	private void compile(long workspaceId, final JsonAnalyzer descriptorAnalyzer, ResourcePath inputFilePath, ResourcePath outputFilePath) {
 		try {
 			
+			// prepare
+			ResourceHandle inputFile = new ResourceHandle(workspaceId, inputFilePath);
+			ResourceHandle outputFile = new ResourceHandle(workspaceId, outputFilePath);
+			
 			// read the input file
-			byte[] inputData = Workspace.readBinaryFile(inputFilePath, false);
+			byte[] inputData = inputFile.readBinaryFile(false);
 			if (inputData == null) {
 				return;
 			}
 			
 			// delete previous output file
-			Workspace.delete(outputFilePath);
+			outputFile.delete();
 
 			// build the command line
 			CommandLine commandLine = new CommandLine(Configuration.getIverilogPath());
@@ -108,7 +112,7 @@ public class VerilogBuilder implements IBuilder {
 			executor.execute(commandLine);
 
 			// create the output file
-			Workspace.writeFile(outputFilePath, outputStream.toByteArray(), true, true);
+			outputFile.writeFile(outputStream.toByteArray(), true, true);
 			
 		} catch (IOException e) {
 			// TODO error message

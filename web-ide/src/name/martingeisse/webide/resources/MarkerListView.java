@@ -67,13 +67,13 @@ public abstract class MarkerListView extends ListView<FetchMarkerResult> {
 	/**
 	 * Constructor.
 	 * @param id the wicket id
-	 * @param path the path of the resource to show markers for
+	 * @param resourceHandle the handle for the resource to show markers for
 	 * @param meaningFilter optional list of accepted marker meanings. If null is
 	 * passed for this parameter then all markers are fetched and displayed.
 	 * @param limit the maximum number of markers to fetch
 	 */
-	public MarkerListView(String id, ResourcePath path, MarkerMeaning[] meaningFilter, long limit) {
-		super(id, new MarkerDataListModel(path, meaningFilter, limit));
+	public MarkerListView(String id, ResourceHandle resourceHandle, MarkerMeaning[] meaningFilter, long limit) {
+		super(id, new MarkerDataListModel(resourceHandle, meaningFilter, limit));
 	}
 
 	/**

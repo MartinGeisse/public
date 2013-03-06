@@ -34,7 +34,7 @@ public class CodeMirrorEditor extends AbstractCodeMirrorEditor {
 	 */
 	@Override
 	public Component createComponent(final String id) {
-		return new CodeMirrorEditorPanel(id, new PropertyModel<String>(this, "document"), getWorkspaceResourcePath(), mode);
+		return new CodeMirrorEditorPanel(id, new PropertyModel<String>(this, "document"), getWorkspaceResourceHandle(), mode);
 	}
 
 }

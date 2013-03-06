@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.PrintWriter;
 
 import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.Workspace;
 
 /**
  * Implements the "cd" command.
@@ -28,7 +27,7 @@ public final class CdTool implements IWorkspaceTool {
 		}
 		ResourcePath specifiedTargetPath = new ResourcePath(arguments[0]);
 		ResourcePath resolvedTargetPath = context.getCurrentWorkingDirectory().concat(specifiedTargetPath, true).collapse();
-		File target = Workspace.map(resolvedTargetPath);
+		File target = null; // Workspace.map(resolvedTargetPath);
 		if (!target.exists()) {
 			err.print("No such folder.\r\n");
 			return;

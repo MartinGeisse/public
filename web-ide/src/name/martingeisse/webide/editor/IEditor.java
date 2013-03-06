@@ -9,7 +9,7 @@ package name.martingeisse.webide.editor;
 import java.util.List;
 
 import name.martingeisse.webide.resources.FetchMarkerResult;
-import name.martingeisse.webide.resources.ResourcePath;
+import name.martingeisse.webide.resources.ResourceHandle;
 
 import org.apache.wicket.Component;
 
@@ -24,9 +24,9 @@ public interface IEditor {
 	 * and load its document. Currently only workspace resources are
 	 * supported as document sources.
 	 * 
-	 * @param workspaceResourcePath the path to the workspace resource to load
+	 * @param resourceHandle the handle to the workspace resource to load
 	 */
-	public void initialize(final ResourcePath workspaceResourcePath);
+	public void initialize(final ResourceHandle resourceHandle);
 	
 	/**
 	 * Creates a user interface component for this editor.
@@ -37,11 +37,11 @@ public interface IEditor {
 	public Component createComponent(String id);
 	
 	/**
-	 * Returns the path to the workspace resource being edited.
+	 * Returns the handle for the workspace resource being edited.
 	 * 
-	 * @return the workspace resource path
+	 * @return the workspace resource handle
 	 */
-	public ResourcePath getWorkspaceResourcePath();
+	public ResourceHandle getWorkspaceResourceHandle();
 	
 	/**
 	 * Returns the document being edited.

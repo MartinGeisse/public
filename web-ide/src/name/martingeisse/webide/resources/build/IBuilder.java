@@ -32,10 +32,11 @@ public interface IBuilder {
 
 	/**
 	 * Performs an incremental build in response to a set of resource deltas.
-	 *  
+	 * 
+	 * @param workspaceId the ID of the workspace in which the build occurs
 	 * @param descriptorAnalyzer the analyzer for the build descriptor
 	 * @param deltas the deltas that triggered the build
 	 */
-	public void incrementalBuild(JsonAnalyzer descriptorAnalyzer, Set<BuilderResourceDelta> deltas);
+	public void incrementalBuild(long workspaceId, JsonAnalyzer descriptorAnalyzer, Set<BuilderResourceDelta> deltas);
 
 }

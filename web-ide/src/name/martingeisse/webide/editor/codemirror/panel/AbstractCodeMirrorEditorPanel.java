@@ -6,8 +6,7 @@
 
 package name.martingeisse.webide.editor.codemirror.panel;
 
-import name.martingeisse.webide.resources.ResourcePath;
-import name.martingeisse.webide.resources.Workspace;
+import name.martingeisse.webide.resources.ResourceHandle;
 import name.martingeisse.webide.util.NoTrimTextArea;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 import name.martingeisse.wicket.util.IClientFuture;
@@ -32,28 +31,28 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 public class AbstractCodeMirrorEditorPanel extends Panel {
 
 	/**
-	 * the workspaceResourcePath
+	 * the resourceHandle
 	 */
-	private final ResourcePath workspaceResourcePath;
+	private final ResourceHandle resourceHandle;
 	
 	/**
 	 * Constructor.
 	 * @param id the wicket id
 	 * @param contentsModel the model
-	 * @param workspaceResourcePath the path of the workspace resource being edited
+	 * @param resourceHandle the handle of the workspace resource being edited
 	 */
-	public AbstractCodeMirrorEditorPanel(String id, IModel<String> contentsModel, ResourcePath workspaceResourcePath) {
+	public AbstractCodeMirrorEditorPanel(String id, IModel<String> contentsModel, ResourceHandle resourceHandle) {
 		super(id, contentsModel);
-		this.workspaceResourcePath = workspaceResourcePath;
+		this.resourceHandle = resourceHandle;
 		
 		final Form<Void> editorForm = new Form<Void>("form") {
 			@Override
 			protected void onSubmit() {
 				
 				// save the resource
-				final ResourcePath workspaceResourcePath = AbstractCodeMirrorEditorPanel.this.workspaceResourcePath;
+				final ResourceHandle resourceHandle = AbstractCodeMirrorEditorPanel.this.resourceHandle;
 				final String newContents = (String)AbstractCodeMirrorEditorPanel.this.getDefaultModelObject();
-				Workspace.writeFile(workspaceResourcePath, newContents, true, true);
+				resourceHandle.writeFile(newContents, true, true);
 				
 				// wait for the build to finish to clear the "workspace building" marker. TODO: This should be decoupled from editors.
 				IClientFuture.Behavior.get(getWebPage()).addFuture(new IClientFuture() {

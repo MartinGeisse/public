@@ -81,11 +81,8 @@ public final class CodeMirrorMode implements Serializable {
 			} else {
 				String bundleIdText = Long.toString(handle.getPluginBundleId());
 				String localPath = "/" + anchor.getCanonicalName().replace('.', '/');
-				System.out.println("***1: " + localPath);
 				localPath = localPath.substring(0, localPath.lastIndexOf('/') + 1) + path;
-				System.out.println("***2: " + localPath);
 				response.render(JavaScriptHeaderItem.forReference(new PluginBundleWicketResourceReference(bundleIdText + '/' + localPath)));
-				System.out.println("***3: " + new PluginBundleWicketResourceReference(bundleIdText + localPath));
 			}
 		}
 	}
