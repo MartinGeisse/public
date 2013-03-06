@@ -80,7 +80,7 @@ public enum ResourceIconSelector {
 	}
 	
 	/**
-	 * Chosses an icon for a resource.
+	 * Chooses an icon for a resource.
 	 * @param type the resource type
 	 * @param hasErrors whether the resource has errors
 	 * @param hasWarnings whether the resource has warnings (ignored if hasErrors is true)

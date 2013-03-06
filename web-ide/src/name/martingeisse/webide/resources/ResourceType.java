@@ -21,6 +21,12 @@ public enum ResourceType {
 	 * A file within a project or folder. A file does not contain resources but
 	 * has binary content.
 	 */
-	FILE;
+	FILE,
+	
+	/**
+	 * This resource type is used for any resource which the framework doesn't
+	 * recognize to be of any known type.
+	 */
+	OTHER;
 	
 }

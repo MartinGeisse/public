@@ -49,6 +49,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * Paths are comparable using lexicographic ordering on the segments,
  * absolute paths before relative paths, and paths without a trailing
  * separator before those with a trailing separator.
+ * 
+ * TODO make sure the separator isn't inserted as a segment character
  */
 public final class ResourcePath implements Serializable, Iterable<String>, Comparable<ResourcePath> {
 
@@ -281,7 +283,11 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	 * @return the new path
 	 */
 	public ResourcePath withLeadingSeparator(boolean withLeadingSeparator) {
-		return new ResourcePath(withLeadingSeparator, trailingSeparator, segmentStorage, firstSegmentIndex, segmentCount, false);
+		if (this.leadingSeparator != withLeadingSeparator) {
+			return new ResourcePath(withLeadingSeparator, trailingSeparator, segmentStorage, firstSegmentIndex, segmentCount, false);
+		} else {
+			return this;
+		}
 	}
 	
 	/**
@@ -293,7 +299,11 @@ public final class ResourcePath implements Serializable, Iterable<String>, Compa
 	 * @return the new path
 	 */
 	public ResourcePath withTrailingSeparator(boolean withTrailingSeparator) {
-		return new ResourcePath(leadingSeparator, withTrailingSeparator, segmentStorage, firstSegmentIndex, segmentCount, false);
+		if (this.trailingSeparator != withTrailingSeparator) {
+			return new ResourcePath(leadingSeparator, withTrailingSeparator, segmentStorage, firstSegmentIndex, segmentCount, false);
+		} else {
+			return this;
+		}
 	}
 	
 	/**
