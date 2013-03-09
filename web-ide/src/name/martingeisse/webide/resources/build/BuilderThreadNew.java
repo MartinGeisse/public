@@ -86,27 +86,38 @@ public class BuilderThreadNew {
 	 */
 	private static void executeConsumeDeltaTask(long workspaceId) {
 		logger.trace("consuming workspace deltas...");
+		
+		// fetch deltas
+		final List<WorkspaceResourceDeltas> rawDeltas = fetchDeltas();
+		final List<BuilderResourceDelta> allDeltas = new ArrayList<BuilderResourceDelta>();
+		for (WorkspaceResourceDeltas rawDelta : rawDeltas) {
+			allDeltas.add(new BuilderResourceDelta(rawDelta));
+		}
+		
+		// invoke listeners first
+		WorkspaceListenerRegistry.onWorkspaceChange(workspaceId, allDeltas);
+		
+		// then invoke builders
 		final List<WorkspaceBuildTriggers> triggers = fetchAllBuildTriggers(workspaceId);
 		final Map<Long, WorkspaceBuilders> workspaceBuildersById = fetchWorkspaceBuildersByIdForBuildTriggers(triggers);
-		final List<WorkspaceResourceDeltas> allDeltas = fetchDeltas();
 		for (WorkspaceBuildTriggers trigger : triggers) {
 			logger.trace("collecting deltas for trigger " + trigger.getBuildscriptPath() + ", base path " + trigger.getTriggerBasePath());
 			final ResourcePath triggerBasePath = new ResourcePath(trigger.getTriggerBasePath());
 			Set<BuilderResourceDelta> builderDeltas = new HashSet<BuilderResourceDelta>();
-			for (final WorkspaceResourceDeltas delta : allDeltas) {
-				logger.trace("delta: " + delta.getPath() + " (deep: " + delta.getIsDeep() + ")");
-				final ResourcePath deltaPath = new ResourcePath(delta.getPath());
-				if (triggerBasePath.isPrefixOf(deltaPath) || (delta.getIsDeep() && deltaPath.isPrefixOf(triggerBasePath))) {
+			for (final BuilderResourceDelta delta : allDeltas) {
+				logger.trace("delta: " + delta.getPath() + " (deep: " + delta.isDeep() + ")");
+				final ResourcePath deltaPath = delta.getPath();
+				if (triggerBasePath.isPrefixOf(deltaPath) || (delta.isDeep() && deltaPath.isPrefixOf(triggerBasePath))) {
 					logger.trace("base path matches");
-					if (delta.getIsDeep()) {
+					if (delta.isDeep()) {
 						logger.trace("deep delta -- skipping path pattern check");
-						builderDeltas.add(new BuilderResourceDelta(delta));
+						builderDeltas.add(delta);
 					} else {
 						logger.trace("matching build trigger with pattern " + trigger.getPathPattern() + ", delta path: " + deltaPath);
-						boolean result = Pattern.matches(trigger.getPathPattern(), delta.getPath());
+						boolean result = Pattern.matches(trigger.getPathPattern(), delta.getPath().toString());
 						if (result) {
 							logger.error("pattern matched, remembering delta for builder invocation");						
-							builderDeltas.add(new BuilderResourceDelta(delta));
+							builderDeltas.add(delta);
 						} else {
 							logger.error("pattern did not match");						
 						}

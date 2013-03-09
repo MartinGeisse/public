@@ -642,19 +642,7 @@ public final class ResourceHandle implements Serializable {
 	 * @return true on success, false if not required and the file did not exist
 	 */
 	public boolean copyFileTo(final ResourcePath destinationPath, final boolean required) {
-		if (isFile()) {
-			final ResourceHandle destination = new ResourceHandle(workspaceId, destinationPath);
-			try {
-				FileUtils.copyFile(resource, destination.getResource());
-				return true;
-			} catch (final IOException e) {
-				throw new WorkspaceOperationException("cannot copy file " + path + " to " + destinationPath, e);
-			}
-		} else if (required) {
-			throw new WorkspaceResourceNotFoundException(path);
-		} else {
-			return false;
-		}
+		return copyFileTo(new ResourceHandle(workspaceId, destinationPath), required);
 	}
 
 	/**
@@ -671,6 +659,7 @@ public final class ResourceHandle implements Serializable {
 		if (isFile()) {
 			try {
 				FileUtils.copyFile(resource, destination.getResource());
+				destination.generateDelta("copy file", false);
 				return true;
 			} catch (final IOException e) {
 				throw new WorkspaceOperationException("cannot copy file " + path + " to " + destination, e);
@@ -694,9 +683,10 @@ public final class ResourceHandle implements Serializable {
 			logger.trace("resource did not exist");
 			return false;
 		}
+		final boolean deep = isFolder();
 		final boolean result = deleteInternal(resource);
 		trace("Workspace.delete creating deltas for workspace resource", path);
-		generateDelta("delete workspace resource", true);
+		generateDelta("delete workspace resource", deep);
 		trace("Workspace.delete finished for workspace resource", path);
 		return result;
 	}
@@ -728,6 +718,43 @@ public final class ResourceHandle implements Serializable {
 		return true;
 	}
 
+	/**
+	 * Renames this resource. Note that after renaming, this resource handle
+	 * isn't connected to the resource anymore since the path contained
+	 * in a handle is immutable. Therefore, the handle for the renamed
+	 * resource is returned.
+	 * 
+	 * @param newName the new name for this resource
+	 * @return the new handle for this resource
+	 * @throws WorkspaceOperationException if the resource cannot be renamed
+	 */
+	public ResourceHandle rename(String newName) throws WorkspaceOperationException {
+		ResourceHandle destination = new ResourceHandle(new File(resource.getParent(), newName));
+		move(destination);
+		return destination;
+	}
+
+	/**
+	 * Moves or renames this resource such that it is subsequently accessible through
+	 * the specified resource handle. Note that the argument handle should NOT
+	 * specify a folder to place this resource into, but rather the new location
+	 * inside that folder (i.e. including the new name of the resource, which may
+	 * be the same as the old name).
+	 * 
+	 * @param destination the destination to move to, i.e. the new handle for the resource
+	 * @throws WorkspaceOperationException if the resource cannot be renamed
+	 */
+	public void move(ResourceHandle destination) throws WorkspaceOperationException {
+		logger.trace("Workspace.move(" + destination + ") starting for workspace resource " + this);
+		boolean deep = isFolder();
+		if (!resource.renameTo(destination.getResource())) {
+			throw new WorkspaceOperationException("cannot rename resource " + this + " to " + destination);
+		}
+		generateDelta("move resource", deep);
+		destination.generateDelta("move resource", deep);
+		logger.trace("resource renamed");
+	}
+	
 	// ---------------------------------------------------------------------------------------------------------
 	// marker manipulation methods
 	// ---------------------------------------------------------------------------------------------------------

@@ -1,0 +1,31 @@
+
+
+Großes Problem: dieselbe Page-Instanz wird in mehreren Tabs geöffnet.
+
+Kann nur bei ein und demselben User passieren, da andere User nicht
+an die selbe Page-Instanz rankommen.
+
+Lösungen:
+1. Mehrere Websockets je Page-Instanz unterstützen
+2. Bei schon offenem Websocket zu anderem Browser-Fenster erst mal
+   eine neue Page-Instanz erzeugen.
+
+Ganz allgemein gesprochen hat es mehrere sehr unintuitive Auswirkungen,
+wenn dieselbe Page-Instanz in mehreren Tabs sichtbar ist, insbesondere
+wenn diese per AJAX / WebSockets massiv verändert wird: Der Benutzer
+hat mit mehreren Tabs, auch "Link in neuem Tab öffnen", zu tun und
+erwartet, dass Tabs vom UI her unabhängig voneinander sind, auch wenn
+sie denselben Workspace / Simulator / ... anzeigen. Konkret sollen
+Änderungen an Workspace übertragen werden, reine UI-Veränderungen aber
+nicht. Das ist bei einer Page-Instanz in mehreren Tabs so nicht machbar.
+
+--> Es wäre wünschenswert, beim Öffnen eines neuen Tabs auch eine
+neue Page-Instanz zu erzeugen (Wicket kann das IIRC), zumindest in
+vielen Fällen und sicherlich bei allen, wo WebSockets beteiligt sind.
+Damit ist auch o.g. Problem gelöst.
+
+
+
+
+
+

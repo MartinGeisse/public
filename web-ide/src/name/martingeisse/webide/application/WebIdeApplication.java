@@ -7,7 +7,7 @@
 package name.martingeisse.webide.application;
 
 import name.martingeisse.common.util.TemporaryFolder;
-import name.martingeisse.webide.workbench.WorkbenchPage;
+import name.martingeisse.webide.experiment.PushTestPage;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -41,8 +41,8 @@ public class WebIdeApplication extends WebApplication {
 	 */
 	@Override
 	public Class<? extends Page> getHomePage() {
-		return WorkbenchPage.class;
-		// return PushTestPage.class;
+		// return WorkbenchPage.class;
+		return PushTestPage.class;
 	}
 
 }

@@ -65,7 +65,7 @@ public abstract class ResourceTreeComponent extends JsTree<ResourceHandle> {
 		bindCommandHandler(CommandVerbs.NEW_FOLDER, new NewFolderHandler(), IJavascriptInteractionInterceptor.PROMPT);
 		bindCommandHandler(CommandVerbs.OPEN, new OpenHandler());
 		bindCommandHandler(CommandVerbs.DELETE, new DeleteHandler(), IJavascriptInteractionInterceptor.CONFIRM);
-		bindCommandHandler(CommandVerbs.RENAME, new RenameHandler());
+		bindCommandHandler(CommandVerbs.RENAME, new RenameHandler(), IJavascriptInteractionInterceptor.PROMPT);
 		bindCommandHandler(CommandVerbs.RUN, new RunHandler());
 		
 		// context menu
@@ -113,9 +113,14 @@ public abstract class ResourceTreeComponent extends JsTree<ResourceHandle> {
 	/**
 	 * This handler renames the first selected resource
 	 */
-	private class RenameHandler implements IJsTreeCommandHandler<ResourceHandle, Void> {
+	private class RenameHandler implements IJsTreeCommandHandler<ResourceHandle, String> {
 		@Override
-		public void handleCommand(final CommandVerb commandVerb, final List<ResourceHandle> selectedNodes, Void ignored) {
+		public void handleCommand(final CommandVerb commandVerb, final List<ResourceHandle> selectedNodes, String newName) {
+			if (!selectedNodes.isEmpty()) {
+				final ResourceHandle resource = selectedNodes.get(0);
+				resource.rename(newName);
+				AjaxRequestUtil.markForRender(workbenchPage.get("filesContainer"));
+			}
 		}
 	}
 	
