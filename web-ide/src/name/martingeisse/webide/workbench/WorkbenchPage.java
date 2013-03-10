@@ -13,12 +13,17 @@ import name.martingeisse.webide.resources.FetchMarkerResult;
 import name.martingeisse.webide.resources.MarkerListView;
 import name.martingeisse.webide.resources.ResourceHandle;
 import name.martingeisse.webide.resources.ResourceIconSelector;
+import name.martingeisse.webide.resources.build.ResourceChangePushMessage;
+import name.martingeisse.webide.resources.build.WebsocketPushWorkspaceListener;
 import name.martingeisse.webide.workbench.services.IWorkbenchEditorService;
 import name.martingeisse.webide.workbench.services.IWorkbenchServicesProvider;
 import name.martingeisse.wicket.component.tree.JsTree;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 import name.martingeisse.wicket.util.IClientFuture;
+import name.martingeisse.wicket.websockets.WebSocketConnectionIdentifier;
+import name.martingeisse.wicket.websockets.WebSocketPushBehavior;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.event.IEvent;
@@ -36,6 +41,8 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.protocol.ws.api.WebSocketRequestHandler;
+import org.apache.wicket.protocol.ws.api.message.IWebSocketPushMessage;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 
@@ -71,6 +78,8 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 		
 		// TODO
 		long workspaceId = 1;
+		
+		// Session.get().bind();
 		
 		this.servicesImplementation = new WorkbenchPageServicesImpl(this);
 		setOutputMarkupId(true);
@@ -148,6 +157,17 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 			public void onClick() {
 				InternalPluginUtil.updateUsersPlugins();
 				setResponsePage(new WorkbenchPage());
+			}
+		});
+
+		// register for push-updates
+		// new WebsocketPushWorkspaceListener(new WebSocketConnectionIdentifier(this)).register(workspaceId);
+		add(new WebSocketPushBehavior() {
+			@Override
+			protected void onPush(WebSocketRequestHandler handler, IWebSocketPushMessage pushMessage) {
+				if (pushMessage instanceof ResourceChangePushMessage) {
+					handler.add(WorkbenchPage.this.get("filesContainer"));
+				}
 			}
 		});
 

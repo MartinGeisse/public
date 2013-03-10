@@ -8,6 +8,8 @@ package name.martingeisse.wicket.websockets;
 
 import java.io.Serializable;
 
+import name.martingeisse.common.util.ParameterUtil;
+
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
@@ -64,6 +66,7 @@ public final class WebSocketConnectionIdentifier implements Serializable {
 	 */
 	public WebSocketConnectionIdentifier(final Page page) {
 		this(page.getApplication(), page.getSession().getId(), page.getPageId());
+		System.err.println("connecting for session id: " + page.getSession().getId());
 	}
 	
 	/**
@@ -73,9 +76,9 @@ public final class WebSocketConnectionIdentifier implements Serializable {
 	 * @param pageId the page ID
 	 */
 	public WebSocketConnectionIdentifier(final Application application, final String sessionId, final int pageId) {
-		this.application = application;
-		this.sessionId = sessionId;
-		this.pageId = pageId;
+		this.application = ParameterUtil.ensureNotNull(application, "application");
+		this.sessionId = ParameterUtil.ensureNotNull(sessionId, "sessionId");
+		this.pageId = ParameterUtil.ensureNotNull(pageId, "pageId");
 	}
 
 	/**

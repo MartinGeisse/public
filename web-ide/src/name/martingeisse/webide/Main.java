@@ -72,6 +72,7 @@ public class Main {
 		final ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 		context.setContextPath("/");
 		context.getSessionHandler().getSessionManager().setMaxInactiveInterval(30 * 60);
+		context.getSessionHandler().getSessionManager().setSessionIdPathParameterName(null);
 		
 		// add the Wicket filter
 		// final Filter wicketFilter = new WicketFilter();
