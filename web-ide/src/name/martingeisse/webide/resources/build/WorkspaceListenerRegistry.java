@@ -63,8 +63,11 @@ public class WorkspaceListenerRegistry {
 	}
 	
 	static void onWorkspaceChange(long workspaceId, Collection<BuilderResourceDelta> deltas) {
-		for (IWorkspaceListener listener : listeners.get(workspaceId).values()) {
-			listener.onWorkspaceChange(deltas);
+		ConcurrentHashMap<Object, IWorkspaceListener> workspaceListeners = listeners.get(workspaceId);
+		if (workspaceListeners != null) {
+			for (IWorkspaceListener listener : workspaceListeners.values()) {
+				listener.onWorkspaceChange(deltas);
+			}
 		}
 	}
 	

@@ -6,10 +6,10 @@
 
 package name.martingeisse.webide;
 
-import java.util.EnumSet;
+import static org.atmosphere.cpr.ApplicationConfig.FILTER_CLASS;
+import static org.atmosphere.cpr.ApplicationConfig.SERVLET_CLASS;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
+import javax.servlet.Servlet;
 
 import name.martingeisse.webide.application.IdeLauncher;
 import name.martingeisse.webide.application.WebIdeApplication;
@@ -20,11 +20,11 @@ import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.apache.sshd.server.session.ServerSession;
 import org.apache.wicket.protocol.http.WicketFilter;
-import org.apache.wicket.protocol.ws.jetty.Jetty7WebSocketFilter;
+import org.atmosphere.cpr.MeteorServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 
 /**
  * The main class.
@@ -66,7 +66,6 @@ public class Main {
 	 * Launches the web user interface.
 	 */
 	private static void launchWeb() throws Exception {
-		final EnumSet<DispatcherType> allDispatcherTypes = EnumSet.allOf(DispatcherType.class);
 		
 		// create and configure a servlet context
 		final ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
@@ -74,16 +73,20 @@ public class Main {
 		context.getSessionHandler().getSessionManager().setMaxInactiveInterval(30 * 60);
 		context.getSessionHandler().getSessionManager().setSessionIdPathParameterName(null);
 		
-		// add the Wicket filter
-		// final Filter wicketFilter = new WicketFilter();
-		final Filter wicketFilter = new Jetty7WebSocketFilter();
-		FilterHolder wicketFilterHolder = new FilterHolder(wicketFilter);
-		wicketFilterHolder.setInitParameter(WicketFilter.FILTER_MAPPING_PARAM, "/*");
-		wicketFilterHolder.setInitParameter("applicationClassName", WebIdeApplication.class.getCanonicalName());
-		context.addFilter(wicketFilterHolder, "/*", allDispatcherTypes);
-		
-		// a default servlet is needed, otherwise the filters cannot catch the request
-		context.addServlet(DefaultServlet.class, "/*");
+		// add the Meteor servlet, also adding Wicket filter configuration
+		final Servlet atmosphereServlet = new MeteorServlet();
+		ServletHolder atmosphereServletHolder = new ServletHolder(atmosphereServlet);
+		atmosphereServletHolder.setInitParameter(FILTER_CLASS, WicketFilter.class.getCanonicalName());
+		atmosphereServletHolder.setInitParameter(SERVLET_CLASS, DefaultServlet.class.getCanonicalName());
+		atmosphereServletHolder.setInitParameter("org.atmosphere.useWebSocket", "true");
+		atmosphereServletHolder.setInitParameter("org.atmosphere.useNative", "true");
+		atmosphereServletHolder.setInitParameter("applicationClassName", WebIdeApplication.class.getCanonicalName());
+		atmosphereServletHolder.setInitParameter(WicketFilter.FILTER_MAPPING_PARAM, "/*");
+		atmosphereServletHolder.setInitParameter("org.atmosphere.cpr.sessionSupport", "true");
+//		atmosphereServletHolder.setInitParameter("org.atmosphere.websocket.WebSocketProtocol", "org.atmosphere.websocket.protocol.EchoProtocol");
+		atmosphereServletHolder.setInitParameter("org.atmosphere.cpr.broadcastFilterClasses", "org.apache.wicket.atmosphere.TrackMessageSizeFilter");
+		// atmosphereServletHolder.setAsyncSupported(true);
+		context.addServlet(atmosphereServletHolder, "/*");
 
 		final Server server = new Server(8080);
 		server.setHandler(context);

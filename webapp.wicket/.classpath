@@ -9,5 +9,10 @@
 	<classpathentry exported="true" kind="lib" path="lib/java/wicket-util-6.6.0.jar" sourcepath="resource/libsrc/wicket-util/src/main/java"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/wicket-native-websocket-core-0.7.jar" sourcepath="resource/libsrc/wicket-experimental/wicket-native-websocket/wicket-native-websocket-core/src/main/java"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/wicket-native-websocket-jetty-0.7.jar" sourcepath="resource/libsrc/wicket-experimental/wicket-native-websocket/wicket-native-websocket-jetty/src/main/java"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/wicket-atmosphere-0.8.jar" sourcepath="resource/libsrc/wicket-experimental/wicket-atmosphere"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/atmosphere-compat-jbossweb-1.0.12.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/atmosphere-compat-tomcat-1.0.12.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/atmosphere-compat-tomcat7-1.0.12.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/atmosphere-runtime-1.0.12.jar" sourcepath="/Users/martin/git-repos/atmosphere/modules/cpr"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

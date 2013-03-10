@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.QueryUtil;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
+import name.martingeisse.webide.application.WebIdeApplication;
 import name.martingeisse.webide.entity.QWorkspaceBuildTriggers;
 import name.martingeisse.webide.entity.QWorkspaceBuilders;
 import name.martingeisse.webide.entity.QWorkspaceResourceDeltas;
@@ -29,6 +30,7 @@ import name.martingeisse.webide.resources.ResourcePath;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.wicket.atmosphere.EventBus;
 
 import com.mysema.query.sql.dml.SQLDeleteClause;
 
@@ -93,6 +95,9 @@ public class BuilderThreadNew {
 		for (WorkspaceResourceDeltas rawDelta : rawDeltas) {
 			allDeltas.add(new BuilderResourceDelta(rawDelta));
 		}
+		
+		// send a push message to any listening websockets
+		EventBus.get(WebIdeApplication.getCrossThreadInstance()).post(new ResourceChangePushMessage());
 		
 		// invoke listeners first
 		WorkspaceListenerRegistry.onWorkspaceChange(workspaceId, allDeltas);

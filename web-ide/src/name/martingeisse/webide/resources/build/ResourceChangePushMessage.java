@@ -9,8 +9,8 @@ package name.martingeisse.webide.resources.build;
 import org.apache.wicket.protocol.ws.api.message.IWebSocketPushMessage;
 
 /**
- * This message gets pushed by a {@link WebsocketPushWorkspaceListener}
- * when something in its workspace changes.
+ * This message gets pushed by the builder thread
+ * when something in one of the workspaces changes.
  */
 public class ResourceChangePushMessage implements IWebSocketPushMessage {
 }
