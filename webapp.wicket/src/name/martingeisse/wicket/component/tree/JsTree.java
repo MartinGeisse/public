@@ -24,7 +24,7 @@ import org.apache.wicket.markup.IMarkupFragment;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.html.list.AbstractItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.Response;
 
@@ -47,9 +47,9 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	private final ITreeProvider<T> treeProvider;
 
 	/**
-	 * the rootInfos
+	 * the rootItems
 	 */
-	private transient NodeInfo<T>[] rootInfos;
+	private transient Item<T>[] rootItems;
 
 	/**
 	 * the contextMenu
@@ -174,41 +174,25 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	@Override
 	protected void onBeforeRender() {
 		removeAll();
-		rootInfos = generateNodeInfos(treeProvider.getRoots());
-		generateItems(rootInfos, 0);
+		rootItems = generateItems(treeProvider.getRoots());
 		super.onBeforeRender();
 	}
 
-	/**
-	 * Generates the internal NodeInfo objects.
-	 */
-	private NodeInfo<T>[] generateNodeInfos(final Iterator<? extends T> nodes) {
-		final List<NodeInfo<T>> nodeInfos = new ArrayList<NodeInfo<T>>();
+	private Item<T>[] generateItems(final Iterator<? extends T> nodes) {
+		// TODO: will cause problems if the same page instance gets rendered
+		// in two browser tabs and an AJAX request arrives for outdated item indices
+		// maybe delegate wicket id generation to a strategy
+		final List<Item<T>> items = new ArrayList<Item<T>>();
 		while (nodes.hasNext()) {
 			final T node = nodes.next();
-			final NodeInfo<T> nodeInfo = new NodeInfo<T>();
-			nodeInfo.model = treeProvider.model(node);
-			nodeInfo.children = generateNodeInfos(treeProvider.getChildren(node));
-			nodeInfos.add(nodeInfo);
-		}
-		final NodeInfo<T>[] nodeInfoArray = GenericTypeUtil.unsafeCast(new NodeInfo<?>[nodeInfos.size()]);
-		return nodeInfos.toArray(nodeInfoArray);
-	}
-
-	/**
-	 * Generates item components for all node infos and returns the new item counter.
-	 */
-	private int generateItems(final NodeInfo<T>[] nodeInfos, int counter) {
-		for (final NodeInfo<T> nodeInfo : nodeInfos) {
-			final Item<T> item = new Item<T>(Integer.toString(counter), counter, nodeInfo.model);
+			final Item<T> item = new Item<T>(Integer.toString(size()), treeProvider.model(node));
 			add(item);
+			items.add(item);
 			populateItem(item);
-			nodeInfo.item = item;
-			nodeInfo.index = counter;
-			counter++;
-			counter += generateItems(nodeInfo.children, counter);
+			item.treeChildren = generateItems(treeProvider.getChildren(node));
 		}
-		return counter;
+		final Item<T>[] itemArray = GenericTypeUtil.unsafeCast(new Item[items.size()]);
+		return items.toArray(itemArray);
 	}
 
 	/* (non-Javadoc)
@@ -249,21 +233,21 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	protected void onRender() {
 		final Response response = getResponse();
 		response.write("<div id=\"" + getMarkupId() + "\">");
-		renderNodes(rootInfos);
+		renderItems(rootItems);
 		response.write("</div>");
 	}
 
 	/**
 	 * Renders the nodes recursively, generating JsTree markup.
 	 */
-	private void renderNodes(final NodeInfo<T>[] nodeInfos) {
+	private void renderItems(final Item<T>[] items) {
 		final Response response = getResponse();
 		response.write("<ul>");
-		for (final NodeInfo<T> nodeInfo : nodeInfos) {
+		for (final Item<T> item : items) {
 			response.write("<li class=\"jstree-open\">");
-			nodeInfo.item.render();
-			renderNodes(nodeInfo.children);
-			response.write("<div style=\"display: none\">" + nodeInfo.index + "</div>");
+			item.render();
+			renderItems(item.treeChildren);
+			response.write("<div style=\"display: none\">" + item.getId() + "</div>");
 			response.write("</li>");
 		}
 		response.write("</ul>");
@@ -284,16 +268,6 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	protected abstract void populateItem(Item<T> item);
 
 	/**
-	 * Caches the data structure for each node.
-	 */
-	private static final class NodeInfo<T> {
-		IModel<T> model;
-		NodeInfo<T>[] children;
-		Item<T> item;
-		int index;
-	}
-
-	/**
 	 * This method is invoked when the client-side scripts notify the server about
 	 * a user interaction. The default implementation does nothing.
 	 * 
@@ -303,7 +277,7 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	 * @param selectedNodes the selected tree nodes
 	 * @param data the JSON-parsed extra input parameter, or null if not present in the request
 	 */
-	protected void onInteraction(final String interaction, final List<T> selectedNodes, Object data) {
+	protected void onInteraction(final String interaction, final List<T> selectedNodes, final Object data) {
 	}
 
 	/**
@@ -311,19 +285,19 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	 * to the server. It looks up the appropriate command handler and invokes it.
 	 * @param data the JSON-parsed extra input parameter, or null if not present in the request
 	 */
-	final void onCommandVerb(final CommandVerb commandVerb, final List<T> selectedNodes, Object data) {
+	final void onCommandVerb(final CommandVerb commandVerb, final List<T> selectedNodes, final Object data) {
 		final JsTreeCommandHandlerBinding<T, ?> binding = commandHandlerBindings.get(commandVerb);
 		if (binding != null) {
 			binding.invoke(selectedNodes, data);
 		}
 	}
-	
+
 	/**
 	 * Called for the "dblclick" interaction in addition to onInteraction(). Checks if a
 	 * double-click command verb is set, and if so, fires it.
 	 * @param data the JSON-parsed extra input parameter, or null if not present in the request
 	 */
-	final void onDoubleClick(final List<T> selectedNodes, Object data) {
+	final void onDoubleClick(final List<T> selectedNodes, final Object data) {
 		if (doubleClickCommandVerb != null) {
 			onCommandVerb(doubleClickCommandVerb, selectedNodes, data);
 		}
@@ -347,6 +321,38 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	final IJavascriptInteractionInterceptor<?> getInterceptor(final CommandVerb commandVerb) {
 		final JsTreeCommandHandlerBinding<T, ?> binding = commandHandlerBindings.get(commandVerb);
 		return (binding == null ? null : binding.getInterceptor());
+	}
+
+	/**
+	 * This class is used as a component for the selectable part of an item.
+	 * The item knows its tree children but they are not child components.
+	 *
+	 * @param <T> the tree node type
+	 */
+	public static class Item<T> extends AbstractItem {
+
+		Item<T>[] treeChildren;
+
+		Item(final String id, final IModel<?> model) {
+			super(id, model);
+		}
+
+		/**
+		 * @return the model for this item
+		 */
+		@SuppressWarnings("unchecked")
+		public final IModel<T> getModel() {
+			return (IModel<T>)getDefaultModel();
+		}
+
+		/**
+		 * @return the model object for this item
+		 */
+		@SuppressWarnings("unchecked")
+		public final T getModelObject() {
+			return (T)getDefaultModelObject();
+		}
+
 	}
 
 }

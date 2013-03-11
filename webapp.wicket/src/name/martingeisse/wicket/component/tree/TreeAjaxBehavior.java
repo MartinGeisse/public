@@ -14,15 +14,16 @@ import name.martingeisse.common.terms.CommandVerb;
 import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.wicket.component.contextmenu.ContextMenu;
 import name.martingeisse.wicket.component.contextmenu.IContextMenuCallbackBuilder;
+import name.martingeisse.wicket.component.tree.JsTree.Item;
 import name.martingeisse.wicket.javascript.IJavascriptInteractionInterceptor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
-import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.json.simple.JSONValue;
@@ -34,6 +35,12 @@ import org.json.simple.JSONValue;
  */
 class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContextMenuCallbackBuilder {
 
+	/**
+	 * the logger
+	 */
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(TreeAjaxBehavior.class);
+	
 	/**
 	 * the CONTEXT_MENU_INTERACTION_PREFIX
 	 */
@@ -136,6 +143,7 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 				final Item<T> item = GenericTypeUtil.unsafeCast((Item<?>)tree.get(Integer.toString(index)));
 				result.add(item.getModelObject());
 			} catch (final Exception e) {
+				logger.debug("could not parse JsTree item specifier: " + specifier, e);
 			}
 		}
 		return result;

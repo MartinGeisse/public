@@ -6,19 +6,14 @@
 
 package name.martingeisse.webide.application;
 
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import name.martingeisse.common.util.TemporaryFolder;
 import name.martingeisse.webide.workbench.WorkbenchPage;
 
-import org.apache.wicket.IRequestCycleProvider;
 import org.apache.wicket.Page;
 import org.apache.wicket.atmosphere.EventBus;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.cycle.RequestCycleContext;
-import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.request.resource.ResourceReferenceRegistry;
 import org.atmosphere.cpr.AsyncIOWriter;
 import org.atmosphere.cpr.AtmosphereRequest;
@@ -64,23 +59,23 @@ public class WebIdeApplication extends WebApplication {
 		new EventBus(this);
 		TemporaryFolder.initialize("web-ide");
 		setHeaderResponseDecorator(new MyHeaderResponseDecorator());
-		setRequestCycleProvider(new IRequestCycleProvider() {
-			@Override
-			public RequestCycle get(RequestCycleContext context) {
-				if (context.getResponse() instanceof WebResponse) {
-					WebResponse webResponse = (WebResponse)context.getResponse();
-					HttpServletResponse httpServletResponse = (HttpServletResponse)webResponse.getContainerResponse();
-					if (httpServletResponse instanceof AtmosphereResponse) {
-						AtmosphereResponse atmosphereResponse = (AtmosphereResponse)httpServletResponse;
-						ServletResponse atmosphereInternalResponse = atmosphereResponse.getResponse();
-						if (atmosphereInternalResponse == crippledAtmosphereHttpServletResponse) {
-							System.err.println("--- found crippled response object ---");
-						}
-					}
-				}
-				return new RequestCycle(context);
-			}
-		});
+//		setRequestCycleProvider(new IRequestCycleProvider() {
+//			@Override
+//			public RequestCycle get(RequestCycleContext context) {
+//				if (context.getResponse() instanceof WebResponse) {
+//					WebResponse webResponse = (WebResponse)context.getResponse();
+//					HttpServletResponse httpServletResponse = (HttpServletResponse)webResponse.getContainerResponse();
+//					if (httpServletResponse instanceof AtmosphereResponse) {
+//						AtmosphereResponse atmosphereResponse = (AtmosphereResponse)httpServletResponse;
+//						ServletResponse atmosphereInternalResponse = atmosphereResponse.getResponse();
+//						if (atmosphereInternalResponse == crippledAtmosphereHttpServletResponse) {
+//							System.err.println("--- found crippled response object ---");
+//						}
+//					}
+//				}
+//				return new RequestCycle(context);
+//			}
+//		});
 	}
 
 	/* (non-Javadoc)
