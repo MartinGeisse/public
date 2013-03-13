@@ -177,3 +177,63 @@ $.fn.jstreeInteract = function(interaction, data) {
 $.fn.jstreeAjaxNodeIndexList = function() {
 	return this.data('jstree').getAjaxNodeIndexList();
 };
+
+jstreeSoftRefresh = function(treeMarkupId, updatedMarkup) {
+	var $tree = $('#' + treeMarkupId);
+	
+	function getLocalId($node) {
+		return $node.children('div').text();
+	}
+	
+	function nodeListToNodeMap(nodeList) {
+		var nodeMap = {};
+		for (var i=0; i<nodeList.length; i++) {
+			var node = nodeList[i];
+			nodeMap[getLocalId($(node))] = node;
+		}
+		return nodeMap;
+	}
+	
+	function mergeNodes($parentElement, $nodes, $patches) {
+		var nodeMap = nodeListToNodeMap($nodes);
+		var patchMap = nodeListToNodeMap($patches);
+		
+		// remove deleted nodes, i.e. nodes without patches
+		for (var i=0; i<$nodes.length; i++) {
+			var $node = $($nodes[i]);
+			if (!patchMap[getLocalId($node)]) {
+				$node.remove();
+			}
+		}
+		
+		// add missing nodes that have a patch, then merge all nodes recursively
+		for (var i=0; i<$patches.length; i++) {
+			var patch = $patches[i], $patch = $(patch);
+			var localId = getLocalId($patch);
+			var node = nodeMap[localId];
+			
+			// add missing nodes
+			if (!node) {
+				$node = $tree.jstree('create_node', $parentElement[0], 'last', {data: '...', state: 'closed'});
+				$node.append('<div style="display: none"></div>');
+			} else {
+				$node = $(node);
+			}
+			
+			// update the node handle and transfer callback info
+			$node.children('a').empty().append($patch.children('a').contents());
+			$node.children('div').empty().append($patch.children('div').contents());
+			
+			// update descendants
+			var $subParentElement = $node.children('ul');
+			mergeNodes($subParentElement, $subParentElement.children(), $patch.children('ul').children());
+			
+		}
+		
+	}
+	
+	var $parentElement = $tree.children();
+	var $roots = $parentElement.children();
+	var $rootPatches = $(updatedMarkup).children().children();
+	mergeNodes($parentElement, $roots, $rootPatches);
+}

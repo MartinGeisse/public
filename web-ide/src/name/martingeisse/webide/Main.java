@@ -78,7 +78,7 @@ public class Main {
 		ServletHolder atmosphereServletHolder = new ServletHolder(atmosphereServlet);
 		atmosphereServletHolder.setInitParameter(FILTER_CLASS, WicketFilter.class.getCanonicalName());
 		atmosphereServletHolder.setInitParameter(SERVLET_CLASS, DefaultServlet.class.getCanonicalName());
-		atmosphereServletHolder.setInitParameter("org.atmosphere.useWebSocket", "true");
+		atmosphereServletHolder.setInitParameter("org.atmosphere.useWebSocket", "false");
 		atmosphereServletHolder.setInitParameter("org.atmosphere.useNative", "true");
 		atmosphereServletHolder.setInitParameter("applicationClassName", WebIdeApplication.class.getCanonicalName());
 		atmosphereServletHolder.setInitParameter(WicketFilter.FILTER_MAPPING_PARAM, "/*");

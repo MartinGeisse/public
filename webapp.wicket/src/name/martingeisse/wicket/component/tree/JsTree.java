@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import name.martingeisse.common.javascript.JavascriptAssembler;
 import name.martingeisse.common.terms.CommandVerb;
 import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.wicket.component.contextmenu.ContextMenu;
@@ -19,6 +20,7 @@ import name.martingeisse.wicket.javascript.IJavascriptInteractionInterceptor;
 import name.martingeisse.wicket.util.WicketHeadUtil;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ITreeProvider;
 import org.apache.wicket.markup.IMarkupFragment;
@@ -319,16 +321,48 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	 * @param target the target to render to
 	 */
 	public void softRefresh(AjaxRequestTarget target) {
-		String rendered = renderToString();
+		JavascriptAssembler assembler = new JavascriptAssembler();
+		assembler.append("jstreeSoftRefresh(").appendStringLiteral(getMarkupId()).append(", ").appendStringLiteral(renderToString()).append(");");
+		target.appendJavaScript(assembler.getAssembledCode());
 	}
 	
+	// helper method for soft refresh
 	private String renderToString() {
+		
+		// prepare string response
 		final RequestCycle requestCycle = RequestCycle.get();
 		final Response oldResponse = requestCycle.getResponse();
 		final StringResponse newResponse = new StringResponse();
 		requestCycle.setResponse(newResponse);
-		render();
+
+		// prepare rendering (I know, this calls internal Wicket API ...)
+		Page page = getPage();
+		page.startComponentRender(this);
+		try {
+			prepareForRender();
+		} catch (RuntimeException e) {
+			try {
+				afterRender();
+			} catch (RuntimeException e2) {
+			}
+			RequestCycle.get().setResponse(oldResponse);
+			throw e;
+		}
+
+		// render the component
+		try {
+			render();
+		} catch (RuntimeException e) {
+			RequestCycle.get().setResponse(oldResponse);
+			throw e;
+		}
+
+		// cleanup render state
+		page.endComponentRender(this);
+		
+		// restore original response
 		requestCycle.setResponse(oldResponse);
+		
 		return newResponse.toString();
 	}
 

@@ -88,112 +88,147 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	public void setDateTimeFormatter(DateTimeFormatter dateTimeFormatter) {
 		this.dateTimeFormatter = dateTimeFormatter;
 	}
-
+	
+	/**
+	 * Appends the specified code fragment to the builder.
+	 * @param code the code fragment to append
+	 * @return this
+	 */
+	public final JavascriptAssembler append(String code) {
+		if (code == null) {
+			throw new IllegalArgumentException("code argument is null");
+		}
+		getBuilder().append(code);
+		return this;
+	}
+	
 	/**
 	 * Appends the specified identifier to the builder.
 	 * @param name the identifier to append
+	 * @return this
 	 */
-	public final void appendIdentifier(String name) {
+	public final JavascriptAssembler appendIdentifier(String name) {
 		if (name == null) {
 			throw new IllegalArgumentException("name argument is null");
 		}
 		JavascriptAssemblerUtil.appendIdentifier(getBuilder(), name);
+		return this;
 	}
 
 	/**
 	 * Appends the null literal to the builder.
+	 * @return this
 	 */
-	public final void appendNullLiteral() {
+	public final JavascriptAssembler appendNullLiteral() {
 		getBuilder().append("null");
+		return this;
 	}
 
 	/**
 	 * Appends the specified string literal to the builder.
 	 * @param value the value of the literal to append (must not be null)
+	 * @return this
 	 */
-	public final void appendStringLiteral(String value) {
+	public final JavascriptAssembler appendStringLiteral(String value) {
 		if (value == null) {
 			throw new IllegalArgumentException("value argument is null");
 		}
 		JavascriptAssemblerUtil.appendStringLiteral(getBuilder(), value);
+		return this;
 	}
 
 	/**
 	 * Appends the specified string literal to the builder, or the null literal if
 	 * the argument is null.
 	 * @param value the value of the literal to append (may be null)
+	 * @return this
 	 */
-	public final void appendStringLiteralOrNull(String value) {
+	public final JavascriptAssembler appendStringLiteralOrNull(String value) {
 		if (value == null) {
 			appendNullLiteral();
 		} else {
 			JavascriptAssemblerUtil.appendStringLiteral(getBuilder(), value);
 		}
+		return this;
 	}
 
 	/**
 	 * Appends the specified boolean literal to the builder.
 	 * @param value the value of the literal to append
+	 * @return this
 	 */
-	public final void appendBooleanLiteral(boolean value) {
+	public final JavascriptAssembler appendBooleanLiteral(boolean value) {
 		JavascriptAssemblerUtil.appendBooleanLiteral(getBuilder(), value);
+		return this;
 	}
 
 	/**
 	 * Appends the specified numeric literal to the builder.
 	 * @param value the value of the literal to append
+	 * @return this
 	 */
-	public final void appendNumericLiteral(int value) {
+	public final JavascriptAssembler appendNumericLiteral(int value) {
 		getBuilder().append(value);
+		return this;
 	}
 
 	/**
 	 * Appends the specified numeric literal to the builder.
 	 * @param value the value of the literal to append
+	 * @return this
 	 */
-	public final void appendNumericLiteral(long value) {
+	public final JavascriptAssembler appendNumericLiteral(long value) {
 		getBuilder().append(value);
+		return this;
 	}
 
 	/**
 	 * Appends the specified numeric literal to the builder.
 	 * @param value the value of the literal to append
+	 * @return this
 	 */
-	public final void appendNumericLiteral(double value) {
+	public final JavascriptAssembler appendNumericLiteral(double value) {
 		getBuilder().append(value);
+		return this;
 	}
 
 	/**
 	 * Appends the specified numeric literal to the builder.
 	 * @param value the value of the literal to append
+	 * @return this
 	 */
-	public final void appendNumericLiteral(Number value) {
+	public final JavascriptAssembler appendNumericLiteral(Number value) {
 		if (value == null) {
 			throw new IllegalArgumentException("value argument is null");
 		}
 		getBuilder().append(value.toString());
+		return this;
 	}
 
 	/**
 	 * Appends the specified numeric literal to the builder, or the null literal if
 	 * the argument is null.
 	 * @param value the value of the literal to append (may be null)
+	 * @return this
 	 */
-	public final void appendNumericLiteralOrNull(Number value) {
+	public final JavascriptAssembler appendNumericLiteralOrNull(Number value) {
 		if (value == null) {
 			appendNullLiteral();
 		} else {
 			appendNumericLiteral(value);
 		}
+		return this;
 	}
 	
 	/**
 	 * Appends the date contained in the specified instant according
 	 * to the date formatter that is set for this assembler.
 	 * @param value the instant to extract the date from
+	 * @return this
 	 */
-	public final void appendDateLiteral(ReadableInstant value) {
+	public final JavascriptAssembler appendDateLiteral(ReadableInstant value) {
 		appendJodaLiteral(value, dateFormatter);
+		return this;
 	}
 
 	/**
@@ -201,18 +236,22 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * to the date formatter that is set for this assembler,
 	 * or the null literal if the argument is null.
 	 * @param value the instant to extract the date from (may be null)
+	 * @return this
 	 */
-	public final void appendDateLiteralOrNull(ReadableInstant value) {
+	public final JavascriptAssembler appendDateLiteralOrNull(ReadableInstant value) {
 		appendJodaLiteralOrNull(value, dateFormatter);
+		return this;
 	}
 	
 	/**
 	 * Appends the datetime contained in the specified instant according
 	 * to the datetime formatter that is set for this assembler.
 	 * @param value the instant to extract the datetime from
+	 * @return this
 	 */
-	public final void appendDateTimeLiteral(ReadableInstant value) {
+	public final JavascriptAssembler appendDateTimeLiteral(ReadableInstant value) {
 		appendJodaLiteral(value, dateTimeFormatter);
+		return this;
 	}
 	
 	/**
@@ -220,9 +259,11 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * to the datetime formatter that is set for this assembler,
 	 * or the null literal if the argument is null.
 	 * @param value the instant to extract the datetime from (may be null)
+	 * @return this
 	 */
-	public final void appendDateTimeLiteralOrNull(ReadableInstant value) {
+	public final JavascriptAssembler appendDateTimeLiteralOrNull(ReadableInstant value) {
 		appendJodaLiteralOrNull(value, dateTimeFormatter);
+		return this;
 	}
 
 	/**
@@ -230,12 +271,14 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * 
 	 * @param value the instant to append
 	 * @param formatter the formatter used to turn the instant into a string
+	 * @return this
 	 */
-	public final void appendJodaLiteral(ReadableInstant value, DateTimeFormatter formatter) {
+	public final JavascriptAssembler appendJodaLiteral(ReadableInstant value, DateTimeFormatter formatter) {
 		if (value == null) {
 			throw new IllegalArgumentException("value argument is null");
 		}
 		appendStringLiteral(formatter.print(value));
+		return this;
 	}
 
 	/**
@@ -244,22 +287,26 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * 
 	 * @param value the instant to append (may be null)
 	 * @param formatter the formatter used to turn the instant into a string
+	 * @return this
 	 */
-	public final void appendJodaLiteralOrNull(ReadableInstant value, DateTimeFormatter formatter) {
+	public final JavascriptAssembler appendJodaLiteralOrNull(ReadableInstant value, DateTimeFormatter formatter) {
 		if (value == null) {
 			appendNullLiteral();
 		} else {
 			appendStringLiteral(formatter.print(value));
 		}
+		return this;
 	}
 	
 	/**
 	 * Appends the specified date according to the date formatter
 	 * that is set for this assembler.
 	 * @param value the date
+	 * @return this
 	 */
-	public final void appendDateLiteral(ReadablePartial value) {
+	public final JavascriptAssembler appendDateLiteral(ReadablePartial value) {
 		appendJodaLiteral(value, dateFormatter);
+		return this;
 	}
 	
 	/**
@@ -267,18 +314,22 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * that is set for this assembler,
 	 * or the null literal if the argument is null.
 	 * @param value the date (may be null)
+	 * @return this
 	 */
-	public final void appendDateLiteralOrNull(ReadablePartial value) {
+	public final JavascriptAssembler appendDateLiteralOrNull(ReadablePartial value) {
 		appendJodaLiteralOrNull(value, dateFormatter);
+		return this;
 	}
 
 	/**
 	 * Appends the specified datetime according to the datetime formatter
 	 * that is set for this assembler.
 	 * @param value the datetime
+	 * @return this
 	 */
-	public final void appendDateTimeLiteral(ReadablePartial value) {
+	public final JavascriptAssembler appendDateTimeLiteral(ReadablePartial value) {
 		appendJodaLiteral(value, dateTimeFormatter);
+		return this;
 	}
 	
 	/**
@@ -286,9 +337,11 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * that is set for this assembler,
 	 * or the null literal if the argument is null.
 	 * @param value the datetime (may be null)
+	 * @return this
 	 */
-	public final void appendDateTimeLiteralOrNull(ReadablePartial value) {
+	public final JavascriptAssembler appendDateTimeLiteralOrNull(ReadablePartial value) {
 		appendJodaLiteralOrNull(value, dateTimeFormatter);
+		return this;
 	}
 
 	/**
@@ -296,12 +349,14 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * 
 	 * @param value the partial to append
 	 * @param formatter the formatter used to turn the partial into a string
+	 * @return this
 	 */
-	public final void appendJodaLiteral(ReadablePartial value, DateTimeFormatter formatter) {
+	public final JavascriptAssembler appendJodaLiteral(ReadablePartial value, DateTimeFormatter formatter) {
 		if (value == null) {
 			throw new IllegalArgumentException("value argument is null");
 		}
 		appendStringLiteral(formatter.print(value));
+		return this;
 	}
 
 	/**
@@ -310,13 +365,15 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * 
 	 * @param value the partial to append (may be null)
 	 * @param formatter the formatter used to turn the partial into a string
+	 * @return this
 	 */
-	public final void appendJodaLiteralOrNull(ReadablePartial value, DateTimeFormatter formatter) {
+	public final JavascriptAssembler appendJodaLiteralOrNull(ReadablePartial value, DateTimeFormatter formatter) {
 		if (value == null) {
 			appendNullLiteral();
 		} else {
 			appendStringLiteral(formatter.print(value));
 		}
+		return this;
 	}
 
 	/**
@@ -324,12 +381,14 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * Note that no escaping is done for the name, so the name
 	 * must conform to identifier syntax.
 	 * @param name the name of the property
+	 * @return this
 	 */
-	public final void appendPropertyName(String name) {
+	public final JavascriptAssembler appendPropertyName(String name) {
 		if (name == null) {
 			throw new IllegalArgumentException("name argument is null");
 		}
 		JavascriptAssemblerUtil.appendStringLiteral(getBuilder(), name);
+		return this;
 	}
 
 	/**
@@ -374,47 +433,59 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 
 	/**
 	 * Begins a new list expression.
+	 * @return this
 	 */
-	public final void beginList() {
+	public final JavascriptAssembler beginList() {
 		beginCollection('[');
+		return this;
 	}
 
 	/**
 	 * Ends the current list expression.
+	 * @return this
 	 */
-	public final void endList() {
+	public final JavascriptAssembler endList() {
 		endCollection(']');
+		return this;
 	}
 
 	/**
 	 * This method must be called before each list element.
+	 * @return this
 	 */
-	public final void prepareListElement() {
+	public final JavascriptAssembler prepareListElement() {
 		prepareCollectionElement();
+		return this;
 	}
 
 	/**
 	 * Begins a new object expression.
+	 * @return this
 	 */
-	public final void beginObject() {
+	public final JavascriptAssembler beginObject() {
 		beginCollection('{');
+		return this;
 	}
 
 	/**
 	 * Ends the current object expression.
+	 * @return this
 	 */
-	public final void endObject() {
+	public final JavascriptAssembler endObject() {
 		endCollection('}');
+		return this;
 	}
 
 	/**
 	 * This method must be called before each object property.
 	 * @param name the name of the property
+	 * @return this
 	 */
-	public final void prepareObjectProperty(String name) {
+	public final JavascriptAssembler prepareObjectProperty(String name) {
 		prepareCollectionElement();
 		appendPropertyName(name);
 		getBuilder().append(": ");
+		return this;
 	}
 
 	/**
@@ -423,8 +494,9 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * {@link Boolean}, and null values.
 	 * 
 	 * @param value the value of the literal to append
+	 * @return this
 	 */
-	public final void appendPrimitive(Object value) {
+	public final JavascriptAssembler appendPrimitive(Object value) {
 		if (value == null) {
 			appendNullLiteral();
 		} else if (value instanceof String) {
@@ -444,6 +516,7 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 		} else {
 			appendCustomPrimitive(value);
 		}
+		return this;
 	}
 
 	/**
@@ -476,28 +549,32 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * Appends an array of primitive values as a Javascript array, using
 	 * {@link #appendPrimitive(Object)} for each element.
 	 * @param value the array to append
+	 * @return this
 	 */
-	public final void appendPrimitiveArray(Object[] value) {
+	public final JavascriptAssembler appendPrimitiveArray(Object[] value) {
 		beginList();
 		for (Object element : value) {
 			prepareListElement();
 			appendPrimitive(element);
 		}
 		endList();
+		return this;
 	}
 	
 	/**
 	 * Appends an {@link Iterable} of primitive values as a Javascript array, using
 	 * {@link #appendPrimitive(Object)} for each element.
 	 * @param value the iterable to append
+	 * @return this
 	 */
-	public final void appendPrimitiveArray(Iterable<?> value) {
+	public final JavascriptAssembler appendPrimitiveArray(Iterable<?> value) {
 		beginList();
 		for (Object element : value) {
 			prepareListElement();
 			appendPrimitive(element);
 		}
 		endList();
+		return this;
 	}
 
 	/**
@@ -556,19 +633,25 @@ public class JavascriptAssembler extends SourceCodeAssembler {
 	 * 
 	 * This method creates complete lines including indentation and
 	 * also increments indentation for the nested scope.
+	 * 
+	 * @return this
 	 */
-	public final void beginNestedScope() {
+	public final JavascriptAssembler beginNestedScope() {
 		appendIndentedLine("(function() {");
 		incrementIndentation();
+		return this;
 	}
 
 	/**
 	 * Ends a nested scope started by beginNestedScope(). See that method for
 	 * a discussion of the purpose of nested scopes.
+	 * 
+	 * @return this
 	 */
-	public final void endNestedScope() {
+	public final JavascriptAssembler endNestedScope() {
 		decrementIdentation();
 		appendIndentedLine("})();");
+		return this;
 	}
 
 }

@@ -25,6 +25,7 @@ import name.martingeisse.wicket.component.contextmenu.FileUploadMenuItem;
 import name.martingeisse.wicket.component.contextmenu.IContextMenuDelegate;
 import name.martingeisse.wicket.component.contextmenu.SimpleContextMenuItem;
 import name.martingeisse.wicket.component.tree.IJsTreeCommandHandler;
+import name.martingeisse.wicket.component.tree.ITreeNodeIdProvider;
 import name.martingeisse.wicket.component.tree.JsTree;
 import name.martingeisse.wicket.javascript.IJavascriptInteractionInterceptor;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
@@ -37,7 +38,7 @@ import org.apache.wicket.util.upload.FileItem;
 /**
  * The tree component that visualizes the workspace resource tree.
  */
-public abstract class ResourceTreeComponent extends JsTree<ResourceHandle> {
+public abstract class ResourceTreeComponent extends JsTree<ResourceHandle> implements ITreeNodeIdProvider<ResourceHandle> {
 
 	/**
 	 * the workbenchPage
@@ -54,6 +55,7 @@ public abstract class ResourceTreeComponent extends JsTree<ResourceHandle> {
 		super(id, treeProvider, new ContextMenu<List<ResourceHandle>>());
 		setOutputMarkupId(true);
 		this.workbenchPage = workbenchPage;
+		setNodeIdProvider(this);
 
 		// key bindings
 		setDoubleClickCommandVerb(CommandVerbs.OPEN);
@@ -85,6 +87,14 @@ public abstract class ResourceTreeComponent extends JsTree<ResourceHandle> {
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.wicket.component.tree.ITreeNodeIdProvider#getLocalId(java.lang.Object)
+	 */
+	@Override
+	public String getLocalId(ResourceHandle node) {
+		return node.getName();
+	}
+	
 	/**
 	 * This handler opens the first selected resource in the editor.
 	 */
@@ -92,7 +102,10 @@ public abstract class ResourceTreeComponent extends JsTree<ResourceHandle> {
 		@Override
 		public void handleCommand(final CommandVerb commandVerb, final List<ResourceHandle> selectedNodes, Void ignored) {
 			if (!selectedNodes.isEmpty()) {
-				workbenchPage.getEditorService().openDefaultEditor(selectedNodes.get(0));
+				ResourceHandle resource = selectedNodes.get(0);
+				if (resource.isFile()) {
+					workbenchPage.getEditorService().openDefaultEditor(selectedNodes.get(0));
+				}
 			}
 		}
 	}
@@ -106,7 +119,7 @@ public abstract class ResourceTreeComponent extends JsTree<ResourceHandle> {
 			for (ResourceHandle node : selectedNodes) {
 				node.delete();
 			}
-			AjaxRequestUtil.markForRender(workbenchPage.get("filesContainer"));
+			workbenchPage.updateResourceView();
 		}
 	}
 	
@@ -119,7 +132,7 @@ public abstract class ResourceTreeComponent extends JsTree<ResourceHandle> {
 			if (!selectedNodes.isEmpty()) {
 				final ResourceHandle resource = selectedNodes.get(0);
 				resource.rename(newName);
-				AjaxRequestUtil.markForRender(workbenchPage.get("filesContainer"));
+				workbenchPage.updateResourceView();
 			}
 		}
 	}
@@ -134,7 +147,7 @@ public abstract class ResourceTreeComponent extends JsTree<ResourceHandle> {
 				final ResourceHandle parentFolder = selectedNodes.get(0).getFolder();
 				final ResourceHandle newFile = parentFolder.getChild(filename);
 				newFile.writeFile("", true, false);
-				AjaxRequestUtil.markForRender(workbenchPage.get("filesContainer"));
+				workbenchPage.updateResourceView();
 				workbenchPage.getEditorService().openDefaultEditor(newFile);
 			}
 		}
@@ -150,7 +163,7 @@ public abstract class ResourceTreeComponent extends JsTree<ResourceHandle> {
 				final ResourceHandle parentFolder = selectedNodes.get(0).getFolder();
 				final ResourceHandle newFolder = parentFolder.getChild(filename);
 				newFolder.createFolder(true);
-				AjaxRequestUtil.markForRender(workbenchPage.get("filesContainer"));
+				workbenchPage.updateResourceView();
 			}
 		}
 	}

@@ -18,7 +18,6 @@ import name.martingeisse.webide.workbench.services.IWorkbenchEditorService;
 import name.martingeisse.webide.workbench.services.IWorkbenchServicesProvider;
 import name.martingeisse.wicket.component.tree.JsTree;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
-import name.martingeisse.wicket.util.IClientFuture;
 
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -75,7 +74,6 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 		
 		this.servicesImplementation = new WorkbenchPageServicesImpl(this);
 		setOutputMarkupId(true);
-		add(new IClientFuture.Behavior());
 		add(new HandleUploadedFileBehavior());
 
 		final WebMarkupContainer filesContainer = new WebMarkupContainer("filesContainer");
@@ -155,13 +153,22 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 	}
 
 	/**
+	 * Soft-refreshes the resource view.
+	 */
+	public void updateResourceView() {
+		@SuppressWarnings("unchecked")
+		JsTree<ResourceHandle> resourceTree = (JsTree<ResourceHandle>)get("filesContainer").get("resources");
+		resourceTree.softRefresh(AjaxRequestUtil.getAjaxRequestTarget());
+	}
+	
+	/**
 	 * Subscribes to {@link ResourceChangePushMessage}s.
 	 * @param target the request handler
 	 * @param message the message
 	 */
 	@Subscribe
 	public void receiveMessage(AjaxRequestTarget target, ResourceChangePushMessage message) {
-		target.add(WorkbenchPage.this.get("filesContainer"));
+		updateResourceView();
 	}
 
 	/**
@@ -244,7 +251,7 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 		 */
 		@Override
 		protected void respond(final AjaxRequestTarget target) {
-			target.add(WorkbenchPage.this.get("filesContainer"));
+			updateResourceView();
 			if (uploadErrorMessage != null) {
 				target.appendJavaScript("alert('" + JavascriptAssemblerUtil.escapeStringLiteralSpecialCharacters(uploadErrorMessage) + "');");
 			}

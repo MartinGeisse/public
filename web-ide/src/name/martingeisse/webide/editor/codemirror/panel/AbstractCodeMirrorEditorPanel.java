@@ -8,8 +8,6 @@ package name.martingeisse.webide.editor.codemirror.panel;
 
 import name.martingeisse.webide.resources.ResourceHandle;
 import name.martingeisse.webide.util.NoTrimTextArea;
-import name.martingeisse.wicket.util.AjaxRequestUtil;
-import name.martingeisse.wicket.util.IClientFuture;
 import name.martingeisse.wicket.util.WicketHeadUtil;
 
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -53,18 +51,9 @@ public class AbstractCodeMirrorEditorPanel extends Panel {
 				final ResourceHandle resourceHandle = AbstractCodeMirrorEditorPanel.this.resourceHandle;
 				final String newContents = (String)AbstractCodeMirrorEditorPanel.this.getDefaultModelObject();
 				resourceHandle.writeFile(newContents, true, true);
-				
-				// wait for the build to finish to clear the "workspace building" marker. TODO: This should be decoupled from editors.
-				IClientFuture.Behavior.get(getWebPage()).addFuture(new IClientFuture() {
-					@Override
-					public boolean check(Behavior behavior) {
-						boolean compiled = false; // TODO  BuilderService.isBuildFinished();
-						if (compiled) {
-							AjaxRequestUtil.markForRender(getWebPage().get("markersContainer"));
-						}
-						return compiled;
-					}
-				});
+
+				// TODO store the "workspace building" indicator globally, update by the
+				// builder thread, then push via Atmosphere. Same for resource markers.
 				
 			}
 		};
