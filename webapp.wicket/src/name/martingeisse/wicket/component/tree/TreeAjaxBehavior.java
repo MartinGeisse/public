@@ -139,8 +139,7 @@ class TreeAjaxBehavior<T> extends AbstractDefaultAjaxBehavior implements IContex
 		}
 		for (final String nodeSpec : StringUtils.split(specifier, ':')) {
 			try {
-				final int index = Integer.parseInt(nodeSpec);
-				final Item<T> item = GenericTypeUtil.unsafeCast((Item<?>)tree.get(Integer.toString(index)));
+				final Item<T> item = GenericTypeUtil.unsafeCast((Item<?>)tree.get(nodeSpec));
 				result.add(item.getModelObject());
 			} catch (final Exception e) {
 				logger.debug("could not parse JsTree item specifier: " + specifier, e);

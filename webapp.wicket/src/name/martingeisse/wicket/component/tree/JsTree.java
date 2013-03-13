@@ -19,6 +19,7 @@ import name.martingeisse.wicket.javascript.IJavascriptInteractionInterceptor;
 import name.martingeisse.wicket.util.WicketHeadUtil;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ITreeProvider;
 import org.apache.wicket.markup.IMarkupFragment;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -27,15 +28,33 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.list.AbstractItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.response.StringResponse;
 
 /**
  * Implements a Javascript/JsTree-based tree component.
  * 
- * The markup element for this component should contain
- * the markup for each tree node. The tree backbone
- * is generated automatically outside that markup.
- * The populateItem(Item) method is called to
- * generate components for each node.
+ * The markup element for this component should contain the markup for each
+ * tree node. The tree backbone is generated automatically outside that markup.
+ * The populateItem(Item) method is called to generate components for each node.
+ * 
+ * Node IDs: Each node has a local and a global ID. The local ID must be unique
+ * among all siblings, while the global ID must be unique within the whole tree.
+ * The local ID is generated from the supplied {@link ITreeNodeIdProvider}
+ * (if none is set, a default provider is used that generates an ID from the
+ * node's identity hash code). The global ID is generated automatically from
+ * the accumulated local IDs of the node and all its ancestors. Client code
+ * seldom has to deal with the global ID, but it is used for example as the
+ * wicket:id of the item components (which are *NOT* tree-structured).
+ * 
+ * The node ID is used to find a node, both server-side (when routing AJAX
+ * callbacks) and client-side (when merging and old and new tree during a
+ * soft refresh). In addition to being unique among siblings, the node ID
+ * provider is expected to return the same ID again and again when invoked
+ * for the same node. This is also the reason why an ID cannot simply be
+ * generated from the node's position in the tree. For example, this ID
+ * "stability" allows to keep the node selected while other nodes in the
+ * tree are added/removed during a soft refresh.
  * 
  * @param <T> the underlying node type
  */
@@ -45,6 +64,11 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	 * the treeProvider
 	 */
 	private final ITreeProvider<T> treeProvider;
+	
+	/**
+	 * the nodeIdProvider
+	 */
+	private ITreeNodeIdProvider<? super T> nodeIdProvider = ITreeNodeIdProvider.DEFAULT;
 
 	/**
 	 * the rootItems
@@ -102,6 +126,22 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	 */
 	public ITreeProvider<T> getTreeProvider() {
 		return treeProvider;
+	}
+
+	/**
+	 * Getter method for the nodeIdProvider.
+	 * @return the nodeIdProvider
+	 */
+	public ITreeNodeIdProvider<? super T> getNodeIdProvider() {
+		return nodeIdProvider;
+	}
+
+	/**
+	 * Setter method for the nodeIdProvider.
+	 * @param nodeIdProvider the nodeIdProvider to set
+	 */
+	public void setNodeIdProvider(ITreeNodeIdProvider<? super T> nodeIdProvider) {
+		this.nodeIdProvider = nodeIdProvider;
 	}
 
 	/**
@@ -174,26 +214,46 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	@Override
 	protected void onBeforeRender() {
 		removeAll();
-		rootItems = generateItems(treeProvider.getRoots());
+		rootItems = generateItems(treeProvider.getRoots(), "");
 		super.onBeforeRender();
 	}
 
-	private Item<T>[] generateItems(final Iterator<? extends T> nodes) {
-		// TODO: will cause problems if the same page instance gets rendered
-		// in two browser tabs and an AJAX request arrives for outdated item indices
-		// maybe delegate wicket id generation to a strategy
+	private Item<T>[] generateItems(final Iterator<? extends T> nodes, final String globalIdPrefix) {
 		final List<Item<T>> items = new ArrayList<Item<T>>();
 		while (nodes.hasNext()) {
 			final T node = nodes.next();
-			final Item<T> item = new Item<T>(Integer.toString(size()), treeProvider.model(node));
+			
+			// generate a local and global ID for this node
+			String localId = nodeIdProvider.getLocalId(node);
+			String globalId = getGlobalId(globalIdPrefix, localId);
+			
+			// generate the item
+			final Item<T> item = new Item<T>(globalId, treeProvider.model(node));
 			add(item);
 			items.add(item);
 			populateItem(item);
-			item.treeChildren = generateItems(treeProvider.getChildren(node));
+			
+			// recursively generate descendants
+			item.treeChildren = generateItems(treeProvider.getChildren(node), globalId + "--");
+			
 		}
 		final Item<T>[] itemArray = GenericTypeUtil.unsafeCast(new Item[items.size()]);
 		return items.toArray(itemArray);
 	}
+	
+	private String getGlobalId(String globalIdPrefix, String localId) {
+		StringBuilder builder = new StringBuilder(globalIdPrefix);
+		for (int i=0; i<localId.length(); i++) {
+			char c = localId.charAt(i);
+			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_' || c == '.' || c == ' ') {
+				builder.append(c);
+				continue;
+			}
+			builder.append('-').append((int)c).append('-');
+		}
+		return builder.toString();
+	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Component#renderHead(org.apache.wicket.markup.head.IHeaderResponse)
@@ -251,6 +311,25 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 			response.write("</li>");
 		}
 		response.write("</ul>");
+	}
+	
+	/**
+	 * Renders this tree in a way that causes a client-side merge of the newly
+	 * rendered tree and a previous rendering, based on node IDs.
+	 * @param target the target to render to
+	 */
+	public void softRefresh(AjaxRequestTarget target) {
+		String rendered = renderToString();
+	}
+	
+	private String renderToString() {
+		final RequestCycle requestCycle = RequestCycle.get();
+		final Response oldResponse = requestCycle.getResponse();
+		final StringResponse newResponse = new StringResponse();
+		requestCycle.setResponse(newResponse);
+		render();
+		requestCycle.setResponse(oldResponse);
+		return newResponse.toString();
 	}
 
 	/* (non-Javadoc)
