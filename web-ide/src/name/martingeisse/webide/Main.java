@@ -9,10 +9,15 @@ package name.martingeisse.webide;
 import static org.atmosphere.cpr.ApplicationConfig.FILTER_CLASS;
 import static org.atmosphere.cpr.ApplicationConfig.SERVLET_CLASS;
 
+import java.io.IOException;
+
 import javax.servlet.Servlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import name.martingeisse.webide.application.IdeLauncher;
 import name.martingeisse.webide.application.WebIdeApplication;
+import name.martingeisse.webide.editor.codemirror.ot.HelloServer;
 import name.martingeisse.webide.ssh.ShellFactory;
 
 import org.apache.sshd.SshServer;
@@ -21,7 +26,11 @@ import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.apache.sshd.server.session.ServerSession;
 import org.apache.wicket.protocol.http.WicketFilter;
 import org.atmosphere.cpr.MeteorServlet;
+import org.eclipse.jetty.rewrite.handler.ProxyRule;
+import org.eclipse.jetty.rewrite.handler.RewriteHandler;
+import org.eclipse.jetty.rewrite.handler.Rule;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -88,10 +97,36 @@ public class Main {
 		// atmosphereServletHolder.setAsyncSupported(true);
 		context.addServlet(atmosphereServletHolder, "/*");
 
+		// create a multiplexing handler for Node.js servers, and start those servers
+		new HelloServer().start();
+		ProxyRule helloProxyRule = new ProxyRule();
+		helloProxyRule.setPattern("/internal-api/ot/*");
+		helloProxyRule.setProxyTo("http://localhost:8081");
+		
+		RewriteHandler rewriteHandler = new RewriteHandler();
+		rewriteHandler.addRule(new DummyRule());
+		rewriteHandler.addRule(helloProxyRule);
+		HandlerCollection handlerCollection = new HandlerCollection();
+		handlerCollection.addHandler(rewriteHandler);
+		handlerCollection.addHandler(context);
+		
+		// start the server
 		final Server server = new Server(8080);
-		server.setHandler(context);
+		server.setHandler(handlerCollection);
 		server.start();
 		server.join();
+		
+	}
+
+	private static class DummyRule extends Rule {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jetty.rewrite.handler.Rule#matchAndApply(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+		 */
+		@Override
+		public String matchAndApply(String target, HttpServletRequest request, HttpServletResponse response) throws IOException {
+			return null;
+		}
 		
 	}
 	
