@@ -22,6 +22,7 @@ import org.apache.commons.exec.ExecuteResultHandler;
 import org.apache.commons.exec.ExecuteStreamHandler;
 import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.exec.ShutdownHookProcessDestroyer;
 
 /**
  * Base class for NodeJS server processes. Each subclass should
@@ -63,6 +64,7 @@ public abstract class AbstractNodejsServer {
 		
 		// run Node.js
 		Executor executor = new DefaultExecutor();
+		executor.setProcessDestroyer(new ShutdownHookProcessDestroyer());
 		executor.setStreamHandler(streamHandler);
 		try {
 			executor.setWorkingDirectory(scriptFile.getParentFile());

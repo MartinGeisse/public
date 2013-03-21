@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import name.martingeisse.webide.application.IdeLauncher;
 import name.martingeisse.webide.application.WebIdeApplication;
+import name.martingeisse.webide.editor.codemirror.ot.CodeMirrorOtServer;
 import name.martingeisse.webide.editor.codemirror.ot.HelloServer;
 import name.martingeisse.webide.ssh.ShellFactory;
 
@@ -99,6 +100,7 @@ public class Main {
 
 		// create a multiplexing handler for Node.js servers, and start those servers
 		new HelloServer().start();
+		new CodeMirrorOtServer().start();
 		ProxyRule helloProxyRule = new ProxyRule();
 		helloProxyRule.setPattern("/internal-api/ot/*");
 		helloProxyRule.setProxyTo("http://localhost:8081");
