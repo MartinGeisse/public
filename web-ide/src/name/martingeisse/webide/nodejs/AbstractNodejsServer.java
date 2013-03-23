@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import name.martingeisse.webide.application.Configuration;
 
@@ -62,13 +64,17 @@ public abstract class AbstractNodejsServer {
 		OutputStream errorStream = System.err;
 		ExecuteStreamHandler streamHandler = new PumpStreamHandler(outputStream, errorStream, inputStream);
 		
+		// build an environment map that contains the path to the node_modules
+		Map<String, String> environment = new HashMap<String, String>();
+		environment.put("NODE_PATH", new File("lib/node_modules").getAbsolutePath());
+		
 		// run Node.js
 		Executor executor = new DefaultExecutor();
 		executor.setProcessDestroyer(new ShutdownHookProcessDestroyer());
 		executor.setStreamHandler(streamHandler);
 		try {
 			executor.setWorkingDirectory(scriptFile.getParentFile());
-			executor.execute(commandLine, new ExecuteResultHandler() {
+			executor.execute(commandLine, environment, new ExecuteResultHandler() {
 				
 				@Override
 				public void onProcessFailed(ExecuteException e) {
