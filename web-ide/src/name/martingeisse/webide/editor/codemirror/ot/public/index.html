@@ -4,9 +4,9 @@
 <head>
   <meta charset="utf-8" />
   <title>Collaborative editing with CodeMirror</title>
-  <link rel="stylesheet" href="/static/components/bootstrap/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="/static/components/codemirror/lib/codemirror.css" />
-  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="stylesheet" href="/components/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/components/codemirror/lib/codemirror.css" />
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 
 <body>
@@ -56,19 +56,19 @@
     </div>
   </div>
 
-  <script src="/static/components/codemirror/lib/codemirror.js"></script>
-  <script src="/static/components/codemirror/mode/xml/xml.js"></script>
-  <script src="/static/components/codemirror/mode/markdown/markdown.js"></script>
-  <script src="/static/components/jquery/jquery.min.js"></script>
+  <script src="/components/codemirror/lib/codemirror.js"></script>
+  <script src="/components/codemirror/mode/xml/xml.js"></script>
+  <script src="/components/codemirror/mode/markdown/markdown.js"></script>
+  <script src="/components/jquery/jquery.min.js"></script>
   <script>
     var useSocketIO = true; // window.location.hash === '#socketio';
     if (useSocketIO) {
-      document.write('<'+'script src="/socket.io/socket.io.js"></'+'script>');
+      document.write('<'+'script src="http://localhost:8081/socket.io/socket.io.js"></'+'script>');
     }
   </script>
   <!--<script src="/ot-min.js"></script>-->
-  <script src="/static/ot.js"></script>
-  <script src="/static/client.js"></script>
+  <script src="/ot.js"></script>
+  <script src="/client.js"></script>
 </body>
 
 </html>

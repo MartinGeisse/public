@@ -151,7 +151,7 @@
 
   var cmClient;
   if (useSocketIO) {
-    socket = io.connect('/');
+	socket = io.connect('http://localhost:8081/');
     socket.on('doc', function (obj) {
       init(obj.str, obj.revision, obj.clients, new SocketIOAdapter(socket));
     });
