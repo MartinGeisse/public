@@ -45,7 +45,7 @@ io.sockets.on('connection', function (socket) {
   });
 });
 
-var port = process.env.PORT || 8082;
+var port = process.env.PORT || 8081;
 appServer.listen(port, function () {
   console.log("Listening on port " + port);
 });
