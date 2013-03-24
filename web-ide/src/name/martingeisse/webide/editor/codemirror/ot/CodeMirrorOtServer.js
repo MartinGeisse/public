@@ -11,7 +11,6 @@ var appServer = http.createServer(app);
 app.configure(function () {
   app.use(express.logger());
   app.use('/', express.static(path.join(__dirname, 'public')));
-  app.use('/static', express.static(path.join(__dirname, 'public')));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 

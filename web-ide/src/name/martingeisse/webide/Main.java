@@ -34,6 +34,7 @@ import org.eclipse.jetty.rewrite.handler.Rule;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -111,9 +112,14 @@ public class Main {
 		handlerCollection.addHandler(rewriteHandler);
 		handlerCollection.addHandler(context);
 
+		// TODO test
+		ResourceHandler resourceHandler = new ResourceHandler();
+		resourceHandler.setResourceBase("/Users/martin/git-repos/public/web-ide/src/name/martingeisse/webide/editor/codemirror/ot/public");
+
 		// start the server
 		final Server server = new Server(8080);
-		server.setHandler(context);
+		// server.setHandler(context);
+		server.setHandler(resourceHandler);
 		server.start();
 		server.join();
 
