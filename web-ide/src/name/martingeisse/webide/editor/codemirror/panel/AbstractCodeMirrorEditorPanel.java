@@ -6,6 +6,7 @@
 
 package name.martingeisse.webide.editor.codemirror.panel;
 
+import name.martingeisse.webide.editor.codemirror.ot.Dummy;
 import name.martingeisse.webide.resources.ResourceHandle;
 import name.martingeisse.webide.util.NoTrimTextArea;
 import name.martingeisse.wicket.util.WicketHeadUtil;
@@ -72,6 +73,8 @@ public class AbstractCodeMirrorEditorPanel extends Panel {
 		response.render(CssHeaderItem.forReference(new CssResourceReference(AbstractCodeMirrorEditorPanel.class, "codemirror.css")));
 		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(AbstractCodeMirrorEditorPanel.class, "codemirror.js")));
 		WicketHeadUtil.includeClassJavascript(response, AbstractCodeMirrorEditorPanel.class);
+		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(Dummy.class, "ot.js")));
+		response.render(JavaScriptHeaderItem.forUrl("http://localhost:8081/socket.io/socket.io.js"));
 	}
 	
 	/**
