@@ -52,7 +52,8 @@ public class IdeLauncher {
 		
 		// initialize classes
 		if (startBackgroundThreads) {
-			BuilderThreadNew.createBuilderThread();
+			// TODO
+			// BuilderThreadNew.createBuilderThread();
 		}
 		
 	}

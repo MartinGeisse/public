@@ -9,12 +9,7 @@ package name.martingeisse.webide;
 import static org.atmosphere.cpr.ApplicationConfig.FILTER_CLASS;
 import static org.atmosphere.cpr.ApplicationConfig.SERVLET_CLASS;
 
-import java.io.IOException;
-
 import javax.servlet.Servlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
 
 import name.martingeisse.webide.application.IdeLauncher;
 import name.martingeisse.webide.application.WebIdeApplication;
@@ -27,14 +22,7 @@ import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.apache.sshd.server.session.ServerSession;
 import org.apache.wicket.protocol.http.WicketFilter;
 import org.atmosphere.cpr.MeteorServlet;
-import org.eclipse.jetty.rewrite.handler.ProxyRule;
-import org.eclipse.jetty.rewrite.handler.RewriteHandler;
-import org.eclipse.jetty.rewrite.handler.RewritePatternRule;
-import org.eclipse.jetty.rewrite.handler.Rule;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -101,87 +89,14 @@ public class Main {
 		// atmosphereServletHolder.setAsyncSupported(true);
 		context.addServlet(atmosphereServletHolder, "/*");
 
-		// create a multiplexing handler for Node.js servers, and start those servers
+		// start the OT server
 		new CodeMirrorOtServer().start();
-		final OtPathRule otPathRule = new OtPathRule();
-
-		final RewriteHandler rewriteHandler = new RewriteHandler();
-		rewriteHandler.addRule(new DummyRule());
-		rewriteHandler.addRule(otPathRule);
-		final HandlerCollection handlerCollection = new HandlerList();
-		handlerCollection.addHandler(rewriteHandler);
-		handlerCollection.addHandler(context);
-
-		// TODO test
-		ResourceHandler resourceHandler = new ResourceHandler();
-		resourceHandler.setResourceBase("/Users/martin/git-repos/public/web-ide/src/name/martingeisse/webide/editor/codemirror/ot/public");
-
-		// start the server
+		
+		// start the main server
 		final Server server = new Server(8080);
-		// server.setHandler(context);
-		server.setHandler(resourceHandler);
+		server.setHandler(context);
 		server.start();
 		server.join();
-
-	}
-
-	private static class DummyRule extends Rule {
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jetty.rewrite.handler.Rule#matchAndApply(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-		 */
-		@Override
-		public String matchAndApply(final String target, final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-			return null;
-		}
-
-	}
-
-	private static class OtPathRule extends Rule {
-
-		/**
-		 * the rewriteRule
-		 */
-		private final RewritePatternRule rewriteRule;
-
-		/**
-		 * the proxyRule
-		 */
-		private final ProxyRule proxyRule;
-
-		/**
-		 * Constructor.
-		 */
-		public OtPathRule() {
-			rewriteRule = new RewritePatternRule();
-			rewriteRule.setPattern("/internal-api/ot/*");
-			rewriteRule.setReplacement("/");
-			proxyRule = new ProxyRule();
-			proxyRule.setPattern("/*");
-			proxyRule.setProxyTo("http://localhost:8081");
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jetty.rewrite.handler.Rule#matchAndApply(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-		 */
-		@Override
-		public String matchAndApply(final String target, final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-			if (target.startsWith("/internal-api/ot/")) {
-				final String translatedTarget = rewriteRule.apply(target, request, response);
-				final HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request) {
-					@Override
-					public String getRequestURI() {
-						return translatedTarget;
-					}
-				};
-				return proxyRule.matchAndApply(target, requestWrapper, response);
-			} else if (target.startsWith("/socket.io/")) {
-				System.err.append("direct proxy for: " + target);
-				return proxyRule.matchAndApply(target, request, response);
-			} else {
-				return null;
-			}
-		}
 
 	}
 
