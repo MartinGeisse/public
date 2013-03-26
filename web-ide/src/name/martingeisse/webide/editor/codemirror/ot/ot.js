@@ -994,14 +994,6 @@ ot.CodeMirrorAdapter = (function () {
   var TextOperation = ot.TextOperation;
   var Cursor = ot.Cursor;
 
-  // TODO this cannot handle multi-step changes. Can we modify the
-  // change object, or is it re-used for different changes?
-  // TODO use (this) if necessary after changing the above
-  var changedText = null;
-  function onBeforeChange(cm, change) {
-    changedText = cm.getRange(change.from, change.to);
-  }
-  
   function CodeMirrorAdapter (cm) {
     this.cm = cm;
     this.ignoreNextChange = false;
@@ -1014,7 +1006,6 @@ ot.CodeMirrorAdapter = (function () {
     cm.on('cursorActivity', this.onCursorActivity);
     cm.on('focus', this.onFocus);
     cm.on('blur', this.onBlur);
-    cm.on('beforeChange', onBeforeChange);
   }
 
   // Removes all event listeners from the CodeMirror instance.
@@ -1023,7 +1014,6 @@ ot.CodeMirrorAdapter = (function () {
     this.cm.off('cursorActivity', this.onCursorActivity);
     this.cm.off('focus', this.onFocus);
     this.cm.off('blur', this.onBlur);
-    this.cm.off('beforeChange', onBeforeChange);
   };
 
   function cmpPos (a, b) {
@@ -1057,7 +1047,6 @@ ot.CodeMirrorAdapter = (function () {
 
     var changes = [], i = 0;
     while (change) {
-      change.removed = changedText.split("\n");
       changes[i++] = change;
       change = change.next;
     }
