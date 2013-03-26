@@ -85,5 +85,13 @@ public class AbstractCodeMirrorEditorPanel extends Panel {
 	public final TextArea<String> getTextArea() {
 		return (TextArea<String>)get("form").get("textarea");
 	}
+
+	/**
+	 * Getter method for the resourceHandle.
+	 * @return the resourceHandle
+	 */
+	public ResourceHandle getResourceHandle() {
+		return resourceHandle;
+	}
 	
 }

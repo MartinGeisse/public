@@ -44,7 +44,7 @@ public final class CodeMirrorEditorPanel extends AbstractCodeMirrorEditorPanel {
 	public void renderHead(final IHeaderResponse response) {
 		super.renderHead(response);
 		mode.renderResourceReferences(response);
-		mode.renderInitializerForTextArea(response, getTextArea());
+		mode.renderInitializerForTextArea(response, getTextArea(), getResourceHandle().getName());
 	}
 
 }

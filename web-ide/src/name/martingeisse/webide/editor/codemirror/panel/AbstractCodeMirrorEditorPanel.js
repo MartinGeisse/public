@@ -1,5 +1,5 @@
 
-$.fn.createCodeMirrorWorkbenchEditor = function(mode, options) {
+$.fn.createCodeMirrorWorkbenchEditor = function(mode, options, otUsername) {
 	this.each(function() {
 		
 		// determine CodeMirror creation options
@@ -60,11 +60,10 @@ $.fn.createCodeMirrorWorkbenchEditor = function(mode, options) {
 			var codeMirrorAdapter = new CodeMirrorAdapter(codeMirror);
 			editorClient = new EditorClient(revision, clients, serverAdapter, codeMirrorAdapter);
 			
-			var username = 'foo';
 			socket.emit('login', {
-				name : username
+				name : otUsername
 			}).on('logged_in', function() {
-				editorClient.serverAdapter.ownUserName = username;
+				editorClient.serverAdapter.ownUserName = otUsername;
 				codeMirror.setOption('readOnly', false);
 			});
 			

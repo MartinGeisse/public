@@ -60,7 +60,7 @@ public abstract class AbstractNodejsServer {
 
 		// build I/O streams
 		ByteArrayInputStream inputStream = null;
-		ByteArrayOutputStream outputStream = null;
+		OutputStream outputStream = System.err;
 		OutputStream errorStream = System.err;
 		ExecuteStreamHandler streamHandler = new PumpStreamHandler(outputStream, errorStream, inputStream);
 		

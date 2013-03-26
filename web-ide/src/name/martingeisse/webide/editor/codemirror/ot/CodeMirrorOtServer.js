@@ -1,26 +1,24 @@
 
-var ot = require('ot');
-var express = require('express');
-var socketIO = require('socket.io');
-var path = require('path');
-var http = require('http');
-
-var app = express();
-var appServer = http.createServer(app);
-
-app.configure(function () {
-  app.use(express.logger());
-  app.use('/', express.static(path.join(__dirname, 'public')));
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+// log uncaught exceptions
+process.on('uncaughtException', function (exc) {
+  console.error(exc);
 });
 
-var io = socketIO.listen(appServer);
+// load modules
+var ot = require('ot');
+var socketIO = require('socket.io');
+var path = require('path');
 
-// source: http://devcenter.heroku.com/articles/using-socket-io-with-node-js-on-heroku
+// start socket.io server
+var io = socketIO.listen(8081);
 io.configure('production', function () {
   io.set('transports', ['xhr-polling']);
   io.set('polling duration', 10);
 });
+
+// --- TODO below this line ---
+
+
 
 var str = "# This is a Markdown heading\n\n"
         + "1. un\n"
@@ -44,11 +42,3 @@ io.sockets.on('connection', function (socket) {
   });
 });
 
-var port = process.env.PORT || 8081;
-appServer.listen(port, function () {
-  console.log("Listening on port " + port);
-});
-
-process.on('uncaughtException', function (exc) {
-  console.error(exc);
-});

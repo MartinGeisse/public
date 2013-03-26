@@ -1,3 +1,12 @@
+/*
+ *    /\
+ *   /  \ ot 0.0.11
+ *  /    \ http://operational-transformation.github.com
+ *  \    /
+ *   \  / (c) 2012-2013 Tim Baumann <tim@timbaumann.info> (http://timbaumann.info)
+ *    \/ ot may be freely distributed under the MIT license.
+ */
+
 if (typeof ot === 'undefined') {
   // Export for browsers
   var ot = {};
@@ -334,25 +343,6 @@ ot.TextOperation = (function () {
     return operation;
   };
 
-  function getSimpleOp (operation, fn) {
-    var ops = operation.ops;
-    var isRetain = TextOperation.isRetain;
-    switch (ops.length) {
-    case 1:
-      return ops[0];
-    case 2:
-      return isRetain(ops[0]) ? ops[1] : (isRetain(ops[1]) ? ops[0] : null);
-    case 3:
-      if (isRetain(ops[0]) && isRetain(ops[2])) { return ops[1]; }
-    }
-    return null;
-  }
-
-  function getStartIndex (operation) {
-    if (isRetain(operation.ops[0])) { return operation.ops[0]; }
-    return 0;
-  }
-
   // When you use ctrl-z to undo your latest changes, you expect the program not
   // to undo every single keystroke but to undo your last sentence you wrote at
   // a stretch or the deletion you did by holding the backspace key down. This
@@ -362,6 +352,25 @@ ot.TextOperation = (function () {
   // operations delete text at the same position. You may want to include other
   // factors like the time since the last change in your decision.
   TextOperation.prototype.shouldBeComposedWith = function (other) {
+    function getSimpleOp (operation, fn) {
+      var ops = operation.ops;
+      var isRetain = TextOperation.isRetain;
+      switch (ops.length) {
+      case 1:
+        return ops[0];
+      case 2:
+        return isRetain(ops[0]) ? ops[1] : (isRetain(ops[1]) ? ops[0] : null);
+      case 3:
+        if (isRetain(ops[0]) && isRetain(ops[2])) { return ops[1]; }
+      }
+      return null;
+    }
+
+    function getStartIndex (operation) {
+      if (isRetain(operation.ops[0])) { return operation.ops[0]; }
+      return 0;
+    }
+
     if (this.isNoop() || other.isNoop()) { return true; }
 
     var startA = getStartIndex(this), startB = getStartIndex(other);
@@ -381,31 +390,10 @@ ot.TextOperation = (function () {
     return false;
   };
 
-  // Decides whether two operations should be composed with each other
-  // if they were inverted, that is
-  // `shouldBeComposedWith(a, b) = shouldBeComposedWithInverted(b^{-1}, a^{-1})`.
-  TextOperation.prototype.shouldBeComposedWithInverted = function (other) {
-    if (this.isNoop() || other.isNoop()) { return true; }
-
-    var startA = getStartIndex(this), startB = getStartIndex(other);
-    var simpleA = getSimpleOp(this), simpleB = getSimpleOp(other);
-    if (!simpleA || !simpleB) { return false; }
-
-    if (isInsert(simpleA) && isInsert(simpleB)) {
-      return startA + simpleA.length === startB || startA === startB;
-    }
-
-    if (isDelete(simpleA) && isDelete(simpleB)) {
-      return startB - simpleB === startA;
-    }
-
-    return false;
-  };
-
   // Transform takes two operations A and B that happened concurrently and
-  // produces two operations A' and B' (in an array) such that
-  // `apply(apply(S, A), B') = apply(apply(S, B), A')`. This function is the
-  // heart of OT.
+  // produces two operations A' and B' (in an arry) such that
+  // apply(apply(S, A), B') = apply(apply(S, B), A'). This function is the heart
+  // of OT.
   TextOperation.transform = function (operation1, operation2) {
     if (operation1.baseLength !== operation2.baseLength) {
       throw new Error("Both operations have to have the same base length");
@@ -527,7 +515,8 @@ ot.TextOperation = (function () {
 // Export for CommonJS
 if (typeof module === 'object') {
   module.exports = ot.TextOperation;
-}if (typeof ot === 'undefined') {
+}
+if (typeof ot === 'undefined') {
   // Export for browsers
   var ot = {};
 }
@@ -594,6 +583,7 @@ ot.Cursor = (function (global) {
 if (typeof module === 'object') {
   module.exports = ot.Cursor;
 }
+
 if (typeof ot === 'undefined') {
   // Export for browsers
   var ot = {};
@@ -673,7 +663,8 @@ ot.WrappedOperation = (function (global) {
 // Export for CommonJS
 if (typeof module === 'object') {
   module.exports = ot.WrappedOperation;
-}if (typeof ot === 'undefined') {
+}
+if (typeof ot === 'undefined') {
   // Export for browsers
   var ot = {};
 }
@@ -784,6 +775,7 @@ ot.UndoManager = (function () {
 if (typeof module === 'object') {
   module.exports = ot.UndoManager;
 }
+
 // translation of https://github.com/djspiewak/cccp/blob/master/agent/src/main/scala/com/codecommit/cccp/agent/state.scala
 
 if (typeof ot === 'undefined') {
@@ -986,6 +978,7 @@ ot.Client = (function (global) {
 if (typeof module === 'object') {
   module.exports = ot.Client;
 }
+
 /*global ot */
 
 ot.CodeMirrorAdapter = (function () {
@@ -996,10 +989,9 @@ ot.CodeMirrorAdapter = (function () {
 
   // TODO this cannot handle multi-step changes. Can we modify the
   // change object, or is it re-used for different changes?
-  // TODO use (this) if necessary after changing the above
   var changedText = null;
   function onBeforeChange(cm, change) {
-    changedText = cm.getRange(change.from, change.to);
+	  changedText = cm.getRange(change.from, change.to);
   }
   
   function CodeMirrorAdapter (cm) {
@@ -1057,7 +1049,7 @@ ot.CodeMirrorAdapter = (function () {
 
     var changes = [], i = 0;
     while (change) {
-      change.removed = changedText.split("\n");
+   	  change.removed = changedText.split("\n");
       changes[i++] = change;
       change = change.next;
     }
@@ -1084,12 +1076,12 @@ ot.CodeMirrorAdapter = (function () {
         if (posLe(pos, change.from)) { return indexFromPos(pos); }
         if (posLe(change.to, pos)) {
           return indexFromPos({
-            line: pos.line + change.text.length - 1 - (change.to.line - change.from.line),
+            line: pos.line + (change.text.length > 0 ? change.text.length - 1 : 0) - (change.to.line - change.from.line),
             ch: (change.to.line < pos.line) ?
               pos.ch :
               (change.text.length <= 1) ?
                 pos.ch - (change.to.ch - change.from.ch) + sumLengths(change.text) :
-                pos.ch - change.to.ch + last(change.text).length
+                pos.ch - change.to.ch + (change.text.length > 0 ? last(change.text).length : 0)
           }) + sumLengths(change.removed) - sumLengths(change.text);
         }
         if (change.from.line === pos.line) {
@@ -1223,7 +1215,6 @@ ot.CodeMirrorAdapter = (function () {
       cursorEl.style.borderLeftColor = color;
       cursorEl.style.height = (cursorCoords.bottom - cursorCoords.top) * 0.9 + 'px';
       cursorEl.style.marginTop = (cursorCoords.top - cursorCoords.bottom) + 'px';
-      cursorEl.style.zIndex = 0;
       cursorEl.setAttribute('data-clientid', clientId);
       this.cm.addWidget(cursorPos, cursorEl, false);
       return {
@@ -1293,6 +1284,7 @@ ot.CodeMirrorAdapter = (function () {
   return CodeMirrorAdapter;
 
 }());
+
 /*global ot */
 
 ot.SocketIOAdapter = (function () {
@@ -1342,7 +1334,8 @@ ot.SocketIOAdapter = (function () {
 
   return SocketIOAdapter;
 
-}());/*global ot, $ */
+}());
+/*global ot, $ */
 
 ot.AjaxAdapter = (function () {
   'use strict';
@@ -1457,7 +1450,8 @@ ot.AjaxAdapter = (function () {
 
   return AjaxAdapter;
 
-})();/*global ot */
+})();
+/*global ot */
 
 ot.EditorClient = (function () {
   'use strict';
@@ -1569,6 +1563,7 @@ ot.EditorClient = (function () {
     this.serverAdapter = serverAdapter;
     this.editorAdapter = editorAdapter;
     this.undoManager = new UndoManager();
+    this.lastOperation = null;
 
     this.initializeClientList();
     this.initializeClients(clients);
@@ -1695,8 +1690,14 @@ ot.EditorClient = (function () {
     var meta = new SelfMeta(cursorBefore, this.cursor);
     var operation = new WrappedOperation(textOperation, meta);
 
-    var compose = this.undoManager.undoStack.length > 0 &&
-      inverse.shouldBeComposedWithInverted(last(this.undoManager.undoStack).wrapped);
+    var compose;
+    if (!this.undoManager.dontCompose && this.lastOperation && this.lastOperation.shouldBeComposedWith(textOperation)) {
+      compose = true;
+      this.lastOperation = this.lastOperation.compose(textOperation);
+    } else {
+      compose = false;
+      this.lastOperation = textOperation;
+    }
     var inverseMeta = new SelfMeta(this.cursor, cursorBefore);
     this.undoManager.add(new WrappedOperation(inverse, inverseMeta), compose);
     this.applyClient(textOperation);

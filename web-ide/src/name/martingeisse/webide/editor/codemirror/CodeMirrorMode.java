@@ -92,10 +92,11 @@ public final class CodeMirrorMode implements Serializable {
 	 * initializes CodeMirror in this mode for the specified text area.
 	 * @param response the response to render to
 	 * @param textArea the text area that shall be using CodeMirror
+	 * @param otUsername the username to use for registering with the OT server
 	 */
-	public void renderInitializerForTextArea(IHeaderResponse response, TextArea<?> textArea) {
+	public void renderInitializerForTextArea(IHeaderResponse response, TextArea<?> textArea, String otUsername) {
 		String escapedId = JavascriptAssemblerUtil.escapeStringLiteralSpecialCharacters(id);
-		String script = "$('#" + textArea.getMarkupId() + "').createCodeMirrorWorkbenchEditor('" + escapedId + "');";
+		String script = "$('#" + textArea.getMarkupId() + "').createCodeMirrorWorkbenchEditor('" + escapedId + "', {}, '" + otUsername + "');";
 		response.render(OnDomReadyHeaderItem.forScript(script));
 	}
 	
