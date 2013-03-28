@@ -1,5 +1,5 @@
 
-$.fn.createCodeMirrorWorkbenchEditor = function(mode, options, otUsername) {
+$.fn.createCodeMirrorWorkbenchEditor = function(mode, options, otDocumentId, otUsername) {
 	this.each(function() {
 		
 		// determine CodeMirror creation options
@@ -49,24 +49,26 @@ $.fn.createCodeMirrorWorkbenchEditor = function(mode, options, otUsername) {
 		var CodeMirrorAdapter = ot.CodeMirrorAdapter;
 
 		codeMirror.setOption('readOnly', true);
-		var editorClient;
 		var socket = io.connect('http://localhost:8081/');
-		socket.on('doc', function(obj) {
-			
+		socket.removeAllListeners('doc');
+		socket.removeAllListeners('client_left');
+		socket.removeAllListeners('set_name');
+		socket.removeAllListeners('ack');
+		socket.removeAllListeners('operation');
+		socket.removeAllListeners('cursor');
+		socket.removeAllListeners('reconnect');
+		socket.emit('login', {
+			documentId: otDocumentId,
+			username : otUsername,
+		}).on('doc', function(obj) {
+			codeMirror.setOption('readOnly', false);
 			codeMirror.setValue(obj.str);
 			var revision = obj.revision;
 			var clients = obj.clients;
 			var serverAdapter = new SocketIOAdapter(socket);
 			var codeMirrorAdapter = new CodeMirrorAdapter(codeMirror);
-			editorClient = new EditorClient(revision, clients, serverAdapter, codeMirrorAdapter);
-			
-			socket.emit('login', {
-				name : otUsername
-			}).on('logged_in', function() {
-				editorClient.serverAdapter.ownUserName = otUsername;
-				codeMirror.setOption('readOnly', false);
-			});
-			
+			var editorClient = new EditorClient(revision, clients, serverAdapter, codeMirrorAdapter);
+			editorClient.serverAdapter.ownUserName = otUsername;
 		});
 		
 	});

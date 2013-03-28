@@ -245,6 +245,15 @@ public final class ResourceHandle implements Serializable {
 	public File getResource() {
 		return resource;
 	}
+	
+	/**
+	 * Returns a unique identifier for this handle. This is a path-like string
+	 * that contains the workspace ID in the first segment.
+	 * @return the unique ID
+	 */
+	public String getId() {
+		return "" + workspaceId + path;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

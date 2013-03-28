@@ -58,7 +58,10 @@ public class AbstractCodeMirrorEditorPanel extends Panel {
 				
 			}
 		};
-		editorForm.add(new NoTrimTextArea<String>("textarea", contentsModel).setOutputMarkupId(true));
+		
+		// TODO: don't load the contents for CodeMirror, we don't need them here (alt: pass directly
+		// to the OT server)
+		editorForm.add(new NoTrimTextArea<String>("textarea").setOutputMarkupId(true));
 		editorForm.add(new AjaxButton("submit", editorForm) {});
 		add(editorForm);
 		
