@@ -8,6 +8,7 @@ process.on('uncaughtException', function (exc) {
 var ot = require('ot');
 var socketIO = require('socket.io');
 var path = require('path');
+var http = require('http');
 
 // patch the EditorSocketIOServer module
 ot.EditorSocketIOServer.prototype.removeClient = function(socket) {
@@ -57,17 +58,8 @@ io.sockets.on('connection', function (socket) {
 			return;
 		}
 		var documentId = obj.documentId;
-		
-		// TODO fetch document, find or create server
-		if (!(documentId in editorServers)) {
-			var documentContent = defaultDocumentContent;
-			editorServers[documentId] = new ot.EditorSocketIOServer(documentContent, [], documentId, function (socket, cb) {
-				cb(!!socket.editorServer);
-			});
-		}
-		var editorServer = editorServers[documentId];
-		
-		// remove the client from any previous server
+
+		// remove the client from the previous server, if any
 		if (socket.editorServer) {
 			var oldEditorServer = socket.editorServer;
 			socket.removeAllListeners('operation');
@@ -78,12 +70,40 @@ io.sockets.on('connection', function (socket) {
 				oldEditorServer.emit('empty-room');
 			}
 			oldEditorServer.removeClient(socket);
+			socket.editorServer = null;
+		}
+
+		// this function gets invoked either directly (if the document has already been
+		// loaded) or when the document-load response arrives
+		function onEditorServerReady(editorServer) {
+			socket.editorServer = editorServer;
+			editorServer.addClient(socket);
+			editorServer.setName(socket, username);
 		}
 		
-		// add the new client to that server
-		socket.editorServer = editorServer;
-		editorServer.addClient(socket);
-		editorServer.setName(socket, username);
+		// load the document if necessary
+		if (documentId in editorServers) {
+			onEditorServerReady(editorServers[documentId]);
+		} else {
+			var documentContent = '';
+			var requestOptions = {
+				hostname: 'localhost',
+				port: 8080,
+				path: '/wicket/resource/name.martingeisse.webide.resources.WorkspaceWicketResourceReference/' + documentId
+			};
+			http.get(requestOptions, function(response) {
+				response.on('data', function(chunk) {
+					documentContent += chunk;
+				});
+				response.on('end', function() {
+					documentContent = documentContent.replace(/\r(\n)?/g, '\n');
+					editorServers[documentId] = new ot.EditorSocketIOServer(documentContent, [], documentId, function (socket, cb) {
+						cb(!!socket.editorServer);
+					});
+					onEditorServerReady(editorServers[documentId]);
+				});
+			});
+		}
 		
 	});
 });
