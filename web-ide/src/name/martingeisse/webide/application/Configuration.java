@@ -24,6 +24,11 @@ public class Configuration {
 	private static boolean deployedFolderLayout;
 	
 	/**
+	 * the selfDomain
+	 */
+	private static String selfDomain;
+	
+	/**
 	 * the databaseMainUrl
 	 */
 	private static String mainDatabaseUrl;
@@ -82,6 +87,7 @@ public class Configuration {
 		properties.load(fileInputStream);
 		fileInputStream.close();
 		deployedFolderLayout = loadBoolean(properties, "path.deployed");
+		selfDomain = loadString(properties, "domain.self");
 		mainDatabaseUrl = loadString(properties, "database.main.url");
 		mainDatabaseUsername = loadString(properties, "database.main.username");
 		mainDatabasePassword = loadString(properties, "database.main.password");
@@ -123,6 +129,14 @@ public class Configuration {
 	 */
 	public static boolean isDeployedFolderLayout() {
 		return deployedFolderLayout;
+	}
+	
+	/**
+	 * Getter method for the selfDomain.
+	 * @return the selfDomain
+	 */
+	public static String getSelfDomain() {
+		return selfDomain;
 	}
 	
 	/**

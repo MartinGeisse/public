@@ -49,7 +49,7 @@ $.fn.createCodeMirrorWorkbenchEditor = function(mode, options, otDocumentId, otU
 		var CodeMirrorAdapter = ot.CodeMirrorAdapter;
 
 		codeMirror.setOption('readOnly', true);
-		var socket = io.connect('http://localhost:8081/');
+		var socket = io.connect('http://' + selfDomain + ':8081/');
 		socket.removeAllListeners('doc');
 		socket.removeAllListeners('client_left');
 		socket.removeAllListeners('set_name');

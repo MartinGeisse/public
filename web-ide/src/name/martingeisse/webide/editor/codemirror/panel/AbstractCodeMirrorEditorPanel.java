@@ -6,6 +6,7 @@
 
 package name.martingeisse.webide.editor.codemirror.panel;
 
+import name.martingeisse.webide.application.Configuration;
 import name.martingeisse.webide.editor.codemirror.ot.Dummy;
 import name.martingeisse.webide.resources.ResourceHandle;
 import name.martingeisse.webide.util.NoTrimTextArea;
@@ -77,7 +78,8 @@ public class AbstractCodeMirrorEditorPanel extends Panel {
 		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(AbstractCodeMirrorEditorPanel.class, "codemirror.js")));
 		WicketHeadUtil.includeClassJavascript(response, AbstractCodeMirrorEditorPanel.class);
 		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(Dummy.class, "ot.js")));
-		response.render(JavaScriptHeaderItem.forUrl("http://localhost:8081/socket.io/socket.io.js"));
+		response.render(JavaScriptHeaderItem.forUrl("http://" + Configuration.getSelfDomain() + ":8081/socket.io/socket.io.js"));
+		response.render(JavaScriptHeaderItem.forScript("window.selfDomain = '" + Configuration.getSelfDomain() + "';", null));
 	}
 	
 	/**
