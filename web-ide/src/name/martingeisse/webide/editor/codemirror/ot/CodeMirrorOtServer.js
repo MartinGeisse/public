@@ -65,6 +65,35 @@ io.sockets.on('connection', function (socket) {
 			socket.editorServer = null;
 		}
 
+		// helper functions to get/put the document from/to the IDE server
+		var documentPath = '/wicket/resource/name.martingeisse.webide.resources.WorkspaceWicketResourceReference/' + documentId;
+		function getDocument(callback) {
+			var documentContent = '';
+			var requestOptions = {
+				hostname: 'localhost',
+				port: 8080,
+				path: documentPath
+			};
+			http.get(requestOptions, function(response) {
+				response.on('data', function(chunk) {
+					documentContent += chunk;
+				});
+				response.on('end', function() {
+					documentContent = documentContent.replace(/\r(\n)?/g, '\n');
+					callback(documentContent);
+				});
+			});			
+		}
+		function putDocument(contents) {
+			var requestOptions = {
+				hostname: 'localhost',
+				port: 8080,
+				method: 'PUT',
+				path: documentPath
+			};
+			http.request(requestOptions).write(contents).end();
+		}
+		
 		// this function gets invoked either directly (if the document has already been
 		// loaded) or when the document-load response arrives
 		function onEditorServerReady(editorServer) {
@@ -77,27 +106,31 @@ io.sockets.on('connection', function (socket) {
 		if (documentId in editorServers) {
 			onEditorServerReady(editorServers[documentId]);
 		} else {
-			var documentContent = '';
-			var requestOptions = {
-				hostname: 'localhost',
-				port: 8080,
-				path: '/wicket/resource/name.martingeisse.webide.resources.WorkspaceWicketResourceReference/' + documentId
-			};
-			http.get(requestOptions, function(response) {
-				response.on('data', function(chunk) {
-					documentContent += chunk;
-				});
-				response.on('end', function() {
-					documentContent = documentContent.replace(/\r(\n)?/g, '\n');
-					editorServers[documentId] = new ot.EditorSocketIOServer(documentContent, [], documentId, function (socket, cb) {
+			getDocument(function(documentContent) {
+				
+				// another client might have created an editor server in the meantime
+				if (documentId in editorServers) {
+					onEditorServerReady(editorServers[documentId]);
+				} else {
+					var editorServer = new ot.EditorSocketIOServer(documentContent, [], documentId, function (socket, cb) {
 						cb(!!socket.editorServer);
 					});
-					editorServers[documentId].on('empty-room', function() {
-						// TODO: keep some N minutes longer in case a user comes back (kind of caching)
+					editorServers[documentId] = editorServer;
+					editorServer.on('empty-room', function() {
 						delete editorServers[documentId];
 					});
-					onEditorServerReady(editorServers[documentId]);
-				});
+					editorServer.on('document-changed', function() {
+						if (!editorServer.savePending) {
+							editorServer.savePending = true;
+							setTimeout(function() {
+								editorServer.savePending = false;
+								putDocument(editorServer.document);
+							}, 1000);
+						}
+					});
+					onEditorServerReady(editorServer);
+				}
+				
 			});
 		}
 		

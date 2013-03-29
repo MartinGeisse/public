@@ -8,8 +8,12 @@ package name.martingeisse.webide.resources;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.jar.JarOutputStream;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.wicket.request.Request;
 import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.util.time.Duration;
@@ -37,7 +41,18 @@ public class WorkspaceWicketResource extends AbstractResource {
 	 */
 	@Override
 	protected ResourceResponse newResourceResponse(final Attributes attributes) {
+		final Request request = attributes.getRequest();
+		final HttpServletRequest httpServletRequest = (HttpServletRequest)request.getContainerRequest();
+		if (httpServletRequest.getMethod().equalsIgnoreCase("put")) {
+			return newPutResponse(attributes);
+		} else {
+			return newGetResponse(attributes);
+		}
+	}
 
+	// handler method for GET requests (read the resource)
+	private ResourceResponse newGetResponse(final Attributes attributes) {
+		
 		// prepare the response
 		final ResourceResponse response = new ResourceResponse();
 		response.setCacheDuration(Duration.NONE);
@@ -83,6 +98,29 @@ public class WorkspaceWicketResource extends AbstractResource {
 		});
 
 		return response;
+		
 	}
 
+	// handler method for PUT requests (create/replace the resource)
+	private ResourceResponse newPutResponse(final Attributes attributes) {
+		
+		// write the resource
+		final Request request = attributes.getRequest();
+		final HttpServletRequest httpServletRequest = (HttpServletRequest)request.getContainerRequest();
+		try {
+			final InputStream inputStream = httpServletRequest.getInputStream();
+			resourceHandle.writeFile(inputStream, false, true);
+			inputStream.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		// create the response
+		final ResourceResponse response = new ResourceResponse();
+		response.setCacheDuration(Duration.NONE);
+		response.setStatusCode(204);
+		return response;
+
+	}
+	
 }
