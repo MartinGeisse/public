@@ -33,14 +33,6 @@ io.configure('production', function () {
 // editor servers / documents are stored here while being edited
 var editorServers = {};
 
-// TODO should fetch from the IDE
-var defaultDocumentContent = "# This is a Markdown heading\n\n"
-    + "1. un\n"
-    + "2. deux\n"
-    + "3. trois\n\n"
-    + "Lorem *ipsum* dolor **sit** amet.\n\n"
-    + "    $ touch test.txt";
-
 // the server itself
 io.sockets.on('connection', function (socket) {
 	socket.on('login', function (obj) {
@@ -99,6 +91,10 @@ io.sockets.on('connection', function (socket) {
 					documentContent = documentContent.replace(/\r(\n)?/g, '\n');
 					editorServers[documentId] = new ot.EditorSocketIOServer(documentContent, [], documentId, function (socket, cb) {
 						cb(!!socket.editorServer);
+					});
+					editorServers[documentId].on('empty-room', function() {
+						// TODO: keep some N minutes longer in case a user comes back (kind of caching)
+						delete editorServers[documentId];
 					});
 					onEditorServerReady(editorServers[documentId]);
 				});
