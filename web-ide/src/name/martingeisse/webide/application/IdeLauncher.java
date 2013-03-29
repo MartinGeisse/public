@@ -50,10 +50,10 @@ public class IdeLauncher {
 		Databases.main = mainDatabase;
 		EntityConnectionManager.initializeDatabaseDescriptors(mainDatabase);
 		
-		// initialize classes
+		// initialize classes. TODO: race condition in the event bus if Wicket doesn't start fast enough
+		// (will NPE then).
 		if (startBackgroundThreads) {
-			// TODO
-			// BuilderThreadNew.createBuilderThread();
+			BuilderThreadNew.createBuilderThread();
 		}
 		
 	}
