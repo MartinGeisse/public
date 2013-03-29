@@ -50,6 +50,7 @@
     <target name="build" depends="prepare, compile-common, compile-wicket, compile-webide">
     	<copy file="run.xml" tofile="${destination}/build.xml" />
     	<copy file="${user.home}/webide.properties" todir="${destination}" overwrite="true" />
+    	<copy dir="lib/node_modules" tofile="${destination}" />
     </target>
 
 </project>
