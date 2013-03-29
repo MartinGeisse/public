@@ -58,8 +58,8 @@
 		<copy file="${user.home}/webide.properties" todir="${destination}" overwrite="true" />
 		<mkdir dir="${destination}/lib" />
 		<mkdir dir="${destination}/lib/node_modules" />
-		<copy todir="${destination}/lib/node_modules">
-			<fileset dir="lib/node_modules" includes="*" />
+		<copy todir="${destination}/lib/node_modules" >
+			<fileset dir="lib/node_modules" includes="**/*" />
 		</copy>
 	</target>
 
