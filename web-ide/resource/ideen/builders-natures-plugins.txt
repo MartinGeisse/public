@@ -1,0 +1,226 @@
+
+Problem: Builders und Virtual Machines können nicht aus (UI-)Plugins
+kommen, weil sie für alle Benutzer gleich sein müssen, UI-Plugins aber
+Benutzerspezifisch sind.
+
+Die größte Frage ist, *woher* B/VM kommen und *wie* der Benutzer sie
+einbindet. Also eine Frage, wie es cool ist, und nicht, wie man es
+technisch umsetzt.
+
+Einige Gedanken dazu:
+- Benutzer erwartet, dass das Installieren vom Plugins etwas mühsam
+  ist (sollte aber auch nicht sein), danach das Installieren des
+  Builders aber einfach ist. So ist es in Eclipse. Das ist aber schon
+  problematisch, weil verschiedene Benutzer mit verschiedenen Plugins
+  kommen. Der Builder kann daher nicht einfach "aus dem Plugin"
+  kommen.
+- Builder werden wie Plugins versioniert sein. "Immer die neueste
+  Version" ist im Prinzip der richtige Gedanke. ABER: Diese Version
+  könnte inkompatibel mit dem Plugin sein, welches den Builder
+  installiert. Andererseits: Sie könnte auch inkompatibel mit den
+  Plugins der anderen Benutzer sein. Beides sollte nicht passieren
+  können.
+- Um die Inkompatibilität zu vermeiden gilt: Ein Builder sollte
+  "mit allem" kommen und keine Plugins benötigen, auch wenn diese
+  natürlich das UI nochmals verbessern können.
+- Plugins können es erleichtern, einen Builder zu installieren,
+  bringen diesen aber nicht selber mit sondern installieren die
+  neueste Version des Builders!
+- Es wird die neueste Version des Builders benutzt. Der Benutzer kann
+  explizit eine ältere installieren, falls die neueste Probleme
+  macht. Es müssen aber nicht mehrere Builder-Versionen im selben
+  Workspace unterstützt werden. Das geht bei Eclipse auch nicht,
+  außerdem ist dann deutlich mehr am Buidler falsch als nur
+  "die neueste Version taugt nix".
+
+Ansatz:
+-> Builders werden per Builder-ID und Versionsnummer organisiert. Die Versionierung
+   kann Major und Minor vorsehen, wobei Major = inkompatibel, Minor = kompatibel.
+   (Das aber noch mal überdenken, wird bestimmt mißverstanden und mißbraucht. Solange
+   es keine triftigen Grund gibt, eine Versionsnummer und alle sind kompatibel!
+   Da sollen sich die Builder-Autoren mit rumschlagen und nicht die Benutzer!)
+-> Plugins können Builders einbinden, aber tun das nur per BuilderID und Major-Version.
+   Sie benutzen dann automatisch die neueste Minor-Version.
+-> Versionswechsel und dadurch nötige State-Flushes / Rebuilds per Events an
+   die Builder melden.
+-> Plugin einbinden per build.json -- weitere Aktionen sollten nicht nötig sein!
+   Also die Plugin-ID in die build.json rein und der Builder wird automatisch eingebunden.
+-> Über die build.json ist es auch möglich, explizit die Versionen zu steuern. Das
+   ist transparent genug. Damit wären sogar mehrere Versionen in einem Workspace
+   möglich. Default ist "immer die neueste".
+-> VMs: Werden entsprechend in der vm.json per ID eingebunden, immer die neueste
+   Version außer explizit angegeben.
+
+Noch zu klären: Wie werden Builders / VMs / etc. während der Entwicklung on-the-fly
+eingebunden, nachdem sie gebuildet wurden? Im Prinzip müsste hier per WS-Path
+statt ID und Versions-Constraints gearbeitet werden.
+
+Das Prinzip würde so Sinn machen für
+- Builders
+- VMs
+- aber auch für Plugins! Der Benutzer bindet ein Plugin per pluginId ein und bekommt
+  jeweils die neueste Version. Ein solches Auto-Update würden viele als Problem
+  ansehen (breakage) -- besser wäre aber, es als Anreiz fürs schnelle Weiterentwickeln
+  zu sehen. Versions-Constraints wären außerdem immer noch möglich, man müsste sie
+  aber explizit einstellen.
+- an vielen anderen Stellen
+
+Es müsste also ein allgemeines System her mit der Funktionalität
+- das neueste X mit public Id ID und ggf. Versionsconstraints VC heraussuchen
+- Versionswechsel muss problemlos sein (state files etc.) -> evtl einen Event auslösen
+
+Da jetzt alles immer die neueste Version benutzt, ist die Unterscheidung zwischen
+Builder und Plugin auch nicht mehr so wichtig -- es gibt jetzt nur noch "plugins",
+diese bestehen aus "plugin bundles" (für die interne Organisation) (?) und werden
+- von Benutzern eingebunden, um sich in UI-EPs einzuhängen
+- von build.json eingebunden, um Build-Callbacks zu bekommen
+- von vm.json eingebunden, um VMs bereitzustellen
+
+Sie werden per (public) pluginId eingebunden und es wird jeweils die neueste Version
+genommen. Falls das Plugin mehrere Builder hat werden alle eingebunden -- Plugins
+sollten so organisiert sein, dass sie eine logische Einheit bilden und dieses
+Vorgehen sinnvoll ist. Im Zweifel kann das Plugin immer noch ermöglichen, über die
+build.json auszuwählen, welche Builder laufen sollen (das ist dann Plugin-spezifischer
+Code).
+
+VMs würden dann grundsätzlich über einen "type" auswählen, welche VM-Implementierung
+gemeint ist, wenn das per "pluginId" gewählte Plugin mehrere zur Verfügung stellt.
+
+-----
+
+Welche Änderungen sind dafür nötig? Erst mal ohne Versionsconstraints.
+
+- user_installed_plugins ::= (id, user_id, plugin_public_id, current_plugin_id)
+  Hier ist ein Cache für die aktuelle Versions-DB-ID drin.
+
+- Updater-Job, welcher user_installed_plugins bei neuen Pluginversionen auf den
+  neuesten Stand bringt. Also der im Prinzip diesen Cache updated.
+
+- builtin_plugins braucht das erst mal nicht. Das wird nötig, wenn solche Plugins
+  tatsächlich mit Versionsnummern kommen und nicht einfach nur eine Fassade
+  für den IDE-internen Code sind.
+
+- declared_* können so bleiben -- sie betreffenen einzelne Plugin-Versionen und
+  sind nicht Versionsübergreifend, also genau wie vorher.
+
+- ähnlich dazu betrifft extension_bindings immer die aktuell installierten
+  Versionen eines Benutzers und muss deshalb auch nicht geändert werden
+
+- plugins + (public_id). Speichert dann Versionen und nicht das versionsübergreifende
+  abstrakte "plugin". Umbenennen? -> Ja.
+  
+- Buildsystem war vorher schon nicht automatisch geupdated, also noch nicht umbauen.
+
+- workspace_staging_plugins kann tatsächlich so bleiben und würde sich auf
+  Benutzer in dem WS auswirken. Evtl könnte man hier auch Builders im Dev-Mode
+  ansetzen.
+
+-----
+
+Grundsätzliche Überlegung:
+Viele Probleme beim Ausbau kommen durch Versions-Constraints zustande.
+Idee: Kann man VCs vielleicht ganz vermeiden, indem man sagt: Wer auf einer
+stabilen Version bleiben will, soll sich diese klonen, und nicht die Version
+festlegen? Dann wäre die Regel für *alle* Fälle: Immer die neueste Version,
+evtl. sogar so machbar, dass es immer nur eine Version gibt.
+
+Dann würde man, wenn man eine Version festhalten will, in den "Plugin Store"
+gehen, eine Version klonen und diese benutzen. Das Feature wäre aber nicht
+"unsichtbar", weil das geklonte Plugin dann eine neue public Id hätte.
+Sonst gäbe es auch diverse Probleme z.B. mit Workspaces, wo manche Benutzer
+eine feste Version und manche das normale Verhalten haben. Durch die neue
+public ID wird dieses Verhalten sichtbar.
+
+Solche festen Versionen sollten eh eine Notlösung sein. Im Normalfall gilt
+auto-update.
+
+Durch den Klon-Trick kann das weitere System aber auf den Grundsatz ausgelegt
+sein: Jeder Benutzer verwendet immer die neueste Version aller Plugins. Es geht
+also gar nicht mehr darum, "wer welche Version verwendet", sondern "welche
+Version die aktive ist". Also Benutzer-unabhängig. Das kann statt eines
+Versionsfeldes durch ein active-Flag gekennzeichnet werden. Inaktive Versionen
+müssen in der DB erlaubt sein, damit der Wechsel-Prozess laufen kann, ohne
+dass in dieser Zeit bei allen Benutzern das System auseinanderfliegt
+(atomarer Wechsel über das active-Flag).
+
+- welche Bedeutung hat der "refresh plugins" Button?
+	-> wechsel auf aktuelle Version aller Plugins und neuladen der Seite.
+	Passiert automatisch unter bestimmten Bedingungen (damit
+	man nicht beim Arbeiten unterbrochen wird).
+- extension_bindings updaten: Sind User-spezifisch. Also gibt es evtl. trotzdem
+  eine "aktuell verwendete Version" je Benutzer, die dann aber beim Refresh
+  (oder wann auch immer) automatisch weiterzählt. Also nur, damit der Übergang
+  problemlos läuft. Nach dem Updaten der Bindings werden auch die States übertragen.
+- plugin_versions + active-Flag. Aktivschalten einer neuen Version: Alle anderen
+  plugin_versions mit derselben public plugin ID: active -> 0. Passiert
+  nach "plugin unpack".
+- user_installed_plugins: plugin_public_id statt plugin_version_id.
++ Tabelle user_effective_plugin_versions (?):
+	user_id, plugin_public_id, plugin_version_id
+
+
+-----
+
+ÄNDERUNGEN STUFE 1
+
+Bedingungen:
+- builtin_plugins nur Fassade, kein auto-update
+
+Änderungen:
+- plugins + (public_id)
+- plugins -> plugin_versions umbenennen (auch plugin_id in anderen Tabellen und Variablen im Code)
+- user_installed_plugins ::= (id, user_id, plugin_public_id, current_plugin_version_id)
+- Updater-Job, welcher user_installed_plugins bei neuen Pluginversionen auf den neuesten Stand bringt.
+
+
+
+-----
+
+Überlegungen für die nächste Stufe:
+
+- plugin_bundle_states sind an eine bestimmte Version gebunden. Ideen:
+	1. Löschen -- dann würde ich festlegen, dass Plugins mit dem Verlust der States
+	   klarkommen müssen und sämtliche Persistente Daten woanders gespeichert werden
+	   müssen. Ist aber nicht so cool.
+	2. Übertragen.
+		- States gehören zu Bundles. Sie müssen zum *jeweiligen* Bundle der neuesten
+		  Plugin-Version mit derselben public Id übertragen werden.
+		  Idee: "internal Bundle Name" -> Plugin-lokal aber innerhalb des
+		  	Plugins eindeutig. States werden zum Bundle mit demselben internal Name
+		  	übertragen.
+		- Es gibt keine Stelle, wo *alle* aktuell aktiven Plugins je Benutzer
+		  festgehalten werden. Die könnte man aber schaffen.
+		  Idee: Ist das nötig? Man kann die States je User finden und dazu
+		  	die neuesten Plugins. -> Ja, aber nur solange keine Versions-Constraints
+		  	aktiv sind. Wenn die kommen dann müssten auch die aktiven Plugins
+		  	je Benutzer gelistet werden. Bis dahin gehts aber ohne.
+
+- Buildsystem
+	- Build Mapper sucht auch den jeweils zuständigen Code (neueste Version) heraus.
+	  Verfügbare Daten: public plugin ID (aus build.json)
+	  - sucht neuestes Plugin mit dieser public ID
+	  -> kein Überblick über die Builders aus diesem Plugin. Dieser Überblick kann
+	     aus den PluginVersion -> Bundles mapping sowie declared_extensions gewonnen werden.
+	     Problem: Für VMs müsse dann ein paralleler Mechanismus her, und dann wieder
+	     für jedes einzelne Feature welches Workspace-gebunden ist.
+	  Idee: Plugins deklarieren neben Exs und EPs auch Workspace-gebundene Erweiterungen
+	  	("agents"? Begriff muss her). Diese werden in einer dritten declared_* Tabelle
+	  	gespeichert. Dann kann der Build Mapper:
+	  		- die public plugin ID aus der build.json auslesen
+	  		- das jeweils neueste Plugin holen
+	  		- dazu alle Bundles
+	  		- dazu alle Workspace-gebundenen Erweiterungen aus dieser neuen Tabelle.
+	  Das ist schnell genug *wenn* der Build Mapper nur bei Änderungen in der build.json
+	  läuft. Problem: das ist wieder Build-spezifisch und nicht auf VMs übertragbar.
+	  -> durch "immer die neueste Version, ohne Aushanme" (s.o.) kann eine weitere Tabelle
+	  her: plugin_agents (public plugin ID, plugin_version_id, plugin_bundle_id, class_name, data)
+	  welche immer das aktive Plugin benutzt -- für Workspaces gibt es keinen Refresh Plugins
+	  button, die machen das immer automatisch.
+
+- Staging Plugins
+	- workspace_staging_builders (später), direkt nach workspace_staging_plugins updaten
+
+
+
+
+

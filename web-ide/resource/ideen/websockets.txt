@@ -24,8 +24,79 @@ neue Page-Instanz zu erzeugen (Wicket kann das IIRC), zumindest in
 vielen Fällen und sicherlich bei allen, wo WebSockets beteiligt sind.
 Damit ist auch o.g. Problem gelöst.
 
+-----
 
+Websockets sind grundsätzlich ein Problem in Wicket -- sie vetragen
+sich nicht gut damit, dass Wicket eigentlich ein "klassischer"
+HTTP-Server ist. Page-State geht zwar, ist aber in mehreren Tabs
+immer so eine Sache, was die Usability angeht. Am besten verhält sich
+Wicket immernoch in "stateless" Szenarien oder zumindest wo Pagestate
+im Kontruktor gesetzt wird und danach nicht mehr geändert wird.
 
+Idee: Aufbau aus Wicket + Node, wobei Browser-Requests von Node
+entgegengenommen werden und die Situation "bestehende Page mit
+offenen Websockets wird in einem zweiten Tab geöffnet" gar nicht
+erst vorkommen kann -- die URL wird nicht benutzt, ob bestehende
+Page-Instanzen zu benennen. Die URLs werden entweder als AJAX-API
+benutzt oder für Websockets (teils abhängig vom Browser, z.B. mobile).
 
+Im Hintergrund stehen dann Wicket-Server, die größtenteils stateless
+und vor allem Websocket-less sind. Kommunikation zurück zu den
+Node-Servern per HTTP, Message Queues oder wie auch immer, hier sind
+keine Websockets nötig!
 
+HTML-Content wird von den Wicket-Servern gerendert und von den
+Nodes gecached und ausgeliefert. Direkter Zugriff sollte auch möglich
+sein (CORS) weil schneller, *alles* weiterreichen nur für Browser die
+kein CORS können.
+
+Dieser Aufbau macht so Sinn, weil die IDE eine Anwendung der Art
+"big AJAX-rich single-page app" ist, ähnlich z.B. Gmail und ganz
+anders als "klassische" Webseiten. 
+
+Das ist zwar ein riesem Umbau, aber bis dahin lohnt es sich nicht,
+eine "richtige" Lösung für das Problem mit mehreren Tabs zu finden.
+
+-----
+
+Das Grundlegende Problem scheint mir dabei zu sein, dass die Seite im
+Browser per AJAX Daten haben will, und Wicket nicht für "lightweight"
+AJAX Services gemacht ist. Es kann solche Services anbieten (mit Stateful
+Pages oder indem die Page on-the-fly konstruiert wird), aber die
+Services funktionieren noch besser, wenn die entsprechenden Komponenten
+auf Page-lose URLs zugreifen. Allerdings macht Wicket es sehr einfach,
+Komponenten erst mal zu schreiben (und per Default Page-URLs zu benutzen)
+und dann die wichtigen Services an Page-lose URLs auszulagern. Auch
+kann Wicket über Resources und über Request Mappers / Handlers sehr gut
+an mehreren Stellen die Requests abfangen. "An Wicket vorbei" ist also
+wenn überhaupt nur für die am öftesten verwendeten AJAX-APIs sinnvoll.
+Was aber sinnvoll ist ist, einen solchen Weg schon von Anfang an
+vorzusehen (d.h. zu überlegen, wie Requests per Servlet Filter oder
+Jetty Handler an Wicket vorbei geschleust werden können).
+
+Nächste Frage wäre: Wie werden die GUI-Elemente auf Wicket abgebildet?
+Ist die ganze IDE eine Wicket-Page? Vermutlich nicht sinnvoll, da die
+IDE stateful ist und dann der Vorteil weg wäre. Alternativ könnte eine
+JS-basierte GUI her (ähnlich Dojo/Ext, aber besser mit jQuery kompatibel --
+jQuery UI vielleicht?) und jedes IDE View ist jeweils eine Page. Das würde
+auch viel besser mit verschiebbaren / nur gegebenenfalls vorhandenen
+IDE Views klarkommen.
+
+- Ext: Fällt raus wegen Lizenz etc.
+- Prototype: wäre Konkurrenz zu jQuery, nicht zu Dojo
+- MooTools: Arbeitet auf unterster Ebene und ist kein GUI Toolkit
+- Zepto: wäre Konkurrenz zu jQuery, nicht zu Dojo
+- SmartClient: kommerziell
+
+Ernstzunehmende Auswahl:
++ jQuery UI
++ YUI (wird als "pretty heavy" bezeichnet)
++ Dojo
+
+Alternative:
+Die paar wenigen Sachen, die "toplevel" gemacht werden müssen, direkt
+oder per jQuery-Plugin. Das JS-Framework würde vermutlich eh nicht weiter
+als bis dahin verwendet (also nicht in Editoren und IDE Views), weil es
+zu stark einschränken würde. Zumindest wäre das eine separate Überlegung.
+-> das klingt aktuell am besten.
 
