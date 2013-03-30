@@ -155,8 +155,6 @@ dass in dieser Zeit bei allen Benutzern das System auseinanderfliegt
   plugin_versions mit derselben public plugin ID: active -> 0. Passiert
   nach "plugin unpack".
 - user_installed_plugins: plugin_public_id statt plugin_version_id.
-+ Tabelle user_effective_plugin_versions (?):
-	user_id, plugin_public_id, plugin_version_id
 
 
 -----
@@ -167,12 +165,15 @@ Bedingungen:
 - builtin_plugins nur Fassade, kein auto-update
 
 Änderungen:
-- plugins + (public_id)
+- plugins: +plugin_public_id +active
+	Was ist plugin_public_id bei builtin Plugins (mehrere Builder im builtin plugin -- doch einen sub-selector benutzen?)? Was bei staging?
 - plugins -> plugin_versions umbenennen (auch plugin_id in anderen Tabellen und Variablen im Code)
 - user_installed_plugins ::= (id, user_id, plugin_public_id, current_plugin_version_id)
-- Updater-Job, welcher user_installed_plugins bei neuen Pluginversionen auf den neuesten Stand bringt.
-
-
+	(buitin_plugins, workspace_staging_plugins benutzen weiter die plugin_version_id)
+- Refresh-Logik:
+	InternalPluginUtil.updateUsersPlugins(): Zusätzlich zu dem was jetzt passiert: Updated
+	die user_installed_plugins des Benutzers auf die neuesten Versionen.
+	Zusätzlich werden States übertragen.
 
 -----
 
