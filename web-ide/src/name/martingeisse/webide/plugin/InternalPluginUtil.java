@@ -24,10 +24,11 @@ import name.martingeisse.webide.entity.PluginVersions;
 import name.martingeisse.webide.entity.QBuiltinPlugins;
 import name.martingeisse.webide.entity.QDeclaredExtensionPoints;
 import name.martingeisse.webide.entity.QDeclaredExtensions;
-import name.martingeisse.webide.entity.QExtensionBindings;
 import name.martingeisse.webide.entity.QPluginBundles;
 import name.martingeisse.webide.entity.QPluginVersions;
+import name.martingeisse.webide.entity.QUserExtensionBindings;
 import name.martingeisse.webide.entity.QUserInstalledPlugins;
+import name.martingeisse.webide.entity.QWorkspaceExtensionBindings;
 
 import org.json.simple.JSONValue;
 
@@ -154,10 +155,10 @@ public class InternalPluginUtil {
 			if (extensionPoint == null) {
 				throw new RuntimeException("extension for unknown extension point: " + extensionPointName);
 			}
-			final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QExtensionBindings.extensionBindings);
-			insert.set(QExtensionBindings.extensionBindings.userId, userId);
-			insert.set(QExtensionBindings.extensionBindings.declaredExtensionPointId, extensionPoint.getId());
-			insert.set(QExtensionBindings.extensionBindings.declaredExtensionId, extension.getId());
+			final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QUserExtensionBindings.userExtensionBindings);
+			insert.set(QUserExtensionBindings.userExtensionBindings.userId, userId);
+			insert.set(QUserExtensionBindings.userExtensionBindings.declaredExtensionPointId, extensionPoint.getId());
+			insert.set(QUserExtensionBindings.userExtensionBindings.declaredExtensionId, extension.getId());
 			insert.execute();
 		}
 		
@@ -166,6 +167,32 @@ public class InternalPluginUtil {
 
 	}
 	
+	/**
+	 * Clears workspace plugin bindings, either just for the specified anchor path ("deep" is false)
+	 * or also for all anchor paths of the shape (path/...). The typical use case is to
+	 * clear bindings after a change to the anchor or a deep change to one of its parent folders.
+	 * 
+	 * Note that "deep" calls to this function only affects anchor paths that start with the
+	 * specified path *followed by a slash character*.
+	 * 
+	 * @param workspaceId the workspace id
+	 * @param path the path to the anchor or one of its parent folder
+	 * @param deep whether to affect descendant resources of the specified path
+	 */
+	public static void clearWorkspacePluginBindings(long workspaceId, String path, boolean deep) {
+		{
+			final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QWorkspaceExtensionBindings.workspaceExtensionBindings);
+			delete.where(QWorkspaceExtensionBindings.workspaceExtensionBindings.workspaceId.eq(workspaceId));
+			delete.where(QWorkspaceExtensionBindings.workspaceExtensionBindings.anchorPath.eq(path));
+			delete.execute();
+		}
+		if (deep) {
+			final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QWorkspaceExtensionBindings.workspaceExtensionBindings);
+			delete.where(QWorkspaceExtensionBindings.workspaceExtensionBindings.workspaceId.eq(workspaceId));
+			delete.where(QWorkspaceExtensionBindings.workspaceExtensionBindings.anchorPath.like(path.replace('%', ' ') + "/%"));
+			delete.execute();
+		}
+	}
 	
 
 	// ------------------------------------------------------------------------------------------------
@@ -200,8 +227,8 @@ public class InternalPluginUtil {
 	 * Deletes any existing extension bindings for the specified user.
 	 */
 	private static void deleteExtensionBindingsForUser(final long userId) {
-		final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QExtensionBindings.extensionBindings);
-		delete.where(QExtensionBindings.extensionBindings.userId.eq(userId)).execute();
+		final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QUserExtensionBindings.userExtensionBindings);
+		delete.where(QUserExtensionBindings.userExtensionBindings.userId.eq(userId)).execute();
 	}
 
 	/**

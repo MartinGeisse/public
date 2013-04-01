@@ -25,6 +25,7 @@ import name.martingeisse.webide.entity.WorkspaceBuildTriggers;
 import name.martingeisse.webide.entity.WorkspaceBuilders;
 import name.martingeisse.webide.entity.WorkspaceResourceDeltas;
 import name.martingeisse.webide.entity.WorkspaceTasks;
+import name.martingeisse.webide.plugin.InternalPluginUtil;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
 import name.martingeisse.webide.resources.ResourcePath;
 
@@ -98,6 +99,11 @@ public class BuilderThreadNew {
 		
 		// send a push message to any listening websockets
 		EventBus.get(WebIdeApplication.getCrossThreadInstance()).post(new ResourceChangePushMessage());
+		
+		// clear cached workspace-bound extension bindings
+		for (BuilderResourceDelta delta : allDeltas) {
+			InternalPluginUtil.clearWorkspacePluginBindings(workspaceId, delta.getPath().toString(), delta.isDeep());
+		}
 		
 		// invoke listeners first
 		WorkspaceListenerRegistry.onWorkspaceChange(workspaceId, allDeltas);

@@ -15,7 +15,7 @@ import name.martingeisse.common.util.ReturnValueUtil;
 import name.martingeisse.webide.editor.IEditor;
 import name.martingeisse.webide.editor.IEditorFactory;
 import name.martingeisse.webide.editor.IEditorFamily;
-import name.martingeisse.webide.plugin.ExtensionQuery;
+import name.martingeisse.webide.plugin.UserExtensionQuery;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
 import name.martingeisse.webide.resources.ResourceHandle;
 import name.martingeisse.webide.resources.WorkspaceResourceCollisionException;
@@ -75,8 +75,8 @@ public class WorkbenchPageServicesImpl implements IWorkbenchServicesProvider, IW
 		// TODO
 		long userId = 1;
 		
-		ExtensionQuery query = new ExtensionQuery(userId, "webide.editor.association");
-		for (ExtensionQuery.Result result : query.fetch()) {
+		UserExtensionQuery query = new UserExtensionQuery(userId, "webide.editor.association");
+		for (UserExtensionQuery.Result result : query.fetch()) {
 			JsonAnalyzer editorAssociation = new JsonAnalyzer(result.getDescriptor());
 			String targetType = editorAssociation.analyzeMapElement("target_type").expectString();
 			String targetSpec = editorAssociation.analyzeMapElement("target_spec").expectString();
@@ -117,8 +117,8 @@ public class WorkbenchPageServicesImpl implements IWorkbenchServicesProvider, IW
 		// TODO
 		long userId = 1;
 		
-		ExtensionQuery query = new ExtensionQuery(userId, "webide.editor");
-		for (ExtensionQuery.Result result : query.fetch()) {
+		UserExtensionQuery query = new UserExtensionQuery(userId, "webide.editor");
+		for (UserExtensionQuery.Result result : query.fetch()) {
 			JsonAnalyzer editorSpec = new JsonAnalyzer(result.getDescriptor());
 			if (editorSpec.analyzeMapElement("id").expectString().equals(editorId)) {
 				String familyId = editorSpec.analyzeMapElement("family").expectString();
@@ -138,8 +138,8 @@ public class WorkbenchPageServicesImpl implements IWorkbenchServicesProvider, IW
 		// TODO
 		long userId = 1;
 		
-		ExtensionQuery query = new ExtensionQuery(userId, "webide.editor.family");
-		for (ExtensionQuery.Result result : query.fetch()) {
+		UserExtensionQuery query = new UserExtensionQuery(userId, "webide.editor.family");
+		for (UserExtensionQuery.Result result : query.fetch()) {
 			JsonAnalyzer editorAssociation = new JsonAnalyzer(result.getDescriptor());
 			String id = editorAssociation.analyzeMapElement("id").expectString();
 			if (id.equals(editorFamilyId)) {

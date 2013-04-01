@@ -39,9 +39,9 @@ public class QUsers extends com.mysema.query.sql.RelationalPathBase<Users> {
     public final com.mysema.query.sql.PrimaryKey<Users> pk_primary = createPrimaryKey(id);
 
     /**
-     * Metamodel property for reverse foreign key 'extension_bindings_ibfk_1'
+     * Metamodel property for reverse foreign key 'user_extension_bindings_ibfk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<ExtensionBindings> fk__extensionBindingsIbfk1 = createInvForeignKey(id, "user_id");
+    public final com.mysema.query.sql.ForeignKey<UserExtensionBindings> fk__userExtensionBindingsIbfk1 = createInvForeignKey(id, "user_id");
 
     /**
      * Metamodel property for reverse foreign key 'user_installed_plugins_ibfk_1'

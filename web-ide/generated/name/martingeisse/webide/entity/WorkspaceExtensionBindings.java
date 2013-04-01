@@ -6,15 +6,20 @@ package name.martingeisse.webide.entity;
 import java.io.Serializable;
 
 /**
- * This class represents rows from table 'extension_bindings'.
+ * This class represents rows from table 'workspace_extension_bindings'.
  */
-public class ExtensionBindings implements Serializable {
+public class WorkspaceExtensionBindings implements Serializable {
 
     /**
      * Constructor.
      */
-    public ExtensionBindings() {
+    public WorkspaceExtensionBindings() {
     }
+
+    /**
+     * the anchorPath
+     */
+    private String anchorPath;
 
     /**
      * the declaredExtensionId
@@ -32,9 +37,25 @@ public class ExtensionBindings implements Serializable {
     private Long id;
 
     /**
-     * the userId
+     * the workspaceId
      */
-    private Long userId;
+    private Long workspaceId;
+
+    /**
+     * Getter method for the anchorPath.
+     * @return the anchorPath
+     */
+    public String getAnchorPath() {
+        return anchorPath;
+    }
+
+    /**
+     * Setter method for the anchorPath.
+     * @param anchorPath the anchorPath to set
+     */
+    public void setAnchorPath(String anchorPath) {
+        this.anchorPath = anchorPath;
+    }
 
     /**
      * Getter method for the declaredExtensionId.
@@ -85,19 +106,19 @@ public class ExtensionBindings implements Serializable {
     }
 
     /**
-     * Getter method for the userId.
-     * @return the userId
+     * Getter method for the workspaceId.
+     * @return the workspaceId
      */
-    public Long getUserId() {
-        return userId;
+    public Long getWorkspaceId() {
+        return workspaceId;
     }
 
     /**
-     * Setter method for the userId.
-     * @param userId the userId to set
+     * Setter method for the workspaceId.
+     * @param workspaceId the workspaceId to set
      */
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setWorkspaceId(Long workspaceId) {
+        this.workspaceId = workspaceId;
     }
 
     /* (non-Javadoc)
@@ -105,7 +126,7 @@ public class ExtensionBindings implements Serializable {
      */
     @Override
     public String toString() {
-        return "{ExtensionBindings. declaredExtensionId = " + declaredExtensionId + ", declaredExtensionPointId = " + declaredExtensionPointId + ", id = " + id + ", userId = " + userId + "}";
+        return "{WorkspaceExtensionBindings. anchorPath = " + anchorPath + ", declaredExtensionId = " + declaredExtensionId + ", declaredExtensionPointId = " + declaredExtensionPointId + ", id = " + id + ", workspaceId = " + workspaceId + "}";
     }
 
 }

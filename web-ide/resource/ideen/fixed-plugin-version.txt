@@ -1,0 +1,23 @@
+Dann würde man, wenn man eine Version festhalten will, in den "Plugin Store"
+gehen, eine Version klonen und diese benutzen. Das Feature wäre aber nicht
+"unsichtbar", weil das geklonte Plugin dann eine neue public Id hätte.
+Sonst gäbe es auch diverse Probleme z.B. mit Workspaces, wo manche Benutzer
+eine feste Version und manche das normale Verhalten haben. Durch die neue
+public ID wird dieses Verhalten sichtbar. Das Klon-Plugin könnte mit dem
+Original verknüpft sein, so dass man kontrolliert eine neuere Version des
+Originals klonen und als neuere Version des Klons speichern kann --
+kontrolliertes Update (man würde festlegen, wann das Update in der DB
+erscheint, anstatt festzulegen wann man es benutzt; benutzt würde immer
+je Plugin die neueste Version).
+
+Solche festen Versionen sollten eh eine Notlösung sein. Im Normalfall gilt
+auto-update.
+
+Durch den Klon-Trick kann das weitere System aber auf den Grundsatz ausgelegt
+sein: Jeder Benutzer verwendet immer die neueste Version aller Plugins. Es geht
+also gar nicht mehr darum, "wer welche Version verwendet", sondern "welche
+Version die aktive ist". Also Benutzer-unabhängig. Das kann statt eines
+Versionsfeldes durch ein active-Flag gekennzeichnet werden. Inaktive Versionen
+müssen in der DB erlaubt sein, damit der Wechsel-Prozess laufen kann, ohne
+dass in dieser Zeit bei allen Benutzern das System auseinanderfliegt
+(atomarer Wechsel über das active-Flag).
