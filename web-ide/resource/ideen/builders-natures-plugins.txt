@@ -231,7 +231,73 @@ Bedingungen:
 - Staging Plugins
 	- workspace_staging_builders (später), direkt nach workspace_staging_plugins updaten
 
+-----
 
+Weiteres Problem: Builder sollten auch per Ext. / EP erweiterbar sein. Beispiel: Java-Builder
+wird als Plugin ausgeliefert und ein anderer Autor schreibt dafür eine Javadoc-Extension.
+Die Frage ist jetzt. An welchem Punkt kommen Plugins dafür zusammen, und woher kommt die
+Information *welche* Plugins das sind?
+
+- das alles muss am Workspace verankert sein, also in Workspace Meta-Info oder in Workspace-Dateien
+- muss auch für VMs und anderes irgendwie klappen
+- Stufe 1: Steht alles in der build.json: Hier werden Plugins aufgezählt (public ID)
+  und (?) ein Builder benannt [weglassen falls nur 1 Builder definiert, damit einfacher?].
+  Der Builder ist selbst als Extension definiert und per EPs erweiterbar. Erweiterungen
+  kommen auch aus den hier aufgezählten Plugins.
+- dieselbe build.json wird vom kompletten Build-Aufbau verwendet, also Builder und Ext.
+- Zukunft evtl.: Zentral Plugins aufzählen, die für alle Buildpunkte gelten (z.B. um Javadoc
+  für alle Java-Builds zu bauen; nicht-Java-Builds würden sich dieses Plugin zwar "einfangen"
+  aber den entsprechenden EP nie abrufen)
+
+Wie sieht diese Überlegung dann bei VMs aus?
+- in der vm.json sind Plugins aufgezählt
+- Falls mehrere VM-Types definiert wird spezifiziert, welcher gemeint ist
+- Der VM-Type ist per EPs erweiterbar und diese kommen wieder aus den Plugins
+- dieselbe vm.json wird vom kompletten VM-Aufbau verwendet, also VM und Ext.
+
+-> "einfachster Weg, der funktionieren könnte"
+
+---
+
+Was ist dafür nötig?
+Im Prinzip muss ein EP/Ext Netzwerk für jeden "Anker" (build.json, vm.json, ...) her. Zu klären ist,
+ob dieses on-the-fly gebildet, gecached oder persistent gespeichert wird. Das Netzwerk zu bilden
+ist einfach: Anhand der public IDs die Plugin-Versionen finden, danach wie für per-user-plugins
+weiter (alle Bundles holen, EPs finden, Ext finden, vernetzen, ...)
+
+DeclaredExtensions und DeclaredExtensionPoints werden rein aus den PluginBundles gebildet, können
+also hier auch verwendet werden! Anders sind nur die ExtensionBindings. Also die evtl
+-> UserExtensionBindings und parallel ein WorkspaceExtensionBindings mit
+- workspace_id
+- anchor_path (build.json, vm.json, ...)
+- declared_extension_point_id
+- declared_extension_id
+
+Diese würde vom BuildMapper gebaut wobei die workspaceId auch in das auflösen der Public IDs einfließt.
+Die WorkspaceBuilders wäre dann unnötig. Die WorkspaceBuildTriggers braucht dann keine workspaceBuilderId
+mehr sondern einen builderName (null falls nicht angegeben, dann muss er eindeutig sein).
+
+Wenn ein Trigger ausgelöst wird, wird anhand der workspaceId und des buildscriptPath (-> anchorPath)
+und extension point ID "builders" (oder wie auch immer genau der heißt) alle Builder-Extensions gesucht.
+Entweder ist das genau eine oder der Builder-Name muss angegeben sein. Der Builder kann dann wiederum
+auf den Build-Descriptor zugreifen (wie) sowie Extensions aus dem o.g. Ext-Netzwerk holen (wie?).
+
+Evtl. eine Workspace-Extension-Query parallel zur User-Extension-Query nötig.
+
+---
+
+Builder Thread:
+
+- löscht bei Deltas alle WorkspaceExtensionBindings mit Delta-Path als Anchor-Path (deep deltas?
+  zusätzlich (LIKE path + "/%") löschen). Wann? Direkt vor Listeners. Optimierung in Zukunft:
+  intern merken, welche Dateinamen überhaupt Anchor sein können (build.json, vm.json, ...)
+  und nur für diese Deltas überhaupt Datensätze holen.
+  
+- UserExtensionQuery, WorkspaceExtensionQuery
+
+- WorkspaceExtensionBindings werden von der WorkspaceExtensionQuery on-demand erzeugt (unmöglich,
+  "keine bindings" von "nicht gecached" zu unterscheiden, aber das ist ein Randfall der erst mal
+  nicht optimiert werden muss)
 
 
 
