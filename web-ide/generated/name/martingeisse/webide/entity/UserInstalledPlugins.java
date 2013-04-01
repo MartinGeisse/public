@@ -22,9 +22,9 @@ public class UserInstalledPlugins implements Serializable {
     private Long id;
 
     /**
-     * the pluginId
+     * the pluginPublicId
      */
-    private Long pluginId;
+    private String pluginPublicId;
 
     /**
      * the userId
@@ -48,19 +48,19 @@ public class UserInstalledPlugins implements Serializable {
     }
 
     /**
-     * Getter method for the pluginId.
-     * @return the pluginId
+     * Getter method for the pluginPublicId.
+     * @return the pluginPublicId
      */
-    public Long getPluginId() {
-        return pluginId;
+    public String getPluginPublicId() {
+        return pluginPublicId;
     }
 
     /**
-     * Setter method for the pluginId.
-     * @param pluginId the pluginId to set
+     * Setter method for the pluginPublicId.
+     * @param pluginPublicId the pluginPublicId to set
      */
-    public void setPluginId(Long pluginId) {
-        this.pluginId = pluginId;
+    public void setPluginPublicId(String pluginPublicId) {
+        this.pluginPublicId = pluginPublicId;
     }
 
     /**
@@ -84,7 +84,7 @@ public class UserInstalledPlugins implements Serializable {
      */
     @Override
     public String toString() {
-        return "{UserInstalledPlugins. id = " + id + ", pluginId = " + pluginId + ", userId = " + userId + "}";
+        return "{UserInstalledPlugins. id = " + id + ", pluginPublicId = " + pluginPublicId + ", userId = " + userId + "}";
     }
 
 }

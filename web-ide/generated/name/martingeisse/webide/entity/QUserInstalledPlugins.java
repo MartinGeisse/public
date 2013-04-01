@@ -29,9 +29,9 @@ public class QUserInstalledPlugins extends com.mysema.query.sql.RelationalPathBa
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     /**
-     * Metamodel property for property 'plugin_id'
+     * Metamodel property for property 'plugin_public_id'
      */
-    public final NumberPath<Long> pluginId = createNumber("plugin_id", Long.class);
+    public final StringPath pluginPublicId = createString("plugin_public_id");
 
     /**
      * Metamodel property for property 'user_id'
@@ -44,14 +44,9 @@ public class QUserInstalledPlugins extends com.mysema.query.sql.RelationalPathBa
     public final com.mysema.query.sql.PrimaryKey<UserInstalledPlugins> pk_primary = createPrimaryKey(id);
 
     /**
-     * Metamodel property for foreign key 'user_plugins_ibfk_2'
+     * Metamodel property for foreign key 'user_installed_plugins_ibfk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<Plugins> fk_userPluginsIbfk2 = createForeignKey(pluginId, "id");
-
-    /**
-     * Metamodel property for foreign key 'user_plugins_ibfk_1'
-     */
-    public final com.mysema.query.sql.ForeignKey<Users> fk_userPluginsIbfk1 = createForeignKey(userId, "id");
+    public final com.mysema.query.sql.ForeignKey<Users> fk_userInstalledPluginsIbfk1 = createForeignKey(userId, "id");
 
     /**
      * Path-variable based constructor.

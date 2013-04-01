@@ -39,9 +39,9 @@ public class QPluginBundles extends com.mysema.query.sql.RelationalPathBase<Plug
     public final SimplePath<byte[]> jarfile = createSimple("jarfile", byte[].class);
 
     /**
-     * Metamodel property for property 'plugin_id'
+     * Metamodel property for property 'plugin_version_id'
      */
-    public final NumberPath<Long> pluginId = createNumber("plugin_id", Long.class);
+    public final NumberPath<Long> pluginVersionId = createNumber("plugin_version_id", Long.class);
 
     /**
      * Metamodel property for primary key 'PRIMARY'
@@ -51,7 +51,7 @@ public class QPluginBundles extends com.mysema.query.sql.RelationalPathBase<Plug
     /**
      * Metamodel property for foreign key 'plugin_bundles_ibfk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<Plugins> fk_pluginBundlesIbfk1 = createForeignKey(pluginId, "id");
+    public final com.mysema.query.sql.ForeignKey<PluginVersions> fk_pluginBundlesIbfk1 = createForeignKey(pluginVersionId, "id");
 
     /**
      * Metamodel property for reverse foreign key 'declared_extension_points_ibfk_1'

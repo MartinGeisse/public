@@ -49,19 +49,14 @@ public class QWorkspaces extends com.mysema.query.sql.RelationalPathBase<Workspa
     public final com.mysema.query.sql.ForeignKey<WorkspaceTasks> fk__workspaceTasksIbfk1 = createInvForeignKey(id, "workspace_id");
 
     /**
-     * Metamodel property for reverse foreign key 'workspace_staging_plugins_ibfk_1'
+     * Metamodel property for reverse foreign key 'plugin_versions_ibfk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<WorkspaceStagingPlugins> fk__workspaceStagingPluginsIbfk1 = createInvForeignKey(id, "workspace_id");
+    public final com.mysema.query.sql.ForeignKey<PluginVersions> fk__pluginVersionsIbfk1 = createInvForeignKey(id, "staging_workspace_id");
 
     /**
      * Metamodel property for reverse foreign key 'workspace_resource_deltas_ibfk_1'
      */
     public final com.mysema.query.sql.ForeignKey<WorkspaceResourceDeltas> fk__workspaceResourceDeltasIbfk1 = createInvForeignKey(id, "workspace_id");
-
-    /**
-     * Metamodel property for reverse foreign key 'workspace_resources_ibfk_1'
-     */
-    public final com.mysema.query.sql.ForeignKey<WorkspaceResources> fk__workspaceResourcesIbfk1 = createInvForeignKey(id, "workspace_id");
 
     /**
      * Metamodel property for reverse foreign key 'markers_ibfk_1'

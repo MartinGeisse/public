@@ -32,9 +32,9 @@ public class PluginBundles implements Serializable {
     private byte[] jarfile;
 
     /**
-     * the pluginId
+     * the pluginVersionId
      */
-    private Long pluginId;
+    private Long pluginVersionId;
 
     /**
      * Getter method for the descriptor.
@@ -85,19 +85,19 @@ public class PluginBundles implements Serializable {
     }
 
     /**
-     * Getter method for the pluginId.
-     * @return the pluginId
+     * Getter method for the pluginVersionId.
+     * @return the pluginVersionId
      */
-    public Long getPluginId() {
-        return pluginId;
+    public Long getPluginVersionId() {
+        return pluginVersionId;
     }
 
     /**
-     * Setter method for the pluginId.
-     * @param pluginId the pluginId to set
+     * Setter method for the pluginVersionId.
+     * @param pluginVersionId the pluginVersionId to set
      */
-    public void setPluginId(Long pluginId) {
-        this.pluginId = pluginId;
+    public void setPluginVersionId(Long pluginVersionId) {
+        this.pluginVersionId = pluginVersionId;
     }
 
     /* (non-Javadoc)
@@ -105,7 +105,7 @@ public class PluginBundles implements Serializable {
      */
     @Override
     public String toString() {
-        return "{PluginBundles. descriptor = " + descriptor + ", id = " + id + ", jarfile = " + jarfile + ", pluginId = " + pluginId + "}";
+        return "{PluginBundles. descriptor = " + descriptor + ", id = " + id + ", jarfile = " + jarfile + ", pluginVersionId = " + pluginVersionId + "}";
     }
 
 }

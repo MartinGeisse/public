@@ -29,9 +29,9 @@ public class QBuiltinPlugins extends com.mysema.query.sql.RelationalPathBase<Bui
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     /**
-     * Metamodel property for property 'plugin_id'
+     * Metamodel property for property 'plugin_version_id'
      */
-    public final NumberPath<Long> pluginId = createNumber("plugin_id", Long.class);
+    public final NumberPath<Long> pluginVersionId = createNumber("plugin_version_id", Long.class);
 
     /**
      * Metamodel property for primary key 'PRIMARY'
@@ -41,7 +41,7 @@ public class QBuiltinPlugins extends com.mysema.query.sql.RelationalPathBase<Bui
     /**
      * Metamodel property for foreign key 'builtin_plugins_ibfk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<Plugins> fk_builtinPluginsIbfk1 = createForeignKey(pluginId, "id");
+    public final com.mysema.query.sql.ForeignKey<PluginVersions> fk_builtinPluginsIbfk1 = createForeignKey(pluginVersionId, "id");
 
     /**
      * Path-variable based constructor.

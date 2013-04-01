@@ -8,7 +8,7 @@ package name.martingeisse.webide.tools;
 
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.webide.application.IdeLauncher;
-import name.martingeisse.webide.entity.QPlugins;
+import name.martingeisse.webide.entity.QPluginVersions;
 import name.martingeisse.webide.plugin.InternalPluginUtil;
 
 import com.mysema.query.sql.SQLQuery;
@@ -26,7 +26,7 @@ public class UnpackPluginsMain {
 	public static void main(final String[] args) throws Exception {
 		IdeLauncher.initialize(false);
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-		InternalPluginUtil.generateDeclaredExtensionPointsAndExtensionsForPlugins(query.from(QPlugins.plugins).list(QPlugins.plugins.id));
+		InternalPluginUtil.generateDeclaredExtensionPointsAndExtensionsForPluginVersions(query.from(QPluginVersions.pluginVersions).list(QPluginVersions.pluginVersions.id));
 		InternalPluginUtil.updateUsersPlugins();
 	}
 	

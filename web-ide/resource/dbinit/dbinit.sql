@@ -95,19 +95,23 @@ CREATE TABLE IF NOT EXISTS `workspace_build_triggers` (
 -- available plugins
 -- --------------------------
 
-CREATE TABLE IF NOT EXISTS `plugins` (
+CREATE TABLE IF NOT EXISTS `plugin_versions` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `plugin_public_id` varchar(255) NOT NULL,
+  `staging_workspace_id` bigint(20) NULL,
   `is_unpacked` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`)
+  `is_active` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `plugin_versions_main` (`plugin_public_id`, `staging_workspace_id`, `is_active`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `plugin_bundles` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `plugin_id` bigint(20) NOT NULL,
+  `plugin_version_id` bigint(20) NOT NULL,
   `descriptor` MEDIUMTEXT NOT NULL,
   `jarfile` LONGBLOB NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `plugin_bundles_plugin_id` (`plugin_id`)
+  INDEX `plugin_bundles_plugin_version_id` (`plugin_version_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `declared_extension_points` (
@@ -137,27 +141,17 @@ CREATE TABLE IF NOT EXISTS `declared_extensions` (
 
 CREATE TABLE IF NOT EXISTS `builtin_plugins` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `plugin_id` bigint(20) NOT NULL,
+  `plugin_version_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `user_plugins_plugin_id` (`plugin_id`)
+  INDEX `builtin_plugins_plugin_version_id` (`plugin_version_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `user_installed_plugins` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) NOT NULL,
-  `plugin_id` bigint(20) NOT NULL,
+  `plugin_public_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `user_plugins_user_id` (`user_id`),
-  INDEX `user_plugins_plugin_id` (`plugin_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
-CREATE TABLE IF NOT EXISTS `workspace_staging_plugins` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `workspace_id` bigint(20) NOT NULL,
-  `plugin_id` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `workspace_staging_plugins_workspace_id` (`workspace_id`),
-  INDEX `workspace_staging_plugins_plugin_id` (`plugin_id`)
+  INDEX `main` (`user_id`, `plugin_public_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 
@@ -224,10 +218,10 @@ INSERT INTO `webide`.`workspace_build_triggers` (`id`, `workspace_id`, `workspac
 -- available plugins
 -- --------------------------
 
-INSERT INTO `plugins` (`id`, `is_unpacked`) VALUES
-(NULL, 0);
+INSERT INTO `plugin_versions` (`id`, `plugin_public_id`, `is_unpacked`, `is_active`) VALUES
+(NULL, 'builtin', 0, 1);
 
-INSERT INTO `plugin_bundles` (`id`, `plugin_id`, `descriptor`, `jarfile`) VALUES
+INSERT INTO `plugin_bundles` (`id`, `plugin_version_id`, `descriptor`, `jarfile`) VALUES
 (NULL, 1, '{"extension_points": [
 	{"name": "webide.context_menu.resource", "on_change_cleared_section": 0},
 	{"name": "webide.editor.family", "on_change_cleared_section": null},
@@ -267,7 +261,7 @@ INSERT INTO `plugin_bundles` (`id`, `plugin_id`, `descriptor`, `jarfile`) VALUES
 -- activated plugins
 -- --------------------------
 
-INSERT INTO  `builtin_plugins` (`id`, `plugin_id`) VALUES
+INSERT INTO  `builtin_plugins` (`id`, `plugin_version_id`) VALUES
 (NULL, '1');
 
 -- INSERT INTO  `user_installed_plugins` (`id`, `user_id`, `plugin_id`) VALUES
@@ -294,16 +288,14 @@ ALTER TABLE `workspace_build_triggers` ADD CONSTRAINT `workspace_build_triggers_
 ALTER TABLE `workspace_build_triggers` ADD CONSTRAINT `workspace_build_triggers_ibfk_2` FOREIGN KEY (`workspace_builder_id`) REFERENCES `workspace_builders` (`id`) ON DELETE CASCADE;
 
 -- available plugins
-ALTER TABLE `plugin_bundles` ADD CONSTRAINT `plugin_bundles_ibfk_1` FOREIGN KEY (`plugin_id`) REFERENCES `plugins` (`id`) ON DELETE CASCADE;
+ALTER TABLE `plugin_versions` ADD CONSTRAINT `plugin_versions_ibfk_1` FOREIGN KEY (`staging_workspace_id`) REFERENCES `workspaces` (`id`) ON DELETE CASCADE;
+ALTER TABLE `plugin_bundles` ADD CONSTRAINT `plugin_bundles_ibfk_1` FOREIGN KEY (`plugin_version_id`) REFERENCES `plugin_versions` (`id`) ON DELETE CASCADE;
 ALTER TABLE `declared_extension_points` ADD CONSTRAINT `declared_extension_points_ibfk_1` FOREIGN KEY (`plugin_bundle_id`) REFERENCES `plugin_bundles` (`id`) ON DELETE CASCADE;
 ALTER TABLE `declared_extensions` ADD CONSTRAINT `declared_extensions_ibfk_1` FOREIGN KEY (`plugin_bundle_id`) REFERENCES `plugin_bundles` (`id`) ON DELETE CASCADE;
 
 -- activated plugins
-ALTER TABLE `builtin_plugins` ADD CONSTRAINT `builtin_plugins_ibfk_1` FOREIGN KEY (`plugin_id`) REFERENCES `plugins` (`id`) ON DELETE CASCADE;
-ALTER TABLE `user_installed_plugins` ADD CONSTRAINT `user_plugins_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-ALTER TABLE `user_installed_plugins` ADD CONSTRAINT `user_plugins_ibfk_2` FOREIGN KEY (`plugin_id`) REFERENCES `plugins` (`id`) ON DELETE CASCADE;
-ALTER TABLE `workspace_staging_plugins` ADD CONSTRAINT `workspace_staging_plugins_ibfk_1` FOREIGN KEY (`workspace_id`) REFERENCES `workspaces` (`id`) ON DELETE CASCADE;
-ALTER TABLE `workspace_staging_plugins` ADD CONSTRAINT `workspace_staging_plugins_ibfk_2` FOREIGN KEY (`plugin_id`) REFERENCES `plugins` (`id`) ON DELETE CASCADE;
+ALTER TABLE `builtin_plugins` ADD CONSTRAINT `builtin_plugins_ibfk_1` FOREIGN KEY (`plugin_version_id`) REFERENCES `plugin_versions` (`id`) ON DELETE CASCADE;
+ALTER TABLE `user_installed_plugins` ADD CONSTRAINT `user_installed_plugins_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 -- plugin run-time information
 ALTER TABLE `extension_bindings` ADD CONSTRAINT `extension_bindings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;

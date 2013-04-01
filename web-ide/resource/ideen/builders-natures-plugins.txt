@@ -129,7 +129,12 @@ gehen, eine Version klonen und diese benutzen. Das Feature wäre aber nicht
 "unsichtbar", weil das geklonte Plugin dann eine neue public Id hätte.
 Sonst gäbe es auch diverse Probleme z.B. mit Workspaces, wo manche Benutzer
 eine feste Version und manche das normale Verhalten haben. Durch die neue
-public ID wird dieses Verhalten sichtbar.
+public ID wird dieses Verhalten sichtbar. Das Klon-Plugin könnte mit dem
+Original verknüpft sein, so dass man kontrolliert eine neuere Version des
+Originals klonen und als neuere Version des Klons speichern kann --
+kontrolliertes Update (man würde festlegen, wann das Update in der DB
+erscheint, anstatt festzulegen wann man es benutzt; benutzt würde immer
+je Plugin die neueste Version).
 
 Solche festen Versionen sollten eh eine Notlösung sein. Im Normalfall gilt
 auto-update.
@@ -142,6 +147,9 @@ Versionsfeldes durch ein active-Flag gekennzeichnet werden. Inaktive Versionen
 müssen in der DB erlaubt sein, damit der Wechsel-Prozess laufen kann, ohne
 dass in dieser Zeit bei allen Benutzern das System auseinanderfliegt
 (atomarer Wechsel über das active-Flag).
+
+
+----
 
 - welche Bedeutung hat der "refresh plugins" Button?
 	-> wechsel auf aktuelle Version aller Plugins und neuladen der Seite.
@@ -167,6 +175,8 @@ Bedingungen:
 Änderungen:
 - plugins: +plugin_public_id +active
 	Was ist plugin_public_id bei builtin Plugins (mehrere Builder im builtin plugin -- doch einen sub-selector benutzen?)? Was bei staging?
+	-> staging: pluginJsonWorkspacePath (durch den '/' am Anfang immer unterscheidbar)
+	-> builtin: "!builtin"
 - plugins -> plugin_versions umbenennen (auch plugin_id in anderen Tabellen und Variablen im Code)
 - user_installed_plugins ::= (id, user_id, plugin_public_id, current_plugin_version_id)
 	(buitin_plugins, workspace_staging_plugins benutzen weiter die plugin_version_id)

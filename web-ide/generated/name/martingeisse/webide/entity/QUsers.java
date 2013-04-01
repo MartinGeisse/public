@@ -44,14 +44,14 @@ public class QUsers extends com.mysema.query.sql.RelationalPathBase<Users> {
     public final com.mysema.query.sql.ForeignKey<ExtensionBindings> fk__extensionBindingsIbfk1 = createInvForeignKey(id, "user_id");
 
     /**
+     * Metamodel property for reverse foreign key 'user_installed_plugins_ibfk_1'
+     */
+    public final com.mysema.query.sql.ForeignKey<UserInstalledPlugins> fk__userInstalledPluginsIbfk1 = createInvForeignKey(id, "user_id");
+
+    /**
      * Metamodel property for reverse foreign key 'plugin_bundle_states_ibfk_1'
      */
     public final com.mysema.query.sql.ForeignKey<PluginBundleStates> fk__pluginBundleStatesIbfk1 = createInvForeignKey(id, "user_id");
-
-    /**
-     * Metamodel property for reverse foreign key 'user_plugins_ibfk_1'
-     */
-    public final com.mysema.query.sql.ForeignKey<UserInstalledPlugins> fk__userPluginsIbfk1 = createInvForeignKey(id, "user_id");
 
     /**
      * Path-variable based constructor.

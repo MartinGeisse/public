@@ -16,8 +16,7 @@ import java.util.zip.ZipEntry;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.webide.entity.QPluginBundles;
-import name.martingeisse.webide.entity.QPlugins;
-import name.martingeisse.webide.entity.QWorkspaceStagingPlugins;
+import name.martingeisse.webide.entity.QPluginVersions;
 import name.martingeisse.webide.plugin.InternalPluginUtil;
 import name.martingeisse.webide.resources.MarkerMeaning;
 import name.martingeisse.webide.resources.MarkerOrigin;
@@ -75,8 +74,8 @@ public class PluginBuilder implements IBuilder {
 	 * 
 	 */
 	private static void clearStagingPlugins(long workspaceId) {
-		final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QWorkspaceStagingPlugins.workspaceStagingPlugins);
-		delete.where(QWorkspaceStagingPlugins.workspaceStagingPlugins.workspaceId.eq(workspaceId));
+		final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QPluginVersions.pluginVersions);
+		delete.where(QPluginVersions.pluginVersions.stagingWorkspaceId.eq(workspaceId));
 		delete.execute();
 	}
 
@@ -100,7 +99,7 @@ public class PluginBuilder implements IBuilder {
 
 		// build and install the plugin
 		final byte[] jarFile = generateJarFile(binFolder, bundleFile);
-		uploadPlugin(pluginBundleDescriptorSourceCode, jarFile, workspaceId);
+		uploadPlugin("$" + descriptorFile.getPath(), pluginBundleDescriptorSourceCode, jarFile, workspaceId);
 		
 	}
 
@@ -170,28 +169,25 @@ public class PluginBuilder implements IBuilder {
 	 * Uploads the JAR file build by the previous step and the plugin bundle descriptor
 	 * as a single-bundle plugin into the plugins and plugin_bundles tables.
 	 */
-	private static void uploadPlugin(final String descriptor, final byte[] jarFile, final long workspaceId) {
+	private static void uploadPlugin(final String publicPluginId, final String descriptor, final byte[] jarFile, final long workspaceId) {
 
 		// plugin
-		final SQLInsertClause pluginInsert = EntityConnectionManager.getConnection().createInsert(QPlugins.plugins);
-		pluginInsert.set(QPlugins.plugins.isUnpacked, false);
-		final long pluginId = pluginInsert.executeWithKey(Long.class);
+		final SQLInsertClause pluginInsert = EntityConnectionManager.getConnection().createInsert(QPluginVersions.pluginVersions);
+		pluginInsert.set(QPluginVersions.pluginVersions.pluginPublicId, publicPluginId);
+		pluginInsert.set(QPluginVersions.pluginVersions.stagingWorkspaceId, workspaceId);
+		pluginInsert.set(QPluginVersions.pluginVersions.isUnpacked, false);
+		pluginInsert.set(QPluginVersions.pluginVersions.isActive, false);
+		final long pluginVersionId = pluginInsert.executeWithKey(Long.class);
 
 		// plugin bundle
 		final SQLInsertClause bundleInsert = EntityConnectionManager.getConnection().createInsert(QPluginBundles.pluginBundles);
-		bundleInsert.set(QPluginBundles.pluginBundles.pluginId, pluginId);
+		bundleInsert.set(QPluginBundles.pluginBundles.pluginVersionId, pluginVersionId);
 		bundleInsert.set(QPluginBundles.pluginBundles.descriptor, descriptor);
 		bundleInsert.set(QPluginBundles.pluginBundles.jarfile, jarFile);
 		bundleInsert.execute();
 
 		// extension points / extensions
-		InternalPluginUtil.generateDeclaredExtensionPointsAndExtensionsForPlugin(pluginId);
-
-		// (workspace - staging plugin) relation
-		final SQLInsertClause workspaceStagingPluginsInsert = EntityConnectionManager.getConnection().createInsert(QWorkspaceStagingPlugins.workspaceStagingPlugins);
-		workspaceStagingPluginsInsert.set(QWorkspaceStagingPlugins.workspaceStagingPlugins.workspaceId, workspaceId);
-		workspaceStagingPluginsInsert.set(QWorkspaceStagingPlugins.workspaceStagingPlugins.pluginId, pluginId);
-		workspaceStagingPluginsInsert.execute();
+		InternalPluginUtil.generateDeclaredExtensionPointsAndExtensionsForPluginVersion(pluginVersionId);
 
 	}
 

@@ -1,5 +1,7 @@
 /**
- * Copyright (c) 2012 Shopgate GmbH
+ * Copyright (c) 2010 Martin Geisse
+ *
+ * This file is distributed under the terms of the MIT license.
  */
 
 package name.martingeisse.webide.plugin;
@@ -18,19 +20,19 @@ import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.webide.entity.DeclaredExtensionPoints;
 import name.martingeisse.webide.entity.DeclaredExtensions;
 import name.martingeisse.webide.entity.PluginBundles;
-import name.martingeisse.webide.entity.Plugins;
+import name.martingeisse.webide.entity.PluginVersions;
 import name.martingeisse.webide.entity.QBuiltinPlugins;
 import name.martingeisse.webide.entity.QDeclaredExtensionPoints;
 import name.martingeisse.webide.entity.QDeclaredExtensions;
 import name.martingeisse.webide.entity.QExtensionBindings;
 import name.martingeisse.webide.entity.QPluginBundles;
-import name.martingeisse.webide.entity.QPlugins;
+import name.martingeisse.webide.entity.QPluginVersions;
 import name.martingeisse.webide.entity.QUserInstalledPlugins;
-import name.martingeisse.webide.entity.QWorkspaceStagingPlugins;
 
 import org.json.simple.JSONValue;
 
 import com.mysema.commons.lang.Pair;
+import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.dml.SQLDeleteClause;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
@@ -47,32 +49,32 @@ public class InternalPluginUtil {
 	}
 
 	/**
-	 * Like generateDeclaredExtensionPointsAndExtensionsForPlugin(pluginId) for
+	 * Like generateDeclaredExtensionPointsAndExtensionsForPluginVersion(pluginVersionId) for
 	 * all the specified IDs.
 	 * 
-	 * @param pluginIds the IDs of the plugins
+	 * @param pluginVersionIds the IDs of the plugin versions
 	 */
-	public static void generateDeclaredExtensionPointsAndExtensionsForPlugins(final Iterable<Long> pluginIds) {
-		for (final long pluginId : pluginIds) {
-			generateDeclaredExtensionPointsAndExtensionsForPlugin(pluginId);
+	public static void generateDeclaredExtensionPointsAndExtensionsForPluginVersions(final Iterable<Long> pluginVersionIds) {
+		for (final long pluginVersionId : pluginVersionIds) {
+			generateDeclaredExtensionPointsAndExtensionsForPluginVersion(pluginVersionId);
 		}
 	}
 
 	/**
-	 * Reads the descriptor of all bundles of the specified plugin, then inserts
+	 * Reads the descriptor of all bundles of the specified plugin version, then inserts
 	 * declared extension points and extensions. This should be called only once
-	 * for each plugin -- previously generated extension points and extensions
+	 * for each plugin version -- previously generated extension points and extensions
 	 * might be referred to already, so they cannot be safely removed.
 	 * 
-	 * @param pluginId the ID of the plugin
+	 * @param pluginVersionId the ID of the plugin version
 	 */
-	public static void generateDeclaredExtensionPointsAndExtensionsForPlugin(final long pluginId) {
-		if (fetchPluginById(pluginId).getIsUnpacked()) {
+	public static void generateDeclaredExtensionPointsAndExtensionsForPluginVersion(final long pluginVersionId) {
+		if (fetchPluginVersionById(pluginVersionId).getIsUnpacked()) {
 			return;
 		}
 		final List<JsonAnalyzer> emptyList = new ArrayList<JsonAnalyzer>();
 		final Map<String, JsonAnalyzer> emptyMap = new HashMap<String, JsonAnalyzer>();
-		final List<PluginBundles> bundles = fetchPluginBundlesByPluginId(pluginId);
+		final List<PluginBundles> bundles = fetchPluginBundlesByPluginVersionId(pluginVersionId);
 		for (final PluginBundles bundle : bundles) {
 			final String descriptor = bundle.getDescriptor();
 			final JsonAnalyzer analyzer = JsonAnalyzer.parse(descriptor);
@@ -106,7 +108,7 @@ public class InternalPluginUtil {
 			}
 			
 		}
-		setPluginUnpacked(pluginId);
+		setPluginVersionUnpacked(pluginVersionId);
 	}
 
 	/**
@@ -120,13 +122,13 @@ public class InternalPluginUtil {
 		final long workspaceId = 1;
 
 		// determine the set of active plugins
-		Set<Long> pluginIds = new HashSet<Long>();
-		pluginIds.addAll(fetchBuiltinPluginIds());
-		pluginIds.addAll(fetchUserInstalledPluginIds(userId));
-		pluginIds.addAll(fetchWorkspaceStagingPluginIds(workspaceId));
+		Set<Long> pluginVersionIds = new HashSet<Long>();
+		pluginVersionIds.addAll(fetchBuiltinPluginVersionIds());
+		pluginVersionIds.addAll(fetchUserInstalledPluginVersionIds(userId));
+		pluginVersionIds.addAll(fetchWorkspaceStagingPluginVersionIds(workspaceId));
 		
 		// fetch plug-in data
-		final List<Long> pluginBundleIds = fetchPluginBundleIds(pluginIds);
+		final List<Long> pluginBundleIds = fetchPluginBundleIds(pluginVersionIds);
 		final List<DeclaredExtensionPoints> declaredExtensionPoints = fetchDeclaredExtensionPoints(pluginBundleIds);
 		final List<DeclaredExtensions> declaredExtensions = fetchDeclaredExtensions(pluginBundleIds);
 
@@ -171,27 +173,27 @@ public class InternalPluginUtil {
 	// ------------------------------------------------------------------------------------------------
 
 	/**
-	 * Returns the plugin with the specified ID.
+	 * Returns the plugin version with the specified ID.
 	 */
-	private static Plugins fetchPluginById(long pluginId) {
-		return QueryUtil.fetchSingle(QPlugins.plugins, QPlugins.plugins.id.eq(pluginId));
+	private static PluginVersions fetchPluginVersionById(long pluginVersionId) {
+		return QueryUtil.fetchSingle(QPluginVersions.pluginVersions, QPluginVersions.pluginVersions.id.eq(pluginVersionId));
 	}
 	
 	/**
-	 * Sets the is_unpacked flag of the specified plugin to true.
+	 * Sets the is_unpacked flag of the specified plugin version to true.
 	 */
-	private static void setPluginUnpacked(long pluginId) {
-		SQLUpdateClause update = EntityConnectionManager.getConnection().createUpdate(QPlugins.plugins);
-		update.where(QPlugins.plugins.id.eq(pluginId));
-		update.set(QPlugins.plugins.isUnpacked, true);
+	private static void setPluginVersionUnpacked(long pluginVersionId) {
+		SQLUpdateClause update = EntityConnectionManager.getConnection().createUpdate(QPluginVersions.pluginVersions);
+		update.where(QPluginVersions.pluginVersions.id.eq(pluginVersionId));
+		update.set(QPluginVersions.pluginVersions.isUnpacked, true);
 		update.execute();
 	}
 	
 	/**
-	 * Returns the plugin bundles that belong to the specified plugin.
+	 * Returns the plugin bundles that belong to the specified plugin version.
 	 */
-	private static List<PluginBundles> fetchPluginBundlesByPluginId(long pluginId) {
-		return QueryUtil.fetchMultiple(QPluginBundles.pluginBundles, QPluginBundles.pluginBundles.pluginId.eq(pluginId));
+	private static List<PluginBundles> fetchPluginBundlesByPluginVersionId(long pluginVersionId) {
+		return QueryUtil.fetchMultiple(QPluginBundles.pluginBundles, QPluginBundles.pluginBundles.pluginVersionId.eq(pluginVersionId));
 	}
 
 	/**
@@ -203,34 +205,41 @@ public class InternalPluginUtil {
 	}
 
 	/**
-	 * Returns the pluginIds of all built-in plugins.
+	 * Returns the pluginVersionIds of all built-in plugins.
 	 */
-	private static List<Long> fetchBuiltinPluginIds() {
-		return QueryUtil.fetchAll(QBuiltinPlugins.builtinPlugins, QBuiltinPlugins.builtinPlugins.pluginId);
+	private static List<Long> fetchBuiltinPluginVersionIds() {
+		return QueryUtil.fetchAll(QBuiltinPlugins.builtinPlugins, QBuiltinPlugins.builtinPlugins.pluginVersionId);
 	}
 
 	/**
 	 * Returns the pluginIds of all user-installed plugins.
 	 */
-	private static List<Long> fetchUserInstalledPluginIds(long userId) {
-		QUserInstalledPlugins qpath = QUserInstalledPlugins.userInstalledPlugins;
-		return QueryUtil.fetchMultiple(qpath, qpath.pluginId, qpath.userId.eq(userId));
+	private static List<Long> fetchUserInstalledPluginVersionIds(long userId) {
+		final QUserInstalledPlugins quip = QUserInstalledPlugins.userInstalledPlugins;
+		final QPluginVersions qpv = QPluginVersions.pluginVersions;
+		SQLQuery query = EntityConnectionManager.getConnection().createQuery();
+		query = query.from(quip, qpv);
+		query = query.where(quip.pluginPublicId.eq(qpv.pluginPublicId));
+		query = query.where(quip.userId.eq(userId));
+		query = query.where(qpv.stagingWorkspaceId.isNull());
+		query = query.where(qpv.isActive.isTrue());
+		return query.list(qpv.id);
 	}
 
 	/**
 	 * Returns the pluginIds of all workspace staging plugins.
 	 */
-	private static List<Long> fetchWorkspaceStagingPluginIds(long workspaceId) {
-		QWorkspaceStagingPlugins qpath = QWorkspaceStagingPlugins.workspaceStagingPlugins;
-		return QueryUtil.fetchMultiple(qpath, qpath.pluginId, qpath.workspaceId.eq(workspaceId));
+	private static List<Long> fetchWorkspaceStagingPluginVersionIds(long workspaceId) {
+		QPluginVersions q = QPluginVersions.pluginVersions;
+		return QueryUtil.fetchMultiple(q, q.id, q.stagingWorkspaceId.eq(workspaceId), q.isActive.isTrue());
 	}
 
 	/**
 	 * Returns the plugin bundle IDs for all bundles that belong to any of
-	 * the specified plugins.
+	 * the specified plugin versions.
 	 */
-	private static List<Long> fetchPluginBundleIds(final Collection<Long> pluginIds) {
-		return QueryUtil.fetchMultiple(QPluginBundles.pluginBundles, QPluginBundles.pluginBundles.id, QPluginBundles.pluginBundles.pluginId.in(pluginIds));
+	private static List<Long> fetchPluginBundleIds(final Collection<Long> pluginVersionIds) {
+		return QueryUtil.fetchMultiple(QPluginBundles.pluginBundles, QPluginBundles.pluginBundles.id, QPluginBundles.pluginBundles.pluginVersionId.in(pluginVersionIds));
 	}
 
 	/**
