@@ -66,23 +66,3 @@ und extension point ID "builders" (oder wie auch immer genau der heißt) alle Bu
 Entweder ist das genau eine oder der Builder-Name muss angegeben sein. Der Builder kann dann wiederum
 auf den Build-Descriptor zugreifen (wie) sowie Extensions aus dem o.g. Ext-Netzwerk holen (wie?).
 
----
-
-Builder Thread:
-
-- WorkspaceExtensionBindings werden von der WorkspaceExtensionQuery on-demand erzeugt (unmöglich,
-  "keine bindings" von "nicht gecached" zu unterscheiden, aber das ist ein Randfall der erst mal
-  nicht optimiert werden muss) -> Das reicht nicht, weil Extensions immer mit einem EP-Name
-  zusammen abgerufen werden. Keine Ergebnis kann also heißen:
-  	- nicht gecached
-  	- keine Extension *für diesen EP*
-  und damit ist es kein Randfall mehr. Schnelle Lösung: Extra-Tabelle, in der vermerkt wird, ob
-  für einen Anker ein Ergebnis vorliegt. Ablauf:
-  	- Extensions abrufen, falls Ergebnis da -> return
-  	- prüfen, ob vorhanden. Falls ja -> leeres Ergebnis
-  	- Abrufen und speichern
-
-----
-
-
-

@@ -171,14 +171,21 @@ CREATE TABLE IF NOT EXISTS `user_extension_bindings` (
   INDEX `user_extension_bindings_declared_extension_id` (`declared_extension_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-CREATE TABLE IF NOT EXISTS `workspace_extension_bindings` (
+CREATE TABLE IF NOT EXISTS `workspace_extension_networks` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `workspace_id` bigint(20) NOT NULL,
   `anchor_path` varchar(4096) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `main` (`workspace_id`, `anchor_path`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `workspace_extension_bindings` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `workspace_extension_network_id` bigint(20) NOT NULL,
   `declared_extension_point_id` bigint(20) NOT NULL,
   `declared_extension_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `workspace_extension_bindings_workspace_id` (`workspace_id`),
+  INDEX `workspace_extension_bindings_workspace_extension_network_id` (`workspace_extension_network_id`),
   INDEX `workspace_extension_bindings_declared_extension_point_id` (`declared_extension_point_id`),
   INDEX `workspace_extension_bindings_declared_extension_id` (`declared_extension_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
@@ -313,7 +320,8 @@ ALTER TABLE `user_installed_plugins` ADD CONSTRAINT `user_installed_plugins_ibfk
 ALTER TABLE `user_extension_bindings` ADD CONSTRAINT `user_extension_bindings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 ALTER TABLE `user_extension_bindings` ADD CONSTRAINT `user_extension_bindings_ibfk_2` FOREIGN KEY (`declared_extension_point_id`) REFERENCES `declared_extension_points` (`id`) ON DELETE CASCADE;
 ALTER TABLE `user_extension_bindings` ADD CONSTRAINT `user_extension_bindings_ibfk_3` FOREIGN KEY (`declared_extension_id`) REFERENCES `declared_extensions` (`id`) ON DELETE CASCADE;
-ALTER TABLE `workspace_extension_bindings` ADD CONSTRAINT `workspace_extension_bindings_ibfk_1` FOREIGN KEY (`workspace_id`) REFERENCES `workspaces` (`id`) ON DELETE CASCADE;
+ALTER TABLE `workspace_extension_networks` ADD CONSTRAINT `workspace_extension_networks_ibfk_1` FOREIGN KEY (`workspace_id`) REFERENCES `workspaces` (`id`) ON DELETE CASCADE;
+ALTER TABLE `workspace_extension_bindings` ADD CONSTRAINT `workspace_extension_bindings_ibfk_1` FOREIGN KEY (`workspace_extension_network_id`) REFERENCES `workspace_extension_networks` (`id`) ON DELETE CASCADE;
 ALTER TABLE `workspace_extension_bindings` ADD CONSTRAINT `workspace_extension_bindings_ibfk_2` FOREIGN KEY (`declared_extension_point_id`) REFERENCES `declared_extension_points` (`id`) ON DELETE CASCADE;
 ALTER TABLE `workspace_extension_bindings` ADD CONSTRAINT `workspace_extension_bindings_ibfk_3` FOREIGN KEY (`declared_extension_id`) REFERENCES `declared_extensions` (`id`) ON DELETE CASCADE;
 ALTER TABLE `plugin_bundle_states` ADD CONSTRAINT `plugin_bundle_states_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;

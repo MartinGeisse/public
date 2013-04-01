@@ -24,11 +24,6 @@ public class QWorkspaceExtensionBindings extends com.mysema.query.sql.Relational
     public static final QWorkspaceExtensionBindings workspaceExtensionBindings = new QWorkspaceExtensionBindings("workspace_extension_bindings");
 
     /**
-     * Metamodel property for property 'anchor_path'
-     */
-    public final StringPath anchorPath = createString("anchor_path");
-
-    /**
      * Metamodel property for property 'declared_extension_id'
      */
     public final NumberPath<Long> declaredExtensionId = createNumber("declared_extension_id", Long.class);
@@ -44,9 +39,9 @@ public class QWorkspaceExtensionBindings extends com.mysema.query.sql.Relational
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     /**
-     * Metamodel property for property 'workspace_id'
+     * Metamodel property for property 'workspace_extension_network_id'
      */
-    public final NumberPath<Long> workspaceId = createNumber("workspace_id", Long.class);
+    public final NumberPath<Long> workspaceExtensionNetworkId = createNumber("workspace_extension_network_id", Long.class);
 
     /**
      * Metamodel property for primary key 'PRIMARY'
@@ -56,7 +51,7 @@ public class QWorkspaceExtensionBindings extends com.mysema.query.sql.Relational
     /**
      * Metamodel property for foreign key 'workspace_extension_bindings_ibfk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<Workspaces> fk_workspaceExtensionBindingsIbfk1 = createForeignKey(workspaceId, "id");
+    public final com.mysema.query.sql.ForeignKey<WorkspaceExtensionNetworks> fk_workspaceExtensionBindingsIbfk1 = createForeignKey(workspaceExtensionNetworkId, "id");
 
     /**
      * Metamodel property for foreign key 'workspace_extension_bindings_ibfk_3'

@@ -10,15 +10,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import name.martingeisse.common.database.EntityConnectionManager;
+import name.martingeisse.common.database.QueryUtil;
 import name.martingeisse.webide.entity.QDeclaredExtensions;
+import name.martingeisse.webide.entity.QUserExtensionBindings;
 import name.martingeisse.webide.entity.QWorkspaceExtensionBindings;
+import name.martingeisse.webide.entity.QWorkspaceExtensionNetworks;
+import name.martingeisse.webide.entity.WorkspaceExtensionNetworks;
+import name.martingeisse.webide.plugin.InternalPluginUtil.ExtensionNetworkBuilder;
 import name.martingeisse.webide.resources.ResourceHandle;
 import name.martingeisse.webide.resources.ResourcePath;
 
 import org.json.simple.JSONValue;
 
 import com.mysema.commons.lang.CloseableIterator;
+import com.mysema.commons.lang.Pair;
 import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.dml.SQLInsertClause;
 
 /**
  * Plugins may use this class to ask for extensions bound
@@ -92,11 +99,11 @@ public final class WorkspaceExtensionQuery extends AbstractExtensionQuery {
 	 * @return the extension descriptors (parsed JSON)
 	 */
 	public List<Result> fetch() {
+		long networkId = fetchExtensionNetworkId();
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		query.from(QWorkspaceExtensionBindings.workspaceExtensionBindings, QDeclaredExtensions.declaredExtensions);
 		query.where(QWorkspaceExtensionBindings.workspaceExtensionBindings.declaredExtensionId.eq(QDeclaredExtensions.declaredExtensions.id));
-		query.where(QWorkspaceExtensionBindings.workspaceExtensionBindings.workspaceId.eq(workspaceId));
-		query.where(QWorkspaceExtensionBindings.workspaceExtensionBindings.anchorPath.eq(anchorPath));
+		query.where(QWorkspaceExtensionBindings.workspaceExtensionBindings.workspaceExtensionNetworkId.eq(networkId));
 		query.where(QDeclaredExtensions.declaredExtensions.extensionPointName.eq(getExtensionPointName()));
 		final CloseableIterator<Object[]> iterator = query.iterate(QDeclaredExtensions.declaredExtensions.descriptor, QDeclaredExtensions.declaredExtensions.pluginBundleId);
 		try {
@@ -111,6 +118,39 @@ public final class WorkspaceExtensionQuery extends AbstractExtensionQuery {
 		} finally {
 			iterator.close();
 		}
+	}
+	
+	/**
+	 * Fetches the ID of the extension network, building it if not yet present.
+	 */
+	private long fetchExtensionNetworkId() {
+		
+		// try an existing network
+		final QWorkspaceExtensionNetworks qnet = QWorkspaceExtensionNetworks.workspaceExtensionNetworks;
+		final Long existingNetworkId = QueryUtil.fetchSingle(qnet, qnet.id, qnet.workspaceId.eq(workspaceId), qnet.anchorPath.eq(anchorPath));
+		if (existingNetworkId != null) {
+			return existingNetworkId;
+		}
+		
+		// create an empty network
+		final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QWorkspaceExtensionNetworks.workspaceExtensionNetworks);
+		insert.set(QWorkspaceExtensionNetworks.workspaceExtensionNetworks.workspaceId, workspaceId);
+		insert.set(QWorkspaceExtensionNetworks.workspaceExtensionNetworks.anchorPath, anchorPath);
+		final long newNetworkId = insert.execute();
+		
+		// build the network
+		new ExtensionNetworkBuilder() {
+			@Override
+			protected void insertBinding(long extensionPointId, long extensionId) {
+				final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QWorkspaceExtensionBindings.workspaceExtensionBindings);
+				insert.set(QWorkspaceExtensionBindings.workspaceExtensionBindings.workspaceExtensionNetworkId, newNetworkId);
+				insert.set(QWorkspaceExtensionBindings.workspaceExtensionBindings.declaredExtensionPointId, extensionPointId);
+				insert.set(QWorkspaceExtensionBindings.workspaceExtensionBindings.declaredExtensionId, extensionId);
+				insert.execute();
+			}
+		}.build(pluginVersionIds);
+		
+		return newNetworkId;
 	}
 
 	/**

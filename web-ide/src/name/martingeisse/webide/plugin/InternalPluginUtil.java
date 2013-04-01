@@ -28,7 +28,7 @@ import name.martingeisse.webide.entity.QPluginBundles;
 import name.martingeisse.webide.entity.QPluginVersions;
 import name.martingeisse.webide.entity.QUserExtensionBindings;
 import name.martingeisse.webide.entity.QUserInstalledPlugins;
-import name.martingeisse.webide.entity.QWorkspaceExtensionBindings;
+import name.martingeisse.webide.entity.QWorkspaceExtensionNetworks;
 
 import org.json.simple.JSONValue;
 
@@ -128,39 +128,20 @@ public class InternalPluginUtil {
 		pluginVersionIds.addAll(fetchUserInstalledPluginVersionIds(userId));
 		pluginVersionIds.addAll(fetchWorkspaceStagingPluginVersionIds(workspaceId));
 		
-		// fetch plug-in data
-		final List<Long> pluginBundleIds = fetchPluginBundleIds(pluginVersionIds);
-		final List<DeclaredExtensionPoints> declaredExtensionPoints = fetchDeclaredExtensionPoints(pluginBundleIds);
-		final List<DeclaredExtensions> declaredExtensions = fetchDeclaredExtensions(pluginBundleIds);
-
-		// map extension points by name
-		final Map<String, DeclaredExtensionPoints> declaredExtensionPointsByName = new HashMap<String, DeclaredExtensionPoints>();
-		final List<Pair<Long, Integer>> sectionsToDelete = new ArrayList<Pair<Long,Integer>>();
-		for (final DeclaredExtensionPoints extensionPoint : declaredExtensionPoints) {
-			if (declaredExtensionPointsByName.put(extensionPoint.getName(), extensionPoint) != null) {
-				throw new RuntimeException("duplicate extension point: " + extensionPoint.getName());
-			}
-			if (extensionPoint.getOnChangeClearedSection() != null) {
-				sectionsToDelete.add(new Pair<Long, Integer>(extensionPoint.getPluginBundleId(), extensionPoint.getOnChangeClearedSection()));
-			}
-		}
-
 		// delete any previously existing bindings
 		deleteExtensionBindingsForUser(userId);
-
-		// insert the new bindings
-		for (final DeclaredExtensions extension : declaredExtensions) {
-			final String extensionPointName = extension.getExtensionPointName();
-			final DeclaredExtensionPoints extensionPoint = declaredExtensionPointsByName.get(extensionPointName);
-			if (extensionPoint == null) {
-				throw new RuntimeException("extension for unknown extension point: " + extensionPointName);
+		
+		// build the binding network
+		List<Pair<Long, Integer>> sectionsToDelete = new ExtensionNetworkBuilder() {
+			@Override
+			protected void insertBinding(long extensionPointId, long extensionId) {
+				final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QUserExtensionBindings.userExtensionBindings);
+				insert.set(QUserExtensionBindings.userExtensionBindings.userId, userId);
+				insert.set(QUserExtensionBindings.userExtensionBindings.declaredExtensionPointId, extensionPointId);
+				insert.set(QUserExtensionBindings.userExtensionBindings.declaredExtensionId, extensionId);
+				insert.execute();
 			}
-			final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QUserExtensionBindings.userExtensionBindings);
-			insert.set(QUserExtensionBindings.userExtensionBindings.userId, userId);
-			insert.set(QUserExtensionBindings.userExtensionBindings.declaredExtensionPointId, extensionPoint.getId());
-			insert.set(QUserExtensionBindings.userExtensionBindings.declaredExtensionId, extension.getId());
-			insert.execute();
-		}
+		}.build(pluginVersionIds);
 		
 		// clear appropriate state of plugin bundles with extension points
 		PluginStateCache.onActivationChange(userId, sectionsToDelete);
@@ -181,15 +162,15 @@ public class InternalPluginUtil {
 	 */
 	public static void clearWorkspacePluginBindings(long workspaceId, String path, boolean deep) {
 		{
-			final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QWorkspaceExtensionBindings.workspaceExtensionBindings);
-			delete.where(QWorkspaceExtensionBindings.workspaceExtensionBindings.workspaceId.eq(workspaceId));
-			delete.where(QWorkspaceExtensionBindings.workspaceExtensionBindings.anchorPath.eq(path));
+			final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QWorkspaceExtensionNetworks.workspaceExtensionNetworks);
+			delete.where(QWorkspaceExtensionNetworks.workspaceExtensionNetworks.workspaceId.eq(workspaceId));
+			delete.where(QWorkspaceExtensionNetworks.workspaceExtensionNetworks.anchorPath.eq(path));
 			delete.execute();
 		}
 		if (deep) {
-			final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QWorkspaceExtensionBindings.workspaceExtensionBindings);
-			delete.where(QWorkspaceExtensionBindings.workspaceExtensionBindings.workspaceId.eq(workspaceId));
-			delete.where(QWorkspaceExtensionBindings.workspaceExtensionBindings.anchorPath.like(path.replace('%', ' ') + "/%"));
+			final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QWorkspaceExtensionNetworks.workspaceExtensionNetworks);
+			delete.where(QWorkspaceExtensionNetworks.workspaceExtensionNetworks.workspaceId.eq(workspaceId));
+			delete.where(QWorkspaceExtensionNetworks.workspaceExtensionNetworks.anchorPath.like(path.replace('%', ' ') + "/%"));
 			delete.execute();
 		}
 	}
@@ -282,6 +263,62 @@ public class InternalPluginUtil {
 	 */
 	private static List<DeclaredExtensions> fetchDeclaredExtensions(final List<Long> pluginBundleIds) {
 		return QueryUtil.fetchMultiple(QDeclaredExtensions.declaredExtensions, QDeclaredExtensions.declaredExtensions.pluginBundleId.in(pluginBundleIds));
+	}
+
+	/**
+	 * This class is used internally to build extension bindings both for user plugins
+	 * and workspace plugins.
+	 */
+	public static abstract class ExtensionNetworkBuilder {
+
+		/**
+		 * Builds the extension network from extensions and extension
+		 * points from the specified plugin versions.
+		 * 
+		 * Returns the state sections to delete for user plugins (there is no
+		 * state handling for workspace plugins yet). The return value is
+		 * a mapping (plugin bundle ID -> section number).
+		 * 
+		 * @param pluginVersionIds the plugin version IDs
+		 * @return the sections to delete
+		 */
+		public List<Pair<Long, Integer>> build(Collection<Long> pluginVersionIds) {
+
+			// fetch plug-in data
+			final List<Long> pluginBundleIds = fetchPluginBundleIds(pluginVersionIds);
+			final List<DeclaredExtensionPoints> declaredExtensionPoints = fetchDeclaredExtensionPoints(pluginBundleIds);
+			final List<DeclaredExtensions> declaredExtensions = fetchDeclaredExtensions(pluginBundleIds);
+
+			// map extension points by name
+			final Map<String, DeclaredExtensionPoints> declaredExtensionPointsByName = new HashMap<String, DeclaredExtensionPoints>();
+			final List<Pair<Long, Integer>> sectionsToDelete = new ArrayList<Pair<Long,Integer>>();
+			for (final DeclaredExtensionPoints extensionPoint : declaredExtensionPoints) {
+				if (declaredExtensionPointsByName.put(extensionPoint.getName(), extensionPoint) != null) {
+					throw new RuntimeException("duplicate extension point: " + extensionPoint.getName());
+				}
+				if (extensionPoint.getOnChangeClearedSection() != null) {
+					sectionsToDelete.add(new Pair<Long, Integer>(extensionPoint.getPluginBundleId(), extensionPoint.getOnChangeClearedSection()));
+				}
+			}
+
+			// insert the new bindings
+			for (final DeclaredExtensions extension : declaredExtensions) {
+				final String extensionPointName = extension.getExtensionPointName();
+				final DeclaredExtensionPoints extensionPoint = declaredExtensionPointsByName.get(extensionPointName);
+				if (extensionPoint == null) {
+					throw new RuntimeException("extension for unknown extension point: " + extensionPointName);
+				}
+				insertBinding(extensionPoint.getId(), extension.getId());
+			}
+			
+			return sectionsToDelete;
+		}
+		
+		/**
+		 * This method actually inserts a binding into the database.
+		 */
+		protected abstract void insertBinding(final long extensionPointId, final long extensionId);
+		
 	}
 	
 }

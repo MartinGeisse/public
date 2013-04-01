@@ -17,11 +17,6 @@ public class WorkspaceExtensionBindings implements Serializable {
     }
 
     /**
-     * the anchorPath
-     */
-    private String anchorPath;
-
-    /**
      * the declaredExtensionId
      */
     private Long declaredExtensionId;
@@ -37,25 +32,9 @@ public class WorkspaceExtensionBindings implements Serializable {
     private Long id;
 
     /**
-     * the workspaceId
+     * the workspaceExtensionNetworkId
      */
-    private Long workspaceId;
-
-    /**
-     * Getter method for the anchorPath.
-     * @return the anchorPath
-     */
-    public String getAnchorPath() {
-        return anchorPath;
-    }
-
-    /**
-     * Setter method for the anchorPath.
-     * @param anchorPath the anchorPath to set
-     */
-    public void setAnchorPath(String anchorPath) {
-        this.anchorPath = anchorPath;
-    }
+    private Long workspaceExtensionNetworkId;
 
     /**
      * Getter method for the declaredExtensionId.
@@ -106,19 +85,19 @@ public class WorkspaceExtensionBindings implements Serializable {
     }
 
     /**
-     * Getter method for the workspaceId.
-     * @return the workspaceId
+     * Getter method for the workspaceExtensionNetworkId.
+     * @return the workspaceExtensionNetworkId
      */
-    public Long getWorkspaceId() {
-        return workspaceId;
+    public Long getWorkspaceExtensionNetworkId() {
+        return workspaceExtensionNetworkId;
     }
 
     /**
-     * Setter method for the workspaceId.
-     * @param workspaceId the workspaceId to set
+     * Setter method for the workspaceExtensionNetworkId.
+     * @param workspaceExtensionNetworkId the workspaceExtensionNetworkId to set
      */
-    public void setWorkspaceId(Long workspaceId) {
-        this.workspaceId = workspaceId;
+    public void setWorkspaceExtensionNetworkId(Long workspaceExtensionNetworkId) {
+        this.workspaceExtensionNetworkId = workspaceExtensionNetworkId;
     }
 
     /* (non-Javadoc)
@@ -126,7 +105,7 @@ public class WorkspaceExtensionBindings implements Serializable {
      */
     @Override
     public String toString() {
-        return "{WorkspaceExtensionBindings. anchorPath = " + anchorPath + ", declaredExtensionId = " + declaredExtensionId + ", declaredExtensionPointId = " + declaredExtensionPointId + ", id = " + id + ", workspaceId = " + workspaceId + "}";
+        return "{WorkspaceExtensionBindings. declaredExtensionId = " + declaredExtensionId + ", declaredExtensionPointId = " + declaredExtensionPointId + ", id = " + id + ", workspaceExtensionNetworkId = " + workspaceExtensionNetworkId + "}";
     }
 
 }
