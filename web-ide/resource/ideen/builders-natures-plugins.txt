@@ -66,3 +66,14 @@ und extension point ID "builders" (oder wie auch immer genau der heißt) alle Bu
 Entweder ist das genau eine oder der Builder-Name muss angegeben sein. Der Builder kann dann wiederum
 auf den Build-Descriptor zugreifen (wie) sowie Extensions aus dem o.g. Ext-Netzwerk holen (wie?).
 
+---
+
+Nächstes Problem: Plugin State.
+- muss user state, workspace state und user/workspace state geben
+- concurrency
+- aktuell wird eine Section gelöscht, wenn sich das Extension Network ändert.
+  Das lässt sich so nicht 1:1 übertragen und ist eh nicht so cool, Events
+  wären besser.
+
+MongoDB? Was gibt es für Datenbanken die mit sowas klarkommen?
+
