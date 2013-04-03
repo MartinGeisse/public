@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
-import name.martingeisse.webide.plugin.AbstractExtensionQuery.Result;
+import name.martingeisse.webide.plugin.ExtensionQuery.Result;
 import name.martingeisse.webide.plugin.PluginBundleStateAccessToken;
 import name.martingeisse.webide.plugin.PluginBundleStateKey;
-import name.martingeisse.webide.plugin.UserExtensionQuery;
+import name.martingeisse.webide.plugin.ExtensionQuery;
 import name.martingeisse.webide.plugin.serializer.IPluginBundleStateSerializer;
 import name.martingeisse.webide.plugin.serializer.JsonSerializer;
 
@@ -52,7 +52,7 @@ public class ContextMenuStateAccess {
 			return existing;
 		}
 		List<Object> jsonList = new ArrayList<Object>();
-		for (Result extension : UserExtensionQuery.fetch(1, "webide.context_menu.resource")) {
+		for (Result extension : ExtensionQuery.fetch(1L, 1L, "webide.context_menu.resource")) {
 			JsonAnalyzer analyzer = new JsonAnalyzer(extension.getDescriptor());
 			Map<String, Object> jsonMap = new HashMap<String, Object>();
 			jsonMap.put("pluginBundleId", extension.getPluginBundleId());

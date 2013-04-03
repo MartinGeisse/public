@@ -27,7 +27,6 @@ public class UnpackPluginsMain {
 		IdeLauncher.initialize(false);
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		InternalPluginUtil.generateDeclaredExtensionPointsAndExtensionsForPluginVersions(query.from(QPluginVersions.pluginVersions).list(QPluginVersions.pluginVersions.id));
-		InternalPluginUtil.updateUsersPlugins();
 	}
 	
 }

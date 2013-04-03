@@ -49,6 +49,11 @@ public class QPluginBundleStates extends com.mysema.query.sql.RelationalPathBase
     public final NumberPath<Long> userId = createNumber("user_id", Long.class);
 
     /**
+     * Metamodel property for property 'workspace_id'
+     */
+    public final NumberPath<Long> workspaceId = createNumber("workspace_id", Long.class);
+
+    /**
      * Metamodel property for primary key 'PRIMARY'
      */
     public final com.mysema.query.sql.PrimaryKey<PluginBundleStates> pk_primary = createPrimaryKey(id);

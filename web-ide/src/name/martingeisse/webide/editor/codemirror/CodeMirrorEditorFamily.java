@@ -11,7 +11,7 @@ import java.util.List;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.webide.editor.IEditorFactory;
 import name.martingeisse.webide.editor.IEditorFamily;
-import name.martingeisse.webide.plugin.UserExtensionQuery;
+import name.martingeisse.webide.plugin.ExtensionQuery;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
 
 /**
@@ -38,10 +38,11 @@ public class CodeMirrorEditorFamily implements IEditorFamily {
 	private CodeMirrorMode getModeById(String modeId) throws Exception {
 
 		// TODO
+		long workspaceId = 1;
 		long userId = 1;
 		
-		UserExtensionQuery query = new UserExtensionQuery(userId, "webide.editor.codemirror.mode");
-		for (UserExtensionQuery.Result result : query.fetch()) {
+		ExtensionQuery query = new ExtensionQuery(workspaceId, userId, "webide.editor.codemirror.mode");
+		for (ExtensionQuery.Result result : query.fetch()) {
 			JsonAnalyzer modeSpec = new JsonAnalyzer(result.getDescriptor());
 			String id = modeSpec.analyzeMapElement("id").expectString();
 			if (id.equals(modeId)) {

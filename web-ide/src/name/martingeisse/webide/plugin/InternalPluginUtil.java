@@ -24,11 +24,12 @@ import name.martingeisse.webide.entity.PluginVersions;
 import name.martingeisse.webide.entity.QBuiltinPlugins;
 import name.martingeisse.webide.entity.QDeclaredExtensionPoints;
 import name.martingeisse.webide.entity.QDeclaredExtensions;
+import name.martingeisse.webide.entity.QExtensionBindings;
+import name.martingeisse.webide.entity.QExtensionNetworks;
 import name.martingeisse.webide.entity.QPluginBundles;
 import name.martingeisse.webide.entity.QPluginVersions;
-import name.martingeisse.webide.entity.QUserExtensionBindings;
 import name.martingeisse.webide.entity.QUserInstalledPlugins;
-import name.martingeisse.webide.entity.QWorkspaceExtensionNetworks;
+import name.martingeisse.webide.entity.QWorkspaceInstalledPlugins;
 
 import org.json.simple.JSONValue;
 
@@ -37,6 +38,7 @@ import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.dml.SQLDeleteClause;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
+import com.mysema.query.types.expr.BooleanExpression;
 
 /**
  * This class contains internal plugin handling utility methods.
@@ -113,69 +115,128 @@ public class InternalPluginUtil {
 	}
 
 	/**
-	 * Updates the user's plugin run-time data from the sets of built-in plugins, installed plugins for that
-	 * user, and currently available workspace staging plugins for the current workspace.
+	 * Clears all plugin bindings for the specified workspace, for all users
+	 * and for the workspace itself.
+	 * 
+	 * This method is used when a plugin has been installed or removed for the workspace.
+	 * 
+	 * @param workspaceId the workspace id
 	 */
-	public static void updateUsersPlugins() {
+	public static void clearWorkspacePluginBindings(long workspaceId) {
+		final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QExtensionNetworks.extensionNetworks);
+		delete.where(QExtensionNetworks.extensionNetworks.workspaceId.eq(workspaceId));
+		delete.execute();
+	}
+	
+	/**
+	 * Clears plugin bindings for the specified user, for all workspaces.
+	 * 
+	 * This method is used when a plugin has been installed or removed for the user.
+	 * 
+	 * @param userId the user id
+	 */
+	public static void clearUserPluginBindings(long userId) {
+		final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QExtensionNetworks.extensionNetworks);
+		delete.where(QExtensionNetworks.extensionNetworks.userId.eq(userId));
+		delete.execute();
+	}
+	
+	/**
+	 * Clears a single workspace/user extension network.
+	 * 
+	 * This method is used when a user refreshes the staging plugins in a workspace.
+	 * 
+	 * @param workspaceId the workspace id
+	 * @param userId the user id, or null to affect all users
+	 */
+	public static void clearWorkspaceUserPluginBindings(long workspaceId, long userId) {
+		final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QExtensionNetworks.extensionNetworks);
+		delete.where(QExtensionNetworks.extensionNetworks.workspaceId.eq(workspaceId));
+		delete.where(QExtensionNetworks.extensionNetworks.userId.eq(userId));
+		delete.execute();
+	}
+	
+	/**
+	 * Fetches the ID of the plugin network for the specified workspace (and optionally user)
+	 * from the database. If no user ID is specified then the network for the workspace itself
+	 * is fetched.
+	 * 
+	 * The network gets built by this method if it does not exist yet, for example if previously
+	 * cleared by {@link #clearWorkspacePluginBindings(long)} or {@link #clearUserPluginBindings(long)}.
+	 * 
+	 * @param workspaceId the ID of the workspace
+	 * @param userId the ID of the user, or null to fetch the network for the workspace
+	 * @return the ID of the extension network
+	 */
+	public static long getExtensionNetworkId(long workspaceId, Long userId) {
 		
-		// TODO: support multiple users, multiple workspaces
-		final long userId = 1;
-		final long workspaceId = 1;
-
-		// determine the set of active plugins
+		// try an existing network
+		{
+			final QExtensionNetworks qnet = QExtensionNetworks.extensionNetworks;
+			final BooleanExpression workspaceIdMatch = qnet.workspaceId.eq(workspaceId);
+			final BooleanExpression userIdMatch = (userId == null ? qnet.userId.isNull() : qnet.userId.eq(userId));
+			final Long existingNetworkId = QueryUtil.fetchSingle(qnet, qnet.id, workspaceIdMatch, userIdMatch);
+			if (existingNetworkId != null) {
+				return existingNetworkId;
+			}
+			
+		}
+		
+		// determine the plugin versions that contribute to the network
 		Set<Long> pluginVersionIds = new HashSet<Long>();
 		pluginVersionIds.addAll(fetchBuiltinPluginVersionIds());
-		pluginVersionIds.addAll(fetchUserInstalledPluginVersionIds(userId));
+		pluginVersionIds.addAll(fetchWorkspaceInstalledPluginVersionIds(workspaceId));
 		pluginVersionIds.addAll(fetchWorkspaceStagingPluginVersionIds(workspaceId));
+		if (userId != null) {
+			pluginVersionIds.addAll(fetchUserInstalledPluginVersionIds(userId));
+		}
 		
-		// delete any previously existing bindings
-		deleteExtensionBindingsForUser(userId);
-		
-		// build the binding network
-		List<Pair<Long, Integer>> sectionsToDelete = new ExtensionNetworkBuilder() {
-			@Override
-			protected void insertBinding(long extensionPointId, long extensionId) {
-				final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QUserExtensionBindings.userExtensionBindings);
-				insert.set(QUserExtensionBindings.userExtensionBindings.userId, userId);
-				insert.set(QUserExtensionBindings.userExtensionBindings.declaredExtensionPointId, extensionPointId);
-				insert.set(QUserExtensionBindings.userExtensionBindings.declaredExtensionId, extensionId);
-				insert.execute();
+		// fetch plug-in data
+		final List<Long> pluginBundleIds = fetchPluginBundleIds(pluginVersionIds);
+		final List<DeclaredExtensionPoints> declaredExtensionPoints = fetchDeclaredExtensionPoints(pluginBundleIds);
+		final List<DeclaredExtensions> declaredExtensions = fetchDeclaredExtensions(pluginBundleIds);
+
+		// map extension points by name
+		final Map<String, DeclaredExtensionPoints> declaredExtensionPointsByName = new HashMap<String, DeclaredExtensionPoints>();
+		final List<Pair<Long, Integer>> sectionsToDelete = new ArrayList<Pair<Long,Integer>>();
+		for (final DeclaredExtensionPoints extensionPoint : declaredExtensionPoints) {
+			if (declaredExtensionPointsByName.put(extensionPoint.getName(), extensionPoint) != null) {
+				throw new RuntimeException("duplicate extension point: " + extensionPoint.getName());
 			}
-		}.build(pluginVersionIds);
+			if (extensionPoint.getOnChangeClearedSection() != null) {
+				sectionsToDelete.add(new Pair<Long, Integer>(extensionPoint.getPluginBundleId(), extensionPoint.getOnChangeClearedSection()));
+			}
+		}
+
+		// create an empty network
+		final long newNetworkId;
+		{
+			final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QExtensionNetworks.extensionNetworks);
+			insert.set(QExtensionNetworks.extensionNetworks.workspaceId, workspaceId);
+			insert.set(QExtensionNetworks.extensionNetworks.userId, userId);
+			newNetworkId = insert.execute();
+		}
+		
+		// insert the new bindings
+		for (final DeclaredExtensions extension : declaredExtensions) {
+			final String extensionPointName = extension.getExtensionPointName();
+			final DeclaredExtensionPoints extensionPoint = declaredExtensionPointsByName.get(extensionPointName);
+			if (extensionPoint == null) {
+				throw new RuntimeException("extension for unknown extension point: " + extensionPointName);
+			}
+			final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QExtensionBindings.extensionBindings);
+			insert.set(QExtensionBindings.extensionBindings.extensionNetworkId, newNetworkId);
+			insert.set(QExtensionBindings.extensionBindings.declaredExtensionPointId, extensionPoint.getId());
+			insert.set(QExtensionBindings.extensionBindings.declaredExtensionId, extension.getId());
+			insert.execute();
+		}
 		
 		// clear appropriate state of plugin bundles with extension points
 		PluginStateCache.onActivationChange(userId, sectionsToDelete);
 
+		return newNetworkId;
 	}
 	
-	/**
-	 * Clears workspace plugin bindings, either just for the specified anchor path ("deep" is false)
-	 * or also for all anchor paths of the shape (path/...). The typical use case is to
-	 * clear bindings after a change to the anchor or a deep change to one of its parent folders.
-	 * 
-	 * Note that "deep" calls to this function only affects anchor paths that start with the
-	 * specified path *followed by a slash character*.
-	 * 
-	 * @param workspaceId the workspace id
-	 * @param path the path to the anchor or one of its parent folder
-	 * @param deep whether to affect descendant resources of the specified path
-	 */
-	public static void clearWorkspacePluginBindings(long workspaceId, String path, boolean deep) {
-		{
-			final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QWorkspaceExtensionNetworks.workspaceExtensionNetworks);
-			delete.where(QWorkspaceExtensionNetworks.workspaceExtensionNetworks.workspaceId.eq(workspaceId));
-			delete.where(QWorkspaceExtensionNetworks.workspaceExtensionNetworks.anchorPath.eq(path));
-			delete.execute();
-		}
-		if (deep) {
-			final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QWorkspaceExtensionNetworks.workspaceExtensionNetworks);
-			delete.where(QWorkspaceExtensionNetworks.workspaceExtensionNetworks.workspaceId.eq(workspaceId));
-			delete.where(QWorkspaceExtensionNetworks.workspaceExtensionNetworks.anchorPath.like(path.replace('%', ' ') + "/%"));
-			delete.execute();
-		}
-	}
-	
-
 	// ------------------------------------------------------------------------------------------------
 	// utility methods
 	// ------------------------------------------------------------------------------------------------
@@ -205,20 +266,27 @@ public class InternalPluginUtil {
 	}
 
 	/**
-	 * Deletes any existing extension bindings for the specified user.
-	 */
-	private static void deleteExtensionBindingsForUser(final long userId) {
-		final SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(QUserExtensionBindings.userExtensionBindings);
-		delete.where(QUserExtensionBindings.userExtensionBindings.userId.eq(userId)).execute();
-	}
-
-	/**
 	 * Returns the pluginVersionIds of all built-in plugins.
 	 */
 	private static List<Long> fetchBuiltinPluginVersionIds() {
 		return QueryUtil.fetchAll(QBuiltinPlugins.builtinPlugins, QBuiltinPlugins.builtinPlugins.pluginVersionId);
 	}
 
+	/**
+	 * Returns the pluginIds of all workspace-installed plugins.
+	 */
+	private static List<Long> fetchWorkspaceInstalledPluginVersionIds(long workspaceId) {
+		final QWorkspaceInstalledPlugins qwip = QWorkspaceInstalledPlugins.workspaceInstalledPlugins;
+		final QPluginVersions qpv = QPluginVersions.pluginVersions;
+		SQLQuery query = EntityConnectionManager.getConnection().createQuery();
+		query = query.from(qwip, qpv);
+		query = query.where(qwip.pluginPublicId.eq(qpv.pluginPublicId));
+		query = query.where(qwip.workspaceId.eq(workspaceId));
+		query = query.where(qpv.stagingWorkspaceId.isNull());
+		query = query.where(qpv.isActive.isTrue());
+		return query.list(qpv.id);
+	}
+	
 	/**
 	 * Returns the pluginIds of all user-installed plugins.
 	 */

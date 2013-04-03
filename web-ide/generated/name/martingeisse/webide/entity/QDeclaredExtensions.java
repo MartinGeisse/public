@@ -54,14 +54,9 @@ public class QDeclaredExtensions extends com.mysema.query.sql.RelationalPathBase
     public final com.mysema.query.sql.ForeignKey<PluginBundles> fk_declaredExtensionsIbfk1 = createForeignKey(pluginBundleId, "id");
 
     /**
-     * Metamodel property for reverse foreign key 'user_extension_bindings_ibfk_3'
+     * Metamodel property for reverse foreign key 'extension_bindings_ibfk_3'
      */
-    public final com.mysema.query.sql.ForeignKey<UserExtensionBindings> fk__userExtensionBindingsIbfk3 = createInvForeignKey(id, "declared_extension_id");
-
-    /**
-     * Metamodel property for reverse foreign key 'workspace_extension_bindings_ibfk_3'
-     */
-    public final com.mysema.query.sql.ForeignKey<WorkspaceExtensionBindings> fk__workspaceExtensionBindingsIbfk3 = createInvForeignKey(id, "declared_extension_id");
+    public final com.mysema.query.sql.ForeignKey<ExtensionBindings> fk__extensionBindingsIbfk3 = createInvForeignKey(id, "declared_extension_id");
 
     /**
      * Path-variable based constructor.

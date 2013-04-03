@@ -54,6 +54,11 @@ public class QWorkspaces extends com.mysema.query.sql.RelationalPathBase<Workspa
     public final com.mysema.query.sql.ForeignKey<PluginVersions> fk__pluginVersionsIbfk1 = createInvForeignKey(id, "staging_workspace_id");
 
     /**
+     * Metamodel property for reverse foreign key 'workspace_installed_plugins_ibfk_1'
+     */
+    public final com.mysema.query.sql.ForeignKey<WorkspaceInstalledPlugins> fk__workspaceInstalledPluginsIbfk1 = createInvForeignKey(id, "workspace_id");
+
+    /**
      * Metamodel property for reverse foreign key 'workspace_resource_deltas_ibfk_1'
      */
     public final com.mysema.query.sql.ForeignKey<WorkspaceResourceDeltas> fk__workspaceResourceDeltasIbfk1 = createInvForeignKey(id, "workspace_id");
@@ -74,9 +79,9 @@ public class QWorkspaces extends com.mysema.query.sql.RelationalPathBase<Workspa
     public final com.mysema.query.sql.ForeignKey<WorkspaceBuildTriggers> fk__workspaceBuildTriggersIbfk1 = createInvForeignKey(id, "workspace_id");
 
     /**
-     * Metamodel property for reverse foreign key 'workspace_extension_networks_ibfk_1'
+     * Metamodel property for reverse foreign key 'extension_networks_ibfk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<WorkspaceExtensionNetworks> fk__workspaceExtensionNetworksIbfk1 = createInvForeignKey(id, "workspace_id");
+    public final com.mysema.query.sql.ForeignKey<ExtensionNetworks> fk__extensionNetworksIbfk1 = createInvForeignKey(id, "workspace_id");
 
     /**
      * Path-variable based constructor.

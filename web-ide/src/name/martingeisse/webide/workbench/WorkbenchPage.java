@@ -145,7 +145,10 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 		add(new Link<Void>("refreshPluginsButton") {
 			@Override
 			public void onClick() {
-				InternalPluginUtil.updateUsersPlugins();
+				// TODO
+				long workspaceId = 1L;
+				long userId = 1L;
+				InternalPluginUtil.clearWorkspaceUserPluginBindings(workspaceId, userId);
 				setResponsePage(new WorkbenchPage());
 			}
 		});

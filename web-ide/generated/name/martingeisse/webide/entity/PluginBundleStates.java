@@ -42,6 +42,11 @@ public class PluginBundleStates implements Serializable {
     private Long userId;
 
     /**
+     * the workspaceId
+     */
+    private Long workspaceId;
+
+    /**
      * Getter method for the data.
      * @return the data
      */
@@ -121,12 +126,28 @@ public class PluginBundleStates implements Serializable {
         this.userId = userId;
     }
 
+    /**
+     * Getter method for the workspaceId.
+     * @return the workspaceId
+     */
+    public Long getWorkspaceId() {
+        return workspaceId;
+    }
+
+    /**
+     * Setter method for the workspaceId.
+     * @param workspaceId the workspaceId to set
+     */
+    public void setWorkspaceId(Long workspaceId) {
+        this.workspaceId = workspaceId;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "{PluginBundleStates. data = " + data + ", id = " + id + ", pluginBundleId = " + pluginBundleId + ", section = " + section + ", userId = " + userId + "}";
+        return "{PluginBundleStates. data = " + data + ", id = " + id + ", pluginBundleId = " + pluginBundleId + ", section = " + section + ", userId = " + userId + ", workspaceId = " + workspaceId + "}";
     }
 
 }

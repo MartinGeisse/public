@@ -6,14 +6,14 @@ package name.martingeisse.webide.entity;
 import java.io.Serializable;
 
 /**
- * This class represents rows from table 'user_extension_bindings'.
+ * This class represents rows from table 'extension_bindings'.
  */
-public class UserExtensionBindings implements Serializable {
+public class ExtensionBindings implements Serializable {
 
     /**
      * Constructor.
      */
-    public UserExtensionBindings() {
+    public ExtensionBindings() {
     }
 
     /**
@@ -27,14 +27,14 @@ public class UserExtensionBindings implements Serializable {
     private Long declaredExtensionPointId;
 
     /**
+     * the extensionNetworkId
+     */
+    private Long extensionNetworkId;
+
+    /**
      * the id
      */
     private Long id;
-
-    /**
-     * the userId
-     */
-    private Long userId;
 
     /**
      * Getter method for the declaredExtensionId.
@@ -69,6 +69,22 @@ public class UserExtensionBindings implements Serializable {
     }
 
     /**
+     * Getter method for the extensionNetworkId.
+     * @return the extensionNetworkId
+     */
+    public Long getExtensionNetworkId() {
+        return extensionNetworkId;
+    }
+
+    /**
+     * Setter method for the extensionNetworkId.
+     * @param extensionNetworkId the extensionNetworkId to set
+     */
+    public void setExtensionNetworkId(Long extensionNetworkId) {
+        this.extensionNetworkId = extensionNetworkId;
+    }
+
+    /**
      * Getter method for the id.
      * @return the id
      */
@@ -84,28 +100,12 @@ public class UserExtensionBindings implements Serializable {
         this.id = id;
     }
 
-    /**
-     * Getter method for the userId.
-     * @return the userId
-     */
-    public Long getUserId() {
-        return userId;
-    }
-
-    /**
-     * Setter method for the userId.
-     * @param userId the userId to set
-     */
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "{UserExtensionBindings. declaredExtensionId = " + declaredExtensionId + ", declaredExtensionPointId = " + declaredExtensionPointId + ", id = " + id + ", userId = " + userId + "}";
+        return "{ExtensionBindings. declaredExtensionId = " + declaredExtensionId + ", declaredExtensionPointId = " + declaredExtensionPointId + ", extensionNetworkId = " + extensionNetworkId + ", id = " + id + "}";
     }
 
 }

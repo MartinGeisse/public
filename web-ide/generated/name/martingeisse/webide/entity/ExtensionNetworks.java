@@ -6,20 +6,15 @@ package name.martingeisse.webide.entity;
 import java.io.Serializable;
 
 /**
- * This class represents rows from table 'workspace_extension_networks'.
+ * This class represents rows from table 'extension_networks'.
  */
-public class WorkspaceExtensionNetworks implements Serializable {
+public class ExtensionNetworks implements Serializable {
 
     /**
      * Constructor.
      */
-    public WorkspaceExtensionNetworks() {
+    public ExtensionNetworks() {
     }
-
-    /**
-     * the anchorPath
-     */
-    private String anchorPath;
 
     /**
      * the id
@@ -27,25 +22,14 @@ public class WorkspaceExtensionNetworks implements Serializable {
     private Long id;
 
     /**
+     * the userId
+     */
+    private Long userId;
+
+    /**
      * the workspaceId
      */
     private Long workspaceId;
-
-    /**
-     * Getter method for the anchorPath.
-     * @return the anchorPath
-     */
-    public String getAnchorPath() {
-        return anchorPath;
-    }
-
-    /**
-     * Setter method for the anchorPath.
-     * @param anchorPath the anchorPath to set
-     */
-    public void setAnchorPath(String anchorPath) {
-        this.anchorPath = anchorPath;
-    }
 
     /**
      * Getter method for the id.
@@ -61,6 +45,22 @@ public class WorkspaceExtensionNetworks implements Serializable {
      */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * Getter method for the userId.
+     * @return the userId
+     */
+    public Long getUserId() {
+        return userId;
+    }
+
+    /**
+     * Setter method for the userId.
+     * @param userId the userId to set
+     */
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     /**
@@ -84,7 +84,7 @@ public class WorkspaceExtensionNetworks implements Serializable {
      */
     @Override
     public String toString() {
-        return "{WorkspaceExtensionNetworks. anchorPath = " + anchorPath + ", id = " + id + ", workspaceId = " + workspaceId + "}";
+        return "{ExtensionNetworks. id = " + id + ", userId = " + userId + ", workspaceId = " + workspaceId + "}";
     }
 
 }
