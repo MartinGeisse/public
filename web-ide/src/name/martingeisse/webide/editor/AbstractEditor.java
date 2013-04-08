@@ -10,6 +10,9 @@ import java.io.Serializable;
 
 import name.martingeisse.webide.resources.ResourceHandle;
 
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
+
 /**
  * Base class for {@link IEditor} implementations.
  *
@@ -65,6 +68,14 @@ public abstract class AbstractEditor<D extends Serializable> implements IEditor,
 	 */
 	public final void setDocument(D document) {
 		this.document = document;
+	}
+	
+	/**
+	 * Creates an IModel for this editor's document.
+	 * @return the document model
+	 */
+	public final IModel<D> createDocumentModel() {
+		return new PropertyModel<D>(this, "document");
 	}
 	
 }

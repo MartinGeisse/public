@@ -9,7 +9,6 @@ package name.martingeisse.webide.editor.codemirror;
 import name.martingeisse.webide.editor.codemirror.panel.CodeMirrorEditorPanel;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.model.PropertyModel;
 
 /**
  * TODO: merge with abstract
@@ -34,7 +33,7 @@ public class CodeMirrorEditor extends AbstractCodeMirrorEditor {
 	 */
 	@Override
 	public Component createComponent(final String id) {
-		return new CodeMirrorEditorPanel(id, new PropertyModel<String>(this, "document"), getWorkspaceResourceHandle(), mode);
+		return new CodeMirrorEditorPanel(id, createDocumentModel(), getWorkspaceResourceHandle(), mode);
 	}
 
 }

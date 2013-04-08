@@ -17,7 +17,6 @@ import name.martingeisse.webide.editor.IEditor;
 import name.martingeisse.webide.resources.FetchMarkerResult;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.model.PropertyModel;
 
 /**
  * {@link IEditor} implementation for the VCD viewer.
@@ -29,7 +28,7 @@ public class WaveEditor extends AbstractEditor<ValueChangeDump> {
 	 */
 	@Override
 	public Component createComponent(String id) {
-		return new WaveEditorPanel(id, new PropertyModel<ValueChangeDump>(this, "document"));
+		return new WaveEditorPanel(id, createDocumentModel());
 	}
 
 	/* (non-Javadoc)
