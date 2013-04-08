@@ -59,11 +59,6 @@ public class QPluginBundles extends com.mysema.query.sql.RelationalPathBase<Plug
     public final com.mysema.query.sql.ForeignKey<DeclaredExtensionPoints> fk__declaredExtensionPointsIbfk1 = createInvForeignKey(id, "plugin_bundle_id");
 
     /**
-     * Metamodel property for reverse foreign key 'plugin_bundle_states_ibfk_2'
-     */
-    public final com.mysema.query.sql.ForeignKey<PluginBundleStates> fk__pluginBundleStatesIbfk2 = createInvForeignKey(id, "plugin_bundle_id");
-
-    /**
      * Metamodel property for reverse foreign key 'declared_extensions_ibfk_1'
      */
     public final com.mysema.query.sql.ForeignKey<DeclaredExtensions> fk__declaredExtensionsIbfk1 = createInvForeignKey(id, "plugin_bundle_id");

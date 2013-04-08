@@ -63,7 +63,7 @@ public abstract class AbstractEditor<D extends Serializable> implements IEditor,
 	 * Setter method for the document.
 	 * @param document the document to set
 	 */
-	public void setDocument(D document) {
+	public final void setDocument(D document) {
 		this.document = document;
 	}
 	

@@ -118,7 +118,6 @@ CREATE TABLE IF NOT EXISTS `declared_extension_points` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `plugin_bundle_id` bigint(20) NOT NULL,
   `name` varchar(255)  NOT NULL,
-  `on_change_cleared_section` INTEGER,
   PRIMARY KEY (`id`),
   INDEX `declared_extension_points_plugin_bundle_id` (`plugin_bundle_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
@@ -188,18 +187,6 @@ CREATE TABLE IF NOT EXISTS `extension_bindings` (
   INDEX `extension_bindings_declared_extension_id` (`declared_extension_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-CREATE TABLE IF NOT EXISTS `plugin_bundle_states` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `workspace_id` bigint(20) NOT NULL,
-  `user_id` bigint(20) NOT NULL,
-  `plugin_bundle_id` bigint(20) NOT NULL,
-  `section` int NOT NULL,
-  `data` LONGBLOB NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `plugin_bundle_states_plugin_bundle_id` (`plugin_bundle_id`),
-  INDEX (`workspace_id`, `user_id`, `plugin_bundle_id`, `section`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
 
 
 -- -------------------------------------------------------------------------
@@ -241,11 +228,11 @@ INSERT INTO `plugin_versions` (`id`, `plugin_public_id`, `is_unpacked`, `is_acti
 
 INSERT INTO `plugin_bundles` (`id`, `plugin_version_id`, `descriptor`, `jarfile`) VALUES
 (NULL, 1, '{"extension_points": [
-	{"name": "webide.context_menu.resource", "on_change_cleared_section": 0},
-	{"name": "webide.editor.family", "on_change_cleared_section": null},
-	{"name": "webide.editor.codemirror.mode", "on_change_cleared_section": null},
-	{"name": "webide.editor", "on_change_cleared_section": null},
-	{"name": "webide.editor.association", "on_change_cleared_section": null}
+	{"name": "webide.context_menu.resource"},
+	{"name": "webide.editor.family"},
+	{"name": "webide.editor.codemirror.mode"},
+	{"name": "webide.editor"},
+	{"name": "webide.editor.association"}
 ], "extensions": {
 	"webide.editor.family": [
 		{"id": "simple", "class": "name.martingeisse.webide.editor.SimpleEditorFamily"}
@@ -260,14 +247,16 @@ INSERT INTO `plugin_bundles` (`id`, `plugin_version_id`, `descriptor`, `jarfile`
 		{"id": "webide.editors.java", "family": "codemirror", "mode": "text/x-csrc"},
 		{"id": "webide.editors.html", "family": "codemirror", "mode": "text/html"},
 		{"id": "webide.editors.verilog", "family": "codemirror", "mode": "text/x-verilog"},
-		{"id": "webide.editors.vcd", "family": "simple", "class": "name.martingeisse.webide.features.verilog.wave.WaveEditor"}
+		{"id": "webide.editors.vcd", "family": "simple", "class": "name.martingeisse.webide.features.verilog.wave.WaveEditor"},
+		{"id": "webide.editors.simvm", "family": "simple", "class": "name.martingeisse.webide.features.simvm.editor.SimulatedVirtualMachineEditor"}
 	],
 	"webide.editor.association": [
 		{"target_type": "filename_pattern", "target_spec": ".*\\.java", "editor": "webide.editors.java"},
 		{"target_type": "filename_pattern", "target_spec": ".*\\.html", "editor": "webide.editors.html"},
 		{"target_type": "filename_pattern", "target_spec": ".*\\.htm", "editor": "webide.editors.html"},
 		{"target_type": "filename_pattern", "target_spec": ".*\\.v", "editor": "webide.editors.verilog"},
-		{"target_type": "filename_pattern", "target_spec": ".*\\.vcd", "editor": "webide.editors.vcd"}
+		{"target_type": "filename_pattern", "target_spec": ".*\\.vcd", "editor": "webide.editors.vcd"},
+		{"target_type": "filename_pattern", "target_spec": ".*\\.simvm", "editor": "webide.editors.simvm"}
 	],
 	"webide.context_menu.resource": [
 		{"class": "name.martingeisse.webide.features.verilog.simulator.VerilogSimulatorMenuDelegate", "name": "Simulate"}
@@ -322,5 +311,3 @@ ALTER TABLE `extension_networks` ADD CONSTRAINT `extension_networks_ibfk_2` FORE
 ALTER TABLE `extension_bindings` ADD CONSTRAINT `extension_bindings_ibfk_1` FOREIGN KEY (`extension_network_id`) REFERENCES `extension_networks` (`id`) ON DELETE CASCADE;
 ALTER TABLE `extension_bindings` ADD CONSTRAINT `extension_bindings_ibfk_2` FOREIGN KEY (`declared_extension_point_id`) REFERENCES `declared_extension_points` (`id`) ON DELETE CASCADE;
 ALTER TABLE `extension_bindings` ADD CONSTRAINT `extension_bindings_ibfk_3` FOREIGN KEY (`declared_extension_id`) REFERENCES `declared_extensions` (`id`) ON DELETE CASCADE;
-ALTER TABLE `plugin_bundle_states` ADD CONSTRAINT `plugin_bundle_states_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-ALTER TABLE `plugin_bundle_states` ADD CONSTRAINT `plugin_bundle_states_ibfk_2` FOREIGN KEY (`plugin_bundle_id`) REFERENCES `plugin_bundles` (`id`) ON DELETE CASCADE;

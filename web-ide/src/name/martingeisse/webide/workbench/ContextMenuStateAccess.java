@@ -12,12 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
-import name.martingeisse.webide.plugin.ExtensionQuery.Result;
-import name.martingeisse.webide.plugin.PluginBundleStateAccessToken;
-import name.martingeisse.webide.plugin.PluginBundleStateKey;
 import name.martingeisse.webide.plugin.ExtensionQuery;
-import name.martingeisse.webide.plugin.serializer.IPluginBundleStateSerializer;
-import name.martingeisse.webide.plugin.serializer.JsonSerializer;
+import name.martingeisse.webide.plugin.ExtensionQuery.Result;
 
 /**
  * Accesses plugin state regarding the context menu.
@@ -44,13 +40,6 @@ public class ContextMenuStateAccess {
 	 * 
 	 */
 	private static Object getJson() {
-		IPluginBundleStateSerializer<Object> serializer = new JsonSerializer();
-		PluginBundleStateAccessToken token = new PluginBundleStateAccessToken();
-		PluginBundleStateKey key = new PluginBundleStateKey(token, 1, 0);
-		Object existing = key.load(serializer);
-		if (existing != null) {
-			return existing;
-		}
 		List<Object> jsonList = new ArrayList<Object>();
 		for (Result extension : ExtensionQuery.fetch(1L, 1L, "webide.context_menu.resource")) {
 			JsonAnalyzer analyzer = new JsonAnalyzer(extension.getDescriptor());
@@ -60,7 +49,6 @@ public class ContextMenuStateAccess {
 			jsonMap.put("name", analyzer.analyzeMapElement("name").expectString());
 			jsonList.add(jsonMap);
 		}
-		key.save(jsonList, serializer);
 		return jsonList;
 	}
 	

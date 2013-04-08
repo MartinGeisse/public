@@ -34,11 +34,6 @@ public class QDeclaredExtensionPoints extends com.mysema.query.sql.RelationalPat
     public final StringPath name = createString("name");
 
     /**
-     * Metamodel property for property 'on_change_cleared_section'
-     */
-    public final NumberPath<Integer> onChangeClearedSection = createNumber("on_change_cleared_section", Integer.class);
-
-    /**
      * Metamodel property for property 'plugin_bundle_id'
      */
     public final NumberPath<Long> pluginBundleId = createNumber("plugin_bundle_id", Long.class);
