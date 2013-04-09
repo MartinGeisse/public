@@ -6,10 +6,13 @@
 
 package name.martingeisse.webide.features.simvm.simulation;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import name.martingeisse.webide.features.simvm.model.SimulatorModel;
+import name.martingeisse.webide.ipc.IpcEvent;
 import name.martingeisse.webide.resources.ResourceHandle;
 
 /**
@@ -25,7 +28,9 @@ import name.martingeisse.webide.resources.ResourceHandle;
  * 
  * Race conditions may lead to this object becoming stale just before
  * invoking a method. Callers should handle the corresponding exception
- * gracefully and avoid showing a user-visible error.
+ * gracefully and avoid showing a user-visible error. It may also
+ * occur that callers can successfully post an event, but the simulation
+ * thread is just about to terminate, and so will never see the event.
  * 
  * All methods are implemented as events posted to the simulation
  * thread. This implies that immediate feedback is not available. Callers
@@ -81,22 +86,23 @@ public final class Simulation {
 	private final ResourceHandle resourceHandle;
 	
 	/**
-	 * the running
+	 * the eventQueue
 	 */
-	private boolean running;
+	private final BlockingQueue<IpcEvent<?>> eventQueue;
 	
 	/**
-	 * the stale
+	 * the simulationThread
 	 */
-	private boolean stale;
+	private final SimulationThread simulationThread;
 	
 	/**
 	 * Constructor.
 	 */
 	private Simulation(ResourceHandle resourceHandle) {
 		this.resourceHandle = resourceHandle;
-		this.running = false;
-		this.stale = false;
+		this.eventQueue = new LinkedBlockingQueue<IpcEvent<?>>();
+		this.simulationThread = new SimulationThread(this);
+		simulationThread.start();
 	}
 
 	/**
@@ -112,7 +118,7 @@ public final class Simulation {
 	 * @return the running
 	 */
 	public boolean isRunning() {
-		return running;
+		return simulationThread.isRunning();
 	}
 	
 	/**
@@ -120,7 +126,7 @@ public final class Simulation {
 	 * @return the stale
 	 */
 	public boolean isStale() {
-		return stale;
+		return (simulationThread.getState() == Thread.State.TERMINATED);
 	}
 	
 	/**
@@ -129,9 +135,8 @@ public final class Simulation {
 	 * 
 	 * @throws StaleSimulationException if this object is stale
 	 */
-	public synchronized void pause() throws StaleSimulationException {
-		checkNotStale();
-		// TODO: post event
+	public void pause() throws StaleSimulationException {
+		postEvent(new IpcEvent<Object>(SimulationThread.EVENT_TYPE_PAUSE, null));
 	}
 	
 	/**
@@ -140,9 +145,8 @@ public final class Simulation {
 	 * 
 	 * @throws StaleSimulationException if this object is stale
 	 */
-	public synchronized void step() throws StaleSimulationException {
-		checkNotStale();
-		// TODO: post event
+	public void step() throws StaleSimulationException {
+		postEvent(new IpcEvent<Object>(SimulationThread.EVENT_TYPE_STEP, null));
 	}
 	
 	/**
@@ -151,9 +155,8 @@ public final class Simulation {
 	 * 
 	 * @throws StaleSimulationException if this object is stale
 	 */
-	public synchronized void resume() throws StaleSimulationException {
-		checkNotStale();
-		// TODO: post event
+	public void resume() throws StaleSimulationException {
+		postEvent(new IpcEvent<Object>(SimulationThread.EVENT_TYPE_RESUME, null));
 	}
 
 	/**
@@ -162,12 +165,8 @@ public final class Simulation {
 	 * 
 	 * @throws StaleSimulationException if this object is stale
 	 */
-	public synchronized void suspend() throws StaleSimulationException {
-		checkNotStale();
-		// TODO: post event
-		
-		// TODO: remove this line, used for fake implementation
-		simulations.remove(resourceHandle);
+	public void suspend() throws StaleSimulationException {
+		postEvent(new IpcEvent<Object>(SimulationThread.EVENT_TYPE_SUSPEND, null));
 	}
 	
 	/**
@@ -176,11 +175,39 @@ public final class Simulation {
 	 * 
 	 * @throws StaleSimulationException if this object is stale
 	 */
-	public synchronized void terminate() throws StaleSimulationException {
+	public void terminate() throws StaleSimulationException {
+		postEvent(new IpcEvent<Object>(SimulationThread.EVENT_TYPE_TERMINATE, null));
+	}
+
+	/**
+	 * Adds an event to the event queue for this simulation.
+	 * @param event the event to post
+	 * 
+	 * @throws StaleSimulationException if this object is stale
+	 */
+	public void postEvent(IpcEvent<?> event) throws StaleSimulationException {
 		checkNotStale();
-		// TODO: post event
-		
-		// TODO: remove this line, used for fake implementation
+		eventQueue.add(event);
+	}
+	
+	/**
+	 * Fetches an event. If no event is available, then if the "block" flag is set,
+	 * this method blocks until an event arrives, otherwise it returns null.
+	 * This method is used by the simulation thread.
+	 */
+	IpcEvent<?> fetchEvent(boolean block) throws InterruptedException {
+		if (block) {
+			return eventQueue.take();
+		} else {
+			return eventQueue.poll();
+		}
+	}
+	
+	/**
+	 * Disposes of this simulation. This method is called by the simulation
+	 * thread just before it exits.
+	 */
+	void dispose() {
 		simulations.remove(resourceHandle);
 	}
 	
@@ -188,7 +215,7 @@ public final class Simulation {
 	 * Throws a {@link StaleSimulationException} if this object is stale.
 	 */
 	private void checkNotStale() {
-		if (stale) {
+		if (isStale()) {
 			throw new StaleSimulationException();
 		}
 	}
