@@ -9,9 +9,9 @@ package name.martingeisse.webide.features.simvm.editor;
 import java.util.List;
 
 import name.martingeisse.webide.editor.AbstractEditor;
-import name.martingeisse.webide.features.simvm.model.IPrimarySimulatorModelElement;
-import name.martingeisse.webide.features.simvm.model.SimulatorModel;
-import name.martingeisse.webide.features.simvm.model.StepwisePrimarySimulatorModelElement;
+import name.martingeisse.webide.features.simvm.model.IPrimarySimulationModelElement;
+import name.martingeisse.webide.features.simvm.model.SimulationModel;
+import name.martingeisse.webide.features.simvm.model.StepwisePrimarySimulationModelElement;
 import name.martingeisse.webide.resources.FetchMarkerResult;
 
 import org.apache.wicket.Component;
@@ -19,15 +19,15 @@ import org.apache.wicket.Component;
 /**
  * "Editor" implementation that shows the SimVM UI.
  */
-public class SimulatedVirtualMachineEditor extends AbstractEditor<SimulatorModel> {
+public class SimulatedVirtualMachineEditor extends AbstractEditor<SimulationModel> {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.webide.editor.AbstractEditor#createDocument(byte[])
 	 */
 	@Override
-	protected SimulatorModel createDocument(byte[] resourceData) {
-		IPrimarySimulatorModelElement primaryElement = new StepwisePrimarySimulatorModelElement();
-		return new SimulatorModel(primaryElement, getWorkspaceResourceHandle());
+	protected SimulationModel createDocument(byte[] resourceData) {
+		IPrimarySimulationModelElement primaryElement = new StepwisePrimarySimulationModelElement();
+		return new SimulationModel(primaryElement, getWorkspaceResourceHandle());
 	}
 
 	/* (non-Javadoc)

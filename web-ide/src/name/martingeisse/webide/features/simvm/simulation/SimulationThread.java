@@ -151,7 +151,7 @@ class SimulationThread extends Thread {
 	}
 	
 	private void handleStep() {
-		// TODO: call step() method of model
+		simulation.getSimulationModel().getPrimaryElement().singleStep();
 	}
 	
 	private void handleResume() {
@@ -159,19 +159,19 @@ class SimulationThread extends Thread {
 	}
 
 	private void handleRunning() {
-		// TODO: call multiStep() method of model
+		simulation.getSimulationModel().getPrimaryElement().batchStep();
 	}
 	
 	private void handleSuspend() {
-		// TODO: call saveState() method of model
+		simulation.getSimulationModel().getPrimaryElement().saveState();
 	}
 	
 	private void handleTerminate() {
-		// TODO: call deleteState() method of model
+		simulation.getSimulationModel().getPrimaryElement().deleteState();
 	}
 	
 	private void handleCustomEvent(IpcEvent<?> event) {
-		// TODO: pass to simulator model
+		simulation.getSimulationModel().getPrimaryElement().handleEvent(event);
 	}
 	
 }

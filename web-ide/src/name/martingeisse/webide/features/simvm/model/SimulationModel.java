@@ -12,16 +12,17 @@ import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.webide.resources.ResourceHandle;
 
 /**
- * A high-level model of the simulator (not including its
- * runtime state). The simulator model is built from a
- * SimVM definition file.
+ * A high-level model of the simulation, including both its
+ * non-changing definition and its volatile runtime state.
+ * The simulation model is first built from a SimVM definition
+ * file, then asked to load runtime state.
  */
-public final class SimulatorModel implements Serializable {
+public final class SimulationModel implements Serializable {
 
 	/**
 	 * the primaryElement
 	 */
-	private final IPrimarySimulatorModelElement primaryElement;
+	private final IPrimarySimulationModelElement primaryElement;
 	
 	/**
 	 * the anchorResource
@@ -33,7 +34,7 @@ public final class SimulatorModel implements Serializable {
 	 * @param primaryElement the primary model element
 	 * @param anchorResource the resource used as an anchor for loading auxiliary files
 	 */
-	public SimulatorModel(IPrimarySimulatorModelElement primaryElement, ResourceHandle anchorResource) {
+	public SimulationModel(IPrimarySimulationModelElement primaryElement, ResourceHandle anchorResource) {
 		this.primaryElement = ParameterUtil.ensureNotNull(primaryElement, "primaryElement");
 		this.anchorResource = ParameterUtil.ensureNotNull(anchorResource, "anchorResource");;
 	}
@@ -42,7 +43,7 @@ public final class SimulatorModel implements Serializable {
 	 * Getter method for the primaryElement.
 	 * @return the primaryElement
 	 */
-	public IPrimarySimulatorModelElement getPrimaryElement() {
+	public IPrimarySimulationModelElement getPrimaryElement() {
 		return primaryElement;
 	}
 
@@ -52,6 +53,13 @@ public final class SimulatorModel implements Serializable {
 	 */
 	public ResourceHandle getAnchorResource() {
 		return anchorResource;
+	}
+
+	/**
+	 * Initializes the primary model element with this object.
+	 */
+	void initializePrimaryElement() {
+		primaryElement.initialize(this);
 	}
 	
 }

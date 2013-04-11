@@ -10,6 +10,6 @@ package name.martingeisse.webide.features.simvm.model;
  * TODO: document me
  *
  */
-public interface IStepwiseSimulatorModelElement {
+public interface IStepwiseSimulationModelElement {
 
 }

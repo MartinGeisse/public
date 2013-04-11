@@ -11,13 +11,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import name.martingeisse.webide.features.simvm.model.SimulatorModel;
+import name.martingeisse.webide.features.simvm.model.SimulationModel;
+import name.martingeisse.webide.features.simvm.model.StepwisePrimarySimulationModelElement;
 import name.martingeisse.webide.ipc.IpcEvent;
 import name.martingeisse.webide.resources.ResourceHandle;
 
 /**
  * Represents a running simulation. Each instance builds its own
- * {@link SimulatorModel} and keeps associated state.
+ * {@link SimulationModel} and keeps associated state.
  * 
  * When the simulation is suspended, the {@link Simulation} instance
  * writes runtime state to the workspace and becomes stale. It should
@@ -50,7 +51,7 @@ public final class Simulation {
 	/**
 	 * Returns the instance for the specified resource, or null if none exists.
 	 *  
-	 * @param resourceHandle the resource that represents the simulator model
+	 * @param resourceHandle the resource that represents the simulation model
 	 * @return the {@link Simulation} instance or null
 	 */
 	public static Simulation getExisting(ResourceHandle resourceHandle) {
@@ -61,23 +62,36 @@ public final class Simulation {
 	 * Returns the instance for the specified resource, creating it if
 	 * it doesn't exist yet.
 	 *  
-	 * @param resourceHandle the resource that represents the simulator model
+	 * @param resourceHandle the resource that represents the simulation model
 	 * @param resumeOnCreate if the simulation does not yet exist, this flag controls whether
 	 * the simulation is immediately resumed or left in "paused" state.
 	 * @return the {@link Simulation} instance
 	 */
 	public static Simulation getOrCreate(ResourceHandle resourceHandle, boolean resumeOnCreate) {
-		Simulation newSimulation = new Simulation(resourceHandle);
-		Simulation existing = simulations.putIfAbsent(resourceHandle, newSimulation);
+		
+		// first check for an existing simulation
+		Simulation existing = simulations.get(resourceHandle);
 		if (existing != null) {
 			return existing;
 		}
-		// TODO initialize
-		// TODO not thread-safe; other threads might use the simulation right now
+		
+		// none existed, so create a new one
+		Simulation newSimulation = new Simulation(resourceHandle);
+		
+		// store the new simulation, but consider that another thread might have done the same
+		existing = simulations.putIfAbsent(resourceHandle, newSimulation);
+		if (existing != null) {
+			return existing;
+		}
+		
+		// our new simulation is now the globally used one, so we start the simulation thread and
+		// possibly post a resume event
+		newSimulation.start();
 		if (resumeOnCreate) {
 			newSimulation.resume();
 		}
 		return newSimulation;
+		
 	}
 	
 	/**
@@ -96,12 +110,24 @@ public final class Simulation {
 	private final SimulationThread simulationThread;
 	
 	/**
+	 * the simulationModel
+	 */
+	private final SimulationModel simulationModel;
+	
+	/**
 	 * Constructor.
 	 */
 	private Simulation(ResourceHandle resourceHandle) {
 		this.resourceHandle = resourceHandle;
 		this.eventQueue = new LinkedBlockingQueue<IpcEvent<?>>();
 		this.simulationThread = new SimulationThread(this);
+		this.simulationModel = new SimulationModel(new StepwisePrimarySimulationModelElement(), resourceHandle);
+	}
+	
+	/**
+	 * 
+	 */
+	private void start() {
 		simulationThread.start();
 	}
 
@@ -111,6 +137,14 @@ public final class Simulation {
 	 */
 	public ResourceHandle getResourceHandle() {
 		return resourceHandle;
+	}
+
+	/**
+	 * Getter method for the simulationModel.
+	 * @return the simulationModel
+	 */
+	public SimulationModel getSimulationModel() {
+		return simulationModel;
 	}
 	
 	/**
