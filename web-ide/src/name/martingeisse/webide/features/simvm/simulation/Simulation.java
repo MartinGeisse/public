@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import name.martingeisse.webide.features.simvm.model.SimulationModel;
-import name.martingeisse.webide.features.simvm.model.StepwisePrimarySimulationModelElement;
 import name.martingeisse.webide.ipc.IpcEvent;
 import name.martingeisse.webide.resources.ResourceHandle;
 
@@ -121,7 +120,7 @@ public final class Simulation {
 		this.resourceHandle = resourceHandle;
 		this.eventQueue = new LinkedBlockingQueue<IpcEvent<?>>();
 		this.simulationThread = new SimulationThread(this);
-		this.simulationModel = new SimulationModel(new StepwisePrimarySimulationModelElement(), resourceHandle);
+		this.simulationModel = new SimulationModel(resourceHandle);
 	}
 	
 	/**

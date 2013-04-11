@@ -7,7 +7,6 @@
 package name.martingeisse.webide.features.simvm.editor;
 
 import name.martingeisse.webide.features.simvm.model.SimulationModel;
-import name.martingeisse.webide.features.simvm.model.StepwisePrimarySimulationModelElement;
 import name.martingeisse.webide.features.simvm.simulation.Simulation;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -36,8 +35,9 @@ class EditorPanel extends Panel {
 					return "stopped";
 				}
 				SimulationModel simulationModel = simulation.getSimulationModel();
-				StepwisePrimarySimulationModelElement primaryElement = (StepwisePrimarySimulationModelElement)simulationModel.getPrimaryElement();
-				return "running: " + primaryElement.getCounter();
+				// StepwisePrimarySimulationModelElement primaryElement = (StepwisePrimarySimulationModelElement)simulationModel.getPrimaryElement();
+				// return "running: " + primaryElement.getCounter();
+				return "running";
 			}
 		}));
 		add(new Link<Void>("startButton") {
