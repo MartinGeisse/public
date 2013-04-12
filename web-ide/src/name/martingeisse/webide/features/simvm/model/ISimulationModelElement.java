@@ -61,31 +61,5 @@ public interface ISimulationModelElement extends Serializable {
 	 * @param event the event to handle
 	 */
 	public void handleEvent(IpcEvent<?> event);
-
-	/**
-	 * Performs a single simulation step, whatever that means for the
-	 * concrete simulation model.
-	 * 
-	 * The intention of this method is to allow single-stepping the
-	 * simulation. Depending on the model, it may be useful to make
-	 * the meaning of a single step configurable. Implementations
-	 * should assume that a distinct user action (key press, mouse
-	 * click, etc.) is required for each single step.
-	 */
-	public void singleStep();
-
-	/**
-	 * Performs a batch simulation step, whatever that means for the
-	 * concrete simulation model.
-	 * 
-	 * The intention of this method is to allow simulation regardless
-	 * of user input. A batch step should behave like a series of
-	 * single steps, but no assumption is made about the number of
-	 * equivalent single steps. Implementations should perform
-	 * just enough work in a batch step to ensure that the overhead
-	 * of the outer event handling loop (which calls this method) is
-	 * negligible.
-	 */
-	public void batchStep();
 	
 }

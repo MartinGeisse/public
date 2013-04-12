@@ -13,4 +13,13 @@ import name.martingeisse.webide.features.simvm.model.ISimulationModelElement;
  */
 public interface IEcosimModelElement extends ISimulationModelElement {
 
+	/**
+	 * Returns the devices contributed by this model element.
+	 * May return null instead of an empty array to indicate
+	 * no contributed devices.
+	 * 
+	 * @return the devices contributed by this model element or null
+	 */
+	public EcosimContributedDevice[] getContributedDevices();
+	
 }

@@ -27,14 +27,6 @@ import org.json.simple.JSONObject;
  * states of the sub-elements. Other properties can be
  * used by subclasses at will.
  * 
- * The {@link #batchStep()} method is another exception. This method
- * cannot simply call batchStep() of each sub-element because then
- * each sub-element would finish its batch before the next sub-element
- * gets a chance to execute the first step. To avoid this problem,
- * batchStep() calls singleStep() ten times in a row. Subclasses are
- * encouraged to adjust this number (e.g. using {@link #multiStep(int)})
- * or find a more efficient solution.
- * 
  * @param <S> the sub-element type
  */
 public abstract class AbstractCompositeSimulationModelElement<S extends ISimulationModelElement> implements ISimulationModelElement {
@@ -155,33 +147,4 @@ public abstract class AbstractCompositeSimulationModelElement<S extends ISimulat
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.features.simvm.model.ISimulationModelElement#singleStep()
-	 */
-	@Override
-	public void singleStep() {
-		for (S subElement : subElements) {
-			subElement.singleStep();
-		}
-	}
-	
-	/**
-	 * Performs a series of n single steps.
-	 * @param n the number of steps
-	 */
-	public void multiStep(int n) {
-		while (n > 0) {
-			singleStep();
-			n--;
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.features.simvm.model.ISimulationModelElement#batchStep()
-	 */
-	@Override
-	public void batchStep() {
-		multiStep(10);
-	}
-	
 }
