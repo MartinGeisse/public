@@ -54,7 +54,11 @@
 			/* --------------------------------------------------------------------------------------------------------- */
 			
 			#simulator-tab-pane-container {
-				margin-top: 20px;
+				position: absolute;
+				top: 40px;
+				left: 5px;
+				right: 5px;
+				bottom: 5px;
 			}
 
 			#simulator-tab-pane-container > div {
@@ -69,11 +73,35 @@
 				bottom: 10px;
 				border: 1px solid #ddd;
 			}
+			
+			.terminal-output-container:focus {
+				border: 1px solid #aaf;
+			}
 		
 		</style>
 		<script type="text/javascript">
 			$(function() {
-				$('#simulator-tab-button-container').tabs('#simulator-tab-pane-container > *');
+				
+				// prepare tabs
+				var tabsApi = $('#simulator-tab-button-container').tabs('#simulator-tab-pane-container > *', {
+					onClick: function(event, index) {
+						if (tabsApi) {
+							var $currentPane = tabsApi.getCurrentPane();
+							if ($currentPane.hasClass('auto-focus')) {
+								$currentPane.children().focus();
+							}
+						}
+					}
+				}).data('tabs');
+				
+				// handle terminal input
+				$('.terminal-output-container').on('keypress', function(event) {
+					var charCode = event.which;
+					var charText = String.fromCharCode(charCode);
+					var escapedCharText = $('<span>').text(charText).html();
+					$('.terminal-output-container > pre').append(escapedCharText);
+				});
+				
 			});
 		</script>
 	</wicket:head>
@@ -101,11 +129,9 @@
 				<div>RAM</div>
 				<div>ROM</div>
 				<div>Disk</div>
-				<div>
-					<div style="position: relative; ">
-						<div class="terminal-output-container">
-							<pre wicket:id="terminalOutput" />
-						</div>
+				<div class="auto-focus">
+					<div class="absolute-cover terminal-output-container" tabindex="0">
+						<pre wicket:id="terminalOutput" style="margin: 0px; padding: 0px; " />
 					</div>
 				</div>
 				<div>Console</div>

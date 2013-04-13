@@ -9,11 +9,17 @@ body {
 	padding: 0px;
 }
 
-div.LayoutBox {
+div.layout-box {
+	position: fixed;
 	padding: 5px;
 }
 
-div.ViewBox {
+div.view-box {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	right: 5px;
+	bottom: 5px;
 	background-color: #fff;
 	border-radius: 8px;
 	padding: 5px;
@@ -43,6 +49,22 @@ h2 {
 	margin: 0px;
 	font-size: 15px;
 	border-bottom: 1px solid #888;
+}
+
+.view-box-body {
+	position: absolute;
+	top: 25px;
+	left: 5px;
+	right: 5px;
+	bottom: 5px;
+}
+
+.view-box-headerless-body {
+	position: absolute;
+	top: 25px;
+	left: 5px;
+	right: 5px;
+	bottom: 5px;
 }
 
 .absolute-cover {

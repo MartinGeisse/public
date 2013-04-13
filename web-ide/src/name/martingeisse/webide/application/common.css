@@ -6,45 +6,69 @@ body {
 }
 
 /* line 12, ../../../../../resource/stylesheet/sass/common.scss */
-div.LayoutBox {
+div.layout-box {
+  position: fixed;
   padding: 5px;
 }
 
-/* line 16, ../../../../../resource/stylesheet/sass/common.scss */
-div.ViewBox, .FileViewBox {
+/* line 17, ../../../../../resource/stylesheet/sass/common.scss */
+div.view-box {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
   background-color: #fff;
   border-radius: 8px;
   padding: 5px;
-  box-shadow: 2px 2px 5px -1px black;
+  box-shadow: 2px 2px 5px -1px #000;
 }
 
-/* line 23, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 29, ../../../../../resource/stylesheet/sass/common.scss */
 div.CodeMirror {
-  border: 1px solid #aaaaaa;
+  border: 1px solid #aaa;
   background-color: #fff;
   height: auto;
 }
 
-/* line 29, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 35, ../../../../../resource/stylesheet/sass/common.scss */
 div.CodeMirror-scroll {
   height: 100%;
 }
 
-/* line 33, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 39, ../../../../../resource/stylesheet/sass/common.scss */
 .FileViewBox {
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
 }
 
-/* line 42, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 48, ../../../../../resource/stylesheet/sass/common.scss */
 h2 {
   margin: 0px;
   font-size: 15px;
-  border-bottom: 1px solid #888888;
+  border-bottom: 1px solid #888;
 }
 
-/* line 48, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 54, ../../../../../resource/stylesheet/sass/common.scss */
+.view-box-body {
+  position: absolute;
+  top: 25px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+}
+
+/* line 62, ../../../../../resource/stylesheet/sass/common.scss */
+.view-box-headerless-body {
+  position: absolute;
+  top: 25px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+}
+
+/* line 70, ../../../../../resource/stylesheet/sass/common.scss */
 .absolute-cover {
   position: absolute;
   top: 0px;
@@ -53,7 +77,7 @@ h2 {
   right: 0px;
 }
 
-/* line 60, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 82, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-list {
   display: inline-block;
   position: absolute;
@@ -62,7 +86,7 @@ h2 {
   -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
   margin: 0;
-  border: 1px solid #dddddd;
+  border: 1px solid #DDD;
   padding: 0;
   background: #EEE;
   min-width: 120px;
@@ -71,7 +95,7 @@ h2 {
   font-size: 11px;
 }
 
-/* line 78, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 100, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-item {
   padding: 2px 2px 2px 24px;
   background-color: #EEE;
@@ -81,31 +105,31 @@ h2 {
   user-select: none;
 }
 
-/* line 85, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 107, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-separator {
   padding-bottom: 0;
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid #DDD;
 }
 
-/* line 90, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 112, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-item.hover {
   cursor: pointer;
   background-color: #39F;
 }
 
-/* line 95, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 117, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-item.disabled {
   color: #666;
 }
 
-/* line 100, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 122, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-input.hover,
 .context-menu-item.disabled.hover {
   cursor: default;
   background-color: #EEE;
 }
 
-/* line 105, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 127, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-submenu:after {
   content: ">";
   color: #666;
@@ -121,49 +145,49 @@ h2 {
     http://css-tricks.com/13224-pseudo-spriting/ to get an idea of how to implement 
     .context-menu-item.icon:before {}
  */
-/* line 120, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 142, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-item.icon {
   min-height: 18px;
   background-repeat: no-repeat;
   background-position: 4px 2px;
 }
 
-/* line 121, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 143, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-item.icon-edit {
   background-image: url(images/page_white_edit.png);
 }
 
-/* line 122, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 144, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-item.icon-cut {
   background-image: url(images/cut.png);
 }
 
-/* line 123, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 145, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-item.icon-copy {
   background-image: url(images/page_white_copy.png);
 }
 
-/* line 124, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 146, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-item.icon-paste {
   background-image: url(images/page_white_paste.png);
 }
 
-/* line 125, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 147, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-item.icon-delete {
   background-image: url(images/page_white_delete.png);
 }
 
-/* line 126, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 148, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-item.icon-add {
   background-image: url(images/page_white_add.png);
 }
 
-/* line 127, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 149, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-item.icon-quit {
   background-image: url(images/door.png);
 }
 
-/* line 135, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 157, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-input > label {
   display: block;
   width: 100%;
@@ -171,19 +195,19 @@ h2 {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-/* line 139, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 161, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-input > label > * {
   vertical-align: top;
 }
-/* line 144, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 166, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-input > label > input[type="checkbox"], .context-menu-input > label > input[type="radio"] {
   margin-left: -17px;
 }
-/* line 149, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 171, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-input > label > span {
   margin-left: 5px;
 }
-/* line 154, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 176, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-input > label > input[type="text"], .context-menu-input > label > textarea, .context-menu-input > label > select {
   display: block;
   width: 100%;
@@ -191,18 +215,18 @@ h2 {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-/* line 159, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 181, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-input > label > textarea {
   height: 100px;
 }
-/* line 164, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 186, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-input > label > input, .context-menu-input > label > textarea {
   -webkit-user-select: text;
   -moz-user-select: text;
   user-select: text;
 }
 
-/* line 170, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 192, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-item > .context-menu-list {
   display: none;
   /* re-positioned by js */
@@ -210,12 +234,12 @@ h2 {
   top: 5px;
 }
 
-/* line 177, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 199, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-item.hover > .context-menu-list {
   display: block;
 }
 
-/* line 181, ../../../../../resource/stylesheet/sass/common.scss */
+/* line 203, ../../../../../resource/stylesheet/sass/common.scss */
 .context-menu-accesskey {
   text-decoration: underline;
 }

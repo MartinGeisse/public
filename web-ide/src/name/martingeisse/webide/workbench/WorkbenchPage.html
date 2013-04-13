@@ -12,47 +12,45 @@
 		</script>
 	</head>
 	<body>
-		<div style="position: absolute; top: 0px; left: 0px; width: 400px; height: 85%; padding: 0px;">
-			<div class="LayoutBox">
-				<div class="FileViewBox">
-					<h2>Files</h2>
-					<div style="overflow: scroll; height: 31%;" id="filesContainer" wicket:id="filesContainer">
-						<a wicket:id="resources" style="white-space: nowrap;" class="file" href="#">
-							<img wicket:id="icon" style="vertical-align: sub;" /> <span wicket:id="name" class="name">name</span>
-						</a>
-					</div>
+		<div class="layout-box" style="top: 0px; left: 0px; width: 400px; bottom: 66%; ">
+			<div class="FileViewBox">
+				<h2>Files</h2>
+				<div class="view-box-body" style="overflow: scroll; " id="filesContainer" wicket:id="filesContainer">
+					<a wicket:id="resources" style="white-space: nowrap;" class="file" href="#">
+						<img wicket:id="icon" style="vertical-align: sub;" /> <span wicket:id="name" class="name">name</span>
+					</a>
 				</div>
 			</div>
-			<div class="LayoutBox">
-				<div class="ViewBox" wicket:id="markersContainer">
-					<h2>Markers</h2>
-					<div style="overflow: scroll; height: 31%;">
-						<div wicket:id="markers" style="margin: 3px; ">
-							<div>
-								<img wicket:id="icon" />
-								<span wicket:id="resource" />
-							</div>
-							<div>
-								<span wicket:id="meaning">meaning</span>: <span wicket:id="message">message</span>
-							</div>
+		</div>
+		<div class="layout-box" style="top: 34%; left: 0px; width: 400px; bottom: 34%; width: 400px ">
+			<div class="view-box" wicket:id="markersContainer">
+				<h2>Markers</h2>
+				<div class="view-box-body" style="overflow: scroll; ">
+					<div wicket:id="markers" style="margin: 3px; ">
+						<div>
+							<img wicket:id="icon" />
+							<span wicket:id="resource" />
+						</div>
+						<div>
+							<span wicket:id="meaning">meaning</span>: <span wicket:id="message">message</span>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="LayoutBox">
-				<div class="ViewBox">
-					<h2>Output</h2>
-					<div style="overflow: scroll; height: 31%; font-family: monospace; white-space: pre; "><div wicket:id="log" /></div>
-				</div>
+		</div>
+		<div class="layout-box" style="top: 66%; left: 0px; width: 400px; bottom: 30px; ">
+			<div class="view-box">
+				<h2>Output</h2>
+				<div class="view-box-body" style="overflow: scroll; font-family: monospace; white-space: pre; "><div wicket:id="log" /></div>
 			</div>
 		</div>
-		<div class="LayoutBox" style="margin-left: 400px;">
-			<div class="ViewBox" style="background-color: #fff; height: 90%;" wicket:id="editorContainer">
-				<div wicket:id="editor" />
+		<div class="layout-box" style="top: 0px; left: 410px; right: 0px; bottom: 30px; ">
+			<div class="view-box" wicket:id="editorContainer">
+				<div class="view-box-headerless-body" wicket:id="editor" />
 			</div>
 		</div>
-		<div class="LayoutBox">
-			<div class="ViewBox" style="height: 16px; ">
+		<div class="layout-box" style="height: 20px; left: 0px; right: 0px; bottom: 5px; ">
+			<div class="view-box" style="height: 16px; ">
 				<div style="float: left;">
 					<span wicket:id="buildingWorkspaceIndicator">
 						Building workspace: <img src="/wicket/resource/name.martingeisse.wicket.icons.other.Dummy/BusyIndicatorBar.gif" height="14" style="vertical-align: top" />
