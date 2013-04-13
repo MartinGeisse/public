@@ -19,6 +19,7 @@ import name.martingeisse.ecosim.devices.memory.Rom;
 import name.martingeisse.ecosim.devices.output.OutputDevice;
 import name.martingeisse.ecosim.devices.terminal.Terminal;
 import name.martingeisse.ecosim.devices.timer.Timer;
+import name.martingeisse.webide.features.ecosim.ui.TerminalUserInterface;
 import name.martingeisse.webide.features.simvm.model.AbstractCompositeSimulationModelElement;
 import name.martingeisse.webide.features.simvm.model.IPrimarySimulationModelElement;
 import name.martingeisse.webide.features.simvm.model.SimulationModel;
@@ -52,6 +53,11 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 	 * the remainingInstructionsForThisTick
 	 */
 	private int remainingInstructionsForThisTick;
+	
+	/**
+	 * the terminalUserInterface
+	 */
+	private TerminalUserInterface terminalUserInterface;
 	
 	/**
 	 * Constructor.
@@ -95,6 +101,8 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 			bus.add(0x30300000, terminal, new int[] {
 				1, 0
 			});
+			terminalUserInterface = new TerminalUserInterface();
+			terminal.setUserInterface(terminalUserInterface);
 	
 			CharacterDisplay characterDisplay = new CharacterDisplay();
 			bus.add(0x30100000, characterDisplay, new int[] {});
@@ -104,6 +112,9 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 				4
 			});
 	
+			// TODO graphics
+			// TODO block console
+			
 			OutputDevice output = new OutputDevice(new File("testout.bin"));
 			bus.add(0x3F000000, output, new int[] {});
 	
@@ -143,6 +154,14 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 		for (int i=0; i<STEPS_PER_BATCH; i++) {
 			singleStep();
 		}
+	}
+	
+	/**
+	 * Getter method for the terminalUserInterface.
+	 * @return the terminalUserInterface
+	 */
+	public TerminalUserInterface getTerminalUserInterface() {
+		return terminalUserInterface;
 	}
 	
 }

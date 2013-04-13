@@ -5,6 +5,7 @@
  */
 package name.martingeisse.ecosim.timer;
 
+
 /**
  * This is an abstract timer that is useful for many simulation purposes.
  * It invokes a callback method (supplied by the concrete implementation

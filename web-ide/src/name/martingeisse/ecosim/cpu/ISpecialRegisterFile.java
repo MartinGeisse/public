@@ -5,6 +5,7 @@
  */
 package name.martingeisse.ecosim.cpu;
 
+
 /**
  * This interface represents the special register file of the CPU. It contains 5 registers, each 32 bits
  * wide. This interface also defines the constants that indicate the semantics of the special registers.

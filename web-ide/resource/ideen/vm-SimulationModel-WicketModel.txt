@@ -1,0 +1,61 @@
+
+SimulationModel und Primary Element werden für zwei Dinge benötigt:
+- Simulation
+- UI
+und werden je Simulation und je Editor einmal erzeugt (-> lightweight).
+
+Entsprechend sind auch die Anforderungen:
+- Simulation: korrektes Verhalten, aber nicht Serializable
+- UI: Extrem leichtgewichtig, Serializable, kein Verhalten
+
+aber ist schon praktischer, wenn dieselben Kern-Model-Elemente für beides
+genommen werden.
+
+Wobei auch der Sim-Teil gerne leichtgewichtig sein darf, und das bedeutet:
+
+-> alle Model-Elemente müssen Serializable sein und sollten lazy loading
+   benutzen
+-> die UI-Klassen im Ecosim-Sinne müssen UI Input Events verarbeiten und
+   dem SimulationModel zur Verfügung stellen. Bei Output Events müssen
+   sie diese an die Clients pushen.
+-> In SimVM-Editors werden keine UI-Klassen im Ecosim-Sinne verwendet.
+   Stattdessen erzeugen die Model Elements bzw. etwas, das diese ausliest,
+   Wicket-Komponenten, welche auf das SimulationModel und dessen lazy
+   loading zugreift.
+-> Die Ecosim-UI-Klassen müssen also nicht serializable sein, weil sie im
+   Editor-(Wicket-)Teil gar nicht verwendet werden -- dieses hat ja auch
+   kein simuliertes Verhalten, welches das UI ansprechen könnte.
+
+-----
+
+Die Darstellung einer suspendeten VM ist weniger wichtig. Möglichkeiten:
+- komplett separates UI. Viele Dinge (Runtime State!) fallen weg, das ist
+  ein sehr großer Teil des gesamten UI. Andere Teile kommen dazu, z.B.
+  Konfiguration, die nicht an der laufenden VM geändert werden kann.
+- Fake Runtime State und die entsprechenden Teile ausblenden
+- UI, welches mit beiden Situationen klarkommt.
+
+Grundidee: Kein generell vorgeschriebener weg, sondern VM-Code entscheidet
+je Modul selbst.
+
+Das bedeutet aber auch: Die wesentliche Architektur richtet sich danach, wie
+*laufende* VMs dargestellt werden. Und für die gilt: Editors haben zwar
+keinen eigenen Runtime State, müssen aber den aus der Simulation anzeigen.
+
+Dann wäre zu klären, ob State und Definition getrennt werden. Das würde einiges
+komplizierter machen, aber dann müsste nur State vom Sim Thread zum Editor
+übermittelt werden. Die wesentliche Komplexität ist aber dann immer noch
+im State sichtbar, nämlich Concurrency. Concurrency in der Definition ist
+für Architekturfragen vernachlässigbar, eben weil die sich ja gar nicht ändert.
+
+-> Grundgedanke für die Editors einer laufenden VM ist:
+
+	*** Ein Editor für eine laufende VM greift direkt auf das SimulationModel
+	aus der Simulation zu. Er hat keine eigenen Daten außer dem ResourceHandle
+	für den Anker der VM. ***
+	
+-> braucht alles nicht Serializable zu sein, da nicht Teil der Wicket-Components,
+sondern es wird nur per IModel drauf zugegriffen. Dann verhält es sich auch wie
+von Wicket gedacht.
+
+

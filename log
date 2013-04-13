@@ -1,0 +1,974 @@
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/: .svn
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/: AbstractValueTransportDelay.java
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/: BufferTools.java
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/: SimulatorUtils.java
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/bus: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/bus/AbstractPeripheralDevice.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/bus/AbstractPeripheralDevice.java
+6c6
+< package name.martingeisse.ecosim.bus;
+---
+> package name.martingeisse.ecotools.simulator.bus;
+diff -r web-ide/src/name/martingeisse/ecosim/bus/Bus.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/bus/Bus.java
+6c6
+< package name.martingeisse.ecosim.bus;
+---
+> package name.martingeisse.ecotools.simulator.bus;
+11c11
+< import name.martingeisse.ecosim.timer.ITickable;
+---
+> import name.martingeisse.ecotools.simulator.timer.ITickable;
+diff -r web-ide/src/name/martingeisse/ecosim/bus/BusAccessSize.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/bus/BusAccessSize.java
+6c6
+< package name.martingeisse.ecosim.bus;
+---
+> package name.martingeisse.ecotools.simulator.bus;
+diff -r web-ide/src/name/martingeisse/ecosim/bus/BusConfigurationException.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/bus/BusConfigurationException.java
+6c6
+< package name.martingeisse.ecosim.bus;
+---
+> package name.martingeisse.ecotools.simulator.bus;
+diff -r web-ide/src/name/martingeisse/ecosim/bus/BusErrorException.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/bus/BusErrorException.java
+6c6
+< package name.martingeisse.ecosim.bus;
+---
+> package name.martingeisse.ecotools.simulator.bus;
+diff -r web-ide/src/name/martingeisse/ecosim/bus/BusMapEntry.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/bus/BusMapEntry.java
+6,7c6
+< package name.martingeisse.ecosim.bus;
+< 
+---
+> package name.martingeisse.ecotools.simulator.bus;
+diff -r web-ide/src/name/martingeisse/ecosim/bus/BusTimeoutException.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/bus/BusTimeoutException.java
+6c6
+< package name.martingeisse.ecosim.bus;
+---
+> package name.martingeisse.ecotools.simulator.bus;
+8c8
+< import name.martingeisse.ecosim.util.HexNumberUtil;
+---
+> import name.martingeisse.ecotools.common.util.HexNumberUtil;
+diff -r web-ide/src/name/martingeisse/ecosim/bus/DefaultInterruptLine.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/bus/DefaultInterruptLine.java
+6c6
+< package name.martingeisse.ecosim.bus;
+---
+> package name.martingeisse.ecotools.simulator.bus;
+diff -r web-ide/src/name/martingeisse/ecosim/bus/IBusMasterAccess.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/bus/IBusMasterAccess.java
+6c6
+< package name.martingeisse.ecosim.bus;
+---
+> package name.martingeisse.ecotools.simulator.bus;
+diff -r web-ide/src/name/martingeisse/ecosim/bus/IInterruptLine.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/bus/IInterruptLine.java
+6,7c6
+< package name.martingeisse.ecosim.bus;
+< 
+---
+> package name.martingeisse.ecotools.simulator.bus;
+diff -r web-ide/src/name/martingeisse/ecosim/bus/IPeripheralDevice.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/bus/IPeripheralDevice.java
+6c6
+< package name.martingeisse.ecosim.bus;
+---
+> package name.martingeisse.ecotools.simulator.bus;
+8c8
+< import name.martingeisse.ecosim.timer.ITickable;
+---
+> import name.martingeisse.ecotools.simulator.timer.ITickable;
+diff -r web-ide/src/name/martingeisse/ecosim/bus/InterruptBus.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/bus/InterruptBus.java
+6,7c6
+< package name.martingeisse.ecosim.bus;
+< 
+---
+> package name.martingeisse.ecotools.simulator.bus;
+diff -r web-ide/src/name/martingeisse/ecosim/bus/MisalignedBusAccessException.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/bus/MisalignedBusAccessException.java
+6c6
+< package name.martingeisse.ecosim.bus;
+---
+> package name.martingeisse.ecotools.simulator.bus;
+diff -r web-ide/src/name/martingeisse/ecosim/bus/NullDevice.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/bus/NullDevice.java
+6c6
+< package name.martingeisse.ecosim.bus;
+---
+> package name.martingeisse.ecotools.simulator.bus;
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/Cpu.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/Cpu.java
+6c6
+< package name.martingeisse.ecosim.cpu;
+---
+> package name.martingeisse.ecotools.simulator.cpu;
+8,11c8,11
+< import name.martingeisse.ecosim.bus.BusAccessSize;
+< import name.martingeisse.ecosim.bus.BusErrorException;
+< import name.martingeisse.ecosim.bus.BusTimeoutException;
+< import name.martingeisse.ecosim.bus.IBusMasterAccess;
+---
+> import name.martingeisse.ecotools.simulator.bus.BusAccessSize;
+> import name.martingeisse.ecotools.simulator.bus.BusErrorException;
+> import name.martingeisse.ecotools.simulator.bus.BusTimeoutException;
+> import name.martingeisse.ecotools.simulator.bus.IBusMasterAccess;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/CpuException.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/CpuException.java
+6c6
+< package name.martingeisse.ecosim.cpu;
+---
+> package name.martingeisse.ecotools.simulator.cpu;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/GeneralRegisterFile.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/GeneralRegisterFile.java
+6c6
+< package name.martingeisse.ecosim.cpu;
+---
+> package name.martingeisse.ecotools.simulator.cpu;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/ICpuExtensionHandler.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/ICpuExtensionHandler.java
+7c7
+< package name.martingeisse.ecosim.cpu;
+---
+> package name.martingeisse.ecotools.simulator.cpu;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/ICpuProfiler.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/ICpuProfiler.java
+7c7
+< package name.martingeisse.ecosim.cpu;
+---
+> package name.martingeisse.ecotools.simulator.cpu;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/ICpuUserInterface.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/ICpuUserInterface.java
+6,7c6
+< package name.martingeisse.ecosim.cpu;
+< 
+---
+> package name.martingeisse.ecotools.simulator.cpu;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/IGeneralRegisterFile.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/IGeneralRegisterFile.java
+6,7c6
+< package name.martingeisse.ecosim.cpu;
+< 
+---
+> package name.martingeisse.ecotools.simulator.cpu;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/IMemoryManagementUnit.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/IMemoryManagementUnit.java
+6,7c6
+< package name.martingeisse.ecosim.cpu;
+< 
+---
+> package name.martingeisse.ecotools.simulator.cpu;
+8a8
+> import name.martingeisse.ecotools.simulator.ui.util.memory.MemoryVisualizationException;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/ISpecialRegisterFile.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/ISpecialRegisterFile.java
+6,7c6
+< package name.martingeisse.ecosim.cpu;
+< 
+---
+> package name.martingeisse.ecotools.simulator.cpu;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/Instruction.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/Instruction.java
+6c6
+< package name.martingeisse.ecosim.cpu;
+---
+> package name.martingeisse.ecotools.simulator.cpu;
+410,415d409
+< 	/**
+< 	 * Prevent instantiation.
+< 	 */
+< 	private Instruction() {
+< 	}
+< 	
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/MemoryManagementUnit.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/MemoryManagementUnit.java
+6c6
+< package name.martingeisse.ecosim.cpu;
+---
+> package name.martingeisse.ecotools.simulator.cpu;
+7a8
+> import name.martingeisse.ecotools.simulator.ui.util.memory.MemoryVisualizationException;
+Only in web-ide/src/name/martingeisse/ecosim/cpu: MemoryVisualizationException.java
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/ProcessorStatusWord.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/ProcessorStatusWord.java
+6c6
+< package name.martingeisse.ecosim.cpu;
+---
+> package name.martingeisse.ecotools.simulator.cpu;
+151a152
+> 
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/ProgramCounter.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/ProgramCounter.java
+6,7c6
+< package name.martingeisse.ecosim.cpu;
+< 
+---
+> package name.martingeisse.ecotools.simulator.cpu;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/SpecialRegisterFile.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/SpecialRegisterFile.java
+6c6
+< package name.martingeisse.ecosim.cpu;
+---
+> package name.martingeisse.ecotools.simulator.cpu;
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/toolhost: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/toolhost/IToolhostFileSystem.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/toolhost/IToolhostFileSystem.java
+7c7
+< package name.martingeisse.ecosim.cpu.toolhost;
+---
+> package name.martingeisse.ecotools.simulator.cpu.toolhost;
+11,12c11,12
+< import name.martingeisse.ecosim.cpu.usermode.unix.IFilePointer;
+< import name.martingeisse.ecosim.cpu.usermode.unix.UnixSyscallException;
+---
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.IFilePointer;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.UnixSyscallException;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/toolhost/IToolhostSleepHandler.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/toolhost/IToolhostSleepHandler.java
+7c7
+< package name.martingeisse.ecosim.cpu.toolhost;
+---
+> package name.martingeisse.ecotools.simulator.cpu.toolhost;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/toolhost/RegularFilePointer.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/toolhost/RegularFilePointer.java
+7c7
+< package name.martingeisse.ecosim.cpu.toolhost;
+---
+> package name.martingeisse.ecotools.simulator.cpu.toolhost;
+13,20c13,20
+< import name.martingeisse.ecosim.cpu.usermode.CopyFromBufferAction;
+< import name.martingeisse.ecosim.cpu.usermode.CopyToBufferAction;
+< import name.martingeisse.ecosim.cpu.usermode.SparseMemory;
+< import name.martingeisse.ecosim.cpu.usermode.unix.AbstractFilePointer;
+< import name.martingeisse.ecosim.cpu.usermode.unix.IFilePointer;
+< import name.martingeisse.ecosim.cpu.usermode.unix.SeekOrigin;
+< import name.martingeisse.ecosim.cpu.usermode.unix.UnixSyscallErrorCode;
+< import name.martingeisse.ecosim.cpu.usermode.unix.UnixSyscallException;
+---
+> import name.martingeisse.ecotools.simulator.cpu.usermode.CopyFromBufferAction;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.CopyToBufferAction;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.SparseMemory;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.AbstractFilePointer;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.IFilePointer;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.SeekOrigin;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.UnixSyscallErrorCode;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.UnixSyscallException;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/toolhost/StatResult.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/toolhost/StatResult.java
+7c7
+< package name.martingeisse.ecosim.cpu.toolhost;
+---
+> package name.martingeisse.ecotools.simulator.cpu.toolhost;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/toolhost/TestMain.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/toolhost/TestMain.java
+7c7
+< package name.martingeisse.ecosim.cpu.toolhost;
+---
+> package name.martingeisse.ecotools.simulator.cpu.toolhost;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/toolhost/ToolhostFileSystem.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/toolhost/ToolhostFileSystem.java
+7c7
+< package name.martingeisse.ecosim.cpu.toolhost;
+---
+> package name.martingeisse.ecotools.simulator.cpu.toolhost;
+14,16c14,16
+< import name.martingeisse.ecosim.cpu.usermode.unix.IFilePointer;
+< import name.martingeisse.ecosim.cpu.usermode.unix.UnixSyscallErrorCode;
+< import name.martingeisse.ecosim.cpu.usermode.unix.UnixSyscallException;
+---
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.IFilePointer;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.UnixSyscallErrorCode;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.UnixSyscallException;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/toolhost/ToolhostProcess.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/toolhost/ToolhostProcess.java
+7c7
+< package name.martingeisse.ecosim.cpu.toolhost;
+---
+> package name.martingeisse.ecotools.simulator.cpu.toolhost;
+14,26c14,26
+< import name.martingeisse.ecosim.bus.Bus;
+< import name.martingeisse.ecosim.bus.BusAccessSize;
+< import name.martingeisse.ecosim.bus.BusTimeoutException;
+< import name.martingeisse.ecosim.cpu.Cpu;
+< import name.martingeisse.ecosim.cpu.IGeneralRegisterFile;
+< import name.martingeisse.ecosim.cpu.usermode.ClearMemoryAction;
+< import name.martingeisse.ecosim.cpu.usermode.ReadFromStreamAction;
+< import name.martingeisse.ecosim.cpu.usermode.ReadStringAction;
+< import name.martingeisse.ecosim.cpu.usermode.SparseMemory;
+< import name.martingeisse.ecosim.cpu.usermode.UsermodeCpu;
+< import name.martingeisse.ecosim.cpu.usermode.unix.FilePointerTable;
+< import name.martingeisse.ecosim.cpu.usermode.unix.UnixSyscallErrorCode;
+< import name.martingeisse.ecosim.cpu.usermode.unix.UnixSyscallException;
+---
+> import name.martingeisse.ecotools.simulator.bus.Bus;
+> import name.martingeisse.ecotools.simulator.bus.BusAccessSize;
+> import name.martingeisse.ecotools.simulator.bus.BusTimeoutException;
+> import name.martingeisse.ecotools.simulator.cpu.Cpu;
+> import name.martingeisse.ecotools.simulator.cpu.IGeneralRegisterFile;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.ClearMemoryAction;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.ReadFromStreamAction;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.ReadStringAction;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.SparseMemory;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.UsermodeCpu;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.FilePointerTable;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.UnixSyscallErrorCode;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.UnixSyscallException;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/toolhost/ToolhostProcessSet.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/toolhost/ToolhostProcessSet.java
+7c7
+< package name.martingeisse.ecosim.cpu.toolhost;
+---
+> package name.martingeisse.ecotools.simulator.cpu.toolhost;
+13,16c13,16
+< import name.martingeisse.ecosim.cpu.usermode.unix.IFilePointer;
+< import name.martingeisse.ecosim.cpu.usermode.unix.StreamFilePointer;
+< import name.martingeisse.ecosim.cpu.usermode.unix.SystemInFilePointer;
+< import name.martingeisse.ecosim.cpu.usermode.unix.UnixSyscallException;
+---
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.IFilePointer;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.StreamFilePointer;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.SystemInFilePointer;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.UnixSyscallException;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/toolhost/ToolhostProcessState.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/toolhost/ToolhostProcessState.java
+7c7
+< package name.martingeisse.ecosim.cpu.toolhost;
+---
+> package name.martingeisse.ecotools.simulator.cpu.toolhost;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/toolhost/ToolhostTrapHandler.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/toolhost/ToolhostTrapHandler.java
+7c7
+< package name.martingeisse.ecosim.cpu.toolhost;
+---
+> package name.martingeisse.ecotools.simulator.cpu.toolhost;
+14,24c14,24
+< import name.martingeisse.ecosim.cpu.Cpu;
+< import name.martingeisse.ecosim.cpu.IGeneralRegisterFile;
+< import name.martingeisse.ecosim.cpu.usermode.IUsermodeCpuTrapHandler;
+< import name.martingeisse.ecosim.cpu.usermode.SparseMemory;
+< import name.martingeisse.ecosim.cpu.usermode.unix.IFilePointer;
+< import name.martingeisse.ecosim.cpu.usermode.unix.ReadingPipeFilePointer;
+< import name.martingeisse.ecosim.cpu.usermode.unix.SeekOrigin;
+< import name.martingeisse.ecosim.cpu.usermode.unix.UnixSyscallErrorCode;
+< import name.martingeisse.ecosim.cpu.usermode.unix.UnixSyscallException;
+< import name.martingeisse.ecosim.cpu.usermode.unix.WritingPipeFilePointer;
+< import name.martingeisse.ecosim.util.ByteQueue;
+---
+> import name.martingeisse.ecotools.common.util.ByteQueue;
+> import name.martingeisse.ecotools.simulator.cpu.Cpu;
+> import name.martingeisse.ecotools.simulator.cpu.IGeneralRegisterFile;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.IUsermodeCpuTrapHandler;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.SparseMemory;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.IFilePointer;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.ReadingPipeFilePointer;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.SeekOrigin;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.UnixSyscallErrorCode;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.UnixSyscallException;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.unix.WritingPipeFilePointer;
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/AbstractSparseMemoryBulkAction.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/AbstractSparseMemoryBulkAction.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/ClearMemoryAction.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/ClearMemoryAction.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/CopyFromBufferAction.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/CopyFromBufferAction.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/CopyToBufferAction.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/CopyToBufferAction.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/IUsermodeCpuTrapHandler.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/IUsermodeCpuTrapHandler.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/IdentityMemoryManagementUnit.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/IdentityMemoryManagementUnit.java
+6c6
+< package name.martingeisse.ecosim.cpu.usermode;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode;
+8,11c8,11
+< import name.martingeisse.ecosim.cpu.CpuException;
+< import name.martingeisse.ecosim.cpu.ICpuUserInterface;
+< import name.martingeisse.ecosim.cpu.IMemoryManagementUnit;
+< import name.martingeisse.ecosim.cpu.MemoryVisualizationException;
+---
+> import name.martingeisse.ecotools.simulator.cpu.CpuException;
+> import name.martingeisse.ecotools.simulator.cpu.ICpuUserInterface;
+> import name.martingeisse.ecotools.simulator.cpu.IMemoryManagementUnit;
+> import name.martingeisse.ecotools.simulator.ui.util.memory.MemoryVisualizationException;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/ReadFromStreamAction.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/ReadFromStreamAction.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/ReadStringAction.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/ReadStringAction.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/SparseMemory.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/SparseMemory.java
+6c6
+< package name.martingeisse.ecosim.cpu.usermode;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode;
+8,11c8,11
+< import name.martingeisse.ecosim.bus.BusAccessSize;
+< import name.martingeisse.ecosim.bus.BusTimeoutException;
+< import name.martingeisse.ecosim.bus.IInterruptLine;
+< import name.martingeisse.ecosim.bus.IPeripheralDevice;
+---
+> import name.martingeisse.ecotools.simulator.bus.BusAccessSize;
+> import name.martingeisse.ecotools.simulator.bus.BusTimeoutException;
+> import name.martingeisse.ecotools.simulator.bus.IInterruptLine;
+> import name.martingeisse.ecotools.simulator.bus.IPeripheralDevice;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/UsermodeCpu.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/UsermodeCpu.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode;
+9,14c9,14
+< import name.martingeisse.ecosim.cpu.Cpu;
+< import name.martingeisse.ecosim.cpu.CpuException;
+< import name.martingeisse.ecosim.cpu.GeneralRegisterFile;
+< import name.martingeisse.ecosim.cpu.IGeneralRegisterFile;
+< import name.martingeisse.ecosim.cpu.IMemoryManagementUnit;
+< import name.martingeisse.ecosim.cpu.ISpecialRegisterFile;
+---
+> import name.martingeisse.ecotools.simulator.cpu.Cpu;
+> import name.martingeisse.ecotools.simulator.cpu.CpuException;
+> import name.martingeisse.ecotools.simulator.cpu.GeneralRegisterFile;
+> import name.martingeisse.ecotools.simulator.cpu.IGeneralRegisterFile;
+> import name.martingeisse.ecotools.simulator.cpu.IMemoryManagementUnit;
+> import name.martingeisse.ecotools.simulator.cpu.ISpecialRegisterFile;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/UsermodeSpecialRegisterFile.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/UsermodeSpecialRegisterFile.java
+6c6
+< package name.martingeisse.ecosim.cpu.usermode;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode;
+8,10c8,10
+< import name.martingeisse.ecosim.cpu.ICpuUserInterface;
+< import name.martingeisse.ecosim.cpu.ISpecialRegisterFile;
+< import name.martingeisse.ecosim.cpu.ProcessorStatusWord;
+---
+> import name.martingeisse.ecotools.simulator.cpu.ICpuUserInterface;
+> import name.martingeisse.ecotools.simulator.cpu.ISpecialRegisterFile;
+> import name.martingeisse.ecotools.simulator.cpu.ProcessorStatusWord;
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/unix: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/unix/AbstractFilePointer.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/unix/AbstractFilePointer.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode.unix;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode.unix;
+9,10c9,10
+< import name.martingeisse.ecosim.cpu.toolhost.ToolhostProcess;
+< import name.martingeisse.ecosim.cpu.usermode.SparseMemory;
+---
+> import name.martingeisse.ecotools.simulator.cpu.toolhost.ToolhostProcess;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.SparseMemory;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/unix/EmptyFilePointer.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/unix/EmptyFilePointer.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode.unix;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode.unix;
+9,11c9,11
+< import name.martingeisse.ecosim.cpu.toolhost.StatResult;
+< import name.martingeisse.ecosim.cpu.toolhost.ToolhostProcess;
+< import name.martingeisse.ecosim.cpu.usermode.SparseMemory;
+---
+> import name.martingeisse.ecotools.simulator.cpu.toolhost.StatResult;
+> import name.martingeisse.ecotools.simulator.cpu.toolhost.ToolhostProcess;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.SparseMemory;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/unix/FilePointerTable.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/unix/FilePointerTable.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode.unix;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode.unix;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/unix/IFilePointer.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/unix/IFilePointer.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode.unix;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode.unix;
+9,11c9,11
+< import name.martingeisse.ecosim.cpu.toolhost.StatResult;
+< import name.martingeisse.ecosim.cpu.toolhost.ToolhostProcess;
+< import name.martingeisse.ecosim.cpu.usermode.SparseMemory;
+---
+> import name.martingeisse.ecotools.simulator.cpu.toolhost.StatResult;
+> import name.martingeisse.ecotools.simulator.cpu.toolhost.ToolhostProcess;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.SparseMemory;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/unix/ReadingPipeFilePointer.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/unix/ReadingPipeFilePointer.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode.unix;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode.unix;
+9,14c9,14
+< import name.martingeisse.ecosim.cpu.toolhost.IToolhostSleepHandler;
+< import name.martingeisse.ecosim.cpu.toolhost.StatResult;
+< import name.martingeisse.ecosim.cpu.toolhost.ToolhostProcess;
+< import name.martingeisse.ecosim.cpu.usermode.CopyFromBufferAction;
+< import name.martingeisse.ecosim.cpu.usermode.SparseMemory;
+< import name.martingeisse.ecosim.util.ByteQueue;
+---
+> import name.martingeisse.ecotools.common.util.ByteQueue;
+> import name.martingeisse.ecotools.simulator.cpu.toolhost.IToolhostSleepHandler;
+> import name.martingeisse.ecotools.simulator.cpu.toolhost.StatResult;
+> import name.martingeisse.ecotools.simulator.cpu.toolhost.ToolhostProcess;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.CopyFromBufferAction;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.SparseMemory;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/unix/SeekOrigin.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/unix/SeekOrigin.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode.unix;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode.unix;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/unix/StreamFilePointer.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/unix/StreamFilePointer.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode.unix;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode.unix;
+13,17c13,17
+< import name.martingeisse.ecosim.cpu.toolhost.StatResult;
+< import name.martingeisse.ecosim.cpu.toolhost.ToolhostProcess;
+< import name.martingeisse.ecosim.cpu.usermode.CopyFromBufferAction;
+< import name.martingeisse.ecosim.cpu.usermode.CopyToBufferAction;
+< import name.martingeisse.ecosim.cpu.usermode.SparseMemory;
+---
+> import name.martingeisse.ecotools.simulator.cpu.toolhost.StatResult;
+> import name.martingeisse.ecotools.simulator.cpu.toolhost.ToolhostProcess;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.CopyFromBufferAction;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.CopyToBufferAction;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.SparseMemory;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/unix/SystemInFilePointer.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/unix/SystemInFilePointer.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode.unix;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode.unix;
+11c11
+< import name.martingeisse.ecosim.util.ByteQueue;
+---
+> import name.martingeisse.ecotools.common.util.ByteQueue;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/unix/UnixSyscallErrorCode.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/unix/UnixSyscallErrorCode.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode.unix;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode.unix;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/unix/UnixSyscallException.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/unix/UnixSyscallException.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode.unix;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode.unix;
+diff -r web-ide/src/name/martingeisse/ecosim/cpu/usermode/unix/WritingPipeFilePointer.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/cpu/usermode/unix/WritingPipeFilePointer.java
+7c7
+< package name.martingeisse.ecosim.cpu.usermode.unix;
+---
+> package name.martingeisse.ecotools.simulator.cpu.usermode.unix;
+9,13c9,13
+< import name.martingeisse.ecosim.cpu.toolhost.StatResult;
+< import name.martingeisse.ecosim.cpu.toolhost.ToolhostProcess;
+< import name.martingeisse.ecosim.cpu.usermode.CopyToBufferAction;
+< import name.martingeisse.ecosim.cpu.usermode.SparseMemory;
+< import name.martingeisse.ecosim.util.ByteQueue;
+---
+> import name.martingeisse.ecotools.common.util.ByteQueue;
+> import name.martingeisse.ecotools.simulator.cpu.toolhost.StatResult;
+> import name.martingeisse.ecotools.simulator.cpu.toolhost.ToolhostProcess;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.CopyToBufferAction;
+> import name.martingeisse.ecotools.simulator.cpu.usermode.SparseMemory;
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices: .svn
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/blockdisplay: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/devices/blockdisplay/BlockDisplay.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/blockdisplay/BlockDisplay.java
+6c6
+< package name.martingeisse.ecosim.devices.blockdisplay;
+---
+> package name.martingeisse.ecotools.simulator.devices.blockdisplay;
+8,9c8,9
+< import name.martingeisse.ecosim.bus.AbstractPeripheralDevice;
+< import name.martingeisse.ecosim.bus.IInterruptLine;
+---
+> import name.martingeisse.ecotools.simulator.bus.AbstractPeripheralDevice;
+> import name.martingeisse.ecotools.simulator.bus.IInterruptLine;
+diff -r web-ide/src/name/martingeisse/ecosim/devices/blockdisplay/BlockGenerator.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/blockdisplay/BlockGenerator.java
+6c6
+< package name.martingeisse.ecosim.devices.blockdisplay;
+---
+> package name.martingeisse.ecotools.simulator.devices.blockdisplay;
+87,92d86
+< 	/**
+< 	 * Prevent instantiation.
+< 	 */
+< 	private BlockGenerator() {
+< 	}
+< 	
+diff -r web-ide/src/name/martingeisse/ecosim/devices/blockdisplay/IBlockDisplayUserInterface.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/blockdisplay/IBlockDisplayUserInterface.java
+6c6
+< package name.martingeisse.ecosim.devices.blockdisplay;
+---
+> package name.martingeisse.ecotools.simulator.devices.blockdisplay;
+diff -r web-ide/src/name/martingeisse/ecosim/devices/blockdisplay/IBlockDisplayUserInterfaceSocket.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/blockdisplay/IBlockDisplayUserInterfaceSocket.java
+6c6
+< package name.martingeisse.ecosim.devices.blockdisplay;
+---
+> package name.martingeisse.ecotools.simulator.devices.blockdisplay;
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/chardisplay: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/devices/chardisplay/CharacterDisplay.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/chardisplay/CharacterDisplay.java
+6c6
+< package name.martingeisse.ecosim.devices.chardisplay;
+---
+> package name.martingeisse.ecotools.simulator.devices.chardisplay;
+8,9c8,9
+< import name.martingeisse.ecosim.bus.AbstractPeripheralDevice;
+< import name.martingeisse.ecosim.bus.IInterruptLine;
+---
+> import name.martingeisse.ecotools.simulator.bus.AbstractPeripheralDevice;
+> import name.martingeisse.ecotools.simulator.bus.IInterruptLine;
+diff -r web-ide/src/name/martingeisse/ecosim/devices/chardisplay/CharacterGenerator.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/chardisplay/CharacterGenerator.java
+6c6
+< package name.martingeisse.ecosim.devices.chardisplay;
+---
+> package name.martingeisse.ecotools.simulator.devices.chardisplay;
+289,294d288
+< 
+< 	/**
+< 	 * Prevent instantiation.
+< 	 */
+< 	private CharacterGenerator() {
+< 	}
+diff -r web-ide/src/name/martingeisse/ecosim/devices/chardisplay/ICharacterDisplayUserInterface.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/chardisplay/ICharacterDisplayUserInterface.java
+6c6
+< package name.martingeisse.ecosim.devices.chardisplay;
+---
+> package name.martingeisse.ecotools.simulator.devices.chardisplay;
+diff -r web-ide/src/name/martingeisse/ecosim/devices/chardisplay/ICharacterDisplayUserInterfaceSocket.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/chardisplay/ICharacterDisplayUserInterfaceSocket.java
+6c6
+< package name.martingeisse.ecosim.devices.chardisplay;
+---
+> package name.martingeisse.ecotools.simulator.devices.chardisplay;
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/disk: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/devices/disk/Disk.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/disk/Disk.java
+6c6
+< package name.martingeisse.ecosim.devices.disk;
+---
+> package name.martingeisse.ecotools.simulator.devices.disk;
+13,17c13,17
+< import name.martingeisse.ecosim.bus.AbstractPeripheralDevice;
+< import name.martingeisse.ecosim.bus.BusTimeoutException;
+< import name.martingeisse.ecosim.bus.IInterruptLine;
+< import name.martingeisse.ecosim.util.AbstractValueTransportDelay;
+< import name.martingeisse.ecosim.util.BufferTools;
+---
+> import name.martingeisse.ecotools.simulator.AbstractValueTransportDelay;
+> import name.martingeisse.ecotools.simulator.BufferTools;
+> import name.martingeisse.ecotools.simulator.bus.AbstractPeripheralDevice;
+> import name.martingeisse.ecotools.simulator.bus.BusTimeoutException;
+> import name.martingeisse.ecotools.simulator.bus.IInterruptLine;
+49c49
+< 	private final File file;
+---
+> 	private File file;
+54c54
+< 	private transient RandomAccessFile randomAccessFile;
+---
+> 	private RandomAccessFile randomAccessFile;
+59c59
+< 	private final byte[] buffer;
+---
+> 	private byte[] buffer;
+129a130
+> 		this.randomAccessFile = new RandomAccessFile(file, "rwd");
+252d252
+< 	 * @throws IOException if the file must be opened and that fails
+254,257c254
+< 	public RandomAccessFile getRandomAccessFile() throws IOException {
+< 		if (randomAccessFile == null) {
+< 			randomAccessFile = new RandomAccessFile(file, "rwd");
+< 		}
+---
+> 	public RandomAccessFile getRandomAccessFile() {
+409,411c406
+< 			if (randomAccessFile != null) {
+< 				randomAccessFile.close();
+< 			}
+---
+> 			randomAccessFile.close();
+414,415d408
+< 		} finally {
+< 			randomAccessFile = null;
+445,452d437
+< 			/** open the simulated disk contents if necessary **/
+< 			RandomAccessFile randomAccessFile;
+< 			try {
+< 				randomAccessFile = getRandomAccessFile();
+< 			} catch (IOException e) {
+< 				throw new RuntimeException(e);
+< 			}
+< 			
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/keyboard: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/devices/keyboard/IKeyboardUserInterface.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/keyboard/IKeyboardUserInterface.java
+6c6
+< package name.martingeisse.ecosim.devices.keyboard;
+---
+> package name.martingeisse.ecotools.simulator.devices.keyboard;
+diff -r web-ide/src/name/martingeisse/ecosim/devices/keyboard/IKeyboardUserInterfaceSocket.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/keyboard/IKeyboardUserInterfaceSocket.java
+6c6
+< package name.martingeisse.ecosim.devices.keyboard;
+---
+> package name.martingeisse.ecotools.simulator.devices.keyboard;
+diff -r web-ide/src/name/martingeisse/ecosim/devices/keyboard/Keyboard.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/keyboard/Keyboard.java
+6c6
+< package name.martingeisse.ecosim.devices.keyboard;
+---
+> package name.martingeisse.ecotools.simulator.devices.keyboard;
+8,11c8,11
+< import name.martingeisse.ecosim.bus.AbstractPeripheralDevice;
+< import name.martingeisse.ecosim.bus.BusTimeoutException;
+< import name.martingeisse.ecosim.bus.IInterruptLine;
+< import name.martingeisse.ecosim.util.AbstractValueTransportDelay;
+---
+> import name.martingeisse.ecotools.simulator.AbstractValueTransportDelay;
+> import name.martingeisse.ecotools.simulator.bus.AbstractPeripheralDevice;
+> import name.martingeisse.ecotools.simulator.bus.BusTimeoutException;
+> import name.martingeisse.ecotools.simulator.bus.IInterruptLine;
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/memory: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/devices/memory/AbstractMemory.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/memory/AbstractMemory.java
+6c6
+< package name.martingeisse.ecosim.devices.memory;
+---
+> package name.martingeisse.ecotools.simulator.devices.memory;
+14,17c14,17
+< import name.martingeisse.ecosim.bus.BusAccessSize;
+< import name.martingeisse.ecosim.bus.BusTimeoutException;
+< import name.martingeisse.ecosim.bus.IInterruptLine;
+< import name.martingeisse.ecosim.bus.IPeripheralDevice;
+---
+> import name.martingeisse.ecotools.simulator.bus.BusAccessSize;
+> import name.martingeisse.ecotools.simulator.bus.BusTimeoutException;
+> import name.martingeisse.ecotools.simulator.bus.IInterruptLine;
+> import name.martingeisse.ecotools.simulator.bus.IPeripheralDevice;
+diff -r web-ide/src/name/martingeisse/ecosim/devices/memory/Ram.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/memory/Ram.java
+6c6
+< package name.martingeisse.ecosim.devices.memory;
+---
+> package name.martingeisse.ecotools.simulator.devices.memory;
+8,9c8,9
+< import name.martingeisse.ecosim.bus.BusAccessSize;
+< import name.martingeisse.ecosim.bus.BusTimeoutException;
+---
+> import name.martingeisse.ecotools.simulator.bus.BusAccessSize;
+> import name.martingeisse.ecotools.simulator.bus.BusTimeoutException;
+diff -r web-ide/src/name/martingeisse/ecosim/devices/memory/Rom.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/memory/Rom.java
+6c6
+< package name.martingeisse.ecosim.devices.memory;
+---
+> package name.martingeisse.ecotools.simulator.devices.memory;
+8,9c8,9
+< import name.martingeisse.ecosim.bus.BusAccessSize;
+< import name.martingeisse.ecosim.bus.BusTimeoutException;
+---
+> import name.martingeisse.ecotools.simulator.bus.BusAccessSize;
+> import name.martingeisse.ecotools.simulator.bus.BusTimeoutException;
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/output: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/devices/output/OutputDevice.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/output/OutputDevice.java
+6c6
+< package name.martingeisse.ecosim.devices.output;
+---
+> package name.martingeisse.ecotools.simulator.devices.output;
+13,15c13,15
+< import name.martingeisse.ecosim.bus.AbstractPeripheralDevice;
+< import name.martingeisse.ecosim.bus.BusTimeoutException;
+< import name.martingeisse.ecosim.bus.IInterruptLine;
+---
+> import name.martingeisse.ecotools.simulator.bus.AbstractPeripheralDevice;
+> import name.martingeisse.ecotools.simulator.bus.BusTimeoutException;
+> import name.martingeisse.ecotools.simulator.bus.IInterruptLine;
+25c25
+< 	 * the file
+---
+> 	 * the outputStream
+27c27
+< 	private final File file;
+---
+> 	private OutputStream outputStream;
+30c30
+< 	 * the outputStream
+---
+> 	 * the closeOnExit
+32c32,43
+< 	private transient OutputStream outputStream;
+---
+> 	private boolean closeOnExit;
+> 	
+> 	/**
+> 	 * Constructor
+> 	 * @param outputStream the output stream to write to
+> 	 * @param closeOnExit whether this device should close the output
+> 	 * stream upon simulator exit.
+> 	 */
+> 	public OutputDevice(OutputStream outputStream, boolean closeOnExit) {
+> 		this.outputStream = outputStream;
+> 		this.closeOnExit = closeOnExit;
+> 	}
+39,40c50
+< 		this.file = file;
+< 		this.outputStream = null;
+---
+> 		this(open(file), true);
+42a53,65
+> 	/**
+> 	 * Opens a file and converts any IO exception to a runtime exception.
+> 	 * @param file the file to open
+> 	 * @return Returns a {@link FileOutputStream} for the specified file.
+> 	 */
+> 	private static FileOutputStream open(File file) {
+> 		try {
+> 			return new FileOutputStream(file);
+> 		} catch (IOException e) {
+> 			throw new RuntimeException("problem while opening the file for the OutputDevice", e);
+> 		}
+> 	}
+> 
+57,59d79
+< 			if (outputStream == null) {
+< 				outputStream = new FileOutputStream(file);
+< 			}
+94,99c114,119
+< 		try {
+< 			outputStream.close();
+< 		} catch (IOException e) {
+< 			throw new RuntimeException("problem while closing the OutputDevice", e);
+< 		} finally {
+< 			outputStream = null;
+---
+> 		if (closeOnExit) {
+> 			try {
+> 				outputStream.close();
+> 			} catch (IOException e) {
+> 				throw new RuntimeException("problem while closing the OutputDevice", e);
+> 			}
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/pixeldisplay: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/devices/pixeldisplay/IPixelDisplayUserInterface.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/pixeldisplay/IPixelDisplayUserInterface.java
+6c6
+< package name.martingeisse.ecosim.devices.pixeldisplay;
+---
+> package name.martingeisse.ecotools.simulator.devices.pixeldisplay;
+diff -r web-ide/src/name/martingeisse/ecosim/devices/pixeldisplay/IPixelDisplayUserInterfaceSocket.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/pixeldisplay/IPixelDisplayUserInterfaceSocket.java
+6c6
+< package name.martingeisse.ecosim.devices.pixeldisplay;
+---
+> package name.martingeisse.ecotools.simulator.devices.pixeldisplay;
+diff -r web-ide/src/name/martingeisse/ecosim/devices/pixeldisplay/PixelDisplay.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/pixeldisplay/PixelDisplay.java
+6c6
+< package name.martingeisse.ecosim.devices.pixeldisplay;
+---
+> package name.martingeisse.ecotools.simulator.devices.pixeldisplay;
+8,10c8,10
+< import name.martingeisse.ecosim.bus.AbstractPeripheralDevice;
+< import name.martingeisse.ecosim.bus.BusTimeoutException;
+< import name.martingeisse.ecosim.bus.IInterruptLine;
+---
+> import name.martingeisse.ecotools.simulator.bus.AbstractPeripheralDevice;
+> import name.martingeisse.ecotools.simulator.bus.BusTimeoutException;
+> import name.martingeisse.ecotools.simulator.bus.IInterruptLine;
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/terminal: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/devices/terminal/ITerminalUserInterface.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/terminal/ITerminalUserInterface.java
+6c6
+< package name.martingeisse.ecosim.devices.terminal;
+---
+> package name.martingeisse.ecotools.simulator.devices.terminal;
+diff -r web-ide/src/name/martingeisse/ecosim/devices/terminal/ITerminalUserInterfaceSocket.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/terminal/ITerminalUserInterfaceSocket.java
+6c6
+< package name.martingeisse.ecosim.devices.terminal;
+---
+> package name.martingeisse.ecotools.simulator.devices.terminal;
+diff -r web-ide/src/name/martingeisse/ecosim/devices/terminal/Terminal.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/terminal/Terminal.java
+6c6
+< package name.martingeisse.ecosim.devices.terminal;
+---
+> package name.martingeisse.ecotools.simulator.devices.terminal;
+8,10c8,10
+< import name.martingeisse.ecosim.bus.AbstractPeripheralDevice;
+< import name.martingeisse.ecosim.bus.BusTimeoutException;
+< import name.martingeisse.ecosim.bus.IInterruptLine;
+---
+> import name.martingeisse.ecotools.simulator.bus.AbstractPeripheralDevice;
+> import name.martingeisse.ecotools.simulator.bus.BusTimeoutException;
+> import name.martingeisse.ecotools.simulator.bus.IInterruptLine;
+diff -r web-ide/src/name/martingeisse/ecosim/devices/terminal/TerminalReceiver.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/terminal/TerminalReceiver.java
+6c6
+< package name.martingeisse.ecosim.devices.terminal;
+---
+> package name.martingeisse.ecotools.simulator.devices.terminal;
+8,11c8,11
+< import name.martingeisse.ecosim.bus.BusTimeoutException;
+< import name.martingeisse.ecosim.bus.IInterruptLine;
+< import name.martingeisse.ecosim.timer.ITickable;
+< import name.martingeisse.ecosim.util.AbstractValueTransportDelay;
+---
+> import name.martingeisse.ecotools.simulator.AbstractValueTransportDelay;
+> import name.martingeisse.ecotools.simulator.bus.BusTimeoutException;
+> import name.martingeisse.ecotools.simulator.bus.IInterruptLine;
+> import name.martingeisse.ecotools.simulator.timer.ITickable;
+183c183
+< 	 * @see name.martingeisse.ecosim.devices.terminal.ITerminalUserInterfaceSocket#onInputAvailable()
+---
+> 	 * @see name.martingeisse.ecotools.simulator.devices.terminal.ITerminalUserInterfaceSocket#onInputAvailable()
+diff -r web-ide/src/name/martingeisse/ecosim/devices/terminal/TerminalTransmitter.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/terminal/TerminalTransmitter.java
+6c6
+< package name.martingeisse.ecosim.devices.terminal;
+---
+> package name.martingeisse.ecotools.simulator.devices.terminal;
+8,11c8,11
+< import name.martingeisse.ecosim.bus.BusTimeoutException;
+< import name.martingeisse.ecosim.bus.IInterruptLine;
+< import name.martingeisse.ecosim.timer.ITickable;
+< import name.martingeisse.ecosim.util.AbstractValueTransportDelay;
+---
+> import name.martingeisse.ecotools.simulator.AbstractValueTransportDelay;
+> import name.martingeisse.ecotools.simulator.bus.BusTimeoutException;
+> import name.martingeisse.ecotools.simulator.bus.IInterruptLine;
+> import name.martingeisse.ecotools.simulator.timer.ITickable;
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/timer: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/devices/timer/Timer.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/devices/timer/Timer.java
+6c6
+< package name.martingeisse.ecosim.devices.timer;
+---
+> package name.martingeisse.ecotools.simulator.devices.timer;
+8,11c8,11
+< import name.martingeisse.ecosim.bus.AbstractPeripheralDevice;
+< import name.martingeisse.ecosim.bus.BusTimeoutException;
+< import name.martingeisse.ecosim.bus.IInterruptLine;
+< import name.martingeisse.ecosim.timer.AbstractPrescaledIntervalTimer;
+---
+> import name.martingeisse.ecotools.simulator.bus.AbstractPeripheralDevice;
+> import name.martingeisse.ecotools.simulator.bus.BusTimeoutException;
+> import name.martingeisse.ecotools.simulator.bus.IInterruptLine;
+> import name.martingeisse.ecotools.simulator.timer.AbstractPrescaledIntervalTimer;
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/mapfile: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/mapfile/MapFile.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/mapfile/MapFile.java
+6c6
+< package name.martingeisse.ecosim.mapfile;
+---
+> package name.martingeisse.ecotools.simulator.mapfile;
+diff -r web-ide/src/name/martingeisse/ecosim/mapfile/MapFileSection.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/mapfile/MapFileSection.java
+6,7c6
+< package name.martingeisse.ecosim.mapfile;
+< 
+---
+> package name.martingeisse.ecotools.simulator.mapfile;
+diff -r web-ide/src/name/martingeisse/ecosim/mapfile/MapFileSymbol.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/mapfile/MapFileSymbol.java
+6,7c6
+< package name.martingeisse.ecosim.mapfile;
+< 
+---
+> package name.martingeisse.ecotools.simulator.mapfile;
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/profiling: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/profiling/FlatCpuProfiler.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/profiling/FlatCpuProfiler.java
+7c7
+< package name.martingeisse.ecosim.profiling;
+---
+> package name.martingeisse.ecotools.simulator.profiling;
+9c9
+< import name.martingeisse.ecosim.cpu.ICpuProfiler;
+---
+> import name.martingeisse.ecotools.simulator.cpu.ICpuProfiler;
+diff -r web-ide/src/name/martingeisse/ecosim/profiling/FlatCpuProfilingRun.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/profiling/FlatCpuProfilingRun.java
+7c7
+< package name.martingeisse.ecosim.profiling;
+---
+> package name.martingeisse.ecotools.simulator.profiling;
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/timer: .svn
+diff -r web-ide/src/name/martingeisse/ecosim/timer/AbstractIntervalTimer.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/timer/AbstractIntervalTimer.java
+6,7c6
+< package name.martingeisse.ecosim.timer;
+< 
+---
+> package name.martingeisse.ecotools.simulator.timer;
+diff -r web-ide/src/name/martingeisse/ecosim/timer/AbstractPrescaledIntervalTimer.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/timer/AbstractPrescaledIntervalTimer.java
+6,7c6
+< package name.martingeisse.ecosim.timer;
+< 
+---
+> package name.martingeisse.ecotools.simulator.timer;
+diff -r web-ide/src/name/martingeisse/ecosim/timer/ITickable.java ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/timer/ITickable.java
+6c6
+< package name.martingeisse.ecosim.timer;
+---
+> package name.martingeisse.ecotools.simulator.timer;
+Only in ../../workspace/ecotools/src/name/martingeisse/ecotools/simulator/: ui
+Only in web-ide/src/name/martingeisse/ecosim: util

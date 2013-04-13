@@ -22,47 +22,24 @@ import name.martingeisse.ecosim.bus.IInterruptLine;
 public class OutputDevice extends AbstractPeripheralDevice {
 
 	/**
+	 * the file
+	 */
+	private final File file;
+	
+	/**
 	 * the outputStream
 	 */
 	private OutputStream outputStream;
-	
-	/**
-	 * the closeOnExit
-	 */
-	private boolean closeOnExit;
-	
-	/**
-	 * Constructor
-	 * @param outputStream the output stream to write to
-	 * @param closeOnExit whether this device should close the output
-	 * stream upon simulator exit.
-	 */
-	public OutputDevice(OutputStream outputStream, boolean closeOnExit) {
-		this.outputStream = outputStream;
-		this.closeOnExit = closeOnExit;
-	}
 	
 	/**
 	 * Constructor
 	 * @param file the file to write to. Any existing file will be overwritten.
 	 */
 	public OutputDevice(File file) {
-		this(open(file), true);
+		this.file = file;
+		this.outputStream = null;
 	}
 	
-	/**
-	 * Opens a file and converts any IO exception to a runtime exception.
-	 * @param file the file to open
-	 * @return Returns a {@link FileOutputStream} for the specified file.
-	 */
-	private static FileOutputStream open(File file) {
-		try {
-			return new FileOutputStream(file);
-		} catch (IOException e) {
-			throw new RuntimeException("problem while opening the file for the OutputDevice", e);
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see name.martingeisse.ecotools.simulator.bus.AbstractPeripheralDevice#readWord(int)
 	 */
@@ -77,6 +54,9 @@ public class OutputDevice extends AbstractPeripheralDevice {
 	@Override
 	protected void writeWord(int localAddress, int value) throws BusTimeoutException {
 		try {
+			if (outputStream == null) {
+				outputStream = new FileOutputStream(file);
+			}
 			outputStream.write(value);
 		} catch (IOException e) {
 			throw new RuntimeException("problem while writing a byte to the OutputDevice", e);
@@ -111,12 +91,12 @@ public class OutputDevice extends AbstractPeripheralDevice {
 	 */
 	@Override
 	public void dispose() {
-		if (closeOnExit) {
-			try {
-				outputStream.close();
-			} catch (IOException e) {
-				throw new RuntimeException("problem while closing the OutputDevice", e);
-			}
+		try {
+			outputStream.close();
+		} catch (IOException e) {
+			throw new RuntimeException("problem while closing the OutputDevice", e);
+		} finally {
+			outputStream = null;
 		}
 	}
 

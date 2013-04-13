@@ -5,6 +5,7 @@
  */
 package name.martingeisse.ecosim.bus;
 
+
 /**
  * This class wraps a set of 16 interrupt lines.
  */

@@ -5,6 +5,7 @@
  */
 package name.martingeisse.ecosim.bus;
 
+
 /**
  * This class represents the way a device is attached to the bus
  */

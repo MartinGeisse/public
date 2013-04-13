@@ -5,6 +5,7 @@
  */
 package name.martingeisse.ecosim.mapfile;
 
+
 /**
  * A single symbol entry from a map file.
  */

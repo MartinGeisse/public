@@ -407,4 +407,10 @@ public class Instruction {
 	 */
 	public static final int OPCODE_TBWI = 0x3D;
 
+	/**
+	 * Prevent instantiation.
+	 */
+	private Instruction() {
+	}
+	
 }

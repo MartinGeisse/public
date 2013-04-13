@@ -84,4 +84,10 @@ public class BlockGenerator {
 		"0000000000000000000000000000000000000000000000000000000000000000"
 	};
 	
+	/**
+	 * Prevent instantiation.
+	 */
+	private BlockGenerator() {
+	}
+	
 }

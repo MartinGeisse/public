@@ -286,5 +286,11 @@ public class CharacterGenerator {
 		{0, 0, 0, 0, 62, 62, 62, 62, 62, 62, 62, 0, 0, 0, 0, 0, },
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
 	};
+
+	/**
+	 * Prevent instantiation.
+	 */
+	private CharacterGenerator() {
+	}
 	
 }

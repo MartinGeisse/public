@@ -149,5 +149,4 @@ public class ProcessorStatusWord {
 		return (value & INTERRUPT_ENABLE_BIT) != 0 && (value & (1 << index)) != 0;
 	}
 
-
 }

@@ -5,6 +5,7 @@
  */
 package name.martingeisse.ecosim.timer;
 
+
 /**
  * This timer type works similar to AbstractIntervalTimer. However, it
  * uses two interval lengths and two remaining tick counts. One of

@@ -1,11 +1,117 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <html>
+	<wicket:head>
+		<style type="text/css">
+		
+			#simulator-tab-bar {
+			}
+			
+			#simulator-tab-button-container {
+			}
+		
+			#simulator-control-container {
+				float: right;
+				width: 120px;
+			}
+
+			.simulator-tab-button {
+				display: inline-block;
+				margin: 0px; 
+				width: 100px;
+				border: 1px solid #aaa;
+				background-color: #ddd;
+				padding: 5px;
+				font-weight: bold;
+				text-align: center;
+				cursor: pointer;
+				color: black;
+				text-decoration: none;
+			}
+
+			.simulator-tab-button.current {
+				background-color: #fff;
+			}
+			
+			.simulator-control-button {
+				display: inline-block;
+				margin: 2px; 
+				width: 80px;
+				border: 1px solid #aaa;
+				padding: 5px;
+				font-weight: bold;
+				text-align: center;
+				cursor: pointer;
+			}
+
+			.simulator-control-button.start {
+				background-color: #daa;
+			}
+
+			.simulator-control-button.terminate {
+				background-color: #ada;
+			}
+			
+			/* --------------------------------------------------------------------------------------------------------- */
+			
+			#simulator-tab-pane-container {
+				margin-top: 20px;
+			}
+
+			#simulator-tab-pane-container > div {
+				height: 60%;
+			}
+
+			.terminal-output-container {
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				right: 10px;
+				bottom: 10px;
+				border: 1px solid #ddd;
+			}
+		
+		</style>
+		<script type="text/javascript">
+			$(function() {
+				$('#simulator-tab-button-container').tabs('#simulator-tab-pane-container > *');
+			});
+		</script>
+	</wicket:head>
 	<body>
 		<wicket:panel>
-			<div>Editor test.</div>
-			<div>Status: <span wicket:id="status" /></div>
-			<div><input type="button" wicket:id="startButton" value="Start" /></div>
-			<div><input type="button" wicket:id="terminateButton" value="Terminate" /></div>
+		
+			<div id="simulator-tab-bar">
+				<div id="simulator-control-container">
+					<input type="button" wicket:id="startButton" value="Start" class="simulator-control-button start" />
+					<input type="button" wicket:id="terminateButton" value="Terminate" class="simulator-control-button terminate" />
+				</div>
+				<div id="simulator-tab-button-container">
+					<a href="#" class="simulator-tab-button">CPU</a>
+					<a href="#" class="simulator-tab-button">RAM</a>
+					<a href="#" class="simulator-tab-button">ROM</a>
+					<a href="#" class="simulator-tab-button">Disk</a>
+					<a href="#" class="simulator-tab-button">Terminal</a>
+					<a href="#" class="simulator-tab-button">Console</a>
+					<a href="#" class="simulator-tab-button">Debug-Out</a>
+				</div>
+			</div>
+
+			<div id="simulator-tab-pane-container">
+				<div>CPU</div>
+				<div>RAM</div>
+				<div>ROM</div>
+				<div>Disk</div>
+				<div>
+					<div style="position: relative; ">
+						<div class="terminal-output-container">
+							<pre wicket:id="terminalOutput" />
+						</div>
+					</div>
+				</div>
+				<div>Console</div>
+				<div>Debug-Out</div>
+			</div>
+			
 		</wicket:panel>
 	</body>
 </html>

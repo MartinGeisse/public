@@ -6,6 +6,7 @@
 package name.martingeisse.ecosim.cpu;
 
 
+
 /**
  * The memory management unit.
  */

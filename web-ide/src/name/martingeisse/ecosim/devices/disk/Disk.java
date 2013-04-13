@@ -46,7 +46,7 @@ public class Disk extends AbstractPeripheralDevice {
 	/**
 	 * the file that backs the simulated disk
 	 */
-	private File file;
+	private final File file;
 
 	/**
 	 * the RandomAccessFile object used to access the backing file
@@ -56,7 +56,7 @@ public class Disk extends AbstractPeripheralDevice {
 	/**
 	 * the simulated disk controller buffer
 	 */
-	private byte[] buffer;
+	private final byte[] buffer;
 
 	/**
 	 * the interruptEnable field of the control register
@@ -127,7 +127,6 @@ public class Disk extends AbstractPeripheralDevice {
 		}
 		
 		this.file = file;
-		this.randomAccessFile = new RandomAccessFile(file, "rwd");
 		this.buffer = new byte[BUFFER_SIZE * SECTOR_SIZE];
 		this.interruptEnable = false;
 		this.write = false;
@@ -250,8 +249,12 @@ public class Disk extends AbstractPeripheralDevice {
 
 	/**
 	 * @return Returns the randomAccessFile.
+	 * @throws IOException if the file must be opened and that fails
 	 */
-	public RandomAccessFile getRandomAccessFile() {
+	public RandomAccessFile getRandomAccessFile() throws IOException {
+		if (randomAccessFile == null) {
+			randomAccessFile = new RandomAccessFile(file, "rwd");
+		}
 		return randomAccessFile;
 	}
 
@@ -403,9 +406,13 @@ public class Disk extends AbstractPeripheralDevice {
 	@Override
 	public void dispose() {
 		try {
-			randomAccessFile.close();
+			if (randomAccessFile != null) {
+				randomAccessFile.close();
+			}
 		} catch (IOException e) {
 			throw new RuntimeException("problem while closing the simulated disk", e);
+		} finally {
+			randomAccessFile = null;
 		}
 	}
 
@@ -435,6 +442,14 @@ public class Disk extends AbstractPeripheralDevice {
 		@Override
 		protected void onArrive(Void value) {
 
+			/** open the simulated disk contents if necessary **/
+			RandomAccessFile randomAccessFile;
+			try {
+				randomAccessFile = getRandomAccessFile();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			
 			/** handle disk initialization **/
 			if (!ready) {
 				ready = true;

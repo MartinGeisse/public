@@ -5,6 +5,7 @@
  */
 package name.martingeisse.ecosim.cpu;
 
+
 /**
  * This interface represents the "CPU" part of the user interface.
  * It provides callback methods that are invoked on various CPU

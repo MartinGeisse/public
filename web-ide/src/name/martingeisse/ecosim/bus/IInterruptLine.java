@@ -5,6 +5,7 @@
  */
 package name.martingeisse.ecosim.bus;
 
+
 /**
  * This interface is used by peripheral devices to signal interrupts.
  */

@@ -5,6 +5,7 @@
  */
 package name.martingeisse.ecosim.cpu;
 
+
 /**
  * This interface represents the general register file of the CPU. It contains 32 registers, each 32 bits
  * wide. Register #0 is the "zero register" which always has the value 0. Writing to this

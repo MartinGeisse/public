@@ -1,2 +1,3 @@
-
-foobar
+{
+	"primaryElementClass": "name.martingeisse.webide.features.ecosim.EcosimPrimaryModelElement"
+}

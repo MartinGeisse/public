@@ -5,6 +5,7 @@
  */
 package name.martingeisse.ecosim.mapfile;
 
+
 /**
  * A section from a map file.
  */

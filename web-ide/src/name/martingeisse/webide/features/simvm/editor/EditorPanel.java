@@ -6,8 +6,10 @@
 
 package name.martingeisse.webide.features.simvm.editor;
 
+import name.martingeisse.webide.features.ecosim.EcosimPrimaryModelElement;
 import name.martingeisse.webide.features.simvm.model.SimulationModel;
 import name.martingeisse.webide.features.simvm.simulation.Simulation;
+import name.martingeisse.webide.resources.ResourceHandle;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
@@ -21,38 +23,42 @@ import org.apache.wicket.model.IModel;
 class EditorPanel extends Panel {
 
 	/**
+	 * the anchorResource
+	 */
+	private final ResourceHandle anchorResource;
+	
+	/**
 	 * Constructor.
 	 * @param id the Wicket id
 	 * @param model the document model
+	 * @param anchorResource the anchor resource of the simulation
 	 */
-	public EditorPanel(String id, IModel<SimulationModel> model) {
+	public EditorPanel(String id, IModel<SimulationModel> model, ResourceHandle anchorResource) {
 		super(id, model);
-		add(new Label("status", new AbstractReadOnlyModel<String>() {
-			@Override
-			public String getObject() {
-				Simulation simulation = Simulation.getExisting(getSimulationModel().getAnchorResource());
-				if (simulation == null) {
-					return "stopped";
-				}
-				SimulationModel simulationModel = simulation.getSimulationModel();
-				// StepwisePrimarySimulationModelElement primaryElement = (StepwisePrimarySimulationModelElement)simulationModel.getPrimaryElement();
-				// return "running: " + primaryElement.getCounter();
-				return "running";
-			}
-		}));
+		this.anchorResource = anchorResource;
+		
 		add(new Link<Void>("startButton") {
+			
 			@Override
 			public void onClick() {
 				try {
-					Simulation.getOrCreate(getSimulationModel().getAnchorResource(), true);
+					Simulation.getOrCreate(EditorPanel.this.anchorResource, true);
 				} catch (Simulation.StaleSimulationException e) {
 				}
 			}
+			
+			@Override
+			public boolean isVisible() {
+				return !isRunning();
+			}
+			
 		});
+		
 		add(new Link<Void>("terminateButton") {
+			
 			@Override
 			public void onClick() {
-				Simulation simulation = Simulation.getExisting(getSimulationModel().getAnchorResource());
+				Simulation simulation = Simulation.getExisting(EditorPanel.this.anchorResource);
 				if (simulation != null) {
 					try {
 						simulation.terminate();
@@ -60,7 +66,32 @@ class EditorPanel extends Panel {
 					}
 				}
 			}
+			
+			/* (non-Javadoc)
+			 * @see org.apache.wicket.Component#isVisible()
+			 */
+			@Override
+			public boolean isVisible() {
+				return isRunning();
+			}
+			
 		});
+		
+		add(new Label("terminalOutput", new AbstractReadOnlyModel<String>() {
+			@Override
+			public String getObject() {
+				SimulationModel simulationModel = getSimulationModel();
+				if (simulationModel == null) {
+					return null;
+				}
+				if (!(simulationModel.getPrimaryElement() instanceof EcosimPrimaryModelElement)) {
+					return null;
+				}
+				EcosimPrimaryModelElement primaryElement = (EcosimPrimaryModelElement)simulationModel.getPrimaryElement();
+				return primaryElement.getTerminalUserInterface().getOutput();
+			}
+		}));
+		
 	}
 	
 	/**
@@ -69,4 +100,12 @@ class EditorPanel extends Panel {
 	private SimulationModel getSimulationModel() {
 		return (SimulationModel)getDefaultModelObject();
 	}
+
+	/**
+	 * 
+	 */
+	private boolean isRunning() {
+		return (Simulation.getExisting(EditorPanel.this.anchorResource) != null);
+	}
+	
 }
