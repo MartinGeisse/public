@@ -49,7 +49,7 @@ class SimulationThread extends Thread {
 	/**
 	 * the EVENT_INSTANCE_RUNNING
 	 */
-	private static final IpcEvent<?> EVENT_INSTANCE_RUNNING = new IpcEvent<Object>(EVENT_TYPE_RUNNING, null);
+	private static final IpcEvent EVENT_INSTANCE_RUNNING = new IpcEvent(EVENT_TYPE_RUNNING, null, null);
 	
 	/**
 	 * the logger
@@ -89,9 +89,16 @@ class SimulationThread extends Thread {
 	 */
 	@Override
 	public void run() {
+		
+		// TODO for testing
+		try {
+			sleep(2000);
+		} catch (InterruptedException e) {
+		}
+		
 		try {
 			while (true) {
-				IpcEvent<?> event = fetchEvent();
+				IpcEvent event = fetchEvent();
 				if (event == null) {
 					continue;
 				}
@@ -109,9 +116,9 @@ class SimulationThread extends Thread {
 		}
 	}
 	
-	private IpcEvent<?> fetchEvent() {
+	private IpcEvent fetchEvent() {
 		try {
-			IpcEvent<?> event = simulation.fetchEvent(!running);
+			IpcEvent event = simulation.fetchEvent(!running);
 			return (event == null ? EVENT_INSTANCE_RUNNING : event);
 		} catch (InterruptedException e) {
 			logger.error("SimVM simulation thread was interrupted while fetching an event");
@@ -120,7 +127,7 @@ class SimulationThread extends Thread {
 		
 	}
 
-	private boolean handleSimulatorControlEvent(IpcEvent<?> event) {
+	private boolean handleSimulatorControlEvent(IpcEvent event) {
 		String type = event.getType();
 		if (type.equals(EVENT_TYPE_PAUSE)) {
 			handlePause();
@@ -170,7 +177,7 @@ class SimulationThread extends Thread {
 		simulation.getSimulationModel().getPrimaryElement().deleteState();
 	}
 	
-	private void handleCustomEvent(IpcEvent<?> event) {
+	private void handleCustomEvent(IpcEvent event) {
 		simulation.getSimulationModel().getPrimaryElement().handleEvent(event);
 	}
 	

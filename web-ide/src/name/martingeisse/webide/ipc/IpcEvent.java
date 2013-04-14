@@ -7,29 +7,39 @@
 package name.martingeisse.webide.ipc;
 
 /**
- * Generic IPC event consisting of a type and arbitrary data.
+ * Generic IPC event consisting of a type, source object and
+ * arbitrary data.
  * 
- * @param <D> the data type
+ * Note: The source and data fields do not use type parameters
+ * because the decoupled nature of IPC events makes (compile-time)
+ * type parameters pretty useless.
  */
-public class IpcEvent<D> {
+public final class IpcEvent {
 
 	/**
 	 * the type
 	 */
 	private final String type;
+
+	/**
+	 * the source
+	 */
+	private final Object source;
 	
 	/**
 	 * the data
 	 */
-	private final D data;
+	private final Object data;
 
 	/**
 	 * Constructor.
 	 * @param type the type
+	 * @param source the source
 	 * @param data the data
 	 */
-	public IpcEvent(String type, D data) {
+	public IpcEvent(String type, Object source, Object data) {
 		this.type = type;
+		this.source = source;
 		this.data = data;
 	}
 
@@ -42,10 +52,18 @@ public class IpcEvent<D> {
 	}
 	
 	/**
+	 * Getter method for the source.
+	 * @return the source
+	 */
+	public Object getSource() {
+		return source;
+	}
+	
+	/**
 	 * Getter method for the data.
 	 * @return the data
 	 */
-	public final D getData() {
+	public final Object getData() {
 		return data;
 	}
 	

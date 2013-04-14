@@ -9,7 +9,7 @@ package name.martingeisse.webide.features.simvm.model;
 import java.io.Serializable;
 
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
-import name.martingeisse.common.util.ParameterUtil;
+import name.martingeisse.webide.ipc.IIpcEventOutbox;
 import name.martingeisse.webide.resources.ResourceHandle;
 
 /**
@@ -33,8 +33,9 @@ public final class SimulationModel implements Serializable {
 	/**
 	 * Constructor.
 	 * @param descriptorResource the resource that contains the descriptor for the model
+	 * @param eventOutbox the event outbox
 	 */
-	public SimulationModel(ResourceHandle descriptorResource) {
+	public SimulationModel(ResourceHandle descriptorResource, IIpcEventOutbox eventOutbox) {
 		try {
 			JsonAnalyzer simulationModelAnalyzer = JsonAnalyzer.parse(descriptorResource.readTextFile(true));
 			String primaryElementClassName = simulationModelAnalyzer.analyzeMapElement("primaryElementClass").expectString();
@@ -44,27 +45,9 @@ public final class SimulationModel implements Serializable {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		initializePrimaryElement();
+		primaryElement.initialize(this, eventOutbox);
 	}
-
-	/**
-	 * Constructor.
-	 * @param primaryElement the primary model element
-	 * @param anchorResource the resource used as an anchor for loading auxiliary files
-	 */
-	public SimulationModel(IPrimarySimulationModelElement primaryElement, ResourceHandle anchorResource) {
-		this.primaryElement = ParameterUtil.ensureNotNull(primaryElement, "primaryElement");
-		this.anchorResource = ParameterUtil.ensureNotNull(anchorResource, "anchorResource");;
-		initializePrimaryElement();
-	}
-
-	/**
-	 * Initializes the primary model element with this object.
-	 */
-	private void initializePrimaryElement() {
-		primaryElement.initialize(this);
-	}
-
+	
 	/**
 	 * Getter method for the primaryElement.
 	 * @return the primaryElement

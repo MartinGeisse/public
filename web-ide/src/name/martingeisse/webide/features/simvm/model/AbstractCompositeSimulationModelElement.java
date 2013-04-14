@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import name.martingeisse.webide.ipc.IIpcEventOutbox;
 import name.martingeisse.webide.ipc.IpcEvent;
 
 import org.json.simple.JSONArray;
@@ -52,12 +53,12 @@ public abstract class AbstractCompositeSimulationModelElement<S extends ISimulat
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.features.simvm.model.ISimulationModelElement#initialize(name.martingeisse.webide.features.simvm.model.SimulationModel)
+	 * @see name.martingeisse.webide.features.simvm.model.ISimulationModelElement#initialize(name.martingeisse.webide.features.simvm.model.SimulationModel, name.martingeisse.webide.ipc.IIpcEventOutbox)
 	 */
 	@Override
-	public void initialize(SimulationModel simulationModel) {
+	public void initialize(SimulationModel simulationModel, IIpcEventOutbox eventOutbox) {
 		for (S subElement : subElements) {
-			subElement.initialize(simulationModel);
+			subElement.initialize(simulationModel, eventOutbox);
 		}
 	}
 
@@ -141,7 +142,7 @@ public abstract class AbstractCompositeSimulationModelElement<S extends ISimulat
 	 * @see name.martingeisse.webide.features.simvm.model.ISimulationModelElement#handleEvent(name.martingeisse.webide.ipc.IpcEvent)
 	 */
 	@Override
-	public void handleEvent(IpcEvent<?> event) {
+	public void handleEvent(IpcEvent event) {
 		for (S subElement : subElements) {
 			subElement.handleEvent(event);
 		}

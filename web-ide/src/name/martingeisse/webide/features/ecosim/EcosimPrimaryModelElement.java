@@ -23,6 +23,7 @@ import name.martingeisse.webide.features.ecosim.ui.TerminalUserInterface;
 import name.martingeisse.webide.features.simvm.model.AbstractCompositeSimulationModelElement;
 import name.martingeisse.webide.features.simvm.model.IPrimarySimulationModelElement;
 import name.martingeisse.webide.features.simvm.model.SimulationModel;
+import name.martingeisse.webide.ipc.IIpcEventOutbox;
 
 /**
  * The primary model element for the Eco32 simulator.
@@ -66,11 +67,11 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.features.simvm.model.AbstractCompositeSimulationModelElement#initialize(name.martingeisse.webide.features.simvm.model.SimulationModel)
+	 * @see name.martingeisse.webide.features.simvm.model.AbstractCompositeSimulationModelElement#initialize(name.martingeisse.webide.features.simvm.model.SimulationModel, name.martingeisse.webide.ipc.IIpcEventOutbox)
 	 */
 	@Override
-	public void initialize(SimulationModel simulationModel) {
-		super.initialize(simulationModel);
+	public void initialize(SimulationModel simulationModel, IIpcEventOutbox eventOutbox) {
+		super.initialize(simulationModel, eventOutbox);
 		this.bus = new Bus();
 		this.cpu = new Cpu();
 		this.remainingInstructionsForThisTick = INSTRUCTIONS_PER_DEVICE_TICK;
@@ -101,7 +102,7 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 			bus.add(0x30300000, terminal, new int[] {
 				1, 0
 			});
-			terminalUserInterface = new TerminalUserInterface();
+			terminalUserInterface = new TerminalUserInterface(eventOutbox);
 			terminal.setUserInterface(terminalUserInterface);
 	
 			CharacterDisplay characterDisplay = new CharacterDisplay();
