@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 
 import name.martingeisse.common.database.EntityConnectionManager;
@@ -26,9 +25,7 @@ import name.martingeisse.webide.entity.WorkspaceBuildTriggers;
 import name.martingeisse.webide.entity.WorkspaceBuilders;
 import name.martingeisse.webide.entity.WorkspaceResourceDeltas;
 import name.martingeisse.webide.entity.WorkspaceTasks;
-import name.martingeisse.webide.features.simvm.editor.EditorPanel;
 import name.martingeisse.webide.plugin.PluginBundleHandle;
-import name.martingeisse.webide.resources.ResourceHandle;
 import name.martingeisse.webide.resources.ResourcePath;
 
 import org.apache.commons.lang3.StringUtils;
@@ -56,7 +53,6 @@ public class BuilderThreadNew {
 						for (final WorkspaceTasks task : fetchPendingTasks()) {
 							executeTask(task);
 						}
-						ConcurrentMap<String, ResourceHandle> editorPageSimulationAnchors = EditorPanel.editorPageSimulationAnchors;
 						Thread.sleep(1000);
 					} catch (final Exception e) {
 						logger.error("", e);

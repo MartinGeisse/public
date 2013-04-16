@@ -30,16 +30,13 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.atmosphere.cpr.ApplicationConfig;
 
 import com.google.common.base.Predicate;
 
 /**
  * The actual Wicket component that encapsulates the SimVM UI.
- * 
- * TODO make private
  */
-public class EditorPanel extends Panel {
+class EditorPanel extends Panel {
 
 	/**
 	 * This map maps Atmosphere resource UUIDs (each corresponding to a page with an
@@ -52,10 +49,8 @@ public class EditorPanel extends Panel {
 	 * a small amount of memory); the only important invariant is that the mapping for
 	 * existing pages which still show a running simulation must be correct and
 	 * up-to-date.
-	 * 
-	 * TODO make private
 	 */
-	public static final ConcurrentMap<String, ResourceHandle> editorPageSimulationAnchors = new ConcurrentHashMap<String, ResourceHandle>();
+	static final ConcurrentMap<String, ResourceHandle> editorPageSimulationAnchors = new ConcurrentHashMap<String, ResourceHandle>();
 	
 	/**
 	 * the anchorResource
@@ -207,7 +202,7 @@ public class EditorPanel extends Panel {
 		public boolean apply(@Nullable AtmosphereEvent input) {
 			
 			String currentUuid = input.getResource().uuid();
-			String originalUuid = (String)input.getResource().getRequest().getAttribute(ApplicationConfig.SUSPENDED_ATMOSPHERE_RESOURCE_UUID);
+			// String originalUuid = (String)input.getResource().getRequest().getAttribute(ApplicationConfig.SUSPENDED_ATMOSPHERE_RESOURCE_UUID);
 			ResourceHandle anchorResourceForUuid = editorPageSimulationAnchors.get(currentUuid);
 			SimulationEventMessage message = (SimulationEventMessage)input.getPayload();
 			ResourceHandle anchorResourceForSimulation = message.getSimulation().getResourceHandle();
