@@ -74,6 +74,7 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 		
 		this.servicesImplementation = new WorkbenchPageServicesImpl(this);
 		setOutputMarkupId(true);
+		// setVersioned(false);
 		add(new HandleUploadedFileBehavior());
 
 		final WebMarkupContainer filesContainer = new WebMarkupContainer("filesContainer");

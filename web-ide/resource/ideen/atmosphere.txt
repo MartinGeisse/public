@@ -1,0 +1,4 @@
+String uuid = (String)request.getAttribute(ApplicationConfig.SUSPENDED_ATMOSPHERE_RESOURCE_UUID);
+AtmosphereResource resource = AtmosphereResourceFactory.getDefault().find(uuid);
+
+an nicht-versionierten pages ausprobieren, danach versionierung ausschalten!
