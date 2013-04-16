@@ -2,3 +2,7 @@ String uuid = (String)request.getAttribute(ApplicationConfig.SUSPENDED_ATMOSPHER
 AtmosphereResource resource = AtmosphereResourceFactory.getDefault().find(uuid);
 
 an nicht-versionierten pages ausprobieren, danach versionierung ausschalten!
+Womit kann man denn überhaupt aktuell neue Versionen triggern? Nichts gefunden ohne simvm
+(letzteres hat nicht funktioniert, weil Eco-Projekt nicht da)
+
+
