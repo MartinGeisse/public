@@ -150,7 +150,7 @@ public final class Simulation {
 			
 			@Override
 			public void handleEvent(IpcEvent event) {
-				EventBus.get(WebIdeApplication.getCrossThreadInstance()).post(new SimulationEventMessage(event));
+				EventBus.get(WebIdeApplication.getCrossThreadInstance()).post(new SimulationEventMessage(Simulation.this, event));
 			}
 			
 			@Override

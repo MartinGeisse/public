@@ -80,7 +80,8 @@
 		
 		</style>
 		<script type="text/javascript">
-			$(function() {
+			
+			function initializeSimvmEditorPanel() {
 				
 				// prepare tabs
 				var tabsApi = $('#simulator-tab-button-container').tabs('#simulator-tab-pane-container > *', {
@@ -101,8 +102,9 @@
 					var escapedCharText = $('<span>').text(charText).html();
 					$('.terminal-output-container > pre').append(escapedCharText);
 				});
-				
-			});
+	
+			}
+			
 		</script>
 	</wicket:head>
 	<body>

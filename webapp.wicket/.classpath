@@ -13,6 +13,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/java/atmosphere-compat-jbossweb-1.0.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/atmosphere-compat-tomcat-1.0.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/atmosphere-compat-tomcat7-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/java/atmosphere-runtime-1.0.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/atmosphere-runtime-1.0.9.jar" sourcepath="lib/java/atmosphere-compat-jbossweb-1.0.9.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

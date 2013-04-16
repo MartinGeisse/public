@@ -25,6 +25,8 @@ import name.martingeisse.webide.workbench.services.UnknownEditorIdException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.util.upload.FileItem;
 
 /**
@@ -37,7 +39,7 @@ public class WorkbenchPageServicesImpl implements IWorkbenchServicesProvider, IW
 	 */
 	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(WorkbenchPageServicesImpl.class);
-	
+
 	/**
 	 * the page
 	 */
@@ -58,29 +60,29 @@ public class WorkbenchPageServicesImpl implements IWorkbenchServicesProvider, IW
 	public IWorkbenchEditorService getEditorService() {
 		return this;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.webide.workbench.services.IWorkbenchEditorService#openDefaultEditor(name.martingeisse.webide.resources.ResourceHandle)
 	 */
 	@Override
-	public void openDefaultEditor(ResourceHandle resourceHandle) {
+	public void openDefaultEditor(final ResourceHandle resourceHandle) {
 		openEditor(resourceHandle, getDefaultEditorIdFromFilename(resourceHandle.getName()));
 	}
-	
+
 	/**
 	 * 
 	 */
-	private String getDefaultEditorIdFromFilename(String filename) {
-		
+	private String getDefaultEditorIdFromFilename(final String filename) {
+
 		// TODO
-		long workspaceId = 1;
-		long userId = 1;
-		
-		ExtensionQuery query = new ExtensionQuery(workspaceId, userId, "webide.editor.association");
-		for (ExtensionQuery.Result result : query.fetch()) {
-			JsonAnalyzer editorAssociation = new JsonAnalyzer(result.getDescriptor());
-			String targetType = editorAssociation.analyzeMapElement("target_type").expectString();
-			String targetSpec = editorAssociation.analyzeMapElement("target_spec").expectString();
+		final long workspaceId = 1;
+		final long userId = 1;
+
+		final ExtensionQuery query = new ExtensionQuery(workspaceId, userId, "webide.editor.association");
+		for (final ExtensionQuery.Result result : query.fetch()) {
+			final JsonAnalyzer editorAssociation = new JsonAnalyzer(result.getDescriptor());
+			final String targetType = editorAssociation.analyzeMapElement("target_type").expectString();
+			final String targetSpec = editorAssociation.analyzeMapElement("target_spec").expectString();
 			if (targetType.equals("filename_pattern")) {
 				if (Pattern.matches(targetSpec, filename)) {
 					return editorAssociation.analyzeMapElement("editor").expectString();
@@ -89,7 +91,7 @@ public class WorkbenchPageServicesImpl implements IWorkbenchServicesProvider, IW
 				logger.error("unknown editor association target type: " + targetType);
 			}
 		}
-		
+
 		// TODO user a better default
 		return "webide.editors.java";
 	}
@@ -98,62 +100,70 @@ public class WorkbenchPageServicesImpl implements IWorkbenchServicesProvider, IW
 	 * @see name.martingeisse.webide.workbench.services.IWorkbenchEditorService#openEditor(name.martingeisse.webide.resources.ResourceHandle, java.lang.String)
 	 */
 	@Override
-	public void openEditor(ResourceHandle resourceHandle, String editorId) {
+	public void openEditor(final ResourceHandle resourceHandle, final String editorId) {
 		try {
-			IEditor editor = ReturnValueUtil.nullNotAllowed(getEditorFactoryForId(editorId).createEditor(), "editorFactory.createEditor");
+			final IEditor editor = ReturnValueUtil.nullNotAllowed(getEditorFactoryForId(editorId).createEditor(), "editorFactory.createEditor");
 			editor.initialize(resourceHandle);
 			page.replaceEditor(editor);
-		} catch (RuntimeException e) {
+		} catch (final RuntimeException e) {
 			throw e;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
-	private IEditorFactory getEditorFactoryForId(String editorId) throws Exception {
-		
+	private IEditorFactory getEditorFactoryForId(final String editorId) throws Exception {
+
 		// TODO
-		long workspaceId = 1;
-		long userId = 1;
-		
-		ExtensionQuery query = new ExtensionQuery(workspaceId, userId, "webide.editor");
-		for (ExtensionQuery.Result result : query.fetch()) {
-			JsonAnalyzer editorSpec = new JsonAnalyzer(result.getDescriptor());
+		final long workspaceId = 1;
+		final long userId = 1;
+
+		final ExtensionQuery query = new ExtensionQuery(workspaceId, userId, "webide.editor");
+		for (final ExtensionQuery.Result result : query.fetch()) {
+			final JsonAnalyzer editorSpec = new JsonAnalyzer(result.getDescriptor());
 			if (editorSpec.analyzeMapElement("id").expectString().equals(editorId)) {
-				String familyId = editorSpec.analyzeMapElement("family").expectString();
-				IEditorFamily family = getEditorFamilyForId(familyId);
+				final String familyId = editorSpec.analyzeMapElement("family").expectString();
+				final IEditorFamily family = getEditorFamilyForId(familyId);
 				return ReturnValueUtil.nullNotAllowed(family.createEditorFactory(editorSpec), "family.createEditorFactory");
 			}
 		}
 		throw new UnknownEditorIdException(editorId);
-		
+
 	}
-	
+
 	/**
 	 * 
 	 */
-	private IEditorFamily getEditorFamilyForId(String editorFamilyId) throws Exception {
-		
+	private IEditorFamily getEditorFamilyForId(final String editorFamilyId) throws Exception {
+
 		// TODO
-		long workspaceId = 1;
-		long userId = 1;
-		
-		ExtensionQuery query = new ExtensionQuery(workspaceId, userId, "webide.editor.family");
-		for (ExtensionQuery.Result result : query.fetch()) {
-			JsonAnalyzer editorAssociation = new JsonAnalyzer(result.getDescriptor());
-			String id = editorAssociation.analyzeMapElement("id").expectString();
+		final long workspaceId = 1;
+		final long userId = 1;
+
+		final ExtensionQuery query = new ExtensionQuery(workspaceId, userId, "webide.editor.family");
+		for (final ExtensionQuery.Result result : query.fetch()) {
+			final JsonAnalyzer editorAssociation = new JsonAnalyzer(result.getDescriptor());
+			final String id = editorAssociation.analyzeMapElement("id").expectString();
 			if (id.equals(editorFamilyId)) {
-				String className = editorAssociation.analyzeMapElement("class").expectString();
-				PluginBundleHandle handle = new PluginBundleHandle(result.getPluginBundleId());
+				final String className = editorAssociation.analyzeMapElement("class").expectString();
+				final PluginBundleHandle handle = new PluginBundleHandle(result.getPluginBundleId());
 				return handle.createObject(IEditorFamily.class, className);
 			}
-			
+
 		}
 		throw new IllegalArgumentException("unknown editor family: " + editorFamilyId);
-		
+
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.webide.workbench.services.IWorkbenchEditorService#getEditorPanel()
+	 */
+	@Override
+	public Panel getEditorPanel() {
+		return (Panel)((WebMarkupContainer)page.get("editorContainer")).get("editor");
 	}
 
 	/**
@@ -164,39 +174,39 @@ public class WorkbenchPageServicesImpl implements IWorkbenchServicesProvider, IW
 	 * @param destinationFolder the folder into which the uploaded
 	 * file should be placed. The name of the file is taken from the upload request.
 	 */
-	public void storeUploadedFile(FileItem fileItem, ResourceHandle destinationFolder) {
+	public void storeUploadedFile(final FileItem fileItem, final ResourceHandle destinationFolder) {
 		try {
-			byte[] contents = IOUtils.toByteArray(fileItem.getInputStream());
-			for (int i = 0; i<20; i++) {
-				String name = modifyUploadedFileName(fileItem.getName(), i);
-				ResourceHandle file = destinationFolder.getChild(name);
+			final byte[] contents = IOUtils.toByteArray(fileItem.getInputStream());
+			for (int i = 0; i < 20; i++) {
+				final String name = modifyUploadedFileName(fileItem.getName(), i);
+				final ResourceHandle file = destinationFolder.getChild(name);
 				try {
 					file.writeFile(contents, false, false);
 					return;
-				} catch (WorkspaceResourceCollisionException e) {
+				} catch (final WorkspaceResourceCollisionException e) {
 				}
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 		page.setUploadErrorMessage("Too many collisions with existing resources -- giving up.");
 	}
-	
+
 	/**
 	 * Creates an alternative file name in case of collision, or the original
 	 * file name if the counter is zero.
 	 */
-	private static String modifyUploadedFileName(String name, int counter) {
+	private static String modifyUploadedFileName(final String name, final int counter) {
 		if (counter == 0) {
 			return name;
 		}
-		int index = name.lastIndexOf('.');
+		final int index = name.lastIndexOf('.');
 		if (index == -1) {
 			return name + '-' + counter;
 		}
-		String baseName = name.substring(0, index);
-		String extension = name.substring(index + 1);
+		final String baseName = name.substring(0, index);
+		final String extension = name.substring(index + 1);
 		return baseName + '-' + counter + '.' + extension;
 	}
-	
+
 }

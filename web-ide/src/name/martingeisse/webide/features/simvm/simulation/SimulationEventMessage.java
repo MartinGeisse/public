@@ -16,18 +16,33 @@ import name.martingeisse.webide.ipc.IpcEvent;
 public final class SimulationEventMessage {
 
 	/**
+	 * the simulation
+	 */
+	private final Simulation simulation;
+	
+	/**
 	 * the event
 	 */
 	private final IpcEvent event;
 
 	/**
 	 * Constructor.
+	 * @param simulation the simulation that produced the event
 	 * @param event the event
 	 */
-	public SimulationEventMessage(IpcEvent event) {
+	public SimulationEventMessage(Simulation simulation, IpcEvent event) {
+		this.simulation = simulation;
 		this.event = event;
 	}
 
+	/**
+	 * Getter method for the simulation.
+	 * @return the simulation
+	 */
+	public Simulation getSimulation() {
+		return simulation;
+	}
+	
 	/**
 	 * Getter method for the event.
 	 * @return the event

@@ -7,6 +7,7 @@
 package name.martingeisse.webide.application;
 
 import name.martingeisse.common.util.TemporaryFolder;
+import name.martingeisse.webide.features.simvm.editor.SimvmAtmosphereRegistrationListener;
 import name.martingeisse.webide.workbench.WorkbenchPage;
 
 import org.apache.wicket.Page;
@@ -41,6 +42,7 @@ public class WebIdeApplication extends WebApplication {
 		instance = this;
 		super.init();
 		new EventBus(this);
+		EventBus.get().addRegistrationListener(new SimvmAtmosphereRegistrationListener());
 		TemporaryFolder.initialize("web-ide");
 		setHeaderResponseDecorator(new MyHeaderResponseDecorator());
 	}

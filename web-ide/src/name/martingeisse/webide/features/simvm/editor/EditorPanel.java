@@ -6,35 +6,57 @@
 
 package name.martingeisse.webide.features.simvm.editor;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 import javax.annotation.Nullable;
 
-import name.martingeisse.webide.application.WebIdeApplication;
 import name.martingeisse.webide.features.ecosim.EcosimEvents;
+import name.martingeisse.webide.features.ecosim.EcosimPrimaryModelElement;
 import name.martingeisse.webide.features.simvm.model.SimulationModel;
 import name.martingeisse.webide.features.simvm.simulation.Simulation;
-import name.martingeisse.webide.ipc.EventListenerMetadata;
-import name.martingeisse.webide.ipc.IIpcEventListener;
+import name.martingeisse.webide.features.simvm.simulation.SimulationEventMessage;
 import name.martingeisse.webide.ipc.IpcEvent;
 import name.martingeisse.webide.resources.ResourceHandle;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.atmosphere.AtmosphereBehavior;
 import org.apache.wicket.atmosphere.AtmosphereEvent;
-import org.apache.wicket.atmosphere.EventBus;
 import org.apache.wicket.atmosphere.Subscribe;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.atmosphere.cpr.ApplicationConfig;
 
 import com.google.common.base.Predicate;
 
 /**
  * The actual Wicket component that encapsulates the SimVM UI.
+ * 
+ * TODO make private
  */
-class EditorPanel extends Panel {
+public class EditorPanel extends Panel {
 
+	/**
+	 * This map maps Atmosphere resource UUIDs (each corresponding to a page with an
+	 * EditorPanel) to {@link ResourceHandle} objects which correspond to running
+	 * simulations. This allows to filter Atmosphere events without building a
+	 * request cycle first.
+	 * 
+	 * The map may contain mappings for pages which don't show a simulation anymore
+	 * (or which don't event exist anymore) without bad effects (other than consuming
+	 * a small amount of memory); the only important invariant is that the mapping for
+	 * existing pages which still show a running simulation must be correct and
+	 * up-to-date.
+	 * 
+	 * TODO make private
+	 */
+	public static final ConcurrentMap<String, ResourceHandle> editorPageSimulationAnchors = new ConcurrentHashMap<String, ResourceHandle>();
+	
 	/**
 	 * the anchorResource
 	 */
@@ -67,7 +89,7 @@ class EditorPanel extends Panel {
 
 			@Override
 			public boolean isVisible() {
-				return !isRunning();
+				return (getRunningSimulation() == null);
 			}
 
 		});
@@ -90,44 +112,71 @@ class EditorPanel extends Panel {
 			 */
 			@Override
 			public boolean isVisible() {
-				return isRunning();
+				return (getRunningSimulation() != null);
 			}
 
 		});
 
 		add(new Label("terminalOutput", new PropertyModel<String>(this, "terminalOutput")).setOutputMarkupId(true));
+		Simulation simulation = getRunningSimulation();
+		if (simulation != null) {
+			SimulationModel runningSimulationModel = simulation.getSimulationModel();
+			EcosimPrimaryModelElement primaryElement = (EcosimPrimaryModelElement)runningSimulationModel.getPrimaryElement();
+			this.terminalOutput = primaryElement.getTerminalUserInterface().getOutput();
+		}
 	}
 
 	/**
-	 * 
+	 * Getter method for the anchorResource.
+	 * @return the anchorResource
 	 */
-	@SuppressWarnings("unused")
-	private SimulationModel getSimulationModel() {
+	public ResourceHandle getAnchorResource() {
+		return anchorResource;
+	}
+	
+	/**
+	 * @return the simulation model
+	 */
+	public SimulationModel getSimulationModel() {
 		return (SimulationModel)getDefaultModelObject();
 	}
 
 	/**
-	 * 
+	 * @return the running simulation, or null if not running
 	 */
-	@SuppressWarnings("unused")
-	private boolean isRunning() {
-		return (Simulation.getExisting(EditorPanel.this.anchorResource) != null);
+	public Simulation getRunningSimulation() {
+		return Simulation.getExisting(EditorPanel.this.anchorResource);
 	}
-
+	
 	/**
 	 * Subscribes to {@link IpcEvent}s.
 	 * @param target the request handler
-	 * @param event the event
+	 * @param message the event message
 	 */
-	// @Subscribe(/*filter = MyFilter.class*/)
-	public void receiveMessage(final AjaxRequestTarget target, final IpcEvent event) {
-//		if (event.getType().equals(EcosimEvents.TERMINAL_OUTPUT)) {
-//			final Simulation simulation = Simulation.getExisting(EditorPanel.this.anchorResource);
-//			terminalOutput = (String)event.getData();
-//			target.add(get("terminalOutput"));
-//		}
+	@Subscribe(filter = MyFilter.class)
+	public void onSimulatorGeneratedEvent(final AjaxRequestTarget target, final SimulationEventMessage message) {
+		IpcEvent event = message.getEvent();
+		if (event.getType().equals(EcosimEvents.TERMINAL_OUTPUT)) {
+			terminalOutput = (String)event.getData();
+			target.add(get("terminalOutput"));
+		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.Component#onAfterRender()
+	 */
+	@Override
+	protected void onAfterRender() {
+		super.onAfterRender();
+		
+		// store the UUID to simulation mapping in case this panel gets rendered into a page
+		// with a pre-existing connection
+		String uuid = AtmosphereBehavior.getUUID(getPage());
+		if (uuid != null) {
+			editorPageSimulationAnchors.put(uuid, anchorResource);
+		}
+	}
+	
 	/**
 	 * Getter method for the terminalOutput.
 	 * @return the terminalOutput
@@ -136,9 +185,18 @@ class EditorPanel extends Panel {
 		return terminalOutput;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.Component#renderHead(org.apache.wicket.markup.head.IHeaderResponse)
+	 */
+	@Override
+	public void renderHead(IHeaderResponse response) {
+		super.renderHead(response);
+		response.render(OnDomReadyHeaderItem.forScript("initializeSimvmEditorPanel()"));
+	}
+	
 	/**
-	 * TODO: document me
-	 *
+	 * Filters atmosphere events with {@link SimulationEventMessage}s to build a Wicket
+	 * context only for pages that show the *same* simulation.
 	 */
 	public static class MyFilter implements Predicate<AtmosphereEvent> {
 
@@ -147,11 +205,20 @@ class EditorPanel extends Panel {
 		 */
 		@Override
 		public boolean apply(@Nullable AtmosphereEvent input) {
-			if (input == null) {
+			
+			String currentUuid = input.getResource().uuid();
+			String originalUuid = (String)input.getResource().getRequest().getAttribute(ApplicationConfig.SUSPENDED_ATMOSPHERE_RESOURCE_UUID);
+			ResourceHandle anchorResourceForUuid = editorPageSimulationAnchors.get(currentUuid);
+			SimulationEventMessage message = (SimulationEventMessage)input.getPayload();
+			ResourceHandle anchorResourceForSimulation = message.getSimulation().getResourceHandle();
+			
+			// return true;
+			if (anchorResourceForUuid == null || anchorResourceForSimulation == null) {
 				return false;
+			} else {
+				return anchorResourceForUuid.equals(anchorResourceForSimulation);
 			}
-			System.out.println("* " + input.getPayload());
-			return false;
+			
 		}
 		
 	}

@@ -8,6 +8,8 @@ package name.martingeisse.webide.workbench.services;
 
 import name.martingeisse.webide.resources.ResourceHandle;
 
+import org.apache.wicket.markup.html.panel.Panel;
+
 /**
  * Allows to interact with workbench editors.
  */
@@ -25,5 +27,12 @@ public interface IWorkbenchEditorService {
 	 * @param editorId the ID of the editor extension to use
 	 */
 	public void openEditor(ResourceHandle resourceHandle, String editorId);
+	
+	/**
+	 * Returns the current editor panel, or null if no editor
+	 * is currently open.
+	 * @return the editor panel or null
+	 */
+	public Panel getEditorPanel();
 	
 }
