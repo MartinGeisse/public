@@ -139,12 +139,6 @@ public final class Simulation {
 		this.resourceHandle = resourceHandle;
 		this.eventQueue = new LinkedBlockingQueue<IpcEvent>();
 		this.simulationThread = new SimulationThread(this);
-		this.simulationModel = new SimulationModel(resourceHandle, new IIpcEventOutbox() {
-			@Override
-			public void sendEvent(IpcEvent event) {
-				outputEventBus.dispatch(event);
-			}
-		});
 		this.outputEventBus = new IpcEventBus();
 		this.outputEventBus.addListener(new IIpcEventListener() {
 			
@@ -158,6 +152,12 @@ public final class Simulation {
 				return null;
 			}
 			
+		});
+		this.simulationModel = new SimulationModel(resourceHandle, new IIpcEventOutbox() {
+			@Override
+			public void sendEvent(IpcEvent event) {
+				outputEventBus.dispatch(event);
+			}
 		});
 	}
 
@@ -215,7 +215,7 @@ public final class Simulation {
 	 * @throws StaleSimulationException if this object is stale
 	 */
 	public void pause() throws StaleSimulationException {
-		postEvent(new IpcEvent(SimulationThread.EVENT_TYPE_PAUSE, this, null));
+		postEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_PAUSE, this, null));
 	}
 
 	/**
@@ -225,7 +225,7 @@ public final class Simulation {
 	 * @throws StaleSimulationException if this object is stale
 	 */
 	public void step() throws StaleSimulationException {
-		postEvent(new IpcEvent(SimulationThread.EVENT_TYPE_STEP, this, null));
+		postEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_STEP, this, null));
 	}
 
 	/**
@@ -235,7 +235,7 @@ public final class Simulation {
 	 * @throws StaleSimulationException if this object is stale
 	 */
 	public void resume() throws StaleSimulationException {
-		postEvent(new IpcEvent(SimulationThread.EVENT_TYPE_RESUME, this, null));
+		postEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_RESUME, this, null));
 	}
 
 	/**
@@ -245,7 +245,7 @@ public final class Simulation {
 	 * @throws StaleSimulationException if this object is stale
 	 */
 	public void suspend() throws StaleSimulationException {
-		postEvent(new IpcEvent(SimulationThread.EVENT_TYPE_SUSPEND, this, null));
+		postEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_SUSPEND, this, null));
 	}
 
 	/**
@@ -255,7 +255,7 @@ public final class Simulation {
 	 * @throws StaleSimulationException if this object is stale
 	 */
 	public void terminate() throws StaleSimulationException {
-		postEvent(new IpcEvent(SimulationThread.EVENT_TYPE_TERMINATE, this, null));
+		postEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_TERMINATE, this, null));
 	}
 
 	/**

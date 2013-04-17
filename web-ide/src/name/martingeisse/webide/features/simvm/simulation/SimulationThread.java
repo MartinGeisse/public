@@ -17,31 +17,6 @@ import org.apache.log4j.Logger;
 class SimulationThread extends Thread {
 
 	/**
-	 * the EVENT_TYPE_PAUSE
-	 */
-	public static final String EVENT_TYPE_PAUSE = "simvm.pause";
-	
-	/**
-	 * the EVENT_TYPE_STEP
-	 */
-	public static final String EVENT_TYPE_STEP = "simvm.step";
-	
-	/**
-	 * the EVENT_TYPE_RESUME
-	 */
-	public static final String EVENT_TYPE_RESUME = "simvm.resume";
-	
-	/**
-	 * the EVENT_TYPE_SUSPEND
-	 */
-	public static final String EVENT_TYPE_SUSPEND = "simvm.suspend";
-	
-	/**
-	 * the EVENT_TYPE_TERMINATE
-	 */
-	public static final String EVENT_TYPE_TERMINATE = "simvm.terminate";
-	
-	/**
 	 * the EVENT_TYPE_RUNNING
 	 */
 	public static final String EVENT_TYPE_RUNNING = "simvm.running";
@@ -97,6 +72,7 @@ class SimulationThread extends Thread {
 		}
 		
 		try {
+			simulation.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_START, simulation, null));
 			while (true) {
 				IpcEvent event = fetchEvent();
 				if (event == null) {
@@ -129,22 +105,22 @@ class SimulationThread extends Thread {
 
 	private boolean handleSimulatorControlEvent(IpcEvent event) {
 		String type = event.getType();
-		if (type.equals(EVENT_TYPE_PAUSE)) {
+		if (type.equals(SimulationEvents.EVENT_TYPE_PAUSE)) {
 			handlePause();
 			return false;
-		} else if (type.equals(EVENT_TYPE_STEP)) {
+		} else if (type.equals(SimulationEvents.EVENT_TYPE_STEP)) {
 			handleStep();
 			return false;
-		} else if (type.equals(EVENT_TYPE_RESUME)) {
+		} else if (type.equals(SimulationEvents.EVENT_TYPE_RESUME)) {
 			handleResume();
 			return false;
 		} else if (type.equals(EVENT_TYPE_RUNNING)) {
 			handleRunning();
 			return false;
-		} else if (type.equals(EVENT_TYPE_SUSPEND)) {
+		} else if (type.equals(SimulationEvents.EVENT_TYPE_SUSPEND)) {
 			handleSuspend();
 			return true;
-		} else if (type.equals(EVENT_TYPE_TERMINATE)) {
+		} else if (type.equals(SimulationEvents.EVENT_TYPE_TERMINATE)) {
 			handleTerminate();
 			return true;
 		} else {
@@ -155,14 +131,17 @@ class SimulationThread extends Thread {
 
 	private void handlePause() {
 		running = false;
+		simulation.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_PAUSE, simulation, null));
 	}
 	
 	private void handleStep() {
 		simulation.getSimulationModel().getPrimaryElement().singleStep();
+		simulation.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_STEP, simulation, null));
 	}
 	
 	private void handleResume() {
 		running = true;
+		simulation.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_RESUME, simulation, null));
 	}
 
 	private void handleRunning() {
@@ -171,10 +150,12 @@ class SimulationThread extends Thread {
 	
 	private void handleSuspend() {
 		simulation.getSimulationModel().getPrimaryElement().saveState();
+		simulation.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_SUSPEND, simulation, null));
 	}
 	
 	private void handleTerminate() {
 		simulation.getSimulationModel().getPrimaryElement().deleteState();
+		simulation.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_TERMINATE, simulation, null));
 	}
 	
 	private void handleCustomEvent(IpcEvent event) {

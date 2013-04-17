@@ -90,10 +90,12 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 			bus.add(0x00000000, ram, new int[] {});
 	
 			Rom rom = new Rom(21);
-			rom.readContentsFromFile(new File("/Users/martin/workspace/eco32-0.20/monitor/monitor/monitor.bin"));
+			// rom.readContentsFromFile(new File("/Users/martin/workspace/eco32-0.20/monitor/monitor/monitor.bin"));
+			rom.readContentsFromFile(new File("resource/simulator/monitor.bin"));
 			bus.add(0x20000000, rom, new int[] {});
 	
-			Disk disk = new Disk(new File("/Users/martin/workspace/eco32-0.20/build/run/disk.img"));
+			// Disk disk = new Disk(new File("/Users/martin/workspace/eco32-0.20/build/run/disk.img"));
+			Disk disk = new Disk(new File("resource/simulator/disk.img"));
 			bus.add(0x30400000, disk, new int[] {
 				8
 			});

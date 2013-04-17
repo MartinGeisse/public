@@ -1,0 +1,12 @@
+
+Elements API (ist das nur die Model-API?)
+---------------------------------------------------------------------------------------------------------
+
+Java Elements API
+- "Java Project", "IPackageFragmentRoot" (source folder; bin folder; jar file) <-> Workspace mit build.json?
+  Vermutlich Project =^= build.json, darin stehen dann die package fragment roots drin, das ist direkt analog zu Eclipse
+
+Hierarchie:
+- Project, Package Fragment Root, Package Fragment, CompilationUnit, Type, Method/Field/Initializer
+  (Package) ::= PackageFragment*
+

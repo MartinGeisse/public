@@ -16,6 +16,7 @@ import name.martingeisse.webide.features.ecosim.EcosimPrimaryModelElement;
 import name.martingeisse.webide.features.simvm.model.SimulationModel;
 import name.martingeisse.webide.features.simvm.simulation.Simulation;
 import name.martingeisse.webide.features.simvm.simulation.SimulationEventMessage;
+import name.martingeisse.webide.features.simvm.simulation.SimulationEvents;
 import name.martingeisse.webide.ipc.IpcEvent;
 import name.martingeisse.webide.resources.ResourceHandle;
 
@@ -70,6 +71,7 @@ class EditorPanel extends Panel {
 	 */
 	public EditorPanel(final String id, final IModel<SimulationModel> model, final ResourceHandle anchorResource) {
 		super(id, model);
+		setOutputMarkupId(true);
 		this.anchorResource = anchorResource;
 
 		add(new Link<Void>("startButton") {
@@ -151,7 +153,11 @@ class EditorPanel extends Panel {
 	@Subscribe(filter = MyFilter.class)
 	public void onSimulatorGeneratedEvent(final AjaxRequestTarget target, final SimulationEventMessage message) {
 		IpcEvent event = message.getEvent();
-		if (event.getType().equals(EcosimEvents.TERMINAL_OUTPUT)) {
+		String type = event.getType();
+		if (type.equals(SimulationEvents.EVENT_TYPE_START) || type.equals(SimulationEvents.EVENT_TYPE_SUSPEND) || type.equals(SimulationEvents.EVENT_TYPE_TERMINATE)) {
+			TODO das reicht noch nicht. Dieses Panel wird neu gerendert *bevor* die Simulation endgültig beendet wurde (-> race condition!)
+			target.add(this);
+		} else if (event.getType().equals(EcosimEvents.TERMINAL_OUTPUT)) {
 			terminalOutput = (String)event.getData();
 			target.add(get("terminalOutput"));
 		}
