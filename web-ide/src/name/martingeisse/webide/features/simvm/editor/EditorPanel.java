@@ -155,7 +155,8 @@ class EditorPanel extends Panel {
 		IpcEvent event = message.getEvent();
 		String type = event.getType();
 		if (type.equals(SimulationEvents.EVENT_TYPE_START) || type.equals(SimulationEvents.EVENT_TYPE_SUSPEND) || type.equals(SimulationEvents.EVENT_TYPE_TERMINATE)) {
-			TODO das reicht noch nicht. Dieses Panel wird neu gerendert *bevor* die Simulation endgültig beendet wurde (-> race condition!)
+			System.out.println("* " + getRunningSimulation());
+//			TODO das reicht noch nicht. Dieses Panel wird neu gerendert *bevor* die Simulation endgültig beendet wurde (-> race condition!)
 			target.add(this);
 		} else if (event.getType().equals(EcosimEvents.TERMINAL_OUTPUT)) {
 			terminalOutput = (String)event.getData();

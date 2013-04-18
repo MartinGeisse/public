@@ -131,6 +131,11 @@ public final class Simulation {
 	 * the outputEventBus
 	 */
 	private final IpcEventBus outputEventBus;
+	
+	/**
+	 * the state
+	 */
+	private volatile SimulationState state;
 
 	/**
 	 * Constructor.
@@ -140,6 +145,7 @@ public final class Simulation {
 		this.eventQueue = new LinkedBlockingQueue<IpcEvent>();
 		this.simulationThread = new SimulationThread(this);
 		this.outputEventBus = new IpcEventBus();
+		this.state = SimulationState.PAUSED;
 		this.outputEventBus.addListener(new IIpcEventListener() {
 			
 			@Override
@@ -193,21 +199,21 @@ public final class Simulation {
 	}
 
 	/**
-	 * Getter method for the running.
-	 * @return the running
+	 * Getter method for the state.
+	 * @return the state
 	 */
-	public boolean isRunning() {
-		return simulationThread.isRunning();
+	public SimulationState getState() {
+		return state;
 	}
-
+	
 	/**
-	 * Getter method for the stale.
-	 * @return the stale
+	 * Setter method for the state.
+	 * @param state the state to set
 	 */
-	public boolean isStale() {
-		return (simulationThread.getState() == Thread.State.TERMINATED);
+	void setState(SimulationState state) {
+		this.state = state;
 	}
-
+	
 	/**
 	 * Pauses this simulation. The simulation stops simulating and waits for
 	 * further method calls. Has no effect if the simulation is already paused.
@@ -283,18 +289,26 @@ public final class Simulation {
 	}
 
 	/**
+	 * Removes this simulation from the global list of active simulations.
+	 * This method is called by the simulation thread just before it exits,
+	 * but before {@link #dispose()} is called.
+	 */
+	void remove() {
+		simulations.remove(resourceHandle);
+	}
+	
+	/**
 	 * Disposes of this simulation. This method is called by the simulation
 	 * thread just before it exits.
 	 */
 	void dispose() {
-		simulations.remove(resourceHandle);
 	}
 
 	/**
 	 * Throws a {@link StaleSimulationException} if this object is stale.
 	 */
 	private void checkNotStale() {
-		if (isStale()) {
+		if (getState() == SimulationState.STOPPED) {
 			throw new StaleSimulationException();
 		}
 	}

@@ -38,9 +38,9 @@ class SimulationThread extends Thread {
 	private final Simulation simulation;
 	
 	/**
-	 * the running
+	 * the exitEvent
 	 */
-	private volatile boolean running;
+	private IpcEvent exitEvent;
 	
 	/**
 	 * Constructor.
@@ -48,15 +48,7 @@ class SimulationThread extends Thread {
 	 */
 	public SimulationThread(Simulation simulation) {
 		this.simulation = simulation;
-		this.running = false;
-	}
-	
-	/**
-	 * Getter method for the running.
-	 * @return the running
-	 */
-	public boolean isRunning() {
-		return running;
+		this.exitEvent = null;
 	}
 	
 	/* (non-Javadoc)
@@ -88,13 +80,17 @@ class SimulationThread extends Thread {
 				}
 			}
 		} finally {
+			simulation.remove();
+			if (exitEvent != null) {
+				simulation.getOutputEventBus().sendEvent(exitEvent);
+			}
 			simulation.dispose();
 		}
 	}
 	
 	private IpcEvent fetchEvent() {
 		try {
-			IpcEvent event = simulation.fetchEvent(!running);
+			IpcEvent event = simulation.fetchEvent(simulation.getState() == SimulationState.PAUSED);
 			return (event == null ? EVENT_INSTANCE_RUNNING : event);
 		} catch (InterruptedException e) {
 			logger.error("SimVM simulation thread was interrupted while fetching an event");
@@ -130,7 +126,7 @@ class SimulationThread extends Thread {
 	}
 
 	private void handlePause() {
-		running = false;
+		simulation.setState(SimulationState.PAUSED);
 		simulation.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_PAUSE, simulation, null));
 	}
 	
@@ -140,7 +136,7 @@ class SimulationThread extends Thread {
 	}
 	
 	private void handleResume() {
-		running = true;
+		simulation.setState(SimulationState.RUNNING);
 		simulation.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_RESUME, simulation, null));
 	}
 
@@ -150,12 +146,12 @@ class SimulationThread extends Thread {
 	
 	private void handleSuspend() {
 		simulation.getSimulationModel().getPrimaryElement().saveState();
-		simulation.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_SUSPEND, simulation, null));
+		exitEvent = new IpcEvent(SimulationEvents.EVENT_TYPE_SUSPEND, simulation, null);
 	}
 	
 	private void handleTerminate() {
 		simulation.getSimulationModel().getPrimaryElement().deleteState();
-		simulation.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_TERMINATE, simulation, null));
+		exitEvent = new IpcEvent(SimulationEvents.EVENT_TYPE_TERMINATE, simulation, null);
 	}
 	
 	private void handleCustomEvent(IpcEvent event) {
