@@ -175,7 +175,9 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 	 */
 	@Override
 	public Component createComponent(String id) {
-		return new CompositeSimulationModelElementPanel(id);
+		CompositeSimulationModelElementPanel panel = new CompositeSimulationModelElementPanel(id, simulationModel, true);
+		// TODO
+		return panel;
 	}
 	
 }

@@ -58,4 +58,28 @@ für Architekturfragen vernachlässigbar, eben weil die sich ja gar nicht änder
 sondern es wird nur per IModel drauf zugegriffen. Dann verhält es sich auch wie
 von Wicket gedacht.
 
+-----
+
+Langsam wird folgendes zum Problem: Verschiedene Editoren öffnen dieselbe SimVM.
+Jeder baut sein eigenes SimulationModel. Bei der eigentlichen Simulation gibt
+es aber ein gemeinsames SimModel in der Simulation. Models mergen wird nix.
+
+Möglichkeit 1: Editoren müssen mit der 1-N-Model-Situation klarkommen.
+Möglichkeit 2: Nur ein SimulationModel an zentraler Stelle, wie OT-Server aber
+	im Java-Code. 
+Möglichkeit 3: Static State x N, Dynamic State zentral.
+
+M2 wäre am coolsten, weil es eine allgemeine Lösung ist:
+- OpenDocumentHub: statischer Zugriff auf "offene" Dokumente; öffnen und schließen.
+	Zusammenspiel mit OT?
+Soll ein Editor festlegen, "wie" ein Dokument geöffnet wird, oder ist das
+Editor-unabhängig? Vgl. SimVM in Texteditor, Simulator öffnen.
+Oder gibt es getrennte Einträge im Document Hub für verschiedene Editoren?
+Oder ist der DH eine Zwischenstufe, die *manche* Editoren zusammenfasst?
+
+
+
+
+
+
 
