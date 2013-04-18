@@ -11,6 +11,8 @@ import java.io.Serializable;
 import name.martingeisse.webide.ipc.IIpcEventOutbox;
 import name.martingeisse.webide.ipc.IpcEvent;
 
+import org.apache.wicket.Component;
+
 /**
  * Base interface for all types of model elements in a simulation.
  * 
@@ -64,5 +66,19 @@ public interface ISimulationModelElement extends Serializable {
 	 * @param event the event to handle
 	 */
 	public void handleEvent(IpcEvent event);
+	
+	/**
+	 * Creates a wicket component for this model element. The type of component (and actually
+	 * whether this model element can create a component at all, or just returns null)
+	 * is unspecified. Typically, the enclosing model element will impose constraints on
+	 * the component type (such as, "only panels").
+	 * 
+	 * Any models needed by the component should be built from the {@link SimulationModel}
+	 * passed to {@link #initialize(SimulationModel, IIpcEventOutbox)}.
+	 * 
+	 * @param id the wicket id
+	 * @return the component
+	 */
+	public Component createComponent(String id);
 	
 }

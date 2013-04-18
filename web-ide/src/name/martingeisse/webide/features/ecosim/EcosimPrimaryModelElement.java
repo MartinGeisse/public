@@ -9,6 +9,8 @@ package name.martingeisse.webide.features.ecosim;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.wicket.Component;
+
 import name.martingeisse.ecosim.bus.Bus;
 import name.martingeisse.ecosim.cpu.Cpu;
 import name.martingeisse.ecosim.devices.chardisplay.CharacterDisplay;
@@ -20,6 +22,7 @@ import name.martingeisse.ecosim.devices.output.OutputDevice;
 import name.martingeisse.ecosim.devices.terminal.Terminal;
 import name.martingeisse.ecosim.devices.timer.Timer;
 import name.martingeisse.webide.features.ecosim.ui.TerminalUserInterface;
+import name.martingeisse.webide.features.simvm.editor.CompositeSimulationModelElementPanel;
 import name.martingeisse.webide.features.simvm.model.AbstractCompositeSimulationModelElement;
 import name.martingeisse.webide.features.simvm.model.IPrimarySimulationModelElement;
 import name.martingeisse.webide.features.simvm.model.SimulationModel;
@@ -165,6 +168,14 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 	 */
 	public TerminalUserInterface getTerminalUserInterface() {
 		return terminalUserInterface;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.webide.features.simvm.model.ISimulationModelElement#createComponent(java.lang.String)
+	 */
+	@Override
+	public Component createComponent(String id) {
+		return new CompositeSimulationModelElementPanel(id);
 	}
 	
 }
