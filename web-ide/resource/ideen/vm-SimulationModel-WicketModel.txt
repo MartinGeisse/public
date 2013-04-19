@@ -77,7 +77,50 @@ Editor-unabhängig? Vgl. SimVM in Texteditor, Simulator öffnen.
 Oder gibt es getrennte Einträge im Document Hub für verschiedene Editoren?
 Oder ist der DH eine Zwischenstufe, die *manche* Editoren zusammenfasst?
 
+OpenDocumentHub -> DocumentModelManager.
+M1 ist M3 in häßlich.
+M3 ist Problem verlagert, da der Dynamic State die Lösung M2 benutzt und der
+Static State praktisch nicht editierbar ist. Das geht nur solange gut, bis nicht
+doch ein zweiter *echter* Editor gebraucht wird.
 
+Also: Lösung M2. Allerdings noch Probleme mit Clustering. Textfiles sind aktuell
+Sonderlösung; der OT-Server ist zwar genau so ein Document Model, aber fällt
+rein formal aus dem Schema.
+
+Clustering:
+Verschiedene Webserver greifen auf dasselbe Dokument zu. Das "document model"
+muss also entweder
+- nur ein Proxy sein (DocumentAccess statt DocumentModel)
+- oder eine selbst-synchronisierende Kopie
+aber damit selbst-synchro funktioniert wird es höchst wahrscheinlich einen zentralen
+Server geben, der das "master" dokument hält (n-to-n synchro zu kompliziert)
+und dann läuft es auf proxy raus.
+
+Wie würde denn auf abstrakter Ebene z.B. das Rendern einer SimVM im Cluster laufen,
+wenn der Webserver nicht der Document-Owner ist? -> wäre ziemlicher Mist. Man
+müsste die Daten remote abrufen, aber dafür ist Wicket überhaupt nicht ausgelegt.
+Eher: Ein Webserver mit UI hält soviele Daten lokal vor, dass er ohne remote
+access rendern kann. Actions und neue Daten gehen dann Remote, und aus Browser-Sicht
+in zwei Schritten: 1. AJAX-request zum triggern, 2. Websockets-Push wenn die Daten
+da sind (als 1 Request wenn es "schnell" geht).
+
+Das würde so aber bedeuten, dass für jeden Dokumenttyp (SimVM: Jede kleine
+Erweiterung) Code für den Dokumenten-Server, ein Proxy *und* das UI geschrieben
+werden müssen. Erste Idee: Proxy und UI besteht aus Standardbibliothek von
+Komponenten, und der Dokumenten-Server liefert eine Struktur (z.B. JSON),
+die diese Standardkomponenten nur noch benutzt/zusammensetzt. Der Dokumentenserver
+sollte aber soweit möglich pro Client Stateless sein, also nur ein globaler State,
+weil das per Definition innerhalb eines Servers nicht-parallel passiert (wobei
+verschiedene Dokumente auf verschiedenen Servern liegen könnten; es wäre aber
+auch einfacher, wenn ein Dokument pro Client stateless ist). Oder zumindest
+minimaler per-client state, siehe OT-Server.
+
+--- idee ---
+- Interface IDocumentModel
+- Klasse DocumentModelManager
+	- <T extends IDocumentModel> getDocumentModel(Class<T> clazz);
+		Liefert ein globales 
+- garbage collection für document models?
 
 
 
