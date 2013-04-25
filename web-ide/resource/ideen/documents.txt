@@ -1,0 +1,85 @@
+
+Document = High-Level-Ansicht auf eine Workspace-Ressource. Es kann zu einer
+Ressource mehrere Dokumente verschiedenen Typs, aber zu jedem Typ jeweils
+nur ein Dokument geben, welches zwischen allen Clients geshared wird, z.B.
+zwischen allen Editoren. 
+
+Textfiles: Verwenden OT nach genau demselben Prinzip, aber Formal getrennt
+weil der OT-Server unter NodeJS läuft.
+
+Kommunikation zwischen verschiedenen Clients findet in v1 über einen
+zentralen DocumentHub, shared objects und mit Java Thread sync statt.
+Später (Multi-Server) dann mehrere Möglichkeiten.
+- Seite oder Panel wird "sticky" an den Webserver, der das Dokument hat
+	(eher schlecht, weil die Webserver dann nicht austauschbar sind.
+	Diese Anforderung führt generell dazu, dass das Dokument nicht
+	auf einem einzelnen Webserver liegen kann).
+- N-to-N 
+	- ohne Message-Server (ist zu wurschtelig)
+	- mit Message-Server
+		- notify events (kein Vorteil zu Delta-Events)
+		- delta events (simple, OT)
+			Wäre eine Möglichkeit und vor allem interessant, wenn es
+			kein zentrales Dokument gibt, sondern N Webserver, die alle
+			das Dokument haben und bei Änderungen abgleichen. Ist aber
+			kompliziert. Das Dokument muss entweder auf *allen*
+			Webservern liegen, oder zumindest auf vielen (austauschbarkeit
+			der Server) und alle müssen wissen, wo es abrufbar ist.
+- Passive DB + Notify-Events. Entspricht der Klassischen Webanwendung
+	(wobei die oft ohne Events arbeitet und einfach nach einiger Zeit
+	synchronisiert). Kein Vorteil erkennbar, und gerade für SimVM
+	(häufige Änderungen) unbrauchbar.
+- Aktive DB
+	- Notify-Events: Kein Vorteil
+	- Delta-Events (Simple, OT): Entspricht einer Server-Variante des
+		DocumentHub und ist von daher der logische Schritt.
+
+Der Zugriff auf die ADB könnte sein:
+- HTTP-HTML vom Browser: Entspricht Sticky-Lösung mit dedicated server. Umständlich,
+  den Wicket-Kontext zu übertragen (wäre dann second-class-webserver,
+  weil er nur bestimmte Sachen rendert). Mehr Nachteile als Vorteile.
+- AJAX-API vom Browser: Umständlich, das für alle Teile jedes Dokumenttyps zu
+  bauen, aber für Einzelfälle interessant (gute Performance, da die
+  AJAX-Calls direkt zum DocServer gehen statt über Umweg).
+  DDOS zum DocServer über einen "intelligenten" Load Balancer abfangen
+  + Hash-Signatur im HTTP Header oder so was.
+- JSON-API-Zugriff vom Webserver: Highlevel-Sprache, in der der DocServer dem
+  WebServer sagt, wie das UI zu einem Doc aussehen soll. Schon sehr gut, aber
+  noch sehr aufwändig, weil dieses JSON-Format ständig erweitert werden muss.
+- Serialized-API-Zugriff vom Webserver: Sieht aktuell nach der coolsten
+  Lösung aus:
+  - DocServer hält Doc
+  - DocServer erzeugt Wicket-Komponenten dazu mit Models, die auch Remote (also
+    über die API zwischen Webserver und DocServer) funktionieren. Hier muss
+    nur mehr Standardisierung her (für die IModel-Klassen) aber zumindest
+    die Components müssen nicht mehr so übertragen werden
+  - Wicket-Komponenten werden serialized (das geht ja bei Wicket immer!)
+    und zum Webserver gesendet
+  - Webserver baut die Komponenten in die WorkbenchPage ein und rendert sie,
+    dabei werden die Remote-Fähigen Models benutzt. Die Models sollten aber
+    auch nach Möglichkeit cachen!
+  - DocServer sendet Change- bzw. CacheClear- (Notify-) Events
+  - Webserver ändert das Doc über die IModel API
+  - Übergang zu JSON-spezifizierten Components wenn sinnvoll
+  - Übergang zu HTTP-API im DocServer, die direkt vom Browser angesprochen wird,
+    wenn sinnvoll
+  - Übergang zu N-to-N Kommunikation wenn sinnvoll
+
+Kommunkation:
+- IpcEvents
+- Code-Events: Da der Code auf allen Servern vorliegt, kann der Webserver ein Objekt
+  senden (auch in einen IpcEvent verpackt), mit Code der auf dem DocServer ausgeführt
+  wird, und umgekehrt.
+- Daraus Standardbausteine bauen, die auf DocServer und WebServer verteilt laufen und
+  per Daten-Events und Code-Events synchronisieren. Dem Document-Code muss zwar bewusst
+  sein, dass alles verteilt läuft, aber in den Standardbausteinen verpackt.
+- Der Code für den IDocumentBody benutzt die Standardbausteine und entweder ist das Doc
+  daraus gebaut oder die Bausteine greifen auf das Doc zu (das dann alles innterhalb des
+  DocServers). Gibt es die Baustein-Instanzen je Doc oder je Client? 
+
+
+
+
+
+
+
