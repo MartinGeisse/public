@@ -9,6 +9,7 @@ package name.martingeisse.webide.features.simvm.simulation;
 import name.martingeisse.webide.ipc.IpcEvent;
 
 import org.apache.log4j.Logger;
+import org.json.simple.JSONObject;
 
 /**
  * This thread executes the actual SimVM simulation code.
@@ -35,7 +36,7 @@ class SimulationThread extends Thread {
 	/**
 	 * the simulation
 	 */
-	private final Simulation simulation;
+	private final SimulatedVirtualMachine virtualMachine;
 	
 	/**
 	 * the exitEvent
@@ -44,10 +45,10 @@ class SimulationThread extends Thread {
 	
 	/**
 	 * Constructor.
-	 * @param simulation the simulation
+	 * @param virtualMachine the simulated virtual machine
 	 */
-	public SimulationThread(Simulation simulation) {
-		this.simulation = simulation;
+	public SimulationThread(SimulatedVirtualMachine virtualMachine) {
+		this.virtualMachine = virtualMachine;
 		this.exitEvent = null;
 	}
 	
@@ -64,7 +65,8 @@ class SimulationThread extends Thread {
 		}
 		
 		try {
-			simulation.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_START, simulation, null));
+			virtualMachine.getSimulationModel().getPrimaryElement().loadRuntimeState(new JSONObject());
+			virtualMachine.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_START, virtualMachine, null));
 			while (true) {
 				IpcEvent event = fetchEvent();
 				if (event == null) {
@@ -80,17 +82,16 @@ class SimulationThread extends Thread {
 				}
 			}
 		} finally {
-			simulation.remove();
+			virtualMachine.detachSimulationThread();
 			if (exitEvent != null) {
-				simulation.getOutputEventBus().sendEvent(exitEvent);
+				virtualMachine.getOutputEventBus().sendEvent(exitEvent);
 			}
-			simulation.dispose();
 		}
 	}
 	
 	private IpcEvent fetchEvent() {
 		try {
-			IpcEvent event = simulation.fetchEvent(simulation.getState() == SimulationState.PAUSED);
+			IpcEvent event = virtualMachine.fetchEvent(virtualMachine.getState() == SimulationState.PAUSED);
 			return (event == null ? EVENT_INSTANCE_RUNNING : event);
 		} catch (InterruptedException e) {
 			logger.error("SimVM simulation thread was interrupted while fetching an event");
@@ -126,36 +127,36 @@ class SimulationThread extends Thread {
 	}
 
 	private void handlePause() {
-		simulation.setState(SimulationState.PAUSED);
-		simulation.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_PAUSE, simulation, null));
+		virtualMachine.setState(SimulationState.PAUSED);
+		virtualMachine.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_PAUSE, virtualMachine, null));
 	}
 	
 	private void handleStep() {
-		simulation.getSimulationModel().getPrimaryElement().singleStep();
-		simulation.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_STEP, simulation, null));
+		virtualMachine.getSimulationModel().getPrimaryElement().singleStep();
+		virtualMachine.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_STEP, virtualMachine, null));
 	}
 	
 	private void handleResume() {
-		simulation.setState(SimulationState.RUNNING);
-		simulation.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_RESUME, simulation, null));
+		virtualMachine.setState(SimulationState.RUNNING);
+		virtualMachine.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_RESUME, virtualMachine, null));
 	}
 
 	private void handleRunning() {
-		simulation.getSimulationModel().getPrimaryElement().batchStep();
+		virtualMachine.getSimulationModel().getPrimaryElement().batchStep();
 	}
 	
 	private void handleSuspend() {
-		simulation.getSimulationModel().getPrimaryElement().saveState();
-		exitEvent = new IpcEvent(SimulationEvents.EVENT_TYPE_SUSPEND, simulation, null);
+		virtualMachine.getSimulationModel().getPrimaryElement().saveRuntimeState();
+		exitEvent = new IpcEvent(SimulationEvents.EVENT_TYPE_SUSPEND, virtualMachine, null);
 	}
 	
 	private void handleTerminate() {
-		simulation.getSimulationModel().getPrimaryElement().deleteState();
-		exitEvent = new IpcEvent(SimulationEvents.EVENT_TYPE_TERMINATE, simulation, null);
+		virtualMachine.getSimulationModel().getPrimaryElement().deleteSavedRuntimeState();
+		exitEvent = new IpcEvent(SimulationEvents.EVENT_TYPE_TERMINATE, virtualMachine, null);
 	}
 	
 	private void handleCustomEvent(IpcEvent event) {
-		simulation.getSimulationModel().getPrimaryElement().handleEvent(event);
+		virtualMachine.getSimulationModel().getPrimaryElement().handleEvent(event);
 	}
 	
 }

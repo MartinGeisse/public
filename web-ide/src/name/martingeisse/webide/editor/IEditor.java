@@ -6,6 +6,7 @@
 
 package name.martingeisse.webide.editor;
 
+import java.io.Serializable;
 import java.util.List;
 
 import name.martingeisse.webide.resources.FetchMarkerResult;
@@ -17,7 +18,7 @@ import org.apache.wicket.Component;
  * Represents an editor instance. Only one editor is running for each
  * workbench page.
  */
-public interface IEditor {
+public interface IEditor extends Serializable {
 
 	/**
 	 * This method is invoked after creation to initialize the editor
@@ -41,7 +42,7 @@ public interface IEditor {
 	 * 
 	 * @return the workspace resource handle
 	 */
-	public ResourceHandle getWorkspaceResourceHandle();
+	public ResourceHandle getResourceHandle();
 	
 	/**
 	 * Returns the document being edited.

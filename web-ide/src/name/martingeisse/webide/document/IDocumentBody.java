@@ -15,6 +15,15 @@ import name.martingeisse.webide.resources.ResourceHandle;
 public interface IDocumentBody {
 
 	/**
+	 * Initializes this object for use in the specified document.
+	 * This method is called before the body is placed in the
+	 * body.
+	 * 
+	 * @param document the document that is to contain this body.
+	 */
+	public void initialize(Document document);
+	
+	/**
 	 * Loads the contents of this document body from the specified resource handle.
 	 * @param resourceHandle the resource handle to load from
 	 */

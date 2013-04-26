@@ -18,7 +18,7 @@ import org.apache.wicket.model.PropertyModel;
  *
  * @param <D> the document type
  */
-public abstract class AbstractEditor<D extends Serializable> implements IEditor, Serializable {
+public abstract class AbstractEditor<D extends Serializable> implements IEditor {
 
 	/**
 	 * the resourceHandle
@@ -47,10 +47,10 @@ public abstract class AbstractEditor<D extends Serializable> implements IEditor,
 	protected abstract D createDocument(byte[] resourceData);
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.workbench.IEditor#getWorkspaceResourceHandle()
+	 * @see name.martingeisse.webide.editor.IEditor#getResourceHandle()
 	 */
 	@Override
-	public final ResourceHandle getWorkspaceResourceHandle() {
+	public ResourceHandle getResourceHandle() {
 		return resourceHandle;
 	}
 	

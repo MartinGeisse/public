@@ -33,7 +33,7 @@ public class CodeMirrorEditor extends AbstractCodeMirrorEditor {
 	 */
 	@Override
 	public Component createComponent(final String id) {
-		return new CodeMirrorEditorPanel(id, createDocumentModel(), getWorkspaceResourceHandle(), mode);
+		return new CodeMirrorEditorPanel(id, createDocumentModel(), getResourceHandle(), mode);
 	}
 
 }

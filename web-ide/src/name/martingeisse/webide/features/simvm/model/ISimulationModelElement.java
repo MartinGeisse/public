@@ -33,7 +33,7 @@ public interface ISimulationModelElement extends Serializable {
 	public void initialize(SimulationModel simulationModel, IIpcEventOutbox eventOutbox);
 	
 	/**
-	 * Saves the state to a JSON structure and optionally to auxiliary workspace
+	 * Saves the runtime state to a JSON structure and optionally to auxiliary workspace
 	 * resources. The JSON structure is returned. Auxiliary resources should be
 	 * used if the state includes parts that are too cumbersome for JSON (such as
 	 * a RAM dump).
@@ -43,20 +43,20 @@ public interface ISimulationModelElement extends Serializable {
 	 * 
 	 * @return the JSON structure
 	 */
-	public Object saveState();
+	public Object saveRuntimeState();
 
 	/**
-	 * Loads the state from a JSON structure and optionally from auxiliary workspace
-	 * resources. This method is the counterpart to {@link #saveState()}.
+	 * Loads the runtime state from a JSON structure and optionally from auxiliary workspace
+	 * resources. This method is the counterpart to {@link #saveRuntimeState()}.
 	 * 
 	 * @param state the JSON structure
 	 */
-	public void loadState(Object state);
+	public void loadRuntimeState(Object state);
 
 	/**
-	 * Deletes the state stored in auxiliary workspace resources.
+	 * Deletes the runtime state stored in auxiliary workspace resources.
 	 */
-	public void deleteState();
+	public void deleteSavedRuntimeState();
 
 	/**
 	 * Handles an event that was passed to the simulation. This is

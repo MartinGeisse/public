@@ -11,15 +11,18 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Nullable;
 
+import name.martingeisse.webide.document.Document;
 import name.martingeisse.webide.features.ecosim.EcosimEvents;
 import name.martingeisse.webide.features.ecosim.EcosimPrimaryModelElement;
 import name.martingeisse.webide.features.simvm.model.SimulationModel;
-import name.martingeisse.webide.features.simvm.simulation.Simulation;
+import name.martingeisse.webide.features.simvm.simulation.SimulatedVirtualMachine;
 import name.martingeisse.webide.features.simvm.simulation.SimulationEventMessage;
 import name.martingeisse.webide.features.simvm.simulation.SimulationEvents;
+import name.martingeisse.webide.features.simvm.simulation.SimulationState;
 import name.martingeisse.webide.ipc.IpcEvent;
 import name.martingeisse.webide.resources.ResourceHandle;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.atmosphere.AtmosphereBehavior;
 import org.apache.wicket.atmosphere.AtmosphereEvent;
@@ -54,11 +57,6 @@ class EditorPanel extends Panel {
 	static final ConcurrentMap<String, ResourceHandle> editorPageSimulationAnchors = new ConcurrentHashMap<String, ResourceHandle>();
 	
 	/**
-	 * the anchorResource
-	 */
-	private final ResourceHandle anchorResource;
-
-	/**
 	 * the terminalOutput
 	 */
 	private String terminalOutput;
@@ -67,41 +65,31 @@ class EditorPanel extends Panel {
 	 * Constructor.
 	 * @param id the Wicket id
 	 * @param model the document model
-	 * @param anchorResource the anchor resource of the simulation
 	 */
-	public EditorPanel(final String id, final IModel<SimulationModel> model, final ResourceHandle anchorResource) {
+	public EditorPanel(final String id, final IModel<Document> model) {
 		super(id, model);
 		setOutputMarkupId(true);
-		this.anchorResource = anchorResource;
 
+		// create components
 		add(new Link<Void>("startButton") {
 
 			@Override
 			public void onClick() {
-				try {
-					Simulation.getOrCreate(EditorPanel.this.anchorResource, true);
-				} catch (final Simulation.StaleSimulationException e) {
-				}
+				getVirtualMachine().startSimulation();
+				getVirtualMachine().resume();
 			}
 
 			@Override
 			public boolean isVisible() {
-				return (getRunningSimulation() == null);
+				return (getVirtualMachine().getState() == SimulationState.STOPPED);
 			}
 
 		});
-
 		add(new Link<Void>("terminateButton") {
 
 			@Override
 			public void onClick() {
-				final Simulation simulation = Simulation.getExisting(EditorPanel.this.anchorResource);
-				if (simulation != null) {
-					try {
-						simulation.terminate();
-					} catch (final Simulation.StaleSimulationException e) {
-					}
-				}
+				getVirtualMachine().terminate();
 			}
 
 			/* (non-Javadoc)
@@ -109,40 +97,55 @@ class EditorPanel extends Panel {
 			 */
 			@Override
 			public boolean isVisible() {
-				return (getRunningSimulation() != null);
+				return (getVirtualMachine().getState() != SimulationState.STOPPED);
 			}
 
 		});
-
 		add(new Label("terminalOutput", new PropertyModel<String>(this, "terminalOutput")).setOutputMarkupId(true));
-		Simulation simulation = getRunningSimulation();
-		if (simulation != null) {
-			SimulationModel runningSimulationModel = simulation.getSimulationModel();
-			EcosimPrimaryModelElement primaryElement = (EcosimPrimaryModelElement)runningSimulationModel.getPrimaryElement();
-			this.terminalOutput = primaryElement.getTerminalUserInterface().getOutput();
-		}
+		
+		// initialize runtime state
+		SimulatedVirtualMachine virtualMachine = getVirtualMachine();
+		SimulationModel runningSimulationModel = virtualMachine.getSimulationModel();
+		EcosimPrimaryModelElement primaryElement = (EcosimPrimaryModelElement)runningSimulationModel.getPrimaryElement();
+		this.terminalOutput = primaryElement.getTerminalUserInterface().getOutput();
+		
 	}
 
+	/**
+	 * @return the {@link IModel} for the {@link Document}
+	 */
+	@SuppressWarnings("unchecked")
+	public final IModel<Document> getDocumentModel() {
+		return (IModel<Document>)getDefaultModel();
+	}
+	
+	/**
+	 * @return the {@link Document}
+	 */
+	public final Document getDocument() {
+		return getDocumentModel().getObject();
+	}
+	
 	/**
 	 * Getter method for the anchorResource.
 	 * @return the anchorResource
 	 */
-	public ResourceHandle getAnchorResource() {
-		return anchorResource;
+	public final ResourceHandle getAnchorResource() {
+		return getDocument().getResourceHandle();
 	}
 	
 	/**
-	 * @return the simulation model
+	 * @return the {@link SimulatedVirtualMachine}
 	 */
-	public SimulationModel getSimulationModel() {
-		return (SimulationModel)getDefaultModelObject();
+	public final SimulatedVirtualMachine getVirtualMachine() {
+		return (SimulatedVirtualMachine)getDocument().getBody();
 	}
-
+	
 	/**
-	 * @return the running simulation, or null if not running
+	 * @return the {@link SimulationModel}
 	 */
-	public Simulation getRunningSimulation() {
-		return Simulation.getExisting(EditorPanel.this.anchorResource);
+	public final SimulationModel getSimulationModel() {
+		return getVirtualMachine().getSimulationModel();
 	}
 	
 	/**
@@ -155,13 +158,14 @@ class EditorPanel extends Panel {
 		IpcEvent event = message.getEvent();
 		String type = event.getType();
 		if (type.equals(SimulationEvents.EVENT_TYPE_START) || type.equals(SimulationEvents.EVENT_TYPE_SUSPEND) || type.equals(SimulationEvents.EVENT_TYPE_TERMINATE)) {
-			System.out.println("* " + getRunningSimulation());
+			// System.out.println("* " + getRunningSimulation());
 //			TODO das reicht noch nicht. Dieses Panel wird neu gerendert *bevor* die Simulation endgültig beendet wurde (-> race condition!)
 			target.add(this);
 		} else if (event.getType().equals(EcosimEvents.TERMINAL_OUTPUT)) {
 			terminalOutput = (String)event.getData();
 			target.add(get("terminalOutput"));
 		}
+		System.out.println("+++ event: " + type);
 	}
 
 	/* (non-Javadoc)
@@ -175,7 +179,7 @@ class EditorPanel extends Panel {
 		// with a pre-existing connection
 		String uuid = AtmosphereBehavior.getUUID(getPage());
 		if (uuid != null) {
-			editorPageSimulationAnchors.put(uuid, anchorResource);
+			editorPageSimulationAnchors.put(uuid, getAnchorResource());
 		}
 	}
 	
@@ -207,20 +211,12 @@ class EditorPanel extends Panel {
 		 */
 		@Override
 		public boolean apply(@Nullable AtmosphereEvent input) {
-			
-			String currentUuid = input.getResource().uuid();
+			String eventTargetUuid = input.getResource().uuid();
 			// String originalUuid = (String)input.getResource().getRequest().getAttribute(ApplicationConfig.SUSPENDED_ATMOSPHERE_RESOURCE_UUID);
-			ResourceHandle anchorResourceForUuid = editorPageSimulationAnchors.get(currentUuid);
+			ResourceHandle eventTargetResourceHandle = editorPageSimulationAnchors.get(eventTargetUuid);
 			SimulationEventMessage message = (SimulationEventMessage)input.getPayload();
-			ResourceHandle anchorResourceForSimulation = message.getSimulation().getResourceHandle();
-			
-			// return true;
-			if (anchorResourceForUuid == null || anchorResourceForSimulation == null) {
-				return false;
-			} else {
-				return anchorResourceForUuid.equals(anchorResourceForSimulation);
-			}
-			
+			ResourceHandle affectedResourceHandle = message.getVirtualMachine().getDocument().getResourceHandle();
+			return ObjectUtils.equals(eventTargetResourceHandle, affectedResourceHandle);
 		}
 		
 	}

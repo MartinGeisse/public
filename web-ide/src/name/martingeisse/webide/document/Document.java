@@ -67,6 +67,7 @@ public final class Document {
 	synchronized void initializeBody(DocumentHub.Key key) {
 		try {
 			body = key.getDocumentType().newInstance();
+			body.initialize(this);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

@@ -63,17 +63,17 @@ public abstract class AbstractCompositeSimulationModelElement<S extends ISimulat
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.features.simvm.model.ISimulationModelElement#saveState()
+	 * @see name.martingeisse.webide.features.simvm.model.ISimulationModelElement#saveRuntimeState()
 	 */
 	@Override
-	public final Object saveState() {
+	public final Object saveRuntimeState() {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> stateObject = new JSONObject();
-		saveState(stateObject);
+		saveRuntimeState(stateObject);
 		@SuppressWarnings("unchecked")
 		List<Object> subElementStates = new JSONArray();
 		for (S subElement : subElements) {
-			subElementStates.add(subElement.saveState());
+			subElementStates.add(subElement.saveRuntimeState());
 		}
 		stateObject.put("subElements", subElementStates);
 		return stateObject;
@@ -83,18 +83,20 @@ public abstract class AbstractCompositeSimulationModelElement<S extends ISimulat
 	 * Saves subclass-specific state. The default implementation does nothing.
 	 * @param stateObject the object to save to
 	 */
-	protected void saveState(Map<String, Object> stateObject) {
+	protected void saveRuntimeState(Map<String, Object> stateObject) {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.features.simvm.model.ISimulationModelElement#loadState(java.lang.Object)
+	 * @see name.martingeisse.webide.features.simvm.model.ISimulationModelElement#loadRuntimeState(java.lang.Object)
 	 */
 	@Override
-	public final void loadState(Object state) {
+	public final void loadRuntimeState(Object state) {
 		
 		// check main state object
 		if (!(state instanceof JSONObject)) {
-			throw new IllegalArgumentException("state argument must be a JSONObject");
+			loadRuntimeState((Map<String, Object>)null);
+			loadNullStateForSubElements();
+			return;
 		}
 		@SuppressWarnings("unchecked")
 		Map<String, Object> stateObject = (JSONObject)state;
@@ -102,7 +104,9 @@ public abstract class AbstractCompositeSimulationModelElement<S extends ISimulat
 		// check sub-element state array
 		Object subState = stateObject.get("subElements");
 		if (!(subState instanceof JSONArray)) {
-			throw new IllegalArgumentException("subElements property of the state object must be a JSONArray");
+			loadRuntimeState(stateObject);
+			loadNullStateForSubElements();
+			return;
 		}
 		@SuppressWarnings("unchecked")
 		List<Object> subElementStates = (JSONArray)subState;
@@ -112,29 +116,38 @@ public abstract class AbstractCompositeSimulationModelElement<S extends ISimulat
 		}
 		
 		// load state
-		loadState(stateObject);
+		loadRuntimeState(stateObject);
 		Iterator<S> modelElementIterator = subElements.iterator();
 		Iterator<Object> subStateIterator = subElementStates.iterator();
 		while (modelElementIterator.hasNext()) {
-			modelElementIterator.next().loadState(subStateIterator.next());
+			modelElementIterator.next().loadRuntimeState(subStateIterator.next());
 		}
 		
+	}
+	
+	/**
+	 * Loads a "null" state for all sub-elements.
+	 */
+	private void loadNullStateForSubElements() {
+		for (S subElement : subElements) {
+			subElement.loadRuntimeState(null);
+		}
 	}
 
 	/**
 	 * Loads subclass-specific state. The default implementation does nothing.
 	 * @param stateObject the object to load from
 	 */
-	protected void loadState(Map<String, Object> stateObject) {
+	protected void loadRuntimeState(Map<String, Object> stateObject) {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.features.simvm.model.ISimulationModelElement#deleteState()
+	 * @see name.martingeisse.webide.features.simvm.model.ISimulationModelElement#deleteSavedRuntimeState()
 	 */
 	@Override
-	public void deleteState() {
+	public void deleteSavedRuntimeState() {
 		for (S subElement : subElements) {
-			subElement.deleteState();
+			subElement.deleteSavedRuntimeState();
 		}
 	}
 

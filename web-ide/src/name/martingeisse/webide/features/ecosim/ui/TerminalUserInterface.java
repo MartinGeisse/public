@@ -44,6 +44,13 @@ public class TerminalUserInterface implements ITerminalUserInterface, Serializab
 		outputBuilder.append(c);
 		eventOutbox.sendEvent(new IpcEvent(EcosimEvents.TERMINAL_OUTPUT, this, getOutput()));
 	}
+	
+	/**
+	 * Clears all previous output.
+	 */
+	public void clearOutput() {
+		outputBuilder.setLength(0);
+	}
 
 	/**
 	 * Returns the buffered output.

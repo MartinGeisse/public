@@ -16,9 +16,9 @@ import name.martingeisse.webide.ipc.IpcEvent;
 public final class SimulationEventMessage {
 
 	/**
-	 * the simulation
+	 * the virtualMachine
 	 */
-	private final Simulation simulation;
+	private final SimulatedVirtualMachine virtualMachine;
 	
 	/**
 	 * the event
@@ -27,20 +27,20 @@ public final class SimulationEventMessage {
 
 	/**
 	 * Constructor.
-	 * @param simulation the simulation that produced the event
+	 * @param virtualMachine the virtual machine that produced the event
 	 * @param event the event
 	 */
-	public SimulationEventMessage(Simulation simulation, IpcEvent event) {
-		this.simulation = simulation;
+	public SimulationEventMessage(SimulatedVirtualMachine virtualMachine, IpcEvent event) {
+		this.virtualMachine = virtualMachine;
 		this.event = event;
 	}
 
 	/**
-	 * Getter method for the simulation.
-	 * @return the simulation
+	 * Getter method for the virtualMachine.
+	 * @return the virtualMachine
 	 */
-	public Simulation getSimulation() {
-		return simulation;
+	public SimulatedVirtualMachine getVirtualMachine() {
+		return virtualMachine;
 	}
 	
 	/**

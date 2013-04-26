@@ -11,7 +11,7 @@ import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.webide.features.ecosim.EcosimPrimaryModelElement;
 import name.martingeisse.webide.features.simvm.model.AbstractCompositeSimulationModelElement;
 import name.martingeisse.webide.features.simvm.model.SimulationModel;
-import name.martingeisse.webide.features.simvm.simulation.Simulation;
+import name.martingeisse.webide.features.simvm.simulation.SimulatedVirtualMachine;
 import name.martingeisse.webide.resources.ResourceHandle;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -78,8 +78,8 @@ public class CompositeSimulationModelElementPanel extends Panel {
 	/**
 	 * @return the running simulation, or null if not running
 	 */
-	public Simulation getRunningSimulation() {
-		return Simulation.getExisting(simulationModel.getAnchorResource());
+	public SimulatedVirtualMachine getRunningSimulation() {
+		return null; // SimulatedVirtualMachine.getExisting(simulationModel.getAnchorResource());
 	}	
 	
 	private void createRealSimulatorControls() {
@@ -87,10 +87,7 @@ public class CompositeSimulationModelElementPanel extends Panel {
 
 			@Override
 			public void onClick() {
-				try {
-					Simulation.getOrCreate(simulationModel.getAnchorResource(), true);
-				} catch (final Simulation.StaleSimulationException e) {
-				}
+				// SimulatedVirtualMachine.getOrCreate(simulationModel.getAnchorResource(), true);
 			}
 
 			@Override
@@ -103,13 +100,12 @@ public class CompositeSimulationModelElementPanel extends Panel {
 
 			@Override
 			public void onClick() {
-				final Simulation simulation = Simulation.getExisting(simulationModel.getAnchorResource());
+				/*
+				final SimulatedVirtualMachine simulation = SimulatedVirtualMachine.getExisting(simulationModel.getAnchorResource());
 				if (simulation != null) {
-					try {
-						simulation.terminate();
-					} catch (final Simulation.StaleSimulationException e) {
-					}
+					simulation.terminate();
 				}
+				*/
 			}
 
 			/* (non-Javadoc)
