@@ -4,12 +4,12 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.features.ecosim;
+package name.martingeisse.webide.features.ecosim.model;
 
 import name.martingeisse.ecosim.bus.IPeripheralDevice;
 
 /**
- * Wraps information about a periperal device that is contributed
+ * Wraps information about a peripheral device that is contributed
  * by a model element.
  */
 public final class EcosimContributedDevice {

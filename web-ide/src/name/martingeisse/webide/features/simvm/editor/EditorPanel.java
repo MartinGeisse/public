@@ -9,36 +9,21 @@ package name.martingeisse.webide.features.simvm.editor;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import javax.annotation.Nullable;
-
 import name.martingeisse.webide.document.Document;
-import name.martingeisse.webide.features.ecosim.EcosimEvents;
-import name.martingeisse.webide.features.ecosim.EcosimPrimaryModelElement;
+import name.martingeisse.webide.features.simvm.model.PrimaryElementFromDocumentModel;
 import name.martingeisse.webide.features.simvm.model.SimulationModel;
 import name.martingeisse.webide.features.simvm.simulation.SimulatedVirtualMachine;
-import name.martingeisse.webide.features.simvm.simulation.SimulationEventMessage;
-import name.martingeisse.webide.features.simvm.simulation.SimulationEvents;
-import name.martingeisse.webide.features.simvm.simulation.SimulationState;
-import name.martingeisse.webide.ipc.IpcEvent;
 import name.martingeisse.webide.resources.ResourceHandle;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.atmosphere.AtmosphereBehavior;
-import org.apache.wicket.atmosphere.AtmosphereEvent;
-import org.apache.wicket.atmosphere.Subscribe;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
-
-import com.google.common.base.Predicate;
 
 /**
  * The actual Wicket component that encapsulates the SimVM UI.
+ * 
+ * This panel stores the page's Atmosphere UUID for push-updates and
+ * renders the components of its simulation model elements.
  */
 class EditorPanel extends Panel {
 
@@ -57,11 +42,6 @@ class EditorPanel extends Panel {
 	static final ConcurrentMap<String, ResourceHandle> editorPageSimulationAnchors = new ConcurrentHashMap<String, ResourceHandle>();
 	
 	/**
-	 * the terminalOutput
-	 */
-	private String terminalOutput;
-
-	/**
 	 * Constructor.
 	 * @param id the Wicket id
 	 * @param model the document model
@@ -69,46 +49,7 @@ class EditorPanel extends Panel {
 	public EditorPanel(final String id, final IModel<Document> model) {
 		super(id, model);
 		setOutputMarkupId(true);
-
-		// create components
-		add(new Link<Void>("startButton") {
-
-			@Override
-			public void onClick() {
-				getVirtualMachine().startSimulation();
-				getVirtualMachine().resume();
-			}
-
-			@Override
-			public boolean isVisible() {
-				return (getVirtualMachine().getState() == SimulationState.STOPPED);
-			}
-
-		});
-		add(new Link<Void>("terminateButton") {
-
-			@Override
-			public void onClick() {
-				getVirtualMachine().terminate();
-			}
-
-			/* (non-Javadoc)
-			 * @see org.apache.wicket.Component#isVisible()
-			 */
-			@Override
-			public boolean isVisible() {
-				return (getVirtualMachine().getState() != SimulationState.STOPPED);
-			}
-
-		});
-		add(new Label("terminalOutput", new PropertyModel<String>(this, "terminalOutput")).setOutputMarkupId(true));
-		
-		// initialize runtime state
-		SimulatedVirtualMachine virtualMachine = getVirtualMachine();
-		SimulationModel runningSimulationModel = virtualMachine.getSimulationModel();
-		EcosimPrimaryModelElement primaryElement = (EcosimPrimaryModelElement)runningSimulationModel.getPrimaryElement();
-		this.terminalOutput = primaryElement.getTerminalUserInterface().getOutput();
-		
+		add(getSimulationModel().getPrimaryElement().createComponent("innerPanel", new PrimaryElementFromDocumentModel(model)));
 	}
 
 	/**
@@ -130,44 +71,24 @@ class EditorPanel extends Panel {
 	 * Getter method for the anchorResource.
 	 * @return the anchorResource
 	 */
-	public final ResourceHandle getAnchorResource() {
+	final ResourceHandle getAnchorResource() {
 		return getDocument().getResourceHandle();
 	}
 	
 	/**
 	 * @return the {@link SimulatedVirtualMachine}
 	 */
-	public final SimulatedVirtualMachine getVirtualMachine() {
+	final SimulatedVirtualMachine getVirtualMachine() {
 		return (SimulatedVirtualMachine)getDocument().getBody();
 	}
 	
 	/**
 	 * @return the {@link SimulationModel}
 	 */
-	public final SimulationModel getSimulationModel() {
+	final SimulationModel getSimulationModel() {
 		return getVirtualMachine().getSimulationModel();
 	}
 	
-	/**
-	 * Subscribes to {@link IpcEvent}s.
-	 * @param target the request handler
-	 * @param message the event message
-	 */
-	@Subscribe(filter = MyFilter.class)
-	public void onSimulatorGeneratedEvent(final AjaxRequestTarget target, final SimulationEventMessage message) {
-		IpcEvent event = message.getEvent();
-		String type = event.getType();
-		if (type.equals(SimulationEvents.EVENT_TYPE_START) || type.equals(SimulationEvents.EVENT_TYPE_SUSPEND) || type.equals(SimulationEvents.EVENT_TYPE_TERMINATE)) {
-			// System.out.println("* " + getRunningSimulation());
-//			TODO das reicht noch nicht. Dieses Panel wird neu gerendert *bevor* die Simulation endgültig beendet wurde (-> race condition!)
-			target.add(this);
-		} else if (event.getType().equals(EcosimEvents.TERMINAL_OUTPUT)) {
-			terminalOutput = (String)event.getData();
-			target.add(get("terminalOutput"));
-		}
-		System.out.println("+++ event: " + type);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Component#onAfterRender()
 	 */
@@ -181,44 +102,6 @@ class EditorPanel extends Panel {
 		if (uuid != null) {
 			editorPageSimulationAnchors.put(uuid, getAnchorResource());
 		}
-	}
-	
-	/**
-	 * Getter method for the terminalOutput.
-	 * @return the terminalOutput
-	 */
-	public String getTerminalOutput() {
-		return terminalOutput;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.wicket.Component#renderHead(org.apache.wicket.markup.head.IHeaderResponse)
-	 */
-	@Override
-	public void renderHead(IHeaderResponse response) {
-		super.renderHead(response);
-		response.render(OnDomReadyHeaderItem.forScript("initializeSimvmEditorPanel()"));
-	}
-	
-	/**
-	 * Filters atmosphere events with {@link SimulationEventMessage}s to build a Wicket
-	 * context only for pages that show the *same* simulation.
-	 */
-	public static class MyFilter implements Predicate<AtmosphereEvent> {
-
-		/* (non-Javadoc)
-		 * @see com.google.common.base.Predicate#apply(java.lang.Object)
-		 */
-		@Override
-		public boolean apply(@Nullable AtmosphereEvent input) {
-			String eventTargetUuid = input.getResource().uuid();
-			// String originalUuid = (String)input.getResource().getRequest().getAttribute(ApplicationConfig.SUSPENDED_ATMOSPHERE_RESOURCE_UUID);
-			ResourceHandle eventTargetResourceHandle = editorPageSimulationAnchors.get(eventTargetUuid);
-			SimulationEventMessage message = (SimulationEventMessage)input.getPayload();
-			ResourceHandle affectedResourceHandle = message.getVirtualMachine().getDocument().getResourceHandle();
-			return ObjectUtils.equals(eventTargetResourceHandle, affectedResourceHandle);
-		}
-		
 	}
 	
 }

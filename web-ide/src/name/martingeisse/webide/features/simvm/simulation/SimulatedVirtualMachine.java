@@ -82,6 +82,14 @@ public final class SimulatedVirtualMachine implements IDocumentBody {
 	private IpcEventBus outputEventBus;
 	
 	/**
+	 * Constructor.
+	 */
+	public SimulatedVirtualMachine() {
+		this.state = SimulationState.STOPPED;
+		this.outputEventBus = new IpcEventBus();
+	}
+	
+	/**
 	 * Getter method for the document.
 	 * @return the document
 	 */
@@ -129,11 +137,6 @@ public final class SimulatedVirtualMachine implements IDocumentBody {
 		
 		// initialize fields
 		this.document = document;
-		this.simulationModel = null;
-		this.state = SimulationState.STOPPED;
-		this.simulationThread = null;
-		this.eventQueue = null;
-		this.outputEventBus = new IpcEventBus();
 		
 		// publish output events to all pages to enable push-updates
 		this.outputEventBus.addListener(new IIpcEventListener() {
@@ -151,7 +154,7 @@ public final class SimulatedVirtualMachine implements IDocumentBody {
 		});
 		
 		// initialize the simulation model
-		this.simulationModel = new SimulationModel(document.getResourceHandle(), new IIpcEventOutbox() {
+		this.simulationModel = new SimulationModel(this, new IIpcEventOutbox() {
 			@Override
 			public void sendEvent(IpcEvent event) {
 				outputEventBus.dispatch(event);

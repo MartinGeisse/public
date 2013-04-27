@@ -1,0 +1,10 @@
+
+Noch weiterbauen:
+
+	features/simvm/editor
+		CompositeSimulationModelElementPanel.java
+		EditorPanel.java
+
+
+	features/ecosim/*
+

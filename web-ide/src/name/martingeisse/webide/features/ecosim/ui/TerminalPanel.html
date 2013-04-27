@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+	<wicket:head>
+		<style type="text/css">
+		
+			.terminal-output-container {
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				right: 10px;
+				bottom: 10px;
+				border: 1px solid #ddd;
+			}
+			
+			.terminal-output-container:focus {
+				border: 1px solid #aaf;
+			}
+			
+		</style>
+		<script type="text/javascript">
+
+			function initializeTerminalPanel() {
+				$('.terminal-output-container').on('keypress', function(event) {
+					var charCode = event.which;
+					var charText = String.fromCharCode(charCode);
+					var escapedCharText = $('<span>').text(charText).html();
+					$('.terminal-output-container > pre').append(escapedCharText);
+				});
+			}
+			
+		</script>
+	</wicket:head>
+	<body>
+		<wicket:panel>
+			<div class="absolute-cover terminal-output-container" tabindex="0">
+				<pre wicket:id="terminalOutput" style="margin: 0px; padding: 0px; " />
+			</div>
+		</wicket:panel>
+	</body>
+</html>

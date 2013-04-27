@@ -9,7 +9,7 @@
 			#simulator-tab-button-container {
 			}
 		
-			#simulator-control-container {
+			#simulator-right-panel {
 				float: right;
 				width: 120px;
 			}
@@ -30,25 +30,6 @@
 
 			.simulator-tab-button.current {
 				background-color: #fff;
-			}
-			
-			.simulator-control-button {
-				display: inline-block;
-				margin: 2px; 
-				width: 80px;
-				border: 1px solid #aaa;
-				padding: 5px;
-				font-weight: bold;
-				text-align: center;
-				cursor: pointer;
-			}
-
-			.simulator-control-button.start {
-				background-color: #daa;
-			}
-
-			.simulator-control-button.terminate {
-				background-color: #ada;
 			}
 			
 			#simulator-tab-pane-container {
@@ -88,17 +69,16 @@
 		<wicket:panel>
 		
 			<div id="simulator-tab-bar">
-				<div id="simulator-control-container">
-					<input type="button" wicket:id="startButton" value="Start" class="simulator-control-button start" />
-					<input type="button" wicket:id="terminateButton" value="Terminate" class="simulator-control-button terminate" />
-				</div>
+				<div id="simulator-right-panel" wicket:id="rightPanel" />
 				<div id="simulator-tab-button-container">
 					<a href="#" class="simulator-tab-button" wicket:id="tabButtons"><span wicket:id="text" /></a>
 				</div>
 			</div>
 
 			<div id="simulator-tab-pane-container">
-				<div wicket:id="tabPanes" />
+				<wicket:container wicket:id="tabPanes">
+					<div wicket:id="tabPane" />
+				</wicket:container>
 			</div>
 			
 		</wicket:panel>

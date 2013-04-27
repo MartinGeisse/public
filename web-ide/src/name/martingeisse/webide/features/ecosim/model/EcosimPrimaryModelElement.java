@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.features.ecosim;
+package name.martingeisse.webide.features.ecosim.model;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,13 +20,15 @@ import name.martingeisse.ecosim.devices.memory.Rom;
 import name.martingeisse.ecosim.devices.output.OutputDevice;
 import name.martingeisse.ecosim.devices.terminal.Terminal;
 import name.martingeisse.ecosim.devices.timer.Timer;
-import name.martingeisse.webide.features.ecosim.ui.TerminalUserInterface;
+import name.martingeisse.webide.features.ecosim.ui.EcosimPanel;
 import name.martingeisse.webide.features.simvm.model.AbstractCompositeSimulationModelElement;
 import name.martingeisse.webide.features.simvm.model.IPrimarySimulationModelElement;
+import name.martingeisse.webide.features.simvm.model.ISimulationModelElement;
 import name.martingeisse.webide.features.simvm.model.SimulationModel;
 import name.martingeisse.webide.ipc.IIpcEventOutbox;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.model.IModel;
 
 /**
  * The primary model element for the Eco32 simulator.
@@ -42,6 +44,11 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 	 * the STEPS_PER_BATCH
 	 */
 	public static final int STEPS_PER_BATCH = 100;
+	
+	/**
+	 * the simulationModel
+	 */
+	private SimulationModel simulationModel;
 	
 	/**
 	 * the bus
@@ -81,7 +88,7 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 	/**
 	 * the terminalUserInterface
 	 */
-	private TerminalUserInterface terminalUserInterface;
+	private TerminalUiModel terminalUserInterface;
 	
 	/**
 	 * the characterDisplay
@@ -109,19 +116,38 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 	public EcosimPrimaryModelElement() {
 	}
 	
+	/**
+	 * Getter method for the simulationModel.
+	 * @return the simulationModel
+	 */
+	public SimulationModel getSimulationModel() {
+		return simulationModel;
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.webide.features.simvm.model.AbstractCompositeSimulationModelElement#initialize(name.martingeisse.webide.features.simvm.model.SimulationModel, name.martingeisse.webide.ipc.IIpcEventOutbox)
 	 */
 	@Override
 	public void initialize(SimulationModel simulationModel, IIpcEventOutbox eventOutbox) {
+		this.simulationModel = simulationModel;
+		getSubElements().add(new EcosimModelElementPlaceholder("CPU", "... cpu panel ..."));
+		getSubElements().add(new EcosimModelElementPlaceholder("Memory", "... memory panel ..."));
+		getSubElements().add(new TerminalModelElement(eventOutbox));
+		getSubElements().add(new EcosimModelElementPlaceholder("Console", "... console panel ..."));
+		getSubElements().add(new EcosimModelElementPlaceholder("Disk", "... disk panel ..."));
+		getSubElements().add(new EcosimModelElementPlaceholder("Output", "... output panel ..."));
 		super.initialize(simulationModel, eventOutbox);
+		
 		bus = new Bus();
 		cpu = new Cpu();
 		remainingInstructionsForThisTick = INSTRUCTIONS_PER_DEVICE_TICK;
 		cpu.setBus(bus);
 		for (IEcosimModelElement subElement : getSubElements()) {
-			for (EcosimContributedDevice contributedDevice : subElement.getContributedDevices()) {
-				bus.add(contributedDevice.getBaseAddress(), contributedDevice.getDevice(), contributedDevice.getInterruptIndices());
+			EcosimContributedDevice[] contributedDevices = subElement.getContributedDevices();
+			if (contributedDevices != null) {
+				for (EcosimContributedDevice contributedDevice : contributedDevices) {
+					bus.add(contributedDevice.getBaseAddress(), contributedDevice.getDevice(), contributedDevice.getInterruptIndices());
+				}
 			}
 		}
 		
@@ -147,7 +173,7 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 			bus.add(0x30300000, terminal, new int[] {
 				1, 0
 			});
-			terminalUserInterface = new TerminalUserInterface(eventOutbox);
+			terminalUserInterface = new TerminalUiModel(eventOutbox);
 			terminal.setUserInterface(terminalUserInterface);
 	
 			characterDisplay = new CharacterDisplay();
@@ -216,19 +242,18 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 	 * Getter method for the terminalUserInterface.
 	 * @return the terminalUserInterface
 	 */
-	public TerminalUserInterface getTerminalUserInterface() {
+	public TerminalUiModel getTerminalUserInterface() {
 		return terminalUserInterface;
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.features.simvm.model.ISimulationModelElement#createComponent(java.lang.String)
+	 * @see name.martingeisse.webide.features.simvm.model.ISimulationModelElement#createComponent(java.lang.String, org.apache.wicket.model.IModel)
 	 */
 	@Override
-	public Component createComponent(String id) {
-		// CompositeSimulationModelElementPanel panel = new CompositeSimulationModelElementPanel(id, simulationModel, true);
-		// TODO
-		// return panel;
-		return null;
+	public Component createComponent(String id, IModel<ISimulationModelElement> thisModel) {
+		@SuppressWarnings("unchecked")
+		IModel<EcosimPrimaryModelElement> model = (IModel<EcosimPrimaryModelElement>)(IModel<?>)thisModel;
+		return new EcosimPanel(id, model);
 	}
 	
 }

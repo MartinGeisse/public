@@ -30,7 +30,7 @@ import org.json.simple.JSONObject;
  * 
  * @param <S> the sub-element type
  */
-public abstract class AbstractCompositeSimulationModelElement<S extends ISimulationModelElement> implements ISimulationModelElement {
+public abstract class AbstractCompositeSimulationModelElement<S extends ISimulationModelElement> extends AbstractSimulationModelElement implements ICompositeSimulationModelElement<S> {
 
 	/**
 	 * the subElements
@@ -44,10 +44,10 @@ public abstract class AbstractCompositeSimulationModelElement<S extends ISimulat
 		this.subElements = new ArrayList<S>();
 	}
 	
-	/**
-	 * Getter method for the subElements.
-	 * @return the subElements
+	/* (non-Javadoc)
+	 * @see name.martingeisse.webide.features.simvm.model.ICompositeSimulationModelElement#getSubElements()
 	 */
+	@Override
 	public final List<S> getSubElements() {
 		return subElements;
 	}

@@ -41,6 +41,10 @@ public class WebIdeApplication extends WebApplication {
 	protected void init() {
 		instance = this;
 		super.init();
+		getResourceSettings().setJavaScriptCompressor(null);
+		getMarkupSettings().setStripWicketTags(true);
+		getMarkupSettings().setDefaultMarkupEncoding("utf-8");
+		getMarkupSettings().setCompressWhitespace(true);
 		new EventBus(this);
 		EventBus.get().addRegistrationListener(new SimvmAtmosphereRegistrationListener());
 		TemporaryFolder.initialize("web-ide");

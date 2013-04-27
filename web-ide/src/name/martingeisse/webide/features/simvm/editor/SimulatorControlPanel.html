@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+	<wicket:head>
+		<style type="text/css">
+		
+			.simulator-control-button {
+				display: inline-block;
+				margin: 2px; 
+				width: 80px;
+				border: 1px solid #aaa;
+				padding: 5px;
+				font-weight: bold;
+				text-align: center;
+				cursor: pointer;
+			}
+
+			.simulator-control-button.start {
+				background-color: #daa;
+			}
+
+			.simulator-control-button.terminate {
+				background-color: #ada;
+			}
+		
+		</style>
+	</wicket:head>
+	<body>
+		<wicket:panel>
+			<input type="button" wicket:id="startButton" value="Start" class="simulator-control-button start" />
+			<input type="button" wicket:id="terminateButton" value="Terminate" class="simulator-control-button terminate" />
+		</wicket:panel>
+	</body>
+</html>

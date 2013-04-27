@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.features.ecosim.ui;
+package name.martingeisse.webide.features.ecosim.model;
 
 import java.io.Serializable;
 
@@ -16,7 +16,7 @@ import name.martingeisse.webide.ipc.IpcEvent;
 /**
  * Dummy implementation for {@link ITerminalUserInterface}.
  */
-public class TerminalUserInterface implements ITerminalUserInterface, Serializable {
+public class TerminalUiModel implements ITerminalUserInterface, Serializable {
 
 	/**
 	 * the outputBuilder
@@ -32,7 +32,7 @@ public class TerminalUserInterface implements ITerminalUserInterface, Serializab
 	 * Constructor.
 	 * @param eventOutbox the event outbox
 	 */
-	public TerminalUserInterface(final IIpcEventOutbox eventOutbox) {
+	public TerminalUiModel(final IIpcEventOutbox eventOutbox) {
 		this.eventOutbox = eventOutbox;
 	}
 
