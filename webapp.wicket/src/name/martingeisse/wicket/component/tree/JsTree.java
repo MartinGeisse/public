@@ -294,7 +294,7 @@ public abstract class JsTree<T> extends WebMarkupContainer {
 	@Override
 	protected void onRender() {
 		final Response response = getResponse();
-		response.write("<div id=\"" + getMarkupId() + "\">");
+		response.write("<div id=\"" + getMarkupId() + "\" class=\"jstree-container\" tabindex=\"0\">");
 		renderItems(rootItems);
 		response.write("</div>");
 	}

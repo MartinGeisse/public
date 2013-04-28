@@ -160,10 +160,20 @@ $.fn.createJsTree = function(options) {
 				handlers.contextmenu.call(trigger, fakeEvent);
 			}));
 		}
-		$(document).on('click', '.jstree', function(e) {
-			$(e.currentTarget).focus();
-			console.log(e);
+		
+		// clicking on the tree but not on any specific node should still focus the tree
+		$this.on('click', function(e) {
+			$this.focus();
 		});
+		
+		// enable / disable hotkeys based on focus (assuming no focus initially)
+		$this.on('focusin', function() {
+			$this.jstree('enable_hotkeys');
+		});
+		$this.on('focusout', function() {
+			$this.jstree('disable_hotkeys');
+		});
+		$this.jstree('disable_hotkeys');
 		
 	});
 	
