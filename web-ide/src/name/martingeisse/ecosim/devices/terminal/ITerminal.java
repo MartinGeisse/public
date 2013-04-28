@@ -6,7 +6,7 @@
 package name.martingeisse.ecosim.devices.terminal;
 
 /**
- * This interface represents the user interface towards a serial line device.
+ * This interface represents a terminal, as seen from the terminal controller.
  * 
  * The serial line device decides when bytes are sent or received by its
  * own internal simulation timer. Therefore, the user interface must be

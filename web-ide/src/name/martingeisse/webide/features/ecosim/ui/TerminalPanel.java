@@ -13,7 +13,9 @@ import name.martingeisse.webide.features.simvm.model.ISimulationModelElement;
 import name.martingeisse.webide.features.simvm.simulation.SimulationEventMessage;
 import name.martingeisse.webide.ipc.IpcEvent;
 
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.CallbackParameter;
 import org.apache.wicket.atmosphere.Subscribe;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -22,6 +24,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.cycle.RequestCycle;
 
 /**
  * This panel shows a terminal in the web UI.
@@ -41,10 +45,12 @@ public class TerminalPanel extends Panel {
 	public TerminalPanel(final String id, IModel<ISimulationModelElement> model) {
 		super(id, model);
 		add(new Label("terminalOutput", new PropertyModel<String>(this, "terminalOutput")).setOutputMarkupId(true));
+		add(new MyInputBehavior());
 
 		// initialize runtime state
 		TerminalModelElement terminalModelElement = (TerminalModelElement)model.getObject();
 		this.terminalOutput = terminalModelElement.getTerminal().getOutput();
+		
 	}
 
 	/**
@@ -61,7 +67,9 @@ public class TerminalPanel extends Panel {
 	@Override
 	public void renderHead(final IHeaderResponse response) {
 		super.renderHead(response);
-		response.render(OnDomReadyHeaderItem.forScript("initializeTerminalPanel()"));
+		MyInputBehavior inputBehavior = getBehaviors(MyInputBehavior.class).get(0);
+		CharSequence callbackFunction = inputBehavior.getCallbackFunction(CallbackParameter.explicit("inputText"));
+		response.render(OnDomReadyHeaderItem.forScript("initializeTerminalPanel(" + callbackFunction + ")"));
 	}
 
 	/* (non-Javadoc)
@@ -85,6 +93,24 @@ public class TerminalPanel extends Panel {
 			terminalOutput = (String)event.getData();
 			target.add(get("terminalOutput"));
 		}
+	}
+	
+	/**
+	 * This behavior generates a callback URL for terminal input.
+	 */
+	class MyInputBehavior extends AbstractDefaultAjaxBehavior {
+
+		/* (non-Javadoc)
+		 * @see org.apache.wicket.ajax.AbstractDefaultAjaxBehavior#respond(org.apache.wicket.ajax.AjaxRequestTarget)
+		 */
+		@Override
+		protected void respond(AjaxRequestTarget target) {
+			final IRequestParameters parameters = RequestCycle.get().getRequest().getRequestParameters();
+			final String inputText = parameters.getParameterValue("inputText").toString();
+			TerminalModelElement terminalModelElement = (TerminalModelElement)TerminalPanel.this.getDefaultModel().getObject();
+			terminalModelElement.getTerminal().notifyUserInput(inputText);
+		}
+		
 	}
 	
 }

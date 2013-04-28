@@ -40,6 +40,7 @@ public class TerminalModelElement extends AbstractSimulationModelElement impleme
 		this.terminalController = new TerminalController();
 		this.terminal = new Terminal(eventOutbox);
 		terminalController.setTerminal(terminal);
+		terminal.setHost(terminalController);
 	}
 
 	/**

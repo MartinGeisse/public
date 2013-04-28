@@ -10,6 +10,7 @@
 				right: 10px;
 				bottom: 10px;
 				border: 1px solid #ddd;
+				overflow: scroll;
 			}
 			
 			.terminal-output-container:focus {
@@ -19,12 +20,21 @@
 		</style>
 		<script type="text/javascript">
 
-			function initializeTerminalPanel() {
-				$('.terminal-output-container').on('keypress', function(event) {
-					var charCode = event.which;
+			function onCharacterInput(q, f) {
+				q.on('keypress', function(event) {
+					f(event.which);
+				}).on('keydown', function(event) {
+					if (event.which == 32 || event.which == 8) {
+						f(event.which);
+					}
+				});
+			}
+			
+			function initializeTerminalPanel(inputCallback) {
+				onCharacterInput($('.terminal-output-container'), function(charCode) {
 					var charText = String.fromCharCode(charCode);
-					var escapedCharText = $('<span>').text(charText).html();
-					$('.terminal-output-container > pre').append(escapedCharText);
+					inputCallback(charText);
+					event.preventDefault();
 				});
 			}
 			
@@ -32,7 +42,7 @@
 	</wicket:head>
 	<body>
 		<wicket:panel>
-			<div class="absolute-cover terminal-output-container" tabindex="0">
+			<div class="absolute-cover terminal-output-container" tabindex="1">
 				<pre wicket:id="terminalOutput" style="margin: 0px; padding: 0px; " />
 			</div>
 		</wicket:panel>

@@ -1,0 +1,18 @@
+
+--------------------------------
+UI
+--------------------------------
+
+Jedes ans Terminal übertragene Zeichen sorgt dafür, dass der gesamte
+Terminal-Output neu gerendert wird.
+- delta-rendering
+- throttling
+
+
+
+--------------------------------
+Simulation
+--------------------------------
+
+Batch-Befehle, z.B. memcpy als 1 CPU-Instruction
+

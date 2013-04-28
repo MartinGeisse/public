@@ -12,7 +12,7 @@ import name.martingeisse.ecosim.bus.IInterruptLine;
 /**
  * The terminal device.
  */
-public class TerminalController extends AbstractPeripheralDevice {
+public class TerminalController extends AbstractPeripheralDevice implements ITerminalHost {
 
 	/**
 	 * the terminal
@@ -93,6 +93,7 @@ public class TerminalController extends AbstractPeripheralDevice {
 	/**
 	 * This method is called when input data is available.
 	 */
+	@Override
 	public void onInputAvailable() {
 		receiver.onInputAvailable();
 	}
