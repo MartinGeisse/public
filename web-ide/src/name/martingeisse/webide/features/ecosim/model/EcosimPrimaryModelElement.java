@@ -18,7 +18,6 @@ import name.martingeisse.ecosim.devices.keyboard.Keyboard;
 import name.martingeisse.ecosim.devices.memory.Ram;
 import name.martingeisse.ecosim.devices.memory.Rom;
 import name.martingeisse.ecosim.devices.output.OutputDevice;
-import name.martingeisse.ecosim.devices.terminal.Terminal;
 import name.martingeisse.ecosim.devices.timer.Timer;
 import name.martingeisse.webide.features.ecosim.ui.EcosimPanel;
 import name.martingeisse.webide.features.simvm.model.AbstractCompositeSimulationModelElement;
@@ -79,16 +78,6 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 	 * the disk
 	 */
 	private Disk disk;
-	
-	/**
-	 * the terminal
-	 */
-	private Terminal terminal;
-	
-	/**
-	 * the terminalUserInterface
-	 */
-	private TerminalUiModel terminalUserInterface;
 	
 	/**
 	 * the characterDisplay
@@ -169,13 +158,6 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 				8
 			});
 	
-			terminal = new Terminal();
-			bus.add(0x30300000, terminal, new int[] {
-				1, 0
-			});
-			terminalUserInterface = new TerminalUiModel(eventOutbox);
-			terminal.setUserInterface(terminalUserInterface);
-	
 			characterDisplay = new CharacterDisplay();
 			bus.add(0x30100000, characterDisplay, new int[] {});
 	
@@ -211,7 +193,6 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 	@Override
 	protected void loadRuntimeState(Map<String, Object> stateObject) {
 		ram.clearContents();
-		terminalUserInterface.clearOutput();
 		cpu.reset();
 	}
 
@@ -238,14 +219,6 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 		}
 	}
 	
-	/**
-	 * Getter method for the terminalUserInterface.
-	 * @return the terminalUserInterface
-	 */
-	public TerminalUiModel getTerminalUserInterface() {
-		return terminalUserInterface;
-	}
-
 	/* (non-Javadoc)
 	 * @see name.martingeisse.webide.features.simvm.model.ISimulationModelElement#createComponent(java.lang.String, org.apache.wicket.model.IModel)
 	 */

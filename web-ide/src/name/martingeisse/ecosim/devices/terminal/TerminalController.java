@@ -12,12 +12,12 @@ import name.martingeisse.ecosim.bus.IInterruptLine;
 /**
  * The terminal device.
  */
-public class Terminal extends AbstractPeripheralDevice implements ITerminalUserInterfaceSocket {
+public class TerminalController extends AbstractPeripheralDevice {
 
 	/**
-	 * the userInterface
+	 * the terminal
 	 */
-	private ITerminalUserInterface userInterface;
+	private ITerminal terminal;
 
 	/**
 	 * the receiver
@@ -32,8 +32,8 @@ public class Terminal extends AbstractPeripheralDevice implements ITerminalUserI
 	/**
 	 * Constructor
 	 */
-	public Terminal() {
-		this.userInterface = null;
+	public TerminalController() {
+		this.terminal = null;
 		this.receiver = new TerminalReceiver();
 		this.transmitter = new TerminalTransmitter();
 	}
@@ -72,28 +72,27 @@ public class Terminal extends AbstractPeripheralDevice implements ITerminalUserI
 		return 4;
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.ecotools.simulator.devices.terminal.ITerminalUserInterfaceSocket#getUserInterface()
+	/**
+	 * Getter method for the terminal.
+	 * @return the terminal
 	 */
-	@Override
-	public ITerminalUserInterface getUserInterface() {
-		return userInterface;
+	public ITerminal getTerminal() {
+		return terminal;
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.ecotools.simulator.devices.terminal.ITerminalUserInterfaceSocket#setUserInterface(name.martingeisse.ecotools.simulator.devices.terminal.ITerminalUserInterface)
+	/**
+	 * Setter method for the terminal.
+	 * @param terminal the terminal to set
 	 */
-	@Override
-	public void setUserInterface(ITerminalUserInterface userInterface) {
-		this.userInterface = userInterface;
-		receiver.setUserInterface(userInterface);
-		transmitter.setUserInterface(userInterface);
+	public void setTerminal(ITerminal terminal) {
+		this.terminal = terminal;
+		receiver.setTerminal(terminal);
+		transmitter.setTerminal(terminal);
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.ecotools.simulator.devices.terminal.ITerminalUserInterfaceSocket#onInputAvailable()
+	/**
+	 * This method is called when input data is available.
 	 */
-	@Override
 	public void onInputAvailable() {
 		receiver.onInputAvailable();
 	}

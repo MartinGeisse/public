@@ -6,7 +6,7 @@
 
 package name.martingeisse.webide.features.ecosim.model;
 
-import name.martingeisse.ecosim.devices.terminal.Terminal;
+import name.martingeisse.ecosim.devices.terminal.TerminalController;
 import name.martingeisse.webide.features.ecosim.ui.TerminalPanel;
 import name.martingeisse.webide.features.simvm.model.AbstractSimulationModelElement;
 import name.martingeisse.webide.features.simvm.model.ISimulationModelElement;
@@ -23,39 +23,39 @@ import org.apache.wicket.model.IModel;
 public class TerminalModelElement extends AbstractSimulationModelElement implements IEcosimModelElement {
 
 	/**
+	 * the terminalController
+	 */
+	private TerminalController terminalController;
+	
+	/**
 	 * the terminal
 	 */
 	private Terminal terminal;
-	
-	/**
-	 * the uiModel
-	 */
-	private TerminalUiModel uiModel;
 
 	/**
 	 * Constructor.
 	 * @param eventOutbox the event outbox
 	 */
 	public TerminalModelElement(final IIpcEventOutbox eventOutbox) {
-		this.terminal = new Terminal();
-		this.uiModel = new TerminalUiModel(eventOutbox);
-		terminal.setUserInterface(uiModel);
+		this.terminalController = new TerminalController();
+		this.terminal = new Terminal(eventOutbox);
+		terminalController.setTerminal(terminal);
 	}
 
+	/**
+	 * Getter method for the terminalController.
+	 * @return the terminalController
+	 */
+	public TerminalController getTerminalController() {
+		return terminalController;
+	}
+	
 	/**
 	 * Getter method for the terminal.
 	 * @return the terminal
 	 */
 	public Terminal getTerminal() {
 		return terminal;
-	}
-	
-	/**
-	 * Getter method for the uiModel.
-	 * @return the uiModel
-	 */
-	public TerminalUiModel getUiModel() {
-		return uiModel;
 	}
 	
 	/* (non-Javadoc)
@@ -86,7 +86,7 @@ public class TerminalModelElement extends AbstractSimulationModelElement impleme
 	 */
 	@Override
 	public void loadRuntimeState(Object state) {
-		uiModel.clearOutput();
+		terminal.clearOutput();
 	}
 
 	/* (non-Javadoc)
@@ -116,7 +116,9 @@ public class TerminalModelElement extends AbstractSimulationModelElement impleme
 	 */
 	@Override
 	public EcosimContributedDevice[] getContributedDevices() {
-		return null;
+		return new EcosimContributedDevice[] {
+			new EcosimContributedDevice(0x30300000, terminalController, new int[] {1, 0}),
+		};
 	}
 
 	

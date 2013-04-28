@@ -46,9 +46,9 @@ public class TerminalReceiver implements ITickable {
 	private IInterruptLine interruptLine;
 
 	/**
-	 * the userInterface
+	 * the terminal
 	 */
-	private ITerminalUserInterface userInterface;
+	private ITerminal terminal;
 
 	/**
 	 * Constructor
@@ -59,7 +59,7 @@ public class TerminalReceiver implements ITickable {
 		this.data = 0;
 		this.serialLineDelay = new MySerialLineDelay();
 		this.interruptLine = null;
-		this.userInterface = null;
+		this.terminal = null;
 	}
 
 	/**
@@ -117,18 +117,19 @@ public class TerminalReceiver implements ITickable {
 	}
 
 	/**
-	 * @return Returns the userInterface.
+	 * Getter method for the terminal.
+	 * @return the terminal
 	 */
-	public ITerminalUserInterface getUserInterface() {
-		return userInterface;
+	public ITerminal getTerminal() {
+		return terminal;
 	}
-
+	
 	/**
-	 * Sets the userInterface.
-	 * @param userInterface the new value to set
+	 * Setter method for the terminal.
+	 * @param terminal the terminal to set
 	 */
-	public void setUserInterface(ITerminalUserInterface userInterface) {
-		this.userInterface = userInterface;
+	public void setTerminal(ITerminal terminal) {
+		this.terminal = terminal;
 	}
 
 	/**
@@ -180,7 +181,7 @@ public class TerminalReceiver implements ITickable {
 	}
 
 	/**
-	 * @see name.martingeisse.ecosim.devices.terminal.ITerminalUserInterfaceSocket#onInputAvailable()
+	 * This method is called when output data is available.
 	 */
 	public void onInputAvailable() {
 		
@@ -203,7 +204,7 @@ public class TerminalReceiver implements ITickable {
 	private void startReceiving() throws IllegalStateException {
 		
 		/** sanity check: the user interface must have available input **/
-		if (!userInterface.hasInput()) {
+		if (!terminal.hasInput()) {
 			throw new IllegalStateException("no user interface input available");
 		}
 
@@ -213,7 +214,7 @@ public class TerminalReceiver implements ITickable {
 		}
 		
 		/** put the byte into the serial line delay **/
-		serialLineDelay.send(userInterface.receiveByte());
+		serialLineDelay.send(terminal.receiveByte());
 
 	}
 	
@@ -241,7 +242,7 @@ public class TerminalReceiver implements ITickable {
 			updateInterrupt();
 			
 			/** look if any further input is available **/
-			if (userInterface.hasInput()) {
+			if (terminal.hasInput()) {
 				startReceiving();
 			}
 			

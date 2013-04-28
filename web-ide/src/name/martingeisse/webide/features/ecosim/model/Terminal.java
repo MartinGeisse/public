@@ -8,15 +8,15 @@ package name.martingeisse.webide.features.ecosim.model;
 
 import java.io.Serializable;
 
-import name.martingeisse.ecosim.devices.terminal.ITerminalUserInterface;
+import name.martingeisse.ecosim.devices.terminal.ITerminal;
 import name.martingeisse.webide.features.ecosim.EcosimEvents;
 import name.martingeisse.webide.ipc.IIpcEventOutbox;
 import name.martingeisse.webide.ipc.IpcEvent;
 
 /**
- * Dummy implementation for {@link ITerminalUserInterface}.
+ * Implementation for {@link ITerminal}.
  */
-public class TerminalUiModel implements ITerminalUserInterface, Serializable {
+public class Terminal implements ITerminal, Serializable {
 
 	/**
 	 * the outputBuilder
@@ -32,7 +32,7 @@ public class TerminalUiModel implements ITerminalUserInterface, Serializable {
 	 * Constructor.
 	 * @param eventOutbox the event outbox
 	 */
-	public TerminalUiModel(final IIpcEventOutbox eventOutbox) {
+	public Terminal(final IIpcEventOutbox eventOutbox) {
 		this.eventOutbox = eventOutbox;
 	}
 
@@ -61,7 +61,7 @@ public class TerminalUiModel implements ITerminalUserInterface, Serializable {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.ecosim.devices.terminal.ITerminalUserInterface#sendByte(byte)
+	 * @see name.martingeisse.ecosim.devices.terminal.ITerminal#sendByte(byte)
 	 */
 	@Override
 	public void sendByte(final byte b) {
@@ -69,7 +69,7 @@ public class TerminalUiModel implements ITerminalUserInterface, Serializable {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.ecosim.devices.terminal.ITerminalUserInterface#sendCorruptedByte()
+	 * @see name.martingeisse.ecosim.devices.terminal.ITerminal#sendCorruptedByte()
 	 */
 	@Override
 	public void sendCorruptedByte() {
@@ -77,7 +77,7 @@ public class TerminalUiModel implements ITerminalUserInterface, Serializable {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.ecosim.devices.terminal.ITerminalUserInterface#hasInput()
+	 * @see name.martingeisse.ecosim.devices.terminal.ITerminal#hasInput()
 	 */
 	@Override
 	public boolean hasInput() {
@@ -85,7 +85,7 @@ public class TerminalUiModel implements ITerminalUserInterface, Serializable {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.ecosim.devices.terminal.ITerminalUserInterface#receiveByte()
+	 * @see name.martingeisse.ecosim.devices.terminal.ITerminal#receiveByte()
 	 */
 	@Override
 	public byte receiveByte() throws IllegalStateException {

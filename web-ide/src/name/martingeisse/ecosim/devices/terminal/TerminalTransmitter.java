@@ -41,9 +41,9 @@ public class TerminalTransmitter implements ITickable {
 	private IInterruptLine interruptLine;
 
 	/**
-	 * the userInterface
+	 * the terminal
 	 */
-	private ITerminalUserInterface userInterface;
+	private ITerminal terminal;
 
 	/**
 	 * Constructor
@@ -95,18 +95,19 @@ public class TerminalTransmitter implements ITickable {
 	}
 
 	/**
-	 * @return Returns the userInterface.
+	 * Getter method for the terminal.
+	 * @return the terminal
 	 */
-	public ITerminalUserInterface getUserInterface() {
-		return userInterface;
+	public ITerminal getTerminal() {
+		return terminal;
 	}
-
+	
 	/**
-	 * Sets the userInterface.
-	 * @param userInterface the new value to set
+	 * Setter method for the terminal.
+	 * @param terminal the terminal to set
 	 */
-	public void setUserInterface(ITerminalUserInterface userInterface) {
-		this.userInterface = userInterface;
+	public void setTerminal(ITerminal terminal) {
+		this.terminal = terminal;
 	}
 
 	/**
@@ -157,7 +158,7 @@ public class TerminalTransmitter implements ITickable {
 	 */
 	private void startTransmission(byte data) {
 		if (serialLineDelay.isActive()) {
-			userInterface.sendCorruptedByte();
+			terminal.sendCorruptedByte();
 			serialLineDelay.cancel();
 		}
 		serialLineDelay.send(data);
@@ -190,7 +191,7 @@ public class TerminalTransmitter implements ITickable {
 		protected void onArrive(Byte b) {
 			ready = true;
 			updateInterrupt();
-			userInterface.sendByte(b);
+			terminal.sendByte(b);
 		}
 
 	}

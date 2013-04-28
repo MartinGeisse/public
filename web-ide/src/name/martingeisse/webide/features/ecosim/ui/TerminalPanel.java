@@ -24,7 +24,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 
 /**
- * This panel presents terminal I/O.
+ * This panel shows a terminal in the web UI.
  */
 public class TerminalPanel extends Panel {
 
@@ -44,7 +44,7 @@ public class TerminalPanel extends Panel {
 
 		// initialize runtime state
 		TerminalModelElement terminalModelElement = (TerminalModelElement)model.getObject();
-		this.terminalOutput = terminalModelElement.getUiModel().getOutput();
+		this.terminalOutput = terminalModelElement.getTerminal().getOutput();
 	}
 
 	/**

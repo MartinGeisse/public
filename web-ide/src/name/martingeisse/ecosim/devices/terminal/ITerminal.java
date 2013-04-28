@@ -14,7 +14,7 @@ package name.martingeisse.ecosim.devices.terminal;
  * to receive a byte for the device (or signal absence of any new input)
  * at any time.
  */
-public interface ITerminalUserInterface {
+public interface ITerminal {
 
 	/**
 	 * Sends a byte through the user interface
