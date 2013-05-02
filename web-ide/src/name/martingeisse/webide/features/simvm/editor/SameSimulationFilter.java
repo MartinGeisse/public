@@ -22,13 +22,16 @@ import com.google.common.base.Predicate;
  * elements subscribe to UI events via {@link Subscribe}. It ensures
  * that only events from the same simulation trigger the subscription.
  */
-public final class SameSimulationFilter implements Predicate<AtmosphereEvent> {
+public final class SameSimulationFilter extends AtmosphereResourceCaptureFilter implements Predicate<AtmosphereEvent> {
 
 	/* (non-Javadoc)
 	 * @see com.google.common.base.Predicate#apply(java.lang.Object)
 	 */
 	@Override
 	public boolean apply(@Nullable final AtmosphereEvent input) {
+		if (!super.apply(input)) {
+			return false;
+		}
 		final String eventTargetUuid = input.getResource().uuid();
 		// String originalUuid = (String)input.getResource().getRequest().getAttribute(ApplicationConfig.SUSPENDED_ATMOSPHERE_RESOURCE_UUID);
 		final ResourceHandle eventTargetResourceHandle = EditorPanel.editorPageSimulationAnchors.get(eventTargetUuid);

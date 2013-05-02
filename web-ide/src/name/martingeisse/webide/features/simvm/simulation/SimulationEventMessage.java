@@ -6,6 +6,9 @@
 
 package name.martingeisse.webide.features.simvm.simulation;
 
+import org.atmosphere.cpr.AtmosphereResource;
+
+import name.martingeisse.webide.features.simvm.editor.AtmosphereResourceCaptureFilter.ISetter;
 import name.martingeisse.webide.ipc.IpcEvent;
 
 /**
@@ -13,7 +16,7 @@ import name.martingeisse.webide.ipc.IpcEvent;
  * subscribing to IPC events via Atmosphere receiving simulator
  * events.
  */
-public final class SimulationEventMessage {
+public final class SimulationEventMessage implements ISetter {
 
 	/**
 	 * the virtualMachine
@@ -24,6 +27,11 @@ public final class SimulationEventMessage {
 	 * the event
 	 */
 	private final IpcEvent event;
+	
+	/**
+	 * the currentResource
+	 */
+	private AtmosphereResource currentResource;
 
 	/**
 	 * Constructor.
@@ -49,6 +57,30 @@ public final class SimulationEventMessage {
 	 */
 	public IpcEvent getEvent() {
 		return event;
+	}
+
+	/**
+	 * Getter method for the currentResource.
+	 * @return the currentResource
+	 */
+	public AtmosphereResource getCurrentResource() {
+		return currentResource;
+	}
+	
+	/**
+	 * Setter method for the currentResource.
+	 * @param currentResource the currentResource to set
+	 */
+	public void setCurrentResource(AtmosphereResource currentResource) {
+		this.currentResource = currentResource;
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.webide.features.simvm.editor.AtmosphereResourceCaptureFilter.ISetter#set(org.atmosphere.cpr.AtmosphereResource)
+	 */
+	@Override
+	public void set(AtmosphereResource resource) {
+		setCurrentResource(resource);
 	}
 	
 }

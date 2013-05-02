@@ -52,7 +52,7 @@ public class Terminal implements ITerminal, Serializable {
 	 */
 	public Terminal(final IIpcEventOutbox eventOutbox) {
 		this.eventOutbox = eventOutbox;
-		this.outputEventThrottlingQueue = new DelayBundledWorkQueue<Void>(200) {
+		this.outputEventThrottlingQueue = new DelayBundledWorkQueue<Void>(100) {
 			@Override
 			protected void perform(Object[] workUnits) {
 				sendOutputEvent();
@@ -98,7 +98,7 @@ public class Terminal implements ITerminal, Serializable {
 	 * Publishes output data via an event.
 	 */
 	private void sendOutputEvent() {
-		eventOutbox.sendEvent(new IpcEvent(EcosimEvents.TERMINAL_OUTPUT, this, getOutput()));
+		eventOutbox.sendEvent(new IpcEvent(EcosimEvents.TERMINAL_OUTPUT, this, null));
 	}
 	
 	/**

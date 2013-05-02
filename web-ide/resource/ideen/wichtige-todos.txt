@@ -1,0 +1,8 @@
+
+Wicket macht defaultmäßig ein CONTINUE bei Form-Method-Mismatch
+(GET statt POST) -> XSRF!! Das könnte auch für die Mailing-Liste
+interessant sein.
+
+Im Wicket-Code steht ein default Encryption key, der automatisch
+benutzt wird. Da sollte eigentlich gar kein Key stehen, auch
+keiner den man manuell benutzen kann!

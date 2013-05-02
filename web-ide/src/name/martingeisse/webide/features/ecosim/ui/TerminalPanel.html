@@ -38,6 +38,12 @@
 				});
 			}
 			
+			function terminalAppend(markupId, delta) {
+				var $label = $('#' + markupId);
+				$label.append($('<div />').text(delta).html());
+				$label.scrollTop($label.height());
+			}
+			
 		</script>
 	</wicket:head>
 	<body>

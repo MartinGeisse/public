@@ -1,0 +1,44 @@
+
+Mehrere Renderings pro Page lassen sich nicht vermeiden (auch mehrere
+AtmosphereResources nicht), kommt bei long polling ganz automatisch.
+
+Idee: Die ganzen wesentlichen Inhalte werden erst geladen, nachdem
+die Atmosphere-Verbindung steht und eine UUID verfügbar ist.
+Das würde einiges vereinfachen und wäre analog zu dem, was node.js
+tun würde. Müsste nur bei Page Reload wieder dasselbe tun.
+Also eine Art AtmospherePage, die nach dem Laden Content nachlädt
+per Atmosphere und alle enthaltenen Komponenten kommen darüber.
+Dadurch lässt sich evtl. auch das new-page-for-new-window machen,
+aber das ist noch unklar.
+
+Falls all das nicht geht: Standardbibliothek von Komponenten, die
+mit Atmosphere klar kommen. Und das heißt: Mit neu rendern in
+eine Page hinein, die schon eine Atmosphere-Verbindung hat, sowie
+neu rendern in eine neue Page, wo die UUID erst nachträglich kommt.
+
+new-page-for-new-window könnte grundsätzlich über abweichende UUIDs
+gehen, wobei noch bei/vor dem neu Rendern der äußeren Seite bemerkt
+werden müsste, dass diese Seite schon eine UUID hat und deshalb
+eine neue Seite erzeugt werden muss. Es reicht nicht, Atmosphere
+Requests mit abweichender UUID zur neuen Seite zu leiten, denn dann
+würde beim "Öffnen in neuem Tab" das *alte* Tab zu einer neuen
+Seite verwiesen.
+
+Das Problem "mehrere UUIDs pro Seite" wird immer schlimmer, weil
+Wicket-Atmosphere nicht darauf ausgelegt ist: Man bekommt immer
+nur die *neueste* UUID zu einer Seite. Nötig wäre hier -- aber
+auch für "Atmosphere-Container" (!!!) -- die UUID zum aktuellen
+Request zu bekommen, nicht nur die neueste UUID zur aktuellen
+Seite! Wenn allerdings jedes neu-Rendern einer Seite mit schon
+vorhandener UUID eine neue Seite erzeugt, dann hätte jede Seite
+nur eine UUID, und das Problem wäre gelöst! Das wäre, wenn es
+denn geht, wahrscheinlich die Lösung mit am wenigsten Ärger
+im Nachhinein. -> das ist nicht so sicher.
+
+Wichtig ist so oder so, die UUID zum aktuellen Request zu finden.
+Evtl. kann man mit Daten an der AtmosphereResource (bzw.
+Map in Component mit UUID als Key) schon alles nötige machen.
+Um das auszuprobieren (und ob die falsche UUID aktuell die
+Fehlerursache ist), die richtige UUID notfalls per Reflection
+holen und probieren, ob sich der Fehler damit beheben lässt!
+
