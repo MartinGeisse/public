@@ -6,9 +6,6 @@
 
 package name.martingeisse.webide.features.ecosim.ui;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import name.martingeisse.common.javascript.JavascriptAssemblerUtil;
 import name.martingeisse.webide.features.ecosim.EcosimEvents;
 import name.martingeisse.webide.features.ecosim.model.TerminalModelElement;
@@ -17,11 +14,11 @@ import name.martingeisse.webide.features.simvm.model.ISimulationModelElement;
 import name.martingeisse.webide.features.simvm.simulation.SimulationEventMessage;
 import name.martingeisse.webide.features.simvm.simulation.SimulationEvents;
 import name.martingeisse.webide.ipc.IpcEvent;
+import name.martingeisse.wicket.atmosphere.AtmosphereUtil;
 
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.CallbackParameter;
-import org.apache.wicket.atmosphere.AtmosphereBehavior;
 import org.apache.wicket.atmosphere.Subscribe;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -32,8 +29,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.atmosphere.cpr.ApplicationConfig;
-import org.atmosphere.cpr.AtmosphereResource;
 
 /**
  * This panel shows a terminal in the web UI.
@@ -46,9 +41,9 @@ public class TerminalPanel extends Panel {
 	private String terminalOutput;
 	
 	/**
-	 * the lastDeltaUpdatePositions
+	 * the lastDeltaUpdatePosition
 	 */
-	private Map<String, Long> lastDeltaUpdatePositions;
+	private long lastDeltaUpdatePosition;
 
 	/**
 	 * Constructor.
@@ -60,7 +55,7 @@ public class TerminalPanel extends Panel {
 		add(new Label("terminalOutput", new PropertyModel<String>(this, "terminalOutput")).setOutputMarkupId(true));
 		add(new MyInputBehavior());
 		this.terminalOutput = getTerminalModelElement().getTerminal().getOutput();
-		this.lastDeltaUpdatePositions = new HashMap<String, Long>();
+		this.lastDeltaUpdatePosition = 0;
 	}
 	
 	/**
@@ -104,11 +99,8 @@ public class TerminalPanel extends Panel {
 	@Override
 	protected void onAfterRender() {
 		super.onAfterRender();
-		
-		// save the previous position as soon as we know the UUID
-		String uuid = AtmosphereBehavior.getUUID(getPage());
-		if (uuid != null) {
-			lastDeltaUpdatePositions.put(uuid, (long)terminalOutput.length());
+		if (AtmosphereUtil.isRequestForMostRecentResource(this)) {
+			lastDeltaUpdatePosition = terminalOutput.length();
 		}
 	}
 	
@@ -119,32 +111,22 @@ public class TerminalPanel extends Panel {
 	 */
 	@Subscribe(filter = SameSimulationFilter.class)
 	public void onSimulatorGeneratedEvent(final AjaxRequestTarget target, final SimulationEventMessage message) {
-		final AtmosphereResource currentResource = message.getCurrentResource();
-		final String uuid = currentResource.uuid();
-		final String originalUuid = (String)currentResource.getRequest().getAttribute(ApplicationConfig.SUSPENDED_ATMOSPHERE_RESOURCE_UUID);
-
 		final IpcEvent event = message.getEvent();
 		final String eventType = event.getType();
-		System.out.println("*** onSimulatorGeneratedEvent: " + eventType + " / " + uuid + " / " + originalUuid);
 		if (eventType.equals(EcosimEvents.TERMINAL_OUTPUT)) {
-			terminalOutput = getTerminalModelElement().getTerminal().getOutput();
-			Long lastDeltaUpdatePosition = lastDeltaUpdatePositions.get(uuid);
-			if (lastDeltaUpdatePosition == null) {
-				// TODO this could insert the wrong lastDeltaUpdatePositions entry!
-				target.add(this);
-			} else {
-				System.out.println("* " + terminalOutput);
+			if (AtmosphereUtil.isRequestForMostRecentResource(this)) {
+				terminalOutput = getTerminalModelElement().getTerminal().getOutput();
 				if (lastDeltaUpdatePosition < terminalOutput.length()) {
-					String delta = terminalOutput.substring(lastDeltaUpdatePosition.intValue());
+					String delta = terminalOutput.substring((int)lastDeltaUpdatePosition);
 					String escapedDelta = JavascriptAssemblerUtil.escapeStringLiteralSpecialCharacters(delta);
 					String markupId = get("terminalOutput").getMarkupId();
 					target.appendJavaScript("terminalAppend('" + markupId + "', '" + escapedDelta + "');");
 				}
-				lastDeltaUpdatePositions.put(uuid, (long)terminalOutput.length());
+				lastDeltaUpdatePosition = terminalOutput.length();
 			}
 		} else if (eventType.equals(SimulationEvents.EVENT_TYPE_START)) {
-			lastDeltaUpdatePositions.remove(uuid);
 			terminalOutput = "";
+			lastDeltaUpdatePosition = 0;
 			// we need to add (this), not just the terminalOutput label, to trigger onAfterRender().
 			target.add(this);
 		}
