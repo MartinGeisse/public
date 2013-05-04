@@ -14,6 +14,7 @@ import name.martingeisse.webide.resources.MarkerListView;
 import name.martingeisse.webide.resources.ResourceHandle;
 import name.martingeisse.webide.resources.ResourceIconSelector;
 import name.martingeisse.webide.resources.build.ResourceChangePushMessage;
+import name.martingeisse.webide.util.NewWindowInterceptBehavior;
 import name.martingeisse.webide.workbench.services.IWorkbenchEditorService;
 import name.martingeisse.webide.workbench.services.IWorkbenchServicesProvider;
 import name.martingeisse.wicket.component.tree.JsTree;
@@ -76,6 +77,12 @@ public class WorkbenchPage extends WebPage implements IWorkbenchServicesProvider
 		setOutputMarkupId(true);
 		// setVersioned(false);
 		add(new HandleUploadedFileBehavior());
+		add(new NewWindowInterceptBehavior() {
+			@Override
+			protected void onNewWindow() {
+				setResponsePage(new WorkbenchPage());
+			}
+		});
 
 		final WebMarkupContainer filesContainer = new WebMarkupContainer("filesContainer");
 		filesContainer.setOutputMarkupId(true);
