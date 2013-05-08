@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+	<wicket:head>
+		<style type="text/css">
+		
+			.terminal-output-container {
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				right: 10px;
+				bottom: 10px;
+				border: 1px solid #ddd;
+				overflow: scroll;
+				background-color: #ffc; 
+			}
+			
+			.terminal-output-container:focus {
+				border: 1px solid #aaf;
+			}
+			
+			.terminal-output-container pre {
+				margin: 0px;
+				padding: 0px;
+			}
+			
+		</style>
+		<script type="text/javascript">
+
+			function onCharacterInput(q, f) {
+				q.on('keypress', function(event) {
+					f(event.which);
+				}).on('keydown', function(event) {
+					if (event.which == 32 || event.which == 8) {
+						f(event.which);
+					}
+				});
+			}
+			
+			function initializeTerminalPanel(inputCallback, markupId) {
+				onCharacterInput($('#' + markupId), function(charCode) {
+					var charText = String.fromCharCode(charCode);
+					inputCallback(charText);
+					event.preventDefault();
+				});
+			}
+			
+		</script>
+	</wicket:head>
+	<body>
+		<wicket:panel>
+			<div class="absolute-cover terminal-output-container" tabindex="1">
+				<pre wicket:id="terminalOutput" />
+			</div>
+		</wicket:panel>
+	</body>
+</html>
