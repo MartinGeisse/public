@@ -14,7 +14,6 @@ import name.martingeisse.webide.features.simvm.model.ISimulationModelElement;
 import name.martingeisse.webide.features.simvm.simulation.SimulationEventMessage;
 import name.martingeisse.webide.features.simvm.simulation.SimulationEvents;
 import name.martingeisse.webide.ipc.IpcEvent;
-import name.martingeisse.wicket.atmosphere.AtmosphereUtil;
 
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -99,9 +98,7 @@ public class TerminalPanel extends Panel {
 	@Override
 	protected void onAfterRender() {
 		super.onAfterRender();
-		if (AtmosphereUtil.isRequestForMostRecentResource(this)) {
-			lastDeltaUpdatePosition = terminalOutput.length();
-		}
+		lastDeltaUpdatePosition = terminalOutput.length();
 	}
 	
 	/**
@@ -114,16 +111,14 @@ public class TerminalPanel extends Panel {
 		final IpcEvent event = message.getEvent();
 		final String eventType = event.getType();
 		if (eventType.equals(EcosimEvents.TERMINAL_OUTPUT)) {
-			if (AtmosphereUtil.isRequestForMostRecentResource(this)) {
-				terminalOutput = getTerminalModelElement().getTerminal().getOutput();
-				if (lastDeltaUpdatePosition < terminalOutput.length()) {
-					String delta = terminalOutput.substring((int)lastDeltaUpdatePosition);
-					String escapedDelta = JavascriptAssemblerUtil.escapeStringLiteralSpecialCharacters(delta);
-					String markupId = get("terminalOutput").getMarkupId();
-					target.appendJavaScript("terminalAppend('" + markupId + "', '" + escapedDelta + "');");
-				}
-				lastDeltaUpdatePosition = terminalOutput.length();
+			terminalOutput = getTerminalModelElement().getTerminal().getOutput();
+			if (lastDeltaUpdatePosition < terminalOutput.length()) {
+				String delta = terminalOutput.substring((int)lastDeltaUpdatePosition);
+				String escapedDelta = JavascriptAssemblerUtil.escapeStringLiteralSpecialCharacters(delta);
+				String markupId = get("terminalOutput").getMarkupId();
+				target.appendJavaScript("terminalAppend('" + markupId + "', '" + escapedDelta + "');");
 			}
+			lastDeltaUpdatePosition = terminalOutput.length();
 		} else if (eventType.equals(SimulationEvents.EVENT_TYPE_START)) {
 			terminalOutput = "";
 			lastDeltaUpdatePosition = 0;
