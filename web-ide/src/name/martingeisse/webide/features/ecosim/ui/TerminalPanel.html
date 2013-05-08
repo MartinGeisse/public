@@ -11,10 +11,16 @@
 				bottom: 10px;
 				border: 1px solid #ddd;
 				overflow: scroll;
+				background-color: #ffc; 
 			}
 			
 			.terminal-output-container:focus {
 				border: 1px solid #aaf;
+			}
+			
+			.terminal-output-container pre {
+				margin: 0px;
+				padding: 0px;
 			}
 			
 		</style>
@@ -30,18 +36,12 @@
 				});
 			}
 			
-			function initializeTerminalPanel(inputCallback) {
-				onCharacterInput($('.terminal-output-container'), function(charCode) {
+			function initializeTerminalPanel(inputCallback, markupId) {
+				onCharacterInput($('#' + markupId), function(charCode) {
 					var charText = String.fromCharCode(charCode);
 					inputCallback(charText);
 					event.preventDefault();
 				});
-			}
-			
-			function terminalAppend(markupId, delta) {
-				var $label = $('#' + markupId);
-				$label.append($('<div />').text(delta).html());
-				$label.scrollTop($label.height());
 			}
 			
 		</script>
@@ -49,7 +49,7 @@
 	<body>
 		<wicket:panel>
 			<div class="absolute-cover terminal-output-container" tabindex="1">
-				<pre wicket:id="terminalOutput" style="margin: 0px; padding: 0px; " />
+				<pre wicket:id="terminalOutput" />
 			</div>
 		</wicket:panel>
 	</body>

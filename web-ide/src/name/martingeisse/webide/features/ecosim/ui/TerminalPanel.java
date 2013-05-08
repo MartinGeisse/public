@@ -6,7 +6,6 @@
 
 package name.martingeisse.webide.features.ecosim.ui;
 
-import name.martingeisse.common.javascript.JavascriptAssemblerUtil;
 import name.martingeisse.webide.features.ecosim.EcosimEvents;
 import name.martingeisse.webide.features.ecosim.model.TerminalModelElement;
 import name.martingeisse.webide.features.simvm.editor.SameSimulationFilter;
@@ -22,10 +21,9 @@ import org.apache.wicket.atmosphere.Subscribe;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
 
@@ -35,26 +33,15 @@ import org.apache.wicket.request.cycle.RequestCycle;
 public class TerminalPanel extends Panel {
 
 	/**
-	 * the terminalOutput
-	 */
-	private String terminalOutput;
-	
-	/**
-	 * the lastDeltaUpdatePosition
-	 */
-	private long lastDeltaUpdatePosition;
-
-	/**
 	 * Constructor.
 	 * @param id the wicket id
 	 * @param model the model
 	 */
 	public TerminalPanel(final String id, IModel<ISimulationModelElement> model) {
 		super(id, model);
-		add(new Label("terminalOutput", new PropertyModel<String>(this, "terminalOutput")).setOutputMarkupId(true));
+		setOutputMarkupId(true);
+		add(new PushAppendLabel("terminalOutput", new MyOutputModel(), "%s.parent()"));
 		add(new MyInputBehavior());
-		this.terminalOutput = getTerminalModelElement().getTerminal().getOutput();
-		this.lastDeltaUpdatePosition = 0;
 	}
 	
 	/**
@@ -62,14 +49,6 @@ public class TerminalPanel extends Panel {
 	 */
 	public TerminalModelElement getTerminalModelElement() {
 		return (TerminalModelElement)getDefaultModelObject();
-	}
-
-	/**
-	 * Getter method for the terminalOutput.
-	 * @return the terminalOutput
-	 */
-	public String getTerminalOutput() {
-		return terminalOutput;
 	}
 
 	/* (non-Javadoc)
@@ -80,7 +59,7 @@ public class TerminalPanel extends Panel {
 		super.renderHead(response);
 		MyInputBehavior inputBehavior = getBehaviors(MyInputBehavior.class).get(0);
 		CharSequence callbackFunction = inputBehavior.getCallbackFunction(CallbackParameter.explicit("inputText"));
-		response.render(OnDomReadyHeaderItem.forScript("initializeTerminalPanel(" + callbackFunction + ")"));
+		response.render(OnDomReadyHeaderItem.forScript("initializeTerminalPanel(" + callbackFunction + ", '" + getMarkupId() + "')"));
 	}
 
 	/* (non-Javadoc)
@@ -90,15 +69,6 @@ public class TerminalPanel extends Panel {
 	protected void onComponentTag(final ComponentTag tag) {
 		super.onComponentTag(tag);
 		tag.put("class", "auto-focus");
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.apache.wicket.Component#onAfterRender()
-	 */
-	@Override
-	protected void onAfterRender() {
-		super.onAfterRender();
-		lastDeltaUpdatePosition = terminalOutput.length();
 	}
 	
 	/**
@@ -111,18 +81,8 @@ public class TerminalPanel extends Panel {
 		final IpcEvent event = message.getEvent();
 		final String eventType = event.getType();
 		if (eventType.equals(EcosimEvents.TERMINAL_OUTPUT)) {
-			terminalOutput = getTerminalModelElement().getTerminal().getOutput();
-			if (lastDeltaUpdatePosition < terminalOutput.length()) {
-				String delta = terminalOutput.substring((int)lastDeltaUpdatePosition);
-				String escapedDelta = JavascriptAssemblerUtil.escapeStringLiteralSpecialCharacters(delta);
-				String markupId = get("terminalOutput").getMarkupId();
-				target.appendJavaScript("terminalAppend('" + markupId + "', '" + escapedDelta + "');");
-			}
-			lastDeltaUpdatePosition = terminalOutput.length();
+			((PushAppendLabel)get("terminalOutput")).onModelAppend(target);
 		} else if (eventType.equals(SimulationEvents.EVENT_TYPE_START)) {
-			terminalOutput = "";
-			lastDeltaUpdatePosition = 0;
-			// we need to add (this), not just the terminalOutput label, to trigger onAfterRender().
 			target.add(this);
 		}
 	}
@@ -143,6 +103,16 @@ public class TerminalPanel extends Panel {
 			terminalModelElement.getTerminal().notifyUserInput(inputText);
 		}
 		
+	}
+	
+	/**
+	 * This model caches the terminal output while a request is in progress.
+	 */
+	class MyOutputModel extends LoadableDetachableModel<String> {
+		@Override
+		protected String load() {
+			return getTerminalModelElement().getTerminal().getOutput();
+		}
 	}
 	
 }
