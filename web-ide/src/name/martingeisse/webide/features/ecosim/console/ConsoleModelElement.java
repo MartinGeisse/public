@@ -51,7 +51,7 @@ public class ConsoleModelElement extends AbstractSimulationModelElement implemen
 		keyboardController.setKeyboard(console);
 		displayController.setDisplay(console);
 		
-		// TODO: remove
+		// TODO: remove, used for demo / debugging
 		displayController.initDemoValues();
 	}
 	

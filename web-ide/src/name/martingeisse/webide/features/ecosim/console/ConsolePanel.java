@@ -81,8 +81,6 @@ public class ConsolePanel extends Panel {
 				int character = controller.getCharacter(column, row) & 0xff;
 				int attribute = controller.getAttribute(column, row) & 0xff;
 				char mappedCharacter = mapOutputCharacter(character);
-				System.err.println("* " + mappedCharacter + " (" + (int)mappedCharacter + ")");
-				System.err.println("* " + mappedCharacter);
 				builder.append("<span class=\"_").append(Integer.toHexString(attribute & 0x0f)).append(" x");
 				builder.append((attribute >> 4) & 7).append('_');
 				if ((attribute & 0x80) != 0) {
