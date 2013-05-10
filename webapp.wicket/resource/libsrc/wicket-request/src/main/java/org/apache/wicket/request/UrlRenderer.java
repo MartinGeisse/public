@@ -127,6 +127,12 @@ public class UrlRenderer
 	 */
 	public String renderFullUrl(final Url url)
 	{
+		if (url instanceof IUrlRenderer)
+		{
+			IUrlRenderer renderer = (IUrlRenderer) url;
+			return renderer.renderFullUrl(url, getBaseUrl());
+		}
+
 		final String protocol = resolveProtocol(url);
 		final String host = resolveHost(url);
 		final Integer port = resolvePort(url);
@@ -144,14 +150,22 @@ public class UrlRenderer
 		}
 
 		StringBuilder render = new StringBuilder();
-		render.append(protocol);
-		render.append("://");
-		render.append(host);
-
-		if ((port != null) && !port.equals(PROTO_TO_PORT.get(protocol)))
+		if (Strings.isEmpty(protocol) == false)
 		{
+			render.append(protocol);
 			render.append(':');
-			render.append(port);
+		}
+
+		if (Strings.isEmpty(host) == false)
+		{
+			render.append("//");
+			render.append(host);
+
+			if ((port != null) && !port.equals(PROTO_TO_PORT.get(protocol)))
+			{
+				render.append(':');
+				render.append(port);
+			}
 		}
 
 		if (url.isAbsolute() == false)
@@ -214,6 +228,12 @@ public class UrlRenderer
 	{
 		Args.notNull(url, "url");
 
+		if (url instanceof IUrlRenderer)
+		{
+			IUrlRenderer renderer = (IUrlRenderer) url;
+			return renderer.renderRelativeUrl(url, getBaseUrl());
+		}
+
 		List<String> baseUrlSegments = getBaseUrl().getSegments();
 		List<String> urlSegments = new ArrayList<String>(url.getSegments());
 
@@ -263,7 +283,7 @@ public class UrlRenderer
 		String renderedUrl = new Url(newSegments, url.getQueryParameters()).toString();
 
 		// sanitize start
-		if (!renderedUrl.startsWith(".."))
+		if (!renderedUrl.startsWith("..") && !renderedUrl.equals("."))
 		{
 			// WICKET-4260
 			renderedUrl = "./" + renderedUrl;
@@ -314,7 +334,7 @@ public class UrlRenderer
 			}
 		}
 
-		for (int i = 0; i < commonPrefix.getSegments().size(); i++)
+		for (int i = 0; i < commonPrefix.getSegments().size() && !segments.isEmpty(); i++)
 		{
 			segments.remove(0);
 		}
@@ -341,6 +361,11 @@ public class UrlRenderer
 		}
 		if ((url.getPort() != null) && !url.getPort().equals(clientUrl.getPort()))
 		{
+			return true;
+		}
+		if (url.isContextAbsolute())
+		{
+			// do not relativize urls like "/a/b"
 			return true;
 		}
 		return false;

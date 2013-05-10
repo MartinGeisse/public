@@ -22,7 +22,6 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.convert.ConversionException;
 import org.apache.wicket.util.convert.IConverter;
-import org.apache.wicket.util.lang.Numbers;
 import org.apache.wicket.util.lang.Objects;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.validation.validator.RangeValidator;
@@ -48,6 +47,8 @@ public class NumberTextField<N extends Number & Comparable<N>> extends TextField
 	private N minimum;
 
 	private N maximum;
+
+	private N step;
 
 	/**
 	 * Construct.
@@ -107,7 +108,7 @@ public class NumberTextField<N extends Number & Comparable<N>> extends TextField
 
 	/**
 	 * Sets the maximum allowed value
-	 * 
+	 *
 	 * @param maximum
 	 *            the maximum allowed value
 	 * @return this instance
@@ -115,6 +116,19 @@ public class NumberTextField<N extends Number & Comparable<N>> extends TextField
 	public NumberTextField<N> setMaximum(final N maximum)
 	{
 		this.maximum = maximum;
+		return this;
+	}
+
+	/**
+	 * Sets the step attribute
+	 *
+	 * @param step
+	 *            the step attribute
+	 * @return this instance
+	 */
+	public NumberTextField<N> setStep(final N step)
+	{
+		this.step = step;
 		return this;
 	}
 
@@ -126,40 +140,14 @@ public class NumberTextField<N extends Number & Comparable<N>> extends TextField
 		if (validator != null)
 		{
 			remove(validator);
+			validator = null;
 		}
 
-		validator = new RangeValidator<N>(getMinValue(), getMaxValue());
-		add(validator);
-	}
-
-	private N getMinValue()
-	{
-		N result;
-		if (minimum != null)
+		if (minimum != null || maximum != null)
 		{
-			result = minimum;
+			validator = RangeValidator.range(minimum, maximum);
+			add(validator);
 		}
-		else
-		{
-			Class<N> numberType = getNumberType();
-			result = (N)Numbers.getMinValue(numberType);
-		}
-		return result;
-	}
-
-	private N getMaxValue()
-	{
-		N result;
-		if (maximum != null)
-		{
-			result = maximum;
-		}
-		else
-		{
-			Class<N> numberType = getNumberType();
-			result = (N)Numbers.getMaxValue(numberType);
-		}
-		return result;
 	}
 
 	private Class<N> getNumberType()
@@ -195,6 +183,15 @@ public class NumberTextField<N extends Number & Comparable<N>> extends TextField
 		else
 		{
 			attributes.remove("max");
+		}
+
+		if (step != null)
+		{
+			attributes.put("step", Objects.stringValue(step));
+		}
+		else
+		{
+			attributes.remove("step");
 		}
 	}
 

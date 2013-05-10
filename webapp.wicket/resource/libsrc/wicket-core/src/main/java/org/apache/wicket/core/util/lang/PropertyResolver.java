@@ -118,6 +118,7 @@ public final class PropertyResolver
 	 *            The value to set.
 	 * @param converter
 	 *            The converter to convert the value if needed to the right type.
+	 * @throws WicketRuntimeException
 	 */
 	public final static void setValue(final String expression, final Object object,
 		final Object value, final PropertyResolverConverter converter)
@@ -148,6 +149,7 @@ public final class PropertyResolver
 	 * @param expression
 	 * @param object
 	 * @return class of the target property object
+	 * @throws WicketRuntimeException if the cannot be resolved
 	 */
 	public final static Class<?> getPropertyClass(final String expression, final Object object)
 	{
@@ -155,7 +157,7 @@ public final class PropertyResolver
 		if (setter == null)
 		{
 			throw new WicketRuntimeException("Null object returned for expression: " + expression +
-				" for getting the target classs of: " + object);
+				" for getting the target class of: " + object);
 		}
 		return setter.getTargetClass();
 	}
@@ -165,6 +167,7 @@ public final class PropertyResolver
 	 * @param expression
 	 * @param clz
 	 * @return class of the target Class property expression
+	 * @throws WicketRuntimeException if class cannot be resolved
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> Class<T> getPropertyClass(final String expression, final Class<?> clz)
@@ -173,7 +176,7 @@ public final class PropertyResolver
 		if (setter == null)
 		{
 			throw new WicketRuntimeException("No Class returned for expression: " + expression +
-				" for getting the target classs of: " + clz);
+				" for getting the target class of: " + clz);
 		}
 		return (Class<T>)setter.getTargetClass();
 	}
@@ -181,8 +184,8 @@ public final class PropertyResolver
 	/**
 	 * @param expression
 	 * @param object
-	 * @return Field for the property expression or null if such field doesn't exist (only getters
-	 *         and setters)
+	 * @return Field for the property expression
+	 * @throws WicketRuntimeException if there is no such field
 	 */
 	public final static Field getPropertyField(final String expression, final Object object)
 	{
@@ -190,7 +193,7 @@ public final class PropertyResolver
 		if (setter == null)
 		{
 			throw new WicketRuntimeException("Null object returned for expression: " + expression +
-				" for getting the target classs of: " + object);
+				" for getting the target class of: " + object);
 		}
 		return setter.getField();
 	}
@@ -198,8 +201,8 @@ public final class PropertyResolver
 	/**
 	 * @param expression
 	 * @param object
-	 * @return Getter method for the property expression or null if such getter doesn't exist (only
-	 *         field)
+	 * @return Getter method for the property expression
+	 * @throws WicketRuntimeException if there is no getter method
 	 */
 	public final static Method getPropertyGetter(final String expression, final Object object)
 	{
@@ -207,7 +210,7 @@ public final class PropertyResolver
 		if (setter == null)
 		{
 			throw new WicketRuntimeException("Null object returned for expression: " + expression +
-				" for getting the target classs of: " + object);
+				" for getting the target class of: " + object);
 		}
 		return setter.getGetter();
 	}
@@ -215,8 +218,8 @@ public final class PropertyResolver
 	/**
 	 * @param expression
 	 * @param object
-	 * @return Setter method for the property expression or null if such setter doesn't exist (only
-	 *         field)
+	 * @return Setter method for the property expression
+	 * @throws WicketRuntimeException if there is no setter method
 	 */
 	public final static Method getPropertySetter(final String expression, final Object object)
 	{
@@ -224,7 +227,7 @@ public final class PropertyResolver
 		if (setter == null)
 		{
 			throw new WicketRuntimeException("Null object returned for expression: " + expression +
-				" for getting the target classs of: " + object);
+				" for getting the target class of: " + object);
 		}
 		return setter.getSetter();
 	}

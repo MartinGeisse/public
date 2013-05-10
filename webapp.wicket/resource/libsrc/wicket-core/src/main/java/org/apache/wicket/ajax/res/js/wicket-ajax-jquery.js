@@ -440,6 +440,22 @@
 		},
 
 		/**
+		 * Aborts the default event if attributes request it
+		 *
+		 * @param {Object} attrs - the Ajax request attributes configured at the server side
+		 */
+		_preventDefaultIfNecessary: function(attrs) {
+			if (!attrs.ad && attrs.event) {
+				try {
+					attrs.event.preventDefault();
+				} catch (ignore) {
+					// WICKET-4986
+					// jquery fails 'member not found' with calls on busy channel
+				}
+			}
+		},
+		
+		/**
 		 * Executes or schedules for execution #doAjax()
 		 *
 		 * @param {Object} attrs - the Ajax request attributes configured at the server side
@@ -528,7 +544,9 @@
 			Wicket.Event.publish('/ajax/call/precondition', attrs);
 
 			if (attrs.mp) { // multipart form. jQuery.ajax() doesn't help here ...
-				return this.submitMultipartForm(context);
+				var ret = self.submitMultipartForm(context);
+				self._preventDefaultIfNecessary(attrs);
+				return ret;
 			}
 
 			if (attrs.f) {
@@ -635,18 +653,11 @@
 			self._executeHandlers(attrs.ah, attrs);
 			Wicket.Event.publish('/ajax/call/after', attrs);
 
-			if (!attrs.ad && attrs.event) {
-				try {
-					attrs.event.preventDefault();
-				} catch (ignore) {
-					// WICKET-4986
-					// jquery fails 'member not found' with calls on busy channel
-				}
-			}
-
+			self._preventDefaultIfNecessary(attrs);
+			
 			return jqXHR;
 		},
-		
+
 		/**
 		 * Method that processes a manually supplied <ajax-response>.
 		 *
@@ -1029,9 +1040,20 @@
 		 * @param node {XmlElement} - the <[priority-]evaluate> element with the script to evaluate
 		 */
 		processEvaluation: function (context, node) {
+
+			// used to match evaluation scripts which manually call FunctionsExecuter's notify() when ready
+			var scriptWithIdentifierR = new RegExp("^\\(function\\(\\)\\{([a-zA-Z_]\\w*)\\|((.|\\n)*)?\\}\\)\\(\\);$");
+
 			context.steps.push(function (notify) {
 				// get the javascript body
-				var text = jQuery(node).text();
+				var text;
+
+				try {
+					text = node.firstChild.nodeValue;
+				} catch (e) {
+					// TODO remove this fallback in 6.11.0+
+					text = jQuery(node).text();
+				}
 
 				// unescape it if necessary
 				var encoding = node.getAttribute("encoding");
@@ -1041,8 +1063,9 @@
 
 				// test if the javascript is in form of identifier|code
 				// if it is, we allow for letting the javascript decide when the rest of processing will continue
-				// by invoking identifier();
-				var res = text.match(new RegExp("^([a-z|A-Z_][a-z|A-Z|0-9_]*)\\|((.|\\n)*)$"));
+				// by invoking identifier();. This allows usage of some asynchronous/deferred logic before the next script
+				// See WICKET-5039
+				var res = text.match(scriptWithIdentifierR);
 
 				if (res !== null) {
 					var f = jQuery.noop;
@@ -1695,12 +1718,10 @@
 							throttler.throttle(throttlingSettings.id, throttlingSettings.d,
 								Wicket.bind(function () {
 									call.ajax(attributes);
-									return attributes.ad;
 								}, this));
 						}
 						else {
 							call.ajax(attributes);
-							return attributes.ad;
 						}
 					});
 				});
@@ -1978,10 +1999,11 @@
 							text = text.replace(/\n\/\*\]\]>\*\/\n$/, "");
 
 							var id = node.getAttribute("id");
+							var type = node.getAttribute("type");
 
 							if (typeof(id) === "string" && id.length > 0) {
 								// add javascript to document head
-								Wicket.Head.addJavascript(text, id);
+								Wicket.Head.addJavascript(text, id, "", type);
 							} else {
 								try {
 									eval(text);
@@ -2069,14 +2091,21 @@
 			// attribute to filter out duplicates. However, since we set the body of the element, we can't assign
 			// also a src value. Therefore we put the url to the src_ (notice the underscore)  attribute.
 			// Wicket.Head.containsElement is aware of that and takes also the underscored attributes into account.
-			addJavascript: function (content, id, fakeSrc) {
-				content = 'try{'+content+'}catch(e){Wicket.Log.error(e);}';
+			addJavascript: function (content, id, fakeSrc, type) {
 				var script = Wicket.Head.createElement("script");
 				if (id) {
 					script.id = id;
 				}
+
+				// WICKET-5047: encloses the content with a try...catch... block if the content is javascript
+				// content is considered javascript if mime-type is empty (html5's default) or is 'text/javascript'
+				if (!type || type.toLowerCase() === "text/javascript") {
+					type = "text/javascript";
+					content = 'try{'+content+'}catch(e){Wicket.Log.error(e);}';
+				}
+
 				script.setAttribute("src_", fakeSrc);
-				script.setAttribute("type", "text/javascript");
+				script.setAttribute("type", type);
 
 				// set the javascript as element content
 				if (null === script.canHaveChildren || script.canHaveChildren) {
@@ -2092,11 +2121,14 @@
 			addJavascripts: function (element, contentFilter) {
 				function add(element) {
 					var src = element.getAttribute("src");
+					var type = element.getAttribute("type");
 
 					// if it is a reference, just add it to head
 					if (src !== null && src.length > 0) {
 						var e = document.createElement("script");
-						e.setAttribute("type","text/javascript");
+						if (type) {
+							e.setAttribute("type",type);
+						}
 						e.setAttribute("src", src);
 						Wicket.Head.addElement(e);
 					} else {
@@ -2109,7 +2141,7 @@
 							content = contentFilter(content);
 						}
 
-						Wicket.Head.addJavascript(content, element.id);
+						Wicket.Head.addJavascript(content, element.id, "", type);
 					}
 				}
 				if (typeof(element) !== "undefined" &&

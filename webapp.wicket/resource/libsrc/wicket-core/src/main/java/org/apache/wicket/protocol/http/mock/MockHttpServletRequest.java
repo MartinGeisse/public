@@ -175,7 +175,7 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	private String url;
 
-	private Map<String, UploadedFile> uploadedFiles;
+	private Map<String, List<UploadedFile>> uploadedFiles;
 
 	private boolean useMultiPartContentType;
 
@@ -264,12 +264,19 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 		if (uploadedFiles == null)
 		{
-			uploadedFiles = new HashMap<String, UploadedFile>();
+			uploadedFiles = new HashMap<String, List<UploadedFile>>();
 		}
 
 		UploadedFile uf = new UploadedFile(fieldName, file, contentType);
 
-		uploadedFiles.put(fieldName, uf);
+		List<UploadedFile> filesPerField = uploadedFiles.get(fieldName);
+		if (filesPerField == null)
+		{
+			filesPerField = new ArrayList<UploadedFile>();
+			uploadedFiles.put(fieldName, filesPerField);
+		}
+
+		filesPerField.add(uf);
 		setUseMultiPartContentType(true);
 	}
 
@@ -457,7 +464,7 @@ public class MockHttpServletRequest implements HttpServletRequest
 		{
 			if (cookie.getName().equals(name))
 			{
-				return cookie;
+				return Cookies.copyOf(cookie);
 			}
 		}
 		return null;
@@ -476,7 +483,11 @@ public class MockHttpServletRequest implements HttpServletRequest
 			return null;
 		}
 		Cookie[] result = new Cookie[cookies.size()];
-		return cookies.toArray(result);
+		for (int i = 0; i < cookies.size(); i++)
+		{
+			result[i] = Cookies.copyOf(cookies.get(i));
+		}
+		return result;
 	}
 
 	/**
@@ -1308,7 +1319,7 @@ public class MockHttpServletRequest implements HttpServletRequest
 	public void setCookies(final Cookie[] theCookies)
 	{
 		cookies.clear();
-		cookies.addAll(Arrays.asList(theCookies));
+		addCookies(Arrays.asList(theCookies));
 	}
 
 	/**
@@ -1638,32 +1649,35 @@ public class MockHttpServletRequest implements HttpServletRequest
 			{
 				for (String fieldName : uploadedFiles.keySet())
 				{
-					UploadedFile uf = uploadedFiles.get(fieldName);
+					List<UploadedFile> files = uploadedFiles.get(fieldName);
 
-					newAttachment(out);
-					out.write("; name=\"".getBytes());
-					out.write(fieldName.getBytes());
-					out.write("\"; filename=\"".getBytes());
-					out.write(uf.getFile().getName().getBytes());
-					out.write("\"".getBytes());
-					out.write(crlf.getBytes());
-					out.write("Content-Type: ".getBytes());
-					out.write(uf.getContentType().getBytes());
-					out.write(crlf.getBytes());
-					out.write(crlf.getBytes());
-
-					// Load the file and put it into the the inputstream
-					FileInputStream fis = new FileInputStream(uf.getFile());
-
-					try
+					for (UploadedFile uf : files)
 					{
-						IOUtils.copy(fis, out);
+						newAttachment(out);
+						out.write("; name=\"".getBytes());
+						out.write(fieldName.getBytes());
+						out.write("\"; filename=\"".getBytes());
+						out.write(uf.getFile().getName().getBytes());
+						out.write("\"".getBytes());
+						out.write(crlf.getBytes());
+						out.write("Content-Type: ".getBytes());
+						out.write(uf.getContentType().getBytes());
+						out.write(crlf.getBytes());
+						out.write(crlf.getBytes());
+
+						// Load the file and put it into the the inputstream
+						FileInputStream fis = new FileInputStream(uf.getFile());
+
+						try
+						{
+							IOUtils.copy(fis, out);
+						}
+						finally
+						{
+							fis.close();
+						}
+						out.write(crlf.getBytes());
 					}
-					finally
-					{
-						fis.close();
-					}
-					out.write(crlf.getBytes());
 				}
 			}
 

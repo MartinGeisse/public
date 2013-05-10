@@ -238,9 +238,6 @@ public final class ValidationError implements IValidationError
 	@Override
 	public final Serializable getErrorMessage(IErrorMessageSource messageSource)
 	{
-
-		final Map<String, Object> p = (vars != null) ? vars : EMPTY_VARS;
-
 		String errorMessage = null;
 
 		if (keys != null)
@@ -277,6 +274,8 @@ public final class ValidationError implements IValidationError
 
 	/**
 	 * Sets message that will be used when no message could be located via message keys.
+	 * <p>
+	 * Note: No variable substitution is performed on the given message!
 	 * 
 	 * @param message
 	 *            a default message to be used when all keys yield no message

@@ -16,6 +16,8 @@
  */
 package org.apache.wicket.request.cycle;
 
+import java.util.Arrays;
+
 import org.apache.wicket.mock.MockWebRequest;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.UrlRenderer;
@@ -147,7 +149,7 @@ public class UrlRendererTest extends Assert
 	public void test11()
 	{
 		UrlRenderer r1 = new UrlRenderer(new MockWebRequest(Url.parse("a")));
-		assertEquals("./.", r1.renderUrl(Url.parse("")));
+		assertEquals(".", r1.renderUrl(Url.parse("")));
 	}
 
 	/**
@@ -465,5 +467,91 @@ public class UrlRendererTest extends Assert
 		String encodedRelativeUrl = renderer.renderRelativeUrl(encodedFullUrl);
 
 		assertEquals("../../../../a/b;jsessionid=123456", encodedRelativeUrl);
+	}
+
+	/**
+	 * https://issues.apache.org/jira/browse/WICKET-5123
+	 */
+	@Test
+	public void renderHomeUrl()
+	{
+		Url baseUrl = Url.parse("login");
+
+		MockWebRequest request = new MockWebRequest(baseUrl);
+		UrlRenderer renderer = new UrlRenderer(request);
+
+		Url homeUrl = Url.parse("");
+		String encodedRelativeUrl = renderer.renderUrl(homeUrl);
+
+		assertEquals(".", encodedRelativeUrl);
+	}
+
+	/**
+	 * https://issues.apache.org/jira/browse/WICKET-5065
+	 */
+	@Test
+	public void renderAbsoluteWithoutHost()
+	{
+		Url baseUrl = Url.parse("a/b");
+
+		MockWebRequest request = new MockWebRequest(baseUrl);
+		UrlRenderer renderer = new UrlRenderer(request);
+
+		Url absoluteUrl = Url.parse("/c/d");
+		String encodedRelativeUrl = renderer.renderUrl(absoluteUrl);
+
+		assertEquals("/c/d", encodedRelativeUrl);
+	}
+
+	/**
+	 * https://issues.apache.org/jira/browse/WICKET-5065
+	 */
+	@Test
+	public void renderAbsoluteWithoutScheme()
+	{
+		Url baseUrl = Url.parse("a/b");
+
+		MockWebRequest request = new MockWebRequest(baseUrl);
+		UrlRenderer renderer = new UrlRenderer(request);
+
+		Url absoluteUrl = Url.parse("//host/c/d");
+		String encodedRelativeUrl = renderer.renderUrl(absoluteUrl);
+
+		assertEquals("//host/c/d", encodedRelativeUrl);
+	}
+
+	/**
+	 * https://issues.apache.org/jira/browse/WICKET-5065
+	 */
+	@Test
+	public void renderAbsoluteWithoutSchemeWithPort()
+	{
+		Url baseUrl = Url.parse("a/b");
+
+		MockWebRequest request = new MockWebRequest(baseUrl);
+		UrlRenderer renderer = new UrlRenderer(request);
+
+		Url absoluteUrl = Url.parse("//host:1234/c/d");
+		String encodedRelativeUrl = renderer.renderUrl(absoluteUrl);
+
+		assertEquals("//host:1234/c/d", encodedRelativeUrl);
+	}
+
+	/**
+	 * https://issues.apache.org/jira/browse/WICKET-5073
+	 */
+	@Test
+	public void removeCommonPrefixesWicket5073()
+	{
+		Url baseUrl = new Url(Arrays.asList(""), Arrays.<Url.QueryParameter> asList());
+
+		MockWebRequest request = new MockWebRequest(baseUrl);
+		request.setContextPath("/qs");
+		request.setFilterPath("");
+		UrlRenderer renderer = new UrlRenderer(request);
+		renderer.setBaseUrl(baseUrl);
+
+		String rendered = renderer.renderRelativeUrl(Url.parse("wicket/resource/org.apache.wicket.Application/x.css"));
+		assertEquals("./wicket/resource/org.apache.wicket.Application/x.css", rendered);
 	}
 }

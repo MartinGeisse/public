@@ -12,15 +12,13 @@ import java.util.Map;
 
 import name.martingeisse.ecosim.bus.Bus;
 import name.martingeisse.ecosim.cpu.Cpu;
-import name.martingeisse.ecosim.devices.chardisplay.CharacterDisplay;
-import name.martingeisse.ecosim.devices.chardisplay.ICharacterDisplayUserInterface;
-import name.martingeisse.ecosim.devices.chardisplay.ICharacterDisplayUserInterfaceSocket;
+import name.martingeisse.ecosim.devices.chardisplay.CharacterDisplayController;
 import name.martingeisse.ecosim.devices.disk.Disk;
-import name.martingeisse.ecosim.devices.keyboard.IKeyboardUserInterface;
-import name.martingeisse.ecosim.devices.keyboard.Keyboard;
+import name.martingeisse.ecosim.devices.keyboard.KeyboardController;
 import name.martingeisse.ecosim.devices.memory.Ram;
 import name.martingeisse.ecosim.devices.memory.Rom;
 import name.martingeisse.ecosim.devices.timer.Timer;
+import name.martingeisse.webide.features.ecosim.console.ConsoleModelElement;
 import name.martingeisse.webide.features.ecosim.debugout.DebugOutputModelElement;
 import name.martingeisse.webide.features.ecosim.terminal.TerminalModelElement;
 import name.martingeisse.webide.features.simvm.model.AbstractCompositeSimulationModelElement;
@@ -85,12 +83,12 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 	/**
 	 * the characterDisplay
 	 */
-	private CharacterDisplay characterDisplay;
+	private CharacterDisplayController characterDisplay;
 	
 	/**
 	 * the keyboard
 	 */
-	private Keyboard keyboard;
+	private KeyboardController keyboard;
 	
 	/**
 	 * the timer
@@ -120,7 +118,7 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 		getSubElements().add(new EcosimModelElementPlaceholder("CPU", "... cpu panel ..."));
 		getSubElements().add(new EcosimModelElementPlaceholder("Memory", "... memory panel ..."));
 		getSubElements().add(new TerminalModelElement(eventOutbox));
-		getSubElements().add(new EcosimModelElementPlaceholder("Console", "... console panel ..."));
+		getSubElements().add(new ConsoleModelElement(eventOutbox));
 		getSubElements().add(new EcosimModelElementPlaceholder("Disk", "... disk panel ..."));
 		getSubElements().add(new DebugOutputModelElement(eventOutbox));
 		super.initialize(simulationModel, eventOutbox);
@@ -154,19 +152,20 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 				8
 			});
 	
-			characterDisplay = new CharacterDisplay();
+			/*
+			characterDisplay = new CharacterDisplayController();
 			bus.add(0x30100000, characterDisplay, new int[] {});
-			characterDisplay.setUserInterface(new ICharacterDisplayUserInterface() {
+			characterDisplay.setUserInterface(new ICharacterDisplay() {
 				@Override
-				public void update(ICharacterDisplayUserInterfaceSocket characterDisplayUserInterfaceSocket, int x, int y) {
+				public void update(ICharacterDisplayHost host, int x, int y) {
 				}
 			});
 	
-			keyboard = new Keyboard();
+			keyboard = new KeyboardController();
 			bus.add(0x30200000, keyboard, new int[] {
 				4
 			});
-			keyboard.setUserInterface(new IKeyboardUserInterface() {
+			keyboard.setUserInterface(new IKeyboard() {
 				
 				@Override
 				public byte receiveByte() throws IllegalStateException {
@@ -179,6 +178,7 @@ public class EcosimPrimaryModelElement extends AbstractCompositeSimulationModelE
 				}
 				
 			});
+			*/
 	
 			// TODO graphics
 			// TODO block console
