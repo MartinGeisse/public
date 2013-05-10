@@ -55,7 +55,24 @@
 			.character-display .x6_ {background-color: #a50}
 			.character-display .x7_ {background-color: #555}
 			
-			.character-display .bl {text-decoration: blink}
+			@keyframes blink {  
+				0% { color: ; }
+				50% { color: transparent }
+				100% { color: ; }
+			}
+			
+			@-webkit-keyframes blink {
+				0% { color: ; }
+				50% { color: transparent }
+				100% { color: ; }
+			}
+			
+			.character-display .bl {
+				text-decoration: blink;
+				animation: blink 1s step-start 0s infinite;
+				-webkit-animation: blink 1s step-start 0s infinite;
+				overflow: hidden;
+			}
 			
 		</style>
 		<script type="text/javascript">
