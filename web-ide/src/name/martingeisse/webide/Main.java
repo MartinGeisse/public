@@ -9,8 +9,13 @@ package name.martingeisse.webide;
 import static org.atmosphere.cpr.ApplicationConfig.FILTER_CLASS;
 import static org.atmosphere.cpr.ApplicationConfig.SERVLET_CLASS;
 
+import java.util.EnumSet;
+
+import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
 import javax.servlet.Servlet;
 
+import name.martingeisse.common.servlet.EnforceUtf8Filter;
 import name.martingeisse.webide.application.IdeLauncher;
 import name.martingeisse.webide.application.WebIdeApplication;
 import name.martingeisse.webide.editor.codemirror.ot.CodeMirrorOtServer;
@@ -24,6 +29,7 @@ import org.apache.wicket.protocol.http.WicketFilter;
 import org.atmosphere.cpr.MeteorServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
@@ -67,12 +73,18 @@ public class Main {
 	 * Launches the web user interface.
 	 */
 	private static void launchWeb() throws Exception {
+		final EnumSet<DispatcherType> allDispatcherTypes = EnumSet.allOf(DispatcherType.class);
 
 		// create and configure a servlet context
 		final ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 		context.setContextPath("/");
 		context.getSessionHandler().getSessionManager().setMaxInactiveInterval(30 * 60);
 		context.getSessionHandler().getSessionManager().setSessionIdPathParameterName(null);
+		
+		// add UTF-8 enforcement filter
+		final Filter utf8Filter = new EnforceUtf8Filter();
+		FilterHolder utf8FilterHolder = new FilterHolder(utf8Filter);
+		context.addFilter(utf8FilterHolder, "/*", allDispatcherTypes);
 
 		// add the Meteor servlet, also adding Wicket filter configuration
 		final Servlet atmosphereServlet = new MeteorServlet();
