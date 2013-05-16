@@ -21,7 +21,6 @@ import name.martingeisse.webide.application.IdeLauncher;
 import name.martingeisse.webide.application.WebIdeApplication;
 import name.martingeisse.webide.editor.codemirror.ot.CodeMirrorOtServer;
 import name.martingeisse.webide.ipc.IpcEvent;
-import name.martingeisse.webide.process.CompanionProcessMessageFilter;
 import name.martingeisse.webide.process.CompanionProcessMessageServer;
 import name.martingeisse.webide.process.NodejsCompanionProcess;
 import name.martingeisse.webide.ssh.ShellFactory;
@@ -37,6 +36,8 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.jboss.netty.logging.InternalLoggerFactory;
+import org.jboss.netty.logging.Log4JLoggerFactory;
 
 /**
  * The main class.
@@ -91,11 +92,6 @@ public class Main {
 		FilterHolder utf8FilterHolder = new FilterHolder(utf8Filter);
 		context.addFilter(utf8FilterHolder, "/*", allDispatcherTypes);
 
-		// add message filter for companion processes
-		final Filter companionProcessMessageFilter = new CompanionProcessMessageFilter();
-		FilterHolder companionProcessMessageFilterHolder = new FilterHolder(companionProcessMessageFilter);
-		context.addFilter(companionProcessMessageFilterHolder, "/*", allDispatcherTypes);
-		
 		// add the Meteor servlet, also adding Wicket filter configuration
 		final Servlet atmosphereServlet = new MeteorServlet();
 		final ServletHolder atmosphereServletHolder = new ServletHolder(atmosphereServlet);
@@ -115,7 +111,8 @@ public class Main {
 		new CodeMirrorOtServer().start();
 		
 		// start message interface for companion processes
-		CompanionProcessMessageServer.start(8081);
+		InternalLoggerFactory.setDefaultFactory(new Log4JLoggerFactory());
+		CompanionProcessMessageServer.start(8082);
 		
 		// TODO remove
 		new NodejsCompanionProcess(new File("resource/companion-test/test1.js")) {

@@ -4,16 +4,8 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.process;
+package name.martingeisse.webide.process.netty;
 
-import static org.jboss.netty.buffer.ChannelBuffers.copiedBuffer;
-
-import java.io.StringWriter;
-import java.nio.ByteOrder;
-import java.nio.charset.Charset;
-
-import org.apache.commons.io.output.WriterOutputStream;
-import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.channel.MessageEvent;
@@ -69,7 +61,7 @@ public class JsonSocketFrameCodec extends SimpleChannelHandler {
 					return;
 				}
 				String frameContents = inputBuilder.substring(hashIndex + 1, hashIndex + 1 + length);
-				CUT FRAME
+				inputBuilder.delete(0, hashIndex + 1 + length);
 				Channels.fireMessageReceived(context, frameContents, event.getRemoteAddress());				
 			}
 			
@@ -82,8 +74,6 @@ public class JsonSocketFrameCodec extends SimpleChannelHandler {
 	@Override
 	public void writeRequested(final ChannelHandlerContext context, final MessageEvent e) throws Exception {
 		
-		TODO
-		
 		// extract the string from the message event
 		final Object message = e.getMessage();
 		if (!(message instanceof String)) {
@@ -92,12 +82,9 @@ public class JsonSocketFrameCodec extends SimpleChannelHandler {
 		}
 		String string = (String)message;
 		
-		// encode the string into a buffer
-		ByteOrder byteOrder = context.getChannel().getConfig().getBufferFactory().getDefaultOrder();
-        ChannelBuffer buffer = copiedBuffer(byteOrder, string, Charset.forName("utf-8"));
-        
-        // send the buffer downstream
-        Channels.write(context, e.getFuture(), buffer, e.getRemoteAddress());
+		// build a frame for the string and send it downstream
+		String frame = Integer.toString(string.length()) + '#' + string;
+        Channels.write(context, e.getFuture(), frame, e.getRemoteAddress());
         
 	}
 

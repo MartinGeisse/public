@@ -42,11 +42,10 @@ public class NodejsCompanionProcess extends CompanionProcess {
 	 */
 	@Override
 	protected CommandLine buildCommandLine() {
-		String url = CompanionProcessMessageFilter.getMessageBaseUrl(getCompanionId());
 		CommandLine commandLine = new CommandLine(Configuration.getBashPath());
 		commandLine.addArgument("--login");
 		commandLine.addArgument("-c");
-		commandLine.addArgument("node " + mainFile.getName() + " '" + url + "'", false);
+		commandLine.addArgument("node " + mainFile.getName(), false);
 		return commandLine;
 	}
 	

@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.webide.process;
+package name.martingeisse.webide.process.netty;
 
 import static org.jboss.netty.buffer.ChannelBuffers.copiedBuffer;
 
@@ -60,6 +60,7 @@ public class CharacterStreamCodec extends SimpleChannelHandler {
 			final byte[] bytes = new byte[buffer.readableBytes()];
 			buffer.readBytes(bytes);
 			writerOutputStream.write(bytes);
+			writerOutputStream.flush();
 			decoded = stringWriter.toString();
 			stringWriter.getBuffer().setLength(0);
 			
