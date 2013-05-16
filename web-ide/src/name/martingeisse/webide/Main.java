@@ -9,6 +9,7 @@ package name.martingeisse.webide;
 import static org.atmosphere.cpr.ApplicationConfig.FILTER_CLASS;
 import static org.atmosphere.cpr.ApplicationConfig.SERVLET_CLASS;
 
+import java.io.File;
 import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
@@ -19,6 +20,10 @@ import name.martingeisse.common.servlet.EnforceUtf8Filter;
 import name.martingeisse.webide.application.IdeLauncher;
 import name.martingeisse.webide.application.WebIdeApplication;
 import name.martingeisse.webide.editor.codemirror.ot.CodeMirrorOtServer;
+import name.martingeisse.webide.ipc.IpcEvent;
+import name.martingeisse.webide.process.CompanionProcessMessageFilter;
+import name.martingeisse.webide.process.CompanionProcessMessageServer;
+import name.martingeisse.webide.process.NodejsCompanionProcess;
 import name.martingeisse.webide.ssh.ShellFactory;
 
 import org.apache.sshd.SshServer;
@@ -86,6 +91,11 @@ public class Main {
 		FilterHolder utf8FilterHolder = new FilterHolder(utf8Filter);
 		context.addFilter(utf8FilterHolder, "/*", allDispatcherTypes);
 
+		// add message filter for companion processes
+		final Filter companionProcessMessageFilter = new CompanionProcessMessageFilter();
+		FilterHolder companionProcessMessageFilterHolder = new FilterHolder(companionProcessMessageFilter);
+		context.addFilter(companionProcessMessageFilterHolder, "/*", allDispatcherTypes);
+		
 		// add the Meteor servlet, also adding Wicket filter configuration
 		final Servlet atmosphereServlet = new MeteorServlet();
 		final ServletHolder atmosphereServletHolder = new ServletHolder(atmosphereServlet);
@@ -103,6 +113,17 @@ public class Main {
 
 		// start the OT server
 		new CodeMirrorOtServer().start();
+		
+		// start message interface for companion processes
+		CompanionProcessMessageServer.start(8081);
+		
+		// TODO remove
+		new NodejsCompanionProcess(new File("resource/companion-test/test1.js")) {
+			@Override
+			protected void onEventReceived(IpcEvent event) {
+				
+			};
+		}.start();
 		
 		// start the main server
 		final Server server = new Server(8080);

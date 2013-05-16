@@ -1,4 +1,15 @@
 
-1. Plugin / Builder / VM
-2. Plugin API (JS) und Subprozesse für externe Tools
-3. Frontend/Websocket Nodes mit Wicket Backend
+- Plugin API (JS) und Subprozesse für externe Tools
+- Documents
+- Builders
+- external Tools, Workspace Changes, Deltas + Notifications
+
+- SCM
+- Hilfesystem
+- Preferences
+
+- Java Tools
+- Refactoring
+- Picosim
+- HDL-Sim
+- Makefile tools, C-Compiler

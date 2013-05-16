@@ -54,5 +54,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/java/jetty-webapp-8.1.10.v20130312.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/jetty-websocket-8.1.10.v20130312.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/jetty-xml-8.1.10.v20130312.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/netty-3.6.5.Final.jar" sourcepath="resource/libsrc/netty-3.6.5.Final-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
