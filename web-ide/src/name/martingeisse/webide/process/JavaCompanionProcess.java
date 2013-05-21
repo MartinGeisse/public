@@ -6,8 +6,6 @@
 
 package name.martingeisse.webide.process;
 
-import name.martingeisse.webide.ipc.IpcEvent;
-
 import org.apache.commons.exec.CommandLine;
 
 /**
@@ -24,11 +22,4 @@ public class JavaCompanionProcess extends CompanionProcess {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.process.CompanionProcess#doSendEvent(name.martingeisse.webide.ipc.IpcEvent)
-	 */
-	@Override
-	protected void doSendEvent(IpcEvent event) {
-	}
-	
 }

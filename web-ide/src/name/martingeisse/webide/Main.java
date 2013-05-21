@@ -11,6 +11,7 @@ import static org.atmosphere.cpr.ApplicationConfig.SERVLET_CLASS;
 
 import java.io.File;
 import java.util.EnumSet;
+import java.util.Map;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -21,8 +22,8 @@ import name.martingeisse.webide.application.IdeLauncher;
 import name.martingeisse.webide.application.WebIdeApplication;
 import name.martingeisse.webide.editor.codemirror.ot.CodeMirrorOtServer;
 import name.martingeisse.webide.ipc.IpcEvent;
-import name.martingeisse.webide.process.CompanionProcessMessageServer;
 import name.martingeisse.webide.process.NodejsCompanionProcess;
+import name.martingeisse.webide.process.msgserv.CompanionProcessMessageServer;
 import name.martingeisse.webide.ssh.ShellFactory;
 
 import org.apache.sshd.SshServer;
@@ -118,7 +119,14 @@ public class Main {
 		new NodejsCompanionProcess(new File("resource/companion-test/test1.js")) {
 			@Override
 			protected void onEventReceived(IpcEvent event) {
-				
+				String type = event.getType();
+				@SuppressWarnings("unchecked")
+				Map<String, Object> data = (Map<String, Object>)event.getData();
+				int a = ((Number)data.get("a")).intValue(); 
+				int b = ((Number)data.get("b")).intValue(); 
+				int result = (type.equals("add") ? a + b : type.equals("mul") ? a * b : 0);
+				IpcEvent resultEvent = new IpcEvent("result", null, result);
+				sendEvent(resultEvent);
 			};
 		}.start();
 		

@@ -7,10 +7,12 @@
 package name.martingeisse.webide.process;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import name.martingeisse.webide.ipc.IpcEvent;
+import name.martingeisse.webide.process.msgserv.MessageHandler;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -54,6 +56,11 @@ public abstract class CompanionProcess {
 	}
 	
 	/**
+	 * the companionId
+	 */
+	private final long companionId;
+	
+	/**
 	 * the started
 	 */
 	private boolean started = false;
@@ -64,9 +71,9 @@ public abstract class CompanionProcess {
 	private boolean stopped = false;
 	
 	/**
-	 * the companionId
+	 * the messageHandler
 	 */
-	private final long companionId;
+	private MessageHandler messageHandler;
 	
 	/**
 	 * Constructor.
@@ -92,6 +99,15 @@ public abstract class CompanionProcess {
 	 */
 	public final boolean isStarted() {
 		return started;
+	}
+	
+	/**
+	 * Returns true if the child process has connected, so this
+	 * object can be used to send {@link IpcEvent}s.
+	 * @return true if connected, false if not
+	 */
+	public final boolean isConnected() {
+		return messageHandler != null;
 	}
 
 	/**
@@ -156,12 +172,14 @@ public abstract class CompanionProcess {
 				
 				@Override
 				public void onProcessFailed(ExecuteException e) {
+					messageHandler = null;
 					runningProcesses.remove(companionId);
 					CompanionProcess.this.onProcessFailed(e.getExitValue(), e.getMessage());
 				}
 				
 				@Override
 				public void onProcessComplete(int exitValue) {
+					messageHandler = null;
 					runningProcesses.remove(companionId);
 					CompanionProcess.this.onProcessComplete(exitValue);
 				}
@@ -175,6 +193,29 @@ public abstract class CompanionProcess {
 		}
 		
 		onAfterStart();
+	}
+	
+	/**
+	 * Internal method. Do not call.
+	 * @param messageHandler the message handler
+	 */
+	public void internalNotifyConnected(MessageHandler messageHandler) {
+		this.messageHandler = messageHandler;
+		onConnected();
+	}
+	
+	/**
+	 * Internal method. Do not call.
+	 * @param envelope the message envelope
+	 */
+	public void internalNotifyIpc(Map<String, Object> envelope) {
+		Object ipcEventType = envelope.get("ipcEventType");
+		if (!(ipcEventType instanceof String)) {
+			return;
+		}
+		Object ipcEventData = envelope.get("ipcEventData");
+		IpcEvent ipcEvent = new IpcEvent((String)ipcEventType, null, ipcEventData);
+		onEventReceived(ipcEvent);
 	}
 	
 	/**
@@ -205,35 +246,20 @@ public abstract class CompanionProcess {
 	 */
 	protected void onProcessComplete(int exitValue) {
 	}
-	
+
 	/**
-	 * Sends an event to the subprocess.
-	 * 
-	 * If the child process has not yet started, or has already stopped,
-	 * has crashed or is unreachable, then this method silently returns.
-	 * The reason for this is that in general, the subprocess would be
-	 * in an undefined state, but there is little guarantee that such
-	 * a condition can actually be detected, so even if this method tried
-	 * to throw an exception, the caller must still be prepared that
-	 * the event silently disappears.
-	 * 
-	 * @param event the event
+	 * This method is invoked when the connection to the subprocess
+	 * has been established. Depending on the application protocol,
+	 * either the parent process or the subprocess would start
+	 * sending the first IPC event, and this method gives the parent
+	 * process the chance to do just that. On the other hand, if the
+	 * child process sends the first event, then this method would
+	 * be empty, and the parent process would wait until the first
+	 * message arrives at {@link #onEventReceived(IpcEvent)}.
 	 */
-	public final void sendEvent(IpcEvent event) {
-		if (started) {
-			doSendEvent(event);
-		}
+	protected void onConnected() {
 	}
 	
-	/**
-	 * Sends an event to the subprocess. This method is invoked by {@link #sendEvent(IpcEvent)}
-	 * if the process has already started. It should return silently if the child process
-	 * cannot be reached.
-	 * 
-	 * @param event the event
-	 */
-	protected abstract void doSendEvent(IpcEvent event);
-
 	/**
 	 * This method is invoked when an event is received from the
 	 * subprocess. The default implementation does nothing.
@@ -243,4 +269,30 @@ public abstract class CompanionProcess {
 	protected void onEventReceived(IpcEvent event) {
 	}
 	
+	/**
+	 * Sends an event to the subprocess.
+	 * 
+	 * If the child process has not yet connected, or has already stopped,
+	 * has crashed or is unreachable, then this method silently returns.
+	 * The reason for this is that in general, the subprocess would be
+	 * in an undefined state, but there is little guarantee that such
+	 * a condition can actually be detected, so even if this method tried
+	 * to throw an exception, the caller must still be prepared that
+	 * the event silently disappears.
+	 * 
+	 * Use onConnected() to detect when the connection to
+	 * the subprocess has been established.
+	 * 
+	 * @param event the event
+	 */
+	public final void sendEvent(IpcEvent event) {
+		if (started) {
+			Map<String, Object> envelope = new HashMap<String, Object>();
+			envelope.put("type", "ipc");
+			envelope.put("ipcEventType", event.getType());
+			envelope.put("ipcEventData", event.getData());
+			messageHandler.sendEnvelope(envelope);
+		}
+	}
+
 }

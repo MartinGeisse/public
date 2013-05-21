@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import name.martingeisse.webide.application.Configuration;
-import name.martingeisse.webide.ipc.IpcEvent;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.Executor;
@@ -45,7 +44,7 @@ public class NodejsCompanionProcess extends CompanionProcess {
 		CommandLine commandLine = new CommandLine(Configuration.getBashPath());
 		commandLine.addArgument("--login");
 		commandLine.addArgument("-c");
-		commandLine.addArgument("node " + mainFile.getName(), false);
+		commandLine.addArgument("node " + mainFile.getName() + " " + getCompanionId(), false);
 		return commandLine;
 	}
 	
@@ -72,11 +71,4 @@ public class NodejsCompanionProcess extends CompanionProcess {
 		executor.setWorkingDirectory(mainFile.getParentFile());
 	}
 
-	/* (non-Javadoc)
-	 * @see name.martingeisse.webide.process.CompanionProcess#doSendEvent(name.martingeisse.webide.ipc.IpcEvent)
-	 */
-	@Override
-	protected void doSendEvent(IpcEvent event) {
-	}
-	
 }
