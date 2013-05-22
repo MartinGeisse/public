@@ -40,6 +40,7 @@ public class CompanionProcessMessageServer {
 		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 			@Override
 			public ChannelPipeline getPipeline() throws Exception {
+				// TODO: das ist zuviel Logging!
 				return Channels.pipeline(
 					new LoggingHandler(),
 					new CharacterStreamCodec(),

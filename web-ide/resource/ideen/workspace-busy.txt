@@ -1,5 +1,4 @@
 
-
 is_building -> is_busy. Entspricht "es gibt noch unerledigte
 Tasks in workspace_tasks für diesen Workspace".
 
@@ -18,7 +17,4 @@ Problem #1: Push.
 Problem #2: Globales "busy" Flag.
 
 Problem #3: Anzeige *vor* dem ersten AJAX Request (unsaved changes)
-
-
-
 

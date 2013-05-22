@@ -1,0 +1,89 @@
+
+------------------------------------------------------------------------
+kurzfristig
+------------------------------------------------------------------------
+
+Prozesse, Ad-Hoc-User-Accounts. Entweder mit nummerischen Unix-UIDs, die
+einfach verwendet werden, oder mit einem Satz vorher eingerichteter
+"echter" Unix-Accounts.
+
+Workspaces, Users: 1 Companion Process pro *was* ???
+
+User-Supplied Programs. Sind die überhaupt wichtig? Stellt der Benutzer denn
+*Programme* bereit oder *Plugins*? Vom Konzept her sind es Plugins für die
+IDE, aber es ist unklar, ob diese als Programme besser realisierbar wären.
+- Programme: Dann würde jeweils ein Programm für einen bestimmten Zweck
+	gestartet und beendet, sobald dieser Zweck nicht mehr benötigt wird.
+- Plugins: Dann würde jeweils ein CompProc als "Hilfsserver" gestartet, um
+	einen oder mehrere Dienste anzubieten, und erst wieder beendet, wenn
+	keiner der Dienste mehr benötigt wird. Analog zu Android-Activities.
+	Die trotzdem nötige Main-Funktion würde vom System bereitgestellt,
+	wobei sie Events auslösen würde.
+
+(Companion) Process Plugins, also Plugins für andere Companion Processes.
+Hier ist zu beachten, dass am Ende alle Plugins in einem Programm zusammen
+finden und da dann ein "Dependency Hell" Problem auftreten kann. Das ist
+aber nicht anders als wenn man z.B. alle möglichen Module in einer NodeJS
+Installation zusammenwirft. Es ist im Gegenteil recht transparent, wenn
+man pro Programm (*) die Plugins einbindet und Aliase vergibt, mit denen
+die Module dann geladen werden können (NodeJS: require("alias")).
+(*) Ggf. sinnvoll, in der plugin.json eine Syntax zu erlauben, mit der
+eine "Installation" (eingebundene Programm-Module) für mehrere Programme
+innerhalb eines IDE-Plugins benutzt werden können, um die plugin.json
+kleiner zu halten: (installation (modules ...) (programs ...))
+
+Plugin-System der IDE neu designen
+- plugin.json bleibt
+- Java-Klassen in jetziger Form weg
+- Ordner für IDE-JS-Scriptlets (Rhino): "scriptlets"
+- kein globales Scriptlet, welches Funktionen registriert, sondern direkt
+	die einzelnen Funktionen und aus plugin.json verlinkt(wenn möglich),
+	da der Ladezeitpunkt des Plugins keine Rolle spielt und da deshalb
+	kein Code dranhängen sollte (aber was ist z.B. mit Plugin-weitem
+	Lazy Init?).
+- Code für Companion Processes und PLugins für solche (JS, Java,
+	was auch immer), z.B. "companion/<name>" aus plugin.json verlinkt
+
+Wie geht Versionierung?
+Abgesehen von Versionierung, Möglichkeiten für CompProc:
+- 1 Prozess je Workspace
+	Dann muss der Proc am ExtNet des WS hängen, sonst haklig und
+	Probleme mit Versionierung
+- 1 Prozess je ExtNetwork
+	Dann laufen CompProc evtl. mehrfach je WS, und evtl. mit 
+	verschiedenen Versionen. Trotzdem evtl. der sauberste Weg.
+- ggf. 1 Prozess insgesamt (z.B. OT, aber das ist ein Spezialfall)
+
+UI Protocol. Was genau wird hier spezifiziert? Einfache UI-Komponenten,
+klar, aber wo fließen Daten her/hin? Zwischen UI und Companion Processes?
+Oder spezifiziert der CompProc auch einen Datenfluß zwischen UI und
+IDE-Main? Wie immer gilt: Spezialfälle wie OT mal ausgenommen.
+
+Builders. Über Scriptlets und Companion Processes realisierbar, dazu
+müssen die fertig spezifiziert sein, aber die Überlegungen zu Builders
+sollten da einfließen.
+
+
+
+
+
+
+
+------------------------------------------------------------------------
+langfristig
+------------------------------------------------------------------------
+
+- Plugin API (JS) und Subprozesse für externe Tools
+- Documents
+- Builders
+- external Tools, Workspace Changes, Deltas + Notifications
+
+- SCM
+- Hilfesystem
+- Preferences
+
+- Java Tools
+- Refactoring
+- Picosim
+- HDL-Sim
+- Makefile tools, C-Compiler

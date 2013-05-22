@@ -18,8 +18,10 @@ import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 import org.jboss.netty.channel.SucceededChannelFuture;
 
 /**
- * TODO: document me
- *
+ * This handler understands the IDE JSON-Socket based protocol
+ * and exchanges messages with companion processes. It acts as
+ * the connecting piece between {@link CompanionProcess} and
+ * the actual sub-process.
  */
 public class MessageHandler extends SimpleChannelUpstreamHandler {
 
@@ -58,6 +60,8 @@ public class MessageHandler extends SimpleChannelUpstreamHandler {
 		
 		// dispatch the message
 		if (type.equals("init")) {
+			// TODO: handle duplicate init
+			// TODO: secure init with HMAC over companion ID and timestamp/random
 			onInit(context, messageEvent, envelope);
 		} else if (type.equals("ipc")) {
 			onIpc(context, messageEvent, envelope);
