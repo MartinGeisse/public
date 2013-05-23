@@ -6,8 +6,23 @@ kurzfristig
 Prozesse, Ad-Hoc-User-Accounts. Entweder mit nummerischen Unix-UIDs, die
 einfach verwendet werden, oder mit einem Satz vorher eingerichteter
 "echter" Unix-Accounts.
+	Es gibt in Linux scheinbar drei UIDs:
+	- EUID (effective): wird für Permission-Checks benutzt
+	- RUID (real): ?
+	- SUID (saved): dahin kann gewechselt werden; dadurch kann ein
+		superuser-Prozess temporär unprivilegiert sein
+http://www.gsp.com/cgi-bin/man.cgi?topic=setuid
+http://en.wikipedia.org/wiki/User_identifier
+http://man7.org/linux/man-pages/dir_section_2.html
+	http://man7.org/linux/man-pages/man2/setuid.2.html
+	sudo -u '#1234' bash
+		-g group
+		-n
+			(non-interactive)
+       -S
+       		The -S (stdin) option causes sudo to read the password from the standard input instead of the terminal device.
 
-Workspaces, Users: 1 Companion Process pro *was* ???
+--------------------------------
 
 User-Supplied Programs. Sind die überhaupt wichtig? Stellt der Benutzer denn
 *Programme* bereit oder *Plugins*? Vom Konzept her sind es Plugins für die
@@ -19,8 +34,70 @@ IDE, aber es ist unklar, ob diese als Programme besser realisierbar wären.
 	keiner der Dienste mehr benötigt wird. Analog zu Android-Activities.
 	Die trotzdem nötige Main-Funktion würde vom System bereitgestellt,
 	wobei sie Events auslösen würde.
+	-
+	Nachteil: IDE will Callback aufrufen, muss aber erst den CompProc
+	starten und warten, bis dieser sich meldet, was er evtl. nicht tut.
+	-> Es sollte nie an einem CompProc liegen, dass eine Funktion aufgehalten
+	wird. So etwas muss man in der Plugin.json (ggf. mit deklarativen
+	Preconditions) und per Scriptlets machen.
+	-
+	CompProc wird gestartet, um Aktionen durchzuführen, und das Asynchron.
+	-> CompProc wird gestartet, um auf Events zu reagieren. Aber da tritt
+	dann wieder das Problem auf, dass ein Event in der IDE darauf wartet,
+	dass ein CompProc startet, damit der Event behandelt werden kann.
+	-
+	Wofür waren CompProc nochmal gedacht? Vor allem für SimVM. Da implementiert
+	der CompProc einen Dokumentenserver und wenn er sich nicht an der IDE
+	anmeldet, dann lädt der Dokumenten-"Editor" nicht. Das braucht die
+	IDE nicht zu stören, solange der Rest damit klarkommt, dass der
+	Editor (a) nicht lädt, oder (b) lädt aber danach eine leere Hülle
+	bleibt. Beides könnte man analog zu dem Fall behandeln, dass das
+	Laden des Dokumenteninhalts (z.B. des Texts bei einem Text-OT-Editor)
+	länger dauert (z.B. HttpEditorSource).
+	-
+	In anderen Fällen als Dokumentenserver, wo ein CompProc evtl. sinnvoll
+	wäre, aber kein CompProc vorgeschrieben, würde die IDE in erster
+	Linie Scriptlets vorsehen. Wenn sich der CompProc nicht meldet dann
+	müssten die Scriptlets damit klarkommen; falls nicht, verhalten sie
+	sich schlimmstenfalls wie aufgehängte Scriptlets und auch mit denen
+	muss die IDE sowieso klarkommen.
+	-
+	Das alles klärt aber immer noch nicht die Frage, ob CompProc jetzt
+	als "Main" laufen oder als Server für "Extensions" (mit impliziter
+	Main). Oder ob das überhaupt pauschal festgelegt werden sollte.
+	Hier ist das Problem, dass man mehr über das Anwendungsgebiet
+	wissen müsse, als "unter anderem für SimVM oder andere
+	Dokumentenserver". Bei SimVM kommt das CompProc-Programm aus dem
+	SimVM-Core und alles andere aus Modulen, die von Plugins bereitgestellt
+	und über SimVM-Extensions eingebunden werden.
+	-
+	SimVM: Der CompProc läuft für den Workspace, nur 1x für alle User.
+	Er muss aus dem ExtNet des WS kommen, was ja für einen Dokumentenserver
+	auch Sinn macht. Aber er muss einen Service *pro Dokument* bereitstellen.
+	Ein Prozess könnte also immer noch mehrere Dokumente serven. Das
+	hätte aber Probleme mit der Abschirmung aus Stabilitätsgründen
+	und zwei Sims in einem Prozess könnten sich auch Performancetechnisch
+	stören. Ohne jetzt eine Aussage über CompProcs allgemein zu machen ist
+	es für SimVM besser, einen eigenen Prozess je Dokument zu starten.
+	-
+	Damit ist für "CompProc für SimVM" alles gesagt. Auf "CompProc für
+	Dokumentenserver" ausgeweitet erst mal dasselbe System; hier wäre
+	neu zu klären, ob nicht mehrere Dokumente in einem Prozess Sinn
+	machen (darüber könnte sogar Text-OT abgewickelt werden, insbesondere
+	um Workspaces gegeneinander abzuschirmen, mit max. N Dokumenten je
+	OT-Server und jeder Server beschränkt auf einen einzigen WS).
+	-
+	Auf "CompProc" allgemein ausgeweitet stellen sich weitere Fragen, die
+	jetzt noch nicht geklärt werden sollten / können:
+	- wie sieht es bei CompProc für einzelne User statt für WS aus?
+	- 1 Companion Process pro *was*? Wann werden neue CompProc gestartet?
+		Wie lange leben sie? 
+	
+--------------------------------
 
 (Companion) Process Plugins, also Plugins für andere Companion Processes.
+Besserer Begriff, um Verwirrung zu vermeiden: Code Libraries, Code Modules,
+Companion Process Modules (Sollten nicht das Extension-System duplizieren!)
 Hier ist zu beachten, dass am Ende alle Plugins in einem Programm zusammen
 finden und da dann ein "Dependency Hell" Problem auftreten kann. Das ist
 aber nicht anders als wenn man z.B. alle möglichen Module in einer NodeJS
@@ -31,6 +108,16 @@ die Module dann geladen werden können (NodeJS: require("alias")).
 eine "Installation" (eingebundene Programm-Module) für mehrere Programme
 innerhalb eines IDE-Plugins benutzt werden können, um die plugin.json
 kleiner zu halten: (installation (modules ...) (programs ...))
+->
+Egal, ob CompProc als "Main" oder als Server für Extensions laufen: Sie haben
+den Charakter einer "Main", was das Zusammenfinden von Modulen angeht,
+da sie die eigentliche Funktionalität des CompProc bereitstellen und
+Module tun das nicht. Auch bei einem Server für Extensions wird erst
+im CompProc-Programm festgelegt, welche Services bereitgestellt werden,
+Module stellen nur den Code bereit bzw. "interne" Extensions für die
+Main / den Server auf intra-Prozess-Code-Ebene.
+
+--------------------------------
 
 Plugin-System der IDE neu designen
 - plugin.json bleibt
@@ -54,18 +141,18 @@ Abgesehen von Versionierung, Möglichkeiten für CompProc:
 	verschiedenen Versionen. Trotzdem evtl. der sauberste Weg.
 - ggf. 1 Prozess insgesamt (z.B. OT, aber das ist ein Spezialfall)
 
+--------------------------------
+
 UI Protocol. Was genau wird hier spezifiziert? Einfache UI-Komponenten,
 klar, aber wo fließen Daten her/hin? Zwischen UI und Companion Processes?
 Oder spezifiziert der CompProc auch einen Datenfluß zwischen UI und
 IDE-Main? Wie immer gilt: Spezialfälle wie OT mal ausgenommen.
 
+--------------------------------
+
 Builders. Über Scriptlets und Companion Processes realisierbar, dazu
 müssen die fertig spezifiziert sein, aber die Überlegungen zu Builders
 sollten da einfließen.
-
-
-
-
 
 
 
