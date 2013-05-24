@@ -92,6 +92,35 @@ IDE, aber es ist unklar, ob diese als Programme besser realisierbar wären.
 	- wie sieht es bei CompProc für einzelne User statt für WS aus?
 	- 1 Companion Process pro *was*? Wann werden neue CompProc gestartet?
 		Wie lange leben sie? 
+	---
+	Es gibt bisher außer SimVM keine Document-basierten Editoren.
+	Vermutlich kann das gesamte Document-System auf "immer per DocServer"
+	umgestellt werden (Begründung: sonst müssten Document-Typen ja
+	direkt in der IDE implementiert sein).
+	Editoren allgemein müssen nicht auf Document aufbauen:
+	- Text/OT
+	- Reine Viewer (z.B. Wave Viewer) -> Scriptlets
+	Also bleibt das Editoren-System wie es ist, und nur das Document-System
+	wird umgebaut. Das neue DocSystem erst mal parallel zum alten, bis es
+	gut genug ist, dass SimVM rüber kann. Im neuen System gibt es
+	nur den DocHub, Document usw. -- kein IDocumentBody, also keine
+	spezifischen Klassen, die direkt benutzt werden. Über das
+	UI-Protocol kommen dann solche rein, und der Document State wird
+	komplett im DocServer gespeichert (deshalb braucht SimVM auch
+	so einen großen Umbau).
+	-
+	Alternativ kann der Umbau vorerst mal so sein, dass der IDE-Seitige
+	Teil der neuen Doc Systems ein IDocumentBody ist, seine UI der
+	UI-Protocol-Server und der Body den DocServer startet und sich
+	dahin verbindet. Letztendlich sollte aber alles umgebaut werden,
+	weil das jetzige DocSys nicht Clusterfähig ist. Um Wicket voll
+	auszunutzen, kann es ja trotzdem voll ausgebaute Wicket-Komponenten
+	für Ecosim etc. geben, nur dass die dann vom DocServer aus über das
+	UI Protocol erzeugt werden statt lokal.
+	-
+	Beim Clustering müssen sich außerdem die Webserver zum DocServer
+	connecten, nicht andersrum.
+	
 	
 --------------------------------
 
@@ -147,6 +176,42 @@ UI Protocol. Was genau wird hier spezifiziert? Einfache UI-Komponenten,
 klar, aber wo fließen Daten her/hin? Zwischen UI und Companion Processes?
 Oder spezifiziert der CompProc auch einen Datenfluß zwischen UI und
 IDE-Main? Wie immer gilt: Spezialfälle wie OT mal ausgenommen.
+
+Das UI-Protocol sollte vorsehen, dass der DocServer das UI als Datenstruktur
+aufbaut und sich dann *mehrere* Webserver connecten, um das darzustellen.
+Nach Möglichkeit sollte die Struktur im DocServer multiclientfähig
+sein, aber evtl. muss man da selbst eingreifen. In Java lässt sich
+sowas gut struktureiren; NodeJS keine Ahnung. Erst mal lassen sich aber
+die meisten GUI-Komponenten ohne per-Client-State bauen (auf der
+DocServer-Seite heißt das; im Webserver gibt es sehr wohl per-Client-State;
+die Struktur ist sehr ähnlich wie ein Stateless Webserver und AJAX,
+nur dass ich hier das Protocol selbst definieren kann und den "Client",
+also den Webserver, mit allen nötigen Features ausstatten kann).
+
+Wie sehr lässt sich dieses Prinzip verallgemeinern? Im Zweifel wäre so
+ein Wicket-basierter Webserver, hinter dem ein Stateless Content Server
+steht, eine coole Sache auch für andere Projekte. Ein paar Überlegungen
+dazu:
+- für andere Projekte ist ein "Verfallsdatum" für die UI-Spec sinnvoll.
+	Bei mir ist das nicht nötig, weil das UI-Protocol auf einer
+	dauerhaften Verbindung und JSON-Packets aufbaut. Wenn sich
+	serverseitig was ändert, dann wird das gepusht. Für andere Projekte
+	müsste man das minimal abstrahieren: Die Verbindung versendet
+	JSON-Packets, und in anderen Projekten gibt es kein Push, nur ein
+	Pull von JSON-Daten und ggf. ein Verfallsdatum.
+- klassische Webserver-Projekte würden sehr wenig auf "echte" Komponenten
+	und mehr auf blankes HTML setzen, wobei sich mit (HTML mit darin
+	vergrabenen Komponenten) schon viel erreichen lässt.
+- der Webserver müsste eher ein erweiterbares Framework sein, weil in
+	meinem Fall sehr viele Anwendungs-spezifische Komponenten und auch
+	die direkte Anbindung an die eigentliche IDE nötig sind. Aber auch
+	andere Projekte hätten sicher ihre spezifischen Anforderungen. Also
+	eher ein Framework mit "Standardmodus".
+- da sind sehr viele Bedingungen drin, also unklar ob das wirklich was
+	wäre. Lieber erst mal nur meinen Fall bedenken, und der ist:
+	DocumentServer und SimVM.
+
+
 
 --------------------------------
 

@@ -9,9 +9,7 @@ package name.martingeisse.webide;
 import static org.atmosphere.cpr.ApplicationConfig.FILTER_CLASS;
 import static org.atmosphere.cpr.ApplicationConfig.SERVLET_CLASS;
 
-import java.io.File;
 import java.util.EnumSet;
-import java.util.Map;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -21,9 +19,6 @@ import name.martingeisse.common.servlet.EnforceUtf8Filter;
 import name.martingeisse.webide.application.IdeLauncher;
 import name.martingeisse.webide.application.WebIdeApplication;
 import name.martingeisse.webide.editor.codemirror.ot.CodeMirrorOtServer;
-import name.martingeisse.webide.ipc.IpcEvent;
-import name.martingeisse.webide.process.NodejsCompanionProcess;
-import name.martingeisse.webide.process.msgserv.CompanionProcessMessageServer;
 import name.martingeisse.webide.ssh.ShellFactory;
 
 import org.apache.sshd.SshServer;
@@ -37,8 +32,6 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.jboss.netty.logging.InternalLoggerFactory;
-import org.jboss.netty.logging.Log4JLoggerFactory;
 
 /**
  * The main class.
@@ -111,6 +104,7 @@ public class Main {
 		// start the OT server
 		new CodeMirrorOtServer().start();
 		
+		/*
 		// start message interface for companion processes
 		InternalLoggerFactory.setDefaultFactory(new Log4JLoggerFactory());
 		CompanionProcessMessageServer.start(8082);
@@ -129,6 +123,7 @@ public class Main {
 				sendEvent(resultEvent);
 			};
 		}.start();
+		*/
 		
 		// start the main server
 		final Server server = new Server(8080);
