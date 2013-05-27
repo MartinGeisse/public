@@ -10,3 +10,10 @@ Hierarchie:
 - Project, Package Fragment Root, Package Fragment, CompilationUnit, Type, Method/Field/Initializer
   (Package) ::= PackageFragment*
 
+---
+
+Erst implementieren, wenn CompProc mit allem drum und dran steht. Sonst ist der Umbau zu groß.
+Das komplette JDT sollte in einem CompProc laufen (bis auf das UI, das läuft per UI Protocol
+im Webserver).
+
+
