@@ -1,6 +1,8 @@
 /web-ide/bin/
+/web-ide-plugin/bin/
 /webapp.admin/bin/
 /webapp.admin-customization/bin/
+/webapp.admin-demo/bin/
 /webapp.admin.test/bin/
 /webapp.api/bin/
 /webapp.api-demo/bin/
@@ -8,5 +10,6 @@
 /webapp.common/bin/
 /webapp.common.test/bin/
 /webapp.reporting/bin/
+/webapp.test/bin/
 /webapp.tools/bin/
 /webapp.wicket/bin/
