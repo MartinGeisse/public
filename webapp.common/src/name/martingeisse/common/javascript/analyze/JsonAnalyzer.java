@@ -104,7 +104,23 @@ public final class JsonAnalyzer {
 	public boolean isNull() {
 		return (value == null);
 	}
+	
+	/**
+	 * Checks if the value is a list.
+	 * @return true if list, false otherwise
+	 */
+	public boolean isList() {
+		return (value instanceof List<?>);
+	}
 
+	/**
+	 * Checks if the value is a map.
+	 * @return true if map, false otherwise
+	 */
+	public boolean isMap() {
+		return (value instanceof Map<?, ?>);
+	}
+	
 	/**
 	 * Returns a new analyzer that contains either this value or, if
 	 * this value is null, the specified fallback value.
@@ -244,6 +260,60 @@ public final class JsonAnalyzer {
 		}
 	}
 
+	/**
+	 * Tries to cast the value to {@link Double}. Returns the value
+	 * if the cast succeeds, null otherwise.
+	 * @return the double value or null
+	 */
+	public Double tryDouble() {
+		return (value instanceof Number) ? ((Number)value).doubleValue() : null;
+	}
+	
+	/**
+	 * Expects the value to be of double type and returns its value.
+	 * Throws a {@link JsonAnalysisException} for non-double values.
+	 * @return the double value
+	 */
+	public double expectDouble() {
+		if (value instanceof Number) {
+			return ((Number)value).doubleValue();
+		}
+		throw expectedException("double");
+	}
+	
+	/**
+	 * Returns null if the value is null. Otherwise turns the value
+	 * into a string using {@link Object#toString()}, then parses
+	 * it as an double. Throws a {@link JsonAnalysisException}
+	 * if parsing fails.
+	 * @return the parsed double or null
+	 */
+	public Double toDoubleOrNull() {
+		if (value == null) {
+			return null;
+		} else {
+			try {
+				return new Double(value.toString());
+			} catch (final NumberFormatException e) {
+				throw expectedException("double");
+			}
+		}
+	}
+	
+	/**
+	 * Turns the value into a string using {@link Object#toString()},
+	 * then parses it as an double. Throws a {@link JsonAnalysisException}
+	 * if parsing fails.
+	 * @return the parsed double
+	 */
+	public double toDouble() {
+		try {
+			return Double.parseDouble(value.toString());
+		} catch (final Exception e) {
+			throw expectedException("double");
+		}
+	}
+	
 	/**
 	 * Tries to cast the value to {@link String}. Returns the value
 	 * if the cast succeeds, null otherwise.
