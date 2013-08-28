@@ -104,7 +104,23 @@ public final class JsonAnalyzer {
 	public boolean isNull() {
 		return (value == null);
 	}
+	
+	/**
+	 * Checks if the value is a list.
+	 * @return true if list, false otherwise
+	 */
+	public boolean isList() {
+		return (value instanceof List<?>);
+	}
 
+	/**
+	 * Checks if the value is a map.
+	 * @return true if map, false otherwise
+	 */
+	public boolean isMap() {
+		return (value instanceof Map<?, ?>);
+	}
+	
 	/**
 	 * Returns a new analyzer that contains either this value or, if
 	 * this value is null, the specified fallback value.
