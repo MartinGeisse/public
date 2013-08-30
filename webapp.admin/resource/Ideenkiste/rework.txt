@@ -1,0 +1,13 @@
+
+Probleme:
+
+Plugin-System so fraglich. Ist gut für untereinander unabhängige 3rd Party Plugins. Weniger
+gut für eine zentral verwaltete Admin-App. Das könnte die Ursache für viele Detail-Probleme sein.
+-> per-entity-mount-contributors
+-> contributors allgemein
+-> contributor-score-system für Reihenfolge
+
+per-entity-mount-tree vermutlich zu kompliziert. Passt nicht mit der Idee zusammen, dass der
+Adminbereich per JSON-Datei konfiguriert wird. Siehe Plugin-System.
+
+
