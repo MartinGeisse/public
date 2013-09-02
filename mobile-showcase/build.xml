@@ -1,0 +1,29 @@
+<project name="MyProject" default="run" basedir=".">
+
+	<!-- compiles the Showcase server -->
+	<target name="compile">
+		<delete dir="build" />
+		<mkdir dir="build" />
+		<javac srcdir="src:../webapp.common/src:../webapp.wicket/src" destdir="build" source="1.6" target="1.6" encoding="utf-8" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
+			<classpath>
+				<fileset dir="../webapp.common/lib/java" />
+				<fileset dir="../webapp.wicket/lib/java" />
+			</classpath>
+		</javac>
+		<copy todir="build">
+			<fileset dir="src" excludes="**/*.java" />
+		</copy>
+	</target>
+
+	<!-- runs the Miner server -->
+	<target name="run" depends="compile">
+    	<java classname="name.martingeisse.mobsc.Main" fork="true">
+    		<classpath>
+    			<pathelement location="build" />
+				<fileset dir="../webapp.common/lib/java" />
+				<fileset dir="../webapp.wicket/lib/java" />
+    		</classpath>
+    	</java>
+	</target>
+
+</project>
