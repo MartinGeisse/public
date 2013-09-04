@@ -6,6 +6,8 @@
 
 package name.martingeisse.wicket.application;
 
+import name.martingeisse.wicket.component.sprite.SpriteRegistry;
+
 import org.apache.log4j.Logger;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -26,14 +28,26 @@ public abstract class AbstractMyWicketApplication extends WebApplication {
 	 */
 	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(AbstractMyWicketApplication.class);
-	
+
+	/**
+	 * the spriteRegistry
+	 */
+	private final SpriteRegistry spriteRegistry;
+
+	/**
+	 * Constructor.
+	 */
+	public AbstractMyWicketApplication() {
+		this.spriteRegistry = new SpriteRegistry();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.protocol.http.WebApplication#init()
 	 */
 	@Override
 	protected void init() {
 		super.init();
-		
+
 		/* Configure wicket.
 		 * 
 		 * We disable the javascript compressor here since (a) it fails for the "minified" JQuery --
@@ -51,7 +65,7 @@ public abstract class AbstractMyWicketApplication extends WebApplication {
 		getMarkupSettings().setStripComments(true);
 		getMarkupSettings().setDefaultMarkupEncoding("utf-8");
 		getMarkupSettings().setCompressWhitespace(true);
-		
+
 		// mount package resources using their revision number
 		// NOTE: FirstLineResourceVersion is nice but only works when the file is *committed* on changes.
 		// LastModifiedResourceVersion should do as long as the last-modified-date is preserved on deployment.
@@ -63,8 +77,16 @@ public abstract class AbstractMyWicketApplication extends WebApplication {
 	 * @see org.apache.wicket.protocol.http.WebApplication#newSession(org.apache.wicket.request.Request, org.apache.wicket.request.Response)
 	 */
 	@Override
-	public Session newSession(Request request, Response response) {
+	public Session newSession(final Request request, final Response response) {
 		return new MyWicketSession(request);
 	}
 
+	/**
+	 * Getter method for the spriteRegistry.
+	 * @return the spriteRegistry
+	 */
+	public SpriteRegistry getSpriteRegistry() {
+		return spriteRegistry;
+	}
+	
 }
