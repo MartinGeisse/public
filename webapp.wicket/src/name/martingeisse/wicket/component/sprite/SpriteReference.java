@@ -51,6 +51,13 @@ public final class SpriteReference {
 		this.width = width;
 		this.height = height;
 	}
+	
+	/**
+	 * Helper method for building the atlas.
+	 */
+	SpriteReference withAtlas(SpriteAtlas atlas) {
+		return new SpriteReference(atlas, x, y, width, height);
+	}
 
 	/**
 	 * Getter method for the atlas.
