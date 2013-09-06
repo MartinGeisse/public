@@ -127,9 +127,11 @@ public class SpriteImage extends Image {
 		
 		// IMG tags cannot handle CSS sprites. They're inline, so we convert to a SPAN.
 		if (tag.getName().equalsIgnoreCase("img")) {
-			tag.getAttributes().remove("src");
 			tag.setName("span");
 		}
+		
+		// remove the SRC attribute -- it doesn't hurt, but it's ugly
+		tag.getAttributes().remove("src");
 		
 		// prepare modification of the style attribute
 		StringBuilder styleBuilder;
