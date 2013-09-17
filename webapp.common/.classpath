@@ -61,5 +61,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/java/httpclient-cache-4.2.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/httpcore-4.2.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/httpmime-4.2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/hazelcast-3.0.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
