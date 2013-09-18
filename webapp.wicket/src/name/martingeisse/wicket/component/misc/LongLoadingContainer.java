@@ -6,6 +6,8 @@
 
 package name.martingeisse.wicket.component.misc;
 
+import name.martingeisse.wicket.util.AjaxRequestUtil;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -13,48 +15,54 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.model.IModel;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 /**
  * A container that can be used to display data that takes a
  * long time to load. It will show a loading indicator
  * initially, while sending an AJAX request immediately that
- * will eventually return with the loaded data.
+ * will eventually return with the loaded data. Specifically,
+ * this component will render its border body only for AJAX
+ * requests, not for normal requests, and it will include a
+ * scriptlet for the AJAX re-render request in the page.
+ * Not rendering the body is done using {@link #setVisible(boolean)}.
  * 
- * The data is represented by a {@link ListenableFuture}.
+ * If accessing the body's model causes a blocking load to
+ * occur, the body should make sure that it accesses its model
+ * only when visible -- the body will be initialized and
+ * configured as usual, but invisible. In concrete terms this
+ * means that access to its model should be restricted to
+ * methods like onBeforeRender() and rendering itself.
+ * 
+ * The calling code and/or subclass should cause a fire-and-forget
+ * prefetch request for the body's model data when receiving the
+ * initial page request, if in any way possible. This speeds
+ * things up a little since the time between the initial page
+ * request and the AJAX request is also used to load the body's
+ * data. If and how such a prefetch request is possible is
+ * specific to the calling code or subclass, and thus out of
+ * scope for this class.
  * 
  * The loading indicator is the replacement in terms of the
  * {@link ReplacementBorder} from which this component inherits.
  * Extend this component and provide child markup to use a
  * different loading indicator.
- * 
- * @param <T> the data type
  */
-public class LongLoadingContainer<T> extends ReplacementBorder {
+public class LongLoadingContainer extends ReplacementBorder {
 
 	/**
-	 * Cached not-finished state of the future. Used to make all parts
-	 * of this component behave consistently during a request, even
-	 * if the future gets done while the request is in progress.
+	 * Constructor.
+	 * @param id the wicket id
 	 */
-	private transient boolean useReplacement;
-	
+	public LongLoadingContainer(String id) {
+		super(id);
+	}
+
 	/**
 	 * Constructor.
 	 * @param id the wicket id
 	 * @param model the model
 	 */
-	public LongLoadingContainer(String id, IModel<ListenableFuture<T>> model) {
+	public LongLoadingContainer(String id, IModel<?> model) {
 		super(id, model);
-	}
-
-	/**
-	 * Getter method for the model.
-	 * @return the model
-	 */
-	@SuppressWarnings("unchecked")
-	public IModel<ListenableFuture<T>> getModel() {
-		return (IModel<ListenableFuture<T>>)getDefaultModel();
 	}
 	
 	/* (non-Javadoc)
@@ -67,33 +75,11 @@ public class LongLoadingContainer<T> extends ReplacementBorder {
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.wicket.component.misc.ReplacementBorder#onConfigure()
-	 */
-	@Override
-	protected void onConfigure() {
-		ListenableFuture<T> future = getModel().getObject();
-		useReplacement = !future.isDone();
-		super.onConfigure();
-	}
-	
-	/* (non-Javadoc)
 	 * @see name.martingeisse.wicket.component.misc.ReplacementBorder#useReplacement()
 	 */
 	@Override
 	protected boolean useReplacement() {
-		return useReplacement;
-	}
-	
-	/**
-	 * 
-	 */
-	private void waitForFuture() {
-		try {
-			ListenableFuture<T> future = getModel().getObject();
-			future.get();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		return !AjaxRequestUtil.isAjax();
 	}
 	
 	/**
@@ -107,7 +93,7 @@ public class LongLoadingContainer<T> extends ReplacementBorder {
 		@Override
 		public void renderHead(Component component, IHeaderResponse response) {
 			super.renderHead(component, response);
-			if (component.isEnabledInHierarchy() && useReplacement) {
+			if (component.isEnabledInHierarchy() && !AjaxRequestUtil.isAjax()) {
 				response.render(OnDomReadyHeaderItem.forScript(getCallbackScript(component)));
 			}
 		}
@@ -117,11 +103,7 @@ public class LongLoadingContainer<T> extends ReplacementBorder {
 		 */
 		@Override
 		protected void respond(AjaxRequestTarget target) {
-			System.out.println("1 ***");
-			waitForFuture();
-			System.out.println("2 ***");
 			target.add(LongLoadingContainer.this);
-			System.out.println("3 ***");
 		}
 		
 	}

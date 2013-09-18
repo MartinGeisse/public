@@ -51,6 +51,13 @@ public class AjaxRequestUtil {
 	}
 	
 	/**
+	 * @return true for AJAX requests, false for other requests
+	 */
+	public static boolean isAjax() {
+		return getAjaxRequestTarget() != null;
+	}
+	
+	/**
 	 * Marks components for (re-)rendering. If the current request is an AJAX
 	 * request, this adds the components to the ART. Otherwise this does nothing
 	 * since the components will be rendered anyway.
