@@ -61,8 +61,23 @@ public final class SpriteRegistry {
 	 * @param references the image resource references
 	 */
 	public void register(PackageResourceReference... references) {
+		register(false, references);
+	}
+	
+	/**
+	 * Registers a sprite atlas containing the specified image resources.
+	 * When a {@link SpriteImage} uses any of those references, it will turn
+	 * into a CSS sprite.
+	 * 
+	 * This method allows any of the specified resources to be missing. If a missing
+	 * resource is used in an image, it will simply not be visible.
+	 * 
+	 * @param allowMissing whether resources may be missing
+	 * @param references the image resource references
+	 */
+	public void register(boolean allowMissing, PackageResourceReference... references) {
 		try {
-			BufferedImage[] spriteImages = loadSpriteImages(references);
+			BufferedImage[] spriteImages = loadSpriteImages(allowMissing, references);
 			ByteArrayOutputStream atlasByteArrayOutputStream = new ByteArrayOutputStream();
 			SpriteReference[] spriteReferences = buildAtlas(atlasByteArrayOutputStream, spriteImages);
 			byte[] serializedAtlasImage = atlasByteArrayOutputStream.toByteArray();
@@ -76,20 +91,27 @@ public final class SpriteRegistry {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/**
 	 * Loads the individual sprite images.
 	 */
-	private BufferedImage[] loadSpriteImages(PackageResourceReference[] references) {
+	private BufferedImage[] loadSpriteImages(boolean allowMissing, PackageResourceReference[] references) {
 		try {
 			BufferedImage[] result = new BufferedImage[references.length];
 			for (int i=0; i<references.length; i++) {
 				IResourceStream resourceStream = references[i].getResource().getResourceStream();
-				InputStream inputStream = resourceStream.getInputStream();
-				try {
-					result[i] = ImageIO.read(inputStream);
-				} finally {
-					resourceStream.close();
+				if (resourceStream == null) {
+					if (!allowMissing) {
+						throw new RuntimeException("missing resource: " + references[i]);
+					}
+					result[i] = null;
+				} else {
+					InputStream inputStream = resourceStream.getInputStream();
+					try {
+						result[i] = ImageIO.read(inputStream);
+					} finally {
+						resourceStream.close();
+					}
 				}
 			}
 			return result;
@@ -107,9 +129,11 @@ public final class SpriteRegistry {
 		// determine the atlas size
 		int sumWidth = 0, maxHeight = 0;
 		for (BufferedImage image : spriteImages) {
-			sumWidth += image.getWidth();
-			if (maxHeight < image.getHeight()) {
-				maxHeight = image.getHeight();
+			if (image != null) {
+				sumWidth += image.getWidth();
+				if (maxHeight < image.getHeight()) {
+					maxHeight = image.getHeight();
+				}
 			}
 		}
 		
@@ -120,10 +144,15 @@ public final class SpriteRegistry {
 			int x = 0, i = 0;
 			Graphics g = atlasImage.getGraphics();
 			for (BufferedImage image : spriteImages) {
-				g.drawImage(image, x, 0, null);
-				spriteReferences[i] = new SpriteReference(null, x, 0, image.getWidth(), image.getHeight());
-				x += image.getWidth();
-				i++;
+				if (image == null) {
+					spriteReferences[i] = new SpriteReference(null, x, 0, 0, 0);
+					i++;
+				} else {
+					g.drawImage(image, x, 0, null);
+					spriteReferences[i] = new SpriteReference(null, x, 0, image.getWidth(), image.getHeight());
+					x += image.getWidth();
+					i++;
+				}
 			}
 			g.dispose();
 		}
