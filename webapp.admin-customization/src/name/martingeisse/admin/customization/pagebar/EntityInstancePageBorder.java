@@ -8,9 +8,9 @@ package name.martingeisse.admin.customization.pagebar;
 
 import java.util.List;
 
-import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.NavigationUtil;
 import name.martingeisse.admin.navigation.component.NavigationMenuPanel;
+import name.martingeisse.admon.navigation.NavigationNode;
 
 import org.apache.wicket.markup.html.border.Border;
 import org.apache.wicket.model.AbstractReadOnlyModel;

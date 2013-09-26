@@ -7,7 +7,6 @@
 package name.martingeisse.admin.entity;
 
 import name.martingeisse.admin.application.ParameterKey;
-import name.martingeisse.admin.entity.schema.IEntityListFieldOrder;
 import name.martingeisse.wicket.autoform.componentfactory.DefaultAutoformPropertyComponentFactory;
 import name.martingeisse.wicket.autoform.componentfactory.IAutoformPropertyComponentFactory;
 
@@ -23,11 +22,6 @@ public final class EntityConfiguration {
 	public static final ParameterKey<EntityConfiguration> parameterKey = new ParameterKey<EntityConfiguration>();
 
 	/**
-	 * the entityListFieldOrder
-	 */
-	private IEntityListFieldOrder entityListFieldOrder;
-
-	/**
 	 * the autoformPropertyComponentFactory
 	 */
 	private IAutoformPropertyComponentFactory autoformPropertyComponentFactory;
@@ -36,24 +30,7 @@ public final class EntityConfiguration {
 	 * Constructor.
 	 */
 	public EntityConfiguration() {
-		entityListFieldOrder = null;
 		autoformPropertyComponentFactory = DefaultAutoformPropertyComponentFactory.instance;
-	}
-
-	/**
-	 * Getter method for the entityListFieldOrder.
-	 * @return the entityListFieldOrder
-	 */
-	public IEntityListFieldOrder getEntityListFieldOrder() {
-		return entityListFieldOrder;
-	}
-
-	/**
-	 * Setter method for the entityListFieldOrder.
-	 * @param entityListFieldOrder the entityListFieldOrder to set
-	 */
-	public void setEntityListFieldOrder(final IEntityListFieldOrder entityListFieldOrder) {
-		this.entityListFieldOrder = entityListFieldOrder;
 	}
 
 	/**

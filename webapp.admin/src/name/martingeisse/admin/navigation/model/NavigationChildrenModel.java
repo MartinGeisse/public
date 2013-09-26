@@ -9,7 +9,7 @@ package name.martingeisse.admin.navigation.model;
 import java.util.List;
 
 import name.martingeisse.admin.navigation.NavigationConfiguration;
-import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.admon.navigation.NavigationNode;
 
 import org.apache.wicket.model.LoadableDetachableModel;
 

@@ -19,7 +19,6 @@ import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.entity.EntityCapabilities;
 import name.martingeisse.admin.entity.EntityConfiguration;
 import name.martingeisse.admin.entity.IEntityNameAware;
-import name.martingeisse.admin.entity.UnknownEntityException;
 import name.martingeisse.admin.entity.component.list.datatable.raw.RawEntityListPanel;
 import name.martingeisse.admin.entity.property.IRawEntityListPropertyDisplayFilter;
 import name.martingeisse.admin.entity.schema.annotation.IEntityAnnotationContributor;
@@ -36,10 +35,11 @@ import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
 import name.martingeisse.admin.entity.schema.search.EntitySearcher;
 import name.martingeisse.admin.entity.schema.type.IEntityIdTypeInfo;
 import name.martingeisse.admin.entity.schema.type.ISqlTypeInfo;
-import name.martingeisse.admin.navigation.INavigationNodeHandler;
-import name.martingeisse.admin.navigation.INavigationNodeVisitor;
 import name.martingeisse.admin.navigation.NavigationConfiguration;
-import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.admon.entity.UnknownEntityException;
+import name.martingeisse.admon.navigation.INavigationNodeHandler;
+import name.martingeisse.admon.navigation.INavigationNodeVisitor;
+import name.martingeisse.admon.navigation.NavigationNode;
 import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.datarow.DataRowMeta;
 import name.martingeisse.common.util.ParameterUtil;
@@ -49,6 +49,9 @@ import org.apache.log4j.Logger;
 
 /**
  * This class holds global data generated from plugins / capabilities and modifiers.
+ * 
+ * TODO: Have the application build the schema to make the initialization sequence
+ * more explicit.
  */
 public class ApplicationSchema {
 
@@ -374,9 +377,6 @@ public class ApplicationSchema {
 			final NavigationNode canonicalEntityListNode = canonicalEntityListNodes.get(entityName);
 			final NavigationNode entityInstanceRootNode = canonicalEntityListNode.getChildFactory().createNavigationFolderChild("${id}", "Entity Instance");
 			entity.setNavigation(new EntityNavigation(entity, entityInstanceRootNode));
-			for (final IEntityNavigationContributor contributor : EntityCapabilities.entityNavigationContributorCapability) {
-				contributor.contributeNavigationNodes(entity, entityInstanceRootNode);
-			}
 			entityInstanceRootNode.acceptVisitor(new INavigationNodeVisitor() {
 				@Override
 				public void visit(final NavigationNode node) {

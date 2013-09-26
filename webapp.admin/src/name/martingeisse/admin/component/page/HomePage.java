@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.component.page;
 
-import name.martingeisse.admin.navigation.INavigationLocationAware;
+import name.martingeisse.admon.navigation.INavigationLocationAware;
 
 /**
  * The "home" page.

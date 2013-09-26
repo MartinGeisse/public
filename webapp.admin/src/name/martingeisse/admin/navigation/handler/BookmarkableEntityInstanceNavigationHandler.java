@@ -7,10 +7,11 @@
 package name.martingeisse.admin.navigation.handler;
 
 import name.martingeisse.admin.entity.IEntityNameAware;
-import name.martingeisse.admin.entity.IGetEntityId;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.admon.entity.IGetEntityId;
+import name.martingeisse.admon.navigation.NavigationNode;
+import name.martingeisse.admon.navigation.handlers.BookmarkablePageNavigationHandler;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;

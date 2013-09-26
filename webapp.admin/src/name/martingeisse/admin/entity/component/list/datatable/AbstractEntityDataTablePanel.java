@@ -13,7 +13,7 @@ import name.martingeisse.admin.entity.component.list.EntityInstanceDataProvider;
 import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.list.IEntityPredicateAcceptor;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.util.IGetPageable;
+import name.martingeisse.admon.util.IGetPageable;
 import name.martingeisse.common.javascript.JavascriptAssembler;
 import name.martingeisse.common.util.GenericTypeUtil;
 import name.martingeisse.common.util.ParameterUtil;

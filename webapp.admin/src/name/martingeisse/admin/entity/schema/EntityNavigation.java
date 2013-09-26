@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.entity.schema;
 
-import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.admon.navigation.NavigationNode;
 
 /**
  * Encapsulates entity descriptor methods that are related

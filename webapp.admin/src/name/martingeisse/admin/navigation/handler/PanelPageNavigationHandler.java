@@ -7,7 +7,8 @@
 package name.martingeisse.admin.navigation.handler;
 
 import name.martingeisse.admin.component.page.PanelPage;
-import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.admon.navigation.NavigationNode;
+import name.martingeisse.admon.navigation.handlers.AbstractNavigationNodeHandler;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseException;

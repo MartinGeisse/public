@@ -15,16 +15,10 @@ import java.lang.annotation.Target;
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
 import name.martingeisse.admin.application.Launcher;
-import name.martingeisse.admin.application.hooks.ISchemaAwareContributor;
-import name.martingeisse.admin.application.security.SecurityConfiguration;
-import name.martingeisse.admin.component.page.login.NopLoginPage;
 import name.martingeisse.admin.customization.incubator.NavigationTabBarFactory;
 import name.martingeisse.admin.customization.pagebar.BasicPageBarFactory;
-import name.martingeisse.admin.customization.reflist.SettingPanel;
 import name.martingeisse.admin.entity.EntityCapabilities;
 import name.martingeisse.admin.entity.EntityConfiguration;
-import name.martingeisse.admin.entity.component.instance.NavigationMountedEntityAutoformPanel;
-import name.martingeisse.admin.entity.component.instance.RawEntityPresentationPanel;
 import name.martingeisse.admin.entity.component.list.datatable.populator.PopulatorColumnDescriptor;
 import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.list.EntityConditions;
@@ -32,9 +26,6 @@ import name.martingeisse.admin.entity.property.ExplicitEntityPropertyFilter;
 import name.martingeisse.admin.entity.property.SingleEntityPropertyFilter;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.entity.schema.EntityPropertyDescriptor;
-import name.martingeisse.admin.entity.schema.IEntityListFieldOrder;
-import name.martingeisse.admin.entity.schema.IEntityNavigationContributor;
 import name.martingeisse.admin.entity.schema.annotation.AnnotatedClassEntityAnnotationContributor;
 import name.martingeisse.admin.entity.schema.annotation.IEntityAnnotatedClassResolver;
 import name.martingeisse.admin.entity.schema.naming.IEntityNameMappingStrategy;
@@ -43,13 +34,11 @@ import name.martingeisse.admin.entity.schema.orm.EntityOrmMapping;
 import name.martingeisse.admin.entity.schema.orm.IEntityOrmMapper;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
-import name.martingeisse.admin.navigation.NavigationConfiguration;
-import name.martingeisse.admin.navigation.NavigationNode;
-import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
 import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
 import name.martingeisse.admin.navigation.handler.PanelPageNavigationHandler;
 import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler;
-import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
+import name.martingeisse.admon.navigation.NavigationNode;
+import name.martingeisse.admon.navigation.handlers.UrlNavigationHandler;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.MysqlDatabaseDescriptor;
 import name.martingeisse.common.util.GenericTypeUtil;
@@ -169,7 +158,6 @@ public class Main {
 //		ApplicationConfiguration.get().addPlugin(new GlobalEntityListPresenter("ids", "IDs only", IdOnlyGlobalEntityListPanel.class));
 //		ApplicationConfiguration.get().addPlugin(new GlobalEntityListPresenter("roleList", "Role List", RoleOrderListPanel.class));
 //		ApplicationConfiguration.get().addPlugin(new GlobalEntityListPresenter("popdata", "Populator / DataView", PopulatorDataViewPanel.class));
-		ApplicationConfiguration.get().addPlugin(new MySchemaStringResourceContributor());
 
 		final ExplicitEntityPropertyFilter userPropertyFilter = new ExplicitEntityPropertyFilter(2, "User");
 		userPropertyFilter.getVisiblePropertyNames().add("id");
@@ -183,21 +171,10 @@ public class Main {
 		EntityConfiguration generalEntityConfiguration = new EntityConfiguration();
 //		generalEntityConfiguration.setEntityNameMappingStrategy(new PrefixEliminatingEntityNameMappingStrategy("phpbb_"));
 		IEntityNameMappingStrategy.PARAMETER_KEY.set(new PrefixEliminatingEntityNameMappingStrategy("phorum_"));
-		generalEntityConfiguration.setEntityListFieldOrder(new IEntityListFieldOrder() {
-			@Override
-			public int compare(final EntityPropertyDescriptor o1, final EntityPropertyDescriptor o2) {
-				if (o1.getName().equals("id")) {
-					return -1;
-				} else if (o2.getName().equals("id")) {
-					return 1;
-				} else {
-					return 0;
-				}
-			}
-		});
 		EntityConfiguration.parameterKey.set(generalEntityConfiguration);
 		
 		// entity navigation contributors
+		/*
 		EntityCapabilities.entityNavigationContributorCapability.add(new IEntityNavigationContributor() {
 			@Override
 			public void contributeNavigationNodes(EntityDescriptor entity, NavigationNode mainEntityInstanceNode) {
@@ -209,6 +186,7 @@ public class Main {
 				mainEntityInstanceNode.getChildFactory().createEntityInstancePanelChild("edit", "Edit", NavigationMountedEntityAutoformPanel.class);
 			}
 		});
+		*/
 		
 		// test raw entity presentation column order
 //		EntityConfigurationUtil.getGeneralEntityConfiguration().setEntityListFieldOrder(new IEntityListFieldOrder() {
@@ -240,21 +218,9 @@ public class Main {
 			
 		});
 		
-		// security
-		SecurityConfiguration.parameterKey.set(new SecurityConfiguration());
-		NopLoginPage.bypass = false;
-		
 		// entity autoforms
 		IEntityAnnotatedClassResolver classResolver = new EntityAutoformAnnotatedClassResolver("name.martingeisse.admin.customization.entity");
 		EntityCapabilities.entityAnnotationContributorCapability.add(new AnnotatedClassEntityAnnotationContributor(classResolver));
-		
-		// initialize navigation only after the application schema has been built
-		ISchemaAwareContributor.CAPABILITY_KEY.add(new ISchemaAwareContributor() {
-			@Override
-			public void contribute() {
-				buildNavigation();
-			}
-		});
 		
 		// initialize specific entity code mapping
 		IEntityOrmMapper.PARAMETER_KEY.set(new IEntityOrmMapper() {
@@ -281,7 +247,7 @@ public class Main {
 	 * 
 	 */
 	private static void buildNavigation() {
-		final NavigationNode root = NavigationConfiguration.navigationTreeParameter.get().getRoot();
+		final NavigationNode root = null;
 		root.setPageBarFactory(new BasicPageBarFactory());
 		root.getChildFactory().createChild("home-dummy", "Home", new UrlNavigationHandler("/"));
 		final NavigationNode sub1 = root.getChildFactory().createFirstChildHandlerChild("sub-one", "Sub One");

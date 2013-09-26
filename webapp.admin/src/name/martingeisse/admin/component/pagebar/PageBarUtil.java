@@ -6,8 +6,8 @@
 
 package name.martingeisse.admin.component.pagebar;
 
-import name.martingeisse.admin.navigation.NavigationNode;
 import name.martingeisse.admin.navigation.NavigationUtil;
+import name.martingeisse.admon.navigation.NavigationNode;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.WebMarkupContainer;

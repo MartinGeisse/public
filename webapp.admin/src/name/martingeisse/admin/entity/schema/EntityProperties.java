@@ -7,14 +7,10 @@
 package name.martingeisse.admin.entity.schema;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import name.martingeisse.admin.entity.EntityConfiguration;
 
 /**
  * This class encapsulates the properties for an entity.
@@ -95,12 +91,6 @@ public final class EntityProperties implements Iterable<EntityPropertyDescriptor
 			if (property.isVisibleInRawEntityList()) {
 				fieldOrder.add(property);
 			}
-		}
-
-		// determine their order
-		final Comparator<EntityPropertyDescriptor> fieldComparator = EntityConfiguration.parameterKey.get().getEntityListFieldOrder();
-		if (fieldComparator != null) {
-			Collections.sort(fieldOrder, fieldComparator);
 		}
 
 		// build an array of the field names

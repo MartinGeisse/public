@@ -6,6 +6,10 @@
 
 package name.martingeisse.admin.navigation;
 
+import name.martingeisse.admon.navigation.INavigationLocationAware;
+import name.martingeisse.admon.navigation.NavigationMountedRequestMapper;
+import name.martingeisse.admon.navigation.NavigationNode;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;

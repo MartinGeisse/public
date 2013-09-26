@@ -7,6 +7,7 @@
 package name.martingeisse.admin.navigation;
 
 import name.martingeisse.admin.application.ParameterKey;
+import name.martingeisse.admon.navigation.NavigationTree;
 
 /**
  * Navigation-related parameter keys.

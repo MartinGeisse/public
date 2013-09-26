@@ -16,7 +16,7 @@ import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.entity.schema.search.EntitySearcher;
 import name.martingeisse.admin.entity.schema.type.IEntityIdTypeInfo;
 import name.martingeisse.admin.entity.schema.type.ISqlTypeInfo;
-import name.martingeisse.admin.navigation.NavigationNode;
+import name.martingeisse.admon.navigation.NavigationNode;
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.database.IEntityDatabaseConnection;

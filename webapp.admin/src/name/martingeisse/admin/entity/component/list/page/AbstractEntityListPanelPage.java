@@ -9,7 +9,7 @@ package name.martingeisse.admin.entity.component.list.page;
 import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.list.IEntityPredicateAcceptor;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.util.IGetPageable;
+import name.martingeisse.admon.util.IGetPageable;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
