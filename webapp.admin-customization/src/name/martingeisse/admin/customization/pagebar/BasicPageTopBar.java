@@ -9,10 +9,10 @@ package name.martingeisse.admin.customization.pagebar;
 import java.util.List;
 
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.navigation.component.NavigationMenuView;
 import name.martingeisse.admon.entity.AllEntityDescriptorsModel;
 import name.martingeisse.admon.navigation.NavigationNode;
 import name.martingeisse.admon.navigation.NavigationTree;
+import name.martingeisse.admon.navigation.component.NavigationMenuView;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.AbstractLink;

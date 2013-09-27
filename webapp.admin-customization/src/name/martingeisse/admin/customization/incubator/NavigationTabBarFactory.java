@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.customization.incubator;
 
-import name.martingeisse.admin.component.pagebar.IPageBarFactory;
+import name.martingeisse.admon.navigation.IPageBarFactory;
 import name.martingeisse.admon.navigation.NavigationChildrenModel;
 import name.martingeisse.admon.navigation.NavigationNode;
 

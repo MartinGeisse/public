@@ -4,10 +4,9 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.navigation.handler;
+package name.martingeisse.admon.navigation;
 
-import name.martingeisse.admin.component.page.PanelPage;
-import name.martingeisse.admon.navigation.NavigationNode;
+import name.martingeisse.admon.application.pages.PanelPage;
 import name.martingeisse.admon.navigation.handlers.AbstractNavigationNodeHandler;
 
 import org.apache.wicket.Component;

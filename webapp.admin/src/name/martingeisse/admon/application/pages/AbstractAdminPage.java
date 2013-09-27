@@ -4,9 +4,9 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.component.page;
+package name.martingeisse.admon.application.pages;
 
-import name.martingeisse.admin.component.pagebar.PageBarUtil;
+import name.martingeisse.admon.navigation.PageBarUtil;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
 

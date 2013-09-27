@@ -6,9 +6,9 @@
 
 package name.martingeisse.admon.navigation;
 
-import name.martingeisse.admin.navigation.component.NavigationFolderPage;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
 import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
+import name.martingeisse.admon.navigation.component.NavigationFolderPage;
 import name.martingeisse.admon.navigation.handlers.AbstractNavigationNodeHandler;
 import name.martingeisse.admon.navigation.handlers.BookmarkablePageNavigationHandler;
 import name.martingeisse.admon.navigation.handlers.FirstChildNavigationHandler;

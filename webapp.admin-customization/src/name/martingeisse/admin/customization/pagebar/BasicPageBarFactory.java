@@ -6,7 +6,7 @@
 
 package name.martingeisse.admin.customization.pagebar;
 
-import name.martingeisse.admin.component.pagebar.IPageBarFactory;
+import name.martingeisse.admon.navigation.IPageBarFactory;
 
 import org.apache.wicket.markup.html.panel.Panel;
 

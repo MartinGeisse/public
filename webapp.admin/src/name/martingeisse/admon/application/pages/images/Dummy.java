@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.component.page.images;
+package name.martingeisse.admon.application.pages.images;
 
 import org.apache.wicket.request.resource.PackageResourceReference;
 

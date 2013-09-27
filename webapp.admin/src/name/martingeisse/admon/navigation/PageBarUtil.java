@@ -4,10 +4,8 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.component.pagebar;
+package name.martingeisse.admon.navigation;
 
-import name.martingeisse.admon.navigation.NavigationNode;
-import name.martingeisse.admon.navigation.NavigationUtil;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.WebMarkupContainer;

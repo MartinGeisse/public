@@ -6,7 +6,6 @@
 
 package name.martingeisse.admon.navigation;
 
-import name.martingeisse.admin.component.pagebar.IPageBarFactory;
 import name.martingeisse.admon.application.wicket.AdminWicketApplication;
 
 import org.apache.wicket.Component;

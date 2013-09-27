@@ -6,8 +6,8 @@
 
 package name.martingeisse.admin.entity.component.list.page;
 
-import name.martingeisse.admin.component.page.AbstractPaginatedAdminPage;
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
+import name.martingeisse.admon.application.pages.AbstractPaginatedAdminPage;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;

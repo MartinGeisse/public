@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.component.pagebar;
+package name.martingeisse.admon.navigation;
 
 import org.apache.wicket.markup.html.panel.Panel;
 

@@ -6,14 +6,14 @@
 
 package name.martingeisse.admon.application.wicket;
 
-import name.martingeisse.admin.component.page.AbstractAdminPage;
-import name.martingeisse.admin.component.page.HomePage;
-import name.martingeisse.admin.component.page.images.Dummy;
 import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admon.application.converter.DateTimeConverter;
 import name.martingeisse.admon.application.converter.LocalDateConverter;
 import name.martingeisse.admon.application.converter.LocalDateTimeConverter;
 import name.martingeisse.admon.application.converter.LocalTimeConverter;
+import name.martingeisse.admon.application.pages.AbstractAdminPage;
+import name.martingeisse.admon.application.pages.HomePage;
+import name.martingeisse.admon.application.pages.images.Dummy;
 import name.martingeisse.admon.navigation.NavigationTree;
 import name.martingeisse.admon.security.SecurityConfiguration;
 import name.martingeisse.common.util.ParameterUtil;

@@ -8,8 +8,8 @@ package name.martingeisse.admin.customization.incubator;
 
 import java.util.List;
 
-import name.martingeisse.admin.navigation.component.NavigationMenuView;
 import name.martingeisse.admon.navigation.NavigationNode;
+import name.martingeisse.admon.navigation.component.NavigationMenuView;
 
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;

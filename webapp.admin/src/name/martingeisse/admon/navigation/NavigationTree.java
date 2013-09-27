@@ -9,8 +9,8 @@ package name.martingeisse.admon.navigation;
 import java.util.HashMap;
 import java.util.Map;
 
-import name.martingeisse.admin.navigation.component.NavigationFolderPage;
 import name.martingeisse.admon.application.wicket.AdminWicketApplication;
+import name.martingeisse.admon.navigation.component.NavigationFolderPage;
 import name.martingeisse.admon.navigation.handlers.BookmarkablePageNavigationHandler;
 
 /**

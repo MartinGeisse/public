@@ -61,40 +61,6 @@ public final class EntitySelection {
 	}
 
 	/**
-	 * Constructor that creates an instance from a referrer entity instance and an entity
-	 * reference. The resulting entity selection looks up the referred entity instances.
-	 * 
-	 * NOTE: This method currently unpacks the referrer data on construction. The consequence
-	 * of this is that if the reference key in the referrer is changed later, then this selection
-	 * will still use the old reference key.
-	 * 
-	 * @param referrerInstanceModel the referrer model
-	 * @param nearReferenceEndpoint the near endpoint of the reference
-	 */
-	public EntitySelection(final IModel<IEntityInstance> referrerInstanceModel, final EntityReferenceEndpoint nearReferenceEndpoint) {
-		ParameterUtil.ensureNotNull(referrerInstanceModel, "referrerInstanceModel");
-		ParameterUtil.ensureNotNull(nearReferenceEndpoint, "nearReferenceEndpoint");
-		final EntityReferenceEndpoint farReferenceEndpoint = nearReferenceEndpoint.getOther();
-		
-		// obtain the value of the key property in the referrer
-		final IEntityInstance referrer = ObjectStateUtil.nullMeansMissing(referrerInstanceModel.getObject(), "referrer (entity instance)") ;
-		if (referrer.getEntity() != nearReferenceEndpoint.getEntity()) {
-			throw new IllegalArgumentException("EntitySelection (from reference): referrer instance is an instance of entity " + referrer.getEntityName() + ", but reference source is " + nearReferenceEndpoint.getEntity().getName());
-		}
-		final Object referrerKey = referrer.getDataRowFieldValue(nearReferenceEndpoint.getPropertyName());
-		// TODO: what if referrerKey is null? check if null means "no reference" or "reference by null"? or is that clear in this context?
-
-		// build a condition object for the query
-		final EntityConditions conditions = new EntityConditions(farReferenceEndpoint.getEntity());
-		conditions.addFieldEquals(farReferenceEndpoint.getPropertyName(), referrerKey);
-
-		// initialize this entity selection
-		this.entityModel = new EntityDescriptorModel(farReferenceEndpoint.getEntity());
-		this.predicate = conditions;
-
-	}
-	
-	/**
 	 * Returns an instance of this class that selects an instance of the specified entity by id.
 	 * @param entityModel the model for the entity descriptor
 	 * @param id the id of the entity instance to select
