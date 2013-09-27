@@ -4,9 +4,8 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.application.wicket;
+package name.martingeisse.admon.application.wicket;
 
-import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.component.page.AbstractAdminPage;
 import name.martingeisse.admin.component.page.HomePage;
 import name.martingeisse.admin.component.page.images.Dummy;
@@ -15,10 +14,7 @@ import name.martingeisse.admon.application.converter.DateTimeConverter;
 import name.martingeisse.admon.application.converter.LocalDateConverter;
 import name.martingeisse.admon.application.converter.LocalDateTimeConverter;
 import name.martingeisse.admon.application.converter.LocalTimeConverter;
-import name.martingeisse.admon.application.wicket.BrokenCryptFactory;
-import name.martingeisse.admon.application.wicket.ExceptionMapper;
-import name.martingeisse.admon.application.wicket.LoginRequestCycleListener;
-import name.martingeisse.admon.application.wicket.PrefixedIdentityStringResourceLoader;
+import name.martingeisse.admon.navigation.NavigationTree;
 import name.martingeisse.admon.security.SecurityConfiguration;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
@@ -49,6 +45,12 @@ import org.joda.time.LocalTime;
  * Wicket {@link WebApplication} implementation for this application.
  */
 public class AdminWicketApplication extends AbstractMyWicketApplication {
+	
+	/**
+	 * the logger
+	 */
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(AdminWicketApplication.class);
 
 	/**
 	 * the exceptionMapper
@@ -66,11 +68,31 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 	};
 	
 	/**
-	 * the logger
+	 * the schema
 	 */
-	@SuppressWarnings("unused")
-	private static Logger logger = Logger.getLogger(AdminWicketApplication.class);
+	private final ApplicationSchema schema = new ApplicationSchema();
+	
+	/**
+	 * the navigationTree
+	 */
+	private final NavigationTree navigationTree = new NavigationTree();
 
+	/**
+	 * Getter method for the schema.
+	 * @return the schema
+	 */
+	public final ApplicationSchema getSchema() {
+		return schema;
+	}
+	
+	/**
+	 * Getter method for the navigationTree.
+	 * @return the navigationTree
+	 */
+	public final NavigationTree getNavigationTree() {
+		return navigationTree;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.protocol.http.WebApplication#init()
 	 */
@@ -98,11 +120,6 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		super.init();
 		logger.trace("base application class initialized");
 
-		// initialize plugins and capabilities
-		logger.trace("initializing ApplicationConfiguration...");
-		ApplicationConfiguration.get().initialize();
-		logger.trace("ApplicationConfiguration initialized");
-		
 		// initialize the application schema from the database
 		logger.trace("initializing ApplicationSchema...");
 		ApplicationSchema.initialize();
@@ -148,7 +165,7 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 	 * @param prefix the URL prefix
 	 * @param names the file names of the resources
 	 */
-	public void mountResources(final Class<?> anchorClass, final String prefix, final String... names) {
+	public final void mountResources(final Class<?> anchorClass, final String prefix, final String... names) {
 		ParameterUtil.ensureNotNull(anchorClass, "anchorClass");
 		ParameterUtil.ensureNotNull(prefix, "prefix");
 		ParameterUtil.ensureNotNull(names, "names");

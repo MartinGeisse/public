@@ -7,8 +7,8 @@
 package name.martingeisse.admin.entity.component.instance.page;
 
 import name.martingeisse.admin.entity.schema.EntityDescriptor;
-import name.martingeisse.admin.navigation.NavigationUtil;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
+import name.martingeisse.admon.navigation.NavigationUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
 
 import org.apache.wicket.markup.html.panel.Panel;

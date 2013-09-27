@@ -4,11 +4,8 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.navigation;
+package name.martingeisse.admon.navigation;
 
-import name.martingeisse.admon.navigation.INavigationLocationAware;
-import name.martingeisse.admon.navigation.NavigationMountedRequestMapper;
-import name.martingeisse.admon.navigation.NavigationNode;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -96,7 +93,7 @@ public final class NavigationUtil {
 	 * @throws IllegalArgumentException if no node was found and required is true
 	 */
 	public static NavigationNode getNavigationNodeForPath(final String path, final boolean required) throws IllegalArgumentException {
-		final NavigationNode node = (path == null ? null : NavigationConfiguration.navigationTreeParameter.get().getNodesByPath().get(path));
+		final NavigationNode node = (path == null ? null : NavigationTree.get().getNodesByPath().get(path));
 		if (node != null) {
 			return node;
 		} else if (required) {
@@ -159,7 +156,7 @@ public final class NavigationUtil {
 	 */
 	public static NavigationNode getNavigationNodeForPage(final Page page) {
 		final String currentNavigationPath = StringUtils.defaultString(NavigationUtil.getNavigationPathForPage(page));
-		return NavigationConfiguration.navigationTreeParameter.get().getRoot().findMostSpecificNode(currentNavigationPath);
+		return NavigationTree.get().getRoot().findMostSpecificNode(currentNavigationPath);
 	}
 
 }

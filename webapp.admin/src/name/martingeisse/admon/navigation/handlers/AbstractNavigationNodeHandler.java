@@ -6,7 +6,7 @@
 
 package name.martingeisse.admon.navigation.handlers;
 
-import name.martingeisse.admin.application.wicket.AdminWicketApplication;
+import name.martingeisse.admon.application.wicket.AdminWicketApplication;
 import name.martingeisse.admon.navigation.INavigationNodeHandler;
 import name.martingeisse.admon.navigation.NavigationNode;
 

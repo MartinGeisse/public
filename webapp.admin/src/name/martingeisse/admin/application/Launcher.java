@@ -11,7 +11,7 @@ import java.util.EnumSet;
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 
-import name.martingeisse.admin.application.wicket.AdminWicketApplication;
+import name.martingeisse.admon.application.wicket.AdminWicketApplication;
 import name.martingeisse.common.database.EntityConnectionServletFilter;
 import name.martingeisse.common.servlet.AntiJsessionidUrlFilter;
 import name.martingeisse.common.servlet.GlobalServletContext;

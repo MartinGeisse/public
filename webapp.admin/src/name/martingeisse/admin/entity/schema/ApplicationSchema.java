@@ -35,11 +35,12 @@ import name.martingeisse.admin.entity.schema.reference.IEntityReferenceDetector;
 import name.martingeisse.admin.entity.schema.search.EntitySearcher;
 import name.martingeisse.admin.entity.schema.type.IEntityIdTypeInfo;
 import name.martingeisse.admin.entity.schema.type.ISqlTypeInfo;
-import name.martingeisse.admin.navigation.NavigationConfiguration;
+import name.martingeisse.admon.application.wicket.AdminWicketApplication;
 import name.martingeisse.admon.entity.UnknownEntityException;
 import name.martingeisse.admon.navigation.INavigationNodeHandler;
 import name.martingeisse.admon.navigation.INavigationNodeVisitor;
 import name.martingeisse.admon.navigation.NavigationNode;
+import name.martingeisse.admon.navigation.NavigationTree;
 import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.datarow.DataRowMeta;
 import name.martingeisse.common.util.ParameterUtil;
@@ -53,7 +54,7 @@ import org.apache.log4j.Logger;
  * TODO: Have the application build the schema to make the initialization sequence
  * more explicit.
  */
-public class ApplicationSchema {
+public final class ApplicationSchema {
 
 	/**
 	 * the logger
@@ -62,12 +63,22 @@ public class ApplicationSchema {
 	private static Logger logger = Logger.getLogger(ApplicationSchema.class);
 	
 	/**
+	 * Returns the schema for the application. The calling thread
+	 * must be associated with the application.
+	 * 
+	 * @return the schema
+	 */
+	public static ApplicationSchema get() {
+		return AdminWicketApplication.get().getSchema();
+	}
+	
+	/**
 	 * the instance
 	 */
 	public static volatile ApplicationSchema instance;
 
 	/**
-	 * Initializes the application schema.
+	 * Initializes the application schema. TODO currently not called
 	 */
 	public static void initialize() {
 		final ApplicationSchema schema = new ApplicationSchema();
@@ -339,7 +350,7 @@ public class ApplicationSchema {
 
 		// determine the (declared) canonical entity list nodes
 		final Map<String, NavigationNode> canonicalEntityListNodes = new HashMap<String, NavigationNode>();
-		NavigationConfiguration.navigationTreeParameter.get().acceptVisior(new INavigationNodeVisitor() {
+		NavigationTree.get().acceptVisior(new INavigationNodeVisitor() {
 			@Override
 			public void visit(final NavigationNode node) {
 				final String entityName = node.getHandler().getEntityNameForCanonicalEntityListNode();
@@ -353,7 +364,7 @@ public class ApplicationSchema {
 		});
 
 		// create ad-hoc canonical list nodes for entities with no declared canonical list node
-		final NavigationNode globalRoot = NavigationConfiguration.navigationTreeParameter.get().getRoot();
+		final NavigationNode globalRoot = NavigationTree.get().getRoot();
 		final NavigationNode allEntitiesNode = globalRoot.getChildFactory().createNavigationFolderChild("all-entities", "All Entities");
 		for (final EntityDescriptor entity : entityDescriptors) {
 

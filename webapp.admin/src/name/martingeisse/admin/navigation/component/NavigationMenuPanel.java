@@ -8,8 +8,8 @@ package name.martingeisse.admin.navigation.component;
 
 import java.util.List;
 
-import name.martingeisse.admin.navigation.NavigationUtil;
 import name.martingeisse.admon.navigation.NavigationNode;
+import name.martingeisse.admon.navigation.NavigationUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.behavior.AttributeAppender;

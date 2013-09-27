@@ -6,11 +6,11 @@
 
 package name.martingeisse.admon.navigation.handlers;
 
-import name.martingeisse.admin.application.wicket.AdminWicketApplication;
-import name.martingeisse.admin.navigation.NavigationUtil;
+import name.martingeisse.admon.application.wicket.AdminWicketApplication;
 import name.martingeisse.admon.navigation.INavigationLocationAware;
 import name.martingeisse.admon.navigation.NavigationMountedRequestMapper;
 import name.martingeisse.admon.navigation.NavigationNode;
+import name.martingeisse.admon.navigation.NavigationUtil;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.RestartResponseException;

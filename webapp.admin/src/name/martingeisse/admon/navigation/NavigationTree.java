@@ -9,8 +9,8 @@ package name.martingeisse.admon.navigation;
 import java.util.HashMap;
 import java.util.Map;
 
-import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.navigation.component.NavigationFolderPage;
+import name.martingeisse.admon.application.wicket.AdminWicketApplication;
 import name.martingeisse.admon.navigation.handlers.BookmarkablePageNavigationHandler;
 
 /**
@@ -20,6 +20,16 @@ import name.martingeisse.admon.navigation.handlers.BookmarkablePageNavigationHan
  */
 public final class NavigationTree {
 
+	/**
+	 * Returns the navigation tree for the application. The calling thread
+	 * must be associated with the application.
+	 * 
+	 * @return the navigation tree
+	 */
+	public static NavigationTree get() {
+		return AdminWicketApplication.get().getNavigationTree();
+	}
+	
 	/**
 	 * the root
 	 */

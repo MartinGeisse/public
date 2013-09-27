@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.component.pagebar.IPageBarFactory;
+import name.martingeisse.admon.application.wicket.AdminWicketApplication;
 import name.martingeisse.common.util.SpecialHandlingList;
 
 import org.apache.wicket.Component;

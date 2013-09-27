@@ -6,8 +6,8 @@
 
 package name.martingeisse.admon.navigation;
 
-import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.component.pagebar.IPageBarFactory;
+import name.martingeisse.admon.application.wicket.AdminWicketApplication;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.link.AbstractLink;

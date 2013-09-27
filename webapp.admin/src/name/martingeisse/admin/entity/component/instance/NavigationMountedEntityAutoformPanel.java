@@ -9,8 +9,8 @@ package name.martingeisse.admin.entity.component.instance;
 import name.martingeisse.admin.entity.EntityConfiguration;
 import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.schema.autoform.EntityAutoformDescriber;
-import name.martingeisse.admin.navigation.NavigationUtil;
 import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
+import name.martingeisse.admon.navigation.NavigationUtil;
 import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.wicket.model.IModel;
