@@ -6,7 +6,6 @@
 
 package name.martingeisse.admon.application.wicket;
 
-import name.martingeisse.admin.entity.schema.ApplicationSchema;
 import name.martingeisse.admon.application.converter.DateTimeConverter;
 import name.martingeisse.admon.application.converter.LocalDateConverter;
 import name.martingeisse.admon.application.converter.LocalDateTimeConverter;
@@ -68,22 +67,9 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 	};
 	
 	/**
-	 * the schema
-	 */
-	private final ApplicationSchema schema = new ApplicationSchema();
-	
-	/**
 	 * the navigationTree
 	 */
 	private final NavigationTree navigationTree = new NavigationTree();
-
-	/**
-	 * Getter method for the schema.
-	 * @return the schema
-	 */
-	public final ApplicationSchema getSchema() {
-		return schema;
-	}
 	
 	/**
 	 * Getter method for the navigationTree.
@@ -119,11 +105,6 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		logger.trace("initializing base application class...");
 		super.init();
 		logger.trace("base application class initialized");
-
-		// initialize the application schema from the database
-		logger.trace("initializing ApplicationSchema...");
-		ApplicationSchema.initialize();
-		logger.trace("ApplicationSchema initialized");
 
 		// register type converters
 		ConverterLocator converterLocator = (ConverterLocator)getConverterLocator();

@@ -8,7 +8,6 @@ package name.martingeisse.admon.navigation;
 
 import java.util.List;
 
-
 import org.apache.wicket.model.LoadableDetachableModel;
 
 /**

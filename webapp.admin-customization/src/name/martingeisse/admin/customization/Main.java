@@ -14,7 +14,6 @@ import java.lang.annotation.Target;
 
 import name.martingeisse.admin.application.ApplicationConfiguration;
 import name.martingeisse.admin.application.DefaultPlugin;
-import name.martingeisse.admin.application.Launcher;
 import name.martingeisse.admin.customization.incubator.NavigationTabBarFactory;
 import name.martingeisse.admin.customization.pagebar.BasicPageBarFactory;
 import name.martingeisse.admin.entity.EntityCapabilities;
@@ -36,6 +35,7 @@ import name.martingeisse.admin.entity.schema.search.IEntitySearchContributor;
 import name.martingeisse.admin.entity.schema.search.IEntitySearchStrategy;
 import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
 import name.martingeisse.admin.navigation.handler.PopulatorBasedEntityListHandler;
+import name.martingeisse.admon.WebServerLauncher;
 import name.martingeisse.admon.navigation.NavigationNode;
 import name.martingeisse.admon.navigation.PanelPageNavigationHandler;
 import name.martingeisse.admon.navigation.handlers.UrlNavigationHandler;
@@ -239,7 +239,7 @@ public class Main {
 		});
 		
 		// run
-		Launcher.launch();
+		WebServerLauncher.launch();
 
 	}
 

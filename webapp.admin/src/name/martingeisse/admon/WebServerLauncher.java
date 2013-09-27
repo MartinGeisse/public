@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.application;
+package name.martingeisse.admon;
 
 import java.util.EnumSet;
 
@@ -25,22 +25,22 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
 /**
- * This class starts the admin system and is typically invoked by the
+ * This class starts the admin web server and is typically invoked by the
  * main method.
  */
-public class Launcher {
+public class WebServerLauncher {
 
 	/**
 	 * the logger
 	 */
-	private static Logger logger = Logger.getLogger(Launcher.class);
+	private static Logger logger = Logger.getLogger(WebServerLauncher.class);
 
 	/**
-	 * Launches the server.
+	 * Launches the web server.
 	 * @throws Exception on errors
 	 */
 	public static void launch() throws Exception {
-		logger.debug("Launcher.launch(): begin");
+		logger.debug("WebServerLauncher.launch(): begin");
 
 		final EnumSet<DispatcherType> allDispatcherTypes = EnumSet.allOf(DispatcherType.class);
 
@@ -84,7 +84,7 @@ public class Launcher {
 		server.start();
 		server.join();
 
-		logger.debug("Launcher.launch(): end");
+		logger.debug("WebServerLauncher.launch(): end");
 	}
 
 }
