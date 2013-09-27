@@ -184,10 +184,8 @@ public final class ApplicationSchema {
 	protected final void prepare() {
 		copyDatabaseList();
 		buildEntityDescriptors();
-		detectEntityReferences();
 		createNavigation();
 		initializeSearchStrategies();
-		initializeAutoformMetadata();
 		initializeSpecificCodeMapping();
 	}
 
@@ -317,24 +315,6 @@ public final class ApplicationSchema {
 		return visible;
 	}
 	
-	/**
-	 * Finds entity references and stores them in the entity reference list as well
-	 * as the source and destination entities.
-	 */
-	private void detectEntityReferences() {
-		for (final EntityDescriptor entity : entityDescriptors) {
-			entity.setReferenceEndpoints(new ArrayList<EntityReferenceEndpoint>());
-		}
-		for (final EntityDescriptor entity : entityDescriptors) {
-			ILowlevelDatabaseStructure lowlevelStructure = databaseStructures.get(entity.getDatabase());
-			for (final EntityPropertyDescriptor property : entity.getProperties()) {
-				final String propertyName = property.getName();
-				for (final IEntityReferenceDetector detector : EntityCapabilities.entityReferenceDetectorCapability) {
-					detector.detectEntityReference(this, lowlevelStructure, entity, propertyName);
-				}
-			}
-		}
-	}
 
 	/**
 	 * Creates navigation nodes in the global navigation tree for each entity, based on the
@@ -408,15 +388,6 @@ public final class ApplicationSchema {
 	private void initializeSearchStrategies() {
 		for (final EntityDescriptor entity : entityDescriptors) {
 			entity.setSearcher(new EntitySearcher(entity));
-		}
-	}
-
-	/**
-	 * Initializes meta-data used to build autoforms.
-	 */
-	private void initializeAutoformMetadata() {
-		for (IEntityAnnotationContributor contributor : EntityCapabilities.entityAnnotationContributorCapability) {
-			contributor.contributeEntityAnnotations(this);
 		}
 	}
 

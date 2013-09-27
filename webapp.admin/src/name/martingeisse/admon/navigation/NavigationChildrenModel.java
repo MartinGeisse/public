@@ -4,12 +4,10 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.admin.navigation.model;
+package name.martingeisse.admon.navigation;
 
 import java.util.List;
 
-import name.martingeisse.admon.navigation.NavigationNode;
-import name.martingeisse.admon.navigation.NavigationTree;
 
 import org.apache.wicket.model.LoadableDetachableModel;
 

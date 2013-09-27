@@ -7,12 +7,10 @@
 package name.martingeisse.admin.entity.schema;
 
 import java.lang.annotation.Annotation;
-import java.util.List;
 
 import name.martingeisse.admin.entity.EntitySelection;
 import name.martingeisse.admin.entity.instance.IEntityInstance;
 import name.martingeisse.admin.entity.schema.orm.EntityOrmMapping;
-import name.martingeisse.admin.entity.schema.reference.EntityReferenceEndpoint;
 import name.martingeisse.admin.entity.schema.search.EntitySearcher;
 import name.martingeisse.admin.entity.schema.type.IEntityIdTypeInfo;
 import name.martingeisse.admin.entity.schema.type.ISqlTypeInfo;
@@ -69,11 +67,6 @@ public class EntityDescriptor {
 	 * the properties
 	 */
 	private EntityProperties properties;
-
-	/**
-	 * the referenceEndpoints
-	 */
-	private List<EntityReferenceEndpoint> referenceEndpoints;
 
 	/**
 	 * the canonicalListNavigationNode
@@ -234,22 +227,6 @@ public class EntityDescriptor {
 	}
 
 	/**
-	 * Getter method for the referenceEndpoints.
-	 * @return the referenceEndpoints
-	 */
-	public List<EntityReferenceEndpoint> getReferenceEndpoints() {
-		return referenceEndpoints;
-	}
-
-	/**
-	 * Setter method for the referenceEndpoints.
-	 * @param referenceEndpoints the referenceEndpoints to set
-	 */
-	void setReferenceEndpoints(final List<EntityReferenceEndpoint> referenceEndpoints) {
-		this.referenceEndpoints = referenceEndpoints;
-	}
-
-	/**
 	 * Getter method for the canonicalListNavigationNode.
 	 * @return the canonicalListNavigationNode
 	 */
@@ -388,18 +365,4 @@ public class EntityDescriptor {
 		return EntitySelection.forId(this, id).fetchSingleInstance(optional);
 	}
 
-	/**
-	 * Looks for a reference with the specified field name.
-	 * @param fieldName the field name
-	 * @return the reference, or null if none was found
-	 */
-	public EntityReferenceEndpoint findReference(final String fieldName) {
-		for (final EntityReferenceEndpoint endpoint : referenceEndpoints) {
-			if (endpoint.getPropertyName().equals(fieldName)) {
-				return endpoint;
-			}
-		}
-		return null;
-	}
-	
 }

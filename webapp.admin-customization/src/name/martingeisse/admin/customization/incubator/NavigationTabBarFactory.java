@@ -7,7 +7,7 @@
 package name.martingeisse.admin.customization.incubator;
 
 import name.martingeisse.admin.component.pagebar.IPageBarFactory;
-import name.martingeisse.admin.navigation.model.NavigationChildrenModel;
+import name.martingeisse.admon.navigation.NavigationChildrenModel;
 import name.martingeisse.admon.navigation.NavigationNode;
 
 import org.apache.wicket.markup.html.panel.Panel;
