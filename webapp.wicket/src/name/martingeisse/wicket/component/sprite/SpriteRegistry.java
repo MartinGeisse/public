@@ -16,8 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.imageio.ImageIO;
 
-import name.martingeisse.wicket.application.AbstractMyWicketApplication;
-
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.resource.IResourceStream;
@@ -28,11 +26,6 @@ import org.apache.wicket.util.resource.IResourceStream;
  */
 public final class SpriteRegistry {
 
-	/**
-	 * the application
-	 */
-	private final AbstractMyWicketApplication application;
-	
 	/**
 	 * the registry
 	 */
@@ -45,10 +38,8 @@ public final class SpriteRegistry {
 	
 	/**
 	 * Constructor.
-	 * @param application the application
 	 */
-	public SpriteRegistry(AbstractMyWicketApplication application) {
-		this.application = application;
+	public SpriteRegistry() {
 		this.registry = new ConcurrentHashMap<ResourceReference.Key, SpriteReference>();
 		this.atlasCounter = 0;
 	}
@@ -81,7 +72,7 @@ public final class SpriteRegistry {
 			ByteArrayOutputStream atlasByteArrayOutputStream = new ByteArrayOutputStream();
 			SpriteReference[] spriteReferences = buildAtlas(atlasByteArrayOutputStream, spriteImages);
 			byte[] serializedAtlasImage = atlasByteArrayOutputStream.toByteArray();
-			SpriteAtlas atlas = new SpriteAtlas(application, "atlas" + atlasCounter + ".png", "image/png", serializedAtlasImage);
+			SpriteAtlas atlas = new SpriteAtlas("atlas" + atlasCounter + ".png", "image/png", serializedAtlasImage);
 			atlasCounter++;
 			for (int i=0; i<spriteReferences.length; i++) {
 				spriteReferences[i] = spriteReferences[i].withAtlas(atlas);

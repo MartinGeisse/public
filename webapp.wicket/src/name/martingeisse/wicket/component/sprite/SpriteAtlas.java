@@ -6,8 +6,7 @@
 
 package name.martingeisse.wicket.component.sprite;
 
-import name.martingeisse.wicket.application.AbstractMyWicketApplication;
-
+import org.apache.wicket.Application;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ByteArrayResource;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -17,11 +16,6 @@ import org.apache.wicket.request.resource.ResourceReference;
  */
 public final class SpriteAtlas {
 
-	/**
-	 * the application
-	 */
-	private final AbstractMyWicketApplication application;
-	
 	/**
 	 * the name
 	 */
@@ -35,11 +29,10 @@ public final class SpriteAtlas {
 	/**
 	 * Constructor.
 	 */
-	SpriteAtlas(AbstractMyWicketApplication application, String name, String contentType, byte[] data) {
-		this.application = application;
+	SpriteAtlas(String name, String contentType, byte[] data) {
 		this.name = name;
 		this.resource = new ByteArrayResource(contentType, data);
-		application.getSharedResources().add(SpriteAtlas.class, name, null, null, null, resource);
+		Application.get().getSharedResources().add(SpriteAtlas.class, name, null, null, null, resource);
 	}
 
 	/**
@@ -55,7 +48,7 @@ public final class SpriteAtlas {
 	 * @return the URL
 	 */
 	public CharSequence getUrl() {
-		ResourceReference resourceReference = application.getSharedResources().get(SpriteAtlas.class, name, null, null, null, true);
+		ResourceReference resourceReference = Application.get().getSharedResources().get(SpriteAtlas.class, name, null, null, null, true);
 		return RequestCycle.get().urlFor(resourceReference, null);
 	}
 	

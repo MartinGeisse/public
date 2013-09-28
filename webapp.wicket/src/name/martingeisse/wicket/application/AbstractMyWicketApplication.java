@@ -38,7 +38,7 @@ public abstract class AbstractMyWicketApplication extends WebApplication {
 	 * Constructor.
 	 */
 	public AbstractMyWicketApplication() {
-		this.spriteRegistry = new SpriteRegistry(this);
+		this.spriteRegistry = new SpriteRegistry();
 	}
 
 	/* (non-Javadoc)
