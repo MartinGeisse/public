@@ -48,7 +48,7 @@ public class MyWicketSession extends WebSession {
 		this.pageId = (new Random().nextInt() & 0xffffff);
 		
 		// TODO
-		this.timeZone = DateTimeZone.forID("Europe/Moscow"); // DateTimeZone.getDefault();
+		this.timeZone = DateTimeZone.forID("Europe/Berlin"); // DateTimeZone.getDefault();
 	}
 	
 	/**
