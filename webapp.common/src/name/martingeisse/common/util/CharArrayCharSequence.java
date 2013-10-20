@@ -76,5 +76,13 @@ public final class CharArrayCharSequence implements CharSequence {
 		}
 		return new CharArrayCharSequence(array, this.start + start, end - start);
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return new String(array, start, length);
+	}
 	
 }

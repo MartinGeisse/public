@@ -6,6 +6,8 @@
 
 package name.martingeisse.common.config;
 
+import name.martingeisse.common.util.ParameterUtil;
+
 /**
  * Base class for properties that are loaded from a {@link ConfigurationPropertiesFile}.
  * 
@@ -43,6 +45,8 @@ public abstract class AbstractConfigurationProperty<T> {
 	 * tricking them into thinking that the value was set in the properties file.
 	 */
 	public AbstractConfigurationProperty(ConfigurationPropertiesFile configFile, String name, T staticDefault) {
+		ParameterUtil.ensureNotNull(configFile, "configFile");
+		ParameterUtil.ensureNotNull(name, "name");
 		this.configFile = configFile;
 		this.name = name;
 		this.valueInitialized = false;
