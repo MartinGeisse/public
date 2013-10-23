@@ -6,8 +6,6 @@ package name.martingeisse.pixel.common;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Represents a fully defined pixel picture. The picture's dimensions
@@ -72,12 +70,10 @@ public final class Picture extends AbstractMatrix {
 		pixels[getIndex(x, y)] = filled;
 	}
 
-	/**
-	 * Renders a not-yet-disposed {@link DrawHelper} from this picture.
-	 * @param cellSize the size of each picture's pixel, measured in returned image pixels
-	 * @param grid whether to draw a grid
-	 * @return the draw helper
+	/* (non-Javadoc)
+	 * @see name.martingeisse.pixel.common.AbstractMatrix#renderToDrawHelper(int, boolean)
 	 */
+	@Override
 	public DrawHelper renderToDrawHelper(int cellSize, boolean grid) {
 		DrawHelper helper = new DrawHelper(getWidth() * cellSize + (grid ? 1 : 0), getHeight() * cellSize + (grid ? 1 : 0), cellSize);
 		for (int x=0; x<getWidth(); x++) {
@@ -91,31 +87,6 @@ public final class Picture extends AbstractMatrix {
 			helper.drawGrid(getWidth(), getHeight());
 		}
 		return helper;
-	}
-
-	/**
-	 * Renders a {@link BufferedImage} from this picture.
-	 * @param cellSize the size of each picture's pixel, meaured in returned image pixels
-	 * @param grid whether to draw a grid
-	 * @return the image
-	 */
-	public BufferedImage renderToBufferedImage(int cellSize, boolean grid) {
-		DrawHelper helper = renderToDrawHelper(cellSize, grid);
-		helper.dispose();
-		return helper.getImage();
-	}
-
-	/**
-	 * Renders a PNG file from this picture.
-	 * @param cellSize the size of each picture's pixel, meaured in returned image pixels
-	 * @param grid whether to draw a grid
-	 * @param file the file to render to
-	 * @throws IOException on I/O errors
-	 */
-	public void renderToPngFile(int cellSize, boolean grid, File file) throws IOException {
-		DrawHelper helper = renderToDrawHelper(cellSize, grid);
-		helper.dispose();
-		helper.writePngFile(file);
 	}
 	
 }

@@ -4,9 +4,6 @@
 
 package name.martingeisse.pixel.common;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Base class for game boards. This class manages a matrix of
@@ -61,12 +58,11 @@ public abstract class AbstractBoard extends AbstractMatrix {
 	}
 
 	/**
-	 * Renders a not-yet-disposed {@link DrawHelper} from this picture.
-	 * @param cellSize the size of each picture's pixel, measured in returned image pixels
-	 * @return the draw helper
+	 * Renders the pixels for this board.
+	 * @param helper the draw helper to render to
+	 * @param grid whether to draw a grid
 	 */
-	public DrawHelper renderToDrawHelper(int cellSize) {
-		DrawHelper helper = new DrawHelper(getWidth() * cellSize + 1, getHeight() * cellSize + 1, cellSize);
+	protected final void renderPixels(DrawHelper helper, boolean grid) {
 		for (int x=0; x<getWidth(); x++) {
 			for (int y=0; y<getHeight(); y++) {
 				Boolean pixel = getPixel(x, y);
@@ -79,31 +75,9 @@ public abstract class AbstractBoard extends AbstractMatrix {
 				}
 			}
 		}
-		helper.drawGrid(getWidth(), getHeight());
-		return helper;
-	}
-
-	/**
-	 * Renders a {@link BufferedImage} from this picture.
-	 * @param cellSize the size of each picture's pixel, meaured in returned image pixels
-	 * @return the image
-	 */
-	public BufferedImage renderToBufferedImage(int cellSize) {
-		DrawHelper helper = renderToDrawHelper(cellSize);
-		helper.dispose();
-		return helper.getImage();
-	}
-
-	/**
-	 * Renders a PNG file from this picture.
-	 * @param cellSize the size of each picture's pixel, meaured in returned image pixels
-	 * @param file the file to render to
-	 * @throws IOException on I/O errors
-	 */
-	public void renderToPngFile(int cellSize, File file) throws IOException {
-		DrawHelper helper = renderToDrawHelper(cellSize);
-		helper.dispose();
-		helper.writePngFile(file);
+		if (grid) {
+			helper.drawGrid(getWidth(), getHeight());
+		}
 	}
 	
 }

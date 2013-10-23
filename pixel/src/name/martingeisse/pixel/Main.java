@@ -33,7 +33,7 @@ public class Main {
 //		picture.setPixel(0, 1, true);
 //		picture.setPixel(0, 2, false);
 //		picture.setPixel(3, 1, true);
-		board.renderToPngFile(10, new File("test.png"));
+		board.renderToPngFile(20, true, new File("test.png"));
 		
 	}
 	
