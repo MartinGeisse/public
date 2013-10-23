@@ -9,6 +9,8 @@ package name.martingeisse.wicket.util;
 
 import java.util.ArrayList;
 
+import name.martingeisse.common.util.ParameterUtil;
+
 import org.apache.wicket.core.request.mapper.MountedMapper;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.component.IRequestablePage;
@@ -102,7 +104,7 @@ public final class ParameterMountedRequestMapper extends MountedMapper {
 	 * @param parametersEncoder the parameters encoder
 	 */
 	private ParameterMountedRequestMapper(final String mountPath, final Class<? extends IRequestablePage> pageClass, PageParameters identifyingParameters, PageParameters implicitDefaultParameters, final MyParametersEncoder parametersEncoder) {
-		super(mountPath, pageClass, parametersEncoder);
+		super(ParameterUtil.ensureNotNull(mountPath, "mountPath"), ParameterUtil.ensureNotNull(pageClass, "pageClass"), parametersEncoder);
 		this.mountPath = mountPath;
 		this.identifyingParameters = (identifyingParameters == null ? new PageParameters() : new PageParameters(identifyingParameters));
 		this.implicitDefaultParameters = implicitDefaultParameters;
@@ -143,7 +145,7 @@ public final class ParameterMountedRequestMapper extends MountedMapper {
 		PageParameters actualParameters = info.getPageParameters();
 		for (NamedPair expectedPair : identifyingParameters.getAllNamed()) {
 			String expectedValue = expectedPair.getValue();
-			String actualValue = actualParameters.get(expectedPair.getKey()).toString();
+			String actualValue = (actualParameters == null ? null : actualParameters.get(expectedPair.getKey()).toString());
 			if (!Objects.equal(expectedValue, actualValue)) {
 				return null;
 			}
