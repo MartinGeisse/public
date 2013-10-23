@@ -114,7 +114,21 @@ public abstract class NonogramTransposableStrategy extends NonogramSolutionStrat
 			solver.getBoard().setPixel(secondary, primary, filled);
 		}
 	}
-	
+
+	/**
+	 * Like setPixel(), but will leave the current pixel value alone
+	 * if the patch value is null, instead of overwriting with null.
+	 * 
+	 * @param primary the location along the primary axis
+	 * @param secondary the location along the secondary axis
+	 * @param filled the pixel color
+	 */
+	public final void patchPixel(int primary, int secondary, Boolean filled) {
+		if (filled != null) {
+			setPixel(primary, secondary, filled);
+		}
+	}
+
 	/**
 	 * Sets a range of pixels. The range runs along the secondary axis.
 	 * @param primary the location along the primary axis

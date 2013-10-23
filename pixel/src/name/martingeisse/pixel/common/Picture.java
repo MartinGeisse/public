@@ -28,9 +28,9 @@ public final class Picture extends AbstractMatrix {
 	public Picture(BufferedImage image) {
 		this(image.getWidth(), image.getHeight());
 		
-		if (image.getType() != BufferedImage.TYPE_BYTE_GRAY && image.getType() != BufferedImage.TYPE_USHORT_GRAY) {
-			throw new IllegalArgumentException("only grayscale images are supported by this constructor");
-		}
+//		if (image.getType() != BufferedImage.TYPE_BYTE_GRAY && image.getType() != BufferedImage.TYPE_USHORT_GRAY) {
+//			throw new IllegalArgumentException("only grayscale images are supported by this constructor");
+//		}
 		Raster raster = image.getRaster();
 		for (int x=0; x<getWidth(); x++) {
 			for (int y=0; y<getHeight(); y++) {
