@@ -28,11 +28,11 @@ import name.martingeisse.common.security.credentials.ICredentials;
  * properties are loaded using the identity and passed as user properties.
  * 
  * Based on this information, an {@link IPermissions} object is created that
- * represents the user's set of granted permissions within the admin application.
+ * represents the user's set of granted permissions within the application.
  * This object is opaque to the framework, therefore this strategy is also
  * needed to check specific requests for permission.
  */
-public interface IAdminAuthorizationStrategy {
+public interface IAuthorizationStrategy {
 
 	/**
 	 * Determines the user's permissions.

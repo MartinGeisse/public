@@ -6,11 +6,13 @@
 
 package name.martingeisse.admin.security;
 
-import name.martingeisse.admin.security.authentication.IUserIdentity;
-import name.martingeisse.admin.security.authentication.IUserProperties;
-import name.martingeisse.admin.security.authorization.IPermissions;
-import name.martingeisse.admin.security.credentials.ICredentials;
 import name.martingeisse.common.util.ParameterUtil;
+import name.martingeisse.wicket.security.LoginData;
+import name.martingeisse.wicket.security.SecurityUtil;
+import name.martingeisse.wicket.security.authentication.IUserIdentity;
+import name.martingeisse.wicket.security.authentication.IUserProperties;
+import name.martingeisse.wicket.security.authorization.IPermissions;
+import name.martingeisse.wicket.security.credentials.ICredentials;
 
 /**
  * An instance of this class in the session indicates that the

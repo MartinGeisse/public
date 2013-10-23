@@ -6,8 +6,8 @@
 
 package name.martingeisse.common.security;
 
-import name.martingeisse.common.security.authentication.IAdminAuthenticationStrategy;
-import name.martingeisse.common.security.authorization.IAdminAuthorizationStrategy;
+import name.martingeisse.common.security.authentication.IAuthenticationStrategy;
+import name.martingeisse.common.security.authorization.IAuthorizationStrategy;
 
 /**
  * This interface hides implementation-specific glue code between
@@ -19,13 +19,13 @@ public interface ISecurityProvider {
 	 * Used by the security subsystem to obtain the authentication strategy.
 	 * @return the authentication strategy
 	 */
-	public IAdminAuthenticationStrategy getAuthenticationStrategy();
+	public IAuthenticationStrategy getAuthenticationStrategy();
 
 	/**
 	 * Used by the security subsystem to obtain the authorization strategy.
 	 * @return the authorization strategy
 	 */
-	public IAdminAuthorizationStrategy getAuthorizationStrategy();
+	public IAuthorizationStrategy getAuthorizationStrategy();
 	
 	/**
 	 * Stores the specified login data and performs application-specific "on login"

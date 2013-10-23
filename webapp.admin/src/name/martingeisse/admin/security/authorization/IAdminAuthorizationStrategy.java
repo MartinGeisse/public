@@ -6,9 +6,11 @@
 
 package name.martingeisse.admin.security.authorization;
 
-import name.martingeisse.admin.security.authentication.IUserIdentity;
-import name.martingeisse.admin.security.authentication.IUserProperties;
-import name.martingeisse.admin.security.credentials.ICredentials;
+import name.martingeisse.wicket.security.authentication.IUserIdentity;
+import name.martingeisse.wicket.security.authentication.IUserProperties;
+import name.martingeisse.wicket.security.authorization.IPermissionRequest;
+import name.martingeisse.wicket.security.authorization.IPermissions;
+import name.martingeisse.wicket.security.credentials.ICredentials;
 
 /**
  * This strategy serves two purposes:

@@ -6,13 +6,17 @@
 
 package name.martingeisse.admin.security.authentication;
 
-import name.martingeisse.admin.security.credentials.ICredentials;
+import name.martingeisse.wicket.security.authentication.IAuthenticationStrategy;
+import name.martingeisse.wicket.security.authentication.IUserIdentity;
+import name.martingeisse.wicket.security.authentication.IUserProperties;
+import name.martingeisse.wicket.security.authentication.UserProperties;
+import name.martingeisse.wicket.security.credentials.ICredentials;
 
 /**
  * This strategy ignores the credentials altogether and just returns
  * the same user properties and user identity all the time.
  */
-public class DefaultAuthenticationStrategy implements IAdminAuthenticationStrategy {
+public class DefaultAuthenticationStrategy implements IAuthenticationStrategy {
 
 	/**
 	 * the user

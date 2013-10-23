@@ -8,6 +8,8 @@ package name.martingeisse.admin.security.authentication;
 
 import java.util.HashMap;
 
+import name.martingeisse.wicket.security.authentication.IUserProperties;
+
 /**
  * Default implementation for {@link IUserProperties} that simply
  * stores properties in a {@link HashMap}.

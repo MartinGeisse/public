@@ -6,20 +6,23 @@
 
 package name.martingeisse.admin.security;
 
-import name.martingeisse.admin.security.authentication.IAdminAuthenticationStrategy;
-import name.martingeisse.admin.security.authentication.IUserIdentity;
-import name.martingeisse.admin.security.authentication.IUserProperties;
-import name.martingeisse.admin.security.authentication.UserProperties;
-import name.martingeisse.admin.security.authorization.CorePermissionRequest;
-import name.martingeisse.admin.security.authorization.IAdminAuthorizationStrategy;
-import name.martingeisse.admin.security.authorization.IPermissionRequest;
-import name.martingeisse.admin.security.authorization.IPermissions;
-import name.martingeisse.admin.security.authorization.PermissionDeniedException;
-import name.martingeisse.admin.security.authorization.UnauthorizedPermissions;
-import name.martingeisse.admin.security.credentials.ICredentials;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
 import name.martingeisse.wicket.application.MyWicketSession;
+import name.martingeisse.wicket.security.LoginData;
+import name.martingeisse.wicket.security.SecurityConfiguration;
+import name.martingeisse.wicket.security.SecurityUtil;
+import name.martingeisse.wicket.security.authentication.IAuthenticationStrategy;
+import name.martingeisse.wicket.security.authentication.IUserIdentity;
+import name.martingeisse.wicket.security.authentication.IUserProperties;
+import name.martingeisse.wicket.security.authentication.UserProperties;
+import name.martingeisse.wicket.security.authorization.CorePermissionRequest;
+import name.martingeisse.wicket.security.authorization.IAuthorizationStrategy;
+import name.martingeisse.wicket.security.authorization.IPermissionRequest;
+import name.martingeisse.wicket.security.authorization.IPermissions;
+import name.martingeisse.wicket.security.authorization.PermissionDeniedException;
+import name.martingeisse.wicket.security.authorization.UnauthorizedPermissions;
+import name.martingeisse.wicket.security.credentials.ICredentials;
 
 import org.apache.log4j.Logger;
 
@@ -51,7 +54,7 @@ public class SecurityUtil {
 	 * - determine user properties using the supplied credentials (authentication step 1)
 	 * - try to determine the user's identity (authentication step 2)
 	 * - determine the user's permissions (authorization step 1)
-	 * - check the user's login permission ({@link name.martingeisse.admin.security.authorization.CorePermissionRequest.Type#LOGIN})
+	 * - check the user's login permission ({@link name.martingeisse.wicket.security.authorization.CorePermissionRequest.Type#LOGIN})
 	 *   (authorization step 2).
 	 * 
 	 * Successfully logging in will replace the current HTTP session with a new
@@ -67,7 +70,7 @@ public class SecurityUtil {
 		logger.debug("a user is trying to log in");
 
 		// authenticate
-		final IAdminAuthenticationStrategy authenticationStrategy = SecurityConfiguration.getInstanceSafe().getAuthenticationStrategy();
+		final IAuthenticationStrategy authenticationStrategy = SecurityConfiguration.getInstanceSafe().getAuthenticationStrategy();
 		logger.trace("authentication strategy: " + authenticationStrategy);
 		ReturnValueUtil.nullMeansMissing(authenticationStrategy, "security configuration: authentication strategy");
 		IUserProperties userProperties = authenticationStrategy.determineProperties(credentials);
@@ -82,7 +85,7 @@ public class SecurityUtil {
 		logger.debug("detected user identity: " + userIdentity);
 
 		// authorization
-		final IAdminAuthorizationStrategy authorizationStrategy = SecurityConfiguration.getInstanceSafe().getAuthorizationStrategy();
+		final IAuthorizationStrategy authorizationStrategy = SecurityConfiguration.getInstanceSafe().getAuthorizationStrategy();
 		logger.trace("authorization strategy: " + authorizationStrategy);
 		ReturnValueUtil.nullMeansMissing(authorizationStrategy, "security configuration: authorization strategy");
 		final IPermissions permissions = authorizationStrategy.determinePermissions(credentials, userProperties, userIdentity);
@@ -166,7 +169,7 @@ public class SecurityUtil {
 	 */
 	public static boolean getPermission(final IPermissionRequest request) {
 		logger.debug("checking permission: " + request);
-		final IAdminAuthorizationStrategy authorizationStrategy = SecurityConfiguration.getInstanceSafe().getAuthorizationStrategy();
+		final IAuthorizationStrategy authorizationStrategy = SecurityConfiguration.getInstanceSafe().getAuthorizationStrategy();
 		ReturnValueUtil.nullMeansMissing(authorizationStrategy, "security configuration: authorization strategy");
 		final IPermissions permissions = getEffectivePermissions();
 		final boolean result = authorizationStrategy.checkPermission(permissions, request);

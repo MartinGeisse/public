@@ -6,6 +6,8 @@
 
 package name.martingeisse.admin.security.authentication;
 
+import name.martingeisse.wicket.security.authentication.IUserProperties;
+
 /**
  * This is a marker interface for type safety, used for a user
  * whose identity is known after authentication.

@@ -13,7 +13,7 @@ package name.martingeisse.common.security.credentials;
 public final class EmptyCredentials implements ICredentials {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.application.security.credentials.ICredentials#purge()
+	 * @see name.martingeisse.common.security.credentials.ICredentials#purge()
 	 */
 	@Override
 	public void purge() {

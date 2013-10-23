@@ -14,10 +14,10 @@ import name.martingeisse.admin.application.pages.AbstractAdminPage;
 import name.martingeisse.admin.application.pages.HomePage;
 import name.martingeisse.admin.application.pages.images.Dummy;
 import name.martingeisse.admin.navigation.NavigationTree;
-import name.martingeisse.admin.security.SecurityConfiguration;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
+import name.martingeisse.wicket.security.SecurityConfiguration;
 import name.martingeisse.wicket.util.json.JsonEncodingContainer;
 
 import org.apache.log4j.Logger;

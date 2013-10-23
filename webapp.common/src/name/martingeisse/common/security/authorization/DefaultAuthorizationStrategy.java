@@ -16,10 +16,10 @@ import name.martingeisse.common.security.credentials.ICredentials;
  * or {@link SuperuserPermissions}, depending on whether the user's identity
  * was successfully authenticated.
  */
-public final class DefaultAuthorizationStrategy implements IAdminAuthorizationStrategy {
+public final class DefaultAuthorizationStrategy implements IAuthorizationStrategy {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.application.security.IAdminAuthorizationStrategy#determinePermissions(name.martingeisse.admin.application.security.ICredentials, name.martingeisse.admin.application.security.IUserProperties, name.martingeisse.admin.application.security.IUserIdentity)
+	 * @see name.martingeisse.common.security.authorization.IAuthorizationStrategy#determinePermissions(name.martingeisse.common.security.credentials.ICredentials, name.martingeisse.common.security.authentication.IUserProperties, name.martingeisse.common.security.authentication.IUserIdentity)
 	 */
 	@Override
 	public IPermissions determinePermissions(ICredentials credentials, IUserProperties userProperties, IUserIdentity userIdentity) {
@@ -27,7 +27,7 @@ public final class DefaultAuthorizationStrategy implements IAdminAuthorizationSt
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.admin.application.security.authorization.IAdminAuthorizationStrategy#checkPermission(name.martingeisse.admin.application.security.authorization.IPermissions, name.martingeisse.admin.application.security.authorization.IPermissionRequest)
+	 * @see name.martingeisse.common.security.authorization.IAuthorizationStrategy#checkPermission(name.martingeisse.common.security.authorization.IPermissions, name.martingeisse.common.security.authorization.IPermissionRequest)
 	 */
 	@Override
 	public boolean checkPermission(IPermissions permissions, IPermissionRequest request) {

@@ -6,44 +6,12 @@
 
 package name.martingeisse.common.security.authentication;
 
+import name.martingeisse.common.security.IPurgeable;
+
 
 /**
  * This interface is implemented by data objects that know some
- * or all of a user's properties. Properties are simple key/value
- * pairs with string keys and arbitrary values.
+ * or all of a user's properties.
  */
-public interface IUserProperties {
-
-	/**
-	 * Checks whether this property set is empty.
-	 * @return true if empty, false if nonempty
-	 */
-	public boolean isEmpty();
-
-	/**
-	 * @return the number of key/value pairs in this object
-	 */
-	public int size();
-
-	/**
-	 * Checks if the specified key is contained in this property set.
-	 * @param key the key
-	 * @return true if this object contains the key, false if not
-	 */
-	public boolean containsKey(String key);
-
-	/**
-	 * Returns an {@link Iterable} object for the keys contained in
-	 * this object.
-	 * @return the keys
-	 */
-	public Iterable<String> getKeys();
-
-	/**
-	 * Returns the value for the specified key.
-	 * @param key the key
-	 * @return the value
-	 */
-	public Object get(String key);
-
+public interface IUserProperties extends IPurgeable {
 }

@@ -6,6 +6,8 @@
 
 package name.martingeisse.admin.security.credentials;
 
+import name.martingeisse.wicket.security.credentials.ICredentials;
+
 /**
  * Simple implementation of {@link ICredentials} that does not
  * contain any data.

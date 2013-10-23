@@ -6,7 +6,9 @@
 
 package name.martingeisse.admin.security.authentication;
 
-import name.martingeisse.admin.security.credentials.ICredentials;
+import name.martingeisse.wicket.security.authentication.IUserIdentity;
+import name.martingeisse.wicket.security.authentication.IUserProperties;
+import name.martingeisse.wicket.security.credentials.ICredentials;
 
 
 /**

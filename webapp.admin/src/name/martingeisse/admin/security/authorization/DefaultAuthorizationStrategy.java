@@ -6,9 +6,14 @@
 
 package name.martingeisse.admin.security.authorization;
 
-import name.martingeisse.admin.security.authentication.IUserIdentity;
-import name.martingeisse.admin.security.authentication.IUserProperties;
-import name.martingeisse.admin.security.credentials.ICredentials;
+import name.martingeisse.wicket.security.authentication.IUserIdentity;
+import name.martingeisse.wicket.security.authentication.IUserProperties;
+import name.martingeisse.wicket.security.authorization.IAuthorizationStrategy;
+import name.martingeisse.wicket.security.authorization.IPermissionRequest;
+import name.martingeisse.wicket.security.authorization.IPermissions;
+import name.martingeisse.wicket.security.authorization.SuperuserPermissions;
+import name.martingeisse.wicket.security.authorization.UnauthorizedPermissions;
+import name.martingeisse.wicket.security.credentials.ICredentials;
 
 
 /**
@@ -16,7 +21,7 @@ import name.martingeisse.admin.security.credentials.ICredentials;
  * or {@link SuperuserPermissions}, depending on whether the user's identity
  * was successfully authenticated.
  */
-public final class DefaultAuthorizationStrategy implements IAdminAuthorizationStrategy {
+public final class DefaultAuthorizationStrategy implements IAuthorizationStrategy {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.admin.application.security.IAdminAuthorizationStrategy#determinePermissions(name.martingeisse.admin.application.security.ICredentials, name.martingeisse.admin.application.security.IUserProperties, name.martingeisse.admin.application.security.IUserIdentity)

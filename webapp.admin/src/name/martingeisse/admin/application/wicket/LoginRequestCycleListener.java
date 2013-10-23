@@ -6,10 +6,10 @@
 
 package name.martingeisse.admin.application.wicket;
 
-import name.martingeisse.admin.security.SecurityConfiguration;
-import name.martingeisse.admin.security.SecurityUtil;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
+import name.martingeisse.wicket.security.SecurityConfiguration;
+import name.martingeisse.wicket.security.SecurityUtil;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.Page;

@@ -6,6 +6,9 @@
 
 package name.martingeisse.admin.security.authorization;
 
+import name.martingeisse.wicket.security.authorization.IPermissions;
+import name.martingeisse.wicket.security.authorization.UnauthorizedPermissions;
+
 /**
  * This is a simple permissions object that can be used to represent
  * the permissions of users that have not otherwise provided any

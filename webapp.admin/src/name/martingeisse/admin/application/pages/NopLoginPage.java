@@ -6,8 +6,8 @@
 
 package name.martingeisse.admin.application.pages;
 
-import name.martingeisse.admin.security.SecurityUtil;
-import name.martingeisse.admin.security.credentials.EmptyCredentials;
+import name.martingeisse.wicket.security.SecurityUtil;
+import name.martingeisse.wicket.security.credentials.EmptyCredentials;
 
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.StatelessForm;

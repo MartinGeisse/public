@@ -6,12 +6,12 @@
 
 package name.martingeisse.common.security;
 
-import name.martingeisse.common.security.authentication.IAdminAuthenticationStrategy;
+import name.martingeisse.common.security.authentication.EmptyUserProperties;
+import name.martingeisse.common.security.authentication.IAuthenticationStrategy;
 import name.martingeisse.common.security.authentication.IUserIdentity;
 import name.martingeisse.common.security.authentication.IUserProperties;
-import name.martingeisse.common.security.authentication.UserProperties;
 import name.martingeisse.common.security.authorization.CorePermissionRequest;
-import name.martingeisse.common.security.authorization.IAdminAuthorizationStrategy;
+import name.martingeisse.common.security.authorization.IAuthorizationStrategy;
 import name.martingeisse.common.security.authorization.IPermissionRequest;
 import name.martingeisse.common.security.authorization.IPermissions;
 import name.martingeisse.common.security.authorization.PermissionDeniedException;
@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Utility methods to deal with the security features of the
- * admin framework.
+ * application.
  */
 public class SecurityUtil {
 
@@ -79,22 +79,19 @@ public class SecurityUtil {
 		logger.debug("a user is trying to log in");
 
 		// authenticate
-		final IAdminAuthenticationStrategy authenticationStrategy = provider.getAuthenticationStrategy();
+		final IAuthenticationStrategy authenticationStrategy = provider.getAuthenticationStrategy();
 		logger.trace("authentication strategy: " + authenticationStrategy);
 		ReturnValueUtil.nullMeansMissing(authenticationStrategy, "security configuration: authentication strategy");
 		IUserProperties userProperties = authenticationStrategy.determineProperties(credentials);
 		if (userProperties == null) {
-			userProperties = new UserProperties();
+			userProperties = new EmptyUserProperties();
 		}
 		logger.debug("detected user properties: " + userProperties);
 		final IUserIdentity userIdentity = authenticationStrategy.determineIdentity(userProperties);
-		if (userIdentity != null) {
-			userProperties = userIdentity;
-		}
 		logger.debug("detected user identity: " + userIdentity);
 
 		// authorization
-		final IAdminAuthorizationStrategy authorizationStrategy = provider.getAuthorizationStrategy();
+		final IAuthorizationStrategy authorizationStrategy = provider.getAuthorizationStrategy();
 		logger.trace("authorization strategy: " + authorizationStrategy);
 		ReturnValueUtil.nullMeansMissing(authorizationStrategy, "security configuration: authorization strategy");
 		final IPermissions permissions = authorizationStrategy.determinePermissions(credentials, userProperties, userIdentity);
@@ -113,6 +110,11 @@ public class SecurityUtil {
 		final LoginData loginData = new LoginData(credentials, userProperties, userIdentity, permissions);
 		provider.onLogin(loginData);
 		logger.info("user logged in");
+		
+		// purge sensitive data that is now irrelevant
+		logger.trace("purging sensitive data");
+		TODO
+		logger.info("sensitive data purged");
 
 	}
 
@@ -168,7 +170,7 @@ public class SecurityUtil {
 	 */
 	public static boolean getPermission(final IPermissionRequest request) {
 		logger.debug("checking permission: " + request);
-		final IAdminAuthorizationStrategy authorizationStrategy = provider.getAuthorizationStrategy();
+		final IAuthorizationStrategy authorizationStrategy = provider.getAuthorizationStrategy();
 		ReturnValueUtil.nullMeansMissing(authorizationStrategy, "security configuration: authorization strategy");
 		final IPermissions permissions = getEffectivePermissions();
 		final boolean result = authorizationStrategy.checkPermission(permissions, request);

@@ -6,6 +6,8 @@
 
 package name.martingeisse.admin.security.authorization;
 
+import name.martingeisse.wicket.security.authorization.IPermissionRequest;
+
 /**
  * This permission request is used for core actions such as "log in".
  */

@@ -6,7 +6,9 @@
 
 package name.martingeisse.admin.security.authorization;
 
-import name.martingeisse.admin.security.SecurityUtil;
+import name.martingeisse.wicket.security.SecurityUtil;
+import name.martingeisse.wicket.security.authorization.IPermissionRequest;
+import name.martingeisse.wicket.security.authorization.IPermissions;
 
 /**
  * This exception type is thrown by {@link SecurityUtil#enforcePermission(IPermissionRequest)}

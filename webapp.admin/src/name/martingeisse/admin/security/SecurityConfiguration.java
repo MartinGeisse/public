@@ -7,10 +7,11 @@
 package name.martingeisse.admin.security;
 
 import name.martingeisse.admin.application.pages.NopLoginPage;
-import name.martingeisse.admin.security.authentication.DefaultAuthenticationStrategy;
-import name.martingeisse.admin.security.authentication.IAdminAuthenticationStrategy;
-import name.martingeisse.admin.security.authorization.DefaultAuthorizationStrategy;
-import name.martingeisse.admin.security.authorization.IAdminAuthorizationStrategy;
+import name.martingeisse.wicket.security.SecurityConfiguration;
+import name.martingeisse.wicket.security.authentication.DefaultAuthenticationStrategy;
+import name.martingeisse.wicket.security.authentication.IAuthenticationStrategy;
+import name.martingeisse.wicket.security.authorization.DefaultAuthorizationStrategy;
+import name.martingeisse.wicket.security.authorization.IAuthorizationStrategy;
 
 import org.apache.wicket.markup.html.WebPage;
 
@@ -59,12 +60,12 @@ public final class SecurityConfiguration {
 	/**
 	 * the authenticationStrategy
 	 */
-	private IAdminAuthenticationStrategy authenticationStrategy = new DefaultAuthenticationStrategy();
+	private IAuthenticationStrategy authenticationStrategy = new DefaultAuthenticationStrategy();
 
 	/**
 	 * the authorizationStrategy
 	 */
-	private IAdminAuthorizationStrategy authorizationStrategy = new DefaultAuthorizationStrategy();
+	private IAuthorizationStrategy authorizationStrategy = new DefaultAuthorizationStrategy();
 
 	/**
 	 * Constructor.
@@ -92,7 +93,7 @@ public final class SecurityConfiguration {
 	 * Getter method for the authenticationStrategy.
 	 * @return the authenticationStrategy
 	 */
-	public IAdminAuthenticationStrategy getAuthenticationStrategy() {
+	public IAuthenticationStrategy getAuthenticationStrategy() {
 		return authenticationStrategy;
 	}
 
@@ -100,7 +101,7 @@ public final class SecurityConfiguration {
 	 * Setter method for the authenticationStrategy.
 	 * @param authenticationStrategy the authenticationStrategy to set
 	 */
-	public void setAuthenticationStrategy(final IAdminAuthenticationStrategy authenticationStrategy) {
+	public void setAuthenticationStrategy(final IAuthenticationStrategy authenticationStrategy) {
 		this.authenticationStrategy = authenticationStrategy;
 	}
 
@@ -108,7 +109,7 @@ public final class SecurityConfiguration {
 	 * Getter method for the authorizationStrategy.
 	 * @return the authorizationStrategy
 	 */
-	public IAdminAuthorizationStrategy getAuthorizationStrategy() {
+	public IAuthorizationStrategy getAuthorizationStrategy() {
 		return authorizationStrategy;
 	}
 
@@ -116,7 +117,7 @@ public final class SecurityConfiguration {
 	 * Setter method for the authorizationStrategy.
 	 * @param authorizationStrategy the authorizationStrategy to set
 	 */
-	public void setAuthorizationStrategy(final IAdminAuthorizationStrategy authorizationStrategy) {
+	public void setAuthorizationStrategy(final IAuthorizationStrategy authorizationStrategy) {
 		this.authorizationStrategy = authorizationStrategy;
 	}
 
