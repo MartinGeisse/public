@@ -158,7 +158,7 @@ public final class DrawHelper {
 	 */
 	public void drawNumber(int cellX, int cellY, int n) {
 		String s = Integer.toString(n);
-		int xshift = s.length() > 1 ? (-cellSize/3) : 0;
+		int xshift = s.length() == 1 ? (cellSize/3) : 0;
 		int yshift = graphics.getFontMetrics().getAscent();
 		graphics.drawString(s, (cellX + cellOffsetX) * cellSize + xshift, (cellY + cellOffsetY) * cellSize + yshift);
 	}

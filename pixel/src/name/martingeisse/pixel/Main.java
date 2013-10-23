@@ -11,6 +11,8 @@ import javax.imageio.ImageIO;
 
 import name.martingeisse.pixel.common.Picture;
 import name.martingeisse.pixel.nonogram.NonogramBoard;
+import name.martingeisse.pixel.nonogram.NonogramSolver;
+import name.martingeisse.pixel.nonogram.NonogramStarterStrategy;
 
 /**
  * Ever-changing main program.
@@ -26,13 +28,11 @@ public class Main {
 	
 		BufferedImage inputImage = ImageIO.read(new File("testpic1.png"));
 		Picture picture = new Picture(inputImage);
-		NonogramBoard board = new NonogramBoard(picture, true);
+		NonogramBoard board = new NonogramBoard(picture, false);
+		NonogramSolver solver = new NonogramSolver(board);
 		
+		new NonogramStarterStrategy().run(solver);
 		
-//		Picture picture = new Picture(5, 3);
-//		picture.setPixel(0, 1, true);
-//		picture.setPixel(0, 2, false);
-//		picture.setPixel(3, 1, true);
 		board.renderToPngFile(20, true, new File("test.png"));
 		
 	}
