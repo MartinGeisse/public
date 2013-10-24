@@ -4,7 +4,7 @@
 
 package name.martingeisse.pixel.nonogram.fast;
 
-import name.martingeisse.pixel.nonogram.NonogramSolver;
+import name.martingeisse.pixel.nonogram.NonogramBoard;
 import name.martingeisse.pixel.nonogram.common.NonogramSolutionStrategy;
 
 /**
@@ -16,13 +16,13 @@ import name.martingeisse.pixel.nonogram.common.NonogramSolutionStrategy;
 public class NonogramFastStrategy extends NonogramSolutionStrategy {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.pixel.nonogram.common.NonogramSolutionStrategy#run(name.martingeisse.pixel.nonogram.NonogramSolver)
+	 * @see name.martingeisse.pixel.nonogram.common.NonogramSolutionStrategy#run(name.martingeisse.pixel.nonogram.NonogramBoard)
 	 */
 	@Override
-	public void run(NonogramSolver solver) {
-		new SinglePinnedSpanStrategy().run(solver);
-		new FillSmallBorderGapsStrategy().run(solver);
-		new CombinedExtremeShiftStrategy().run(solver);
+	public void run(NonogramBoard board) {
+		new SinglePinnedSpanStrategy().run(board);
+		new FillSmallBorderGapsStrategy().run(board);
+		new CombinedExtremeShiftStrategy().run(board);
 	}
 
 }

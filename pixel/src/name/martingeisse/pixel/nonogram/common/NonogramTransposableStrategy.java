@@ -4,7 +4,8 @@
 
 package name.martingeisse.pixel.nonogram.common;
 
-import name.martingeisse.pixel.nonogram.NonogramSolver;
+import name.martingeisse.pixel.common.InconsistencyException;
+import name.martingeisse.pixel.nonogram.NonogramBoard;
 
 /**
  * Most strategies inherit from this class.
@@ -21,9 +22,9 @@ import name.martingeisse.pixel.nonogram.NonogramSolver;
 public abstract class NonogramTransposableStrategy extends NonogramSolutionStrategy {
 
 	/**
-	 * the solver
+	 * the board
 	 */
-	private NonogramSolver solver;
+	private NonogramBoard board;
 	
 	/**
 	 * the transposed
@@ -31,25 +32,25 @@ public abstract class NonogramTransposableStrategy extends NonogramSolutionStrat
 	private boolean transposed;
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.pixel.nonogram.NonogramSolutionStrategy#run(name.martingeisse.pixel.nonogram.NonogramSolver)
+	 * @see name.martingeisse.pixel.nonogram.NonogramSolutionStrategy#run(name.martingeisse.pixel.nonogram.NonogramBoard)
 	 */
 	@Override
-	public final void run(NonogramSolver solver) {
-		this.solver = solver;
+	public final void run(NonogramBoard board) {
+		this.board = board;
 		this.transposed = false;
-		System.out.println("RUNNING " + getClass() + " for rows");
+		// System.out.println("RUNNING " + getClass() + " for rows");
 		runForTransposition();
 		this.transposed = true;
-		System.out.println("RUNNING " + getClass() + " for columns");
+		// System.out.println("RUNNING " + getClass() + " for columns");
 		runForTransposition();
 	}
 
 	/**
-	 * Getter method for the solver.
-	 * @return the solver
+	 * Getter method for the board.
+	 * @return the board
 	 */
-	public final NonogramSolver getSolver() {
-		return solver;
+	public NonogramBoard getBoard() {
+		return board;
 	}
 
 	/**
@@ -69,28 +70,28 @@ public abstract class NonogramTransposableStrategy extends NonogramSolutionStrat
 	 * @return the size of the board along the primary axis
 	 */
 	public final int getPrimarySize() {
-		return transposed ? solver.getBoard().getWidth() : solver.getBoard().getHeight();
+		return transposed ? board.getWidth() : board.getHeight();
 	}
 	
 	/**
 	 * @return the size of the board along the secondary axis
 	 */
 	public final int getSecondarySize() {
-		return transposed ? solver.getBoard().getHeight() : solver.getBoard().getWidth();
+		return transposed ? board.getHeight() : board.getWidth();
 	}
 	
 	/**
 	 * @return the primary hints for the current transposition state
 	 */
 	public final int[][] getPrimaryHints() {
-		return transposed ? solver.getBoard().getColumnHints() : solver.getBoard().getRowHints();
+		return transposed ? board.getColumnHints() : board.getRowHints();
 	}
 
 	/**
 	 * @return the secondary hints for the current transposition state
 	 */
 	public final int[][] getSecondaryHints() {
-		return transposed ? solver.getBoard().getRowHints() : solver.getBoard().getColumnHints();
+		return transposed ? board.getRowHints() : board.getColumnHints();
 	}
 
 	/**
@@ -100,9 +101,9 @@ public abstract class NonogramTransposableStrategy extends NonogramSolutionStrat
 	 */
 	public final Boolean getPixel(int primary, int secondary) {
 		if (transposed) {
-			return solver.getBoard().getPixel(primary, secondary);
+			return board.getPixel(primary, secondary);
 		} else {
-			return solver.getBoard().getPixel(secondary, primary);
+			return board.getPixel(secondary, primary);
 		}
 	}
 
@@ -112,11 +113,13 @@ public abstract class NonogramTransposableStrategy extends NonogramSolutionStrat
 	 * @param filled the pixel color
 	 */
 	public final void setPixel(int primary, int secondary, Boolean filled) {
-		if (transposed) {
-			solver.getBoard().setPixel(primary, secondary, filled);
-		} else {
-			solver.getBoard().setPixel(secondary, primary, filled);
+		int x = transposed ? primary : secondary;
+		int y = transposed ? secondary : primary;
+		Boolean previousPixel = board.getPixel(x, y);
+		if (previousPixel != null && !previousPixel.equals(filled)) {
+			throw new InconsistencyException();
 		}
+		board.setPixel(x, y, filled);
 	}
 
 	/**
@@ -169,7 +172,7 @@ public abstract class NonogramTransposableStrategy extends NonogramSolutionStrat
 	 * @return the slice
 	 */
 	public final Boolean[] getPrimarySlice(int primary) {
-		return transposed ? solver.getBoard().copyColumn(primary) : solver.getBoard().copyRow(primary);
+		return transposed ? board.copyColumn(primary) : board.copyRow(primary);
 	}
 	
 	/**
@@ -180,7 +183,7 @@ public abstract class NonogramTransposableStrategy extends NonogramSolutionStrat
 	 * @return the slice
 	 */
 	public final Boolean[] getSecondarySlice(int secondary) {
-		return transposed ? solver.getBoard().copyRow(secondary) : solver.getBoard().copyColumn(secondary);
+		return transposed ? board.copyRow(secondary) : board.copyColumn(secondary);
 	}
 	
 }
