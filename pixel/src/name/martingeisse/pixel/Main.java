@@ -34,8 +34,10 @@ public class Main {
 		NonogramSolver solver = new NonogramSolver(board);
 		
 		new NonogramStarterStrategy().run(solver);
-		new NonogramFastStrategy().run(solver);
-		new SliceSpanCombinationsStrategy().run(solver);
+		for (int i=0; i<100; i++) {
+			new NonogramFastStrategy().run(solver);
+			new SliceSpanCombinationsStrategy().run(solver);
+		}
 		
 		board.renderToPngFile(20, true, new File("test.png"));
 		

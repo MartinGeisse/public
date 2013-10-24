@@ -20,6 +20,11 @@ public class SliceSpanCombinationsStrategy extends NonogramSlicingStrategy {
 	 */
 	private Boolean[] target;
 	
+	/**
+	 * the logging
+	 */
+	private boolean logging;
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.pixel.nonogram.common.NonogramSlicingStrategy#handleSlice(int, int[])
 	 */
@@ -41,7 +46,7 @@ public class SliceSpanCombinationsStrategy extends NonogramSlicingStrategy {
 			possibleSpanStarts[i] = new ArrayList<Integer>();
 			
 			// loop over possible start locations and add all to the list that are compatible with the existing slice
-			possibleStarts: for (int j=0; j<slice.length - spanLength; j++) {
+			possibleStarts: for (int j=0; j<=slice.length - spanLength; j++) {
 				
 				// check for collision of the current start location with the existing slice
 				for (int k=0; k<spanLength; k++) {
@@ -64,7 +69,7 @@ public class SliceSpanCombinationsStrategy extends NonogramSlicingStrategy {
 
 				// check end delimiter except for the last span
 				if (i < primaryHints.length - 1) {
-					if (j >= slice.length - 2) {
+					if (j >= slice.length - spanLength - 1) {
 						continue possibleStarts;
 					}
 					Boolean existing = slice[j + spanLength];
@@ -78,42 +83,42 @@ public class SliceSpanCombinationsStrategy extends NonogramSlicingStrategy {
 		}
 		
 		// 
-		System.out.println("slice: " + (isTransposed() ? "column" : "row") + " " + primaryLocation);
-		System.out.print("existing: ");
-		for (int i=0; i<slice.length; i++) {
-			Boolean existing = slice[i];
-			System.out.print(existing == null ? '.' : existing ? '#' : 'x');
-		}
-		System.out.println();
-		for (int i=0; i<primaryHints.length; i++) {
-			System.out.print("span #" + i + ": ");
-			for (int start : possibleSpanStarts[i]) {
-				System.out.print("" + start + " ");
-			}
-			System.out.println();
-		}
-		
-		target = null;
-		findRecursive(slice, primaryHints, possibleSpanStarts, new int[primaryHints.length], 0);
-		System.out.print("target: ");
-		if (target == null) {
-			System.out.println("null");
-		} else {
-			for (int i=0; i<slice.length; i++) {
-				System.out.print("" + (target[i] == null ? '.' : target[i] ? '#' : 'x'));
-			}
-			System.out.println();
-		}
-		
-		
-//		if (target != null) {
-//			for (int i=0; i<slice.length; i++) {
-//				patchPixel(primaryLocation, i, target[i]);
+//		System.out.println("slice: " + (isTransposed() ? "column" : "row") + " " + primaryLocation);
+//		System.out.print("existing: ");
+//		for (int i=0; i<slice.length; i++) {
+//			Boolean existing = slice[i];
+//			System.out.print(existing == null ? '.' : existing ? '#' : 'x');
+//		}
+//		System.out.println();
+//		for (int i=0; i<primaryHints.length; i++) {
+//			System.out.print("span #" + i + ": ");
+//			for (int start : possibleSpanStarts[i]) {
+//				System.out.print("" + start + " ");
 //			}
+//			System.out.println();
 //		}
 		
+		target = null;
+		logging = false & (primaryLocation == 22);
+		findRecursive(slice, primaryHints, possibleSpanStarts, new int[primaryHints.length], 0);
 		
-		System.out.println();
+//		System.out.print("target: ");
+//		if (target == null) {
+//			System.out.println("null");
+//		} else {
+//			for (int i=0; i<slice.length; i++) {
+//				System.out.print("" + (target[i] == null ? '.' : target[i] ? '#' : 'x'));
+//			}
+//			System.out.println();
+//		}
+		
+		if (target != null) {
+			for (int i=0; i<slice.length; i++) {
+				patchPixel(primaryLocation, i, target[i]);
+			}
+		}
+		
+//		System.out.println();
 	}
 
 	/**
@@ -125,17 +130,37 @@ public class SliceSpanCombinationsStrategy extends NonogramSlicingStrategy {
 		if (consideredSpans == actualSpanStarts.length) {
 			
 			// build possible solution
-			Boolean[] possibleSolution = slice.clone();
+			Boolean[] possibleSolution = new Boolean[slice.length];
+			for (int i=0; i<possibleSolution.length; i++) {
+				possibleSolution[i] = false;
+			}
 			for (int i=0; i<actualSpanStarts.length; i++) {
 				int start = actualSpanStarts[i];
-				if (i > 0) {
-					possibleSolution[start - 1] = false;
-				}
-				if (i < actualSpanStarts.length - 1) {
-					possibleSolution[start + spanLengths[i]] = false;
-				}
 				for (int j=0; j<spanLengths[i]; j++) {
 					possibleSolution[start + j] = true;
+				}
+			}
+
+			//
+			if (logging) {
+				System.out.print("found possible solution: ");
+				for (int i=0; i<possibleSolution.length; i++) {
+					System.out.print("" + (possibleSolution[i] == null ? '.' : possibleSolution[i] ? '#' : 'x'));
+				}
+			}
+
+			// check again that this solution is compatible with the slice. This should be the case for known-empty
+			// cells, but we also have to check for known-filled cells to discard "solutions" that do not match
+			// already filled cells in the board. Discarding possible solutions reduces the number of solutions
+			// to merge and thus makes it more likely to find known cells.
+			for (int i=0; i<slice.length; i++) {
+				if (slice[i] != null && possibleSolution[i] != null) {
+					if (!slice[i].equals(possibleSolution[i])) {
+						if (logging) {
+							System.out.println(" incompatible");
+						}
+						return;
+					}
 				}
 			}
 			
@@ -152,6 +177,9 @@ public class SliceSpanCombinationsStrategy extends NonogramSlicingStrategy {
 				}
 			}
 			
+			if (logging) {
+				System.out.println(" OK");
+			}
 			return;
 		}
 		
