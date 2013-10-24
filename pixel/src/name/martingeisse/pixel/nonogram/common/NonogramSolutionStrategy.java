@@ -2,7 +2,9 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.pixel.nonogram;
+package name.martingeisse.pixel.nonogram.common;
+
+import name.martingeisse.pixel.nonogram.NonogramSolver;
 
 /**
  * Base class to implement solution strategies.

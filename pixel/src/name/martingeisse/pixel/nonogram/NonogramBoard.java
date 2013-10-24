@@ -18,12 +18,12 @@ public final class NonogramBoard extends AbstractBoard {
 	/**
 	 * the rowHints
 	 */
-	private final int[][] rowHints;
+	private int[][] rowHints;
 	
 	/**
 	 * the columnHints
 	 */
-	private final int[][] columnHints;
+	private int[][] columnHints;
 	
 	/**
 	 * Constructor.
@@ -35,6 +35,28 @@ public final class NonogramBoard extends AbstractBoard {
 		super(picture, solved);
 		rowHints = buildHints(picture, true);
 		columnHints = buildHints(picture, false);
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public NonogramBoard clone() {
+		NonogramBoard clone = (NonogramBoard)super.clone();
+		clone.rowHints = cloneArrays(clone.rowHints);
+		clone.columnHints = cloneArrays(clone.columnHints);
+		return clone;
+	}
+	
+	/**
+	 * 
+	 */
+	private static int[][] cloneArrays(int[][] a) {
+		a = a.clone();
+		for (int i=0; i<a.length; i++) {
+			a[i] = a[i].clone();
+		}
+		return a;
 	}
 	
 	/**
@@ -130,6 +152,34 @@ public final class NonogramBoard extends AbstractBoard {
 		}
 		return result;
 	}
+	
+	/**
+	 * Creates a copy of a pixel row.
+	 * @param index the row index
+	 * @return the row copy
+	 */
+	public Boolean[] copyRow(int index) {
+		int width = getWidth();
+		Boolean[] result = new Boolean[width];
+		for (int i=0; i<width; i++) {
+			result[i] = getPixel(i, index);
+		}
+		return result;
+	}
+	
+	/**
+	 * Creates a copy of a pixel column.
+	 * @param index the column index
+	 * @return the column copy
+	 */
+	public Boolean[] copyColumn(int index) {
+		int height = getHeight();
+		Boolean[] result = new Boolean[height];
+		for (int i=0; i<height; i++) {
+			result[i] = getPixel(index, i);
+		}
+		return result;
+	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.pixel.common.AbstractMatrix#renderToDrawHelper(int, boolean)
@@ -165,8 +215,8 @@ public final class NonogramBoard extends AbstractBoard {
 		for (int i=0; i<hints.length; i++) {
 			int[] hintsEntry = hints[i];
 			for (int j=0; j<hintsEntry.length; j++) {
-				int x = (trueForRowsFalseForColumns ? -1-j : i);
-				int y = (trueForRowsFalseForColumns ? i : -1-j);
+				int x = (trueForRowsFalseForColumns ? j-hintsEntry.length : i);
+				int y = (trueForRowsFalseForColumns ? i : j-hintsEntry.length);
 				helper.drawNumber(x, y, hintsEntry[j]);
 			}
 		}

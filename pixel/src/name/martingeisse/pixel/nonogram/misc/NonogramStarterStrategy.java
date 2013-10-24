@@ -2,7 +2,9 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.pixel.nonogram;
+package name.martingeisse.pixel.nonogram.misc;
+
+import name.martingeisse.pixel.nonogram.common.NonogramSlicingStrategy;
 
 /**
  * Implements a few "starter" strategies. These strategies do not take
@@ -17,26 +19,11 @@ public class NonogramStarterStrategy extends NonogramSlicingStrategy {
 	@Override
 	protected void handleSlice(int primaryLocation, int[] primaryHints) {
 		
-		//
+		// handle empty slices
 		if (primaryHints.length == 0) {
 			setPixels(primaryLocation, 0, getSecondarySize(), false);
 			return;
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.pixel.nonogram.NonogramTransposableStrategy#runForTransposition()
-	 */
-	@Override
-	public void runForTransposition() {
-		int primarySize = getPrimarySize();
-		int secondarySize = getSecondarySize();
-		int[][] primaryHints = getPrimaryHints();
-		for (int i=0; i<primarySize; i++) {
-		}
-	}
-
-	private void findStarter(int primary, int[] primaryHints) {
 		
 		// find the number of defined and missing cells
 		int secondarySize = getSecondarySize();
@@ -51,7 +38,7 @@ public class NonogramStarterStrategy extends NonogramSlicingStrategy {
 		for (int primaryHint : primaryHints) {
 			int left = primaryHint - missing;
 			if (left > 0) {
-				setPixels(primary, minStart + missing, left, true);
+				setPixels(primaryLocation, minStart + missing, left, true);
 			}
 			minStart = minStart + primaryHint + 1;
 		}

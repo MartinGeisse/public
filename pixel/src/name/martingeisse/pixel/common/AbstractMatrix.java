@@ -12,7 +12,7 @@ import java.io.IOException;
 /**
  * Base class for picture and board implementations.
  */
-public abstract class AbstractMatrix {
+public abstract class AbstractMatrix implements Cloneable {
 
 	/**
 	 * the width
@@ -32,6 +32,18 @@ public abstract class AbstractMatrix {
 	public AbstractMatrix(int width, int height) {
 		this.width = width;
 		this.height = height;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public AbstractMatrix clone() {
+		try {
+			return (AbstractMatrix)super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	/**

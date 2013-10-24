@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.pixel.nonogram;
+package name.martingeisse.pixel.nonogram.common;
 
 /**
  * Base class for all strategies that "slice" the board into rows/columns

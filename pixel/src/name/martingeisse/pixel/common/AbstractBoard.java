@@ -5,6 +5,7 @@
 package name.martingeisse.pixel.common;
 
 
+
 /**
  * Base class for game boards. This class manages a matrix of
  * pixels that can be "indeterminate" (represented by null and
@@ -17,7 +18,7 @@ public abstract class AbstractBoard extends AbstractMatrix {
 	/**
 	 * the pixels
 	 */
-	private final Boolean[] pixels;
+	private Boolean[] pixels;
 
 	/**
 	 * Constructor.
@@ -37,6 +38,16 @@ public abstract class AbstractBoard extends AbstractMatrix {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public AbstractBoard clone() {
+		AbstractBoard clone = (AbstractBoard)super.clone();
+		clone.pixels = clone.pixels.clone();
+		return clone;
+	}
+	
 	/**
 	 * Returns the color of a single pixel.
 	 * @param x the x position of the pixel

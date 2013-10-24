@@ -21,6 +21,14 @@ public class NonogramSolver {
 	public NonogramSolver(NonogramBoard board) {
 		this.board = board;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	protected NonogramSolver clone() {
+		return new NonogramSolver(board.clone());
+	}
 
 	/**
 	 * Getter method for the board.

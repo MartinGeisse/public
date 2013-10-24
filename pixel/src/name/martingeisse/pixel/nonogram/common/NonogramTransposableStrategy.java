@@ -2,7 +2,9 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.pixel.nonogram;
+package name.martingeisse.pixel.nonogram.common;
+
+import name.martingeisse.pixel.nonogram.NonogramSolver;
 
 /**
  * Most strategies inherit from this class.
@@ -35,8 +37,10 @@ public abstract class NonogramTransposableStrategy extends NonogramSolutionStrat
 	public final void run(NonogramSolver solver) {
 		this.solver = solver;
 		this.transposed = false;
+		System.out.println("RUNNING " + getClass() + " for rows");
 		runForTransposition();
 		this.transposed = true;
+		System.out.println("RUNNING " + getClass() + " for columns");
 		runForTransposition();
 	}
 
@@ -140,6 +144,43 @@ public abstract class NonogramTransposableStrategy extends NonogramSolutionStrat
 		for (int i=0; i<count; i++) {
 			setPixel(primary, secondaryStart + i, filled);
 		}
+	}
+	
+	/**
+	 * Like patchPixels(), but will leave the current pixel value alone
+	 * if the patch value is null, instead of overwriting with null.
+	 * 
+	 * @param primary the location along the primary axis
+	 * @param secondaryStart the startlocation along the secondary axis
+	 * @param count the number of pixels
+	 * @param filled the pixel color
+	 */
+	public final void patchPixels(int primary, int secondaryStart, int count, Boolean filled) {
+		for (int i=0; i<count; i++) {
+			patchPixel(primary, secondaryStart + i, filled);
+		}
+	}
+	
+	/**
+	 * Gets a primary slice, i.e. a row or column with a single primary
+	 * location that expands along the secondary axis.
+	 * 
+	 * @param primary the primary location
+	 * @return the slice
+	 */
+	public final Boolean[] getPrimarySlice(int primary) {
+		return transposed ? solver.getBoard().copyColumn(primary) : solver.getBoard().copyRow(primary);
+	}
+	
+	/**
+	 * Gets a secondary slice, i.e. a row or column with a single secondary
+	 * location that expands along the primary axis.
+	 * 
+	 * @param secondary the secondary location
+	 * @return the slice
+	 */
+	public final Boolean[] getSecondarySlice(int secondary) {
+		return transposed ? solver.getBoard().copyRow(secondary) : solver.getBoard().copyColumn(secondary);
 	}
 	
 }
