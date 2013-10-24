@@ -24,15 +24,15 @@ public class FillSmallBorderGapsStrategy extends NonogramSlicingStrategy {
 		}
 		Boolean[] slice = getPrimarySlice(primaryLocation);
 		
-		System.out.println("primary: " + primaryLocation);
+//		System.out.println("primary: " + primaryLocation);
 		
 		// first span
 		{
 			int spanLength = primaryHints[0];
-			System.out.println("first span length: " + spanLength);
+//			System.out.println("first span length: " + spanLength);
 			int marker = 0;
 			for (int i=0; i < marker + spanLength; i++) {
-				System.out.println("* " + i);
+//				System.out.println("* " + i);
 				if (slice[i] != null) {
 					if (slice[i]) {
 						break;
@@ -49,10 +49,10 @@ public class FillSmallBorderGapsStrategy extends NonogramSlicingStrategy {
 		// last span
 		{
 			int spanLength = primaryHints[primaryHints.length - 1];
-			System.out.println("last span length: " + spanLength);
+//			System.out.println("last span length: " + spanLength);
 			int marker = slice.length-1;
 			for (int i=marker; i > marker - spanLength; i--) {
-				System.out.println("* " + i);
+//				System.out.println("* " + i);
 				if (slice[i] != null) {
 					if (slice[i]) {
 						break;

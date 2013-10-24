@@ -14,6 +14,7 @@ import name.martingeisse.pixel.nonogram.NonogramBoard;
 import name.martingeisse.pixel.nonogram.NonogramSolver;
 import name.martingeisse.pixel.nonogram.fast.NonogramFastStrategy;
 import name.martingeisse.pixel.nonogram.misc.NonogramStarterStrategy;
+import name.martingeisse.pixel.nonogram.misc.SliceSpanCombinationsStrategy;
 
 /**
  * Ever-changing main program.
@@ -34,6 +35,7 @@ public class Main {
 		
 		new NonogramStarterStrategy().run(solver);
 		new NonogramFastStrategy().run(solver);
+		new SliceSpanCombinationsStrategy().run(solver);
 		
 		board.renderToPngFile(20, true, new File("test.png"));
 		
