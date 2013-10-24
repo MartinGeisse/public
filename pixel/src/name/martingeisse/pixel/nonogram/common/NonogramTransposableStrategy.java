@@ -38,11 +38,11 @@ public abstract class NonogramTransposableStrategy extends NonogramSolutionStrat
 	public final void run(NonogramBoard board) {
 		this.board = board;
 		this.transposed = false;
-		// System.out.println("RUNNING " + getClass() + " for rows");
+//		 System.out.println("RUNNING " + getClass() + " for rows");
 		runForTransposition();
 		this.transposed = true;
-		// System.out.println("RUNNING " + getClass() + " for columns");
-		runForTransposition();
+//		 System.out.println("RUNNING " + getClass() + " for columns");
+		 runForTransposition();
 	}
 
 	/**
@@ -117,7 +117,7 @@ public abstract class NonogramTransposableStrategy extends NonogramSolutionStrat
 		int y = transposed ? secondary : primary;
 		Boolean previousPixel = board.getPixel(x, y);
 		if (previousPixel != null && !previousPixel.equals(filled)) {
-			throw new InconsistencyException();
+			throw new InconsistencyException("inconsistency at (" + x + ", " + y + "): previous: " + previousPixel + ", current: " + filled);
 		}
 		board.setPixel(x, y, filled);
 	}
