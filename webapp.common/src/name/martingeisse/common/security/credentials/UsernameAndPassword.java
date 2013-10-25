@@ -4,16 +4,13 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.common.security;
+package name.martingeisse.common.security.credentials;
 
-import name.martingeisse.common.security.authentication.IUserProperties;
-import name.martingeisse.common.security.credentials.ICredentials;
 
 /**
- * Simple username / password pair. Can be used as credentials
- * or as known user properties.
+ * Simple username / password pair credentials.
  */
-public final class UsernameAndPassword implements ICredentials, IUserProperties {
+public final class UsernameAndPassword implements ICredentials {
 
 	/**
 	 * the username

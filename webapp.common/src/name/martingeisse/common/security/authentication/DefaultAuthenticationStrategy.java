@@ -21,6 +21,14 @@ public class DefaultAuthenticationStrategy implements IAuthenticationStrategy {
 	 * The singleton user identity of the application.
 	 */
 	public static final IUserIdentity SINGLETON_USER_IDENTITY = new IUserIdentity() {
+
+		/* (non-Javadoc)
+		 * @see name.martingeisse.common.security.IPurgeable#purge()
+		 */
+		@Override
+		public void purge() {
+		}
+		
 	};
 	
 	/* (non-Javadoc)

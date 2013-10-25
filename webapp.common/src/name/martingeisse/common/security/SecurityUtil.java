@@ -105,16 +105,20 @@ public class SecurityUtil {
 		}
 		logger.trace("login permission granted");
 
-		// clear previous session
+		// purge sensitive data that is now irrelevant
+		logger.trace("purging sensitive data");
+		credentials.purge();
+		userProperties.purge();
+		if (userIdentity != null) {
+			userIdentity.purge();
+		}
+		logger.info("sensitive data purged");
+
+		// store the login data in the session
 		logger.trace("performing on-login actions");
 		final LoginData loginData = new LoginData(credentials, userProperties, userIdentity, permissions);
 		provider.onLogin(loginData);
 		logger.info("user logged in");
-		
-		// purge sensitive data that is now irrelevant
-		logger.trace("purging sensitive data");
-		TODO
-		logger.info("sensitive data purged");
 
 	}
 
