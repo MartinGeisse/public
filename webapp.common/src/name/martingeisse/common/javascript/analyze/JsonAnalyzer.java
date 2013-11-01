@@ -6,6 +6,7 @@
 
 package name.martingeisse.common.javascript.analyze;
 
+import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.json.simple.JSONValue;
+import org.json.simple.parser.ParseException;
 
 /**
  * This class provides basic functionality to dissect a JSON
@@ -64,7 +66,11 @@ public final class JsonAnalyzer {
 	 * @return the analyzer
 	 */
 	public static JsonAnalyzer parse(final String json) {
-		return new JsonAnalyzer(JSONValue.parse(json));
+		try {
+			return new JsonAnalyzer(JSONValue.parseWithException(json));
+		} catch (ParseException e) {
+			throw new RuntimeException("Parse exception in JSON input: " + json, e);
+		}
 	}
 	
 	/**
@@ -73,7 +79,13 @@ public final class JsonAnalyzer {
 	 * @return the analyzer
 	 */
 	public static JsonAnalyzer parse(final Reader jsonReader) {
-		return new JsonAnalyzer(JSONValue.parse(jsonReader));
+		try {
+			return new JsonAnalyzer(JSONValue.parseWithException(jsonReader));
+		} catch (ParseException e) {
+			throw new RuntimeException("Parse exception in JSON input", e);
+		} catch (IOException e) {
+			throw new RuntimeException("IOException while parsing JSON", e);
+		}
 	}
 
 	/**
@@ -499,7 +511,7 @@ public final class JsonAnalyzer {
 	 * @return the exception
 	 */
 	public JsonAnalysisException expectedException(String what) {
-		return exception("expected " + what + ", found " + value + (value == null ? "" : " (" + value.getClass().getSimpleName() + ")"));
+		return exception("expected " + what + ", found " + value + (value == null ? "(toplevel)" : " (" + value.getClass().getSimpleName() + ")"));
 	}
 	
 	/**
