@@ -180,7 +180,7 @@ public final class NonogramBoard extends AbstractBoard {
 		}
 		return result;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.pixel.common.AbstractMatrix#renderToDrawHelper(int, boolean)
 	 */

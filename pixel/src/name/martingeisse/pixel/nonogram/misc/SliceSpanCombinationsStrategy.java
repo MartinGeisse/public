@@ -82,6 +82,8 @@ public class SliceSpanCombinationsStrategy extends NonogramSlicingStrategy {
 			}
 		}
 		
+		removeCollidingLocations(primaryHints, possibleSpanStarts);
+		
 		// 
 //		System.out.println("slice: " + (isTransposed() ? "column" : "row") + " " + primaryLocation);
 //		System.out.print("existing: ");
@@ -100,7 +102,11 @@ public class SliceSpanCombinationsStrategy extends NonogramSlicingStrategy {
 		
 		target = null;
 		logging = false & (primaryLocation == 22);
-		findRecursive(slice, primaryHints, possibleSpanStarts, new int[primaryHints.length], 0);
+		try {
+			findRecursive(slice, primaryHints, possibleSpanStarts, new int[primaryHints.length], 0);
+		} catch (GivingUpException e) {
+			return;
+		}
 		
 //		System.out.print("target: ");
 //		if (target == null) {
@@ -121,6 +127,28 @@ public class SliceSpanCombinationsStrategy extends NonogramSlicingStrategy {
 //		System.out.println();
 	}
 
+	/**
+	 * Removes locations from the list of possible locations where a collision is inevitable.
+	 */
+	private void removeCollidingLocations(int[] spanLengths, List<Integer>[] possibleSpanStarts) {
+//		int remainingSpace = getPrimarySize();
+//		
+//		
+//		
+//		System.out.println("removeCollidingLocations");
+//		System.out.print("span lengths: ");
+//		for (int i=0; i<spanLengths.length; i++) {
+//			System.out.print(" " + spanLengths[i]);
+//		}
+//		System.out.println();
+//		for (int i=0; i<possibleSpanStarts.length; i++) {
+//			System.out.println("span " + i + ": " + StringUtils.join(possibleSpanStarts[i], ", "));
+//		}
+		
+		// TODO
+		
+	}
+	
 	/**
 	 * 
 	 */
@@ -165,18 +193,24 @@ public class SliceSpanCombinationsStrategy extends NonogramSlicingStrategy {
 			}
 			
 			// merge into target
+			boolean targetHasInformation = false;
 			if (target == null) {
 				target = possibleSolution;
+				targetHasInformation = true;
 			} else {
 				for (int i=0; i<slice.length; i++) {
 					if (target[i] != null) {
 						if (!target[i].equals(possibleSolution[i])) {
 							target[i] = null;
+						} else if (slice[i] == null) {
+							targetHasInformation = true;
 						}
 					}
 				}
 			}
-			
+			if (!targetHasInformation) {
+				throw new GivingUpException();
+			}
 			if (logging) {
 				System.out.println(" OK");
 			}
@@ -185,14 +219,36 @@ public class SliceSpanCombinationsStrategy extends NonogramSlicingStrategy {
 		
 		// try all locations for the next span
 		int minStart = (consideredSpans == 0 ? 0 : (actualSpanStarts[consideredSpans - 1] + spanLengths[consideredSpans - 1] + 1));
-		for (Integer possibleSpanStart : possibleSpanStarts[consideredSpans]) {
+		possibleSpanStarts: for (Integer possibleSpanStart : possibleSpanStarts[consideredSpans]) {
+			
+			// compare to the placement of the previous span
 			if (possibleSpanStart < minStart) {
 				continue;
 			}
+			
+			// compare to previously known cells
+			for (int i=0; i<spanLengths[consideredSpans]; i++) {
+				Boolean previous = slice[possibleSpanStart + i];
+				if (previous != null && !previous) {
+					continue possibleSpanStarts;
+				}
+			}
+			if (consideredSpans < actualSpanStarts.length - 1) {
+				Boolean previous = slice[possibleSpanStart + spanLengths[consideredSpans]];
+				if (previous != null && previous) {
+					continue possibleSpanStarts;
+				}
+			}
+			
+			// try placement recursively
 			actualSpanStarts[consideredSpans] = possibleSpanStart;
 			findRecursive(slice, spanLengths, possibleSpanStarts, actualSpanStarts, consideredSpans + 1);
+			
 		}
 		
 	}
 
+	private static class GivingUpException extends RuntimeException {
+	}
+	
 }

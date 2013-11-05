@@ -1,0 +1,13 @@
+
+Die Schablonen gibt es am 19.
+
+Schablonen mit Buchstaben gekennzeichnet.
+
+qr-code-tag: hinweis zum Anordnen, aber immer noch als Rätsel.
+
+Jede Schablone kann man auf 8 Arten anordnen (1. egal)
+-> 8^(N-1) Möglichkeiten.
++ Verschiebung (Variation: 10) jeweils in X und Y
+-> 800^(N-1)
+
+4 Schablonen -> 800^3 = 512.000.000 Möglichkeiten

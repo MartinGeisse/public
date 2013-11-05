@@ -145,7 +145,7 @@ public final class DrawHelper {
 		int x = (cellX + cellOffsetX) * cellSize;
 		int y = (cellY + cellOffsetY) * cellSize;
 		int h = cellSize / 2;
-		int q = cellSize / 4;
+		int q = 1; // cellSize / 4;
 		graphics.drawLine(x + h - q, y + h - q, x + h + q, y + h + q);
 		graphics.drawLine(x + h - q, y + h + q, x + h + q, y + h - q);
 	}
@@ -169,14 +169,24 @@ public final class DrawHelper {
 	 * @param cellsY the number of cells in the y direction
 	 */
 	public void drawGrid(int cellsX, int cellsY) {
+		graphics.setColor(Color.lightGray);
 		int baseX = cellOffsetX * cellSize;
 		int baseY = cellOffsetY * cellSize;
 		for (int i = 0; i <= cellsX; i++) {
 			graphics.drawLine(baseX + i * cellSize, baseY, baseX + i * cellSize, baseY + cellsY * cellSize);
+			if (i % 5 == 0) {
+				graphics.drawLine(baseX + i * cellSize + 1, baseY, baseX + i * cellSize + 1, baseY + cellsY * cellSize);
+				graphics.drawLine(baseX + i * cellSize + 2, baseY, baseX + i * cellSize + 2, baseY + cellsY * cellSize);
+			}
 		}
 		for (int i = 0; i <= cellsY; i++) {
 			graphics.drawLine(baseX, baseY + i * cellSize, baseX + cellsX * cellSize, baseY + i * cellSize);
+			if (i % 5 == 0) {
+				graphics.drawLine(baseX, baseY + i * cellSize + 1, baseX + cellsX * cellSize, baseY + i * cellSize + 1);
+				graphics.drawLine(baseX, baseY + i * cellSize + 2, baseX + cellsX * cellSize, baseY + i * cellSize + 2);
+			}
 		}
+		graphics.setColor(Color.black);
 	}
 
 }

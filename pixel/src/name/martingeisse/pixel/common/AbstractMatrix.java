@@ -104,5 +104,5 @@ public abstract class AbstractMatrix implements Cloneable {
 		helper.dispose();
 		helper.writePngFile(file);
 	}
-	
+
 }

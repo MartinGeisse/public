@@ -35,46 +35,47 @@ public abstract class NonogramSolutionStrategy {
 	 * @return true on success, false on failure
 	 */
 	public static boolean forkOn(NonogramBoard board, int x, int y, int depth) {
-		boolean falseWorks = tryBranch(board, x, y, depth, false);
-		boolean trueWorks = tryBranch(board, x, y, depth, true);
+		NonogramBoard falseBoard = tryBranch(board, x, y, depth, false);
+		NonogramBoard trueBoard = tryBranch(board, x, y, depth, true);
 		boolean winnerValue;
-		if (falseWorks) {
-			if (trueWorks) {
+		if (falseBoard != null) {
+			if (trueBoard != null) {
+				trueBoard.mergeForkFrom(falseBoard);
+				board.mergeResultsFrom(trueBoard);
 				return false;
 			} else {
 				winnerValue = false;
 			}
 		} else {
-			if (trueWorks) {
+			if (trueBoard != null) {
 				winnerValue = true;
 			} else {
 				throw new InconsistencyException();
 			}
 		}
-		System.out.println("+++ " + x + ", " + y + " (" + depth + ")");
+		System.out.println("found cell by forking: " + x + ", " + y + " (" + depth + ")");
 		board.setPixel(x, y, winnerValue);
-		for (int i = 0; i < 20; i++) {
+		while (true) {
+			int counter = board.getChangeCounter();
 			new NonForkingStrategyBundle().run(board);
+			if (board.getChangeCounter() == counter) {
+				break;
+			}
 		}
 		return true;
 	}
 
 	/**
-	 * @param board
-	 * @param x
-	 * @param y
-	 * @param depth
-	 * @param value
-	 * @return
+	 * 
 	 */
-	public static boolean tryBranch(NonogramBoard board, int x, int y, int depth, boolean value) {
+	private static NonogramBoard tryBranch(NonogramBoard board, int x, int y, int depth, boolean value) {
 		board = board.clone();
 		board.setPixel(x, y, value);
 		try {
 			new ForkStrategy(depth - 1).run(board);
-			return true;
+			return board;
 		} catch (InconsistencyException e) {
-			return false;
+			return null;
 		}
 	}
 	

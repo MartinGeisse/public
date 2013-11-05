@@ -38,13 +38,16 @@ public class ForkStrategy extends NonogramSolutionStrategy {
 			new NonForkingStrategyBundle().run(board);
 			return;
 		}
+		System.out.println("starting fork strategy");
 		for (int x = 0; x < board.getWidth(); x++) {
 			for (int y = 0; y < board.getHeight(); y++) {
 				if (board.getPixel(x, y) == null) {
+					System.out.println("forking on " + x + ", " + y + " at counter " + board.getChangeCounter());
 					forkOn(board, x, y, depth);
 				}
 			}
 		}
+		System.out.println("finished fork strategy");
 	}
 
 }
