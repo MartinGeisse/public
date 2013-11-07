@@ -29,11 +29,11 @@ public class ExperimentMain {
 		
 		Picture key = new Picture(original.getWidth(), original.getHeight());
 		key.random(0);
-		key.scaleToCheckerboards().scaleUp(3).renderToPngFile(1, false, new File("19-checker-key.png"));
+		key.scaleToCheckerboards().scaleUp(10).renderToPngFile(1, false, new File("19-checker-key.png"));
 
 		Picture ciphertext = original.scaleUp(1);
 		ciphertext.mergeXor(key);
-		ciphertext.scaleToCheckerboards().scaleUp(3).renderToPngFile(1, false, new File("19-checker-ciphertext.png"));
+		ciphertext.scaleToCheckerboards().scaleUp(10).renderToPngFile(1, false, new File("19-checker-ciphertext.png"));
 		
 //		Picture test = ciphertext.scaleUp(1).scaleToCheckerboards();
 //		test.merge(key.scaleToCheckerboards(), true);
