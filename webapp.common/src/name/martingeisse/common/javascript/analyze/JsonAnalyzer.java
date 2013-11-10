@@ -106,6 +106,8 @@ public final class JsonAnalyzer {
 				builder.append('.');
 			}
 			builder.append(contextName);
+		} else {
+			builder.append("(TOPLEVEL)");
 		}
 	}
 
@@ -511,7 +513,7 @@ public final class JsonAnalyzer {
 	 * @return the exception
 	 */
 	public JsonAnalysisException expectedException(String what) {
-		return exception("expected " + what + ", found " + value + (value == null ? "(toplevel)" : " (" + value.getClass().getSimpleName() + ")"));
+		return exception("expected " + what + ", found " + value + (value == null ? "(NULL)" : " (" + value.getClass().getSimpleName() + ")"));
 	}
 	
 	/**
