@@ -8,8 +8,10 @@ package name.martingeisse.tools.codegen;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,7 @@ import com.mysema.codegen.model.Types;
 import com.mysema.query.codegen.EntityType;
 import com.mysema.query.codegen.Property;
 import com.mysema.query.codegen.SerializerConfig;
+import com.mysema.query.sql.support.PrimaryKeyData;
 import com.mysema.util.BeanUtils;
 
 /**
@@ -57,6 +60,42 @@ public class BeanSerializer extends AbstractSerializer {
 	@Override
 	public void serialize(final EntityType entityType, final SerializerConfig config, final CodeWriter w) throws IOException {
 		final String tableName = entityType.getData().get("table").toString();
+        @SuppressWarnings("unchecked")
+		Collection<PrimaryKeyData> primaryKeys = (Collection<PrimaryKeyData>) entityType.getData().get(PrimaryKeyData.class);
+        // @SuppressWarnings("unchecked")
+		// Collection<ForeignKeyData> foreignKeys = (Collection<ForeignKeyData>) entityType.getData().get(ForeignKeyData.class);
+		
+        // determine primary key
+        PrimaryKeyData primaryKey;
+        if (primaryKeys.size() == 0) {
+        	primaryKey = null;
+        } else if (primaryKeys.size() == 1) {
+        	primaryKey = primaryKeys.iterator().next();
+        } else {
+        	throw new RuntimeException("Found entity with more than one primary key: " + entityType.getSimpleName());
+        }
+        
+        // determine non-primary-key fields
+        List<Property> nonPrimaryKeyProperties;
+        if (primaryKey == null) {
+        	nonPrimaryKeyProperties = new ArrayList<Property>(entityType.getProperties());
+        } else {
+        	nonPrimaryKeyProperties = new ArrayList<Property>();
+        	propertyLoop: for (Property property : entityType.getProperties()) {
+        		for (String primaryKeyPropertyName : primaryKey.getColumns()) {
+        			if (primaryKeyPropertyName.equals(property.getName())) {
+        				continue propertyLoop;
+        			}
+        		}
+        		nonPrimaryKeyProperties.add(property);
+        	}
+        }
+        
+        // map properties by name
+        Map<String, Property> propertiesByName = new HashMap<String, Property>();
+        for (Property property : entityType.getProperties()) {
+        	propertiesByName.put(property.getEscapedName(), property);
+        }
 
 		// file comment
 		printFileComment(w);
@@ -159,6 +198,26 @@ public class BeanSerializer extends AbstractSerializer {
 			w.line("return ", builder.toString(), " + \"}\";");
 		}
 		w.end();
+		
+		// generate insert() method (only works if there is no multi-column primary key)
+		if (primaryKey == null || primaryKey.getColumns().size() < 2) {
+			w.javadoc("Inserts a record into the database using all fields from this object except the ID, then updates the ID.");
+			w.beginPublicMethod(Types.VOID, "insert");
+			w.line("final Q" + entityType.getSimpleName() + " q = Q" + entityType.getSimpleName() + "." + entityType.getUncapSimpleName() + ";");
+			w.line("final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(q);");
+			for (final Property property : nonPrimaryKeyProperties) {
+				final String propertyName = property.getEscapedName();
+				w.line("insert.set(q." + propertyName + ", " + propertyName + ");");
+			}
+			if (primaryKey == null || primaryKey.getColumns().isEmpty()) {
+				w.line("insert.execute();");
+			} else {
+				String idName = primaryKey.getColumns().iterator().next();
+				Type idType = propertiesByName.get(idName).getType();
+				w.line(idName + " = insert.executeWithKey(" + idType.getSimpleName() + ".class);");
+			}
+			w.end();
+		}
 
 		// finish writing the class itself
 		w.end();
@@ -192,6 +251,8 @@ public class BeanSerializer extends AbstractSerializer {
 		addIf(imports, "name.martingeisse.admin.entity.schema.orm.GeneratedFromTable", forAdmin);
 		addIf(imports, "name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn", forAdmin);
 		addIf(imports, "java.io.Serializable", !forAdmin);
+		imports.add("com.mysema.query.sql.dml.SQLInsertClause");
+		imports.add("name.martingeisse.common.database.EntityConnectionManager");
 
 		// actually write the imports
 		printImports(w, imports);
