@@ -92,5 +92,24 @@ public final class PermissionBundle implements IPermissions, Iterable<IPermissio
 			
 		};
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder("[");
+		boolean first = true;
+		for (IPermissions element : elements) {
+			if (first) {
+				first = false;
+			} else {
+				builder.append(", ");
+			}
+			builder.append(element);
+		}
+		builder.append("]");
+		return builder.toString();
+	}
 	
 }

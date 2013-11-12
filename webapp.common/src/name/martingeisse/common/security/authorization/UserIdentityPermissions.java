@@ -40,5 +40,13 @@ public final class UserIdentityPermissions implements IPermissions {
 	public IUserIdentity getUserIdentity() {
 		return userIdentity;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "(UserIdentityPermissions: " + userIdentity + ")";
+	}
 	
 }

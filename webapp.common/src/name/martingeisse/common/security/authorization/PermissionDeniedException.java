@@ -30,7 +30,7 @@ public class PermissionDeniedException extends RuntimeException {
 	 * @param request the request that was denied
 	 */
 	public PermissionDeniedException(final IPermissions permissions, final IPermissionRequest request) {
-		super("permission denied");
+		super("permission denied; permissions: " + permissions + "; request: " + request);
 		this.permissions = permissions;
 		this.request = request;
 	}
