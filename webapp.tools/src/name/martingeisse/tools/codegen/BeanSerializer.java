@@ -199,6 +199,18 @@ public class BeanSerializer extends AbstractSerializer {
 		}
 		w.end();
 		
+		// generate findById() method (only works if there is a single-column primary key)
+		if (primaryKey != null && primaryKey.getColumns().size() == 1) {
+			String idName = primaryKey.getColumns().iterator().next();
+			Property idProperty = propertiesByName.get(idName);
+			w.javadoc("Loads a record by id.");
+			w.beginStaticMethod(entityType, "findById", new Parameter("id", idProperty.getType()));
+			w.line("final Q" + entityType.getSimpleName() + " q = Q" + entityType.getSimpleName() + "." + entityType.getUncapSimpleName() + ";");
+			w.line("final SQLQuery query = EntityConnectionManager.getConnection().createQuery();");
+			w.line("return query.from(q).where(q." + idName + ".eq(id)).singleResult(q);");
+			w.end();
+		}
+		
 		// generate insert() method (only works if there is no multi-column primary key)
 		if (primaryKey == null || primaryKey.getColumns().size() < 2) {
 			w.javadoc("Inserts a record into the database using all fields from this object except the ID, then updates the ID.");
@@ -251,6 +263,7 @@ public class BeanSerializer extends AbstractSerializer {
 		addIf(imports, "name.martingeisse.admin.entity.schema.orm.GeneratedFromTable", forAdmin);
 		addIf(imports, "name.martingeisse.admin.entity.schema.orm.GeneratedFromColumn", forAdmin);
 		addIf(imports, "java.io.Serializable", !forAdmin);
+		imports.add("com.mysema.query.sql.SQLQuery");
 		imports.add("com.mysema.query.sql.dml.SQLInsertClause");
 		imports.add("name.martingeisse.common.database.EntityConnectionManager");
 
