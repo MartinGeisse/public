@@ -203,7 +203,7 @@ public class BeanSerializer extends AbstractSerializer {
 		if (primaryKey != null && primaryKey.getColumns().size() == 1) {
 			String idName = primaryKey.getColumns().iterator().next();
 			Property idProperty = propertiesByName.get(idName);
-			w.javadoc("Loads a record by id.");
+			w.javadoc("Loads a record by id.", "@param id the id of the record to load", "@return the loaded record");
 			w.beginStaticMethod(entityType, "findById", new Parameter("id", idProperty.getType()));
 			w.line("final Q" + entityType.getSimpleName() + " q = Q" + entityType.getSimpleName() + "." + entityType.getUncapSimpleName() + ";");
 			w.line("final SQLQuery query = EntityConnectionManager.getConnection().createQuery();");
