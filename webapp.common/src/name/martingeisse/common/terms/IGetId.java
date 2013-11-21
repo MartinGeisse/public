@@ -5,7 +5,9 @@
 package name.martingeisse.common.terms;
 
 /**
- * Generic interface for the {@link #getId()} method. 
+ * Generic interface for the {@link #getId()} method.
+ *  
+ * @param <T> the ID type
  */
 public interface IGetId<T> {
 

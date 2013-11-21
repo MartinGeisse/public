@@ -6,6 +6,8 @@ package name.martingeisse.common.terms;
 
 /**
  * Generic interface for the {@link #setId(Object)} method. 
+ *  
+ * @param <T> the ID type
  */
 public interface ISetId<T> {
 

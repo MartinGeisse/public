@@ -75,20 +75,33 @@ public class BeanSerializer extends AbstractSerializer {
         	throw new RuntimeException("Found entity with more than one primary key: " + entityType.getSimpleName());
         }
         
-        // determine non-primary-key fields
+        
+        // determine primary-key and non-primary-key fields
+        List<Property> primaryKeyProperties;
         List<Property> nonPrimaryKeyProperties;
         if (primaryKey == null) {
+        	primaryKeyProperties = new ArrayList<Property>();
         	nonPrimaryKeyProperties = new ArrayList<Property>(entityType.getProperties());
         } else {
+        	primaryKeyProperties = new ArrayList<Property>();
         	nonPrimaryKeyProperties = new ArrayList<Property>();
         	propertyLoop: for (Property property : entityType.getProperties()) {
         		for (String primaryKeyPropertyName : primaryKey.getColumns()) {
         			if (primaryKeyPropertyName.equals(property.getName())) {
+        				primaryKeyProperties.add(property);
         				continue propertyLoop;
         			}
         		}
         		nonPrimaryKeyProperties.add(property);
         	}
+        }
+        
+        // determine if we have an "ID"
+        final Property idProperty;
+        if (primaryKeyProperties.size() == 1 && primaryKeyProperties.get(0).getName().equals("id")) {
+        	idProperty = primaryKeyProperties.get(0);
+        } else {
+        	idProperty = null;
         }
         
         // map properties by name
@@ -106,7 +119,7 @@ public class BeanSerializer extends AbstractSerializer {
 		}
 
 		// imports
-		printImports(entityType, config, w);
+		printImports(entityType, config, w, idProperty != null);
 
 		// class Javadoc comment
 		w.javadoc("This class represents rows from table '" + entityType.getData().get("table") + "'.");
@@ -125,7 +138,7 @@ public class BeanSerializer extends AbstractSerializer {
 				w.beginClass(entityType, new SimpleType("AbstractSpecificEntityInstance"));
 			}
 		} else {
-			w.beginClass(entityType, null, new SimpleType("Serializable"));
+			w.beginClass(entityType, null, new SimpleType("Serializable"), new SimpleType(new SimpleType("IEntityWithId"), idProperty.getType()));
 		}
 
 		// add the meta-data class constant for the admin framework
@@ -163,12 +176,18 @@ public class BeanSerializer extends AbstractSerializer {
 			if (forAdmin) {
 				w.line("@GeneratedFromColumn(\"" + property.getName() + "\")");
 			}
+			if (property == idProperty) {
+				w.line("@Override");
+			}
 			w.beginPublicMethod(propertyType, "get" + capitalizedPropertyName);
 			w.line("return ", propertyName, ";");
 			w.end();
 
 			// setter method
 			w.javadoc("Setter method for the " + propertyName + ".", "@param " + propertyName + " the " + propertyName + " to set");
+			if (property == idProperty) {
+				w.line("@Override");
+			}
 			final Parameter parameter = new Parameter(propertyName, propertyType);
 			w.beginPublicMethod(Types.VOID, "set" + capitalizedPropertyName, parameter);
 			w.line("this.", propertyName, " = ", propertyName, ";");
@@ -200,14 +219,12 @@ public class BeanSerializer extends AbstractSerializer {
 		w.end();
 		
 		// generate findById() method (only works if there is a single-column primary key)
-		if (primaryKey != null && primaryKey.getColumns().size() == 1) {
-			String idName = primaryKey.getColumns().iterator().next();
-			Property idProperty = propertiesByName.get(idName);
+		if (idProperty != null) {
 			w.javadoc("Loads a record by id.", "@param id the id of the record to load", "@return the loaded record");
 			w.beginStaticMethod(entityType, "findById", new Parameter("id", idProperty.getType()));
 			w.line("final Q" + entityType.getSimpleName() + " q = Q" + entityType.getSimpleName() + "." + entityType.getUncapSimpleName() + ";");
 			w.line("final SQLQuery query = EntityConnectionManager.getConnection().createQuery();");
-			w.line("return query.from(q).where(q." + idName + ".eq(id)).singleResult(q);");
+			w.line("return query.from(q).where(q." + idProperty.getName() + ".eq(id)).singleResult(q);");
 			w.end();
 		}
 		
@@ -239,7 +256,7 @@ public class BeanSerializer extends AbstractSerializer {
 	/**
 	 * Prints import clauses.
 	 */
-	private void printImports(final EntityType entityType, final SerializerConfig config, final CodeWriter w) throws IOException {
+	private void printImports(final EntityType entityType, final SerializerConfig config, final CodeWriter w, final boolean hasId) throws IOException {
 
 		// to avoid duplicate imports, we first collect all imports in a set
 		final Set<String> imports = new HashSet<String>();
@@ -265,6 +282,8 @@ public class BeanSerializer extends AbstractSerializer {
 		addIf(imports, "java.io.Serializable", !forAdmin);
 		imports.add("com.mysema.query.sql.SQLQuery");
 		imports.add("com.mysema.query.sql.dml.SQLInsertClause");
+		imports.add("name.martingeisse.common.database.EntityConnectionManager");
+		addIf(imports, "name.martingeisse.common.terms.IEntityWithId", hasId);
 		imports.add("name.martingeisse.common.database.EntityConnectionManager");
 
 		// actually write the imports
