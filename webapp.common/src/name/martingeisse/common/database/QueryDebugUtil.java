@@ -24,6 +24,7 @@ import java.sql.Struct;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
 import name.martingeisse.common.util.ParameterUtil;
 
@@ -97,6 +98,7 @@ public class QueryDebugUtil {
 	/**
 	 * Fake {@link Connection} implementation.
 	 */
+	@SuppressWarnings({"unused", "javadoc"})
 	private static class MyConnection implements Connection {
 
 		/* (non-Javadoc)
@@ -477,6 +479,38 @@ public class QueryDebugUtil {
 		public void setTypeMap(final Map<String, Class<?>> map) throws SQLException {
 		}
 
+		/**
+		 * This method is implemented for JDK 7 compatibility.
+		 */
+		public void abort(Executor executor) throws SQLException {
+		}
+
+		/**
+		 * This method is implemented for JDK 7 compatibility.
+		 */
+		public int getNetworkTimeout() throws SQLException {
+			return 0;
+		}
+
+		/**
+		 * This method is implemented for JDK 7 compatibility.
+		 */
+		public String getSchema() throws SQLException {
+			return null;
+		}
+
+		/**
+		 * This method is implemented for JDK 7 compatibility.
+		 */
+		public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+		}
+
+		/**
+		 * This method is implemented for JDK 7 compatibility.
+		 */
+		public void setSchema(String schema) throws SQLException {
+		}
+		
 	}
 
 }
