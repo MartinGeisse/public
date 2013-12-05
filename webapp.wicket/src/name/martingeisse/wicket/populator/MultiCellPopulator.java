@@ -8,7 +8,6 @@ package name.martingeisse.wicket.populator;
 
 import java.util.Arrays;
 import java.util.List;
-
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
@@ -30,6 +29,7 @@ public class MultiCellPopulator<T> implements ICellPopulator<T> {
 	 * Constructor.
 	 * @param cellPopulators the sub-populators
 	 */
+	@SafeVarargs
 	public MultiCellPopulator(final ICellPopulator<T>... cellPopulators) {
 		this(Arrays.asList(cellPopulators));
 	}

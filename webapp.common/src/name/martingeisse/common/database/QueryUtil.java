@@ -110,7 +110,7 @@ public class QueryUtil {
 	 * @param database the database to use
 	 * @return the query
 	 */
-	public static <T> SQLQuery from(IDatabaseDescriptor database, Expression<?>... qpaths) {
+	public static SQLQuery from(IDatabaseDescriptor database, Expression<?>... qpaths) {
 		return EntityConnectionManager.getConnection(database).createQuery().from(qpaths);
 	}
 	

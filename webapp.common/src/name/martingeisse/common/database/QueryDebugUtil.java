@@ -25,9 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
-
 import name.martingeisse.common.util.ParameterUtil;
-
 import com.mysema.query.sql.MySQLTemplates;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.SQLQueryImpl;
@@ -98,7 +96,6 @@ public class QueryDebugUtil {
 	/**
 	 * Fake {@link Connection} implementation.
 	 */
-	@SuppressWarnings({"unused", "javadoc"})
 	private static class MyConnection implements Connection {
 
 		/* (non-Javadoc)
@@ -482,12 +479,14 @@ public class QueryDebugUtil {
 		/**
 		 * This method is implemented for JDK 7 compatibility.
 		 */
+		@Override
 		public void abort(Executor executor) throws SQLException {
 		}
 
 		/**
 		 * This method is implemented for JDK 7 compatibility.
 		 */
+		@Override
 		public int getNetworkTimeout() throws SQLException {
 			return 0;
 		}
@@ -495,6 +494,7 @@ public class QueryDebugUtil {
 		/**
 		 * This method is implemented for JDK 7 compatibility.
 		 */
+		@Override
 		public String getSchema() throws SQLException {
 			return null;
 		}
@@ -502,12 +502,14 @@ public class QueryDebugUtil {
 		/**
 		 * This method is implemented for JDK 7 compatibility.
 		 */
+		@Override
 		public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
 		}
 
 		/**
 		 * This method is implemented for JDK 7 compatibility.
 		 */
+		@Override
 		public void setSchema(String schema) throws SQLException {
 		}
 		

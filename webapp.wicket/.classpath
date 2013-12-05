@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/webapp.common"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/atmosphere-compat-jbossweb-1.0.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/atmosphere-compat-tomcat-1.0.9.jar"/>
@@ -15,5 +14,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/java/wicket-extensions-6.11.0.jar" sourcepath="resource/libsrc/apache-wicket-6.11.0/wicket-extensions/src/main/java"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/wicket-request-6.11.0.jar" sourcepath="resource/libsrc/apache-wicket-6.11.0/wicket-request/src/main/java"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/wicket-util-6.11.0.jar" sourcepath="resource/libsrc/apache-wicket-6.11.0/wicket-util/src/main/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
