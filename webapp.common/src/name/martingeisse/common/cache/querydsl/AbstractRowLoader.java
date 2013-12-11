@@ -91,13 +91,13 @@ public abstract class AbstractRowLoader<K, R, V> extends AbstractDatabaseCacheLo
 		query.where(additionalPredicates);
 		
 		// fetch results and store them in a map, indexed by value of the key expression
-		CloseableIterator<Object[]> iterator = query.iterate(keyExpression, path);
 		Map<K, R> foundValues = new HashMap<K, R>();
-		while (iterator.hasNext()) {
-			Object[] entry = iterator.next();
-			foundValues.put((K)entry[0], (R)entry[1]);
+		try (CloseableIterator<Object[]> iterator = query.iterate(keyExpression, path)) {
+			while (iterator.hasNext()) {
+				Object[] entry = iterator.next();
+				foundValues.put((K)entry[0], (R)entry[1]);
+			}
 		}
-		iterator.close();
 		
 		// create the result list, using null for missing keys
 		List<R> preTransformationResult = new ArrayList<R>();

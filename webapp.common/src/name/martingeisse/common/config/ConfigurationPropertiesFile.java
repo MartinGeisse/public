@@ -28,11 +28,8 @@ public final class ConfigurationPropertiesFile {
 	 */
 	public ConfigurationPropertiesFile(File file) throws IOException {
 		properties = new Properties();
-		FileInputStream fileInputStream = new FileInputStream(file);
-		try {
+		try (FileInputStream fileInputStream = new FileInputStream(file)) {
 			properties.load(fileInputStream);
-		} finally {
-			fileInputStream.close();
 		}
 	}
 

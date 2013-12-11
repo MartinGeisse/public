@@ -108,10 +108,10 @@ final class CannedResponse {
 		// response.setHeader("Terra-Note", "canned response from GZIP cache");
 		
 		// content
-		OutputStream out = response.getOutputStream();
-		out.write(data);
-		out.flush();
-		out.close();
+		try (OutputStream out = response.getOutputStream()) {
+			out.write(data);
+			out.flush();
+		}
 		
 	}
 	

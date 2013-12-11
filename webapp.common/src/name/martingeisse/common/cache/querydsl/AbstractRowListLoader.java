@@ -123,20 +123,20 @@ public abstract class AbstractRowListLoader<K, R, V> extends AbstractDatabaseCac
 		query.where(additionalPredicates).orderBy(orderSpecifiers);
 		
 		// fetch results and store them in a map, indexed by value of the key expression
-		CloseableIterator<Object[]> iterator = query.iterate(keyExpression, path);
 		Map<K, List<R>> foundValues = new HashMap<K, List<R>>();
-		while (iterator.hasNext()) {
-			Object[] entry = iterator.next();
-			@SuppressWarnings("unchecked") K key = (K)entry[0];
-			@SuppressWarnings("unchecked") R row = (R)entry[1];
-			List<R> rowList = foundValues.get(key);
-			if (rowList == null) {
-				rowList = new ArrayList<R>();
-				foundValues.put(key, rowList);
+		try (CloseableIterator<Object[]> iterator = query.iterate(keyExpression, path)) {
+			while (iterator.hasNext()) {
+				Object[] entry = iterator.next();
+				@SuppressWarnings("unchecked") K key = (K)entry[0];
+				@SuppressWarnings("unchecked") R row = (R)entry[1];
+				List<R> rowList = foundValues.get(key);
+				if (rowList == null) {
+					rowList = new ArrayList<R>();
+					foundValues.put(key, rowList);
+				}
+				rowList.add(row);
 			}
-			rowList.add(row);
 		}
-		iterator.close();
 
 		// create the result list, using null for missing keys
 		List<List<R>> preTransformationResult = new ArrayList<List<R>>();

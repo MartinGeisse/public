@@ -73,20 +73,21 @@ public class QueryToListMapMapping<K, V> implements IMapping<SQLQuery, Map<K, Li
 	 */
 	@Override
 	public Map<K, List<V>> map(SQLQuery query) {
-        CloseableIterator<V> it = query.iterate(beanExpression);
-        Map<K, List<V>> result = new HashMap<K, List<V>>();
-        while (it.hasNext()) {
-        	V row = it.next();
-        	K key = extractKey(row);
-        	List<V> list = result.get(key);
-        	if (list == null) {
-        		list = new ArrayList<V>();
-        		result.put(key, list);
+        try (CloseableIterator<V> it = query.iterate(beanExpression)) {
+        	Map<K, List<V>> result = new HashMap<K, List<V>>();
+        	while (it.hasNext()) {
+        		V row = it.next();
+        		K key = extractKey(row);
+        		List<V> list = result.get(key);
+        		if (list == null) {
+        			list = new ArrayList<V>();
+        			result.put(key, list);
+        		}
+        		list.add(row);
         	}
-        	list.add(row);
+        	return result;
+        	
         }
-        it.close();
-        return result;
 	}
 
 	/**

@@ -109,6 +109,12 @@ public class BeanSerializer extends AbstractSerializer {
         for (Property property : entityType.getProperties()) {
         	propertiesByName.put(property.getEscapedName(), property);
         }
+        
+        // check if the entity has a boolean "deleted" property
+        Property deletedFlagProperty = propertiesByName.get("deleted");
+        if (deletedFlagProperty != null && deletedFlagProperty.getType().getJavaClass() != Boolean.class && deletedFlagProperty.getType().getJavaClass() != Boolean.TYPE) {
+        	deletedFlagProperty = null;
+        }
 
 		// file comment
 		printFileComment(w);
@@ -119,7 +125,7 @@ public class BeanSerializer extends AbstractSerializer {
 		}
 
 		// imports
-		printImports(entityType, config, w, idProperty != null);
+		printImports(entityType, config, w, idProperty != null, deletedFlagProperty != null);
 
 		// class Javadoc comment
 		w.javadoc("This class represents rows from table '" + entityType.getData().get("table") + "'.");
@@ -138,7 +144,11 @@ public class BeanSerializer extends AbstractSerializer {
 				w.beginClass(entityType, new SimpleType("AbstractSpecificEntityInstance"));
 			}
 		} else {
-			w.beginClass(entityType, null, new SimpleType("Serializable"), new SimpleType(new SimpleType("IEntityWithId"), idProperty.getType()));
+			if (deletedFlagProperty != null) {
+				w.beginClass(entityType, null, new SimpleType("Serializable"), new SimpleType(new SimpleType("IEntityWithId"), idProperty.getType()), new SimpleType("IEntityWithDeletedFlag"));
+			} else {
+				w.beginClass(entityType, null, new SimpleType("Serializable"), new SimpleType(new SimpleType("IEntityWithId"), idProperty.getType()));
+			}
 		}
 
 		// add the meta-data class constant for the admin framework
@@ -176,7 +186,7 @@ public class BeanSerializer extends AbstractSerializer {
 			if (forAdmin) {
 				w.line("@GeneratedFromColumn(\"" + property.getName() + "\")");
 			}
-			if (property == idProperty) {
+			if (property == idProperty || property == deletedFlagProperty) {
 				w.line("@Override");
 			}
 			w.beginPublicMethod(propertyType, "get" + capitalizedPropertyName);
@@ -185,7 +195,7 @@ public class BeanSerializer extends AbstractSerializer {
 
 			// setter method
 			w.javadoc("Setter method for the " + propertyName + ".", "@param " + propertyName + " the " + propertyName + " to set");
-			if (property == idProperty) {
+			if (property == idProperty || property == deletedFlagProperty) {
 				w.line("@Override");
 			}
 			final Parameter parameter = new Parameter(propertyName, propertyType);
@@ -256,7 +266,7 @@ public class BeanSerializer extends AbstractSerializer {
 	/**
 	 * Prints import clauses.
 	 */
-	private void printImports(final EntityType entityType, final SerializerConfig config, final CodeWriter w, final boolean hasId) throws IOException {
+	private void printImports(final EntityType entityType, final SerializerConfig config, final CodeWriter w, final boolean hasId, final boolean hasDeletedFlag) throws IOException {
 
 		// to avoid duplicate imports, we first collect all imports in a set
 		final Set<String> imports = new HashSet<String>();
@@ -284,6 +294,7 @@ public class BeanSerializer extends AbstractSerializer {
 		imports.add("com.mysema.query.sql.dml.SQLInsertClause");
 		imports.add("name.martingeisse.common.database.EntityConnectionManager");
 		addIf(imports, "name.martingeisse.common.terms.IEntityWithId", hasId);
+		addIf(imports, "name.martingeisse.common.terms.IEntityWithDeletedFlag", hasDeletedFlag);
 		imports.add("name.martingeisse.common.database.EntityConnectionManager");
 
 		// actually write the imports

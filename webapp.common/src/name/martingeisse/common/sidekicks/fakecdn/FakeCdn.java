@@ -65,9 +65,10 @@ public final class FakeCdn {
 	 */
 	private FakeCdnRecord fetch(String key) throws IOException {
 		HttpResponse response = fetchResponse("http://localhost/foo" + key);
-		InputStream responseStream = response.getEntity().getContent();
-		byte[] data = IOUtils.toByteArray(responseStream);
-		responseStream.close();
+		byte[] data;
+		try (InputStream responseStream = response.getEntity().getContent()) {
+			data = IOUtils.toByteArray(responseStream);
+		}
 		return new FakeCdnRecord(response.getStatusLine().getStatusCode(), key, response.getFirstHeader("Content-Type").getValue(), data);
 	}
 

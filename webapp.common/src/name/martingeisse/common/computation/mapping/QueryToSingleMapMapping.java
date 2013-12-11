@@ -71,14 +71,14 @@ public class QueryToSingleMapMapping<K, V> implements IMapping<SQLQuery, Map<K, 
 	 */
 	@Override
 	public Map<K, V> map(SQLQuery query) {
-        CloseableIterator<V> it = query.iterate(beanExpression);
-        Map<K, V> result = new HashMap<K, V>();
-        while (it.hasNext()) {
-        	V row = it.next();
-        	result.put(extractKey(row), row);
+        try (CloseableIterator<V> it = query.iterate(beanExpression)) {
+        	Map<K, V> result = new HashMap<K, V>();
+        	while (it.hasNext()) {
+        		V row = it.next();
+        		result.put(extractKey(row), row);
+        	}
+        	return result;
         }
-        it.close();
-        return result;
 	}
 
 	/**

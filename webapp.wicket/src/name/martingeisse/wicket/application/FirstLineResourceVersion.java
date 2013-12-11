@@ -8,7 +8,6 @@ package name.martingeisse.wicket.application;
 
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-
 import org.apache.wicket.request.resource.caching.IStaticCacheableResource;
 import org.apache.wicket.request.resource.caching.version.IResourceVersion;
 import org.apache.wicket.util.resource.IResourceStream;
@@ -34,20 +33,17 @@ public class FirstLineResourceVersion implements IResourceVersion {
 	 * @return the version
 	 */
 	public static String getVersionFrom(IStaticCacheableResource resource) {
-		try {
+		try (IResourceStream stream = resource.getCacheableResourceStream()) {
 
 			// load the resource and bail out early if we don't like the content type
-			final IResourceStream stream = resource.getCacheableResourceStream();
 			final String contentType = stream.getContentType();
 			if (!contentType.startsWith("text/") && !contentType.equals("application/x-javascript")) {
-				stream.close();
 				return null;
 			}
 			
 			// read the first line
 			final LineNumberReader reader = new LineNumberReader(new InputStreamReader(stream.getInputStream()));
 			final String firstLine = reader.readLine();
-			stream.close();
 
 			// look for the SVN keyword
 			final int firstDollarPosition = firstLine.indexOf('$', 0);
