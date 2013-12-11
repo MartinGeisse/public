@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import com.mysema.codegen.CodeWriter;
 import com.mysema.codegen.model.Parameter;
 import com.mysema.codegen.model.SimpleType;
@@ -116,6 +115,12 @@ public class BeanSerializer extends AbstractSerializer {
         	deletedFlagProperty = null;
         }
 
+        // check if the entity has an "orderIndex" property
+        Property orderIndexProperty = propertiesByName.get("orderIndex");
+        if (orderIndexProperty != null && orderIndexProperty.getType().getJavaClass() != Integer.class && orderIndexProperty.getType().getJavaClass() != Integer.TYPE) {
+        	orderIndexProperty = null;
+        }
+
 		// file comment
 		printFileComment(w);
 
@@ -125,7 +130,7 @@ public class BeanSerializer extends AbstractSerializer {
 		}
 
 		// imports
-		printImports(entityType, config, w, idProperty != null, deletedFlagProperty != null);
+		printImports(entityType, config, w, idProperty != null, deletedFlagProperty != null, orderIndexProperty != null);
 
 		// class Javadoc comment
 		w.javadoc("This class represents rows from table '" + entityType.getData().get("table") + "'.");
@@ -144,11 +149,16 @@ public class BeanSerializer extends AbstractSerializer {
 				w.beginClass(entityType, new SimpleType("AbstractSpecificEntityInstance"));
 			}
 		} else {
+			List<Type> interfaces = new ArrayList<>();
+			interfaces.add(new SimpleType("Serializable"));
+			interfaces.add(new SimpleType(new SimpleType("IEntityWithId"), idProperty.getType()));
 			if (deletedFlagProperty != null) {
-				w.beginClass(entityType, null, new SimpleType("Serializable"), new SimpleType(new SimpleType("IEntityWithId"), idProperty.getType()), new SimpleType("IEntityWithDeletedFlag"));
-			} else {
-				w.beginClass(entityType, null, new SimpleType("Serializable"), new SimpleType(new SimpleType("IEntityWithId"), idProperty.getType()));
+				interfaces.add(new SimpleType("IEntityWithDeletedFlag"));
 			}
+			if (orderIndexProperty != null) {
+				interfaces.add(new SimpleType("IEntityWithOrderIndex"));
+			}
+			w.beginClass(entityType, null, interfaces.toArray(new Type[0]));
 		}
 
 		// add the meta-data class constant for the admin framework
@@ -186,7 +196,7 @@ public class BeanSerializer extends AbstractSerializer {
 			if (forAdmin) {
 				w.line("@GeneratedFromColumn(\"" + property.getName() + "\")");
 			}
-			if (property == idProperty || property == deletedFlagProperty) {
+			if (property == idProperty || property == deletedFlagProperty || property == orderIndexProperty) {
 				w.line("@Override");
 			}
 			w.beginPublicMethod(propertyType, "get" + capitalizedPropertyName);
@@ -195,7 +205,7 @@ public class BeanSerializer extends AbstractSerializer {
 
 			// setter method
 			w.javadoc("Setter method for the " + propertyName + ".", "@param " + propertyName + " the " + propertyName + " to set");
-			if (property == idProperty || property == deletedFlagProperty) {
+			if (property == idProperty || property == deletedFlagProperty || property == orderIndexProperty) {
 				w.line("@Override");
 			}
 			final Parameter parameter = new Parameter(propertyName, propertyType);
@@ -266,7 +276,7 @@ public class BeanSerializer extends AbstractSerializer {
 	/**
 	 * Prints import clauses.
 	 */
-	private void printImports(final EntityType entityType, final SerializerConfig config, final CodeWriter w, final boolean hasId, final boolean hasDeletedFlag) throws IOException {
+	private void printImports(final EntityType entityType, final SerializerConfig config, final CodeWriter w, final boolean hasId, final boolean hasDeletedFlag, final boolean hasOrderIndex) throws IOException {
 
 		// to avoid duplicate imports, we first collect all imports in a set
 		final Set<String> imports = new HashSet<String>();
@@ -295,6 +305,7 @@ public class BeanSerializer extends AbstractSerializer {
 		imports.add("name.martingeisse.common.database.EntityConnectionManager");
 		addIf(imports, "name.martingeisse.common.terms.IEntityWithId", hasId);
 		addIf(imports, "name.martingeisse.common.terms.IEntityWithDeletedFlag", hasDeletedFlag);
+		addIf(imports, "name.martingeisse.common.terms.IEntityWithOrderIndex", hasOrderIndex);
 		imports.add("name.martingeisse.common.database.EntityConnectionManager");
 
 		// actually write the imports
