@@ -238,14 +238,23 @@ public class BeanSerializer extends AbstractSerializer {
 		}
 		w.end();
 		
-		// generate findById() method (only works if there is a single-column primary key)
+		// generate findById() method and corresponding Wicket model (only works if there is a single-column primary key)
 		if (idProperty != null) {
+			String entityName = entityType.getSimpleName();
+			String uncapEntityName = entityType.getUncapSimpleName();
+			
 			w.javadoc("Loads a record by id.", "@param id the id of the record to load", "@return the loaded record");
 			w.beginStaticMethod(entityType, "findById", new Parameter("id", idProperty.getType()));
-			w.line("final Q" + entityType.getSimpleName() + " q = Q" + entityType.getSimpleName() + "." + entityType.getUncapSimpleName() + ";");
+			w.line("final Q" + entityName + " q = Q" + entityName + "." + entityType.getUncapSimpleName() + ";");
 			w.line("final SQLQuery query = EntityConnectionManager.getConnection().createQuery();");
 			w.line("return query.from(q).where(q." + idProperty.getName() + ".eq(id)).singleResult(q);");
 			w.end();
+			
+			w.javadoc("Creates a model that loads a record by id.", "@param id the id of the record to load", "@return the model loading the record");
+			w.beginStaticMethod(new SimpleType(new SimpleType("IModel"), entityType), "getModelForId", new Parameter("id", idProperty.getType()));
+			w.line("return new EntityModel<" + entityName + ">(Q" + entityName + "." + uncapEntityName + ", Q" + entityName + "." + uncapEntityName + ".id.eq(id));");
+			w.end();
+			
 		}
 		
 		// generate insert() method (only works if there is no multi-column primary key)
@@ -307,6 +316,8 @@ public class BeanSerializer extends AbstractSerializer {
 		addIf(imports, "name.martingeisse.common.terms.IEntityWithDeletedFlag", hasDeletedFlag);
 		addIf(imports, "name.martingeisse.common.terms.IEntityWithOrderIndex", hasOrderIndex);
 		imports.add("name.martingeisse.common.database.EntityConnectionManager");
+		addIf(imports, "org.apache.wicket.model.IModel", hasId);
+		addIf(imports, "name.martingeisse.wicket.model.database.EntityModel", hasId);
 
 		// actually write the imports
 		printImports(w, imports);
