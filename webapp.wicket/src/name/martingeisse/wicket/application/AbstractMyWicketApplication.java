@@ -6,8 +6,6 @@
 
 package name.martingeisse.wicket.application;
 
-import name.martingeisse.wicket.component.sprite.SpriteRegistry;
-
 import org.apache.log4j.Logger;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -30,15 +28,9 @@ public abstract class AbstractMyWicketApplication extends WebApplication {
 	private static Logger logger = Logger.getLogger(AbstractMyWicketApplication.class);
 
 	/**
-	 * the spriteRegistry
-	 */
-	private final SpriteRegistry spriteRegistry;
-
-	/**
 	 * Constructor.
 	 */
 	public AbstractMyWicketApplication() {
-		this.spriteRegistry = new SpriteRegistry();
 	}
 
 	/* (non-Javadoc)
@@ -81,12 +73,4 @@ public abstract class AbstractMyWicketApplication extends WebApplication {
 		return new MyWicketSession(request);
 	}
 
-	/**
-	 * Getter method for the spriteRegistry.
-	 * @return the spriteRegistry
-	 */
-	public SpriteRegistry getSpriteRegistry() {
-		return spriteRegistry;
-	}
-	
 }
