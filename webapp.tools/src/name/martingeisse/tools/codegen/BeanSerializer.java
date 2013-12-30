@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang.ClassUtils;
 import com.mysema.codegen.CodeWriter;
 import com.mysema.codegen.model.Parameter;
 import com.mysema.codegen.model.SimpleType;
@@ -243,15 +244,20 @@ public class BeanSerializer extends AbstractSerializer {
 			String entityName = entityType.getSimpleName();
 			String uncapEntityName = entityType.getUncapSimpleName();
 			
+			Type idType = idProperty.getType();
+			if (ClassUtils.wrapperToPrimitive(idType.getJavaClass()) != null) {
+				idType = new SimpleType(ClassUtils.wrapperToPrimitive(idType.getJavaClass()).getSimpleName());
+			}
+			
 			w.javadoc("Loads a record by id.", "@param id the id of the record to load", "@return the loaded record");
-			w.beginStaticMethod(entityType, "findById", new Parameter("id", idProperty.getType()));
+			w.beginStaticMethod(entityType, "findById", new Parameter("id", idType));
 			w.line("final Q" + entityName + " q = Q" + entityName + "." + entityType.getUncapSimpleName() + ";");
 			w.line("final SQLQuery query = EntityConnectionManager.getConnection().createQuery();");
 			w.line("return query.from(q).where(q." + idProperty.getName() + ".eq(id)).singleResult(q);");
 			w.end();
 			
 			w.javadoc("Creates a model that loads a record by id.", "@param id the id of the record to load", "@return the model loading the record");
-			w.beginStaticMethod(new SimpleType(new SimpleType("IModel"), entityType), "getModelForId", new Parameter("id", idProperty.getType()));
+			w.beginStaticMethod(new SimpleType(new SimpleType("IModel"), entityType), "getModelForId", new Parameter("id", idType));
 			w.line("return new EntityModel<" + entityName + ">(Q" + entityName + "." + uncapEntityName + ", Q" + entityName + "." + uncapEntityName + ".id.eq(id));");
 			w.end();
 			
