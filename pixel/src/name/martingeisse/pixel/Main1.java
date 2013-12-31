@@ -17,7 +17,7 @@ public class Main1 {
 	 */
 	public static void main(final String[] args) throws Exception {
 
-		String filename = "11.png";
+		String filename = "16.png";
 		PuzzleHandler handler = new PuzzleHandler(filename, "A-");
 		
 //		int hintStartX = 2, hintStepX = 4, hintEndX = handler.getBoard().getWidth();

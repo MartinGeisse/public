@@ -6,11 +6,8 @@
 
 package name.martingeisse.wicket.application;
 
-import java.util.Locale;
 import java.util.Random;
-
 import name.martingeisse.common.util.ClassKeyedContainer;
-
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.Request;
@@ -43,11 +40,11 @@ public class MyWicketSession extends WebSession {
 	 */
 	public MyWicketSession(final Request request) {
 		super(request);
-		setLocale(Locale.GERMANY);
 		this.dataContainer = new ClassKeyedContainer<Object>();
 		this.pageId = (new Random().nextInt() & 0xffffff);
 		
 		// TODO
+		// setLocale(Locale.GERMANY);
 		this.timeZone = DateTimeZone.forID("Europe/Berlin"); // DateTimeZone.getDefault();
 	}
 	
