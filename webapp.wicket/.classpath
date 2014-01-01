@@ -14,6 +14,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/java/wicket-extensions-6.11.0.jar" sourcepath="resource/libsrc/apache-wicket-6.11.0/wicket-extensions/src/main/java"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/wicket-request-6.11.0.jar" sourcepath="resource/libsrc/apache-wicket-6.11.0/wicket-request/src/main/java"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/wicket-util-6.11.0.jar" sourcepath="resource/libsrc/apache-wicket-6.11.0/wicket-util/src/main/java"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/wicketstuff-stateless-6.12.0.jar" sourcepath="/Users/martin/.m2/repository/org/wicketstuff/wicketstuff-stateless/6.12.0/wicketstuff-stateless-6.12.0-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/wicket-bits-sprite"/>
 	<classpathentry kind="output" path="bin"/>
