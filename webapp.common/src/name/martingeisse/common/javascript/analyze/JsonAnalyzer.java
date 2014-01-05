@@ -8,11 +8,11 @@ package name.martingeisse.common.javascript.analyze;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 
@@ -20,7 +20,7 @@ import org.json.simple.parser.ParseException;
  * This class provides basic functionality to dissect a JSON
  * value parsed by JSON-Simple.
  */
-public final class JsonAnalyzer {
+public final class JsonAnalyzer implements Serializable {
 
 	/**
 	 * the value
