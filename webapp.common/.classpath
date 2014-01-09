@@ -61,6 +61,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/java/httpcore-4.2.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/httpmime-4.2.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/hazelcast-3.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/freemarker.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
