@@ -14,12 +14,12 @@ import name.martingeisse.common.security.authorization.CorePermissionRequest;
 import name.martingeisse.common.security.authorization.IAuthorizationStrategy;
 import name.martingeisse.common.security.authorization.IPermissionRequest;
 import name.martingeisse.common.security.authorization.IPermissions;
+import name.martingeisse.common.security.authorization.LoginFailedException;
 import name.martingeisse.common.security.authorization.PermissionDeniedException;
 import name.martingeisse.common.security.authorization.UnauthorizedPermissions;
 import name.martingeisse.common.security.credentials.ICredentials;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
-
 import org.apache.log4j.Logger;
 
 /**
@@ -37,7 +37,7 @@ public class SecurityUtil {
 	 * the provider
 	 */
 	private static ISecurityProvider provider;
-	
+
 	/**
 	 * Prevent instantiation.
 	 */
@@ -48,10 +48,10 @@ public class SecurityUtil {
 	 * Initializes the security subsystem.
 	 * @param provider the implementation-specific glue code provider
 	 */
-	public static void initialize(ISecurityProvider provider) {
+	public static void initialize(final ISecurityProvider provider) {
 		SecurityUtil.provider = provider;
 	}
-	
+
 	/**
 	 * Attempts to perform a login with the specified credentials.
 	 * If successful, the corresponding user properties, user identity
@@ -101,7 +101,7 @@ public class SecurityUtil {
 		logger.trace("checking permission: " + loginPermissionRequest);
 		if (!authorizationStrategy.checkPermission(permissions, loginPermissionRequest)) {
 			logger.debug("login permission denied");
-			throw new PermissionDeniedException(permissions, loginPermissionRequest);
+			throw new LoginFailedException(permissions, loginPermissionRequest);
 		}
 		logger.trace("login permission granted");
 
@@ -186,6 +186,10 @@ public class SecurityUtil {
 	 * Checks whether the currently logged in user is granted the specified
 	 * request for permission, and throws an exception if the permission
 	 * was denied.
+	 * 
+	 * This is just a utility method. For example, callers that want to throw
+	 * a more specific exception in case of missing permissions should call
+	 * {@link #getPermission(IPermissionRequest)} directly.
 	 * 
 	 * @param request the request
 	 */
