@@ -6,14 +6,17 @@
 
 package name.martingeisse.wicket.application;
 
+import java.util.Iterator;
 import org.apache.log4j.Logger;
 import org.apache.wicket.Session;
+import org.apache.wicket.markup.resolver.IComponentResolver;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.version.CachingResourceVersion;
 import org.apache.wicket.request.resource.caching.version.LastModifiedResourceVersion;
+import org.apache.wicket.settings.def.PageSettings;
 import org.apache.wicket.util.lang.Bytes;
 
 /**
@@ -73,4 +76,24 @@ public abstract class AbstractMyWicketApplication extends WebApplication {
 		return new MyWicketSession(request);
 	}
 
+	/**
+	 * Replaces one of Wicket's default application-wide component resolvers by a new one. Pass null
+	 * as the new resolver to just remove the previous one.
+	 * @param replacedClass the class of the resolver to replace
+	 * @param newResolver the new resolver or null
+	 */
+	public void replaceWicketComponentResolver(Class<? extends IComponentResolver> replacedClass, IComponentResolver newResolver) {
+		PageSettings pageSettings = (PageSettings)getPageSettings();
+		for (Iterator<IComponentResolver> it = pageSettings.getComponentResolvers().iterator(); it.hasNext(); ) {
+			IComponentResolver existingResolver = it.next();
+			if (replacedClass.isInstance(existingResolver)) {
+				it.remove();
+				break;
+			}
+		}
+		if (newResolver != null) {
+			pageSettings.addComponentResolver(newResolver);
+		}
+	}
+	
 }
