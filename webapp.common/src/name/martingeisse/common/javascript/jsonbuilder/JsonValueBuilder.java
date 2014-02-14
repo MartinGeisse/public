@@ -6,6 +6,7 @@
 
 package name.martingeisse.common.javascript.jsonbuilder;
 
+import org.json.simple.JSONValue;
 import name.martingeisse.common.javascript.JavascriptAssemblerUtil;
 
 /**
@@ -141,30 +142,59 @@ public abstract class JsonValueBuilder<C> extends AbstractJsonBuilder<C> {
 	}
 	
 	/**
-	 * Converts an object to a JSON value and puts it into the
-	 * place used by this builder.
+	 * Converts an {@link IJsonBuildable} object to a JSON value and
+	 * puts it into the place used by this builder.
 	 * 
 	 * @param jsonBuildable the object to convert to JSON
 	 * @return the continuation
 	 */
-	public final C convert(IJsonBuildable jsonBuildable) {
+	public final C convertBuildable(IJsonBuildable jsonBuildable) {
 		jsonBuildable.toJson(this);
 		return getContinuation();
 	}
 	
 	/**
-	 * Converts an object to a JSON value and puts it into the
-	 * place used by this builder, or appends the null literal
-	 * if the argument is null.
+	 * Converts an {@link IJsonBuildable} object to a JSON value and
+	 * puts it into the place used by this builder, or appends the
+	 * null literal if the argument is null.
 	 * 
 	 * @param jsonBuildable the object to convert to JSON
 	 * @return the continuation
 	 */
-	public final C convertOrNull(IJsonBuildable jsonBuildable) {
+	public final C convertBuildableOrNull(IJsonBuildable jsonBuildable) {
 		if (jsonBuildable == null) {
 			nullLiteral();
 		} else {
 			jsonBuildable.toJson(this);
+		}
+		return getContinuation();
+	}
+	
+	/**
+	 * Converts a JsonSimple compatible object to a JSON value and
+	 * puts it into the place used by this builder.
+	 * 
+	 * @param object the object to convert to JSON
+	 * @return the continuation
+	 */
+	public final C convertSimple(Object object) {
+		getBuilder().append(JSONValue.toJSONString(object));
+		return getContinuation();
+	}
+	
+	/**
+	 * Converts a JsonSimple compatible object to a JSON value and
+	 * puts it into the place used by this builder, or appends the
+	 * null literal if the argument is null.
+	 * 
+	 * @param object the object to convert to JSON
+	 * @return the continuation
+	 */
+	public final C convertSimpleOrNull(Object object) {
+		if (object == null) {
+			nullLiteral();
+		} else {
+			convertSimple(this);
 		}
 		return getContinuation();
 	}

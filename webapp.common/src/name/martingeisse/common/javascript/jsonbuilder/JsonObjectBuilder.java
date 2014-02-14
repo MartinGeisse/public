@@ -65,7 +65,7 @@ public final class JsonObjectBuilder<C> extends AbstractJsonBuilder<C> {
 	 * @return this
 	 */
 	public final JsonObjectBuilder<C> property(String name, IJsonBuildable value) {
-		return property(name).convert(value);
+		return property(name).convertBuildable(value);
 	}
 	
 	/**

@@ -59,7 +59,7 @@ public final class JsonListBuilder<C> extends AbstractJsonBuilder<C> {
 	 * @return this
 	 */
 	public final JsonListBuilder<C> element(IJsonBuildable element) {
-		return element().convert(element);
+		return element().convertBuildable(element);
 	}
 
 	/**
