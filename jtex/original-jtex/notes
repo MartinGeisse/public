@@ -1,0 +1,62 @@
+
+interaction mode: vermutlich nonstop_mode (sinnvoll für LaTeX-IDEs):
+die Ausführung wird nicht angehalten, aber alles wird ausgegeben.
+
+selector: wäre nach interaction mode dann term_only. Wird auf
+term_and_log gesetzt, sobald die Log-Datei geöffnet wird. Vermutlich ist
+das der Fall, sobald bekannt ist, wie die Input-Datei heißt und dadurch
+auch bekannt ist, wie die Log-Datei heißt. Das ist aber bisher eine
+Vermutung.
+
+Kein "interaktives Editieren" des Quellcodes in dem Sinne wie TeX das
+versteht. Stattdessen sollte das System in Richtung incremental builds
+ausgelegt werden und dann in Eclipse interaktiv editierbar sein.
+
+Außerdem ist die Unterscheidung zwischen Terminal und Transcript File
+sehr fragwürdig. Die hatte bestimmt "damals" mehr Sinn gemacht, als z.B.
+ein TeX-Lauf teuer war und man Sachen "interaktiv" gefixt hat bzw.
+nachträglich ins Log geschaut hat. Heute würde man immer alles
+durchlaufen lassen und immer ins Log sehen, oder besser noch alles
+durchlaufen lassen und das "Log" als Annotations im Quellcode anhängen.
+
+"Capacity" rauswerfen. Die Datenstrukturen sollten dynamisch angelegt
+werden. Stattdessen kann ein Limit geprüft werden, welches die
+Verarbeitung vor dem OOM abbricht, aber das wäre dann *sehr* viel
+größer als die statische Capacity von TeX.
+
+"check_interrupt" -> nicht interaktiv, aber evtl. sinnvoll um das
+TeX-System aus einem anderen Thread heraus abzuschießen. Mal schauen,
+wo das aufgerufen wird. Evtl. sieht das aber nach etwas Refactoring
+eh alles ganz anders aus.
+
+Hilfsklassen TexInt und TexFixed für int/fixed Arithmetik. Im Hintergrund
+int als Datentyp. Auch toString(int) implementieren!
+
+Im refactoredten TeX ist 1pt = 1 / (72.27) inch. Das so reproduzieren.
+Wenn daraus später ein weiterentwickeltes System (z.B. XML-Syntax)
+wird -> 1/72 in. Am besten schon in der Engine selbst (die vermutlich
+gemeinsam benutzt wird) konfigurierbar.
+
+Hilfsklasse TexPacked für "Packed Data" (16- oder 8-Bit-Werte in einem
+32-Bit Container). Die Vorhandenen Hilfsklassen sind ja super käsig:
+getInt, getScaled, getGlueRatio, getLeftHalf, getRightHalf,
+getByte0...getByte3. 2 Bytes und ein Halfword werden als
+(byte0, byte1, rightHalf) verpackt, so ist es im Text beschrieben.
+Half und Quarter sind unsigned (Java-Typ: int).
+
+min_quarterword, min_halfword sind sinnvollerweise 0 --> da wird
+vermutlich eine Menge Code einfach verschwinden. Dafür gibt es
+"qi" und "qo" Macros --> sieht aus, als wäre das schon passiert.
+
+Das "mem" Array ist für dynamische Speicherverwaltung da. Das kann
+evtl. alles wegfallen in Java.
+
+
+
+
+
+
+
+
+
+

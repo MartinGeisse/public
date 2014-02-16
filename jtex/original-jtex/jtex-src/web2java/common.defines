@@ -1,0 +1,230 @@
+{This file is concatenated by ./convert to the beginning of the Pascal
+ code that tangle outputs.  The idea is to put all these symbols, which
+ can be defined as macros or functions, or as part of standard C, into
+ web2c's symbol table, so that we can access them from a change file.
+ Some are standard Pascal functions, others are simply used in our
+ implementation.
+
+ web2java.yacc can parse these @define statements.}
+
+@define const false;
+@define const input;
+@define const maxint;
+@define const nil;
+@define const output;
+@define const stderr;
+@define const stdin;
+@define const stdout;
+@define const true;
+@define const null;
+
+@define function abs ();
+@define function floor ();
+@define function reset ();
+@define function rewrite ();
+@define function round ();
+@define function trunc ();
+
+@define procedure close ; 
+@define procedure flush ; 
+@define procedure free ();
+@define procedure seek ();
+@define procedure exit ();
+
+@define type boolean;
+@define type char;
+@define type byte;
+@define type int;
+@define type short;
+@define type long;
+@define type float;
+@define type double;
+
+@define type String;
+@define class Byte;
+@define class File;
+@define class DataInputStream;
+@define class FileInputStream;
+@define class ByteArrayInputStream;
+@define class DataOutputStream;
+@define class FileOutputStream;
+@define class RandomAccessFile;
+@define class PrintStream;
+@define class Hashtable;
+@define class StringBuffer;
+@define object System;
+@define object Math;
+@define object this;
+@define procedure append();
+
+@define object in;
+@define object out;
+@define object err;
+@define class TeXlib;
+@define class DVI;
+@define var MaxFonts;
+@define object ex;
+@define var optarg;
+@define var optstring;
+@define function getopt;
+@define var args;
+@define var argc;
+@define var filelength;
+
+@define function FindTFM ();
+@define function randomReset ();
+@define procedure dumpwd ();
+@define procedure dumpint ();
+@define procedure dumphh ();
+@define procedure dumpqqqq ();
+@define procedure undumpwd ();
+@define procedure undumpint ();
+@define procedure undumphh ();
+@define procedure undumpqqqq ();
+@define procedure undumpsize ();
+
+@define function readLine ;
+@define function readChar ;
+@define function readUnsignedByte ;
+@define function readUnsignedShort ;
+@define function indexOf ();
+@define function substring ();
+@define function replace ();
+@define function concat ();
+@define function toCharArray ;
+@define function toString ;
+@define procedure setLength();
+@define function charAt ();
+@define function length ;
+@define function equals ();
+@define procedure put ();
+@define procedure get;
+
+@define class Exception;
+@define class IOException;
+@define class EOFException;
+@define class FileNotFoundException;
+@define class NumberFormatException;
+@define class DviException;
+
+@define procedure readln;
+
+@define class memoryword;
+@define class bigmemword;
+@define const maxHalfword;
+
+@define class Printer;
+@define class TypePrinter;
+@define class PSPrinter;
+@define class InputStream;
+@define class Reader;
+@define class FileReader;
+@define class BufferedReader;
+@define class InputStreamReader;
+@define class FileWriter;
+@define class Writer;
+@define class PrintWriter;
+@define function getMessage;
+@define type CmdLine;
+@define procedure bop() ;
+@define procedure eop ;
+@define procedure preamble() ;
+@define procedure postamble() ;
+@define function setChar ();
+@define procedure putChar ();
+@define procedure setRule ();
+@define procedure putRule ();
+@define procedure moveRight ();
+@define procedure moveDown ();
+@define procedure moveTo ();
+@define function setFont ();
+@define function setLocalFont ();
+@define procedure defineFont ();
+@define procedure special ();
+@define var Banner;
+
+@define class TeXFile;
+@define object texFile;
+@define class TeXFont;
+@define var font;
+
+@define type tfmlabel;
+@define var cc;
+@define var rr;
+
+@define function ffn ();
+
+@define var b0;
+@define var b1;
+@define var b2;
+@define var b3;
+@define var lh;
+@define var rh;
+
+@define var vfCmd;
+@define type VfFont;
+@define type VfChar;
+@define object function dviStream ();
+@define var fount;
+@define var chr;
+
+@define procedure quiz ();
+
+@define printproc write ();
+@define procedure writeLong ();
+@define procedure writeInt ();
+@define procedure writeShort ();
+@define procedure writeByte ();
+@define function readLong;
+@define function readInt;
+@define function readShort;
+@define function readByte;
+@define printproc print ();
+@define printproc println ();
+
+@define memfield hh;
+@define memfield qqqq;
+@define memfield hqq;
+@define memfield gr;
+@define memfield INT;
+@define var Int;
+@define var Long;
+
+@define class alphafile;
+@define class alphaout;
+@define class bytefile;
+@define class byteout;
+@define class wordfile;
+@define class wordout;
+@define function open ();
+
+@define var termin;
+@define var termout;
+
+@define function Aopenin();
+@define function Aopenout();
+@define function Bopenin();
+@define function Bopenout();
+@define function Wopenin();
+@define function Wopenout();
+
+@define var glue;
+@define var eof;
+@define function eoln;
+@define var filebuf;
+
+@define continue 20;
+@define continue 21;
+@define continue 22;
+@define continue 25;
+@define continue 26;
+@define continue 60;
+
+@define object Integer;
+@define function parseInt();
+@define function exists;
+@define procedure start;
+
+@define procedure memdump ();
+@define procedure memundump ();
+
