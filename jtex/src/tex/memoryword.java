@@ -2,6 +2,7 @@
 /*2:*/
 package tex;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import name.martingeisse.jtex.io.TexFileDataOutputStream;
 
@@ -119,7 +120,7 @@ public class memoryword {
 		fmtfile.writeInt(Int);
 	}
 
-	public final void memundump(final wordfile fmtfile) throws IOException {
+	public final void memundump(final DataInputStream fmtfile) throws IOException {
 		this.Int = fmtfile.readInt();
 	}/*:10*/
 

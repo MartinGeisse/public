@@ -3,7 +3,7 @@ package tex;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import name.martingeisse.jtex.io.TexFileDataInputStream;
 import name.martingeisse.jtex.io.TexFileDataOutputStream;
 import name.martingeisse.jtex.io.TexFilePrintWriter;
 
@@ -625,9 +625,7 @@ public class tex extends Thread {
 
 	private int formatident;
 
-	wordfile fmtfile;
-
-	private int readyalready;
+	TexFileDataInputStream fmtfile;
 
 	private PrintWriter writefile[] = new PrintWriter[16];
 
@@ -1314,14 +1312,7 @@ public class tex extends Thread {
 
 	public void jumpout() {
 		closefilesandterminate();
-		termout.println();
-		termout.flush();
-		readyalready = 0;
-		if ((history != 0) && (history != 1)) {
-			System.exit(1);
-		} else {
-			System.exit(0);
-		}
+		exit();
 	}
 
 	public void error() {
@@ -1445,14 +1436,7 @@ public class tex extends Thread {
 						if (formatident == 0) {
 							termout.print("Buffer size exceeded!" + '\n');
 							{
-								termout.println();
-								termout.flush();
-								readyalready = 0;
-								if ((history != 0) && (history != 1)) {
-									System.exit(1);
-								} else {
-									System.exit(0);
-								}
+								exit();
 							}
 						} else {
 							curinput.locfield = first;
@@ -7963,7 +7947,7 @@ public class tex extends Thread {
 		return Result;
 	}
 
-	public void readtoks(int n, final int r) {
+	public void readtoks(final int n, final int r) {
 		/* 30 */int p;
 		int q;
 		int s;
@@ -8470,7 +8454,7 @@ public class tex extends Thread {
 		}
 		return Result;
 	}
-	
+
 	public void scanfilename() {
 		/* 30 */nameinprogress = true;
 		beginname();
@@ -9180,15 +9164,12 @@ public class tex extends Thread {
 								}
 							}
 						}
-						if (tfmfile.eof) {
-							break lab11;
-						}
 						for (k = np + 1; k <= 7; k++) {
 							fontinfo[parambase[f] + k - 1].setInt(0);
 						}
 					}
 				} catch (final IOException ex) {
-					;
+					break lab11;
 				}
 				if (np >= 7) {
 					fontparams[f] = np;
@@ -20715,7 +20696,7 @@ public class tex extends Thread {
 		tokenshow(eqtb[7721].getrh());
 	}
 
-	public boolean openfmtfile() {
+	public boolean openfmtfile() throws IOException {
 		/* 40 10 */boolean Result;
 		int j;
 		j = curinput.locfield;
@@ -20731,7 +20712,7 @@ public class tex extends Thread {
 				thisfile = new TeXFile(nameoffile);
 				if (thisfile.exists()) {
 					try {
-						fmtfile = new wordfile(thisfile);
+						fmtfile = new TexFileDataInputStream(thisfile);
 					} catch (final FileNotFoundException ex) {
 						termout.println();
 						termout.print("Cannot open ");
@@ -20743,7 +20724,7 @@ public class tex extends Thread {
 				thisfile = new TeXFile(nameoffile);
 				if (thisfile.exists()) {
 					try {
-						fmtfile = new wordfile(thisfile);
+						fmtfile = new TexFileDataInputStream(thisfile);
 					} catch (final FileNotFoundException ex) {
 						termout.println();
 						termout.print("Cannot open ");
@@ -20758,7 +20739,7 @@ public class tex extends Thread {
 			thisfile = new TeXFile(nameoffile);
 			if (thisfile.exists()) {
 				try {
-					fmtfile = new wordfile(thisfile);
+					fmtfile = new TexFileDataInputStream(thisfile);
 				} catch (final FileNotFoundException ex) {
 					termout.println();
 					termout.print("Cannot open ");
@@ -21250,7 +21231,7 @@ public class tex extends Thread {
 					}
 				}
 				x = fmtfile.readInt();
-				if ((x != 69069) || fmtfile.eof) {
+				if (x != 69069) {
 					break lab125;
 				}
 				Result = true;
@@ -21866,14 +21847,7 @@ public class tex extends Thread {
 				error();
 			}
 			if (m < 0) {
-				termout.println();
-				termout.flush();
-				readyalready = 0;
-				if ((history != 0) && (history != 1)) {
-					System.exit(1);
-				} else {
-					System.exit(0);
-				}
+				exit();
 			} else if (m == 0) {
 				return /* lab10 */;
 			} else {
@@ -22007,102 +21981,81 @@ public class tex extends Thread {
 	public void run() {
 		history = 3;
 		termout = new PrintWriter(System.out);
-		while (true) {
-			if (readyalready == 314159) {
-				break /* lab1 */;
-			}
-			bad = 0;
-			if ((halferrorline < 30) || (halferrorline > errorline - 15)) {
-				bad = 1;
-			}
-			if (maxprintline < 60) {
-				bad = 2;
-			}
-			if (dvibufsize % 8 != 0) {
-				bad = 3;
-			}
-			if (1100 > memtop) {
-				bad = 4;
-			}
-			if (5437 > 6400) {
-				bad = 5;
-			}
-			if (maxinopen >= 128) {
-				bad = 6;
-			}
-			if (memtop < 267) {
-				bad = 7;
-			}
-			if (INITEX && memmax != memtop) {
-				bad = 10;
-			}
-			if ((memmax < memtop)) {
-				bad = 10;
-			}
-			if ((maxhalfword < 32767)) {
-				bad = 12;
-			}
-			if (255 > maxhalfword) {
-				bad = 13;
-			}
-			if ((memmax >= maxhalfword) || (-0 > maxhalfword + 1)) {
-				bad = 14;
-			}
-			if (fontmax > 255) {
-				bad = 15;
-			}
-			if (fontmax > 256) {
-				bad = 16;
-			}
-			if ((savesize > maxhalfword) || (maxstrings > maxhalfword)) {
-				bad = 17;
-			}
-			if (bufsize > maxhalfword) {
-				bad = 18;
-			}
-			if (11276 > maxhalfword) {
-				bad = 21;
-			}
-			if (20 > filenamesize) {
-				bad = 31;
-			}
-			if (2 * maxhalfword < memtop - 0) {
-				bad = 41;
-			}
-			if (bad > 0) {
-				termout.println("Ouch---my internal constants have been clobbered!" + "---case " + bad);
-				{
-					termout.println();
-					termout.flush();
-					readyalready = 0;
-					if ((history != 0) && (history != 1)) {
-						System.exit(1);
-					} else {
-						System.exit(0);
-					}
-				}
-			}
-			initialize();
-			if (INITEX) {
-				if (!getstringsstarted()) {
-					termout.println();
-					termout.flush();
-					readyalready = 0;
-					if ((history != 0) && (history != 1)) {
-						System.exit(1);
-					} else {
-						System.exit(0);
-					}
-				}
-				initprim();
-				initstrptr = strptr;
-				initpoolptr = poolptr;
-				fixdateandtime();
-			}
-			readyalready = 314159;
-			break;
+		bad = 0;
+		if ((halferrorline < 30) || (halferrorline > errorline - 15)) {
+			bad = 1;
 		}
-		/* lab1: */selector = 17;
+		if (maxprintline < 60) {
+			bad = 2;
+		}
+		if (dvibufsize % 8 != 0) {
+			bad = 3;
+		}
+		if (1100 > memtop) {
+			bad = 4;
+		}
+		if (5437 > 6400) {
+			bad = 5;
+		}
+		if (maxinopen >= 128) {
+			bad = 6;
+		}
+		if (memtop < 267) {
+			bad = 7;
+		}
+		if (INITEX && memmax != memtop) {
+			bad = 10;
+		}
+		if ((memmax < memtop)) {
+			bad = 10;
+		}
+		if ((maxhalfword < 32767)) {
+			bad = 12;
+		}
+		if (255 > maxhalfword) {
+			bad = 13;
+		}
+		if ((memmax >= maxhalfword) || (-0 > maxhalfword + 1)) {
+			bad = 14;
+		}
+		if (fontmax > 255) {
+			bad = 15;
+		}
+		if (fontmax > 256) {
+			bad = 16;
+		}
+		if ((savesize > maxhalfword) || (maxstrings > maxhalfword)) {
+			bad = 17;
+		}
+		if (bufsize > maxhalfword) {
+			bad = 18;
+		}
+		if (11276 > maxhalfword) {
+			bad = 21;
+		}
+		if (20 > filenamesize) {
+			bad = 31;
+		}
+		if (2 * maxhalfword < memtop - 0) {
+			bad = 41;
+		}
+		if (bad > 0) {
+			termout.println("Ouch---my internal constants have been clobbered!" + "---case " + bad);
+			{
+				exit();
+			}
+		}
+		initialize();
+		if (INITEX) {
+			if (!getstringsstarted()) {
+				exit();
+			}
+			initprim();
+			initstrptr = strptr;
+			initpoolptr = poolptr;
+			fixdateandtime();
+		}
+		selector = 17;
 		tally = 0;
 		termoffset = 0;
 		fileoffset = 0;
@@ -22119,101 +22072,78 @@ public class tex extends Thread {
 		nameinprogress = false;
 		logopened = false;
 		outputfilename = 0;
-		{
-			{
-				inputptr = 0;
-				maxinstack = 0;
-				inopen = 0;
-				openparens = 0;
-				maxbufstack = 0;
-				paramptr = 0;
-				maxparamstack = 0;
-				first = bufsize;
-				do {
-					buffer[first] = 0;
-					first = first - 1;
-				} while (!(first == 0));
-				scannerstatus = 0;
-				warningindex = 0;
-				first = 1;
-				curinput.statefield = 33;
-				curinput.startfield = 1;
-				curinput.indexfield = 0;
-				line = 0;
-				curinput.namefield = 0;
-				forceeof = false;
-				alignstate = 1000000;
-				if (!initterminal()) {
-					termout.println();
-					termout.flush();
-					readyalready = 0;
-					if ((history != 0) && (history != 1)) {
-						System.exit(1);
-					} else {
-						System.exit(0);
-					}
-				}
-				curinput.limitfield = last;
-				first = last + 1;
+		inputptr = 0;
+		maxinstack = 0;
+		inopen = 0;
+		openparens = 0;
+		maxbufstack = 0;
+		paramptr = 0;
+		maxparamstack = 0;
+		first = bufsize;
+		do {
+			buffer[first] = 0;
+			first = first - 1;
+		} while (!(first == 0));
+		scannerstatus = 0;
+		warningindex = 0;
+		first = 1;
+		curinput.statefield = 33;
+		curinput.startfield = 1;
+		curinput.indexfield = 0;
+		line = 0;
+		curinput.namefield = 0;
+		forceeof = false;
+		alignstate = 1000000;
+		if (!initterminal()) {
+			exit();
+		}
+		curinput.limitfield = last;
+		first = last + 1;
+		if ((formatident == 0) || (buffer[curinput.locfield] == 38)) {
+			if (formatident != 0) {
+				initialize();
 			}
-			if ((formatident == 0) || (buffer[curinput.locfield] == 38)) {
-				if (formatident != 0) {
-					initialize();
-				}
+			try {
 				if (!openfmtfile()) {
-					termout.println();
-					termout.flush();
-					readyalready = 0;
-					if ((history != 0) && (history != 1)) {
-						System.exit(1);
-					} else {
-						System.exit(0);
-					}
+					exit();
 				}
-				if (!loadfmtfile()) {
-					fmtfile.close();
-					{
-						termout.println();
-						termout.flush();
-						readyalready = 0;
-						if ((history != 0) && (history != 1)) {
-							System.exit(1);
-						} else {
-							System.exit(0);
-						}
-					}
-				}
+			} catch (IOException e) {
+				System.err.println(e);
+				exit();
+			}
+			if (!loadfmtfile()) {
 				fmtfile.close();
-				while ((curinput.locfield < curinput.limitfield) && (buffer[curinput.locfield] == 32)) {
-					curinput.locfield = curinput.locfield + 1;
+				{
+					exit();
 				}
 			}
-			if ((eqtb[9611].getInt() < 0) || (eqtb[9611].getInt() > 255)) {
-				curinput.limitfield = curinput.limitfield - 1;
-			} else {
-				buffer[curinput.limitfield] = eqtb[9611].getInt();
+			fmtfile.close();
+			while ((curinput.locfield < curinput.limitfield) && (buffer[curinput.locfield] == 32)) {
+				curinput.locfield = curinput.locfield + 1;
 			}
-			fixdateandtime();
-			magicoffset = strstart[892] - 9 * 16;
-			selector = 17;
-			if ((curinput.locfield < curinput.limitfield) && (eqtb[8283 + buffer[curinput.locfield]].getrh() != 0)) {
-				startinput();
-			}
+		}
+		if ((eqtb[9611].getInt() < 0) || (eqtb[9611].getInt() > 255)) {
+			curinput.limitfield = curinput.limitfield - 1;
+		} else {
+			buffer[curinput.limitfield] = eqtb[9611].getInt();
+		}
+		fixdateandtime();
+		magicoffset = strstart[892] - 9 * 16;
+		selector = 17;
+		if ((curinput.locfield < curinput.limitfield) && (eqtb[8283 + buffer[curinput.locfield]].getrh() != 0)) {
+			startinput();
 		}
 		history = 0;
 		maincontrol();
 		finalcleanup();
 		closefilesandterminate();
-		{
-			termout.println();
-			termout.flush();
-			readyalready = 0;
-			if ((history != 0) && (history != 1)) {
-				System.exit(1);
-			} else {
-				System.exit(0);
-			}
-		}
-		readyalready = 0;
+		exit();
 	}
+
+	private void exit() {
+		termout.println();
+		termout.flush();
+		System.exit(history == 0 || history == 1 ? 0 : 1);
+	}
+
 }

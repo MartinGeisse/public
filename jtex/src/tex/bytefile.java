@@ -13,11 +13,7 @@ import java.io.InputStream;
 public class bytefile extends DataInputStream {
 	public int filebuf;
 
-	public boolean eof = false;
-
 	public String name;
-
-	public TeXFile texFile;
 
 	public bytefile(final InputStream in) {
 		super(in);
@@ -28,9 +24,7 @@ public class bytefile extends DataInputStream {
 		try {
 			filebuf = super.read();
 		} catch (final IOException e) {
-			eof = true;
 		}
-		this.texFile = texFile;
 		name = texFile.getName();
 	}
 
@@ -41,9 +35,7 @@ public class bytefile extends DataInputStream {
 			filebuf = super.read();
 			return c;
 		} catch (final EOFException e) {
-			eof = true;
 		} catch (final IOException e) {
-			eof = true;
 		}
 		return 0;
 	}
@@ -52,7 +44,6 @@ public class bytefile extends DataInputStream {
 		try {
 			filebuf = super.read();
 		} catch (final IOException e) {
-			eof = true;
 		}
 	}
 
