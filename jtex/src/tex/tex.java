@@ -3554,10 +3554,8 @@ public class tex extends Thread {
 	}
 
 	public void popnest() {
-		{
-			mem[curlist.headfield].setrh(avail);
-			avail = curlist.headfield;
-		}
+		mem[curlist.headfield].setrh(avail);
+		avail = curlist.headfield;
 		nestptr = nestptr - 1;
 		curlist.copy(nest[nestptr]);
 	}
@@ -10265,15 +10263,11 @@ public class tex extends Thread {
 		}
 		lab30: while (true) {
 			if ((mem[p + 3].getInt() > 1073741823) || (mem[p + 2].getInt() > 1073741823) || (mem[p + 3].getInt() + mem[p + 2].getInt() + eqtb[10149].getInt() > 1073741823) || (mem[p + 1].getInt() + eqtb[10148].getInt() > 1073741823)) {
-				{
-					printnl(262);
-					Print(833);
-				}
-				{
-					helpptr = 2;
-					helpline[1] = 834;
-					helpline[0] = 835;
-				}
+				printnl(262);
+				Print(833);
+				helpptr = 2;
+				helpline[1] = 834;
+				helpline[0] = 835;
 				error();
 				if (eqtb[9597].getInt() <= 0) {
 					begindiagnostic();
@@ -10316,19 +10310,15 @@ public class tex extends Thread {
 				outputfilename = makenamestring();
 			}
 			if (totalpages == 0) {
-				{
-					dvibuf[dviptr] = 247;
-					dviptr = dviptr + 1;
-					if (dviptr == dvilimit) {
-						dviswap();
-					}
+				dvibuf[dviptr] = 247;
+				dviptr = dviptr + 1;
+				if (dviptr == dvilimit) {
+					dviswap();
 				}
-				{
-					dvibuf[dviptr] = 2;
-					dviptr = dviptr + 1;
-					if (dviptr == dvilimit) {
-						dviswap();
-					}
+				dvibuf[dviptr] = 2;
+				dviptr = dviptr + 1;
+				if (dviptr == dvilimit) {
+					dviswap();
 				}
 				dvifour(25400000);
 				dvifour(473628672);
@@ -15511,16 +15501,12 @@ public class tex extends Thread {
 		p = eqtb[7978 + n].getrh();
 		if (p != 0) {
 			if (mem[p].getb0() == 0) {
-				{
-					printnl(262);
-					Print(989);
-				}
-				{
-					helpptr = 3;
-					helpline[2] = 990;
-					helpline[1] = 991;
-					helpline[0] = 992;
-				}
+				printnl(262);
+				Print(989);
+				helpptr = 3;
+				helpline[2] = 990;
+				helpline[1] = 991;
+				helpline[0] = 992;
 				boxerror(n);
 			}
 		}
@@ -15553,17 +15539,13 @@ public class tex extends Thread {
 			bestpagebreak = 0;
 		}
 		if (eqtb[8233].getrh() != 0) {
-			{
-				printnl(262);
-				Print(338);
-			}
+			printnl(262);
+			Print(338);
 			printesc(409);
 			Print(1003);
-			{
-				helpptr = 2;
-				helpline[1] = 1004;
-				helpline[0] = 992;
-			}
+			helpptr = 2;
+			helpline[1] = 1004;
+			helpline[0] = 992;
 			boxerror(255);
 		}
 		insertpenalties = 0;
@@ -15706,18 +15688,14 @@ public class tex extends Thread {
 		}
 		if (eqtb[7713].getrh() != 0) {
 			if (deadcycles >= eqtb[9603].getInt()) {
-				{
-					printnl(262);
-					Print(1005);
-				}
+				printnl(262);
+				Print(1005);
 				printint(deadcycles);
 				Print(1006);
-				{
-					helpptr = 3;
-					helpline[2] = 1007;
-					helpline[1] = 1008;
-					helpline[0] = 1009;
-				}
+				helpptr = 3;
+				helpline[2] = 1007;
+				helpline[1] = 1008;
+				helpline[0] = 1009;
 				error();
 			} else {
 				outputactive = true;
@@ -15733,24 +15711,22 @@ public class tex extends Thread {
 				return /* lab10 */;
 			}
 		}
-		{
-			if (mem[memtop - 2].getrh() != 0) {
-				if (mem[memtop - 1].getrh() == 0) {
-					if (nestptr == 0) {
-						curlist.tailfield = pagetail;
-					} else {
-						nest[0].tailfield = pagetail;
-					}
+		if (mem[memtop - 2].getrh() != 0) {
+			if (mem[memtop - 1].getrh() == 0) {
+				if (nestptr == 0) {
+					curlist.tailfield = pagetail;
 				} else {
-					mem[pagetail].setrh(mem[memtop - 1].getrh());
+					nest[0].tailfield = pagetail;
 				}
-				mem[memtop - 1].setrh(mem[memtop - 2].getrh());
-				mem[memtop - 2].setrh(0);
-				pagetail = memtop - 2;
+			} else {
+				mem[pagetail].setrh(mem[memtop - 1].getrh());
 			}
-			shipout(eqtb[8233].getrh());
-			eqtb[8233].setrh(0);
+			mem[memtop - 1].setrh(mem[memtop - 2].getrh());
+			mem[memtop - 2].setrh(0);
+			pagetail = memtop - 2;
 		}
+		shipout(eqtb[8233].getrh());
+		eqtb[8233].setrh(0);
 	}
 
 	public void buildpage() {
