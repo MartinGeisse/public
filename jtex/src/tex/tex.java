@@ -291,7 +291,7 @@ public class tex extends Thread {
 
 	private int logname;
 
-	bytefile tfmfile;
+	TexFileDataInputStream tfmfile;
 
 	private memoryword fontinfo[] = new memoryword[fontmemsize + 1];
 
@@ -363,7 +363,7 @@ public class tex extends Thread {
 
 	private boolean doingleaders;
 
-	private int c, f;
+	private int f;
 
 	private int ruleht, ruledp, rulewd;
 
@@ -1311,7 +1311,7 @@ public class tex extends Thread {
 	}
 
 	public void jumpout() {
-		closefilesandterminate();
+		closeFiles();
 		exit();
 	}
 
@@ -1384,35 +1384,25 @@ public class tex extends Thread {
 	public void confusion(final int s) {
 		normalizeselector();
 		if (history < 2) {
-			{
-				printnl(262);
-				Print(291);
-			}
+			printnl(262);
+			Print(291);
 			Print(s);
 			printchar(41);
-			{
-				helpptr = 1;
-				helpline[0] = 292;
-			}
+			helpptr = 1;
+			helpline[0] = 292;
 		} else {
-			{
-				printnl(262);
-				Print(293);
-			}
-			{
-				helpptr = 2;
-				helpline[1] = 294;
-				helpline[0] = 295;
-			}
+			printnl(262);
+			Print(293);
+			helpptr = 2;
+			helpline[1] = 294;
+			helpline[0] = 295;
 		}
-		{
-			if (logopened) {
-				error();
-			}
-			debughelp();
-			history = 3;
-			jumpout();
+		if (logopened) {
+			error();
 		}
+		debughelp();
+		history = 3;
+		jumpout();
 	}
 
 	public boolean inputln(final alphafile f, final boolean bypasseoln) {
@@ -8674,47 +8664,32 @@ public class tex extends Thread {
 					}
 					thisfile = new TeXFile(nameoffile);
 					if (thisfile.exists()) {
-						tfmfile = new bytefile(thisfile);
+						tfmfile = new TexFileDataInputStream(thisfile);
 					} else {
 						break lab11;
 					}
 					fileopened = true;
 					{
-						{
-							lf = tfmfile.filebuf;
-							if (lf > 127) {
-								break lab11;
-							}
-							tfmfile.get();
-							lf = lf * 256 + tfmfile.filebuf;
+						lf = tfmfile.read();
+						if (lf > 127) {
+							break lab11;
 						}
-						tfmfile.get();
-						{
-							lh = tfmfile.filebuf;
-							if (lh > 127) {
-								break lab11;
-							}
-							tfmfile.get();
-							lh = lh * 256 + tfmfile.filebuf;
+						lf = lf * 256 + tfmfile.read();
+						lh = tfmfile.read();
+						if (lh > 127) {
+							break lab11;
 						}
-						tfmfile.get();
-						{
-							bc = tfmfile.filebuf;
-							if (bc > 127) {
-								break lab11;
-							}
-							tfmfile.get();
-							bc = bc * 256 + tfmfile.filebuf;
+						lh = lh * 256 + tfmfile.read();
+						bc = tfmfile.read();
+						if (bc > 127) {
+							break lab11;
 						}
-						tfmfile.get();
-						{
-							ec = tfmfile.filebuf;
-							if (ec > 127) {
-								break lab11;
-							}
-							tfmfile.get();
-							ec = ec * 256 + tfmfile.filebuf;
+						bc = bc * 256 + tfmfile.read();
+						ec = tfmfile.read();
+						if (ec > 127) {
+							break lab11;
 						}
+						ec = ec * 256 + tfmfile.read();
 						if ((bc > ec + 1) || (ec > 255)) {
 							break lab11;
 						}
@@ -8722,77 +8697,61 @@ public class tex extends Thread {
 							bc = 1;
 							ec = 0;
 						}
-						tfmfile.get();
 						{
-							nw = tfmfile.filebuf;
+							nw = tfmfile.read();
 							if (nw > 127) {
 								break lab11;
 							}
-							tfmfile.get();
-							nw = nw * 256 + tfmfile.filebuf;
+							nw = nw * 256 + tfmfile.read();
 						}
-						tfmfile.get();
 						{
-							nh = tfmfile.filebuf;
+							nh = tfmfile.read();
 							if (nh > 127) {
 								break lab11;
 							}
-							tfmfile.get();
-							nh = nh * 256 + tfmfile.filebuf;
+							nh = nh * 256 + tfmfile.read();
 						}
-						tfmfile.get();
 						{
-							nd = tfmfile.filebuf;
+							nd = tfmfile.read();
 							if (nd > 127) {
 								break lab11;
 							}
-							tfmfile.get();
-							nd = nd * 256 + tfmfile.filebuf;
+							nd = nd * 256 + tfmfile.read();
 						}
-						tfmfile.get();
 						{
-							ni = tfmfile.filebuf;
+							ni = tfmfile.read();
 							if (ni > 127) {
 								break lab11;
 							}
-							tfmfile.get();
-							ni = ni * 256 + tfmfile.filebuf;
+							ni = ni * 256 + tfmfile.read();
 						}
-						tfmfile.get();
 						{
-							nl = tfmfile.filebuf;
+							nl = tfmfile.read();
 							if (nl > 127) {
 								break lab11;
 							}
-							tfmfile.get();
-							nl = nl * 256 + tfmfile.filebuf;
+							nl = nl * 256 + tfmfile.read();
 						}
-						tfmfile.get();
 						{
-							nk = tfmfile.filebuf;
+							nk = tfmfile.read();
 							if (nk > 127) {
 								break lab11;
 							}
-							tfmfile.get();
-							nk = nk * 256 + tfmfile.filebuf;
+							nk = nk * 256 + tfmfile.read();
 						}
-						tfmfile.get();
 						{
-							ne = tfmfile.filebuf;
+							ne = tfmfile.read();
 							if (ne > 127) {
 								break lab11;
 							}
-							tfmfile.get();
-							ne = ne * 256 + tfmfile.filebuf;
+							ne = ne * 256 + tfmfile.read();
 						}
-						tfmfile.get();
 						{
-							np = tfmfile.filebuf;
+							np = tfmfile.read();
 							if (np > 127) {
 								break lab11;
 							}
-							tfmfile.get();
-							np = np * 256 + tfmfile.filebuf;
+							np = np * 256 + tfmfile.read();
 						}
 						if (lf != 6 + lh + (ec - bc + 1) + nw + nh + nd + ni + nl + nk + ne + np) {
 							break lab11;
@@ -8844,41 +8803,33 @@ public class tex extends Thread {
 							break lab11;
 						}
 						{
-							tfmfile.get();
-							a = tfmfile.filebuf;
+							a = tfmfile.read();
 							qw.b0 = a;
-							tfmfile.get();
-							b = tfmfile.filebuf;
+							b = tfmfile.read();
 							qw.b1 = b;
-							tfmfile.get();
-							c = tfmfile.filebuf;
+							c = tfmfile.read();
 							qw.b2 = c;
-							tfmfile.get();
-							d = tfmfile.filebuf;
+							d = tfmfile.read();
 							qw.b3 = d;
 							fontcheck[f].copy(qw);
 						}
-						tfmfile.get();
 						{
-							z = tfmfile.filebuf;
+							z = tfmfile.read();
 							if (z > 127) {
 								break lab11;
 							}
-							tfmfile.get();
-							z = z * 256 + tfmfile.filebuf;
+							z = z * 256 + tfmfile.read();
 						}
-						tfmfile.get();
-						z = z * 256 + tfmfile.filebuf;
-						tfmfile.get();
-						z = (z * 16) + (tfmfile.filebuf / 16);
+						z = z * 256 + tfmfile.read();
+						z = (z * 16) + (tfmfile.read() / 16);
 						if (z < 65536) {
 							break lab11;
 						}
 						while (lh > 2) {
-							tfmfile.get();
-							tfmfile.get();
-							tfmfile.get();
-							tfmfile.get();
+							tfmfile.read();
+							tfmfile.read();
+							tfmfile.read();
+							tfmfile.read();
 							lh = lh - 1;
 						}
 						fontdsize[f] = z;
@@ -8893,17 +8844,13 @@ public class tex extends Thread {
 					}
 					for (k = fmemptr; k <= widthbase[f] - 1; k++) {
 						{
-							tfmfile.get();
-							a = tfmfile.filebuf;
+							a = tfmfile.read();
 							qw.b0 = a;
-							tfmfile.get();
-							b = tfmfile.filebuf;
+							b = tfmfile.read();
 							qw.b1 = b;
-							tfmfile.get();
-							c = tfmfile.filebuf;
+							c = tfmfile.read();
 							qw.b2 = c;
-							tfmfile.get();
-							d = tfmfile.filebuf;
+							d = tfmfile.read();
 							qw.b3 = d;
 							fontinfo[k].setqqqq(qw);
 						}
@@ -8958,14 +8905,10 @@ public class tex extends Thread {
 							alpha = alpha * z;
 						}
 						for (k = widthbase[f]; k <= ligkernbase[f] - 1; k++) {
-							tfmfile.get();
-							a = tfmfile.filebuf;
-							tfmfile.get();
-							b = tfmfile.filebuf;
-							tfmfile.get();
-							c = tfmfile.filebuf;
-							tfmfile.get();
-							d = tfmfile.filebuf;
+							a = tfmfile.read();
+							b = tfmfile.read();
+							c = tfmfile.read();
+							d = tfmfile.read();
 							sw = (((((d * z) / 256) + (c * z)) / 256) + (b * z)) / beta;
 							if (a == 0) {
 								fontinfo[k].setInt(sw);
@@ -8993,17 +8936,13 @@ public class tex extends Thread {
 					if (nl > 0) {
 						for (k = ligkernbase[f]; k <= kernbase[f] + 256 * (128) - 1; k++) {
 							{
-								tfmfile.get();
-								a = tfmfile.filebuf;
+								a = tfmfile.read();
 								qw.b0 = a;
-								tfmfile.get();
-								b = tfmfile.filebuf;
+								b = tfmfile.read();
 								qw.b1 = b;
-								tfmfile.get();
-								c = tfmfile.filebuf;
+								c = tfmfile.read();
 								qw.b2 = c;
-								tfmfile.get();
-								d = tfmfile.filebuf;
+								d = tfmfile.read();
 								qw.b3 = d;
 								fontinfo[k].setqqqq(qw);
 							}
@@ -9053,14 +8992,10 @@ public class tex extends Thread {
 						}
 					}
 					for (k = kernbase[f] + 256 * (128); k <= extenbase[f] - 1; k++) {
-						tfmfile.get();
-						a = tfmfile.filebuf;
-						tfmfile.get();
-						b = tfmfile.filebuf;
-						tfmfile.get();
-						c = tfmfile.filebuf;
-						tfmfile.get();
-						d = tfmfile.filebuf;
+						a = tfmfile.read();
+						b = tfmfile.read();
+						c = tfmfile.read();
+						d = tfmfile.read();
 						sw = (((((d * z) / 256) + (c * z)) / 256) + (b * z)) / beta;
 						if (a == 0) {
 							fontinfo[k].setInt(sw);
@@ -9072,17 +9007,13 @@ public class tex extends Thread {
 					}
 					for (k = extenbase[f]; k <= parambase[f] - 1; k++) {
 						{
-							tfmfile.get();
-							a = tfmfile.filebuf;
+							a = tfmfile.read();
 							qw.b0 = a;
-							tfmfile.get();
-							b = tfmfile.filebuf;
+							b = tfmfile.read();
 							qw.b1 = b;
-							tfmfile.get();
-							c = tfmfile.filebuf;
+							c = tfmfile.read();
 							qw.b2 = c;
-							tfmfile.get();
-							d = tfmfile.filebuf;
+							d = tfmfile.read();
 							qw.b3 = d;
 							fontinfo[k].setqqqq(qw);
 						}
@@ -9134,26 +9065,18 @@ public class tex extends Thread {
 					{
 						for (k = 1; k <= np; k++) {
 							if (k == 1) {
-								tfmfile.get();
-								sw = tfmfile.filebuf;
+								sw = tfmfile.read();
 								if (sw > 127) {
 									sw = sw - 256;
 								}
-								tfmfile.get();
-								sw = sw * 256 + tfmfile.filebuf;
-								tfmfile.get();
-								sw = sw * 256 + tfmfile.filebuf;
-								tfmfile.get();
-								fontinfo[parambase[f]].setInt((sw * 16) + (tfmfile.filebuf / 16));
+								sw = sw * 256 + tfmfile.read();
+								sw = sw * 256 + tfmfile.read();
+								fontinfo[parambase[f]].setInt((sw * 16) + (tfmfile.read() / 16));
 							} else {
-								tfmfile.get();
-								a = tfmfile.filebuf;
-								tfmfile.get();
-								b = tfmfile.filebuf;
-								tfmfile.get();
-								c = tfmfile.filebuf;
-								tfmfile.get();
-								d = tfmfile.filebuf;
+								a = tfmfile.read();
+								b = tfmfile.read();
+								c = tfmfile.read();
+								d = tfmfile.read();
 								sw = (((((d * z) / 256) + (c * z)) / 256) + (b * z)) / beta;
 								if (a == 0) {
 									fontinfo[parambase[f] + k - 1].setInt(sw);
@@ -9869,7 +9792,7 @@ public class tex extends Thread {
 					}
 					do {
 						f = mem[p].getb0();
-						c = mem[p].getb1();
+						int c = mem[p].getb1();
 						if (f != dvif) {
 							if (!fontused[f]) {
 								dvifontdef(f);
@@ -20670,17 +20593,16 @@ public class tex extends Thread {
 				}
 				break;
 			}
-			/* lab120: */if (eqtb[7194].getrh() == 0) {
-				{
-					mainp = fontglue[eqtb[8234].getrh()];
-					if (mainp == 0) {
-						mainp = newspec(0);
-						maink = parambase[eqtb[8234].getrh()] + 2;
-						mem[mainp + 1].setInt(fontinfo[maink].getInt());
-						mem[mainp + 2].setInt(fontinfo[maink + 1].getInt());
-						mem[mainp + 3].setInt(fontinfo[maink + 2].getInt());
-						fontglue[eqtb[8234].getrh()] = mainp;
-					}
+			/* lab120: */
+			if (eqtb[7194].getrh() == 0) {
+				mainp = fontglue[eqtb[8234].getrh()];
+				if (mainp == 0) {
+					mainp = newspec(0);
+					maink = parambase[eqtb[8234].getrh()] + 2;
+					mem[mainp + 1].setInt(fontinfo[maink].getInt());
+					mem[mainp + 2].setInt(fontinfo[maink + 1].getInt());
+					mem[mainp + 3].setInt(fontinfo[maink + 2].getInt());
+					fontglue[eqtb[8234].getrh()] = mainp;
 				}
 				tempptr = newglue(mainp);
 			} else {
@@ -20790,31 +20712,27 @@ public class tex extends Thread {
 				if (x != 607) {
 					break lab125;
 				}
-				{
-					x = fmtfile.readInt();
-					if (x < 0) {
-						break lab125;
-					}
-					if (x > poolsize) {
-						;
-						termout.println("---! Must increase the " + "string pool size");
-						break lab125;
-					} else {
-						poolptr = x;
-					}
+				x = fmtfile.readInt();
+				if (x < 0) {
+					break lab125;
 				}
-				{
-					x = fmtfile.readInt();
-					if (x < 0) {
-						break lab125;
-					}
-					if (x > maxstrings) {
-						;
-						termout.println("---! Must increase the " + "max strings");
-						break lab125;
-					} else {
-						strptr = x;
-					}
+				if (x > poolsize) {
+					;
+					termout.println("---! Must increase the " + "string pool size");
+					break lab125;
+				} else {
+					poolptr = x;
+				}
+				x = fmtfile.readInt();
+				if (x < 0) {
+					break lab125;
+				}
+				if (x > maxstrings) {
+					;
+					termout.println("---! Must increase the " + "max strings");
+					break lab125;
+				} else {
+					strptr = x;
 				}
 				for (k = 0; k <= strptr; k++) {
 					x = fmtfile.readInt();
@@ -20826,12 +20744,10 @@ public class tex extends Thread {
 				}
 				k = 0;
 				while (k + 4 < poolptr) {
-					{
-						w.b0 = fmtfile.readByte();
-						w.b1 = fmtfile.readByte();
-						w.b2 = fmtfile.readByte();
-						w.b3 = fmtfile.readByte();
-					}
+					w.b0 = fmtfile.readByte();
+					w.b1 = fmtfile.readByte();
+					w.b2 = fmtfile.readByte();
+					w.b3 = fmtfile.readByte();
 					strpool[k] = w.b0;
 					strpool[k + 1] = w.b1;
 					strpool[k + 2] = w.b2;
@@ -20839,33 +20755,27 @@ public class tex extends Thread {
 					k = k + 4;
 				}
 				k = poolptr - 4;
-				{
-					w.b0 = fmtfile.readByte();
-					w.b1 = fmtfile.readByte();
-					w.b2 = fmtfile.readByte();
-					w.b3 = fmtfile.readByte();
-				}
+				w.b0 = fmtfile.readByte();
+				w.b1 = fmtfile.readByte();
+				w.b2 = fmtfile.readByte();
+				w.b3 = fmtfile.readByte();
 				strpool[k] = w.b0;
 				strpool[k + 1] = w.b1;
 				strpool[k + 2] = w.b2;
 				strpool[k + 3] = w.b3;
 				initstrptr = strptr;
 				initpoolptr = poolptr;
-				{
-					x = fmtfile.readInt();
-					if ((x < 1019) || (x > memtop - 14)) {
-						break lab125;
-					} else {
-						lomemmax = x;
-					}
+				x = fmtfile.readInt();
+				if ((x < 1019) || (x > memtop - 14)) {
+					break lab125;
+				} else {
+					lomemmax = x;
 				}
-				{
-					x = fmtfile.readInt();
-					if ((x < 20) || (x > lomemmax)) {
-						break lab125;
-					} else {
-						rover = x;
-					}
+				x = fmtfile.readInt();
+				if ((x < 20) || (x > lomemmax)) {
+					break lab125;
+				} else {
+					rover = x;
 				}
 				p = 0;
 				q = rover;
@@ -20882,21 +20792,17 @@ public class tex extends Thread {
 				for (k = p; k <= lomemmax; k++) {
 					mem[k].memundump(fmtfile);
 				}
-				{
-					x = fmtfile.readInt();
-					if ((x < lomemmax + 1) || (x > memtop - 13)) {
-						break lab125;
-					} else {
-						himemmin = x;
-					}
+				x = fmtfile.readInt();
+				if ((x < lomemmax + 1) || (x > memtop - 13)) {
+					break lab125;
+				} else {
+					himemmin = x;
 				}
-				{
-					x = fmtfile.readInt();
-					if ((x < 0) || (x > memtop)) {
-						break lab125;
-					} else {
-						avail = x;
-					}
+				x = fmtfile.readInt();
+				if ((x < 0) || (x > memtop)) {
+					break lab125;
+				} else {
+					avail = x;
 				}
 				memend = memtop;
 				for (k = himemmin; k <= memend; k++) {
@@ -20923,130 +20829,104 @@ public class tex extends Thread {
 					}
 					k = k + x;
 				} while (!(k > 10406));
-				{
-					x = fmtfile.readInt();
-					if ((x < 514) || (x > 6914)) {
-						break lab125;
-					} else {
-						parloc = x;
-					}
+				x = fmtfile.readInt();
+				if ((x < 514) || (x > 6914)) {
+					break lab125;
+				} else {
+					parloc = x;
 				}
 				partoken = 4095 + parloc;
-				{
-					x = fmtfile.readInt();
-					if ((x < 514) || (x > 6914)) {
-						break lab125;
-					} else {
-						writeloc = x;
-					}
+				x = fmtfile.readInt();
+				if ((x < 514) || (x > 6914)) {
+					break lab125;
+				} else {
+					writeloc = x;
 				}
-				{
-					x = fmtfile.readInt();
-					if ((x < 514) || (x > 6914)) {
-						break lab125;
-					} else {
-						hashused = x;
-					}
+				x = fmtfile.readInt();
+				if ((x < 514) || (x > 6914)) {
+					break lab125;
+				} else {
+					hashused = x;
 				}
 				p = 513;
 				do {
-					{
-						x = fmtfile.readInt();
-						if ((x < p + 1) || (x > hashused)) {
-							break lab125;
-						} else {
-							p = x;
-						}
+					x = fmtfile.readInt();
+					if ((x < p + 1) || (x > hashused)) {
+						break lab125;
+					} else {
+						p = x;
 					}
-					{
-						hash[p - 514].lh = fmtfile.readShort();
-						hash[p - 514].rh = fmtfile.readShort();
-					}
+					hash[p - 514].lh = fmtfile.readShort();
+					hash[p - 514].rh = fmtfile.readShort();
 				} while (!(p == hashused));
 				for (p = hashused + 1; p <= 7180; p++) {
 					hash[p - 514].lh = fmtfile.readShort();
 					hash[p - 514].rh = fmtfile.readShort();
 				}
 				cscount = fmtfile.readInt();
-				{
-					x = fmtfile.readInt();
-					if (x < 7) {
-						break lab125;
-					}
-					if (x > fontmemsize) {
-						;
-						termout.println("---! Must increase the " + "font mem size");
-						break lab125;
-					} else {
-						fmemptr = x;
-					}
+				x = fmtfile.readInt();
+				if (x < 7) {
+					break lab125;
+				}
+				if (x > fontmemsize) {
+					;
+					termout.println("---! Must increase the " + "font mem size");
+					break lab125;
+				} else {
+					fmemptr = x;
 				}
 				for (k = 0; k <= fmemptr - 1; k++) {
 					fontinfo[k].memundump(fmtfile);
 				}
-				{
-					x = fmtfile.readInt();
-					if (x < 0) {
-						break lab125;
-					}
-					if (x > fontmax) {
-						;
-						termout.println("---! Must increase the " + "font max");
-						break lab125;
-					} else {
-						fontptr = x;
-					}
+				x = fmtfile.readInt();
+				if (x < 0) {
+					break lab125;
+				}
+				if (x > fontmax) {
+					;
+					termout.println("---! Must increase the " + "font max");
+					break lab125;
+				} else {
+					fontptr = x;
 				}
 				for (k = 0; k <= fontptr; k++) {
-					{
-						fontcheck[k].b0 = fmtfile.readByte();
-						fontcheck[k].b1 = fmtfile.readByte();
-						fontcheck[k].b2 = fmtfile.readByte();
-						fontcheck[k].b3 = fmtfile.readByte();
-					}
+					fontcheck[k].b0 = fmtfile.readByte();
+					fontcheck[k].b1 = fmtfile.readByte();
+					fontcheck[k].b2 = fmtfile.readByte();
+					fontcheck[k].b3 = fmtfile.readByte();
 					fontsize[k] = fmtfile.readInt();
 					fontdsize[k] = fmtfile.readInt();
-					{
-						x = fmtfile.readInt();
-						if ((x < 0) || (x > maxhalfword)) {
-							break lab125;
-						} else {
-							fontparams[k] = x;
-						}
+					x = fmtfile.readInt();
+					if ((x < 0) || (x > maxhalfword)) {
+						break lab125;
+					} else {
+						fontparams[k] = x;
 					}
 					hyphenchar[k] = fmtfile.readInt();
 					skewchar[k] = fmtfile.readInt();
-					{
-						x = fmtfile.readInt();
-						if ((x < 0) || (x > strptr)) {
-							break lab125;
-						} else {
-							fontname[k] = x;
-						}
+					x = fmtfile.readInt();
+					if ((x < 0) || (x > strptr)) {
+						break lab125;
+					} else {
+						fontname[k] = x;
 					}
-					{
-						x = fmtfile.readInt();
-						if ((x < 0) || (x > strptr)) {
-							break lab125;
-						} else {
-							fontarea[k] = x;
-						}
+					x = fmtfile.readInt();
+					if ((x < 0) || (x > strptr)) {
+						break lab125;
+					} else {
+						fontarea[k] = x;
 					}
-					{
-						x = fmtfile.readInt();
-						if ((x < 0) || (x > 255)) {
-							break lab125;
-						} else {
-							fontbc[k] = x;
-						}
+					x = fmtfile.readInt();
+					if ((x < 0) || (x > 255)) {
+						break lab125;
+					} else {
+						fontbc[k] = x;
 					}
-					{
-						x = fmtfile.readInt();
-						if ((x < 0) || (x > 255)) {
-							break lab125;
-						} else {
-							fontec[k] = x;
-						}
+					x = fmtfile.readInt();
+					if ((x < 0) || (x > 255)) {
+						break lab125;
+					} else {
+						fontec[k] = x;
 					}
 					charbase[k] = fmtfile.readInt();
 					widthbase[k] = fmtfile.readInt();
@@ -21057,85 +20937,67 @@ public class tex extends Thread {
 					kernbase[k] = fmtfile.readInt();
 					extenbase[k] = fmtfile.readInt();
 					parambase[k] = fmtfile.readInt();
-					{
-						x = fmtfile.readInt();
-						if ((x < 0) || (x > lomemmax)) {
-							break lab125;
-						} else {
-							fontglue[k] = x;
-						}
+					x = fmtfile.readInt();
+					if ((x < 0) || (x > lomemmax)) {
+						break lab125;
+					} else {
+						fontglue[k] = x;
 					}
-					{
-						x = fmtfile.readInt();
-						if ((x < 0) || (x > fmemptr - 1)) {
-							break lab125;
-						} else {
-							bcharlabel[k] = x;
-						}
+					x = fmtfile.readInt();
+					if ((x < 0) || (x > fmemptr - 1)) {
+						break lab125;
+					} else {
+						bcharlabel[k] = x;
 					}
-					{
-						x = fmtfile.readInt();
-						if ((x < 0) || (x > 256)) {
-							break lab125;
-						} else {
-							fontbchar[k] = x;
-						}
+					x = fmtfile.readInt();
+					if ((x < 0) || (x > 256)) {
+						break lab125;
+					} else {
+						fontbchar[k] = x;
 					}
-					{
-						x = fmtfile.readInt();
-						if ((x < 0) || (x > 256)) {
-							break lab125;
-						} else {
-							fontfalsebchar[k] = x;
-						}
+					x = fmtfile.readInt();
+					if ((x < 0) || (x > 256)) {
+						break lab125;
+					} else {
+						fontfalsebchar[k] = x;
 					}
 				}
-				{
+				x = fmtfile.readInt();
+				if ((x < 0) || (x > 607)) {
+					break lab125;
+				} else {
+					hyphcount = x;
+				}
+				for (k = 1; k <= hyphcount; k++) {
 					x = fmtfile.readInt();
 					if ((x < 0) || (x > 607)) {
 						break lab125;
 					} else {
-						hyphcount = x;
-					}
-				}
-				for (k = 1; k <= hyphcount; k++) {
-					{
-						x = fmtfile.readInt();
-						if ((x < 0) || (x > 607)) {
-							break lab125;
-						} else {
-							j = x;
-						}
-					}
-					{
-						x = fmtfile.readInt();
-						if ((x < 0) || (x > strptr)) {
-							break lab125;
-						} else {
-							hyphword[j] = x;
-						}
-					}
-					{
-						x = fmtfile.readInt();
-						if ((x < 0) || (x > maxhalfword)) {
-							break lab125;
-						} else {
-							hyphlist[j] = x;
-						}
-					}
-				}
-				{
-					x = fmtfile.readInt();
-					if (x < 0) {
-						break lab125;
-					}
-					if (x > triesize) {
-						;
-						termout.println("---! Must increase the " + "trie size");
-						break lab125;
-					} else {
 						j = x;
 					}
+					x = fmtfile.readInt();
+					if ((x < 0) || (x > strptr)) {
+						break lab125;
+					} else {
+						hyphword[j] = x;
+					}
+					x = fmtfile.readInt();
+					if ((x < 0) || (x > maxhalfword)) {
+						break lab125;
+					} else {
+						hyphlist[j] = x;
+					}
+				}
+				x = fmtfile.readInt();
+				if (x < 0) {
+					break lab125;
+				}
+				if (x > triesize) {
+					;
+					termout.println("---! Must increase the " + "trie size");
+					break lab125;
+				} else {
+					j = x;
 				}
 				if (INITEX) {
 					triemax = j;
@@ -21144,46 +21006,38 @@ public class tex extends Thread {
 					trie[k].lh = fmtfile.readShort();
 					trie[k].rh = fmtfile.readShort();
 				}
-				{
-					x = fmtfile.readInt();
-					if (x < 0) {
-						break lab125;
-					}
-					if (x > 751) {
-						;
-						termout.println("---! Must increase the " + "trie op size");
-						break lab125;
-					} else {
-						j = x;
-					}
+				x = fmtfile.readInt();
+				if (x < 0) {
+					break lab125;
+				}
+				if (x > 751) {
+					;
+					termout.println("---! Must increase the " + "trie op size");
+					break lab125;
+				} else {
+					j = x;
 				}
 				if (INITEX) {
 					trieopptr = j;
 				}
 				for (k = 1; k <= j; k++) {
-					{
-						x = fmtfile.readInt();
-						if ((x < 0) || (x > 63)) {
-							break lab125;
-						} else {
-							hyfdistance[k] = x;
-						}
+					x = fmtfile.readInt();
+					if ((x < 0) || (x > 63)) {
+						break lab125;
+					} else {
+						hyfdistance[k] = x;
 					}
-					{
-						x = fmtfile.readInt();
-						if ((x < 0) || (x > 63)) {
-							break lab125;
-						} else {
-							hyfnum[k] = x;
-						}
+					x = fmtfile.readInt();
+					if ((x < 0) || (x > 63)) {
+						break lab125;
+					} else {
+						hyfnum[k] = x;
 					}
-					{
-						x = fmtfile.readInt();
-						if ((x < 0) || (x > 255)) {
-							break lab125;
-						} else {
-							hyfnext[k] = x;
-						}
+					x = fmtfile.readInt();
+					if ((x < 0) || (x > 255)) {
+						break lab125;
+					} else {
+						hyfnext[k] = x;
 					}
 				}
 				if (INITEX) {
@@ -21193,19 +21047,15 @@ public class tex extends Thread {
 				}
 				k = 256;
 				while (j > 0) {
-					{
-						x = fmtfile.readInt();
-						if ((x < 0) || (x > k - 1)) {
-							break lab125;
-						} else {
-							k = x;
-						}
+					x = fmtfile.readInt();
+					if ((x < 0) || (x > k - 1)) {
+						break lab125;
+					} else {
+						k = x;
 					}
-					{
-						x = fmtfile.readInt();
-						if ((x < 1) || (x > j)) {
-							break lab125;
-						}
+					x = fmtfile.readInt();
+					if ((x < 1) || (x > j)) {
+						break lab125;
 					}
 					if (INITEX) {
 						trieused[k] = x;
@@ -21216,19 +21066,15 @@ public class tex extends Thread {
 				if (INITEX) {
 					trienotready = false;
 				}
-				{
-					x = fmtfile.readInt();
-					if ((x < 0) || (x > 3)) {
-						break lab125;
-					}
+				x = fmtfile.readInt();
+				if ((x < 0) || (x > 3)) {
+					break lab125;
 				}
-				{
-					x = fmtfile.readInt();
-					if ((x < 0) || (x > strptr)) {
-						break lab125;
-					} else {
-						formatident = x;
-					}
+				x = fmtfile.readInt();
+				if ((x < 0) || (x > strptr)) {
+					break lab125;
+				} else {
+					formatident = x;
 				}
 				x = fmtfile.readInt();
 				if (x != 69069) {
@@ -21238,14 +21084,14 @@ public class tex extends Thread {
 				return Result /* lab10 */;
 			}
 		} catch (final IOException ex) {
-			;
 		}
-		/* lab125: */termout.println("(Fatal format file error; I'm stymied)");
+		/* lab125: */
+		termout.println("(Fatal format file error; I'm stymied)");
 		Result = false;
 		return Result;
 	}
 
-	public void closefilesandterminate() {
+	public void closeFiles() {
 		int k;
 		for (k = 0; k <= 15; k++) {
 			if (writeopen[k]) {
@@ -21381,8 +21227,6 @@ public class tex extends Thread {
 	}
 
 	public void finalcleanup() {
-		/* 10 */int c;
-		c = curchr;
 		if (jobname == 0) {
 			openlogfile();
 		}
@@ -21427,9 +21271,9 @@ public class tex extends Thread {
 				selector = 19;
 			}
 		}
-		if (c == 1) {
+		if (curchr == 1) {
 			if (INITEX) {
-				for (c = 0; c <= 4; c++) {
+				for (int c = 0; c <= 4; c++) {
 					if (curmark[c] != 0) {
 						deletetokenref(curmark[c]);
 					}
@@ -21948,31 +21792,31 @@ public class tex extends Thread {
 
 	public tex() {
 		maxhalfword = memoryword.maxHalfword;
-		for (c = 0; c <= memmax; c++) {
+		for (int c = 0; c <= memmax; c++) {
 			mem[c] = new memoryword();
 		}
-		for (c = 1; c <= 10406; c++) {
+		for (int c = 1; c <= 10406; c++) {
 			eqtb[c] = new memoryword();
 		}
-		for (c = 0; c <= savesize; c++) {
+		for (int c = 0; c <= savesize; c++) {
 			savestack[c] = new memoryword();
 		}
-		for (c = 0; c <= fontmemsize; c++) {
+		for (int c = 0; c <= fontmemsize; c++) {
 			fontinfo[c] = new memoryword();
 		}
-		for (c = 514; c <= 7180; c++) {
+		for (int c = 514; c <= 7180; c++) {
 			hash[c - 514] = new twohalves();
 		}
-		for (c = 0; c <= triesize; c++) {
+		for (int c = 0; c <= triesize; c++) {
 			trie[c] = new twohalves();
 		}
-		for (c = 0; c <= fontmax; c++) {
+		for (int c = 0; c <= fontmax; c++) {
 			fontcheck[c] = new fourquarters();
 		}
-		for (c = 0; c <= nestsize; c++) {
+		for (int c = 0; c <= nestsize; c++) {
 			nest[c] = new liststaterecord();
 		}
-		for (c = 0; c <= stacksize; c++) {
+		for (int c = 0; c <= stacksize; c++) {
 			inputstack[c] = new instaterecord();
 		}
 	}
@@ -22041,9 +21885,7 @@ public class tex extends Thread {
 		}
 		if (bad > 0) {
 			termout.println("Ouch---my internal constants have been clobbered!" + "---case " + bad);
-			{
-				exit();
-			}
+			exit();
 		}
 		initialize();
 		if (INITEX) {
@@ -22107,7 +21949,7 @@ public class tex extends Thread {
 				if (!openfmtfile()) {
 					exit();
 				}
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				System.err.println(e);
 				exit();
 			}
@@ -22136,7 +21978,7 @@ public class tex extends Thread {
 		history = 0;
 		maincontrol();
 		finalcleanup();
-		closefilesandterminate();
+		closeFiles();
 		exit();
 	}
 
