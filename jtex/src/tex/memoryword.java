@@ -3,7 +3,7 @@
 package tex;
 
 import java.io.IOException;
-import name.martingeisse.jtex.io.FileDataOutputStream;
+import name.martingeisse.jtex.io.TexFileDataOutputStream;
 
 public class memoryword {
 	/*10:*/
@@ -115,7 +115,7 @@ public class memoryword {
 		return val;
 	}
 
-	public final void memdump(final FileDataOutputStream fmtfile) throws IOException {
+	public final void memdump(final TexFileDataOutputStream fmtfile) throws IOException {
 		fmtfile.writeInt(Int);
 	}
 

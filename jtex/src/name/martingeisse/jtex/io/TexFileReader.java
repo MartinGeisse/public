@@ -6,15 +6,16 @@
 
 package name.martingeisse.jtex.io;
 
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
- * Specialized {@link DataOutputStream} for files.
+ * Specialized {@link Reader} for files.
  */
-public class FileDataOutputStream extends DataOutputStream {
+public class TexFileReader extends InputStreamReader {
 
 	/**
 	 * the file
@@ -26,7 +27,7 @@ public class FileDataOutputStream extends DataOutputStream {
 	 * @param filename the name of the file to write to
 	 * @throws IOException on I/O errors
 	 */
-	public FileDataOutputStream(String filename) throws IOException {
+	public TexFileReader(String filename) throws IOException {
 		this(new File(filename));
 	}
 
@@ -35,8 +36,8 @@ public class FileDataOutputStream extends DataOutputStream {
 	 * @param file the file to write to
 	 * @throws IOException on I/O errors
 	 */
-	public FileDataOutputStream(File file) throws IOException {
-		super(new FileOutputStream(file));
+	public TexFileReader(File file) throws IOException {
+		super(new FileInputStream(file), "utf-8");
 		this.file = file;
 	}
 
@@ -46,18 +47,6 @@ public class FileDataOutputStream extends DataOutputStream {
 	 */
 	public File getFile() {
 		return file;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.io.FilterOutputStream#close()
-	 */
-	@Override
-	public void close() {
-		try {
-			super.close();
-		} catch (IOException e) {
-			System.err.println("Could not close output stream for file: " + file.getPath());
-		}
 	}
 	
 }

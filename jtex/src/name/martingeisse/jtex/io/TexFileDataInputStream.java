@@ -14,7 +14,7 @@ import java.io.IOException;
 /**
  * Specialized {@link DataInputStream} for files.
  */
-public class FileDataInputStream extends DataInputStream {
+public class TexFileDataInputStream extends DataInputStream {
 
 	/**
 	 * the file
@@ -26,7 +26,7 @@ public class FileDataInputStream extends DataInputStream {
 	 * @param filename the name of the file to read from
 	 * @throws IOException on I/O errors
 	 */
-	public FileDataInputStream(String filename) throws IOException {
+	public TexFileDataInputStream(String filename) throws IOException {
 		this(new File(filename));
 	}
 	
@@ -35,7 +35,7 @@ public class FileDataInputStream extends DataInputStream {
 	 * @param file the file to read from
 	 * @throws IOException on I/O errors
 	 */
-	public FileDataInputStream(File file) throws IOException {
+	public TexFileDataInputStream(File file) throws IOException {
 		super(new FileInputStream(file));
 		this.file = file;
 	}

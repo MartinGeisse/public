@@ -3,8 +3,9 @@ package tex;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import name.martingeisse.jtex.io.FileDataOutputStream;
-import name.martingeisse.jtex.io.FilePrintWriter;
+
+import name.martingeisse.jtex.io.TexFileDataOutputStream;
+import name.martingeisse.jtex.io.TexFilePrintWriter;
 
 public class tex extends Thread {
 
@@ -104,8 +105,6 @@ public class tex extends Thread {
 
 	private int firstcount;
 
-	private int interaction;
-
 	private boolean deletionsallowed;
 
 	private boolean setboxallowed;
@@ -119,10 +118,6 @@ public class tex extends Thread {
 	private int helpptr;
 
 	private boolean useerrhelp;
-
-	private int interrupt;
-
-	private boolean OKtointerrupt;
 
 	private boolean aritherror;
 
@@ -290,7 +285,7 @@ public class tex extends Thread {
 
 	private boolean logopened;
 
-	FileDataOutputStream dvifile;
+	TexFileDataOutputStream dvifile;
 
 	private int outputfilename;
 
@@ -441,10 +436,6 @@ public class tex extends Thread {
 	private int justbox;
 
 	private int passive;
-
-	private int printednode;
-
-	private int passnumber;
 
 	private int activewidth[] = new int[7];
 
@@ -644,8 +635,6 @@ public class tex extends Thread {
 
 	private int writeloc;
 
-	private int tfmtemp;
-
 	private StringBuffer cmdlinebuf = new StringBuffer();
 
 	private int maxhalfword;
@@ -764,14 +753,11 @@ public class tex extends Thread {
 		for (i = 0; i <= 126; i++) {
 			xord[xchr[i]] = i;
 		}
-		interaction = 3;
 		deletionsallowed = true;
 		setboxallowed = true;
 		errorcount = 0;
 		helpptr = 0;
 		useerrhelp = false;
-		interrupt = 0;
-		OKtointerrupt = true;
 		wasmemend = 0;
 		waslomax = 0;
 		washimin = memmax;
@@ -1328,194 +1314,29 @@ public class tex extends Thread {
 
 	public void jumpout() {
 		closefilesandterminate();
-		{
-			termout.println();
-			termout.flush();
-			readyalready = 0;
-			if ((history != 0) && (history != 1)) {
-				System.exit(1);
-			} else {
-				System.exit(0);
-			}
+		termout.println();
+		termout.flush();
+		readyalready = 0;
+		if ((history != 0) && (history != 1)) {
+			System.exit(1);
+		} else {
+			System.exit(0);
 		}
 	}
 
 	public void error() {
-		/* 22 10 */int c;
-		int s1, s2, s3, s4;
 		if (history < 2) {
 			history = 2;
 		}
 		printchar(46);
 		showcontext();
-		if (interaction == 3) {
-			lab22: while (true) {
-				clearforerrorprompt();
-				{
-					;
-					Print(264);
-					terminput();
-				}
-				if (last == first) {
-					return /* lab10 */;
-				}
-				c = buffer[first];
-				if (c >= 97) {
-					c = c - 32;
-				}
-				switch (c) {
-				case 48:
-				case 49:
-				case 50:
-				case 51:
-				case 52:
-				case 53:
-				case 54:
-				case 55:
-				case 56:
-				case 57:
-					if (deletionsallowed) {
-						s1 = curtok;
-						s2 = curcmd;
-						s3 = curchr;
-						s4 = alignstate;
-						alignstate = 1000000;
-						OKtointerrupt = false;
-						if ((last > first + 1) && (buffer[first + 1] >= 48) && (buffer[first + 1] <= 57)) {
-							c = c * 10 + buffer[first + 1] - 48 * 11;
-						} else {
-							c = c - 48;
-						}
-						while (c > 0) {
-							gettoken();
-							c = c - 1;
-						}
-						curtok = s1;
-						curcmd = s2;
-						curchr = s3;
-						alignstate = s4;
-						OKtointerrupt = true;
-						{
-							helpptr = 2;
-							helpline[1] = 279;
-							helpline[0] = 280;
-						}
-						showcontext();
-						continue lab22;
-					}
-					break;
-				case 68: {
-					debughelp();
-					continue lab22;
-				}
-				case 69:
-					if (baseptr > 0) {
-						printnl(265);
-						slowprint(inputstack[baseptr].namefield);
-						Print(266);
-						printint(line);
-						interaction = 2;
-						jumpout();
-					}
-					break;
-				case 72: {
-					if (useerrhelp) {
-						giveerrhelp();
-						useerrhelp = false;
-					} else {
-						if (helpptr == 0) {
-							helpptr = 2;
-							helpline[1] = 281;
-							helpline[0] = 282;
-						}
-						do {
-							helpptr = helpptr - 1;
-							Print(helpline[helpptr]);
-							Println();
-						} while (!(helpptr == 0));
-					}
-					{
-						helpptr = 4;
-						helpline[3] = 283;
-						helpline[2] = 282;
-						helpline[1] = 284;
-						helpline[0] = 285;
-					}
-					continue lab22;
-				}
-				case 73: {
-					beginfilereading();
-					if (last > first + 1) {
-						curinput.locfield = first + 1;
-						buffer[first] = 32;
-					} else {
-						{
-							;
-							Print(278);
-							terminput();
-						}
-						curinput.locfield = first;
-					}
-					first = last;
-					curinput.limitfield = last - 1;
-					return /* lab10 */;
-				}
-				case 81:
-				case 82:
-				case 83: {
-					errorcount = 0;
-					interaction = 0 + c - 81;
-					Print(273);
-					switch (c) {
-					case 81: {
-						printesc(274);
-						selector = selector - 1;
-					}
-						break;
-					case 82:
-						printesc(275);
-						break;
-					case 83:
-						printesc(276);
-						break;
-					}
-					Print(277);
-					Println();
-					termout.flush();
-					return /* lab10 */;
-				}
-				case 88: {
-					interaction = 2;
-					jumpout();
-				}
-					break;
-				default:
-					;
-					break;
-				}
-				{
-					Print(267);
-					printnl(268);
-					printnl(269);
-					if (baseptr > 0) {
-						Print(270);
-					}
-					if (deletionsallowed) {
-						printnl(271);
-					}
-					printnl(272);
-				}
-			}
-		}
 		errorcount = errorcount + 1;
 		if (errorcount == 100) {
 			printnl(263);
 			history = 3;
 			jumpout();
 		}
-		if (interaction > 0) {
-			selector = selector - 1;
-		}
+		selector = selector - 1;
 		if (useerrhelp) {
 			Println();
 			giveerrhelp();
@@ -1526,46 +1347,27 @@ public class tex extends Thread {
 			}
 		}
 		Println();
-		if (interaction > 0) {
-			selector = selector + 1;
-		}
+		selector = selector + 1;
 		Println();
 	}
 
 	public void fatalerror(final int s) {
 		normalizeselector();
-		{
-			if (interaction == 3) {
-				;
-			}
-			printnl(262);
-			Print(287);
+		printnl(262);
+		Print(287);
+		helpptr = 1;
+		helpline[0] = s;
+		if (logopened) {
+			error();
 		}
-		{
-			helpptr = 1;
-			helpline[0] = s;
-		}
-		{
-			if (interaction == 3) {
-				interaction = 2;
-			}
-			if (logopened) {
-				error();
-			}
-			if (interaction > 0) {
-				debughelp();
-			}
-			history = 3;
-			jumpout();
-		}
+		debughelp();
+		history = 3;
+		jumpout();
 	}
 
 	public void overflow(final int s, final int n) {
 		normalizeselector();
 		{
-			if (interaction == 3) {
-				;
-			}
 			printnl(262);
 			Print(288);
 		}
@@ -1579,15 +1381,10 @@ public class tex extends Thread {
 			helpline[0] = 290;
 		}
 		{
-			if (interaction == 3) {
-				interaction = 2;
-			}
 			if (logopened) {
 				error();
 			}
-			if (interaction > 0) {
-				debughelp();
-			}
+			debughelp();
 			history = 3;
 			jumpout();
 		}
@@ -1597,9 +1394,6 @@ public class tex extends Thread {
 		normalizeselector();
 		if (history < 2) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(291);
 			}
@@ -1611,9 +1405,6 @@ public class tex extends Thread {
 			}
 		} else {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(293);
 			}
@@ -1624,15 +1415,10 @@ public class tex extends Thread {
 			}
 		}
 		{
-			if (interaction == 3) {
-				interaction = 2;
-			}
 			if (logopened) {
 				error();
 			}
-			if (interaction > 0) {
-				debughelp();
-			}
+			debughelp();
 			history = 3;
 			jumpout();
 		}
@@ -1652,7 +1438,7 @@ public class tex extends Thread {
 			Result = false;
 		} else {
 			lastnonblank = first;
-			lab30: while (!f.eoln()) {
+			while (!f.eoln()) {
 				if (last >= maxbufstack) {
 					maxbufstack = last + 1;
 					if (maxbufstack == bufsize) {
@@ -1791,7 +1577,6 @@ public class tex extends Thread {
 		/* 30 10 */boolean Result;
 		int k, l;
 		char m, n;
-		int g;
 		int a;
 		boolean c;
 		int ch;
@@ -2026,35 +1811,6 @@ public class tex extends Thread {
 		}
 		if (jobname == 0) {
 			openlogfile();
-		}
-		if (interaction == 0) {
-			selector = selector - 1;
-		}
-	}
-
-	public void pauseforinstructions() {
-		if (OKtointerrupt) {
-			interaction = 3;
-			if ((selector == 18) || (selector == 16)) {
-				selector = selector + 1;
-			}
-			{
-				if (interaction == 3) {
-					;
-				}
-				printnl(262);
-				Print(296);
-			}
-			{
-				helpptr = 3;
-				helpline[2] = 297;
-				helpline[1] = 298;
-				helpline[0] = 299;
-			}
-			deletionsallowed = false;
-			error();
-			deletionsallowed = true;
-			interrupt = 0;
 		}
 	}
 
@@ -5345,9 +5101,6 @@ public class tex extends Thread {
 	public void preparemag() {
 		if ((magset > 0) && (eqtb[9580].getInt() != magset)) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(547);
 			}
@@ -5364,9 +5117,6 @@ public class tex extends Thread {
 		}
 		if ((eqtb[9580].getInt() <= 0) || (eqtb[9580].getInt() > 32768)) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(552);
 			}
@@ -5674,11 +5424,6 @@ public class tex extends Thread {
 			inputptr = inputptr - 1;
 			curinput.copy(inputstack[inputptr]);
 		}
-		{
-			if (interrupt != 0) {
-				pauseforinstructions();
-			}
-		}
 	}
 
 	public void backinput() {
@@ -5712,17 +5457,13 @@ public class tex extends Thread {
 	}
 
 	public void backerror() {
-		OKtointerrupt = false;
 		backinput();
-		OKtointerrupt = true;
 		error();
 	}
 
 	public void inserror() {
-		OKtointerrupt = false;
 		backinput();
 		curinput.indexfield = 4;
-		OKtointerrupt = true;
 		error();
 	}
 
@@ -5788,17 +5529,11 @@ public class tex extends Thread {
 			if (scannerstatus > 1) {
 				runaway();
 				if (curcs == 0) {
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(604);
 				} else {
 					curcs = 0;
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(605);
 					}
@@ -5846,9 +5581,6 @@ public class tex extends Thread {
 				error();
 			} else {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(598);
 				}
@@ -6086,9 +5818,6 @@ public class tex extends Thread {
 							case 32:
 							case 48: {
 								{
-									if (interaction == 3) {
-										;
-									}
 									printnl(262);
 									Print(613);
 								}
@@ -6209,36 +5938,7 @@ public class tex extends Thread {
 							if (selector < 18) {
 								openlogfile();
 							}
-							if (interaction > 1) {
-								if ((eqtb[9611].getInt() < 0) || (eqtb[9611].getInt() > 255)) {
-									curinput.limitfield = curinput.limitfield + 1;
-								}
-								if (curinput.limitfield == curinput.startfield) {
-									printnl(616);
-								}
-								Println();
-								first = curinput.startfield;
-								{
-									;
-									Print(42);
-									terminput();
-								}
-								curinput.limitfield = last;
-								if ((eqtb[9611].getInt() < 0) || (eqtb[9611].getInt() > 255)) {
-									curinput.limitfield = curinput.limitfield - 1;
-								} else {
-									buffer[curinput.limitfield] = eqtb[9611].getInt();
-								}
-								first = curinput.limitfield + 1;
-								curinput.locfield = curinput.startfield;
-							} else {
-								fatalerror(617);
-							}
-						}
-						{
-							if (interrupt != 0) {
-								pauseforinstructions();
-							}
+							fatalerror(617);
 						}
 						continue lab25;
 					}
@@ -6311,31 +6011,7 @@ public class tex extends Thread {
 	}
 
 	public void firmuptheline() {
-		int k;
 		curinput.limitfield = last;
-		if (eqtb[9591].getInt() > 0) {
-			if (interaction > 1) {
-				;
-				Println();
-				if (curinput.startfield < curinput.limitfield) {
-					for (k = curinput.startfield; k <= curinput.limitfield - 1; k++) {
-						Print(buffer[k]);
-					}
-				}
-				first = curinput.limitfield;
-				{
-					;
-					Print(618);
-					terminput();
-				}
-				if (last > first) {
-					for (k = first; k <= last - 1; k++) {
-						buffer[k + curinput.startfield - first] = buffer[k];
-					}
-					curinput.limitfield = curinput.startfield + last - first;
-				}
-			}
-		}
 	}
 
 	public void gettoken() {
@@ -6416,9 +6092,6 @@ public class tex extends Thread {
 						if (s != r) {
 							if (s == 0) {
 								{
-									if (interaction == 3) {
-										;
-									}
 									printnl(262);
 									Print(650);
 								}
@@ -6470,9 +6143,6 @@ public class tex extends Thread {
 								if (longstate == 111) {
 									runaway();
 									{
-										if (interaction == 3) {
-											;
-										}
 										printnl(262);
 										Print(645);
 									}
@@ -6518,9 +6188,6 @@ public class tex extends Thread {
 											if (longstate == 111) {
 												runaway();
 												{
-													if (interaction == 3) {
-														;
-													}
 													printnl(262);
 													Print(645);
 												}
@@ -6563,9 +6230,6 @@ public class tex extends Thread {
 							} else {
 								backinput();
 								{
-									if (interaction == 3) {
-										;
-									}
 									printnl(262);
 									Print(637);
 								}
@@ -6736,9 +6400,6 @@ public class tex extends Thread {
 				} while (!(curcs != 0));
 				if (curcmd != 67) {
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(625);
 					}
@@ -6796,9 +6457,6 @@ public class tex extends Thread {
 						insertrelax();
 					} else {
 						{
-							if (interaction == 3) {
-								;
-							}
 							printnl(262);
 							Print(776);
 						}
@@ -6834,9 +6492,6 @@ public class tex extends Thread {
 				break;
 			default: {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(619);
 				}
@@ -6908,9 +6563,6 @@ public class tex extends Thread {
 		} while (!((curcmd != 10) && (curcmd != 0)));
 		if (curcmd != 1) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(657);
 			}
@@ -6972,9 +6624,6 @@ public class tex extends Thread {
 
 	public void muerror() {
 		{
-			if (interaction == 3) {
-				;
-			}
 			printnl(262);
 			Print(662);
 		}
@@ -6989,9 +6638,6 @@ public class tex extends Thread {
 		scanint();
 		if ((curval < 0) || (curval > 255)) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(687);
 			}
@@ -7009,9 +6655,6 @@ public class tex extends Thread {
 		scanint();
 		if ((curval < 0) || (curval > 255)) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(690);
 			}
@@ -7029,9 +6672,6 @@ public class tex extends Thread {
 		scanint();
 		if ((curval < 0) || (curval > 15)) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(692);
 			}
@@ -7049,9 +6689,6 @@ public class tex extends Thread {
 		scanint();
 		if ((curval < 0) || (curval > 32767)) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(694);
 			}
@@ -7069,9 +6706,6 @@ public class tex extends Thread {
 		scanint();
 		if ((curval < 0) || (curval > 134217727)) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(696);
 			}
@@ -7101,9 +6735,6 @@ public class tex extends Thread {
 			f = eqtb[m + curval].getrh();
 		} else {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(817);
 			}
@@ -7152,9 +6783,6 @@ public class tex extends Thread {
 		}
 		if (curval == fmemptr) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(802);
 			}
@@ -7197,9 +6825,6 @@ public class tex extends Thread {
 		case 88:
 			if (level != 5) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(664);
 				}
@@ -7255,9 +6880,6 @@ public class tex extends Thread {
 		case 79:
 			if (Math.abs(curlist.modefield) != m) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(680);
 				}
@@ -7442,9 +7064,6 @@ public class tex extends Thread {
 			break;
 		default: {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(685);
 			}
@@ -7526,9 +7145,6 @@ public class tex extends Thread {
 			}
 			if (curval > 255) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(698);
 				}
@@ -7579,9 +7195,6 @@ public class tex extends Thread {
 				if ((curval >= m) && ((curval > m) || (d > 7) || (radix != 10))) {
 					if (OKsofar) {
 						{
-							if (interaction == 3) {
-								;
-							}
 							printnl(262);
 							Print(701);
 						}
@@ -7601,9 +7214,6 @@ public class tex extends Thread {
 			}
 			/* lab30: */if (vacuous) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(664);
 				}
@@ -7726,9 +7336,6 @@ public class tex extends Thread {
 							while (scankeyword(108)) {
 								if (curorder == 3) {
 									{
-										if (interaction == 3) {
-											;
-										}
 										printnl(262);
 										Print(705);
 									}
@@ -7798,9 +7405,6 @@ public class tex extends Thread {
 							break lab88;
 						} else {
 							{
-								if (interaction == 3) {
-									;
-								}
 								printnl(262);
 								Print(705);
 							}
@@ -7854,9 +7458,6 @@ public class tex extends Thread {
 							break lab30;
 						} else {
 							{
-								if (interaction == 3) {
-									;
-								}
 								printnl(262);
 								Print(705);
 							}
@@ -7898,9 +7499,6 @@ public class tex extends Thread {
 		}
 		/* lab89: */if (aritherror || (Math.abs(curval) >= 1073741824)) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(727);
 			}
@@ -8228,9 +7826,6 @@ public class tex extends Thread {
 								}
 								if (t == 3129) {
 									{
-										if (interaction == 3) {
-											;
-										}
 										printnl(262);
 										Print(744);
 									}
@@ -8243,9 +7838,6 @@ public class tex extends Thread {
 									t = t + 1;
 									if (curtok != t) {
 										{
-											if (interaction == 3) {
-												;
-											}
 											printnl(262);
 											Print(746);
 										}
@@ -8274,9 +7866,6 @@ public class tex extends Thread {
 						}
 						if (curcmd == 2) {
 							{
-								if (interaction == 3) {
-									;
-								}
 								printnl(262);
 								Print(657);
 							}
@@ -8337,9 +7926,6 @@ public class tex extends Thread {
 						if (curcmd != 6) {
 							if ((curtok <= 3120) || (curtok > t)) {
 								{
-									if (interaction == 3) {
-										;
-									}
 									printnl(262);
 									Print(749);
 								}
@@ -8404,25 +7990,7 @@ public class tex extends Thread {
 			beginfilereading();
 			curinput.namefield = m + 1;
 			if (readopen[m] == 2) {
-				if (interaction > 1) {
-					if (n < 0) {
-						;
-						Print(338);
-						terminput();
-					} else {
-						;
-						Println();
-						sprintcs(r);
-						{
-							;
-							Print(61);
-							terminput();
-						}
-						n = -1;
-					}
-				} else {
-					fatalerror(753);
-				}
+				fatalerror(753);
 			} else if (readopen[m] == 1) {
 				if (inputln(readfile[m], false)) {
 					readopen[m] = 0;
@@ -8437,9 +8005,6 @@ public class tex extends Thread {
 					if (alignstate != 1000000) {
 						runaway();
 						{
-							if (interaction == 3) {
-								;
-							}
 							printnl(262);
 							Print(754);
 						}
@@ -8607,9 +8172,6 @@ public class tex extends Thread {
 					r = curtok - 3072;
 				} else {
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(780);
 					}
@@ -8766,9 +8328,6 @@ public class tex extends Thread {
 						break lab50;
 					}
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(776);
 					}
@@ -8854,7 +8413,6 @@ public class tex extends Thread {
 
 	public void packfilename(final int n, final int a, final int e) {
 		final StringBuffer strbuf = new StringBuffer();
-		final int c;
 		int j;
 		namelength = 0;
 		for (j = strstart[a]; j <= strstart[a + 1] - 1; j++) {
@@ -8873,7 +8431,6 @@ public class tex extends Thread {
 	}
 
 	public void packbufferedname(final int n, final int a, int b) {
-		final int c;
 		int j;
 		final StringBuffer strbuf = new StringBuffer();
 		StringBuffer TEXbuf;
@@ -8913,43 +8470,7 @@ public class tex extends Thread {
 		}
 		return Result;
 	}
-
-	public int amakenamestring(final alphafile f) {
-		int Result;
-		Result = makenamestring();
-		return Result;
-	}
-
-	public int bmakenamestring(final bytefile f) {
-		int Result;
-		Result = makenamestring();
-		return Result;
-	}
-
-	public int wmakenamestring(final wordfile f) {
-		int Result;
-		Result = makenamestring();
-		return Result;
-	}
-
-	public int Amakenamestring(final PrintWriter f) {
-		int Result;
-		Result = makenamestring();
-		return Result;
-	}
-
-	public int Bmakenamestring(final FileDataOutputStream f) {
-		int Result;
-		Result = makenamestring();
-		return Result;
-	}
-
-	public int Wmakenamestring(final FileDataOutputStream f) {
-		int Result;
-		Result = makenamestring();
-		return Result;
-	}
-
+	
 	public void scanfilename() {
 		/* 30 */nameinprogress = true;
 		beginname();
@@ -8978,20 +8499,10 @@ public class tex extends Thread {
 	}
 
 	public void promptfilename(final int s, final int e) {
-		/* 30 */int k;
-		if (interaction == 2) {
-			;
-		}
 		if (s == 787) {
-			if (interaction == 3) {
-				;
-			}
 			printnl(262);
 			Print(788);
 		} else {
-			if (interaction == 3) {
-				;
-			}
 			printnl(262);
 			Print(789);
 		}
@@ -9002,35 +8513,7 @@ public class tex extends Thread {
 		}
 		printnl(792);
 		Print(s);
-		if (interaction < 2) {
-			fatalerror(793);
-		}
-		{
-			;
-			Print(568);
-			terminput();
-		}
-		{
-			beginname();
-			k = first;
-			while ((buffer[k] == 32) && (k < last)) {
-				k = k + 1;
-			}
-			while (true) {
-				if (k == last) {
-					break /* lab30 */;
-				}
-				if (!morename(buffer[k])) {
-					break /* lab30 */;
-				}
-				k = k + 1;
-			}
-			/* lab30: */endname();
-		}
-		if (curext == 338) {
-			curext = e;
-		}
-		packfilename(curname, curarea, curext);
+		fatalerror(793);
 	}
 
 	public void openlogfile() {
@@ -9046,7 +8529,7 @@ public class tex extends Thread {
 		packjobname(797);
 		lab31: while (true) {
 			try {
-				logfile = new FilePrintWriter(nameoffile);
+				logfile = new TexFilePrintWriter(nameoffile);
 			} catch (final FileNotFoundException ex) {
 				termout.println();
 				termout.print("Cannot open ");
@@ -9062,7 +8545,7 @@ public class tex extends Thread {
 				promptfilename(799, 797);
 			}
 		}
-		logname = Amakenamestring(logfile);
+		logname = makenamestring();
 		selector = 18;
 		logopened = true;
 		{
@@ -9132,7 +8615,7 @@ public class tex extends Thread {
 			endfilereading();
 			promptfilename(787, 791);
 		}
-		/* lab30: */curinput.namefield = amakenamestring(inputfile[curinput.indexfield]);
+		/* lab30: */curinput.namefield = makenamestring();
 		if (jobname == 0) {
 			jobname = curname;
 			openlogfile();
@@ -9337,9 +8820,6 @@ public class tex extends Thread {
 					}
 					if ((fontptr == fontmax) || (fmemptr + lf > fontmemsize)) {
 						{
-							if (interaction == 3) {
-								;
-							}
 							printnl(262);
 							Print(802);
 						}
@@ -9749,9 +9229,6 @@ public class tex extends Thread {
 				break lab30;
 			}
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(802);
 			}
@@ -10278,9 +9755,6 @@ public class tex extends Thread {
 		gettoken();
 		if (curtok != 11017) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(1297);
 			}
@@ -10338,7 +9812,7 @@ public class tex extends Thread {
 						packfilename(curname, curarea, curext);
 						lab31: while (true) {
 							try {
-								writefile[j] = new FilePrintWriter(nameoffile);
+								writefile[j] = new TexFilePrintWriter(nameoffile);
 							} catch (final FileNotFoundException ex) {
 								termout.println();
 								termout.print("Cannot open ");
@@ -10888,9 +10362,6 @@ public class tex extends Thread {
 		lab30: while (true) {
 			if ((mem[p + 3].getInt() > 1073741823) || (mem[p + 2].getInt() > 1073741823) || (mem[p + 3].getInt() + mem[p + 2].getInt() + eqtb[10149].getInt() > 1073741823) || (mem[p + 1].getInt() + eqtb[10148].getInt() > 1073741823)) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(833);
 				}
@@ -10925,7 +10396,7 @@ public class tex extends Thread {
 				packjobname(794);
 				lab31: while (true) {
 					try {
-						dvifile = new FileDataOutputStream(nameoffile);
+						dvifile = new TexFileDataOutputStream(nameoffile);
 					} catch (final FileNotFoundException ex) {
 						termout.println();
 						termout.print("Cannot open ");
@@ -10938,7 +10409,7 @@ public class tex extends Thread {
 					}
 					promptfilename(795, 794);
 				}
-				outputfilename = Bmakenamestring(dvifile);
+				outputfilename = makenamestring();
 			}
 			if (totalpages == 0) {
 				{
@@ -11919,9 +11390,6 @@ public class tex extends Thread {
 		curf = eqtb[8235 + mem[a].getb0() + cursize].getrh();
 		if (curf == 0) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(338);
 			}
@@ -12309,11 +11777,6 @@ public class tex extends Thread {
 															mem[q].setrh(p);
 															return /* lab10 */;
 														} else {
-															{
-																if (interrupt != 0) {
-																	pauseforinstructions();
-																}
-															}
 															switch (curi.b2) {
 															case 1:
 															case 5:
@@ -12981,9 +12444,6 @@ public class tex extends Thread {
 		alignstate = -1000000;
 		if ((curlist.modefield == 203) && ((curlist.tailfield != curlist.headfield) || (curlist.auxfield.getInt() != 0))) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(680);
 			}
@@ -13030,9 +12490,6 @@ public class tex extends Thread {
 						curloop = curalign;
 					} else {
 						{
-							if (interaction == 3) {
-								;
-							}
 							printnl(262);
 							Print(903);
 						}
@@ -13065,9 +12522,6 @@ public class tex extends Thread {
 				}
 				if (curcmd == 6) {
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(907);
 					}
@@ -13187,9 +12641,6 @@ public class tex extends Thread {
 				mem[p].setrh(newglue(mem[curloop + 1].getlh()));
 			} else {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(910);
 				}
@@ -13560,9 +13011,6 @@ public class tex extends Thread {
 			doassignments();
 			if (curcmd != 3) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(1170);
 				}
@@ -13576,9 +13024,6 @@ public class tex extends Thread {
 				getxtoken();
 				if (curcmd != 3) {
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(1166);
 					}
@@ -13655,9 +13100,6 @@ public class tex extends Thread {
 		if (noshrinkerroryet) {
 			noshrinkerroryet = false;
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(917);
 			}
@@ -13696,7 +13138,6 @@ public class tex extends Thread {
 		int b;
 		int d;
 		boolean artificialdemerits;
-		final int savelink;
 		int shortfall;
 		if (Math.abs(pi) >= 10000) {
 			if (pi > 0) {
@@ -14334,11 +13775,6 @@ public class tex extends Thread {
 									if (j == n) {
 										if (ligstack == 0) {
 											rthit = true;
-										}
-									}
-									{
-										if (interrupt != 0) {
-											pauseforinstructions();
 										}
 									}
 									switch (q.b2) {
@@ -15005,9 +14441,6 @@ public class tex extends Thread {
 							curchr = eqtb[8539 + curchr].getrh();
 							if (curchr == 0) {
 								{
-									if (interaction == 3) {
-										;
-									}
 									printnl(262);
 									Print(957);
 								}
@@ -15082,9 +14515,6 @@ public class tex extends Thread {
 						}
 						if (trieo[q] != 0) {
 							{
-								if (interaction == 3) {
-									;
-								}
 								printnl(262);
 								Print(958);
 							}
@@ -15106,9 +14536,6 @@ public class tex extends Thread {
 					break;
 				default: {
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(955);
 					}
@@ -15124,9 +14551,6 @@ public class tex extends Thread {
 			}
 			/* lab30: */} else {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(952);
 			}
@@ -15327,8 +14751,6 @@ public class tex extends Thread {
 			activewidth[5] = background[5];
 			activewidth[6] = background[6];
 			passive = 0;
-			printednode = memtop - 3;
-			passnumber = 0;
 			fontinshortdisplay = 0;
 			curp = mem[memtop - 3].getrh();
 			autobreaking = true;
@@ -15754,9 +15176,6 @@ public class tex extends Thread {
 					} else {
 						if (eqtb[8539 + curchr].getrh() == 0) {
 							{
-								if (interaction == 3) {
-									;
-								}
 								printnl(262);
 								Print(945);
 							}
@@ -15851,9 +15270,6 @@ public class tex extends Thread {
 					break;
 				default: {
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(680);
 					}
@@ -16032,9 +15448,6 @@ public class tex extends Thread {
 					activewidth[6] = activewidth[6] + mem[q + 3].getInt();
 					if ((mem[q].getb1() != 0) && (mem[q + 3].getInt() != 0)) {
 						{
-							if (interaction == 3) {
-								;
-							}
 							printnl(262);
 							Print(961);
 						}
@@ -16086,9 +15499,6 @@ public class tex extends Thread {
 		}
 		if (mem[v].getb0() != 1) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(338);
 			}
@@ -16198,9 +15608,6 @@ public class tex extends Thread {
 		if (p != 0) {
 			if (mem[p].getb0() == 0) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(989);
 				}
@@ -16243,9 +15650,6 @@ public class tex extends Thread {
 		}
 		if (eqtb[8233].getrh() != 0) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(338);
 			}
@@ -16399,9 +15803,6 @@ public class tex extends Thread {
 		if (eqtb[7713].getrh() != 0) {
 			if (deadcycles >= eqtb[9603].getInt()) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(1005);
 				}
@@ -16544,7 +15945,6 @@ public class tex extends Thread {
 								while (n >= mem[mem[r].getrh()].getb1()) {
 									r = mem[r].getrh();
 								}
-								n = n;
 								if (mem[r].getb1() != n) {
 									q = getnode(4);
 									mem[q].setrh(mem[r].getrh());
@@ -16570,9 +15970,6 @@ public class tex extends Thread {
 									pagesofar[6] = pagesofar[6] + mem[q + 3].getInt();
 									if ((mem[q].getb1() != 0) && (mem[q + 3].getInt() != 0)) {
 										{
-											if (interaction == 3) {
-												;
-											}
 											printnl(262);
 											Print(998);
 										}
@@ -16691,9 +16088,6 @@ public class tex extends Thread {
 							pagesofar[6] = pagesofar[6] + mem[q + 3].getInt();
 							if ((mem[q].getb1() != 0) && (mem[q + 3].getInt() != 0)) {
 								{
-									if (interaction == 3) {
-										;
-									}
 									printnl(262);
 									Print(994);
 								}
@@ -16774,9 +16168,6 @@ public class tex extends Thread {
 		backinput();
 		curtok = 804;
 		{
-			if (interaction == 3) {
-				;
-			}
 			printnl(262);
 			Print(1017);
 		}
@@ -16790,9 +16181,6 @@ public class tex extends Thread {
 
 	public void youcant() {
 		{
-			if (interaction == 3) {
-				;
-			}
 			printnl(262);
 			Print(685);
 		}
@@ -16901,9 +16289,6 @@ public class tex extends Thread {
 		int p;
 		if (curgroup == 0) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(776);
 			}
@@ -16918,9 +16303,6 @@ public class tex extends Thread {
 			p = getavail();
 			mem[memtop - 3].setrh(p);
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(625);
 			}
@@ -16965,9 +16347,6 @@ public class tex extends Thread {
 
 	public void extrarightbrace() {
 		{
-			if (interaction == 3) {
-				;
-			}
 			printnl(262);
 			Print(1048);
 		}
@@ -17056,9 +16435,6 @@ public class tex extends Thread {
 					mem[curlist.tailfield + 1].setrh(curbox);
 				} else {
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(1066);
 					}
@@ -17146,9 +16522,6 @@ public class tex extends Thread {
 			n = curval;
 			if (!scankeyword(842)) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(1073);
 				}
@@ -17211,9 +16584,6 @@ public class tex extends Thread {
 			boxend(boxcontext);
 		} else {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(1076);
 			}
@@ -17323,9 +16693,6 @@ public class tex extends Thread {
 				offsave();
 			} else {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(685);
 				}
@@ -17365,9 +16732,6 @@ public class tex extends Thread {
 			scaneightbitint();
 			if (curval == 255) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(1085);
 				}
@@ -17468,9 +16832,6 @@ public class tex extends Thread {
 		}
 		if ((Math.abs(curlist.modefield) == 203) || ((Math.abs(curlist.modefield) == 1) && (mem[p].getb0() != 1)) || ((Math.abs(curlist.modefield) == 102) && (mem[p].getb0() != 0))) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(1097);
 			}
@@ -17552,9 +16913,6 @@ public class tex extends Thread {
 					if (mem[p].getb0() != 11) {
 						if (mem[p].getb0() != 6) {
 							{
-								if (interaction == 3) {
-									;
-								}
 								printnl(262);
 								Print(1107);
 							}
@@ -17590,9 +16948,6 @@ public class tex extends Thread {
 		case 2: {
 			if ((n > 0) && (Math.abs(curlist.modefield) == 203)) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(1101);
 				}
@@ -17612,9 +16967,6 @@ public class tex extends Thread {
 				mem[curlist.tailfield].setb1(n);
 			} else {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(1104);
 				}
@@ -17692,9 +17044,6 @@ public class tex extends Thread {
 	public void alignerror() {
 		if (Math.abs(alignstate) > 2) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(1114);
 			}
@@ -17724,9 +17073,6 @@ public class tex extends Thread {
 			backinput();
 			if (alignstate < 0) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(657);
 				}
@@ -17734,9 +17080,6 @@ public class tex extends Thread {
 				curtok = 379;
 			} else {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(1110);
 				}
@@ -17755,9 +17098,6 @@ public class tex extends Thread {
 
 	public void noalignerror() {
 		{
-			if (interaction == 3) {
-				;
-			}
 			printnl(262);
 			Print(1114);
 		}
@@ -17772,9 +17112,6 @@ public class tex extends Thread {
 
 	public void omiterror() {
 		{
-			if (interaction == 3) {
-				;
-			}
 			printnl(262);
 			Print(1114);
 		}
@@ -17800,9 +17137,6 @@ public class tex extends Thread {
 
 	public void cserror() {
 		{
-			if (interaction == 3) {
-				;
-			}
 			printnl(262);
 			Print(776);
 		}
@@ -18067,9 +17401,6 @@ public class tex extends Thread {
 			}
 		}
 		{
-			if (interaction == 3) {
-				;
-			}
 			printnl(262);
 			Print(1130);
 		}
@@ -18102,9 +17433,6 @@ public class tex extends Thread {
 		}
 		if (curval < 0) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(1132);
 			}
@@ -18143,9 +17471,6 @@ public class tex extends Thread {
 	public void mathac() {
 		if (curcmd == 45) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(1139);
 			}
@@ -18260,9 +17585,6 @@ public class tex extends Thread {
 			if (t != 0) {
 				if (curcmd == 7) {
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(1143);
 					}
@@ -18272,9 +17594,6 @@ public class tex extends Thread {
 					}
 				} else {
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(1145);
 					}
@@ -18301,9 +17620,6 @@ public class tex extends Thread {
 				scandimen(false, false, false);
 			}
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(1153);
 			}
@@ -18353,9 +17669,6 @@ public class tex extends Thread {
 			if (curgroup == 15) {
 				scandelimiter(memtop - 12, false);
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(776);
 				}
@@ -18409,9 +17722,6 @@ public class tex extends Thread {
 		danger = false;
 		if ((fontparams[eqtb[8237].getrh()] < 22) || (fontparams[eqtb[8253].getrh()] < 22) || (fontparams[eqtb[8269].getrh()] < 22)) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(1158);
 			}
@@ -18426,9 +17736,6 @@ public class tex extends Thread {
 			danger = true;
 		} else if ((fontparams[eqtb[8238].getrh()] < 13) || (fontparams[eqtb[8254].getrh()] < 13) || (fontparams[eqtb[8270].getrh()] < 13)) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(1162);
 			}
@@ -18450,9 +17757,6 @@ public class tex extends Thread {
 				getxtoken();
 				if (curcmd != 3) {
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(1166);
 					}
@@ -18477,9 +17781,6 @@ public class tex extends Thread {
 			danger = false;
 			if ((fontparams[eqtb[8237].getrh()] < 22) || (fontparams[eqtb[8253].getrh()] < 22) || (fontparams[eqtb[8269].getrh()] < 22)) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(1158);
 				}
@@ -18494,9 +17795,6 @@ public class tex extends Thread {
 				danger = true;
 			} else if ((fontparams[eqtb[8238].getrh()] < 13) || (fontparams[eqtb[8254].getrh()] < 13) || (fontparams[eqtb[8270].getrh()] < 13)) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(1162);
 				}
@@ -18539,9 +17837,6 @@ public class tex extends Thread {
 				getxtoken();
 				if (curcmd != 3) {
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(1166);
 					}
@@ -18695,9 +17990,6 @@ public class tex extends Thread {
 			} while (!(curtok != 2592));
 			if ((curcs == 0) || (curcs > 6914)) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(1184);
 				}
@@ -18744,9 +18036,6 @@ public class tex extends Thread {
 					}
 					if (curcmd != 89) {
 						{
-							if (interaction == 3) {
-								;
-							}
 							printnl(262);
 							Print(685);
 						}
@@ -18853,9 +18142,6 @@ public class tex extends Thread {
 		}
 		if (aritherror) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(1207);
 			}
@@ -18897,9 +18183,6 @@ public class tex extends Thread {
 				scanint();
 				if ((curval <= 0) || (curval > 32767)) {
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(1213);
 					}
@@ -18926,9 +18209,6 @@ public class tex extends Thread {
 		scanint();
 		if (curval < 0) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(955);
 			}
@@ -19023,9 +18303,6 @@ public class tex extends Thread {
 			s = curval;
 			if ((s <= 0) || (s >= 134217728)) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(1222);
 				}
@@ -19044,9 +18321,6 @@ public class tex extends Thread {
 			s = -curval;
 			if ((curval <= 0) || (curval > 32768)) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(552);
 				}
@@ -19089,19 +18363,6 @@ public class tex extends Thread {
 		hash[6924 + f - 514].rh = t;
 	}
 
-	public void newinteraction() {
-		Println();
-		interaction = curchr;
-		if (interaction == 0) {
-			selector = 16;
-		} else {
-			selector = 17;
-		}
-		if (logopened) {
-			selector = selector + 2;
-		}
-	}
-
 	public void prefixedcommand() {
 		/* 30 10 */int a;
 		int f;
@@ -19120,9 +18381,6 @@ public class tex extends Thread {
 			} while (!((curcmd != 10) && (curcmd != 0)));
 			if (curcmd <= 70) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(1179);
 				}
@@ -19138,9 +18396,6 @@ public class tex extends Thread {
 		}
 		if ((curcmd != 97) && (a % 4 != 0)) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(685);
 			}
@@ -19301,9 +18556,6 @@ public class tex extends Thread {
 				n = curval;
 				if (!scankeyword(842)) {
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(1073);
 					}
@@ -19452,9 +18704,6 @@ public class tex extends Thread {
 				scanint();
 				if (((curval < 0) && (p < 9874)) || (curval > n)) {
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(1202);
 					}
@@ -19522,9 +18771,6 @@ public class tex extends Thread {
 					scanbox(1073741824 + n);
 				} else {
 					{
-						if (interaction == 3) {
-							;
-						}
 						printnl(262);
 						Print(680);
 					}
@@ -19583,9 +18829,6 @@ public class tex extends Thread {
 						break lab30;
 					} else {
 						{
-							if (interaction == 3) {
-								;
-							}
 							printnl(262);
 							Print(1216);
 						}
@@ -19625,7 +18868,8 @@ public class tex extends Thread {
 				newfont(a);
 				break;
 			case 100:
-				newinteraction();
+				// TODO error: cannot change interaction level
+				// should log this as an error but continue processing
 				break;
 			default:
 				confusion(1178);
@@ -19712,9 +18956,6 @@ public class tex extends Thread {
 			termout.flush();
 		} else {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(338);
 			}
@@ -19725,16 +18966,12 @@ public class tex extends Thread {
 				helpptr = 1;
 				helpline[0] = 1232;
 			} else {
-				if (interaction < 3) {
-					longhelpseen = true;
-				}
-				{
-					helpptr = 4;
-					helpline[3] = 1233;
-					helpline[2] = 1234;
-					helpline[1] = 1235;
-					helpline[0] = 1236;
-				}
+				longhelpseen = true;
+				helpptr = 4;
+				helpline[3] = 1233;
+				helpline[2] = 1234;
+				helpline[1] = 1235;
+				helpline[0] = 1236;
 			}
 			error();
 			useerrhelp = false;
@@ -19771,7 +19008,6 @@ public class tex extends Thread {
 	}
 
 	public void showwhatever() {
-		/* 50 */int p;
 		lab50: while (true) {
 			switch (curchr) {
 			case 3: {
@@ -19794,9 +19030,6 @@ public class tex extends Thread {
 				break;
 			case 0: {
 				gettoken();
-				if (interaction == 3) {
-					;
-				}
 				printnl(1248);
 				if (curcs != 0) {
 					sprintcs(curcs);
@@ -19806,10 +19039,7 @@ public class tex extends Thread {
 				break lab50;
 			}
 			default: {
-				p = thetoks();
-				if (interaction == 3) {
-					;
-				}
+				thetoks();
 				printnl(1248);
 				tokenshow(memtop - 3);
 				flushlist(mem[memtop - 3].getrh());
@@ -19818,9 +19048,6 @@ public class tex extends Thread {
 			}
 			enddiagnostic(true);
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(1255);
 			}
@@ -19833,26 +19060,8 @@ public class tex extends Thread {
 			}
 			break;
 		}
-		/* lab50: */if (interaction < 3) {
-			helpptr = 0;
-			errorcount = errorcount - 1;
-		} else if (eqtb[9592].getInt() > 0) {
-			{
-				helpptr = 3;
-				helpline[2] = 1243;
-				helpline[1] = 1244;
-				helpline[0] = 1245;
-			}
-		} else {
-			{
-				helpptr = 5;
-				helpline[4] = 1243;
-				helpline[3] = 1244;
-				helpline[2] = 1245;
-				helpline[1] = 1246;
-				helpline[0] = 1247;
-			}
-		}
+		helpptr = 0;
+		errorcount = errorcount - 1;
 		error();
 	}
 
@@ -19861,14 +19070,10 @@ public class tex extends Thread {
 		int p, q;
 		int x;
 		final fourquarters w = new fourquarters();
-		FileDataOutputStream fmtfile;
-		final memoryword m = new memoryword();
+		TexFileDataOutputStream fmtfile;
 		fmtfile = null;
 		if (saveptr != 0) {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(1258);
 			}
@@ -19877,15 +19082,10 @@ public class tex extends Thread {
 				helpline[0] = 1259;
 			}
 			{
-				if (interaction == 3) {
-					interaction = 2;
-				}
 				if (logopened) {
 					error();
 				}
-				if (interaction > 0) {
-					debughelp();
-				}
+				debughelp();
 				history = 3;
 				jumpout();
 			}
@@ -19900,21 +19100,15 @@ public class tex extends Thread {
 		printchar(46);
 		printint(eqtb[9584].getInt());
 		printchar(41);
-		if (interaction == 0) {
-			selector = 18;
-		} else {
-			selector = 19;
-		}
-		{
-			if (poolptr + 1 > poolsize) {
-				overflow(257, poolsize - initpoolptr);
-			}
+		selector = 19;
+		if (poolptr + 1 > poolsize) {
+			overflow(257, poolsize - initpoolptr);
 		}
 		formatident = makestring();
 		packjobname(785);
 		lab33: while (true) {
 			try {
-				fmtfile = new FileDataOutputStream(nameoffile);
+				fmtfile = new TexFileDataOutputStream(nameoffile);
 			} catch (final FileNotFoundException ex) {
 				termout.println();
 				termout.print("Cannot open ");
@@ -19928,7 +19122,7 @@ public class tex extends Thread {
 			promptfilename(1273, 785);
 		}
 		printnl(1274);
-		slowprint(Wmakenamestring(fmtfile));
+		slowprint(makenamestring());
 		{
 			strptr = strptr - 1;
 			poolptr = strstart[strptr];
@@ -20209,7 +19403,7 @@ public class tex extends Thread {
 				}
 			}
 			termout.flush();
-			fmtfile.writeInt(interaction);
+			fmtfile.writeInt(1);
 			fmtfile.writeInt(formatident);
 			fmtfile.writeInt(69069);
 			eqtb[9594].setInt(0);
@@ -20244,10 +19438,8 @@ public class tex extends Thread {
 	}
 
 	public void doextension() {
-		final int i, j;
 		int k;
 		int p;
-		final int q, r;
 		switch (curchr) {
 		case 0: {
 			newwritewhatsit(3);
@@ -20344,9 +19536,6 @@ public class tex extends Thread {
 			break;
 		case 0: {
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(1044);
 			}
@@ -20422,9 +19611,6 @@ public class tex extends Thread {
 		case 8: {
 			if ((curinput.locfield != 0) || ((curinput.indexfield != 6) && (curinput.indexfield != 3))) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(1010);
 				}
@@ -20445,9 +19631,6 @@ public class tex extends Thread {
 			insertpenalties = 0;
 			if (eqtb[8233].getrh() != 0) {
 				{
-					if (interaction == 3) {
-						;
-					}
 					printnl(262);
 					Print(1013);
 				}
@@ -20485,9 +19668,6 @@ public class tex extends Thread {
 			backinput();
 			curtok = 11010;
 			{
-				if (interaction == 3) {
-					;
-				}
 				printnl(262);
 				Print(625);
 			}
@@ -20572,17 +19752,6 @@ public class tex extends Thread {
 			;
 			getxtoken();
 			lab21: while (true) {
-				if (interrupt != 0) {
-					if (OKtointerrupt) {
-						backinput();
-						{
-							if (interrupt != 0) {
-								pauseforinstructions();
-							}
-						}
-						continue lab60;
-					}
-				}
 				if (panicking) {
 					checkmem(false);
 				}
@@ -21378,11 +20547,6 @@ public class tex extends Thread {
 									} else if (ligstack == 0) {
 										rthit = true;
 									}
-									{
-										if (interrupt != 0) {
-											pauseforinstructions();
-										}
-									}
 									switch (mainj.b2) {
 									case 1:
 									case 5: {
@@ -21619,8 +20783,6 @@ public class tex extends Thread {
 		int p, q;
 		int x;
 		final fourquarters w = new fourquarters();
-		memoryword m = new memoryword();
-		m = new memoryword();
 		try {
 			lab125: while (true) {
 				x = fmtfile.readInt();
@@ -22062,8 +21224,6 @@ public class tex extends Thread {
 						x = fmtfile.readInt();
 						if ((x < 1) || (x > j)) {
 							break lab125;
-						} else {
-							x = x;
 						}
 					}
 					if (INITEX) {
@@ -22079,8 +21239,6 @@ public class tex extends Thread {
 					x = fmtfile.readInt();
 					if ((x < 0) || (x > 3)) {
 						break lab125;
-					} else {
-						interaction = x;
 					}
 				}
 				{
@@ -22282,12 +21440,10 @@ public class tex extends Thread {
 			freenode(tempptr, 2);
 		}
 		if (history != 0) {
-			if (((history == 1) || (interaction < 3))) {
-				if (selector == 19) {
-					selector = 17;
-					printnl(1282);
-					selector = 19;
-				}
+			if (selector == 19) {
+				selector = 17;
+				printnl(1282);
+				selector = 19;
 			}
 		}
 		if (c == 1) {
@@ -22658,13 +21814,8 @@ public class tex extends Thread {
 	}
 
 	public void dumpmem(final int n) {
-		final int j;
 		int k;
-		final int l;
-		final int p, q;
-		final int x;
-		final fourquarters w = new fourquarters();
-		FileDataOutputStream fmtfile;
+		TexFileDataOutputStream fmtfile;
 		if (jobname == 0) {
 			jobname = 796;
 			packjobname(786);
@@ -22674,7 +21825,7 @@ public class tex extends Thread {
 		}
 		fmtfile = null;
 		try {
-			fmtfile = new FileDataOutputStream(nameoffile);
+			fmtfile = new TexFileDataOutputStream(nameoffile);
 		} catch (final FileNotFoundException ex) {
 			termout.println();
 			termout.print("Cannot open ");
@@ -22809,7 +21960,6 @@ public class tex extends Thread {
 
 	public static void main(final String[] args) {
 		int i;
-		final StringBuffer strbuf = new StringBuffer();
 		final tex prog = new tex();
 		i = 0;
 		while (i < args.length) {
@@ -22886,22 +22036,19 @@ public class tex extends Thread {
 			if (INITEX && memmax != memtop) {
 				bad = 10;
 			}
-			if ((0 > 0) || (memmax < memtop)) {
+			if ((memmax < memtop)) {
 				bad = 10;
 			}
-			if ((0 > 0) || (255 < 127)) {
-				bad = 11;
-			}
-			if ((0 > 0) || (maxhalfword < 32767)) {
+			if ((maxhalfword < 32767)) {
 				bad = 12;
 			}
-			if ((0 < 0) || (255 > maxhalfword)) {
+			if (255 > maxhalfword) {
 				bad = 13;
 			}
-			if ((0 < 0) || (memmax >= maxhalfword) || (-0 > maxhalfword + 1)) {
+			if ((memmax >= maxhalfword) || (-0 > maxhalfword + 1)) {
 				bad = 14;
 			}
-			if ((0 < 0) || (fontmax > 255)) {
+			if (fontmax > 255) {
 				bad = 15;
 			}
 			if (fontmax > 256) {
@@ -22912,9 +22059,6 @@ public class tex extends Thread {
 			}
 			if (bufsize > maxhalfword) {
 				bad = 18;
-			}
-			if (255 < 255) {
-				bad = 19;
 			}
 			if (11276 > maxhalfword) {
 				bad = 21;
@@ -23051,11 +22195,7 @@ public class tex extends Thread {
 			}
 			fixdateandtime();
 			magicoffset = strstart[892] - 9 * 16;
-			if (interaction == 0) {
-				selector = 16;
-			} else {
-				selector = 17;
-			}
+			selector = 17;
 			if ((curinput.locfield < curinput.limitfield) && (eqtb[8283 + buffer[curinput.locfield]].getrh() != 0)) {
 				startinput();
 			}
@@ -23074,6 +22214,6 @@ public class tex extends Thread {
 				System.exit(0);
 			}
 		}
-		lab127: readyalready = 0;
+		readyalready = 0;
 	}
 }
