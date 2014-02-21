@@ -3,9 +3,11 @@ package tex;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import name.martingeisse.jtex.io.TexFileDataInputStream;
 import name.martingeisse.jtex.io.TexFileDataOutputStream;
 import name.martingeisse.jtex.io.TexFilePrintWriter;
+import name.martingeisse.jtex.parser.TexParser;
 
 public class tex extends Thread {
 
@@ -68,8 +70,6 @@ public class tex extends Thread {
 	private int last;
 
 	private int maxbufstack;
-
-	alphafile termin;
 
 	PrintWriter termout;
 
@@ -199,13 +199,11 @@ public class tex extends Thread {
 
 	private int curtok;
 
-	private instaterecord inputstack[] = new instaterecord[stacksize + 1];
+	private TexParser inputstack[] = new TexParser[stacksize + 1];
 
 	private int inputptr;
 
-	private int maxinstack;
-
-	private instaterecord curinput = new instaterecord();
+	private TexParser curinput = new TexParser();
 
 	private int inopen;
 
@@ -1351,7 +1349,6 @@ public class tex extends Thread {
 		if (logopened) {
 			error();
 		}
-		debughelp();
 		history = 3;
 		jumpout();
 	}
@@ -1375,7 +1372,6 @@ public class tex extends Thread {
 			if (logopened) {
 				error();
 			}
-			debughelp();
 			history = 3;
 			jumpout();
 		}
@@ -1400,7 +1396,6 @@ public class tex extends Thread {
 		if (logopened) {
 			error();
 		}
-		debughelp();
 		history = 3;
 		jumpout();
 	}
@@ -1429,8 +1424,8 @@ public class tex extends Thread {
 								exit();
 							}
 						} else {
-							curinput.locfield = first;
-							curinput.limitfield = last - 1;
+							curinput.setLoc(first);
+							curinput.setLimit(last - 1);
 							overflow(256, bufsize);
 						}
 					}
@@ -1451,6 +1446,7 @@ public class tex extends Thread {
 	}
 
 	public boolean initterminal() {
+		alphafile termin;
 		/* 10 */boolean Result;
 		int bufptr;
 		last = first;
@@ -1460,13 +1456,12 @@ public class tex extends Thread {
 		}
 		termin = new alphafile(System.in);
 		if (last > first) {
-			curinput.locfield = first;
-			while ((curinput.locfield < last) && (buffer[curinput.locfield] == ' ')) {
-				curinput.locfield = curinput.locfield + 1;
+			curinput.setLoc(first);
+			while ((curinput.getLoc() < last) && (buffer[curinput.getLoc()] == ' ')) {
+				curinput.setLoc( curinput.getLoc() + 1);
 			}
-			if (curinput.locfield < last) {
-				Result = true;
-				return Result /* lab10 */;
+			if (curinput.getLoc() < last) {
+				return true;
 			}
 		}
 		while (true) {
@@ -1479,13 +1474,12 @@ public class tex extends Thread {
 				Result = false;
 				return Result /* lab10 */;
 			}
-			curinput.locfield = first;
-			while ((curinput.locfield < last) && (buffer[curinput.locfield] == 32)) {
-				curinput.locfield = curinput.locfield + 1;
+			curinput.setLoc( first);
+			while ((curinput.getLoc() < last) && (buffer[curinput.getLoc()] == 32)) {
+				curinput.setLoc(curinput.getLoc() + 1);
 			}
-			if (curinput.locfield < last) {
-				Result = true;
-				return Result /* lab10 */;
+			if (curinput.getLoc() < last) {
+				return true;
 			}
 			termout.print("Please type the name of your input file." + '\n');
 		}
@@ -1751,23 +1745,6 @@ public class tex extends Thread {
 			printchar(strpool[j]);
 			j = j + 1;
 		}
-	}
-
-	public void terminput() {
-		int k;
-		termout.flush();
-		if (!inputln(termin, true)) {
-			fatalerror(261);
-		}
-		termoffset = 0;
-		selector = selector - 1;
-		if (last != first) {
-			for (k = first; k <= last - 1; k++) {
-				Print(buffer[k]);
-			}
-		}
-		Println();
-		selector = selector + 1;
 	}
 
 	public void interror(final int n) {
@@ -5146,23 +5123,23 @@ public class tex extends Thread {
 		int p;
 		int q;
 		baseptr = inputptr;
-		inputstack[baseptr].copy(curinput);
+		inputstack[baseptr].copyFrom(curinput);
 		nn = -1;
 		bottomline = false;
 		while (true) {
-			curinput.copy(inputstack[baseptr]);
-			if ((curinput.statefield != 0)) {
-				if ((curinput.namefield > 17) || (baseptr == 0)) {
+			curinput.copyFrom(inputstack[baseptr]);
+			if ((curinput.getState() != 0)) {
+				if ((curinput.getName() > 17) || (baseptr == 0)) {
 					bottomline = true;
 				}
 			}
 			if ((baseptr == inputptr) || bottomline || (nn < eqtb[9617].getInt())) {
-				if ((baseptr == inputptr) || (curinput.statefield != 0) || (curinput.indexfield != 3) || (curinput.locfield != 0)) {
+				if ((baseptr == inputptr) || (curinput.getState() != 0) || (curinput.getIndex() != 3) || (curinput.getLoc() != 0)) {
 					tally = 0;
 					oldsetting = selector;
-					if (curinput.statefield != 0) {
-						if (curinput.namefield <= 17) {
-							if ((curinput.namefield == 0)) {
+					if (curinput.getState() != 0) {
+						if (curinput.getName() <= 17) {
+							if ((curinput.getName() == 0)) {
 								if (baseptr == 0) {
 									printnl(574);
 								} else {
@@ -5170,10 +5147,10 @@ public class tex extends Thread {
 								}
 							} else {
 								printnl(576);
-								if (curinput.namefield == 17) {
+								if (curinput.getName() == 17) {
 									printchar(42);
 								} else {
-									printint(curinput.namefield - 1);
+									printint(curinput.getName() - 1);
 								}
 								printchar(62);
 							}
@@ -5188,14 +5165,14 @@ public class tex extends Thread {
 							selector = 20;
 							trickcount = 1000000;
 						}
-						if (buffer[curinput.limitfield] == eqtb[9611].getInt()) {
-							j = curinput.limitfield;
+						if (buffer[curinput.getLimit()] == eqtb[9611].getInt()) {
+							j = curinput.getLimit();
 						} else {
-							j = curinput.limitfield + 1;
+							j = curinput.getLimit() + 1;
 						}
 						if (j > 0) {
-							for (i = curinput.startfield; i <= j - 1; i++) {
-								if (i == curinput.locfield) {
+							for (i = curinput.getStart(); i <= j - 1; i++) {
+								if (i == curinput.getLoc()) {
 									firstcount = tally;
 									trickcount = tally + 1 + errorline - halferrorline;
 									if (trickcount < errorline) {
@@ -5206,7 +5183,7 @@ public class tex extends Thread {
 							}
 						}
 					} else {
-						switch (curinput.indexfield) {
+						switch (curinput.getIndex()) {
 						case 0:
 							printnl(578);
 							break;
@@ -5215,7 +5192,7 @@ public class tex extends Thread {
 							printnl(579);
 							break;
 						case 3:
-							if (curinput.locfield == 0) {
+							if (curinput.getLoc() == 0) {
 								printnl(580);
 							} else {
 								printnl(581);
@@ -5226,7 +5203,7 @@ public class tex extends Thread {
 							break;
 						case 5: {
 							Println();
-							printcs(curinput.namefield);
+							printcs(curinput.getName());
 						}
 							break;
 						case 6:
@@ -5269,10 +5246,10 @@ public class tex extends Thread {
 							selector = 20;
 							trickcount = 1000000;
 						}
-						if (curinput.indexfield < 5) {
-							showtokenlist(curinput.startfield, curinput.locfield, 100000);
+						if (curinput.getIndex() < 5) {
+							showtokenlist(curinput.getStart(), curinput.getLoc(), 100000);
 						} else {
-							showtokenlist(mem[curinput.startfield].getrh(), curinput.locfield, 100000);
+							showtokenlist(mem[curinput.getStart()].getrh(), curinput.getLoc(), 100000);
 						}
 					}
 					selector = oldsetting;
@@ -5325,29 +5302,26 @@ public class tex extends Thread {
 			}
 			baseptr = baseptr - 1;
 		}
-		/* lab30: */curinput.copy(inputstack[inputptr]);
+		/* lab30: */curinput.copyFrom(inputstack[inputptr]);
 	}
 
 	public void begintokenlist(final int p, final int t) {
 		{
-			if (inputptr > maxinstack) {
-				maxinstack = inputptr;
-				if (inputptr == stacksize) {
-					overflow(593, stacksize);
-				}
+			if (inputptr == stacksize) {
+				overflow(593, stacksize);
 			}
-			inputstack[inputptr].copy(curinput);
+			inputstack[inputptr].copyFrom(curinput);
 			inputptr = inputptr + 1;
 		}
-		curinput.statefield = 0;
-		curinput.startfield = p;
-		curinput.indexfield = t;
+		curinput.setState(0);
+		curinput.setStart(p);
+		curinput.setIndex(t);
 		if (t >= 5) {
 			mem[p].setlh(mem[p].getlh() + 1);
 			if (t == 5) {
-				curinput.limitfield = paramptr;
+				curinput.setLimit(paramptr);
 			} else {
-				curinput.locfield = mem[p].getrh();
+				curinput.setLoc(mem[p].getrh());
 				if (eqtb[9593].getInt() > 1) {
 					begindiagnostic();
 					printnl(338);
@@ -5368,24 +5342,24 @@ public class tex extends Thread {
 				}
 			}
 		} else {
-			curinput.locfield = p;
+			curinput.setLoc(p);
 		}
 	}
 
 	public void endtokenlist() {
-		if (curinput.indexfield >= 3) {
-			if (curinput.indexfield <= 4) {
-				flushlist(curinput.startfield);
+		if (curinput.getIndex() >= 3) {
+			if (curinput.getIndex() <= 4) {
+				flushlist(curinput.getStart());
 			} else {
-				deletetokenref(curinput.startfield);
-				if (curinput.indexfield == 5) {
-					while (paramptr > curinput.limitfield) {
+				deletetokenref(curinput.getStart());
+				if (curinput.getIndex() == 5) {
+					while (paramptr > curinput.getLimit()) {
 						paramptr = paramptr - 1;
 						flushlist(paramstack[paramptr]);
 					}
 				}
 			}
-		} else if (curinput.indexfield == 1) {
+		} else if (curinput.getIndex() == 1) {
 			if (alignstate > 500000) {
 				alignstate = 0;
 			} else {
@@ -5394,13 +5368,13 @@ public class tex extends Thread {
 		}
 		{
 			inputptr = inputptr - 1;
-			curinput.copy(inputstack[inputptr]);
+			curinput.copyFrom(inputstack[inputptr]);
 		}
 	}
 
 	public void backinput() {
 		int p;
-		while ((curinput.statefield == 0) && (curinput.locfield == 0)) {
+		while ((curinput.getState() == 0) && (curinput.getLoc() == 0)) {
 			endtokenlist();
 		}
 		p = getavail();
@@ -5413,19 +5387,16 @@ public class tex extends Thread {
 			}
 		}
 		{
-			if (inputptr > maxinstack) {
-				maxinstack = inputptr;
-				if (inputptr == stacksize) {
-					overflow(593, stacksize);
-				}
+			if (inputptr == stacksize) {
+				overflow(593, stacksize);
 			}
-			inputstack[inputptr].copy(curinput);
+			inputstack[inputptr].copyFrom(curinput);
 			inputptr = inputptr + 1;
 		}
-		curinput.statefield = 0;
-		curinput.startfield = p;
-		curinput.indexfield = 3;
-		curinput.locfield = p;
+		curinput.setState(0);
+		curinput.setStart( p);
+		curinput.setIndex(3);
+		curinput.setLoc(p);
 	}
 
 	public void backerror() {
@@ -5435,7 +5406,7 @@ public class tex extends Thread {
 
 	public void inserror() {
 		backinput();
-		curinput.indexfield = 4;
+		curinput.setIndex( 4);
 		error();
 	}
 
@@ -5448,37 +5419,34 @@ public class tex extends Thread {
 		}
 		inopen = inopen + 1;
 		{
-			if (inputptr > maxinstack) {
-				maxinstack = inputptr;
-				if (inputptr == stacksize) {
-					overflow(593, stacksize);
-				}
+			if (inputptr == stacksize) {
+				overflow(593, stacksize);
 			}
-			inputstack[inputptr].copy(curinput);
+			inputstack[inputptr].copyFrom(curinput);
 			inputptr = inputptr + 1;
 		}
-		curinput.indexfield = inopen;
-		linestack[curinput.indexfield] = line;
-		curinput.startfield = first;
-		curinput.statefield = 1;
-		curinput.namefield = 0;
+		curinput.setIndex( inopen);
+		linestack[curinput.getIndex()] = line;
+		curinput.setStart( first);
+		curinput.setState( 1);
+		curinput.setName( 0);
 	}
 
 	public void endfilereading() {
-		first = curinput.startfield;
-		line = linestack[curinput.indexfield];
-		if (curinput.namefield > 17) {
-			inputfile[curinput.indexfield].close();
+		first = curinput.getStart();
+		line = linestack[curinput.getIndex()];
+		if (curinput.getName() > 17) {
+			inputfile[curinput.getIndex()].close();
 		}
 		{
 			inputptr = inputptr - 1;
-			curinput.copy(inputstack[inputptr]);
+			curinput.copyFrom(inputstack[inputptr]);
 		}
 		inopen = inopen - 1;
 	}
 
 	public void clearforerrorprompt() {
-		while ((curinput.statefield != 0) && (curinput.namefield == 0) && (inputptr > 0) && (curinput.locfield > curinput.limitfield)) {
+		while ((curinput.getState() != 0) && (curinput.getName() == 0) && (inputptr > 0) && (curinput.getLoc() > curinput.getLimit())) {
 			endfilereading();
 		}
 		Println();
@@ -5490,7 +5458,7 @@ public class tex extends Thread {
 		if (scannerstatus != 0) {
 			deletionsallowed = false;
 			if (curcs != 0) {
-				if ((curinput.statefield == 0) || (curinput.namefield < 1) || (curinput.namefield > 17)) {
+				if ((curinput.getState() == 0) || (curinput.getName() < 1) || (curinput.getName() > 17)) {
 					p = getavail();
 					mem[p].setlh(4095 + curcs);
 					begintokenlist(p, 3);
@@ -5586,14 +5554,14 @@ public class tex extends Thread {
 		cc = 0;
 		lab20: while (true) {
 			curcs = 0;
-			if (curinput.statefield != 0) {
+			if (curinput.getState() != 0) {
 				lab25: while (true) {
-					if (curinput.locfield <= curinput.limitfield) {
-						curchr = buffer[curinput.locfield];
-						curinput.locfield = curinput.locfield + 1;
+					if (curinput.getLoc() <= curinput.getLimit()) {
+						curchr = buffer[curinput.getLoc()];
+						curinput.setLoc(curinput.getLoc() + 1);
 						lab21: while (true) {
 							curcmd = eqtb[8283 + curchr].getrh();
-							switch (curinput.statefield + curcmd) {
+							switch (curinput.getState() + curcmd) {
 							case 10:
 							case 26:
 							case 42:
@@ -5603,37 +5571,37 @@ public class tex extends Thread {
 							case 1:
 							case 17:
 							case 33: {
-								if (curinput.locfield > curinput.limitfield) {
+								if (curinput.getLoc() > curinput.getLimit()) {
 									curcs = 513;
 								} else {
 									lab40: while (true) {
 										lab26: while (true) {
-											k = curinput.locfield;
+											k = curinput.getLoc();
 											curchr = buffer[k];
 											cat = eqtb[8283 + curchr].getrh();
 											k = k + 1;
 											if (cat == 11) {
-												curinput.statefield = 17;
+												curinput.setState( 17);
 											} else if (cat == 10) {
-												curinput.statefield = 17;
+												curinput.setState( 17);
 											} else {
-												curinput.statefield = 1;
+												curinput.setState( 1);
 											}
-											if ((cat == 11) && (k <= curinput.limitfield)) {
+											if ((cat == 11) && (k <= curinput.getLimit())) {
 												do {
 													curchr = buffer[k];
 													cat = eqtb[8283 + curchr].getrh();
 													k = k + 1;
-												} while (!((cat != 11) || (k > curinput.limitfield)));
+												} while (!((cat != 11) || (k > curinput.getLimit())));
 												{
 													if (buffer[k] == curchr) {
 														if (cat == 7) {
-															if (k < curinput.limitfield) {
+															if (k < curinput.getLimit()) {
 																c = buffer[k + 1];
 																if (c < 128) {
 																	d = 2;
 																	if ((((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102)))) {
-																		if (k + 2 <= curinput.limitfield) {
+																		if (k + 2 <= curinput.getLimit()) {
 																			cc = buffer[k + 2];
 																			if ((((cc >= 48) && (cc <= 57)) || ((cc >= 97) && (cc <= 102)))) {
 																				d = d + 1;
@@ -5657,9 +5625,9 @@ public class tex extends Thread {
 																	} else {
 																		buffer[k - 1] = c - 64;
 																	}
-																	curinput.limitfield = curinput.limitfield - d;
+																	curinput.setLimit(curinput.getLimit() - d);
 																	first = first - d;
-																	while (k <= curinput.limitfield) {
+																	while (k <= curinput.getLimit()) {
 																		buffer[k] = buffer[k + d];
 																		k = k + 1;
 																	}
@@ -5672,20 +5640,20 @@ public class tex extends Thread {
 												if (cat != 11) {
 													k = k - 1;
 												}
-												if (k > curinput.locfield + 1) {
-													curcs = idlookup(curinput.locfield, k - curinput.locfield);
-													curinput.locfield = k;
+												if (k > curinput.getLoc() + 1) {
+													curcs = idlookup(curinput.getLoc(), k - curinput.getLoc());
+													curinput.setLoc(k);
 													break lab40;
 												}
 											} else {
 												if (buffer[k] == curchr) {
 													if (cat == 7) {
-														if (k < curinput.limitfield) {
+														if (k < curinput.getLimit()) {
 															c = buffer[k + 1];
 															if (c < 128) {
 																d = 2;
 																if ((((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102)))) {
-																	if (k + 2 <= curinput.limitfield) {
+																	if (k + 2 <= curinput.getLimit()) {
 																		cc = buffer[k + 2];
 																		if ((((cc >= 48) && (cc <= 57)) || ((cc >= 97) && (cc <= 102)))) {
 																			d = d + 1;
@@ -5709,9 +5677,9 @@ public class tex extends Thread {
 																} else {
 																	buffer[k - 1] = c - 64;
 																}
-																curinput.limitfield = curinput.limitfield - d;
+																curinput.setLimit(curinput.getLimit() - d);
 																first = first - d;
-																while (k <= curinput.limitfield) {
+																while (k <= curinput.getLimit()) {
 																	buffer[k] = buffer[k + d];
 																	k = k + 1;
 																}
@@ -5721,8 +5689,8 @@ public class tex extends Thread {
 													}
 												}
 											}
-											curcs = 257 + buffer[curinput.locfield];
-											curinput.locfield = curinput.locfield + 1;
+											curcs = 257 + buffer[curinput.getLoc()];
+											curinput.setLoc( curinput.getLoc() + 1);
 											break;
 										}
 										break;
@@ -5741,7 +5709,7 @@ public class tex extends Thread {
 								curcs = curchr + 1;
 								curcmd = eqtb[curcs].getb0();
 								curchr = eqtb[curcs].getrh();
-								curinput.statefield = 1;
+								curinput.setState( 1);
 								if (curcmd >= 113) {
 									checkoutervalidity();
 								}
@@ -5750,16 +5718,16 @@ public class tex extends Thread {
 							case 8:
 							case 24:
 							case 40: {
-								if (curchr == buffer[curinput.locfield]) {
-									if (curinput.locfield < curinput.limitfield) {
-										c = buffer[curinput.locfield + 1];
+								if (curchr == buffer[curinput.getLoc()]) {
+									if (curinput.getLoc() < curinput.getLimit()) {
+										c = buffer[curinput.getLoc() + 1];
 										if (c < 128) {
-											curinput.locfield = curinput.locfield + 2;
+											curinput.setLoc(curinput.getLoc() + 2);
 											if ((((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102)))) {
-												if (curinput.locfield <= curinput.limitfield) {
-													cc = buffer[curinput.locfield];
+												if (curinput.getLoc() <= curinput.getLimit()) {
+													cc = buffer[curinput.getLoc()];
 													if ((((cc >= 48) && (cc <= 57)) || ((cc >= 97) && (cc <= 102)))) {
-														curinput.locfield = curinput.locfield + 1;
+														curinput.setLoc( curinput.getLoc() + 1);
 														if (c <= 57) {
 															curchr = c - 48;
 														} else {
@@ -5783,7 +5751,7 @@ public class tex extends Thread {
 										}
 									}
 								}
-								curinput.statefield = 1;
+								curinput.setState( 1);
 							}
 								break;
 							case 16:
@@ -5804,12 +5772,12 @@ public class tex extends Thread {
 								continue lab20;
 							}
 							case 11: {
-								curinput.statefield = 17;
+								curinput.setState( 17);
 								curchr = 32;
 							}
 								break;
 							case 6: {
-								curinput.locfield = curinput.limitfield + 1;
+								curinput.setLoc(curinput.getLimit() + 1);
 								curcmd = 10;
 								curchr = 32;
 							}
@@ -5818,11 +5786,11 @@ public class tex extends Thread {
 							case 15:
 							case 31:
 							case 47: {
-								curinput.locfield = curinput.limitfield + 1;
+								curinput.setLoc( curinput.getLimit() + 1);
 								continue lab25;
 							}
 							case 38: {
-								curinput.locfield = curinput.limitfield + 1;
+								curinput.setLoc( curinput.getLimit() + 1);
 								curcs = parloc;
 								curcmd = eqtb[curcs].getb0();
 								curchr = eqtb[curcs].getrh();
@@ -5836,7 +5804,7 @@ public class tex extends Thread {
 								break;
 							case 18:
 							case 34: {
-								curinput.statefield = 1;
+								curinput.setState( 1);
 								alignstate = alignstate + 1;
 							}
 								break;
@@ -5845,7 +5813,7 @@ public class tex extends Thread {
 								break;
 							case 19:
 							case 35: {
-								curinput.statefield = 1;
+								curinput.setState( 1);
 								alignstate = alignstate - 1;
 							}
 								break;
@@ -5861,7 +5829,7 @@ public class tex extends Thread {
 							case 41:
 							case 44:
 							case 45:
-								curinput.statefield = 1;
+								curinput.setState( 1);
 								break;
 							default:
 								;
@@ -5870,12 +5838,12 @@ public class tex extends Thread {
 							break;
 						}
 					} else {
-						curinput.statefield = 33;
-						if (curinput.namefield > 17) {
+						curinput.setState( 33);
+						if (curinput.getName() > 17) {
 							line = line + 1;
-							first = curinput.startfield;
+							first = curinput.getStart();
 							if (!forceeof) {
-								if (inputln(inputfile[curinput.indexfield], true)) {
+								if (inputln(inputfile[curinput.getIndex()], true)) {
 									firmuptheline();
 								} else {
 									forceeof = true;
@@ -5891,14 +5859,14 @@ public class tex extends Thread {
 								continue lab20;
 							}
 							if ((eqtb[9611].getInt() < 0) || (eqtb[9611].getInt() > 255)) {
-								curinput.limitfield = curinput.limitfield - 1;
+								curinput.setLimit( curinput.getLimit() - 1);
 							} else {
-								buffer[curinput.limitfield] = eqtb[9611].getInt();
+								buffer[curinput.getLimit()] = eqtb[9611].getInt();
 							}
-							first = curinput.limitfield + 1;
-							curinput.locfield = curinput.startfield;
+							first = curinput.getLimit() + 1;
+							curinput.setLoc( curinput.getStart());
 						} else {
-							if (!(curinput.namefield == 0)) {
+							if (!(curinput.getName() == 0)) {
 								curcmd = 0;
 								curchr = 0;
 								return /* lab10 */;
@@ -5916,17 +5884,17 @@ public class tex extends Thread {
 					}
 					break;
 				}
-			} else if (curinput.locfield != 0) {
-				t = mem[curinput.locfield].getlh();
-				curinput.locfield = mem[curinput.locfield].getrh();
+			} else if (curinput.getLoc() != 0) {
+				t = mem[curinput.getLoc()].getlh();
+				curinput.setLoc( mem[curinput.getLoc()].getrh());
 				if (t >= 4095) {
 					curcs = t - 4095;
 					curcmd = eqtb[curcs].getb0();
 					curchr = eqtb[curcs].getrh();
 					if (curcmd >= 113) {
 						if (curcmd == 116) {
-							curcs = mem[curinput.locfield].getlh() - 4095;
-							curinput.locfield = 0;
+							curcs = mem[curinput.getLoc()].getlh() - 4095;
+							curinput.setLoc( 0);
 							curcmd = eqtb[curcs].getb0();
 							curchr = eqtb[curcs].getrh();
 							if (curcmd > 100) {
@@ -5948,7 +5916,7 @@ public class tex extends Thread {
 						alignstate = alignstate - 1;
 						break;
 					case 5: {
-						begintokenlist(paramstack[curinput.limitfield + curchr - 1], 0);
+						begintokenlist(paramstack[curinput.getLimit() + curchr - 1], 0);
 						continue lab20;
 					}
 					default:
@@ -5983,7 +5951,7 @@ public class tex extends Thread {
 	}
 
 	public void firmuptheline() {
-		curinput.limitfield = last;
+		curinput.setLimit( last);
 	}
 
 	public void gettoken() {
@@ -6275,12 +6243,12 @@ public class tex extends Thread {
 				}
 			} while (!(mem[r].getlh() == 3584));
 		}
-		while ((curinput.statefield == 0) && (curinput.locfield == 0)) {
+		while ((curinput.getState() == 0) && (curinput.getLoc() == 0)) {
 			endtokenlist();
 		}
 		begintokenlist(refcount, 5);
-		curinput.namefield = warningindex;
-		curinput.locfield = mem[r].getrh();
+		curinput.setName( warningindex);
+		curinput.setLoc( mem[r].getrh());
 		if (n > 0) {
 			if (paramptr + n > maxparamstack) {
 				maxparamstack = paramptr + n;
@@ -6302,7 +6270,7 @@ public class tex extends Thread {
 		backinput();
 		curtok = 11016;
 		backinput();
-		curinput.indexfield = 4;
+		curinput.setIndex(4);
 	}
 
 	public void expand() {
@@ -6352,9 +6320,9 @@ public class tex extends Thread {
 				if (t >= 4095) {
 					p = getavail();
 					mem[p].setlh(11018);
-					mem[p].setrh(curinput.locfield);
-					curinput.startfield = p;
-					curinput.locfield = p;
+					mem[p].setrh(curinput.getLoc());
+					curinput.setStart( p);
+					curinput.setLoc( p);
 				}
 			}
 				break;
@@ -7960,7 +7928,7 @@ public class tex extends Thread {
 		alignstate = 1000000;
 		do {
 			beginfilereading();
-			curinput.namefield = m + 1;
+			curinput.setName(m + 1);
 			if (readopen[m] == 2) {
 				fatalerror(753);
 			} else if (readopen[m] == 1) {
@@ -7990,15 +7958,15 @@ public class tex extends Thread {
 					}
 				}
 			}
-			curinput.limitfield = last;
+			curinput.setLimit(last);
 			if ((eqtb[9611].getInt() < 0) || (eqtb[9611].getInt() > 255)) {
-				curinput.limitfield = curinput.limitfield - 1;
+				curinput.setLimit( curinput.getLimit() - 1);
 			} else {
-				buffer[curinput.limitfield] = eqtb[9611].getInt();
+				buffer[curinput.getLimit()] = eqtb[9611].getInt();
 			}
-			first = curinput.limitfield + 1;
-			curinput.locfield = curinput.startfield;
-			curinput.statefield = 33;
+			first = curinput.getLimit() + 1;
+			curinput.setLoc( curinput.getStart());
+			curinput.setState( 33);
 			while (true) {
 				gettoken();
 				if (curtok == 0) {
@@ -8538,9 +8506,9 @@ public class tex extends Thread {
 			printchar(58);
 			printtwo(eqtb[9583].getInt() % 60);
 		}
-		inputstack[inputptr].copy(curinput);
+		inputstack[inputptr].copyFrom(curinput);
 		printnl(798);
-		l = inputstack[0].limitfield;
+		l = inputstack[0].getLimit();
 		if (buffer[l] == eqtb[9611].getInt()) {
 			l = l - 1;
 		}
@@ -8562,7 +8530,7 @@ public class tex extends Thread {
 			thisfile = new TeXFile(nameoffile);
 			if (thisfile.exists()) {
 				try {
-					inputfile[curinput.indexfield] = new alphafile(thisfile);
+					inputfile[curinput.getIndex()] = new alphafile(thisfile);
 				} catch (final FileNotFoundException ex) {
 					termout.println();
 					termout.print("Cannot open ");
@@ -8575,7 +8543,7 @@ public class tex extends Thread {
 				thisfile = new TeXFile(nameoffile);
 				if (thisfile.exists()) {
 					try {
-						inputfile[curinput.indexfield] = new alphafile(thisfile);
+						inputfile[curinput.getIndex()] = new alphafile(thisfile);
 					} catch (final FileNotFoundException ex) {
 						termout.println();
 						termout.print("Cannot open ");
@@ -8587,41 +8555,41 @@ public class tex extends Thread {
 			endfilereading();
 			promptfilename(787, 791);
 		}
-		/* lab30: */curinput.namefield = makenamestring();
+		/* lab30: */curinput.setName( makenamestring());
 		if (jobname == 0) {
 			jobname = curname;
 			openlogfile();
 		}
-		if (termoffset + (strstart[curinput.namefield + 1] - strstart[curinput.namefield]) > maxprintline - 2) {
+		if (termoffset + (strstart[curinput.getName() + 1] - strstart[curinput.getName()]) > maxprintline - 2) {
 			Println();
 		} else if ((termoffset > 0) || (fileoffset > 0)) {
 			printchar(32);
 		}
 		printchar(40);
 		openparens = openparens + 1;
-		slowprint(curinput.namefield);
+		slowprint(curinput.getName());
 		termout.flush();
-		curinput.statefield = 33;
-		if (curinput.namefield == strptr - 1) {
+		curinput.setState( 33);
+		if (curinput.getName() == strptr - 1) {
 			{
 				strptr = strptr - 1;
 				poolptr = strstart[strptr];
 			}
-			curinput.namefield = curname;
+			curinput.setName( curname);
 		}
 		{
 			line = 1;
-			if (inputln(inputfile[curinput.indexfield], false)) {
+			if (inputln(inputfile[curinput.getIndex()], false)) {
 				;
 			}
 			firmuptheline();
 			if ((eqtb[9611].getInt() < 0) || (eqtb[9611].getInt() > 255)) {
-				curinput.limitfield = curinput.limitfield - 1;
+				curinput.setLimit( curinput.getLimit() - 1);
 			} else {
-				buffer[curinput.limitfield] = eqtb[9611].getInt();
+				buffer[curinput.getLimit()] = eqtb[9611].getInt();
 			}
-			first = curinput.limitfield + 1;
-			curinput.locfield = curinput.startfield;
+			first = curinput.getLimit() + 1;
+			curinput.setLoc( curinput.getStart());
 		}
 	}
 
@@ -16589,7 +16557,7 @@ public class tex extends Thread {
 			backinput();
 			curtok = partoken;
 			backinput();
-			curinput.indexfield = 4;
+			curinput.setIndex(4);
 		}
 	}
 
@@ -18965,7 +18933,6 @@ public class tex extends Thread {
 				if (logopened) {
 					error();
 				}
-				debughelp();
 				history = 3;
 				jumpout();
 			}
@@ -19489,7 +19456,7 @@ public class tex extends Thread {
 		}
 			break;
 		case 8: {
-			if ((curinput.locfield != 0) || ((curinput.indexfield != 6) && (curinput.indexfield != 3))) {
+			if ((curinput.getLoc() != 0) || ((curinput.getIndex() != 6) && (curinput.getIndex() != 3))) {
 				{
 					printnl(262);
 					Print(1010);
@@ -19502,7 +19469,7 @@ public class tex extends Thread {
 				error();
 				do {
 					gettoken();
-				} while (!(curinput.locfield == 0));
+				} while (!(curinput.getLoc() == 0));
 			}
 			endtokenlist();
 			endgraf();
@@ -20597,16 +20564,16 @@ public class tex extends Thread {
 	public boolean openfmtfile() throws IOException {
 		/* 40 10 */boolean Result;
 		int j;
-		j = curinput.locfield;
+		j = curinput.getLoc();
 		lab40: while (true) {
-			if (buffer[curinput.locfield] == 38) {
-				curinput.locfield = curinput.locfield + 1;
-				j = curinput.locfield;
+			if (buffer[curinput.getLoc()] == 38) {
+				curinput.setLoc(curinput.getLoc() + 1);
+				j = curinput.getLoc();
 				buffer[last] = 32;
 				while (buffer[j] != 32) {
 					j = j + 1;
 				}
-				packbufferedname(0, curinput.locfield, j - 1);
+				packbufferedname(0, curinput.getLoc(), j - 1);
 				thisfile = new TeXFile(nameoffile);
 				if (thisfile.exists()) {
 					try {
@@ -20618,7 +20585,7 @@ public class tex extends Thread {
 					}
 					break lab40;
 				}
-				packbufferedname(11, curinput.locfield, j - 1);
+				packbufferedname(11, curinput.getLoc(), j - 1);
 				thisfile = new TeXFile(nameoffile);
 				if (thisfile.exists()) {
 					try {
@@ -20651,7 +20618,7 @@ public class tex extends Thread {
 			}
 			break;
 		}
-		/* lab40: */curinput.locfield = j;
+		/* lab40: */curinput.setLoc( j);
 		Result = true;
 		return Result;
 	}
@@ -21207,7 +21174,7 @@ public class tex extends Thread {
 			openlogfile();
 		}
 		while (inputptr > 0) {
-			if (curinput.statefield == 0) {
+			if (curinput.getState() == 0) {
 				endtokenlist();
 			} else {
 				endfilereading();
@@ -21648,110 +21615,6 @@ public class tex extends Thread {
 		}
 	}
 
-	public void debughelp() {
-		/* 127 10 */int k, l, m, n;
-		String str;
-		while (true) {
-			;
-			printnl(1284);
-			termout.flush();
-			m = 0;
-			n = 0;
-			l = 0;
-			try {
-				str = termin.readLine();
-				m = Integer.parseInt(str);
-			} catch (final IOException ex) {
-				error();
-			} catch (final NumberFormatException ex) {
-				error();
-			}
-			if (m < 0) {
-				exit();
-			} else if (m == 0) {
-				return /* lab10 */;
-			} else {
-				try {
-					str = termin.readLine();
-					n = Integer.parseInt(str);
-				} catch (final IOException ex) {
-					error();
-				}
-				switch (m) {
-				case 1:
-					printword(mem[n]);
-					break;
-				case 2:
-					printint(mem[n].getlh());
-					break;
-				case 3:
-					printint(mem[n].getrh());
-					break;
-				case 4:
-					printword(eqtb[n]);
-					break;
-				case 5:
-					printword(fontinfo[n]);
-					break;
-				case 6:
-					printword(savestack[n]);
-					break;
-				case 7:
-					showbox(n);
-					break;
-				case 8: {
-					breadthmax = 10000;
-					depththreshold = poolsize - poolptr - 10;
-					shownodelist(n);
-				}
-					break;
-				case 9:
-					showtokenlist(n, 0, 1000);
-					break;
-				case 10:
-					slowprint(n);
-					break;
-				case 11:
-					checkmem(n > 0);
-					break;
-				case 12:
-					searchmem(n);
-					break;
-				case 13: {
-					try {
-						str = termin.readLine();
-						l = Integer.parseInt(str);
-					} catch (final IOException ex) {
-						error();
-					}
-					printcmdchr(n, l);
-				}
-					break;
-				case 14:
-					for (k = 0; k <= n; k++) {
-						Print(buffer[k]);
-					}
-					break;
-				case 15: {
-					fontinshortdisplay = 0;
-					shortdisplay(n);
-				}
-					break;
-				case 16:
-					panicking = !panicking;
-					break;
-				case 17: {
-					dumpmem(n);
-				}
-					break;
-				default:
-					Print(63);
-					break;
-				}
-			}
-		}
-	}
-
 	public static void main(final String[] args) {
 		int i;
 		final tex prog = new tex();
@@ -21793,7 +21656,7 @@ public class tex extends Thread {
 			nest[c] = new liststaterecord();
 		}
 		for (int c = 0; c <= stacksize; c++) {
-			inputstack[c] = new instaterecord();
+			inputstack[c] = new TexParser();
 		}
 	}
 
@@ -21891,7 +21754,6 @@ public class tex extends Thread {
 		logopened = false;
 		outputfilename = 0;
 		inputptr = 0;
-		maxinstack = 0;
 		inopen = 0;
 		openparens = 0;
 		maxbufstack = 0;
@@ -21905,19 +21767,19 @@ public class tex extends Thread {
 		scannerstatus = 0;
 		warningindex = 0;
 		first = 1;
-		curinput.statefield = 33;
-		curinput.startfield = 1;
-		curinput.indexfield = 0;
 		line = 0;
-		curinput.namefield = 0;
 		forceeof = false;
 		alignstate = 1000000;
 		if (!initterminal()) {
 			exit();
 		}
-		curinput.limitfield = last;
+		curinput.setState(33);
+		curinput.setStart( 1);
+		curinput.setIndex( 0);
+		curinput.setName( 0);
+		curinput.setLimit( last);
 		first = last + 1;
-		if ((formatident == 0) || (buffer[curinput.locfield] == 38)) {
+		if ((formatident == 0) || (buffer[curinput.getLoc()] == 38)) {
 			if (formatident != 0) {
 				initialize();
 			}
@@ -21936,19 +21798,19 @@ public class tex extends Thread {
 				}
 			}
 			fmtfile.close();
-			while ((curinput.locfield < curinput.limitfield) && (buffer[curinput.locfield] == 32)) {
-				curinput.locfield = curinput.locfield + 1;
+			while ((curinput.getLoc() < curinput.getLimit()) && (buffer[curinput.getLoc()] == 32)) {
+				curinput.setLoc( curinput.getLoc() + 1);
 			}
 		}
 		if ((eqtb[9611].getInt() < 0) || (eqtb[9611].getInt() > 255)) {
-			curinput.limitfield = curinput.limitfield - 1;
+			curinput.setLimit( curinput.getLimit() - 1);
 		} else {
-			buffer[curinput.limitfield] = eqtb[9611].getInt();
+			buffer[curinput.getLimit()] = eqtb[9611].getInt();
 		}
 		fixdateandtime();
 		magicoffset = strstart[892] - 9 * 16;
 		selector = 17;
-		if ((curinput.locfield < curinput.limitfield) && (eqtb[8283 + buffer[curinput.locfield]].getrh() != 0)) {
+		if ((curinput.getLoc() < curinput.getLimit()) && (eqtb[8283 + buffer[curinput.getLoc()]].getrh() != 0)) {
 			startinput();
 		}
 		history = 0;
