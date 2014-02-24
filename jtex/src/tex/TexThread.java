@@ -23,8 +23,6 @@ public class TexThread extends Thread {
 
 	static final int memtop = 65500;
 
-	static final int bufsize = 50000; // originally 500, max line length, replace by dynamic allocation
-
 	static final int errorline = 72;
 
 	static final int halferrorline = 42;
@@ -65,7 +63,7 @@ public class TexThread extends Thread {
 
 	private int namelength;
 
-	private int buffer[] = new int[bufsize + 1];
+	private int buffer[] = new int[500000];
 
 	private int first;
 
@@ -5279,9 +5277,6 @@ public class TexThread extends Thread {
 	public void beginfilereading() {
 		if (inopen == maxinopen) {
 			overflow(596, maxinopen);
-		}
-		if (first == bufsize) {
-			overflow(256, bufsize);
 		}
 		inopen = inopen + 1;
 		{
@@ -21566,9 +21561,6 @@ public class TexThread extends Thread {
 		if ((savesize > maxhalfword) || (maxstrings > maxhalfword)) {
 			bad = 17;
 		}
-		if (bufsize > maxhalfword) {
-			bad = 18;
-		}
 		if (11276 > maxhalfword) {
 			bad = 21;
 		}
@@ -21614,7 +21606,7 @@ public class TexThread extends Thread {
 		openparens = 0;
 		paramptr = 0;
 		maxparamstack = 0;
-		first = bufsize;
+		first = buffer.length - 1;
 		do {
 			buffer[first] = 0;
 			first = first - 1;

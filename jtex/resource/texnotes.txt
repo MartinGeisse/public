@@ -1,0 +1,13 @@
+
+\font\ninerm=cmr9
+	Lädt den Font cmr9 und speichern ihn so, dass die CS \ninerm den Font aktiviert.
+
+\font\magnifiedfiverm=cmr5 at 10pt
+	Skaliert einen Font. Sollte nur benutzt werden, wenn es keinen Font in der passenden
+	Größe gibt.
+
+\font\magnifiedfiverm=cmr5 scaled 2000
+	Dasselbe mit Skalierungsfaktor (in 1/1000) statt Zielgröße.
+
+
+
