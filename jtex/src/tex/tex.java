@@ -1420,9 +1420,7 @@ public class tex extends Thread {
 					if (maxbufstack == bufsize) {
 						if (formatident == 0) {
 							termout.print("Buffer size exceeded!" + '\n');
-							{
-								exit();
-							}
+							exit();
 						} else {
 							curinput.setLoc(first);
 							curinput.setLimit(last - 1);
