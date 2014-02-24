@@ -17,7 +17,7 @@ public class tex extends Thread {
 
 	static final int memtop = 65500;
 
-	static final int bufsize = 500;
+	static final int bufsize = 50000; // originally 500, max line length, replace by dynamic allocation
 
 	static final int errorline = 72;
 
@@ -68,8 +68,6 @@ public class tex extends Thread {
 	private int first;
 
 	private int last;
-
-	private int maxbufstack;
 
 	PrintWriter termout;
 
@@ -1355,26 +1353,20 @@ public class tex extends Thread {
 
 	public void overflow(final int s, final int n) {
 		normalizeselector();
-		{
-			printnl(262);
-			Print(288);
-		}
+		printnl(262);
+		Print(288);
 		Print(s);
 		printchar(61);
 		printint(n);
 		printchar(93);
-		{
-			helpptr = 2;
-			helpline[1] = 289;
-			helpline[0] = 290;
+		helpptr = 2;
+		helpline[1] = 289;
+		helpline[0] = 290;
+		if (logopened) {
+			error();
 		}
-		{
-			if (logopened) {
-				error();
-			}
-			history = 3;
-			jumpout();
-		}
+		history = 3;
+		jumpout();
 	}
 
 	public void confusion(final int s) {
@@ -1415,19 +1407,6 @@ public class tex extends Thread {
 		} else {
 			lastnonblank = first;
 			while (!f.eoln()) {
-				if (last >= maxbufstack) {
-					maxbufstack = last + 1;
-					if (maxbufstack == bufsize) {
-						if (formatident == 0) {
-							termout.print("Buffer size exceeded!" + '\n');
-							exit();
-						} else {
-							curinput.setLoc(first);
-							curinput.setLimit(last - 1);
-							overflow(256, bufsize);
-						}
-					}
-				}
 				ch = f.read();
 				if (!f.eof) {
 					buffer[last] = xord[ch];
@@ -6353,12 +6332,6 @@ public class tex extends Thread {
 				j = first;
 				p = mem[r].getrh();
 				while (p != 0) {
-					if (j >= maxbufstack) {
-						maxbufstack = j + 1;
-						if (maxbufstack == bufsize) {
-							overflow(256, bufsize);
-						}
-					}
 					buffer[j] = mem[p].getlh() % 256;
 					j = j + 1;
 					p = mem[p].getrh();
@@ -21754,7 +21727,6 @@ public class tex extends Thread {
 		inputptr = 0;
 		inopen = 0;
 		openparens = 0;
-		maxbufstack = 0;
 		paramptr = 0;
 		maxparamstack = 0;
 		first = bufsize;
