@@ -9,8 +9,14 @@ import name.martingeisse.jtex.io.TexFileDataOutputStream;
 import name.martingeisse.jtex.io.TexFilePrintWriter;
 import name.martingeisse.jtex.parser.TexParser;
 
-public class tex extends Thread {
+/**
+ * TODO: document
+ */
+public class TexThread extends Thread {
 
+	/**
+	 * TODO: make configurable.
+	 */
 	public static final boolean INITEX = true;
 
 	static final int memmax = 65500;
@@ -52,10 +58,6 @@ public class tex extends Thread {
 	static final int filenamesize = 80;
 
 	private int bad;
-
-	private int xord[] = new int[256];
-
-	private char xchr[] = new char[256];
 
 	private String nameoffile;
 
@@ -102,8 +104,6 @@ public class tex extends Thread {
 	private int trickcount;
 
 	private int firstcount;
-
-	private boolean deletionsallowed;
 
 	private boolean setboxallowed;
 
@@ -637,117 +637,6 @@ public class tex extends Thread {
 		int i;
 		int k;
 		int z;
-		xchr[32] = ' ';
-		xchr[33] = '!';
-		xchr[34] = '"';
-		xchr[35] = '#';
-		xchr[36] = '$';
-		xchr[37] = '%';
-		xchr[38] = '&';
-		xchr[39] = '\'';
-		xchr[40] = '(';
-		xchr[41] = ')';
-		xchr[42] = '*';
-		xchr[43] = '+';
-		xchr[44] = ',';
-		xchr[45] = '-';
-		xchr[46] = '.';
-		xchr[47] = '/';
-		xchr[48] = '0';
-		xchr[49] = '1';
-		xchr[50] = '2';
-		xchr[51] = '3';
-		xchr[52] = '4';
-		xchr[53] = '5';
-		xchr[54] = '6';
-		xchr[55] = '7';
-		xchr[56] = '8';
-		xchr[57] = '9';
-		xchr[58] = ':';
-		xchr[59] = ';';
-		xchr[60] = '<';
-		xchr[61] = '=';
-		xchr[62] = '>';
-		xchr[63] = '?';
-		xchr[64] = '@';
-		xchr[65] = 'A';
-		xchr[66] = 'B';
-		xchr[67] = 'C';
-		xchr[68] = 'D';
-		xchr[69] = 'E';
-		xchr[70] = 'F';
-		xchr[71] = 'G';
-		xchr[72] = 'H';
-		xchr[73] = 'I';
-		xchr[74] = 'J';
-		xchr[75] = 'K';
-		xchr[76] = 'L';
-		xchr[77] = 'M';
-		xchr[78] = 'N';
-		xchr[79] = 'O';
-		xchr[80] = 'P';
-		xchr[81] = 'Q';
-		xchr[82] = 'R';
-		xchr[83] = 'S';
-		xchr[84] = 'T';
-		xchr[85] = 'U';
-		xchr[86] = 'V';
-		xchr[87] = 'W';
-		xchr[88] = 'X';
-		xchr[89] = 'Y';
-		xchr[90] = 'Z';
-		xchr[91] = '[';
-		xchr[92] = '\\';
-		xchr[93] = ']';
-		xchr[94] = '^';
-		xchr[95] = '_';
-		xchr[96] = '`';
-		xchr[97] = 'a';
-		xchr[98] = 'b';
-		xchr[99] = 'c';
-		xchr[100] = 'd';
-		xchr[101] = 'e';
-		xchr[102] = 'f';
-		xchr[103] = 'g';
-		xchr[104] = 'h';
-		xchr[105] = 'i';
-		xchr[106] = 'j';
-		xchr[107] = 'k';
-		xchr[108] = 'l';
-		xchr[109] = 'm';
-		xchr[110] = 'n';
-		xchr[111] = 'o';
-		xchr[112] = 'p';
-		xchr[113] = 'q';
-		xchr[114] = 'r';
-		xchr[115] = 's';
-		xchr[116] = 't';
-		xchr[117] = 'u';
-		xchr[118] = 'v';
-		xchr[119] = 'w';
-		xchr[120] = 'x';
-		xchr[121] = 'y';
-		xchr[122] = 'z';
-		xchr[123] = '{';
-		xchr[124] = '|';
-		xchr[125] = '}';
-		xchr[126] = '~';
-		for (i = 0; i <= 31; i++) {
-			xchr[i] = (char)i;
-		}
-		for (i = 127; i <= 255; i++) {
-			xchr[i] = (char)i;
-		}
-		for (i = 0; i <= 255; i++) {
-			xord[(char)i] = 127;
-		}
-		for (i = 128; i <= 255; i++) {
-			xord[xchr[i]] = i;
-		}
-		for (i = 0; i <= 126; i++) {
-			xord[xchr[i]] = i;
-		}
-		deletionsallowed = true;
 		setboxallowed = true;
 		errorcount = 0;
 		helpptr = 0;
@@ -1077,8 +966,8 @@ public class tex extends Thread {
 		}
 		switch (selector) {
 		case 19: {
-			termout.print(xchr[s]);
-			logfile.print(xchr[s]);
+			termout.print((char)(s));
+			logfile.print((char)(s));
 			termoffset = termoffset + 1;
 			fileoffset = fileoffset + 1;
 			if (termoffset == maxprintline) {
@@ -1092,7 +981,7 @@ public class tex extends Thread {
 		}
 			break;
 		case 18: {
-			logfile.print(xchr[s]);
+			logfile.print((char)(s));
 			fileoffset = fileoffset + 1;
 			if (fileoffset == maxprintline) {
 				Println();
@@ -1100,7 +989,7 @@ public class tex extends Thread {
 		}
 			break;
 		case 17: {
-			termout.print(xchr[s]);
+			termout.print((char)(s));
 			termoffset = termoffset + 1;
 			if (termoffset == maxprintline) {
 				Println();
@@ -1123,7 +1012,7 @@ public class tex extends Thread {
 		}
 			break;
 		default:
-			writefile[selector].print(xchr[s]);
+			writefile[selector].print((char)(s));
 			break;
 		}
 		tally = tally + 1;
@@ -1409,7 +1298,7 @@ public class tex extends Thread {
 			while (!f.eoln()) {
 				ch = f.read();
 				if (!f.eof) {
-					buffer[last] = xord[ch];
+					buffer[last] = ch;
 					last = last + 1;
 					if (buffer[last - 1] != 32) {
 						lastnonblank = last;
@@ -1428,7 +1317,7 @@ public class tex extends Thread {
 		int bufptr;
 		last = first;
 		for (bufptr = 0; bufptr <= cmdlinebuf.length() - 1; bufptr++) {
-			buffer[last] = xord[cmdlinebuf.charAt(bufptr)];
+			buffer[last] = cmdlinebuf.charAt(bufptr);
 			last = last + 1;
 		}
 		termin = new alphafile(System.in);
@@ -1590,27 +1479,27 @@ public class tex extends Thread {
 						return Result /* lab10 */;
 					}
 					ch = poolfile.read();
-					m = xchr[ch];
+					m = (char)ch;
 					ch = poolfile.read();
-					n = xchr[ch];
+					n = (char)ch;
 					if (m == '*') {
 						a = 0;
 						k = 1;
 						while (true) {
-							if ((xord[n] < 48) || (xord[n] > 57)) {
+							if ((n < 48) || (n > 57)) {
 								;
 								termout.print("! tex.pool check sum doesn't have nine digits." + '\n');
 								poolfile.close();
 								Result = false;
 								return Result /* lab10 */;
 							}
-							a = 10 * a + xord[n] - 48;
+							a = 10 * a + n - 48;
 							if (k == 9) {
 								break /* lab30 */;
 							}
 							k = k + 1;
 							ch = poolfile.read();
-							n = xchr[ch];
+							n = (char)(ch);
 						}
 						/* lab30: */if (a != 270280812) {
 							;
@@ -1621,14 +1510,14 @@ public class tex extends Thread {
 						}
 						c = true;
 					} else {
-						if ((xord[m] < 48) || (xord[m] > 57) || (xord[n] < 48) || (xord[n] > 57)) {
+						if ((m < 48) || (m > 57) || (n < 48) || (n > 57)) {
 							;
 							termout.print("! tex.pool line doesn't begin with two digits." + '\n');
 							poolfile.close();
 							Result = false;
 							return Result /* lab10 */;
 						}
-						l = xord[m] * 10 + xord[n] - 48 * 11;
+						l = m * 10 + n - 48 * 11;
 						if (poolptr + l + stringvacancies > poolsize) {
 							;
 							termout.print("! You have to increase POOLSIZE." + '\n');
@@ -1641,16 +1530,16 @@ public class tex extends Thread {
 								m = ' ';
 							} else {
 								ch = poolfile.read();
-								m = xchr[ch];
+								m = (char)(ch);
 							}
 							{
-								strpool[poolptr] = xord[m];
+								strpool[poolptr] = m;
 								poolptr = poolptr + 1;
 							}
 						}
 						do {
 							ch = poolfile.read();
-							m = xchr[ch];
+							m = (char)(ch);
 						} while (!(m == '\n'));
 						g = makestring();
 					}
@@ -5433,7 +5322,6 @@ public class tex extends Thread {
 		int p;
 		int q;
 		if (scannerstatus != 0) {
-			deletionsallowed = false;
 			if (curcs != 0) {
 				if ((curinput.getState() == 0) || (curinput.getName() < 1) || (curinput.getName() > 17)) {
 					p = getavail();
@@ -5518,7 +5406,6 @@ public class tex extends Thread {
 				curtok = 11013;
 				inserror();
 			}
-			deletionsallowed = true;
 		}
 	}
 
@@ -5743,9 +5630,7 @@ public class tex extends Thread {
 									helpline[1] = 614;
 									helpline[0] = 615;
 								}
-								deletionsallowed = false;
 								error();
-								deletionsallowed = true;
 								continue lab20;
 							}
 							case 11: {
@@ -8328,15 +8213,15 @@ public class tex extends Thread {
 		namelength = 0;
 		for (j = strstart[a]; j <= strstart[a + 1] - 1; j++) {
 			namelength = namelength + 1;
-			strbuf.append(xchr[strpool[j]]);
+			strbuf.append((char)(strpool[j]));
 		}
 		for (j = strstart[n]; j <= strstart[n + 1] - 1; j++) {
 			namelength = namelength + 1;
-			strbuf.append(xchr[strpool[j]]);
+			strbuf.append((char)(strpool[j]));
 		}
 		for (j = strstart[e]; j <= strstart[e + 1] - 1; j++) {
 			namelength = namelength + 1;
-			strbuf.append(xchr[strpool[j]]);
+			strbuf.append((char)(strpool[j]));
 		}
 		nameoffile = strbuf.toString();
 	}
@@ -8352,15 +8237,15 @@ public class tex extends Thread {
 		namelength = 0;
 		for (j = 0; j <= n - 1; j++) {
 			namelength = namelength + 1;
-			strbuf.append(xchr[xord[TEXbuf.charAt(j)]]);
+			strbuf.append((char)(TEXbuf.charAt(j)));
 		}
 		for (j = a; j <= b; j++) {
 			namelength = namelength + 1;
-			strbuf.append(xchr[buffer[j]]);
+			strbuf.append((char)(buffer[j]));
 		}
 		for (j = 16; j <= 19; j++) {
 			namelength = namelength + 1;
-			strbuf.append(xchr[xord[TEXbuf.charAt(j)]]);
+			strbuf.append((char)(TEXbuf.charAt(j)));
 		}
 		nameoffile = strbuf.toString();
 	}
@@ -8374,7 +8259,7 @@ public class tex extends Thread {
 			Result = 63;
 		} else {
 			for (k = 0; k <= namelength - 1; k++) {
-				strpool[poolptr] = xord[strbuf.charAt(k)];
+				strpool[poolptr] = strbuf.charAt(k);
 				poolptr = poolptr + 1;
 			}
 			Result = makestring();
@@ -21588,7 +21473,7 @@ public class tex extends Thread {
 
 	public static void main(final String[] args) {
 		int i;
-		final tex prog = new tex();
+		final TexThread prog = new TexThread();
 		i = 0;
 		while (i < args.length) {
 			if (i > 0) {
@@ -21600,7 +21485,7 @@ public class tex extends Thread {
 		prog.start();
 	}
 
-	public tex() {
+	public TexThread() {
 		maxhalfword = memoryword.maxHalfword;
 		for (int c = 0; c <= memmax; c++) {
 			mem[c] = new memoryword();
