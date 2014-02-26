@@ -10,14 +10,9 @@ import name.martingeisse.jtex.io.TexFilePrintWriter;
 import name.martingeisse.jtex.parser.TexParser;
 
 /**
- * TODO: document
+ * The complete TeX engine.
  */
-public class TexThread extends Thread {
-
-	/**
-	 * TODO: make configurable.
-	 */
-	public static final boolean INITEX = true;
+public final class Tex {
 
 	static final int memmax = 65500;
 
@@ -55,6 +50,8 @@ public class TexThread extends Thread {
 
 	static final int filenamesize = 80;
 
+	private final boolean initex;
+	
 	private int bad;
 
 	private String nameoffile;
@@ -748,7 +745,7 @@ public class TexThread extends Thread {
 		for (k = 0; k <= 17; k++) {
 			writeopen[k] = false;
 		}
-		if (INITEX) {
+		if (initex) {
 			for (k = 1; k <= 19; k++) {
 				mem[k].setInt(0);
 			}
@@ -14442,7 +14439,7 @@ public class TexThread extends Thread {
 				threshold = 10000;
 			}
 			if (secondpass) {
-				if (INITEX && trienotready) {
+				if (initex && trienotready) {
 					inittrie();
 				}
 				curlang = initcurlang;
@@ -18523,7 +18520,7 @@ public class TexThread extends Thread {
 				break;
 			case 99:
 				if (curchr == 1) {
-					if (INITEX) {
+					if (initex) {
 						newpatterns();
 						break lab30;
 					} else {
@@ -20793,7 +20790,7 @@ public class TexThread extends Thread {
 				} else {
 					j = x;
 				}
-				if (INITEX) {
+				if (initex) {
 					triemax = j;
 				}
 				for (k = 0; k <= j; k++) {
@@ -20811,7 +20808,7 @@ public class TexThread extends Thread {
 				} else {
 					j = x;
 				}
-				if (INITEX) {
+				if (initex) {
 					trieopptr = j;
 				}
 				for (k = 1; k <= j; k++) {
@@ -20834,7 +20831,7 @@ public class TexThread extends Thread {
 						hyfnext[k] = x;
 					}
 				}
-				if (INITEX) {
+				if (initex) {
 					for (k = 0; k <= 255; k++) {
 						trieused[k] = 0;
 					}
@@ -20851,13 +20848,13 @@ public class TexThread extends Thread {
 					if ((x < 1) || (x > j)) {
 						break lab125;
 					}
-					if (INITEX) {
+					if (initex) {
 						trieused[k] = x;
 					}
 					j = j - x;
 					opstart[k] = j;
 				}
-				if (INITEX) {
+				if (initex) {
 					trienotready = false;
 				}
 				x = fmtfile.readInt();
@@ -21066,7 +21063,7 @@ public class TexThread extends Thread {
 			}
 		}
 		if (curchr == 1) {
-			if (INITEX) {
+			if (initex) {
 				for (int c = 0; c <= 4; c++) {
 					if (curmark[c] != 0) {
 						deletetokenref(curmark[c]);
@@ -21466,21 +21463,20 @@ public class TexThread extends Thread {
 		}
 	}
 
-	public static void main(final String[] args) {
-		int i;
-		final TexThread prog = new TexThread();
-		i = 0;
+	public Tex(boolean initex, final String[] args) {
+		this(initex);
+		int i = 0;
 		while (i < args.length) {
 			if (i > 0) {
-				prog.cmdlinebuf.append(' ');
+				cmdlinebuf.append(' ');
 			}
-			prog.cmdlinebuf.append(args[i]);
+			cmdlinebuf.append(args[i]);
 			i = i + 1;
 		}
-		prog.start();
 	}
 
-	public TexThread() {
+	public Tex(boolean initex) {
+		this.initex = initex;
 		maxhalfword = memoryword.maxHalfword;
 		for (int c = 0; c <= memmax; c++) {
 			mem[c] = new memoryword();
@@ -21511,7 +21507,6 @@ public class TexThread extends Thread {
 		}
 	}
 
-	@Override
 	public void run() {
 		history = 3;
 		termout = new PrintWriter(System.out);
@@ -21537,7 +21532,7 @@ public class TexThread extends Thread {
 		if (memtop < 267) {
 			bad = 7;
 		}
-		if (INITEX && memmax != memtop) {
+		if (initex && memmax != memtop) {
 			bad = 10;
 		}
 		if ((memmax < memtop)) {
@@ -21575,7 +21570,7 @@ public class TexThread extends Thread {
 			exit();
 		}
 		initialize();
-		if (INITEX) {
+		if (initex) {
 			if (!getstringsstarted()) {
 				exit();
 			}

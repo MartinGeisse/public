@@ -1,4 +1,4 @@
-TEXMF=/Users/martin/workspace/jtex/texmf
+TEXMF=/Users/martin/git-repos/public/jtex/texmf
 DviPdf.debugging=true
 DviPdf.fontDeflate=true
 DviPdf.imageDeflate=true
