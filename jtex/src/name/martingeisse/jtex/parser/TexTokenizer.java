@@ -5,9 +5,9 @@
 package name.martingeisse.jtex.parser;
 
 /**
- * Keeps the parser state for an input file.
+ * Keeps the tokenizer state for an input file.
  */
-public final class TexParser {
+public final class TexTokenizer {
 
 	/**
 	 * the state
@@ -42,14 +42,14 @@ public final class TexParser {
 	/**
 	 * Constructor.
 	 */
-	public TexParser() {
+	public TexTokenizer() {
 	}
 
 	/**
-	 * Copies all values from another parser.
-	 * @param other the other parser to copy from
+	 * Copies all values from another tokenizer.
+	 * @param other the other tokenizer to copy from
 	 */
-	public void copyFrom(TexParser other) {
+	public void copyFrom(TexTokenizer other) {
 		this.state = other.state;
 		this.index = other.index;
 		this.start = other.start;

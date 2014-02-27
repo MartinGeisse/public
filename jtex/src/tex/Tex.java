@@ -7,12 +7,17 @@ import java.io.PrintWriter;
 import name.martingeisse.jtex.io.TexFileDataInputStream;
 import name.martingeisse.jtex.io.TexFileDataOutputStream;
 import name.martingeisse.jtex.io.TexFilePrintWriter;
-import name.martingeisse.jtex.parser.TexParser;
+import name.martingeisse.jtex.parser.TexTokenizer;
 
 /**
  * The complete TeX engine.
  */
 public final class Tex {
+	
+	static final int TOKENIZER_STATE_TOKEN_LIST = 0;
+	static final int TOKENIZER_STATE_NEW_LINE = 33;
+	static final int TOKENIZER_STATE_MID_LINE = 1;
+	static final int TOKENIZER_STATE_SKIP_BLANKS = 17;
 
 	static final int memmax = 65500;
 
@@ -192,11 +197,11 @@ public final class Tex {
 
 	private int curtok;
 
-	private TexParser inputstack[] = new TexParser[stacksize + 1];
+	private TexTokenizer inputstack[] = new TexTokenizer[stacksize + 1];
 
 	private int inputptr;
 
-	private TexParser curinput = new TexParser();
+	private TexTokenizer curinput = new TexTokenizer();
 
 	private int inopen;
 
@@ -5174,7 +5179,7 @@ public final class Tex {
 			inputstack[inputptr].copyFrom(curinput);
 			inputptr = inputptr + 1;
 		}
-		curinput.setState(0);
+		curinput.setState(TOKENIZER_STATE_TOKEN_LIST);
 		curinput.setStart(p);
 		curinput.setIndex(t);
 		if (t >= 5) {
@@ -5254,7 +5259,7 @@ public final class Tex {
 			inputstack[inputptr].copyFrom(curinput);
 			inputptr = inputptr + 1;
 		}
-		curinput.setState(0);
+		curinput.setState(TOKENIZER_STATE_TOKEN_LIST);
 		curinput.setStart( p);
 		curinput.setIndex(3);
 		curinput.setLoc(p);
@@ -5286,7 +5291,7 @@ public final class Tex {
 		curinput.setIndex( inopen);
 		linestack[curinput.getIndex()] = line;
 		curinput.setStart( first);
-		curinput.setState( 1);
+		curinput.setState(TOKENIZER_STATE_MID_LINE);
 		curinput.setName( 0);
 	}
 
@@ -5437,11 +5442,11 @@ public final class Tex {
 											cat = eqtb[8283 + curchr].getrh();
 											k = k + 1;
 											if (cat == 11) {
-												curinput.setState( 17);
+												curinput.setState( TOKENIZER_STATE_SKIP_BLANKS);
 											} else if (cat == 10) {
-												curinput.setState( 17);
+												curinput.setState(TOKENIZER_STATE_SKIP_BLANKS);
 											} else {
-												curinput.setState( 1);
+												curinput.setState(TOKENIZER_STATE_MID_LINE);
 											}
 											if ((cat == 11) && (k <= curinput.getLimit())) {
 												do {
@@ -5565,7 +5570,7 @@ public final class Tex {
 								curcs = curchr + 1;
 								curcmd = eqtb[curcs].getb0();
 								curchr = eqtb[curcs].getrh();
-								curinput.setState( 1);
+								curinput.setState( TOKENIZER_STATE_MID_LINE);
 								if (curcmd >= 113) {
 									checkoutervalidity();
 								}
@@ -5607,7 +5612,7 @@ public final class Tex {
 										}
 									}
 								}
-								curinput.setState( 1);
+								curinput.setState( TOKENIZER_STATE_MID_LINE);
 							}
 								break;
 							case 16:
@@ -5626,7 +5631,7 @@ public final class Tex {
 								continue lab20;
 							}
 							case 11: {
-								curinput.setState( 17);
+								curinput.setState( TOKENIZER_STATE_SKIP_BLANKS);
 								curchr = 32;
 							}
 								break;
@@ -5658,7 +5663,7 @@ public final class Tex {
 								break;
 							case 18:
 							case 34: {
-								curinput.setState( 1);
+								curinput.setState( TOKENIZER_STATE_MID_LINE);
 								alignstate = alignstate + 1;
 							}
 								break;
@@ -5667,7 +5672,7 @@ public final class Tex {
 								break;
 							case 19:
 							case 35: {
-								curinput.setState( 1);
+								curinput.setState( TOKENIZER_STATE_MID_LINE);
 								alignstate = alignstate - 1;
 							}
 								break;
@@ -5683,7 +5688,7 @@ public final class Tex {
 							case 41:
 							case 44:
 							case 45:
-								curinput.setState( 1);
+								curinput.setState( TOKENIZER_STATE_MID_LINE);
 								break;
 							default:
 								;
@@ -5692,7 +5697,7 @@ public final class Tex {
 							break;
 						}
 					} else {
-						curinput.setState( 33);
+						curinput.setState( TOKENIZER_STATE_NEW_LINE);
 						if (curinput.getName() > 17) {
 							line = line + 1;
 							first = curinput.getStart();
@@ -7814,7 +7819,7 @@ public final class Tex {
 			}
 			first = curinput.getLimit() + 1;
 			curinput.setLoc( curinput.getStart());
-			curinput.setState( 33);
+			curinput.setState(TOKENIZER_STATE_NEW_LINE);
 			while (true) {
 				gettoken();
 				if (curtok == 0) {
@@ -8417,7 +8422,7 @@ public final class Tex {
 		openparens = openparens + 1;
 		slowprint(curinput.getName());
 		termout.flush();
-		curinput.setState( 33);
+		curinput.setState(TOKENIZER_STATE_NEW_LINE);
 		if (curinput.getName() == strptr - 1) {
 			{
 				strptr = strptr - 1;
@@ -21503,7 +21508,7 @@ public final class Tex {
 			nest[c] = new liststaterecord();
 		}
 		for (int c = 0; c <= stacksize; c++) {
-			inputstack[c] = new TexParser();
+			inputstack[c] = new TexTokenizer();
 		}
 	}
 
@@ -21615,7 +21620,7 @@ public final class Tex {
 		if (!initterminal()) {
 			exit();
 		}
-		curinput.setState(33);
+		curinput.setState(TOKENIZER_STATE_NEW_LINE);
 		curinput.setStart( 1);
 		curinput.setIndex( 0);
 		curinput.setName( 0);
