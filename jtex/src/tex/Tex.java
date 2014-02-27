@@ -5172,13 +5172,7 @@ public final class Tex {
 	}
 
 	public void begintokenlist(final int p, final int t) {
-		{
-			if (inputptr == stacksize) {
-				overflow(593, stacksize);
-			}
-			inputstack[inputptr].copyFrom(curinput);
-			inputptr = inputptr + 1;
-		}
+		dupInput();
 		curinput.setState(TOKENIZER_STATE_TOKEN_LIST);
 		curinput.setStart(p);
 		curinput.setIndex(t);
@@ -5240,9 +5234,8 @@ public final class Tex {
 
 	public void backinput() {
 		int p;
-		while ((curinput.getState() == TOKENIZER_STATE_TOKEN_LIST) && (curinput.getLoc() == 0)) {
-			endtokenlist();
-		}
+		
+		popFinishedTokenLists();
 		p = getavail();
 		mem[p].setlh(curtok);
 		if (curtok < 768) {
@@ -5252,13 +5245,7 @@ public final class Tex {
 				alignstate = alignstate + 1;
 			}
 		}
-		{
-			if (inputptr == stacksize) {
-				overflow(593, stacksize);
-			}
-			inputstack[inputptr].copyFrom(curinput);
-			inputptr = inputptr + 1;
-		}
+		dupInput();
 		curinput.setState(TOKENIZER_STATE_TOKEN_LIST);
 		curinput.setStart( p);
 		curinput.setIndex(3);
@@ -5281,13 +5268,7 @@ public final class Tex {
 			overflow(596, maxinopen);
 		}
 		inopen = inopen + 1;
-		{
-			if (inputptr == stacksize) {
-				overflow(593, stacksize);
-			}
-			inputstack[inputptr].copyFrom(curinput);
-			inputptr = inputptr + 1;
-		}
+		dupInput();
 		curinput.setIndex( inopen);
 		linestack[curinput.getIndex()] = line;
 		curinput.setStart( first);
@@ -6102,9 +6083,7 @@ public final class Tex {
 				}
 			} while (!(mem[r].getlh() == 3584));
 		}
-		while ((curinput.getState() == TOKENIZER_STATE_TOKEN_LIST) && (curinput.getLoc() == 0)) {
-			endtokenlist();
-		}
+		popFinishedTokenLists();
 		begintokenlist(refcount, 5);
 		curinput.setName( warningindex);
 		curinput.setLoc( mem[r].getrh());
@@ -21673,4 +21652,20 @@ public final class Tex {
 		System.exit(history == 0 || history == 1 ? 0 : 1);
 	}
 
+	// removes as many finished token lists from the input stack as possible
+	private void popFinishedTokenLists() {
+		while ((curinput.getState() == TOKENIZER_STATE_TOKEN_LIST) && (curinput.getLoc() == 0)) {
+			endtokenlist();
+		}
+	}
+
+	// pushes a copy of the current input on the input stack
+	private void dupInput() {
+		if (inputptr == stacksize) {
+			overflow(593, stacksize);
+		}
+		inputstack[inputptr].copyFrom(curinput);
+		inputptr = inputptr + 1;
+	}
+	
 }

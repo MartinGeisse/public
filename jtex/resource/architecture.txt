@@ -19,3 +19,15 @@ Als separate Module:
 	- nur noch per Java erweiterbar
 	- möglichst viele Features wiederverwenden, indem diese nur
 		auf der Typesetting Engine aufbauen
+
+Evtl. macht es Sinn, "Typesetting" noch mal zu unterteilen:
+1. Low-Level: Nimmt Boxes, Glue, Kern, etc. und gibt ihnen eine
+	konkrete, absolute Position
+2. High-Level: Nimmt Text und erzeugt daraus und aus Font-spezifischen
+	Daten für Kerning, Space Factor Behandlung, Ligaturen etc.
+	die Low-Level Boxes+Glue+Kern.
+->
+In welchem der beiden Schritte werden die Zeilenumbrüche erzeugt?
+
+
+
