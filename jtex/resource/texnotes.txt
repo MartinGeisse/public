@@ -1,0 +1,88 @@
+
+Zu entscheiden:
+Inwiefern soll das Original-TeX nachgebildet werden? Also vor allem
+was den Macro-Interpreter angeht! Wäre zwar recht cool, insbesondere
+weil die Codebase dann von einer breiteren Masse genutzt wird, aber
+das eigentliche Ziel ist eine einfachere Macro-Sprache! Trotzdem macht
+es Sinn, auch Benutzer vom "normalen" TeX abzugreifen.
+
+
+\font\ninerm=cmr9
+	Lädt den Font cmr9 und speichern ihn so, dass die CS \ninerm den Font aktiviert.
+
+\font\magnifiedfiverm=cmr5 at 10pt
+	Skaliert einen Font. Sollte nur benutzt werden, wenn es keinen Font in der passenden
+	Größe gibt.
+
+\font\magnifiedfiverm=cmr5 scaled 2000
+	Dasselbe mit Skalierungsfaktor (in 1/1000) statt Zielgröße.
+
+\string\anycontrolsequence --> \anycontrolsequence
+	Also eine Art Escaping für Control Sequences. Alle Zeichen (besonders der Backslash)
+	haben Catcode 12 (other), so dass keine Effekte mehr getriggert werden. Ausnahme:
+	Space hat den Space-Catcode 10.
+	
+\csname ... \endcsname
+	Erzeugt ein Control Sequence Token, indem der Content Ausgewertet wird (Macros werden
+	Expanded) und danach die Zeichen zu einem String zusammengesetzt werden. Dann darf
+	aber keine Control Sequence mehr da sein, was letztendlich bedeutet, dass keine
+	Primitiven CSes im Content verwendet werden dürfen (auch nicht von im Content
+	aufgerufenen Macros).
+
+Setting \escapechar
+	Wird von \csname als erstes Zeichen für Control Sequences benutzt. Default ist der
+	Backslash. Dieses Zeichen steuert nur die Convertierung CS->String, *nicht* die
+	Erkennung von CSes, das passiert über Catcodes!
+
+\number, \romannumeral
+	Sinnvoll, um interne Variablen auszugeben, Bsp. \number\count5 gibt den
+	Inhalt der Variablen count5 aus.
+
+\uppercase, \lowercase
+	Wird gesteuert per \uccode und \lccode ähnlich \catcode.
+	-> Das wird in Unicode klar definiert, Idee also dass das nicht geändert werden kann
+	außer es ist für bestimmte Pakete nötig.
+	ACHTUNG: Wirkt eh nur auf Character Tokens!!!
+
+\char
+	Beliebiges Zeichen diret ausgeben.
+
+’
+	vor Zahlen --> oktal
+	unklar welches Zeichen genau!
+
+"
+	vor Zahlen --> hexadezimal
+
+‘
+	ASCII-Code, Bsp.:
+	\def\%{\char‘\%}
+	unklar welches Zeichen genau!
+
+^^A ^^7a etc.
+	um *alle* ASCII-Zeichen zu erzeugen. Das passiert noch vor dem eigentlichen Parsen,
+	z.B. kann das innerhalb einer CS passieren. Genau genommen steht ^ hier für
+	ein Zeichen mit Catcode 7.
+	
+"states" N, M, S
+	-> haben mit Tokenization zu tun. != Modes, die greifen an einem späteren
+	Punkt an.
+	Zeichen am Anfang und am Ende einer Zeile werden gelöscht.
+	Danach wird am Ende jeder Zeile ein <return> Character angehängt,
+		genauer gesagt das Zeichen \endlinechar (default 13),
+		dessen Bedeutung vom Catcode abhängt. Wenn \endlinechar negativ oder
+		> 255 ist dann wird er nicht angehängt.
+	Achtung: CRLF -> LF Normalisierung!
+	Nach einer CS:
+		- aus Buchstaben: State S (spaces skippen)
+		- aus 1 Space: State S (spaces skippen)
+		- aus 1 anderen Zeichen: State M (normal weitermachen)
+	Alle Spaces (Catcode 10) werden als Character Code 32 gelesen. 
+
+
+
+
+
+
+
+

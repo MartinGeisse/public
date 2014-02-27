@@ -1,0 +1,79 @@
+
+Buffer: Hier wird die aktuelle Input-Line *zusammengebaut*, und das ggf.
+aus mehreren Quellen, teilweise aus verschiedenen Inputs! Also nicht einfach
+nur "Zeile lesen, Zeile verarbeiten". Klingt als wäre hier ein StringBuilder
+angebracht.
+-
+Möglicherweise wird hier aber doch nichts zusammengebaut sondern der
+Buffer dient nur gleichzeitig auch als Stack für die *jeweilige* aktuelle
+Zeile in allen Elementen des Input Stack. In diesem Fall: Zeile als
+String im Input Stack Element speichern. 
+-> 
+(1) Analysieren, wie der Buffer benutzt wird, (2) wenn möglich das in
+Methoden der Klasse Tex auslagern, (3) Check dass die Vermutung stimmt,
+(4) In Input Stack Element verschieben. 
+
+
+Input stack: (state, index, start, loc, limit, name)+
+	name: file name:
+		0 = terminal
+		1..17 = input stream 0..16
+			(input stream 16 is "invalid" and actually the terminal)
+	start: start of line in buffer
+	limit: end of line in buffer (incl.)
+		usually buffer[limit] = '\n' ('\r' ?)
+			but not if it is an insertion
+	loc: read pointer
+	state:
+		new_line (texbook: N) = 3 + 2*max_char_code
+		mid_line (texbook: M) = 1;
+		skip_blanks (texbook: S) = 2 + max_char_code
+		so dass man den aktuellen State *plus* next char's command code
+			rechnen kann
+	index:
+		Hängt mit der Position des Items auf dem Input Stack zusammen,
+		wird aber etwas anders gezählt (vor allem in Bezug auf "Token Lists",
+		die zählen scheinbar beim Index nicht mit, obwohl sie einen Platz
+		auf dem Input Stack haben)
+	line:
+		Aktuelle Zeilennummer
+		Prüfen, ob line_stack einen Dummy-Eintrag für das Terminal enthält.
+		In die Input Stack Element Klasse verschieben.
+
+Globale Variable in_open: index des höchsten non-Token-List Stack-Items
+->
+* (in_open + 1) Zeilen sind im Buffer gespeichert,
+* (in_open == index) wenn nicht gerade eine Token List gelesen wird
+->
+Das klingt, als würde eine Token List *keiner* Zeile im Buffer entsprechen!
+Macht dem Namen nach Sinn: Ein "echter" Input liest und tokenized eine
+Zeile aus dem Buffer; eine Token List liest Tokens direkt aus einer anderen
+Quelle und braucht deshalb den Buffer nicht. Dabei geht es dann vermutlich
+um Macro- und Parameter-Expansion. Eine solche Token List ist dann aber
+trotzdem auf dem Input Stack vertreten.
+
+???
+If we are not currently reading from the terminal, or from an input stream,
+we are reading from the file variable input_file[index]. We use the
+notation terminal input as a convenient abbreviation for name = 0, and cur
+file as an abbreviation for input_file[index].
+???
+input_file ist ein alpha_file[].
+Unklar, wie sich das hier von "input streams" unterscheidet. Input Streams
+sind die o.g. 0-16.
+
+???
+Line numbers should never be negative, since the negative of the current line number is used to identify the user’s output routine in the mode line field of the semantic nest entries.
+???
+Das ist vermutlich einfacher zu verstehen, wenn ich das "nest" verstanden
+habe.
+
+scanner_status:
+	Hält Fest, ob gerade ein Conditional, Macro-Def, Macro-Call, Align
+	oder Write/Message/... gescannt wird. Damit wird entschieden, ob ein
+	EOF zulässig ist.
+
+
+
+
+
