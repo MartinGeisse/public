@@ -4994,16 +4994,16 @@ public final class Tex {
 		bottomline = false;
 		while (true) {
 			curinput.copyFrom(inputstack[baseptr]);
-			if ((curinput.getState() != 0)) {
+			if ((curinput.getState() != TOKENIZER_STATE_TOKEN_LIST)) {
 				if ((curinput.getName() > 17) || (baseptr == 0)) {
 					bottomline = true;
 				}
 			}
 			if ((baseptr == inputptr) || bottomline || (nn < eqtb[9617].getInt())) {
-				if ((baseptr == inputptr) || (curinput.getState() != 0) || (curinput.getIndex() != 3) || (curinput.getLoc() != 0)) {
+				if ((baseptr == inputptr) || (curinput.getState() != TOKENIZER_STATE_TOKEN_LIST) || (curinput.getIndex() != 3) || (curinput.getLoc() != 0)) {
 					tally = 0;
 					oldsetting = selector;
-					if (curinput.getState() != 0) {
+					if (curinput.getState() != TOKENIZER_STATE_TOKEN_LIST) {
 						if (curinput.getName() <= 17) {
 							if ((curinput.getName() == 0)) {
 								if (baseptr == 0) {
@@ -5240,7 +5240,7 @@ public final class Tex {
 
 	public void backinput() {
 		int p;
-		while ((curinput.getState() == 0) && (curinput.getLoc() == 0)) {
+		while ((curinput.getState() == TOKENIZER_STATE_TOKEN_LIST) && (curinput.getLoc() == 0)) {
 			endtokenlist();
 		}
 		p = getavail();
@@ -5309,7 +5309,7 @@ public final class Tex {
 	}
 
 	public void clearforerrorprompt() {
-		while ((curinput.getState() != 0) && (curinput.getName() == 0) && (inputptr > 0) && (curinput.getLoc() > curinput.getLimit())) {
+		while ((curinput.getState() != TOKENIZER_STATE_TOKEN_LIST) && (curinput.getName() == 0) && (inputptr > 0) && (curinput.getLoc() > curinput.getLimit())) {
 			endfilereading();
 		}
 		Println();
@@ -5320,7 +5320,7 @@ public final class Tex {
 		int q;
 		if (scannerstatus != 0) {
 			if (curcs != 0) {
-				if ((curinput.getState() == 0) || (curinput.getName() < 1) || (curinput.getName() > 17)) {
+				if ((curinput.getState() == TOKENIZER_STATE_TOKEN_LIST) || (curinput.getName() < 1) || (curinput.getName() > 17)) {
 					p = getavail();
 					mem[p].setlh(4095 + curcs);
 					begintokenlist(p, 3);
@@ -5415,7 +5415,7 @@ public final class Tex {
 		cc = 0;
 		lab20: while (true) {
 			curcs = 0;
-			if (curinput.getState() != 0) {
+			if (curinput.getState() != TOKENIZER_STATE_TOKEN_LIST) {
 				lab25: while (true) {
 					if (curinput.getLoc() <= curinput.getLimit()) {
 						curchr = buffer[curinput.getLoc()];
@@ -6102,7 +6102,7 @@ public final class Tex {
 				}
 			} while (!(mem[r].getlh() == 3584));
 		}
-		while ((curinput.getState() == 0) && (curinput.getLoc() == 0)) {
+		while ((curinput.getState() == TOKENIZER_STATE_TOKEN_LIST) && (curinput.getLoc() == 0)) {
 			endtokenlist();
 		}
 		begintokenlist(refcount, 5);
@@ -21027,7 +21027,7 @@ public final class Tex {
 			openlogfile();
 		}
 		while (inputptr > 0) {
-			if (curinput.getState() == 0) {
+			if (curinput.getState() == TOKENIZER_STATE_TOKEN_LIST) {
 				endtokenlist();
 			} else {
 				endfilereading();
