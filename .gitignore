@@ -14,5 +14,6 @@
 /webapp.tools/bin/
 /webapp.wicket/bin/
 /mobile-showcase/bin/
+/jtex/bin/
 /pixel/bin/
 .DS_Store
