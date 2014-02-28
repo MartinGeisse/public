@@ -79,7 +79,41 @@ Setting \escapechar
 		- aus 1 anderen Zeichen: State M (normal weitermachen)
 	Alle Spaces (Catcode 10) werden als Character Code 32 gelesen. 
 
+Interessant:
+	Was passiert mit Stretchability / Shrinkability einer Box/Glue-Sequenz, wenn man
+	sie in einer hbox verpackt und diese dann wieder in einer horizontalen Sequenz
+	benutzt? Hat diese hbox dann immer fest ihre "Natural Width" oder bleibt sie
+	stretchable/shrinkable?
 
+hfil, hfill, hfilll:
+	1st, 2nd, 3rd order Infinity. Kann für Flattersatz und für die letzte Zeile in
+	einem Absatz benutzt werden. Erst wird entschieden ob Strech oder Shrink, danach
+	hat nur die höchste Ordnung != 0 Auswirkungen und nimmt den kompletten
+	stretch/shrink amount ein. Vermutung: Das passiert dann wieder in dem Verhältnis
+	in dem die einzelnen Infinity-Vorfaktoren der höchsten Ordnung zueinander
+	stehen. Inf macht nur bei stretch/shrink Sinn, nicht bei natural. Alle dimensions
+	außer der höchsten Ordnung behalten ihren natural amount.
+	
+	
+	
+baselineskip, lineskip, lineskiplimit
+	Zwei vertikal angeordnete Boxen mit heights, depths h1, d1, h2, d2.
+	Berechne y := baselineskip - d1 - h2
+	Interline Glue (der Glue zwischen der Unterkante Box1 und Oberkante Box2:
+		Wenn natural(y) < lineskiplimit
+			ILG := y
+		sonst
+			ILG := lineskip
+	Achtung: Das bedeutet insbesondere, dass baselineskip und lineskip trotz des
+	ähnlichen Namens ganz anders gerechnet werden! BLS wird zwischen den Baselines
+	angesetzt, LS zwischen Unterkante1 und Oberkante2.
+	-
+	Zusätzlicher Glue z.B. durch \smallskip wird *danach* draufgezählt, hat also
+	auf die Entscheidung zwischen BLS oder LS keinen Einfluß.
+	-
+	Bei mehrseitigen Dokumenten wird empfohlen, dass BLS fix ist (ohne stretch/shrink)
+	weil Seiten mit verschiedenen Baseline-Abständen in ein und demselben Dokument
+	kacke aussehen.
 
 
 
