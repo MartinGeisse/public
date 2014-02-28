@@ -3,17 +3,27 @@ package tex;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import name.martingeisse.jtex.io.TexFileDataInputStream;
 import name.martingeisse.jtex.io.TexFileDataOutputStream;
 import name.martingeisse.jtex.io.TexFilePrintWriter;
 import name.martingeisse.jtex.parser.TexTokenizer;
+import org.apache.log4j.Logger;
 
 /**
  * The complete TeX engine.
  */
 public final class Tex {
 	
+	/**
+	 * the documentLogger
+	 */
+	private static Logger documentLogger = Logger.getLogger(Tex.class.getName() + ".document");
+	
+	/**
+	 * the internalLogger
+	 */
+	private static Logger internalLogger = Logger.getLogger(Tex.class.getName() + ".internal");
+
 	static final int TOKENIZER_STATE_TOKEN_LIST = 0;
 	static final int TOKENIZER_STATE_NEW_LINE = 33;
 	static final int TOKENIZER_STATE_MID_LINE = 1;
@@ -284,8 +294,6 @@ public final class Tex {
 	TexFileDataOutputStream dvifile;
 
 	private int outputfilename;
-
-	private int logname;
 
 	TexFileDataInputStream tfmfile;
 
@@ -1625,9 +1633,6 @@ public final class Tex {
 			selector = 19;
 		} else {
 			selector = 17;
-		}
-		if (jobname == 0) {
-			openlogfile();
 		}
 	}
 
@@ -5226,10 +5231,7 @@ public final class Tex {
 				fatalerror(595);
 			}
 		}
-		{
-			inputptr = inputptr - 1;
-			curinput.copyFrom(inputstack[inputptr]);
-		}
+		popInput();
 	}
 
 	public void backinput() {
@@ -5282,18 +5284,8 @@ public final class Tex {
 		if (curinput.getName() > 17) {
 			inputfile[curinput.getIndex()].close();
 		}
-		{
-			inputptr = inputptr - 1;
-			curinput.copyFrom(inputstack[inputptr]);
-		}
+		popInput();
 		inopen = inopen - 1;
-	}
-
-	public void clearforerrorprompt() {
-		while ((curinput.getState() != TOKENIZER_STATE_TOKEN_LIST) && (curinput.getName() == 0) && (inputptr > 0) && (curinput.getLoc() > curinput.getLimit())) {
-			endfilereading();
-		}
-		Println();
 	}
 
 	public void checkoutervalidity() {
@@ -7506,9 +7498,6 @@ public final class Tex {
 			scanfontident();
 			break;
 		case 5:
-			if (jobname == 0) {
-				openlogfile();
-			}
 			break;
 		}
 		oldsetting = selector;
@@ -8295,17 +8284,14 @@ public final class Tex {
 		String months;
 		StringBuffer strbuf = new StringBuffer();
 		oldsetting = selector;
-		if (jobname == 0) {
-			jobname = 796;
-		}
 		packjobname(797);
 		lab31: while (true) {
 			try {
-				logfile = new TexFilePrintWriter(nameoffile);
+				logfile = new TexFilePrintWriter("texlog.txt");
 			} catch (final FileNotFoundException ex) {
 				termout.println();
 				termout.print("Cannot open ");
-				termout.print(nameoffile);
+				termout.print("texlog.txt");
 			} catch (final IOException ex) {
 				;
 			}
@@ -8317,7 +8303,7 @@ public final class Tex {
 				promptfilename(799, 797);
 			}
 		}
-		logname = makenamestring();
+		makenamestring();
 		selector = 18;
 		logopened = true;
 		{
@@ -8328,9 +8314,9 @@ public final class Tex {
 			printchar(32);
 			months = "JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
 			strbuf = new StringBuffer(months);
-			for (k = 3 * eqtb[9585].getInt() - 3; k <= 3 * eqtb[9585].getInt() - 1; k++) {
-				logfile.print(strbuf.charAt(k));
-			}
+//			for (k = 3 * eqtb[9585].getInt() - 3; k <= 3 * eqtb[9585].getInt() - 1; k++) {
+//				logfile.print(strbuf.charAt(k));
+//			}
 			printchar(32);
 			printint(eqtb[9586].getInt());
 			printchar(32);
@@ -8388,10 +8374,6 @@ public final class Tex {
 			promptfilename(787, 791);
 		}
 		/* lab30: */curinput.setName( makenamestring());
-		if (jobname == 0) {
-			jobname = curname;
-			openlogfile();
-		}
 		if (termoffset + (strstart[curinput.getName() + 1] - strstart[curinput.getName()]) > maxprintline - 2) {
 			Println();
 		} else if ((termoffset > 0) || (fileoffset > 0)) {
@@ -10088,9 +10070,6 @@ public final class Tex {
 			curh = eqtb[10148].getInt();
 			dvif = 0;
 			if (outputfilename == 0) {
-				if (jobname == 0) {
-					openlogfile();
-				}
 				packjobname(794);
 				lab31: while (true) {
 					try {
@@ -17944,9 +17923,6 @@ public final class Tex {
 		int t;
 		int oldsetting;
 		int flushablestring;
-		if (jobname == 0) {
-			openlogfile();
-		}
 		getrtoken();
 		u = curcs;
 		if (u >= 514) {
@@ -20993,25 +20969,11 @@ public final class Tex {
 			logfile.println();
 			logfile.close();
 			selector = selector - 2;
-			if (selector == 17) {
-				printnl(1275);
-				slowprint(logname);
-				printchar(46);
-			}
 		}
 	}
 
 	public void finalcleanup() {
-		if (jobname == 0) {
-			openlogfile();
-		}
-		while (inputptr > 0) {
-			if (curinput.getState() == TOKENIZER_STATE_TOKEN_LIST) {
-				endtokenlist();
-			} else {
-				endfilereading();
-			}
-		}
+		cleanUpInputStack();
 		while (openparens > 0) {
 			Print(1276);
 			openparens = openparens - 1;
@@ -21416,13 +21378,7 @@ public final class Tex {
 	public void dumpmem(final int n) {
 		int k;
 		TexFileDataOutputStream fmtfile;
-		if (jobname == 0) {
-			jobname = 796;
-			packjobname(786);
-			jobname = 0;
-		} else {
-			packjobname(786);
-		}
+		packjobname(786);
 		fmtfile = null;
 		try {
 			fmtfile = new TexFileDataOutputStream(nameoffile);
@@ -21554,6 +21510,7 @@ public final class Tex {
 			exit();
 		}
 		initialize();
+		openlogfile();
 		if (initex) {
 			if (!getstringsstarted()) {
 				exit();
@@ -21576,7 +21533,7 @@ public final class Tex {
 			termout.println("[Java version A]");
 		}
 		termout.flush();
-		jobname = 0;
+		jobname = 796; // pre-assigned dummy job name
 		nameinprogress = false;
 		logopened = false;
 		outputfilename = 0;
@@ -21668,4 +21625,21 @@ public final class Tex {
 		inputptr = inputptr + 1;
 	}
 	
+	// pops the top input off the input stack and makes it the current input
+	private void popInput() {
+		inputptr = inputptr - 1;
+		curinput.copyFrom(inputstack[inputptr]);
+	}
+
+	// closes and removes all inputs on the input stack
+	private void cleanUpInputStack() {
+		while (inputptr > 0) {
+			if (curinput.getState() == TOKENIZER_STATE_TOKEN_LIST) {
+				endtokenlist();
+			} else {
+				endfilereading();
+			}
+		}
+	}
+
 }
