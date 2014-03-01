@@ -30,7 +30,7 @@ public final class TexTokenizer {
 	private int loc;
 
 	/**
-	 * the limit
+	 * the limit (end-of-line, inclusive)
 	 */
 	private int limit;
 
