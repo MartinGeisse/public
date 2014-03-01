@@ -65,6 +65,13 @@ public final class Tex {
 
 	static final int filenamesize = 80;
 
+	// ------------------------------------------------------------
+	
+	/**
+	 * the inputBuffer
+	 */
+	private final PrelimInputBuffer inputBuffer;
+	
 	private final boolean initex;
 	
 	private int bad;
@@ -8259,24 +8266,6 @@ public final class Tex {
 		packfilename(curname, curarea, curext);
 	}
 
-	public void promptfilename(final int s, final int e) {
-		if (s == 787) {
-			printnl(262);
-			Print(788);
-		} else {
-			printnl(262);
-			Print(789);
-		}
-		printfilename(curname, curarea, curext);
-		Print(790);
-		if (e == 791) {
-			showcontext();
-		}
-		printnl(792);
-		Print(s);
-		fatalerror(793);
-	}
-
 	public void openlogfile() {
 		int oldsetting;
 		int k;
@@ -8285,23 +8274,10 @@ public final class Tex {
 		StringBuffer strbuf = new StringBuffer();
 		oldsetting = selector;
 		packjobname(797);
-		lab31: while (true) {
-			try {
-				logfile = new TexFilePrintWriter("texlog.txt");
-			} catch (final FileNotFoundException ex) {
-				termout.println();
-				termout.print("Cannot open ");
-				termout.print("texlog.txt");
-			} catch (final IOException ex) {
-				;
-			}
-			if (logfile != null) {
-				break lab31;
-			}
-			{
-				selector = 17;
-				promptfilename(799, 797);
-			}
+		try {
+			logfile = new TexFilePrintWriter("texlog.txt");
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
 		}
 		makenamestring();
 		selector = 18;
@@ -8371,7 +8347,14 @@ public final class Tex {
 				}
 			}
 			endfilereading();
-			promptfilename(787, 791);
+			printnl(262);
+			Print(788);
+			printfilename(curname, curarea, curext);
+			Print(790);
+			showcontext();
+			printnl(792);
+			Print(787);
+			fatalerror(793);
 		}
 		/* lab30: */curinput.setName( makenamestring());
 		if (termoffset + (strstart[curinput.getName() + 1] - strstart[curinput.getName()]) > maxprintline - 2) {
@@ -9494,20 +9477,10 @@ public final class Tex {
 							curext = 791;
 						}
 						packfilename(curname, curarea, curext);
-						lab31: while (true) {
-							try {
-								writefile[j] = new TexFilePrintWriter(nameoffile);
-							} catch (final FileNotFoundException ex) {
-								termout.println();
-								termout.print("Cannot open ");
-								termout.print(nameoffile);
-							} catch (final IOException ex) {
-								;
-							}
-							if (writefile[j] != null) {
-								break lab31;
-							}
-							promptfilename(1300, 791);
+						try {
+							writefile[j] = new TexFilePrintWriter(nameoffile);
+						} catch (final IOException e) {
+							throw new RuntimeException(e);
 						}
 						writeopen[j] = true;
 					}
@@ -10071,20 +10044,10 @@ public final class Tex {
 			dvif = 0;
 			if (outputfilename == 0) {
 				packjobname(794);
-				lab31: while (true) {
-					try {
-						dvifile = new TexFileDataOutputStream(nameoffile);
-					} catch (final FileNotFoundException ex) {
-						termout.println();
-						termout.print("Cannot open ");
-						termout.print(nameoffile);
-					} catch (final IOException ex) {
-						;
-					}
-					if (dvifile != null) {
-						break lab31;
-					}
-					promptfilename(795, 794);
+				try {
+					dvifile = new TexFileDataOutputStream(nameoffile);
+				} catch (final IOException e) {
+					throw new RuntimeException(e);
 				}
 				outputfilename = makenamestring();
 			}
@@ -18761,20 +18724,10 @@ public final class Tex {
 		}
 		formatident = makestring();
 		packjobname(785);
-		lab33: while (true) {
-			try {
-				fmtfile = new TexFileDataOutputStream(nameoffile);
-			} catch (final FileNotFoundException ex) {
-				termout.println();
-				termout.print("Cannot open ");
-				termout.print(nameoffile);
-			} catch (final IOException ex) {
-				;
-			}
-			if (fmtfile != null) {
-				break lab33;
-			}
-			promptfilename(1273, 785);
+		try {
+			fmtfile = new TexFileDataOutputStream(nameoffile);
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
 		}
 		printnl(1274);
 		slowprint(makenamestring());
@@ -21417,6 +21370,7 @@ public final class Tex {
 
 	public Tex(boolean initex) {
 		this.initex = initex;
+		this.inputBuffer = new PrelimInputBuffer(this);
 		maxhalfword = memoryword.maxHalfword;
 		for (int c = 0; c <= memmax; c++) {
 			mem[c] = new memoryword();
@@ -21606,7 +21560,11 @@ public final class Tex {
 	private void exit() {
 		termout.println();
 		termout.flush();
-		System.exit(history == 0 || history == 1 ? 0 : 1);
+		if (history == 0 || history == 1) {
+			System.exit(0);
+		} else {
+			throw new RuntimeException();
+		}
 	}
 
 	// removes as many finished token lists from the input stack as possible
