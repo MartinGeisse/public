@@ -95,6 +95,8 @@ public final class Tex {
 	alphafile poolfile;
 
 	PrintWriter logfile;
+	
+	ErrorReporter errorReporter;
 
 	int selector;
 
@@ -18293,6 +18295,7 @@ public final class Tex {
 		}
 		initialize();
 		openlogfile();
+		this.errorReporter = new ErrorReporter(logfile);
 		if (initex) {
 			if (!getstringsstarted()) {
 				exit();
