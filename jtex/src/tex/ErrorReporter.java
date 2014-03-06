@@ -54,6 +54,20 @@ public final class ErrorReporter {
 	}
 
 	/**
+	 * Resets the error count to 0.
+	 */
+	public void resetErrorCount() {
+		errorCount = 0;
+	}
+	
+	/**
+	 * Decrements the error count by 1.
+	 */
+	public void decrementErrorCount() {
+		errorCount--;
+	}
+	
+	/**
 	 * Reports an info-level message.
 	 * @param level the level to report on
 	 * @param message the message
@@ -107,7 +121,6 @@ public final class ErrorReporter {
 		report(Level.FATAL, message);
 	}
 	
-
 	/**
 	 * Reportable error levels.
 	 */

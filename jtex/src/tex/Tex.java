@@ -3,6 +3,7 @@ package tex;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import tex.ErrorReporter.Level;
 import name.martingeisse.jtex.io.TexFileDataInputStream;
 import name.martingeisse.jtex.io.TexFileDataOutputStream;
 import name.martingeisse.jtex.io.TexFilePrintWriter;
@@ -116,15 +117,9 @@ public final class Tex {
 
 	boolean setboxallowed;
 
-	int history;
-
-	int errorcount;
-
 	int helpline[] = new int[6];
 
 	int helpptr;
-
-	boolean useerrhelp;
 
 	boolean aritherror;
 
@@ -644,9 +639,7 @@ public final class Tex {
 		int k;
 		int z;
 		setboxallowed = true;
-		errorcount = 0;
 		helpptr = 0;
-		useerrhelp = false;
 		wasmemend = 0;
 		waslomax = 0;
 		washimin = memmax;
@@ -13352,7 +13345,7 @@ public final class Tex {
 				linebreak(eqtb[9569].getInt());
 			}
 			normalparagraph();
-			errorcount = 0;
+			errorReporter.resetErrorCount();
 		}
 	}
 
@@ -15472,10 +15465,8 @@ public final class Tex {
 		tokenshow(defref);
 		selector = oldsetting;
 		flushlist(defref);
-		{
-			if (poolptr + 1 > poolsize) {
-				overflow(257, poolsize - initpoolptr);
-			}
+		if (poolptr + 1 > poolsize) {
+			overflow(257, poolsize - initpoolptr);
 		}
 		s = makestring();
 		if (c == 0) {
@@ -15490,6 +15481,7 @@ public final class Tex {
 				print(338);
 			}
 			print(s);
+			boolean useerrhelp = false;
 			if (eqtb[7721].getrh() != 0) {
 				useerrhelp = true;
 			} else if (longhelpseen) {
@@ -15503,13 +15495,24 @@ public final class Tex {
 				helpline[1] = 1235;
 				helpline[0] = 1236;
 			}
-			error();
-			useerrhelp = false;
+			
+			printchar(46);
+			showcontext();
+			selector = selector - 1;
+			if (useerrhelp) {
+				println();
+				tokenshow(eqtb[7721].getrh());
+			} else {
+				while (helpptr > 0) {
+					helpptr = helpptr - 1;
+					printnl(helpline[helpptr]);
+				}
+			}
+			selector = selector + 1;
+			errorReporter.error("ERROR"); // TODO dirty: sets the "worst error level so far" and stops on 100+ errors
 		}
-		{
-			strptr = strptr - 1;
-			poolptr = strstart[strptr];
-		}
+		strptr = strptr - 1;
+		poolptr = strstart[strptr];
 	}
 
 	private void shiftcase() {
@@ -15557,7 +15560,6 @@ public final class Tex {
 				if (logopened) {
 					error();
 				}
-				history = 3;
 				jumpout();
 			}
 		}
@@ -16010,9 +16012,29 @@ public final class Tex {
 			break;
 		case 14:
 		case 15:
-		case 16:
-			extrarightbrace();
+		case 16: {
+			String message = "!Extra }, or forgotten ";
+			switch (curgroup) {
+			case 14:
+				message += getCurrentEscapeCharacter() + "endgroup";
+				break;
+			case 15:
+				message += '$';
+				break;
+			case 16:
+				message += getCurrentEscapeCharacter() + "right";
+				break;
+			}
+			error(message,
+				"I've deleted a group-closing symbol because it seems to be",
+				"spurious, as in `$x}$'. But perhaps the } is legitimate and",
+				"you forgot something else, as in `\\hbox{$x}'. In such cases",
+				"the way to recover is to insert both the forgotten and the",
+				"deleted material, e.g., by typing `I$}'."
+			);
+			alignstate = alignstate + 1;
 			break;
+		}
 		case 2:
 			Package(0);
 			break;
@@ -16499,12 +16521,12 @@ public final class Tex {
 						case 35:
 						case 136:
 						case 237:
-							noalignerror();
+							error("!Misplaced " + getCurrentEscapeCharacter() + "noalign", "I expect to see \\noalign only after the \\cr of", "an alignment. Proceed, and I'll ignore this case.");
 							break;
 						case 64:
 						case 165:
 						case 266:
-							omiterror();
+							error("!Misplaced " + getCurrentEscapeCharacter() + "omit", "I expect to see \\omit only after tab marks or the \\cr of", "an alignment. Proceed, and I'll ignore this case.");
 							break;
 						case 33:
 						case 135:
@@ -16526,7 +16548,7 @@ public final class Tex {
 						case 68:
 						case 169:
 						case 270:
-							cserror();
+							error("!Extra " + getCurrentEscapeCharacter() + "endcsname", "I'm ignoring this, since I wasn't doing a \\csname.");
 							break;
 						case 105:
 							initmath();
@@ -17803,7 +17825,7 @@ public final class Tex {
 			condptr = mem[condptr].getrh();
 			freenode(tempptr, 2);
 		}
-		if (history != 0) {
+		if (errorReporter.getWorstLevelSoFar() != Level.OK) {
 			if (selector == 19) {
 				selector = 17;
 				printnl(1282);
@@ -18235,7 +18257,6 @@ public final class Tex {
 	 * Runs the tex engine.
 	 */
 	public void run() {
-		history = 3;
 		termout = new PrintWriter(System.out);
 		bad = 0;
 		if ((halferrorline < 30) || (halferrorline > errorline - 15)) {
@@ -18290,15 +18311,14 @@ public final class Tex {
 			bad = 41;
 		}
 		if (bad > 0) {
-			termout.println("Ouch---my internal constants have been clobbered!" + "---case " + bad);
-			exit();
+			throw new IllegalStateException("Ouch---my internal constants have been clobbered!" + "---case " + bad);
 		}
 		initialize();
 		openlogfile();
 		this.errorReporter = new ErrorReporter(logfile);
 		if (initex) {
 			if (!getstringsstarted()) {
-				exit();
+				throw new RuntimeException("getstringsstarted() failed");
 			}
 			initprim();
 			initstrptr = strptr;
@@ -18335,7 +18355,7 @@ public final class Tex {
 		forceeof = false;
 		alignstate = 1000000;
 		if (!initterminal()) {
-			exit();
+			throw new RuntimeException("initterminal() failed");
 		}
 		curinput.setState(TOKENIZER_STATE_NEW_LINE);
 		curinput.setStart(1);
@@ -18349,17 +18369,14 @@ public final class Tex {
 			}
 			try {
 				if (!openfmtfile()) {
-					exit();
+					throw new RuntimeException("openfmtfile()");
 				}
 			} catch (final IOException e) {
-				System.err.println(e);
-				exit();
+				throw new RuntimeException(e);
 			}
 			if (!loadfmtfile()) {
 				fmtfile.close();
-				{
-					exit();
-				}
+				throw new RuntimeException("malformed format file");
 			}
 			fmtfile.close();
 			while ((curinput.getLoc() < curinput.getLimit()) && (buffer[curinput.getLoc()] == 32)) {
@@ -18377,21 +18394,9 @@ public final class Tex {
 		if ((curinput.getLoc() < curinput.getLimit()) && (eqtb[8283 + buffer[curinput.getLoc()]].getrh() != 0)) {
 			startinput();
 		}
-		history = 0;
 		maincontrol();
 		finalcleanup();
 		closeFiles();
-		exit();
-	}
-
-	private void exit() {
-		termout.println();
-		termout.flush();
-		if (history == 0 || history == 1) {
-			System.exit(0);
-		} else {
-			throw new RuntimeException();
-		}
 	}
 
 	// removes as many finished token lists from the input stack as possible
@@ -18596,6 +18601,19 @@ public final class Tex {
 	// ------------------------------------------------------------------------------------------------
 	// level-2 printing routines (formatting of various values)
 	// ------------------------------------------------------------------------------------------------
+	
+	/**
+	 * Returns the current escape character (usually a backslash). Also returns a backslash
+	 * if the current escape character is invalid.
+	 */
+	private int getCurrentEscapeCharacter() {
+		int c = eqtb[9608].getInt();
+		if (c >= 0 && c < 256) {
+			return c;
+		} else {
+			return '\\';
+		}
+	}
 	
 	/**
 	 * Prints the current escape character (usually a backslash), or nothing if
@@ -20756,9 +20774,7 @@ public final class Tex {
 		oldsetting = selector;
 		if ((eqtb[9592].getInt() <= 0) && (selector == 19)) {
 			selector = selector - 1;
-			if (history == 0) {
-				history = 1;
-			}
+			errorReporter.warning("WARNING"); // TODO dirty: sets the worst error level so far
 		}
 	}
 
@@ -21041,14 +21057,10 @@ public final class Tex {
 			break;
 		}
 		helpptr = 0;
-		errorcount = errorcount - 1;
+		errorReporter.decrementErrorCount();
 		error();
 	}
 	
-	private void giveerrhelp() {
-		tokenshow(eqtb[7721].getrh());
-	}
-
 	
 	// ------------------------------------------------------------------------------------------------
 	// error routines
@@ -21169,36 +21181,34 @@ public final class Tex {
 
 	private void jumpout() {
 		closeFiles();
-		exit();
+		throw new RuntimeException("jumpout() called");
+	}
+
+	private void error(String errorMessage, String... helpLines) {
+		printnl(errorMessage);
+		errorWithStringHelpLines();
+	}
+
+	private void errorWithStringHelpLines(String... helpLines) {
+		printchar('.');
+		showcontext();
+		for (String helpLine : helpLines) {
+			printnl(helpLine);
+		}
+		helpptr = 0;
+		errorReporter.error("ERROR"); // TODO dirty: sets the "worst error level so far" and stops on 100+ errors
 	}
 
 	private void error() {
-		if (history < 2) {
-			history = 2;
-		}
-		printchar(46);
+		printchar('.');
 		showcontext();
-		errorcount = errorcount + 1;
-		if (errorcount == 100) {
-			printnl(263);
-			history = 3;
-			jumpout();
+		while (helpptr > 0) {
+			helpptr = helpptr - 1;
+			printnl(helpline[helpptr]);
 		}
-		selector = selector - 1;
-		if (useerrhelp) {
-			println();
-			giveerrhelp();
-		} else {
-			while (helpptr > 0) {
-				helpptr = helpptr - 1;
-				printnl(helpline[helpptr]);
-			}
-		}
-		println();
-		selector = selector + 1;
-		println();
+		errorReporter.error("ERROR"); // TODO dirty: sets the "worst error level so far" and stops on 100+ errors
 	}
-
+	
 	private void fatalerror(final int s) {
 		normalizeselector();
 		printnl(262);
@@ -21208,7 +21218,6 @@ public final class Tex {
 		if (logopened) {
 			error();
 		}
-		history = 3;
 		jumpout();
 	}
 
@@ -21226,13 +21235,12 @@ public final class Tex {
 		if (logopened) {
 			error();
 		}
-		history = 3;
 		jumpout();
 	}
 
 	private void confusion(final int s) {
 		normalizeselector();
-		if (history < 2) {
+		if (errorReporter.getWorstLevelSoFar().ordinal() < Level.ERROR.ordinal()) {
 			printnl(262);
 			print(291);
 			print(s);
@@ -21249,7 +21257,6 @@ public final class Tex {
 		if (logopened) {
 			error();
 		}
-		history = 3;
 		jumpout();
 	}
 
@@ -21304,23 +21311,17 @@ public final class Tex {
 	private void insertdollarsign() {
 		backinput();
 		curtok = 804;
-		{
-			printnl(262);
-			print(1017);
-		}
-		{
-			helpptr = 2;
-			helpline[1] = 1018;
-			helpline[0] = 1019;
-		}
+		printnl(262);
+		print(1017);
+		helpptr = 2;
+		helpline[1] = 1018;
+		helpline[0] = 1019;
 		inserror();
 	}
 
 	private void youcant() {
-		{
-			printnl(262);
-			print(685);
-		}
+		printnl(262);
+		print(685);
 		printcmdchr(curcmd, curchr);
 		print(1020);
 		printmode(curlist.modefield);
@@ -21347,128 +21348,47 @@ public final class Tex {
 		return Result;
 	}
 
-	private void extrarightbrace() {
-		{
-			printnl(262);
-			print(1048);
-		}
-		switch (curgroup) {
-		case 14:
-			printEscapeSequence(516);
-			break;
-		case 15:
-			printchar(36);
-			break;
-		case 16:
-			printEscapeSequence(877);
-			break;
-		}
-		{
-			helpptr = 5;
-			helpline[4] = 1049;
-			helpline[3] = 1050;
-			helpline[2] = 1051;
-			helpline[1] = 1052;
-			helpline[0] = 1053;
-		}
-		error();
-		alignstate = alignstate + 1;
-	}
-
 	private void alignerror() {
 		if (Math.abs(alignstate) > 2) {
-			{
-				printnl(262);
-				print(1114);
-			}
+			printnl("!Misplaced ");
 			printcmdchr(curcmd, curchr);
 			if (curtok == 1062) {
-				{
-					helpptr = 6;
-					helpline[5] = 1115;
-					helpline[4] = 1116;
-					helpline[3] = 1117;
-					helpline[2] = 1118;
-					helpline[1] = 1119;
-					helpline[0] = 1120;
-				}
+				error("",
+					"I can't figure out why you would want to use a tab mark",
+					"here. If you just want an ampersand, the remedy is",
+					"simple: Just type `I\\&' now. But if some right brace",
+					"up above has ended a previous alignment prematurely,",
+					"you're probably due for more error messages, and you",
+					"might try typing `S' now just to see what is salvageable."
+				);
 			} else {
-				{
-					helpptr = 5;
-					helpline[4] = 1115;
-					helpline[3] = 1121;
-					helpline[2] = 1118;
-					helpline[1] = 1119;
-					helpline[0] = 1120;
-				}
+				error("",
+					"I can't figure out why you would want to use a tab mark",
+					"or \\cr or \\span just now. If something like a right brace",
+					"up above has ended a previous alignment prematurely,",
+					"you're probably due for more error messages, and you",
+					"might try typing `S' now just to see what is salvageable."
+				);
 			}
-			error();
 		} else {
 			backinput();
 			if (alignstate < 0) {
-				{
-					printnl(262);
-					print(657);
-				}
+				printnl(262);
+				print(657);
 				alignstate = alignstate + 1;
 				curtok = 379;
 			} else {
-				{
-					printnl(262);
-					print(1110);
-				}
+				printnl(262);
+				print(1110);
 				alignstate = alignstate - 1;
 				curtok = 637;
 			}
-			{
-				helpptr = 3;
-				helpline[2] = 1111;
-				helpline[1] = 1112;
-				helpline[0] = 1113;
-			}
+			helpptr = 3;
+			helpline[2] = 1111;
+			helpline[1] = 1112;
+			helpline[0] = 1113;
 			inserror();
 		}
-	}
-
-	private void noalignerror() {
-		{
-			printnl(262);
-			print(1114);
-		}
-		printEscapeSequence(527);
-		{
-			helpptr = 2;
-			helpline[1] = 1122;
-			helpline[0] = 1123;
-		}
-		error();
-	}
-
-	private void omiterror() {
-		{
-			printnl(262);
-			print(1114);
-		}
-		printEscapeSequence(530);
-		{
-			helpptr = 2;
-			helpline[1] = 1124;
-			helpline[0] = 1123;
-		}
-		error();
-	}
-
-	private void cserror() {
-		{
-			printnl(262);
-			print(776);
-		}
-		printEscapeSequence(505);
-		{
-			helpptr = 1;
-			helpline[0] = 1126;
-		}
-		error();
 	}
 
 }
