@@ -3,11 +3,11 @@ package tex;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import tex.ErrorReporter.Level;
 import name.martingeisse.jtex.io.TexFileDataInputStream;
 import name.martingeisse.jtex.io.TexFileDataOutputStream;
 import name.martingeisse.jtex.io.TexFilePrintWriter;
 import name.martingeisse.jtex.parser.TexTokenizer;
+import tex.ErrorReporter.Level;
 
 /**
  * The complete TeX engine.
@@ -98,6 +98,8 @@ public final class Tex {
 	PrintWriter logfile;
 	
 	ErrorReporter errorReporter;
+	
+	ErrorLogic errorLogic;
 
 	int selector;
 
@@ -635,7 +637,7 @@ public final class Tex {
 
 	int maxhalfword;
 
-	private void initialize() {
+	void initialize() {
 		int k;
 		int z;
 		setboxallowed = true;
@@ -926,14 +928,14 @@ public final class Tex {
 		}
 	}
 
-	private boolean inputln(final alphafile f, final boolean bypasseoln) {
+	boolean inputln(final alphafile f, final boolean bypasseoln) {
 		if (bypasseoln && !f.eof) {
 			f.get();
 		}
 		return inputBuffer.appendRightTrimmedLineFromFile(f);
 	}
 
-	private boolean initterminal() {
+	boolean initterminal() {
 		alphafile termin;
 		boolean Result;
 		inputBuffer.appendLine(cmdlinebuf);
@@ -967,10 +969,18 @@ public final class Tex {
 		}
 	}
 
-	private int makestring() {
+	boolean privileged() {
+		boolean ok = (curlist.modefield > 0);
+		if (!ok) {
+			errorLogic.reportillegalcase();
+		}
+		return ok;
+	}
+	
+	int makestring() {
 		int Result;
 		if (strptr == maxstrings) {
-			overflow(258, maxstrings - initstrptr);
+			errorLogic.overflow(258, maxstrings - initstrptr);
 		}
 		strptr = strptr + 1;
 		strstart[strptr] = poolptr;
@@ -978,7 +988,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private boolean streqbuf(final int s, int k) {
+	boolean streqbuf(final int s, int k) {
 		/* 45 */boolean Result;
 		int j;
 		boolean result;
@@ -997,7 +1007,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private boolean streqstr(final int s, final int t) {
+	boolean streqstr(final int s, final int t) {
 		/* 45 */boolean Result;
 		int j, k;
 		boolean result;
@@ -1023,7 +1033,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private boolean getstringsstarted() {
+	boolean getstringsstarted() {
 		/* 30 10 */boolean Result;
 		int k, l;
 		char m, n;
@@ -1173,7 +1183,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void normalizeselector() {
+	void normalizeselector() {
 		if (logopened) {
 			selector = 19;
 		} else {
@@ -1181,7 +1191,7 @@ public final class Tex {
 		}
 	}
 
-	private int half(final int x) {
+	int half(final int x) {
 		int Result;
 		if (((x) % 2 == 1)) {
 			Result = (x + 1) / 2;
@@ -1191,7 +1201,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int rounddecimals(int k) {
+	int rounddecimals(int k) {
 		int Result;
 		int a;
 		a = 0;
@@ -1203,7 +1213,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int multandadd(int n, int x, final int y, final int maxanswer) {
+	int multandadd(int n, int x, final int y, final int maxanswer) {
 		int Result;
 		if (n < 0) {
 			x = -x;
@@ -1220,7 +1230,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int xovern(int x, int n) {
+	int xovern(int x, int n) {
 		int Result;
 		boolean negative;
 		negative = false;
@@ -1248,7 +1258,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int xnoverd(int x, final int n, final int d) {
+	int xnoverd(int x, final int n, final int d) {
 		int Result;
 		boolean positive;
 		int t, u, v;
@@ -1276,7 +1286,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int badness(final int t, final int s) {
+	int badness(final int t, final int s) {
 		int Result;
 		int r;
 		if (t == 0) {
@@ -1300,7 +1310,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int getavail() {
+	int allocateMemoryWord() {
 		int Result;
 		int p;
 		p = avail;
@@ -1314,7 +1324,7 @@ public final class Tex {
 			p = himemmin;
 			if (himemmin <= lomemmax) {
 				runaway();
-				overflow(300, memmax + 1);
+				errorLogic.overflow(300, memmax + 1);
 			}
 		}
 		mem[p].setrh(0);
@@ -1322,7 +1332,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void flushlist(final int p) {
+	void flushlist(final int p) {
 		int q, r;
 		if (p != 0) {
 			r = p;
@@ -1335,7 +1345,7 @@ public final class Tex {
 		}
 	}
 
-	private int getnode(final int s) {
+	int getnode(final int s) {
 		/* 40 10 20 */int Result;
 		int p;
 		int q;
@@ -1402,7 +1412,7 @@ public final class Tex {
 						continue lab20;
 					}
 				}
-				overflow(300, memmax + 1);
+				errorLogic.overflow(300, memmax + 1);
 				break;
 			}
 			/* lab40: */mem[r].setrh(0);
@@ -1412,7 +1422,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void freenode(final int p, final int s) {
+	void freenode(final int p, final int s) {
 		int q;
 		mem[p].setlh(s);
 		mem[p].setrh(maxhalfword);
@@ -1423,7 +1433,7 @@ public final class Tex {
 		mem[q + 1].setrh(p);
 	}
 
-	private void sortavail() {
+	void sortavail() {
 		int p, q, r;
 		int oldrover;
 		p = getnode(1073741824);
@@ -1456,7 +1466,7 @@ public final class Tex {
 		mem[rover + 1].setlh(p);
 	}
 
-	private int newnullbox() {
+	int newnullbox() {
 		int Result;
 		int p;
 		p = getnode(7);
@@ -1474,7 +1484,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int newrule() {
+	int newrule() {
 		int Result;
 		int p;
 		p = getnode(4);
@@ -1487,7 +1497,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int newligature(final int f, final int c, final int q) {
+	int newligature(final int f, final int c, final int q) {
 		int Result;
 		int p;
 		p = getnode(2);
@@ -1500,7 +1510,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int newligitem(final int c) {
+	int newligitem(final int c) {
 		int Result;
 		int p;
 		p = getnode(2);
@@ -1510,7 +1520,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int newdisc() {
+	int newdisc() {
 		int Result;
 		int p;
 		p = getnode(2);
@@ -1522,7 +1532,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int newmath(final int w, final int s) {
+	int newmath(final int w, final int s) {
 		int Result;
 		int p;
 		p = getnode(2);
@@ -1533,7 +1543,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int newspec(final int p) {
+	int newspec(final int p) {
 		int Result;
 		int q;
 		q = getnode(4);
@@ -1546,7 +1556,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int newparamglue(final int n) {
+	int newparamglue(final int n) {
 		int Result;
 		int p;
 		int q;
@@ -1561,7 +1571,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int newglue(final int q) {
+	int newglue(final int q) {
 		int Result;
 		int p;
 		p = getnode(2);
@@ -1574,7 +1584,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int newskipparam(final int n) {
+	int newskipparam(final int n) {
 		int Result;
 		int p;
 		tempptr = newspec(eqtb[7182 + n].getrh());
@@ -1585,7 +1595,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int newkern(final int w) {
+	int newkern(final int w) {
 		int Result;
 		int p;
 		p = getnode(2);
@@ -1596,7 +1606,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int newpenalty(final int m) {
+	int newpenalty(final int m) {
 		int Result;
 		int p;
 		p = getnode(2);
@@ -1607,7 +1617,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void checkmem(final boolean printlocs) {
+	void checkmem(final boolean printlocs) {
 		/* 31 32 */int p, q;
 		boolean clobbered;
 		for (p = 0; p <= lomemmax; p++) {
@@ -1700,7 +1710,7 @@ public final class Tex {
 		washimin = himemmin;
 	}
 
-	private void shortdisplay(int p) {
+	void shortdisplay(int p) {
 		int n;
 		while (p > 0) {
 			if ((p >= himemmin)) {
@@ -1762,7 +1772,7 @@ public final class Tex {
 		}
 	}
 
-	private void deletetokenref(final int p) {
+	void deletetokenref(final int p) {
 		if (mem[p].getlh() == 0) {
 			flushlist(p);
 		} else {
@@ -1770,7 +1780,7 @@ public final class Tex {
 		}
 	}
 
-	private void deleteglueref(final int p) {
+	void deleteglueref(final int p) {
 		if (mem[p].getrh() == 0) {
 			freenode(p, 4);
 		} else {
@@ -1778,7 +1788,7 @@ public final class Tex {
 		}
 	}
 
-	private void flushnodelist(int p) {
+	void flushnodelist(int p) {
 		/* 30 */int q;
 		while (p != 0) {
 			q = mem[p].getrh();
@@ -1821,7 +1831,7 @@ public final class Tex {
 							freenode(p, 2);
 							break;
 						default:
-							confusion(1295);
+							errorLogic.confusion(1295);
 							break;
 						}
 						break lab30;
@@ -1913,7 +1923,7 @@ public final class Tex {
 						break lab30;
 					}
 					default:
-						confusion(353);
+						errorLogic.confusion(353);
 						break;
 					}
 					freenode(p, 2);
@@ -1924,19 +1934,19 @@ public final class Tex {
 		}
 	}
 
-	private int copynodelist(int p) {
+	int copynodelist(int p) {
 		int Result;
 		int h;
 		int q;
 		int r;
 		int words;
 		r = 0;
-		h = getavail();
+		h = allocateMemoryWord();
 		q = h;
 		while (p != 0) {
 			words = 1;
 			if ((p >= himemmin)) {
-				r = getavail();
+				r = allocateMemoryWord();
 			} else {
 				switch (mem[p].getb0()) {
 				case 0:
@@ -1983,7 +1993,7 @@ public final class Tex {
 					}
 						break;
 					default:
-						confusion(1294);
+						errorLogic.confusion(1294);
 						break;
 					}
 					break;
@@ -2025,7 +2035,7 @@ public final class Tex {
 				}
 					break;
 				default:
-					confusion(354);
+					errorLogic.confusion(354);
 					break;
 				}
 			}
@@ -2047,36 +2057,36 @@ public final class Tex {
 		return Result;
 	}
 
-	private void pushnest() {
+	void pushnest() {
 		if (nestptr > maxneststack) {
 			maxneststack = nestptr;
 			if (nestptr == nestsize) {
-				overflow(362, nestsize);
+				errorLogic.overflow(362, nestsize);
 			}
 		}
 		nest[nestptr].copy(curlist);
 		nestptr = nestptr + 1;
-		curlist.headfield = getavail();
+		curlist.headfield = allocateMemoryWord();
 		curlist.tailfield = curlist.headfield;
 		curlist.pgfield = 0;
 		curlist.mlfield = line;
 	}
 
-	private void popnest() {
+	void popnest() {
 		mem[curlist.headfield].setrh(avail);
 		avail = curlist.headfield;
 		nestptr = nestptr - 1;
 		curlist.copy(nest[nestptr]);
 	}
 
-	private void fixdateandtime() {
+	void fixdateandtime() {
 		eqtb[9583].setInt(12 * 60);
 		eqtb[9584].setInt(4);
 		eqtb[9585].setInt(7);
 		eqtb[9586].setInt(1776);
 	}
 
-	private int idlookup(final int j, final int l) {
+	int idlookup(final int j, final int l) {
 		/* 40 */int Result;
 		int h;
 		int d;
@@ -2105,7 +2115,7 @@ public final class Tex {
 					if (hash[p - 514].rh > 0) {
 						do {
 							if ((hashused == 514)) {
-								overflow(503, 6400);
+								errorLogic.overflow(503, 6400);
 							}
 							hashused = hashused - 1;
 						} while (!(hash[hashused - 514].rh == 0));
@@ -2114,7 +2124,7 @@ public final class Tex {
 					}
 					{
 						if (poolptr + l > poolsize) {
-							overflow(257, poolsize - initpoolptr);
+							errorLogic.overflow(257, poolsize - initpoolptr);
 						}
 					}
 					d = (poolptr - strstart[strptr]);
@@ -2137,7 +2147,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void primitive(final int s, final int c, final int o) {
+	void primitive(final int s, final int c, final int o) {
 		if (s < 256) {
 			curval = s + 257;
 		} else {
@@ -2154,18 +2164,18 @@ public final class Tex {
 		eqtb[curval].setrh(o);
 	}
 
-	private void newsavelevel(final int c) {
+	void newsavelevel(final int c) {
 		if (saveptr > maxsavestack) {
 			maxsavestack = saveptr;
 			if (maxsavestack > savesize - 6) {
-				overflow(541, savesize);
+				errorLogic.overflow(541, savesize);
 			}
 		}
 		savestack[saveptr].setb0(3);
 		savestack[saveptr].setb1(curgroup);
 		savestack[saveptr].setrh(curboundary);
 		if (curlevel == 255) {
-			overflow(542, 255);
+			errorLogic.overflow(542, 255);
 		}
 		curboundary = saveptr;
 		curlevel = curlevel + 1;
@@ -2173,7 +2183,7 @@ public final class Tex {
 		curgroup = c;
 	}
 
-	private void eqdestroy(final memoryword w) {
+	void eqdestroy(final memoryword w) {
 		int q;
 		switch (w.getb0()) {
 		case 111:
@@ -2201,11 +2211,11 @@ public final class Tex {
 		}
 	}
 
-	private void eqsave(final int p, final int l) {
+	void eqsave(final int p, final int l) {
 		if (saveptr > maxsavestack) {
 			maxsavestack = saveptr;
 			if (maxsavestack > savesize - 6) {
-				overflow(541, savesize);
+				errorLogic.overflow(541, savesize);
 			}
 		}
 		if (l == 0) {
@@ -2220,7 +2230,7 @@ public final class Tex {
 		saveptr = saveptr + 1;
 	}
 
-	private void eqdefine(final int p, final int t, final int e) {
+	void eqdefine(final int p, final int t, final int e) {
 		if (eqtb[p].getb1() == curlevel) {
 			eqdestroy(eqtb[p]);
 		} else if (curlevel > 1) {
@@ -2231,7 +2241,7 @@ public final class Tex {
 		eqtb[p].setrh(e);
 	}
 
-	private void eqworddefine(final int p, final int w) {
+	void eqworddefine(final int p, final int w) {
 		if (xeqlevel[p - 9563] != curlevel) {
 			eqsave(p, xeqlevel[p - 9563]);
 			xeqlevel[p - 9563] = curlevel;
@@ -2239,24 +2249,24 @@ public final class Tex {
 		eqtb[p].setInt(w);
 	}
 
-	private void geqdefine(final int p, final int t, final int e) {
+	void geqdefine(final int p, final int t, final int e) {
 		eqdestroy(eqtb[p]);
 		eqtb[p].setb1(1);
 		eqtb[p].setb0(t);
 		eqtb[p].setrh(e);
 	}
 
-	private void geqworddefine(final int p, final int w) {
+	void geqworddefine(final int p, final int w) {
 		eqtb[p].setInt(w);
 		xeqlevel[p - 9563] = 1;
 	}
 
-	private void saveforafter(final int t) {
+	void saveforafter(final int t) {
 		if (curlevel > 1) {
 			if (saveptr > maxsavestack) {
 				maxsavestack = saveptr;
 				if (maxsavestack > savesize - 6) {
-					overflow(541, savesize);
+					errorLogic.overflow(541, savesize);
 				}
 			}
 			savestack[saveptr].setb0(2);
@@ -2266,7 +2276,7 @@ public final class Tex {
 		}
 	}
 
-	private void unsave() {
+	void unsave() {
 		/* 30 */int p;
 		int l;
 		int t;
@@ -2282,7 +2292,7 @@ public final class Tex {
 				if (savestack[saveptr].getb0() == 2) {
 					t = curtok;
 					curtok = p;
-					backinput();
+					unreadToken();
 					curtok = t;
 				} else {
 					if (savestack[saveptr].getb0() == 0) {
@@ -2309,11 +2319,11 @@ public final class Tex {
 			/* lab30: */curgroup = savestack[saveptr].getb1();
 			curboundary = savestack[saveptr].getrh();
 		} else {
-			confusion(543);
+			errorLogic.confusion(543);
 		}
 	}
 
-	private void preparemag() {
+	void preparemag() {
 		if ((magset > 0) && (eqtb[9580].getInt() != magset)) {
 			{
 				printnl(262);
@@ -2327,7 +2337,7 @@ public final class Tex {
 				helpline[1] = 550;
 				helpline[0] = 551;
 			}
-			interror(magset);
+			errorLogic.interror(magset);
 			geqworddefine(9580, magset);
 		}
 		if ((eqtb[9580].getInt() <= 0) || (eqtb[9580].getInt() > 32768)) {
@@ -2339,13 +2349,13 @@ public final class Tex {
 				helpptr = 1;
 				helpline[0] = 553;
 			}
-			interror(eqtb[9580].getInt());
+			errorLogic.interror(eqtb[9580].getInt());
 			geqworddefine(9580, 1000);
 		}
 		magset = eqtb[9580].getInt();
 	}
 	
-	private void begintokenlist(final int p, final int t) {
+	void begintokenlist(final int p, final int t) {
 		dupInput();
 		curinput.setState(TOKENIZER_STATE_TOKEN_LIST);
 		curinput.setStart(p);
@@ -2380,7 +2390,7 @@ public final class Tex {
 		}
 	}
 
-	private void endtokenlist() {
+	void endtokenlist() {
 		if (curinput.getIndex() >= 3) {
 			if (curinput.getIndex() <= 4) {
 				flushlist(curinput.getStart());
@@ -2397,20 +2407,27 @@ public final class Tex {
 			if (alignstate > 500000) {
 				alignstate = 0;
 			} else {
-				fatalerror(595);
+				errorLogic.fatalerror(595);
 			}
 		}
 		popInput();
 	}
 
-	private void backinput() {
-		int p;
-
+	void unreadToken() {
+		insertToken(curtok, 3);
+	}
+	
+	void insertToken(int token) {
+		insertToken(token, 4);
+		curtok = token;
+	}
+	
+	void insertToken(int token, int type) {
 		popFinishedTokenLists();
-		p = getavail();
-		mem[p].setlh(curtok);
-		if (curtok < 768) {
-			if (curtok < 512) {
+		int p = allocateMemoryWord();
+		mem[p].setlh(token);
+		if (token < 768) {
+			if (token < 512) {
 				alignstate = alignstate - 1;
 			} else {
 				alignstate = alignstate + 1;
@@ -2419,13 +2436,13 @@ public final class Tex {
 		dupInput();
 		curinput.setState(TOKENIZER_STATE_TOKEN_LIST);
 		curinput.setStart(p);
-		curinput.setIndex(3);
+		curinput.setIndex(type);
 		curinput.setLoc(p);
 	}
 
-	private void beginfilereading() {
+	void beginfilereading() {
 		if (inopen == maxinopen) {
-			overflow(596, maxinopen);
+			errorLogic.overflow(596, maxinopen);
 		}
 		inopen = inopen + 1;
 		dupInput();
@@ -2436,7 +2453,7 @@ public final class Tex {
 		curinput.setName(0);
 	}
 
-	private void endfilereading() {
+	void endfilereading() {
 		first = curinput.getStart();
 		line = linestack[curinput.getIndex()];
 		if (curinput.getName() > 17) {
@@ -2446,13 +2463,13 @@ public final class Tex {
 		inopen = inopen - 1;
 	}
 
-	private void checkoutervalidity() {
+	void checkoutervalidity() {
 		int p;
 		int q;
 		if (scannerstatus != 0) {
 			if (curcs != 0) {
 				if ((curinput.getState() == TOKENIZER_STATE_TOKEN_LIST) || (curinput.getName() < 1) || (curinput.getName() > 17)) {
-					p = getavail();
+					p = allocateMemoryWord();
 					mem[p].setlh(4095 + curcs);
 					begintokenlist(p, 3);
 				}
@@ -2472,7 +2489,7 @@ public final class Tex {
 					}
 				}
 				print(606);
-				p = getavail();
+				p = allocateMemoryWord();
 				switch (scannerstatus) {
 				case 2: {
 					print(570);
@@ -2489,7 +2506,7 @@ public final class Tex {
 					print(572);
 					mem[p].setlh(637);
 					q = p;
-					p = getavail();
+					p = allocateMemoryWord();
 					mem[p].setrh(q);
 					mem[p].setlh(11010);
 					alignstate = -1000000;
@@ -2511,7 +2528,7 @@ public final class Tex {
 					helpline[1] = 610;
 					helpline[0] = 611;
 				}
-				error();
+				errorLogic.error();
 			} else {
 				{
 					printnl(262);
@@ -2531,13 +2548,13 @@ public final class Tex {
 				} else {
 					helpline[2] = 603;
 				}
-				curtok = 11013;
-				inserror();
+				insertToken(11013);
+				errorLogic.error();
 			}
 		}
 	}
 
-	private void getnext() {
+	void getnext() {
 		/* 20 25 21 26 40 10 */int k;
 		int t;
 		int cat;
@@ -2758,7 +2775,7 @@ public final class Tex {
 									helpline[1] = 614;
 									helpline[0] = 615;
 								}
-								error();
+								errorLogic.error();
 								continue lab20;
 							}
 							case 11: {
@@ -2868,7 +2885,7 @@ public final class Tex {
 							if (selector < 18) {
 								openlogfile();
 							}
-							fatalerror(617);
+							errorLogic.fatalerror(617);
 						}
 						continue lab25;
 					}
@@ -2922,7 +2939,7 @@ public final class Tex {
 				if (curcmd >= 4) {
 					if (alignstate == 0) {
 						if (scannerstatus == 4) {
-							fatalerror(595);
+							errorLogic.fatalerror(595);
 						}
 						curcmd = mem[curalign + 5].getlh();
 						mem[curalign + 5].setlh(curchr);
@@ -2940,11 +2957,11 @@ public final class Tex {
 		}
 	}
 
-	private void firmuptheline() {
+	void firmuptheline() {
 		curinput.setLimit(last);
 	}
 
-	private void gettoken() {
+	void gettoken() {
 		nonewcontrolsequence = false;
 		getnext();
 		nonewcontrolsequence = true;
@@ -2955,7 +2972,7 @@ public final class Tex {
 		}
 	}
 
-	private void macrocall() {
+	void macrocall() {
 		/* 10 22 30 31 40 */int r;
 		int p;
 		int q;
@@ -3034,13 +3051,13 @@ public final class Tex {
 									helpline[1] = 654;
 									helpline[0] = 655;
 								}
-								error();
+								errorLogic.error();
 								return /* lab10 */;
 							} else {
 								t = s;
 								do {
 									{
-										q = getavail();
+										q = allocateMemoryWord();
 										mem[p].setrh(q);
 										mem[q].setlh(mem[t].getlh());
 										p = q;
@@ -3084,7 +3101,7 @@ public final class Tex {
 										helpline[1] = 648;
 										helpline[0] = 649;
 									}
-									backerror();
+									errorLogic.backerror();
 								}
 								pstack[n] = mem[memtop - 3].getrh();
 								alignstate = alignstate - unbalance;
@@ -3102,7 +3119,7 @@ public final class Tex {
 										{
 											q = avail;
 											if (q == 0) {
-												q = getavail();
+												q = allocateMemoryWord();
 											} else {
 												avail = mem[q].getrh();
 												mem[q].setrh(0);
@@ -3129,7 +3146,7 @@ public final class Tex {
 													helpline[1] = 648;
 													helpline[0] = 649;
 												}
-												backerror();
+												errorLogic.backerror();
 											}
 											pstack[n] = mem[memtop - 3].getrh();
 											alignstate = alignstate - unbalance;
@@ -3152,13 +3169,13 @@ public final class Tex {
 								}
 								/* lab31: */rbraceptr = p;
 								{
-									q = getavail();
+									q = allocateMemoryWord();
 									mem[p].setrh(q);
 									mem[q].setlh(curtok);
 									p = q;
 								}
 							} else {
-								backinput();
+								unreadToken();
 								{
 									printnl(262);
 									print(637);
@@ -3176,8 +3193,8 @@ public final class Tex {
 								}
 								alignstate = alignstate + 1;
 								longstate = 111;
-								curtok = partoken;
-								inserror();
+								insertToken(partoken);
+								errorLogic.error();
 							}
 						} else {
 							if (curtok == 2592) {
@@ -3188,7 +3205,7 @@ public final class Tex {
 								}
 							}
 							{
-								q = getavail();
+								q = allocateMemoryWord();
 								mem[p].setrh(q);
 								mem[q].setlh(curtok);
 								p = q;
@@ -3241,7 +3258,7 @@ public final class Tex {
 			if (paramptr + n > maxparamstack) {
 				maxparamstack = paramptr + n;
 				if (maxparamstack > paramsize) {
-					overflow(636, paramsize);
+					errorLogic.overflow(636, paramsize);
 				}
 			}
 			for (m = 0; m <= n - 1; m++) {
@@ -3253,15 +3270,15 @@ public final class Tex {
 		warningindex = savewarningindex;
 	}
 
-	private void insertrelax() {
+	void insertrelax() {
 		curtok = 4095 + curcs;
-		backinput();
+		unreadToken();
 		curtok = 11016;
-		backinput();
+		unreadToken();
 		curinput.setIndex(4);
 	}
 
-	private void expand() {
+	void expand() {
 		int t;
 		int p, q, r;
 		int j;
@@ -3292,10 +3309,10 @@ public final class Tex {
 				if (curcmd > 100) {
 					expand();
 				} else {
-					backinput();
+					unreadToken();
 				}
 				curtok = t;
-				backinput();
+				unreadToken();
 			}
 				break;
 			case 103: {
@@ -3304,9 +3321,9 @@ public final class Tex {
 				gettoken();
 				scannerstatus = savescannerstatus;
 				t = curtok;
-				backinput();
+				unreadToken();
 				if (t >= 4095) {
-					p = getavail();
+					p = allocateMemoryWord();
 					mem[p].setlh(11018);
 					mem[p].setrh(curinput.getLoc());
 					curinput.setStart(p);
@@ -3315,12 +3332,12 @@ public final class Tex {
 			}
 				break;
 			case 107: {
-				r = getavail();
+				r = allocateMemoryWord();
 				p = r;
 				do {
 					getxtoken();
 					if (curcs == 0) {
-						q = getavail();
+						q = allocateMemoryWord();
 						mem[p].setrh(q);
 						mem[q].setlh(curtok);
 						p = q;
@@ -3338,7 +3355,7 @@ public final class Tex {
 						helpline[1] = 627;
 						helpline[0] = 628;
 					}
-					backerror();
+					errorLogic.backerror();
 				}
 				j = first;
 				p = mem[r].getrh();
@@ -3361,7 +3378,7 @@ public final class Tex {
 					eqdefine(curcs, 0, 256);
 				}
 				curtok = curcs + 4095;
-				backinput();
+				unreadToken();
 			}
 				break;
 			case 108:
@@ -3387,7 +3404,7 @@ public final class Tex {
 							helpptr = 1;
 							helpline[0] = 777;
 						}
-						error();
+						errorLogic.error();
 					}
 				} else {
 					while (curchr != 2) {
@@ -3425,7 +3442,7 @@ public final class Tex {
 					helpline[1] = 623;
 					helpline[0] = 624;
 				}
-				error();
+				errorLogic.error();
 			}
 				break;
 			}
@@ -3433,7 +3450,7 @@ public final class Tex {
 			macrocall();
 		} else {
 			curtok = 11015;
-			backinput();
+			unreadToken();
 		}
 		curval = cvbackup;
 		curvallevel = cvlbackup;
@@ -3442,7 +3459,7 @@ public final class Tex {
 		mem[memtop - 13].setrh(backupbackup);
 	}
 
-	private void getxtoken() {
+	void getxtoken() {
 		/* 20 30 */while (true) {
 			getnext();
 			if (curcmd <= 100) {
@@ -3467,7 +3484,7 @@ public final class Tex {
 		}
 	}
 
-	private void xtoken() {
+	void xtoken() {
 		while (curcmd > 100) {
 			expand();
 			getnext();
@@ -3479,7 +3496,7 @@ public final class Tex {
 		}
 	}
 
-	private void scanleftbrace() {
+	void scanleftbrace() {
 		do {
 			getxtoken();
 		} while (!((curcmd != 10) && (curcmd != 0)));
@@ -3495,7 +3512,7 @@ public final class Tex {
 				helpline[1] = 660;
 				helpline[0] = 661;
 			}
-			backerror();
+			errorLogic.backerror();
 			curtok = 379;
 			curcmd = 1;
 			curchr = 123;
@@ -3503,16 +3520,16 @@ public final class Tex {
 		}
 	}
 
-	private void scanoptionalequals() {
+	void scanoptionalequals() {
 		do {
 			getxtoken();
 		} while (!(curcmd != 10));
 		if (curtok != 3133) {
-			backinput();
+			unreadToken();
 		}
 	}
 
-	private boolean scankeyword(final int s) {
+	boolean scankeyword(final int s) {
 		/* 10 */boolean Result;
 		int p;
 		int q;
@@ -3524,14 +3541,14 @@ public final class Tex {
 			getxtoken();
 			if ((curcs == 0) && ((curchr == strpool[k]) || (curchr == strpool[k] - 32))) {
 				{
-					q = getavail();
+					q = allocateMemoryWord();
 					mem[p].setrh(q);
 					mem[q].setlh(curtok);
 					p = q;
 				}
 				k = k + 1;
 			} else if ((curcmd != 10) || (p != memtop - 13)) {
-				backinput();
+				unreadToken();
 				if (p != memtop - 13) {
 					begintokenlist(mem[memtop - 13].getrh(), 3);
 				}
@@ -3544,7 +3561,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void scaneightbitint() {
+	void scaneightbitint() {
 		scanint();
 		if ((curval < 0) || (curval > 255)) {
 			{
@@ -3556,12 +3573,12 @@ public final class Tex {
 				helpline[1] = 688;
 				helpline[0] = 689;
 			}
-			interror(curval);
+			errorLogic.interror(curval);
 			curval = 0;
 		}
 	}
 
-	private void scancharnum() {
+	void scancharnum() {
 		scanint();
 		if ((curval < 0) || (curval > 255)) {
 			{
@@ -3573,12 +3590,12 @@ public final class Tex {
 				helpline[1] = 691;
 				helpline[0] = 689;
 			}
-			interror(curval);
+			errorLogic.interror(curval);
 			curval = 0;
 		}
 	}
 
-	private void scanfourbitint() {
+	void scanfourbitint() {
 		scanint();
 		if ((curval < 0) || (curval > 15)) {
 			{
@@ -3590,12 +3607,12 @@ public final class Tex {
 				helpline[1] = 693;
 				helpline[0] = 689;
 			}
-			interror(curval);
+			errorLogic.interror(curval);
 			curval = 0;
 		}
 	}
 
-	private void scanfifteenbitint() {
+	void scanfifteenbitint() {
 		scanint();
 		if ((curval < 0) || (curval > 32767)) {
 			{
@@ -3607,12 +3624,12 @@ public final class Tex {
 				helpline[1] = 695;
 				helpline[0] = 689;
 			}
-			interror(curval);
+			errorLogic.interror(curval);
 			curval = 0;
 		}
 	}
 
-	private void scantwentysevenbitint() {
+	void scantwentysevenbitint() {
 		scanint();
 		if ((curval < 0) || (curval > 134217727)) {
 			{
@@ -3624,12 +3641,12 @@ public final class Tex {
 				helpline[1] = 697;
 				helpline[0] = 689;
 			}
-			interror(curval);
+			errorLogic.interror(curval);
 			curval = 0;
 		}
 	}
 
-	private void scanfontident() {
+	void scanfontident() {
 		int f;
 		int m;
 		do {
@@ -3653,13 +3670,13 @@ public final class Tex {
 				helpline[1] = 818;
 				helpline[0] = 819;
 			}
-			backerror();
+			errorLogic.backerror();
 			f = 0;
 		}
 		curval = f;
 	}
 
-	private void findfontdimen(final boolean writing) {
+	void findfontdimen(final boolean writing) {
 		int f;
 		int n;
 		scanint();
@@ -3679,7 +3696,7 @@ public final class Tex {
 				} else {
 					do {
 						if (fmemptr == fontmemsize) {
-							overflow(824, fontmemsize);
+							errorLogic.overflow(824, fontmemsize);
 						}
 						fontinfo[fmemptr].setInt(0);
 						fmemptr = fmemptr + 1;
@@ -3705,11 +3722,11 @@ public final class Tex {
 				helpline[1] = 822;
 				helpline[0] = 823;
 			}
-			error();
+			errorLogic.error();
 		}
 	}
 
-	private void scansomethinginternal(final int level, final boolean negative) {
+	void scansomethinginternal(final int level, final boolean negative) {
 		int m;
 		int p;
 		m = curchr;
@@ -3744,7 +3761,7 @@ public final class Tex {
 					helpline[1] = 666;
 					helpline[0] = 667;
 				}
-				backerror();
+				errorLogic.backerror();
 				{
 					curval = 0;
 					curvallevel = 1;
@@ -3759,7 +3776,7 @@ public final class Tex {
 					curvallevel = 5;
 				}
 			} else {
-				backinput();
+				unreadToken();
 				scanfontident();
 				{
 					curval = 6924 + curval;
@@ -3801,7 +3818,7 @@ public final class Tex {
 					helpline[1] = 683;
 					helpline[0] = 684;
 				}
-				error();
+				errorLogic.error();
 				if (level != 5) {
 					curval = 0;
 					curvallevel = 1;
@@ -3984,7 +4001,7 @@ public final class Tex {
 				helpptr = 1;
 				helpline[0] = 684;
 			}
-			error();
+			errorLogic.error();
 			if (level != 5) {
 				curval = 0;
 				curvallevel = 1;
@@ -3999,7 +4016,7 @@ public final class Tex {
 			if (curvallevel == 2) {
 				curval = mem[curval + 1].getInt();
 			} else if (curvallevel == 3) {
-				muerror();
+				errorLogic.muerror();
 			}
 			curvallevel = curvallevel - 1;
 		}
@@ -4019,7 +4036,7 @@ public final class Tex {
 		}
 	}
 
-	private void scanint() {
+	void scanint() {
 		/* 30 */boolean negative;
 		int m;
 		int d;
@@ -4064,11 +4081,11 @@ public final class Tex {
 					helpline[0] = 700;
 				}
 				curval = 48;
-				backerror();
+				errorLogic.backerror();
 			} else {
 				getxtoken();
 				if (curcmd != 10) {
-					backinput();
+					unreadToken();
 				}
 			}
 		} else if ((curcmd >= 68) && (curcmd <= 89)) {
@@ -4113,7 +4130,7 @@ public final class Tex {
 							helpline[1] = 702;
 							helpline[0] = 703;
 						}
-						error();
+						errorLogic.error();
 						curval = 2147483647;
 						OKsofar = false;
 					}
@@ -4133,9 +4150,9 @@ public final class Tex {
 					helpline[1] = 666;
 					helpline[0] = 667;
 				}
-				backerror();
+				errorLogic.backerror();
 			} else if (curcmd != 10) {
-				backinput();
+				unreadToken();
 			}
 		}
 		if (negative) {
@@ -4143,7 +4160,7 @@ public final class Tex {
 		}
 	}
 
-	private void scandimen(final boolean mu, final boolean inf, final boolean shortcut) {
+	void scandimen(final boolean mu, final boolean inf, final boolean shortcut) {
 		/* 30 31 32 40 45 88 89 */boolean negative;
 		int f;
 		int num, denom;
@@ -4179,7 +4196,7 @@ public final class Tex {
 							break lab89;
 						}
 						if (curvallevel != 0) {
-							muerror();
+							errorLogic.muerror();
 						}
 					} else {
 						scansomethinginternal(1, false);
@@ -4188,7 +4205,7 @@ public final class Tex {
 						}
 					}
 				} else {
-					backinput();
+					unreadToken();
 					if (curtok == 3116) {
 						curtok = 3118;
 					}
@@ -4211,7 +4228,7 @@ public final class Tex {
 								break lab31;
 							}
 							if (k < 17) {
-								q = getavail();
+								q = allocateMemoryWord();
 								mem[q].setrh(p);
 								mem[q].setlh(curtok - 3120);
 								p = q;
@@ -4229,7 +4246,7 @@ public final class Tex {
 						}
 						f = rounddecimals(k);
 						if (curcmd != 10) {
-							backinput();
+							unreadToken();
 						}
 					}
 				}
@@ -4254,7 +4271,7 @@ public final class Tex {
 										helpptr = 1;
 										helpline[0] = 707;
 									}
-									error();
+									errorLogic.error();
 								} else {
 									curorder = curorder + 1;
 								}
@@ -4271,7 +4288,7 @@ public final class Tex {
 						lab40: while (true) {
 							;
 							if ((curcmd < 68) || (curcmd > 89)) {
-								backinput();
+								unreadToken();
 							} else {
 								if (mu) {
 									scansomethinginternal(3, false);
@@ -4281,7 +4298,7 @@ public final class Tex {
 										curval = v;
 									}
 									if (curvallevel != 3) {
-										muerror();
+										errorLogic.muerror();
 									}
 								} else {
 									scansomethinginternal(1, false);
@@ -4302,7 +4319,7 @@ public final class Tex {
 							{
 								getxtoken();
 								if (curcmd != 10) {
-									backinput();
+									unreadToken();
 								}
 							}
 							break;
@@ -4326,7 +4343,7 @@ public final class Tex {
 								helpline[1] = 713;
 								helpline[0] = 714;
 							}
-							error();
+							errorLogic.error();
 							break lab88;
 						}
 					}
@@ -4381,7 +4398,7 @@ public final class Tex {
 								helpline[1] = 713;
 								helpline[0] = 714;
 							}
-							error();
+							errorLogic.error();
 							break lab32;
 						}
 						curval = xnoverd(curval, num, denom);
@@ -4402,7 +4419,7 @@ public final class Tex {
 			/* lab30: */{
 				getxtoken();
 				if (curcmd != 10) {
-					backinput();
+					unreadToken();
 				}
 			}
 			break;
@@ -4417,7 +4434,7 @@ public final class Tex {
 				helpline[1] = 728;
 				helpline[0] = 729;
 			}
-			error();
+			errorLogic.error();
 			curval = 1073741823;
 			aritherror = false;
 		}
@@ -4426,7 +4443,7 @@ public final class Tex {
 		}
 	}
 
-	private void scanglue(final int level) {
+	void scanglue(final int level) {
 		/* 10 */boolean negative;
 		int q;
 		boolean mu;
@@ -4445,17 +4462,17 @@ public final class Tex {
 			scansomethinginternal(level, negative);
 			if (curvallevel >= 2) {
 				if (curvallevel != level) {
-					muerror();
+					errorLogic.muerror();
 				}
 				return /* lab10 */;
 			}
 			if (curvallevel == 0) {
 				scandimen(mu, false, true);
 			} else if (level == 3) {
-				muerror();
+				errorLogic.muerror();
 			}
 		} else {
-			backinput();
+			unreadToken();
 			scandimen(mu, false, false);
 			if (negative) {
 				curval = -curval;
@@ -4476,7 +4493,7 @@ public final class Tex {
 		curval = q;
 	}
 
-	private int scanrulespec() {
+	int scanrulespec() {
 		/* 21 */int Result;
 		int q;
 		q = newrule();
@@ -4508,7 +4525,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int strtoks(final int b) {
+	int strtoks(final int b) {
 		int Result;
 		int p;
 		int q;
@@ -4516,7 +4533,7 @@ public final class Tex {
 		int k;
 		{
 			if (poolptr + 1 > poolsize) {
-				overflow(257, poolsize - initpoolptr);
+				errorLogic.overflow(257, poolsize - initpoolptr);
 			}
 		}
 		p = memtop - 3;
@@ -4533,7 +4550,7 @@ public final class Tex {
 				{
 					q = avail;
 					if (q == 0) {
-						q = getavail();
+						q = allocateMemoryWord();
 					} else {
 						avail = mem[q].getrh();
 						mem[q].setrh(0);
@@ -4550,7 +4567,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int thetoks() {
+	int thetoks() {
 		int Result;
 		int oldsetting;
 		int p, q, r;
@@ -4561,7 +4578,7 @@ public final class Tex {
 			p = memtop - 3;
 			mem[p].setrh(0);
 			if (curvallevel == 4) {
-				q = getavail();
+				q = allocateMemoryWord();
 				mem[p].setrh(q);
 				mem[q].setlh(4095 + curval);
 				p = q;
@@ -4572,7 +4589,7 @@ public final class Tex {
 						{
 							q = avail;
 							if (q == 0) {
-								q = getavail();
+								q = allocateMemoryWord();
 							} else {
 								avail = mem[q].getrh();
 								mem[q].setrh(0);
@@ -4616,12 +4633,12 @@ public final class Tex {
 		return Result;
 	}
 
-	private void insthetoks() {
+	void insthetoks() {
 		mem[memtop - 12].setrh(thetoks());
 		begintokenlist(mem[memtop - 3].getrh(), 4);
 	}
 
-	private void convtoks() {
+	void convtoks() {
 		int oldsetting;
 		int c;
 		int savescannerstatus;
@@ -4684,7 +4701,7 @@ public final class Tex {
 		begintokenlist(mem[memtop - 3].getrh(), 4);
 	}
 
-	private int scantoks(final boolean macrodef, final boolean xpand) {
+	int scantoks(final boolean macrodef, final boolean xpand) {
 		/* 40 30 31 32 */int Result;
 		int t;
 		int s;
@@ -4698,7 +4715,7 @@ public final class Tex {
 			scannerstatus = 5;
 		}
 		warningindex = curcs;
-		defref = getavail();
+		defref = allocateMemoryWord();
 		mem[defref].setlh(0);
 		p = defref;
 		hashbrace = 0;
@@ -4718,13 +4735,13 @@ public final class Tex {
 								if (curcmd == 1) {
 									hashbrace = curtok;
 									{
-										q = getavail();
+										q = allocateMemoryWord();
 										mem[p].setrh(q);
 										mem[q].setlh(curtok);
 										p = q;
 									}
 									{
-										q = getavail();
+										q = allocateMemoryWord();
 										mem[p].setrh(q);
 										mem[q].setlh(3584);
 										p = q;
@@ -4740,7 +4757,7 @@ public final class Tex {
 										helpptr = 1;
 										helpline[0] = 745;
 									}
-									error();
+									errorLogic.error();
 								} else {
 									t = t + 1;
 									if (curtok != t) {
@@ -4753,20 +4770,20 @@ public final class Tex {
 											helpline[1] = 747;
 											helpline[0] = 748;
 										}
-										backerror();
+										errorLogic.backerror();
 									}
 									curtok = s;
 								}
 							}
 							{
-								q = getavail();
+								q = allocateMemoryWord();
 								mem[p].setrh(q);
 								mem[q].setlh(curtok);
 								p = q;
 							}
 						}
 						/* lab31: */{
-							q = getavail();
+							q = allocateMemoryWord();
 							mem[p].setrh(q);
 							mem[q].setlh(3584);
 							p = q;
@@ -4782,7 +4799,7 @@ public final class Tex {
 								helpline[1] = 742;
 								helpline[0] = 743;
 							}
-							error();
+							errorLogic.error();
 							break lab40;
 						}
 						break;
@@ -4843,7 +4860,7 @@ public final class Tex {
 									helpline[1] = 751;
 									helpline[0] = 752;
 								}
-								backerror();
+								errorLogic.backerror();
 								curtok = s;
 							} else {
 								curtok = 1232 + curchr;
@@ -4852,7 +4869,7 @@ public final class Tex {
 					}
 				}
 				{
-					q = getavail();
+					q = allocateMemoryWord();
 					mem[p].setrh(q);
 					mem[q].setlh(curtok);
 					p = q;
@@ -4861,7 +4878,7 @@ public final class Tex {
 		}
 		/* lab40: */scannerstatus = 0;
 		if (hashbrace != 0) {
-			q = getavail();
+			q = allocateMemoryWord();
 			mem[p].setrh(q);
 			mem[q].setlh(hashbrace);
 			p = q;
@@ -4870,18 +4887,18 @@ public final class Tex {
 		return Result;
 	}
 
-	private void readtoks(final int n, final int r) {
+	void readtoks(final int n, final int r) {
 		/* 30 */int p;
 		int q;
 		int s;
 		int m;
 		scannerstatus = 2;
 		warningindex = r;
-		defref = getavail();
+		defref = allocateMemoryWord();
 		mem[defref].setlh(0);
 		p = defref;
 		{
-			q = getavail();
+			q = allocateMemoryWord();
 			mem[p].setrh(q);
 			mem[q].setlh(3584);
 			p = q;
@@ -4897,7 +4914,7 @@ public final class Tex {
 			beginfilereading();
 			curinput.setName(m + 1);
 			if (readopen[m] == 2) {
-				fatalerror(753);
+				errorLogic.fatalerror(753);
 			} else if (readopen[m] == 1) {
 				if (inputln(readfile[m], false)) {
 					readopen[m] = 0;
@@ -4921,7 +4938,7 @@ public final class Tex {
 							helpline[0] = 755;
 						}
 						alignstate = 1000000;
-						error();
+						errorLogic.error();
 					}
 				}
 			}
@@ -4947,7 +4964,7 @@ public final class Tex {
 					break /* lab30 */;
 				}
 				{
-					q = getavail();
+					q = allocateMemoryWord();
 					mem[p].setrh(q);
 					mem[q].setlh(curtok);
 					p = q;
@@ -4960,7 +4977,7 @@ public final class Tex {
 		alignstate = s;
 	}
 
-	private void passtext() {
+	void passtext() {
 		/* 30 */int l;
 		int savescannerstatus;
 		savescannerstatus = scannerstatus;
@@ -4983,7 +5000,7 @@ public final class Tex {
 		/* lab30: */scannerstatus = savescannerstatus;
 	}
 
-	private void changeiflimit(final int l, final int p) {
+	void changeiflimit(final int l, final int p) {
 		/* 10 */int q;
 		if (p == condptr) {
 			iflimit = l;
@@ -4991,7 +5008,7 @@ public final class Tex {
 			q = condptr;
 			while (true) {
 				if (q == 0) {
-					confusion(756);
+					errorLogic.confusion(756);
 				}
 				if (mem[q].getrh() == p) {
 					mem[q].setb0(l);
@@ -5002,7 +5019,7 @@ public final class Tex {
 		}
 	}
 
-	private void conditional() {
+	void conditional() {
 		/* 10 50 */boolean b;
 		int r;
 		int m, n;
@@ -5087,7 +5104,7 @@ public final class Tex {
 						helpptr = 1;
 						helpline[0] = 781;
 					}
-					backerror();
+					errorLogic.backerror();
 					r = 61;
 				}
 				if (thisif == 2) {
@@ -5243,7 +5260,7 @@ public final class Tex {
 						helpptr = 1;
 						helpline[0] = 777;
 					}
-					error();
+					errorLogic.error();
 				} else if (curchr == 2) {
 					p = condptr;
 					ifline = mem[p + 1].getInt();
@@ -5266,19 +5283,19 @@ public final class Tex {
 		}
 	}
 
-	private void beginname() {
+	void beginname() {
 		areadelimiter = 0;
 		extdelimiter = 0;
 	}
 
-	private boolean morename(final int c) {
+	boolean morename(final int c) {
 		boolean Result;
 		if (c == 32) {
 			Result = false;
 		} else {
 			{
 				if (poolptr + 1 > poolsize) {
-					overflow(257, poolsize - initpoolptr);
+					errorLogic.overflow(257, poolsize - initpoolptr);
 				}
 			}
 			{
@@ -5296,9 +5313,9 @@ public final class Tex {
 		return Result;
 	}
 
-	private void endname() {
+	void endname() {
 		if (strptr + 3 > maxstrings) {
-			overflow(258, maxstrings - initstrptr);
+			errorLogic.overflow(258, maxstrings - initstrptr);
 		}
 		if (areadelimiter == 0) {
 			curarea = 338;
@@ -5318,7 +5335,7 @@ public final class Tex {
 		}
 	}
 
-	private void packfilename(final int n, final int a, final int e) {
+	void packfilename(final int n, final int a, final int e) {
 		final StringBuffer strbuf = new StringBuffer();
 		int j;
 		namelength = 0;
@@ -5337,7 +5354,7 @@ public final class Tex {
 		nameoffile = strbuf.toString();
 	}
 
-	private void packbufferedname(final int n, final int a, int b) {
+	void packbufferedname(final int n, final int a, int b) {
 		int j;
 		final StringBuffer strbuf = new StringBuffer();
 		StringBuffer TEXbuf;
@@ -5361,7 +5378,7 @@ public final class Tex {
 		nameoffile = strbuf.toString();
 	}
 
-	private int makenamestring() {
+	int makenamestring() {
 		int Result;
 		int k;
 		StringBuffer strbuf = new StringBuffer();
@@ -5378,7 +5395,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void scanfilename() {
+	void scanfilename() {
 		/* 30 */nameinprogress = true;
 		beginname();
 		do {
@@ -5386,7 +5403,7 @@ public final class Tex {
 		} while (!(curcmd != 10));
 		while (true) {
 			if ((curcmd > 12) || (curchr > 255)) {
-				backinput();
+				unreadToken();
 				break /* lab30 */;
 			}
 			if (!morename(curchr)) {
@@ -5398,14 +5415,14 @@ public final class Tex {
 		nameinprogress = false;
 	}
 
-	private void packjobname(final int s) {
+	void packjobname(final int s) {
 		curarea = 338;
 		curext = s;
 		curname = jobname;
 		packfilename(curname, curarea, curext);
 	}
 
-	private void openlogfile() {
+	void openlogfile() {
 		int oldsetting;
 		int k;
 		int l;
@@ -5451,7 +5468,7 @@ public final class Tex {
 		selector = oldsetting + 2;
 	}
 
-	private void startinput() {
+	void startinput() {
 		/* 30 */scanfilename();
 		if (curext == 338) {
 			curext = 791;
@@ -5492,7 +5509,7 @@ public final class Tex {
 			showcontext();
 			printnl(792);
 			print(787);
-			fatalerror(793);
+			errorLogic.fatalerror(793);
 		}
 		/* lab30: */curinput.setName(makenamestring());
 		if ((termoffset > 0) || (fileoffset > 0)) {
@@ -5524,7 +5541,7 @@ public final class Tex {
 		}
 	}
 
-	private int readfontinfo(final int u, final int nom, final int aire, final int s) {
+	int readfontinfo(final int u, final int nom, final int aire, final int s) {
 		/* 30 11 45 */int Result;
 		int k;
 		boolean fileopened;
@@ -5682,7 +5699,7 @@ public final class Tex {
 							helpline[1] = 815;
 							helpline[0] = 816;
 						}
-						error();
+						errorLogic.error();
 						break lab30;
 					}
 					f = fontptr + 1;
@@ -6057,7 +6074,7 @@ public final class Tex {
 				helpline[1] = 809;
 				helpline[0] = 810;
 			}
-			error();
+			errorLogic.error();
 			break;
 		}
 		/* lab30: */if (fileopened) {
@@ -6067,13 +6084,13 @@ public final class Tex {
 		return Result;
 	}
 
-	private int newcharacter(final int f, final int c) {
+	int newcharacter(final int f, final int c) {
 		/* 10 */int Result;
 		int p;
 		if (fontbc[f] <= c) {
 			if (fontec[f] >= c) {
 				if ((fontinfo[charbase[f] + c].getb0() > 0)) {
-					p = getavail();
+					p = allocateMemoryWord();
 					mem[p].setb0(f);
 					mem[p].setb1(c);
 					Result = p;
@@ -6086,7 +6103,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void writedvi(final int a, final int b) {
+	void writedvi(final int a, final int b) {
 		int k;
 		try {
 			for (k = a; k <= b; k++) {
@@ -6097,7 +6114,7 @@ public final class Tex {
 		}
 	}
 
-	private void dviswap() {
+	void dviswap() {
 		if (dvilimit == dvibufsize) {
 			writedvi(0, halfbuf - 1);
 			dvilimit = halfbuf;
@@ -6110,7 +6127,7 @@ public final class Tex {
 		dvigone = dvigone + halfbuf;
 	}
 
-	private void dvifour(int x) {
+	void dvifour(int x) {
 		if (x >= 0) {
 			dvibuf[dviptr] = x / 16777216;
 			dviptr = dviptr + 1;
@@ -6153,7 +6170,7 @@ public final class Tex {
 		}
 	}
 
-	private void dvipop(final int l) {
+	void dvipop(final int l) {
 		if ((l == dvioffset + dviptr) && (dviptr > 0)) {
 			dviptr = dviptr - 1;
 		} else {
@@ -6165,7 +6182,7 @@ public final class Tex {
 		}
 	}
 
-	private void dvifontdef(final int f) {
+	void dvifontdef(final int f) {
 		int k;
 		{
 			dvibuf[dviptr] = 243;
@@ -6241,7 +6258,7 @@ public final class Tex {
 		}
 	}
 
-	private void movement(int w, final int o) {
+	void movement(int w, final int o) {
 		/* 10 40 45 2 1 */int mstate;
 		int p, q;
 		int k;
@@ -6447,7 +6464,7 @@ public final class Tex {
 		}
 	}
 
-	private void prunemovements(final int l) {
+	void prunemovements(final int l) {
 		/* 30 10 */int p;
 		while (downptr != 0) {
 			if (mem[downptr + 2].getInt() < l) {
@@ -6467,7 +6484,7 @@ public final class Tex {
 		}
 	}
 
-	private void specialout(final int p) {
+	void specialout(final int p) {
 		int oldsetting;
 		int k;
 		if (curh != dvih) {
@@ -6484,7 +6501,7 @@ public final class Tex {
 		selector = oldsetting;
 		{
 			if (poolptr + 1 > poolsize) {
-				overflow(257, poolsize - initpoolptr);
+				errorLogic.overflow(257, poolsize - initpoolptr);
 			}
 		}
 		if ((poolptr - strstart[strptr]) < 256) {
@@ -6522,19 +6539,19 @@ public final class Tex {
 		poolptr = strstart[strptr];
 	}
 
-	private void writeout(final int p) {
+	void writeout(final int p) {
 		int oldsetting;
 		int oldmode;
 		int j;
 		int q, r;
-		q = getavail();
+		q = allocateMemoryWord();
 		mem[q].setlh(637);
-		r = getavail();
+		r = allocateMemoryWord();
 		mem[q].setrh(r);
 		mem[r].setlh(11017);
 		begintokenlist(q, 4);
 		begintokenlist(mem[p + 1].getrh(), 15);
-		q = getavail();
+		q = allocateMemoryWord();
 		mem[q].setlh(379);
 		begintokenlist(q, 4);
 		oldmode = curlist.modefield;
@@ -6552,7 +6569,7 @@ public final class Tex {
 				helpline[1] = 1298;
 				helpline[0] = 1012;
 			}
-			error();
+			errorLogic.error();
 			do {
 				gettoken();
 			} while (!(curtok == 11017));
@@ -6575,7 +6592,7 @@ public final class Tex {
 		selector = oldsetting;
 	}
 
-	private void outwhat(final int p) {
+	void outwhat(final int p) {
 		int j;
 		switch (mem[p].getb1()) {
 		case 0:
@@ -6616,12 +6633,12 @@ public final class Tex {
 			;
 			break;
 		default:
-			confusion(1299);
+			errorLogic.confusion(1299);
 			break;
 		}
 	}
 
-	private void hlistout() {
+	void hlistout() {
 		/* 21 13 14 15 */int baseline;
 		int leftedge;
 		int saveh, savev;
@@ -6896,7 +6913,7 @@ public final class Tex {
 		curs = curs - 1;
 	}
 
-	private void vlistout() {
+	void vlistout() {
 		/* 13 14 15 */int leftedge;
 		int topedge;
 		int saveh, savev;
@@ -6933,7 +6950,7 @@ public final class Tex {
 		while (p != 0) {
 			lab15: while (true) {
 				if ((p >= himemmin)) {
-					confusion(828);
+					errorLogic.confusion(828);
 				} else {
 					lab13: while (true) {
 						lab14: while (true) {
@@ -7105,7 +7122,7 @@ public final class Tex {
 		curs = curs - 1;
 	}
 
-	private void shipout(final int p) {
+	void shipout(final int p) {
 		/* 30 */int pageloc;
 		int j, k;
 		int s;
@@ -7143,7 +7160,7 @@ public final class Tex {
 				helpptr = 2;
 				helpline[1] = 834;
 				helpline[0] = 835;
-				error();
+				errorLogic.error();
 				if (eqtb[9597].getInt() <= 0) {
 					begindiagnostic();
 					printnl(836);
@@ -7253,7 +7270,7 @@ public final class Tex {
 		flushnodelist(p);
 	}
 
-	private void scanspec(final int c, final boolean threecodes) {
+	void scanspec(final int c, final boolean threecodes) {
 		/* 40 */int s;
 		int speccode;
 		if (threecodes) {
@@ -7285,7 +7302,7 @@ public final class Tex {
 		scanleftbrace();
 	}
 
-	private int hpack(int p, int w, final int m) {
+	int hpack(int p, int w, final int m) {
 		/* 21 50 10 */int Result;
 		int r;
 		int q;
@@ -7544,7 +7561,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int vpackage(int p, int h, final int m, final int l) {
+	int vpackage(int p, int h, final int m, final int l) {
 		/* 50 10 */int Result;
 		int r;
 		int w, d, x;
@@ -7570,7 +7587,7 @@ public final class Tex {
 		totalshrink[3] = 0;
 		while (p != 0) {
 			if ((p >= himemmin)) {
-				confusion(855);
+				errorLogic.confusion(855);
 			} else {
 				switch (mem[p].getb0()) {
 				case 0:
@@ -7739,7 +7756,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void appendtovlist(final int b) {
+	void appendtovlist(final int b) {
 		int d;
 		int p;
 		if (curlist.auxfield.getInt() > -65536000) {
@@ -7758,7 +7775,7 @@ public final class Tex {
 		curlist.auxfield.setInt(mem[b + 2].getInt());
 	}
 
-	private int newnoad() {
+	int newnoad() {
 		int Result;
 		int p;
 		p = getnode(4);
@@ -7771,7 +7788,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int newstyle(final int s) {
+	int newstyle(final int s) {
 		int Result;
 		int p;
 		p = getnode(3);
@@ -7783,7 +7800,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int newchoice() {
+	int newchoice() {
 		int Result;
 		int p;
 		p = getnode(3);
@@ -7797,7 +7814,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int fractionrule(final int t) {
+	int fractionrule(final int t) {
 		int Result;
 		int p;
 		p = newrule();
@@ -7807,7 +7824,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int overbar(final int b, final int k, final int t) {
+	int overbar(final int b, final int k, final int t) {
 		int Result;
 		int p, q;
 		p = newkern(k);
@@ -7820,7 +7837,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int charbox(final int f, final int c) {
+	int charbox(final int f, final int c) {
 		int Result;
 		final fourquarters q = new fourquarters();
 		int hd;
@@ -7831,7 +7848,7 @@ public final class Tex {
 		mem[b + 1].setInt(fontinfo[widthbase[f] + q.b0].getInt() + fontinfo[italicbase[f] + (q.b2) / 4].getInt());
 		mem[b + 3].setInt(fontinfo[heightbase[f] + (hd) / 16].getInt());
 		mem[b + 2].setInt(fontinfo[depthbase[f] + (hd) % 16].getInt());
-		p = getavail();
+		p = allocateMemoryWord();
 		mem[p].setb1(c);
 		mem[p].setb0(f);
 		mem[b + 5].setrh(p);
@@ -7839,7 +7856,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void stackintobox(final int b, final int f, final int c) {
+	void stackintobox(final int b, final int f, final int c) {
 		int p;
 		p = charbox(f, c);
 		mem[p].setrh(mem[b + 5].getrh());
@@ -7847,7 +7864,7 @@ public final class Tex {
 		mem[b + 3].setInt(mem[p + 3].getInt());
 	}
 
-	private int heightplusdepth(final int f, final int c) {
+	int heightplusdepth(final int f, final int c) {
 		int Result;
 		final fourquarters q = new fourquarters();
 		int hd;
@@ -7857,7 +7874,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int vardelimiter(final int d, final int s, final int v) {
+	int vardelimiter(final int d, final int s, final int v) {
 		/* 40 22 */int Result;
 		int b;
 		int f, g;
@@ -7987,7 +8004,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int rebox(int b, final int w) {
+	int rebox(int b, final int w) {
 		int Result;
 		int p;
 		int f;
@@ -8019,7 +8036,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int mathglue(final int g, final int m) {
+	int mathglue(final int g, final int m) {
 		int Result;
 		int p;
 		int n;
@@ -8048,7 +8065,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void mathkern(final int p, final int m) {
+	void mathkern(final int p, final int m) {
 		int n;
 		int f;
 		if (mem[p].getb1() == 99) {
@@ -8063,7 +8080,7 @@ public final class Tex {
 		}
 	}
 
-	private void flushmath() {
+	void flushmath() {
 		flushnodelist(mem[curlist.headfield].getrh());
 		flushnodelist(curlist.auxfield.getInt());
 		mem[curlist.headfield].setrh(0);
@@ -8071,7 +8088,7 @@ public final class Tex {
 		curlist.auxfield.setInt(0);
 	}
 
-	private int cleanbox(final int p, final int s) {
+	int cleanbox(final int p, final int s) {
 		/* 40 */int Result;
 		int q;
 		int savestyle;
@@ -8137,7 +8154,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void fetch(final int a) {
+	void fetch(final int a) {
 		curc = mem[a].getb1();
 		curf = eqtb[8235 + mem[a].getb0() + cursize].getrh();
 		if (curf == 0) {
@@ -8158,7 +8175,7 @@ public final class Tex {
 				helpline[1] = 887;
 				helpline[0] = 888;
 			}
-			error();
+			errorLogic.error();
 			curi.copy(nullcharacter);
 			mem[a].setrh(0);
 		} else {
@@ -8174,12 +8191,12 @@ public final class Tex {
 		}
 	}
 
-	private void makeover(final int q) {
+	void makeover(final int q) {
 		mem[q + 1].setlh(overbar(cleanbox(q + 1, 2 * (curstyle / 2) + 1), 3 * fontinfo[8 + parambase[eqtb[8238 + cursize].getrh()]].getInt(), fontinfo[8 + parambase[eqtb[8238 + cursize].getrh()]].getInt()));
 		mem[q + 1].setrh(2);
 	}
 
-	private void makeunder(final int q) {
+	void makeunder(final int q) {
 		int p, x, y;
 		int delta;
 		x = cleanbox(q + 1, curstyle);
@@ -8194,19 +8211,19 @@ public final class Tex {
 		mem[q + 1].setrh(2);
 	}
 
-	private void makevcenter(final int q) {
+	void makevcenter(final int q) {
 		int v;
 		int delta;
 		v = mem[q + 1].getlh();
 		if (mem[v].getb0() != 1) {
-			confusion(539);
+			errorLogic.confusion(539);
 		}
 		delta = mem[v + 3].getInt() + mem[v + 2].getInt();
 		mem[v + 3].setInt(fontinfo[22 + parambase[eqtb[8237 + cursize].getrh()]].getInt() + half(delta));
 		mem[v + 2].setInt(delta - mem[v + 3].getInt());
 	}
 
-	private void makeradical(final int q) {
+	void makeradical(final int q) {
 		int x, y;
 		int delta, clr;
 		x = cleanbox(q + 1, 2 * (curstyle / 2) + 1);
@@ -8227,7 +8244,7 @@ public final class Tex {
 		mem[q + 1].setrh(2);
 	}
 
-	private void makemathaccent(final int q) {
+	void makemathaccent(final int q) {
 		/* 30 31 */int p, x, y;
 		int a;
 		int c;
@@ -8329,7 +8346,7 @@ public final class Tex {
 		}
 	}
 
-	private void makefraction(final int q) {
+	void makefraction(final int q) {
 		int p, v, x, y, z;
 		int delta, delta1, delta2, shiftup, shiftdown, clr;
 		if (mem[q + 1].getInt() == 1073741824) {
@@ -8410,7 +8427,7 @@ public final class Tex {
 		mem[q + 1].setInt(hpack(x, 0, 1));
 	}
 
-	private int makeop(final int q) {
+	int makeop(final int q) {
 		int Result;
 		int delta;
 		int p, v, x, y, z;
@@ -8498,7 +8515,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void makeord(final int q) {
+	void makeord(final int q) {
 		/* 20 10 */int a;
 		int p, r;
 		lab20: while (true) {
@@ -8588,7 +8605,7 @@ public final class Tex {
 		}
 	}
 
-	private void makescripts(final int q, final int delta) {
+	void makescripts(final int q, final int delta) {
 		int p, x, y, z;
 		int shiftup, shiftdown, clr;
 		int t;
@@ -8673,7 +8690,7 @@ public final class Tex {
 		}
 	}
 
-	private int makeleftright(final int q, final int style, final int maxd, final int maxh) {
+	int makeleftright(final int q, final int style, final int maxd, final int maxh) {
 		int Result;
 		int delta, delta1, delta2;
 		if (style < 4) {
@@ -8696,7 +8713,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void mlisttohlist() {
+	void mlisttohlist() {
 		/* 21 82 80 81 83 30 */int mlist;
 		boolean penalties;
 		int style;
@@ -8891,7 +8908,7 @@ public final class Tex {
 								break lab81;
 							}
 							default:
-								confusion(889);
+								errorLogic.confusion(889);
 								break;
 							}
 							break;
@@ -8939,7 +8956,7 @@ public final class Tex {
 						}
 							break;
 						default:
-							confusion(890);
+							errorLogic.confusion(890);
 							break;
 						}
 						mem[q + 1].setInt(p);
@@ -9054,7 +9071,7 @@ public final class Tex {
 					break lab30;
 				}
 				default:
-					confusion(891);
+					errorLogic.confusion(891);
 					break;
 				}
 				if (rtype > 0) {
@@ -9087,7 +9104,7 @@ public final class Tex {
 						}
 						break;
 					default:
-						confusion(893);
+						errorLogic.confusion(893);
 						break;
 					}
 					if (x != 0) {
@@ -9128,7 +9145,7 @@ public final class Tex {
 			/* lab30: */}
 	}
 
-	private void pushalignment() {
+	void pushalignment() {
 		int p;
 		p = getnode(5);
 		mem[p].setrh(alignptr);
@@ -9140,10 +9157,10 @@ public final class Tex {
 		mem[p + 4].setlh(curhead);
 		mem[p + 4].setrh(curtail);
 		alignptr = p;
-		curhead = getavail();
+		curhead = allocateMemoryWord();
 	}
 
-	private void popalignment() {
+	void popalignment() {
 		int p;
 		{
 			mem[curhead].setrh(avail);
@@ -9161,7 +9178,7 @@ public final class Tex {
 		freenode(p, 5);
 	}
 
-	private void getpreambletoken() {
+	void getpreambletoken() {
 		/* 20 */lab20: while (true) {
 			gettoken();
 			while ((curchr == 256) && (curcmd == 4)) {
@@ -9172,7 +9189,7 @@ public final class Tex {
 				}
 			}
 			if (curcmd == 9) {
-				fatalerror(595);
+				errorLogic.fatalerror(595);
 			}
 			if ((curcmd == 75) && (curchr == 7193)) {
 				scanoptionalequals();
@@ -9188,7 +9205,7 @@ public final class Tex {
 		}
 	}
 
-	private void initalign() {
+	void initalign() {
 		/* 30 31 32 22 */int savecsptr;
 		int p;
 		savecsptr = curcs;
@@ -9207,7 +9224,7 @@ public final class Tex {
 				helpline[1] = 896;
 				helpline[0] = 897;
 			}
-			error();
+			errorLogic.error();
 			flushmath();
 		}
 		pushnest();
@@ -9251,11 +9268,11 @@ public final class Tex {
 							helpline[1] = 905;
 							helpline[0] = 906;
 						}
-						backerror();
+						errorLogic.backerror();
 						break /* lab31 */;
 					}
 				} else if ((curcmd != 10) || (p != memtop - 4)) {
-					mem[p].setrh(getavail());
+					mem[p].setrh(allocateMemoryWord());
 					p = mem[p].getrh();
 					mem[p].setlh(curtok);
 				}
@@ -9283,14 +9300,14 @@ public final class Tex {
 						helpline[1] = 905;
 						helpline[0] = 908;
 					}
-					error();
+					errorLogic.error();
 					continue lab22;
 				}
-				mem[p].setrh(getavail());
+				mem[p].setrh(allocateMemoryWord());
 				p = mem[p].getrh();
 				mem[p].setlh(curtok);
 			}
-			/* lab32: */mem[p].setrh(getavail());
+			/* lab32: */mem[p].setrh(allocateMemoryWord());
 			p = mem[p].getrh();
 			mem[p].setlh(11014);
 			mem[curalign + 2].setInt(mem[memtop - 4].getrh());
@@ -9303,7 +9320,7 @@ public final class Tex {
 		alignpeek();
 	}
 
-	private void initspan(final int p) {
+	void initspan(final int p) {
 		pushnest();
 		if (curlist.modefield == -102) {
 			curlist.auxfield.setlh(1000);
@@ -9314,7 +9331,7 @@ public final class Tex {
 		curspan = p;
 	}
 
-	private void initrow() {
+	void initrow() {
 		pushnest();
 		curlist.modefield = (-103) - curlist.modefield;
 		if (curlist.modefield == -102) {
@@ -9332,17 +9349,17 @@ public final class Tex {
 		initspan(curalign);
 	}
 
-	private void initcol() {
+	void initcol() {
 		mem[curalign + 5].setlh(curcmd);
 		if (curcmd == 63) {
 			alignstate = 0;
 		} else {
-			backinput();
+			unreadToken();
 			begintokenlist(mem[curalign + 3].getInt(), 1);
 		}
 	}
 
-	private boolean fincol() {
+	boolean fincol() {
 		/* 10 */boolean Result;
 		int p;
 		int q, r;
@@ -9352,14 +9369,14 @@ public final class Tex {
 		int o;
 		int n;
 		if (curalign == 0) {
-			confusion(909);
+			errorLogic.confusion(909);
 		}
 		q = mem[curalign].getrh();
 		if (q == 0) {
-			confusion(909);
+			errorLogic.confusion(909);
 		}
 		if (alignstate < 500000) {
-			fatalerror(595);
+			errorLogic.fatalerror(595);
 		}
 		p = mem[q].getrh();
 		if ((p == 0) && (mem[curalign + 5].getlh() < 257)) {
@@ -9372,7 +9389,7 @@ public final class Tex {
 				q = memtop - 4;
 				r = mem[curloop + 3].getInt();
 				while (r != 0) {
-					mem[q].setrh(getavail());
+					mem[q].setrh(allocateMemoryWord());
 					q = mem[q].getrh();
 					mem[q].setlh(mem[r].getlh());
 					r = mem[r].getrh();
@@ -9382,7 +9399,7 @@ public final class Tex {
 				q = memtop - 4;
 				r = mem[curloop + 2].getInt();
 				while (r != 0) {
-					mem[q].setrh(getavail());
+					mem[q].setrh(allocateMemoryWord());
 					q = mem[q].getrh();
 					mem[q].setlh(mem[r].getlh());
 					r = mem[r].getrh();
@@ -9404,7 +9421,7 @@ public final class Tex {
 					helpline[0] = 913;
 				}
 				mem[curalign + 5].setlh(257);
-				error();
+				errorLogic.error();
 			}
 		}
 		if (mem[curalign + 5].getlh() != 256) {
@@ -9429,7 +9446,7 @@ public final class Tex {
 						q = mem[mem[q].getrh()].getrh();
 					} while (!(q == curalign));
 					if (n > 255) {
-						confusion(914);
+						errorLogic.confusion(914);
 					}
 					q = curspan;
 					while (mem[mem[q].getlh()].getrh() < n) {
@@ -9496,7 +9513,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void finrow() {
+	void finrow() {
 		int p;
 		if (curlist.modefield == -102) {
 			p = hpack(mem[curlist.headfield].getrh(), 0, 1);
@@ -9521,7 +9538,7 @@ public final class Tex {
 		alignpeek();
 	}
 
-	private void finalign() {
+	void finalign() {
 		int p, q, r, s, u, v;
 		int t, w;
 		int o;
@@ -9529,11 +9546,11 @@ public final class Tex {
 		int rulesave;
 		final memoryword auxsave = new memoryword();
 		if (curgroup != 6) {
-			confusion(915);
+			errorLogic.confusion(915);
 		}
 		unsave();
 		if (curgroup != 6) {
-			confusion(916);
+			errorLogic.confusion(916);
 		}
 		unsave();
 		if (nest[nestptr - 1].modefield == 203) {
@@ -9771,7 +9788,7 @@ public final class Tex {
 					helpline[1] = 895;
 					helpline[0] = 896;
 				}
-				backerror();
+				errorLogic.backerror();
 			} else {
 				getxtoken();
 				if (curcmd != 3) {
@@ -9784,7 +9801,7 @@ public final class Tex {
 						helpline[1] = 1167;
 						helpline[0] = 1168;
 					}
-					backerror();
+					errorLogic.backerror();
 				}
 			}
 			popnest();
@@ -9822,7 +9839,7 @@ public final class Tex {
 		}
 	}
 
-	private void alignpeek() {
+	void alignpeek() {
 		/* 20 */lab20: while (true) {
 			alignstate = 1000000;
 			do {
@@ -9846,7 +9863,7 @@ public final class Tex {
 		}
 	}
 
-	private int finiteshrink(final int p) {
+	int finiteshrink(final int p) {
 		int Result;
 		int q;
 		if (noshrinkerroryet) {
@@ -9863,7 +9880,7 @@ public final class Tex {
 				helpline[1] = 921;
 				helpline[0] = 922;
 			}
-			error();
+			errorLogic.error();
 		}
 		q = newspec(p);
 		mem[q].setb1(0);
@@ -9872,7 +9889,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void trybreak(int pi, final int breaktype) {
+	void trybreak(int pi, final int breaktype) {
 		/* 10 30 31 22 61 */int r;
 		int prevr;
 		int oldl;
@@ -9960,7 +9977,7 @@ public final class Tex {
 												breakwidth[1] = breakwidth[1] - mem[v + 1].getInt();
 												break;
 											default:
-												confusion(923);
+												errorLogic.confusion(923);
 												break;
 											}
 										}
@@ -9983,7 +10000,7 @@ public final class Tex {
 												breakwidth[1] = breakwidth[1] + mem[s + 1].getInt();
 												break;
 											default:
-												confusion(924);
+												errorLogic.confusion(924);
 												break;
 											}
 										}
@@ -10264,7 +10281,7 @@ public final class Tex {
 		}
 	}
 
-	private void postlinebreak(final int finalwidowpenalty) {
+	void postlinebreak(final int finalwidowpenalty) {
 		/* 30 31 */int q, r, s;
 		boolean discbreak;
 		boolean postdiscbreak;
@@ -10425,12 +10442,12 @@ public final class Tex {
 			}
 		} while (!(curp == 0));
 		if ((curline != bestline) || (mem[memtop - 3].getrh() != 0)) {
-			confusion(939);
+			errorLogic.confusion(939);
 		}
 		curlist.pgfield = bestline - 1;
 	}
 
-	private int reconstitute(int j, final int n, int bchar, int hchar) {
+	int reconstitute(int j, final int n, int bchar, int hchar) {
 		/* 22 30 */int Result;
 		int p;
 		int t;
@@ -10453,7 +10470,7 @@ public final class Tex {
 			}
 			while (p > 0) {
 				{
-					mem[t].setrh(getavail());
+					mem[t].setrh(allocateMemoryWord());
 					t = mem[t].getrh();
 					mem[t].setb0(hf);
 					mem[t].setb1(mem[p].getb1());
@@ -10461,7 +10478,7 @@ public final class Tex {
 				p = mem[p].getrh();
 			}
 		} else if (curl < 256) {
-			mem[t].setrh(getavail());
+			mem[t].setrh(allocateMemoryWord());
 			t = mem[t].getrh();
 			mem[t].setb0(hf);
 			mem[t].setb1(curl);
@@ -10546,7 +10563,7 @@ public final class Tex {
 											if (j == n) {
 												bchar = 256;
 											} else {
-												p = getavail();
+												p = allocateMemoryWord();
 												mem[ligstack + 1].setrh(p);
 												mem[p].setb1(hu[j + 1]);
 												mem[p].setb0(hf);
@@ -10614,7 +10631,7 @@ public final class Tex {
 											break lab30;
 										} else {
 											{
-												mem[t].setrh(getavail());
+												mem[t].setrh(allocateMemoryWord());
 												t = mem[t].getrh();
 												mem[t].setb0(hf);
 												mem[t].setb1(curr);
@@ -10717,7 +10734,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void hyphenate() {
+	void hyphenate() {
 		/* 50 30 40 41 42 45 10 */int i, j, l;
 		int q, r, s;
 		int bchar;
@@ -10994,7 +11011,7 @@ public final class Tex {
 		flushlist(initlist);
 	}
 
-	private int newtrieop(final int d, final int n, final int v) {
+	int newtrieop(final int d, final int n, final int v) {
 		/* 10 */int Result;
 		int h;
 		int u;
@@ -11004,11 +11021,11 @@ public final class Tex {
 			l = trieophash[h + 751];
 			if (l == 0) {
 				if (trieopptr == 751) {
-					overflow(949, 751);
+					errorLogic.overflow(949, 751);
 				}
 				u = trieused[curlang];
 				if (u == 255) {
-					overflow(950, 255);
+					errorLogic.overflow(950, 255);
 				}
 				trieopptr = trieopptr + 1;
 				u = u + 1;
@@ -11034,7 +11051,7 @@ public final class Tex {
 		}
 	}
 
-	private int trienode(final int p) {
+	int trienode(final int p) {
 		/* 10 */int Result;
 		int h;
 		int q;
@@ -11058,7 +11075,7 @@ public final class Tex {
 		}
 	}
 
-	private int compresstrie(final int p) {
+	int compresstrie(final int p) {
 		int Result;
 		if (p == 0) {
 			Result = 0;
@@ -11070,7 +11087,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void firstfit(final int p) {
+	void firstfit(final int p) {
 		/* 45 40 */int h;
 		int z;
 		int q;
@@ -11083,7 +11100,7 @@ public final class Tex {
 			h = z - c;
 			if (triemax < h + 256) {
 				if (triesize <= h + 256) {
-					overflow(951, triesize);
+					errorLogic.overflow(951, triesize);
 				}
 				do {
 					triemax = triemax + 1;
@@ -11132,7 +11149,7 @@ public final class Tex {
 		} while (!(q == 0));
 	}
 
-	private void triepack(int p) {
+	void triepack(int p) {
 		int q;
 		do {
 			q = triel[p];
@@ -11144,7 +11161,7 @@ public final class Tex {
 		} while (!(p == 0));
 	}
 
-	private void triefix(int p) {
+	void triefix(int p) {
 		int q;
 		int c;
 		int z;
@@ -11162,7 +11179,7 @@ public final class Tex {
 		} while (!(p == 0));
 	}
 
-	private void newpatterns() {
+	void newpatterns() {
 		/* 30 31 */int k, l;
 		boolean digitsensed;
 		int v;
@@ -11200,7 +11217,7 @@ public final class Tex {
 									helpptr = 1;
 									helpline[0] = 956;
 								}
-								error();
+								errorLogic.error();
 							}
 						}
 						if (k < 63) {
@@ -11249,7 +11266,7 @@ public final class Tex {
 							}
 							if ((p == 0) || (c < triec[p])) {
 								if (trieptr == triesize) {
-									overflow(951, triesize);
+									errorLogic.overflow(951, triesize);
 								}
 								trieptr = trieptr + 1;
 								trier[trieptr] = p;
@@ -11274,7 +11291,7 @@ public final class Tex {
 								helpptr = 1;
 								helpline[0] = 956;
 							}
-							error();
+							errorLogic.error();
 						}
 						trieo[q] = v;
 					}
@@ -11296,7 +11313,7 @@ public final class Tex {
 						helpptr = 1;
 						helpline[0] = 956;
 					}
-					error();
+					errorLogic.error();
 				}
 					break;
 				}
@@ -11311,13 +11328,13 @@ public final class Tex {
 				helpptr = 1;
 				helpline[0] = 954;
 			}
-			error();
+			errorLogic.error();
 			mem[memtop - 12].setrh(scantoks(false, false));
 			flushlist(defref);
 		}
 	}
 
-	private void inittrie() {
+	void inittrie() {
 		int p;
 		int j, k, t;
 		int r, s;
@@ -11382,7 +11399,7 @@ public final class Tex {
 		trienotready = false;
 	}
 
-	private void linebreak(final int finalwidowpenalty) {
+	void linebreak(final int finalwidowpenalty) {
 		/* 30 31 32 33 34 35 22 */boolean autobreaking;
 		int prevp;
 		int q, r, s, prevs;
@@ -11735,7 +11752,7 @@ public final class Tex {
 										discwidth = discwidth + mem[s + 1].getInt();
 										break;
 									default:
-										confusion(937);
+										errorLogic.confusion(937);
 										break;
 									}
 								}
@@ -11765,7 +11782,7 @@ public final class Tex {
 									activewidth[1] = activewidth[1] + mem[s + 1].getInt();
 									break;
 								default:
-									confusion(938);
+									errorLogic.confusion(938);
 									break;
 								}
 							}
@@ -11797,7 +11814,7 @@ public final class Tex {
 						;
 						break;
 					default:
-						confusion(936);
+						errorLogic.confusion(936);
 						break;
 					}
 					prevp = curp;
@@ -11892,7 +11909,7 @@ public final class Tex {
 		packbeginline = 0;
 	}
 
-	private void newhyphexceptions() {
+	void newhyphexceptions() {
 		/* 21 10 40 45 */int n;
 		int j;
 		int h;
@@ -11920,7 +11937,7 @@ public final class Tex {
 				case 68:
 					if (curchr == 45) {
 						if (n < 63) {
-							q = getavail();
+							q = allocateMemoryWord();
 							mem[q].setrh(p);
 							mem[q].setlh(n);
 							p = q;
@@ -11936,7 +11953,7 @@ public final class Tex {
 								helpline[1] = 946;
 								helpline[0] = 947;
 							}
-							error();
+							errorLogic.error();
 						} else if (n < 63) {
 							n = n + 1;
 							hc[n] = eqtb[8539 + curchr].getrh();
@@ -11956,7 +11973,7 @@ public final class Tex {
 						hc[n] = curlang;
 						{
 							if (poolptr + n > poolsize) {
-								overflow(257, poolsize - initpoolptr);
+								errorLogic.overflow(257, poolsize - initpoolptr);
 							}
 						}
 						h = 0;
@@ -11969,7 +11986,7 @@ public final class Tex {
 						}
 						s = makestring();
 						if (hyphcount == 607) {
-							overflow(948, 607);
+							errorLogic.overflow(948, 607);
 						}
 						hyphcount = hyphcount + 1;
 						while (hyphword[h] != 0) {
@@ -12032,7 +12049,7 @@ public final class Tex {
 						helpline[1] = 943;
 						helpline[0] = 944;
 					}
-					error();
+					errorLogic.error();
 				}
 					break;
 				}
@@ -12041,7 +12058,7 @@ public final class Tex {
 		}
 	}
 
-	private int prunepagetop(int p) {
+	int prunepagetop(int p) {
 		int Result;
 		int prevp;
 		int q;
@@ -12081,7 +12098,7 @@ public final class Tex {
 			}
 				break;
 			default:
-				confusion(959);
+				errorLogic.confusion(959);
 				break;
 			}
 		}
@@ -12089,7 +12106,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int vertbreak(int p, final int h, final int d) {
+	int vertbreak(int p, final int h, final int d) {
 		/* 30 45 90 */int Result;
 		int prevp;
 		int q, r;
@@ -12153,7 +12170,7 @@ public final class Tex {
 						case 3:
 							break lab45;
 						default:
-							confusion(960);
+							errorLogic.confusion(960);
 							break;
 						}
 					}
@@ -12210,7 +12227,7 @@ public final class Tex {
 							helpline[1] = 964;
 							helpline[0] = 922;
 						}
-						error();
+						errorLogic.error();
 						r = newspec(q);
 						mem[r].setb1(0);
 						deleteglueref(q);
@@ -12233,7 +12250,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private int vsplit(final int n, final int h) {
+	int vsplit(final int n, final int h) {
 		/* 10 30 */int Result;
 		int v;
 		int p;
@@ -12262,7 +12279,7 @@ public final class Tex {
 				helpline[1] = 968;
 				helpline[0] = 969;
 			}
-			error();
+			errorLogic.error();
 			Result = 0;
 			return Result /* lab10 */;
 		}
@@ -12302,7 +12319,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void freezepagespecs(final int s) {
+	void freezepagespecs(final int s) {
 		pagecontents = s;
 		pagesofar[0] = eqtb[10134].getInt();
 		pagemaxdepth = eqtb[10135].getInt();
@@ -12316,7 +12333,7 @@ public final class Tex {
 		leastpagecost = 1073741823;
 	}
 
-	private void ensurevbox(final int n) {
+	void ensurevbox(final int n) {
 		int p;
 		p = eqtb[7978 + n].getrh();
 		if (p != 0) {
@@ -12332,7 +12349,7 @@ public final class Tex {
 		}
 	}
 
-	private void fireup(final int c) {
+	void fireup(final int c) {
 		/* 10 */int p, q, r, s;
 		int prevp;
 		int n;
@@ -12516,7 +12533,7 @@ public final class Tex {
 				helpline[2] = 1007;
 				helpline[1] = 1008;
 				helpline[0] = 1009;
-				error();
+				errorLogic.error();
 			} else {
 				outputactive = true;
 				deadcycles = deadcycles + 1;
@@ -12549,7 +12566,7 @@ public final class Tex {
 		eqtb[8233].setrh(0);
 	}
 
-	private void buildpage() {
+	void buildpage() {
 		/* 10 30 31 22 80 90 */int p;
 		int q, r;
 		int b, c;
@@ -12681,7 +12698,7 @@ public final class Tex {
 											helpline[1] = 1000;
 											helpline[0] = 922;
 										}
-										error();
+										errorLogic.error();
 									}
 								}
 								if (mem[r].getb0() == 1) {
@@ -12728,7 +12745,7 @@ public final class Tex {
 								break lab80;
 							}
 							default:
-								confusion(993);
+								errorLogic.confusion(993);
 								break;
 							}
 							if (pi < 10000) {
@@ -12798,7 +12815,7 @@ public final class Tex {
 									helpline[1] = 964;
 									helpline[0] = 922;
 								}
-								error();
+								errorLogic.error();
 								r = newspec(q);
 								mem[r].setb1(0);
 								deleteglueref(q);
@@ -12833,7 +12850,7 @@ public final class Tex {
 		}
 	}
 
-	private void appspace() {
+	void appspace() {
 		int q;
 		if ((curlist.auxfield.getlh() >= 2000) && (eqtb[7195].getrh() != 0)) {
 			q = newparamglue(13);
@@ -12864,14 +12881,14 @@ public final class Tex {
 		curlist.tailfield = q;
 	}
 
-	private boolean itsallover() {
+	boolean itsallover() {
 		/* 10 */boolean Result;
 		if (privileged()) {
 			if ((memtop - 2 == pagetail) && (curlist.headfield == curlist.tailfield) && (deadcycles == 0)) {
 				Result = true;
 				return Result /* lab10 */;
 			}
-			backinput();
+			unreadToken();
 			{
 				mem[curlist.tailfield].setrh(newnullbox());
 				curlist.tailfield = mem[curlist.tailfield].getrh();
@@ -12891,7 +12908,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void appendglue() {
+	void appendglue() {
 		int s;
 		s = curchr;
 		switch (s) {
@@ -12926,7 +12943,7 @@ public final class Tex {
 		}
 	}
 
-	private void appendkern() {
+	void appendkern() {
 		int s;
 		s = curchr;
 		scandimen(s == 99, false, false);
@@ -12937,7 +12954,7 @@ public final class Tex {
 		mem[curlist.tailfield].setb1(s);
 	}
 
-	private void offsave() {
+	void offsave() {
 		int p;
 		if (curgroup == 0) {
 			{
@@ -12949,10 +12966,10 @@ public final class Tex {
 				helpptr = 1;
 				helpline[0] = 1043;
 			}
-			error();
+			errorLogic.error();
 		} else {
-			backinput();
-			p = getavail();
+			unreadToken();
+			p = allocateMemoryWord();
 			mem[memtop - 3].setrh(p);
 			{
 				printnl(262);
@@ -12971,7 +12988,7 @@ public final class Tex {
 				break;
 			case 16: {
 				mem[p].setlh(11012);
-				mem[p].setrh(getavail());
+				mem[p].setrh(allocateMemoryWord());
 				p = mem[p].getrh();
 				mem[p].setlh(3118);
 				printEscapeSequence(1042);
@@ -12993,11 +13010,11 @@ public final class Tex {
 				helpline[1] = 1040;
 				helpline[0] = 1041;
 			}
-			error();
+			errorLogic.error();
 		}
 	}
 
-	private void normalparagraph() {
+	void normalparagraph() {
 		if (eqtb[9582].getInt() != 0) {
 			eqworddefine(9582, 0);
 		}
@@ -13012,7 +13029,7 @@ public final class Tex {
 		}
 	}
 
-	private void boxend(final int boxcontext) {
+	void boxend(final int boxcontext) {
 		int p;
 		if (boxcontext < 1073741824) {
 			if (curbox != 0) {
@@ -13068,7 +13085,7 @@ public final class Tex {
 						helpline[1] = 1068;
 						helpline[0] = 1069;
 					}
-					backerror();
+					errorLogic.backerror();
 					flushnodelist(curbox);
 				}
 			} else {
@@ -13077,7 +13094,7 @@ public final class Tex {
 		}
 	}
 
-	private void beginbox(final int boxcontext) {
+	void beginbox(final int boxcontext) {
 		/* 10 30 */int p, q;
 		int m;
 		int k;
@@ -13097,20 +13114,9 @@ public final class Tex {
 		case 2: {
 			curbox = 0;
 			if (Math.abs(curlist.modefield) == 203) {
-				youcant();
-				{
-					helpptr = 1;
-					helpline[0] = 1070;
-				}
-				error();
+				errorLogic.youCantUse("Sorry; this \\lastbox will be void.");
 			} else if ((curlist.modefield == 1) && (curlist.headfield == curlist.tailfield)) {
-				youcant();
-				{
-					helpptr = 2;
-					helpline[1] = 1071;
-					helpline[0] = 1072;
-				}
-				error();
+				errorLogic.youCantUse("Sorry...I usually can't take things from the current page.", "This \\lastbox will therefore be void.");
 			} else {
 				if (!(curlist.tailfield >= himemmin)) {
 					if ((mem[curlist.tailfield].getb0() == 0) || (mem[curlist.tailfield].getb0() == 1)) {
@@ -13154,7 +13160,7 @@ public final class Tex {
 					helpline[1] = 1074;
 					helpline[0] = 1075;
 				}
-				error();
+				errorLogic.error();
 			}
 			scandimen(false, false, false);
 			curbox = vsplit(n, curval);
@@ -13197,7 +13203,7 @@ public final class Tex {
 		boxend(boxcontext);
 	}
 
-	private void scanbox(final int boxcontext) {
+	void scanbox(final int boxcontext) {
 		do {
 			getxtoken();
 		} while (!((curcmd != 10) && (curcmd != 0)));
@@ -13217,11 +13223,11 @@ public final class Tex {
 				helpline[1] = 1078;
 				helpline[0] = 1079;
 			}
-			backerror();
+			errorLogic.backerror();
 		}
 	}
 
-	private void Package(final int c) {
+	void Package(final int c) {
 		int h;
 		int p;
 		int d;
@@ -13248,7 +13254,7 @@ public final class Tex {
 		boxend(savestack[saveptr + 0].getInt());
 	}
 
-	private int normmin(final int h) {
+	int normmin(final int h) {
 		int Result;
 		if (h <= 0) {
 			Result = 1;
@@ -13260,7 +13266,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void newgraf(final boolean indented) {
+	void newgraf(final boolean indented) {
 		curlist.pgfield = 0;
 		if ((curlist.modefield == 1) || (curlist.headfield != curlist.tailfield)) {
 			mem[curlist.tailfield].setrh(newparamglue(2));
@@ -13291,7 +13297,7 @@ public final class Tex {
 		}
 	}
 
-	private void indentinhmode() {
+	void indentinhmode() {
 		int p, q;
 		if (curchr > 0) {
 			p = newnullbox();
@@ -13311,7 +13317,7 @@ public final class Tex {
 		}
 	}
 
-	private void headforvmode() {
+	void headforvmode() {
 		if (curlist.modefield < 0) {
 			if (curcmd != 36) {
 				offsave();
@@ -13327,17 +13333,17 @@ public final class Tex {
 					helpline[1] = 1083;
 					helpline[0] = 1084;
 				}
-				error();
+				errorLogic.error();
 			}
 		} else {
-			backinput();
+			unreadToken();
 			curtok = partoken;
-			backinput();
+			unreadToken();
 			curinput.setIndex(4);
 		}
 	}
 
-	private void endgraf() {
+	void endgraf() {
 		if (curlist.modefield == 102) {
 			if (curlist.headfield == curlist.tailfield) {
 				popnest();
@@ -13349,7 +13355,7 @@ public final class Tex {
 		}
 	}
 
-	private void begininsertoradjust() {
+	void begininsertoradjust() {
 		if (curcmd == 38) {
 			curval = 255;
 		} else {
@@ -13365,7 +13371,7 @@ public final class Tex {
 					helpptr = 1;
 					helpline[0] = 1086;
 				}
-				error();
+				errorLogic.error();
 				curval = 0;
 			}
 		}
@@ -13379,7 +13385,7 @@ public final class Tex {
 		curlist.auxfield.setInt(-65536000);
 	}
 
-	private void makemark() {
+	void makemark() {
 		int p;
 		p = scantoks(false, true);
 		p = getnode(2);
@@ -13390,7 +13396,7 @@ public final class Tex {
 		curlist.tailfield = p;
 	}
 
-	private void appendpenalty() {
+	void appendpenalty() {
 		scanint();
 		{
 			mem[curlist.tailfield].setrh(newpenalty(curval));
@@ -13401,23 +13407,18 @@ public final class Tex {
 		}
 	}
 
-	private void deletelast() {
+	void deletelast() {
 		/* 10 */int p, q;
 		int m;
 		if ((curlist.modefield == 1) && (curlist.tailfield == curlist.headfield)) {
 			if ((curchr != 10) || (lastglue != maxhalfword)) {
-				youcant();
-				{
-					helpptr = 2;
-					helpline[1] = 1071;
-					helpline[0] = 1087;
-				}
+				String line2 = "Try `I\\vskip-\\lastskip' instead.";
 				if (curchr == 11) {
-					helpline[0] = (1088);
+					line2 = "Try `I\\kern-\\lastkern' instead.";
 				} else if (curchr != 10) {
-					helpline[0] = (1089);
+					line2 = "Perhaps you can make the output routine do it.";
 				}
-				error();
+				errorLogic.youCantUse("Sorry...I usually can't take things from the current page.", line2);
 			}
 		} else {
 			if (!(curlist.tailfield >= himemmin)) {
@@ -13445,7 +13446,7 @@ public final class Tex {
 		}
 	}
 
-	private void unpackage() {
+	void unpackage() {
 		/* 10 */int p;
 		int c;
 		c = curchr;
@@ -13465,7 +13466,7 @@ public final class Tex {
 				helpline[1] = 1099;
 				helpline[0] = 1100;
 			}
-			error();
+			errorLogic.error();
 			return /* lab10 */;
 		}
 		if (c == 1) {
@@ -13480,7 +13481,7 @@ public final class Tex {
 		}
 	}
 
-	private void appenditaliccorrection() {
+	void appenditaliccorrection() {
 		/* 10 */int p;
 		int f;
 		if (curlist.tailfield != curlist.headfield) {
@@ -13500,7 +13501,7 @@ public final class Tex {
 		}
 	}
 
-	private void appenddiscretionary() {
+	void appenddiscretionary() {
 		int c;
 		{
 			mem[curlist.tailfield].setrh(newdisc());
@@ -13524,7 +13525,7 @@ public final class Tex {
 		}
 	}
 
-	private void builddiscretionary() {
+	void builddiscretionary() {
 		/* 30 10 */int p, q;
 		int n;
 		unsave();
@@ -13544,7 +13545,7 @@ public final class Tex {
 								helpptr = 1;
 								helpline[0] = 1108;
 							}
-							error();
+							errorLogic.error();
 							begindiagnostic();
 							printnl(1109);
 							showbox(p);
@@ -13583,7 +13584,7 @@ public final class Tex {
 				}
 				flushnodelist(p);
 				n = 0;
-				error();
+				errorLogic.error();
 			} else {
 				mem[curlist.tailfield].setrh(p);
 			}
@@ -13599,7 +13600,7 @@ public final class Tex {
 					helpline[1] = 1105;
 					helpline[0] = 1106;
 				}
-				error();
+				errorLogic.error();
 			}
 			if (n > 0) {
 				curlist.tailfield = q;
@@ -13616,7 +13617,7 @@ public final class Tex {
 		curlist.auxfield.setlh(1000);
 	}
 
-	private void makeaccent() {
+	void makeaccent() {
 		double s, t;
 		int p, q, r;
 		int f;
@@ -13638,7 +13639,7 @@ public final class Tex {
 				scancharnum();
 				q = newcharacter(f, curval);
 			} else {
-				backinput();
+				unreadToken();
 			}
 			if (q != 0) {
 				t = fontinfo[1 + parambase[f]].getInt() / (65536.0);
@@ -13665,7 +13666,7 @@ public final class Tex {
 		}
 	}
 
-	private void doendv() {
+	void doendv() {
 		if (curgroup == 6) {
 			endgraf();
 			if (fincol()) {
@@ -13676,14 +13677,14 @@ public final class Tex {
 		}
 	}
 
-	private void pushmath(final int c) {
+	void pushmath(final int c) {
 		pushnest();
 		curlist.modefield = -203;
 		curlist.auxfield.setInt(0);
 		newsavelevel(c);
 	}
 
-	private void initmath() {
+	void initmath() {
 		/* 21 40 45 30 */int w;
 		int l;
 		int s;
@@ -13807,7 +13808,7 @@ public final class Tex {
 				buildpage();
 			}
 		} else {
-			backinput();
+			unreadToken();
 			{
 				pushmath(15);
 				eqworddefine(9607, -1);
@@ -13818,7 +13819,7 @@ public final class Tex {
 		}
 	}
 
-	private void starteqno() {
+	void starteqno() {
 		savestack[saveptr + 0].setInt(curchr);
 		saveptr = saveptr + 1;
 		{
@@ -13830,7 +13831,7 @@ public final class Tex {
 		}
 	}
 
-	private void scanmath(final int p) {
+	void scanmath(final int p) {
 		/* 20 21 10 */int c;
 		lab20: while (true) {
 			do {
@@ -13848,7 +13849,7 @@ public final class Tex {
 							curcmd = eqtb[curcs].getb0();
 							curchr = eqtb[curcs].getrh();
 							xtoken();
-							backinput();
+							unreadToken();
 						}
 						continue lab20;
 					}
@@ -13874,7 +13875,7 @@ public final class Tex {
 				}
 					break;
 				default: {
-					backinput();
+					unreadToken();
 					scanleftbrace();
 					savestack[saveptr + 0].setInt(p);
 					saveptr = saveptr + 1;
@@ -13895,14 +13896,14 @@ public final class Tex {
 		}
 	}
 
-	private void setmathchar(final int c) {
+	void setmathchar(final int c) {
 		int p;
 		if (c >= 32768) {
 			curcs = curchr + 1;
 			curcmd = eqtb[curcs].getb0();
 			curchr = eqtb[curcs].getrh();
 			xtoken();
-			backinput();
+			unreadToken();
 		} else {
 			p = newnoad();
 			mem[p + 1].setrh(1);
@@ -13921,7 +13922,7 @@ public final class Tex {
 		}
 	}
 
-	private void mathlimitswitch() {
+	void mathlimitswitch() {
 		/* 10 */if (curlist.headfield != curlist.tailfield) {
 			if (mem[curlist.tailfield].getb0() == 17) {
 				mem[curlist.tailfield].setb1(curchr);
@@ -13936,10 +13937,10 @@ public final class Tex {
 			helpptr = 1;
 			helpline[0] = 1131;
 		}
-		error();
+		errorLogic.error();
 	}
 
-	private void scandelimiter(final int p, final boolean r) {
+	void scandelimiter(final int p, final boolean r) {
 		if (r) {
 			scantwentysevenbitint();
 		} else {
@@ -13973,7 +13974,7 @@ public final class Tex {
 				helpline[1] = 1137;
 				helpline[0] = 1138;
 			}
-			backerror();
+			errorLogic.backerror();
 			curval = 0;
 		}
 		mem[p].setb0((curval / 1048576) % 16);
@@ -13982,7 +13983,7 @@ public final class Tex {
 		mem[p].setb3(curval % 256);
 	}
 
-	private void mathradical() {
+	void mathradical() {
 		{
 			mem[curlist.tailfield].setrh(getnode(5));
 			curlist.tailfield = mem[curlist.tailfield].getrh();
@@ -13996,7 +13997,7 @@ public final class Tex {
 		scanmath(curlist.tailfield + 1);
 	}
 
-	private void mathac() {
+	void mathac() {
 		if (curcmd == 45) {
 			{
 				printnl(262);
@@ -14009,7 +14010,7 @@ public final class Tex {
 				helpline[1] = 1141;
 				helpline[0] = 1142;
 			}
-			error();
+			errorLogic.error();
 		}
 		{
 			mem[curlist.tailfield].setrh(getnode(5));
@@ -14031,7 +14032,7 @@ public final class Tex {
 		scanmath(curlist.tailfield + 1);
 	}
 
-	private void appendchoices() {
+	void appendchoices() {
 		{
 			mem[curlist.tailfield].setrh(newchoice());
 			curlist.tailfield = mem[curlist.tailfield].getrh();
@@ -14042,7 +14043,7 @@ public final class Tex {
 		scanleftbrace();
 	}
 
-	private int finmlist(final int p) {
+	int finmlist(final int p) {
 		int Result;
 		int q;
 		if (curlist.auxfield.getInt() != 0) {
@@ -14053,7 +14054,7 @@ public final class Tex {
 			} else {
 				q = mem[curlist.auxfield.getInt() + 2].getlh();
 				if (mem[q].getb0() != 30) {
-					confusion(877);
+					errorLogic.confusion(877);
 				}
 				mem[curlist.auxfield.getInt() + 2].setlh(mem[q].getrh());
 				mem[q].setrh(curlist.auxfield.getInt());
@@ -14068,7 +14069,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void buildchoices() {
+	void buildchoices() {
 		/* 10 */int p;
 		unsave();
 		p = finmlist(0);
@@ -14093,7 +14094,7 @@ public final class Tex {
 		scanleftbrace();
 	}
 
-	private void subsup() {
+	void subsup() {
 		int t;
 		int p;
 		t = 0;
@@ -14130,13 +14131,13 @@ public final class Tex {
 						helpline[0] = 1146;
 					}
 				}
-				error();
+				errorLogic.error();
 			}
 		}
 		scanmath(p);
 	}
 
-	private void mathfraction() {
+	void mathfraction() {
 		int c;
 		c = curchr;
 		if (curlist.auxfield.getInt() != 0) {
@@ -14157,7 +14158,7 @@ public final class Tex {
 				helpline[1] = 1155;
 				helpline[0] = 1156;
 			}
-			error();
+			errorLogic.error();
 		} else {
 			curlist.auxfield.setInt(getnode(6));
 			mem[curlist.auxfield.getInt()].setb0(25);
@@ -14189,7 +14190,7 @@ public final class Tex {
 		}
 	}
 
-	private void mathleftright() {
+	void mathleftright() {
 		int t;
 		int p;
 		t = curchr;
@@ -14205,7 +14206,7 @@ public final class Tex {
 					helpptr = 1;
 					helpline[0] = 1157;
 				}
-				error();
+				errorLogic.error();
 			} else {
 				offsave();
 			}
@@ -14231,7 +14232,7 @@ public final class Tex {
 		}
 	}
 
-	private void aftermath() {
+	void aftermath() {
 		boolean l;
 		boolean danger;
 		int m;
@@ -14259,7 +14260,7 @@ public final class Tex {
 				helpline[1] = 1160;
 				helpline[0] = 1161;
 			}
-			error();
+			errorLogic.error();
 			flushmath();
 			danger = true;
 		} else if ((fontparams[eqtb[8238].getrh()] < 13) || (fontparams[eqtb[8254].getrh()] < 13) || (fontparams[eqtb[8270].getrh()] < 13)) {
@@ -14273,7 +14274,7 @@ public final class Tex {
 				helpline[1] = 1164;
 				helpline[0] = 1165;
 			}
-			error();
+			errorLogic.error();
 			flushmath();
 			danger = true;
 		}
@@ -14293,7 +14294,7 @@ public final class Tex {
 						helpline[1] = 1167;
 						helpline[0] = 1168;
 					}
-					backerror();
+					errorLogic.backerror();
 				}
 			}
 			curmlist = p;
@@ -14318,7 +14319,7 @@ public final class Tex {
 					helpline[1] = 1160;
 					helpline[0] = 1161;
 				}
-				error();
+				errorLogic.error();
 				flushmath();
 				danger = true;
 			} else if ((fontparams[eqtb[8238].getrh()] < 13) || (fontparams[eqtb[8254].getrh()] < 13) || (fontparams[eqtb[8270].getrh()] < 13)) {
@@ -14332,7 +14333,7 @@ public final class Tex {
 					helpline[1] = 1164;
 					helpline[0] = 1165;
 				}
-				error();
+				errorLogic.error();
 				flushmath();
 				danger = true;
 			}
@@ -14373,7 +14374,7 @@ public final class Tex {
 						helpline[1] = 1167;
 						helpline[0] = 1168;
 					}
-					backerror();
+					errorLogic.backerror();
 				}
 			}
 			curmlist = p;
@@ -14482,9 +14483,9 @@ public final class Tex {
 		}
 	}
 
-	private void resumeafterdisplay() {
+	void resumeafterdisplay() {
 		if (curgroup != 15) {
-			confusion(1169);
+			errorLogic.confusion(1169);
 		}
 		unsave();
 		curlist.pgfield = curlist.pgfield + 3;
@@ -14503,7 +14504,7 @@ public final class Tex {
 		{
 			getxtoken();
 			if (curcmd != 10) {
-				backinput();
+				unreadToken();
 			}
 		}
 		if (nestptr == 1) {
@@ -14511,7 +14512,7 @@ public final class Tex {
 		}
 	}
 
-	private void getrtoken() {
+	void getrtoken() {
 		/* 20 */lab20: while (true) {
 			do {
 				gettoken();
@@ -14530,17 +14531,17 @@ public final class Tex {
 					helpline[0] = 1189;
 				}
 				if (curcs == 0) {
-					backinput();
+					unreadToken();
 				}
-				curtok = 11009;
-				inserror();
+				insertToken(11009);
+				errorLogic.error();
 				continue lab20;
 			}
 			break;
 		}
 	}
 
-	private void trapzeroglue() {
+	void trapzeroglue() {
 		if ((mem[curval + 1].getInt() == 0) && (mem[curval + 2].getInt() == 0) && (mem[curval + 3].getInt() == 0)) {
 			mem[0].setrh(mem[0].getrh() + 1);
 			deleteglueref(curval);
@@ -14548,7 +14549,7 @@ public final class Tex {
 		}
 	}
 
-	private void doregistercommand(final int a) {
+	void doregistercommand(final int a) {
 		/* 40 10 */int l, q, r, s;
 		int p;
 		l = 0;
@@ -14574,7 +14575,7 @@ public final class Tex {
 							helpptr = 1;
 							helpline[0] = 1210;
 						}
-						error();
+						errorLogic.error();
 						return /* lab10 */;
 					}
 				}
@@ -14678,7 +14679,7 @@ public final class Tex {
 				helpline[1] = 1208;
 				helpline[0] = 1209;
 			}
-			error();
+			errorLogic.error();
 			return /* lab10 */;
 		}
 		if (p < 2) {
@@ -14697,10 +14698,10 @@ public final class Tex {
 		}
 	}
 
-	private void alteraux() {
+	void alteraux() {
 		int c;
 		if (curchr != Math.abs(curlist.modefield)) {
-			reportillegalcase();
+			errorLogic.reportillegalcase();
 		} else {
 			c = curchr;
 			scanoptionalequals();
@@ -14718,7 +14719,7 @@ public final class Tex {
 						helpptr = 1;
 						helpline[0] = 1214;
 					}
-					interror(curval);
+					errorLogic.interror(curval);
 				} else {
 					curlist.auxfield.setlh(curval);
 				}
@@ -14726,7 +14727,7 @@ public final class Tex {
 		}
 	}
 
-	private void alterprevgraf() {
+	void alterprevgraf() {
 		int p;
 		nest[nestptr].copy(curlist);
 		p = nestptr;
@@ -14745,14 +14746,14 @@ public final class Tex {
 				helpptr = 1;
 				helpline[0] = 1215;
 			}
-			interror(curval);
+			errorLogic.interror(curval);
 		} else {
 			nest[p].pgfield = curval;
 			curlist.copy(nest[nestptr]);
 		}
 	}
 
-	private void alterpagesofar() {
+	void alterpagesofar() {
 		int c;
 		c = curchr;
 		scanoptionalequals();
@@ -14760,7 +14761,7 @@ public final class Tex {
 		pagesofar[c] = curval;
 	}
 
-	private void alterinteger() {
+	void alterinteger() {
 		int c;
 		c = curchr;
 		scanoptionalequals();
@@ -14772,7 +14773,7 @@ public final class Tex {
 		}
 	}
 
-	private void alterboxdimen() {
+	void alterboxdimen() {
 		int c;
 		int b;
 		c = curchr;
@@ -14785,7 +14786,7 @@ public final class Tex {
 		}
 	}
 
-	private void newfont(final int a) {
+	void newfont(final int a) {
 		/* 50 */int u;
 		int s;
 		int f;
@@ -14810,7 +14811,7 @@ public final class Tex {
 			selector = oldsetting;
 			{
 				if (poolptr + 1 > poolsize) {
-					overflow(257, poolsize - initpoolptr);
+					errorLogic.overflow(257, poolsize - initpoolptr);
 				}
 			}
 			t = makestring();
@@ -14838,7 +14839,7 @@ public final class Tex {
 					helpline[1] = 1224;
 					helpline[0] = 1225;
 				}
-				error();
+				errorLogic.error();
 				s = 10 * 65536;
 			}
 		} else if (scankeyword(1221)) {
@@ -14853,7 +14854,7 @@ public final class Tex {
 					helpptr = 1;
 					helpline[0] = 553;
 				}
-				interror(curval);
+				errorLogic.interror(curval);
 				s = -1000;
 			}
 		} else {
@@ -14888,7 +14889,7 @@ public final class Tex {
 		hash[6924 + f - 514].rh = t;
 	}
 
-	private void prefixedcommand() {
+	void prefixedcommand() {
 		/* 30 10 */int a;
 		int f;
 		int j;
@@ -14915,7 +14916,7 @@ public final class Tex {
 					helpptr = 1;
 					helpline[0] = 1180;
 				}
-				backerror();
+				errorLogic.backerror();
 				return /* lab10 */;
 			}
 		}
@@ -14934,7 +14935,7 @@ public final class Tex {
 				helpptr = 1;
 				helpline[0] = 1183;
 			}
-			error();
+			errorLogic.error();
 		}
 		if (eqtb[9606].getInt() != 0) {
 			if (eqtb[9606].getInt() < 0) {
@@ -14989,9 +14990,9 @@ public final class Tex {
 					gettoken();
 					q = curtok;
 					gettoken();
-					backinput();
+					unreadToken();
 					curtok = q;
-					backinput();
+					unreadToken();
 				}
 				if (curcmd >= 111) {
 					mem[curchr].setlh(mem[curchr].getlh() + 1);
@@ -15089,7 +15090,7 @@ public final class Tex {
 						helpline[1] = 1200;
 						helpline[0] = 1201;
 					}
-					error();
+					errorLogic.error();
 				}
 				getrtoken();
 				p = curcs;
@@ -15139,7 +15140,7 @@ public final class Tex {
 						break lab30;
 					}
 				}
-				backinput();
+				unreadToken();
 				curcs = q;
 				q = scantoks(false, false);
 				if (mem[defref].getrh() == 0) {
@@ -15154,10 +15155,10 @@ public final class Tex {
 					}
 				} else {
 					if (p == 7713) {
-						mem[q].setrh(getavail());
+						mem[q].setrh(allocateMemoryWord());
 						q = mem[q].getrh();
 						mem[q].setlh(637);
-						q = getavail();
+						q = allocateMemoryWord();
 						mem[q].setlh(379);
 						mem[q].setrh(mem[defref].getrh());
 						mem[defref].setrh(q);
@@ -15243,7 +15244,7 @@ public final class Tex {
 						helpptr = 1;
 						helpline[0] = 1205;
 					}
-					error();
+					errorLogic.error();
 					curval = 0;
 				}
 				if (p < 9307) {
@@ -15305,7 +15306,7 @@ public final class Tex {
 						helpline[1] = 1211;
 						helpline[0] = 1212;
 					}
-					error();
+					errorLogic.error();
 				}
 			}
 				break;
@@ -15358,7 +15359,7 @@ public final class Tex {
 							print(1216);
 						}
 						helpptr = 0;
-						error();
+						errorLogic.error();
 						do {
 							gettoken();
 						} while (!(curcmd == 2));
@@ -15397,19 +15398,19 @@ public final class Tex {
 				// should log this as an error but continue processing
 				break;
 			default:
-				confusion(1178);
+				errorLogic.confusion(1178);
 				break;
 			}
 			break;
 		}
 		/* lab30: */if (aftertoken != 0) {
 			curtok = aftertoken;
-			backinput();
+			unreadToken();
 			aftertoken = 0;
 		}
 	}
 
-	private void doassignments() {
+	void doassignments() {
 		/* 10 */while (true) {
 			do {
 				getxtoken();
@@ -15423,7 +15424,7 @@ public final class Tex {
 		}
 	}
 
-	private void openorclosein() {
+	void openorclosein() {
 		int c;
 		int n;
 		c = curchr;
@@ -15454,7 +15455,7 @@ public final class Tex {
 		}
 	}
 
-	private void issuemessage() {
+	void issuemessage() {
 		int oldsetting;
 		int c;
 		int s;
@@ -15466,7 +15467,7 @@ public final class Tex {
 		selector = oldsetting;
 		flushlist(defref);
 		if (poolptr + 1 > poolsize) {
-			overflow(257, poolsize - initpoolptr);
+			errorLogic.overflow(257, poolsize - initpoolptr);
 		}
 		s = makestring();
 		if (c == 0) {
@@ -15515,7 +15516,7 @@ public final class Tex {
 		poolptr = strstart[strptr];
 	}
 
-	private void shiftcase() {
+	void shiftcase() {
 		int b;
 		int p;
 		int t;
@@ -15540,7 +15541,7 @@ public final class Tex {
 		}
 	}
 
-	private void storefmtfile() {
+	void storefmtfile() {
 		/* 41 42 31 32 */int j, k, l;
 		int p, q;
 		int x;
@@ -15558,7 +15559,7 @@ public final class Tex {
 			}
 			{
 				if (logopened) {
-					error();
+					errorLogic.error();
 				}
 				jumpout();
 			}
@@ -15575,7 +15576,7 @@ public final class Tex {
 		printchar(41);
 		selector = 19;
 		if (poolptr + 1 > poolsize) {
-			overflow(257, poolsize - initpoolptr);
+			errorLogic.overflow(257, poolsize - initpoolptr);
 		}
 		formatident = makestring();
 		packjobname(785);
@@ -15876,7 +15877,7 @@ public final class Tex {
 		fmtfile.close();
 	}
 
-	private void newwhatsit(final int s, final int w) {
+	void newwhatsit(final int s, final int w) {
 		int p;
 		p = getnode(w);
 		mem[p].setb0(8);
@@ -15885,7 +15886,7 @@ public final class Tex {
 		curlist.tailfield = p;
 	}
 
-	private void newwritewhatsit(final int w) {
+	void newwritewhatsit(final int w) {
 		newwhatsit(curchr, w);
 		if (w != 2) {
 			scanfourbitint();
@@ -15900,7 +15901,7 @@ public final class Tex {
 		mem[curlist.tailfield + 1].setlh(curval);
 	}
 
-	private void doextension() {
+	void doextension() {
 		int k;
 		int p;
 		switch (curchr) {
@@ -15943,13 +15944,13 @@ public final class Tex {
 				curlist.tailfield = p;
 				mem[p].setrh(0);
 			} else {
-				backinput();
+				unreadToken();
 			}
 		}
 			break;
 		case 5:
 			if (Math.abs(curlist.modefield) != 102) {
-				reportillegalcase();
+				errorLogic.reportillegalcase();
 			} else {
 				newwhatsit(4, 2);
 				scanint();
@@ -15966,12 +15967,12 @@ public final class Tex {
 			}
 			break;
 		default:
-			confusion(1291);
+			errorLogic.confusion(1291);
 			break;
 		}
 	}
 
-	private void fixlanguage() {
+	void fixlanguage() {
 		int l;
 		if (eqtb[9613].getInt() <= 0) {
 			l = 0;
@@ -15989,7 +15990,7 @@ public final class Tex {
 		}
 	}
 
-	private void handlerightbrace() {
+	void handlerightbrace() {
 		int p, q;
 		int d;
 		int f;
@@ -16007,7 +16008,7 @@ public final class Tex {
 				helpline[1] = 1045;
 				helpline[0] = 1046;
 			}
-			error();
+			errorLogic.error();
 		}
 			break;
 		case 14:
@@ -16025,7 +16026,7 @@ public final class Tex {
 				message += getCurrentEscapeCharacter() + "right";
 				break;
 			}
-			error(message,
+			errorLogic.error(message,
 				"I've deleted a group-closing symbol because it seems to be",
 				"spurious, as in `$x}$'. But perhaps the } is legitimate and",
 				"you forgot something else, as in `\\hbox{$x}'. In such cases",
@@ -16102,7 +16103,7 @@ public final class Tex {
 					helpline[1] = 1011;
 					helpline[0] = 1012;
 				}
-				error();
+				errorLogic.error();
 				do {
 					gettoken();
 				} while (!(curinput.getLoc() == 0));
@@ -16148,21 +16149,17 @@ public final class Tex {
 			builddiscretionary();
 			break;
 		case 6: {
-			backinput();
-			curtok = 11010;
-			{
-				printnl(262);
-				print(625);
-			}
+			unreadToken();
+			printnl(262);
+			print(625);
 			printEscapeSequence(899);
 			print(626);
-			{
-				helpptr = 1;
-				helpline[0] = 1125;
-			}
-			inserror();
-		}
+			helpptr = 1;
+			helpline[0] = 1125;
+			insertToken(11010);
+			errorLogic.error();
 			break;
+		}
 		case 7: {
 			endgraf();
 			unsave();
@@ -16220,12 +16217,12 @@ public final class Tex {
 		}
 			break;
 		default:
-			confusion(1047);
+			errorLogic.confusion(1047);
 			break;
 		}
 	}
 
-	private void maincontrol() {
+	void maincontrol() {
 		/* 60 21 120 10 */int t;
 		int jcase;
 		if (eqtb[7719].getrh() != 0) {
@@ -16304,7 +16301,7 @@ public final class Tex {
 						case 7:
 						case 108:
 						case 209:
-							reportillegalcase();
+							errorLogic.reportillegalcase();
 							break;
 						case 8:
 						case 109:
@@ -16347,7 +16344,9 @@ public final class Tex {
 						case 227:
 						case 236:
 						case 239:
-							insertdollarsign();
+							unreadToken();
+							insertToken(804);
+							errorLogic.error("!Missing $ inserted", "I've inserted a begin-math/end-math symbol since I think", "you left one out. Proceed, with fingers crossed.");
 							break;
 						case 37:
 						case 137:
@@ -16436,7 +16435,7 @@ public final class Tex {
 						case 34:
 						case 65:
 						case 66: {
-							backinput();
+							unreadToken();
 							newgraf(true);
 						}
 							break;
@@ -16516,17 +16515,17 @@ public final class Tex {
 						case 5:
 						case 106:
 						case 207:
-							alignerror();
+							errorLogic.alignError();
 							break;
 						case 35:
 						case 136:
 						case 237:
-							error("!Misplaced " + getCurrentEscapeCharacter() + "noalign", "I expect to see \\noalign only after the \\cr of", "an alignment. Proceed, and I'll ignore this case.");
+							errorLogic.error("!Misplaced " + getCurrentEscapeCharacter() + "noalign", "I expect to see \\noalign only after the \\cr of", "an alignment. Proceed, and I'll ignore this case.");
 							break;
 						case 64:
 						case 165:
 						case 266:
-							error("!Misplaced " + getCurrentEscapeCharacter() + "omit", "I expect to see \\omit only after tab marks or the \\cr of", "an alignment. Proceed, and I'll ignore this case.");
+							errorLogic.error("!Misplaced " + getCurrentEscapeCharacter() + "omit", "I expect to see \\omit only after tab marks or the \\cr of", "an alignment. Proceed, and I'll ignore this case.");
 							break;
 						case 33:
 						case 135:
@@ -16548,7 +16547,7 @@ public final class Tex {
 						case 68:
 						case 169:
 						case 270:
-							error("!Extra " + getCurrentEscapeCharacter() + "endcsname", "I'm ignoring this, since I wasn't doing a \\csname.");
+							errorLogic.error("!Extra " + getCurrentEscapeCharacter() + "endcsname", "I'm ignoring this, since I wasn't doing a \\csname.");
 							break;
 						case 105:
 							initmath();
@@ -16567,7 +16566,7 @@ public final class Tex {
 								mem[curlist.tailfield].setrh(newnoad());
 								curlist.tailfield = mem[curlist.tailfield].getrh();
 							}
-							backinput();
+							unreadToken();
 							scanmath(curlist.tailfield + 1);
 						}
 							break;
@@ -16815,7 +16814,7 @@ public final class Tex {
 					{
 						ligstack = avail;
 						if (ligstack == 0) {
-							ligstack = getavail();
+							ligstack = allocateMemoryWord();
 						} else {
 							avail = mem[ligstack].getrh();
 							mem[ligstack].setrh(0);
@@ -16953,7 +16952,7 @@ public final class Tex {
 							{
 								ligstack = avail;
 								if (ligstack == 0) {
-									ligstack = getavail();
+									ligstack = allocateMemoryWord();
 								} else {
 									avail = mem[ligstack].getrh();
 									mem[ligstack].setrh(0);
@@ -17193,7 +17192,7 @@ public final class Tex {
 		}
 	}
 
-	private boolean openfmtfile() throws IOException {
+	boolean openfmtfile() throws IOException {
 		/* 40 10 */boolean Result;
 		int j;
 		j = curinput.getLoc();
@@ -17255,7 +17254,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private boolean loadfmtfile() {
+	boolean loadfmtfile() {
 		/* 125 10 */boolean Result;
 		int j, k;
 		int p, q;
@@ -17666,7 +17665,7 @@ public final class Tex {
 		return Result;
 	}
 
-	private void closeFiles() {
+	void closeFiles() {
 		int k;
 		for (k = 0; k <= 15; k++) {
 			if (writeopen[k]) {
@@ -17796,7 +17795,7 @@ public final class Tex {
 		}
 	}
 
-	private void finalcleanup() {
+	void finalcleanup() {
 		cleanUpInputStack();
 		while (openparens > 0) {
 			print(1276);
@@ -17847,7 +17846,7 @@ public final class Tex {
 		}
 	}
 
-	private void initprim() {
+	void initprim() {
 		nonewcontrolsequence = false;
 		primitive(376, 75, 7182);
 		primitive(377, 75, 7183);
@@ -18316,6 +18315,7 @@ public final class Tex {
 		initialize();
 		openlogfile();
 		this.errorReporter = new ErrorReporter(logfile);
+		this.errorLogic = new ErrorLogic(this);
 		if (initex) {
 			if (!getstringsstarted()) {
 				throw new RuntimeException("getstringsstarted() failed");
@@ -18400,29 +18400,29 @@ public final class Tex {
 	}
 
 	// removes as many finished token lists from the input stack as possible
-	private void popFinishedTokenLists() {
+	void popFinishedTokenLists() {
 		while ((curinput.getState() == TOKENIZER_STATE_TOKEN_LIST) && (curinput.getLoc() == 0)) {
 			endtokenlist();
 		}
 	}
 
 	// pushes a copy of the current input on the input stack
-	private void dupInput() {
+	void dupInput() {
 		if (inputptr == stacksize) {
-			overflow(593, stacksize);
+			errorLogic.overflow(593, stacksize);
 		}
 		inputstack[inputptr].copyFrom(curinput);
 		inputptr = inputptr + 1;
 	}
 
 	// pops the top input off the input stack and makes it the current input
-	private void popInput() {
+	void popInput() {
 		inputptr = inputptr - 1;
 		curinput.copyFrom(inputstack[inputptr]);
 	}
 
 	// closes and removes all inputs on the input stack
-	private void cleanUpInputStack() {
+	void cleanUpInputStack() {
 		while (inputptr > 0) {
 			if (curinput.getState() == TOKENIZER_STATE_TOKEN_LIST) {
 				endtokenlist();
@@ -18454,14 +18454,14 @@ public final class Tex {
 	 * Returns the "current newline character" used for printing.
 	 * @return the current newline character
 	 */
-	private int getCurrentNewlineCharacter() {
+	int getCurrentNewlineCharacter() {
 		return eqtb[9612].getInt();
 	}
 	
 	/**
 	 * Prints a newline character to the currently selected output.
 	 */
-	private void println() {
+	void println() {
 		
 		// output streams
 		if (selector < 16) {
@@ -18487,7 +18487,7 @@ public final class Tex {
 	 * Prints the specified character to the current output
 	 * @param c the character to print
 	 */
-	private void printchar(final int c) {
+	void printchar(final int c) {
 		
 		// replace the "current newline character" by a real newline character except for show_context and new_string
 		if (selector < 20 && c == getCurrentNewlineCharacter()) {
@@ -18550,7 +18550,7 @@ public final class Tex {
 	 * Prints the specified string to the current output
 	 * @param s the string to print
 	 */
-	private void print(String s) {
+	void print(String s) {
 		for (int i=0; i<s.length(); i++) {
 			printchar(s.charAt(i));
 		}
@@ -18560,7 +18560,7 @@ public final class Tex {
 	 * Prints the specified string from the string pool to the current output.
 	 * @param s the string pool selector for the string to print
 	 */
-	private void print(int s) {
+	void print(int s) {
 		if (s < 0 || s >= strptr) {
 			print("???");
 			return;
@@ -18579,7 +18579,7 @@ public final class Tex {
 	 * detected for the terminal or log file), then prints the specified string.
 	 * @param s the string to print
 	 */
-	private void printnl(String s) {
+	void printnl(String s) {
 		if (((termoffset > 0) && (((selector) % 2 == 1))) || ((fileoffset > 0) && (selector >= 18))) {
 			println();
 		}
@@ -18591,7 +18591,7 @@ public final class Tex {
 	 * detected for the terminal or log file), then prints the specified string.
 	 * @param s the string pool selector for the string to print
 	 */
-	private void printnl(final int s) {
+	void printnl(final int s) {
 		if (((termoffset > 0) && (((selector) % 2 == 1))) || ((fileoffset > 0) && (selector >= 18))) {
 			println();
 		}
@@ -18606,7 +18606,7 @@ public final class Tex {
 	 * Returns the current escape character (usually a backslash). Also returns a backslash
 	 * if the current escape character is invalid.
 	 */
-	private int getCurrentEscapeCharacter() {
+	int getCurrentEscapeCharacter() {
 		int c = eqtb[9608].getInt();
 		if (c >= 0 && c < 256) {
 			return c;
@@ -18619,7 +18619,7 @@ public final class Tex {
 	 * Prints the current escape character (usually a backslash), or nothing if
 	 * that character is set to an invalid code.
 	 */
-	private void printCurrentEscapeCharacter() {
+	void printCurrentEscapeCharacter() {
 		int c = eqtb[9608].getInt();
 		if (c >= 0 && c < 256) {
 			printchar(c);
@@ -18632,7 +18632,7 @@ public final class Tex {
 	 * 
 	 * @param s the string to print
 	 */
-	private void printEscapeSequence(final String s) {
+	void printEscapeSequence(final String s) {
 		printCurrentEscapeCharacter();
 		print(s);
 	}
@@ -18643,7 +18643,7 @@ public final class Tex {
 	 * 
 	 * @param s the string pool selector for the string to print
 	 */
-	private void printEscapeSequence(final int s) {
+	void printEscapeSequence(final int s) {
 		printCurrentEscapeCharacter();
 		print(s);
 	}
@@ -18652,7 +18652,7 @@ public final class Tex {
 	 * Prints a decimal integer to the currently selected output.
 	 * @param n the integer to print
 	 */
-	private void printInt(int n) {
+	void printInt(int n) {
 		print(Integer.toString(n));
 	}
 	
@@ -18661,7 +18661,7 @@ public final class Tex {
 	 * (used by TeX to denote hexadecimal integers).
 	 * @param n the integer to print
 	 */
-	private void printHex(int n) {
+	void printHex(int n) {
 		printchar(34);
 		print(Integer.toString(n, 16));
 	}
@@ -18670,7 +18670,7 @@ public final class Tex {
 	 * Prints the two lowest-order decimal digits of the specified integer.
 	 * @param n the integer to print
 	 */
-	private void printTwoDigits(int n) {
+	void printTwoDigits(int n) {
 		n = Math.abs(n) % 100;
 		printchar(48 + (n / 10));
 		printchar(48 + (n % 10));
@@ -18680,7 +18680,7 @@ public final class Tex {
 	 * Prints a fixed-point number.
 	 * @param n the number to print
 	 */
-	private void printFixed(int n) {
+	void printFixed(int n) {
 		printInt(n >> 16);
 		printchar(46);
 		
@@ -18702,7 +18702,7 @@ public final class Tex {
 	// ------------------------------------------------------------------------------------------------
 	
 
-	private void printcs(final int p) {
+	void printcs(final int p) {
 		if (p < 514) {
 			if (p >= 257) {
 				if (p == 513) {
@@ -18729,7 +18729,7 @@ public final class Tex {
 		}
 	}
 
-	private void sprintcs(final int p) {
+	void sprintcs(final int p) {
 		if (p < 514) {
 			if (p < 257) {
 				print(p - 1);
@@ -18744,13 +18744,13 @@ public final class Tex {
 		}
 	}
 
-	private void printfilename(final int n, final int a, final int e) {
+	void printfilename(final int n, final int a, final int e) {
 		print(a);
 		print(n);
 		print(e);
 	}
 
-	private void printsize(final int s) {
+	void printsize(final int s) {
 		if (s == 0) {
 			printEscapeSequence(412);
 		} else if (s == 16) {
@@ -18760,7 +18760,7 @@ public final class Tex {
 		}
 	}
 
-	private void printwritewhatsit(final int s, final int p) {
+	void printwritewhatsit(final int s, final int p) {
 		printEscapeSequence(s);
 		if (mem[p + 1].getlh() < 16) {
 			printInt(mem[p + 1].getlh());
@@ -18773,7 +18773,7 @@ public final class Tex {
 
 
 
-	private void printromanint(int n) {
+	void printromanint(int n) {
 		/* 10 */int j, k;
 		int u, v;
 		j = strstart[260];
@@ -18802,7 +18802,7 @@ public final class Tex {
 		}
 	}
 
-	private void printcurrentstring() {
+	void printcurrentstring() {
 		int j;
 		j = strstart[strptr];
 		while (j < poolptr) {
@@ -18812,7 +18812,7 @@ public final class Tex {
 	}
 	
 
-	private void printfontandchar(final int p) {
+	void printfontandchar(final int p) {
 		if (p > memend) {
 			printEscapeSequence(309);
 		} else {
@@ -18826,7 +18826,7 @@ public final class Tex {
 		}
 	}
 
-	private void printmark(final int p) {
+	void printmark(final int p) {
 		printchar(123);
 		if ((p < himemmin) || (p > memend)) {
 			printEscapeSequence(309);
@@ -18836,7 +18836,7 @@ public final class Tex {
 		printchar(125);
 	}
 
-	private void printruledimen(final int d) {
+	void printruledimen(final int d) {
 		if ((d == -1073741824)) {
 			printchar(42);
 		} else {
@@ -18844,7 +18844,7 @@ public final class Tex {
 		}
 	}
 
-	private void printglue(final int d, int order, final int s) {
+	void printglue(final int d, int order, final int s) {
 		printFixed(d);
 		if ((order < 0) || (order > 3)) {
 			print(310);
@@ -18859,7 +18859,7 @@ public final class Tex {
 		}
 	}
 
-	private void printspec(final int p, final int s) {
+	void printspec(final int p, final int s) {
 		if ((p < 0) || (p >= lomemmax)) {
 			printchar(42);
 		} else {
@@ -18878,14 +18878,14 @@ public final class Tex {
 		}
 	}
 
-	private void printfamandchar(final int p) {
+	void printfamandchar(final int p) {
 		printEscapeSequence(464);
 		printInt(mem[p].getb0());
 		printchar(32);
 		print(mem[p].getb1());
 	}
 
-	private void printdelimiter(final int p) {
+	void printdelimiter(final int p) {
 		int a;
 		a = mem[p].getb0() * 256 + mem[p].getb1();
 		a = a * 4096 + mem[p].getb2() * 256 + mem[p].getb3();
@@ -18896,7 +18896,7 @@ public final class Tex {
 		}
 	}
 
-	private void printsubsidiarydata(final int p, final int c) {
+	void printsubsidiarydata(final int p, final int c) {
 		if ((poolptr - strstart[strptr]) >= depththreshold) {
 			if (mem[p].getrh() != 0) {
 				print(314);
@@ -18934,7 +18934,7 @@ public final class Tex {
 		}
 	}
 
-	private void printstyle(final int c) {
+	void printstyle(final int c) {
 		switch (c / 2) {
 		case 0:
 			printEscapeSequence(861);
@@ -18954,7 +18954,7 @@ public final class Tex {
 		}
 	}
 
-	private void printskipparam(final int n) {
+	void printskipparam(final int n) {
 		switch (n) {
 		case 0:
 			printEscapeSequence(376);
@@ -19016,7 +19016,7 @@ public final class Tex {
 		}
 	}
 
-	private void printmode(final int m) {
+	void printmode(final int m) {
 		if (m > 0) {
 			switch (m / (101)) {
 			case 0:
@@ -19047,7 +19047,7 @@ public final class Tex {
 		print(361);
 	}
 
-	private void printparam(final int n) {
+	void printparam(final int n) {
 		switch (n) {
 		case 0:
 			printEscapeSequence(420);
@@ -19220,7 +19220,7 @@ public final class Tex {
 		}
 	}
 	
-	private void printlengthparam(final int n) {
+	void printlengthparam(final int n) {
 		switch (n) {
 		case 0:
 			printEscapeSequence(478);
@@ -19291,7 +19291,7 @@ public final class Tex {
 		}
 	}
 
-	private void printcmdchr(final int cmd, final int chrcode) {
+	void printcmdchr(final int cmd, final int chrcode) {
 		switch (cmd) {
 		case 1: {
 			print(557);
@@ -20176,7 +20176,7 @@ public final class Tex {
 		}
 	}
 	
-	private void printmeaning() {
+	void printmeaning() {
 		printcmdchr(curcmd, curchr);
 		if (curcmd >= 111) {
 			printchar(58);
@@ -20189,7 +20189,7 @@ public final class Tex {
 		}
 	}
 
-	private void printtotals() {
+	void printtotals() {
 		printFixed(pagesofar[1]);
 		if (pagesofar[2] != 0) {
 			print(312);
@@ -20217,7 +20217,7 @@ public final class Tex {
 		}
 	}
 
-	private void shownodelist(int p) {
+	void shownodelist(int p) {
 		/* 10 */int n;
 		double g;
 		if ((poolptr - strstart[strptr]) > depththreshold) {
@@ -20645,7 +20645,7 @@ public final class Tex {
 		}
 	}
 
-	private void showbox(final int p) {
+	void showbox(final int p) {
 		depththreshold = eqtb[9588].getInt();
 		breadthmax = eqtb[9587].getInt();
 		if (breadthmax <= 0) {
@@ -20658,7 +20658,7 @@ public final class Tex {
 		println();
 	}
 	
-	private void showactivities() {
+	void showactivities() {
 		int p;
 		int m;
 		final memoryword a = new memoryword();
@@ -20770,7 +20770,7 @@ public final class Tex {
 		}
 	}
 	
-	private void begindiagnostic() {
+	void begindiagnostic() {
 		oldsetting = selector;
 		if ((eqtb[9592].getInt() <= 0) && (selector == 19)) {
 			selector = selector - 1;
@@ -20778,7 +20778,7 @@ public final class Tex {
 		}
 	}
 
-	private void enddiagnostic(final boolean blankline) {
+	void enddiagnostic(final boolean blankline) {
 		printnl(338);
 		if (blankline) {
 			println();
@@ -20786,13 +20786,13 @@ public final class Tex {
 		selector = oldsetting;
 	}
 	
-	private void tokenshow(final int p) {
+	void tokenshow(final int p) {
 		if (p != 0) {
 			showtokenlist(mem[p].getrh(), 0, 10000000);
 		}
 	}
 
-	private void showcurcmdchr() {
+	void showcurcmdchr() {
 		begindiagnostic();
 		printnl(123);
 		if (curlist.modefield != shownmode) {
@@ -20805,7 +20805,7 @@ public final class Tex {
 		enddiagnostic(false);
 	}
 
-	private void showcontext() {
+	void showcontext() {
 		/* 30 */int oldsetting;
 		int nn;
 		boolean bottomline;
@@ -20999,11 +20999,11 @@ public final class Tex {
 		/* lab30: */curinput.copyFrom(inputstack[inputptr]);
 	}
 	
-	private void showinfo() {
+	void showinfo() {
 		shownodelist(mem[tempptr].getlh());
 	}
 	
-	private void showwhatever() {
+	void showwhatever() {
 		lab50: while (true) {
 			switch (curchr) {
 			case 3: {
@@ -21058,7 +21058,7 @@ public final class Tex {
 		}
 		helpptr = 0;
 		errorReporter.decrementErrorCount();
-		error();
+		errorLogic.error();
 	}
 	
 	
@@ -21066,7 +21066,7 @@ public final class Tex {
 	// error routines
 	// ------------------------------------------------------------------------------------------------
 
-	private void showtokenlist(int p, final int q, final int l) {
+	void showtokenlist(int p, final int q, final int l) {
 		/* 10 */int m, c;
 		int matchchr;
 		int n;
@@ -21146,7 +21146,7 @@ public final class Tex {
 		}
 	}
 
-	private void runaway() {
+	void runaway() {
 		int p;
 		p = 0;
 		if (scannerstatus > 1) {
@@ -21179,114 +21179,12 @@ public final class Tex {
 		}
 	}
 
-	private void jumpout() {
+	void jumpout() {
 		closeFiles();
 		throw new RuntimeException("jumpout() called");
 	}
 
-	private void error(String errorMessage, String... helpLines) {
-		printnl(errorMessage);
-		errorWithStringHelpLines();
-	}
-
-	private void errorWithStringHelpLines(String... helpLines) {
-		printchar('.');
-		showcontext();
-		for (String helpLine : helpLines) {
-			printnl(helpLine);
-		}
-		helpptr = 0;
-		errorReporter.error("ERROR"); // TODO dirty: sets the "worst error level so far" and stops on 100+ errors
-	}
-
-	private void error() {
-		printchar('.');
-		showcontext();
-		while (helpptr > 0) {
-			helpptr = helpptr - 1;
-			printnl(helpline[helpptr]);
-		}
-		errorReporter.error("ERROR"); // TODO dirty: sets the "worst error level so far" and stops on 100+ errors
-	}
-	
-	private void fatalerror(final int s) {
-		normalizeselector();
-		printnl(262);
-		print(287);
-		helpptr = 1;
-		helpline[0] = s;
-		if (logopened) {
-			error();
-		}
-		jumpout();
-	}
-
-	private void overflow(final int s, final int n) {
-		normalizeselector();
-		printnl(262);
-		print(288);
-		print(s);
-		printchar(61);
-		printInt(n);
-		printchar(93);
-		helpptr = 2;
-		helpline[1] = 289;
-		helpline[0] = 290;
-		if (logopened) {
-			error();
-		}
-		jumpout();
-	}
-
-	private void confusion(final int s) {
-		normalizeselector();
-		if (errorReporter.getWorstLevelSoFar().ordinal() < Level.ERROR.ordinal()) {
-			printnl(262);
-			print(291);
-			print(s);
-			printchar(41);
-			helpptr = 1;
-			helpline[0] = 292;
-		} else {
-			printnl(262);
-			print(293);
-			helpptr = 2;
-			helpline[1] = 294;
-			helpline[0] = 295;
-		}
-		if (logopened) {
-			error();
-		}
-		jumpout();
-	}
-
-	private void interror(final int n) {
-		print(286);
-		printInt(n);
-		printchar(41);
-		error();
-	}
-
-	private void muerror() {
-		printnl(262);
-		print(662);
-		helpptr = 1;
-		helpline[0] = 663;
-		error();
-	}
-
-	private void backerror() {
-		backinput();
-		error();
-	}
-
-	private void inserror() {
-		backinput();
-		curinput.setIndex(4);
-		error();
-	}
-
-	private void charwarning(final int f, final int c) {
+	void charwarning(final int f, final int c) {
 		if (eqtb[9598].getInt() > 0) {
 			begindiagnostic();
 			printnl(825);
@@ -21298,8 +21196,8 @@ public final class Tex {
 		}
 	}
 
-	private void boxerror(final int n) {
-		error();
+	void boxerror(final int n) {
+		errorLogic.error();
 		begindiagnostic();
 		printnl(836);
 		showbox(eqtb[7978 + n].getrh());
@@ -21308,87 +21206,5 @@ public final class Tex {
 		eqtb[7978 + n].setrh(0);
 	}
 
-	private void insertdollarsign() {
-		backinput();
-		curtok = 804;
-		printnl(262);
-		print(1017);
-		helpptr = 2;
-		helpline[1] = 1018;
-		helpline[0] = 1019;
-		inserror();
-	}
-
-	private void youcant() {
-		printnl(262);
-		print(685);
-		printcmdchr(curcmd, curchr);
-		print(1020);
-		printmode(curlist.modefield);
-	}
-
-	private void reportillegalcase() {
-		youcant();
-		helpptr = 4;
-		helpline[3] = 1021;
-		helpline[2] = 1022;
-		helpline[1] = 1023;
-		helpline[0] = 1024;
-		error();
-	}
-
-	private boolean privileged() {
-		boolean Result;
-		if (curlist.modefield > 0) {
-			Result = true;
-		} else {
-			reportillegalcase();
-			Result = false;
-		}
-		return Result;
-	}
-
-	private void alignerror() {
-		if (Math.abs(alignstate) > 2) {
-			printnl("!Misplaced ");
-			printcmdchr(curcmd, curchr);
-			if (curtok == 1062) {
-				error("",
-					"I can't figure out why you would want to use a tab mark",
-					"here. If you just want an ampersand, the remedy is",
-					"simple: Just type `I\\&' now. But if some right brace",
-					"up above has ended a previous alignment prematurely,",
-					"you're probably due for more error messages, and you",
-					"might try typing `S' now just to see what is salvageable."
-				);
-			} else {
-				error("",
-					"I can't figure out why you would want to use a tab mark",
-					"or \\cr or \\span just now. If something like a right brace",
-					"up above has ended a previous alignment prematurely,",
-					"you're probably due for more error messages, and you",
-					"might try typing `S' now just to see what is salvageable."
-				);
-			}
-		} else {
-			backinput();
-			if (alignstate < 0) {
-				printnl(262);
-				print(657);
-				alignstate = alignstate + 1;
-				curtok = 379;
-			} else {
-				printnl(262);
-				print(1110);
-				alignstate = alignstate - 1;
-				curtok = 637;
-			}
-			helpptr = 3;
-			helpline[2] = 1111;
-			helpline[1] = 1112;
-			helpline[0] = 1113;
-			inserror();
-		}
-	}
 
 }
