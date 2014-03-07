@@ -3,6 +3,7 @@ package tex;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import name.martingeisse.jtex.io.TexFileDataInputStream;
 import name.martingeisse.jtex.io.TexFileDataOutputStream;
 import name.martingeisse.jtex.io.TexFilePrintWriter;
@@ -29,8 +30,6 @@ public final class Tex {
 	static final int errorline = 72;
 
 	static final int halferrorline = 42;
-
-	static final int stacksize = 200;
 
 	static final int maxinopen = 6;
 
@@ -203,9 +202,11 @@ public final class Tex {
 
 	int curtok;
 
-	TexTokenizer inputstack[] = new TexTokenizer[stacksize + 1];
+	TexTokenizer inputStackBackingArray[] = new TexTokenizer[InputStack.STACK_SIZE + 1];
 
 	int inputptr;
+	
+	InputStack inputStack;
 
 	TexTokenizer curinput = new TexTokenizer();
 
@@ -955,8 +956,7 @@ public final class Tex {
 			if (!inputln(termin, true)) {
 				termout.print('\n');
 				termout.print("! End of file on the terminal... why?");
-				Result = false;
-				return Result /* lab10 */;
+				return false;
 			}
 			curinput.setLoc(first);
 			while ((curinput.getLoc() < last) && (buffer[curinput.getLoc()] == 32)) {
@@ -2356,7 +2356,7 @@ public final class Tex {
 	}
 	
 	void begintokenlist(final int p, final int t) {
-		dupInput();
+		inputStack.duplicate();
 		curinput.setState(TOKENIZER_STATE_TOKEN_LIST);
 		curinput.setStart(p);
 		curinput.setIndex(t);
@@ -2410,7 +2410,7 @@ public final class Tex {
 				errorLogic.fatalerror(595);
 			}
 		}
-		popInput();
+		inputStack.pop();
 	}
 
 	void unreadToken() {
@@ -2423,7 +2423,7 @@ public final class Tex {
 	}
 	
 	void insertToken(int token, int type) {
-		popFinishedTokenLists();
+		inputStack.popFinishedTokenLists();
 		int p = allocateMemoryWord();
 		mem[p].setlh(token);
 		if (token < 768) {
@@ -2433,7 +2433,7 @@ public final class Tex {
 				alignstate = alignstate + 1;
 			}
 		}
-		dupInput();
+		inputStack.duplicate();
 		curinput.setState(TOKENIZER_STATE_TOKEN_LIST);
 		curinput.setStart(p);
 		curinput.setIndex(type);
@@ -2445,7 +2445,7 @@ public final class Tex {
 			errorLogic.overflow(596, maxinopen);
 		}
 		inopen = inopen + 1;
-		dupInput();
+		inputStack.duplicate();
 		curinput.setIndex(inopen);
 		linestack[curinput.getIndex()] = line;
 		curinput.setStart(first);
@@ -2459,7 +2459,7 @@ public final class Tex {
 		if (curinput.getName() > 17) {
 			inputfile[curinput.getIndex()].close();
 		}
-		popInput();
+		inputStack.pop();
 		inopen = inopen - 1;
 	}
 
@@ -3250,7 +3250,7 @@ public final class Tex {
 				}
 			} while (!(mem[r].getlh() == 3584));
 		}
-		popFinishedTokenLists();
+		inputStack.popFinishedTokenLists();
 		begintokenlist(refcount, 5);
 		curinput.setName(warningindex);
 		curinput.setLoc(mem[r].getrh());
@@ -5455,9 +5455,9 @@ public final class Tex {
 			printchar(58);
 			printTwoDigits(eqtb[9583].getInt() % 60);
 		}
-		inputstack[inputptr].copyFrom(curinput);
+		inputStackBackingArray[inputptr].copyFrom(curinput);
 		printnl(798);
-		l = inputstack[0].getLimit();
+		l = inputStackBackingArray[0].getLimit();
 		if (buffer[l] == eqtb[9611].getInt()) {
 			l = l - 1;
 		}
@@ -17796,7 +17796,7 @@ public final class Tex {
 	}
 
 	void finalcleanup() {
-		cleanUpInputStack();
+		inputStack.close();
 		while (openparens > 0) {
 			print(1276);
 			openparens = openparens - 1;
@@ -18247,8 +18247,8 @@ public final class Tex {
 		for (int c = 0; c <= nestsize; c++) {
 			nest[c] = new liststaterecord();
 		}
-		for (int c = 0; c <= stacksize; c++) {
-			inputstack[c] = new TexTokenizer();
+		for (int c = 0; c <= InputStack.STACK_SIZE; c++) {
+			inputStackBackingArray[c] = new TexTokenizer();
 		}
 	}
 
@@ -18313,6 +18313,7 @@ public final class Tex {
 			throw new IllegalStateException("Ouch---my internal constants have been clobbered!" + "---case " + bad);
 		}
 		initialize();
+		this.inputStack = new InputStack(this);
 		openlogfile();
 		this.errorReporter = new ErrorReporter(logfile);
 		this.errorLogic = new ErrorLogic(this);
@@ -18397,39 +18398,6 @@ public final class Tex {
 		maincontrol();
 		finalcleanup();
 		closeFiles();
-	}
-
-	// removes as many finished token lists from the input stack as possible
-	void popFinishedTokenLists() {
-		while ((curinput.getState() == TOKENIZER_STATE_TOKEN_LIST) && (curinput.getLoc() == 0)) {
-			endtokenlist();
-		}
-	}
-
-	// pushes a copy of the current input on the input stack
-	void dupInput() {
-		if (inputptr == stacksize) {
-			errorLogic.overflow(593, stacksize);
-		}
-		inputstack[inputptr].copyFrom(curinput);
-		inputptr = inputptr + 1;
-	}
-
-	// pops the top input off the input stack and makes it the current input
-	void popInput() {
-		inputptr = inputptr - 1;
-		curinput.copyFrom(inputstack[inputptr]);
-	}
-
-	// closes and removes all inputs on the input stack
-	void cleanUpInputStack() {
-		while (inputptr > 0) {
-			if (curinput.getState() == TOKENIZER_STATE_TOKEN_LIST) {
-				endtokenlist();
-			} else {
-				endfilereading();
-			}
-		}
 	}
 
 	// ------------------------------------------------------------------------------------------------
@@ -20817,11 +20785,11 @@ public final class Tex {
 		int p;
 		int q;
 		baseptr = inputptr;
-		inputstack[baseptr].copyFrom(curinput);
+		inputStackBackingArray[baseptr].copyFrom(curinput);
 		nn = -1;
 		bottomline = false;
 		while (true) {
-			curinput.copyFrom(inputstack[baseptr]);
+			curinput.copyFrom(inputStackBackingArray[baseptr]);
 			if ((curinput.getState() != TOKENIZER_STATE_TOKEN_LIST)) {
 				if ((curinput.getName() > 17) || (baseptr == 0)) {
 					bottomline = true;
@@ -20996,7 +20964,7 @@ public final class Tex {
 			}
 			baseptr = baseptr - 1;
 		}
-		/* lab30: */curinput.copyFrom(inputstack[inputptr]);
+		/* lab30: */curinput.copyFrom(inputStackBackingArray[inputptr]);
 	}
 	
 	void showinfo() {
