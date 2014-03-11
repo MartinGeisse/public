@@ -170,9 +170,7 @@ public final class ErrorLogic {
 		tex.print(287);
 		tex.helpptr = 1;
 		tex.helpline[0] = s;
-		if (tex.logopened) {
-			error();
-		}
+		error();
 		tex.jumpout();
 	}
 
@@ -190,9 +188,7 @@ public final class ErrorLogic {
 		tex.helpptr = 2;
 		tex.helpline[1] = 289;
 		tex.helpline[0] = 290;
-		if (tex.logopened) {
-			error();
-		}
+		error();
 		tex.jumpout();
 	}
 
@@ -215,9 +211,7 @@ public final class ErrorLogic {
 			tex.helpline[1] = 294;
 			tex.helpline[0] = 295;
 		}
-		if (tex.logopened) {
-			error();
-		}
+		error();
 		tex.jumpout();
 	}
 

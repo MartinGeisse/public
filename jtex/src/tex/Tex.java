@@ -286,8 +286,6 @@ public final class Tex {
 
 	int jobname;
 
-	boolean logopened;
-
 	TexFileDataOutputStream dvifile;
 
 	int outputfilename;
@@ -1184,11 +1182,7 @@ public final class Tex {
 	}
 
 	void normalizeselector() {
-		if (logopened) {
-			selector = 19;
-		} else {
-			selector = 17;
-		}
+		selector = 19;
 	}
 
 	int half(final int x) {
@@ -5436,25 +5430,22 @@ public final class Tex {
 		}
 		makenamestring();
 		selector = 18;
-		logopened = true;
-		{
-			logfile.print("This is TeX, Version 3.14159");
-			print(formatident);
-			print(800);
-			printInt(eqtb[9584].getInt());
-			printchar(32);
-			months = "JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
-			// StringBuffer strbuf = new StringBuffer(months);
-			//			for (k = 3 * eqtb[9585].getInt() - 3; k <= 3 * eqtb[9585].getInt() - 1; k++) {
-			//				logfile.print(strbuf.charAt(k));
-			//			}
-			printchar(32);
-			printInt(eqtb[9586].getInt());
-			printchar(32);
-			printTwoDigits(eqtb[9583].getInt() / 60);
-			printchar(58);
-			printTwoDigits(eqtb[9583].getInt() % 60);
-		}
+		logfile.print("This is TeX, Version 3.14159");
+		print(formatident);
+		print(800);
+		printInt(eqtb[9584].getInt());
+		printchar(32);
+		months = "JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
+		// StringBuffer strbuf = new StringBuffer(months);
+		//			for (k = 3 * eqtb[9585].getInt() - 3; k <= 3 * eqtb[9585].getInt() - 1; k++) {
+		//				logfile.print(strbuf.charAt(k));
+		//			}
+		printchar(32);
+		printInt(eqtb[9586].getInt());
+		printchar(32);
+		printTwoDigits(eqtb[9583].getInt() / 60);
+		printchar(58);
+		printTwoDigits(eqtb[9583].getInt() % 60);
 		inputStackBackingArray[inputptr].copyFrom(curinput);
 		printnl(798);
 		l = inputStackBackingArray[0].getLimit();
@@ -15549,20 +15540,12 @@ public final class Tex {
 		TexFileDataOutputStream fmtfile;
 		fmtfile = null;
 		if (saveptr != 0) {
-			{
-				printnl(262);
-				print(1258);
-			}
-			{
-				helpptr = 1;
-				helpline[0] = 1259;
-			}
-			{
-				if (logopened) {
-					errorLogic.error();
-				}
-				jumpout();
-			}
+			printnl(262);
+			print(1258);
+			helpptr = 1;
+			helpline[0] = 1259;
+			errorLogic.error();
+			jumpout();
 		}
 		selector = 21;
 		print(1272);
@@ -17788,11 +17771,9 @@ public final class Tex {
 			print(841);
 			dvifile.close();
 		}
-		if (logopened) {
-			logfile.println();
-			logfile.close();
-			selector = selector - 2;
-		}
+		logfile.println();
+		logfile.close();
+		selector = selector - 2;
 	}
 
 	void finalcleanup() {
@@ -18341,7 +18322,6 @@ public final class Tex {
 		termout.flush();
 		jobname = 796; // pre-assigned dummy job name
 		nameinprogress = false;
-		logopened = false;
 		outputfilename = 0;
 		inputptr = 0;
 		inopen = 0;
