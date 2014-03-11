@@ -1181,6 +1181,15 @@ public final class Tex {
 		return Result;
 	}
 
+	String getStringFromPool(int n) {
+		StringBuilder builder = new StringBuilder();
+		int start = strstart[n], end = strstart[n + 1];
+		for (int i=start; i<end; i++) {
+			builder.append((char)strpool[i]);
+		}
+		return builder.toString();
+	}
+	
 	void normalizeselector() {
 		selector = 19;
 	}
@@ -2319,30 +2328,15 @@ public final class Tex {
 
 	void preparemag() {
 		if ((magset > 0) && (eqtb[9580].getInt() != magset)) {
-			{
-				printnl(262);
-				print(547);
-			}
-			printInt(eqtb[9580].getInt());
-			print(548);
-			printnl(549);
-			{
-				helpptr = 2;
-				helpline[1] = 550;
-				helpline[0] = 551;
-			}
-			errorLogic.interror(magset);
+			errorLogic.error("!Incompatible magnification (" + eqtb[9580].getInt() + "); the previous value will be retained. I can handle only one magnification ratio per job. So I've reverted to the magnification you used earlier on this run.");
 			geqworddefine(9580, magset);
 		}
 		if ((eqtb[9580].getInt() <= 0) || (eqtb[9580].getInt() > 32768)) {
-			{
-				printnl(262);
-				print(552);
-			}
-			{
-				helpptr = 1;
-				helpline[0] = 553;
-			}
+			// errorLogic.error("!Illegal magnification has been changed to 1000. The magnification ratio must be between 1 and 32768.");
+			printnl(262);
+			print(552);
+			helpptr = 1;
+			helpline[0] = 553;
 			errorLogic.interror(eqtb[9580].getInt());
 			geqworddefine(9580, 1000);
 		}
@@ -2401,7 +2395,7 @@ public final class Tex {
 			if (alignstate > 500000) {
 				alignstate = 0;
 			} else {
-				errorLogic.fatalerror(595);
+				errorLogic.fatalError("(interwoven alignment preambles are not allowed)");
 			}
 		}
 		inputStack.pop();
@@ -2879,7 +2873,7 @@ public final class Tex {
 							if (selector < 18) {
 								openlogfile();
 							}
-							errorLogic.fatalerror(617);
+							errorLogic.fatalError("*** (job aborted, no legal \\end found)");
 						}
 						continue lab25;
 					}
@@ -2933,7 +2927,7 @@ public final class Tex {
 				if (curcmd >= 4) {
 					if (alignstate == 0) {
 						if (scannerstatus == 4) {
-							errorLogic.fatalerror(595);
+							errorLogic.fatalError("(interwoven alignment preambles are not allowed)");
 						}
 						curcmd = mem[curalign + 5].getlh();
 						mem[curalign + 5].setlh(curchr);
@@ -4908,7 +4902,7 @@ public final class Tex {
 			beginfilereading();
 			curinput.setName(m + 1);
 			if (readopen[m] == 2) {
-				errorLogic.fatalerror(753);
+				errorLogic.fatalError("*** (cannot \read from terminal in nonstop modes)");
 			} else if (readopen[m] == 1) {
 				if (inputln(readfile[m], false)) {
 					readopen[m] = 0;
@@ -5500,7 +5494,7 @@ public final class Tex {
 			showcontext();
 			printnl(792);
 			print(787);
-			errorLogic.fatalerror(793);
+			errorLogic.fatalError("*** (job aborted, file error in nonstop mode)");
 		}
 		/* lab30: */curinput.setName(makenamestring());
 		if ((termoffset > 0) || (fileoffset > 0)) {
@@ -9180,7 +9174,7 @@ public final class Tex {
 				}
 			}
 			if (curcmd == 9) {
-				errorLogic.fatalerror(595);
+				errorLogic.fatalError("(interwoven alignment preambles are not allowed)");
 			}
 			if ((curcmd == 75) && (curchr == 7193)) {
 				scanoptionalequals();
@@ -9367,7 +9361,7 @@ public final class Tex {
 			errorLogic.confusion(909);
 		}
 		if (alignstate < 500000) {
-			errorLogic.fatalerror(595);
+			errorLogic.fatalError("(interwoven alignment preambles are not allowed)");
 		}
 		p = mem[q].getrh();
 		if ((p == 0) && (mem[curalign + 5].getlh() < 257)) {
@@ -15545,7 +15539,7 @@ public final class Tex {
 			helpptr = 1;
 			helpline[0] = 1259;
 			errorLogic.error();
-			jumpout();
+			errorReporter.fatal("");
 		}
 		selector = 21;
 		print(1272);
@@ -18377,7 +18371,7 @@ public final class Tex {
 		}
 		maincontrol();
 		finalcleanup();
-		closeFiles();
+		closeFiles(); // TODO also in case of exceptions
 	}
 
 	// ------------------------------------------------------------------------------------------------
@@ -21125,11 +21119,6 @@ public final class Tex {
 			println();
 			showtokenlist(mem[p].getrh(), 0, errorline - 10);
 		}
-	}
-
-	void jumpout() {
-		closeFiles();
-		throw new RuntimeException("jumpout() called");
 	}
 
 	void charwarning(final int f, final int c) {

@@ -162,57 +162,31 @@ public final class ErrorLogic {
 	}
 	
 	/**
-	 * TODO documentation
+	 * Simple method to stop with a fatal error.
 	 */
-	void fatalerror(final int s) {
+	void fatalError(String s) {
 		tex.normalizeselector();
-		tex.printnl(262);
-		tex.print(287);
-		tex.helpptr = 1;
-		tex.helpline[0] = s;
-		error();
-		tex.jumpout();
+		tex.errorReporter.fatal(s);
 	}
-
+	
 	/**
-	 * TODO documentation
+	 * Stops with a fatal error about capacity quantity s (string pool index) being n, which is too large.
 	 */
 	void overflow(final int s, final int n) {
 		tex.normalizeselector();
-		tex.printnl(262);
-		tex.print(288);
-		tex.print(s);
-		tex.printchar(61);
-		tex.printInt(n);
-		tex.printchar(93);
-		tex.helpptr = 2;
-		tex.helpline[1] = 289;
-		tex.helpline[0] = 290;
-		error();
-		tex.jumpout();
+		tex.errorReporter.fatal("!TeX capacity exceeded, sorry [" + tex.getStringFromPool(s) + '=' + n + "]. If you really absolutely need more capacity, you can ask a wizard to enlarge me.");
 	}
 
 	/**
-	 * TODO documentation
+	 * Stops with a fatal error because of "something that cannot happen".
 	 */
 	void confusion(final int s) {
 		tex.normalizeselector();
 		if (tex.errorReporter.getWorstLevelSoFar().ordinal() < Level.ERROR.ordinal()) {
-			tex.printnl(262);
-			tex.print(291);
-			tex.print(s);
-			tex.printchar(41);
-			tex.helpptr = 1;
-			tex.helpline[0] = 292;
+			tex.errorReporter.fatal("!This can't happen (" + tex.getStringFromPool(s) + "). I'm broken. Please show this to someone who can fix can fix. ");
 		} else {
-			tex.printnl(262);
-			tex.print(293);
-			tex.helpptr = 2;
-			tex.helpline[1] = 294;
-			tex.helpline[0] = 295;
+			tex.errorReporter.fatal("!I can't go on meeting you like this. One of your faux pas seems to have wounded me deeply... in fact, I'm barely conscious. Please fix it and try again.");
 		}
-		error();
-		tex.jumpout();
 	}
-
+	
 }
