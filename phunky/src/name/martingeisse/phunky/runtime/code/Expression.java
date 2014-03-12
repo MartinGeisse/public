@@ -26,12 +26,13 @@ public interface Expression {
 	 * @param environment the environment
 	 * @return the value of the expression
 	 */
-	public Object execute(Environment environment);
+	public Object evaluate(Environment environment);
 
 	/**
 	 * Obtains the variable for this expression, if any.
+	 * @param environment the environment
 	 * @return the variable or null
 	 */
-	public Variable getVariable();
+	public Variable getVariable(Environment environment);
 	
 }
