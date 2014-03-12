@@ -15,10 +15,10 @@ public enum UnaryOperator {
 	NEGATE {
 
 		/* (non-Javadoc)
-		 * @see name.martingeisse.phunky.runtime.code.BinaryOperator#apply(java.lang.Object, java.lang.Object)
+		 * @see name.martingeisse.phunky.runtime.code.UnaryOperator#apply(java.lang.Object)
 		 */
 		@Override
-		public Object apply(Object leftHandSide, Object rightHandSide) {
+		public Object apply(Object operand) {
 			return null;
 		}
 		
@@ -30,21 +30,20 @@ public enum UnaryOperator {
 	LOGICAL_NOT {
 
 		/* (non-Javadoc)
-		 * @see name.martingeisse.phunky.runtime.code.BinaryOperator#apply(java.lang.Object, java.lang.Object)
+		 * @see name.martingeisse.phunky.runtime.code.UnaryOperator#apply(java.lang.Object)
 		 */
 		@Override
-		public Object apply(Object leftHandSide, Object rightHandSide) {
+		public Object apply(Object operand) {
 			return null;
 		}
 		
 	};
 	
 	/**
-	 * Applies this operator to the specified values.
-	 * @param leftHandSide the left-hand side
-	 * @param rightHandSide the right-hand side
+	 * Applies this operator to the specified operand.
+	 * @param operand the operand
 	 * @return the resulting value
 	 */
-	public abstract Object apply(Object leftHandSide, Object rightHandSide);
+	public abstract Object apply(Object operand);
 
 }

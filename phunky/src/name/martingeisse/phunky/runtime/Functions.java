@@ -7,9 +7,9 @@ package name.martingeisse.phunky.runtime;
 import java.util.HashMap;
 
 /**
- * The environment that keeps variables per function call.
+ * This map keeps globally callable functions.
  */
-public final class Environment extends HashMap<String, Variable> {
+public final class Functions extends HashMap<String, Callable> {
 
 	/**
 	 * the runtime
@@ -20,7 +20,7 @@ public final class Environment extends HashMap<String, Variable> {
 	 * Constructor.
 	 * @param runtime the PHP runtime
 	 */
-	public Environment(final PhpRuntime runtime) {
+	public Functions(final PhpRuntime runtime) {
 		this.runtime = runtime;
 	}
 

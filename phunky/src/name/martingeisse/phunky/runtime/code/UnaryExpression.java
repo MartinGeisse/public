@@ -7,59 +7,45 @@ package name.martingeisse.phunky.runtime.code;
 import name.martingeisse.phunky.runtime.Environment;
 
 /**
- * Combines two sub-expressions using a {@link BinaryOperator}.
+ * Applies a {@link UnaryOperator} to a sub-expression.
  */
 public final class UnaryExpression extends AbstractComputeExpression {
 
 	/**
-	 * the leftHandSide
-	 */
-	private final Expression leftHandSide;
-
-	/**
 	 * the operator
 	 */
-	private final BinaryOperator operator;
+	private final UnaryOperator operator;
 
 	/**
-	 * the rightHandSide
+	 * the operand
 	 */
-	private final Expression rightHandSide;
+	private final Expression operand;
 
+	
 	/**
 	 * Constructor.
-	 * @param leftHandSide the left-hand side
 	 * @param operator the operator
-	 * @param rightHandSide the right-hand side
+	 * @param operand the operand
 	 */
-	public UnaryExpression(Expression leftHandSide, BinaryOperator operator, Expression rightHandSide) {
-		this.leftHandSide = leftHandSide;
+	public UnaryExpression(UnaryOperator operator, Expression operand) {
 		this.operator = operator;
-		this.rightHandSide = rightHandSide;
-	}
-
-	/**
-	 * Getter method for the leftHandSide.
-	 * @return the leftHandSide
-	 */
-	public Expression getLeftHandSide() {
-		return leftHandSide;
+		this.operand = operand;
 	}
 
 	/**
 	 * Getter method for the operator.
 	 * @return the operator
 	 */
-	public BinaryOperator getOperator() {
+	public UnaryOperator getOperator() {
 		return operator;
 	}
-
+	
 	/**
-	 * Getter method for the rightHandSide.
-	 * @return the rightHandSide
+	 * Getter method for the operand.
+	 * @return the operand
 	 */
-	public Expression getRightHandSide() {
-		return rightHandSide;
+	public Expression getOperand() {
+		return operand;
 	}
 
 	/* (non-Javadoc)
@@ -67,7 +53,7 @@ public final class UnaryExpression extends AbstractComputeExpression {
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-		return operator.apply(leftHandSide.evaluate(environment), rightHandSide.evaluate(environment));
+		return operator.apply(operand.evaluate(environment));
 	}
 	
 }
