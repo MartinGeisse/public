@@ -25,7 +25,7 @@ public final class StatementSequence implements Statement, Iterable<Statement> {
 	 * Constructor.
 	 * @param statements the sub-statements
 	 */
-	public StatementSequence(final Statement[] statements) {
+	public StatementSequence(final Statement... statements) {
 		this.statements = statements.clone();
 	}
 

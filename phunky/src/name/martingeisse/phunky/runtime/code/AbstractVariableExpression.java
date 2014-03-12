@@ -5,6 +5,7 @@
 package name.martingeisse.phunky.runtime.code;
 
 import name.martingeisse.phunky.runtime.Environment;
+import name.martingeisse.phunky.runtime.Variable;
 
 /**
  * Base class for expressions that denote a variable.
@@ -16,7 +17,13 @@ public abstract class AbstractVariableExpression implements Expression {
 	 */
 	@Override
 	public final Object evaluate(Environment environment) {
-		return getVariable(environment).getValue();
+		Variable variable = getVariable(environment);
+		if (variable == null) {
+			environment.getRuntime().triggerError("undefined variable"); // TODO describe
+			return null;
+		} else {
+			return variable.getValue();
+		}
 	}
 	
 }

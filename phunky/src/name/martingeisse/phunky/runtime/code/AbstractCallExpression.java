@@ -65,7 +65,7 @@ public abstract class AbstractCallExpression extends AbstractComputeExpression i
 	protected final Object[] evaluateParameters(Environment environment) {
 		Object[] results = new Object[parameters.length];
 		for (int i=0; i<parameters.length; i++) {
-			results[i] = parameters[i];
+			results[i] = parameters[i].evaluate(environment);
 		}
 		return results;
 	}

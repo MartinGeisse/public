@@ -67,4 +67,12 @@ public final class PhpRuntime {
 		// TODO
 	}
 	
+	/**
+	 * Called when an error occurs. This message prints the error to System.err.
+	 * @param message the error message
+	 */
+	public void triggerError(String message) {
+		System.err.println(message);
+	}
+	
 }
