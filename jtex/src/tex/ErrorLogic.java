@@ -189,4 +189,23 @@ public final class ErrorLogic {
 		}
 	}
 	
+	/**
+	 * Emits a warning about a "lost" character, i.e. a character for which there is no glyph
+	 * in the font, *if* such warnings are currently enabled as specified by \tracinglostchars.
+	 * 
+	 * @param f the font
+	 * @param c the lost character
+	 */
+	void charwarning(final int f, final int c) {
+		if (tex.eqtb[9598].getInt() > 0) { // (tracinglostchars) --> show characters that aren't in the font
+			tex.begindiagnostic();
+			tex.printnl(825);
+			tex.print(c);
+			tex.print(826);
+			tex.print(tex.fontname[f]);
+			tex.printchar(33);
+			tex.enddiagnostic(false);
+		}
+	}
+
 }

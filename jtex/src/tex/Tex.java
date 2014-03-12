@@ -2082,7 +2082,10 @@ public final class Tex {
 		curlist.copy(nest[nestptr]);
 	}
 
-	void fixdateandtime() {
+	/**
+	 * Sets a dummy date/time for initialization (July 4th, 1776).
+	 */
+	void setDummyDateTime() {
 		eqtb[9583].setInt(12 * 60);
 		eqtb[9584].setInt(4);
 		eqtb[9585].setInt(7);
@@ -6083,7 +6086,7 @@ public final class Tex {
 				}
 			}
 		}
-		charwarning(f, c);
+		errorLogic.charwarning(f, c);
 		Result = 0;
 		return Result;
 	}
@@ -8170,7 +8173,7 @@ public final class Tex {
 				curi.copy(nullcharacter);
 			}
 			if (!((curi.b0 > 0))) {
-				charwarning(curf, curc);
+				errorLogic.charwarning(curf, curc);
 				mem[a].setrh(0);
 			}
 		}
@@ -16863,26 +16866,20 @@ public final class Tex {
 						}
 						case 92: {
 							if ((curchr < fontbc[mainf]) || (curchr > fontec[mainf])) {
-								charwarning(mainf, curchr);
-								{
-									mem[ligstack].setrh(avail);
-									avail = ligstack;
-								}
+								errorLogic.charwarning(mainf, curchr);
+								mem[ligstack].setrh(avail);
+								avail = ligstack;
 								continue lab60;
 							}
 							maini.copy(fontinfo[charbase[mainf] + curl].qqqq());
 							if (!(maini.b0 > 0)) {
-								charwarning(mainf, curchr);
-								{
-									mem[ligstack].setrh(avail);
-									avail = ligstack;
-								}
+								errorLogic.charwarning(mainf, curchr);
+								mem[ligstack].setrh(avail);
+								avail = ligstack;
 								continue lab60;
 							}
-							{
-								mem[curlist.tailfield].setrh(ligstack);
-								curlist.tailfield = mem[curlist.tailfield].getrh();
-							}
+							mem[curlist.tailfield].setrh(ligstack);
+							curlist.tailfield = mem[curlist.tailfield].getrh();
 						}
 						case 100: {
 							getnext();
@@ -18299,7 +18296,7 @@ public final class Tex {
 			initprim();
 			initstrptr = strptr;
 			initpoolptr = poolptr;
-			fixdateandtime();
+			setDummyDateTime();
 		}
 		selector = 17;
 		tally = 0;
@@ -18363,7 +18360,7 @@ public final class Tex {
 		} else {
 			buffer[curinput.getLimit()] = eqtb[9611].getInt();
 		}
-		fixdateandtime();
+		setDummyDateTime();
 		magicoffset = strstart[892] - 9 * 16;
 		selector = 17;
 		if ((curinput.getLoc() < curinput.getLimit()) && (eqtb[8283 + buffer[curinput.getLoc()]].getrh() != 0)) {
@@ -20712,16 +20709,23 @@ public final class Tex {
 		}
 	}
 	
+	/**
+	 * TODO: remove this. Sets the error level to WARNING and does selector handling
+	 * for warning output, but the selector should probably be removed altogether.
+	 */
 	void begindiagnostic() {
+		errorReporter.warning("WARNING"); // TODO dirty: sets the worst error level so far
 		oldsetting = selector;
 		if ((eqtb[9592].getInt() <= 0) && (selector == 19)) {
 			selector = selector - 1;
-			errorReporter.warning("WARNING"); // TODO dirty: sets the worst error level so far
 		}
 	}
 
+	/**
+	 * TODO: see begindiagnostic
+	 */
 	void enddiagnostic(final boolean blankline) {
-		printnl(338);
+		printnl("");
 		if (blankline) {
 			println();
 		}
@@ -21121,17 +21125,6 @@ public final class Tex {
 		}
 	}
 
-	void charwarning(final int f, final int c) {
-		if (eqtb[9598].getInt() > 0) {
-			begindiagnostic();
-			printnl(825);
-			print(c);
-			print(826);
-			print(fontname[f]);
-			printchar(33);
-			enddiagnostic(false);
-		}
-	}
 
 	void boxerror(final int n) {
 		errorLogic.error();
@@ -21142,6 +21135,5 @@ public final class Tex {
 		flushnodelist(eqtb[7978 + n].getrh());
 		eqtb[7978 + n].setrh(0);
 	}
-
 
 }
