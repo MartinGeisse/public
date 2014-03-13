@@ -5,9 +5,12 @@
 package name.martingeisse.phunky.runtime.value;
 
 /**
- * TODO: document me
- *
+ * PHP Array.
  */
-public class PhpArray {
+public final class PhpArray {
 
+	public boolean isEmpty() {
+		return true; // TODO
+	}
+	
 }

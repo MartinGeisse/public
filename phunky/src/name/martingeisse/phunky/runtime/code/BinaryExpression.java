@@ -67,7 +67,7 @@ public final class BinaryExpression extends AbstractComputeExpression {
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-		return operator.apply(leftHandSide.evaluate(environment), rightHandSide.evaluate(environment));
+		return operator.applyToExpressions(environment, leftHandSide, rightHandSide);
 	}
 	
 }

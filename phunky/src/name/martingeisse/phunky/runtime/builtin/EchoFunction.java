@@ -21,7 +21,7 @@ public class EchoFunction implements Callable {
 		if (arguments.length >= 1) {
 			Object argument = arguments[0];
 			String text = (argument == null ? "" : argument.toString());
-			System.out.println(text);
+			System.out.print(text);
 		}
 		return null;
 	}
