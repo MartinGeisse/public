@@ -19,7 +19,7 @@ public abstract class AbstractVariableExpression implements Expression {
 	public final Object evaluate(Environment environment) {
 		Variable variable = getVariable(environment);
 		if (variable == null) {
-			environment.getRuntime().triggerError("undefined variable"); // TODO describe
+			environment.getRuntime().triggerError("undefined variable: " + this);
 			return null;
 		} else {
 			return variable.getValue();

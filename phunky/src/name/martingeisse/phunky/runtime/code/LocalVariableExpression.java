@@ -40,5 +40,26 @@ public final class LocalVariableExpression extends AbstractVariableExpression {
 	public Variable getVariable(Environment environment) {
 		return environment.get(name);
 	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.Expression#getOrCreateVariable(name.martingeisse.phunky.runtime.Environment)
+	 */
+	@Override
+	public Variable getOrCreateVariable(Environment environment) {
+		Variable variable = environment.get(name);
+		if (variable == null) {
+			variable = new Variable();
+			environment.put(name, variable);
+		}
+		return variable;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "$" + name;
+	}
 	
 }

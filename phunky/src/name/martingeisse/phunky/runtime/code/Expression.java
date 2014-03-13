@@ -35,4 +35,13 @@ public interface Expression {
 	 */
 	public Variable getVariable(Environment environment);
 	
+	/**
+	 * Obtains the variable for this expression; creates the variable if there could be
+	 * one but isn't; returns null if this expression cannot denote a variable.
+	 * 
+	 * @param environment the environment
+	 * @return the variable or null
+	 */
+	public Variable getOrCreateVariable(Environment environment);
+	
 }

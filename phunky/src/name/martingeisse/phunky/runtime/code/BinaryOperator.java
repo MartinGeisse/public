@@ -6,6 +6,7 @@ package name.martingeisse.phunky.runtime.code;
 
 import name.martingeisse.common.util.NotImplementedException;
 import name.martingeisse.phunky.runtime.Environment;
+import name.martingeisse.phunky.runtime.Variable;
 import name.martingeisse.phunky.runtime.value.PhpArray;
 import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
 
@@ -130,7 +131,47 @@ public enum BinaryOperator {
 			}
 		}
 		
+	},
+	
+	/**
+	 * Concatenates the values.
+	 */
+	CONCATENATE {
+
+		/* (non-Javadoc)
+		 * @see name.martingeisse.phunky.runtime.code.BinaryOperator#applyToValues(java.lang.Object, java.lang.Object)
+		 */
+		@Override
+		public Object applyToValues(Object leftHandSide, Object rightHandSide) throws UnsupportedOperationException {
+			String x = TypeConversionUtil.convertToString(leftHandSide);
+			String y = TypeConversionUtil.convertToString(rightHandSide);
+			return x + y;
+		}
+		
+	},
+	
+	/**
+	 * Assigns the right-hand value to the left-hand variable.
+	 */
+	ASSIGN {
+
+		/* (non-Javadoc)
+		 * @see name.martingeisse.phunky.runtime.code.BinaryOperator#applyToExpressions(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.code.Expression, name.martingeisse.phunky.runtime.code.Expression)
+		 */
+		@Override
+		public Object applyToExpressions(Environment environment, Expression leftHandSide, Expression rightHandSide) {
+			Variable variable = leftHandSide.getOrCreateVariable(environment);
+			Object value = rightHandSide.evaluate(environment);
+			if (variable == null) {
+				environment.getRuntime().triggerError("cannot assign to " + leftHandSide);
+			} else {
+				variable.setValue(value);
+			}
+			return value;
+		}
+		
 	};
+	
 	
 	/**
 	 * Applies this operator to the specified sub-expressions.

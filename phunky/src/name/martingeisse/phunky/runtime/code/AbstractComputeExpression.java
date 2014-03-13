@@ -20,4 +20,12 @@ public abstract class AbstractComputeExpression implements Expression {
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.Expression#getOrCreateVariable(name.martingeisse.phunky.runtime.Environment)
+	 */
+	@Override
+	public Variable getOrCreateVariable(Environment environment) {
+		return null;
+	}
+	
 }

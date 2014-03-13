@@ -10,6 +10,7 @@ import name.martingeisse.phunky.runtime.code.BinaryOperator;
 import name.martingeisse.phunky.runtime.code.ExpressionStatement;
 import name.martingeisse.phunky.runtime.code.FunctionCall;
 import name.martingeisse.phunky.runtime.code.LiteralExpression;
+import name.martingeisse.phunky.runtime.code.LocalVariableExpression;
 import name.martingeisse.phunky.runtime.code.StatementSequence;
 
 /**
@@ -32,6 +33,11 @@ public final class Main {
 			new ExpressionStatement(new FunctionCall("echo", new LiteralExpression(42))),
 			new ExpressionStatement(new FunctionCall("echo", new LiteralExpression("\n"))),
 			new ExpressionStatement(new FunctionCall("echo", new BinaryExpression(new LiteralExpression(23), BinaryOperator.ADD, new LiteralExpression(42)))),
+			new ExpressionStatement(new FunctionCall("echo", new LiteralExpression("\n"))),
+			new ExpressionStatement(new FunctionCall("echo", new LocalVariableExpression("foo"))),
+			new ExpressionStatement(new FunctionCall("echo", new LiteralExpression("\n"))),
+			new ExpressionStatement(new BinaryExpression(new LocalVariableExpression("foo"), BinaryOperator.ASSIGN, new LiteralExpression(55))),
+			new ExpressionStatement(new FunctionCall("echo", new LocalVariableExpression("foo"))),
 			new ExpressionStatement(new FunctionCall("echo", new LiteralExpression("\n")))
 		);
 		program.execute(runtime.getGlobalEnvironment());
