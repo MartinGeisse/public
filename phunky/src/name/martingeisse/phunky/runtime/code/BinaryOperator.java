@@ -170,8 +170,53 @@ public enum BinaryOperator {
 			return value;
 		}
 		
-	};
+	},
 	
+	/**
+	 * Compares the operands for equality.
+	 */
+	EQUALS {
+
+		/* (non-Javadoc)
+		 * @see name.martingeisse.phunky.runtime.code.BinaryOperator#applyToValues(java.lang.Object, java.lang.Object)
+		 */
+		@Override
+		public Object applyToValues(Object leftHandSide, Object rightHandSide) throws UnsupportedOperationException {
+			if ((leftHandSide instanceof String) || (rightHandSide instanceof String)) {
+				String x = TypeConversionUtil.convertToString(leftHandSide);
+				String y = TypeConversionUtil.convertToString(rightHandSide);
+				return x.equals(y);
+			} else if ((leftHandSide instanceof PhpArray) || (rightHandSide instanceof PhpArray)) {
+				// TODO array-equals
+				throw new NotImplementedException();
+			} else if ((leftHandSide instanceof Double) || (rightHandSide instanceof Double) || (leftHandSide instanceof Float) || (rightHandSide instanceof Float)) {
+				double x = TypeConversionUtil.convertToDouble(leftHandSide);
+				double y = TypeConversionUtil.convertToDouble(rightHandSide);
+				return x == y;
+			} else {
+				int x = TypeConversionUtil.convertToInt(leftHandSide);
+				int y = TypeConversionUtil.convertToInt(rightHandSide);
+				return x == y;
+			}
+		}
+		
+	},
+	
+	/**
+	 * Compares the operands for inequality.
+	 */
+	NOT_EQUALS {
+
+		/* (non-Javadoc)
+		 * @see name.martingeisse.phunky.runtime.code.BinaryOperator#applyToValues(java.lang.Object, java.lang.Object)
+		 */
+		@Override
+		public Object applyToValues(Object leftHandSide, Object rightHandSide) throws UnsupportedOperationException {
+			Boolean equals = (Boolean)EQUALS.applyToValues(leftHandSide, rightHandSide);
+			return !equals;
+		}
+		
+	};
 	
 	/**
 	 * Applies this operator to the specified sub-expressions.

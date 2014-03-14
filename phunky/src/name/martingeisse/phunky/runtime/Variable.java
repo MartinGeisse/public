@@ -23,14 +23,22 @@ public final class Variable {
 	 * the value
 	 */
 	private Object value;
-	
+
 	/**
 	 * Constructor.
 	 */
 	public Variable() {
 		value = null;
 	}
-	
+
+	/**
+	 * Constructor.
+	 * @param value the initial value
+	 */
+	public Variable(final Object value) {
+		this.value = value;
+	}
+
 	/**
 	 * Getter method for the value.
 	 * @return the value
@@ -38,13 +46,13 @@ public final class Variable {
 	public Object getValue() {
 		return value;
 	}
-	
+
 	/**
 	 * Setter method for the value.
 	 * @param value the value to set
 	 */
-	public void setValue(Object value) {
+	public void setValue(final Object value) {
 		this.value = value;
 	}
-	
+
 }

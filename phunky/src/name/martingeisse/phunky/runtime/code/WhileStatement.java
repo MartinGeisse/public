@@ -1,0 +1,63 @@
+/**
+ * Copyright (c) 2010 Martin Geisse
+ *
+ * This file is distributed under the terms of the MIT license.
+ */
+
+package name.martingeisse.phunky.runtime.code;
+
+import name.martingeisse.phunky.runtime.Environment;
+import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
+
+/**
+ * The "while" statement.
+ */
+public final class WhileStatement implements Statement {
+
+	/**
+	 * the loopCondition
+	 */
+	private final Expression loopCondition;
+
+	/**
+	 * the body
+	 */
+	private final Statement body;
+
+	/**
+	 * Constructor.
+	 * @param loopCondition the condition that checks whether to execute the loop once more
+	 * @param body the body
+	 */
+	public WhileStatement(final Expression loopCondition, final Statement body) {
+		this.loopCondition = loopCondition;
+		this.body = body;
+	}
+
+	/**
+	 * Getter method for the loopCondition.
+	 * @return the loopCondition
+	 */
+	public Expression getLoopCondition() {
+		return loopCondition;
+	}
+
+	/**
+	 * Getter method for the body.
+	 * @return the body
+	 */
+	public Statement getBody() {
+		return body;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.Statement#execute(name.martingeisse.phunky.runtime.Environment)
+	 */
+	@Override
+	public void execute(final Environment environment) {
+		while (TypeConversionUtil.convertToBoolean(loopCondition.evaluate(environment))) {
+			body.execute(environment);
+		}
+	}
+
+}
