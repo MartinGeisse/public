@@ -9,6 +9,10 @@ package name.martingeisse.phunky.runtime.value;
  */
 public final class PhpArray {
 
+	/**
+	 * TODO
+	 * @return ...
+	 */
 	public boolean isEmpty() {
 		return true; // TODO
 	}

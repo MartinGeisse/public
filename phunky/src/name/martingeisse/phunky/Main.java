@@ -4,6 +4,7 @@
 
 package name.martingeisse.phunky;
 
+import java.io.File;
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.code.BinaryExpression;
 import name.martingeisse.phunky.runtime.code.BinaryOperator;
@@ -75,6 +76,7 @@ public final class Main {
 			new ExpressionStatement(new FunctionCall("echo", new LiteralExpression("ok\n")))
 		);
 		program.execute(runtime.getGlobalEnvironment());
+		runtime.getInterpreter().execute(new File("test.php"));
 		
 	}
 	

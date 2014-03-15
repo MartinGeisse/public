@@ -22,6 +22,11 @@ public final class PhpRuntime {
 	 * the functions
 	 */
 	private final Functions functions;
+	
+	/**
+	 * the interpreter
+	 */
+	private final SourceFileInterpreter interpreter;
 
 	/**
 	 * Constructor for a standard PHP runtime.
@@ -38,6 +43,7 @@ public final class PhpRuntime {
 	public PhpRuntime(boolean standardDefinitions) {
 		this.globalEnvironment = new Environment(this);
 		this.functions = new Functions(this);
+		this.interpreter = new SourceFileInterpreter(this);
 		if (standardDefinitions) {
 			applyStandardDefinitions();
 		}
@@ -59,6 +65,14 @@ public final class PhpRuntime {
 		return functions;
 	}
 
+	/**
+	 * Getter method for the interpreter.
+	 * @return the interpreter
+	 */
+	public SourceFileInterpreter getInterpreter() {
+		return interpreter;
+	}
+	
 	/**
 	 * Applies standard definitions to this runtime
 	 */
