@@ -69,5 +69,19 @@ public final class BinaryExpression extends AbstractComputeExpression {
 	public Object evaluate(Environment environment) {
 		return operator.applyToExpressions(environment, leftHandSide, rightHandSide);
 	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.Expression#dump(name.martingeisse.phunky.runtime.code.CodeDumper)
+	 */
+	@Override
+	public void dump(CodeDumper dumper) {
+		dumper.print('(');
+		leftHandSide.dump(dumper);
+		dumper.print(' ');
+		dumper.print(operator.getSymbol());
+		dumper.print(' ');
+		rightHandSide.dump(dumper);
+		dumper.print(')');
+	}
 	
 }

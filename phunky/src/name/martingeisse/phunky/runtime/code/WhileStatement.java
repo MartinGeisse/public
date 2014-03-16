@@ -60,4 +60,18 @@ public final class WhileStatement implements Statement {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.Statement#dump(name.martingeisse.phunky.runtime.code.CodeDumper)
+	 */
+	@Override
+	public void dump(CodeDumper dumper) {
+		dumper.print("while (");
+		loopCondition.dump(dumper);
+		dumper.println(") {");
+		dumper.increaseIndentation();
+		body.dump(dumper);
+		dumper.decreaseIndentation();
+		dumper.println("}");
+	}
+
 }

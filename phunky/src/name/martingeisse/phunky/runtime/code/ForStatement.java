@@ -92,4 +92,24 @@ public final class ForStatement implements Statement {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.Statement#dump(name.martingeisse.phunky.runtime.code.CodeDumper)
+	 */
+	@Override
+	public void dump(CodeDumper dumper) {
+		dumper.print("for (");
+		initializationStatement.dump(dumper);
+		dumper.removeRecentNewline();
+		dumper.print("; ");
+		loopCondition.dump(dumper);
+		dumper.print("; ");
+		advanceStatement.dump(dumper);
+		dumper.removeRecentNewline();
+		dumper.println(") {");
+		dumper.increaseIndentation();
+		body.dump(dumper);
+		dumper.decreaseIndentation();
+		dumper.println("}");
+	}
+	
 }

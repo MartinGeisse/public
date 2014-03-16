@@ -104,4 +104,28 @@ public final class FunctionDefinition implements Statement {
 		});
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.Statement#dump(name.martingeisse.phunky.runtime.code.CodeDumper)
+	 */
+	@Override
+	public void dump(CodeDumper dumper) {
+		dumper.print("function ");
+		dumper.print(name);
+		dumper.print('(');
+		boolean first = true;
+		for (String parameterName : parameterNames) {
+			if (first) {
+				first = false;
+			} else {
+				dumper.print(", ");
+			}
+			dumper.print(parameterName);
+		}
+		dumper.println(") {");
+		dumper.increaseIndentation();
+		body.dump(dumper);
+		dumper.decreaseIndentation();
+		dumper.println("}");
+	}
+	
 }

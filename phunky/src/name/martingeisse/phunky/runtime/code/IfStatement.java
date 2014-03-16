@@ -82,4 +82,26 @@ public final class IfStatement implements Statement {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.Statement#dump(name.martingeisse.phunky.runtime.code.CodeDumper)
+	 */
+	@Override
+	public void dump(CodeDumper dumper) {
+		dumper.print("if (");
+		condition.dump(dumper);
+		dumper.println(") {");
+		if (thenBranch != null) {
+			dumper.increaseIndentation();
+			thenBranch.dump(dumper);
+			dumper.decreaseIndentation();
+		}
+		if (elseBranch != null) {
+			dumper.println("} else {");
+			dumper.increaseIndentation();
+			elseBranch.dump(dumper);
+			dumper.decreaseIndentation();
+		}
+		dumper.println("}");
+	}
+	
 }

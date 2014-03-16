@@ -55,5 +55,16 @@ public final class UnaryExpression extends AbstractComputeExpression {
 	public Object evaluate(Environment environment) {
 		return operator.apply(operand.evaluate(environment));
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.Expression#dump(name.martingeisse.phunky.runtime.code.CodeDumper)
+	 */
+	@Override
+	public void dump(CodeDumper dumper) {
+		dumper.print('(');
+		dumper.print(operator.getSymbol());
+		operand.dump(dumper);
+		dumper.print(')');
+	}
+
 }

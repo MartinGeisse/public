@@ -74,12 +74,46 @@ LocalVariable = "$" {Identifier}
 // ---------------------------------------------------------------------------------------------------------
 
 
+%state CODE
 %state STRING
 %%
 
-// normal scanning
+// verbatim content outside the PHP tags
 <YYINITIAL> {
 
+	// actual verbatim content
+	[^<]+ {
+		return symbol(Tokens.VERBATIM_CONTENT, yytext());
+	}
+	"<" / [^?] {
+		return symbol(Tokens.VERBATIM_CONTENT, yytext());
+	}
+	
+	// statement opening tag
+	"<?" {
+		yybegin(CODE);
+	}
+	"<?php" {
+		yybegin(CODE);
+	}
+	
+	// echo opening tag
+	"<?=" {
+		yybegin(CODE);
+		return symbol(Tokens.IDENTIFIER, "echo"); 
+	}
+	
+}
+
+// normal scanning
+<CODE> {
+
+	// PHP closing tag (back to verbatim content)
+	"?>" {
+		yybegin(YYINITIAL);
+		return symbol(Tokens.SEMICOLON);
+	}
+	
 	// punctuation (some of these can be operators too)
 	"(" {
 		return symbol(Tokens.OPENING_PARENTHESIS);
@@ -357,7 +391,7 @@ LocalVariable = "$" {Identifier}
 // scanning string literals
 <STRING> {
 	\" {
-		yybegin(YYINITIAL); 
+		yybegin(CODE); 
 		return symbol(Tokens.STRING_LITERAL, stringBuilder.toString());
 	}
 	[^\n\r\"\\]+ {
@@ -382,5 +416,7 @@ LocalVariable = "$" {Identifier}
 
 // error fallback
 [^] {
-	throw new Error("Illegal character <" + yytext() + ">");
+	String s = yytext();
+	int code = s.charAt(0);
+	throw new RuntimeException("Illegal character '" + yytext() + "' (code " + code + ")");
 }

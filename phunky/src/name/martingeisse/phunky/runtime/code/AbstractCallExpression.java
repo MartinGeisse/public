@@ -69,5 +69,23 @@ public abstract class AbstractCallExpression extends AbstractComputeExpression i
 		}
 		return results;
 	}
+
+	/**
+	 * Dumps the parameter expressions using the specified code dumper.
+	 * @param dumper the dumper
+	 */
+	protected final void dumpParameters(CodeDumper dumper) {
+		dumper.print('(');
+		boolean first = true;
+		for (Expression parameter : parameters) {
+			if (first) {
+				first = false;
+			} else {
+				dumper.print(", ");
+			}
+			parameter.dump(dumper);
+		}
+		dumper.print(')');
+	}
 	
 }

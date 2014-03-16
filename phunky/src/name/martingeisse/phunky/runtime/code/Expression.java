@@ -44,4 +44,10 @@ public interface Expression {
 	 */
 	public Variable getOrCreateVariable(Environment environment);
 	
+	/**
+	 * Dumps this expression using the specified code dumper.
+	 * @param dumper the code dumper
+	 */
+	public void dump(CodeDumper dumper);
+	
 }

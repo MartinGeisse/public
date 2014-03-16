@@ -76,8 +76,12 @@ public final class Main {
 			new ExpressionStatement(new FunctionCall("echo", new LiteralExpression("ok\n")))
 		);
 		program.execute(runtime.getGlobalEnvironment());
-		runtime.getInterpreter().execute(new File("test.php"));
 		
+		System.out.println("--- test.php ---");
+		runtime.getInterpreter().dump(new File("test.php"));
+		// runtime.getInterpreter().execute(new File("test.php"));
+		
+		System.out.println("--- end ---");
 	}
 	
 }

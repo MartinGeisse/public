@@ -4,10 +4,9 @@
 // ------------------------------------------------------------------------------------
 
 import java_cup.runtime.*;
-import name.martingeisse.phunky.runtime.code.BinaryExpression;
-import name.martingeisse.phunky.runtime.code.BinaryOperator;
-import name.martingeisse.phunky.runtime.code.Expression;
-import name.martingeisse.phunky.runtime.code.LiteralExpression;
+import name.martingeisse.phunky.runtime.code.*;
+import java.util.List;
+import java.util.ArrayList;
 
 // scanner behavior
 init with {:
@@ -20,6 +19,9 @@ scan with {:
 // ------------------------------------------------------------------------------------
 // --- symbols
 // ------------------------------------------------------------------------------------
+
+// embedding in verbatim content
+terminal String VERBATIM_CONTENT;
 
 // punctuation (some of these can be operators too)
 terminal OPENING_PARENTHESIS, CLOSING_PARENTHESIS;
@@ -75,9 +77,10 @@ terminal String STRING_LITERAL;
 terminal String IDENTIFIER;
 terminal String LOCAL_VARIABLE;
 
-
-
 // non terminals
+non terminal StatementSequence program;
+non terminal List<Statement> statements;
+non terminal Statement statement;
 non terminal Expression expression;
 
 // precedences
@@ -89,9 +92,39 @@ precedence left TIMES, DIVIDE, MOD;
 // --- rules
 // ------------------------------------------------------------------------------------
 
+start with program;
+
+program ::=
+	statements:sts
+		{: RESULT = new StatementSequence(sts); :}
+;
+	
+statements ::=
+		{: RESULT = new ArrayList<Statement>(); :}
+	| statements:sts statement:st
+		{: sts.add(st); RESULT = sts; :}
+;
+
+statement ::=
+	SEMICOLON
+		{: RESULT = new NopStatement(); :} 
+	| expression:e SEMICOLON
+		{: RESULT = new ExpressionStatement(e); :} 
+	| IDENTIFIER:id expression:e SEMICOLON
+		{: RESULT = new ExpressionStatement(new FunctionCall(id, e)); :}
+	| VERBATIM_CONTENT:c
+		{: RESULT = new ExpressionStatement(new FunctionCall("echo", new LiteralExpression(c))); :}
+	| OPENING_CURLY_BRACE statements:sts CLOSING_CURLY_BRACE
+		{: RESULT = new StatementSequence(sts); :}
+;
+
 expression ::=
-	INTEGER_LITERAL:e
-		{: RESULT = new LiteralExpression(e); :} 
+	BOOLEAN_LITERAL:e
+		{: RESULT = new LiteralExpression(e); :}
+	| INTEGER_LITERAL:e
+		{: RESULT = new LiteralExpression(e); :}
+	| STRING_LITERAL:e 
+		{: RESULT = new LiteralExpression(e); :}
 	| expression:e1 PLUS expression:e2
 		{: RESULT = new BinaryExpression(e1, BinaryOperator.ADD, e2); :} 
 	| expression:e1 MINUS expression:e2

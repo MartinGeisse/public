@@ -10,8 +10,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java_cup.runtime.ComplexSymbolFactory;
-import java_cup.runtime.Symbol;
-import name.martingeisse.phunky.runtime.code.Expression;
+import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.code.Statement;
+import name.martingeisse.phunky.runtime.code.StatementSequence;
 import name.martingeisse.phunky.runtime.parser.Lexer;
 import name.martingeisse.phunky.runtime.parser.Parser;
 
@@ -50,10 +51,25 @@ public final class SourceFileInterpreter {
 		try (FileInputStream fileInputStream = new FileInputStream(sourceFile); InputStreamReader reader = new InputStreamReader(fileInputStream)) {
 			Lexer lexer = new Lexer(reader);
 			Parser parser = new Parser(lexer, new ComplexSymbolFactory());
-			Symbol program = parser.parse();
-			Expression expression = (Expression)program.value;
-			Object value = expression.evaluate(runtime.getGlobalEnvironment());
-			System.out.println("value of " + sourceFile + " = " + value);
+			Statement program = (Statement)parser.parse().value;
+			program.execute(runtime.getGlobalEnvironment());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Loads and dumps a source file. This is used mainly to test the parser.
+	 * @param sourceFile the source file
+	 */
+	public void dump(final File sourceFile) {
+		try (FileInputStream fileInputStream = new FileInputStream(sourceFile); InputStreamReader reader = new InputStreamReader(fileInputStream)) {
+			Lexer lexer = new Lexer(reader);
+			Parser parser = new Parser(lexer, new ComplexSymbolFactory());
+			StatementSequence program = (StatementSequence)parser.parse().value;
+			CodeDumper dumper = new CodeDumper();
+			program.dump(dumper);
+			System.out.println(dumper.toString());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

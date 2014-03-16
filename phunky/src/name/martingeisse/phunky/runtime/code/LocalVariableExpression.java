@@ -62,4 +62,13 @@ public final class LocalVariableExpression extends AbstractVariableExpression {
 		return "$" + name;
 	}
 	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.Expression#dump(name.martingeisse.phunky.runtime.code.CodeDumper)
+	 */
+	@Override
+	public void dump(CodeDumper dumper) {
+		dumper.print('$');
+		dumper.print(name);
+	}
+	
 }

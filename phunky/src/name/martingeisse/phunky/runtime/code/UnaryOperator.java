@@ -10,34 +10,70 @@ package name.martingeisse.phunky.runtime.code;
 public enum UnaryOperator {
 
 	/**
-	 * Negates the values.
+	 * Negates the value.
 	 */
-	NEGATE {
+	NEGATE("-") {
 
 		/* (non-Javadoc)
 		 * @see name.martingeisse.phunky.runtime.code.UnaryOperator#apply(java.lang.Object)
 		 */
 		@Override
-		public Object apply(Object operand) {
+		public Object apply(final Object operand) {
 			return null;
 		}
-		
+
 	},
-	
+
 	/**
-	 * Logically inverts the values.
+	 * Logically inverts the value.
 	 */
-	LOGICAL_NOT {
+	LOGICAL_NOT("!") {
 
 		/* (non-Javadoc)
 		 * @see name.martingeisse.phunky.runtime.code.UnaryOperator#apply(java.lang.Object)
 		 */
 		@Override
-		public Object apply(Object operand) {
+		public Object apply(final Object operand) {
+			return null;
+		}
+
+	},
+
+	/**
+	 * Inverts every single bit of the value.
+	 */
+	BITWISE_NOT("~") {
+		
+		/* (non-Javadoc)
+		 * @see name.martingeisse.phunky.runtime.code.UnaryOperator#apply(java.lang.Object)
+		 */
+		@Override
+		public Object apply(final Object operand) {
 			return null;
 		}
 		
 	};
+	
+	/**
+	 * the symbol
+	 */
+	private final String symbol;
+
+	/**
+	 * Constructor.
+	 * @param symbol the operator symbol
+	 */
+	private UnaryOperator(final String symbol) {
+		this.symbol = symbol;
+	}
+
+	/**
+	 * Getter method for the symbol.
+	 * @return the symbol
+	 */
+	public String getSymbol() {
+		return symbol;
+	}
 	
 	/**
 	 * Applies this operator to the specified operand.

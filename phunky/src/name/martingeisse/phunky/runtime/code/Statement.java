@@ -18,5 +18,11 @@ public interface Statement {
 	 * @param environment the environment
 	 */
 	public void execute(Environment environment);
-	
+
+	/**
+	 * Dumps this statement using the specified code dumper.
+	 * @param dumper the code dumper
+	 */
+	public void dump(CodeDumper dumper);
+
 }

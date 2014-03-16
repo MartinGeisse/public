@@ -35,4 +35,18 @@ public final class ReturnStatement implements Statement {
 		throw new ReturnException(returnValue);
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.Statement#dump(name.martingeisse.phunky.runtime.code.CodeDumper)
+	 */
+	@Override
+	public void dump(CodeDumper dumper) {
+		if (returnValueExpression == null) {
+			dumper.println("return;");
+		} else {
+			dumper.print("return ");
+			returnValueExpression.dump(dumper);
+			dumper.println(";");
+		}
+	}
+	
 }

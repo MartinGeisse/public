@@ -51,4 +51,13 @@ public final class FunctionCall extends AbstractCallExpression {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.Expression#dump(name.martingeisse.phunky.runtime.code.CodeDumper)
+	 */
+	@Override
+	public void dump(CodeDumper dumper) {
+		dumper.print(name);
+		dumpParameters(dumper);
+	}
+	
 }

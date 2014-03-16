@@ -7,6 +7,7 @@
 package name.martingeisse.phunky.runtime.code;
 
 import java.util.Iterator;
+import java.util.List;
 import name.martingeisse.phunky.runtime.Environment;
 import org.apache.commons.collections.iterators.ArrayIterator;
 
@@ -29,6 +30,14 @@ public final class StatementSequence implements Statement, Iterable<Statement> {
 		this.statements = statements.clone();
 	}
 
+	/**
+	 * Constructor.
+	 * @param statements the sub-statements
+	 */
+	public StatementSequence(final List<Statement> statements) {
+		this.statements = statements.toArray(new Statement[statements.size()]);
+	}
+	
 	/**
 	 * Getter method for the number of sub-statements.
 	 * @return the number of sub-statements
@@ -62,6 +71,16 @@ public final class StatementSequence implements Statement, Iterable<Statement> {
 	public void execute(Environment environment) {
 		for (Statement statement : statements) {
 			statement.execute(environment);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.Statement#dump(name.martingeisse.phunky.runtime.code.CodeDumper)
+	 */
+	@Override
+	public void dump(CodeDumper dumper) {
+		for (Statement statement : statements) {
+			statement.dump(dumper);
 		}
 	}
 	
