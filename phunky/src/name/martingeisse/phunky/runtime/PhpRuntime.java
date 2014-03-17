@@ -6,6 +6,8 @@
 
 package name.martingeisse.phunky.runtime;
 
+import java.io.PrintWriter;
+import java.io.Writer;
 import name.martingeisse.phunky.runtime.builtin.EchoFunction;
 
 /**
@@ -27,6 +29,11 @@ public final class PhpRuntime {
 	 * the interpreter
 	 */
 	private final SourceFileInterpreter interpreter;
+	
+	/**
+	 * the outputWriter
+	 */
+	private PrintWriter outputWriter;
 
 	/**
 	 * Constructor for a standard PHP runtime.
@@ -44,6 +51,7 @@ public final class PhpRuntime {
 		this.globalEnvironment = new Environment(this);
 		this.functions = new Functions(this);
 		this.interpreter = new SourceFileInterpreter(this);
+		this.outputWriter = new PrintWriter(System.out);
 		if (standardDefinitions) {
 			applyStandardDefinitions();
 		}
@@ -71,6 +79,31 @@ public final class PhpRuntime {
 	 */
 	public SourceFileInterpreter getInterpreter() {
 		return interpreter;
+	}
+	
+	/**
+	 * Getter method for the outputWriter.
+	 * @return the outputWriter
+	 */
+	public PrintWriter getOutputWriter() {
+		return outputWriter;
+	}
+	
+	/**
+	 * Setter method for the outputWriter.
+	 * @param outputWriter the outputWriter to set
+	 */
+	public void setOutputWriter(PrintWriter outputWriter) {
+		this.outputWriter = outputWriter;
+	}
+	
+	/**
+	 * Setter method for the outputWriter. This method wraps
+	 * the specified writer with a {@link PrintWriter}.
+	 * @param outputWriter the outputWriter to set
+	 */
+	public void setOutputWriter(Writer outputWriter) {
+		this.outputWriter = new PrintWriter(outputWriter);
 	}
 	
 	/**

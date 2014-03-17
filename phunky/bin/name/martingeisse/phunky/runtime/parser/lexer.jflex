@@ -75,7 +75,8 @@ LocalVariable = "$" {Identifier}
 
 
 %state CODE
-%state STRING
+%state SINGLE_QUOTED_STRING
+%state DOUBLE_QUOTED_STRING
 %%
 
 // verbatim content outside the PHP tags
@@ -109,7 +110,7 @@ LocalVariable = "$" {Identifier}
 <CODE> {
 
 	// PHP closing tag (back to verbatim content)
-	"?>" {
+	"?>" \n? {
 		yybegin(YYINITIAL);
 		return symbol(Tokens.SEMICOLON);
 	}
@@ -365,9 +366,13 @@ LocalVariable = "$" {Identifier}
 	{DecimalIntegerLiteral} {
 		return symbol(Tokens.INTEGER_LITERAL, Integer.parseInt(yytext()));
 	}
+	\' {
+		stringBuilder.setLength(0);
+		yybegin(SINGLE_QUOTED_STRING);
+	}
 	\" {
 		stringBuilder.setLength(0);
-		yybegin(STRING);
+		yybegin(DOUBLE_QUOTED_STRING);
 	}
 
 	// primitive expressions (except literals)
@@ -388,8 +393,34 @@ LocalVariable = "$" {Identifier}
   
 }
 
-// scanning string literals
-<STRING> {
+// scanning single-quoted string literals
+<SINGLE_QUOTED_STRING> {
+	\' {
+		yybegin(CODE); 
+		return symbol(Tokens.STRING_LITERAL, stringBuilder.toString());
+	}
+	[^\n\r\'\\]+ {
+		stringBuilder.append(yytext());
+	}
+	\\t {
+		stringBuilder.append('\t');
+	}
+	\\n {
+		stringBuilder.append('\n');
+	}
+	\\r {
+		stringBuilder.append('\r');
+	}
+	\\\' {
+		stringBuilder.append('\'');
+	}
+	\\ {
+		stringBuilder.append('\\');
+	}
+}
+
+// scanning double-quoted string literals
+<DOUBLE_QUOTED_STRING> {
 	\" {
 		yybegin(CODE); 
 		return symbol(Tokens.STRING_LITERAL, stringBuilder.toString());

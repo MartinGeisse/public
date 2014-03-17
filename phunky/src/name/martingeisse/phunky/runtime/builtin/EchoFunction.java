@@ -7,6 +7,7 @@
 package name.martingeisse.phunky.runtime.builtin;
 
 import name.martingeisse.phunky.runtime.Callable;
+import name.martingeisse.phunky.runtime.PhpRuntime;
 
 /**
  * The built-in "echo" function.
@@ -14,14 +15,14 @@ import name.martingeisse.phunky.runtime.Callable;
 public class EchoFunction implements Callable {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.Callable#call(java.lang.Object[])
+	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])
 	 */
 	@Override
-	public Object call(Object[] arguments) {
+	public Object call(PhpRuntime runtime, Object[] arguments) {
 		if (arguments.length >= 1) {
 			Object argument = arguments[0];
 			String text = (argument == null ? "" : argument.toString());
-			System.out.print(text);
+			runtime.getOutputWriter().print(text);
 		}
 		return null;
 	}

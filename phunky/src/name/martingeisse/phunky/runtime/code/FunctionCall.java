@@ -47,7 +47,7 @@ public final class FunctionCall extends AbstractCallExpression {
 			environment.getRuntime().triggerError("undefined function: " + name);
 			return null;
 		} else {
-			return function.call(evaluateParameters(environment));
+			return function.call(environment.getRuntime(), evaluateParameters(environment));
 		}
 	}
 

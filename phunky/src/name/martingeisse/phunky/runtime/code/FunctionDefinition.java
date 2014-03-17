@@ -8,6 +8,7 @@ package name.martingeisse.phunky.runtime.code;
 
 import name.martingeisse.phunky.runtime.Callable;
 import name.martingeisse.phunky.runtime.Environment;
+import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.Variable;
 
 /**
@@ -82,11 +83,11 @@ public final class FunctionDefinition implements Statement {
 	public void execute(final Environment environment) {
 		environment.getRuntime().getFunctions().put(name, new Callable() {
 			@Override
-			public Object call(final Object[] arguments) {
-				final Environment childEnvironment = new Environment(environment.getRuntime());
+			public Object call(PhpRuntime runtime, Object[] arguments) {
+				final Environment childEnvironment = new Environment(runtime);
 				final int bindCount;
 				if (arguments.length < parameterNames.length) {
-					childEnvironment.getRuntime().triggerError("too few parameters for function " + FunctionDefinition.this);
+					runtime.triggerError("too few parameters for function " + FunctionDefinition.this);
 					bindCount = arguments.length;
 				} else {
 					bindCount = parameterNames.length;

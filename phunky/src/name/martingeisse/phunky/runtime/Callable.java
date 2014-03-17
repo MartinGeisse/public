@@ -14,9 +14,10 @@ public interface Callable {
 
 	/**
 	 * Calls this object.
+	 * @param runtime the PHP runtime
 	 * @param arguments the argument values
 	 * @return the return value
 	 */
-	public Object call(Object[] arguments);
+	public Object call(PhpRuntime runtime, Object[] arguments);
 	
 }
