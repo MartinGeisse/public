@@ -42,15 +42,22 @@ import com.mysema.util.BeanUtils;
 public class BeanSerializer extends AbstractSerializer {
 
 	/**
+	 * the forWicket
+	 */
+	private final boolean forWicket;
+	
+	/**
 	 * the forAdmin
 	 */
 	private final boolean forAdmin;
 
 	/**
 	 * Constructor.
+	 * @param forWicket whether the generated classes are intended for use with Wicket
 	 * @param forAdmin whether the generated classes are intended for use in the admin framework
 	 */
-	public BeanSerializer(final boolean forAdmin) {
+	public BeanSerializer(final boolean forWicket, final boolean forAdmin) {
+		this.forWicket = forWicket;
 		this.forAdmin = forAdmin;
 	}
 
@@ -256,10 +263,12 @@ public class BeanSerializer extends AbstractSerializer {
 			w.line("return query.from(q).where(q." + idProperty.getName() + ".eq(id)).singleResult(q);");
 			w.end();
 			
-			w.javadoc("Creates a model that loads a record by id.", "@param id the id of the record to load", "@return the model loading the record");
-			w.beginStaticMethod(new SimpleType(new SimpleType("IModel"), entityType), "getModelForId", new Parameter("id", idType));
-			w.line("return new EntityModel<" + entityName + ">(Q" + entityName + "." + uncapEntityName + ", Q" + entityName + "." + uncapEntityName + ".id.eq(id));");
-			w.end();
+			if (forWicket) {
+				w.javadoc("Creates a model that loads a record by id.", "@param id the id of the record to load", "@return the model loading the record");
+				w.beginStaticMethod(new SimpleType(new SimpleType("IModel"), entityType), "getModelForId", new Parameter("id", idType));
+				w.line("return new EntityModel<" + entityName + ">(Q" + entityName + "." + uncapEntityName + ", Q" + entityName + "." + uncapEntityName + ".id.eq(id));");
+				w.end();
+			}
 			
 		}
 		
@@ -322,8 +331,10 @@ public class BeanSerializer extends AbstractSerializer {
 		addIf(imports, "name.martingeisse.common.terms.IEntityWithDeletedFlag", hasDeletedFlag);
 		addIf(imports, "name.martingeisse.common.terms.IEntityWithOrderIndex", hasOrderIndex);
 		imports.add("name.martingeisse.common.database.EntityConnectionManager");
-		addIf(imports, "org.apache.wicket.model.IModel", hasId);
-		addIf(imports, "name.martingeisse.wicket.model.database.EntityModel", hasId);
+		if (forWicket) {
+			addIf(imports, "org.apache.wicket.model.IModel", hasId);
+			addIf(imports, "name.martingeisse.wicket.model.database.EntityModel", hasId);
+		}
 
 		// actually write the imports
 		printImports(w, imports);
