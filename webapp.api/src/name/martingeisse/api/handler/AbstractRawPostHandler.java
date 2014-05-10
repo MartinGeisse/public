@@ -23,7 +23,7 @@ public abstract class AbstractRawPostHandler implements IRequestHandler {
 	 * @see name.martingeisse.api.handler.IRequestHandler#handle(name.martingeisse.api.request.RequestCycle, name.martingeisse.api.request.RequestPathChain)
 	 */
 	@Override
-	public void handle(RequestCycle requestCycle, RequestPathChain path) throws Exception {
+	public final void handle(RequestCycle requestCycle, RequestPathChain path) throws Exception {
 		if (requestCycle.getRequestMethod() == RequestMethod.POST) {
 			handlePost(requestCycle, path);
 		} else {

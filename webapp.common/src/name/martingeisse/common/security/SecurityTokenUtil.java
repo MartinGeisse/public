@@ -8,7 +8,8 @@ package name.martingeisse.common.security;
 
 import java.util.Locale;
 import name.martingeisse.common.util.HmacUtil;
-import org.joda.time.Instant;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.ReadableInstant;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -42,7 +43,7 @@ public final class SecurityTokenUtil {
 	 * @param secret the secret used to generate the HMAC
 	 * @return the token
 	 */
-	public static String createToken(String subject, Instant timestamp, String secret) {
+	public static String createToken(String subject, ReadableInstant timestamp, String secret) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(subject);
 		builder.append('|');
@@ -51,6 +52,47 @@ public final class SecurityTokenUtil {
 		builder.append('|');
 		builder.append(HmacUtil.generateHmacBase64(payload, secret, HmacUtil.ALGORITHM_SHA256));
 		return builder.toString();
+	}
+	
+	/**
+	 * Validates the specified security token. Returns the subject if the token is valid.
+	 * Throws an {@link IllegalArgumentException} if invalid. This exception contains
+	 * an error message about the problem.
+	 * 
+	 * @param token the token
+	 * @param maxTimestamp the maximum allowed value for the token's timestamp
+	 * @param secret the secret used to generate the HMAC
+	 * @return the token's subject
+	 */
+	public static String validateToken(String token, ReadableInstant maxTimestamp, String secret) {
+		
+		// split the token into segments
+		String[] tokenSegments = StringUtils.split(token, '|');
+		if (tokenSegments.length != 3) {
+			throw new IllegalArgumentException("malformed token (has " + tokenSegments.length + " segments)");
+		}
+		
+		// validate the signature
+		String payload = (tokenSegments[0] + '|' + tokenSegments[1]);
+		String expectedSignatureBase64 = HmacUtil.generateHmacBase64(payload, secret, HmacUtil.ALGORITHM_SHA256);
+		if (!expectedSignatureBase64.equals(tokenSegments[2])) {
+			throw new IllegalArgumentException("invalid token signature");
+		}
+		
+		// validate the timestamp
+		ReadableInstant timestamp;
+		try {
+			timestamp = dateTimeFormatter.parseDateTime(tokenSegments[1]);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("malformed timestamp: " + e.getMessage());
+		}
+		if (timestamp.isAfter(maxTimestamp)) {
+			throw new IllegalArgumentException("token has expired");
+		}
+
+		// return the subject
+		return tokenSegments[0];
+		
 	}
 	
 }

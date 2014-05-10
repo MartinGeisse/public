@@ -29,7 +29,7 @@ public abstract class AbstractJsonApiHandler extends AbstractRawPostHandler {
 	 * @see name.martingeisse.api.handler.AbstractRawPostHandler#handlePost(name.martingeisse.api.request.RequestCycle, name.martingeisse.api.request.RequestPathChain)
 	 */
 	@Override
-	protected void handlePost(RequestCycle requestCycle, RequestPathChain path) throws Exception {
+	protected final void handlePost(RequestCycle requestCycle, RequestPathChain path) throws Exception {
 		
 		// prepare
 		JsonAnalyzer input;
@@ -45,7 +45,7 @@ public abstract class AbstractJsonApiHandler extends AbstractRawPostHandler {
 		output.property("errorCode").number(0);
 		output.property("errorMessage").nullLiteral();
 		try {
-			handle(input, output.property("data"));
+			handle(requestCycle, input, output.property("data"));
 		} catch (JsonAnalysisException e) {
 			emitError(requestCycle, 400, -2, "JSON structural error: " + e.getMessage());
 		} catch (ApiNotImplementedException e) {
@@ -63,11 +63,12 @@ public abstract class AbstractJsonApiHandler extends AbstractRawPostHandler {
 
 	/**
 	 * The actual request handling.
+	 * @param requestCycle the request cycle
 	 * @param input the input data
 	 * @param output the output builder
 	 * @throws Exception on errors
 	 */
-	protected abstract void handle(JsonAnalyzer input, JsonValueBuilder<?> output) throws Exception;
+	protected abstract void handle(RequestCycle requestCycle, JsonAnalyzer input, JsonValueBuilder<?> output) throws Exception;
 
 	/**
 	 * 
