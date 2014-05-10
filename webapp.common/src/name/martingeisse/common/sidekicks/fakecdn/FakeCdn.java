@@ -10,14 +10,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.concurrent.ConcurrentHashMap;
+import name.martingeisse.common.util.NullCookieStore;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.client.params.CookiePolicy;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 
 /**
  * Implements a fake CDN for testing.
@@ -75,8 +76,8 @@ public final class FakeCdn {
 	 * 
 	 */
 	private HttpResponse fetchResponse(String url) throws IOException {
-		HttpClient client = new DefaultHttpClient();
-		client.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.IGNORE_COOKIES);
+		HttpClientConnectionManager connectionManager = new BasicHttpClientConnectionManager();
+		HttpClient client = HttpClients.custom().setConnectionManager(connectionManager).setDefaultCookieStore(new NullCookieStore()).build();
 		while (true) {
 			HttpUriRequest request = new HttpGet(url);
 			HttpResponse response = client.execute(request);
