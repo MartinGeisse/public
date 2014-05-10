@@ -7,11 +7,9 @@
 package name.martingeisse.common.computation.operation;
 
 import java.util.List;
-
 import name.martingeisse.common.util.ObjectStateUtil;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
-
 import org.apache.log4j.Logger;
 
 /**

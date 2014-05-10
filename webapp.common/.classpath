@@ -8,7 +8,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/java/commons-beanutils-bean-collections-1.8.3.jar" sourcepath="resource/libsrc/commons-beanutils-1.8.3-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/commons-codec-1.7.jar" sourcepath="resource/libsrc/commons-codec-1.7-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/commons-io-2.4.jar" sourcepath="resource/libsrc/commons-io-2.4-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/java/commons-lang3-3.1.jar" sourcepath="resource/libsrc/commons-lang3-3.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/commons-logging-adapters-1.1.1.jar" sourcepath="resource/libsrc/commons-logging-1.1.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/commons-logging-api-1.1.1.jar" sourcepath="resource/libsrc/commons-logging-1.1.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/commons-collections-3.2.1.jar" sourcepath="resource/libsrc/commons-collections-3.2.1-sources.jar"/>
@@ -67,5 +66,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/java/httpcore-ab-4.3.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/httpcore-nio-4.3.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/java/httpmime-4.3.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/commons-lang3-3.3.2-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/commons-lang3-3.3.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

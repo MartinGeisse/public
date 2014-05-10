@@ -8,7 +8,6 @@ package name.martingeisse.common.datarow;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import name.martingeisse.common.database.IDatabaseDescriptor;
 import name.martingeisse.common.util.ParameterUtil;
 

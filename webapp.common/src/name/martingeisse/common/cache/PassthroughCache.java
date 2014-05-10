@@ -9,11 +9,8 @@ package name.martingeisse.common.cache;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
-
 import javax.annotation.Nullable;
-
-import name.martingeisse.common.util.NotImplementedException;
-
+import org.apache.commons.lang3.NotImplementedException;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.CacheStats;
 import com.google.common.cache.LoadingCache;
@@ -139,7 +136,7 @@ public final class PassthroughCache<K, V> implements LoadingCache<K, V> {
 	 */
 	@Override
 	public ConcurrentMap<K, V> asMap() {
-		throw new NotImplementedException();
+		throw new NotImplementedException("");
 	}
 
 	/* (non-Javadoc)

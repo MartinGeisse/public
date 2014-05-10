@@ -9,7 +9,6 @@ package name.martingeisse.common.database;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
-
 import com.mysema.commons.lang.CloseableIterator;
 import com.mysema.commons.lang.Pair;
 import com.mysema.query.Projectable;

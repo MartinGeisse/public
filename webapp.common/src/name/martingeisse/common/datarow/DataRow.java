@@ -9,7 +9,6 @@ package name.martingeisse.common.datarow;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-
 import name.martingeisse.common.database.IDatabaseDescriptor;
 
 /**

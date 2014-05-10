@@ -9,7 +9,6 @@ package name.martingeisse.common.javascript.serialize;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-
 import name.martingeisse.common.javascript.JavascriptAssembler;
 
 /**

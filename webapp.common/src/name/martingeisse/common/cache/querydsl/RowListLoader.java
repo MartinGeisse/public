@@ -8,7 +8,6 @@ package name.martingeisse.common.cache.querydsl;
 
 import java.io.Serializable;
 import java.util.List;
-
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.types.Expression;
 import com.mysema.query.types.OrderSpecifier;

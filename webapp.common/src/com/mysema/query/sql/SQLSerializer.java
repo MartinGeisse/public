@@ -18,9 +18,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
 import javax.annotation.Nullable;
-
 import com.google.common.base.Strings;
 import com.mysema.commons.lang.Pair;
 import com.mysema.query.JoinExpression;

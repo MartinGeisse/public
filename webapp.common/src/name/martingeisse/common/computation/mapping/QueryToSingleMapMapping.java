@@ -8,7 +8,6 @@ package name.martingeisse.common.computation.mapping;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import com.mysema.commons.lang.CloseableIterator;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.types.Expression;

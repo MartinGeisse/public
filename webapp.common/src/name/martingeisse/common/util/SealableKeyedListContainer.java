@@ -6,7 +6,6 @@
 
 package name.martingeisse.common.util;
 
-import name.martingeisse.common.util.KeyedListContainer;
 
 /**
  * This subclass of {@link KeyedListContainer} allows to be

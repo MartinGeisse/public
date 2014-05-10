@@ -7,9 +7,7 @@
 package name.martingeisse.common.terms;
 
 import java.io.Serializable;
-
 import name.martingeisse.common.util.ParameterUtil;
-
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**

@@ -8,7 +8,6 @@ package name.martingeisse.common.cache.querydsl;
 
 import name.martingeisse.common.database.EntityConnectionManager;
 import name.martingeisse.common.database.IDatabaseDescriptor;
-
 import com.google.common.cache.CacheLoader;
 import com.mysema.commons.lang.Pair;
 import com.mysema.query.group.QPair;

@@ -9,7 +9,6 @@ package name.martingeisse.common.servlet.gzip;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 

@@ -8,7 +8,6 @@ package name.martingeisse.common.database;
 
 import java.util.Arrays;
 import java.util.List;
-
 import com.google.common.base.Objects;
 import com.mysema.query.support.Expressions;
 import com.mysema.query.types.ConstantImpl;

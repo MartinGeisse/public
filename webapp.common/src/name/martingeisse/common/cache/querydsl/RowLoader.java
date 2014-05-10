@@ -7,7 +7,6 @@
 package name.martingeisse.common.cache.querydsl;
 
 import name.martingeisse.common.util.Wrapper;
-
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.types.Expression;
 import com.mysema.query.types.Predicate;

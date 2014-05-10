@@ -8,9 +8,7 @@ package name.martingeisse.common.javascript.serialize;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-
 import name.martingeisse.common.javascript.JavascriptAssembler;
-
 import org.apache.commons.beanutils.PropertyUtils;
 
 /**

@@ -9,15 +9,11 @@ package name.martingeisse.common.database.config;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import javax.annotation.Nullable;
-
 import name.martingeisse.common.util.ParameterUtil;
-
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
 import com.mysema.query.sql.types.AbstractType;
 
 /**

@@ -8,11 +8,8 @@ package name.martingeisse.common.database;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-
 import name.martingeisse.common.database.config.CustomMysqlQuerydslConfiguration;
-
 import org.joda.time.DateTimeZone;
-
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
 import com.mysema.query.sql.Configuration;

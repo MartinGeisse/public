@@ -45,19 +45,15 @@ public class Launcher {
 		final EnumSet<DispatcherType> allDispatcherTypes = EnumSet.allOf(DispatcherType.class);
 
 		// create and configure a servlet context
-		final ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+		final ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS | ServletContextHandler.NO_SECURITY);
 		context.setContextPath("/");
-		context.getSessionHandler().getSessionManager().setMaxInactiveInterval(30 * 60);
-		context.getSessionHandler().getSessionManager().setSessionIdPathParameterName("none");
 
 		// add the global servlet listener
 		context.addEventListener(new GlobalServletContext());
 		context.addFilter(SideEffectsOriginRestrictionFilter.class, "/*", allDispatcherTypes);
 		context.addFilter(AntiJsessionidUrlFilter.class, "/*", allDispatcherTypes);
 
-		// the GZIP filter seems to cause problems on Jetty. The HTTP response either has
-		// an incorrect or duplicate Content-Length header (my tools won't tell me...)
-		//context.addFilter(GzipFilter.class, "/*", allDispatcherTypes);
+		// add GZIP support
 		context.addFilter(GzipFilter.class, "/*", allDispatcherTypes);
 
 		// JDBC connection-closing filter
@@ -68,7 +64,7 @@ public class Launcher {
 		context.addServlet(RestfulServlet.class, "/*");
 
 		// configure SSL / HTTPS
-		SslContextFactory sslContextFactory = new SslContextFactory("/Users/geisse/.keystore");
+		SslContextFactory sslContextFactory = new SslContextFactory("/Users/martin/.keystore");
 		sslContextFactory.setKeyStorePassword("changeit");
 		SslSocketConnector sslSocketConnector = new SslSocketConnector(sslContextFactory);
 		sslSocketConnector.setPort(8889);

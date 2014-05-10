@@ -7,7 +7,6 @@
 package name.martingeisse.common.database.config;
 
 import java.sql.Types;
-
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormatter;
 

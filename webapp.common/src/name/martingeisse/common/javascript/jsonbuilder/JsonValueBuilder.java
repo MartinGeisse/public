@@ -6,8 +6,8 @@
 
 package name.martingeisse.common.javascript.jsonbuilder;
 
-import org.json.simple.JSONValue;
 import name.martingeisse.common.javascript.JavascriptAssemblerUtil;
+import org.json.simple.JSONValue;
 
 /**
  * Base class for "value" builders, i.e. builders that are

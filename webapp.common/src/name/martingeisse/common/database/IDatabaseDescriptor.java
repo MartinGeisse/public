@@ -8,10 +8,8 @@ package name.martingeisse.common.database;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
-
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.SQLTemplates;

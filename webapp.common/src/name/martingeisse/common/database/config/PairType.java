@@ -10,9 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-
 import javax.annotation.Nullable;
-
 import com.mysema.commons.lang.Pair;
 import com.mysema.query.sql.types.Type;
 

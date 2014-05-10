@@ -7,17 +7,21 @@
 package name.martingeisse.api.request;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import org.apache.commons.io.IOUtils;
 import name.martingeisse.api.servlet.ServletUtil;
+import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 
 /**
  * Stores information about a request cycle, such as {@link HttpServletRequest},
@@ -34,6 +38,19 @@ public final class RequestCycle {
 	 * the EXCEPTION_REQUEST_ATTRIBUTE_KEY
 	 */
 	public static final RequestAttributeKey<Throwable> EXCEPTION_REQUEST_ATTRIBUTE_KEY = new RequestAttributeKey<Throwable>(Throwable.class);
+	
+	/**
+	 * the useSessions
+	 */
+	private static volatile boolean useSessions = true;
+	
+	/**
+	 * Setter method for the useSessions.
+	 * @param useSessions the useSessions to set
+	 */
+	public static void setUseSessions(boolean useSessions) {
+		RequestCycle.useSessions = useSessions;
+	}
 	
 	/**
 	 * the request
@@ -143,6 +160,58 @@ public final class RequestCycle {
 	}
 
 	/**
+	 * Returns either the raw POST body, or the value of the "body" POST parameter
+	 * (if the Content-Type is "application/x-www-form-urlencoded"), as a {@link Reader}.
+	 * 
+	 * @return the reader
+	 * @throws IOException on I/O errors
+	 */
+	public Reader getBodyAsReader() throws IOException {
+		if (isFormRequest()) {
+			return new StringReader(parameters.getString("body", true));
+		} else {
+			return new InputStreamReader(request.getInputStream(), Charset.forName("utf-8"));
+		}
+	}
+	
+	/**
+	 * Returns either the raw POST body, or the value of the "body" POST parameter
+	 * (if the Content-Type is "application/x-www-form-urlencoded"), as a {@link String}.
+	 * 
+	 * @return the string
+	 * @throws IOException on I/O errors
+	 */
+	public String getBodyAsString() throws IOException {
+		if (isFormRequest()) {
+			return parameters.getString("body", true);
+		} else {
+			return IOUtils.toString(request.getInputStream(), Charset.forName("utf-8"));
+		}
+	}
+
+	/**
+	 * Returns either the raw POST body, or the value of the "body" POST parameter
+	 * (if the Content-Type is "application/x-www-form-urlencoded"), as a {@link JsonAnalyzer}.
+	 * 
+	 * @return the JSON analyuer
+	 * @throws IOException on I/O errors
+	 */
+	public JsonAnalyzer getBodyAsJsonAnalyzer() throws IOException {
+		if (isFormRequest()) {
+			return JsonAnalyzer.parse(parameters.getString("body", true));
+		} else {
+			return JsonAnalyzer.parse(new InputStreamReader(request.getInputStream(), Charset.forName("utf-8")));
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private boolean isFormRequest() {
+		return request.getContentType().startsWith("application/x-www-form-urlencoded");
+	}
+	
+	/**
 	 * @return the writer of the response
 	 * @throws IOException on I/O errors
 	 */
@@ -196,12 +265,39 @@ public final class RequestCycle {
 	}
 
 	/**
+	 * Renders an HTML page that shows a form to manually enter a request body. Only works
+	 * in combination with the getBodyAs*() methods or similar that can accept a POST form
+	 * parameter named "body" instead of a raw POST body.
+	 * 
+	 * @throws IOException on I/O errors
+	 */
+	public void emitBodyFormPage() throws IOException {
+		
+		// build the page
+		StringBuilder builder = new StringBuilder();
+		builder.append("<html><body><form method=\"post\" style=\"width: 800px; margin-left: auto; margin-right: auto; \">");
+		builder.append("<textarea name=\"body\" style=\"display: block; width: 100%; height: 300px; margin-top: 30px; font-family: monospace; font-size: 12pt; \">{\n}</textarea>");
+		builder.append("<input type=\"submit\" value=\"Submit\" style=\"display: block; width: 100%; height: 40px; margin-top: 20px; background-color: #ddd; border: 1px solid #aaa; \">");
+		builder.append("</form></body></html>");
+		
+		// emit the response
+		response.setCharacterEncoding("utf-8");
+		response.setContentType("text/html; charset=utf-8");
+		response.getWriter().print(builder);
+		response.getWriter().flush();
+		response.getWriter().close();
+		
+	}
+
+	/**
 	 * Sets the session object for the specified key.
 	 * @param key the session key
 	 * @param value the value to set
 	 */
 	public <T extends Serializable> void setSessionValue(SessionKey<T> key, T value) {
-		request.getSession().setAttribute(key.getInternalKey(), value);
+		if (useSessions) {
+			request.getSession().setAttribute(key.getInternalKey(), value);
+		}
 	}
 
 	/**
@@ -211,7 +307,11 @@ public final class RequestCycle {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends Serializable> T getSessionValue(SessionKey<T> key) {
-		return (T)request.getSession().getAttribute(key.getInternalKey());
+		if (useSessions) {
+			return (T)request.getSession().getAttribute(key.getInternalKey());
+		} else {
+			return null;
+		}
 	}
 
 }

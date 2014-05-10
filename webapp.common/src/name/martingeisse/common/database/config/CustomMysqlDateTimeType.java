@@ -7,9 +7,7 @@
 package name.martingeisse.common.database.config;
 
 import java.sql.Types;
-
 import name.martingeisse.common.util.ParameterUtil;
-
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;

@@ -8,7 +8,6 @@ package name.martingeisse.common.database;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.log4j.Logger;
 
 /**

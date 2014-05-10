@@ -8,9 +8,7 @@ package name.martingeisse.common.database;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-
 import org.apache.log4j.Logger;
-
 import com.mysema.query.sql.RelationalPath;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.dml.SQLDeleteClause;

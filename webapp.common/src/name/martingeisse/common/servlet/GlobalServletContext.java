@@ -7,7 +7,6 @@
 package name.martingeisse.common.servlet;
 
 import java.io.Serializable;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

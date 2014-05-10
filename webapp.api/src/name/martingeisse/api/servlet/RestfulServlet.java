@@ -8,12 +8,10 @@ package name.martingeisse.api.servlet;
 
 import java.io.IOException;
 import java.util.Locale;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import name.martingeisse.api.i18n.LocalizationUtil;
 import name.martingeisse.api.request.MalformedRequestPathException;
 import name.martingeisse.api.request.RequestCycle;
@@ -21,7 +19,6 @@ import name.martingeisse.api.request.RequestException;
 import name.martingeisse.api.request.RequestHandlingFinishedException;
 import name.martingeisse.api.request.RequestPathNotFoundException;
 import name.martingeisse.api.request.SessionKey;
-
 import org.apache.log4j.Logger;
 
 /**

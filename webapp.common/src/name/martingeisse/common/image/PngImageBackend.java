@@ -8,7 +8,6 @@ package name.martingeisse.common.image;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
 import javax.imageio.ImageIO;
 
 /**

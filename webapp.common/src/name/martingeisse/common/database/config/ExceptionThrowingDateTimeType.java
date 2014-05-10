@@ -10,11 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-
 import javax.annotation.Nullable;
-
 import org.joda.time.DateTime;
-
 import com.mysema.query.sql.types.AbstractType;
 import com.mysema.query.sql.types.DateTimeType;
 

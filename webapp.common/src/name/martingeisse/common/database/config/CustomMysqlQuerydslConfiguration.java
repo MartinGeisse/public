@@ -9,7 +9,6 @@ package name.martingeisse.common.database.config;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
-
 import com.mysema.query.sql.Configuration;
 import com.mysema.query.sql.SQLTemplates;
 
