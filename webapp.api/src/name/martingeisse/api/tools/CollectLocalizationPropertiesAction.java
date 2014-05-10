@@ -67,10 +67,8 @@ public class CollectLocalizationPropertiesAction extends LocalizationFileAction 
 		
 		// load the property file
 		Properties properties = new Properties();
-		try {
-			InputStream inputStream = new FileInputStream(file);
+		try (InputStream inputStream = new FileInputStream(file)) {
 			properties.load(inputStream);
-			inputStream.close();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -104,11 +102,9 @@ public class CollectLocalizationPropertiesAction extends LocalizationFileAction 
 	 * @param properties the properties to write
 	 */
 	protected void writeOutputFileForLocale(String localeName, Properties properties) {
-		try {
-			File file = new File("localization_" + localeName + ".properties");
-			FileOutputStream fileOutputStream = new FileOutputStream(file);
+		File file = new File("localization_" + localeName + ".properties");
+		try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
 			properties.store(fileOutputStream, null);
-			fileOutputStream.close();
 		} catch (IOException e) {
 			throw new RuntimeException();
 		}

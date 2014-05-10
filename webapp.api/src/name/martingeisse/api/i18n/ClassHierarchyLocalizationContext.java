@@ -148,24 +148,17 @@ public final class ClassHierarchyLocalizationContext implements ILocalizationCon
 	 */
 	private static Map<String, String> loadProperties(Class<?> origin, Locale locale) {
 		String filename = origin.getSimpleName() + '_' + locale + ".properties";
-		try {
-			
-			// try to open the file, and fall back to an empty map if that fails
-			InputStream inputStream = origin.getResourceAsStream(filename);
+		try (InputStream inputStream = origin.getResourceAsStream(filename)) {
 			if (inputStream == null) {
 				@SuppressWarnings("unchecked")
 				Map<String, String> emptyMap = MapUtils.EMPTY_MAP;
 				return emptyMap;
 			}
-			
-			// load the properties
 			Properties properties = new Properties();
 			properties.load(inputStream);
-			inputStream.close();
 			@SuppressWarnings("unchecked")
 			Map<String, String> typedProperties = (Map<String, String>)(Map<?, ?>)properties;
 			return typedProperties;
-			
 		} catch (IOException e) {
 			logger.error("could not load i18n property file", e);
 			return null;

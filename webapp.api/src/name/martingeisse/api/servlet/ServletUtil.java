@@ -47,9 +47,9 @@ public class ServletUtil {
 	 * @throws IOException on I/O errors
 	 */
 	public static void finishTextResponse(HttpServletResponse response) throws IOException {
-		PrintWriter w = response.getWriter();
-		w.flush();
-		w.close();
+		try (PrintWriter w = response.getWriter()) {
+			w.flush();
+		}
 	}
 	
 	/**

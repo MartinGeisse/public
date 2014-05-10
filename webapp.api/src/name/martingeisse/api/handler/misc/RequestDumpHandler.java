@@ -22,11 +22,11 @@ public class RequestDumpHandler implements IRequestHandler {
 	 */
 	@Override
 	public void handle(RequestCycle requestCycle, RequestPathChain path) throws Exception {
-		PrintWriter w = requestCycle.getResponse().getWriter();
-		w.println("Full Request path: " + requestCycle.getRequestPath().toString());
-		w.println("Relative Request path: " + path.toString());
-		w.flush();
-		w.close();
+		try (PrintWriter w = requestCycle.getResponse().getWriter()) {
+			w.println("Full Request path: " + requestCycle.getRequestPath().toString());
+			w.println("Relative Request path: " + path.toString());
+			w.flush();
+		}
 	}
 	
 }

@@ -126,15 +126,15 @@ public class ClasspathResourceHandler implements IRequestHandler {
 		Class<?> scope = (this.classpathScope == null ? getClass() : this.classpathScope);
 		String packageName = scope.getPackage().getName();
 		String internalPath = "/" + packageName.replace('.', '/') + '/' + classpathFilename;
-		InputStream inputStream = scope.getResourceAsStream(internalPath);
-		if (inputStream == null) {
-			throw new Exception("classpath resource not found: " + internalPath);
+		try (InputStream inputStream = scope.getResourceAsStream(internalPath)) {
+			if (inputStream == null) {
+				throw new Exception("classpath resource not found: " + internalPath);
+			}
+			try (OutputStream outputStream = requestCycle.getOutputStream()) {
+				IOUtils.copy(inputStream, outputStream);
+				outputStream.flush();
+			}
 		}
-		OutputStream outputStream = requestCycle.getOutputStream();
-		IOUtils.copy(inputStream, outputStream);
-		inputStream.close();
-		outputStream.flush();
-		outputStream.close();
 
 	}
 
