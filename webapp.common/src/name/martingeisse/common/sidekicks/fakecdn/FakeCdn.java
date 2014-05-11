@@ -8,7 +8,7 @@ package name.martingeisse.common.sidekicks.fakecdn;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ConcurrentHashMap;
 import name.martingeisse.common.util.NullCookieStore;
 import org.apache.commons.io.IOUtils;
@@ -53,7 +53,7 @@ public final class FakeCdn {
 			try {
 				record = fetch(key);
 			} catch (IOException e) {
-				record = new FakeCdnRecord(404, key, "text/plain; charset=UTF-8", "could not connect to server".getBytes(Charset.forName("utf-8")));
+				record = new FakeCdnRecord(404, key, "text/plain; charset=UTF-8", "could not connect to server".getBytes(StandardCharsets.UTF_8));
 			}
 			cache.put(key, record);
 		}

@@ -7,6 +7,7 @@
 package name.martingeisse.common.util;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import javax.crypto.Mac;
@@ -52,7 +53,7 @@ public class HmacUtil {
 	 * @return the HMAC
 	 */
 	public static byte[] generateHmac(String payload, String secret, String algorithm) {
-		Charset utf8 = Charset.forName("utf-8");
+		Charset utf8 = StandardCharsets.UTF_8;
 		return generateHmac(payload.getBytes(utf8), secret.getBytes(utf8), algorithm);
 	}
 	

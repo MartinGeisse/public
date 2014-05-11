@@ -14,14 +14,14 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.Writer;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.io.IOUtils;
 import name.martingeisse.api.servlet.ServletUtil;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Stores information about a request cycle, such as {@link HttpServletRequest},
@@ -170,7 +170,7 @@ public final class RequestCycle {
 		if (isFormRequest()) {
 			return new StringReader(parameters.getString("body", true));
 		} else {
-			return new InputStreamReader(request.getInputStream(), Charset.forName("utf-8"));
+			return new InputStreamReader(request.getInputStream(), StandardCharsets.UTF_8);
 		}
 	}
 	
@@ -185,7 +185,7 @@ public final class RequestCycle {
 		if (isFormRequest()) {
 			return parameters.getString("body", true);
 		} else {
-			return IOUtils.toString(request.getInputStream(), Charset.forName("utf-8"));
+			return IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
 		}
 	}
 
@@ -200,7 +200,7 @@ public final class RequestCycle {
 		if (isFormRequest()) {
 			return JsonAnalyzer.parse(parameters.getString("body", true));
 		} else {
-			return JsonAnalyzer.parse(new InputStreamReader(request.getInputStream(), Charset.forName("utf-8")));
+			return JsonAnalyzer.parse(new InputStreamReader(request.getInputStream(), StandardCharsets.UTF_8));
 		}
 	}
 	
