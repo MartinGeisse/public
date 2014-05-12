@@ -1,0 +1,17 @@
+
+Layers
+-> LayerStack ("op stack")
+-> LayerSlots ("register")
+
+Befehle:
+- move slot to stack (slot ist danach NULL)
+- copy slot to stack (Layer wird kopiert)
+- move stack to slot (pop)
+- copy stack to slot (peek + copy)
+Dadurch wird der Unterschied zwischen "Layer" und "Referenz auf Layer" nie sichtbar.
+
+Die meisten Funktionen arbeiten auf dem Stack.
+
+Das Ergebnis eines Programms ist die top-of-stack layer (Fehler, falls keine vorhanden)
+
+

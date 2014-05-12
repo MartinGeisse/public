@@ -1,0 +1,38 @@
+<project name="MyProject" default="deploy" basedir=".">
+
+	<!-- compiles the Miner launcher -->
+	<target name="compile">
+		<delete dir="build" />
+		<mkdir dir="build" />
+		<javac srcdir="src" destdir="build" source="1.6" target="1.6" encoding="utf-8" debug="true" debuglevel="lines,vars,source" includeantruntime="false" />
+		<copy todir="build">
+			<fileset dir="src" excludes="**/*.java" />
+		</copy>
+	</target>
+
+	<!-- creates a JAR of the Miner launcher -->
+	<target name="jar" depends="compile">
+		<jar destfile="miner-launcher.jar" basedir="build" update="true" manifest="META-INF/MANIFEST.MF" manifestencoding="utf-8" level="9">
+			<zipgroupfileset dir="../stackd-client/lib/java" />
+			<zipgroupfileset dir="../stackd-common/lib/java" />
+		</jar>
+		<chmod file="miner-launcher.jar" perm="744" />
+	</target>
+
+	<!-- deploys the Miner launcher JAR to the download host -->
+	<target name="deploy" depends="jar">
+		<copy tofile="/home/martin/www/miner/miner-launcher-windows.jar" overwrite="true">
+			<fileset dir="." includes="miner-launcher.jar" />
+		</copy>
+		<copy tofile="/home/martin/www/miner/miner-launcher-macosx.jar" overwrite="true">
+			<fileset dir="." includes="miner-launcher.jar" />
+		</copy>
+		<delete file="/home/martin/www/miner/miner-launcher-linux-bundle.tar" />
+		<tar destfile="/home/martin/www/miner/miner-launcher-linux-bundle.tar">
+		     <tarfileset dir="." filemode="744">
+		         <include name="miner-launcher.jar"/>
+		     </tarfileset>
+		</tar>
+	</target>
+
+</project>

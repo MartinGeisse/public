@@ -1,0 +1,18 @@
+
+Ob sub-cube details sichtbar sind, oder welcher LOD benutzt wird, entscheidet
+der Server und packt es ins Render Model. Der Renderer ist an sowas nicht
+interessiert, er bekommt (informationen über) Polygone. Er kann z.B. über
+Wireframe entscheiden, Vertices zu VBOs zuordnen usw.
+
+Evtl ist hier eine Art Scene Graph nötig: Die RenderModel-Knoten sind
+gleichzeitig auch SG-Knoten. SG aus Interfaces oder aus abstrakten
+Basisklassen gebaut. Der Renderer rendert einen SG und entscheidet
+selbst wie das passiert. SG-Knoten:
+
+- Bounding Volume (Frustum Culling) -> perSection data
+- Texture (Renderer sortiert nach T.) -> perTexture data
+- Backface Culling anhand AxisAlignedDirection
+-> allg. Culling-Knoten - der Renderer muss nur in der Lage sein, es als
+  Culling-Knoten zu erkennen und die unterknoten auch ohne Check
+  zu bekommen, und zu wissen dass man die Unterknoten unter Performancekosten
+  trotzdem rendern kann (z.B. Zusammenfassen zu VBO)
