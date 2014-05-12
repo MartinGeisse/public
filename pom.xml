@@ -34,5 +34,6 @@
 		<module>name.martingeisse.servlet-httpclient</module>
 		<module>name.martingeisse.image</module>
 		<module>name.martingeisse.http-api-server</module>
+		<module>name.martingeisse.wicket</module>
 	</modules>
 </project>

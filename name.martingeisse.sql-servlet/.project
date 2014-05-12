@@ -5,6 +5,7 @@
   <projects>
     <project>common</project>
     <project>sql</project>
+    <project>jetty</project>
   </projects>
   <buildSpec>
     <buildCommand>

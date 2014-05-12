@@ -5,8 +5,9 @@
   <projects>
     <project>common</project>
     <project>sql</project>
-    <project>json</project>
     <project>jetty</project>
+    <project>sql-servlet</project>
+    <project>json</project>
   </projects>
   <buildSpec>
     <buildCommand>

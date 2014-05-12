@@ -1,2 +1,0 @@
-mvn archetype:create -DgroupId=guide.ide.eclipse -DartifactId=guide-ide-eclipse
-
