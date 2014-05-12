@@ -1,0 +1,26 @@
+
+- pass-through handler: Leitet Calls zu einer existierenden API
+  auf einem anderen Server weiter (auf HTTP-level, nicht auf
+  API-level; letzteres kann man von Hand programmieren wenn
+  nötig) -> eine Art HTTP-Proxy, aber nur für bestimmte Funktionen
+
+- AbstractMethodHandler: Sammelt weitere URL-Segmente in Array,
+  GET in Map, POST in Map; alternativ je GET/POST Bean-Properties
+  
+- IndexedResourceFolderHandler, NumberIndexedRFH, StringIndexedRFH:
+  Folder selbst listet Indices auf; Elements werden per Index
+  angesprochen; es gibt nur einen Sub-Handler für alle Elements
+  und der Index wird als Parameter hinterlegt wenn dieser
+  aufgerufen wird.
+
+- dazu: ParameterDecorator implements IParameterSet
+  Dekoriert ein anderes PS und fügt einen Parameter hinzu.
+
+- Idee: "Interceptors": Orthogonal zu Handlern:
+	- logging (je nach Annotations)
+	- caching (je nach Annotations)
+	- security (je nach Annotations, und mit Admin-Security kombiniert)
+		-> IAdminAuthenticationStrategy -> IApplicationAuthenticationStrategy
+		-> IAdminAuthorizationStrategy -> IApplicationAuthorizationStrategy
+		usw. 
+		Annotations geben Permission Requests für die jeweiligen HAndler / Methoden an

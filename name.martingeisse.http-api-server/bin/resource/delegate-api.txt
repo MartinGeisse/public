@@ -1,0 +1,19 @@
+
+Generischer, konfigurierbarer Handler, der an eine andere API delegiert, wobei
+die Requests im großen und ganzen gleich bleiben (genaues wieder konfigurierbar,
+ggf. Strategy Pattern).
+
+Auch strategy/config, wie local und remote Sessions behandelt werden. Einfache
+impl.: local sessions und remote sessions sind grundverschieden; optional wird
+die Remote Session ID in der local session gespeichert. Die durschgeschleiften
+Requests müssen dann was die Session ID angeht abgeändert werden; dito die
+Responses (es muss jeweils local/remote ausgetauscht werden). Das ist machbar.
+
+Eine andere impl. benutzt identische IDs. Dann muss nix ausgetauscht werden.
+Allerdings kann dann eine Lokale Session nur angelegt werden, wenn eine Remote
+Session angelegt wird -- remote wird sich keine Session IDs vorschreiben lassen,
+daher können Session IDs nur Remote erzeugt werden und das passiert wenn eine
+Remote Session erzeugt wird. 
+
+
+

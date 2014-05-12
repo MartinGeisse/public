@@ -130,6 +130,7 @@ public final class PassthroughCache<K, V> implements LoadingCache<K, V> {
 	/* (non-Javadoc)
 	 * @see com.google.common.cache.LoadingCache#apply(java.lang.Object)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public V apply(K key) {
 		try {
