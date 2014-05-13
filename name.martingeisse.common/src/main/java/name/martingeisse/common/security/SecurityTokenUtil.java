@@ -60,11 +60,11 @@ public final class SecurityTokenUtil {
 	 * an error message about the problem.
 	 * 
 	 * @param token the token
-	 * @param maxTimestamp the maximum allowed value for the token's timestamp
+	 * @param minTimestamp the maximum allowed value for the token's timestamp
 	 * @param secret the secret used to generate the HMAC
 	 * @return the token's subject
 	 */
-	public static String validateToken(String token, ReadableInstant maxTimestamp, String secret) {
+	public static String validateToken(String token, ReadableInstant minTimestamp, String secret) {
 		
 		// split the token into segments
 		String[] tokenSegments = StringUtils.split(token, '|');
@@ -86,7 +86,7 @@ public final class SecurityTokenUtil {
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException("malformed timestamp: " + e.getMessage());
 		}
-		if (timestamp.isAfter(maxTimestamp)) {
+		if (timestamp.isBefore(minTimestamp)) {
 			throw new IllegalArgumentException("token has expired");
 		}
 

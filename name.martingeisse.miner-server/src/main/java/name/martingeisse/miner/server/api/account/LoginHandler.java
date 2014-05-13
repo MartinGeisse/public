@@ -61,7 +61,8 @@ public final class LoginHandler extends AbstractJsonApiHandler {
 		}
 		
 		// build the access token and add it to the response body and to the cookie header
-		String token = SecurityTokenUtil.createToken(username, new Instant(), MinerServerSecurityConstants.SECURITY_TOKEN_SECRET);
+		Instant expiryTime = new Instant().plus(MinerServerSecurityConstants.ACCOUNT_ACCESS_TOKEN_MAX_AGE_MILLISECONDS);
+		String token = SecurityTokenUtil.createToken(username, expiryTime, MinerServerSecurityConstants.SECURITY_TOKEN_SECRET);
 		output.object().property("accountAccessToken").string(token).end();
 		requestCycle.getResponse().addCookie(buildCookie(token));
 		
@@ -72,7 +73,7 @@ public final class LoginHandler extends AbstractJsonApiHandler {
 	 */
 	private static Cookie buildCookie(String token) {
 		Cookie cookie = new Cookie("accountAccessToken", token);
-		cookie.setMaxAge(MinerServerSecurityConstants.ACCOUNT_ACCESS_TOKEN_MAX_AGE);
+		cookie.setMaxAge(MinerServerSecurityConstants.ACCOUNT_ACCESS_TOKEN_MAX_AGE_SECONDS);
 		cookie.setPath("/");
 		return cookie;
 	}

@@ -7,7 +7,6 @@
 package name.martingeisse.miner.server.api.account;
 
 import javax.servlet.http.Cookie;
-
 import name.martingeisse.api.handler.jsonapi.AbstractJsonApiHandler;
 import name.martingeisse.api.handler.jsonapi.JsonApiException;
 import name.martingeisse.api.request.RequestCycle;
@@ -18,10 +17,7 @@ import name.martingeisse.miner.server.MinerServerSecurityConstants;
 import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.webide.entity.QUserAccount;
 import name.martingeisse.webide.entity.UserAccount;
-
 import org.joda.time.Instant;
-import org.joda.time.ReadableInstant;
-
 import com.mysema.query.sql.SQLQuery;
 
 /**
@@ -54,9 +50,8 @@ public abstract class AbstractLoggedInHandler extends AbstractJsonApiHandler {
 		// parse the token
 		String username;
 		try {
-			ReadableInstant maxTimestamp = new Instant().minus(MinerServerSecurityConstants.ACCOUNT_ACCESS_TOKEN_MAX_AGE);
 			String secret = MinerServerSecurityConstants.SECURITY_TOKEN_SECRET;
-			username = SecurityTokenUtil.validateToken(presentedToken, maxTimestamp, secret);
+			username = SecurityTokenUtil.validateToken(presentedToken, new Instant(), secret);
 		} catch (IllegalArgumentException e) {
 			throw new JsonApiException(1, "invalid accountAccessToken: " + e.getMessage());
 		}

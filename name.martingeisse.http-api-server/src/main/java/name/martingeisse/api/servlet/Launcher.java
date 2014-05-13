@@ -47,7 +47,6 @@ public class Launcher {
 
 		// add the global servlet listener
 		context.addEventListener(new GlobalServletContext());
-		context.addFilter(SideEffectsOriginRestrictionFilter.class, "/*", allDispatcherTypes);
 		context.addFilter(AntiJsessionidUrlFilter.class, "/*", allDispatcherTypes);
 
 		// add GZIP support

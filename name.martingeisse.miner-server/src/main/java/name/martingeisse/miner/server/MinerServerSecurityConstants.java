@@ -17,8 +17,13 @@ public class MinerServerSecurityConstants {
 	public static final String SECURITY_TOKEN_SECRET = "qwiuofghiuqwhqipuwhfiuqoghfiuoqwhfiuqwbfhowquizgbfhuqhfgiuqghio";
 	
 	/**
-	 * the ACCOUNT_ACCESS_TOKEN_MAX_AGE
+	 * the ACCOUNT_ACCESS_TOKEN_MAX_AGE_SECONDS
 	 */
-	public static final int ACCOUNT_ACCESS_TOKEN_MAX_AGE = 5 * 60;
+	public static final int ACCOUNT_ACCESS_TOKEN_MAX_AGE_SECONDS = 5 * 60;
 	
+	/**
+	 * the ACCOUNT_ACCESS_TOKEN_MAX_AGE_MILLISECONDS
+	 */
+	public static final int ACCOUNT_ACCESS_TOKEN_MAX_AGE_MILLISECONDS = 1000 * ACCOUNT_ACCESS_TOKEN_MAX_AGE_SECONDS;
+
 }

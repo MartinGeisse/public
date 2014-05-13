@@ -89,4 +89,29 @@ public final class AccountApiClient {
 		}
 	}
 
+	/**
+	 * Fetches the list of players for the logged-in user.
+	 * 
+	 * @return the list of players
+	 */
+	public JsonAnalyzer fetchPlayers() {
+		try {
+			String requestData = new JsonBuilder().object().property("accountAccessToken").string(accountAccessToken).end();
+			HttpPost post = new HttpPost("http://localhost:8888/players");
+			post.setEntity(new StringEntity(requestData, StandardCharsets.UTF_8));
+			HttpResponse response = httpClient.execute(post);
+			if (response.getStatusLine().getStatusCode() != 200) {
+				throw new RuntimeException(IOUtils.toString(response.getEntity().getContent(), "ascii"));
+			}
+			JsonAnalyzer json = JsonAnalyzer.parse(new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8));
+			int errorCode = json.analyzeMapElement("errorCode").expectInteger();
+			if (errorCode != 0) {
+				throw new RuntimeException("error (" + errorCode + "): " + json.analyzeMapElement("errorMessage").expectString());
+			}
+			return json.analyzeMapElement("data");
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 }

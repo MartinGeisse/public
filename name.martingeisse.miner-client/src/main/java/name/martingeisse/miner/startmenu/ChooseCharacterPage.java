@@ -6,8 +6,11 @@
 
 package name.martingeisse.miner.startmenu;
 
+import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
+import name.martingeisse.miner.account.AccountApiClient;
 import name.martingeisse.stackd.client.frame.handlers.ExitHandler;
 import name.martingeisse.stackd.client.gui.control.Control;
+import name.martingeisse.stackd.client.gui.element.Spacer;
 
 /**
  * The "login" menu page.
@@ -15,30 +18,19 @@ import name.martingeisse.stackd.client.gui.control.Control;
 public class ChooseCharacterPage extends Control {
 
 	/**
+	 * the exitHandler
+	 */
+	private final ExitHandler exitHandler;
+
+	/**
 	 * Constructor.
 	 * @param exitHandler the exit handler
 	 */
 	public ChooseCharacterPage(final ExitHandler exitHandler) {
-//		final VerticalLayout menu = new VerticalLayout();
-//		menu.addElement(new TextLine("Username"));
-//		menu.addElement(new Spacer(20));
-//		menu.addElement(new TextLine("Password"));
-//		menu.addElement(new Spacer(20));
-//		menu.addElement(new Sizer(new Button("Log in", Color.BLUE, Color.WHITE, Color.WHITE) {
-//			@Override
-//			protected void onClick() {
-//
-//			}
-//		}, 200, 50));
-//		menu.addElement(new Spacer(20));
-//		menu.addElement(new Sizer(new Button("Quit", Color.BLUE, Color.WHITE, Color.WHITE) {
-//			@Override
-//			protected void onClick() {
-//				exitHandler.setProgrammaticExit(true);
-//			}
-//		}, 200, 50));
-//		StackdTexture backgroundTexture = new StackdTexture(LauncherAssets.class, "dirt.png", false);
-//		setControlRootElement(new OverlayStack(new FillTexture(backgroundTexture), new Margin(menu, 50, 100)));
+		this.exitHandler = exitHandler;
+		setControlRootElement(new Spacer(1));
+		JsonAnalyzer json = AccountApiClient.getInstance().fetchPlayers();
+		System.out.println("* " + json.getValue());
 	}
 
 }

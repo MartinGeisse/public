@@ -7,6 +7,7 @@
 package name.martingeisse.miner.startmenu;
 
 import name.martingeisse.launcher.assets.LauncherAssets;
+import name.martingeisse.miner.account.AccountApiClient;
 import name.martingeisse.stackd.client.frame.handlers.ExitHandler;
 import name.martingeisse.stackd.client.gui.GuiEvent;
 import name.martingeisse.stackd.client.gui.control.Control;
@@ -23,6 +24,11 @@ import name.martingeisse.stackd.client.system.StackdTexture;
 public class LoginPage extends Control {
 
 	/**
+	 * the exitHandler
+	 */
+	private final ExitHandler exitHandler;
+	
+	/**
 	 * the username
 	 */
 	private final LabeledTextField username;
@@ -37,6 +43,7 @@ public class LoginPage extends Control {
 	 * @param exitHandler the exit handler
 	 */
 	public LoginPage(final ExitHandler exitHandler) {
+		this.exitHandler = exitHandler;
 		
 		username = new LabeledTextField("Username");
 		password = new LabeledTextField("Password");
@@ -51,7 +58,7 @@ public class LoginPage extends Control {
 		menu.addElement(new StartmenuButton("Log in") {
 			@Override
 			protected void onClick() {
-
+				login();
 			}
 		});
 		menu.addElement(new Spacer(20));
@@ -72,10 +79,18 @@ public class LoginPage extends Control {
 	public void handleEvent(GuiEvent event) {
 		super.handleEvent(event);
 		if (event == GuiEvent.KEY_PRESSED && getGui().getCurrentKeyboardCharacter() == '\r') {
-			
-			
-			System.out.println("* " + username.getTextField().getValue() + " / " + password.getTextField().getValue());
+			login();
 		}
+	}
+	
+	/**
+	 * 
+	 */
+	private void login() {
+		String username = this.username.getTextField().getValue();
+		String password = this.password.getTextField().getValue();
+		AccountApiClient.getInstance().login(username, password);
+		getGui().setRootElement(new ChooseCharacterPage(exitHandler));
 	}
 
 }
