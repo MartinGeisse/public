@@ -36,6 +36,26 @@
 			<artifactId>miner-common</artifactId>
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>name.martingeisse</groupId>
+			<artifactId>jetty</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>name.martingeisse</groupId>
+			<artifactId>sql</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>name.martingeisse</groupId>
+			<artifactId>sql-servlet</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>name.martingeisse</groupId>
+			<artifactId>http-api-server</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
 
 	</dependencies>
 

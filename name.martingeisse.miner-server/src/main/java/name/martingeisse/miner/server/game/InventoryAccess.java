@@ -8,10 +8,16 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+
 import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.sql.JdbcEntityDatabaseConnection;
 import name.martingeisse.webide.entity.PlayerInventorySlot;
 import name.martingeisse.webide.entity.QPlayerInventorySlot;
+
+import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.dml.SQLDeleteClause;
+import com.mysema.query.sql.dml.SQLInsertClause;
+import com.mysema.query.sql.dml.SQLUpdateClause;
 
 /**
  * Database utility class to deal with players' inventories.

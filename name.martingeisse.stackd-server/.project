@@ -5,6 +5,7 @@
   <projects>
     <project>common</project>
     <project>stackd-common</project>
+    <project>json</project>
   </projects>
   <buildSpec>
     <buildCommand>

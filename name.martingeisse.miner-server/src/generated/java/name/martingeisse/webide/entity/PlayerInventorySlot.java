@@ -3,11 +3,13 @@
  */
 package name.martingeisse.webide.entity;
 
-import name.martingeisse.common.terms.IEntityWithId;
-import com.mysema.query.sql.SQLQuery;
-import name.martingeisse.common.database.EntityConnectionManager;
-import com.mysema.query.sql.dml.SQLInsertClause;
 import java.io.Serializable;
+
+import name.martingeisse.sql.EntityConnectionManager;
+import name.martingeisse.sql.terms.IEntityWithId;
+
+import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.dml.SQLInsertClause;
 
 /**
  * This class represents rows from table 'player_inventory_slot'.

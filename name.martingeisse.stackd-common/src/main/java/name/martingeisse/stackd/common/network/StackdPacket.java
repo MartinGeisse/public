@@ -7,7 +7,7 @@
 package name.martingeisse.stackd.common.network;
 
 import java.io.DataOutput;
-import java.nio.charset.StandardCharsets;
+
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 

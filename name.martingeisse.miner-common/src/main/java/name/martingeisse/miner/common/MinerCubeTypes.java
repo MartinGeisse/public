@@ -7,7 +7,6 @@
 package name.martingeisse.miner.common;
 
 import name.martingeisse.stackd.common.cubetype.CubeType;
-import name.martingeisse.stackd.common.cubetype.DiagonalCrossCubeType;
 import name.martingeisse.stackd.common.cubetype.EmptyCubeType;
 import name.martingeisse.stackd.common.cubetype.SlabCubeType;
 import name.martingeisse.stackd.common.cubetype.SolidOpaqueCubeType;

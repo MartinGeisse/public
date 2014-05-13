@@ -6,8 +6,10 @@
     <project>common</project>
     <project>stackd-client</project>
     <project>stackd-common</project>
+    <project>json</project>
     <project>miner-common</project>
     <project>miner-launcher</project>
+    <project>httpclient</project>
   </projects>
   <buildSpec>
     <buildCommand>

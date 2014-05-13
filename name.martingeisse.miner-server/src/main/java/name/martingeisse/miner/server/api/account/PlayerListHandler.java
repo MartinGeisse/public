@@ -7,6 +7,7 @@
 package name.martingeisse.miner.server.api.account;
 
 import java.util.List;
+
 import name.martingeisse.api.request.RequestCycle;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.common.javascript.jsonbuilder.JsonListBuilder;
@@ -16,6 +17,8 @@ import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.webide.entity.Player;
 import name.martingeisse.webide.entity.QPlayer;
 import name.martingeisse.webide.entity.UserAccount;
+
+import com.mysema.query.sql.SQLQuery;
 
 /**
  * This handler returns the list of players for the user.

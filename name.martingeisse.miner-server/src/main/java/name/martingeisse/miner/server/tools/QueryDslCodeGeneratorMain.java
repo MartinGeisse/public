@@ -9,10 +9,15 @@ package name.martingeisse.miner.server.tools;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+
+import name.martingeisse.sql.codegen.BeanSerializer;
 import name.martingeisse.sql.codegen.MetaDataSerializer;
 import name.martingeisse.sql.config.CustomMysqlQuerydslConfiguration;
+
 import org.joda.time.DateTimeZone;
 
+import com.mysema.query.sql.MySQLTemplates;
+import com.mysema.query.sql.codegen.MetaDataExporter;
 
 /**
  * Generates QueryDSL classes.

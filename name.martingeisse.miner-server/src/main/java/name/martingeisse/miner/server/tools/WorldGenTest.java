@@ -10,7 +10,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileOutputStream;
+
 import javax.imageio.ImageIO;
+
 import name.martingeisse.stackd.common.util.PerlinNoise;
 
 /**
