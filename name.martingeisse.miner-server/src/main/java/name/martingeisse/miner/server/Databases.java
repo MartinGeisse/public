@@ -7,8 +7,8 @@
 package name.martingeisse.miner.server;
 
 import name.martingeisse.sql.IDatabaseDescriptor;
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
+
+import org.eclipse.jetty.server.session.JDBCSessionManager.Session;
 
 /**
  * Static access to all database descriptors.
@@ -29,7 +29,7 @@ public class Databases {
 	/**
 	 * The Cassandra-based database cluster (not usually used).
 	 */
-	public static Cluster cassandraCluster;
+	// public static Cluster cassandraCluster;
 	
 	/**
 	 * The Cassandra database session for the world DB.

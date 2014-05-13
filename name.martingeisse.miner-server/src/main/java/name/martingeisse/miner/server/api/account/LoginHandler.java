@@ -7,16 +7,22 @@
 package name.martingeisse.miner.server.api.account;
 
 import javax.servlet.http.Cookie;
+
 import name.martingeisse.api.handler.jsonapi.AbstractJsonApiHandler;
 import name.martingeisse.api.handler.jsonapi.JsonApiException;
 import name.martingeisse.api.request.RequestCycle;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.common.javascript.jsonbuilder.JsonValueBuilder;
+import name.martingeisse.common.security.SecurityTokenUtil;
 import name.martingeisse.miner.server.MinerServerSecurityConstants;
 import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.webide.entity.QUserAccount;
 import name.martingeisse.webide.entity.UserAccount;
+
 import org.joda.time.Instant;
+
+import com.mysema.query.sql.SQLQuery;
+
 import external.BCrypt;
 
 /**

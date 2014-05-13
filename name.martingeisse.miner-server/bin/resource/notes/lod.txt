@@ -1,0 +1,105 @@
+
+--- client ------------------------------------------
+
+Clientseitig ist fast nichts zu machen, da per-section, per-texture, per-direction bleiben
+wie gehabt und per-plane einfach vom Server die planes im selben Koordinatensystem wie
+ohne LOD bekommt. Dass dann nur jede 2./4./8. Plane belegt ist stört den Client nicht,
+der hantiert ja eh nur mit Plane-Nummern, d.h. es ergibt sich nicht mal ein Sparse-Array.
+
+Das einzige, wo der Client betroffen ist, ist dass ein Face jetzt nicht mehr so funzt:
+- (plane, u, v)
+- (plane, u, v + 1)
+- (plane, u + 1, v + 1)
+- (plane, u + 1, v)
+
+sondern, damit der Server nicht unnötig viele Faces senden muss, so:
+- (plane, u, v)
+- (plane, u, v + s)
+- (plane, u + s, v + s)
+- (plane, u + s, v)
+wobei s vom Server kommt und die LOD-clusterSize (getSize) ist.
+
+-
+Aktuell übernimmt der Client noch die entscheidung, welche Sections mit welchem LOD
+geladen werden. Das muss auch angepasst werden. Dazu sendet der Client entsprechende
+Infos an den Server (die sind noch leicht rauszufinden). Egal, was der Server dann
+an RenderModel-Updates sendet, der Client tauscht entsprechend die Sections aus,
+ggf. indem alte Sections verworfen werden. Dadurch ist dann auch der wechsel auf
+einen höheren / niedrigeren LOD machbar.
+
+--- server ------------------------------------------
+
+Hier tut sich deutlich mehr:
+- der Server muss LOD-versionen aller Sections aus den ursprünglichen berechnen
+- ähnlich wie detailed-data und detailed-rendermodel sollten alle (lodN-data? und)
+  lodN-renderModel in der section-DB liegen.
+- lodN-data wäre nicht unbedingt nötig, aber evtl um die renderModels schneller zu
+  berechnen. Genau genommen liegen die geänderten Daten schon vor, es geht nur
+  darum, zu erkennen, bis in welche LODs sich die Änderung durchzieht, damit nicht
+  grundsätzlich für jeden geänderten Cube alle LODs dieser Section *und* der
+  Nachbarn neu berechnet werden müssen -> falsch, das trifft zwar auf die Section
+  mit dem geänderten Cube zu, aber die lodN-data der *Nachbarn* sind trotzdem
+  nötig, die liegen nämlich nicht automatisch vor.
+  ->
+  Die Möglichkeiten sind also:
+  (a) bei einer Änderung die lodN-data der Section und aller NAchbarn (zumindest
+      am Rand) neu berechnen und daraus das lodN-renderModel der geänderten
+      Section, dabei z.B. per Hash feststellen, wenn eine Änderung keine Auswirkung
+      mehr hat
+  (b) logN-data auch in der DB speichern, bei einer Änderung lodN-data der Section
+      neu berechnen und dann lodN-renderModel dieser Section und der NAchbarsection
+      neu erzeugen.
+  Das ist nämlich noch ein neues Problem, dass nicht nur die Daten der Nachbarn ins
+  aktuelle renderModel einfließen, sondern ggf. auch die RenderModels der Nachbarn
+  neu berechnet werden müssen! Dazu sind auch die lodN-data der Nachbarn nötig.
+  ->
+  Variante (b) klingt immer besser, weil alle berechneten Daten in der DB abgelegt
+  werden und viel weniger neu berechnet werden muss.
+- dazu wäre evtl. erst mal der Umstieg auf eine richtige DB sinnvoll (Cassandra)
+- Collider müssen nur in der Detail-Version gespeichert werden. "grobe" Collider
+  werden an keiner Stelle gebraucht.
+
+Dimensionen der Section-Datenbank:
+
+(Instanz) x (x, y, z) x (Zeit = Unix-UTC-Timestamp) x (data / renderModel / collider) x (LOD)
+
+Dabei hat Cassandra schon eine gesonderte Behandlung der Zeit (Wie eigentlich jede
+nicht-historische DB), nämlich dass nur die neueste Version gespeichert wird und
+dazu (notfalls manuell) der Timestamp. Dadurch müssen keine "Timestamp-Tabellen"
+gespeichert werden, wo drinsteht, welches die neueste Version ist. Der
+Cassandra-Key ist dann:
+
+(Instanz) x (x, y, z) x (data / renderModel / collider) x (LOD)
+
+- der Server sollte die DB-Daten in einem "kleinen" Cache halten (wenigstens die
+  Sections, zu denen gerade Daten berechnet werden, dann muss man sie nicht
+  herumreichen). Bei Änderungen werden ggf. Einträge entfernt, wobei das vor
+  allem passieren wird, wenn ein Server-*Cluster* beteiligt ist.
+- die Clients sollten in der Lage sein, renderModels und Collider zu cachen und
+  nur zu downloaden, wenn ihre Version veraltet ist. Das passiert per Timestamps:
+  der Server sagt, wann die Daten das letztemal geändert wurden bzw. der Client
+  sagt, welche Version er schon hat. Entsprechend werden dann nur die neuesten
+  Änderungen übertragen.
+
+Änderungen werden im Client als Befehl erstellt und im Server zu echten Cube-Änderungen
+umgewandelt. Sie propagieren so:
+
+origin: (I, x, y, z, DATA, 0)
+(I, x, y, z, DATA, n) -> (I, x, y, z, DATA, n + 1)
+(I, x, y, z, DATA, n) -> (I, x, y, z, RENDERMODEL, n)
+(I, x, y, z, DATA, n) -> (I, (Nachbarn), RENDERMODEL, n)
+(I, x, y, z, DATA, 0) -> (I, x, y, z, COLLIDER, 0)
+
+Dabei haben die Neuberechnung der 0-Rendermodels und 0-Collider hohe
+Prio (am besten sofort erledigen und nicht in eine Queue legen), die
+der N-Daten und N-renderModels niedrige Prio (-> Queue). Wobei für die
+Entwicklung erst mal alles sofort passieren kann, weil aktuell noch keine
+Queue/Worker da sind.
+
+Neuer Code ist vor allem nötig, um aus dem SectionData für LOD N das
+SectionData für LOD N+1 zu erzeugen. Alles andere sind nur kleine
+Anpassungen (z.B. vom Nachbarn das richtige LOD-data abzurufen statt
+immer 0).
+
+
+

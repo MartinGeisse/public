@@ -12,6 +12,11 @@ import name.martingeisse.webide.entity.Player;
 import name.martingeisse.webide.entity.QPlayer;
 import name.martingeisse.webide.entity.QPlayerAwardedAchievement;
 
+import com.mysema.query.QueryException;
+import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.dml.SQLInsertClause;
+import com.mysema.query.sql.dml.SQLUpdateClause;
+
 /**
  * Utility methods to deal with player's achievements.
  */

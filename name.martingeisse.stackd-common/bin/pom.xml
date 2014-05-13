@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>name.martingeisse</groupId>
+		<artifactId>public</artifactId>
+		<version>0.1-SNAPSHOT</version>
+	</parent>
+
+	<groupId>name.martingeisse</groupId>
+	<artifactId>stackd-common</artifactId>
+	<version>0.1-SNAPSHOT</version>
+
+	<name>Martin Geisse -- Stack'd Common Core Library</name>
+	<url>https://github.com/MartinGeisse/public</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+
+		<!-- mgeisse -->
+		<dependency>
+			<groupId>name.martingeisse</groupId>
+			<artifactId>common</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>name.martingeisse</groupId>
+			<artifactId>json</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+
+		<!-- other libraries -->
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty</artifactId>
+			<version>3.6.5.Final</version>
+		</dependency>
+
+	</dependencies>
+</project>

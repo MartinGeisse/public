@@ -11,6 +11,9 @@ import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.webide.entity.Player;
 import name.martingeisse.webide.entity.QPlayer;
 
+import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.dml.SQLUpdateClause;
+
 /**
  * Utility methods to deal with digging.
  */

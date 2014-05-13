@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Locale;
 import java.util.concurrent.Executors;
+
 import name.martingeisse.api.handler.DefaultMasterHandler;
 import name.martingeisse.api.handler.misc.NotFoundHandler;
 import name.martingeisse.api.request.RequestCycle;
@@ -22,12 +23,12 @@ import name.martingeisse.miner.server.api.account.AccountApiHandler;
 import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.sql.MysqlDatabaseDescriptor;
 import name.martingeisse.stackd.server.network.StackdNettyPipelineFactory;
+
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
-import com.datastax.driver.core.Cluster;
 
 /**
  * The main class for the game server.
@@ -118,8 +119,8 @@ public class Main {
 		EntityConnectionManager.initializeDatabaseDescriptors(mainDatabase);
 
 		// initialize Cassandra database
-		Databases.cassandraCluster = Cluster.builder().addContactPoint("localhost").build();
-		Databases.world = Databases.cassandraCluster.connect("miner");
+//		Databases.cassandraCluster = Cluster.builder().addContactPoint("localhost").build();
+//		Databases.world = Databases.cassandraCluster.connect("miner");
 		
 	}
 

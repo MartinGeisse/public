@@ -1,0 +1,34 @@
+<project name="MyProject" default="run" basedir=".">
+
+	<!-- compiles the Miner server -->
+	<target name="compile">
+		<delete dir="build" />
+		<mkdir dir="build" />
+		<javac srcdir="src:generated:../miner-common/src:../stackd-server/src:../stackd-common/src:../support-serverlib/src:../support-servertools/src" destdir="build" source="1.6" target="1.6" encoding="utf-8" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
+			<classpath>
+				<fileset dir="../stackd-server/lib/java" />
+				<fileset dir="../stackd-common/lib/java" />
+				<fileset dir="../support-serverlib/lib/java" />
+				<fileset dir="../support-servertools/lib/java" />
+			</classpath>
+		</javac>
+		<copy todir="build">
+			<fileset dir="src" excludes="**/*.java" />
+		</copy>
+	</target>
+
+	<!-- runs the Miner server -->
+	<target name="run" depends="compile">
+    	<java classname="name.martingeisse.miner.server.Main" fork="true">
+    		<classpath>
+    			<pathelement location="build" />
+				<fileset dir="../stackd-server/lib/java" />
+				<fileset dir="../stackd-common/lib/java" />
+				<fileset dir="../support-serverlib/lib/java" />
+				<fileset dir="../support-servertools/lib/java" />
+    		</classpath>
+    		<arg value="../../../miner-server.properties" />
+    	</java>
+	</target>
+
+</project>

@@ -6,7 +6,12 @@
     <project>common</project>
     <project>stackd-server</project>
     <project>stackd-common</project>
+    <project>json</project>
     <project>miner-common</project>
+    <project>jetty</project>
+    <project>sql</project>
+    <project>sql-servlet</project>
+    <project>http-api-server</project>
   </projects>
   <buildSpec>
     <buildCommand>

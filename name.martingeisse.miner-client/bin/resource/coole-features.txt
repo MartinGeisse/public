@@ -1,0 +1,8 @@
+
+1. Terrain-Features, "von denen man sich erzählt", z.b. Dungeons, Riesen-Organismus wie
+	bei Starbound.
+	
+2. Gefährliches Terrain, wo man sich nicht normal fortbewegen kann, sondern nur Stück
+	für Stück eine Basis ausbauen kann. Vgl. Unter-Lava-Anlage bei Starbound; Weltraum
+	wäre auch so ähnlich.
+

@@ -3,12 +3,14 @@
  */
 package name.martingeisse.webide.entity;
 
+import static com.mysema.query.types.PathMetadataFactory.forVariable;
+
 import javax.annotation.Generated;
 
-import com.mysema.query.types.*;
-import com.mysema.query.types.path.*;
-
-import static com.mysema.query.types.PathMetadataFactory.*;
+import com.mysema.query.types.Path;
+import com.mysema.query.types.PathMetadata;
+import com.mysema.query.types.path.NumberPath;
+import com.mysema.query.types.path.StringPath;
 
 /**
  * QUserAccount is a Querydsl query type for UserAccount

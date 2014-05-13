@@ -1,0 +1,16 @@
+
+Übertragung direkt über das neue Packet-System. -> nein, das erschwert anfangs
+die Parallelisierung des Loaders.
+
+---
+
+Nötige Schritte:
+- Render Model serverseitig speichern
+- compression scheme 0 (no faces) dazu
+- CubeTypes vom Server laden
+- Damage Accumulator im Server? Oder Modifications mergen und auf einen Schlag ausführen?
+  -> DA ist eh nur genau dafür da, Mods zu mergen
+- Zukünftig: Fieser Hack für einen Clientseitigen Effekt, der Mods besser aussehen
+  lässt. Zukünftig auch: Patch für das RenderModel, anstatt es komplett neu zu übertragen.
+  Aber es wird nicht Clientseitig ein neues RenderModel gebaut, dafür sind auch die
+  Daten gar nicht da. Das passiert Serverseitig.
