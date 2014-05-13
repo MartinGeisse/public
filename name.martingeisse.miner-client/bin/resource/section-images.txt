@@ -1,0 +1,217 @@
+
+Render Model:
+
+631 requests total	= 20676608 cubes (~ 20M)
+
+6: 434				= 2604
+100 - 1k: 7			= 3500
+1k - 5k: 30			= 75000
+5k - 10k: 24		= 180000
+10k - 15k: 35		= 437500
+15k - 20k: 54		= 945000
+20k - 30k: 72		= 1,800000
+
+Things nicht mitgerechnet
+
+Collider: 250 x 32768 = 8,192000
+(warum 250? sollten 9 sein! -> 294912)
+
+---------------------------------------------------------------
+
+Grundidee bisher: Es werden "Section Image" Objekte übertragen,
+die für nahe Sections sichtbare Cubes und Colliders enthalten,
+für entfernte Sections nur sichtbare Cubes und für weit
+entfernte Sections sogar nur LOD-Versionen. Billboards für noch
+weiter entfernte Sections bisher ausgenommen. Diese Variante
+statt RenderModel + Collider macht vermutlich auch die
+Integration ins UDK einfacher, da dieses auch nicht auf oberster
+Ebene die RenderModels und Colliders trennt, sondern erst mal
+verschiedene Spielobjekte.
+
+Generell macht es 1. wegen der Größe, 2. wegen nicht vollständig
+gefüllten Cube Types und 3. evtl für Daten "unter der Oberfläche"
+(beim Weggraben) Sinn, doch Cubes statt Faces zu übertragen. Das
+löst mehrere Probleme auf einmal. Problematisch ist die Größe.
+
+- Leere Sections können immer noch als leer übertragen werden. Das
+  verkleinert nach dem neuen Schema auch die Colliders.
+
+- Für nahe Sections macht es evtl. Sinn, mehr als nur die Oberfläche
+  zu übertragen, so dass beim Weggraben eines Cubes gleich der
+  darunter sichtbar werden kann, ohne dass er erst vom Server
+  übetragen werden muss. Andererseits macht das das Cheaten
+  leichter (zumindest das Informations-Cheaten), und der Client
+  kann auch nicht immer den Cube direkt verschwinden lassen,
+  sondern muss auf Bestätigung vom Server warten (ausgenommen
+  z.B. synchronisierte Random Number Generators oder Digging
+  ganz ohne Zufall). SRNG wiederum erleichtern das Cheating,
+  indem dieser durch einen Client-Hack ständig auf einen
+  günstigen Zustand "vorgewärmt" wird, so dass z.B. das Digging
+  immer klappt. Dazu würde der Client ständig mit der Spitzhacke
+  rumhauen, bis der nächste Dig-Event erfolgreich ist, und
+  dann aufhören. 
+  -
+  Was ist für den Anfang einfacher? Vermutlich, immer nur die
+  oberste Schicht zu übertragen, beim Weggraben nur einen Dig-Event
+  an den Server zu senden und der sendet ggf. das neue SectionImage
+  bzw. einen SectionImagePatch. Damit ist Client-Logik und
+  Server-Logik sauber getrennt.
+  - 
+  Einfach wäre auch, die Logik im Client zu lassen, und der
+  Server synchronisiert nur. Cheating müsste man dann im Grunde
+  ignorieren. Damit fallen leider auch Client-GUI-Plugins
+  (WoW-Style) weg, sonst wird ja nur noch gecheatet.
+  -
+  Variante 3 wäre: Logik im Client, und der Server synchronisiert,
+  aber prüft auch auf Plausi. Damit fallen aber RNG weg
+  (pre-warming) und Informations-Cheating ist möglich.
+  -
+  RNG kann weg mit Durability pro Block, die Dura muss ja nur
+  für "nahe" Sections übertragen werden. Damit bleibt bei
+  Clientseitiger Logik + Plausi vor allem das Informations-
+  Cheating. Dazu siehe unten. Wichtig wäre hier z.B., dass der Client
+  vorhersagen kann, wann Digging erfolgreich ist (kein Zufall),
+  so dass das dem User gezeigt werden kann, bevor der Server das
+  Ack'd.
+
+- Für entfernte Sections können weniger "Schichten" übertragen
+  werden, bis hin zu einer einzigen. Cubes darunter werden als
+  "unknown" übertragen. Im Client sind Faces, deren eine oder
+  beide Seiten "unknown" sind, immer unsichtbar.
+  
+  PROBLEM: für die Kompression wäre es in bestimmten Fällen
+  eigentlich besser, statt "unknown" denselben Cube Type wie
+  in der Schicht darüber zu übertragen. Das wäre OK, weil es
+  sich um ein nur sichtbares Section Image ohne Collider handelt.
+  Sobald man näher kommt, wird eh ein genaueres Image inkl.
+  Collider geladen, welches dann auch korrekte Cube Types
+  unter der Oberfläche enthält.
+
+- Kompressions-Schemas:
+	1. unknown (alle Cubes haben Typ "unknown") -- default wenn der
+		Schema-Code fehlt, da häufigster Typ (entspricht leerem
+		Render Model und fehlendem Collider in der aktuellen Version)
+	2. empty (alle Cubes haben Typ 0) -- z.B. für "nahe" Sections in
+		der Luft
+	3. uniform (alle Cubes haben Typ X) -- z.B. Wasser im Meer
+		Schema-Vorschlag (2) ist ein Subtyp, Cube Type 0 ist default
+		wenn er fehlt
+	4. Raw. Das ist vor allem für die Umstellung sinnvoll.
+	5. AABSP (Axis-Aligned Binary Space Partitioning)
+		siehe unten
+
+- AABSP:
+	ANMEKRUNG: Das hier genannte AABSP-Format unterstüzt Sections bis
+		max. Größe 256^3 Cubes, da Koordinaten als Byte gespeichert werden.
+		Das sollte aber nach bisherigem Wissen ausreichen.
+	Part 1: Partitioning Schema.
+		Ist eine Abfolge von 2-Bit-Codes mit der Bedeutung:
+			- 00: split along x axis
+			- 01: split along y axis
+			- 10: split along z axis
+			- 11: leaf node
+		Der AABSP wird in depth-first, prefix order gespeichert und
+		die Länge der Daten ist implizit darin Codiert.
+	Part 2: Leaf Types (selbe Reihenfolge wie die o.g. Leaf Nodes).
+		Ist eine Abfolge von 2-Bit-Codes mit der Bedeutung:
+			- 00: uniform unknown
+			- 01: uniform empty
+			- 10: uniform X
+			- 11: other
+	Part 3: Padding.
+		Es wird auf ein volles Byte gepadded.
+	Part 4: Split Plane offset.
+		Je Split Plane kommt ein Byte mit der Position entlang der
+		Split-Achse.
+	Part 5: Leaf Data (selbe Reihenfolge wie die o.g. Leaf Nodes).
+		Je nach Leaf Type kommen jetzt Byte-Daten:
+			- 00, 01: keine Daten
+			- 10: 1 Byte Cube Type
+			- 11: complex AABSP leaf (s.u.)
+
+- Complex AABSP leaf:
+	In Version 1 kommen jetzt einfach Cube-Daten. Aus dem AABSP-Backbone
+	ergibt sich implizit die Größe des Leaf Nodes in x/y/z Richtung und
+	damit auch die Länge der Daten.
+	Später macht es ggf. Sinn, hier RLE, uniform with exceptions usw. zu
+	verwenden.
+
+------------------------------------------------------------------------------
+
+Plausi:
+- zu schnelle Bewegung
+- fliegen
+- Digging auf Entfernung
+- zu schnelles Digging
+- ...
+
+Informations-Cheating:
+- Cubes unter der Oberfläche doch nicht übertragen, erst nach Digging:
+  User klickt auf "graben", Clientseitig verschwindet der Cube, Cubes dahinter
+  nur als Staubwolke sichtbar, später dann "echt" sichtbar sobald der Server
+  den Patch gesendet hat.
+- Problem: IC ist bei verborgenen Tunneln trotzdem immer möglich, weil der
+  Server die für sichtbar hält. Das Problem kann man ignorieren, aber dann
+  findet sich dadurch keine Lösung für echt verborgene Cubes.
+- Es könnte die oberste und zweitoberste Schicht übertragen werden. Das löst
+  das Digging-Lag-Problem größtenteils. IC ist dann möglich, und als Ausgleich
+  könnte es für relativ wenig Ressourcen ein Gerät zu bauen geben, welches genau
+  dieses IC zum Effekt hat (erst Metalldetektor, dann "below the surface scanner"
+  wo einfach die oberste Schicht komplett ausgeblendet wird). Problematisch ist
+  das nur dann, wenn man schnell mehr als einen Cube tief graben kann. Dazu dann
+  schnelles Netzwerkprotokoll und Items so designen, dass das Problem selten
+  auftritt.
+- Idee: Die zweitoberste Schicht wird "reduziert" übertragen, d.h. es fehlen
+  Informationen. Dadurch ist IC möglich aber weit weniger hilfreich. Wichtigste
+  Reduktion: Statt Erz wird immer Stein übertragen. Man kann dann noch IC
+  ob Stein oder Erde, aber der IC-Metalldetektor ist nicht mehr ohne Server-OK
+  möglich.
+
+Plan daher:
+- Clients stellen Anfage nach Section Image mit sectionId und Detail-Level:
+	- interactive: enthält alles Sichtbare, die 2. Schicht reduziert und alles
+	  was für Collision Detection nötig ist; alles was für special Volumes
+	  (Wasser) nötig ist usw. -- wird vom Client für die "eigene" Section
+	  angefordert und für umliegende wenn nah genug an der Grenze.
+	- view LOD 0: enthält alles Sichtbare, aber sonst nichts: Keine 2. Schicht,
+	  keine special Volumes, keine Collider -- wird vom Client für "nahe"
+	  Sections angefordert. Entspricht den bisherigen Render Models.
+	- view LOD 1: ...
+- alle Section Images werden aus dem Section Data erzeugt, aber dieses verlässt
+  den Server nicht.
+- Collider sind nicht mehr nötig, die sind im Section Image der Stufe
+  "interactive" enthalten.
+- Clients können theoretisch entfernte Sections anfordern, solange sie den Server
+  nicht DOSen. Das entspricht einer "Map"-Ansicht der Welt. Sollte nur
+  view LOD n, nicht interactive sein, da das nicht nötig sein sollte und unnötig
+  viele Daten sind.
+- Digging: oberster Cube verschwindet und der dahinter wird sichtbar (der ist
+  in "interactive" vorhanden. Im Hintergrund wird die jeweils nächste Schicht
+  nachgeladen fürs weitergraben, außerdem ob Erz freigelegt wurde. Entsprechend
+  wird ein Update and andere Clients gepusht.
+- Digging muss daher deterministisch sein! Kein SRNG und auch kein Server-Only-
+  RNG. Da muss noch geklärt werden, wie das gehen soll. Bisher erst mal immer
+  Erfolg, das ist fürs testen eh angenehm.
+- Dura nicht im Cube Type codieren und damit implizit mit übertragen! Zumindest
+  nicht auf naive Art. Das hätte zur Folge, dass die Dura unnötigerweise bei
+  allen Sections mit übertragen wird, nicht nur bei "interactive". Möglich wäre
+  es z.B., die Dura bei der "Reduktion" für "view" images wegfallen zu lassen.
+  Dann ist es egal, ob sie im Cube Type mit codiert ist.
+
+Weiterer Plan:
+- Die Section Images können dieselben Klassen wie Section Data benutzen.
+- Aber Wrapper mit Informationen über neighbor Sections
+- andere Codierung ("unknown" hat kurze Codewörter statt "empty")
+	-> wirklich? "unknown" kann nicht für Luft verwendet werden, weil an der
+	   Grenzfläche zum Boden "echte" Luft sein muss und dann die Grenzfläche
+	   zwischen "echter" Luft und "unknown" wieder schlecht zu codieren ist.
+	-> könnte also Sinn machen, doch dieselbe Codierung zu verwenden, wo
+	   "empty" die kürzesten und "unknown" die zweitkürzesten Codes benutzt.
+
+TODO
+* Things erst mal nicht beachtet, sollen so eh nicht weiter bestehen
+- stackd-client: !!!
+
+
+
+

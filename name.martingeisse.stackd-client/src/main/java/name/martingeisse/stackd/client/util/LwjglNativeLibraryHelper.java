@@ -43,6 +43,7 @@ public final class LwjglNativeLibraryHelper {
 	    
 	    // detect which set of native libraries to load, then extract the files
 		resourcePath = OperatingSystemSelector.getHostOs().getNativeLibraryPath();
+		System.out.println("native library path: " + resourcePath);
 		for (String fileName : OperatingSystemSelector.getHostOs().getNativeLibraryFileNames()) {
 			extractFile(fileName);
 		}

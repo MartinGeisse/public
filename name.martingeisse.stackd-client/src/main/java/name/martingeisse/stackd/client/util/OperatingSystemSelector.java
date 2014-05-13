@@ -14,22 +14,22 @@ public enum OperatingSystemSelector {
 	/**
 	 * All Windows OSes
 	 */
-	WINDOWS("native/windows/", new String[] {"jinput-dx8_64.dll", "jinput-dx8.dll", "jinput-raw_64.dll", "jinput-raw.dll", "lwjgl.dll", "lwjgl64.dll", "OpenAL32.dll", "OpenAL64.dll"}),
+	WINDOWS("", new String[] {"jinput-dx8_64.dll", "jinput-dx8.dll", "jinput-raw_64.dll", "jinput-raw.dll", "lwjgl.dll", "lwjgl64.dll", "OpenAL32.dll", "OpenAL64.dll"}),
 
 	/**
 	 * All Linux OSes
 	 */
-	LINUX("native/linux/", new String[] {"libjinput-linux.so", "libjinput-linux64.so", "liblwjgl.so", "liblwjgl64.so", "libopenal.so", "libopenal64.so"}),
+	LINUX("", new String[] {"libjinput-linux.so", "libjinput-linux64.so", "liblwjgl.so", "liblwjgl64.so", "libopenal.so", "libopenal64.so"}),
 
 	/**
 	 * Mac OS X
 	 */
-	MAC("native/macosx/", new String[] {"libjinput-osx.jnilib", "liblwjgl.jnilib", "openal.dylib"}),
+	MAC("", new String[] {"libjinput-osx.jnilib", "liblwjgl.jnilib", "openal.dylib"}),
 
 	/**
 	 * Solaris
 	 */
-	SOLARIS("native/solaris/", new String[] {"liblwjgl.so", "liblwjgl64.so", "libopenal.so", "libopenal64.so"});
+	SOLARIS("", new String[] {"liblwjgl.so", "liblwjgl64.so", "libopenal.so", "libopenal64.so"});
 
 	/**
 	 * the hostOs

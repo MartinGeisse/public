@@ -1,0 +1,14 @@
+
+RenderModel: UV -> UVWH
+	Problem: für (u, v, 1, 1), (u, v, w, 1), (u, v, 1, h) müssen zuviele
+	Daten übertragen werden! Nur für (u, v, w, h) macht das Sinn. Idee:
+	In 4 Listen unterteilen, jeweils size und elements übertragen, aber
+	die 1-Felder jeweils weglassen.
+	
+Server: Requests sollten parallel behandelt werden, das werden sie aber
+aktuell nicht. Idee: Server-interne Queue und Executor. Dazu wäre es aber
+erst mal sinnvoll, den StackdApplicationHandler auf ein Minimum zu
+schrumpfen und alles in die Server-Klasse zu verlagern. Dann können die
+Queue Items dort intern erzeugt werden.
+
+

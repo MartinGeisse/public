@@ -1,0 +1,156 @@
+/**
+ * Copyright (c) 2013 Shopgate GmbH
+ */
+
+package name.martingeisse.miner.startmenu;
+
+import name.martingeisse.miner.Main;
+import name.martingeisse.miner.ingame.IngameHandler;
+import name.martingeisse.miner.ingame.gui.IngameMenuHandler;
+import name.martingeisse.stackd.client.frame.handlers.NiftyHandler;
+import name.martingeisse.stackd.client.nifty.ScreenController;
+import org.lwjgl.input.Mouse;
+import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.controls.TextField;
+import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.render.TextRenderer;
+import de.lessvoid.nifty.screen.Screen;
+
+/**
+ * Base class for the screen controllers for the start menu.
+ */
+public class StartmenuScreenController extends ScreenController {
+
+	/**
+	 * the errorPopupId
+	 */
+	private String errorPopupId;
+	
+	/**
+	 * the userId
+	 */
+	private long userId;
+	
+	/**
+	 * the factionId
+	 */
+	private long factionId;
+	
+	/**
+	 * the characterName
+	 */
+	private String characterName;
+	
+	/**
+	 * 
+	 */
+	public void login() {
+		final Nifty nifty = getNifty();
+		final Screen screen = getScreen();
+		final String username = screen.findNiftyControl("username", TextField.class).getRealText();
+		final String password = screen.findNiftyControl("password", TextField.class).getRealText();
+		if (username.isEmpty()) {
+			openErrorPopup("Please enter your username.");
+		} else if (password.isEmpty()) {
+			openErrorPopup("Please enter your password.");
+		} else if (!username.equals("user") || !password.equals("test")) {
+			// TODO
+			openErrorPopup("Wrong username or password.");
+		} else {
+			// TODO
+			userId = 1;
+			nifty.gotoScreen("chooseCharacter");
+		}
+	}
+
+	/**
+	 * 
+	 */
+	public void startCreateCharacter() {
+		getNifty().gotoScreen("chooseNewCharacterFaction");
+	}
+
+	/**
+	 * @param factionIdText ...
+	 */
+	public void chooseFaction(final String factionIdText) {
+		// TODO
+		factionId = 1;
+		getNifty().gotoScreen("chooseNewCharacterName");
+	}
+
+	/**
+	 * 
+	 */
+	public void chooseNewCharacterFactionBackButton() {
+		getNifty().gotoScreen("chooseCharacter");
+	}
+
+	/**
+	 * 
+	 */
+	public void finishCreateCharacter() {
+		final Screen screen = getScreen();
+		characterName = screen.findNiftyControl("name", TextField.class).getRealText();
+		if (characterName.isEmpty()) {
+			openErrorPopup("Please enter your name.");
+		} else {
+			// TODO
+			startGame();
+		}
+	}
+
+	/**
+	 * 
+	 */
+	public void chooseNewCharacterNameBackButton() {
+		getNifty().gotoScreen("chooseNewCharacterFaction");
+	}
+
+	/**
+	 * 
+	 */
+	public void startGame() {
+		try {
+			// TODO we probably cannot create a new IngameHandler every time
+			// because the old one doesn't clean up properly
+			Main.frameLoop.getRootHandler().setWrappedHandler(new IngameHandler());
+			Mouse.setGrabbed(true);
+			NiftyHandler.getInstance().setClearScreen(false);
+			// TODO make the GUI invisible before loading / register the GUI loading
+			// for later execution
+			IngameMenuHandler.load();
+		} catch (final Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * 
+	 */
+	public void quitGame() {
+		getNifty().exit();
+	}
+
+	/**
+	 * 
+	 */
+	private void openErrorPopup(String message) {
+		if (errorPopupId != null) {
+			throw new IllegalStateException("Another error popup is already open.");
+		}
+		final Element popup = getNifty().createPopup("errorPopup");
+		errorPopupId = popup.getId();
+		popup.findElementByName("#message").getRenderer(TextRenderer.class).setText(message);
+		getNifty().showPopup(getScreen(), errorPopupId, null);
+	}
+	
+	/**
+	 * 
+	 */
+	public void closeErrorPopup() {
+		getNifty().closePopup(errorPopupId);
+		errorPopupId = null;
+	}
+	
+}

@@ -1,0 +1,16 @@
+
+Warum?
+- Inhalte im Spiel anzeigen, die vom Server kommen, ohne dass man
+  dafür den Browser öffnen muss
+
+Anforderungen:
+- wenige: CSS wäre cool aber es reicht, wenn man den Style per Code
+  beeinflussen kann
+- JS vermutlich nicht nötig
+- kein "arbitrary content", sondern der Content kommt von mir, also kann er
+  sich danach richten, was der Browser kann
+
+Interessante Projekte dazu:
+- http://cssbox.sourceforge.net/
+- https://code.google.com/p/flying-saucer/
+
