@@ -15,7 +15,7 @@ public interface IFocusableElement {
 
 	/**
 	 * Notifies this element about whether it is now focused. This is
-	 * used by {@link Gui#setFocus(name.martingeisse.stackd.client.gui.GuiElement)}
+	 * used by {@link Gui#setFocus(IFocusableElement)}
 	 * and should not be called by other elements directly.
 	 * 
 	 * @param focused true if focused, false if not

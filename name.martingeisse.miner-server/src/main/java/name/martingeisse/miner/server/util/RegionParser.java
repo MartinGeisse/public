@@ -46,8 +46,7 @@ public class RegionParser {
 	 * @throws SyntaxException on NBT format errors
 	 */
 	public final void parse(File file) throws IOException, SyntaxException {
-		RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
-		try {
+		try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")) {
 			int[] chunkLocations = new int[32 * 32];
 			int[] chunkLengths = new int[32 * 32];
 			for (int i=0; i<32*32; i++) {
@@ -76,8 +75,6 @@ public class RegionParser {
 					}
 				}
 			}
-		} finally {
-			randomAccessFile.close();
 		}
 	}
 

@@ -94,14 +94,8 @@ public class SimpleResources {
 	 * @throws IOException on I/O errors
 	 */
 	private Audio loadOggSound(final String filename) throws IOException {
-		InputStream inputStream = null;
-		try {
-			inputStream = LauncherAssets.class.getResourceAsStream(filename);
+		try (InputStream inputStream = LauncherAssets.class.getResourceAsStream(filename)) {
 			return AudioLoader.getAudio("OGG", inputStream);
-		} finally {
-			if (inputStream != null) {
-				inputStream.close();
-			}
 		}
 	}
 
@@ -112,17 +106,9 @@ public class SimpleResources {
 	 * @throws IOException on I/O errors
 	 */
 	private BufferedImage loadImage(final String filename) throws IOException {
-		BufferedImage image;
-		InputStream inputStream = null;
-		try {
-			inputStream = LauncherAssets.class.getResourceAsStream(filename);
-			image = ImageIO.read(inputStream);
-		} finally {
-			if (inputStream != null) {
-				inputStream.close();
-			}
+		try (InputStream inputStream = LauncherAssets.class.getResourceAsStream(filename)) {
+			return  ImageIO.read(inputStream);
 		}
-		return image;
 	}
 	
 	/**

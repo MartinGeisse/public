@@ -47,12 +47,12 @@ public class Configuration {
 	 */
 	public static void initializeFromClasspathConfig() throws IOException {
 		Properties properties = new Properties();
-		InputStream inputStream = Configuration.class.getResourceAsStream("/miner-server.properties");
-		if (inputStream == null) {
-			throw new FileNotFoundException("classpath resource miner-server.properties not found");
+		try (InputStream inputStream = Configuration.class.getResourceAsStream("/miner-server.properties")) {
+			if (inputStream == null) {
+				throw new FileNotFoundException("classpath resource miner-server.properties not found");
+			}
+			properties.load(inputStream);
 		}
-		properties.load(inputStream);
-		inputStream.close();
 		initialize(properties);
 	}
 	
@@ -63,9 +63,9 @@ public class Configuration {
 	 */
 	public static void initializeFromConfigFile(File configFile) throws IOException {
 		Properties properties = new Properties();
-		FileInputStream fileInputStream = new FileInputStream(configFile);
-		properties.load(fileInputStream);
-		fileInputStream.close();
+		try (FileInputStream fileInputStream = new FileInputStream(configFile)) {
+			properties.load(fileInputStream);
+		}
 		initialize(properties);
 	}
 

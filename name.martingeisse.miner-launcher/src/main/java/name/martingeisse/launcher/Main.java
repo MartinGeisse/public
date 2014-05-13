@@ -42,13 +42,13 @@ public class Main {
 	 */
 	private static Properties getLaunchProperties(ClassLoader classLoader) throws IOException {
 		Properties launchProperties = new Properties();
-		InputStream inputStream = classLoader.getResourceAsStream("launch.properties");
-		if (inputStream == null) {
-			System.err.println("could not load client bundle");
-			System.exit(1);
+		try (InputStream inputStream = classLoader.getResourceAsStream("launch.properties")) {
+			if (inputStream == null) {
+				System.err.println("could not load client bundle");
+				System.exit(1);
+			}
+			launchProperties.load(inputStream);
 		}
-		launchProperties.load(inputStream);
-		inputStream.close();
 		return launchProperties;
 	}
 	

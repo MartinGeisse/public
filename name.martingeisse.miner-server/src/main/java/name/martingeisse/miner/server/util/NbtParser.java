@@ -41,14 +41,11 @@ public class NbtParser {
 	 * @throws SyntaxException on format errors
 	 */
 	public final void parse(File file) throws IOException, SyntaxException {
-		FileInputStream inputStream = new FileInputStream(file);
-		try {
+		try (FileInputStream inputStream = new FileInputStream(file)) {
 			parse(inputStream);
 			if (inputStream.read() != -1) {
 				throw new SyntaxException("NBT file contains extra bytes after the main tag");
 			}
-		} finally {
-			inputStream.close();
 		}
 	}
 

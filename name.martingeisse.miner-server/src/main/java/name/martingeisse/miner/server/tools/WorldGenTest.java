@@ -66,9 +66,9 @@ public class WorldGenTest {
 				raster.setSample(x, y, 3, 255);
 			}
 		}
-		FileOutputStream fileOutputStream = new FileOutputStream(new File("world.png"));
-		ImageIO.write(bufferedImage, "png", fileOutputStream);
-		fileOutputStream.close();
+		try (FileOutputStream fileOutputStream = new FileOutputStream(new File("world.png"))) {
+			ImageIO.write(bufferedImage, "png", fileOutputStream);
+		}
 		
 	}
 
