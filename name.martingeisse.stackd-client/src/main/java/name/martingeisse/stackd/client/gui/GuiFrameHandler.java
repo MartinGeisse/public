@@ -69,7 +69,7 @@ public final class GuiFrameHandler extends AbstractFrameHandler {
 	/**
 	 * Called in the OpenGL thread.
 	 */
-	private void drawInternal() {
+	private synchronized void drawInternal() {
 
 		// render nifty
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
@@ -77,7 +77,7 @@ public final class GuiFrameHandler extends AbstractFrameHandler {
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, 800, 600, 0, -1, 1);
-		gui.draw();
+		gui.fireEvent(GuiEvent.DRAW);
 		
 	}
 
@@ -85,22 +85,20 @@ public final class GuiFrameHandler extends AbstractFrameHandler {
 	 * @see name.martingeisse.stackd.client.frame.AbstractFrameHandler#handleStep()
 	 */
 	@Override
-	public void handleStep() throws BreakFrameLoopException {
+	public synchronized void handleStep() throws BreakFrameLoopException {
 		
 		// dispatch keyboard events
 		while (Keyboard.next()) {
-			if (Keyboard.getEventKeyState()) {
-				gui.handleKeyboardEvent(Keyboard.getEventCharacter(), Keyboard.getEventKey());
-			}
+			gui.fireEvent(Keyboard.getEventKeyState() ? GuiEvent.KEY_PRESSED : GuiEvent.KEY_RELEASED);
 		}
 		
 		// dispatch mouse events
 		while (Mouse.next()) {
 			if (Mouse.getEventDX() != 0 || Mouse.getEventDY() != 0) {
-				gui.handleMouseMovement(Mouse.getEventX(), gui.getHeight() - Mouse.getEventY());
+				gui.fireEvent(GuiEvent.MOUSE_MOVED);
 			}
-			if (Mouse.getEventButton() != -1 && Mouse.getEventButtonState()) {
-				gui.handleMouseClick();
+			if (Mouse.getEventButton() != -1) {
+				gui.fireEvent(Mouse.getEventButtonState() ? GuiEvent.MOUSE_BUTTON_PRESSED : GuiEvent.MOUSE_BUTTON_RELEASED);
 			}
 		}
 		

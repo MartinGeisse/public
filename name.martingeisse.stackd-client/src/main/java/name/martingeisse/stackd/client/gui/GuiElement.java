@@ -7,6 +7,7 @@
 package name.martingeisse.stackd.client.gui;
 
 
+
 /**
  * The root class for all GUI elements.
  */

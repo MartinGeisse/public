@@ -10,18 +10,19 @@ import name.martingeisse.launcher.assets.LauncherAssets;
 import name.martingeisse.miner.account.AccountApiClient;
 import name.martingeisse.stackd.client.frame.handlers.ExitHandler;
 import name.martingeisse.stackd.client.gui.GuiEvent;
-import name.martingeisse.stackd.client.gui.control.Control;
+import name.martingeisse.stackd.client.gui.control.MessageBox;
+import name.martingeisse.stackd.client.gui.control.Page;
 import name.martingeisse.stackd.client.gui.element.FillTexture;
 import name.martingeisse.stackd.client.gui.element.Margin;
-import name.martingeisse.stackd.client.gui.element.OverlayStack;
 import name.martingeisse.stackd.client.gui.element.Spacer;
 import name.martingeisse.stackd.client.gui.element.VerticalLayout;
 import name.martingeisse.stackd.client.system.StackdTexture;
+import org.lwjgl.input.Keyboard;
 
 /**
  * The "login" menu page.
  */
-public class LoginPage extends Control {
+public class LoginPage extends Page {
 
 	/**
 	 * the exitHandler
@@ -49,6 +50,7 @@ public class LoginPage extends Control {
 		password = new LabeledTextField("Password");
 		username.getTextField().setNextFocusableElement(password.getTextField());
 		password.getTextField().setNextFocusableElement(username.getTextField());
+		password.getTextField().setPasswordCharacter('*');
 		
 		final VerticalLayout menu = new VerticalLayout();
 		menu.addElement(username);
@@ -69,7 +71,7 @@ public class LoginPage extends Control {
 			}
 		});
 		StackdTexture backgroundTexture = new StackdTexture(LauncherAssets.class, "dirt.png", false);
-		setControlRootElement(new OverlayStack().addElement(new FillTexture(backgroundTexture)).addElement(new Margin(menu, 200, 300)));
+		initializePage(new FillTexture(backgroundTexture), new Margin(menu, 200, 300));
 	}
 	
 	/* (non-Javadoc)
@@ -78,7 +80,7 @@ public class LoginPage extends Control {
 	@Override
 	public void handleEvent(GuiEvent event) {
 		super.handleEvent(event);
-		if (event == GuiEvent.KEY_PRESSED && getGui().getCurrentKeyboardCharacter() == '\r') {
+		if (event == GuiEvent.KEY_PRESSED && Keyboard.getEventCharacter() == '\r') {
 			login();
 		}
 	}
@@ -89,8 +91,12 @@ public class LoginPage extends Control {
 	private void login() {
 		String username = this.username.getTextField().getValue();
 		String password = this.password.getTextField().getValue();
-		AccountApiClient.getInstance().login(username, password);
-		getGui().setRootElement(new ChooseCharacterPage(exitHandler));
+		try {
+			AccountApiClient.getInstance().login(username, password);
+			getGui().setRootElement(new ChooseCharacterPage(exitHandler));
+		} catch (RuntimeException e) {
+			MessageBox.show(LoginPage.this, e.getMessage());
+		}
 	}
 
 }

@@ -8,6 +8,7 @@ package name.martingeisse.stackd.client.gui;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import org.lwjgl.input.Mouse;
 import name.martingeisse.stackd.client.gui.element.IFocusableElement;
 import name.martingeisse.stackd.client.system.Font;
 
@@ -36,26 +37,6 @@ public final class Gui {
 	 * the layoutRequested
 	 */
 	private boolean layoutRequested;
-
-	/**
-	 * the mouseX
-	 */
-	private int mouseX;
-	
-	/**
-	 * the mouseY
-	 */
-	private int mouseY;
-	
-	/**
-	 * the currentKeyboardCharacter
-	 */
-	private int currentKeyboardCharacter;
-	
-	/**
-	 * the currentKeyboardCode
-	 */
-	private int currentKeyboardCode;
 	
 	/**
 	 * the time
@@ -130,32 +111,20 @@ public final class Gui {
 	}
 
 	/**
-	 * Draws the GUI.
+	 * Fires the specified event.
+	 * @param event the event
 	 */
-	public final void draw() {
+	public void fireEvent(GuiEvent event) {
 		if (rootElement == null) {
 			return;
 		}
-		if (layoutRequested) {
+		if (event == GuiEvent.DRAW && layoutRequested) {
 			rootElement.requestSize(width, height);
 			rootElement.setPosition(0, 0);
 			layoutRequested = false;
 		}
 		time = (int)System.currentTimeMillis();
-		rootElement.handleEvent(GuiEvent.DRAW);
-	}
-
-	/**
-	 * Handles a movement of the mouse cursor.
-	 * @param x the new x coordinate of the mouse cursor
-	 * @param y the new y coordinate of the mouse cursor
-	 */
-	public void handleMouseMovement(int x, int y) {
-		this.mouseX = x;
-		this.mouseY = y;
-		if (rootElement != null) {
-			rootElement.handleEvent(GuiEvent.MOUSE_MOVED);
-		}
+		rootElement.handleEvent(event);
 	}
 	
 	/**
@@ -163,7 +132,7 @@ public final class Gui {
 	 * @return the mouseX
 	 */
 	public int getMouseX() {
-		return mouseX;
+		return Mouse.getX();
 	}
 	
 	/**
@@ -171,45 +140,7 @@ public final class Gui {
 	 * @return the mouseY
 	 */
 	public int getMouseY() {
-		return mouseY;
-	}
-	
-	/**
-	 * Handles a mouse click.
-	 */
-	public void handleMouseClick() {
-		if (rootElement != null) {
-			rootElement.handleEvent(GuiEvent.MOUSE_CLICKED);
-		}
-	}
-	
-	/**
-	 * Handles a keypress event.
-	 * @param character the character that was typed
-	 * @param code the code of the key that was pressed
-	 */
-	public void handleKeyboardEvent(int character, int code) {
-		this.currentKeyboardCharacter = character;
-		this.currentKeyboardCode = code;
-		if (rootElement != null) {
-			rootElement.handleEvent(GuiEvent.KEY_PRESSED);
-		}
-	}
-	
-	/**
-	 * Getter method for the currentKeyboardCharacter.
-	 * @return the currentKeyboardCharacter
-	 */
-	public int getCurrentKeyboardCharacter() {
-		return currentKeyboardCharacter;
-	}
-	
-	/**
-	 * Getter method for the currentKeyboardCode.
-	 * @return the currentKeyboardCode
-	 */
-	public int getCurrentKeyboardCode() {
-		return currentKeyboardCode;
+		return (height - Mouse.getY());
 	}
 	
 	/**

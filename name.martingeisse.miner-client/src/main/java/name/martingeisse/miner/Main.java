@@ -104,8 +104,6 @@ public class Main {
 			// build the frame loop
 			frameLoop = new FrameLoop(SimpleWorkerScheme.getGlWorkerLoop());
 			frameLoop.getRootHandler().setWrappedHandler(new StartmenuHandler());
-//			Main.frameLoop.getRootHandler().setWrappedHandler(new IngameHandler());
-//			Mouse.setGrabbed(true);
 
 			// run the game logic in a different thread, then run the OpenGL worker in the main thread
 			new Thread() {

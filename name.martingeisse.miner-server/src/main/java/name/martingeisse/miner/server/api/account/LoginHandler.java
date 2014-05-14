@@ -57,7 +57,7 @@ public final class LoginHandler extends AbstractJsonApiHandler {
 		// dummy hash to produce similar timing, to prevent timing attacks.
 		String password = input.analyzeMapElement("password").expectString();
 		if (!BCrypt.checkpw(password, userAccount == null ? DUMMY_PASSWORD_HASH : userAccount.getPasswordHash())) {
-			throw new JsonApiException(1, "Invalid username or pasword");
+			throw new JsonApiException(1, "Invalid username or password");
 		}
 		
 		// build the access token and add it to the response body and to the cookie header

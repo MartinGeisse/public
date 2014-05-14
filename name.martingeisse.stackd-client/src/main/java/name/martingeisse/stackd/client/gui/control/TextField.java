@@ -192,7 +192,7 @@ public final class TextField extends Control implements IFocusableElement {
 	public void handleEvent(GuiEvent event) {
 		switch (event) {
 		
-		case MOUSE_CLICKED:
+		case MOUSE_BUTTON_PRESSED:
 			if (isMouseInside()) {
 				getGui().setFocus(this);
 			}
@@ -200,8 +200,8 @@ public final class TextField extends Control implements IFocusableElement {
 			
 		case KEY_PRESSED:
 			if (getGui().getFocus() == this) {
-				char character = (char)getGui().getCurrentKeyboardCharacter();
-				int code = getGui().getCurrentKeyboardCode();
+				char character = Keyboard.getEventCharacter();
+				int code = Keyboard.getEventKey();
 				if (code == Keyboard.KEY_BACK) {
 					if (!value.isEmpty()) {
 						setValue(value.substring(0, value.length() - 1));

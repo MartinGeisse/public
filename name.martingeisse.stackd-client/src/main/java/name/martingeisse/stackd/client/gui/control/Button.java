@@ -130,7 +130,7 @@ public abstract class Button extends Control {
 	@Override
 	public void handleEvent(GuiEvent event) {
 		super.handleEvent(event);
-		if (event == GuiEvent.MOUSE_CLICKED && isMouseInside()) {
+		if (event == GuiEvent.MOUSE_BUTTON_PRESSED && isMouseInside()) {
 			onClick();
 		}
 	}

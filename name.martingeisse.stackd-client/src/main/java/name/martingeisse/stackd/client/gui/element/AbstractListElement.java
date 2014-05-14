@@ -79,6 +79,18 @@ public abstract class AbstractListElement extends GuiElement {
 	}
 
 	/**
+	 * Removes the specified element. This method requests a re-layout automatically.
+	 * @param index the index of the element to remove
+	 * @return this for chaining
+	 */
+	public final AbstractListElement removeElement(int index) {
+		getWrappedElements().get(index).notifyNewParent(null);
+		getWrappedElements().remove(index);
+		requestLayout();
+		return this;
+	}
+	
+	/**
 	 * Clears the list of wrapped elements. This method requests a re-layout
 	 * automatically.
 	 */

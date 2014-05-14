@@ -74,6 +74,7 @@ public final class AccountApiClient {
 			HttpPost post = new HttpPost("http://localhost:8888/login");
 			post.setEntity(new StringEntity(requestData, StandardCharsets.UTF_8));
 			HttpResponse response = httpClient.execute(post);
+			System.out.println("* " + response.getStatusLine().getStatusCode());
 			if (response.getStatusLine().getStatusCode() != 200) {
 				throw new RuntimeException(IOUtils.toString(response.getEntity().getContent(), "ascii"));
 			}
@@ -84,6 +85,9 @@ public final class AccountApiClient {
 			}
 			this.accountAccessToken = json.analyzeMapElement("data").analyzeMapElement("accountAccessToken").expectString();
 			System.out.println("obtained token: " + accountAccessToken);
+		} catch (RuntimeException e) {
+			System.out.println("* " + e.getMessage());
+			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
