@@ -7,6 +7,7 @@
 package name.martingeisse.miner;
 
 import name.martingeisse.miner.ingame.IngameHandler;
+import name.martingeisse.miner.ingame.MinerResources;
 import name.martingeisse.miner.startmenu.StartmenuHandler;
 import name.martingeisse.stackd.client.frame.FrameLoop;
 import name.martingeisse.stackd.client.glworker.SimpleWorkerScheme;
@@ -100,6 +101,9 @@ public class Main {
 			Display.create(new PixelFormat(0, 24, 0));
 			Mouse.create();
 			Mouse.poll();
+			
+			// load images and sounds
+			MinerResources.initializeInstance();
 
 			// build the frame loop
 			frameLoop = new FrameLoop(SimpleWorkerScheme.getGlWorkerLoop());

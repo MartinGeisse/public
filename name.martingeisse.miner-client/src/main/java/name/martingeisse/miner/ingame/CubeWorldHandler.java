@@ -103,7 +103,7 @@ public class CubeWorldHandler {
 	/**
 	 * the resources
 	 */
-	private final SimpleResources resources;
+	private final MinerResources resources;
 
 	/**
 	 * the workingSet
@@ -220,7 +220,7 @@ public class CubeWorldHandler {
 	 * @param resources the resources
 	 * @throws IOException on I/O errors while loading the textures
 	 */
-	public CubeWorldHandler(final int width, final int height, SimpleResources resources) throws IOException {
+	public CubeWorldHandler(final int width, final int height, MinerResources resources) throws IOException {
 
 		// the player
 		player = new Player();
@@ -260,7 +260,7 @@ public class CubeWorldHandler {
 	 * Getter method for the resources.
 	 * @return the resources
 	 */
-	public SimpleResources getResources() {
+	public MinerResources getResources() {
 		return resources;
 	}
 

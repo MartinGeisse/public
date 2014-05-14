@@ -26,12 +26,33 @@ import org.newdawn.slick.util.ResourceLoader;
 /**
  * 
  */
-public class SimpleResources {
+public class MinerResources {
 
 	/**
 	 * the KEY_COLOR
 	 */
 	public static final int[] KEY_COLOR = {255, 0, 255};
+	
+	/**
+	 * the instance
+	 */
+	private static MinerResources instance;
+	
+	/**
+	 * Initializes the instance of this class and loads all resources.
+	 * @throws IOException on I/O errors
+	 */
+	public synchronized static void initializeInstance() throws IOException {
+		instance = new MinerResources();
+	}
+	
+	/**
+	 * Getter method for the instance.
+	 * @return the instance
+	 */
+	public static MinerResources getInstance() {
+		return instance;
+	}
 	
 	/**
 	 * the cubeTextures
@@ -67,7 +88,7 @@ public class SimpleResources {
 	 * Constructor. The resources are immediately loaded.
 	 * @throws IOException on I/O errors
 	 */
-	public SimpleResources() throws IOException {
+	private MinerResources() throws IOException {
 
 		// load cube textures
 		final String[] cubeTextureNames = MinerCubeTypes.CUBE_TEXTURE_FILENAMES;

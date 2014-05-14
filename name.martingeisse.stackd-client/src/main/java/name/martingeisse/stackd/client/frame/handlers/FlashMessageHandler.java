@@ -71,7 +71,7 @@ public class FlashMessageHandler extends AbstractFrameHandler {
 	/**
 	 * the height
 	 */
-	private final int height;
+	private int height = 0;
 
 	/**
 	 * the glWorkUnit
@@ -79,6 +79,11 @@ public class FlashMessageHandler extends AbstractFrameHandler {
 	private final GlWorkUnit glWorkUnit = new GlWorkUnit() {
 		@Override
 		public void execute() {
+			if (height == 0) {
+				final IntBuffer buffer = ByteBuffer.allocateDirect(64).order(ByteOrder.nativeOrder()).asIntBuffer();
+				glGetInteger(GL_VIEWPORT, buffer);
+				height = buffer.get(3);
+			}
 			final long now = System.currentTimeMillis();
 			int i = 0;
 			glBindTexture(GL_TEXTURE_2D, 0);
@@ -127,11 +132,6 @@ public class FlashMessageHandler extends AbstractFrameHandler {
 		this.leftOffset = 0;
 		this.topOffset = 0;
 		this.queue = new ConcurrentLinkedQueue<FlashMessageHandler.Entry>();
-
-		final IntBuffer buffer = ByteBuffer.allocateDirect(64).order(ByteOrder.nativeOrder()).asIntBuffer();
-		glGetInteger(GL_VIEWPORT, buffer);
-		this.height = buffer.get(3);
-
 	}
 
 	/**

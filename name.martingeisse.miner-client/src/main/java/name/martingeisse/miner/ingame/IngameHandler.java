@@ -92,7 +92,7 @@ public class IngameHandler extends HandlerList {
 		}
 
 		// connect to the server
-		SimpleResources resources = new SimpleResources();
+		MinerResources resources = MinerResources.getInstance();
 		flashMessageHandler = new FlashMessageHandler(resources.getFont());
 		protocolClient = new MinerProtocolClient();
 		protocolClient.setFlashMessageHandler(flashMessageHandler);

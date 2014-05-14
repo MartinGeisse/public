@@ -31,6 +31,7 @@
   <classpathentry kind="var" path="M2_REPO/net/java/jinput/jinput-platform/2.0.5/jinput-platform-2.0.5-natives-osx.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/lwjgl/lwjgl/lwjgl_util/2.9.1/lwjgl_util-2.9.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/slick/slick/20121001-264/slick-20121001-264.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/googlecode/soundlibs/jorbis/0.0.17-2/jorbis-0.0.17-2.jar"/>
   <classpathentry kind="src" path="/miner-common"/>
   <classpathentry kind="src" path="/miner-launcher"/>
   <classpathentry kind="src" path="/httpclient"/>

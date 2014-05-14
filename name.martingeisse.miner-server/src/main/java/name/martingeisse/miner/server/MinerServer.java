@@ -263,6 +263,8 @@ public class MinerServer extends StackdServer<MinerSession> {
 		SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QPlayer.player);
 		insert.set(QPlayer.player.userAccountId, 1L);
 		insert.set(QPlayer.player.coins, 0L);
+		insert.set(QPlayer.player.name, "Bob"); // TODO
+		insert.set(QPlayer.player.faction, 0); // TODO
 		insert.set(QPlayer.player.x, BigDecimal.ZERO);
 		insert.set(QPlayer.player.y, BigDecimal.ZERO);
 		insert.set(QPlayer.player.z, BigDecimal.ZERO);
