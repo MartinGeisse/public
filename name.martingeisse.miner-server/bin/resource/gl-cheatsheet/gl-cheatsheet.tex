@@ -1,0 +1,883 @@
+\documentclass[12pt]{article}
+\let\stdsection\section \renewcommand\section{\newpage\stdsection}
+\begin{document}
+
+\tableofcontents
+
+
+
+
+
+\section{Core Functions and Basic Configuration}
+
+
+
+\subsection{Core Functions}
+\begin{itemize}
+\item \texttt{glEnable}, \texttt{glDisable}, \texttt{glIsEnabled} \\
+	Controls server-side features.
+\item \texttt{glEnableClientState}, \texttt{glDisableClientState} \\
+	Controls client-side features.
+\item \texttt{glGetBoolean}, \texttt{glGetInteger}, \texttt{glGetFloat}, \texttt{glGetDouble}, \texttt{glGetString} \\
+	Reads server-side state variables.
+\item \texttt{glFlush} \\
+	Flushes commands to the server.
+\item \texttt{glFinish} \\
+	Flushes commands to the server and waits for them to finish.
+\item \texttt{glGetError} \\
+	Returns the last error.
+\item \texttt{glPushAttrib}, \texttt{glPopAttrib} \\
+	Push/pop server-side state.
+\item \texttt{glPushClientAttrib}, \texttt{glPopClientAttrib} \\
+	Push/pop client-side state.
+\end{itemize}
+
+
+
+\subsection{Viewport Configuration}
+\begin{itemize}
+\item \texttt{glViewport} \\
+	Defines the transformation from normalized device coordinates to window coordinates.
+\item \texttt{glViewportIndexed} \\
+	Like \texttt{glViewport}, but takes the index of the viewport to configure.
+\item \texttt{glViewportArray} \\
+	Like \texttt{glViewport}, but configures multiple viewports at once.
+\item \texttt{glScissor} \\
+	Defines a \textit{scissor box} in the viewport (using window coordinates) and restricts drawing to that box.
+\item \texttt{glScissorIndexed} \\
+	Like \texttt{glScissor}, but takes the index of the viewport to configure.
+\item \texttt{glScissorArray} \\
+	Like \texttt{glScissor}, but configures multiple viewports at once.
+\item \texttt{glDepthRange} \\
+	Defines the mapping of depth values to internal depth values for the depth buffer.	
+\item \texttt{glDepthRangeIndexed} \\
+	Like \texttt{glDepthRange}, but takes the index of the viewport to configure.
+\item \texttt{glDepthRangeArray} \\
+	Like \texttt{glDepthRange}, but configures multiple viewports at once.
+\end{itemize}
+
+
+
+\subsection{Misc. Configuration}
+\begin{itemize}
+\item \texttt{glCullFace} \\
+	Switches between front-face culling and back-face culling.
+\item \texttt{glFrontFace} \\
+	Specifies which polygon side is the "front" face.
+\item \texttt{glHint} \\
+	Sets rendering quality hints.
+\end{itemize}
+
+
+
+
+
+\section{Render State Configuration}
+
+
+
+\subsection{Transform Management}
+
+(\texttt{glVertex}) $\rightarrow$ Object Coordinates \\
+$\rightarrow$ (ModelView Matrix) $\rightarrow$ Eye Coordinates \\
+$\rightarrow$ (Projection Matrix) $\rightarrow$ Clip Coordinates \\
+$\rightarrow$ (Divide by w) $\rightarrow$ Normalized Device Coordinates (+-1 cube) \\
+$\rightarrow$ (Viewport Transform) $\rightarrow$ Window Coordinates (0,0..w,h)
+
+\subsubsection{General}
+\begin{itemize}
+\item \texttt{glMatrixMode} \\
+	Selects whether the modelview matrix, projection matrix or texture matrix is affected by future calls.
+\item \texttt{glPushMatrix} \\
+	Pushes the current matrix onto the matrix stack for the current mode (each mode has a separate stack).
+\item \texttt{glPopMatrix} \\
+	Pops the top of the matrix stack for the current mode.
+\end{itemize}
+
+\subsubsection{Loading Matrices}
+\begin{itemize}
+\item \texttt{glLoadIdentity} \\
+	Loads the identity matrix.
+\item \texttt{glLoadMatrix} \\
+	Loads the specified matrix.
+\item \texttt{glLoadTransposeMatrix} \\
+	Loads the transpose of the specified matrix.
+\end{itemize}
+
+\subsubsection{Multiplying Matrices}
+\begin{itemize}
+\item \texttt{glTranslate\{f,d\}} \\
+	Multiplies the current matrix with a translation matrix.
+\item \texttt{glRotate\{f,d\}} \\
+	Multiplies the current matrix with a rotation matrix.
+\item \texttt{glScale\{f,d\}} \\
+	Multiplies the current matrix with a scaling matrix.
+\item \texttt{glFrustum} \\
+	Multiplies the current matrix with a perspective projection matrix.
+\item \texttt{glOrtho} \\
+	Multiplies the current matrix with a parallel projection matrix.
+\item \texttt{glMultMatrix} \\
+	Multiplies the current matrix with the specified matrix.
+\item \texttt{glMultTransposeMatrix} \\
+	Multiplies the current matrix with the transpose of the specified matrix.
+\end{itemize}
+
+
+
+\subsection{Rasterizing}
+
+\subsubsection{Color Buffer and Blending}
+\begin{itemize}
+\item \texttt{glAlphaFunc} \\
+	Discards pixels based on comparing the alpha value with a fixed reference value (performance!)
+\item \texttt{glBlendFunc}, \texttt{glBlendEquation},  \\
+	Defines how pixels are blended into the color buffer.
+\item \texttt{glBlendFuncSeparate}, \texttt{glBlendEquationSeparate} \\
+	"set the RGB blend equation and the alpha blend equation separately"
+\item \texttt{glBlendColor} \\
+	Sets the auxiliary color for \texttt{glBlendFunc}.
+\item \texttt{glColorMask}, \texttt{glColorMaski} \\
+	Blocks off writing to specific color channels.
+\end{itemize}
+
+\subsubsection{Depth Buffer}
+\begin{itemize}
+\item \texttt{glDepthFunc} \\
+	Discards pixels based on comparing the depth value with the depth value from the frame buffer (Z-/W-buffering)
+\item \texttt{glDepthMask} \\
+	Enables / disables writing to the depth buffer.
+\end{itemize}
+
+\subsubsection{Stencil Buffer}
+\begin{itemize}
+\item \texttt{glStencilFunc} \\
+	Discards pixels based on comparing a fixed stencil value with the value from the stencil buffer, masking both values with a defined bit mask.
+\item \texttt{glStencilMask} \\
+	Defines the write-enable bit mask when writing to the stencil buffer.
+\item \texttt{glStencilOp} \\
+	Defines the effects of (stencil-rejected, stencil-accepted-depth-rejected and both-accepted) pixels on the stencil buffer.
+\item \texttt{glStencilFuncSeparate}, \texttt{glStencilMaskSeparate}, \texttt{glStencilOpSeparate} \\
+	Configures stencil buffer behavior separately for front-facing and back-facing polygons.
+\end{itemize}
+
+\subsubsection{Misc. Rasterizing Configuration}
+\begin{itemize}
+\item \texttt{glSampleCoverage} \\
+	Specifies a bit mask when multisampling each pixel.
+\end{itemize}
+
+
+
+\subsection{Effects}
+
+\subsubsection{Lighting}
+\begin{itemize}
+\item \texttt{glLight} \\
+	"set light source parameters"
+\item \texttt{glGetLight} \\
+	"return light source parameter values"
+\item \texttt{glLightModel} \\
+	"set the lighting model parameters"
+\item \texttt{glMaterial} \\
+	"specify material parameters for the lighting model"
+\item \texttt{glGetMaterial} \\
+	"return material parameters values"
+\item \texttt{glColorMaterial} \\
+	"cause a material color to track the current color"
+\item \texttt{glShadeModel} \\
+	Switches between flat shading and smooth shading.
+\item \texttt{glMinSampleShading} \\
+	"specifies minimum rate at which sample shading takes place"
+\end{itemize}
+
+\subsubsection{Fog}
+\begin{itemize}
+\item \texttt{glFog}
+\item \texttt{glFogCoord}
+\item \texttt{glFogCoordPointer}
+\end{itemize}
+
+\subsubsection{Custom Clipping Planes}
+\begin{itemize}
+\item \texttt{glClipPlane} \\
+	Controls custom clipping planes.
+\item \texttt{glGetClipPlane} \\
+	Controls custom clipping planes.
+\end{itemize}
+
+\subsubsection{Decals}
+\begin{itemize}
+\item \texttt{glPolygonOffset} \\
+	"set the scale and units used to calculate depth values" (used for outlining and decals)
+\end{itemize}
+
+\subsubsection{Points and Lines}
+\begin{itemize}
+\item \texttt{glPolygonMode} \\
+	Switches between polygon drawing, outline drawing, and vertex drawing.
+\item \texttt{glPolygonStipple}
+	...
+\item \texttt{glGetPolygonStipple}
+	...
+\item \texttt{glLineWidth} \\
+	Specifies the line width for line / outline drawing.
+\item \texttt{glLineStipple}
+	...
+\item \texttt{glPointSize} \\
+	Specifies the point size for point / vertex drawing.
+\item \texttt{glPointParameter} \\
+	Specifies parameters for point / vertex drawing.
+\end{itemize}
+
+
+
+
+
+\section{Primitives, Arrays and Buffers}
+
+
+
+\subsection{Direct Mode Rendering}
+\begin{itemize}
+\item \texttt{glBegin(type)}, \texttt{glEnd} \\
+	Start / stop drawing primitives of type \texttt{type}.
+\item \texttt{glVertex\{2,3,4\}\{i,f,d\}} \\
+	Send a vertex for the current primitive. Default values are (x, y, 0, 1)
+\item \texttt{glNormal3\{b,i,f,d\}} \\
+	Set the normal for the next vertex.
+\item \texttt{glColor\{3,4\}\{ub,b,f,d\}}, \texttt{glColorP\{3,4\}\{u,ui\}} \\
+	Set the color for the next vertex.
+\item \texttt{glSecondaryColor*} \\
+	Sets a secondary per-vertex color that gets added to each pixel.
+\item \texttt{glTexCoord\{1,2,3,4\}\{f,d\}} \\
+	Set the texture coordinates for the next vertex.
+\item \texttt{glMultiTexCoord} \\
+	Like \texttt{glTexCoord}, but takes the target texture unit as an additional argument.
+\item \texttt{glEdgeFlag} \\
+	Hides specific edges when outlining polygons because they're "inner" tesselation edges.
+\item \texttt{glRect} \\
+	Draws a rectangle. Equivalent to sending four vertices, surrounded by \texttt{glBegin} / \texttt{glEnd}.
+\end{itemize}
+
+
+
+\subsection{Buffers}
+
+\subsubsection{Life Cycle}
+\begin{itemize}
+\item \texttt{glGenBuffers} \\
+	Generates one or more buffer names.
+\item \texttt{glDeleteBuffers} \\
+	Deletes one or more buffer names and associated buffers.
+\item \texttt{glIsBuffer} \\
+	Check if a buffer name is associated with a buffer.
+\end{itemize}
+
+\subsubsection{Binding Buffers}
+\begin{itemize}
+\item \texttt{glBindBuffer} \\
+	Binds a buffer to a target for future calls and for drawing, creating the buffer if necessary.
+\item \texttt{glBindBufferBase} \\
+	bind a buffer object to an indexed buffer target (target with multiple bind points)
+\item \texttt{glBindBufferRange} \\
+	bind a range within a buffer object to an indexed buffer target (target with multiple bind points)
+\end{itemize}
+	
+\subsubsection{Handling Buffer Data}
+\begin{itemize}
+\item \texttt{glClearBufferData}, \texttt{glClearBufferSubData} \\
+	Fills (part of) a buffer with a fixed value.
+\item \texttt{glBufferData} \\
+	Defines the usage mode for a buffer and uploads buffer data.
+\item \texttt{glBufferSubData} \\
+	Updates part of a buffer.
+\item \texttt{glMapBuffer}, \texttt{glMapBufferRange}, \texttt{glUnmapBuffer}, \texttt{glGetBufferPointer}, \texttt{glFlushMappedBufferRange} \\
+	Maps / unmaps (part of) a buffer to the client's address space; obtains a pointer to the mapped data; flushes changes to a mapped buffer.
+\item \texttt{glCopyBufferSubData} \\
+	"copy part of the data store of a buffer object to the data store of another buffer object"
+\item \texttt{glInvalidateBufferData}, \texttt{glInvalidateBufferSubData} \\
+	Invalidates (part of) a buffer.
+\item \texttt{glGetBufferSubData} \\
+	Reads part of a buffer.
+\item \texttt{glGetBufferParameter} \\
+	Reads a buffer parameter.
+\end{itemize}
+
+
+
+\subsection{Using Arrays and Buffers}
+(Client-side) arrays and (server-side) buffers are configured using the same functions. For each pointer, if a corresponding
+buffer is bound, then it is used (and the "pointer" is an offset for that buffer), otherwise a client-side array is used. Both arrays
+and buffers are affected by \texttt{glEnableClientState} and \texttt{glDisableClientState} regarding arrays.
+
+\subsubsection{Configuration}
+\begin{itemize}
+\item \texttt{glVertexPointer} \\
+	Selects a vertex array or sets the offset for a vertex buffer.
+\item \texttt{glNormalPointer} \\
+	Selects a normal array or sets the offset for a normal buffer.
+\item \texttt{glColorPointer} \\
+	Selects a per-vertex color array or sets the offset for a per-vertex color buffer.
+\item \texttt{glSecondaryColorPointer} \\
+	Selects a per-vertex secondary color array or sets the offset for a per-vertex secondary color buffer.
+\item \texttt{glTexCoordPointer} \\
+	Selects a texture coordinate array or sets the offset for a texture coordinate buffer.
+\item \texttt{glEdgeFlagPointer} \\
+	Selects a edge flag array or sets the offset for a edge flag buffer.
+\item \texttt{glInterleavedArrays} \\
+	Deprecated function to set multiple client-side pointers at once.
+\item \texttt{glGetPointer} \\
+	Returns a client-side array pointer or server-side buffer offset.
+\end{itemize}
+
+\subsubsection{Drawing Primitives From Arrays and Buffers}
+\begin{itemize}
+\item \texttt{glDrawArrays} \\
+	Draws primitives from the previously defined arrays.
+\item \texttt{glArrayElement} \\
+	Draws the vertex from index i of the current array / buffer (requires \texttt{glBegin} / \texttt{glEnd}).
+\item \texttt{glDrawElements} \\
+	Draws primitives from the previously defined arrays as well as an additional index array that associates primitives with (re-used) vertices.
+\item \texttt{glDrawElementsBaseVertex} \\
+	Like \texttt{glDrawElements}, with a constant added on-the-fly to each element of the index array.
+\item \texttt{glDrawRangeElements} \\
+	Like \texttt{glDrawElements} but with additional lower and upper bound hints for the indices from the index array.
+\item \texttt{glDrawRangeElementsBaseVertex} \\
+	Like \texttt{glDrawRangeElements}, with a constant added on-the-fly to each element of the index array.
+\item \texttt{glMultiDrawArrays}, \texttt{glMultiDrawElements} \\
+	Performs multiple \texttt{glDrawArrays} / \texttt{glDrawElements} invocations at once, taking the parameters for each
+	invocation from an array.
+\item \texttt{glPrimitiveRestartIndex}
+	Sets the "primitive restart index", that is, an array index that doesn't issue a vertex but instead starts a new draw operation.
+\end{itemize}
+
+\subsubsection{Instancing Support for Shaders}
+These functions repeat the above functions n times, incrementing a counter each time. They are useless without a
+geometry shader that interprets the counter, since they otherwise just repeatedly draw the same object. A shader could,
+for example, apply a different transformation each time to draw multiple instances at different locations.
+\begin{itemize}
+\item \texttt{glDrawArraysInstanced} \\
+	Repeats \texttt{glDrawArrays} n times.
+\item \texttt{glDrawElementsInstanced} \\
+	Repeats \texttt{glDrawElements} n times.
+\item \texttt{glDrawArraysInstancedBaseInstance} \\
+	Like \texttt{glDrawArraysInstanced}, but respects "instanced" generic vertex attributes.
+\item \texttt{glDrawElementsInstancedBaseInstance} \\
+	Like \texttt{glDrawElementsInstanced}, but respects "instanced" generic vertex attributes.
+\item \texttt{glDrawElementsInstancedBaseVertex} \\
+	Like \texttt{glDrawElementsInstanced}, with a constant added on-the-fly to each element of the index array.
+\item \texttt{glDrawElementsInstancedBaseVertexBaseInstance} \\
+	Like \texttt{glDrawElementsInstanced}, with a constant added on-the-fly to each element of the index array AND
+	respects "instanced" generic vertex attributes.
+\item \texttt{glDrawArraysIndirect} \\
+	Variant of \texttt{glDrawArraysInstancedBaseInstance} that takes a pointer to the remaining function arguments.
+\item \texttt{glDrawElementsIndirect} \\
+	Variant of \texttt{glDrawElementsInstancedBaseVertexBaseInstance} that takes a pointer to the remaining function
+	arguments.
+\item \texttt{glMultiDrawArraysIndirect}, \texttt{glMultiDrawElementsIndirect} \\
+	Performs multiple \texttt{glDrawArraysInstancedBaseInstance} / \texttt{glDrawElementsInstancedBaseVertexBaseInstance}
+	invocations at once, taking the parameters for each invocation from an array.
+\end{itemize}
+
+
+
+
+
+\section{Textures, Images and Bitmaps}
+
+
+
+\subsection{Dealing With Image Data}
+
+\subsubsection{Pixel Handling Configuration}
+Affects texture uploading, texture downloading, drawing pixels and bitmaps, etc. 
+\begin{itemize}
+\item \texttt{glPixelStore\{i,f\}}
+	Defines how pixels are stored in application memory.
+\item \texttt{glPixelTransfer\{i,f\}}
+	Defines a per-channel scale and offset when reading, writing or copying pixels.
+\item \texttt{glPixelMap\{usv,uiv,fv\}}
+	Defines a per-channel mapping, e.g. for palette lookup or gamma correction.
+\item \texttt{glGetPixelMap}
+	Reads the pixel map.
+\end{itemize}
+
+
+
+\subsection{Handling Textures}
+
+\subsubsection{Life Cycle}
+\begin{itemize}
+\item \texttt{glGenTextures} \\
+	Generates one or more texture names.
+\item \texttt{glDeleteTextures} \\
+	Deletes texture names and associated textures.
+\item \texttt{glIsTexture} \\
+	Checks whether a texture name is associated with a texture.
+\end{itemize}
+
+\subsubsection{Binding Textures}
+\begin{itemize}
+\item \texttt{glBindTexture} \\
+	Binds a texture for future calls and for drawing. The target for the first binding of a texture determines its dimension.
+	Separate bindings exist per target.
+\end{itemize}
+
+\subsubsection{Configuring Textures}
+\begin{itemize}
+\item \texttt{glTexStorage*}, \texttt{glTexStorage*Multisample} \\
+	Specifies the storage for all levels of a texture at once.
+\item \texttt{glGenerateMipmap} \\
+	"generate mipmaps for a specified texture target"
+\end{itemize}
+
+\subsubsection{Handling Texture Data}
+\begin{itemize}
+\item \texttt{glTexImage\{1D,2D,3D\}}, \texttt{glTexImage\{2D,3D\}Multisample} \\
+	Upload texture image data.
+\item \texttt{glTexSubImage\{1D,2D,3D\}} \\
+	Update part of a texture image.
+\item \texttt{glCompressedTexImage\{1D,2D,3D\}} \\
+	Upload texture image data from a compressed source.
+\item \texttt{glCompressedTexSubImage\{1D,2D,3D\}} \\
+	Update part of a texture image from a compressed source.
+\item \texttt{glInvalidateTexImage}, \texttt{glInvalidateTexSubImage} \\
+	Invalidate (part of) a texture.
+\item \texttt{glGetTexImage} \\
+	Download texture image data.
+\item \texttt{glGetCompressedTexImage} \\
+	"return a compressed texture image"
+\item \texttt{glTextureView} \\
+	"initialize a texture as a data alias of another texture's data store"
+\item \texttt{glCopyImageSubData} \\
+	"perform a raw data copy between two images"
+\end{itemize}
+
+\subsubsection{Texture-Related Render State}
+\begin{itemize}
+\item \texttt{glActiveTexture}, \texttt{glClientActiveTexture} \\
+	Selects the active texture unit. The server-side active unit affects future server-side operations and drawing; the client-side
+	active unit affects future client-side operations (e.g. \texttt{glTexCoordPointer}).
+\item \texttt{glTexParameter(target, parameterName, parameterValue} \\
+	Set texture parameters.
+\item \texttt{glGetTexParameter	} \\
+	Get texture parameters.
+\item \texttt{glGetTexLevelParameter(target, level, parameterName, parameterValue} \\
+	Get LOD-(mipmap-)dependent texture parameters.
+\item \texttt{glTexEnv} \\
+	???
+\item \texttt{glGetTexEnvf} \\
+	???
+\item \texttt{glTexGen} \\
+	Defines automatic generation of texture coordinates.
+\item \texttt{glGetTexGen} \\
+	Returns automatic texture generation parameters.
+\item \texttt{glAreTexturesResident} \\
+	"determine if textures are loaded in texture memory"
+\end{itemize}
+
+
+
+\subsection{Samplers}
+
+\subsubsection{Life Cycle}
+\begin{itemize}
+\item \texttt{glGenSamplers} \\
+	"generate sampler object names"
+\item \texttt{glDeleteSamplers} \\
+	"delete named sampler objects"
+\item \texttt{glIsSampler} \\
+	"determine if a name corresponds to a sampler object"
+\end{itemize}
+
+\subsubsection{Binding Samplers}
+\begin{itemize}
+\item \texttt{glBindSampler} \\
+	"bind a named sampler to a texturing target"
+\end{itemize}
+
+\subsubsection{Configuring Samplers}
+\begin{itemize}
+\item \texttt{glSamplerParameter} \\
+	Specifies sampler parameters.
+\item \texttt{glGetSamplerParameter} \\
+	Returns sampler parameters.
+\end{itemize}
+
+
+
+\subsection{Connecting Textures and Buffers}
+\begin{itemize}
+\item \texttt{glTexBuffer} \\
+	"attach the storage for a buffer object to the active buffer texture"
+\item \texttt{glTexBufferRange} \\
+	"bind a range of a buffer's data store to a buffer texture"
+\end{itemize}
+
+
+
+\subsection{Drawing Bitmaps and Pixels}
+\begin{itemize}
+\item \texttt{glRasterPos\{2,3,4\}\{s,i,f,d\}} \\
+	Sets the raster position by transforming 3d coordinates like for \texttt{glVertex}.
+\item \texttt{glWindowPos} \\
+	Sets the raster position directly using window coordinates.
+\item \texttt{glBitmap} \\
+	Draws a bitmap, with a "1" bit using the current color and a "0" bit being transparent, to the current raster position.
+	This function also updates the raster position.
+\item \texttt{glDrawPixels} \\
+	Copies pixels from memory to the current raster position of the framebuffer.
+\item \texttt{glCopyPixels} \\
+	Copies pixels from the specified framebuffer position to the current raster position.
+\item \texttt{glPixelZoom}
+	Specifies the zoom factor for \texttt{glDrawPixels} and \texttt{glCopyPixels}.
+\end{itemize}
+
+
+
+
+
+\section{OpenGL (non-shader part)}
+
+\subsection{Display Lists}
+\begin{itemize}
+\item \texttt{glGenLists} \\
+	Generates display lists.
+\item \texttt{glDeleteLists} \\
+	Deletes display lists.
+\item \texttt{glIsList} \\
+	"determine if a name corresponds to a display list"
+\item \texttt{glNewList} \\
+	Start filling a display list.
+\item \texttt{glEndList} \\
+	Finish filling a display list.
+\item \texttt{glCallList} \\
+	Executes a display list.
+\item \texttt{glCallLists} \\
+	Executes multiple display lists.
+\item \texttt{glListBase} \\
+	Defines an offset for display list indices when calling lists.
+\end{itemize}
+
+
+
+
+\subsection{Splines, B-Splines, NURBS, Bezier Curves, etc.}
+\begin{itemize}
+\item \texttt{glMapGrid\{1,2\}\{f,d\}}
+\item \texttt{glMap\{1,2\}\{f,d\}}
+\item \texttt{glGetMap\{1,2\}\{f,d\}}
+\item \texttt{glEvalPoint\{1,2\}}
+\item \texttt{glEvalCoord\{1,2\}\{f,d,fv,dv\}}
+\item \texttt{glEvalMesh\{1,2\}}
+\end{itemize}
+
+
+\subsection{Synchronization}
+Used to synchronize client and server processes.
+\begin{itemize}
+\item \texttt{glClientWaitSync}
+\item \texttt{glFenceSync}
+\item \texttt{glIsSync}
+\item \texttt{glWaitSync}
+\item \texttt{glGetSync}
+\item \texttt{glDeleteSync}
+\item \texttt{glObjectPtrLabel}
+\item \texttt{glGetObjectPtrLabel}
+\item \texttt{glMemoryBarrier}
+\end{itemize}
+
+
+
+
+\subsection{Frame Buffer Management}
+\begin{itemize}
+\item \texttt{glClear} \\
+	Clears one or more buffers.
+\item \texttt{glClearColor} \\
+	Set the value that \texttt{glClear} will use for the color buffer.
+\item \texttt{glClearDepth} \\
+	Set the value that \texttt{glClear} will use for the depth buffer.
+\item \texttt{glClearStencil} \\
+	Set the value that \texttt{glClear} will use for the stencil buffer.
+\item \texttt{glClearAccum} \\
+	Set the value that \texttt{glClear} will use for the accumulation buffer.
+\item \texttt{glAccum} \\
+	Transfer between color buffer and accumulation buffer.
+\item \texttt{glDrawBuffer} \\
+	Selects the buffer (double buffering, stereo rendering)
+\item \texttt{glInvalidateFramebuffer}, \texttt{glInvalidateSubFramebuffer} \\
+	Invalidates (part of) the frame buffer.
+\item \texttt{glGenFramebuffers} \\
+	...
+\item \texttt{glDeleteFramebuffers} \\
+	...
+\item \texttt{glBindFramebuffer} \\
+	...
+\item \texttt{glIsFramebuffer} \\
+	...
+\item \texttt{glCheckFramebufferStatus} \\
+	...
+\item \texttt{glFramebufferTexture} \\
+	"attach a level of a texture object as a logical buffer to the currently bound framebuffer object"
+\item \texttt{glFramebufferTextureLayer} \\
+	"attach a single layer of a texture to a framebuffer"
+\item \texttt{glClearBuffer} \\
+	"clear individual buffers of the currently bound draw framebuffer"
+\item \texttt{glFramebufferParameter} \\
+	"set a named parameter of a framebuffer"
+\item \texttt{glGetFramebufferAttachmentParameter} \\
+	"retrieve information about attachments of a bound framebuffer object"
+\item \texttt{glFramebufferParameter} \\
+	"set a named parameter of a framebuffer"
+\item \texttt{glGetFramebufferParameter} \\
+	"retrieve a named parameter from a framebuffer"
+\item \texttt{glGetMultisample} \\
+	"retrieve the location of a sample"
+\end{itemize}
+
+\subsection{Renderbuffers}
+\begin{itemize}
+\item \texttt{glGenRenderbuffers} \\
+\item \texttt{glDeleteRenderbuffers} \\
+\item \texttt{glIsRenderbuffer} \\
+\item \texttt{glBindRenderbuffer} \\
+\item \texttt{glGetRenderbufferParameter} \\
+\item \texttt{glRenderbufferStorage} \\
+\item \texttt{glRenderbufferStorageMultisample} \\
+\item \texttt{glFramebufferRenderbuffer} \\
+	"attach a renderbuffer as a logical buffer to the currently bound framebuffer object"
+\item \texttt{glSampleMaski} \\
+	"set the value of a sub-word of the sample mask"
+\end{itemize}
+
+\subsection{Reading the Frame Buffer}
+\begin{itemize}
+\item \texttt{glReadBuffer} \\
+	Selects the frame buffer to read from.
+\item \texttt{glCopyTexImage\{1,2\}D} \\
+	Defines a texture by copying a rectangular part of the frame buffer.
+\item \texttt{glCopyTexSubImage\{1,2,3\}D} \\
+	Updates a texture by copying a rectangular part of the frame buffer.
+\item \texttt{glReadPixels} \\
+	Copies pixels from the framebuffer into memory.
+\item \texttt{glClampColor} \\
+	"specify whether data read via glReadPixels should be clamped"
+\item \texttt{glBlitFramebuffer} \\
+	Copies pixels within the frame buffer or from one frame buffer to another.
+\end{itemize}
+
+\subsection{Render Queries}
+\begin{itemize}
+\item \texttt{glGenQueries} \\
+	"generate query object names"
+\item \texttt{glDeleteQueries} \\
+	"delete named query objects"
+\item \texttt{glIsQuery} \\
+	"determine if a name corresponds to a query object"
+\item \texttt{glGetQueryObject} \\
+	"return parameters of a query object"
+\item \texttt{glGetQueryIndexed} \\
+	"return parameters of an indexed query object target"
+\item \texttt{glBeginQuery}, \texttt{glEndQuery} \\
+	"delimit the boundaries of a query object"
+\item \texttt{glBeginQueryIndexed}, \texttt{glEndQueryIndexed} \\
+	"delimit the boundaries of a query object on an indexed target"
+\item \texttt{glGetQuery} \\
+	"return parameters of a query object target"
+\item \texttt{glQueryCounter} \\
+	"record the GL time into a query object after all previous commands have reached the GL server but have not yet necessarily executed"
+\item \texttt{glBeginConditionalRender}, \texttt{glEndConditionalRender} \\
+	Execute GL commands only if a query detects that samples passed the tests.
+\end{itemize}
+
+\subsection{Debugging}
+\begin{itemize}
+\item \texttt{glDebugMessageControl} \\
+	"control the reporting of debug messages in a debug context"
+\item \texttt{glPushDebugGroup} \\
+	"push a named debug group into the command stream"
+\item \texttt{glPopDebugGroup} \\
+	"pop the active debug group"
+\item \texttt{glDebugMessageCallback} \\
+	"specify a callback to receive debugging messages from the GL"
+\item \texttt{glDebugMessageInsert} \\
+	"inject an application-supplied message into the debug message queue"
+\item \texttt{glGetDebugMessageLog} \\
+	"retrieve messages from the debug message log"
+\item \texttt{glObjectLabel} \\
+	"label a named object identified within a namespace"
+\item \texttt{glGetObjectLabel} \\
+	"retrieve the label of a named object identified within a namespace"
+\end{itemize}
+
+\subsection{Feedback Buffers (structured rendering log, selection)}
+\begin{itemize}
+\item \texttt{glInitNames} \\
+	...
+\item \texttt{glLoadName} \\
+	...
+\item \texttt{glPushName} \\
+	...
+\item \texttt{glPopName} \\
+	...
+\item \texttt{glFeedbackBuffer} \\
+	...
+\item \texttt{glSelectBuffer} \\
+	...
+\item \texttt{glRenderMode} \\
+	...
+\item \texttt{glPassThrough} \\
+	...
+\end{itemize}
+
+\subsection{Various Rendering Parameters}
+\begin{itemize}
+\item \texttt{glPrioritizeTextures} \\
+	Sets texture priority with respect to eviction from the graphics memory.
+\item \texttt{glGetInternalformat} \\
+	"retrieve information about implementation-dependent support for internal formats"
+\item \texttt{glPatchParameter} \\
+	"specifies the parameters for patch primitives" (hardware tesselation control)
+\end{itemize}
+
+\section{OpenGL Shaders}
+
+\begin{itemize}
+\item \texttt{glCreateShader}
+\item \texttt{glShaderSource}
+\item \texttt{glCompileShader}
+\item \texttt{glCreateProgram}
+\item \texttt{glAttachShader}
+\item \texttt{glLinkProgram}
+\item \texttt{glUseProgram}
+\item \texttt{glProgramUniform}, \texttt{glProgramUniformMatrix}
+\item \texttt{glGetProgramiv}
+\item \texttt{glValidateProgram}
+\item \texttt{glValidateProgramPipeline}
+\item \texttt{glGetProgramBinary}
+\item \texttt{glGetProgramResourceLocation}
+\item \texttt{glGetProgramStage}
+\item \texttt{glGetProgram}
+\item \texttt{glCreateShaderProgram}
+\item \texttt{glGetProgramPipeline.}
+\item \texttt{glGetProgramPipelineInfoLog}
+\item \texttt{glGetProgramInterface.}
+\item \texttt{glIsProgram}
+\item \texttt{glDeleteProgramPipelines}
+\item \texttt{glDeleteProgram}
+\item \texttt{glGetProgramResourceIndex}
+\item \texttt{glGetProgramResourceLocationIndex}
+\item \texttt{glActiveShaderProgram}
+\item \texttt{glGetProgramStagei}
+\item \texttt{glBindProgramPipeline}
+\item \texttt{glGetProgramResource}
+\item \texttt{glGetProgramResourceName}
+\item \texttt{glGenProgramPipelines}
+\item \texttt{glGetProgramInfoLog}
+\item \texttt{glProgramParameteri}
+\item \texttt{glUseProgramStages}
+\item \texttt{glProgramBinary}
+\item \texttt{glIsProgramPipeline}
+\item \texttt{glGetShaderInfoLog}
+\item \texttt{glDeleteShader}
+\item \texttt{glDetachShader}
+\item \texttt{glShaderBinary}
+\item \texttt{glGetAttachedShaders}
+\item \texttt{glGetShader}
+\item \texttt{glGetShaderSource}
+\item \texttt{glGetShaderPrecisionFormat}
+\item \texttt{glShaderStorageBlockBinding}
+\item \texttt{glIsShader}
+\item \texttt{glGetShaderi}
+\item \texttt{glReleaseShaderCompiler}
+\item \texttt{glBindAttribLocation}
+\item \texttt{glGetUniform}
+\item \texttt{glGetUniformLocation}
+\item \texttt{glGetActiveAttrib}
+\item \texttt{glGetActiveAttribSize}
+\item \texttt{glGetActiveAttribType}
+\item \texttt{glGetActiveUniform}
+\item \texttt{glGetAttribLocation}
+\item \texttt{glVertexAttrib}
+\item \texttt{glGetVertexAttrib}
+\item \texttt{glVertexAttribPointer}
+\item \texttt{glGetVertexAttribPointer}
+\item \texttt{glUniform}
+\item \texttt{glUniformMatrix}
+\item \texttt{glUniformSubroutinesu}
+\item \texttt{glGetUniformBlockIndex}
+\item \texttt{glGetActiveSubroutineUniform}
+\item \texttt{glGetActiveSubroutineUniformName}
+\item \texttt{glGetActiveUniformType}
+\item \texttt{glGetActiveUniformSize}
+\item \texttt{glGetActiveUniformBlockName}
+\item \texttt{glGetSubroutineUniformLocation}
+\item \texttt{glGetUniformIndices}
+\item \texttt{glGetActiveUniforms}
+\item \texttt{glUniformBlockBinding}
+\item \texttt{glGetActiveUniformBlock}
+\item \texttt{glGetActiveUniformName}
+\item \texttt{glGetSubroutineIndex}
+\item \texttt{glGetActiveSubroutineName}
+\item \texttt{glVertexAttribFormat}
+\item \texttt{glVertexAttribDivisor}
+\item \texttt{glVertexAttribBinding}
+\item \texttt{glEnableVertexAttribArray}
+\item \texttt{glDisableVertexAttribArray}
+\item \texttt{glDrawBuffers}
+\item \texttt{glVertexBindingDivisor}
+\item \texttt{glBindFragDataLocation}
+\item \texttt{glBindFragDataLocationIndexed}
+\item \texttt{glGetActiveAtomicCounterBuffer}
+\item \texttt{glBindImageTexture}
+\item \texttt{glGetUniformSubroutine}
+\item \texttt{glDispatchCompute}
+\item \texttt{glDispatchComputeIndirect}
+\item \texttt{glProvokingVertex}
+\item \texttt{glGetFragDataIndex}
+\item \texttt{glGetFragDataLocation}
+\item \texttt{glBindVertexBuffer} \\
+	"bind a buffer to a vertex buffer bind point" (only used for generic vertex attributes)
+\end{itemize}
+
+\subsection{Vertex Array Objects (related to generic vertex attributes)}
+\begin{itemize}
+\item \texttt{glGenVertexArrays} \\
+	"generate vertex array object names"
+\item \texttt{glDeleteVertexArrays} \\
+	"delete vertex array objects"
+\item \texttt{glIsVertexArray} \\
+	"determine if a name corresponds to a vertex array object"
+\item \texttt{glBindVertexArray} \\
+	"bind a vertex array object"
+\end{itemize}
+
+\subsection{Transform Feedback}
+\begin{itemize}
+\item \texttt{glGenTransformFeedbacks}
+\item \texttt{glDeleteTransformFeedbacks}
+\item \texttt{glBeginTransformFeedback}
+\item \texttt{glEndTransformFeedback}
+\item \texttt{glBindTransformFeedback}
+\item \texttt{glDrawTransformFeedback}
+\item \texttt{glDrawTransformFeedbackInstanced}
+\item \texttt{glDrawTransformFeedbackStream}
+\item \texttt{glDrawTransformFeedbackStreamInstanced}
+\item \texttt{glGetTransformFeedbackVarying}
+\item \texttt{glIsTransformFeedback}
+\item \texttt{glPauseTransformFeedback}
+\item \texttt{glResumeTransformFeedback}
+\item \texttt{glTransformFeedbackVaryings}
+\end{itemize}
+
+\section{Useless OpenGL Features}
+
+\subsection{Functions Related to Indexed Color Modes}
+\begin{itemize}
+\item \texttt{glIndexPointer}
+\item \texttt{glClearIndex}
+\item \texttt{glLogicOp}
+\end{itemize}
+
+\end{document}

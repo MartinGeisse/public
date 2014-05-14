@@ -1,0 +1,30 @@
+
+
+To make this a game:
+
+v1
+- achievements
+-> simple server action to claim an achievement (no checks, could
+   be easily hacked, but better than nothing)
+-> save userId, userAuthenticationToken via Java Preferences API
+	(java.util.prefs)
+-> authentication token not used yet for this API. Just pass userId
+   to claim the achievement.
+-> need another API to create a user. Returns userId and auth token.
+
+v2
+- players should see each other
+-> need a better network protocol
+-> section downloading / updates / notifications can stay at HTTP
+   for now, just player updates via the new protocol, but this
+   time the new protocol should be general enough to handle the
+   other things too (just not yet).
+
+v3
+- currency
+-> gain money by mining ores (directly, no inventory)
+-> new achievements
+
+v4
+- inventory for ores (later: items)
+-> stacking?

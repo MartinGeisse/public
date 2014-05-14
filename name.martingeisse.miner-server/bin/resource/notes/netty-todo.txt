@@ -1,0 +1,7 @@
+
+game message 0x0000 (server -> client): full list of players. int32
+numberOfPlayers, N x Player-Datensatz (session ID, x/y/z) -> client
+wählt farbe randommäßig aus der session ID
+v1: Wird vom Server 2x pro Sekunde gesendet. Client ignoriert "sich
+selbst"; updated Liste von anderen Spielern, die dann beim Rendern
+mit gezeichnet werden.

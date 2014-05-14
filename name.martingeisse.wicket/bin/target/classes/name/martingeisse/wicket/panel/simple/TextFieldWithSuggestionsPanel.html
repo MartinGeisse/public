@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+	<wicket:head>
+		<script type="text/javascript">
+			(function() {
+			
+				prepareTextFieldWithSuggestionsPanel = function(selector) {
+					var container = $(selector)[0];
+					var selectQuery = $('select', container);
+					var select = selectQuery[0];
+					var textFieldQuery = $('input', container);
+					var textField = textFieldQuery[0];
+					
+					selectQuery.change(function() {
+						var selectedOptionQuery = $('option:selected', selectQuery);
+						var selectedText = selectedOptionQuery.text();
+						var selectedValue = selectedOptionQuery.attr('value');
+						if (selectedValue == null || selectedValue == '') {
+							return;
+						}
+						$('option[value=""]', selectQuery).remove();
+						
+						if (selectedText.charAt(0) == '(') {
+							textField.value = '';
+							textField.style.visibility = 'visible';
+							textField.focus();
+						} else {
+							textField.style.visibility = 'hidden';
+							textField.value = selectedText;
+						}
+					});
+				}
+
+			})();
+		</script>
+	</wicket:head>
+	<body>
+		<wicket:panel>
+			<table style="border-collapse: collapse; border: 0px none red; width: 100%; ">
+				<tr>
+					<td style="width: auto; padding-right: 10px; ">
+						<select wicket:id="suggestions" style="width: 100%; " />
+					</td>
+					<td style="">
+						<input type="text" wicket:id="wrapped" style="width: 100%; "></input>
+					</td>
+				</tr>
+			</table>
+		</wicket:panel>
+	</body>
+</html>

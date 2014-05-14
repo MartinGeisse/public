@@ -1,0 +1,17 @@
+
+Instance IDs:
+------------------------------------
+- Use instance IDs 1, 2, ... for dynamic instances.
+- Use instance IDs -1, -2 ... for static instances.
+  -1 is the "world".
+- Use 0 as an invalid instance ID typed value.
+
+Instance Management
+------------------------------------
+Table in SQL database that keeps track of existing instances.
+(Just ID for now). Will keep the TTL of the instance in the future.
+
+Function to create an instance - allocate ID, *generate World*
+-> needs a trigger in the world like a merchant who sells instance access
+-> needs an inventory for access token items (instance keys)
+
