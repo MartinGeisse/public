@@ -1,4 +1,0 @@
-
-Render all faces of all sections with the same texture, only then switch textures
-
-shared VBOs zwischen per-direction objekten.
