@@ -6,6 +6,7 @@
 
 package name.martingeisse.stackd.client.gui.element;
 
+import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.system.StackdTexture;
 import org.lwjgl.opengl.GL11;
@@ -35,7 +36,7 @@ public final class FillTexture extends AbstractFillElement {
 	 * @param texture the texture to fill with
 	 */
 	public FillTexture(final StackdTexture texture) {
-		this.texture = texture;
+		setTexture(texture);
 		this.repetitionLengthX = -1;
 		this.repetitionLengthY = -1;
 	}
@@ -47,9 +48,9 @@ public final class FillTexture extends AbstractFillElement {
 	 * @param repetitionLengthY the y length to repeat the texture at
 	 */
 	public FillTexture(final StackdTexture texture, final int repetitionLengthX, final int repetitionLengthY) {
-		this.texture = texture;
-		this.repetitionLengthX = repetitionLengthX;
-		this.repetitionLengthY = repetitionLengthY;
+		setTexture(texture);
+		setRepetitionLengthX(repetitionLengthX);
+		setRepetitionLengthY(repetitionLengthY);
 	}
 
 	/**
@@ -58,6 +59,9 @@ public final class FillTexture extends AbstractFillElement {
 	 * @return this for chaining
 	 */
 	public FillTexture setRepetitionLengthX(final int repetitionLengthX) {
+		if (repetitionLengthX < 1) {
+			throw new IllegalArgumentException("invalid x repetition length: " + repetitionLengthX);
+		}
 		this.repetitionLengthX = repetitionLengthX;
 		return this;
 	}
@@ -68,6 +72,9 @@ public final class FillTexture extends AbstractFillElement {
 	 * @return this for chaining
 	 */
 	public FillTexture setRepetitionLengthY(final int repetitionLengthY) {
+		if (repetitionLengthY < 1) {
+			throw new IllegalArgumentException("invalid y repetition length: " + repetitionLengthY);
+		}
 		this.repetitionLengthY = repetitionLengthY;
 		return this;
 	}
@@ -79,8 +86,8 @@ public final class FillTexture extends AbstractFillElement {
 	 * @return this for chaining
 	 */
 	public FillTexture setRepetitionLengths(final int repetitionLengthX, final int repetitionLengthY) {
-		this.repetitionLengthX = repetitionLengthX;
-		this.repetitionLengthY = repetitionLengthY;
+		setRepetitionLengthX(repetitionLengthX);
+		setRepetitionLengthY(repetitionLengthY);
 		return this;
 	}
 
@@ -98,6 +105,7 @@ public final class FillTexture extends AbstractFillElement {
 	 * @return this for chaining
 	 */
 	public FillTexture setTexture(final StackdTexture texture) {
+		ParameterUtil.ensureNotNull(texture, "texture");
 		this.texture = texture;
 		return this;
 	}

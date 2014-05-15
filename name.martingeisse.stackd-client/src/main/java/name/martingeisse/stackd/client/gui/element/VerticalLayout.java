@@ -6,6 +6,7 @@
 
 package name.martingeisse.stackd.client.gui.element;
 
+import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.GuiElement;
 import name.martingeisse.stackd.client.gui.util.HorizontalAlignment;
@@ -42,6 +43,7 @@ public final class VerticalLayout extends AbstractListElement {
 	 * @return this for chaining
 	 */
 	public VerticalLayout setAlignment(HorizontalAlignment alignment) {
+		ParameterUtil.ensureNotNull(alignment, "alignment");
 		this.alignment = alignment;
 		return this;
 	}

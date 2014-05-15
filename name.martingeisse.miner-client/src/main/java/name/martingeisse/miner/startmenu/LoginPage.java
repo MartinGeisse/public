@@ -6,30 +6,19 @@
 
 package name.martingeisse.miner.startmenu;
 
-import name.martingeisse.launcher.assets.LauncherAssets;
 import name.martingeisse.miner.account.AccountApiClient;
-import name.martingeisse.stackd.client.frame.handlers.ExitHandler;
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.GuiEvent;
 import name.martingeisse.stackd.client.gui.control.MessageBox;
-import name.martingeisse.stackd.client.gui.control.Page;
-import name.martingeisse.stackd.client.gui.element.FillTexture;
-import name.martingeisse.stackd.client.gui.element.Margin;
 import name.martingeisse.stackd.client.gui.element.Spacer;
 import name.martingeisse.stackd.client.gui.element.VerticalLayout;
-import name.martingeisse.stackd.client.system.StackdTexture;
 import org.lwjgl.input.Keyboard;
 
 /**
  * The "login" menu page.
  */
-public class LoginPage extends Page {
+public class LoginPage extends AbstractStartmenuPage {
 
-	/**
-	 * the exitHandler
-	 */
-	private final ExitHandler exitHandler;
-	
 	/**
 	 * the username
 	 */
@@ -42,10 +31,8 @@ public class LoginPage extends Page {
 	
 	/**
 	 * Constructor.
-	 * @param exitHandler the exit handler
 	 */
-	public LoginPage(final ExitHandler exitHandler) {
-		this.exitHandler = exitHandler;
+	public LoginPage() {
 		
 		username = new LabeledTextField("Username");
 		password = new LabeledTextField("Password");
@@ -65,14 +52,9 @@ public class LoginPage extends Page {
 			}
 		});
 		menu.addElement(new Spacer(2 * Gui.GRID));
-		menu.addElement(new StartmenuButton("Quit") {
-			@Override
-			protected void onClick() {
-				exitHandler.setProgrammaticExit(true);
-			}
-		});
-		StackdTexture backgroundTexture = new StackdTexture(LauncherAssets.class, "dirt.png", false);
-		initializePage(new FillTexture(backgroundTexture), new Margin(menu, 30 * Gui.GRID, 30 * Gui.GRID));
+		menu.addElement(EXIT_BUTTON);
+		initializeStartmenuPage(menu);
+		
 	}
 	
 	/* (non-Javadoc)
@@ -94,7 +76,7 @@ public class LoginPage extends Page {
 		String password = this.password.getTextField().getValue();
 		try {
 			AccountApiClient.getInstance().login(username, password);
-			getGui().setRootElement(new ChooseCharacterPage(exitHandler));
+			getGui().setRootElement(new ChooseCharacterPage());
 		} catch (RuntimeException e) {
 			MessageBox.show(LoginPage.this, e.getMessage());
 		}

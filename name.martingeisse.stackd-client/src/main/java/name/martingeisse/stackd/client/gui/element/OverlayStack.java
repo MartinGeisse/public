@@ -6,6 +6,7 @@
 
 package name.martingeisse.stackd.client.gui.element;
 
+import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.stackd.client.gui.GuiElement;
 import name.martingeisse.stackd.client.gui.util.AreaAlignment;
 
@@ -43,6 +44,7 @@ public final class OverlayStack extends AbstractListElement {
 	 * @return this for chaining
 	 */
 	public OverlayStack setAlignment(AreaAlignment alignment) {
+		ParameterUtil.ensureNotNull(alignment, "alignment");
 		this.alignment = alignment;
 		requestLayout();
 		return this;

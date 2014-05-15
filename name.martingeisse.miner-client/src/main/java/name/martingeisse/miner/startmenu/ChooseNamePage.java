@@ -6,39 +6,60 @@
 
 package name.martingeisse.miner.startmenu;
 
-import name.martingeisse.stackd.client.frame.handlers.ExitHandler;
-import name.martingeisse.stackd.client.gui.control.Control;
+import org.lwjgl.input.Mouse;
+import name.martingeisse.miner.Main;
+import name.martingeisse.miner.ingame.IngameHandler;
+import name.martingeisse.stackd.client.gui.Gui;
+import name.martingeisse.stackd.client.gui.element.Spacer;
+import name.martingeisse.stackd.client.gui.element.VerticalLayout;
+
 
 /**
- * The "login" menu page.
+ * The "choose your name" menu page.
  */
-public class ChooseNamePage extends Control {
+public class ChooseNamePage extends AbstractStartmenuPage {
+
+	/**
+	 * the selectedName
+	 */
+	public static String selectedName;
+	
+	/**
+	 * the username
+	 */
+	private final LabeledTextField name;
 
 	/**
 	 * Constructor.
-	 * @param exitHandler the exit handler
 	 */
-	public ChooseNamePage(final ExitHandler exitHandler) {
-//		final VerticalLayout menu = new VerticalLayout();
-//		menu.addElement(new TextLine("Username"));
-//		menu.addElement(new Spacer(20));
-//		menu.addElement(new TextLine("Password"));
-//		menu.addElement(new Spacer(20));
-//		menu.addElement(new Sizer(new Button("Log in", Color.BLUE, Color.WHITE, Color.WHITE) {
-//			@Override
-//			protected void onClick() {
-//
-//			}
-//		}, 200, 50));
-//		menu.addElement(new Spacer(20));
-//		menu.addElement(new Sizer(new Button("Quit", Color.BLUE, Color.WHITE, Color.WHITE) {
-//			@Override
-//			protected void onClick() {
-//				exitHandler.setProgrammaticExit(true);
-//			}
-//		}, 200, 50));
-//		StackdTexture backgroundTexture = new StackdTexture(LauncherAssets.class, "dirt.png", false);
-//		setControlRootElement(new OverlayStack(new FillTexture(backgroundTexture), new Margin(menu, 50, 100)));
+	public ChooseNamePage() {
+		final VerticalLayout menu = new VerticalLayout();
+		this.name = new LabeledTextField("Name");
+		menu.addElement(name);
+		menu.addElement(new Spacer(2 * Gui.GRID));
+		menu.addElement(new StartmenuButton("Create Character") {
+			@Override
+			protected void onClick() {
+				selectedName = name.getTextField().getValue();
+				// TODO: create character
+				// TODO: use character
+				System.out.println("TODO actually load this player");
+				try {
+					Main.frameLoop.getRootHandler().setWrappedHandler(new IngameHandler());
+					Mouse.setGrabbed(true);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		});
+		menu.addElement(new Spacer(2 * Gui.GRID));
+		menu.addElement(new StartmenuButton("Back") {
+			@Override
+			protected void onClick() {
+				getGui().setRootElement(new ChooseFactionPage());
+			}
+		});
+		initializeStartmenuPage(menu);
 	}
 
 }

@@ -48,9 +48,8 @@ public abstract class AbstractWrapperElement extends GuiElement {
 	 */
 	public AbstractWrapperElement setWrappedElement(GuiElement wrappedElement) {
 		this.wrappedElement = wrappedElement;
-		if (wrappedElement != null) {
-			wrappedElement.notifyNewParent(this);
-		}
+		requireWrappedElement();
+		this.wrappedElement.notifyNewParent(this);
 		requestLayout();
 		return this;
 	}
@@ -60,7 +59,17 @@ public abstract class AbstractWrapperElement extends GuiElement {
 	 */
 	@Override
 	public void handleEvent(GuiEvent event) {
-		getWrappedElement().handleEvent(event);
+		requireWrappedElement();
+		wrappedElement.handleEvent(event);
+	}
+	
+	/**
+	 * Throws an {@link IllegalStateException} if no wrapped element is currently set.
+	 */
+	public final void requireWrappedElement() {
+		if (wrappedElement == null) {
+			throw new IllegalArgumentException(getClass().getName() + " has no wrapped element set");
+		}
 	}
 
 }

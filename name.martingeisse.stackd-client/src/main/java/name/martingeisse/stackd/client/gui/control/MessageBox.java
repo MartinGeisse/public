@@ -11,6 +11,7 @@ import name.martingeisse.stackd.client.gui.GuiElement;
 import name.martingeisse.stackd.client.gui.element.FillColor;
 import name.martingeisse.stackd.client.gui.element.Margin;
 import name.martingeisse.stackd.client.gui.element.OverlayStack;
+import name.martingeisse.stackd.client.gui.element.Sizer;
 import name.martingeisse.stackd.client.gui.element.TextLine;
 import name.martingeisse.stackd.client.gui.element.VerticalLayout;
 import name.martingeisse.stackd.client.gui.util.Color;
@@ -79,7 +80,7 @@ public class MessageBox extends Control {
 		button.addPulseEffect(new Color(255, 255, 255, 64));
 		verticalLayout.addElement(button);
 		
-		setControlRootElement(new Margin(verticalLayout, 30 * Gui.GRID));
+		setControlRootElement(new Sizer(verticalLayout, 50 * Gui.GRID, 30 * Gui.GRID));
 	}
 
 	/**

@@ -36,6 +36,7 @@ public final class MouseOverWrapper extends AbstractWrapperElement {
 	 */
 	@Override
 	public void requestSize(final int width, final int height) {
+		requireWrappedElement();
 		getWrappedElement().requestSize(width, height);
 		setSize(getWrappedElement().getWidth(), getWrappedElement().getHeight());
 	}
@@ -45,6 +46,7 @@ public final class MouseOverWrapper extends AbstractWrapperElement {
 	 */
 	@Override
 	protected void setChildrenLayoutPosition(int absoluteX, int absoluteY) {
+		requireWrappedElement();
 		getWrappedElement().setPosition(absoluteX, absoluteY);
 	}
 
@@ -53,6 +55,7 @@ public final class MouseOverWrapper extends AbstractWrapperElement {
 	 */
 	@Override
 	public void handleEvent(final GuiEvent event) {
+		requireWrappedElement();
 		if (isMouseInside()) {
 			getWrappedElement().handleEvent(event);
 		}

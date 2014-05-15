@@ -220,6 +220,7 @@ public final class Margin extends AbstractWrapperElement {
 	 */
 	@Override
 	public void requestSize(int width, int height) {
+		requireWrappedElement();
 		int remainingWidth = width - left - right;
 		int remainingHeight = height - top - bottom;
 		GuiElement wrappedElement = getWrappedElement();
@@ -232,6 +233,7 @@ public final class Margin extends AbstractWrapperElement {
 	 */
 	@Override
 	protected void setChildrenLayoutPosition(int absoluteX, int absoluteY) {
+		requireWrappedElement();
 		getWrappedElement().setPosition(absoluteX + left, absoluteY + top);
 	}
 

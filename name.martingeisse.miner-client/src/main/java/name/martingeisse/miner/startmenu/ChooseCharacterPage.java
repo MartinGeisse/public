@@ -7,39 +7,27 @@
 package name.martingeisse.miner.startmenu;
 
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
-import name.martingeisse.launcher.assets.LauncherAssets;
 import name.martingeisse.miner.Main;
 import name.martingeisse.miner.account.AccountApiClient;
 import name.martingeisse.miner.common.Faction;
 import name.martingeisse.miner.ingame.IngameHandler;
-import name.martingeisse.stackd.client.frame.handlers.ExitHandler;
 import name.martingeisse.stackd.client.gui.Gui;
-import name.martingeisse.stackd.client.gui.control.Page;
-import name.martingeisse.stackd.client.gui.element.FillTexture;
-import name.martingeisse.stackd.client.gui.element.Margin;
 import name.martingeisse.stackd.client.gui.element.Spacer;
 import name.martingeisse.stackd.client.gui.element.VerticalLayout;
-import name.martingeisse.stackd.client.system.StackdTexture;
 import org.lwjgl.input.Mouse;
 
 /**
  * The "choose your character" menu page.
  */
-public class ChooseCharacterPage extends Page {
-
-	/**
-	 * the exitHandler
-	 */
-	private final ExitHandler exitHandler;
+public class ChooseCharacterPage extends AbstractStartmenuPage {
 
 	/**
 	 * Constructor.
-	 * @param exitHandler the exit handler
 	 */
-	public ChooseCharacterPage(final ExitHandler exitHandler) {
-		this.exitHandler = exitHandler;
+	public ChooseCharacterPage() {
 		final VerticalLayout menu = new VerticalLayout();
 		
+		// fetch players
 		JsonAnalyzer json = AccountApiClient.getInstance().fetchPlayers();
 		json = json.analyzeMapElement("players");
 		int playerIndex = 0;
@@ -66,21 +54,17 @@ public class ChooseCharacterPage extends Page {
 			menu.addElement(new Spacer(2 * Gui.GRID));
 		}
 		
+		// build the remaining menu
 		menu.addElement(new StartmenuButton("Create Character") {
 			@Override
 			protected void onClick() {
-				getGui().setRootElement(new ChooseFactionPage(exitHandler));
+				getGui().setRootElement(new ChooseFactionPage());
 			}
 		});
 		menu.addElement(new Spacer(2 * Gui.GRID));
-		menu.addElement(new StartmenuButton("Quit") {
-			@Override
-			protected void onClick() {
-				exitHandler.setProgrammaticExit(true);
-			}
-		});
-		StackdTexture backgroundTexture = new StackdTexture(LauncherAssets.class, "dirt.png", false);
-		initializePage(new FillTexture(backgroundTexture), new Margin(menu, 30 * Gui.GRID, 30 * Gui.GRID));
+		menu.addElement(EXIT_BUTTON);
+		initializeStartmenuPage(menu);
+		
 	}
 
 }

@@ -6,6 +6,7 @@
 
 package name.martingeisse.stackd.client.gui.element;
 
+import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.stackd.client.gui.GuiElement;
 import name.martingeisse.stackd.client.gui.GuiEvent;
 import name.martingeisse.stackd.client.gui.util.Color;
@@ -60,6 +61,7 @@ public final class ThinBorder extends AbstractWrapperElement {
 	 * @return this for chaining
 	 */
 	public ThinBorder setColor(Color color) {
+		ParameterUtil.ensureNotNull(color, "color");
 		this.color = color;
 		return this;
 	}
@@ -87,6 +89,7 @@ public final class ThinBorder extends AbstractWrapperElement {
 	 */
 	@Override
 	public void handleEvent(GuiEvent event) {
+		requireWrappedElement();
 		getWrappedElement().handleEvent(event);
 		if (event == GuiEvent.DRAW) {
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -109,6 +112,7 @@ public final class ThinBorder extends AbstractWrapperElement {
 	 */
 	@Override
 	public void requestSize(int width, int height) {
+		requireWrappedElement();
 		getWrappedElement().requestSize(width, height);
 		setSize(getWrappedElement().getWidth(), getWrappedElement().getHeight());
 	}
@@ -118,6 +122,7 @@ public final class ThinBorder extends AbstractWrapperElement {
 	 */
 	@Override
 	protected void setChildrenLayoutPosition(int absoluteX, int absoluteY) {
+		requireWrappedElement();
 		getWrappedElement().setPosition(absoluteX, absoluteY);
 	}
 	

@@ -9,6 +9,7 @@ package name.martingeisse.stackd.client.gui.element;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
+import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.stackd.client.gui.util.Color;
 import name.martingeisse.stackd.client.gui.util.PulseFunction;
 import org.lwjgl.opengl.GL11;
@@ -59,6 +60,7 @@ public final class PulseFillColor extends AbstractFillElement {
 	 * @return this for chaining
 	 */
 	public PulseFillColor setColor(final Color color) {
+		ParameterUtil.ensureNotNull(color, "color");
 		this.color = color;
 		return this;
 	}
@@ -77,6 +79,7 @@ public final class PulseFillColor extends AbstractFillElement {
 	 * @return this for chaining
 	 */
 	public PulseFillColor setPulseFunction(final PulseFunction pulseFunction) {
+		ParameterUtil.ensureNotNull(pulseFunction, "pulseFunction");
 		this.pulseFunction = pulseFunction;
 		return this;
 	}

@@ -7,6 +7,7 @@
 package name.martingeisse.stackd.client.gui.element;
 
 import static org.lwjgl.opengl.GL14.glWindowPos2i;
+import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.GuiElement;
 import name.martingeisse.stackd.client.gui.GuiEvent;
@@ -58,6 +59,7 @@ public final class TextLine extends GuiElement {
 	 * @return this for chaining
 	 */
 	public TextLine setFont(final Font font) {
+		ParameterUtil.ensureNotNull(font, "font");
 		this.font = font;
 		requestLayout();
 		return this;
@@ -77,6 +79,7 @@ public final class TextLine extends GuiElement {
 	 * @return this for chaining
 	 */
 	public TextLine setColor(Color color) {
+		ParameterUtil.ensureNotNull(color, "color");
 		this.color = color;
 		return this;
 	}
@@ -95,6 +98,7 @@ public final class TextLine extends GuiElement {
 	 * @return this for chaining
 	 */
 	public TextLine setText(final String text) {
+		ParameterUtil.ensureNotNull(text, "text");
 		this.text = text;
 		requestLayout();
 		return this;

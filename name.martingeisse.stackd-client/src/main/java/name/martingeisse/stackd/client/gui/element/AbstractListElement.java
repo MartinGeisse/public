@@ -8,6 +8,7 @@ package name.martingeisse.stackd.client.gui.element;
 
 import java.util.ArrayList;
 import java.util.List;
+import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.stackd.client.gui.GuiElement;
 import name.martingeisse.stackd.client.gui.GuiEvent;
 
@@ -58,6 +59,7 @@ public abstract class AbstractListElement extends GuiElement {
 	 * @return this for chaining
 	 */
 	public final AbstractListElement addElement(GuiElement element) {
+		ParameterUtil.ensureNotNull(element, "element");
 		wrappedElements.add(element);
 		element.notifyNewParent(this);
 		requestLayout();
@@ -71,6 +73,7 @@ public abstract class AbstractListElement extends GuiElement {
 	 * @return this for chaining
 	 */
 	public final AbstractListElement replaceElement(int index, GuiElement newElement) {
+		ParameterUtil.ensureNotNull(newElement, "newElement");
 		getWrappedElements().get(index).notifyNewParent(null);
 		getWrappedElements().set(index, newElement);
 		newElement.notifyNewParent(this);

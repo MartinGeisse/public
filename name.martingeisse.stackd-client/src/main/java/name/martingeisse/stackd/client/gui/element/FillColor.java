@@ -9,6 +9,7 @@ package name.martingeisse.stackd.client.gui.element;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
+import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.stackd.client.gui.util.Color;
 import org.lwjgl.opengl.GL11;
 
@@ -27,7 +28,7 @@ public final class FillColor extends AbstractFillElement {
 	 * @param color the color to fill with
 	 */
 	public FillColor(Color color) {
-		this.color = color;
+		setColor(color);
 	}
 	
 	/**
@@ -44,6 +45,7 @@ public final class FillColor extends AbstractFillElement {
 	 * @return this for chaining
 	 */
 	public FillColor setColor(Color color) {
+		ParameterUtil.ensureNotNull(color, "color");
 		this.color = color;
 		return this;
 	}
