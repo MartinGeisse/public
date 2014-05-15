@@ -6,6 +6,7 @@
 
 package name.martingeisse.stackd.client.gui.control;
 
+import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.GuiElement;
 import name.martingeisse.stackd.client.gui.GuiEvent;
 import name.martingeisse.stackd.client.gui.element.Margin;
@@ -48,7 +49,7 @@ public abstract class Button extends Control {
 	 */
 	public Button() {
 		textLine = new TextLine();
-		margin = new Margin(textLine, 10);
+		margin = new Margin(textLine, Gui.GRID);
 		stack = new OverlayStack();
 		stack.addElement(NullElement.instance);
 		stack.addElement(margin);

@@ -6,6 +6,7 @@
 
 package name.martingeisse.stackd.client.gui.element;
 
+import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.system.StackdTexture;
 import org.lwjgl.opengl.GL11;
 
@@ -35,8 +36,8 @@ public final class FillTexture extends AbstractFillElement {
 	 */
 	public FillTexture(final StackdTexture texture) {
 		this.texture = texture;
-		this.repetitionLengthX = texture.getWidth();
-		this.repetitionLengthY = texture.getHeight();
+		this.repetitionLengthX = -1;
+		this.repetitionLengthY = -1;
 	}
 
 	/**
@@ -52,14 +53,6 @@ public final class FillTexture extends AbstractFillElement {
 	}
 
 	/**
-	 * Getter method for the repetitionLengthX.
-	 * @return the repetitionLengthX
-	 */
-	public int getRepetitionLengthX() {
-		return repetitionLengthX;
-	}
-
-	/**
 	 * Setter method for the repetitionLengthX.
 	 * @param repetitionLengthX the repetitionLengthX to set
 	 * @return this for chaining
@@ -67,14 +60,6 @@ public final class FillTexture extends AbstractFillElement {
 	public FillTexture setRepetitionLengthX(final int repetitionLengthX) {
 		this.repetitionLengthX = repetitionLengthX;
 		return this;
-	}
-
-	/**
-	 * Getter method for the repetitionLengthY.
-	 * @return the repetitionLengthY
-	 */
-	public int getRepetitionLengthY() {
-		return repetitionLengthY;
 	}
 
 	/**
@@ -126,8 +111,11 @@ public final class FillTexture extends AbstractFillElement {
 		GL11.glDisable(GL11.GL_BLEND);
 		texture.glBindTexture();
 		final int x = getAbsoluteX(), y = getAbsoluteY(), w = getWidth(), h = getHeight();
-		final float s = ((float)w / (float)repetitionLengthX);
-		final float t = ((float)h / (float)repetitionLengthY);
+		final Gui gui = getGui();
+		final float effectiveRepetitionLengthX = (repetitionLengthX < 1 ? gui.pixelsToUnits(texture.getWidth()) : repetitionLengthX);
+		final float effectiveRepetitionLengthY = (repetitionLengthY < 1 ? gui.pixelsToUnits(texture.getHeight()) : repetitionLengthY);
+		final float s = (w / effectiveRepetitionLengthX);
+		final float t = (h / effectiveRepetitionLengthY);
 
 		GL11.glColor3ub((byte)255, (byte)255, (byte)255);
 		GL11.glBegin(GL11.GL_TRIANGLE_FAN);

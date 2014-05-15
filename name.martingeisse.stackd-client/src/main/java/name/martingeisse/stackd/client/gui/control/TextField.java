@@ -6,6 +6,7 @@
 
 package name.martingeisse.stackd.client.gui.control;
 
+import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.GuiElement;
 import name.martingeisse.stackd.client.gui.GuiEvent;
 import name.martingeisse.stackd.client.gui.element.FillColor;
@@ -63,7 +64,7 @@ public final class TextField extends Control implements IFocusableElement {
 	 */
 	public TextField() {
 		this.textLine = new TextLine();
-		this.margin = new Margin(textLine, 3);
+		this.margin = new Margin(textLine, 5 * Gui.MINIGRID);
 		this.overlayStack = new OverlayStack().setAlignment(AreaAlignment.LEFT_CENTER);
 		overlayStack.addElement(new FillColor(new Color(0, 0, 64, 255)));
 		overlayStack.addElement(margin);

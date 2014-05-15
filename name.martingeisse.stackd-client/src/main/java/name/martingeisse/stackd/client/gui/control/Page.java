@@ -8,9 +8,10 @@ package name.martingeisse.stackd.client.gui.control;
 
 import name.martingeisse.stackd.client.gui.GuiElement;
 import name.martingeisse.stackd.client.gui.GuiEvent;
+import name.martingeisse.stackd.client.gui.element.FillColor;
 import name.martingeisse.stackd.client.gui.element.OverlayStack;
-import name.martingeisse.stackd.client.gui.element.Spacer;
 import name.martingeisse.stackd.client.gui.util.AreaAlignment;
+import name.martingeisse.stackd.client.gui.util.Color;
 
 /**
  * This element shows a main element over a background filler, and
@@ -19,6 +20,11 @@ import name.martingeisse.stackd.client.gui.util.AreaAlignment;
  */
 public class Page extends Control {
 
+	/**
+	 * the DARK_OVERLAY
+	 */
+	private static final Color DARK_OVERLAY = new Color(0, 0, 0, 192);
+	
 	/**
 	 * Constructor.
 	 * 
@@ -30,7 +36,7 @@ public class Page extends Control {
 		stack.setAlignment(AreaAlignment.CENTER);
 		stack.addElement(backgroundElement);
 		stack.addElement(mainElement);
-		stack.addElement(new Spacer(1));
+		stack.addElement(new FillColor(Color.TRANSPARENT));
 		setControlRootElement(stack);
 	}
 
@@ -56,6 +62,8 @@ public class Page extends Control {
 						getStack().addElement(popupElement);
 					}
 				}
+				FillColor fillColor = (FillColor)getStack().getWrappedElements().get(2);
+				fillColor.setColor(popupElement == null ? Color.TRANSPARENT : DARK_OVERLAY);
 			}
 		});
 	}

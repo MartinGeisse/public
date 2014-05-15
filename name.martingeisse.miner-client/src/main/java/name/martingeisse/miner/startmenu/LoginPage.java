@@ -9,6 +9,7 @@ package name.martingeisse.miner.startmenu;
 import name.martingeisse.launcher.assets.LauncherAssets;
 import name.martingeisse.miner.account.AccountApiClient;
 import name.martingeisse.stackd.client.frame.handlers.ExitHandler;
+import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.GuiEvent;
 import name.martingeisse.stackd.client.gui.control.MessageBox;
 import name.martingeisse.stackd.client.gui.control.Page;
@@ -54,16 +55,16 @@ public class LoginPage extends Page {
 		
 		final VerticalLayout menu = new VerticalLayout();
 		menu.addElement(username);
-		menu.addElement(new Spacer(20));
+		menu.addElement(new Spacer(2 * Gui.GRID));
 		menu.addElement(password);
-		menu.addElement(new Spacer(20));
+		menu.addElement(new Spacer(2 * Gui.GRID));
 		menu.addElement(new StartmenuButton("Log in") {
 			@Override
 			protected void onClick() {
 				login();
 			}
 		});
-		menu.addElement(new Spacer(20));
+		menu.addElement(new Spacer(2 * Gui.GRID));
 		menu.addElement(new StartmenuButton("Quit") {
 			@Override
 			protected void onClick() {
@@ -71,7 +72,7 @@ public class LoginPage extends Page {
 			}
 		});
 		StackdTexture backgroundTexture = new StackdTexture(LauncherAssets.class, "dirt.png", false);
-		initializePage(new FillTexture(backgroundTexture), new Margin(menu, 200, 300));
+		initializePage(new FillTexture(backgroundTexture), new Margin(menu, 30 * Gui.GRID, 30 * Gui.GRID));
 	}
 	
 	/* (non-Javadoc)

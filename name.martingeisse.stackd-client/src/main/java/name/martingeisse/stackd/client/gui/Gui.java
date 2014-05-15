@@ -9,25 +9,50 @@ package name.martingeisse.stackd.client.gui;
 import java.util.LinkedList;
 import java.util.Queue;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 import name.martingeisse.stackd.client.gui.element.IFocusableElement;
 import name.martingeisse.stackd.client.system.Font;
 
 
 /**
  * The main container class for the GUI.
+ * 
+ * The GUI uses an integer coordinate system where the total height
+ * of the GUI is a hundred thousand units, and the total width a determined such
+ * that a unit has the same length along either axis.
  */
 public final class Gui {
 
 	/**
-	 * the width
+	 * the HEIGHT_UNITS
 	 */
-	private final int width;
-
+	public static final int HEIGHT_UNITS = 100000;
+	
 	/**
-	 * the height
+	 * The "normal" grid to align things. The total height is 100 grid clicks.
 	 */
-	private final int height;
-
+	public static final int GRID = 1000;
+	
+	/**
+	 * The "mini" grid to align things. The total height is 1000 minigrid clicks. 
+	 */
+	public static final int MINIGRID = 100;
+	
+	/**
+	 * the widthPixels
+	 */
+	private final int widthPixels;
+	
+	/**
+	 * the heightPixels
+	 */
+	private final int heightPixels;
+	
+	/**
+	 * the widthUnits
+	 */
+	private final int widthUnits;
+	
 	/**
 	 * the rootElement
 	 */
@@ -60,29 +85,38 @@ public final class Gui {
 
 	/**
 	 * Constructor.
-	 * @param width the screen width
-	 * @param height the screen height
+	 * @param widthPixels the width of the GUI in pixels
+	 * @param heightPixels the height of the GUI in pixels
 	 */
-	public Gui(final int width, final int height) {
-		this.width = width;
-		this.height = height;
+	public Gui(int widthPixels, int heightPixels) {
+		this.widthPixels = widthPixels;
+		this.heightPixels = heightPixels;
+		this.widthUnits = pixelsToUnits(widthPixels);
 		this.followupActions = new LinkedList<Runnable>();
 	}
 
 	/**
-	 * Getter method for the width.
-	 * @return the width
+	 * Getter method for the widthPixels.
+	 * @return the widthPixels
 	 */
-	public int getWidth() {
-		return width;
+	public int getWidthPixels() {
+		return widthPixels;
 	}
 	
 	/**
-	 * Getter method for the height.
-	 * @return the height
+	 * Getter method for the heightPixels.
+	 * @return the heightPixels
 	 */
-	public int getHeight() {
-		return height;
+	public int getHeightPixels() {
+		return heightPixels;
+	}
+	
+	/**
+	 * Getter method for the widthUnits.
+	 * @return the widthUnits
+	 */
+	public int getWidthUnits() {
+		return widthUnits;
 	}
 	
 	/**
@@ -118,10 +152,17 @@ public final class Gui {
 		if (rootElement == null) {
 			return;
 		}
-		if (event == GuiEvent.DRAW && layoutRequested) {
-			rootElement.requestSize(width, height);
-			rootElement.setPosition(0, 0);
-			layoutRequested = false;
+		if (event == GuiEvent.DRAW) {
+			if (layoutRequested) {
+				rootElement.requestSize(widthUnits, HEIGHT_UNITS);
+				rootElement.setPosition(0, 0);
+				layoutRequested = false;
+			}
+			GL11.glMatrixMode(GL11.GL_MODELVIEW);
+			GL11.glLoadIdentity();
+			GL11.glMatrixMode(GL11.GL_PROJECTION);
+			GL11.glLoadIdentity();
+			GL11.glOrtho(0, widthUnits, HEIGHT_UNITS, 0, -1, 1);
 		}
 		time = (int)System.currentTimeMillis();
 		rootElement.handleEvent(event);
@@ -132,7 +173,7 @@ public final class Gui {
 	 * @return the mouseX
 	 */
 	public int getMouseX() {
-		return Mouse.getX();
+		return pixelsToUnits(Mouse.getX());
 	}
 	
 	/**
@@ -140,7 +181,25 @@ public final class Gui {
 	 * @return the mouseY
 	 */
 	public int getMouseY() {
-		return (height - Mouse.getY());
+		return pixelsToUnits(heightPixels - Mouse.getY());
+	}
+	
+	/**
+	 * Converts coordinate units to pixels.
+	 * @param units the units
+	 * @return the pixels
+	 */
+	public int unitsToPixels(int units) {
+		return units * heightPixels / HEIGHT_UNITS;
+	}
+	
+	/**
+	 * Converts pixels to coordinate units.
+	 * @param pixels the pixels
+	 * @return the coordinate units
+	 */
+	public int pixelsToUnits(int pixels) {
+		return pixels * HEIGHT_UNITS / heightPixels;
 	}
 	
 	/**

@@ -17,7 +17,6 @@ import name.martingeisse.stackd.client.glworker.GlWorkUnit;
 import name.martingeisse.stackd.client.glworker.GlWorkerLoop;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
 /**
  * This handler draws the GUI and sends events to it.
@@ -70,15 +69,7 @@ public final class GuiFrameHandler extends AbstractFrameHandler {
 	 * Called in the OpenGL thread.
 	 */
 	private synchronized void drawInternal() {
-
-		// render nifty
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		GL11.glLoadIdentity();
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glLoadIdentity();
-		GL11.glOrtho(0, 800, 600, 0, -1, 1);
 		gui.fireEvent(GuiEvent.DRAW);
-		
 	}
 
 	/* (non-Javadoc)

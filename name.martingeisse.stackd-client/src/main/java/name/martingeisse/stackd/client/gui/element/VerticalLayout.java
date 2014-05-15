@@ -6,6 +6,7 @@
 
 package name.martingeisse.stackd.client.gui.element;
 
+import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.GuiElement;
 import name.martingeisse.stackd.client.gui.util.HorizontalAlignment;
 
@@ -52,7 +53,7 @@ public final class VerticalLayout extends AbstractListElement {
 	public void requestSize(int width, int height) {
 		int requiredWidth = width, requiredHeight = 0;
 		for (GuiElement element : getWrappedElements()) {
-			element.requestSize(width, 10); // TODO configurable? another indication that method chaining would be cool here
+			element.requestSize(width, Gui.GRID);
 			requiredWidth = Math.max(requiredWidth, element.getWidth());
 			requiredHeight += element.getHeight();
 		}

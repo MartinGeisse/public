@@ -9,6 +9,7 @@ package name.martingeisse.miner.startmenu;
 import name.martingeisse.launcher.assets.LauncherAssets;
 import name.martingeisse.miner.common.Faction;
 import name.martingeisse.stackd.client.frame.handlers.ExitHandler;
+import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.control.Page;
 import name.martingeisse.stackd.client.gui.element.FillTexture;
 import name.martingeisse.stackd.client.gui.element.Margin;
@@ -43,7 +44,7 @@ public class ChooseFactionPage extends Page {
 					System.out.println("TODO actually use this faction");
 				}
 			});
-			menu.addElement(new Spacer(20));
+			menu.addElement(new Spacer(2 * Gui.GRID));
 		}
 		
 		menu.addElement(new StartmenuButton("Back") {
@@ -53,7 +54,7 @@ public class ChooseFactionPage extends Page {
 			}
 		});
 		StackdTexture backgroundTexture = new StackdTexture(LauncherAssets.class, "dirt.png", false);
-		initializePage(new FillTexture(backgroundTexture), new Margin(menu, 200, 300));
+		initializePage(new FillTexture(backgroundTexture), new Margin(menu, 30 * Gui.GRID, 30 * Gui.GRID));
 	}
 
 }

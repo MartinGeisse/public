@@ -6,6 +6,7 @@
 
 package name.martingeisse.stackd.client.gui.control;
 
+import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.GuiElement;
 import name.martingeisse.stackd.client.gui.element.FillColor;
 import name.martingeisse.stackd.client.gui.element.Margin;
@@ -60,7 +61,7 @@ public class MessageBox extends Control {
 		VerticalLayout verticalLayout = new VerticalLayout();
 		
 		TextLine textLine = new TextLine().setText(message);
-		Margin textLineMargin = new Margin(textLine, 20);
+		Margin textLineMargin = new Margin(textLine, 2 * Gui.GRID);
 		OverlayStack textStack = new OverlayStack();
 		textStack.addElement(new FillColor(new Color(128, 128, 128, 255)));
 		textStack.addElement(textLineMargin);
@@ -78,7 +79,7 @@ public class MessageBox extends Control {
 		button.addPulseEffect(new Color(255, 255, 255, 64));
 		verticalLayout.addElement(button);
 		
-		setControlRootElement(new Margin(verticalLayout, 200));
+		setControlRootElement(new Margin(verticalLayout, 30 * Gui.GRID));
 	}
 
 	/**

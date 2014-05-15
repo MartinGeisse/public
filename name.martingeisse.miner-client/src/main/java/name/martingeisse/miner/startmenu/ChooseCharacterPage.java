@@ -13,6 +13,7 @@ import name.martingeisse.miner.account.AccountApiClient;
 import name.martingeisse.miner.common.Faction;
 import name.martingeisse.miner.ingame.IngameHandler;
 import name.martingeisse.stackd.client.frame.handlers.ExitHandler;
+import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.control.Page;
 import name.martingeisse.stackd.client.gui.element.FillTexture;
 import name.martingeisse.stackd.client.gui.element.Margin;
@@ -62,7 +63,7 @@ public class ChooseCharacterPage extends Page {
 				}
 			});
 			playerIndex++;
-			menu.addElement(new Spacer(20));
+			menu.addElement(new Spacer(2 * Gui.GRID));
 		}
 		
 		menu.addElement(new StartmenuButton("Create Character") {
@@ -71,7 +72,7 @@ public class ChooseCharacterPage extends Page {
 				getGui().setRootElement(new ChooseFactionPage(exitHandler));
 			}
 		});
-		menu.addElement(new Spacer(20));
+		menu.addElement(new Spacer(2 * Gui.GRID));
 		menu.addElement(new StartmenuButton("Quit") {
 			@Override
 			protected void onClick() {
@@ -79,7 +80,7 @@ public class ChooseCharacterPage extends Page {
 			}
 		});
 		StackdTexture backgroundTexture = new StackdTexture(LauncherAssets.class, "dirt.png", false);
-		initializePage(new FillTexture(backgroundTexture), new Margin(menu, 200, 300));
+		initializePage(new FillTexture(backgroundTexture), new Margin(menu, 30 * Gui.GRID, 30 * Gui.GRID));
 	}
 
 }
