@@ -7,11 +7,13 @@
 package name.martingeisse.api.servlet;
 
 import java.util.EnumSet;
+
 import javax.servlet.DispatcherType;
+
 import name.martingeisse.database.EntityConnectionServletFilter;
 import name.martingeisse.jetty.AntiJsessionidUrlFilter;
 import name.martingeisse.jetty.GlobalServletContext;
-import name.martingeisse.jetty.SideEffectsOriginRestrictionFilter;
+
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ssl.SslSocketConnector;
