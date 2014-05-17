@@ -9,6 +9,7 @@ package name.martingeisse.stackd.client.gui.control;
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.GuiElement;
 import name.martingeisse.stackd.client.gui.GuiEvent;
+import name.martingeisse.stackd.client.gui.element.Glue;
 import name.martingeisse.stackd.client.gui.element.Margin;
 import name.martingeisse.stackd.client.gui.element.MouseOverWrapper;
 import name.martingeisse.stackd.client.gui.element.NullElement;
@@ -46,13 +47,18 @@ public abstract class Button extends Control {
 	
 	/**
 	 * Constructor.
+	 * @param fillHorizontal whether the button should fill the available horizontal
+	 * space, no matter its natural size
+	 * @param fillVertical whether the button should fill the available vertical
+	 * space, no matter its natural size
 	 */
-	public Button() {
+	public Button(boolean fillHorizontal, boolean fillVertical) {
 		textLine = new TextLine();
 		margin = new Margin(textLine, Gui.GRID);
+		Glue glue = new Glue(margin).setFillHorizontal(fillHorizontal).setFillVertical(fillVertical);
 		stack = new OverlayStack();
 		stack.addElement(NullElement.instance);
-		stack.addElement(margin);
+		stack.addElement(glue);
 		border = new ThinBorder(stack);
 		setControlRootElement(border);
 	}

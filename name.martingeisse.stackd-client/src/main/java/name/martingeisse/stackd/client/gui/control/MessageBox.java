@@ -12,7 +12,7 @@ import name.martingeisse.stackd.client.gui.element.FillColor;
 import name.martingeisse.stackd.client.gui.element.Margin;
 import name.martingeisse.stackd.client.gui.element.OverlayStack;
 import name.martingeisse.stackd.client.gui.element.Sizer;
-import name.martingeisse.stackd.client.gui.element.TextLine;
+import name.martingeisse.stackd.client.gui.element.TextParagraph;
 import name.martingeisse.stackd.client.gui.element.VerticalLayout;
 import name.martingeisse.stackd.client.gui.util.Color;
 
@@ -61,14 +61,14 @@ public class MessageBox extends Control {
 	public MessageBox(final String message) {
 		VerticalLayout verticalLayout = new VerticalLayout();
 		
-		TextLine textLine = new TextLine().setText(message);
-		Margin textLineMargin = new Margin(textLine, 2 * Gui.GRID);
+		TextParagraph textParagraph = new TextParagraph().setText(message);
+		Margin textLineMargin = new Margin(textParagraph, 2 * Gui.GRID);
 		OverlayStack textStack = new OverlayStack();
 		textStack.addElement(new FillColor(new Color(128, 128, 128, 255)));
 		textStack.addElement(textLineMargin);
 		verticalLayout.addElement(textStack);
 		
-		Button button = new Button() {
+		Button button = new Button(true, false) {
 			@Override
 			protected void onClick() {
 				removeFromPages();

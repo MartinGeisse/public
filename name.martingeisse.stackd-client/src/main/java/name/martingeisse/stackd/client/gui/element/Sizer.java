@@ -13,6 +13,10 @@ import name.martingeisse.stackd.client.gui.util.AreaAlignment;
  * This element works somewhat similar to a {@link Margin}. However, instead of
  * specifying the amount to move inwards from the enclosing element, this
  * element specifies the size and alignment of the inner element directly.
+ * 
+ * The size along either axis can be negative to disable the sizer's effect
+ * and pass the requested size from the enclosing element down to the wrapped
+ * element.
  */
 public final class Sizer extends AbstractWrapperElement {
 
@@ -116,8 +120,8 @@ public final class Sizer extends AbstractWrapperElement {
 	public void requestSize(final int width, final int height) {
 		requireWrappedElement();
 		final GuiElement wrappedElement = getWrappedElement();
-		wrappedElement.requestSize(innerWidth, innerHeight);
-		setSize(width, height);
+		wrappedElement.requestSize(innerWidth < 0 ? width : innerWidth, innerHeight < 0 ? height : innerHeight);
+		setSize(innerWidth < 0 ? wrappedElement.getWidth() : width, innerHeight < 0 ? wrappedElement.getHeight() : height);
 	}
 
 	/* (non-Javadoc)
