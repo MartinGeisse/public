@@ -78,7 +78,7 @@ public class LoginPage extends AbstractStartmenuPage {
 			AccountApiClient.getInstance().login(username, password);
 			getGui().setRootElement(new ChooseCharacterPage());
 		} catch (RuntimeException e) {
-			MessageBox.show(LoginPage.this, e.getMessage());
+			new MessageBox(e.getMessage()).show(LoginPage.this);
 		}
 	}
 

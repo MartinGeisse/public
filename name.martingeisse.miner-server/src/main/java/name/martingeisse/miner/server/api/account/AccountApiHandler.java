@@ -19,9 +19,10 @@ public final class AccountApiHandler extends NamedResourceFolderHandler {
 	public AccountApiHandler() {
 		getResources().put("login", new LoginHandler());
 		getResources().put("getPlayers", new PlayerListHandler());
-		getResources().put("getPlayerDetails", new PlayerDetailsHandler());
 		getResources().put("createPlayer", new CreatePlayerHandler());
+		getResources().put("getPlayerDetails", new PlayerDetailsHandler());
 		getResources().put("accessPlayer", new AccessPlayerHandler());
+		getResources().put("deletePlayer", new DeletePlayerHandler());
 	}
 	
 }

@@ -13,6 +13,7 @@ import name.martingeisse.miner.common.Faction;
 import name.martingeisse.miner.ingame.IngameHandler;
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.GuiElement;
+import name.martingeisse.stackd.client.gui.control.MessageBox;
 import name.martingeisse.stackd.client.gui.element.FillColor;
 import name.martingeisse.stackd.client.gui.element.Margin;
 import name.martingeisse.stackd.client.gui.element.OverlayStack;
@@ -66,19 +67,34 @@ public class PlayerDetailsPage extends AbstractStartmenuPage {
 		final VerticalLayout menu = new VerticalLayout();
 		menu.addElement(buildInfoBox());
 		menu.addElement(new Spacer(2 * Gui.GRID));
-		menu.addElement(new Sizer(new StartmenuButton("Play!", true) {
+		menu.addElement(new Sizer(new StartmenuButton("Play!") {
 			@Override
 			protected void onClick() {
 				play();
 			}
 		}, -1, 10 * Gui.GRID));
 		menu.addElement(new Spacer(2 * Gui.GRID));
-		menu.addElement(new StartmenuButton("Back") {
+		menu.addElement(new StartmenuButton("Delete Character") {
+			@Override
+			protected void onClick() {
+				new MessageBox("Really delete this character?", MessageBox.YES_NO) {
+					@Override
+					protected void onClose(int buttonIndex) {
+						if (buttonIndex == 0) {
+							AccountApiClient.getInstance().deletePlayer(PlayerDetailsPage.this.playerId);
+							getGui().setRootElement(new ChooseCharacterPage());
+						}
+					};
+				}.show(PlayerDetailsPage.this);
+			}
+		});
+		menu.addElement(new Spacer(2 * Gui.GRID));
+		menu.addElement(new Sizer(new StartmenuButton("Back") {
 			@Override
 			protected void onClick() {
 				getGui().setRootElement(new ChooseCharacterPage());
 			}
-		});
+		}, -1, 5 * Gui.GRID));
 		initializeStartmenuPage(menu);
 		
 	}

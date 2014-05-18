@@ -89,6 +89,20 @@ public final class AccountApiClient {
 	}
 	
 	/**
+	 * 
+	 */
+	private JsonObjectBuilder<String> createLoggedInRequest() {
+		return new JsonBuilder().object().property("accountAccessToken").string(accountAccessToken);
+	}
+	
+	/**
+	 * 
+	 */
+	private JsonObjectBuilder<String> createPlayerRequest(long playerId) {
+		return createLoggedInRequest().property("playerId").number(playerId);
+	}
+	
+	/**
 	 * Sends username and password to the server, asking for an account access token.
 	 * 
 	 * @param username the username
@@ -107,19 +121,7 @@ public final class AccountApiClient {
 	 * @return the list of players
 	 */
 	public JsonAnalyzer fetchPlayers() {
-		String requestData = new JsonBuilder().object().property("accountAccessToken").string(accountAccessToken).end();
-		return request("getPlayers", requestData);
-	}
-	
-	/**
-	 * Fetches detailed data for a single player.
-	 * 
-	 * @param playerId the player's ID
-	 * @return the player data
-	 */
-	public JsonAnalyzer fetchPlayerDetails(long playerId) {
-		String requestData = new JsonBuilder().object().property("accountAccessToken").string(accountAccessToken).property("playerId").number(playerId).end();
-		return request("getPlayerDetails", requestData);
+		return request("getPlayers", createLoggedInRequest().end());
 	}
 	
 	/**
@@ -130,8 +132,7 @@ public final class AccountApiClient {
 	 * @return the player's ID
 	 */
 	public long createPlayer(Faction faction, String name) {
-		JsonObjectBuilder<String> builder = new JsonBuilder().object();
-		builder.property("accountAccessToken").string(accountAccessToken);
+		JsonObjectBuilder<String> builder = createLoggedInRequest();
 		builder.property("faction").number(faction.ordinal());
 		builder.property("name").string(name);
 		JsonAnalyzer response = request("createPlayer", builder.end());
@@ -139,15 +140,33 @@ public final class AccountApiClient {
 	}
 
 	/**
+	 * Fetches detailed data for a single player.
+	 * 
+	 * @param playerId the player's ID
+	 * @return the player data
+	 */
+	public JsonAnalyzer fetchPlayerDetails(long playerId) {
+		return request("getPlayerDetails", createPlayerRequest(playerId).end());
+	}
+	
+	/**
 	 * Obtains a player access token.
 	 * 
 	 * @param playerId the player's ID
 	 * @return the access token
 	 */
 	public String getPlayerAccessToken(long playerId) {
-		String requestData = new JsonBuilder().object().property("accountAccessToken").string(accountAccessToken).property("playerId").number(playerId).end();
-		JsonAnalyzer response = request("accessPlayer", requestData);
+		JsonAnalyzer response = request("accessPlayer", createPlayerRequest(playerId).end());
 		return response.analyzeMapElement("playerAccessToken").expectString();
 	}
-	
+
+	/**
+	 * Deletes a player character.
+	 * 
+	 * @param playerId the player's ID
+	 */
+	public void deletePlayer(long playerId) {
+		request("deletePlayer", createPlayerRequest(playerId).end());
+	}
+
 }

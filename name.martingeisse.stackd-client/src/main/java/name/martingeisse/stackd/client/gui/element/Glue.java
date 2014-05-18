@@ -11,10 +11,10 @@ import name.martingeisse.stackd.client.gui.GuiElement;
 import name.martingeisse.stackd.client.gui.util.AreaAlignment;
 
 /**
- * This element takes up the remaining space around an element with
- * a natural size, to behave as the size its enclosing element
- * expects. An {@link AreaAlignment} controls the positioning of
- * the wrapped element.
+ * This element asks its wrapped element to be as small as possible,
+ * then takes up the remaining space to behave as the size its
+ * enclosing element expects. An {@link AreaAlignment} controls
+ * the positioning of the wrapped element.
  * 
  * Boolean parameters are used to control whether any space is
  * actually filled along both the horizontal and vertical axes.
@@ -117,7 +117,7 @@ public final class Glue extends AbstractWrapperElement {
 	public void requestSize(int width, int height) {
 		requireWrappedElement();
 		final GuiElement wrappedElement = getWrappedElement();
-		wrappedElement.requestSize(width, height);
+		wrappedElement.requestSize(0, 0);
 		width = (fillHorizontal ? Math.max(width, wrappedElement.getWidth()) : wrappedElement.getWidth());
 		height = (fillVertical ? Math.max(height, wrappedElement.getHeight()) : wrappedElement.getHeight());
 		setSize(width, height);
