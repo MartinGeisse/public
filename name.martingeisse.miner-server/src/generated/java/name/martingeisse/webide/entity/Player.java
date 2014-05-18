@@ -3,18 +3,17 @@
  */
 package name.martingeisse.webide.entity;
 
-import java.io.Serializable;
-
-import name.martingeisse.sql.EntityConnectionManager;
+import name.martingeisse.sql.terms.IEntityWithDeletedFlag;
 import name.martingeisse.sql.terms.IEntityWithId;
-
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.dml.SQLInsertClause;
+import name.martingeisse.sql.EntityConnectionManager;
+import java.io.Serializable;
 
 /**
  * This class represents rows from table 'player'.
  */
-public class Player implements Serializable, IEntityWithId<Long> {
+public class Player implements Serializable, IEntityWithId<Long>, IEntityWithDeletedFlag {
 
     /**
      * Constructor.
@@ -26,6 +25,11 @@ public class Player implements Serializable, IEntityWithId<Long> {
      * the coins
      */
     private Long coins;
+
+    /**
+     * the deleted
+     */
+    private Boolean deleted;
 
     /**
      * the faction
@@ -76,6 +80,24 @@ public class Player implements Serializable, IEntityWithId<Long> {
      */
     public void setCoins(Long coins) {
         this.coins = coins;
+    }
+
+    /**
+     * Getter method for the deleted.
+     * @return the deleted
+     */
+    @Override
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    /**
+     * Setter method for the deleted.
+     * @param deleted the deleted to set
+     */
+    @Override
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 
     /**
@@ -197,7 +219,7 @@ public class Player implements Serializable, IEntityWithId<Long> {
      */
     @Override
     public String toString() {
-        return "{Player. coins = " + coins + ", faction = " + faction + ", id = " + id + ", name = " + name + ", userAccountId = " + userAccountId + ", x = " + x + ", y = " + y + ", z = " + z + "}";
+        return "{Player. coins = " + coins + ", deleted = " + deleted + ", faction = " + faction + ", id = " + id + ", name = " + name + ", userAccountId = " + userAccountId + ", x = " + x + ", y = " + y + ", z = " + z + "}";
     }
 
     /**
@@ -218,6 +240,7 @@ public class Player implements Serializable, IEntityWithId<Long> {
         final QPlayer q = QPlayer.player;
         final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(q);
         insert.set(q.coins, coins);
+        insert.set(q.deleted, deleted);
         insert.set(q.faction, faction);
         insert.set(q.name, name);
         insert.set(q.userAccountId, userAccountId);

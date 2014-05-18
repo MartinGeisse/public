@@ -3,19 +3,17 @@
  */
 package name.martingeisse.webide.entity;
 
-import static com.mysema.query.types.PathMetadataFactory.forVariable;
-
 import javax.annotation.Generated;
 
-import com.mysema.query.types.Path;
-import com.mysema.query.types.PathMetadata;
-import com.mysema.query.types.path.NumberPath;
-import com.mysema.query.types.path.StringPath;
+import com.mysema.query.types.*;
+import com.mysema.query.types.path.*;
+
+import static com.mysema.query.types.PathMetadataFactory.*;
 
 /**
  * QPlayerAwardedAchievement is a Querydsl query type for PlayerAwardedAchievement
  */
-@Generated("name.martingeisse.tools.codegen.MetaDataSerializer")
+@Generated("name.martingeisse.sql.codegen.MetaDataSerializer")
 public class QPlayerAwardedAchievement extends com.mysema.query.sql.RelationalPathBase<PlayerAwardedAchievement> {
 
     private static final long serialVersionUID = -675372451;

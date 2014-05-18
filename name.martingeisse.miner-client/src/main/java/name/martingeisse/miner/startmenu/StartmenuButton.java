@@ -20,7 +20,16 @@ public abstract class StartmenuButton extends Button {
 	 * @param label the button label
 	 */
 	public StartmenuButton(String label) {
-		super(false, false);
+		this(label, false);
+	}
+	
+	/**
+	 * Constructor.
+	 * @param label the button label
+	 * @param big whether the button is big or normal.sized
+	 */
+	public StartmenuButton(String label, boolean big) {
+		super(false, big);
 		getTextLine().setText(label);
 		setBackgroundElement(new FillColor(Color.BLUE));
 		addPulseEffect(new Color(255, 255, 255, 64));

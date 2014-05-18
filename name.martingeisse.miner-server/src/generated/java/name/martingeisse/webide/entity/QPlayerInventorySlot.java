@@ -3,19 +3,17 @@
  */
 package name.martingeisse.webide.entity;
 
-import static com.mysema.query.types.PathMetadataFactory.forVariable;
-
 import javax.annotation.Generated;
 
-import com.mysema.query.types.Path;
-import com.mysema.query.types.PathMetadata;
-import com.mysema.query.types.path.BooleanPath;
-import com.mysema.query.types.path.NumberPath;
+import com.mysema.query.types.*;
+import com.mysema.query.types.path.*;
+
+import static com.mysema.query.types.PathMetadataFactory.*;
 
 /**
  * QPlayerInventorySlot is a Querydsl query type for PlayerInventorySlot
  */
-@Generated("name.martingeisse.tools.codegen.MetaDataSerializer")
+@Generated("name.martingeisse.sql.codegen.MetaDataSerializer")
 public class QPlayerInventorySlot extends com.mysema.query.sql.RelationalPathBase<PlayerInventorySlot> {
 
     private static final long serialVersionUID = -1022099792;

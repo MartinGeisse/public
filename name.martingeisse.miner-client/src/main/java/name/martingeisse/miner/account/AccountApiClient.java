@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.common.javascript.jsonbuilder.JsonBuilder;
+import name.martingeisse.common.javascript.jsonbuilder.JsonObjectBuilder;
+import name.martingeisse.miner.common.Faction;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -63,45 +65,11 @@ public final class AccountApiClient {
 	}
 	
 	/**
-	 * Sends username and password to the server, asking for an account access token.
 	 * 
-	 * @param username the username
-	 * @param password the password
 	 */
-	public void login(String username, String password) {
+	private JsonAnalyzer request(String action, String requestData) {
 		try {
-			String requestData = new JsonBuilder().object().property("username").string(username).property("password").string(password).end();
-			HttpPost post = new HttpPost("http://localhost:8888/login");
-			post.setEntity(new StringEntity(requestData, StandardCharsets.UTF_8));
-			HttpResponse response = httpClient.execute(post);
-			System.out.println("* " + response.getStatusLine().getStatusCode());
-			if (response.getStatusLine().getStatusCode() != 200) {
-				throw new RuntimeException(IOUtils.toString(response.getEntity().getContent(), "ascii"));
-			}
-			JsonAnalyzer json = JsonAnalyzer.parse(new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8));
-			int errorCode = json.analyzeMapElement("errorCode").expectInteger();
-			if (errorCode != 0) {
-				throw new RuntimeException("error (" + errorCode + "): " + json.analyzeMapElement("errorMessage").expectString());
-			}
-			this.accountAccessToken = json.analyzeMapElement("data").analyzeMapElement("accountAccessToken").expectString();
-			System.out.println("obtained token: " + accountAccessToken);
-		} catch (RuntimeException e) {
-			System.out.println("* " + e.getMessage());
-			throw e;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	/**
-	 * Fetches the list of players for the logged-in user.
-	 * 
-	 * @return the list of players
-	 */
-	public JsonAnalyzer fetchPlayers() {
-		try {
-			String requestData = new JsonBuilder().object().property("accountAccessToken").string(accountAccessToken).end();
-			HttpPost post = new HttpPost("http://localhost:8888/players");
+			HttpPost post = new HttpPost("http://localhost:8888/" + action);
 			post.setEntity(new StringEntity(requestData, StandardCharsets.UTF_8));
 			HttpResponse response = httpClient.execute(post);
 			if (response.getStatusLine().getStatusCode() != 200) {
@@ -113,9 +81,73 @@ public final class AccountApiClient {
 				throw new RuntimeException("error (" + errorCode + "): " + json.analyzeMapElement("errorMessage").expectString());
 			}
 			return json.analyzeMapElement("data");
+		} catch (RuntimeException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	/**
+	 * Sends username and password to the server, asking for an account access token.
+	 * 
+	 * @param username the username
+	 * @param password the password
+	 */
+	public void login(String username, String password) {
+		String request = new JsonBuilder().object().property("username").string(username).property("password").string(password).end();
+		JsonAnalyzer response = request("login", request);
+		this.accountAccessToken = response.analyzeMapElement("accountAccessToken").expectString();
+		System.out.println("obtained token: " + accountAccessToken);
+	}
+
+	/**
+	 * Fetches the list of players for the logged-in user.
+	 * 
+	 * @return the list of players
+	 */
+	public JsonAnalyzer fetchPlayers() {
+		String requestData = new JsonBuilder().object().property("accountAccessToken").string(accountAccessToken).end();
+		return request("getPlayers", requestData);
+	}
+	
+	/**
+	 * Fetches detailed data for a single player.
+	 * 
+	 * @param playerId the player's ID
+	 * @return the player data
+	 */
+	public JsonAnalyzer fetchPlayerDetails(long playerId) {
+		String requestData = new JsonBuilder().object().property("accountAccessToken").string(accountAccessToken).property("playerId").number(playerId).end();
+		return request("getPlayerDetails", requestData);
+	}
+	
+	/**
+	 * Creates a new player for the current user.
+	 * 
+	 * @param faction the player's faction
+	 * @param name the player's name
+	 * @return the player's ID
+	 */
+	public long createPlayer(Faction faction, String name) {
+		JsonObjectBuilder<String> builder = new JsonBuilder().object();
+		builder.property("accountAccessToken").string(accountAccessToken);
+		builder.property("faction").number(faction.ordinal());
+		builder.property("name").string(name);
+		JsonAnalyzer response = request("createPlayer", builder.end());
+		return response.analyzeMapElement("id").expectLong();
+	}
+
+	/**
+	 * Obtains a player access token.
+	 * 
+	 * @param playerId the player's ID
+	 * @return the access token
+	 */
+	public String getPlayerAccessToken(long playerId) {
+		String requestData = new JsonBuilder().object().property("accountAccessToken").string(accountAccessToken).property("playerId").number(playerId).end();
+		JsonAnalyzer response = request("accessPlayer", requestData);
+		return response.analyzeMapElement("playerAccessToken").expectString();
 	}
 	
 }

@@ -6,9 +6,7 @@
 
 package name.martingeisse.miner.startmenu;
 
-import org.lwjgl.input.Mouse;
-import name.martingeisse.miner.Main;
-import name.martingeisse.miner.ingame.IngameHandler;
+import name.martingeisse.miner.account.AccountApiClient;
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.element.Spacer;
 import name.martingeisse.stackd.client.gui.element.VerticalLayout;
@@ -18,11 +16,6 @@ import name.martingeisse.stackd.client.gui.element.VerticalLayout;
  * The "choose your name" menu page.
  */
 public class ChooseNamePage extends AbstractStartmenuPage {
-
-	/**
-	 * the selectedName
-	 */
-	public static String selectedName;
 	
 	/**
 	 * the username
@@ -40,16 +33,9 @@ public class ChooseNamePage extends AbstractStartmenuPage {
 		menu.addElement(new StartmenuButton("Create Character") {
 			@Override
 			protected void onClick() {
-				selectedName = name.getTextField().getValue();
-				// TODO: create character
-				// TODO: use character
-				System.out.println("TODO actually load this player");
-				try {
-					Main.frameLoop.getRootHandler().setWrappedHandler(new IngameHandler());
-					Mouse.setGrabbed(true);
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
+				String name = ChooseNamePage.this.name.getTextField().getValue();
+				long playerId = AccountApiClient.getInstance().createPlayer(ChooseFactionPage.selectedFaction, name);
+				getGui().setRootElement(new PlayerDetailsPage(playerId));
 			}
 		});
 		menu.addElement(new Spacer(2 * Gui.GRID));

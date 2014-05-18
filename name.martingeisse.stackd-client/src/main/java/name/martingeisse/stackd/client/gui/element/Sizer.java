@@ -41,10 +41,10 @@ public final class Sizer extends AbstractWrapperElement {
 	 * @param innerWidth the width of the inner element
 	 * @param innerHeight the height of the inner element
 	 */
-	public Sizer(GuiElement wrappedElement, final int innerWidth, final int innerHeight) {
+	public Sizer(final GuiElement wrappedElement, final int innerWidth, final int innerHeight) {
 		this(wrappedElement, innerWidth, innerHeight, AreaAlignment.CENTER);
 	}
-	
+
 	/**
 	 * Constructor.
 	 * @param wrappedElement the sized element
@@ -52,7 +52,7 @@ public final class Sizer extends AbstractWrapperElement {
 	 * @param innerHeight the height of the inner element
 	 * @param alignment the alignment of the inner element within the outer one
 	 */
-	public Sizer(GuiElement wrappedElement, final int innerWidth, final int innerHeight, final AreaAlignment alignment) {
+	public Sizer(final GuiElement wrappedElement, final int innerWidth, final int innerHeight, final AreaAlignment alignment) {
 		super(wrappedElement);
 		this.innerWidth = innerWidth;
 		this.innerHeight = innerHeight;
@@ -121,7 +121,7 @@ public final class Sizer extends AbstractWrapperElement {
 		requireWrappedElement();
 		final GuiElement wrappedElement = getWrappedElement();
 		wrappedElement.requestSize(innerWidth < 0 ? width : innerWidth, innerHeight < 0 ? height : innerHeight);
-		setSize(innerWidth < 0 ? wrappedElement.getWidth() : width, innerHeight < 0 ? wrappedElement.getHeight() : height);
+		setSize(Math.max(wrappedElement.getWidth(), width), Math.max(wrappedElement.getHeight(), height));
 	}
 
 	/* (non-Javadoc)
@@ -130,8 +130,8 @@ public final class Sizer extends AbstractWrapperElement {
 	@Override
 	protected void setChildrenLayoutPosition(final int absoluteX, final int absoluteY) {
 		requireWrappedElement();
-		int x = alignment.getHorizontalAlignment().alignSpan(getWidth(), getWrappedElement().getWidth());
-		int y = alignment.getVerticalAlignment().alignSpan(getHeight(), getWrappedElement().getHeight());
+		final int x = alignment.getHorizontalAlignment().alignSpan(getWidth(), getWrappedElement().getWidth());
+		final int y = alignment.getVerticalAlignment().alignSpan(getHeight(), getWrappedElement().getHeight());
 		getWrappedElement().setPosition(absoluteX + x, absoluteY + y);
 	}
 

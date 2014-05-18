@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS `user_account` (
 	`id` bigint(20) NOT NULL AUTO_INCREMENT,
 	`username` varchar(255) NOT NULL,
 	`password_hash` varchar(255) NOT NULL,
+	`deleted` tinyint(1) NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB	DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -33,6 +34,7 @@ CREATE TABLE IF NOT EXISTS `player` (
 	`y` decimal(10,2) NOT NULL,
 	`z` decimal(10,2) NOT NULL,
 	`coins` bigint(20) NOT NULL,
+	`deleted` tinyint(1) NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB	DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 

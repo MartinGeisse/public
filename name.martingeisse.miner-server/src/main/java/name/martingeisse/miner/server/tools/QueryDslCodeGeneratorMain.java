@@ -29,7 +29,7 @@ public class QueryDslCodeGeneratorMain {
 	public static void main(String[] args) throws Exception {
 		try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/miner?zeroDateTimeBehavior=convertToNull&useTimezone=false&characterEncoding=utf8&characterSetResults=utf8", "root", "")) {
 			MetaDataExporter exporter = new MetaDataExporter();
-			exporter.setTargetFolder(new File("generated"));
+			exporter.setTargetFolder(new File("src/generated/java"));
 			exporter.setPackageName("name.martingeisse.webide.entity");
 			exporter.setSerializerClass(MetaDataSerializer.class);
 			exporter.setBeanSerializer(new BeanSerializer(false, false));

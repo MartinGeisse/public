@@ -11,14 +11,17 @@ import name.martingeisse.api.handler.misc.NamedResourceFolderHandler;
 /**
  * The main application handler.
  */
-public class AccountApiHandler extends NamedResourceFolderHandler {
+public final class AccountApiHandler extends NamedResourceFolderHandler {
 
 	/**
 	 * Constructor.
 	 */
 	public AccountApiHandler() {
 		getResources().put("login", new LoginHandler());
-		getResources().put("players", new PlayerListHandler());
+		getResources().put("getPlayers", new PlayerListHandler());
+		getResources().put("getPlayerDetails", new PlayerDetailsHandler());
+		getResources().put("createPlayer", new CreatePlayerHandler());
+		getResources().put("accessPlayer", new AccessPlayerHandler());
 	}
 	
 }

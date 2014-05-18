@@ -3,19 +3,17 @@
  */
 package name.martingeisse.webide.entity;
 
-import static com.mysema.query.types.PathMetadataFactory.forVariable;
-
 import javax.annotation.Generated;
 
-import com.mysema.query.types.Path;
-import com.mysema.query.types.PathMetadata;
-import com.mysema.query.types.path.NumberPath;
-import com.mysema.query.types.path.StringPath;
+import com.mysema.query.types.*;
+import com.mysema.query.types.path.*;
+
+import static com.mysema.query.types.PathMetadataFactory.*;
 
 /**
  * QPlayer is a Querydsl query type for Player
  */
-@Generated("name.martingeisse.tools.codegen.MetaDataSerializer")
+@Generated("name.martingeisse.sql.codegen.MetaDataSerializer")
 public class QPlayer extends com.mysema.query.sql.RelationalPathBase<Player> {
 
     private static final long serialVersionUID = 584492778;
@@ -29,6 +27,11 @@ public class QPlayer extends com.mysema.query.sql.RelationalPathBase<Player> {
      * Metamodel property for property 'coins'
      */
     public final NumberPath<Long> coins = createNumber("coins", Long.class);
+
+    /**
+     * Metamodel property for property 'deleted'
+     */
+    public final BooleanPath deleted = createBoolean("deleted");
 
     /**
      * Metamodel property for property 'faction'

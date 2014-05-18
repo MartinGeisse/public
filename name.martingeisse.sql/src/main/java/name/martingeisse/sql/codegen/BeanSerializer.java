@@ -45,7 +45,7 @@ public class BeanSerializer extends AbstractSerializer {
 	 * the forWicket
 	 */
 	private final boolean forWicket;
-	
+
 	/**
 	 * the forAdmin
 	 */
@@ -67,67 +67,66 @@ public class BeanSerializer extends AbstractSerializer {
 	@Override
 	public void serialize(final EntityType entityType, final SerializerConfig config, final CodeWriter w) throws IOException {
 		final String tableName = entityType.getData().get("table").toString();
-        @SuppressWarnings("unchecked")
-		Collection<PrimaryKeyData> primaryKeys = (Collection<PrimaryKeyData>) entityType.getData().get(PrimaryKeyData.class);
-        // @SuppressWarnings("unchecked")
+		@SuppressWarnings("unchecked")
+		final Collection<PrimaryKeyData> primaryKeys = (Collection<PrimaryKeyData>)entityType.getData().get(PrimaryKeyData.class);
+		// @SuppressWarnings("unchecked")
 		// Collection<ForeignKeyData> foreignKeys = (Collection<ForeignKeyData>) entityType.getData().get(ForeignKeyData.class);
-		
-        // determine primary key
-        PrimaryKeyData primaryKey;
-        if (primaryKeys.size() == 0) {
-        	primaryKey = null;
-        } else if (primaryKeys.size() == 1) {
-        	primaryKey = primaryKeys.iterator().next();
-        } else {
-        	throw new RuntimeException("Found entity with more than one primary key: " + entityType.getSimpleName());
-        }
-        
-        
-        // determine primary-key and non-primary-key fields
-        List<Property> primaryKeyProperties;
-        List<Property> nonPrimaryKeyProperties;
-        if (primaryKey == null) {
-        	primaryKeyProperties = new ArrayList<Property>();
-        	nonPrimaryKeyProperties = new ArrayList<Property>(entityType.getProperties());
-        } else {
-        	primaryKeyProperties = new ArrayList<Property>();
-        	nonPrimaryKeyProperties = new ArrayList<Property>();
-        	propertyLoop: for (Property property : entityType.getProperties()) {
-        		for (String primaryKeyPropertyName : primaryKey.getColumns()) {
-        			if (primaryKeyPropertyName.equals(property.getName())) {
-        				primaryKeyProperties.add(property);
-        				continue propertyLoop;
-        			}
-        		}
-        		nonPrimaryKeyProperties.add(property);
-        	}
-        }
-        
-        // determine if we have an "ID"
-        final Property idProperty;
-        if (primaryKeyProperties.size() == 1 && primaryKeyProperties.get(0).getName().equals("id")) {
-        	idProperty = primaryKeyProperties.get(0);
-        } else {
-        	idProperty = null;
-        }
-        
-        // map properties by name
-        Map<String, Property> propertiesByName = new HashMap<String, Property>();
-        for (Property property : entityType.getProperties()) {
-        	propertiesByName.put(property.getEscapedName(), property);
-        }
-        
-        // check if the entity has a boolean "deleted" property
-        Property deletedFlagProperty = propertiesByName.get("deleted");
-        if (deletedFlagProperty != null && deletedFlagProperty.getType().getJavaClass() != Boolean.class && deletedFlagProperty.getType().getJavaClass() != Boolean.TYPE) {
-        	deletedFlagProperty = null;
-        }
 
-        // check if the entity has an "orderIndex" property
-        Property orderIndexProperty = propertiesByName.get("orderIndex");
-        if (orderIndexProperty != null && orderIndexProperty.getType().getJavaClass() != Integer.class && orderIndexProperty.getType().getJavaClass() != Integer.TYPE) {
-        	orderIndexProperty = null;
-        }
+		// determine primary key
+		PrimaryKeyData primaryKey;
+		if (primaryKeys.size() == 0) {
+			primaryKey = null;
+		} else if (primaryKeys.size() == 1) {
+			primaryKey = primaryKeys.iterator().next();
+		} else {
+			throw new RuntimeException("Found entity with more than one primary key: " + entityType.getSimpleName());
+		}
+
+		// determine primary-key and non-primary-key fields
+		List<Property> primaryKeyProperties;
+		List<Property> nonPrimaryKeyProperties;
+		if (primaryKey == null) {
+			primaryKeyProperties = new ArrayList<Property>();
+			nonPrimaryKeyProperties = new ArrayList<Property>(entityType.getProperties());
+		} else {
+			primaryKeyProperties = new ArrayList<Property>();
+			nonPrimaryKeyProperties = new ArrayList<Property>();
+			propertyLoop: for (final Property property : entityType.getProperties()) {
+				for (final String primaryKeyPropertyName : primaryKey.getColumns()) {
+					if (primaryKeyPropertyName.equals(property.getName())) {
+						primaryKeyProperties.add(property);
+						continue propertyLoop;
+					}
+				}
+				nonPrimaryKeyProperties.add(property);
+			}
+		}
+
+		// determine if we have an "ID"
+		final Property idProperty;
+		if (primaryKeyProperties.size() == 1 && primaryKeyProperties.get(0).getName().equals("id")) {
+			idProperty = primaryKeyProperties.get(0);
+		} else {
+			idProperty = null;
+		}
+
+		// map properties by name
+		final Map<String, Property> propertiesByName = new HashMap<String, Property>();
+		for (final Property property : entityType.getProperties()) {
+			propertiesByName.put(property.getEscapedName(), property);
+		}
+
+		// check if the entity has a boolean "deleted" property
+		Property deletedFlagProperty = propertiesByName.get("deleted");
+		if (deletedFlagProperty != null && deletedFlagProperty.getType().getJavaClass() != Boolean.class && deletedFlagProperty.getType().getJavaClass() != Boolean.TYPE) {
+			deletedFlagProperty = null;
+		}
+
+		// check if the entity has an "orderIndex" property
+		Property orderIndexProperty = propertiesByName.get("orderIndex");
+		if (orderIndexProperty != null && orderIndexProperty.getType().getJavaClass() != Integer.class && orderIndexProperty.getType().getJavaClass() != Integer.TYPE) {
+			orderIndexProperty = null;
+		}
 
 		// file comment
 		printFileComment(w);
@@ -157,7 +156,7 @@ public class BeanSerializer extends AbstractSerializer {
 				w.beginClass(entityType, new SimpleType("AbstractSpecificEntityInstance"));
 			}
 		} else {
-			List<Type> interfaces = new ArrayList<>();
+			final List<Type> interfaces = new ArrayList<>();
 			interfaces.add(new SimpleType("Serializable"));
 			interfaces.add(new SimpleType(new SimpleType("IEntityWithId"), idProperty.getType()));
 			if (deletedFlagProperty != null) {
@@ -173,8 +172,7 @@ public class BeanSerializer extends AbstractSerializer {
 		if (forAdmin) {
 			final String className = w.getGenericName(true, entityType);
 			w.javadoc("Meta-data about this class for the admin framework");
-			w.line("public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(" + className
-				+ ".class);");
+			w.line("public static final SpecificEntityInstanceMeta GENERATED_CLASS_META_DATA = new SpecificEntityInstanceMeta(" + className + ".class);");
 			w.nl();
 		}
 
@@ -245,33 +243,33 @@ public class BeanSerializer extends AbstractSerializer {
 			w.line("return ", builder.toString(), " + \"}\";");
 		}
 		w.end();
-		
+
 		// generate findById() method and corresponding Wicket model (only works if there is a single-column primary key)
 		if (idProperty != null) {
-			String entityName = entityType.getSimpleName();
-			String uncapEntityName = entityType.getUncapSimpleName();
-			
+			final String entityName = entityType.getSimpleName();
+			final String uncapEntityName = entityType.getUncapSimpleName();
+
 			Type idType = idProperty.getType();
 			if (ClassUtils.wrapperToPrimitive(idType.getJavaClass()) != null) {
 				idType = new SimpleType(ClassUtils.wrapperToPrimitive(idType.getJavaClass()).getSimpleName());
 			}
-			
+
 			w.javadoc("Loads a record by id.", "@param id the id of the record to load", "@return the loaded record");
 			w.beginStaticMethod(entityType, "findById", new Parameter("id", idType));
 			w.line("final Q" + entityName + " q = Q" + entityName + "." + entityType.getUncapSimpleName() + ";");
 			w.line("final SQLQuery query = EntityConnectionManager.getConnection().createQuery();");
 			w.line("return query.from(q).where(q." + idProperty.getName() + ".eq(id)).singleResult(q);");
 			w.end();
-			
+
 			if (forWicket) {
 				w.javadoc("Creates a model that loads a record by id.", "@param id the id of the record to load", "@return the model loading the record");
 				w.beginStaticMethod(new SimpleType(new SimpleType("IModel"), entityType), "getModelForId", new Parameter("id", idType));
 				w.line("return new EntityModel<" + entityName + ">(Q" + entityName + "." + uncapEntityName + ", Q" + entityName + "." + uncapEntityName + ".id.eq(id));");
 				w.end();
 			}
-			
+
 		}
-		
+
 		// generate insert() method (only works if there is no multi-column primary key)
 		if (primaryKey == null || primaryKey.getColumns().size() < 2) {
 			w.javadoc("Inserts a record into the database using all fields from this object except the ID, then updates the ID.");
@@ -285,8 +283,8 @@ public class BeanSerializer extends AbstractSerializer {
 			if (primaryKey == null || primaryKey.getColumns().isEmpty()) {
 				w.line("insert.execute();");
 			} else {
-				String idName = primaryKey.getColumns().iterator().next();
-				Type idType = propertiesByName.get(idName).getType();
+				final String idName = primaryKey.getColumns().iterator().next();
+				final Type idType = propertiesByName.get(idName).getType();
 				w.line(idName + " = insert.executeWithKey(" + idType.getSimpleName() + ".class);");
 			}
 			w.end();
@@ -326,11 +324,10 @@ public class BeanSerializer extends AbstractSerializer {
 		addIf(imports, "java.io.Serializable", !forAdmin);
 		imports.add("com.mysema.query.sql.SQLQuery");
 		imports.add("com.mysema.query.sql.dml.SQLInsertClause");
-		imports.add("name.martingeisse.common.database.EntityConnectionManager");
-		addIf(imports, "name.martingeisse.common.terms.IEntityWithId", hasId);
-		addIf(imports, "name.martingeisse.common.terms.IEntityWithDeletedFlag", hasDeletedFlag);
-		addIf(imports, "name.martingeisse.common.terms.IEntityWithOrderIndex", hasOrderIndex);
-		imports.add("name.martingeisse.common.database.EntityConnectionManager");
+		imports.add("name.martingeisse.sql.EntityConnectionManager");
+		addIf(imports, "name.martingeisse.sql.terms.IEntityWithId", hasId);
+		addIf(imports, "name.martingeisse.sql.terms.IEntityWithDeletedFlag", hasDeletedFlag);
+		addIf(imports, "name.martingeisse.sql.terms.IEntityWithOrderIndex", hasOrderIndex);
 		if (forWicket) {
 			addIf(imports, "org.apache.wicket.model.IModel", hasId);
 			addIf(imports, "name.martingeisse.wicket.model.database.EntityModel", hasId);

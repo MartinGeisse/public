@@ -3,24 +3,28 @@
  */
 package name.martingeisse.webide.entity;
 
-import java.io.Serializable;
-
-import name.martingeisse.sql.EntityConnectionManager;
+import name.martingeisse.sql.terms.IEntityWithDeletedFlag;
 import name.martingeisse.sql.terms.IEntityWithId;
-
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.dml.SQLInsertClause;
+import name.martingeisse.sql.EntityConnectionManager;
+import java.io.Serializable;
 
 /**
  * This class represents rows from table 'user_account'.
  */
-public class UserAccount implements Serializable, IEntityWithId<Long> {
+public class UserAccount implements Serializable, IEntityWithId<Long>, IEntityWithDeletedFlag {
 
     /**
      * Constructor.
      */
     public UserAccount() {
     }
+
+    /**
+     * the deleted
+     */
+    private Boolean deleted;
 
     /**
      * the id
@@ -36,6 +40,24 @@ public class UserAccount implements Serializable, IEntityWithId<Long> {
      * the username
      */
     private String username;
+
+    /**
+     * Getter method for the deleted.
+     * @return the deleted
+     */
+    @Override
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    /**
+     * Setter method for the deleted.
+     * @param deleted the deleted to set
+     */
+    @Override
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
 
     /**
      * Getter method for the id.
@@ -92,7 +114,7 @@ public class UserAccount implements Serializable, IEntityWithId<Long> {
      */
     @Override
     public String toString() {
-        return "{UserAccount. id = " + id + ", passwordHash = " + passwordHash + ", username = " + username + "}";
+        return "{UserAccount. deleted = " + deleted + ", id = " + id + ", passwordHash = " + passwordHash + ", username = " + username + "}";
     }
 
     /**
@@ -112,6 +134,7 @@ public class UserAccount implements Serializable, IEntityWithId<Long> {
     public void insert() {
         final QUserAccount q = QUserAccount.userAccount;
         final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(q);
+        insert.set(q.deleted, deleted);
         insert.set(q.passwordHash, passwordHash);
         insert.set(q.username, username);
         id = insert.executeWithKey(Long.class);

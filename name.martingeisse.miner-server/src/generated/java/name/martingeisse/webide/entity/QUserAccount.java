@@ -3,19 +3,17 @@
  */
 package name.martingeisse.webide.entity;
 
-import static com.mysema.query.types.PathMetadataFactory.forVariable;
-
 import javax.annotation.Generated;
 
-import com.mysema.query.types.Path;
-import com.mysema.query.types.PathMetadata;
-import com.mysema.query.types.path.NumberPath;
-import com.mysema.query.types.path.StringPath;
+import com.mysema.query.types.*;
+import com.mysema.query.types.path.*;
+
+import static com.mysema.query.types.PathMetadataFactory.*;
 
 /**
  * QUserAccount is a Querydsl query type for UserAccount
  */
-@Generated("name.martingeisse.tools.codegen.MetaDataSerializer")
+@Generated("name.martingeisse.sql.codegen.MetaDataSerializer")
 public class QUserAccount extends com.mysema.query.sql.RelationalPathBase<UserAccount> {
 
     private static final long serialVersionUID = -1832878727;
@@ -24,6 +22,11 @@ public class QUserAccount extends com.mysema.query.sql.RelationalPathBase<UserAc
      * The default instance of this class.
      */
     public static final QUserAccount userAccount = new QUserAccount("user_account");
+
+    /**
+     * Metamodel property for property 'deleted'
+     */
+    public final BooleanPath deleted = createBoolean("deleted");
 
     /**
      * Metamodel property for property 'id'
