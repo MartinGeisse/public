@@ -7,16 +7,13 @@
 package name.martingeisse.miner.server;
 
 import java.math.BigDecimal;
-
-import name.martingeisse.miner.common.netty.MinerPacketConstants;
+import name.martingeisse.miner.common.MinerPacketConstants;
 import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.stackd.common.network.StackdPacket;
 import name.martingeisse.stackd.server.network.StackdSession;
 import name.martingeisse.webide.entity.Player;
 import name.martingeisse.webide.entity.QPlayer;
-
 import org.jboss.netty.channel.Channel;
-
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 

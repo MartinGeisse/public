@@ -118,9 +118,7 @@ public class PlayerDetailsPage extends AbstractStartmenuPage {
 	 * 
 	 */
 	private void play() {
-		System.out.println("selected player #" + playerId);
-		// TODO 
-		System.out.println("TODO actually load this player");
+		AccountApiClient.getInstance().accessPlayer(playerId);
 		try {
 			Main.frameLoop.getRootHandler().setWrappedHandler(new IngameHandler());
 			Mouse.setGrabbed(true);

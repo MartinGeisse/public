@@ -6,6 +6,7 @@
 
 package name.martingeisse.miner.startmenu;
 
+import java.util.prefs.Preferences;
 import name.martingeisse.miner.account.AccountApiClient;
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.GuiEvent;
@@ -33,9 +34,15 @@ public class LoginPage extends AbstractStartmenuPage {
 	 */
 	public LoginPage() {
 		
+		Preferences preferences = Preferences.userNodeForPackage(AccountApiClient.class);
+		String defaultUsername = preferences.get("username", null);
+		if (defaultUsername == null) {
+			defaultUsername = "";
+		}
+
 		username = new LabeledTextField("Username");
 		password = new LabeledTextField("Password");
-		username.getTextField().setNextFocusableElement(password.getTextField());
+		username.getTextField().setNextFocusableElement(password.getTextField()).setValue(defaultUsername);
 		password.getTextField().setNextFocusableElement(username.getTextField());
 		password.getTextField().setPasswordCharacter('*');
 		
@@ -75,6 +82,7 @@ public class LoginPage extends AbstractStartmenuPage {
 		String password = this.password.getTextField().getValue();
 		AccountApiClient.getInstance().login(username, password);
 		getGui().setRootElement(new ChooseCharacterPage());
+		Preferences.userNodeForPackage(AccountApiClient.class).put("username", username);
 	}
 
 }

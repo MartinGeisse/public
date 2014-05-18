@@ -7,19 +7,18 @@
 package name.martingeisse.miner.server;
 
 import java.io.File;
-import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import name.martingeisse.common.security.SecurityTokenUtil;
 import name.martingeisse.miner.common.MinerCommonConstants;
 import name.martingeisse.miner.common.MinerCubeTypes;
-import name.martingeisse.miner.common.netty.MinerPacketConstants;
+import name.martingeisse.miner.common.MinerPacketConstants;
 import name.martingeisse.miner.server.game.DigUtil;
 import name.martingeisse.miner.server.terrain.TerrainGenerator;
 import name.martingeisse.sql.EntityConnectionManager;
@@ -33,13 +32,11 @@ import name.martingeisse.stackd.server.section.SectionCubesCacheEntry;
 import name.martingeisse.stackd.server.section.storage.MemorySectionStorage;
 import name.martingeisse.webide.entity.Player;
 import name.martingeisse.webide.entity.QPlayer;
-
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
-
+import org.joda.time.Instant;
 import com.mysema.query.sql.SQLQuery;
-import com.mysema.query.sql.dml.SQLInsertClause;
 
 /**
  * High-level server code.
@@ -157,38 +154,19 @@ public class MinerServer extends StackdServer<MinerSession> {
 			break;
 		}
 			
-		case MinerPacketConstants.TYPE_C2S_UPDATE_NAME: {
-			int length = buffer.readInt();
-			byte[] data = new byte[2 * length];
-			buffer.readBytes(data);
-			try {
-				session.setName(new String(data, "UTF-16"));
-			} catch (Exception exception) {
-				throw new RuntimeException(exception);
-			}
-			break;
-		}
-		
-		case MinerPacketConstants.TYPE_C2S_CREATE_PLAYER: {
-			try {
-				createPlayer(session);
-				session.sendCoinsUpdate();
-			} finally {
-				EntityConnectionManager.disposeConnections();
-			}
-			break;
-		}
-
 		case MinerPacketConstants.TYPE_C2S_RESUME_PLAYER: {
-			long playerId = buffer.readLong();
+			byte[] tokenBytes = new byte[buffer.readInt()];
+			buffer.readBytes(tokenBytes);
+			String token = new String(tokenBytes, StandardCharsets.UTF_8);
+			String tokenSubject = SecurityTokenUtil.validateToken(token, new Instant(), MinerServerSecurityConstants.SECURITY_TOKEN_SECRET);
+			long playerId = Long.parseLong(tokenSubject);
 			try {
 				final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 				query.from(QPlayer.player);
 				query.where(QPlayer.player.id.eq(playerId));
 				Player player = query.singleResult(QPlayer.player);
 				if (player == null) {
-					createPlayer(session);
-					break;
+					throw new RuntimeException("player not found, id: " + playerId);
 				}
 				session.setPlayerId(player.getId());
 				session.setX(player.getX().doubleValue());
@@ -254,25 +232,6 @@ public class MinerServer extends StackdServer<MinerSession> {
 			
 		}
 		
-	}
-	
-	/**
-	 * TODO creating a player should happen over the HTTP API
-	 */
-	private void createPlayer(MinerSession session) {
-		SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(QPlayer.player);
-		insert.set(QPlayer.player.userAccountId, 1L);
-		insert.set(QPlayer.player.coins, 0L);
-		insert.set(QPlayer.player.name, "Bob"); // TODO
-		insert.set(QPlayer.player.faction, 0); // TODO
-		insert.set(QPlayer.player.x, BigDecimal.ZERO);
-		insert.set(QPlayer.player.y, BigDecimal.ZERO);
-		insert.set(QPlayer.player.z, BigDecimal.ZERO);
-		long playerId = insert.executeWithKey(Long.class);
-		session.setPlayerId(playerId);
-		StackdPacket responsePacket = new StackdPacket(MinerPacketConstants.TYPE_S2C_PLAYER_CREATED, 8);
-		responsePacket.getBuffer().writeLong(playerId);
-		broadcast(responsePacket);
 	}
 	
 	/* (non-Javadoc)

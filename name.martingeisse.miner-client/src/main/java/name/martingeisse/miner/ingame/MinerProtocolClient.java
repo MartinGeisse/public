@@ -6,16 +6,18 @@
 
 package name.martingeisse.miner.ingame;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
+import name.martingeisse.miner.account.AccountApiClient;
 import name.martingeisse.miner.common.MinerCommonConstants;
-import name.martingeisse.miner.common.netty.MinerPacketConstants;
+import name.martingeisse.miner.common.MinerPacketConstants;
 import name.martingeisse.stackd.client.network.StackdProtocolClient;
 import name.martingeisse.stackd.common.network.StackdPacket;
 import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.buffer.ChannelBuffers;
 
 /**
  * Application-specific protocol client.
@@ -70,30 +72,13 @@ public class MinerProtocolClient extends StackdProtocolClient {
 	@Override
 	protected void onReady() {
 		
-		// send name to the server
-		{
-			String name = System.getProperty("user.name");
-			StackdPacket packet = new StackdPacket(MinerPacketConstants.TYPE_C2S_UPDATE_NAME, 4 + 2*name.length());
-			ChannelBuffer buffer = packet.getBuffer();
-			buffer.writeInt(name.length());
-			for (int i=0; i<name.length(); i++) {
-				buffer.writeChar(name.charAt(i));
-			}
-			send(packet);
-		}
-		
-		// create a new player or resume an existing one
-		Preferences preferences = Preferences.userNodeForPackage(MinerProtocolClient.class);
-		long playerId = preferences.getLong("playerId", 0);
-		if (playerId == 0) {
-			StackdPacket packet = new StackdPacket(MinerPacketConstants.TYPE_C2S_CREATE_PLAYER, 0);
-			packet.getBuffer();
-			send(packet);
-		} else {
-			StackdPacket packet = new StackdPacket(MinerPacketConstants.TYPE_C2S_RESUME_PLAYER, 8);
-			packet.getBuffer().writeLong(playerId);
-			send(packet);
-		}
+		// send the "resume player" packet
+		ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
+		buffer.writeZero(StackdPacket.HEADER_SIZE);
+		byte[] tokenBytes = AccountApiClient.getInstance().getPlayerAccessToken().getBytes(StandardCharsets.UTF_8);
+		buffer.writeInt(tokenBytes.length);
+		buffer.writeBytes(tokenBytes);
+		send(new StackdPacket(MinerPacketConstants.TYPE_C2S_RESUME_PLAYER, buffer, false));
 		
 	}
 	
@@ -139,14 +124,6 @@ public class MinerProtocolClient extends StackdProtocolClient {
 			break;
 		}
 		
-		case MinerPacketConstants.TYPE_S2C_PLAYER_CREATED: {
-			long playerId = buffer.readLong();
-			System.out.println("* created player with ID: " + playerId);
-			Preferences preferences = Preferences.userNodeForPackage(MinerProtocolClient.class);
-			preferences.putLong("playerId", playerId);
-			break;
-		}
-
 		case MinerPacketConstants.TYPE_S2C_PLAYER_RESUMED: {
 			synchronized(this) {
 				this.playerResumedMessage = new PlayerResumedMessage(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
