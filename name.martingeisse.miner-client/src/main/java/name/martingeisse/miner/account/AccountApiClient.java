@@ -78,7 +78,7 @@ public final class AccountApiClient {
 			JsonAnalyzer json = JsonAnalyzer.parse(new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8));
 			int errorCode = json.analyzeMapElement("errorCode").expectInteger();
 			if (errorCode != 0) {
-				throw new RuntimeException("error (" + errorCode + "): " + json.analyzeMapElement("errorMessage").expectString());
+				throw new UserVisibleMessageException("error (" + errorCode + "): " + json.analyzeMapElement("errorMessage").expectString());
 			}
 			return json.analyzeMapElement("data");
 		} catch (RuntimeException e) {

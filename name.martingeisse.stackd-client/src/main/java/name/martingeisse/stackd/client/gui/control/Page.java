@@ -12,14 +12,29 @@ import name.martingeisse.stackd.client.gui.element.FillColor;
 import name.martingeisse.stackd.client.gui.element.OverlayStack;
 import name.martingeisse.stackd.client.gui.util.AreaAlignment;
 import name.martingeisse.stackd.client.gui.util.Color;
+import org.apache.log4j.Logger;
 
 /**
  * This element shows a main element over a background filler, and
  * optionally a popup element that can be added/removed/exchanged
  * at runtime.
+ * 
+ * Pages all to catch all exceptions that occur during event handling
+ * in the enclosed elements. These exceptions are passed to
+ * {@link #onException(Throwable)}. The default behavior is to catch
+ * and log the exceptions.
+ * 
+ * To support all this, subclasses that want to override
+ * {@link #handleEvent(GuiEvent)} must override {@link #handlePageEvent(GuiEvent)}
+ * instead.
  */
 public class Page extends Control {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(Page.class);
+	
 	/**
 	 * the DARK_OVERLAY
 	 */
@@ -95,17 +110,52 @@ public class Page extends Control {
 	 * @see name.martingeisse.stackd.client.gui.control.Control#handleEvent(name.martingeisse.stackd.client.gui.GuiEvent)
 	 */
 	@Override
-	public void handleEvent(GuiEvent event) {
-		if (event == GuiEvent.DRAW) {
-			super.handleEvent(event);
-			return;
+	public final void handleEvent(GuiEvent event) {
+		try {
+			if (event == GuiEvent.DRAW) {
+				super.handleEvent(event);
+				return;
+			}
+			GuiElement popupElement = getPopupElement();
+			if (popupElement == null) {
+				handlePageEvent(event);
+			} else {
+				popupElement.handleEvent(event);
+			}
+		} catch (Throwable t) {
+			onException(t);
 		}
-		GuiElement popupElement = getPopupElement();
-		if (popupElement == null) {
-			super.handleEvent(event);
-		} else {
-			popupElement.handleEvent(event);
-		}
+	}
+
+	/**
+	 * Reacts to an event in the page. Only called for non-draw events
+	 * if no popup element is visible. Exceptions that occur in this
+	 * method are passed to {@link #onException(Throwable)} as usual.
+	 * 
+	 * The default implementation implements the normal event handling
+	 * that passes the event to enclosed elements.
+	 * 
+	 * When overriding this method, be sure to call
+	 * 
+	 * 		super.handlePageEvent(event);
+	 * 
+	 * and not
+	 * 
+	 * 		super.handleEvent(event);
+	 * 
+	 * as that would create an infinite loop.
+	 * 
+	 * @param event the event
+	 */
+	protected void handlePageEvent(GuiEvent event) {
+		super.handleEvent(event);
+	}
+
+	/**
+	 * This method gets invoked when one of the elements inside the page throw an exception.
+	 */
+	protected void onException(Throwable t) {
+		logger.error("exception during GUI event handling", t);
 	}
 	
 }

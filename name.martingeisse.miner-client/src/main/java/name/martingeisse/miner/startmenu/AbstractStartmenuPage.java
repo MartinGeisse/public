@@ -7,8 +7,10 @@
 package name.martingeisse.miner.startmenu;
 
 import name.martingeisse.launcher.assets.LauncherAssets;
+import name.martingeisse.miner.account.UserVisibleMessageException;
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.GuiElement;
+import name.martingeisse.stackd.client.gui.control.MessageBox;
 import name.martingeisse.stackd.client.gui.control.Page;
 import name.martingeisse.stackd.client.gui.element.FillTexture;
 import name.martingeisse.stackd.client.gui.element.Margin;
@@ -41,6 +43,19 @@ public class AbstractStartmenuPage extends Page {
 	protected final void initializeStartmenuPage(GuiElement mainElement) {
 		StackdTexture backgroundTexture = new StackdTexture(LauncherAssets.class, "dirt.png", false);
 		initializePage(new FillTexture(backgroundTexture), new Margin(mainElement, 30 * Gui.GRID, 30 * Gui.GRID));
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.stackd.client.gui.control.Page#onException(java.lang.Throwable)
+	 */
+	@Override
+	protected void onException(Throwable t) {
+		if (t instanceof UserVisibleMessageException) {
+			new MessageBox(t.getMessage()).show(this);
+		} else {
+			super.onException(t);
+			new MessageBox("An error has occurred.").show(this);
+		}
 	}
 	
 }

@@ -15,6 +15,7 @@ import name.martingeisse.stackd.client.gui.element.Margin;
 import name.martingeisse.stackd.client.gui.element.OverlayStack;
 import name.martingeisse.stackd.client.gui.element.Sizer;
 import name.martingeisse.stackd.client.gui.element.TextParagraph;
+import name.martingeisse.stackd.client.gui.element.ThinBorder;
 import name.martingeisse.stackd.client.gui.element.VerticalLayout;
 import name.martingeisse.stackd.client.gui.util.Color;
 import name.martingeisse.stackd.client.gui.util.HorizontalAlignment;
@@ -91,7 +92,8 @@ public class MessageBox extends Control {
 		OverlayStack stack = new OverlayStack();
 		stack.addElement(new FillColor(new Color(128, 128, 128, 255)));
 		stack.addElement(verticalLayout);
-		setControlRootElement(new Glue(stack));
+		ThinBorder boxBorder = new ThinBorder(stack).setColor(new Color(192, 192, 192, 256));
+		setControlRootElement(new Glue(boxBorder));
 		
 	}
 	

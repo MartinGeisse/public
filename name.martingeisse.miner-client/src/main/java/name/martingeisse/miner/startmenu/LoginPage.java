@@ -9,7 +9,6 @@ package name.martingeisse.miner.startmenu;
 import name.martingeisse.miner.account.AccountApiClient;
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.GuiEvent;
-import name.martingeisse.stackd.client.gui.control.MessageBox;
 import name.martingeisse.stackd.client.gui.element.Spacer;
 import name.martingeisse.stackd.client.gui.element.VerticalLayout;
 import org.lwjgl.input.Keyboard;
@@ -58,11 +57,11 @@ public class LoginPage extends AbstractStartmenuPage {
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.stackd.client.gui.control.Control#handleEvent(name.martingeisse.stackd.client.gui.GuiEvent)
+	 * @see name.martingeisse.stackd.client.gui.control.Page#handlePageEvent(name.martingeisse.stackd.client.gui.GuiEvent)
 	 */
 	@Override
-	public void handleEvent(GuiEvent event) {
-		super.handleEvent(event);
+	protected void handlePageEvent(GuiEvent event) {
+		super.handlePageEvent(event);
 		if (event == GuiEvent.KEY_PRESSED && Keyboard.getEventCharacter() == '\r') {
 			login();
 		}
@@ -74,12 +73,8 @@ public class LoginPage extends AbstractStartmenuPage {
 	private void login() {
 		String username = this.username.getTextField().getValue();
 		String password = this.password.getTextField().getValue();
-		try {
-			AccountApiClient.getInstance().login(username, password);
-			getGui().setRootElement(new ChooseCharacterPage());
-		} catch (RuntimeException e) {
-			new MessageBox(e.getMessage()).show(LoginPage.this);
-		}
+		AccountApiClient.getInstance().login(username, password);
+		getGui().setRootElement(new ChooseCharacterPage());
 	}
 
 }
