@@ -6,7 +6,6 @@
 
 package name.martingeisse.miner.startmenu;
 
-import name.martingeisse.miner.account.AccountApiClient;
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.element.Spacer;
 import name.martingeisse.stackd.client.gui.element.VerticalLayout;
@@ -33,9 +32,7 @@ public class ChooseNamePage extends AbstractStartmenuPage {
 		menu.addElement(new StartmenuButton("Create Character") {
 			@Override
 			protected void onClick() {
-				String name = ChooseNamePage.this.name.getTextField().getValue();
-				long playerId = AccountApiClient.getInstance().createPlayer(ChooseFactionPage.selectedFaction, name);
-				getGui().setRootElement(new PlayerDetailsPage(playerId));
+				createPlayer();
 			}
 		});
 		menu.addElement(new Spacer(2 * Gui.GRID));
@@ -48,4 +45,29 @@ public class ChooseNamePage extends AbstractStartmenuPage {
 		initializeStartmenuPage(menu);
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.stackd.client.gui.control.Page#onAttach()
+	 */
+	@Override
+	protected void onAttach() {
+		getGui().setFocus(name.getTextField());
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.miner.startmenu.AbstractStartmenuPage#onEnterPressed()
+	 */
+	@Override
+	protected void onEnterPressed() {
+		createPlayer();
+	}
+
+	/**
+	 * 
+	 */
+	private void createPlayer() {
+		String name = ChooseNamePage.this.name.getTextField().getValue();
+		long playerId = AccountApiClient.getInstance().createPlayer(ChooseFactionPage.selectedFaction, name);
+		getGui().setRootElement(new PlayerDetailsPage(playerId));
+	}
+	
 }

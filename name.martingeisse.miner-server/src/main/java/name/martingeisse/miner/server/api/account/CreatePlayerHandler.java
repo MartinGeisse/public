@@ -48,7 +48,7 @@ public final class CreatePlayerHandler extends AbstractLoggedInHandler {
 		insert.set(QPlayer.player.name, name);
 		insert.set(QPlayer.player.faction, factionIndex);
 		insert.set(QPlayer.player.x, BigDecimal.ZERO);
-		insert.set(QPlayer.player.y, BigDecimal.ZERO);
+		insert.set(QPlayer.player.y, BigDecimal.ONE.add(BigDecimal.ONE));
 		insert.set(QPlayer.player.z, BigDecimal.ZERO);
 		long playerId = insert.executeWithKey(Long.class);
 

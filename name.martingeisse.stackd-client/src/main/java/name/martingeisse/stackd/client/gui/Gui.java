@@ -79,10 +79,15 @@ public final class Gui {
 	private IFocusableElement focus;
 	
 	/**
-	 * the followupActions
+	 * the followupLogicActions
 	 */
-	private Queue<Runnable> followupActions;
+	private Queue<Runnable> followupLogicActions;
 
+	/**
+	 * the followupOpenglActions
+	 */
+	private Queue<Runnable> followupOpenglActions;
+	
 	/**
 	 * Constructor.
 	 * @param widthPixels the width of the GUI in pixels
@@ -92,7 +97,8 @@ public final class Gui {
 		this.widthPixels = widthPixels;
 		this.heightPixels = heightPixels;
 		this.widthUnits = pixelsToUnits(widthPixels);
-		this.followupActions = new LinkedList<Runnable>();
+		this.followupLogicActions = new LinkedList<Runnable>();
+		this.followupOpenglActions = new LinkedList<Runnable>();
 	}
 
 	/**
@@ -134,7 +140,9 @@ public final class Gui {
 	public final void setRootElement(final GuiElement rootElement) {
 		this.rootElement = rootElement;
 		this.layoutRequested = true;
-		rootElement.usedAsRootElement(this);
+		if (rootElement != null) {
+			rootElement.usedAsRootElement(this);
+		}
 	}
 
 	/**
@@ -252,26 +260,55 @@ public final class Gui {
 	}
 
 	/**
-	 * Adds an action to execute as part of the "followup action loop".
+	 * Adds an action to execute as part of the "followup logic action loop".
 	 * 
 	 * For example, a text field that wants to change focus in reaction to the tab key
-	 * should do so in a followup action. If it changed focus directly, then handling
+	 * should do so in a followup logic action. If it changed focus directly, then handling
 	 * of the tab key would continue and might reach the newly focused element later on
 	 * (depending on element order) and immediately switch focus again.
 	 * 
-	 * @param followupAction the followup action to add
+	 * @param followupAction the followup logic action to add
 	 */
-	public void addFollowupAction(Runnable followupAction) {
-		followupActions.add(followupAction);
+	public void addFollowupLogicAction(Runnable followupLogicAction) {
+		followupLogicActions.add(followupLogicAction);
 	}
 	
 	/**
-	 * Executes all pending followup actions. This should generally be done after
+	 * Executes all pending followup logic actions. This should generally be done after
 	 * passing input events to the GUI.
 	 */
-	public void executeFollowupActions() {
+	public void executeFollowupLogicActions() {
 		while (true) {
-			Runnable action = followupActions.poll();
+			Runnable action = followupLogicActions.poll();
+			if (action == null) {
+				break;
+			}
+			action.run();
+		}
+	}
+	
+	/**
+	 * Adds an action to execute as part of the "followup OpenGL action loop". This is
+	 * similar to followup logic actions, except they're executed in the OpenGL
+	 * worker thread.
+	 * 
+	 * Followup OpenGL actions are needed for special cases during the interaction
+	 * between GUI and the in-game OpenGL code. This comment cannot describe a
+	 * typical use case because there is none.
+	 * 
+	 * @param followupAction the followup OpenGL action to add
+	 */
+	public void addFollowupOpenglAction(Runnable followupOpenglAction) {
+		followupOpenglActions.add(followupOpenglAction);
+	}
+	
+	/**
+	 * Executes all pending followup OpenGL actions. This should generally be done after
+	 * firing the DRAW event.
+	 */
+	public void executeFollowupOpenglActions() {
+		while (true) {
+			Runnable action = followupOpenglActions.poll();
 			if (action == null) {
 				break;
 			}

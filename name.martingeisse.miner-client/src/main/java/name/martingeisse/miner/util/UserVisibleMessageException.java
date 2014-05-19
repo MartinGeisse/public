@@ -4,7 +4,9 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.miner.account;
+package name.martingeisse.miner.util;
+
+import name.martingeisse.miner.startmenu.AccountApiClient;
 
 /**
  * This exception type gets thrown by the {@link AccountApiClient} to

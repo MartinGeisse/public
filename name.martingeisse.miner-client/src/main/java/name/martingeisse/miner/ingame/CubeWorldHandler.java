@@ -54,12 +54,14 @@ import static org.lwjgl.opengl.GL11.glVertex3f;
 import static org.lwjgl.opengl.GL11.glVertex3i;
 import static org.lwjgl.opengl.GL14.glWindowPos2i;
 import static org.lwjgl.util.glu.GLU.gluPerspective;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
 import name.martingeisse.miner.common.MinerCommonConstants;
 import name.martingeisse.miner.common.MinerCubeTypes;
 import name.martingeisse.stackd.client.engine.EngineParameters;
@@ -74,11 +76,13 @@ import name.martingeisse.stackd.client.network.CubeModificationPacketBuilder;
 import name.martingeisse.stackd.client.network.SectionGridLoader;
 import name.martingeisse.stackd.client.sound.RegularSound;
 import name.martingeisse.stackd.client.system.Font;
+import name.martingeisse.stackd.client.util.MouseUtil;
 import name.martingeisse.stackd.client.util.RayAction;
 import name.martingeisse.stackd.client.util.RayActionSupport;
 import name.martingeisse.stackd.common.geometry.AxisAlignedDirection;
 import name.martingeisse.stackd.common.geometry.RectangularRegion;
 import name.martingeisse.stackd.common.util.ProfilingHelper;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -324,8 +328,8 @@ public class CubeWorldHandler {
 	 * 
 	 */
 	public void step() {
-		final boolean keysEnabled = IngameHandler.ingameMenuHandlerWrapper.getWrappedHandler() == null;
-		final boolean mouseMovementEnabled = IngameHandler.ingameMenuHandlerWrapper.getWrappedHandler() == null;
+		final boolean keysEnabled = IngameHandler.gameMenuHandlerWrapper.getWrappedHandler() == null;
+		final boolean mouseMovementEnabled = IngameHandler.gameMenuHandlerWrapper.getWrappedHandler() == null;
 
 		// first, handle the stuff that already works without the world being loaded "enough"
 		frameDurationSensor.tick();
@@ -350,10 +354,10 @@ public class CubeWorldHandler {
 			grid = false;
 		}
 		if (keysEnabled && Keyboard.isKeyDown(Keyboard.KEY_K)) {
-			Mouse.setGrabbed(false);
+			MouseUtil.ungrab();
 		}
 		if (keysEnabled && Keyboard.isKeyDown(Keyboard.KEY_L)) {
-			Mouse.setGrabbed(true);
+			MouseUtil.grab();
 		}
 		if (keysEnabled && Keyboard.isKeyDown(Keyboard.KEY_SLASH) && !minusPressed) {
 			IngameHandler.flashMessageHandler.addMessage("foobar! " + flashMessageCounter);
@@ -384,8 +388,8 @@ public class CubeWorldHandler {
 		if (keysEnabled) {
 			while (Keyboard.next()) {
 				if (Keyboard.getEventKey() == Keyboard.KEY_ESCAPE && Keyboard.getEventKeyState()) {
-					IngameHandler.ingameMenuHandlerWrapper.setWrappedHandler(IngameHandler.ingameMenuHandler);
-					Mouse.setGrabbed(false);
+					IngameHandler.gameMenuHandlerWrapper.setWrappedHandler(IngameHandler.gameMenuHandler);
+					MouseUtil.ungrab();
 				}
 			}
 		}

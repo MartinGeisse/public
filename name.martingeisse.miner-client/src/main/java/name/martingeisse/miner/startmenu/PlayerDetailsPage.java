@@ -8,7 +8,6 @@ package name.martingeisse.miner.startmenu;
 
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.miner.Main;
-import name.martingeisse.miner.account.AccountApiClient;
 import name.martingeisse.miner.common.Faction;
 import name.martingeisse.miner.ingame.IngameHandler;
 import name.martingeisse.stackd.client.gui.Gui;
@@ -23,7 +22,7 @@ import name.martingeisse.stackd.client.gui.element.TextParagraph;
 import name.martingeisse.stackd.client.gui.element.ThinBorder;
 import name.martingeisse.stackd.client.gui.element.VerticalLayout;
 import name.martingeisse.stackd.client.gui.util.Color;
-import org.lwjgl.input.Mouse;
+import name.martingeisse.stackd.client.util.MouseUtil;
 
 /**
  * The "character details" menu page.
@@ -119,12 +118,17 @@ public class PlayerDetailsPage extends AbstractStartmenuPage {
 	 */
 	private void play() {
 		AccountApiClient.getInstance().accessPlayer(playerId);
-		try {
-			Main.frameLoop.getRootHandler().setWrappedHandler(new IngameHandler());
-			Mouse.setGrabbed(true);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		getGui().addFollowupOpenglAction(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Main.frameLoop.getRootHandler().setWrappedHandler(new IngameHandler());
+					MouseUtil.grab();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		});
 	}
 
 }

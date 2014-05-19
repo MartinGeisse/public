@@ -210,7 +210,7 @@ public final class TextField extends Control implements IFocusableElement {
 				} else if (code == Keyboard.KEY_DELETE) {
 				} else if (character == '\t') {
 					if (nextFocusableElement != null) {
-						getGui().addFollowupAction(new Runnable() {
+						getGui().addFollowupLogicAction(new Runnable() {
 							@Override
 							public void run() {
 								getGui().setFocus(nextFocusableElement);
