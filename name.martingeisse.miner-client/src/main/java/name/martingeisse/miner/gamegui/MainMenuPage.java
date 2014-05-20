@@ -6,8 +6,6 @@
 
 package name.martingeisse.miner.gamegui;
 
-import org.lwjgl.input.Mouse;
-
 import name.martingeisse.miner.ingame.IngameHandler;
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.element.Margin;

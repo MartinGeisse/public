@@ -267,7 +267,7 @@ public final class Gui {
 	 * of the tab key would continue and might reach the newly focused element later on
 	 * (depending on element order) and immediately switch focus again.
 	 * 
-	 * @param followupAction the followup logic action to add
+	 * @param followupLogicAction the followup logic action to add
 	 */
 	public void addFollowupLogicAction(Runnable followupLogicAction) {
 		followupLogicActions.add(followupLogicAction);
@@ -296,7 +296,7 @@ public final class Gui {
 	 * between GUI and the in-game OpenGL code. This comment cannot describe a
 	 * typical use case because there is none.
 	 * 
-	 * @param followupAction the followup OpenGL action to add
+	 * @param followupOpenglAction the followup OpenGL action to add
 	 */
 	public void addFollowupOpenglAction(Runnable followupOpenglAction) {
 		followupOpenglActions.add(followupOpenglAction);
