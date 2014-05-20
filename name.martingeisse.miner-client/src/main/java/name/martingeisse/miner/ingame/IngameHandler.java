@@ -8,8 +8,9 @@ package name.martingeisse.miner.ingame;
 
 import java.util.List;
 import java.util.Map;
+
 import name.martingeisse.miner.Main;
-import name.martingeisse.miner.ingame.gui.IngameMenuHandler;
+import name.martingeisse.miner.gamegui.GameMenuHandler;
 import name.martingeisse.stackd.client.frame.AbstractFrameHandler;
 import name.martingeisse.stackd.client.frame.BreakFrameLoopException;
 import name.martingeisse.stackd.client.frame.handlers.FlashMessageHandler;
@@ -60,14 +61,14 @@ public class IngameHandler extends HandlerList {
 	public static FlashMessageHandler flashMessageHandler;
 	
 	/**
-	 * the ingameMenuHandler
+	 * the gameMenuHandler
 	 */
-	public static IngameMenuHandler ingameMenuHandler;
+	public static GameMenuHandler gameMenuHandler;
 	
 	/**
 	 * the ingameMenuHandlerWrapper
 	 */
-	public static SwappableHandler ingameMenuHandlerWrapper;
+	public static SwappableHandler gameMenuHandlerWrapper;
 
 	/**
 	 * Constructor.
@@ -191,9 +192,9 @@ public class IngameHandler extends HandlerList {
 		*/
 		
 		// the in-game menu
-		ingameMenuHandler = new IngameMenuHandler();
-		ingameMenuHandlerWrapper = new SwappableHandler();
-		add(ingameMenuHandlerWrapper);
+		gameMenuHandler = new GameMenuHandler();
+		gameMenuHandlerWrapper = new SwappableHandler();
+		add(gameMenuHandlerWrapper);
 
 		// prepare running the game
 		protocolClient.setFlashMessageHandler(flashMessageHandler);

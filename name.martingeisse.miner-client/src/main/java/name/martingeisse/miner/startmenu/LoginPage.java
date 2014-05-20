@@ -7,12 +7,10 @@
 package name.martingeisse.miner.startmenu;
 
 import java.util.prefs.Preferences;
-import name.martingeisse.miner.account.AccountApiClient;
+
 import name.martingeisse.stackd.client.gui.Gui;
-import name.martingeisse.stackd.client.gui.GuiEvent;
 import name.martingeisse.stackd.client.gui.element.Spacer;
 import name.martingeisse.stackd.client.gui.element.VerticalLayout;
-import org.lwjgl.input.Keyboard;
 
 /**
  * The "login" menu page.
@@ -62,16 +60,22 @@ public class LoginPage extends AbstractStartmenuPage {
 		initializeStartmenuPage(menu);
 		
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see name.martingeisse.stackd.client.gui.control.Page#handlePageEvent(name.martingeisse.stackd.client.gui.GuiEvent)
+	 * @see name.martingeisse.stackd.client.gui.control.Page#onAttach()
 	 */
 	@Override
-	protected void handlePageEvent(GuiEvent event) {
-		super.handlePageEvent(event);
-		if (event == GuiEvent.KEY_PRESSED && Keyboard.getEventCharacter() == '\r') {
-			login();
-		}
+	protected void onAttach() {
+		LabeledTextField initialFocus = (username.getTextField().getValue().isEmpty() ? username : password);
+		getGui().setFocus(initialFocus.getTextField());
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.miner.startmenu.AbstractStartmenuPage#onEnterPressed()
+	 */
+	@Override
+	protected void onEnterPressed() {
+		login();
 	}
 	
 	/**

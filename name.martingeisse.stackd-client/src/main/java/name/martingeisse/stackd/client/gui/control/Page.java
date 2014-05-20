@@ -9,6 +9,7 @@ package name.martingeisse.stackd.client.gui.control;
 import name.martingeisse.stackd.client.gui.GuiElement;
 import name.martingeisse.stackd.client.gui.GuiEvent;
 import name.martingeisse.stackd.client.gui.element.FillColor;
+import name.martingeisse.stackd.client.gui.element.NullElement;
 import name.martingeisse.stackd.client.gui.element.OverlayStack;
 import name.martingeisse.stackd.client.gui.util.AreaAlignment;
 import name.martingeisse.stackd.client.gui.util.Color;
@@ -27,6 +28,10 @@ import org.apache.log4j.Logger;
  * To support all this, subclasses that want to override
  * {@link #handleEvent(GuiEvent)} must override {@link #handlePageEvent(GuiEvent)}
  * instead.
+ * 
+ * Pages call the helper method {@link #onAttach()} once (and only once)
+ * when the GUI becomes available. This can be used, for example, to
+ * set the initial input focus.
  */
 public class Page extends Control {
 
@@ -41,6 +46,11 @@ public class Page extends Control {
 	private static final Color DARK_OVERLAY = new Color(0, 0, 0, 192);
 	
 	/**
+	 * the attached
+	 */
+	private boolean attached = false;
+	
+	/**
 	 * Constructor.
 	 * 
 	 * @param backgroundElement the background element, or null if none
@@ -49,7 +59,7 @@ public class Page extends Control {
 	protected final void initializePage(final GuiElement backgroundElement, final GuiElement mainElement) {
 		final OverlayStack stack = new OverlayStack();
 		stack.setAlignment(AreaAlignment.CENTER);
-		stack.addElement(backgroundElement);
+		stack.addElement(backgroundElement == null ? NullElement.instance : backgroundElement);
 		stack.addElement(mainElement);
 		stack.addElement(new FillColor(Color.TRANSPARENT));
 		setControlRootElement(stack);
@@ -61,7 +71,7 @@ public class Page extends Control {
 	 * @param popupElement the popup element to use, or null for none
 	 */
 	public final void setPopupElement(final GuiElement popupElement) {
-		getGui().addFollowupAction(new Runnable() {
+		getGui().addFollowupLogicAction(new Runnable() {
 			@Override
 			public void run() {
 				if (hasPopup()) {
@@ -112,6 +122,10 @@ public class Page extends Control {
 	@Override
 	public final void handleEvent(GuiEvent event) {
 		try {
+			if (!attached && getGuiOrNull() != null) {
+				attached = true;
+				onAttach();
+			}
 			if (event == GuiEvent.DRAW) {
 				super.handleEvent(event);
 				return;
@@ -156,6 +170,12 @@ public class Page extends Control {
 	 */
 	protected void onException(Throwable t) {
 		logger.error("exception during GUI event handling", t);
+	}
+	
+	/**
+	 * This method gets fired once when the GUI is available to this page.
+	 */
+	protected void onAttach() {
 	}
 	
 }

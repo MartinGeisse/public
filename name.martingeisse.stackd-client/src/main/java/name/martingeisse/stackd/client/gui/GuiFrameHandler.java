@@ -70,6 +70,7 @@ public final class GuiFrameHandler extends AbstractFrameHandler {
 	 */
 	private synchronized void drawInternal() {
 		gui.fireEvent(GuiEvent.DRAW);
+		gui.executeFollowupOpenglActions();
 	}
 
 	/* (non-Javadoc)
@@ -94,7 +95,7 @@ public final class GuiFrameHandler extends AbstractFrameHandler {
 		}
 		
 		// handle pending followup actions
-		gui.executeFollowupActions();
+		gui.executeFollowupLogicActions();
 		
 	}
 	

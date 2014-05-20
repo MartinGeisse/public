@@ -10,6 +10,8 @@ import name.martingeisse.stackd.client.frame.AbstractFrameHandler;
 import name.martingeisse.stackd.client.frame.BreakFrameLoopException;
 import name.martingeisse.stackd.client.frame.FrameLoop;
 import name.martingeisse.stackd.client.util.LwjglNativeLibraryHelper;
+import name.martingeisse.stackd.client.util.MouseUtil;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -37,8 +39,8 @@ public final class KeyboardCodePrinter {
 			// initialize LWJGL
 			Display.create();
 			Mouse.create();
-			Mouse.setGrabbed(true);
 			Mouse.poll();
+			MouseUtil.grab();
 
 			final FrameLoop loop = new FrameLoop();
 			loop.getRootHandler().setWrappedHandler(new AbstractFrameHandler() {

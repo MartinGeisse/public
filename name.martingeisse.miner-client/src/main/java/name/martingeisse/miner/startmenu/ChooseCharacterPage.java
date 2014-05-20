@@ -7,7 +7,6 @@
 package name.martingeisse.miner.startmenu;
 
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
-import name.martingeisse.miner.account.AccountApiClient;
 import name.martingeisse.miner.common.Faction;
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.element.Spacer;
