@@ -9,8 +9,8 @@ package name.martingeisse.stackd.client.glworker;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * Implements a simple, globally accessible worker thread scheme that uses
- * one OpenGL thread and one application thread.
+ * Implements a simple, globally accessible worker thread scheme
+ * that uses a single OpenGL thread.
  */
 public final class SimpleWorkerScheme {
 

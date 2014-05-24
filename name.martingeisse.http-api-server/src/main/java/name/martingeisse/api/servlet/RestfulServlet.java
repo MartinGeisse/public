@@ -110,7 +110,7 @@ public class RestfulServlet extends HttpServlet {
 			} catch (RequestException e) {
 				ServletUtil.emitParameterErrorResponse(response, e.getMessage());
 			} catch (Exception e) {
-				e.printStackTrace(System.out);
+				logger.error("unexpected exception", e);
 				ServletUtil.emitInternalServerErrorResponse(response);
 				return;
 			}

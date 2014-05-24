@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Locale;
 import java.util.concurrent.Executors;
-
 import name.martingeisse.api.handler.DefaultMasterHandler;
 import name.martingeisse.api.handler.misc.NotFoundHandler;
 import name.martingeisse.api.request.RequestCycle;
@@ -22,8 +21,8 @@ import name.martingeisse.miner.common.MinerCommonConstants;
 import name.martingeisse.miner.server.api.account.AccountApiHandler;
 import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.sql.MysqlDatabaseDescriptor;
+import name.martingeisse.stackd.common.task.TaskSystem;
 import name.martingeisse.stackd.server.network.StackdNettyPipelineFactory;
-
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
@@ -107,6 +106,9 @@ public class Main {
 		JavascriptAssembler.defaultDateFormatter = DateTimeFormat.forPattern("YYYY-MM-dd").withZone(timeZone);
 		JavascriptAssembler.defaultDateTimeFormatter = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss").withZone(timeZone);
 
+		// initialize task system
+		TaskSystem.initialize();
+		
 		// initialize SQL database
 		final MysqlDatabaseDescriptor mainDatabase = new MysqlDatabaseDescriptor();
 		mainDatabase.setDisplayName("Main Database");

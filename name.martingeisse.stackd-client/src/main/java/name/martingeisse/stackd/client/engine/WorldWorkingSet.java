@@ -18,6 +18,7 @@ import name.martingeisse.stackd.common.collision.CompositeCollider;
 import name.martingeisse.stackd.common.collision.IAxisAlignedCollider;
 import name.martingeisse.stackd.common.geometry.ClusterSize;
 import name.martingeisse.stackd.common.geometry.SectionId;
+import org.apache.log4j.Logger;
 
 /**
  * Represents the "working set" (i.e. currently visible sections) of a potentially huge
@@ -29,6 +30,11 @@ import name.martingeisse.stackd.common.geometry.SectionId;
  */
 public final class WorldWorkingSet {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(WorldWorkingSet.class);
+	
 	/**
 	 * the engineParameters
 	 */
@@ -194,10 +200,7 @@ public final class WorldWorkingSet {
 					return unit1.getBackfaceCullingDirection().ordinal() - unit2.getBackfaceCullingDirection().ordinal();
 				}
 			});
-			System.out.println("--- render units ---");
-			for (RenderUnit renderUnit : renderUnits) {
-				System.out.println("# " + renderUnit.getTextureIndex() + ", " + renderUnit.getTextureCoordinateGenerationDirection() + ", " + renderUnit.getBackfaceCullingDirection() + ", " + renderUnit.getVertexCount());
-			}
+			logger.info("working set now has " + renderUnits.length + " render units");
 		}
 		
 		// render

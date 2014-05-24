@@ -7,7 +7,7 @@
 package name.martingeisse.stackd.server.section;
 
 import name.martingeisse.stackd.common.network.SectionDataId;
-import name.martingeisse.stackd.server.task.StackdTask;
+import name.martingeisse.stackd.common.task.Task;
 
 /**
  * Base class for cached section data objects. This class stores
@@ -82,7 +82,7 @@ public abstract class SectionDataCacheEntry {
 	public synchronized final void markModified() {
 		if (!modified) {
 			this.modified = true;
-			new StackdTask() {
+			new Task() {
 				@Override
 				public void run() {
 					save();

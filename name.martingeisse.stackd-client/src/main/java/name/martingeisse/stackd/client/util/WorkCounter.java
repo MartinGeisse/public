@@ -8,6 +8,7 @@ package name.martingeisse.stackd.client.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  * Utility class to count how often a piece of work
@@ -161,10 +162,15 @@ public class WorkCounter {
 	}
 	
 	/**
-	 * Work counter implementation that prints min/max/average to System.out.
+	 * Work counter implementation that logs min/max/average at INFO level.
 	 * The full stats are not printed by default.
 	 */
-	public static class SystemOutPrinter extends WorkCounter {
+	public static class WorkLogger extends WorkCounter {
+		
+		/**
+		 * the logger
+		 */
+		private static Logger logger = Logger.getLogger(WorkCounter.WorkLogger.class);
 		
 		/**
 		 * the description
@@ -176,7 +182,7 @@ public class WorkCounter {
 		 * @param period the period
 		 * @param description a string that is printed with every change message
 		 */
-		public SystemOutPrinter(int period, String description) {
+		public WorkLogger(int period, String description) {
 			super(period);
 			this.description = description;
 		}
@@ -186,7 +192,7 @@ public class WorkCounter {
 		 */
 		@Override
 		protected void onCycle() {
-			System.out.println(description + ": min = " + getMinimumWork() + ", max = " + getMaximumWork() + ", avg = " + getAverageWork());
+			logger.info(description + ": min = " + getMinimumWork() + ", max = " + getMaximumWork() + ", avg = " + getAverageWork());
 		}
 		
 	}

@@ -22,6 +22,7 @@ import name.martingeisse.stackd.server.console.NullConsoleCommandHandler;
 import name.martingeisse.stackd.server.section.SectionCubesCacheEntry;
 import name.martingeisse.stackd.server.section.SectionWorkingSet;
 import name.martingeisse.stackd.server.section.storage.AbstractSectionStorage;
+import org.apache.log4j.Logger;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBufferInputStream;
 import org.jboss.netty.channel.Channel;
@@ -36,6 +37,11 @@ import org.json.simple.JSONValue;
  */
 public abstract class StackdServer<S extends StackdSession> {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(StackdServer.class);
+	
 	/**
 	 * the sessions
 	 */
@@ -250,14 +256,15 @@ public abstract class StackdServer<S extends StackdSession> {
 			break;
 		}
 		
-		case StackdPacket.TYPE_SINGLE_SECTION_DATA_DEFINITIVE:
+		// TYPE_SINGLE_SECTION_DATA_DEFINITIVE is not valid because the client must not get that information,
+		// to prevent information cheating.
 		case StackdPacket.TYPE_SINGLE_SECTION_DATA_INTERACTIVE:
 		case StackdPacket.TYPE_SINGLE_SECTION_DATA_VIEW_LOD_0:
 		{
 			SectionId sectionId = new SectionId(buffer.readInt(), buffer.readInt(), buffer.readInt());
 			SectionDataType type = SectionDataType.values()[packet.getType() - StackdPacket.TYPE_SINGLE_SECTION_DATA_BASE];
 			SectionDataId dataId = new SectionDataId(sectionId, type);
-			System.out.println("* " + (System.currentTimeMillis() % 100000) + ": SERVER received section data request: " + dataId);
+			logger.debug("SERVER received section data request: " + dataId);
 			onSectionDataRequested(session, dataId);
 			break;
 		}
@@ -282,7 +289,7 @@ public abstract class StackdServer<S extends StackdSession> {
 			if (packet.getType() < 0xff00) {
 				onApplicationPacketReceived(session, packet);
 			} else {
-				System.err.println("invalid protocol packet type: " + packet.getType());
+				logger.warn("client sent invalid protocol packet type: " + packet.getType());
 			}
 			break;
 		
@@ -330,10 +337,10 @@ public abstract class StackdServer<S extends StackdSession> {
 	 */
 	final void internalOnClientDisconnected(final S session) {
 		if (session == null) {
-			System.out.println("client without session disconnected");
+			logger.info("client without session disconnected");
 		} else {
 			final int sessionId = session.getId();
-			System.out.println("client disconnected: " + sessionId);
+			logger.info("client disconnected: " + sessionId);
 			onClientDisconnected(session);
 			sessions.remove(sessionId);
 		}
@@ -367,7 +374,7 @@ public abstract class StackdServer<S extends StackdSession> {
 		buffer.writeInt(sectionId.getZ());
 		buffer.writeBytes(data);
 		session.sendPacketDestructive(response);
-		System.out.println("* " + (System.currentTimeMillis() % 100000) + ": SERVER sent section data: " + sectionDataId + " (" + data.length + " bytes)");
+		logger.debug("* " + (System.currentTimeMillis() % 100000) + ": SERVER sent section data: " + sectionDataId + " (" + data.length + " bytes)");
 	}
 	
 	/**

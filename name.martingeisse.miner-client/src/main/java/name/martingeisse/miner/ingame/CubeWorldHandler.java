@@ -54,14 +54,13 @@ import static org.lwjgl.opengl.GL11.glVertex3f;
 import static org.lwjgl.opengl.GL11.glVertex3i;
 import static org.lwjgl.opengl.GL14.glWindowPos2i;
 import static org.lwjgl.util.glu.GLU.gluPerspective;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
+import name.martingeisse.common.util.ThreadUtil;
 import name.martingeisse.miner.common.MinerCommonConstants;
 import name.martingeisse.miner.common.MinerCubeTypes;
 import name.martingeisse.stackd.client.engine.EngineParameters;
@@ -82,7 +81,10 @@ import name.martingeisse.stackd.client.util.RayActionSupport;
 import name.martingeisse.stackd.common.geometry.AxisAlignedDirection;
 import name.martingeisse.stackd.common.geometry.RectangularRegion;
 import name.martingeisse.stackd.common.util.ProfilingHelper;
-
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.joda.time.Duration;
+import org.joda.time.Instant;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -94,6 +96,11 @@ import org.lwjgl.util.glu.Sphere;
  */
 public class CubeWorldHandler {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(CubeWorldHandler.class);
+	
 	/**
 	 * the MAX_STAIRS_HEIGHT
 	 */
@@ -193,6 +200,11 @@ public class CubeWorldHandler {
 	 * the cooldownFinishTime
 	 */
 	private long cooldownFinishTime;
+	
+	/**
+	 * the previousConnectionProblemInstant
+	 */
+	private Instant previousConnectionProblemInstant = new Instant();
 
 	/**
 	 * The sectionLoadHandler -- checks often (100 ms), but doesn't re-request frequently (5 sec)
@@ -397,7 +409,12 @@ public class CubeWorldHandler {
 		// check if the world is loaded "enough"
 		workingSet.acceptLoadedSections();
 		if (!workingSet.hasAllRenderModels(player.getSectionId(), 1) || !workingSet.hasAllColliders(player.getSectionId(), 1)) {
-			System.err.println("connection problems");
+			Instant now = new Instant();
+			if (new Duration(previousConnectionProblemInstant, now).getMillis() >= 1000) {
+				logger.warn("connection problems");
+				ThreadUtil.dumpThreads(Level.INFO);
+				previousConnectionProblemInstant = now;
+			}
 			return;
 		}
 

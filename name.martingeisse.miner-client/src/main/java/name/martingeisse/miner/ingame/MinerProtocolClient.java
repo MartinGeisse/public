@@ -16,6 +16,7 @@ import name.martingeisse.miner.common.MinerPacketConstants;
 import name.martingeisse.miner.startmenu.AccountApiClient;
 import name.martingeisse.stackd.client.network.StackdProtocolClient;
 import name.martingeisse.stackd.common.network.StackdPacket;
+import org.apache.log4j.Logger;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 
@@ -24,6 +25,11 @@ import org.jboss.netty.buffer.ChannelBuffers;
  */
 public class MinerProtocolClient extends StackdProtocolClient {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(MinerProtocolClient.class);
+	
 	/**
 	 * the updatedPlayerProxies
 	 */
@@ -133,7 +139,7 @@ public class MinerProtocolClient extends StackdProtocolClient {
 
 		case MinerPacketConstants.TYPE_S2C_UPDATE_COINS: {
 			this.coins = buffer.readLong();
-			System.out.println("update coins: " + coins);
+			logger.info("update coins: " + coins);
 			break;
 		}
 		

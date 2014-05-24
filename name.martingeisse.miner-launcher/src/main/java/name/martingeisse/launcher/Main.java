@@ -11,12 +11,18 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Properties;
+import org.apache.log4j.Logger;
 
 /**
  * The launcher -- downloads the up-to-date client and starts it.
  */
 public class Main {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(Main.class);
+	
 	/**
 	 * Main method.
 	 * @param args command-line arguments (ignored)
@@ -44,7 +50,7 @@ public class Main {
 		Properties launchProperties = new Properties();
 		try (InputStream inputStream = classLoader.getResourceAsStream("launch.properties")) {
 			if (inputStream == null) {
-				System.err.println("could not load client bundle");
+				logger.fatal("could not load client bundle");
 				System.exit(1);
 			}
 			launchProperties.load(inputStream);

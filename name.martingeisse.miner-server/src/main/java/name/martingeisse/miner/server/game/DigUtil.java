@@ -10,7 +10,7 @@ import name.martingeisse.miner.server.MinerSession;
 import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.webide.entity.Player;
 import name.martingeisse.webide.entity.QPlayer;
-
+import org.apache.log4j.Logger;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 
@@ -19,6 +19,11 @@ import com.mysema.query.sql.dml.SQLUpdateClause;
  */
 public final class DigUtil {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(DigUtil.class);
+	
 	/**
 	 * This method gets invoked when a player has dug away a cube. It handles
 	 * any game logic besides the basic fact that clients must update that cube
@@ -32,7 +37,7 @@ public final class DigUtil {
 	 * @param cubeType the cube type dug away
 	 */
 	public static void onCubeDugAway(MinerSession session, int x, int y, int z, byte cubeType) {
-		System.out.println("dug cube: " + cubeType);
+		logger.info("dug cube: " + cubeType);
 		
 		// check for ores
 		switch (cubeType) {

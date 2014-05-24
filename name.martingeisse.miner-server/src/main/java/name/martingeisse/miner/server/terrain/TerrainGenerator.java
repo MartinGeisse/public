@@ -7,7 +7,6 @@
 package name.martingeisse.miner.server.terrain;
 
 import java.util.Random;
-
 import name.martingeisse.miner.common.MinerCommonConstants;
 import name.martingeisse.stackd.common.cubes.Cubes;
 import name.martingeisse.stackd.common.edit.ByteArrayEditAccessHost;
@@ -16,13 +15,35 @@ import name.martingeisse.stackd.common.geometry.RectangularRegion;
 import name.martingeisse.stackd.common.geometry.SectionId;
 import name.martingeisse.stackd.common.network.SectionDataId;
 import name.martingeisse.stackd.common.network.SectionDataType;
+import name.martingeisse.stackd.common.task.ParallelGoal;
 import name.martingeisse.stackd.common.util.PerlinNoise;
 import name.martingeisse.stackd.server.section.storage.AbstractSectionStorage;
+import org.apache.log4j.Logger;
 
 /**
  * The main entry point to terrain generation.
  */
 public final class TerrainGenerator {
+
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(TerrainGenerator.class);
+	
+	/**
+	 * the octaves
+	 */
+	private static final PerlinNoise[] heightFieldOctaves = new PerlinNoise[10];
+	static {
+		for (int i=0; i<heightFieldOctaves.length; i++) {
+			heightFieldOctaves[i] = new PerlinNoise(i);
+		}
+	}
+	
+	/**
+	 * the snowNoise
+	 */
+	private static final PerlinNoise snowNoise = new PerlinNoise(123);
 
 	/**
 	 * the random
@@ -42,7 +63,7 @@ public final class TerrainGenerator {
 	/**
 	 * the heightFieldOctaveCount
 	 */
-	private int heightFieldOctaveCount = 10;
+	private int heightFieldOctaveCount = heightFieldOctaves.length;
 
 	/**
 	 * the heightFieldOctaveFactor
@@ -135,10 +156,25 @@ public final class TerrainGenerator {
 	 * @param max the section ID with highest coordinates along all three axes (inclusive)
 	 */
 	public void generate(final AbstractSectionStorage storage, final SectionId min, final SectionId max) {
+		ParallelGoal goal = new ParallelGoal();
+		goal.schedule(); // TODO allow quick autostart without thread round-trip
 		for (int x = min.getX(); x <= max.getX(); x++) {
+			final int finalX = x;
 			for (int z = min.getZ(); z <= max.getZ(); z++) {
-				generate(storage, x, min.getY(), max.getY(), z);
+				final int finalZ = z;
+				goal.addSubgoal(new Runnable() {
+					@Override
+					public void run() {
+						generate(storage, finalX, min.getY(), max.getY(), finalZ);
+					}
+				});
 			}
+		}
+		goal.seal();
+		try {
+			goal.await();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -162,6 +198,7 @@ public final class TerrainGenerator {
 	 * @param sectionZ the z component of section IDs to handle
 	 */
 	public void generate(final AbstractSectionStorage storage, final int sectionX, final int minSectionY, final int maxSectionY, final int sectionZ) {
+		logger.debug("generating random terrain for section column at " + sectionX + ", " + sectionZ);
 		
 		// some common values
 		final int size = storage.getClusterSize().getSize();
@@ -174,10 +211,9 @@ public final class TerrainGenerator {
 			double amplitude = heightFieldAmplitude;
 			double wavelength = heightFieldWavelength;
 			for (int octave = 0; octave < heightFieldOctaveCount; octave++) {
-				PerlinNoise.seed(octave);
 				for (int x = 0; x < size; x++) {
 					for (int z = 0; z < size; z++) {
-						final double contribution = PerlinNoise.computeNoise((x + baseX) / wavelength, (z + baseZ) / wavelength) * amplitude;
+						final double contribution = heightFieldOctaves[octave].computeNoise((x + baseX) / wavelength, (z + baseZ) / wavelength) * amplitude;
 						heightField[z * size + x] += contribution;
 					}
 				}
@@ -189,16 +225,16 @@ public final class TerrainGenerator {
 		for (int i = 0; i < heightField.length; i++) {
 			intHeightField[i] = (int)heightField[i];
 		}
+		logger.trace("height field generated");
 
 		// generate snow delta field
 		final double[] snowDeltaField = new double[size * size];
 		{
 			double amplitude = 10.0;
 			double wavelength = 10.0;
-			PerlinNoise.seed(123);
 			for (int x = 0; x < size; x++) {
 				for (int z = 0; z < size; z++) {
-					final double contribution = PerlinNoise.computeNoise((x + baseX) / wavelength, (z + baseZ) / wavelength) * amplitude;
+					final double contribution = snowNoise.computeNoise((x + baseX) / wavelength, (z + baseZ) / wavelength) * amplitude;
 					snowDeltaField[z * size + x] += contribution;
 				}
 			}
@@ -207,10 +243,12 @@ public final class TerrainGenerator {
 		for (int i = 0; i < snowDeltaField.length; i++) {
 			intSnowDeltaField[i] = (int)snowDeltaField[i];
 		}
+		logger.trace("snow delta field generated");
 
 		// generate sections
-		RectangularRegion relativeRegion = new RectangularRegion(0, 0, 0, size, size, size);
-		for (int sectionY = minSectionY; sectionY <= maxSectionY; sectionY++) {
+		final RectangularRegion relativeRegion = new RectangularRegion(0, 0, 0, size, size, size);
+		for (int sectionYCounter = minSectionY; sectionYCounter <= maxSectionY; sectionYCounter++) {
+			final int sectionY = sectionYCounter;
 			final SectionId sectionId = new SectionId(sectionX, sectionY, sectionZ);
 			final int baseY = sectionY * size;
 			final byte[] cubes = new byte[size * size * size];
@@ -226,7 +264,7 @@ public final class TerrainGenerator {
 					}
 				}
 			}
-
+			
 			// make the base height field
 			for (int x = 0; x < size; x++) {
 				for (int z = 0; z < size; z++) {
@@ -254,7 +292,7 @@ public final class TerrainGenerator {
 					}
 				}
 			}
-
+			
 			// place some tall grass
 			Random grassRandom = new Random(sectionX << 32 + sectionZ);
 			for (int g = 0; g < 40; g++) {
@@ -275,7 +313,7 @@ public final class TerrainGenerator {
 					}
 				}
 			}
-
+			
 			// spread some gold and gems
 			final byte[] goldAndGems = { 14, 14, 14 };
 			for (final byte cubeType : goldAndGems) {
@@ -286,7 +324,7 @@ public final class TerrainGenerator {
 					relativeEditAccess.setCube(x, y, z, cubeType);
 				}
 			}
-
+			
 			// place trees within the section, but stay away from the boundaries so the tree doesn't overlap them
 			Random treeRandom = new Random(sectionX << 32 + sectionZ);
 			for (int t = 0; t < 5; t++) {
@@ -318,12 +356,12 @@ public final class TerrainGenerator {
 					
 				}
 			}
-
+			
 			// compress section data and send it to storage
 			final byte[] compressedCubes = Cubes.createFromCubes(MinerCommonConstants.CLUSTER_SIZE, cubes).compressToByteArray(MinerCommonConstants.CLUSTER_SIZE);
 			storage.saveSectionRelatedObject(new SectionDataId(sectionId, SectionDataType.DEFINITIVE), compressedCubes);
-			
 		}
+		logger.debug("random terrain generated for section column at " + sectionX + ", " + sectionZ);
 		
 	}
 	

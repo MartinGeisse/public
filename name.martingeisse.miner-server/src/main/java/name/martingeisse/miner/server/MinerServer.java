@@ -32,6 +32,7 @@ import name.martingeisse.stackd.server.section.SectionCubesCacheEntry;
 import name.martingeisse.stackd.server.section.storage.MemorySectionStorage;
 import name.martingeisse.webide.entity.Player;
 import name.martingeisse.webide.entity.QPlayer;
+import org.apache.log4j.Logger;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
@@ -47,6 +48,11 @@ import com.mysema.query.sql.SQLQuery;
  */
 public class MinerServer extends StackdServer<MinerSession> {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(MinerServer.class);
+	
 	/**
 	 * Constructor.
 	 */
@@ -100,7 +106,7 @@ public class MinerServer extends StackdServer<MinerSession> {
 		importer.importRegions(new File("resource/stoneless"));
 		
 		getSectionWorkingSet().getSectionDataCache().clearCache();
-		System.out.println("world initialized");
+		logger.info("world initialized");
 		
 	}
 	
@@ -113,7 +119,7 @@ public class MinerServer extends StackdServer<MinerSession> {
 		TerrainGenerator terrainGenerator = new TerrainGenerator();
 		terrainGenerator.generate(getSectionWorkingSet().getStorage(), new SectionId(-horizontalRadius, -verticalRadius, -horizontalRadius), new SectionId(horizontalRadius, verticalRadius, horizontalRadius));
 		getSectionWorkingSet().getSectionDataCache().clearCache();
-		System.out.println("world initialized");
+		logger.info("world initialized");
 	}
 
 	/**

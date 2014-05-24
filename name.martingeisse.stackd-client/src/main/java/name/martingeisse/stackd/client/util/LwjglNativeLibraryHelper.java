@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Helper class that extracts LWJGL native libraries to a temporary folder
@@ -19,6 +20,11 @@ import org.apache.commons.io.FileUtils;
  */
 public final class LwjglNativeLibraryHelper {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(LwjglNativeLibraryHelper.class);
+	
 	/**
 	 * the resourcePath
 	 */
@@ -39,11 +45,11 @@ public final class LwjglNativeLibraryHelper {
 	    tempFolder = File.createTempFile("miner-launcher-", "");
 	    deleteRecursively(tempFolder);
 	    tempFolder.mkdir();
-		System.out.println("temp: " + tempFolder.getAbsolutePath());
+		logger.debug("temp: " + tempFolder.getAbsolutePath());
 	    
 	    // detect which set of native libraries to load, then extract the files
 		resourcePath = OperatingSystemSelector.getHostOs().getNativeLibraryPath();
-		System.out.println("native library path: " + resourcePath);
+		logger.debug("native library path: " + resourcePath);
 		for (String fileName : OperatingSystemSelector.getHostOs().getNativeLibraryFileNames()) {
 			extractFile(fileName);
 		}

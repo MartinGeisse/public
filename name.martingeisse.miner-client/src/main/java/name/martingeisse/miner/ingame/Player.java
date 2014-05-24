@@ -8,12 +8,18 @@ package name.martingeisse.miner.ingame;
 
 import name.martingeisse.stackd.client.engine.WorldWorkingSet;
 import name.martingeisse.stackd.common.geometry.SectionId;
+import org.apache.log4j.Logger;
 
 /**
  * Note: Angles are measured in degrees, not radians! 
  */
 public class Player {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(Player.class);
+	
 	/**
 	 * the world
 	 */
@@ -332,9 +338,9 @@ public class Player {
 		double x = ((int)(this.x * 100)) / 100.0; 
 		double y = ((int)(this.y * 100)) / 100.0; 
 		double z = ((int)(this.z * 100)) / 100.0; 
-		System.out.println("position: " + x + ", " + y + ", " + z);
-		System.out.println("leftAngle: " + leftAngle);
-		System.out.println("upAngle: " + upAngle);
+		logger.info("position: " + x + ", " + y + ", " + z);
+		logger.info("leftAngle: " + leftAngle);
+		logger.info("upAngle: " + upAngle);
 	}
 
 	/**

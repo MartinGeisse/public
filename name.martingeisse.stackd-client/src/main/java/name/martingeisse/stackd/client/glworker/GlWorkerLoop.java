@@ -8,9 +8,10 @@ package name.martingeisse.stackd.client.glworker;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import org.apache.log4j.Logger;
 
 /**
- * This class must be used by the worker thread to handle work units.
+ * This class must be used by the OpenGL worker thread to handle work units.
  * 
  * Clients should pass work units to the worker by calling {@link #schedule(GlWorkUnit)}.
  * 
@@ -48,6 +49,11 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public final class GlWorkerLoop {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(GlWorkerLoop.class);
+	
 	/**
 	 * the queue
 	 */
@@ -156,7 +162,7 @@ public final class GlWorkerLoop {
 			wantsToSkip = (workload >= frameSkipThreshold);
 			actuallySkipping = wantsToSkip;
 			if (actuallySkipping) {
-				System.out.println("low-level skip frame");
+				logger.info("low-level skip frame");
 			}
 		} else if (workUnit == BEGIN_SIDE_EFFECTS) {
 			actuallySkipping = false;

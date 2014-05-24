@@ -7,6 +7,7 @@
 package name.martingeisse.stackd.server.network;
 
 import name.martingeisse.stackd.common.network.StackdPacket;
+import org.apache.log4j.Logger;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
@@ -23,6 +24,11 @@ import org.jboss.netty.channel.SimpleChannelHandler;
  */
 final class StackdApplicationHandler<S extends StackdSession> extends SimpleChannelHandler {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(StackdApplicationHandler.class);
+	
 	/**
 	 * the server
 	 */
@@ -49,7 +55,7 @@ final class StackdApplicationHandler<S extends StackdSession> extends SimpleChan
 		super.channelConnected(ctx, e);
 		session = server.createSession(e.getChannel());
 		e.getChannel().write(createHelloPacket(session.getId()));
-		System.out.println("client connected: " + session.getId());
+		logger.info("client connected: " + session.getId());
 		server.onClientConnected(session);
 	}
 	
@@ -97,7 +103,7 @@ final class StackdApplicationHandler<S extends StackdSession> extends SimpleChan
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) throws Exception {
 		if (ctx.getChannel().isConnected()) {
 			ctx.getChannel().disconnect();
-			e.getCause().printStackTrace(System.err);
+			logger.error("unexpected exception", e.getCause());
 		}
 		server.internalOnClientDisconnected(session);
 	}

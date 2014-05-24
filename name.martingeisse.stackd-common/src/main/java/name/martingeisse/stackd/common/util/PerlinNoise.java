@@ -14,44 +14,31 @@ import java.util.Random;
 public final class PerlinNoise {
 
 	/**
-	 * the random
+	 * the permutationTable
 	 */
-	private static final Random random = new Random();
+	private final int[] permutationTable = new int[256];
 	
 	/**
-	 * This array contains a permutation of the numbers 0..255, randomly generated
-	 * at program start.
+	 * Constructor.
 	 */
-	private static final int[] PERMUTATION = new int[256];
-
-	/**
-	 * Static initializer.
-	 */
-	static {
-		seed();
+	public PerlinNoise() {
+		this(System.currentTimeMillis());
 	}
-
+	
 	/**
-	 * Re-seeds the random table with the specified seed.
-	 * @param seed the random seed
+	 * Constructor.
+	 * @param seed the random generator seed
 	 */
-	public static void seed(long seed) {
-		random.setSeed(seed);
-		seed();
-	}
-
-	/**
-	 * Re-seeds the random table with a randomly generated seed.
-	 */
-	public static void seed() {
+	public PerlinNoise(long seed) {
+		Random random = new Random(seed);
 		for (int i=0; i<256; i++) {
-			PERMUTATION[i] = i;
+			permutationTable[i] = i;
 		}
 		for (int i=255; i>=0; i--) {
 			int j = random.nextInt(i + 1);
-			int temp = PERMUTATION[i];
-			PERMUTATION[i] = PERMUTATION[j];
-			PERMUTATION[j] = temp;
+			int temp = permutationTable[i];
+			permutationTable[i] = permutationTable[j];
+			permutationTable[j] = temp;
 		}
 	}
 	
@@ -64,7 +51,7 @@ public final class PerlinNoise {
 	 * @param y the y position
 	 * @return the noise function value
 	 */
-	public static double computeNoise(double x, double y) {
+	public double computeNoise(double x, double y) {
 		
 		// compute grid-granular coordinates
 		int majorX = (int)Math.floor(x);
@@ -95,8 +82,8 @@ public final class PerlinNoise {
 	/**
 	 * Computes a deterministic pseudo-random function for the specified grid position.
 	 */
-	private static int randomize(int majorX, int majorY) {
-		return PERMUTATION[(PERMUTATION[majorX & 0xff] + majorY) & 0xff];
+	private int randomize(int majorX, int majorY) {
+		return permutationTable[(permutationTable[majorX & 0xff] + majorY) & 0xff];
 	}
 	
 	/**
@@ -105,7 +92,7 @@ public final class PerlinNoise {
 	 * relative to the grid point, used to compute the dot product between the gradient vector and the
 	 * vector from the grid point to the exact point.
 	 */
-	private static double computeGradientDotProduct(int randomGradientIndex, double minorX, double minorY) {
+	private double computeGradientDotProduct(int randomGradientIndex, double minorX, double minorY) {
 		
 		// compute x/y indices
 		int gradientIndexX = (randomGradientIndex >> 4) & 15;
@@ -128,7 +115,7 @@ public final class PerlinNoise {
 	 * @param t the interpolation position, in the range 0..1
 	 * @return the interpolated value
 	 */
-	private static double computeLinearInterpolation(double start, double end, double t) {
+	private double computeLinearInterpolation(double start, double end, double t) {
 		return start + (end - start) * t;
 	}
 	
@@ -140,7 +127,7 @@ public final class PerlinNoise {
 	 * @param t the position, in the range 0..1
 	 * @return the easing curve value, in the range 0..1
 	 */
-	private static double computeEasingFunction(double t) {
+	private double computeEasingFunction(double t) {
 		return t * t * t * (t * (t * 6 - 15) + 10);
 	}
 

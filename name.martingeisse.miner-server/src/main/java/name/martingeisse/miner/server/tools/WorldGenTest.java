@@ -37,10 +37,10 @@ public class WorldGenTest {
 		
 		// generate height field
 		for (int octave = 0; octave < octaveCount; octave++) {
-			PerlinNoise.seed();
+			PerlinNoise noise = new PerlinNoise(octave);
 			for (int x=0; x<size; x++) {
 				for (int y=0; y<size; y++) {
-					double contribution = PerlinNoise.computeNoise((x - radius) / wavelength, (y - radius) / wavelength) * amplitude;
+					double contribution = noise.computeNoise((x - radius) / wavelength, (y - radius) / wavelength) * amplitude;
 					values[y * size + x] += contribution;
 				}
 			}

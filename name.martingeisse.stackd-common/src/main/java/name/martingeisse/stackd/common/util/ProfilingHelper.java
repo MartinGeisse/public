@@ -6,6 +6,8 @@
 
 package name.martingeisse.stackd.common.util;
 
+import org.apache.log4j.Logger;
+
 /**
  * Simple helper class for code profiling. This uses three methods.
  * The start() method starts a timer. The check() method outputs
@@ -16,6 +18,11 @@ package name.martingeisse.stackd.common.util;
  */
 public class ProfilingHelper {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(ProfilingHelper.class);
+	
 	/**
 	 * the startTime
 	 */
@@ -89,7 +96,7 @@ public class ProfilingHelper {
 	private static void print(String description, long deltaNanos, int threshold) {
 		long deltaMillis = deltaNanos / 1000000;
 		if (deltaMillis >= threshold) {
-			System.out.println(description + ": " + deltaMillis);
+			logger.info(description + ": " + deltaMillis);
 		}
 	}
 	

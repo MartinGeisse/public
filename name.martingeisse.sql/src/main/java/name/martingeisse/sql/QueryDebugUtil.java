@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 import name.martingeisse.common.util.ParameterUtil;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import com.mysema.query.sql.MySQLTemplates;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.SQLQueryImpl;
@@ -39,6 +41,11 @@ import com.mysema.query.types.expr.Wildcard;
 public class QueryDebugUtil {
 
 	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(QueryDebugUtil.class);
+
+	/**
 	 * Prevent instantiation.
 	 */
 	private QueryDebugUtil() {
@@ -47,8 +54,9 @@ public class QueryDebugUtil {
 	/**
 	 * Dumps the query text and parameters from the specified query.
 	 * @param query the query to dump
+	 * @param level the log level
 	 */
-	public static void dumpQuery(final SQLQueryImpl query) {
+	public static void dumpQuery(final SQLQueryImpl query, final Level level) {
 		ParameterUtil.ensureNotNull(query, "query");
 
 		final Connection connection = new MyConnection();
@@ -60,19 +68,19 @@ public class QueryDebugUtil {
 			@Override
 			protected void setParameters(final PreparedStatement stmt, final List<?> objects, final List<Path<?>> constantPaths, final Map<ParamExpression<?>, ?> params) {
 
-				System.out.println("objects: ");
+				logger.log(level, "objects: ");
 				for (final Object o : objects) {
-					System.out.println("* " + o);
+					logger.log(level, "* " + o);
 				}
 
-				System.out.println("constant paths: ");
+				logger.log(level, "constant paths: ");
 				for (final Path<?> path : constantPaths) {
-					System.out.println("* " + path);
+					logger.log(level, "* " + path);
 				}
 
-				System.out.println("params: ");
+				logger.log(level, "params: ");
 				for (final Map.Entry<ParamExpression<?>, ?> param : params.entrySet()) {
-					System.out.println("* " + param.getKey() + " -> " + param.getValue());
+					logger.log(level, "* " + param.getKey() + " -> " + param.getValue());
 				}
 
 				throw new MyAbortException();
@@ -480,7 +488,7 @@ public class QueryDebugUtil {
 		 * This method is implemented for JDK 7 compatibility.
 		 */
 		@Override
-		public void abort(Executor executor) throws SQLException {
+		public void abort(final Executor executor) throws SQLException {
 		}
 
 		/**
@@ -503,16 +511,16 @@ public class QueryDebugUtil {
 		 * This method is implemented for JDK 7 compatibility.
 		 */
 		@Override
-		public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+		public void setNetworkTimeout(final Executor executor, final int milliseconds) throws SQLException {
 		}
 
 		/**
 		 * This method is implemented for JDK 7 compatibility.
 		 */
 		@Override
-		public void setSchema(String schema) throws SQLException {
+		public void setSchema(final String schema) throws SQLException {
 		}
-		
+
 	}
 
 }

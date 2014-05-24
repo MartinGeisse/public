@@ -15,7 +15,10 @@ import java.util.Map;
  * set of subjects of type T. The subjects must be specified at construction
  * of this object, and one work unit is created per subject. Later, the
  * work units can be scheduled as a batch, and will invoke the
- * {@link #handleSubject(Object)} method in the GL worker thread for each subject.
+ * {@link #handleSubject(Object)} method in the GL worker thread for each
+ * subject. The work units can also be scheduled individually by specifying
+ * their subject, which is the reason why this class doesn't use a single
+ * big work unit for all subjects.
  * 
  * @param <T> the subject type
  */

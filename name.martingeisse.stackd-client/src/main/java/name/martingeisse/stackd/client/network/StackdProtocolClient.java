@@ -9,11 +9,13 @@ package name.martingeisse.stackd.client.network;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import name.martingeisse.stackd.client.console.Console;
 import name.martingeisse.stackd.client.frame.handlers.FlashMessageHandler;
 import name.martingeisse.stackd.common.network.StackdPacket;
 import name.martingeisse.stackd.common.network.StackdPacketCodec;
+import org.apache.log4j.Logger;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBufferInputStream;
@@ -29,6 +31,8 @@ import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelHandler;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
+import org.jboss.netty.util.ThreadNameDeterminer;
+import org.jboss.netty.util.ThreadRenamingRunnable;
 import org.json.simple.JSONValue;
 
 /**
@@ -38,6 +42,11 @@ import org.json.simple.JSONValue;
  */
 public class StackdProtocolClient {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(StackdProtocolClient.class);
+	
 	/**
 	 * the connectFuture
 	 */
@@ -74,7 +83,15 @@ public class StackdProtocolClient {
 	 * @param port the port to connect to
 	 */
 	public StackdProtocolClient(String host, int port) {
-		final ChannelFactory factory = new NioClientSocketChannelFactory(Executors.newCachedThreadPool(), Executors.newCachedThreadPool());
+		logger.info("connecting to server");
+		ThreadRenamingRunnable.setThreadNameDeterminer(new ThreadNameDeterminer() {
+			@Override
+			public String determineThreadName(String currentThreadName, String proposedThreadName) throws Exception {
+				return proposedThreadName.replace(' ', '-');
+			}
+		});
+		// final ChannelFactory factory = new NioClientSocketChannelFactory(Executors.newCachedThreadPool(), Executors.newCachedThreadPool());
+		final ChannelFactory factory = new NioClientSocketChannelFactory(Executors.newSingleThreadExecutor(), Executors.newSingleThreadExecutor());
 		final ClientBootstrap bootstrap = new ClientBootstrap(factory);
 		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 			@Override
@@ -84,7 +101,6 @@ public class StackdProtocolClient {
 		});
 		bootstrap.setOption("tcpNoDelay", true);
 		bootstrap.setOption("keepAlive", true);
-		System.out.println("* " + (System.currentTimeMillis() % 100000) + ": connecting to server");
 		connectFuture = bootstrap.connect(new InetSocketAddress(host, port));
 	}
 
@@ -256,7 +272,7 @@ public class StackdProtocolClient {
 	private final void onProtocolPacketReceived(StackdPacket packet) {
 		ChannelBuffer buffer = packet.getBuffer();
 		if (packet.getType() == StackdPacket.TYPE_HELLO) {
-			System.out.println("* " + (System.currentTimeMillis() % 100000) + ": hello packet received");
+			logger.debug("hello packet received");
 			synchronized (syncObject) {
 				sessionId = buffer.readInt();
 				if (sessionId < 0) {
@@ -265,7 +281,7 @@ public class StackdProtocolClient {
 				syncObject.notifyAll();
 			}
 			onReady();
-			System.out.println("* " + (System.currentTimeMillis() % 100000) + ": protocol client ready");
+			logger.debug("protocol client ready");
 		} else if (packet.getType() == StackdPacket.TYPE_JSON_API) {
 			byte[] binary = new byte[buffer.readableBytes()];
 			buffer.readBytes(binary);
@@ -281,13 +297,13 @@ public class StackdProtocolClient {
 			if (sectionGridLoader != null) {
 				sectionGridLoader.handleInteractiveSectionImagePacket(packet);
 			} else {
-				System.err.println("received interactive section image but no sectionGridLoader is set in the StackdProtoclClient!");
+				logger.error("received interactive section image but no sectionGridLoader is set in the StackdProtoclClient!");
 			}
 		} else if (packet.getType() == StackdPacket.TYPE_SINGLE_SECTION_MODIFICATION_EVENT) {
 			if (sectionGridLoader != null) {
 				sectionGridLoader.handleModificationEventPacket(packet);
 			} else {
-				System.err.println("received section modification event but no sectionGridLoader is set in the StackdProtoclClient!");
+				logger.error("received section modification event but no sectionGridLoader is set in the StackdProtoclClient!");
 			}
 		} else if (packet.getType() == StackdPacket.TYPE_CONSOLE) {
 			if (console != null) {
@@ -299,7 +315,7 @@ public class StackdProtocolClient {
 					throw new RuntimeException(e);
 				}
 			} else {
-				System.err.println("received console output packet but there's no console set for the StackdProtocolClient!");
+				logger.error("received console output packet but there's no console set for the StackdProtocolClient!");
 			}
 		}
 	}

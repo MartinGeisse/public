@@ -20,6 +20,8 @@ import name.martingeisse.stackd.common.cubetype.CubeType;
 import name.martingeisse.stackd.common.geometry.ClusterSize;
 import name.martingeisse.stackd.common.geometry.SectionId;
 import name.martingeisse.stackd.common.network.StackdPacket;
+import name.martingeisse.stackd.common.task.Task;
+import org.apache.log4j.Logger;
 import org.jboss.netty.buffer.ChannelBuffer;
 
 /**
@@ -42,6 +44,11 @@ import org.jboss.netty.buffer.ChannelBuffer;
  */
 public final class SectionGridLoader {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(SectionGridLoader.class);
+	
 	/**
 	 * the workingSet
 	 */
@@ -125,7 +132,7 @@ public final class SectionGridLoader {
 		
 		// if the protocol client isn't ready yet, we cannot load anything
 		if (!protocolClient.isReady()) {
-			System.out.println("* " + (System.currentTimeMillis() % 100000) + ": cannot load sections, protocol client not ready yet");
+			logger.debug("cannot load sections, protocol client not ready yet");
 			return anythingUpdated;
 		}
 
@@ -133,6 +140,7 @@ public final class SectionGridLoader {
 		// TODO implement a batch request packet
 		// TODO fetch non-interactive data for "far" sections
 		{
+			logger.debug("requesting updates for missing sections. viewer position: " + viewerPosition);
 			final List<SectionId> missingSectionIds = findMissingSectionIds(workingSet.getRenderableSections().keySet(), renderModelRadius);
 			if (missingSectionIds != null && !missingSectionIds.isEmpty()) {
 				final SectionId[] sectionIds = missingSectionIds.toArray(new SectionId[missingSectionIds.size()]);
@@ -142,7 +150,7 @@ public final class SectionGridLoader {
 					buffer.writeInt(sectionId.getX());
 					buffer.writeInt(sectionId.getY());
 					buffer.writeInt(sectionId.getZ());
-					System.out.println("* " + (System.currentTimeMillis() % 100000) + ": requested update for section " + sectionId);
+					logger.debug("requested update for section " + sectionId);
 					protocolClient.send(packet);
 					anythingUpdated = true;
 				}
@@ -179,22 +187,14 @@ public final class SectionGridLoader {
 	 * @param sectionId the ID of the section to reload
 	 */
 	public void reloadSection(SectionId sectionId) {
-		{
-			StackdPacket packet = new StackdPacket(StackdPacket.TYPE_SINGLE_SECTION_DATA_INTERACTIVE, 12);
-			ChannelBuffer buffer = packet.getBuffer();
-			buffer.writeInt(sectionId.getX());
-			buffer.writeInt(sectionId.getY());
-			buffer.writeInt(sectionId.getZ());
-			protocolClient.send(packet);
-		}
-		{
-			StackdPacket packet = new StackdPacket(StackdPacket.TYPE_SINGLE_SECTION_DATA_INTERACTIVE, 12);
-			ChannelBuffer buffer = packet.getBuffer();
-			buffer.writeInt(sectionId.getX());
-			buffer.writeInt(sectionId.getY());
-			buffer.writeInt(sectionId.getZ());
-			protocolClient.send(packet);
-		}
+		
+		// TODO check distance; adjust data type; fetch at all?
+		StackdPacket packet = new StackdPacket(StackdPacket.TYPE_SINGLE_SECTION_DATA_INTERACTIVE, 12);
+		ChannelBuffer buffer = packet.getBuffer();
+		buffer.writeInt(sectionId.getX());
+		buffer.writeInt(sectionId.getY());
+		buffer.writeInt(sectionId.getZ());
+		protocolClient.send(packet);
 	}
 	
 	/**
@@ -206,29 +206,44 @@ public final class SectionGridLoader {
 		// read the section data from the packet
 		ChannelBuffer buffer = packet.getBuffer();
 		final SectionId sectionId = new SectionId(buffer.readInt(), buffer.readInt(), buffer.readInt());
+		logger.debug("received interactive section image for section " + sectionId);
 		byte[] data = new byte[buffer.readableBytes()];
 		buffer.readBytes(data);
-		Cubes cubes = Cubes.createFromCompressedData(workingSet.getClusterSize(), data);
+		final Cubes cubes = Cubes.createFromCompressedData(workingSet.getClusterSize(), data);
+		logger.debug("created Cubes instance for section " + sectionId);
 		
 		// add a renderable section
 		workingSet.getRenderableSectionsLoadedQueue().add(new RenderableSection(workingSet, sectionId, cubes));
 		
-		// add a colliding section
-		ClusterSize clusterSize = workingSet.getClusterSize();
-		CubeType[] cubeTypes = workingSet.getEngineParameters().getCubeTypes();
-		int size = clusterSize.getSize();
-		byte[] colliderCubes = new byte[size * size * size];
-		for (int x=0; x<size; x++) {
-			for (int y=0; y<size; y++) {
-				for (int z=0; z<size; z++) {
-					colliderCubes[x * size * size + y * size + z] = cubes.getCubeRelative(clusterSize, x, y, z);
+		// add a colliding section if this section is close enough
+		int dx = Math.abs(sectionId.getX() - viewerPosition.getX());
+		int dy = Math.abs(sectionId.getY() - viewerPosition.getY());
+		int dz = Math.abs(sectionId.getZ() - viewerPosition.getZ());
+		if (dx < 2 && dy < 2 && dz < 2) {
+			new Task() {
+				@Override
+				public void run() {
+					logger.debug("building collider for section " + sectionId);
+					ClusterSize clusterSize = workingSet.getClusterSize();
+					CubeType[] cubeTypes = workingSet.getEngineParameters().getCubeTypes();
+					int size = clusterSize.getSize();
+					byte[] colliderCubes = new byte[size * size * size];
+					for (int x=0; x<size; x++) {
+						for (int y=0; y<size; y++) {
+							for (int z=0; z<size; z++) {
+								colliderCubes[x * size * size + y * size + z] = cubes.getCubeRelative(clusterSize, x, y, z);
+							}
+						}
+					}
+					final IAxisAlignedCollider collider = new CubeArrayClusterCollider(clusterSize, sectionId, colliderCubes, cubeTypes);
+					final CollidingSection collidingSection = new CollidingSection(workingSet, sectionId, collider);
+					workingSet.getCollidingSectionsLoadedQueue().add(collidingSection);
+					logger.debug("collider registered for section " + sectionId);
 				}
-			}
+			}.schedule();
 		}
-		final IAxisAlignedCollider collider = new CubeArrayClusterCollider(clusterSize, sectionId, colliderCubes, cubeTypes);
-		final CollidingSection collidingSection = new CollidingSection(workingSet, sectionId, collider);
-		workingSet.getCollidingSectionsLoadedQueue().add(collidingSection);
 		
+		logger.debug("consumed interactive section image for section " + sectionId);
 	}
 	
 	/**

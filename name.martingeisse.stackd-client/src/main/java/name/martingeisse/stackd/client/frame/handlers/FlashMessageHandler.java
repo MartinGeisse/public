@@ -25,6 +25,7 @@ import name.martingeisse.stackd.client.frame.BreakFrameLoopException;
 import name.martingeisse.stackd.client.glworker.GlWorkUnit;
 import name.martingeisse.stackd.client.glworker.GlWorkerLoop;
 import name.martingeisse.stackd.client.system.Font;
+import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -38,6 +39,11 @@ import org.lwjgl.opengl.GL11;
  */
 public class FlashMessageHandler extends AbstractFrameHandler {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(FlashMessageHandler.class);
+	
 	/**
 	 * the font
 	 */
@@ -219,7 +225,7 @@ public class FlashMessageHandler extends AbstractFrameHandler {
 	 * @param message the message to add
 	 */
 	public final void addMessage(final String message) {
-		System.out.println("*** " + message);
+		logger.info("Flash message: " + message);
 		queue.add(new Entry(System.currentTimeMillis(), message));
 	}
 

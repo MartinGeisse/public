@@ -3,7 +3,7 @@
 			ByteBuffer buffer = row.getBytes("cubes0");
 			byte[] bytes = new byte[buffer.remaining()];
 			buffer.get(bytes);
-		    System.out.println("* " + new String(bytes, StandardCharsets.UTF_8));
+		    logger.info("* " + new String(bytes, StandardCharsets.UTF_8));
 		}
 		System.exit(0);
 

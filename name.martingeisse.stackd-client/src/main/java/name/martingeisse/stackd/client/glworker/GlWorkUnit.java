@@ -7,7 +7,7 @@
 package name.martingeisse.stackd.client.glworker;
 
 /**
- * Base class for all work units executed by the worker thread.
+ * Base class for all work units executed by the OpenGL worker thread.
  */
 public abstract class GlWorkUnit {
 

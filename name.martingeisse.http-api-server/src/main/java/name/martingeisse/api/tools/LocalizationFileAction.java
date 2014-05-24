@@ -8,8 +8,8 @@ package name.martingeisse.api.tools;
 
 import java.io.File;
 import java.util.LinkedList;
-
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * This class iterates over all localization files in one or multiple
@@ -17,6 +17,11 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class LocalizationFileAction {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(LocalizationFileAction.class);
+	
 	/**
 	 * the DOT_PROPERTIES
 	 */
@@ -63,8 +68,8 @@ public class LocalizationFileAction {
 	}
 	
 	/**
-	 * This method is invoked for every localization file. The default implementation just prints
-	 * some information to stdout.
+	 * This method is invoked for every localization file. The default implementation just logs
+	 * some information at info level
 	 * 
 	 * @param packageStack the package in which the file was found. This stack must not be
 	 * modified by this method!
@@ -73,10 +78,9 @@ public class LocalizationFileAction {
 	 * @param localeName the locale name contained in the file name
 	 */
 	protected void onLocalizationFile(LinkedList<String> packageStack, File file, String baseName, String localeName) {
-		System.out.println("found .properties file at " + file);
-		System.out.println("package: " + getPackageName(packageStack));
-		System.out.println("base name: " + baseName + ", locale: " + localeName);
-		System.out.println();
+		logger.info("found .properties file at " + file);
+		logger.info("package: " + getPackageName(packageStack));
+		logger.info("base name: " + baseName + ", locale: " + localeName);
 	}
 	
 	/**

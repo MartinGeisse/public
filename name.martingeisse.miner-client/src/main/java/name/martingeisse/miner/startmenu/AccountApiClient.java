@@ -118,10 +118,11 @@ public final class AccountApiClient {
 	 * @param password the password
 	 */
 	public void login(final String username, final String password) {
+		logger.debug("trying to log in as user " + username);
 		final String request = new JsonBuilder().object().property("username").string(username).property("password").string(password).end();
 		final JsonAnalyzer response = request("login", request);
 		this.accountAccessToken = response.analyzeMapElement("accountAccessToken").expectString();
-		System.out.println("obtained token: " + accountAccessToken);
+		logger.info("logged in as user " + username + ", account access token: " + accountAccessToken);
 	}
 
 	/**
@@ -130,7 +131,10 @@ public final class AccountApiClient {
 	 * @return the list of players
 	 */
 	public JsonAnalyzer fetchPlayers() {
-		return request("getPlayers", createLoggedInRequest().end());
+		logger.debug("trying to fetch players");
+		JsonAnalyzer json = request("getPlayers", createLoggedInRequest().end());
+		logger.debug("players fetched");
+		return json;
 	}
 
 	/**
@@ -141,11 +145,14 @@ public final class AccountApiClient {
 	 * @return the player's ID
 	 */
 	public long createPlayer(final Faction faction, final String name) {
+		logger.debug("creating player with faction " + faction + ", name " + name);
 		final JsonObjectBuilder<String> builder = createLoggedInRequest();
 		builder.property("faction").number(faction.ordinal());
 		builder.property("name").string(name);
 		final JsonAnalyzer response = request("createPlayer", builder.end());
-		return response.analyzeMapElement("id").expectLong();
+		final long id = response.analyzeMapElement("id").expectLong();
+		logger.info("created player with faction " + faction + ", name " + name + ": id " + id);
+		return id;
 	}
 
 	/**
@@ -155,7 +162,10 @@ public final class AccountApiClient {
 	 * @return the player data
 	 */
 	public JsonAnalyzer fetchPlayerDetails(final long playerId) {
-		return request("getPlayerDetails", createPlayerRequest(playerId).end());
+		logger.debug("trying to fetch player details for player " + playerId);
+		JsonAnalyzer json = request("getPlayerDetails", createPlayerRequest(playerId).end());
+		logger.debug("fetched player details for player " + playerId);
+		return json;
 	}
 
 	/**
@@ -164,8 +174,10 @@ public final class AccountApiClient {
 	 * @param playerId the player's ID
 	 */
 	public void accessPlayer(final long playerId) {
+		logger.debug("trying to create player access token for player " + playerId);
 		final JsonAnalyzer response = request("accessPlayer", createPlayerRequest(playerId).end());
 		playerAccessToken = response.analyzeMapElement("playerAccessToken").expectString();
+		logger.info("created player access token for player " + playerId + ": " + playerAccessToken);
 	}
 
 	/**
@@ -174,7 +186,9 @@ public final class AccountApiClient {
 	 * @param playerId the player's ID
 	 */
 	public void deletePlayer(final long playerId) {
+		logger.debug("trying to delete player " + playerId);
 		request("deletePlayer", createPlayerRequest(playerId).end());
+		logger.info("player " + playerId + " deleted");
 	}
 
 	/**
