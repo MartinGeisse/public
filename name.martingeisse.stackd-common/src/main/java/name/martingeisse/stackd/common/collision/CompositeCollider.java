@@ -8,7 +8,6 @@ package name.martingeisse.stackd.common.collision;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import name.martingeisse.stackd.common.geometry.RectangularRegion;
 
 

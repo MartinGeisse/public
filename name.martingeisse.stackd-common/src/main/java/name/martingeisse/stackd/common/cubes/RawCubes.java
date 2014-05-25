@@ -9,9 +9,7 @@ package name.martingeisse.stackd.common.cubes;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
-
 import name.martingeisse.stackd.common.geometry.ClusterSize;
-
 import org.apache.commons.lang3.ArrayUtils;
 
 /**

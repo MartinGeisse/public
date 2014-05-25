@@ -8,7 +8,6 @@ package name.martingeisse.stackd.common.cubes;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
 import name.martingeisse.stackd.common.geometry.ClusterSize;
 
 /**

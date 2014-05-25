@@ -11,7 +11,6 @@ import name.martingeisse.stackd.client.frame.BreakFrameLoopException;
 import name.martingeisse.stackd.client.frame.FrameLoop;
 import name.martingeisse.stackd.client.util.LwjglNativeLibraryHelper;
 import name.martingeisse.stackd.client.util.MouseUtil;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;

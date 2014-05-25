@@ -8,10 +8,10 @@ package name.martingeisse.stackd.client.gui;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 import name.martingeisse.stackd.client.gui.element.IFocusableElement;
 import name.martingeisse.stackd.client.system.Font;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 
 /**

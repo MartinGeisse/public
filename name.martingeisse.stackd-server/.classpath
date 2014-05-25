@@ -67,4 +67,19 @@
       <attribute value="jar:file:/Users/martin/.m2/repository/io/netty/netty/3.6.5.Final/netty-3.6.5.Final-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/datastax/cassandra/cassandra-driver-core/2.0.2/cassandra-driver-core-2.0.2.jar" sourcepath="M2_REPO/com/datastax/cassandra/cassandra-driver-core/2.0.2/cassandra-driver-core-2.0.2-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/martin/.m2/repository/com/datastax/cassandra/cassandra-driver-core/2.0.2/cassandra-driver-core-2.0.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/codahale/metrics/metrics-core/3.0.2/metrics-core-3.0.2.jar" sourcepath="M2_REPO/com/codahale/metrics/metrics-core/3.0.2/metrics-core-3.0.2-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/martin/.m2/repository/com/codahale/metrics/metrics-core/3.0.2/metrics-core-3.0.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.7.5/slf4j-api-1.7.5.jar" sourcepath="M2_REPO/org/slf4j/slf4j-api/1.7.5/slf4j-api-1.7.5-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/martin/.m2/repository/org/slf4j/slf4j-api/1.7.5/slf4j-api-1.7.5-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
 </classpath>

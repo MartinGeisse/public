@@ -6,7 +6,6 @@ package name.martingeisse.stackd.common.cubes;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import name.martingeisse.stackd.common.StackdConstants;
 import name.martingeisse.stackd.common.geometry.AxisAlignedDirection;
 import name.martingeisse.stackd.common.geometry.RectangularRegion;

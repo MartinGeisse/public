@@ -9,7 +9,6 @@ package name.martingeisse.stackd.client.network;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import name.martingeisse.stackd.client.console.Console;
 import name.martingeisse.stackd.client.frame.handlers.FlashMessageHandler;

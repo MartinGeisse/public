@@ -6,9 +6,16 @@
 
 package name.martingeisse.stackd.server.section.storage;
 
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 import name.martingeisse.stackd.common.geometry.ClusterSize;
 import name.martingeisse.stackd.common.network.SectionDataId;
+import org.apache.log4j.Logger;
+import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.querybuilder.Clause;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 
 /**
  * This storage implementation stores sections in a Cassandra database.
@@ -17,6 +24,11 @@ import com.datastax.driver.core.Session;
  */
 public final class CassandraSectionStorage extends AbstractSectionStorage {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(CassandraSectionStorage.class);
+	
 	/**
 	 * the cassandrasSession
 	 */
@@ -37,7 +49,6 @@ public final class CassandraSectionStorage extends AbstractSectionStorage {
 		super(clusterSize);
 		this.cassandrasSession = cassandrasSession;
 		this.tableName = tableName;
-		throw new RuntimeException();
 	}
 
 	/**
@@ -60,76 +71,62 @@ public final class CassandraSectionStorage extends AbstractSectionStorage {
 	 * @see name.martingeisse.stackd.server.section.storage.AbstractSectionStorage#loadSectionRelatedObjects(name.martingeisse.stackd.common.network.SectionDataId[])
 	 */
 	@Override
-	public byte[][] loadSectionRelatedObjects(final SectionDataId[] ids) {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.stackd.server.section.storage.AbstractSectionStorage#saveSectionRelatedObject(name.martingeisse.stackd.common.network.SectionDataId, byte[])
-	 */
-	@Override
-	public void saveSectionRelatedObject(final SectionDataId id, final byte[] data) {
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.stackd.server.section.storage.AbstractSectionStorage#deleteSectionRelatedObject(name.martingeisse.stackd.common.network.SectionDataId)
-	 */
-	@Override
-	public void deleteSectionRelatedObject(final SectionDataId id) {
-	}
-
-	/*
-	@Override
-	public byte[][] loadSectionCubes0(SectionId[] sectionIds) {
+	public byte[][] loadSectionRelatedObjects(final SectionDataId[] SectionDataIds) {
+		logger.debug("loading section-related objects...");
 		
 		// build a map to map the section IDs from the result set back to array indices,
 		// also generate text from the IDs
-		Map<SectionId, Integer> sectionIndices = new HashMap<SectionId, Integer>();
-		String[] sectionIdTexts = new String[sectionIds.length];
-		for (int i=0; i<sectionIds.length; i++) {
-			sectionIndices.put(sectionIds[i], i);
-			sectionIdTexts[i] = sectionIds[i].getIdentifierText();
-			logger.debug("loading cubes0 for section " + sectionIds[i]);
+		Map<SectionDataId, Integer> sectionIndices = new HashMap<SectionDataId, Integer>();
+		String[] sectionDataIdTexts = new String[SectionDataIds.length];
+		for (int i=0; i<SectionDataIds.length; i++) {
+			sectionIndices.put(SectionDataIds[i], i);
+			sectionDataIdTexts[i] = SectionDataIds[i].getIdentifierText();
+			logger.trace("including: " + SectionDataIds[i]);
 		}
 		
 		// load data from the database
-		byte[][] result = new byte[sectionIds.length][];
+		byte[][] result = new byte[SectionDataIds.length][];
 		try {
-			Clause clause = QueryBuilder.in("id", (Object[])sectionIdTexts);
+			Clause clause = QueryBuilder.in("id", (Object[])sectionDataIdTexts);
 			for (Row row : cassandrasSession.execute(QueryBuilder.select().all().from(tableName).where(clause))) {
 				String id = row.getString("id");
-				ByteBuffer dataBuffer = row.getBytes("cubes0");
+				ByteBuffer dataBuffer = row.getBytes("data");
 				byte[] data = new byte[dataBuffer.remaining()];
 				dataBuffer.get(data);
-				result[sectionIndices.get(new SectionId(id))] = data;				
+				result[sectionIndices.get(new SectionDataId(id))] = data;				
 			}
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
 		
 		return result;
+	
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.stackd.server.section.storage.AbstractSectionStorage#saveSectionRelatedObject(name.martingeisse.stackd.common.network.SectionDataId, byte[])
+	 */
 	@Override
-	public void saveSectionCubes0(SectionId sectionId, InputStream in) {
+	public void saveSectionRelatedObject(final SectionDataId sectionDataId, final byte[] data) {
 		try {
-			final String rowId = sectionId.getIdentifierText();
-			final byte[] data = IOUtils.toByteArray(in);
-			cassandrasSession.execute(QueryBuilder.insertInto(tableName).value("id", rowId).value("cubes0", ByteBuffer.wrap(data)));
+			final String rowId = sectionDataId.getIdentifierText();
+			cassandrasSession.execute(QueryBuilder.insertInto(tableName).value("id", rowId).value("data", ByteBuffer.wrap(data)));
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.stackd.server.section.storage.AbstractSectionStorage#deleteSectionRelatedObject(name.martingeisse.stackd.common.network.SectionDataId)
+	 */
 	@Override
-	public void saveSectionRenderModel0(SectionId sectionId, InputStream in) {
-		throw new RuntimeException("not yet implemented");
+	public void deleteSectionRelatedObject(final SectionDataId sectionDataId) {
+		try {
+			final Clause clause = QueryBuilder.eq("id", sectionDataId.getIdentifierText());
+			cassandrasSession.execute(QueryBuilder.delete().from(tableName).where(clause));
+		} catch (final Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
-
-	@Override
-	public void deleteSectionRenderModel0(SectionId sectionId) {
-		throw new RuntimeException("not yet implemented");
-	}
-	*/
 
 }

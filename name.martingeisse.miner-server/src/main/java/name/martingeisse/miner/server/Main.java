@@ -28,6 +28,7 @@ import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
+import com.datastax.driver.core.Cluster;
 
 /**
  * The main class for the game server.
@@ -121,8 +122,8 @@ public class Main {
 		EntityConnectionManager.initializeDatabaseDescriptors(mainDatabase);
 
 		// initialize Cassandra database
-//		Databases.cassandraCluster = Cluster.builder().addContactPoint("localhost").build();
-//		Databases.world = Databases.cassandraCluster.connect("miner");
+		Databases.cassandraCluster = Cluster.builder().addContactPoint("localhost").build();
+		Databases.world = Databases.cassandraCluster.connect("miner");
 		
 	}
 

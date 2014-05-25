@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * This class creates a task for each element of the collection at creation
  * time and allows to schedule those tasks for execution. If the collection
  * is large, then this large number of objects might put too much stress
- * on the GC and {@link LargeCollectionTask} might be more suitable.
+ * on the GC.
  * 
  * The collection supports adding a "followup" task that will be invoked
  * when all tasks for the collection have completed. However, collection

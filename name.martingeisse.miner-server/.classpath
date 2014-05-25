@@ -84,6 +84,21 @@
       <attribute value="jar:file:/Users/martin/.m2/repository/io/netty/netty/3.6.5.Final/netty-3.6.5.Final-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/datastax/cassandra/cassandra-driver-core/2.0.2/cassandra-driver-core-2.0.2.jar" sourcepath="M2_REPO/com/datastax/cassandra/cassandra-driver-core/2.0.2/cassandra-driver-core-2.0.2-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/martin/.m2/repository/com/datastax/cassandra/cassandra-driver-core/2.0.2/cassandra-driver-core-2.0.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/codahale/metrics/metrics-core/3.0.2/metrics-core-3.0.2.jar" sourcepath="M2_REPO/com/codahale/metrics/metrics-core/3.0.2/metrics-core-3.0.2-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/martin/.m2/repository/com/codahale/metrics/metrics-core/3.0.2/metrics-core-3.0.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar" sourcepath="M2_REPO/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/martin/.m2/repository/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
   <classpathentry kind="src" path="/miner-common"/>
   <classpathentry kind="src" path="/jetty"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-server/8.1.15.v20140411/jetty-server-8.1.15.v20140411.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-server/8.1.15.v20140411/jetty-server-8.1.15.v20140411-sources.jar">
@@ -158,11 +173,6 @@
     </attributes>
   </classpathentry>
   <classpathentry kind="var" path="M2_REPO/asm/asm/3.3.1/asm-3.3.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar" sourcepath="M2_REPO/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/Users/martin/.m2/repository/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
   <classpathentry kind="var" path="M2_REPO/com/mysema/querydsl/querydsl-sql-codegen/2.9.0/querydsl-sql-codegen-2.9.0.jar" sourcepath="M2_REPO/com/mysema/querydsl/querydsl-sql-codegen/2.9.0/querydsl-sql-codegen-2.9.0-sources.jar">
     <attributes>
       <attribute value="jar:file:/Users/martin/.m2/repository/com/mysema/querydsl/querydsl-sql-codegen/2.9.0/querydsl-sql-codegen-2.9.0-javadoc.jar!/" name="javadoc_location"/>

@@ -8,7 +8,6 @@ package name.martingeisse.stackd.common.network;
 
 import name.martingeisse.stackd.common.geometry.AxisAlignedDirection;
 import name.martingeisse.stackd.common.geometry.SectionId;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 

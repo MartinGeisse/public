@@ -7,7 +7,6 @@
 package name.martingeisse.stackd.common.cubetype;
 
 import java.util.Arrays;
-
 import name.martingeisse.stackd.common.geometry.AxisAlignedDirection;
 
 /**
