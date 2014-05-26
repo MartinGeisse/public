@@ -18,6 +18,7 @@ import name.martingeisse.stackd.common.geometry.AxisAlignedDirection;
 import name.martingeisse.stackd.common.geometry.ClusterSize;
 import name.martingeisse.stackd.common.geometry.RectangularRegion;
 import name.martingeisse.stackd.common.geometry.SectionId;
+import org.apache.log4j.Logger;
 
 /**
  * This class wraps a {@link Cubes} object and augments it with
@@ -26,6 +27,11 @@ import name.martingeisse.stackd.common.geometry.SectionId;
  */
 public final class RenderableSection {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(RenderableSection.class);
+	
 	/**
 	 * the workingSet
 	 */
@@ -141,11 +147,19 @@ public final class RenderableSection {
 		if (renderUnits != null) {
 			return;
 		}
+		logger.debug("need to prepare render units for section " + sectionId);
 		needResourceNode();
 		MeshBuilder meshBuilder = new MeshBuilder();
 		meshBuilder.setBoundingBox(region);
+		// TODO building the mesh takes relatively long (4ms per section). preparing the render units
+		// is almost instantly -- not counting the OpenGL buffer loading because it happens in another thread.
+		// Building the VBOs takes ca. (8 VBOs / ms). This yields another 1-3 ms for typical simple sections
+		// (estimated). Total time is then ca. 5 ms per section. Loading a slice at radius 3 means 49 sections,
+		// i.e. 250ms.
 		buildMesh(meshBuilder);
+		logger.debug("mesh built; building render units for section " + sectionId);
 		renderUnits = meshBuilder.build(systemResourceNode, renderer.getGlWorkerLoop());
+		logger.debug("prepared render units for section " + sectionId);
 	}
 	
 	/**

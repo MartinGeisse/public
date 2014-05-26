@@ -44,9 +44,19 @@ public class QPlayer extends com.mysema.query.sql.RelationalPathBase<Player> {
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     /**
+     * Metamodel property for property 'left_angle'
+     */
+    public final NumberPath<java.math.BigDecimal> leftAngle = createNumber("left_angle", java.math.BigDecimal.class);
+
+    /**
      * Metamodel property for property 'name'
      */
     public final StringPath name = createString("name");
+
+    /**
+     * Metamodel property for property 'up_angle'
+     */
+    public final NumberPath<java.math.BigDecimal> upAngle = createNumber("up_angle", java.math.BigDecimal.class);
 
     /**
      * Metamodel property for property 'user_account_id'

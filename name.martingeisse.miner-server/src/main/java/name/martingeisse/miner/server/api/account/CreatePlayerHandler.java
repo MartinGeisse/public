@@ -50,6 +50,8 @@ public final class CreatePlayerHandler extends AbstractLoggedInHandler {
 		insert.set(QPlayer.player.x, BigDecimal.ZERO);
 		insert.set(QPlayer.player.y, BigDecimal.ONE.add(BigDecimal.ONE));
 		insert.set(QPlayer.player.z, BigDecimal.ZERO);
+		insert.set(QPlayer.player.leftAngle, BigDecimal.ZERO);
+		insert.set(QPlayer.player.upAngle, BigDecimal.ZERO);
 		long playerId = insert.executeWithKey(Long.class);
 
 		// build the response

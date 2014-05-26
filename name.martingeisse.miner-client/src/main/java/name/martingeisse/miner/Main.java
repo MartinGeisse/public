@@ -155,7 +155,7 @@ public class Main {
 			// TODO remove, used for development
 			logger.info("auto-login...");
 			barrier.await();
-			autologinComplete();
+			// autologinComplete();
 			logger.info("auto-login successful");
 
 			// run the game logic in a different thread, then run the OpenGL worker in the main thread

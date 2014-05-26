@@ -20,6 +20,7 @@ import name.martingeisse.stackd.client.system.SystemResourceNode;
 import name.martingeisse.stackd.common.cubes.MeshBuilderBase;
 import name.martingeisse.stackd.common.geometry.AxisAlignedDirection;
 import name.martingeisse.stackd.common.geometry.RectangularRegion;
+import org.apache.log4j.Logger;
 
 /**
  * This class accepts polygons to render and builds an array of
@@ -27,6 +28,11 @@ import name.martingeisse.stackd.common.geometry.RectangularRegion;
  */
 public final class MeshBuilder extends MeshBuilderBase {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(MeshBuilder.class);
+	
 	/**
 	 * Constructor.
 	 */
@@ -100,10 +106,12 @@ public final class MeshBuilder extends MeshBuilderBase {
 			glWorkerLoop.schedule(new GlWorkUnit() {
 				@Override
 				public void execute() {
+					logger.debug("building vertex buffer for mesh...");
 					final OpenGlVertexBuffer vertexBuffer = new OpenGlVertexBuffer();
 					vertexBuffer.createDataStore(vertexData, GL_STATIC_DRAW);
 					systemResourceNode.addResource(vertexBuffer);
 					renderUnit.setVertexBuffer(vertexBuffer);
+					logger.debug("vertex buffer built.");
 				}
 			});
 		}

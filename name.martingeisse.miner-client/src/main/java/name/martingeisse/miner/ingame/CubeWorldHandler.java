@@ -99,12 +99,12 @@ public class CubeWorldHandler {
 	 * the logger
 	 */
 	private static Logger logger = Logger.getLogger(CubeWorldHandler.class);
-	
+
 	/**
 	 * the MAX_STAIRS_HEIGHT
 	 */
 	public static final double MAX_STAIRS_HEIGHT = 0.8;
-	
+
 	/**
 	 * the player
 	 */
@@ -199,7 +199,7 @@ public class CubeWorldHandler {
 	 * the cooldownFinishTime
 	 */
 	private long cooldownFinishTime;
-	
+
 	/**
 	 * the previousConnectionProblemInstant
 	 */
@@ -207,14 +207,16 @@ public class CubeWorldHandler {
 
 	/**
 	 * The sectionLoadHandler -- checks often (100 ms), but doesn't re-request frequently (5 sec)
+	 * to avoid re-requesting a section again and again while the server is loading it.
 	 * 
 	 * TODO should be resettable for edge cases where frequent reloading is needed, such as
 	 * falling down from high places.
+	 * This handler checks if sections must be loaded.
 	 */
 	private AbstractIntervalFrameHandler sectionLoadHandler = new AbstractIntervalFrameHandler(100) {
-		
+
 		private int requestCooldown = 0;
-		
+
 		@Override
 		protected void onIntervalTimerExpired() {
 			if (requestCooldown == 0) {
@@ -235,7 +237,7 @@ public class CubeWorldHandler {
 	 * @param resources the resources
 	 * @throws IOException on I/O errors while loading the textures
 	 */
-	public CubeWorldHandler(final int width, final int height, MinerResources resources) throws IOException {
+	public CubeWorldHandler(final int width, final int height, final MinerResources resources) throws IOException {
 
 		// the player
 		player = new Player();
@@ -408,7 +410,7 @@ public class CubeWorldHandler {
 		// check if the world is loaded "enough"
 		workingSet.acceptLoadedSections();
 		if (!workingSet.hasAllRenderModels(player.getSectionId(), 1) || !workingSet.hasAllColliders(player.getSectionId(), 1)) {
-			Instant now = new Instant();
+			final Instant now = new Instant();
 			if (new Duration(previousConnectionProblemInstant, now).getMillis() >= 1000) {
 				logger.warn("connection problems");
 				ThreadUtil.dumpThreads(Level.INFO);
@@ -445,7 +447,7 @@ public class CubeWorldHandler {
 			walking = true;
 		}
 		player.moveHorizontal(forward, right, player.isOnGround() ? MAX_STAIRS_HEIGHT : 0);
-		
+
 		// special movement
 		if (keysEnabled && Keyboard.isKeyDown(Keyboard.KEY_C)) {
 			player.moveUp(-speed);
@@ -453,7 +455,7 @@ public class CubeWorldHandler {
 		if (keysEnabled && Keyboard.isKeyDown(Keyboard.KEY_E)) {
 			player.moveUp(speed);
 		}
-		
+
 		// cube placement
 		final long now = System.currentTimeMillis();
 		if (now >= cooldownFinishTime) {
@@ -464,7 +466,7 @@ public class CubeWorldHandler {
 						if (distance < 3.0) {
 							final byte effectiveCubeType;
 							if (currentCubeType == 50) {
-								int angle = ((int)player.getLeftAngle() % 360 + 360) % 360;
+								final int angle = ((int)player.getLeftAngle() % 360 + 360) % 360;
 								if (angle < 45) {
 									effectiveCubeType = 52;
 								} else if (angle < 45 + 90) {
@@ -479,7 +481,7 @@ public class CubeWorldHandler {
 							} else {
 								effectiveCubeType = currentCubeType;
 							}
-							
+
 							/* TODO: The call to breakFree() will remove a stairs cube if the player is standing
 							 * on the lower step, because the player's bounding box intersects with the cube's
 							 * bounding box. Solution 1: Remove breakFree(), don't place a cube if the player then
@@ -508,7 +510,7 @@ public class CubeWorldHandler {
 				});
 			}
 		}
-		
+
 		// special actions
 		if (keysEnabled && Keyboard.isKeyDown(Keyboard.KEY_B)) {
 			final CubeModificationPacketBuilder builder = new CubeModificationPacketBuilder();
@@ -518,7 +520,7 @@ public class CubeWorldHandler {
 
 		// handle player logic
 		player.step(frameDurationSensor.getMultiplier());
-		
+
 		// handle sound effects
 		if (player.isOnGround() && walking) {
 			footstepSound.handleActiveTime();
@@ -554,8 +556,8 @@ public class CubeWorldHandler {
 	/**
 	 * @param glWorkerLoop the OpenGL worker loop
 	 */
-	public void draw(GlWorkerLoop glWorkerLoop) {
-		
+	public void draw(final GlWorkerLoop glWorkerLoop) {
+
 		// determine player's position as integers
 		final int playerX = (int)(Math.floor(player.getX()));
 		final int playerY = (int)(Math.floor(player.getY()));
@@ -563,12 +565,12 @@ public class CubeWorldHandler {
 
 		// set the GL worker loop for the section renderer
 		((DefaultSectionRenderer)workingSet.getEngineParameters().getSectionRenderer()).setGlWorkerLoop(glWorkerLoop);
-		
+
 		// run preparation code in the OpenGL worker thread
 		glWorkerLoop.schedule(new GlWorkUnit() {
 			@Override
 			public void execute() {
-				
+
 				// profiling
 				ProfilingHelper.start();
 
@@ -578,7 +580,7 @@ public class CubeWorldHandler {
 				gluPerspective(60, aspectRatio, 0.1f, 10000.0f);
 
 				// set up modelview matrix
-				int geometryDetailFactor = StackdConstants.GEOMETRY_DETAIL_FACTOR;
+				final int geometryDetailFactor = StackdConstants.GEOMETRY_DETAIL_FACTOR;
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity(); // model transformation (direct)
 				glRotatef((float)player.getUpAngle(), -1, 0, 0); // view transformation (reversed)
@@ -596,7 +598,7 @@ public class CubeWorldHandler {
 				((DefaultSectionRenderer)workingSet.getEngineParameters().getSectionRenderer()).setWireframe(wireframe);
 				((DefaultSectionRenderer)workingSet.getEngineParameters().getSectionRenderer()).setTexturing(IngameHandler.enableTexturing);
 				((DefaultSectionRenderer)workingSet.getEngineParameters().getSectionRenderer()).setTextureCoordinateGeneration(IngameHandler.enableTexGen);
-				
+
 			}
 		});
 
@@ -607,7 +609,7 @@ public class CubeWorldHandler {
 		glWorkerLoop.schedule(new GlWorkUnit() {
 			@Override
 			public void execute() {
-				int geometryDetailFactor = StackdConstants.GEOMETRY_DETAIL_FACTOR;
+				final int geometryDetailFactor = StackdConstants.GEOMETRY_DETAIL_FACTOR;
 
 				// measure visible distance in the center of the crosshair, with only the world visible (no HUD or similar)
 				// TODO only call if needed, this stalls the rendering pipeline --> 2x frame rate possible!
@@ -678,9 +680,11 @@ public class CubeWorldHandler {
 						final Random random = new Random(playerProxy.getId());
 						glColor4ub((byte)random.nextInt(255), (byte)random.nextInt(255), (byte)random.nextInt(255), (byte)127);
 
-						// draw the player and set the raster position for drawing the name
+						// Set up inverse modelview matrix, draw, then restore previous matrix.
+						// Also set the raster position for drawing the name.
 						glPushMatrix();
 						glTranslated(geometryDetailFactor * playerProxy.getX(), geometryDetailFactor * playerProxy.getY(), geometryDetailFactor * playerProxy.getZ());
+						glRotatef((float)playerProxy.getLeftAngle(), 0, 1, 0);
 						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 						new Sphere().draw(0.8f, 10, 10);
 						glRasterPos3f(0f, 1.5f, 0f);
@@ -701,15 +705,15 @@ public class CubeWorldHandler {
 						glBindTexture(GL_TEXTURE_2D, 0);
 						glDisable(GL_BLEND);
 						glDepthFunc(GL_ALWAYS);
-						GL11.glPixelTransferf(GL11.GL_RED_BIAS, 1.0f);			
-						GL11.glPixelTransferf(GL11.GL_GREEN_BIAS, 1.0f);			
-						GL11.glPixelTransferf(GL11.GL_BLUE_BIAS, 1.0f);			
+						GL11.glPixelTransferf(GL11.GL_RED_BIAS, 1.0f);
+						GL11.glPixelTransferf(GL11.GL_GREEN_BIAS, 1.0f);
+						GL11.glPixelTransferf(GL11.GL_BLUE_BIAS, 1.0f);
 						resources.drawText(name, (float)zoom);
-						GL11.glPixelTransferf(GL11.GL_RED_BIAS, 0.0f);			
-						GL11.glPixelTransferf(GL11.GL_GREEN_BIAS, 0.0f);			
+						GL11.glPixelTransferf(GL11.GL_RED_BIAS, 0.0f);
+						GL11.glPixelTransferf(GL11.GL_GREEN_BIAS, 0.0f);
 						GL11.glPixelTransferf(GL11.GL_BLUE_BIAS, 0.0f);
 						glDepthFunc(GL_LESS);
-						
+
 					}
 				}
 				glDisable(GL_BLEND);
@@ -745,7 +749,7 @@ public class CubeWorldHandler {
 
 				// profiling
 				ProfilingHelper.checkRelevant("draw", 50);
-				
+
 			}
 		});
 

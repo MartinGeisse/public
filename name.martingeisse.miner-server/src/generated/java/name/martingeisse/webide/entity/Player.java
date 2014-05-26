@@ -42,9 +42,19 @@ public class Player implements Serializable, IEntityWithId<Long>, IEntityWithDel
     private Long id;
 
     /**
+     * the leftAngle
+     */
+    private java.math.BigDecimal leftAngle;
+
+    /**
      * the name
      */
     private String name;
+
+    /**
+     * the upAngle
+     */
+    private java.math.BigDecimal upAngle;
 
     /**
      * the userAccountId
@@ -135,6 +145,22 @@ public class Player implements Serializable, IEntityWithId<Long>, IEntityWithDel
     }
 
     /**
+     * Getter method for the leftAngle.
+     * @return the leftAngle
+     */
+    public java.math.BigDecimal getLeftAngle() {
+        return leftAngle;
+    }
+
+    /**
+     * Setter method for the leftAngle.
+     * @param leftAngle the leftAngle to set
+     */
+    public void setLeftAngle(java.math.BigDecimal leftAngle) {
+        this.leftAngle = leftAngle;
+    }
+
+    /**
      * Getter method for the name.
      * @return the name
      */
@@ -148,6 +174,22 @@ public class Player implements Serializable, IEntityWithId<Long>, IEntityWithDel
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * Getter method for the upAngle.
+     * @return the upAngle
+     */
+    public java.math.BigDecimal getUpAngle() {
+        return upAngle;
+    }
+
+    /**
+     * Setter method for the upAngle.
+     * @param upAngle the upAngle to set
+     */
+    public void setUpAngle(java.math.BigDecimal upAngle) {
+        this.upAngle = upAngle;
     }
 
     /**
@@ -219,7 +261,7 @@ public class Player implements Serializable, IEntityWithId<Long>, IEntityWithDel
      */
     @Override
     public String toString() {
-        return "{Player. coins = " + coins + ", deleted = " + deleted + ", faction = " + faction + ", id = " + id + ", name = " + name + ", userAccountId = " + userAccountId + ", x = " + x + ", y = " + y + ", z = " + z + "}";
+        return "{Player. coins = " + coins + ", deleted = " + deleted + ", faction = " + faction + ", id = " + id + ", leftAngle = " + leftAngle + ", name = " + name + ", upAngle = " + upAngle + ", userAccountId = " + userAccountId + ", x = " + x + ", y = " + y + ", z = " + z + "}";
     }
 
     /**
@@ -242,11 +284,15 @@ public class Player implements Serializable, IEntityWithId<Long>, IEntityWithDel
         insert.set(q.coins, coins);
         insert.set(q.deleted, deleted);
         insert.set(q.faction, faction);
+        insert.set(q.leftAngle, leftAngle);
         insert.set(q.name, name);
+        insert.set(q.upAngle, upAngle);
         insert.set(q.userAccountId, userAccountId);
         insert.set(q.x, x);
         insert.set(q.y, y);
         insert.set(q.z, z);
+        insert.set(q.leftAngle, leftAngle);
+        insert.set(q.upAngle, upAngle);
         id = insert.executeWithKey(Long.class);
     }
 

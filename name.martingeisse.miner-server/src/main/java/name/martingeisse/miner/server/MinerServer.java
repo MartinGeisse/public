@@ -150,6 +150,8 @@ public class MinerServer extends StackdServer<MinerSession> {
 			session.setX(buffer.readDouble());
 			session.setY(buffer.readDouble());
 			session.setZ(buffer.readDouble());
+			session.setLeftAngle(buffer.readDouble());
+			session.setUpAngle(buffer.readDouble());
 			break;
 		}
 			
@@ -172,15 +174,19 @@ public class MinerServer extends StackdServer<MinerSession> {
 				session.setX(player.getX().doubleValue());
 				session.setY(player.getY().doubleValue());
 				session.setZ(player.getZ().doubleValue());
+				session.setLeftAngle(player.getLeftAngle().doubleValue());
+				session.setUpAngle(player.getUpAngle().doubleValue());
 				session.sendCoinsUpdate();
 			} finally {
 				EntityConnectionManager.disposeConnections();
 			}
-			StackdPacket responsePacket = new StackdPacket(MinerPacketConstants.TYPE_S2C_PLAYER_RESUMED, 24);
+			StackdPacket responsePacket = new StackdPacket(MinerPacketConstants.TYPE_S2C_PLAYER_RESUMED, 40);
 			ChannelBuffer responseBuffer = responsePacket.getBuffer();
 			responseBuffer.writeDouble(session.getX());
 			responseBuffer.writeDouble(session.getY());
 			responseBuffer.writeDouble(session.getZ());
+			responseBuffer.writeDouble(session.getLeftAngle());
+			responseBuffer.writeDouble(session.getUpAngle());
 			broadcast(responsePacket);
 			break;
 		}
@@ -292,13 +298,15 @@ public class MinerServer extends StackdServer<MinerSession> {
 			}
 			
 			// assemble the packet
-			StackdPacket packet = new StackdPacket(MinerPacketConstants.TYPE_S2C_PLAYER_LIST_UPDATE, 28 * sessionList.size());
+			StackdPacket packet = new StackdPacket(MinerPacketConstants.TYPE_S2C_PLAYER_LIST_UPDATE, 44 * sessionList.size());
 			ChannelBuffer buffer = packet.getBuffer();
 			for (MinerSession session : sessionList) {
 				buffer.writeInt(session.getId());
 				buffer.writeDouble(session.getX());
 				buffer.writeDouble(session.getY());
 				buffer.writeDouble(session.getZ());
+				buffer.writeDouble(session.getLeftAngle());
+				buffer.writeDouble(session.getUpAngle());
 			}
 			
 			// send the packet

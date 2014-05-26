@@ -13,6 +13,7 @@ import name.martingeisse.stackd.common.network.StackdPacket;
 import name.martingeisse.stackd.server.network.StackdSession;
 import name.martingeisse.webide.entity.Player;
 import name.martingeisse.webide.entity.QPlayer;
+import org.apache.log4j.Logger;
 import org.jboss.netty.channel.Channel;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.dml.SQLUpdateClause;
@@ -24,10 +25,15 @@ import com.mysema.query.sql.dml.SQLUpdateClause;
 public class MinerSession extends StackdSession {
 
 	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(MinerSession.class);
+	
+	/**
 	 * the playerId
 	 */
 	private volatile Long playerId;
-	
+
 	/**
 	 * the x
 	 */
@@ -42,7 +48,17 @@ public class MinerSession extends StackdSession {
 	 * the z
 	 */
 	private volatile double z;
-	
+
+	/**
+	 * the leftAngle
+	 */
+	private volatile double leftAngle;
+
+	/**
+	 * the upAngle
+	 */
+	private volatile double upAngle;
+
 	/**
 	 * the name
 	 */
@@ -65,12 +81,12 @@ public class MinerSession extends StackdSession {
 	public Long getPlayerId() {
 		return playerId;
 	}
-	
+
 	/**
 	 * Setter method for the playerId.
 	 * @param playerId the playerId to set
 	 */
-	public void setPlayerId(Long playerId) {
+	public void setPlayerId(final Long playerId) {
 		this.playerId = playerId;
 	}
 
@@ -121,7 +137,39 @@ public class MinerSession extends StackdSession {
 	public void setZ(final double z) {
 		this.z = z;
 	}
-	
+
+	/**
+	 * Getter method for the leftAngle.
+	 * @return the leftAngle
+	 */
+	public double getLeftAngle() {
+		return leftAngle;
+	}
+
+	/**
+	 * Setter method for the leftAngle.
+	 * @param leftAngle the leftAngle to set
+	 */
+	public void setLeftAngle(final double leftAngle) {
+		this.leftAngle = leftAngle;
+	}
+
+	/**
+	 * Getter method for the upAngle.
+	 * @return the upAngle
+	 */
+	public double getUpAngle() {
+		return upAngle;
+	}
+
+	/**
+	 * Setter method for the upAngle.
+	 * @param upAngle the upAngle to set
+	 */
+	public void setUpAngle(final double upAngle) {
+		this.upAngle = upAngle;
+	}
+
 	/**
 	 * Getter method for the name.
 	 * @return the name
@@ -129,29 +177,35 @@ public class MinerSession extends StackdSession {
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * Setter method for the name.
 	 * @param name the name to set
 	 */
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * Handles disconnected clients.
 	 */
 	public void handleDisconnect() {
 		if (playerId != null) {
-			SQLUpdateClause update = EntityConnectionManager.getConnection().createUpdate(QPlayer.player);
+			final SQLUpdateClause update = EntityConnectionManager.getConnection().createUpdate(QPlayer.player);
 			update.where(QPlayer.player.id.eq(playerId));
 			update.set(QPlayer.player.x, new BigDecimal(x));
 			update.set(QPlayer.player.y, new BigDecimal(y));
 			update.set(QPlayer.player.z, new BigDecimal(z));
-			update.execute();
+			update.set(QPlayer.player.leftAngle, new BigDecimal(leftAngle));
+			update.set(QPlayer.player.upAngle, new BigDecimal(upAngle));
+			try {
+				update.execute();
+			} catch (Exception e) {
+				logger.error("could not update player position. id: " + playerId + "; values = " + x + ", " + y + ", " + z + ", " + leftAngle + ", " + upAngle);
+			}
 		}
 	}
-	
+
 	/**
 	 * Sends an update for the number of coins to the client, fetching the
 	 * number of coins from the database.
@@ -162,19 +216,19 @@ public class MinerSession extends StackdSession {
 		} else {
 			final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 			query.from(QPlayer.player).where(QPlayer.player.id.eq(playerId));
-			Player player = query.singleResult(QPlayer.player);
+			final Player player = query.singleResult(QPlayer.player);
 			sendCoinsUpdate(player == null ? 0 : player.getCoins());
 		}
 	}
-	
+
 	/**
 	 * Sends an update for the number of coins to the client.
 	 * @param coins the number of coins to send
 	 */
-	public void sendCoinsUpdate(long coins) {
-		StackdPacket packet = new StackdPacket(MinerPacketConstants.TYPE_S2C_UPDATE_COINS, 8);
+	public void sendCoinsUpdate(final long coins) {
+		final StackdPacket packet = new StackdPacket(MinerPacketConstants.TYPE_S2C_UPDATE_COINS, 8);
 		packet.getBuffer().writeLong(coins);
 		sendPacketDestructive(packet);
 	}
-	
+
 }

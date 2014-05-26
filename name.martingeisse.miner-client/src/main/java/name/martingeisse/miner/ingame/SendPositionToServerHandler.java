@@ -32,7 +32,7 @@ public class SendPositionToServerHandler extends AbstractIntervalFrameHandler {
 	 */
 	@Override
 	protected void onIntervalTimerExpired() {
-		IngameHandler.protocolClient.sendPositionUpdate(player.getX(), player.getY(), player.getZ());
+		IngameHandler.protocolClient.sendPositionUpdate(player.getX(), player.getY(), player.getZ(), player.getLeftAngle(), player.getUpAngle());
 	}
 	
 }

@@ -34,17 +34,31 @@ public class PlayerProxy {
 	private final double z;
 
 	/**
+	 * the leftAngle
+	 */
+	private final double leftAngle;
+	
+	/**
+	 * the upAngle
+	 */
+	private final double upAngle;
+	
+	/**
 	 * Constructor.
 	 * @param id the session ID
 	 * @param x the x position of the player
 	 * @param y the y position of the player
 	 * @param z the z position of the player
+	 * @param leftAngle the horizontal angle, with left being positive
+	 * @param upAngle the vertical angle, with up being positive
 	 */
-	public PlayerProxy(final int id, final double x, final double y, final double z) {
+	public PlayerProxy(final int id, final double x, final double y, final double z, final double leftAngle, final double upAngle) {
 		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		this.leftAngle = leftAngle;
+		this.upAngle = upAngle;
 	}
 
 	/**
@@ -79,4 +93,20 @@ public class PlayerProxy {
 		return z;
 	}
 
+	/**
+	 * Getter method for the leftAngle.
+	 * @return the leftAngle
+	 */
+	public double getLeftAngle() {
+		return leftAngle;
+	}
+	
+	/**
+	 * Getter method for the upAngle.
+	 * @return the upAngle
+	 */
+	public double getUpAngle() {
+		return upAngle;
+	}
+	
 }

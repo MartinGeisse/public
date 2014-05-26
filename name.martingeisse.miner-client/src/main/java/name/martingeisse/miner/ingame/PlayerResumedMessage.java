@@ -28,15 +28,29 @@ public final class PlayerResumedMessage {
 	private final double z;
 
 	/**
+	 * the leftAngle
+	 */
+	private final double leftAngle;
+	
+	/**
+	 * the upAngle
+	 */
+	private final double upAngle;
+
+	/**
 	 * Constructor.
 	 * @param x the x position of the player
 	 * @param y the y position of the player
 	 * @param z the z position of the player
+	 * @param leftAngle the horizontal angle, with left being positive
+	 * @param upAngle the vertical angle, with up being positive
 	 */
-	public PlayerResumedMessage(final double x, final double y, final double z) {
+	public PlayerResumedMessage(final double x, final double y, final double z, final double leftAngle, final double upAngle) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		this.leftAngle = leftAngle;
+		this.upAngle = upAngle;
 	}
 	
 	/**
@@ -63,4 +77,20 @@ public final class PlayerResumedMessage {
 		return z;
 	}
 
+	/**
+	 * Getter method for the leftAngle.
+	 * @return the leftAngle
+	 */
+	public double getLeftAngle() {
+		return leftAngle;
+	}
+	
+	/**
+	 * Getter method for the upAngle.
+	 * @return the upAngle
+	 */
+	public double getUpAngle() {
+		return upAngle;
+	}
+	
 }

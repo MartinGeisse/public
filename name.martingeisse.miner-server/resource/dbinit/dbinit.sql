@@ -33,6 +33,8 @@ CREATE TABLE IF NOT EXISTS `player` (
 	`x` decimal(10,2) NOT NULL,
 	`y` decimal(10,2) NOT NULL,
 	`z` decimal(10,2) NOT NULL,
+	`left_angle` decimal(5,2) NOT NULL,
+	`up_angle` decimal(5,2) NOT NULL,
 	`coins` bigint(20) NOT NULL,
 	`deleted` tinyint(1) NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)

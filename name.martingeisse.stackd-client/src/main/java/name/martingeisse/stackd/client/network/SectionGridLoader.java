@@ -122,11 +122,11 @@ public final class SectionGridLoader {
 		}
 
 		// remove all sections that are too far away
-		if (restrictMapToRadius(workingSet.getRenderableSections(), renderModelRadius)) {
+		if (restrictMapToRadius(workingSet.getRenderableSections(), renderModelRadius + 1)) {
 			workingSet.markRenderModelsModified();
 			anythingUpdated = true;
 		}
-		anythingUpdated |= restrictMapToRadius(workingSet.getCollidingSections(), colliderRadius);
+		anythingUpdated |= restrictMapToRadius(workingSet.getCollidingSections(), colliderRadius + 1);
 		
 		// ProfilingHelper.checkRelevant("update sections 1");
 		
@@ -140,7 +140,6 @@ public final class SectionGridLoader {
 		// TODO implement a batch request packet
 		// TODO fetch non-interactive data for "far" sections
 		{
-			logger.debug("requesting updates for missing sections. viewer position: " + viewerPosition);
 			final List<SectionId> missingSectionIds = findMissingSectionIds(workingSet.getRenderableSections().keySet(), renderModelRadius);
 			if (missingSectionIds != null && !missingSectionIds.isEmpty()) {
 				final SectionId[] sectionIds = missingSectionIds.toArray(new SectionId[missingSectionIds.size()]);
@@ -150,7 +149,7 @@ public final class SectionGridLoader {
 					buffer.writeInt(sectionId.getX());
 					buffer.writeInt(sectionId.getY());
 					buffer.writeInt(sectionId.getZ());
-					logger.debug("requested update for section " + sectionId);
+					logger.debug("requested render model update for section " + sectionId);
 					protocolClient.send(packet);
 					anythingUpdated = true;
 				}
@@ -171,6 +170,7 @@ public final class SectionGridLoader {
 					buffer.writeInt(sectionId.getX());
 					buffer.writeInt(sectionId.getY());
 					buffer.writeInt(sectionId.getZ());
+					logger.debug("requested collider update for section " + sectionId);
 					protocolClient.send(packet);
 					anythingUpdated = true;
 				}
@@ -219,7 +219,7 @@ public final class SectionGridLoader {
 		int dx = Math.abs(sectionId.getX() - viewerPosition.getX());
 		int dy = Math.abs(sectionId.getY() - viewerPosition.getY());
 		int dz = Math.abs(sectionId.getZ() - viewerPosition.getZ());
-		if (dx < 2 && dy < 2 && dz < 2) {
+		if (dx < colliderRadius + 1 && dy < colliderRadius + 1 && dz < colliderRadius + 1) {
 			new Task() {
 				@Override
 				public void run() {

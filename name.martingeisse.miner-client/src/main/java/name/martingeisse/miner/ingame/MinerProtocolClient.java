@@ -62,13 +62,17 @@ public class MinerProtocolClient extends StackdProtocolClient {
 	 * @param x the player's x position
 	 * @param y the player's y position
 	 * @param z the player's z position
+	 * @param leftAngle the horizontal angle, with left being positive
+	 * @param upAngle the vertical angle, with up being positive
 	 */
-	public void sendPositionUpdate(double x, double y, double z) {
-		StackdPacket packet = new StackdPacket(MinerPacketConstants.TYPE_C2S_UPDATE_POSITION, 24);
+	public void sendPositionUpdate(double x, double y, double z, double leftAngle, double upAngle) {
+		StackdPacket packet = new StackdPacket(MinerPacketConstants.TYPE_C2S_UPDATE_POSITION, 40);
 		ChannelBuffer buffer = packet.getBuffer();
 		buffer.writeDouble(x);
 		buffer.writeDouble(y);
 		buffer.writeDouble(z);
+		buffer.writeDouble(leftAngle);
+		buffer.writeDouble(upAngle);
 		send(packet);
 	}
 	
@@ -103,7 +107,9 @@ public class MinerProtocolClient extends StackdProtocolClient {
 				double x = buffer.readDouble();
 				double y = buffer.readDouble();
 				double z = buffer.readDouble();
-				playerProxiesFromMessage.add(new PlayerProxy(id, x, y, z));
+				double leftAngle = buffer.readDouble();
+				double upAngle = buffer.readDouble();
+				playerProxiesFromMessage.add(new PlayerProxy(id, x, y, z, leftAngle, upAngle));
 			}
 			synchronized(this) {
 				this.updatedPlayerProxies = playerProxiesFromMessage;
@@ -132,7 +138,7 @@ public class MinerProtocolClient extends StackdProtocolClient {
 		
 		case MinerPacketConstants.TYPE_S2C_PLAYER_RESUMED: {
 			synchronized(this) {
-				this.playerResumedMessage = new PlayerResumedMessage(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
+				this.playerResumedMessage = new PlayerResumedMessage(buffer.readDouble(), buffer.readDouble(), buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
 			}
 			break;
 		}
