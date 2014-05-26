@@ -72,6 +72,7 @@ public final class FpsPanel extends AbstractFrameHandler {
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			IntBuffer buffer = ByteBuffer.allocateDirect(64).order(ByteOrder.nativeOrder()).asIntBuffer();
+			// TODO remove getters in frame code!
 			glGetInteger(GL_VIEWPORT, buffer);
 			glWindowPos2i(buffer.get(2), buffer.get(3));
 			GL11.glPixelTransferf(GL11.GL_RED_BIAS, 1.0f);			

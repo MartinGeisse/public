@@ -16,11 +16,9 @@ import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_COLOR;
 import static org.lwjgl.opengl.GL11.GL_PROJECTION;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_COLOR;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_GEN_Q;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_GEN_R;
@@ -78,6 +76,7 @@ import name.martingeisse.stackd.client.system.Font;
 import name.martingeisse.stackd.client.util.MouseUtil;
 import name.martingeisse.stackd.client.util.RayAction;
 import name.martingeisse.stackd.client.util.RayActionSupport;
+import name.martingeisse.stackd.common.StackdConstants;
 import name.martingeisse.stackd.common.geometry.AxisAlignedDirection;
 import name.martingeisse.stackd.common.geometry.RectangularRegion;
 import name.martingeisse.stackd.common.util.ProfilingHelper;
@@ -579,11 +578,12 @@ public class CubeWorldHandler {
 				gluPerspective(60, aspectRatio, 0.1f, 10000.0f);
 
 				// set up modelview matrix
+				int geometryDetailFactor = StackdConstants.GEOMETRY_DETAIL_FACTOR;
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity(); // model transformation (direct)
 				glRotatef((float)player.getUpAngle(), -1, 0, 0); // view transformation (reversed)
 				glRotatef((float)player.getLeftAngle(), 0, -1, 0); // ...
-				glTranslated(-player.getX() * 8, -player.getY() * 8, -player.getZ() * 8); // ...
+				glTranslated(-player.getX() * geometryDetailFactor, -player.getY() * geometryDetailFactor, -player.getZ() * geometryDetailFactor); // ...
 
 				// clear the screen
 				glDepthMask(true);
@@ -607,6 +607,7 @@ public class CubeWorldHandler {
 		glWorkerLoop.schedule(new GlWorkUnit() {
 			@Override
 			public void execute() {
+				int geometryDetailFactor = StackdConstants.GEOMETRY_DETAIL_FACTOR;
 
 				// measure visible distance in the center of the crosshair, with only the world visible (no HUD or similar)
 				// TODO only call if needed, this stalls the rendering pipeline --> 2x frame rate possible!
@@ -640,9 +641,9 @@ public class CubeWorldHandler {
 				if (grid) {
 					glDisable(GL_TEXTURE_2D);
 					glColor3f(1.0f, 1.0f, 1.0f);
-					final int sectionX = playerX / 16;
-					final int sectionY = playerY / 16;
-					final int sectionZ = playerZ / 16;
+					final int sectionX = playerX >> MinerCommonConstants.CLUSTER_SIZE.getShiftBits();
+					final int sectionY = playerY >> MinerCommonConstants.CLUSTER_SIZE.getShiftBits();
+					final int sectionZ = playerZ >> MinerCommonConstants.CLUSTER_SIZE.getShiftBits();
 					final int distance = 48;
 					glLineWidth(2.0f);
 					glBegin(GL_LINES);
@@ -652,12 +653,12 @@ public class CubeWorldHandler {
 								if (direction.isNegative()) {
 									continue;
 								}
-								final int x = 16 * (sectionX + direction.selectByAxis(0, u, v));
-								final int dx = direction.selectByAxis(distance, 0, 0);
-								final int y = 16 * (sectionY + direction.selectByAxis(v, 0, u));
-								final int dy = direction.selectByAxis(0, distance, 0);
-								final int z = 16 * (sectionZ + direction.selectByAxis(u, v, 0));
-								final int dz = direction.selectByAxis(0, 0, distance);
+								final int x = geometryDetailFactor * MinerCommonConstants.CLUSTER_SIZE.getSize() * (sectionX + direction.selectByAxis(0, u, v));
+								final int dx = geometryDetailFactor * direction.selectByAxis(distance, 0, 0);
+								final int y = geometryDetailFactor * MinerCommonConstants.CLUSTER_SIZE.getSize() * (sectionY + direction.selectByAxis(v, 0, u));
+								final int dy = geometryDetailFactor * direction.selectByAxis(0, distance, 0);
+								final int z = geometryDetailFactor * MinerCommonConstants.CLUSTER_SIZE.getSize() * (sectionZ + direction.selectByAxis(u, v, 0));
+								final int dz = geometryDetailFactor * direction.selectByAxis(0, 0, distance);
 								glVertex3f(x + dx, y + dy, z + dz);
 								glVertex3f(x - dx, y - dy, z - dz);
 							}
@@ -679,7 +680,7 @@ public class CubeWorldHandler {
 
 						// draw the player and set the raster position for drawing the name
 						glPushMatrix();
-						glTranslated(playerProxy.getX(), playerProxy.getY(), playerProxy.getZ());
+						glTranslated(geometryDetailFactor * playerProxy.getX(), geometryDetailFactor * playerProxy.getY(), geometryDetailFactor * playerProxy.getZ());
 						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 						new Sphere().draw(0.8f, 10, 10);
 						glRasterPos3f(0f, 1.5f, 0f);
@@ -689,7 +690,7 @@ public class CubeWorldHandler {
 						final double dx = player.getX() - playerProxy.getX();
 						final double dy = player.getY() - playerProxy.getY();
 						final double dz = player.getZ() - playerProxy.getZ();
-						final double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+						final double distance = geometryDetailFactor * Math.sqrt(dx * dx + dy * dy + dz * dz);
 						final double zoom = 5.0 / (Math.sqrt(distance) + 0.5);
 
 						// draw the player's name
@@ -697,11 +698,18 @@ public class CubeWorldHandler {
 						if (name == null) {
 							name = "...";
 						}
-						glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
+						glBindTexture(GL_TEXTURE_2D, 0);
+						glDisable(GL_BLEND);
 						glDepthFunc(GL_ALWAYS);
+						GL11.glPixelTransferf(GL11.GL_RED_BIAS, 1.0f);			
+						GL11.glPixelTransferf(GL11.GL_GREEN_BIAS, 1.0f);			
+						GL11.glPixelTransferf(GL11.GL_BLUE_BIAS, 1.0f);			
 						resources.drawText(name, (float)zoom);
+						GL11.glPixelTransferf(GL11.GL_RED_BIAS, 0.0f);			
+						GL11.glPixelTransferf(GL11.GL_GREEN_BIAS, 0.0f);			
+						GL11.glPixelTransferf(GL11.GL_BLUE_BIAS, 0.0f);
 						glDepthFunc(GL_LESS);
-
+						
 					}
 				}
 				glDisable(GL_BLEND);

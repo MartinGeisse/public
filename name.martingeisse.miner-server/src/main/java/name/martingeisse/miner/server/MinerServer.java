@@ -29,7 +29,7 @@ import name.martingeisse.stackd.common.network.SectionDataType;
 import name.martingeisse.stackd.common.network.StackdPacket;
 import name.martingeisse.stackd.server.network.StackdServer;
 import name.martingeisse.stackd.server.section.SectionCubesCacheEntry;
-import name.martingeisse.stackd.server.section.storage.MemorySectionStorage;
+import name.martingeisse.stackd.server.section.storage.CassandraSectionStorage;
 import name.martingeisse.webide.entity.Player;
 import name.martingeisse.webide.entity.QPlayer;
 import org.apache.log4j.Logger;
@@ -57,15 +57,8 @@ public class MinerServer extends StackdServer<MinerSession> {
 	 * Constructor.
 	 */
 	public MinerServer() {
-		
-		// 1s startup time
-		// super(new FolderBasedSectionStorageBackend(new ClusterSize(4), new File("data/persisted-procedural-world")));
-		
-		// 5-8s startup time
-		// super(new CassandraSectionStorage(new ClusterSize(4), Databases.world, "sections"));
-		
-		// testing
-		super(new MemorySectionStorage(MinerCommonConstants.CLUSTER_SIZE));
+		super(new CassandraSectionStorage(MinerCommonConstants.CLUSTER_SIZE, Databases.world, "section_data"));
+		// super(new MemorySectionStorage(MinerCommonConstants.CLUSTER_SIZE));
 		setCubeTypes(MinerCubeTypes.CUBE_TYPES);
 		
 		Timer timer = new Timer(true);
@@ -78,7 +71,7 @@ public class MinerServer extends StackdServer<MinerSession> {
 		// TODO for testing
 		try {
 			// initializeWorld();
-			initializeWorldWithHeightField();
+			// initializeWorldWithHeightField();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -175,6 +168,7 @@ public class MinerServer extends StackdServer<MinerSession> {
 					throw new RuntimeException("player not found, id: " + playerId);
 				}
 				session.setPlayerId(player.getId());
+				session.setName(player.getName());
 				session.setX(player.getX().doubleValue());
 				session.setY(player.getY().doubleValue());
 				session.setZ(player.getZ().doubleValue());
