@@ -52,3 +52,5 @@
 /name.martingeisse.sql/target/
 /name.martingeisse.stackd-common/bin/
 /name.martingeisse.stackd-common/target/
+/name.martingeisse.miner-client/client.log
+/name.martingeisse.miner-server/server.log
