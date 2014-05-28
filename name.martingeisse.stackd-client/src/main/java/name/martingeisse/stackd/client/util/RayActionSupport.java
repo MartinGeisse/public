@@ -26,44 +26,46 @@ import org.lwjgl.BufferUtils;
  * Usage: Invoke capture() during the render process as described in
  * the method documentation, then invoke execute() at any later time
  * (typically in the same frame, but this is not a requirement) to
- * actually execute the ray action.
+ * actually execute the ray action. Use release() to release the
+ * captured state(). execute() will do nothing if there is no ray
+ * target captured.
  */
 public class RayActionSupport {
 
 	/**
 	 * the width
 	 */
-	private int width;
+	private final int width;
 	
 	/**
 	 * the height
 	 */
-	private int height;
+	private final int height;
 	
 	/**
 	 * the depthValueBuffer
 	 */
-	private FloatBuffer depthValueBuffer;
+	private final FloatBuffer depthValueBuffer;
 
 	/**
 	 * the viewport
 	 */
-	private IntBuffer viewport;
+	private final IntBuffer viewport;
 	
 	/**
 	 * the modelviewTransform
 	 */
-	private FloatBuffer modelviewTransform;
+	private final FloatBuffer modelviewTransform;
 
 	/**
 	 * the projectionTransform
 	 */
-	private FloatBuffer projectionTransform;
+	private final FloatBuffer projectionTransform;
 	
 	/**
 	 * the objectPosition
 	 */
-	private FloatBuffer objectPosition;
+	private final FloatBuffer objectPosition;
 	
 	/**
 	 * the impactX
@@ -79,6 +81,11 @@ public class RayActionSupport {
 	 * the impactZ
 	 */
 	private double impactZ;
+	
+	/**
+	 * the captured
+	 */
+	private boolean captured;
 	
 	/**
 	 * Constructor.
@@ -101,6 +108,7 @@ public class RayActionSupport {
 		this.modelviewTransform = BufferUtils.createFloatBuffer(16);
 		this.projectionTransform = BufferUtils.createFloatBuffer(16);
 		this.objectPosition = BufferUtils.createFloatBuffer(3);
+		this.captured = false;
 	}
 
 	/**
@@ -129,7 +137,15 @@ public class RayActionSupport {
 		impactX = objectPosition.get(0) / StackdConstants.GEOMETRY_DETAIL_FACTOR;
 		impactY = objectPosition.get(1) / StackdConstants.GEOMETRY_DETAIL_FACTOR;
 		impactZ = objectPosition.get(2) / StackdConstants.GEOMETRY_DETAIL_FACTOR;
+		captured = true;
 		
+	}
+	
+	/**
+	 * Releases the captured values.
+	 */
+	public void release() {
+		captured = false;
 	}
 	
 	/**
@@ -144,6 +160,9 @@ public class RayActionSupport {
 	 * @param action the action to execute
 	 */
 	public void execute(double sourceX, double sourceY, double sourceZ, RayAction action) {
+		if (!captured) {
+			return;
+		}
 		double dx = (impactX - sourceX);
 		double dy = (impactY - sourceY);
 		double dz = (impactZ - sourceZ);

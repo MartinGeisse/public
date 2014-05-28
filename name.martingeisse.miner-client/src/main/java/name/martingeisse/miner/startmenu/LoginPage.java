@@ -7,7 +7,6 @@
 package name.martingeisse.miner.startmenu;
 
 import java.util.prefs.Preferences;
-
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.element.Spacer;
 import name.martingeisse.stackd.client.gui.element.VerticalLayout;

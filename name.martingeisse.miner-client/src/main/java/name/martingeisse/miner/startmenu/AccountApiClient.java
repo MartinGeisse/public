@@ -6,14 +6,12 @@ package name.martingeisse.miner.startmenu;
 
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.common.javascript.jsonbuilder.JsonBuilder;
 import name.martingeisse.common.javascript.jsonbuilder.JsonObjectBuilder;
 import name.martingeisse.httpclient.NullCookieStore;
 import name.martingeisse.miner.common.Faction;
 import name.martingeisse.miner.util.UserVisibleMessageException;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;

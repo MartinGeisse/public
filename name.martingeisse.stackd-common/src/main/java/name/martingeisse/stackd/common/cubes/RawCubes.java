@@ -9,6 +9,8 @@ package name.martingeisse.stackd.common.cubes;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
+import name.martingeisse.common.util.CompressionUtil;
+import name.martingeisse.stackd.common.StackdConstants;
 import name.martingeisse.stackd.common.geometry.ClusterSize;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -44,9 +46,10 @@ public class RawCubes extends Cubes {
 	@Override
 	protected void compressToStreamInternal(final ClusterSize clusterSize, final OutputStream stream) throws IOException {
 		
+		// TODO try uniform
 		// write cubes
 		stream.write(1);
-		stream.write(cubes);
+		stream.write(CompressionUtil.deflate(cubes, StackdConstants.INTERACTIVE_SECTION_DATA_COMPRESSION_DICTIONARY));
 		 
 	}
 
@@ -59,9 +62,8 @@ public class RawCubes extends Cubes {
 	 * @return the cubes object, or null if not successful
 	 */
 	public static RawCubes decompress(final ClusterSize clusterSize, final byte[] compressedData) {
-		int size = clusterSize.getSize();
-		int cubesEndIndex = 1 + size * size * size;
-		byte[] cubes = ArrayUtils.subarray(compressedData, 1, cubesEndIndex);
+		final byte[] deflatedCubes = ArrayUtils.subarray(compressedData, 1, compressedData.length);
+		final byte[] cubes = CompressionUtil.inflate(deflatedCubes, StackdConstants.INTERACTIVE_SECTION_DATA_COMPRESSION_DICTIONARY);
 		return new RawCubes(cubes);
 	}
 

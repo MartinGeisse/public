@@ -10,19 +10,15 @@ import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_VIEWPORT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glGetInteger;
 import static org.lwjgl.opengl.GL14.glWindowPos2i;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
 import name.martingeisse.stackd.client.frame.AbstractFrameHandler;
 import name.martingeisse.stackd.client.glworker.GlWorkUnit;
 import name.martingeisse.stackd.client.glworker.GlWorkerLoop;
 import name.martingeisse.stackd.client.system.Font;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -71,10 +67,7 @@ public final class FpsPanel extends AbstractFrameHandler {
 			glBindTexture(GL_TEXTURE_2D, 0);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			IntBuffer buffer = ByteBuffer.allocateDirect(64).order(ByteOrder.nativeOrder()).asIntBuffer();
-			// TODO remove getters in frame code!
-			glGetInteger(GL_VIEWPORT, buffer);
-			glWindowPos2i(buffer.get(2), buffer.get(3));
+			glWindowPos2i(Display.getWidth(), Display.getHeight());
 			GL11.glPixelTransferf(GL11.GL_RED_BIAS, 1.0f);			
 			GL11.glPixelTransferf(GL11.GL_GREEN_BIAS, 1.0f);			
 			GL11.glPixelTransferf(GL11.GL_BLUE_BIAS, 1.0f);			

@@ -10,7 +10,6 @@ import name.martingeisse.miner.util.UserVisibleMessageException;
 import name.martingeisse.stackd.client.gui.GuiEvent;
 import name.martingeisse.stackd.client.gui.control.MessageBox;
 import name.martingeisse.stackd.client.gui.control.Page;
-
 import org.lwjgl.input.Keyboard;
 
 /**

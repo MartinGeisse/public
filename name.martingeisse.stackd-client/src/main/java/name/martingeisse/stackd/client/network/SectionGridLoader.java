@@ -137,6 +137,7 @@ public final class SectionGridLoader {
 		}
 
 		// detect missing section render models in the viewer's proximity, then request them all at once
+		// logger.trace("checking for missing section data; position: " + viewerPosition);
 		// TODO implement a batch request packet
 		// TODO fetch non-interactive data for "far" sections
 		{

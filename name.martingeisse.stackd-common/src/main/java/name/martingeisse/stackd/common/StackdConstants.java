@@ -6,6 +6,7 @@
 
 package name.martingeisse.stackd.common;
 
+import java.io.ByteArrayOutputStream;
 import name.martingeisse.stackd.common.geometry.ClusterSize;
 
 /**
@@ -38,6 +39,24 @@ public class StackdConstants {
 	 * A {@link ClusterSize} for {@link #GEOMETRY_DETAIL_FACTOR}.
 	 */
 	public static final ClusterSize GEOMETRY_DETAIL_CLUSTER_SIZE = new ClusterSize(GEOMETRY_DETAIL_SHIFT);
+	
+	/**
+	 * The DEFLATE dictionary used for compressing interactive section data.
+	 */
+	public static final byte[] INTERACTIVE_SECTION_DATA_COMPRESSION_DICTIONARY;
+	static {
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		for (int i=0; i<30; i++) {
+			s.write(0x00);
+		}
+		for (int i=0; i<10; i++) {
+			s.write(0x09);
+		}
+		for (int i=0; i<1000; i++) {
+			s.write(0xff);
+		}
+		INTERACTIVE_SECTION_DATA_COMPRESSION_DICTIONARY = s.toByteArray();
+	}
 
 	/**
 	 * Prevent instantiation.

@@ -19,8 +19,9 @@ import name.martingeisse.stackd.common.network.SectionDataType;
 import name.martingeisse.stackd.common.network.StackdPacket;
 import name.martingeisse.stackd.server.console.IConsoleCommandHandler;
 import name.martingeisse.stackd.server.console.NullConsoleCommandHandler;
-import name.martingeisse.stackd.server.section.SectionCubesCacheEntry;
+import name.martingeisse.stackd.server.section.SectionToClientShipper;
 import name.martingeisse.stackd.server.section.SectionWorkingSet;
+import name.martingeisse.stackd.server.section.entry.SectionCubesCacheEntry;
 import name.martingeisse.stackd.server.section.storage.AbstractSectionStorage;
 import org.apache.log4j.Logger;
 import org.jboss.netty.buffer.ChannelBuffer;
@@ -51,6 +52,11 @@ public abstract class StackdServer<S extends StackdSession> {
 	 * the sectionWorkingSet
 	 */
 	private final SectionWorkingSet sectionWorkingSet;
+	
+	/**
+	 * the sectionToClientShipper
+	 */
+	private final SectionToClientShipper sectionToClientShipper;
 
 	/**
 	 * the cubeTypes
@@ -69,6 +75,7 @@ public abstract class StackdServer<S extends StackdSession> {
 	public StackdServer(final AbstractSectionStorage sectionStorage) {
 		this.sessions = new ConcurrentHashMap<Integer, S>();
 		this.sectionWorkingSet = new SectionWorkingSet(this, sectionStorage);
+		this.sectionToClientShipper = new SectionToClientShipper(sectionWorkingSet);
 		this.cubeTypes = new CubeType[0];
 		this.consoleCommandHandler = new NullConsoleCommandHandler<S>();
 	}
@@ -244,7 +251,7 @@ public abstract class StackdServer<S extends StackdSession> {
 				byte newCubeType = (byte)buffer.readUnsignedByte();
 				SectionId sectionId = new SectionId(sectionX, sectionY, sectionZ);
 				SectionDataId sectionDataId = new SectionDataId(sectionId, SectionDataType.DEFINITIVE);
-				SectionCubesCacheEntry sectionDataCacheEntry = (SectionCubesCacheEntry)sectionWorkingSet.getSectionDataCache().get(sectionDataId);
+				SectionCubesCacheEntry sectionDataCacheEntry = (SectionCubesCacheEntry)sectionWorkingSet.get(sectionDataId);
 				sectionDataCacheEntry.setCubeAbsolute(x, y, z, newCubeType);
 				affectedSectionIds.add(sectionId);
 			}
@@ -263,9 +270,9 @@ public abstract class StackdServer<S extends StackdSession> {
 		{
 			SectionId sectionId = new SectionId(buffer.readInt(), buffer.readInt(), buffer.readInt());
 			SectionDataType type = SectionDataType.values()[packet.getType() - StackdPacket.TYPE_SINGLE_SECTION_DATA_BASE];
-			SectionDataId dataId = new SectionDataId(sectionId, type);
+			final SectionDataId dataId = new SectionDataId(sectionId, type);
 			logger.debug("SERVER received section data request: " + dataId);
-			onSectionDataRequested(session, dataId);
+			sectionToClientShipper.addJob(dataId, session);
 			break;
 		}
 		
@@ -357,26 +364,6 @@ public abstract class StackdServer<S extends StackdSession> {
 	protected void onClientDisconnected(final S session) {
 	}
 
-	/**
-	 * This method is called when a client requests that we send them a section data object.
-	 * 
-	 * @param session the requesting session
-	 * @param sectionDataId the section data object ID to send the image for
-	 */
-	final void onSectionDataRequested(final StackdSession session, final SectionDataId sectionDataId) {
-		final SectionId sectionId = sectionDataId.getSectionId();
-		final SectionDataType type = sectionDataId.getType();
-		final byte[] data = getSectionWorkingSet().getSectionDataCache().get(sectionDataId).getDataForClient();
-		StackdPacket response = new StackdPacket(StackdPacket.TYPE_SINGLE_SECTION_DATA_BASE + type.ordinal(), data.length + 12);
-		ChannelBuffer buffer = response.getBuffer();
-		buffer.writeInt(sectionId.getX());
-		buffer.writeInt(sectionId.getY());
-		buffer.writeInt(sectionId.getZ());
-		buffer.writeBytes(data);
-		session.sendPacketDestructive(response);
-		logger.debug("* " + (System.currentTimeMillis() % 100000) + ": SERVER sent section data: " + sectionDataId + " (" + data.length + " bytes)");
-	}
-	
 	/**
 	 * Handles a console command. Such a command is typically sent by a client. Even if
 	 * not, the command must at least be associated with a client, and is handled as if

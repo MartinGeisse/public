@@ -66,7 +66,7 @@ public class Main {
 				@Override
 				public void run() {
 					try {
-						autologinRequest("martin", "foobar", 8);
+						autologinRequest("martin", "foobar", 1);
 					} catch (Exception e) {
 						logger.error("could not auto-login", e);
 					}
@@ -155,7 +155,7 @@ public class Main {
 			// TODO remove, used for development
 			logger.info("auto-login...");
 			barrier.await();
-			// autologinComplete();
+			autologinComplete();
 			logger.info("auto-login successful");
 
 			// run the game logic in a different thread, then run the OpenGL worker in the main thread
@@ -190,6 +190,7 @@ public class Main {
 	/**
 	 * Helper method for development. Must be called from the OpenGL thread.
 	 */
+	@SuppressWarnings("unused")
 	private static void autologinComplete() throws Exception {
 		Main.frameLoop.getRootHandler().setWrappedHandler(new IngameHandler());
 		MouseUtil.grab();

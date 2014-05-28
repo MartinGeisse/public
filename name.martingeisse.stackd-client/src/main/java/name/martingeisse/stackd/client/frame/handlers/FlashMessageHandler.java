@@ -10,15 +10,10 @@ import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_VIEWPORT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glGetInteger;
 import static org.lwjgl.opengl.GL14.glWindowPos2i;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import name.martingeisse.stackd.client.frame.AbstractFrameHandler;
 import name.martingeisse.stackd.client.frame.BreakFrameLoopException;
@@ -26,6 +21,7 @@ import name.martingeisse.stackd.client.glworker.GlWorkUnit;
 import name.martingeisse.stackd.client.glworker.GlWorkerLoop;
 import name.martingeisse.stackd.client.system.Font;
 import org.apache.log4j.Logger;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -75,21 +71,12 @@ public class FlashMessageHandler extends AbstractFrameHandler {
 	private final ConcurrentLinkedQueue<Entry> queue;
 
 	/**
-	 * the height
-	 */
-	private int height = 0;
-
-	/**
 	 * the glWorkUnit
 	 */
 	private final GlWorkUnit glWorkUnit = new GlWorkUnit() {
 		@Override
 		public void execute() {
-			if (height == 0) {
-				final IntBuffer buffer = ByteBuffer.allocateDirect(64).order(ByteOrder.nativeOrder()).asIntBuffer();
-				glGetInteger(GL_VIEWPORT, buffer);
-				height = buffer.get(3);
-			}
+			int height = Display.getHeight();
 			final long now = System.currentTimeMillis();
 			int i = 0;
 			glBindTexture(GL_TEXTURE_2D, 0);

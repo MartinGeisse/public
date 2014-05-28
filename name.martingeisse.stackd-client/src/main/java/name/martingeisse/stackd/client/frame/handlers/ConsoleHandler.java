@@ -12,19 +12,14 @@ import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_VIEWPORT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glGetInteger;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.opengl.GL14.glWindowPos2i;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
 import name.martingeisse.stackd.client.console.Console;
 import name.martingeisse.stackd.client.frame.AbstractVisiblityToggleFrameHandler;
 import name.martingeisse.stackd.client.frame.BreakFrameLoopException;
@@ -32,6 +27,7 @@ import name.martingeisse.stackd.client.glworker.GlWorkUnit;
 import name.martingeisse.stackd.client.glworker.GlWorkerLoop;
 import name.martingeisse.stackd.client.system.Font;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -50,16 +46,12 @@ public class ConsoleHandler extends AbstractVisiblityToggleFrameHandler {
 	private final Font font;
 
 	/**
-	 * the screenHeight
-	 */
-	private final int screenHeight;
-
-	/**
 	 * the glWorkUnit
 	 */
 	private final GlWorkUnit glWorkUnit = new GlWorkUnit() {
 		@Override
 		public void execute() {
+			int screenHeight = Display.getHeight();
 			
 			// draw background
 			glMatrixMode(GL11.GL_PROJECTION);
@@ -128,10 +120,6 @@ public class ConsoleHandler extends AbstractVisiblityToggleFrameHandler {
 		super(toggleKey);
 		this.console = console;
 		this.font = font;
-
-		final IntBuffer buffer = ByteBuffer.allocateDirect(64).order(ByteOrder.nativeOrder()).asIntBuffer();
-		glGetInteger(GL_VIEWPORT, buffer);
-		this.screenHeight = buffer.get(3);
 	}
 
 	/**

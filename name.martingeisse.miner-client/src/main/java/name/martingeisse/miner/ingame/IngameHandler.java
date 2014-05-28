@@ -8,7 +8,6 @@ package name.martingeisse.miner.ingame;
 
 import java.util.List;
 import java.util.Map;
-
 import name.martingeisse.miner.Main;
 import name.martingeisse.miner.gamegui.GameMenuHandler;
 import name.martingeisse.stackd.client.frame.AbstractFrameHandler;

@@ -6,6 +6,8 @@
 
 package name.martingeisse.stackd.server.section.storage;
 
+import java.util.Collection;
+import java.util.Map;
 import name.martingeisse.stackd.common.geometry.ClusterSize;
 import name.martingeisse.stackd.common.network.SectionDataId;
 
@@ -42,17 +44,15 @@ public abstract class AbstractSectionStorage {
 	 * @param id the ID of the object to load
 	 * @return the loaded object
 	 */
-	public final byte[] loadSectionRelatedObject(SectionDataId id) {
-		return loadSectionRelatedObjects(new SectionDataId[] {id})[0];
-	}
+	public abstract byte[] loadSectionRelatedObject(SectionDataId id);
 
 	/**
-	 * Loads section-related objects for multiple sections, all using the same subkey.
+	 * Loads multiple section-related objects.
 	 * 
 	 * @param ids the IDs of the objects to load
 	 * @return the loaded objects
 	 */
-	public abstract byte[][] loadSectionRelatedObjects(SectionDataId[] ids);
+	public abstract Map<SectionDataId, byte[]> loadSectionRelatedObjects(Collection<? extends SectionDataId> ids);
 
 	/**
 	 * Saves a section-related object.

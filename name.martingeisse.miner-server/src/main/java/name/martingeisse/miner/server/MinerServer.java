@@ -28,7 +28,7 @@ import name.martingeisse.stackd.common.network.SectionDataId;
 import name.martingeisse.stackd.common.network.SectionDataType;
 import name.martingeisse.stackd.common.network.StackdPacket;
 import name.martingeisse.stackd.server.network.StackdServer;
-import name.martingeisse.stackd.server.section.SectionCubesCacheEntry;
+import name.martingeisse.stackd.server.section.entry.SectionCubesCacheEntry;
 import name.martingeisse.stackd.server.section.storage.CassandraSectionStorage;
 import name.martingeisse.webide.entity.Player;
 import name.martingeisse.webide.entity.QPlayer;
@@ -98,7 +98,7 @@ public class MinerServer extends StackdServer<MinerSession> {
 		// importer.importRegions(new File("resource/fis/region"));
 		importer.importRegions(new File("resource/stoneless"));
 		
-		getSectionWorkingSet().getSectionDataCache().clearCache();
+		getSectionWorkingSet().clearCache();
 		logger.info("world initialized");
 		
 	}
@@ -111,7 +111,7 @@ public class MinerServer extends StackdServer<MinerSession> {
 		int verticalRadius = 5;
 		TerrainGenerator terrainGenerator = new TerrainGenerator();
 		terrainGenerator.generate(getSectionWorkingSet().getStorage(), new SectionId(-horizontalRadius, -verticalRadius, -horizontalRadius), new SectionId(horizontalRadius, verticalRadius, horizontalRadius));
-		getSectionWorkingSet().getSectionDataCache().clearCache();
+		getSectionWorkingSet().clearCache();
 		logger.info("world initialized");
 	}
 
@@ -199,7 +199,7 @@ public class MinerServer extends StackdServer<MinerSession> {
 			int y  = buffer.readInt(), sectionY = (y >> shiftBits);
 			int z  = buffer.readInt(), sectionZ = (z >> shiftBits);
 			SectionId id = new SectionId(sectionX, sectionY, sectionZ);
-			SectionCubesCacheEntry sectionDataCacheEntry = (SectionCubesCacheEntry)getSectionWorkingSet().getSectionDataCache().get(new SectionDataId(id, SectionDataType.DEFINITIVE));
+			SectionCubesCacheEntry sectionDataCacheEntry = (SectionCubesCacheEntry)getSectionWorkingSet().get(new SectionDataId(id, SectionDataType.DEFINITIVE));
 			byte oldCubeType = sectionDataCacheEntry.getCubeAbsolute(x, y, z);
 			
 			// determine whether digging is successful

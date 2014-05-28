@@ -6,8 +6,6 @@
 
 package name.martingeisse.miner.startmenu;
 
-import org.lwjgl.input.Keyboard;
-
 import name.martingeisse.launcher.assets.LauncherAssets;
 import name.martingeisse.miner.util.UserVisibleMessageException;
 import name.martingeisse.stackd.client.gui.Gui;
@@ -18,6 +16,7 @@ import name.martingeisse.stackd.client.gui.control.Page;
 import name.martingeisse.stackd.client.gui.element.FillTexture;
 import name.martingeisse.stackd.client.gui.element.Margin;
 import name.martingeisse.stackd.client.system.StackdTexture;
+import org.lwjgl.input.Keyboard;
 
 /**
  * The base class for start menu pages.

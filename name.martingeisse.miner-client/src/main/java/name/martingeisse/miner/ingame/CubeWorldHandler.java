@@ -129,6 +129,11 @@ public class CubeWorldHandler {
 	 * the rayActionSupport
 	 */
 	private final RayActionSupport rayActionSupport;
+	
+	/**
+	 * the captureRayActionSupport
+	 */
+	private boolean captureRayActionSupport;
 
 	/**
 	 * the wireframe
@@ -457,9 +462,11 @@ public class CubeWorldHandler {
 		}
 
 		// cube placement
+		captureRayActionSupport = false;
 		final long now = System.currentTimeMillis();
 		if (now >= cooldownFinishTime) {
 			if (mouseMovementEnabled && Mouse.isButtonDown(0)) {
+				captureRayActionSupport = true;
 				rayActionSupport.execute(player.getX(), player.getY(), player.getZ(), new RayAction(false) {
 					@Override
 					public void handleImpact(final int x, final int y, final int z, final double distance) {
@@ -497,6 +504,7 @@ public class CubeWorldHandler {
 					}
 				});
 			} else if (mouseMovementEnabled && Mouse.isButtonDown(1)) {
+				captureRayActionSupport = true;
 				rayActionSupport.execute(player.getX(), player.getY(), player.getZ(), new RayAction(true) {
 					@Override
 					public void handleImpact(final int x, final int y, final int z, final double distance) {
@@ -613,7 +621,11 @@ public class CubeWorldHandler {
 
 				// measure visible distance in the center of the crosshair, with only the world visible (no HUD or similar)
 				// TODO only call if needed, this stalls the rendering pipeline --> 2x frame rate possible!
-				rayActionSupport.capture();
+				if (captureRayActionSupport) {
+					rayActionSupport.capture();
+				} else {
+					rayActionSupport.release();
+				}
 
 				// draw the sky
 				glDisable(GL_TEXTURE_GEN_S);

@@ -6,17 +6,13 @@
 
 package name.martingeisse.stackd.client.gui;
 
-import static org.lwjgl.opengl.GL11.GL_VIEWPORT;
-import static org.lwjgl.opengl.GL11.glGetInteger;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
 import name.martingeisse.stackd.client.frame.AbstractFrameHandler;
 import name.martingeisse.stackd.client.frame.BreakFrameLoopException;
 import name.martingeisse.stackd.client.glworker.GlWorkUnit;
 import name.martingeisse.stackd.client.glworker.GlWorkerLoop;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 
 /**
  * This handler draws the GUI and sends events to it.
@@ -42,11 +38,7 @@ public final class GuiFrameHandler extends AbstractFrameHandler {
 	 * Constructor.
 	 */
 	public GuiFrameHandler() {
-		final IntBuffer buffer = ByteBuffer.allocateDirect(64).order(ByteOrder.nativeOrder()).asIntBuffer();
-		glGetInteger(GL_VIEWPORT, buffer);
-		int width = buffer.get(2);
-		int height = buffer.get(3);
-		this.gui = new Gui(width, height);
+		this.gui = new Gui(Display.getWidth(), Display.getHeight());
 	}
 	
 	/**
