@@ -54,6 +54,11 @@ public final class RenderUnit extends GlWorkUnit {
 	 * the backfaceCullingDirection
 	 */
 	private final AxisAlignedDirection backfaceCullingDirection;
+	
+	/**
+	 * the firstVertexIndex
+	 */
+	private int firstVertexIndex;
 
 	/**
 	 * the vertexCount
@@ -87,6 +92,22 @@ public final class RenderUnit extends GlWorkUnit {
 		return boundingBox;
 	}
 
+	/**
+	 * Getter method for the firstVertexIndex.
+	 * @return the firstVertexIndex
+	 */
+	public int getFirstVertexIndex() {
+		return firstVertexIndex;
+	}
+	
+	/**
+	 * Setter method for the firstVertexIndex.
+	 * @param firstVertexIndex the firstVertexIndex to set
+	 */
+	public void setFirstVertexIndex(int firstVertexIndex) {
+		this.firstVertexIndex = firstVertexIndex;
+	}
+	
 	/**
 	 * Getter method for the vertexCount.
 	 * @return the vertexCount
@@ -196,7 +217,7 @@ public final class RenderUnit extends GlWorkUnit {
 	public void execute() {
 		vertexBuffer.bind();
 		glVertexPointer(3, GL_INT, 0, 0);
-		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+		glDrawArrays(GL_TRIANGLES, firstVertexIndex, vertexCount);
 	}
 
 }

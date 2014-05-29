@@ -159,7 +159,7 @@ public final class RenderableSection {
 		buildMesh(meshBuilder);
 		logger.debug("mesh built; building render units for section " + sectionId);
 		renderUnits = meshBuilder.build(systemResourceNode, renderer.getGlWorkerLoop());
-		logger.debug("prepared render units for section " + sectionId);
+		logger.debug("prepared render units for section " + sectionId + "(" + renderUnits.length + " RUs)");
 	}
 	
 	/**

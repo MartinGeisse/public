@@ -34,6 +34,11 @@ public final class MeshBuilder extends MeshBuilderBase {
 	private static Logger logger = Logger.getLogger(MeshBuilder.class);
 	
 	/**
+	 * the NO_RENDER_UNITS
+	 */
+	private static final RenderUnit[] NO_RENDER_UNITS = new RenderUnit[0];
+	
+	/**
 	 * Constructor.
 	 */
 	public MeshBuilder() {
@@ -47,11 +52,15 @@ public final class MeshBuilder extends MeshBuilderBase {
 	 * @return the render units
 	 */
 	public RenderUnit[] build(final SystemResourceNode systemResourceNode, final GlWorkerLoop glWorkerLoop) {
-		RectangularRegion boundingBox = getBoundingBox();
-		List<Triangle> triangles = getTriangles();
-			
 
-		// check
+		// get triangles
+		List<Triangle> triangles = getTriangles();
+		if (triangles.isEmpty()) {
+			return NO_RENDER_UNITS;
+		}
+		
+		// get bounding box
+		RectangularRegion boundingBox = getBoundingBox();
 		if (boundingBox == null) {
 			throw new IllegalStateException("no bounding box set");
 		}
@@ -74,8 +83,10 @@ public final class MeshBuilder extends MeshBuilderBase {
 		});
 
 		// build render units
+		final IntBuffer vertexData = ByteBuffer.allocateDirect(triangles.size() * 3 * 3 * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
 		final ArrayList<RenderUnit> renderUnits = new ArrayList<>();
 		int i = 0;
+		int totalVertexCount = 0;
 		while (i < triangles.size()) {
 			final int textureIndex = triangles.get(i).textureIndex;
 			final AxisAlignedDirection textureCoordinateGenerationDirection = triangles.get(i).textureCoordinateGenerationDirection;
@@ -87,8 +98,8 @@ public final class MeshBuilder extends MeshBuilderBase {
 			}
 			final int renderUnitTriangleCount = (i - start);
 			final RenderUnit renderUnit = new RenderUnit(boundingBox, textureIndex, textureCoordinateGenerationDirection, backfaceCullingDirection);
+			renderUnit.setFirstVertexIndex(totalVertexCount);
 			renderUnit.setVertexCount(renderUnitTriangleCount * 3);
-			final IntBuffer vertexData = ByteBuffer.allocateDirect(renderUnitTriangleCount * 3 * 3 * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
 			for (int k = start; k < i; k++) {
 				final Triangle triangle = triangles.get(k);
 				vertexData.put(triangle.x1);
@@ -101,20 +112,24 @@ public final class MeshBuilder extends MeshBuilderBase {
 				vertexData.put(triangle.y3);
 				vertexData.put(triangle.z3);
 			}
-			vertexData.rewind();
 			renderUnits.add(renderUnit);
-			glWorkerLoop.schedule(new GlWorkUnit() {
-				@Override
-				public void execute() {
-					logger.debug("building vertex buffer for mesh...");
-					final OpenGlVertexBuffer vertexBuffer = new OpenGlVertexBuffer();
-					vertexBuffer.createDataStore(vertexData, GL_STATIC_DRAW);
-					systemResourceNode.addResource(vertexBuffer);
-					renderUnit.setVertexBuffer(vertexBuffer);
-					logger.debug("vertex buffer built.");
-				}
-			});
+			totalVertexCount += (renderUnitTriangleCount * 3);
 		}
+		vertexData.rewind();
+		glWorkerLoop.schedule(new GlWorkUnit() {
+			@Override
+			public void execute() {
+				logger.debug("building vertex buffer for mesh...");
+				final OpenGlVertexBuffer vertexBuffer = new OpenGlVertexBuffer();
+				vertexBuffer.createDataStore(vertexData, GL_STATIC_DRAW);
+				systemResourceNode.addResource(vertexBuffer);
+				for (RenderUnit renderUnit : renderUnits) {
+					renderUnit.setVertexBuffer(vertexBuffer);
+				}
+				logger.debug("vertex buffer built.");
+			}
+		});
+		
 
 		return renderUnits.toArray(new RenderUnit[renderUnits.size()]);
 	}
