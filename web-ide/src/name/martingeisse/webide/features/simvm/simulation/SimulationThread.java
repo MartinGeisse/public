@@ -58,12 +58,6 @@ class SimulationThread extends Thread {
 	@Override
 	public void run() {
 		
-		// TODO for testing
-		try {
-			sleep(2000);
-		} catch (InterruptedException e) {
-		}
-		
 		try {
 			virtualMachine.getSimulationModel().getPrimaryElement().loadRuntimeState(new JSONObject());
 			virtualMachine.getOutputEventBus().sendEvent(new IpcEvent(SimulationEvents.EVENT_TYPE_START, virtualMachine, null));

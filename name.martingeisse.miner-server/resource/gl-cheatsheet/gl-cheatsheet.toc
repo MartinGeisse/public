@@ -1,0 +1,61 @@
+\contentsline {section}{\numberline {1}Core Functions and Basic Configuration}{3}
+\contentsline {subsection}{\numberline {1.1}Core Functions}{3}
+\contentsline {subsection}{\numberline {1.2}Viewport Configuration}{3}
+\contentsline {subsection}{\numberline {1.3}Misc. Configuration}{4}
+\contentsline {section}{\numberline {2}Render State Configuration}{5}
+\contentsline {subsection}{\numberline {2.1}Transform Management}{5}
+\contentsline {subsubsection}{\numberline {2.1.1}General}{5}
+\contentsline {subsubsection}{\numberline {2.1.2}Loading Matrices}{5}
+\contentsline {subsubsection}{\numberline {2.1.3}Multiplying Matrices}{5}
+\contentsline {subsection}{\numberline {2.2}Rasterizing}{6}
+\contentsline {subsubsection}{\numberline {2.2.1}Color Buffer and Blending}{6}
+\contentsline {subsubsection}{\numberline {2.2.2}Depth Buffer}{6}
+\contentsline {subsubsection}{\numberline {2.2.3}Stencil Buffer}{7}
+\contentsline {subsubsection}{\numberline {2.2.4}Misc. Rasterizing Configuration}{7}
+\contentsline {subsection}{\numberline {2.3}Effects}{7}
+\contentsline {subsubsection}{\numberline {2.3.1}Lighting}{7}
+\contentsline {subsubsection}{\numberline {2.3.2}Fog}{8}
+\contentsline {subsubsection}{\numberline {2.3.3}Custom Clipping Planes}{8}
+\contentsline {subsubsection}{\numberline {2.3.4}Decals}{8}
+\contentsline {subsubsection}{\numberline {2.3.5}Points and Lines}{8}
+\contentsline {section}{\numberline {3}Primitives, Arrays and Buffers}{10}
+\contentsline {subsection}{\numberline {3.1}Direct Mode Rendering}{10}
+\contentsline {subsection}{\numberline {3.2}Buffers}{10}
+\contentsline {subsubsection}{\numberline {3.2.1}Life Cycle}{10}
+\contentsline {subsubsection}{\numberline {3.2.2}Binding Buffers}{11}
+\contentsline {subsubsection}{\numberline {3.2.3}Handling Buffer Data}{11}
+\contentsline {subsection}{\numberline {3.3}Using Arrays and Buffers}{12}
+\contentsline {subsubsection}{\numberline {3.3.1}Configuration}{12}
+\contentsline {subsubsection}{\numberline {3.3.2}Drawing Primitives From Arrays and Buffers}{13}
+\contentsline {subsubsection}{\numberline {3.3.3}Instancing Support for Shaders}{14}
+\contentsline {section}{\numberline {4}Textures, Images and Bitmaps}{16}
+\contentsline {subsection}{\numberline {4.1}Dealing With Image Data}{16}
+\contentsline {subsubsection}{\numberline {4.1.1}Pixel Handling Configuration}{16}
+\contentsline {subsection}{\numberline {4.2}Handling Textures}{16}
+\contentsline {subsubsection}{\numberline {4.2.1}Life Cycle}{16}
+\contentsline {subsubsection}{\numberline {4.2.2}Binding Textures}{16}
+\contentsline {subsubsection}{\numberline {4.2.3}Configuring Textures}{17}
+\contentsline {subsubsection}{\numberline {4.2.4}Handling Texture Data}{17}
+\contentsline {subsubsection}{\numberline {4.2.5}Texture-Related Render State}{18}
+\contentsline {subsection}{\numberline {4.3}Samplers}{18}
+\contentsline {subsubsection}{\numberline {4.3.1}Life Cycle}{18}
+\contentsline {subsubsection}{\numberline {4.3.2}Binding Samplers}{19}
+\contentsline {subsubsection}{\numberline {4.3.3}Configuring Samplers}{19}
+\contentsline {subsection}{\numberline {4.4}Connecting Textures and Buffers}{19}
+\contentsline {subsection}{\numberline {4.5}Drawing Bitmaps and Pixels}{19}
+\contentsline {section}{\numberline {5}OpenGL (non-shader part)}{21}
+\contentsline {subsection}{\numberline {5.1}Display Lists}{21}
+\contentsline {subsection}{\numberline {5.2}Splines, B-Splines, NURBS, Bezier Curves, etc.}{21}
+\contentsline {subsection}{\numberline {5.3}Synchronization}{22}
+\contentsline {subsection}{\numberline {5.4}Frame Buffer Management}{22}
+\contentsline {subsection}{\numberline {5.5}Renderbuffers}{24}
+\contentsline {subsection}{\numberline {5.6}Reading the Frame Buffer}{24}
+\contentsline {subsection}{\numberline {5.7}Render Queries}{25}
+\contentsline {subsection}{\numberline {5.8}Debugging}{26}
+\contentsline {subsection}{\numberline {5.9}Feedback Buffers (structured rendering log, selection)}{26}
+\contentsline {subsection}{\numberline {5.10}Various Rendering Parameters}{27}
+\contentsline {section}{\numberline {6}OpenGL Shaders}{28}
+\contentsline {subsection}{\numberline {6.1}Vertex Array Objects (related to generic vertex attributes)}{32}
+\contentsline {subsection}{\numberline {6.2}Transform Feedback}{32}
+\contentsline {section}{\numberline {7}Useless OpenGL Features}{34}
+\contentsline {subsection}{\numberline {7.1}Functions Related to Indexed Color Modes}{34}

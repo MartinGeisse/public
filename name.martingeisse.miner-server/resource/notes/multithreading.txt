@@ -1,0 +1,30 @@
+Idee:
+
+Schritt 1: Aufteilung des Rendering in
+- Schleife über alle Sections des Working Set
+- Schleife über die Render Model Nodes
+- Application-side Frustum Culling und Backface Culling
+- Runterbrechen in OpenGlRunnable (Marker-Interface extends Runnable) mit Hilfe des Renderers
+
+Letztendlich ein einziger Renderthread mit OpenGl-Context, evtl. Peephole-Optimierung, z.B.
+Sortierung der wartenden OpenGlRunnables nach Texture.
+
+-----
+java.util.concurrent:
+
+Callable: Runnable mit Returnwert
+Delayed: Methode zum Abrufen, wie lange es noch dauert
+Future: Hülle für das Ergebnis eines Callable, das später eintrifft, plus cancellation.
+Passend dazu: RunnableFuture (Runnable, Future); ScheduledFuture (Future, Delayed), RunnableScheduledFuture (beides)
+
+Executor: Führt die Callables aus, kann sonst aber nichts.
+ExecutorService: erweiterter Executor. Returned Futures für die Ergebnisse.
+ScheduledExecutorService: Liefert ScheduledFutures, also Futures für die Ergebnisse inkl. delay.
+
+CompletionService bzw. ExecutorCompletionService: Setzt auf Executors auf. Sammelt und
+buffert die Ergebnisse, bis sie abgerufen werden.
+
+-----
+ThreadPoolExecutor:
+
+Runtime.getRuntime().availableProcessors()

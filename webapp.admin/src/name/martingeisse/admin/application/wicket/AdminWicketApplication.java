@@ -6,22 +6,18 @@
 
 package name.martingeisse.admin.application.wicket;
 
-import name.martingeisse.admin.application.ApplicationConfiguration;
-import name.martingeisse.admin.application.hooks.ISchemaAwareContributor;
-import name.martingeisse.admin.application.security.SecurityConfiguration;
-import name.martingeisse.admin.application.wicket.converter.DateTimeConverter;
-import name.martingeisse.admin.application.wicket.converter.LocalDateConverter;
-import name.martingeisse.admin.application.wicket.converter.LocalDateTimeConverter;
-import name.martingeisse.admin.application.wicket.converter.LocalTimeConverter;
-import name.martingeisse.admin.component.page.AbstractAdminPage;
-import name.martingeisse.admin.component.page.HomePage;
-import name.martingeisse.admin.component.page.images.Dummy;
-import name.martingeisse.admin.entity.schema.ApplicationSchema;
-import name.martingeisse.admin.navigation.NavigationConfiguration;
-import name.martingeisse.common.util.ObjectStateUtil;
+import name.martingeisse.admin.application.converter.DateTimeConverter;
+import name.martingeisse.admin.application.converter.LocalDateConverter;
+import name.martingeisse.admin.application.converter.LocalDateTimeConverter;
+import name.martingeisse.admin.application.converter.LocalTimeConverter;
+import name.martingeisse.admin.application.pages.AbstractAdminPage;
+import name.martingeisse.admin.application.pages.HomePage;
+import name.martingeisse.admin.application.pages.images.Dummy;
+import name.martingeisse.admin.navigation.NavigationTree;
 import name.martingeisse.common.util.ParameterUtil;
 import name.martingeisse.common.util.ReturnValueUtil;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
+import name.martingeisse.wicket.security.SecurityConfiguration;
 import name.martingeisse.wicket.util.json.JsonEncodingContainer;
 
 import org.apache.log4j.Logger;
@@ -29,6 +25,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ConverterLocator;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
+import org.apache.wicket.authentication.strategy.NoOpAuthenticationStrategy;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.WicketTag;
@@ -47,6 +44,12 @@ import org.joda.time.LocalTime;
  * Wicket {@link WebApplication} implementation for this application.
  */
 public class AdminWicketApplication extends AbstractMyWicketApplication {
+	
+	/**
+	 * the logger
+	 */
+	@SuppressWarnings("unused")
+	private static Logger logger = Logger.getLogger(AdminWicketApplication.class);
 
 	/**
 	 * the exceptionMapper
@@ -64,11 +67,18 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 	};
 	
 	/**
-	 * the logger
+	 * the navigationTree
 	 */
-	@SuppressWarnings("unused")
-	private static Logger logger = Logger.getLogger(AdminWicketApplication.class);
-
+	private final NavigationTree navigationTree = new NavigationTree();
+	
+	/**
+	 * Getter method for the navigationTree.
+	 * @return the navigationTree
+	 */
+	public final NavigationTree getNavigationTree() {
+		return navigationTree;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.protocol.http.WebApplication#init()
 	 */
@@ -96,27 +106,6 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		super.init();
 		logger.trace("base application class initialized");
 
-		// initialize plugins and capabilities
-		logger.trace("initializing ApplicationConfiguration...");
-		ApplicationConfiguration.get().initialize();
-		logger.trace("ApplicationConfiguration initialized");
-		
-		// initialize the application schema from the database
-		logger.trace("initializing ApplicationSchema...");
-		ApplicationSchema.initialize();
-		logger.trace("ApplicationSchema initialized");
-
-		// run schema-aware contributors
-		for (ISchemaAwareContributor contributor : ISchemaAwareContributor.CAPABILITY_KEY) {
-			contributor.contribute();
-		}
-
-		// initialize module-specific data
-		logger.trace("running post-schema initialization...");
-		ObjectStateUtil.nullMeansMissing(NavigationConfiguration.navigationTreeParameter.get(), "navigation tree");
-		NavigationConfiguration.navigationTreeParameter.get().prepare();
-		logger.trace("post-schema initialization finished");
-		
 		// register type converters
 		ConverterLocator converterLocator = (ConverterLocator)getConverterLocator();
 		converterLocator.set(DateTime.class, new DateTimeConverter());
@@ -128,7 +117,7 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		getApplicationSettings().setPageExpiredErrorPage(HomePage.class);
 		getMarkupSettings().setDefaultBeforeDisabledLink("<span class=\"disabled-link\">");
 		getMarkupSettings().setDefaultAfterDisabledLink("</span>");
-		getSecuritySettings().setAuthenticationStrategy(WicketConfiguration.determineEffectiveWicketAuthenticationStrategy());
+		getSecuritySettings().setAuthenticationStrategy(new NoOpAuthenticationStrategy());
 
 		// mount resource URLs
 		logger.trace("mounting resource URLs...");
@@ -137,23 +126,11 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 		mountResources(Dummy.class, "images/", "ui-bg_diagonals-thick_18_b81900_40x40.png", "ui-bg_diagonals-thick_20_666666_40x40.png", "ui-bg_flat_10_000000_40x100.png", "ui-bg_glass_100_f6f6f6_1x400.png", "ui-bg_glass_100_fdf5ce_1x400.png", "ui-bg_glass_65_ffffff_1x400.png", "ui-bg_gloss-wave_35_f6a828_500x100.png", "ui-bg_highlight-soft_100_eeeeee_1x100.png", "ui-bg_highlight-soft_75_ffe45c_1x100.png", "ui-icons_222222_256x240.png", "ui-icons_228ef1_256x240.png", "ui-icons_ef8c08_256x240.png", "ui-icons_ffd27a_256x240.png", "ui-icons_ffffff_256x240.png");
 		logger.trace("resource URLs mounted");
 
-		// mount navigation URLs
-		logger.trace("mounting navigation URLs...");
-		NavigationConfiguration.navigationTreeParameter.get().mountRequestMappers(this);
-		logger.trace("navigation URLs mounted");
-
 		// mount other URLs
 		logger.trace("mounting misc URLs...");
 		mountPage("/login", ReturnValueUtil.nullMeansMissing(SecurityConfiguration.getInstanceSafe().getLoginPageClass(), "security configuration: login page class"));
 		logger.trace("misc URLs mounted");
 		
-		// let plugins contribute
-		logger.trace("invoking web application initialization contributors...");
-		for (final IWebApplicationInitializationContributor contributor : WicketConfiguration.webApplicationInitializationCapability) {
-			contributor.onInitializeWebApplication(this);
-		}
-		logger.trace("application initialization contributors invoked");
-
 		// add fallback string loaders
 		getResourceSettings().getStringResourceLoaders().add(new PrefixedIdentityStringResourceLoader("schema.entity."));
 		
@@ -169,7 +146,7 @@ public class AdminWicketApplication extends AbstractMyWicketApplication {
 	 * @param prefix the URL prefix
 	 * @param names the file names of the resources
 	 */
-	public void mountResources(final Class<?> anchorClass, final String prefix, final String... names) {
+	public final void mountResources(final Class<?> anchorClass, final String prefix, final String... names) {
 		ParameterUtil.ensureNotNull(anchorClass, "anchorClass");
 		ParameterUtil.ensureNotNull(prefix, "prefix");
 		ParameterUtil.ensureNotNull(names, "names");

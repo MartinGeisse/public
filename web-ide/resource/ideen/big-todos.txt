@@ -1,4 +1,0 @@
-
-1. Plugin / Builder / VM
-2. Plugin API (JS) und Subprozesse für externe Tools
-3. Frontend/Websocket Nodes mit Wicket Backend

@@ -7,7 +7,6 @@
 package name.martingeisse.admin.navigation;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
-import name.martingeisse.admin.component.pagebar.IPageBarFactory;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.link.AbstractLink;
@@ -59,8 +58,9 @@ public interface INavigationNodeHandler extends IPageBarFactory {
 	public AbstractLink createLink(String id, NavigationNode node);
 	
 	/**
-	 * Creates a {@link ReplaceHandlerException}, typically to redirect to the page
-	 * that is represented by this navigation node.
+	 * Creates a {@link ReplaceHandlerException}, typically to HTTP-redirect to
+	 * the page that is represented by this navigation node, instead of just
+	 * showing a link to that page.
 	 * 
 	 * This method requires a context component that is "the component to which
 	 * the link from {{@link #createLink(String, NavigationNode)} would have been
@@ -76,8 +76,9 @@ public interface INavigationNodeHandler extends IPageBarFactory {
 	public ReplaceHandlerException createReplaceHandlerException(NavigationNode node, Component context);
 
 	/**
-	 * Mounts the request mappers for this node and its descendants in the Wicket
-	 * Application. This method is called by the framework.
+	 * Mounts the request mappers for the specified node in the Wicket Application,
+	 * using this handler for the node.
+	 * 
 	 * @param node the handled node
 	 * @param application the wicket application
 	 */
@@ -87,6 +88,8 @@ public interface INavigationNodeHandler extends IPageBarFactory {
 	 * Checks whether this handler handles a canonical entity list node. Such a node
 	 * is typically the one and only unfiltered list node for that entity. If so,
 	 * returns the name of that entity. Otherwise returns null.
+	 * 
+	 * TODO: check if the concept of a "canonical entity list node" is useful at all.
 	 * 
 	 * @return the entity name or null
 	 */

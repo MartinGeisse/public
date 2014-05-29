@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
-import name.martingeisse.admin.component.pagebar.IPageBarFactory;
 import name.martingeisse.common.util.SpecialHandlingList;
 
 import org.apache.wicket.Component;
@@ -230,14 +229,14 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 	}
 
 	/**
-	 * 
+	 * Ensures that the tree structure is well-formed.
 	 */
-	void initializeTree() {
+	void validateTree() {
 
 		final Set<String> childIds = new HashSet<String>();
 		boolean hasVariableChild = false;
 		for (final NavigationNode child : children) {
-			child.initializeTree();
+			child.validateTree();
 
 			// ensure that the child is either regular or a variable declaration and that no two variables are declared
 			if (child.isVariableNode()) {
@@ -543,11 +542,12 @@ public final class NavigationNode implements Iterable<NavigationNode> {
 
 	/**
 	 * Invokes {@link INavigationNodeHandler#mountRequestMappers(AdminWicketApplication, NavigationNode)}
-	 * for all nodes of the whole subtree except for the absolute root node (this node has
-	 * no parent). This method is called by the framework.
+	 * for all nodes of the whole subtree except for the absolute root node. The latter always uses a
+	 * special request mapper.
+	 * 
 	 * @param application the wicket application
 	 */
-	public void mountRequestMappers(final AdminWicketApplication application) {
+	void mountRequestMappers(final AdminWicketApplication application) {
 		if (getParent() != null) {
 			handler.mountRequestMappers(application, this);
 		}

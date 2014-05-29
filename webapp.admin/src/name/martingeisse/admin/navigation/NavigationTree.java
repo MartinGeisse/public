@@ -11,7 +11,7 @@ import java.util.Map;
 
 import name.martingeisse.admin.application.wicket.AdminWicketApplication;
 import name.martingeisse.admin.navigation.component.NavigationFolderPage;
-import name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler;
+import name.martingeisse.admin.navigation.handlers.BookmarkablePageNavigationHandler;
 
 /**
  * This class wraps a tree of navigation nodes. It always contains
@@ -20,6 +20,16 @@ import name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHand
  */
 public final class NavigationTree {
 
+	/**
+	 * Returns the navigation tree for the application. The calling thread
+	 * must be associated with the application.
+	 * 
+	 * @return the navigation tree
+	 */
+	public static NavigationTree get() {
+		return AdminWicketApplication.get().getNavigationTree();
+	}
+	
 	/**
 	 * the root
 	 */
@@ -57,13 +67,14 @@ public final class NavigationTree {
 	}
 
 	/**
-	 * Prepares various internal data structures. This method is called by the
-	 * framework after all nodes have been added but before the tree is used.
+	 * Prepares various internal data structures. This method should be called
+	 * after all nodes have been added, but before the tree is used, and before
+	 * its request mappers are mounted.
 	 */
 	public void prepare() {
 
 		// initialize tree structure
-		root.initializeTree();
+		root.validateTree();
 		if (!NavigationNode.ROOT_NODE_ID.equals(root.getId())) {
 			throw new IllegalStateException("Navigation root node has invalid ID: " + root.getId());
 		}
@@ -100,8 +111,7 @@ public final class NavigationTree {
 	}
 
 	/**
-	 * Mounts the request mappers for all navigation nodes. This method
-	 * is called by the framework.
+	 * Mounts the request mappers for all navigation nodes.
 	 * @param application the wicket application
 	 */
 	public void mountRequestMappers(final AdminWicketApplication application) {

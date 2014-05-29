@@ -6,8 +6,6 @@
 
 package name.martingeisse.admin.application.wicket;
 
-import name.martingeisse.admin.component.page.error.UnknownEntityErrorPage;
-import name.martingeisse.admin.entity.UnknownEntityException;
 import name.martingeisse.common.util.ParameterUtil;
 
 import org.apache.log4j.Logger;
@@ -91,9 +89,11 @@ public class ExceptionMapper extends DefaultExceptionMapper {
 		}
 
 		// handle some known exceptions
+		/*
 		if (originalCause instanceof UnknownEntityException) {
 			return createPageRequestHandler(new UnknownEntityErrorPage(e, (UnknownEntityException)originalCause, extractCurrentPage()));
 		}
+		*/
 
 		// delegate all others to the parent class
 		return null;
@@ -103,6 +103,7 @@ public class ExceptionMapper extends DefaultExceptionMapper {
 	/**
 	 * 
 	 */
+	@SuppressWarnings("unused")
 	private Page extractCurrentPage() {
 		final RequestCycle requestCycle = RequestCycle.get();
 		IRequestHandler handler = requestCycle.getActiveRequestHandler();
@@ -119,6 +120,7 @@ public class ExceptionMapper extends DefaultExceptionMapper {
 	/**
 	 * 
 	 */
+	@SuppressWarnings("unused")
 	private RenderPageRequestHandler createPageRequestHandler(final IRequestablePage page) {
 		return new RenderPageRequestHandler(new PageProvider(page), RenderPageRequestHandler.RedirectPolicy.NEVER_REDIRECT);
 	}

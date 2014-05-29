@@ -1,0 +1,33 @@
+
+Als separate Module:
+- Typesetting
+	- PDF-Erzeugung hier oder als eigenes Modul?
+	- keine Macros, nur programmatisch nutzbar
+	- Objekte: Box, VerticalSequence, Paragraph, Kern,
+		IBlockItem (Box, VBS, Para), IInlineItem (Box, Kern)
+		Box ist "Blackbox" mit width, height, depth, content
+		VBS = IBlockItem*
+		Para = IInlineItem*
+		Kern = ähnlich Box aber ohne auto-Kerning außenrum
+		oder sowas in die Richtung
+- TeX-Macro-Engine
+	- Kompatibilität soweit möglich
+	- Community aufgreifen
+	- trotzdem per Java erweiterbar
+- XML-basierte Markup Engine
+	- intuitiver, an HTML angelehnt
+	- nur noch per Java erweiterbar
+	- möglichst viele Features wiederverwenden, indem diese nur
+		auf der Typesetting Engine aufbauen
+
+Evtl. macht es Sinn, "Typesetting" noch mal zu unterteilen:
+1. Low-Level: Nimmt Boxes, Glue, Kern, etc. und gibt ihnen eine
+	konkrete, absolute Position
+2. High-Level: Nimmt Text und erzeugt daraus und aus Font-spezifischen
+	Daten für Kerning, Space Factor Behandlung, Ligaturen etc.
+	die Low-Level Boxes+Glue+Kern.
+->
+In welchem der beiden Schritte werden die Zeilenumbrüche erzeugt?
+
+
+

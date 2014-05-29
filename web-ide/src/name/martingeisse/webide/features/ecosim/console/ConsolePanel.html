@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+	<wicket:head>
+		<!-- Note: http://www.howtoplaza.com/how-to-use-custom-fonts-on-your-website-with-css -->
+		<style type="text/css">
+		
+			@font-face {
+				font-family: BIOS;
+				src: url('/wicket/resource/name.martingeisse.webide.features.ecosim.console.ConsolePanel/bios.ttf') format('truetype');
+			}
+			
+			.character-display {
+				width: 640px;
+				height: 480px;
+				border: 1px solid #ddd;
+				font-family: BIOS;
+				white-space: pre;
+			}
+			
+			.character-display:focus {
+				border: 1px solid #aaf;
+			}
+			
+			.character-display span {
+				display: inline-block;
+				margin: 0px;
+				padding: 0px;
+				width: 8px;
+				height: 16px;
+			}
+			
+			.character-display ._0 {color: #000}
+			.character-display ._1 {color: #008}
+			.character-display ._2 {color: #080}
+			.character-display ._3 {color: #088}
+			.character-display ._4 {color: #800}
+			.character-display ._5 {color: #808}
+			.character-display ._6 {color: #a50}
+			.character-display ._7 {color: #aaa}
+			.character-display ._8 {color: #555}
+			.character-display ._9 {color: #55f}
+			.character-display ._a {color: #5f5}
+			.character-display ._b {color: #5ff}
+			.character-display ._c {color: #f55}
+			.character-display ._d {color: #f5f}
+			.character-display ._e {color: #ff5}
+			.character-display ._f {color: #fff}
+			
+			.character-display .x0_ {background-color: #000}
+			.character-display .x1_ {background-color: #008}
+			.character-display .x2_ {background-color: #080}
+			.character-display .x3_ {background-color: #088}
+			.character-display .x4_ {background-color: #800}
+			.character-display .x5_ {background-color: #808}
+			.character-display .x6_ {background-color: #a50}
+			.character-display .x7_ {background-color: #555}
+			
+			@keyframes blink {  
+				0% { color: ; }
+				50% { color: transparent }
+				100% { color: ; }
+			}
+			
+			@-webkit-keyframes blink {
+				0% { color: ; }
+				50% { color: transparent }
+				100% { color: ; }
+			}
+			
+			.character-display .bl {
+				text-decoration: blink;
+				animation: blink 1s step-start 0s infinite;
+				-webkit-animation: blink 1s step-start 0s infinite;
+				overflow: hidden;
+			}
+			
+		</style>
+		<script type="text/javascript">
+		</script>
+	</wicket:head>
+	<body>
+		<wicket:panel>
+			<div class="character-display" tabindex="1" wicket:id="characterDisplay" />
+		</wicket:panel>
+	</body>
+</html>

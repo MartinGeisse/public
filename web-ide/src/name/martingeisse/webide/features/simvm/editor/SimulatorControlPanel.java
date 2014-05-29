@@ -15,6 +15,7 @@ import name.martingeisse.webide.ipc.IpcEvent;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.atmosphere.Subscribe;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
@@ -41,11 +42,20 @@ public class SimulatorControlPanel extends Panel {
 			public void onClick(AjaxRequestTarget target) {
 				getVirtualMachine().startSimulation();
 				getVirtualMachine().resume();
+				if (getVirtualMachine().getState() != SimulationState.STOPPED) {
+					target.add(SimulatorControlPanel.this);
+				}
 			}
 
+			/* (non-Javadoc)
+			 * @see org.apache.wicket.ajax.markup.html.AjaxLink#onComponentTag(org.apache.wicket.markup.ComponentTag)
+			 */
 			@Override
-			public boolean isVisible() {
-				return (getVirtualMachine().getState() == SimulationState.STOPPED);
+			protected void onComponentTag(ComponentTag tag) {
+				super.onComponentTag(tag);
+				if (getVirtualMachine().getState() != SimulationState.STOPPED) {
+					tag.append("style", "display: none", "; ");
+				}
 			}
 
 		});
@@ -54,14 +64,20 @@ public class SimulatorControlPanel extends Panel {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 				getVirtualMachine().terminate();
+				if (getVirtualMachine().getState() == SimulationState.STOPPED) {
+					target.add(SimulatorControlPanel.this);
+				}
 			}
-
+			
 			/* (non-Javadoc)
-			 * @see org.apache.wicket.Component#isVisible()
+			 * @see org.apache.wicket.ajax.markup.html.AjaxLink#onComponentTag(org.apache.wicket.markup.ComponentTag)
 			 */
 			@Override
-			public boolean isVisible() {
-				return (getVirtualMachine().getState() != SimulationState.STOPPED);
+			protected void onComponentTag(ComponentTag tag) {
+				super.onComponentTag(tag);
+				if (getVirtualMachine().getState() == SimulationState.STOPPED) {
+					tag.append("style", "display: none", "; ");
+				}
 			}
 
 		});

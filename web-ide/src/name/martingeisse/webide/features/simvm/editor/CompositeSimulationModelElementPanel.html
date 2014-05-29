@@ -54,9 +54,7 @@
 					onClick: function(event, index) {
 						if (tabsApi) {
 							var $currentPane = tabsApi.getCurrentPane();
-							if ($currentPane.hasClass('auto-focus')) {
-								$currentPane.children().focus();
-							}
+							$('.auto-focus', $currentPane).children().focus();
 						}
 					}
 				}).data('tabs');
@@ -76,9 +74,9 @@
 			</div>
 
 			<div id="simulator-tab-pane-container">
-				<wicket:container wicket:id="tabPanes">
+				<div wicket:id="tabPanes">
 					<div wicket:id="tabPane" />
-				</wicket:container>
+				</div>
 			</div>
 			
 		</wicket:panel>

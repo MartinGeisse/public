@@ -1,0 +1,7 @@
+
+Fully resume player before starting. This sometimes causes a five seconds
+pause when starting because the initial batch of loaded sections is for the
+wrong position (0, 0, 0) and so some sections are missing for the actual
+player's position; the game waits 5 seconds before requesting sections again.
+
+

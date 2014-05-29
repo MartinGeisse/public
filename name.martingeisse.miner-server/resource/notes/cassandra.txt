@@ -1,0 +1,19 @@
+		ResultSet results = Databases.world.execute("SELECT * FROM sections WHERE id = 'foo';");
+		for (Row row : results) {
+			ByteBuffer buffer = row.getBytes("cubes0");
+			byte[] bytes = new byte[buffer.remaining()];
+			buffer.get(bytes);
+		    logger.info("* " + new String(bytes, StandardCharsets.UTF_8));
+		}
+		System.exit(0);
+
+
+
+-------------------------
+Performancevergleich
+-------------------------
+
+Kaltstart mit Dateien: 1250 ms
+Kaltstart mit Cassandra (sections nacheinander abgefragt): 1800 ms
+Kaltstart mit Cassandra (alle sections gleichzeitig abgefragt):
+Warmstart: 150 ms (DB praktisch nicht mehr beteiligt, da alles im in-Memory-Cache liegt)

@@ -1,0 +1,4 @@
+
+EventBus.unregisterConnection() -- löscht die Einträge aus "trackedPages", aber
+nicht aus "subscriptions".
+

@@ -1,0 +1,7 @@
+
+Editor: Basiert noch auf einem uralten "Document"-Konzept. De facto gibt es OT, DocumentHub und
+"anderes", aber letzteres ist auch nur ein kleiner Spezialfall. Das sollte nicht im AbstractEditor
+und IEditor stehen.
+
+Plugin Builder: Nach dem neuen Plugin-System muss da einiges geändert werden. Bis dahin
+deaktivieren, um keine Sicherheitslücken zu öffnen.

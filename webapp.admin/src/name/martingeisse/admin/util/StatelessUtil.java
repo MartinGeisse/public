@@ -18,7 +18,9 @@ import org.apache.wicket.MarkupContainer;
 public class StatelessUtil {
 
 	/**
-	 * Dumps the component hierarchy, starting at the specified component.
+	 * Dumps the stateful components in the component hierarchy, starting at
+	 * the specified component.
+	 * 
 	 * @param root the component to start at
 	 */
 	public static void dumpStatefulComponents(final Component root) {

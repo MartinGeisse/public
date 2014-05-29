@@ -1,0 +1,45 @@
+
+Nach Aussage auf Stackoverflow ist es ein Performance-Killer, mehr als einen OpenGL-Thread
+zu benutzen. Also:
+
+- ein "OpenGL Slave Thread" führt die eigentlichen OGL commands aus. Dieser bekommt work units
+  über eine (concurrency-fähige) Queue. Andere Threads kommunizieren mit OpenGL nur über diese
+  Queue.
+  
+- Einige dieser Work Units liefern Daten zurück, dazu Callbacks oder Futures (letztendlich
+  sollte beides ermöglicht werden). Beispiele sind: "daten sind in NIO-Buffer geschrieben worden",
+  "OpenGL-Objekt wurde angelegt und NIO-Buffer steht jetzt zum schreiben bereit" usw.
+  Diese sind dazu da, Daten aus dem Slave Thread an die Anwendung ohne Stall weiterzugeben.
+  Daten aus dem eigentlichen OpenGL erfordern trotzdem ein OpenGL-Pipeline-Stall.
+  
+- "OpenGL state knowledge": Ist ja jetzt schon so dass Anwendungen eine teilweise Kopie des
+  OpenGL State halten, um zu wissen, welche State-Mod-Calls nötig sind (z.B. Slick mit
+  aktuell gebindeter Texture). Diese Info hält hier komplett der Slave Thread, da
+  1. ein zweiter Slave Thread einen zweiten Zustand hätte (korrektes Verhalten, auch wenn Performance Killer)
+  2. wenn alles über den Slave Thread passiert, stimmt dessen state knowledge, egal welche Objekte beteiligt sind
+  Der Slave Thread benutzt also selbst eine "state knowledge"-Abstraktionsebene, die die eigentlichen
+  OpenGL-Calls ausführt und state knowledge verwaltet, darüber liegt dann die ausführung der WUs.
+
+- Auxiliary Slave Threads: 1..N: Führen Hilfsarbeiten durch, die mit OpenGL nichts zu tun haben.
+  Also vor allem das parallelisierte lesen/schreiben von NIO buffers.
+  
+- Als Open Source lib auf LWJGL-Seite veröffentlichen, da gibts bestimmt interessierte und auch Helfer.
+
+-----
+
+Frame skipping:
+- replace queue -> GlWorkUnitAcceptor, with custom methods and special handling for add()
+- method addFrameStart(), addFrameEnd(); queued frame count == number of queued frame starts
+- method addSideEffectRegionStart(),. addSideEffectRegionEnd() == important region that cannot be skipped
+	(such as VBO creation commands)
+- setFrameSkipThreshold() --> low-level threshold; worker thread starts skipping frames ==
+	skips between start frame event and end frame event, except important regions
+- getQueuedFrameCount() --> too high (queued frame count > high-level threshold > low-level threshold) ==
+	jammed, high-level render thread should skip frames too (adaptive!) [version 2]
+
+-----
+
+Memory Thrashing:
+- in case the queue handling starts thrashing memory, add commands in larger pre-created blocks to
+  avoid stress on the queue.
+

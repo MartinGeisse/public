@@ -7,17 +7,12 @@
 package name.martingeisse.admin.navigation;
 
 import name.martingeisse.admin.navigation.component.NavigationFolderPage;
-import name.martingeisse.admin.navigation.handler.AbstractNavigationNodeHandler;
-import name.martingeisse.admin.navigation.handler.BookmarkablePageNavigationHandler;
-import name.martingeisse.admin.navigation.handler.EntityInstancePanelHandler;
-import name.martingeisse.admin.navigation.handler.EntityListPanelHandler;
-import name.martingeisse.admin.navigation.handler.FirstChildNavigationHandler;
-import name.martingeisse.admin.navigation.handler.UrlNavigationHandler;
+import name.martingeisse.admin.navigation.handlers.AbstractNavigationNodeHandler;
+import name.martingeisse.admin.navigation.handlers.BookmarkablePageNavigationHandler;
+import name.martingeisse.admin.navigation.handlers.FirstChildNavigationHandler;
+import name.martingeisse.admin.navigation.handlers.UrlNavigationHandler;
 
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.panel.Panel;
-
-import com.mysema.query.types.Predicate;
 
 /**
  * This class contains various methods to create child nodes for navigation
@@ -119,51 +114,6 @@ public class NavigationNodeChildFactory {
 	 */
 	public final NavigationNode createUrlChild(final String id, final String title, final String url) {
 		return createChild(id, title, new UrlNavigationHandler(url));
-	}
-
-	// ----------------------------------------------------------------------------------
-	// ----------------------------------------------------------------------------------
-	// factory methods for generic entity-related pages
-	// ----------------------------------------------------------------------------------
-	// ----------------------------------------------------------------------------------
-
-	/**
-	 * Creates a new {@link NavigationNode} with a {@link EntityListPanelHandler} handler
-	 * for the specified entity-list panel and adds it as a child node. 
-	 * @param id the node id
-	 * @param title the node title
-	 * @param panelClass the panel class
-	 * @param entityName the entity name
-	 * @return the new node
-	 */
-	public final NavigationNode createEntityListPanelChild(final String id, final String title, final Class<? extends Panel> panelClass, final String entityName) {
-		return createChild(id, title, new EntityListPanelHandler(panelClass, entityName));
-	}
-
-	/**
-	 * Creates a new {@link NavigationNode} with a {@link EntityListPanelHandler} handler
-	 * for the specified entity-list panel and adds it as a child node. 
-	 * @param id the node id
-	 * @param title the node title
-	 * @param panelClass the panel class
-	 * @param entityName the entity name
-	 * @param filterPredicate the filter predicate used to produce the list
-	 * @return the new node
-	 */
-	public final NavigationNode createEntityListPanelChild(final String id, final String title, final Class<? extends Panel> panelClass, final String entityName, final Predicate filterPredicate) {
-		return createChild(id, title, new EntityListPanelHandler(panelClass, entityName).setFilter(filterPredicate));
-	}
-
-	/**
-	 * Creates a new {@link NavigationNode} with a {@link EntityInstancePanelHandler} handler
-	 * for the specified entity-instance panel and adds it as a child node. 
-	 * @param id the node id
-	 * @param title the node title
-	 * @param panelClass the panel class
-	 * @return the new node
-	 */
-	public final NavigationNode createEntityInstancePanelChild(final String id, final String title, final Class<? extends Panel> panelClass) {
-		return createChild(id, title, new EntityInstancePanelHandler(panelClass));
 	}
 
 	// ----------------------------------------------------------------------------------

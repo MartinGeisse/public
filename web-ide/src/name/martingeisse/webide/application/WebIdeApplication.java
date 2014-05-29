@@ -8,6 +8,7 @@ package name.martingeisse.webide.application;
 
 import name.martingeisse.common.util.TemporaryFolder;
 import name.martingeisse.webide.features.simvm.editor.SimvmAtmosphereRegistrationListener;
+import name.martingeisse.webide.util.OldAtmosphereResourceCleaner;
 import name.martingeisse.webide.workbench.WorkbenchPage;
 
 import org.apache.wicket.Page;
@@ -47,6 +48,7 @@ public class WebIdeApplication extends WebApplication {
 		getMarkupSettings().setCompressWhitespace(true);
 		new EventBus(this);
 		EventBus.get().addRegistrationListener(new SimvmAtmosphereRegistrationListener());
+		EventBus.get().addRegistrationListener(new OldAtmosphereResourceCleaner());
 		TemporaryFolder.initialize("web-ide");
 		setHeaderResponseDecorator(new MyHeaderResponseDecorator());
 	}

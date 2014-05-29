@@ -61,6 +61,11 @@
 		<copy todir="${destination}/lib/node_modules" >
 			<fileset dir="lib/node_modules" includes="**/*" />
 		</copy>
+		<mkdir dir="${destination}/resource" />
+		<mkdir dir="${destination}/resource/simulator" />
+		<copy todir="${destination}/resource/simulator" >
+			<fileset dir="resource/simulator" includes="**/*" />
+		</copy>
 	</target>
 
 </project>

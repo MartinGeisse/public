@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.navigation;
 
+
 /**
  * Visitor interface for iterating {@link NavigationNode} instances.
  */

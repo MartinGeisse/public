@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>name.martingeisse</groupId>
+	<artifactId>public</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>Martin Geisse's Public Repository</name>
+	<url>https://github.com/MartinGeisse/public</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<modules>
+
+		<!-- various libraries -->
+		<module>name.martingeisse.common</module>
+		<module>name.martingeisse.json</module>
+		<module>name.martingeisse.sql</module>
+		<module>name.martingeisse.jetty</module>
+		<module>name.martingeisse.sql-servlet</module>
+		<module>name.martingeisse.httpclient</module>
+		<module>name.martingeisse.servlet-httpclient</module>
+		<module>name.martingeisse.image</module>
+		<module>name.martingeisse.http-api-server</module>
+		<module>name.martingeisse.wicket</module>
+
+		<!-- Stack'd / Miner project -->
+		<module>name.martingeisse.stackd-common</module>
+		<module>name.martingeisse.stackd-server</module>
+		<module>name.martingeisse.stackd-client</module>
+		<module>name.martingeisse.miner-common</module>
+		<module>name.martingeisse.miner-server</module>
+		<module>name.martingeisse.miner-launcher</module>
+		<module>name.martingeisse.miner-client</module>
+
+	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>true</downloadJavadocs>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

@@ -6,6 +6,7 @@
 
 package name.martingeisse.admin.navigation;
 
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.core.request.mapper.MountedMapper;
 import org.apache.wicket.request.Url;

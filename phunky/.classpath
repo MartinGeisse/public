@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/webapp.common"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/java-cup-11b-runtime.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/java-cup-11b.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/jflex-1.5.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/commons-codec-1.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/commons-collections-3.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/commons-exec-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/commons-io-2.4.jar" sourcepath="/Users/martin/.m2/repository/commons-io/commons-io/2.4/commons-io-2.4-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java/commons-lang3-3.1.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

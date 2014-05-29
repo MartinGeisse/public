@@ -1,0 +1,3 @@
+#!/bin/sh
+java -Djava.compiler=tya javaTeX.virtex \&plain $*
+

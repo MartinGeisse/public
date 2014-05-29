@@ -1,0 +1,6 @@
+TEXMF=/Users/martin/git-repos/public/jtex/texmf
+DviPdf.debugging=true
+DviPdf.fontDeflate=true
+DviPdf.imageDeflate=true
+DviPdf.textDeflate=false
+

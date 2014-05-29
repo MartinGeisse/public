@@ -1,0 +1,199 @@
+
+- Tesselation:
+	Folgende Situationen erfordern *immer* getrennte Polygone:
+		- Faces auf verschiedenen Achsen
+		- Parallele aber gegeneinander verschobene Faces
+	Die Situation: Parallele, geflippte Polygone auf derselben Ebene *sollten* getrennt
+		sein, weil sie niemals gleichzeitig sichtbar sind.
+	Die weitere Überlegung kann also davon ausgehen, dass ein einem Tesselation-Schritt
+		nur noch Faces betrachtet werden, die
+		- identische Ebenen haben
+		- nicht geflippt sind
+		Das lässt sicht allein durch den Aufbau der Tesselation-Schleife leicht bewerkstelligen.
+
+- das Rendering würde als erstes ein Frustum Culling für ganze Superclusters durchführen.
+	Fürs Rendering müsste also nur noch ein teilweise oder vollständig sichtbarer Supercluster
+	beachtet werden.
+	
+- desweiteren würde das Rendering durch eine Liste von Plane-Sides (Ebene mit Vorzeichen)
+	gehen, für die
+	(a) sichtbare Polygone existieren (also auch sichtbare Faces existieren)
+		-> leerer Luftraum wird in O(1) übersprungen,
+	(b) das Vorzeichen mit der Camera-Position relativ zur Ebene stimmt (damit ist genau das
+		Backface Culling erledigt), und
+	(c) die Blickrichtung mit der Camera-Position relativ zur Ebene stimmt (damit ist genau
+		das Near-Plane Culling erledigt)
+	Nicht erledigt sind bis dahin das Side-Plane Culling, Sortierung nach Renderstates.
+
+Alle diese Ansätze betreffen allerdings nur das Rendering und nicht
+- Kollisionsabfrage
+- Speicherverbrauch / Kompression
+Evtl. ist für diese Punkte eine Cluster-Hierarchie und/oder Cube-RLE besser.
+Dadurch könnte auch der Pre-Optimizer schneller werden (z.B. weil Luft-Cluster
+einfach übersprungen werden).
+
+---
+
+Nachteile der Tesselation:
+- geht nur in Fällen, wo sich auch die *Beleuchtung* der Faces nicht ändert, ansonsten
+  braucht man so oder so eigene Vertices für glColor().
+- verhindert "Supertextures" -> das lässt sich mit Fragment Shaders umgehen; Frage ist, ob
+  das schneller ist als ohne Supertextures oder mit kleineren Polygonen.
+- "In my experience switching a texture is one of the most expensive state changes of opengl."
+  Allerdings betrifft das vor allem Cache Misses, und was den Cache angeht sind kleine
+  Texturen und Supertextures gleich.
+
+Mittelweg:
+- 1xN Texture Atlas mit N Texturen und Tiling nur entlang der anderen Achse
+- Nx1 Tesselation
+Das könnte allerdings Probleme machen, wenn es eine Max. Größte für Texturen *entlang einer
+Achse* gibt, denn dadurch wäre N dann stark beschränkt.
+
+Stichwort: Texture Atlas + Tiling / Repeating
+
+QUAD_STRIPS lassen sich mit Texture Atlases nicht kombinieren, weil je Vertex nur eine
+Textureposition angegeben werden kann. Texture Atlases müssen also mit QUADS benutzt
+werden. Dasselbe gilt allerdings auch für per-Face Beleuchtung.
+
+Anderes Problem mit Atlases ist dass unklar ist, wie viele der enthaltenen Texturen wirklich
+benutzt werden -> unnütze Daten werden in den Cache geladen.
+
+iPhone -> Texturen müssen angeblich quadratisch sein, damit sie komprimiert werden können.
+Dadurch würden 1xN Atlases unmöglich. Also sind die Möglichkeiten:
+
+- NxN Atlas, QUADS, viele Polygone, keine Tesselation, per-Face lighting
+- kein Atlas, QUADS, viele Polygone, keine Tesselation, per-Face lighting
+	(kein Vorteil)
+- kein Atlas, Tesselation und QUAD_STRIPS -> wenige Polygone, per-Vertex Lighting
+	Das per-Vertex Lighting sollte dann auch per-Vertex berechnet werden, damit es keine
+	häßlichen Übergänge zwischen zwei QUAD_STRIPS gibt.
+	-> dann muss aber derselbe Lighting-Algo wie in Hardware genommen werden, sonst gibt
+	es die Übergänge immer noch, wenn ein großes Polygon und ein Strip benachbart sind.
+
+---
+
+Google-Bilder-Suche nach "minecraft" -> Tesselation ist *teilweise* sinnvoll. Und zwar gibt
+es teilweise große einheitliche Flächen, teilweise Details mit verschiedenen Texturen/Beleuchtung.
+Fließende Übergänge in der Beleuchtung waren nicht zu sehen und würden auch ins Gesamtbild
+nicht passen, von den technischen Schwierigkeiten bei Strips vs. Tesselation mal abgesehen.
+
+Dann muss eine Kombination her (nur "flat" lighting!):
+Idee: nur "flat" Lighting wegen Gesamtbild
+Idee: Stips und Atlas passt nicht zusammen, weil ein Vertex nicht mehrere TexCoords haben kann.
+Idee: Tesselation und Strip-Erkennung immer nur *innerhalb* eines Supercluster. Vorsortierung
+	nach Textur jeweils innerhalb eines Supercluster. Endgültige Nachsortierung per
+	Peephole und Cluster-übergreifend.
+
+1. "single"-Textures (kein Atlas). Tesselation zu QUADS. Innerhalb eines Polygons nur die
+	eine Textur und einheitliche Beleuchtung. Gruppierung nach Textur.
+	(große, einheitliche Flächen)
+	
+2. "single"-Textures (kein Atlas). Strips. Innerhalb eines Strips nur die
+	eine Textur und einheitliche Beleuchtung. Gruppierung nach Textur.
+	(unebene Stellen, z.B. Berghang)
+	
+	-> die bringen nichts!
+	- "unebene" Strips benutzen i.A. wechselnde Beleuchtung (Sonne kommt aus einer anderen
+		Richtung). Wenn sie das nicht tun dann sieht es nix aus!
+	- "ebene" Strips müssen die "konkave" Ecke doppelt zählen und sind dadurch keine
+		QUADS mehr sondern Fünfecke!
+	
+3. Atlas. Single-Face QUADS. Texture und Beleuchtung kann sich demnach unterscheiden,
+	allerdings immer noch gruppiert nach *Atlas* falls es mehrere gibt.
+	(alle Faces, die übrig bleiben)
+
+Also werden 1 + 3 verwendet.
+
+"Fehlstellen": hidden Faces und "Löcher" werden in einer Sache getrennt behandelt: hidden
+Faces können durch ein großes Polygon mit gefüllt werden, sie verursachen nur zusätzliche
+Kosten die mit einberechnet werden. Löcher dürfen nicht gefüllt werden (= die Kosten
+sind unendlich). Hier muss eine Heuristik her, die aus Länge und Breite des Polygons und
+der Anzahl der Hidden Surfaces berechnet, ob das Polygon erstellt werden kann. Wenn
+nicht, dann wird ähnlich wie bei Löchern nach einem kleineren passenden Polygon gesucht.
+
+Dabei muss bedacht werden:
+- Größere Polygone sind besser und können eher Fehlstellen verkraften
+- ein Loch darf nicht den "Rand" eines Polygons ausmachen, sonst sollte das Polygon
+  von vornherein kleiner sein (besonders beim Fall 1xN). Hier sind die Fehlstellen vielleicht
+  verkraftbar aber überflüssig!
+
+Wert eines Polygons:
+- eine "single-Textur" muss bereitliegen (seltene Faces gehen nur über Atlas)
+- jedes sichtbare Face bringt 1 Punkt
+- jede Fehlstelle bringt M Minuspunkte
+- das wertvollste Polygon wird erzeugt
+- der Wert muss größer als 0 sein (müsste implizit dadurch sein, dass es immer mind.
+  ein Polygon mit Wert 1 gibt, solange noch Faces übrig sind).
+
+Ein Polygon hat dann maximal N fehlstellen bei N*M Faces, also einen Fehlstellenanteil
+von (N / (N*M+N)) = (1 / (M + 1)), z.B. 10% Fehlstellen bei M=9.
+
+*** In diese Kostenfunktion ist nicht eingeflossen, dass ein A*B Polygon besser als
+	A*b Polygone zu je 1*1 sind!!! ***
+
+Die Pixelanzahlen sind glech, solange keine Fehlstellen dabei sind. Mit Fehlstellen wird
+die Abschätzung schwer wegen Pixelkosten vs. Vertexkosten.
+
+Ein A*B Polygon hat 4 Vertices. A*B Polygone haben 4*A*B Vertices. Da Wert > 0 bzw. das
+Äquivalent implizit ist, reicht es, immer das wertvollste Polygon zu erzeugen und der
+Wert darf dann auch < 0 sein. Dann lassen sich Kosten ein Vertex-Einheiten rechnen:
+
+- jedes Polygon bringt 4 Minuspunkte (4 Vertices) und 4*Faces Pluspunkte (also ein
+	1x1 Polygon genau 0 Punkte, ein 2x2 Polygon 12 Punkte.
+- jede Fehlstelle bringt M Minuspunkte.
+
+Normalisierung:
+
+- benötigtes Polygon = -1
+- abgedecktes Face = +1
+- Fehlstelle = -M
+
+Dann gilt M=9 für 10% Fehlstellen nur asymptotisch für große Polygone, bei kleinen Polygonen
+sind Fehlstellen teurer. Das passt auch intuitiv. Dann werden für kleine Flächen eher
+Atlas-Faces genommen als Fehlstellen in Kauf zu nehmen.
+
+---
+
+Man könnte von nur zusammenhängenden Flächen ausgehen (Flood-Fill), aber dann würde man
+den Fall übersehen, wo zwei Flächen von einer Fehlstelle getrennt sind und zusammen
+wertvoller wären. Kann ein solcher Fall vorkommen, oder ist die zusammenhängende
+Fläche immer weniger Wertvoll?
+
+- getrennt: 2 Polygone, n*a + n*b Faces
+- zusammen: 1 Polygon, n*a + n*b Faces, n Fehlstellen
+- Differenz: 1 Polygon vs. n Fehlstellen
+-> Zusammen nur besser, wenn M=n=1, also die große Fläche nur 1 Face breit und
+  nur 1 Minuspunkt für Fehlstellen. Das ist eh zu wenig.
+
+Deshalb kann Flood-Fill verwendet werden und die Tesselation rein auf zusammenhängenden
+Stücken arbeiten (weder von Löchern noch von Fehlstellen unterbrochen).
+
+---
+
+Nachsortierung nach Renderstates geht z.B., indem eine LinkedList je Renderstate
+benutzt wird und die Polygone da drangehängt werden. Ein "echter" Sortier-Algo
+ist nicht nötig, weil nur gleiche Renderstates zusammenkommen müssen, aber die
+Reihenfolge der Renderstates untereinander nicht so wichtig; außerdem ist vorher
+bekannt, welche States es gibt. Die States können untereinander noch mal so
+sortiert werden, dass viele "billige" und wenige "teure" Switches stattfinden
+(wenn die Kosten bekannt sind).
+
+---
+
+Ein weiteres Problem ist es, innerhalb eines Superclusters das *teilweise* sichtbar ist
+auf schnellem Weg die unsichtbaren Polygone auszusortieren. Das betrifft *nicht* das
+Backface Culling, denn das lässt sich durch die Render-Schleife supereinfach machen.
+Es betrifft aber das near-plane / frustum culling. Ein Ansatz wäre es, die Tesselation
+auf 32^3 durchzuführen (obwohl mit 64^3 nachgeladen wird) und solche 32-Cluster
+gegen das View Frumstum zu prüfen.
+
+---
+
+Wasser und andere halbtransparente Blöcke machen da noch Schwierigkeiten: Der o.g.
+Algo stellt NICHT sicher, dass immer von weit nach nah gezeichnet wird: Die
+Hauptschleife geht über die Achsen. Es wäre aber trotzdem möglich, alle halb-
+transparenten Blocke *nachträglich* zu zeichnen, so dass sich zumindest nur
+die HT gegenseitig stören, aber nicht die anderen Blöcke dank z-Buffer.
+Dazu die HT getrennt von den anderen (je Ebene, Achse, Supercluster oder Welt)
+speichern.
+

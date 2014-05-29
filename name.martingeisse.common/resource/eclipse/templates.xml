@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="true" context="java" deleted="false" description="" enabled="true" name="__exceptionClass">public class ${Name}Exception extends Exception {
+
+	/**
+	 * Constructor.
+	 */
+	public ${Name}Exception() {
+		super();
+	}
+
+	/**
+	 * Constructor.
+	 * @param message the exception message
+	 */
+	public ${Name}Exception(String message) {
+		super(message);
+	}
+
+	/**
+	 * Constructor.
+	 * @param cause the exception that caused this exception
+	 */
+	public ${Name}Exception(Throwable cause) {
+		super(cause);
+	}
+
+	/**
+	 * Constructor.
+	 * @param message the exception message
+	 * @param cause the exception that caused this exception
+	 */
+	public ${Name}Exception(String message, Throwable cause) {
+		super(message, cause);
+	}
+	
+}
+</template><template autoinsert="true" context="java" deleted="false" description="" enabled="true" name="__logger">	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(${enclosing_type}.class);
+</template><template autoinsert="true" context="java" deleted="false" description="" enabled="true" name="__notnull">ParameterUtil.ensureNotNull(${variable}, "${variable}")</template><template autoinsert="true" context="java" deleted="false" description="" enabled="true" name="__preventInstantiation">	/**
+	 * Prevent instantiation.
+	 */
+	private ${enclosing_type}() {
+	}
+</template><template autoinsert="true" context="java" deleted="false" description="" enabled="true" name="__query">final SQLQuery query = EntityConnectionManager.getConnection().createQuery();</template><template autoinsert="true" context="java" deleted="false" description="" enabled="true" name="__sqldelete">SQLDeleteClause delete = EntityConnectionManager.getConnection().createDelete(Q${table});</template><template autoinsert="true" context="java" deleted="false" description="" enabled="true" name="__sqlinsert">SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(Q${table});</template><template autoinsert="true" context="java" deleted="false" description="" enabled="true" name="__sqlupdate">SQLUpdateClause update = EntityConnectionManager.getConnection().createUpdate(Q${table});</template></templates>

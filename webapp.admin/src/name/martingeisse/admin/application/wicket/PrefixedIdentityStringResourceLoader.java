@@ -15,7 +15,7 @@ import org.apache.wicket.resource.loader.IStringResourceLoader;
 
 /**
  * This implementation of {@link IStringResourceLoader} uses a fixed
- * prefix. If any key string beings with that prefix, this loader
+ * prefix. If any key string begins with that prefix, this loader
  * returns the remainder of the string as the value for that key.
  * 
  * This class is typically used to turn missing text properties

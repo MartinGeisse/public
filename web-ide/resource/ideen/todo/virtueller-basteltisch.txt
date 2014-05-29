@@ -1,0 +1,70 @@
+
+Wird vermutlich die erste richtige Anwendung für die IDE, weil aktuell keiner eine Webbasierte Java-IDE,
+HDL-IDE, Web-IDE oder irgendwas für Eco32 braucht. Und der VBT ist wenigstens etwas, was interessierte
+Leute zieht.
+
+Wesentliche "Entities":
+- "Experiment" oder "Aufbau": die Einheit, die "ausgeführt" werden kann. Ein E. hat den Strom an-
+  oder ausgeschaltet. Mit Strom läuft im Hintergrund ein entsprechender Thread / CompProc, wo die
+  Simulation stattfindet. Wechselwirkung zwischen zwei Experimenten gibt es nur auf sehr entkoppelte
+  Art und Weise, weil genau dann auch in der Simulation ein echtes IPC stattfinden muss. Also könnte
+  sowas z.B. eine serielle Schnittstelle oder ein IP-Netz sein, aber nichts mit simuliertem Handshake
+  oder gemeinsamem Clocksignal.
+
+Problem:
+- einerseits ist der Workspace wie bisher ganz brauchbar, um z.B. Code für einen Prozessor auf dem
+  Basteltisch zu erzeugen, um Disk-Images zu bearbeiten usw.
+- andererseits ist unklar, wie ein Experiment mit den zugehörigen Ressourcen auf das Workspace-
+  konzept abgebildet wird. Dafür ein neues Ressourcenkonzept zu schaffen ist aber auch doof: Der
+  Workspace ist der Unix-Idee "alles ist eine Datei" nachempfunden, und das funktioniert eigentlich
+  ganz gut. Zum Beispiel sind Experimente dadurch in Workspace-Ordnern zu finden. Außerdem wird man
+  z.B. in einem Experiment ein Disk-Image verwenden wollen, welches im Workspace liegt und da
+  bearbeitet werden kann.
+Lösungen:
+- die beste Lösung wäre eine, die Experimente auf den Workspace abbildet. Zum Beispiel: ein E.
+  gleich eine Datei. Das hat aber noch den Nachteil, dass man Komponenten nicht einfach aus
+  einem Experiment nehmen kann und im Workspace ablegen kann, weil sie immer eine Datei als
+  Träger brauchen (in einem anderen Experiment ablegen würde gehen).
+  Wenn andererseits ein E. aus mehreren Dateien besteht, gibt es grundsätzlich die Frage,
+  wie die Basteltisch-Ansicht (Was ja ein Editor wäre) mit Editoren für die einzelnen Dateien
+  zusammenhängt. Angeknüpft wäre die Frage, ob die Basteltisch-GUI eine Dateiansicht benutzt.
+  
+Idee 1: Es gibt für Komponenten ein eigenes Dateiformat. Wenn eh alles auf JSON basiert, dann
+  kann man sehr einfach einen Subtree woanders speichern.
+
+Idee 2: Das Experiment ist ein Ordner mit Filename Extension, und wenn man eine Datei innerhalb
+  eines solchen Ordners "öffnet", dann wird das gesondert behandelt.
+  Allerdings ist dann noch völlig unklar, wie die interne Struktur eines Experiments aussieht.
+
+Idee 1 gefällt mir ganz gut.
+
+In einem E. würden dann Komponenten gelistet und (der einfachheit halber parallel zu den
+Komponenten) Verkabelung. Parallel gespeicherte Verkabelung hat die Vorteile:
+- das Format für Komponenten muss die Verkabelung nicht vorsehen
+- Komponenten in einem E. und außerhalb benutzen das gleiche Format
+- Es wäre unklar, bei welchem Endpunkt die Verkabelung gespeichert wird.
+
+---
+
+Struktur in einem Experiment, wenn das mal nötig ist:
+- "Box" ("Kiste"): Enthält Komponenten, ist selbst aber keine Komponente. Die Leitungen nach
+  draußen sind die, die halt zwischen den inneren und äußeren Komponenten liegen.
+- "Case" ("Gehäuse"): Enthält Komponenten und ist selbst eine Komponente. Die Leitungen nach
+  draußen sind im Case definierte Ports. 
+Allerdings erst mal nur "flache" Experimente.
+
+---
+
+Nach dem aktuellen Aufbau wäre ein Experiment einfach ein weiterer IDocumentType, evtl kann man
+sogar SimVM direkt nehmen. Das hängt davon ab, inwiefern SimVM mit dem o.g. Komponenten-Konzept
+klarkommt. SimVM war bisher eher für "geplante" VMs gedacht, nicht für lose Basteleien.
+- Für den Basteltisch muss sich SimVM "tarnen". Wenn die Interna (z.B. der Name "SimVM")
+  durchsickern sorgt das nur für die totale Verwirrung.
+- SimVM definiert "stepping". Das macht aber für Basteltische auch Sinn und muss halt je nach
+  Situation abgebildet werden.
+- Wenn auf SimVM abgebildet, dann wäre der Basteltisch kein custom IDocumentType sondern
+  ein custom IPrimarySimulationModelElement.
+Kurzer Check: Genau so müsste es gehen -> custom IPrimarySimulationModelElement und damit
+auf SimVM abbilden. SimVM ggf. pimpen, damit es sich tarnen kann. 
+
+Später dann Umstieg auf CompProc.

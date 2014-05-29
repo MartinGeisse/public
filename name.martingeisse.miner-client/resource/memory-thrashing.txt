@@ -1,0 +1,32 @@
+
+JVM arg:
+	-verbosegc
+JMX (JConsole)
+	Then from JConsole choose "Remote" and connect to localhost:8999. You can read up more on the different options for JConsole, but I should warn you that the overhead is a bit high, so only use it in development
+(j)visualvm
+
+stackd-common found:
+	collision detection (2 new RectangularRegions per frame and loaded section)
+	AxisAlignedDirection.configureTextureCoordinateGeneration (Array)
+		-> benötigte arrays (2) * directions (6) * sectionCount (343) * FPS (200) = 823200 arrays / sec
+			*16 Bytes pro Array = 13 171 200 Bytes / sec = 13 MB / sec
+		-> werden da evtl von LWJGL noch weitere Objekte erzeugt?
+	geometry -> andere probleme
+	render model -> pack() zu oft aufgerufen?
+
+stackd-client found:
+	!!! SectionGridLoader -> new HashSet, new SectionId
+	StackdProtocolClient.onProtocolPacketReceived()
+	update downloader -> prüfen dass nicht ständig updates reinkommen
+	WorkCounter & usage
+
+miner-client found:
+	new FrameRenderParameters(), new Random(), new Sphere() im CubeWorldHandler
+		-> das ist aber untergeordnet weil nur 1x pro Frame
+	wie oft wird Player.isBlockedAt() aufgerufen?
+	wie oft wird PlayerCollider.createRegion() aufgerufen?
+	
+network packets
+	-> vermutlich eher harmlos, weil wenige
+	-> evtl. bei sowas wie sendPositionUpdate() / TYPE_S2C_PLAYER_LIST_UPDATE, aber selbst das ist nur 1x pro Frame
+

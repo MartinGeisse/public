@@ -1,0 +1,43 @@
+----------------------------------DOSFONT-----------------------------------
+
+-INTRODUCTION-
+Ever since I bought my PC I have wanted to change that boring font in DOS.
+With the dosfont utility I give you the ability to draw your own font.
+The program doesn't use up any memory so you can put it in your autoexec.bat
+if you like (I did).
+
+-USAGE-
+At the DOS-prompt, type  dosfont  followed by the pcx-image containing the
+font that you would like to use.
+Example: To use the future.pcx font, type like this:
+dosfont future.pcx
+
+-DRAWING A FONT-
+The characters are 8 pixels wide and 14 pixels high and there are 256
+different types. If you look at the future.pcx that followed the exe-file
+you'll see 256 sqares. Each square represents a character in the
+ASCII-table. If you for example want to change the capital A simply count 
+the squares until you come to number 65 and draw the new character with
+color nr 1 in that square. Dosfont will notice that there is at least one
+pixel with color nr 1 in that square and exchange the normal character for
+the new one. All other colors will be ignored and a square without any pixel
+of color 1 will leave that character unchanged.
+If you don't understand take a look at future.pcx and I think you'll get the
+hang of it.
+
+-COPYING-
+Dosfont is POSTCARDWARE.
+This means that you can copy it freely as long as the files are not changed 
+nor left out.
+However if you use dosfont you have to send me a postcard to this address:
+
+ Martin Magnusson
+  ™stg”tagatan 5
+382-31 Nybro Sweden
+
+-INFORMATION-
+Dosfont is written in Borland Pascal 7.0 by Martin Magnusson.
+The included font future.pcx was also done by Martin Magnusson in 
+Deluxe Paint 2 Enhanced.
+
+---------------HAVE FUN and don't forget to send a postcard!----------------

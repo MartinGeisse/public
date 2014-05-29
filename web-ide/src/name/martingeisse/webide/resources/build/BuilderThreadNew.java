@@ -59,7 +59,7 @@ public class BuilderThreadNew {
 					}
 				}
 			}
-		}.start();
+		}; // TODO .start();
 	}
 	
 	private static List<WorkspaceTasks> fetchPendingTasks() {
