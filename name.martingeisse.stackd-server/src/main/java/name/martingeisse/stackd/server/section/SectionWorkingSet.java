@@ -138,6 +138,16 @@ public final class SectionWorkingSet {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	/**
+	 * Returns a single object if present in the cache, null if not present.
+	 * 
+	 * @param sectionDataId the section data ID
+	 * @return the section-related object or null
+	 */
+	public SectionDataCacheEntry getIfPresent(final SectionDataId sectionDataId) {
+		return cache.getIfPresent(sectionDataId);
+	}
 
 	/**
 	 * Returns multiple objects, loading them if necessary.
@@ -160,6 +170,22 @@ public final class SectionWorkingSet {
 	}
 
 	/**
+	 * Of multiple objects, returns those that are already present in the cache.
+	 * 
+	 * @param sectionDataIds the section data IDs
+	 * @return the cached section-related objects
+	 */
+	public ImmutableMap<SectionDataId, SectionDataCacheEntry> getAllPresent(final SectionDataId... sectionDataIds) {
+		return cache.getAllPresent(new Iterable<SectionDataId>() {
+			@Override
+			@SuppressWarnings("unchecked")
+			public Iterator<SectionDataId> iterator() {
+				return new ArrayIterator(sectionDataIds);
+			}
+		});
+	}
+	
+	/**
 	 * Returns multiple objects, loading them if necessary.
 	 * 
 	 * @param sectionDataIds the section data IDs
@@ -171,6 +197,16 @@ public final class SectionWorkingSet {
 		} catch (final ExecutionException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	/**
+	 * Of multiple objects, returns those that are already present in the cache.
+	 * 
+	 * @param sectionDataIds the section data IDs
+	 * @return the section-related objects
+	 */
+	public ImmutableMap<SectionDataId, SectionDataCacheEntry> getAllPresent(final Iterable<SectionDataId> sectionDataIds) {
+		return cache.getAllPresent(sectionDataIds);
 	}
 
 	/**

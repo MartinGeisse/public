@@ -68,11 +68,16 @@ public final class SectionToClientShipper {
 	 * @param session the session to ship to
 	 */
 	public void addJob(SectionDataId sectionDataId, StackdSession session) {
-		ShippingJob job = new ShippingJob();
-		job.sectionDataId = sectionDataId;
-		job.session = session;
-		jobQueue.add(job);
-		handleAllJobsTask.schedule();
+		SectionDataCacheEntry presentEntry = workingSet.getIfPresent(sectionDataId);
+		if (presentEntry == null) {
+			ShippingJob job = new ShippingJob();
+			job.sectionDataId = sectionDataId;
+			job.session = session;
+			jobQueue.add(job);
+			handleAllJobsTask.schedule();
+		} else {
+			sendResult(presentEntry, session);
+		}
 	}
 	
 	/**
@@ -103,22 +108,33 @@ public final class SectionToClientShipper {
 		
 		// complete the jobs by sending data to the clients
 		for (ShippingJob job : jobs) {
-			final SectionDataId sectionDataId = job.sectionDataId;
-			final SectionId sectionId = sectionDataId.getSectionId();
-			final SectionDataType type = sectionDataId.getType();
-			final byte[] data = cacheEntries.get(sectionDataId).getDataForClient();
-			final StackdPacket response = new StackdPacket(StackdPacket.TYPE_SINGLE_SECTION_DATA_BASE + type.ordinal(), data.length + 12);
-			ChannelBuffer buffer = response.getBuffer();
-			buffer.writeInt(sectionId.getX());
-			buffer.writeInt(sectionId.getY());
-			buffer.writeInt(sectionId.getZ());
-			buffer.writeBytes(data);
-			logger.debug("SERVER sending section data: " + sectionDataId + " (" + data.length + " bytes)");
-			job.session.sendPacketDestructive(response);
-			logger.debug("SERVER sent section data: " + sectionDataId + " (" + data.length + " bytes)");
+			sendResult(cacheEntries.get(job.sectionDataId), job.session);
 		}
 		
 	}
+	
+	/**
+	 * 
+	 */
+	private void sendResult(SectionDataCacheEntry cacheEntry, StackdSession session) {
+		final SectionDataId sectionDataId = cacheEntry.getSectionDataId();
+		final SectionId sectionId = sectionDataId.getSectionId();
+		final SectionDataType type = sectionDataId.getType();
+		final byte[] data = cacheEntry.getDataForClient();
+		final StackdPacket response = new StackdPacket(StackdPacket.TYPE_SINGLE_SECTION_DATA_BASE + type.ordinal(), data.length + 12);
+		ChannelBuffer buffer = response.getBuffer();
+		buffer.writeInt(sectionId.getX());
+		buffer.writeInt(sectionId.getY());
+		buffer.writeInt(sectionId.getZ());
+		buffer.writeBytes(data);
+		logger.debug("SERVER sending section data: " + sectionDataId + " (" + data.length + " bytes)");
+		session.sendPacketDestructive(response);
+		logger.debug("SERVER sent section data: " + sectionDataId + " (" + data.length + " bytes)");
+		total += data.length;
+		logger.debug("SERVER total section data sent: " + total);
+	}
+	
+	static volatile long total = 0;
 	
 	/**
 	 * Contains the data for a single shipping job.

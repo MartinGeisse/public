@@ -71,7 +71,7 @@ public class MinerServer extends StackdServer<MinerSession> {
 		// TODO for testing
 		try {
 			// initializeWorld();
-			// initializeWorldWithHeightField();
+			initializeWorldWithHeightField();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
