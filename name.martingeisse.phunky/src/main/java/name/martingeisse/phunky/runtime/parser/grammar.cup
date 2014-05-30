@@ -74,6 +74,7 @@ terminal FUNCTION, CLASS, INTERFACE;
 // modifier keywords
 terminal PUBLIC, PROTECTED, PRIVATE;
 terminal ABSTRACT, FINAL, STATIC;
+terminal VAR;
 
 // statement keywords
 terminal FOR, FOREACH, UNTIL, DO, WHILE, BREAK;

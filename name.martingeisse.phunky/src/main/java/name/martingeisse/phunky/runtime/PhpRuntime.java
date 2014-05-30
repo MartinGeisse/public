@@ -8,7 +8,6 @@ package name.martingeisse.phunky.runtime;
 
 import java.io.PrintWriter;
 import java.io.Writer;
-
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
 import name.martingeisse.phunky.runtime.builtin.EchoFunction;
 import name.martingeisse.phunky.runtime.builtin.string.StrlenFunction;

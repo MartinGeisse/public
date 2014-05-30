@@ -183,6 +183,9 @@ LocalVariable = "$" {Identifier}
 	"static" {
 		return symbol(Tokens.STATIC);
 	}
+	"var" {
+		return symbol(Tokens.VAR);
+	}
 	
 	// statement keywords
 	"for" {
