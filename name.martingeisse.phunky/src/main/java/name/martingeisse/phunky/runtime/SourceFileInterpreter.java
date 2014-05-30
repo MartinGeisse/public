@@ -9,9 +9,10 @@ package name.martingeisse.phunky.runtime;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+
 import java_cup.runtime.ComplexSymbolFactory;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
-import name.martingeisse.phunky.runtime.code.statement.Statement;
 import name.martingeisse.phunky.runtime.code.statement.StatementSequence;
 import name.martingeisse.phunky.runtime.parser.Lexer;
 import name.martingeisse.phunky.runtime.parser.Parser;
@@ -48,14 +49,7 @@ public final class SourceFileInterpreter {
 	 * @param sourceFile the source file
 	 */
 	public void execute(final File sourceFile) {
-		try (FileInputStream fileInputStream = new FileInputStream(sourceFile); InputStreamReader reader = new InputStreamReader(fileInputStream)) {
-			Lexer lexer = new Lexer(reader);
-			Parser parser = new Parser(lexer, new ComplexSymbolFactory());
-			Statement program = (Statement)parser.parse().value;
-			program.execute(runtime.getGlobalEnvironment());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		parse(sourceFile).execute(runtime.getGlobalEnvironment());
 	}
 
 	/**
@@ -63,16 +57,25 @@ public final class SourceFileInterpreter {
 	 * @param sourceFile the source file
 	 */
 	public void dump(final File sourceFile) {
-		try (FileInputStream fileInputStream = new FileInputStream(sourceFile); InputStreamReader reader = new InputStreamReader(fileInputStream)) {
+		CodeDumper dumper = new CodeDumper();
+		parse(sourceFile).dump(dumper);
+		System.out.println(dumper.toString());
+	}
+
+	/**
+	 * Parses a source file. The file MUST be in UTF-8 encoding.
+	 * 
+	 * @param sourceFile the file to parse
+	 * @return the AST
+	 */
+	private StatementSequence parse(final File sourceFile) {
+		try (FileInputStream fileInputStream = new FileInputStream(sourceFile); InputStreamReader reader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8)) {
 			Lexer lexer = new Lexer(reader);
 			Parser parser = new Parser(lexer, new ComplexSymbolFactory());
 			StatementSequence program = (StatementSequence)parser.parse().value;
-			CodeDumper dumper = new CodeDumper();
-			program.dump(dumper);
-			System.out.println(dumper.toString());
+			return program;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-
 }
