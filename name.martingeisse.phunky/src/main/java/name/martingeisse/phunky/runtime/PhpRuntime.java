@@ -9,7 +9,7 @@ package name.martingeisse.phunky.runtime;
 import java.io.PrintWriter;
 import java.io.Writer;
 
-import name.martingeisse.phunky.runtime.builtin.BuiltinFunction;
+import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
 import name.martingeisse.phunky.runtime.builtin.EchoFunction;
 import name.martingeisse.phunky.runtime.builtin.string.StrlenFunction;
 
@@ -120,16 +120,16 @@ public final class PhpRuntime {
 	 * Applies standard definitions to this runtime
 	 */
 	public void applyStandardDefinitions() {
-		addBuiltinFunctions(new EchoFunction());
-		addBuiltinFunctions(new StrlenFunction());
+		addBuiltinCallables(new EchoFunction());
+		addBuiltinCallables(new StrlenFunction());
 	}
 	
 	/**
 	 * 
 	 */
-	private void addBuiltinFunctions(BuiltinFunction... functions) {
-		for (BuiltinFunction function : functions) {
-			this.functions.put(function.getName(), function);
+	private void addBuiltinCallables(BuiltinCallable... callables) {
+		for (BuiltinCallable callable : callables) {
+			this.functions.put(callable.getName(), callable);
 		}
 	}
 	

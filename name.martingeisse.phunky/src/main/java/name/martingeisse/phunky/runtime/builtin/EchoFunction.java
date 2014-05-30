@@ -14,7 +14,7 @@ import name.martingeisse.phunky.util.Name;
  * The built-in "echo" function.
  */
 @Name("echo")
-public class EchoFunction extends BuiltinFunction {
+public class EchoFunction extends BuiltinCallable {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])

@@ -6,7 +6,7 @@ package name.martingeisse.phunky.runtime.builtin.string;
 
 import java.util.ArrayList;
 import name.martingeisse.phunky.runtime.PhpRuntime;
-import name.martingeisse.phunky.runtime.builtin.BuiltinFunction;
+import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
 import name.martingeisse.phunky.runtime.value.PhpArray;
 import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
 import name.martingeisse.phunky.util.Name;
@@ -15,7 +15,7 @@ import name.martingeisse.phunky.util.Name;
  * The built-in "implode" function.
  */
 @Name("implode")
-public final class ImplodeFunction extends BuiltinFunction {
+public final class ImplodeFunction extends BuiltinCallable {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])

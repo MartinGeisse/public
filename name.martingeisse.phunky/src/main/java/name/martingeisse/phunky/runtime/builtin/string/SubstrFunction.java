@@ -5,14 +5,14 @@
 package name.martingeisse.phunky.runtime.builtin.string;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
-import name.martingeisse.phunky.runtime.builtin.BuiltinFunction;
+import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
 import name.martingeisse.phunky.util.Name;
 
 /**
  * The built-in "substr" function.
  */
 @Name("substr")
-public final class SubstrFunction extends BuiltinFunction {
+public final class SubstrFunction extends BuiltinCallable {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])

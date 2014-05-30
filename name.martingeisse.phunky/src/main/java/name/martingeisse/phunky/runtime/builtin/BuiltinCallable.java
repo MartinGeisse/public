@@ -10,9 +10,10 @@ import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
 import name.martingeisse.phunky.util.Name;
 
 /**
- * Helper class to simplify the implementation of built-in functions.
+ * Helper class to simplify the implementation of built-in functions
+ * and special forms
  */
-public abstract class BuiltinFunction implements Callable {
+public abstract class BuiltinCallable implements Callable {
 
 	/**
 	 * Returns the name of this function, as specified by the {@link Name} annotation.
