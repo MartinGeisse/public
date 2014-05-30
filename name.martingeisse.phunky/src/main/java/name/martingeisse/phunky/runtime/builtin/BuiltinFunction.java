@@ -46,4 +46,27 @@ public abstract class BuiltinFunction implements Callable {
 		return TypeConversionUtil.convertToString(arguments[position]);
 	}
 	
+	/**
+	 * Returns argument #position as an integer. If the number of arguments is less than
+	 * that, and a defaultValue is specified, it is returned. Otherwise, this method triggers
+	 * an error and 0 is returned.
+	 * 
+	 * @param runtime the runtime
+	 * @param arguments the function arguments
+	 * @param position the argument position
+	 * @param defaultValue the default value, or null if none
+	 * @return the value
+	 */
+	protected final int getIntParameter(PhpRuntime runtime, Object[] arguments, int position, Integer defaultValue) {
+		if (arguments.length <= position) {
+			if (defaultValue == null) {
+				runtime.triggerError("missing argument #" + position);
+				return 0;
+			} else {
+				return defaultValue;
+			}
+		}
+		return TypeConversionUtil.convertToInt(arguments[position]);
+	}
+	
 }

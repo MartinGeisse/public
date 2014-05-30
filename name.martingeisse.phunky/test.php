@@ -16,3 +16,4 @@ $c = 3;
 
 echo(strlen('foobar'));
 
+echo(strlen('blubberdiflupp'));

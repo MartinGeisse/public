@@ -6,23 +6,23 @@
 
 package name.martingeisse.phunky.runtime.builtin;
 
-import name.martingeisse.phunky.runtime.Callable;
 import name.martingeisse.phunky.runtime.PhpRuntime;
+import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
+import name.martingeisse.phunky.util.Name;
 
 /**
  * The built-in "echo" function.
  */
-public class EchoFunction implements Callable {
+@Name("echo")
+public class EchoFunction extends BuiltinFunction {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])
 	 */
 	@Override
 	public Object call(PhpRuntime runtime, Object[] arguments) {
-		if (arguments.length >= 1) {
-			Object argument = arguments[0];
-			String text = (argument == null ? "" : argument.toString());
-			runtime.getOutputWriter().print(text);
+		for (Object argument : arguments) {
+			runtime.getOutputWriter().print(TypeConversionUtil.convertToString(argument));
 		}
 		return null;
 	}

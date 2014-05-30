@@ -120,9 +120,8 @@ public final class PhpRuntime {
 	 * Applies standard definitions to this runtime
 	 */
 	public void applyStandardDefinitions() {
-		functions.put("echo", new EchoFunction());
+		addBuiltinFunctions(new EchoFunction());
 		addBuiltinFunctions(new StrlenFunction());
-		// TODO
 	}
 	
 	/**

@@ -81,7 +81,9 @@ public final class Main {
 		
 		System.out.println("--- test.php ---");
 		runtime.getInterpreter().dump(new File("test.php"));
-		// runtime.getInterpreter().execute(new File("test.php"));
+		System.out.println("--- execute ---");
+		runtime.getInterpreter().execute(new File("test.php"));
+		runtime.flushOutputWriter();
 		System.out.println("--- end ---");
 	}
 	
