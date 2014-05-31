@@ -85,6 +85,27 @@ public final class Main {
 		runtime.getInterpreter().execute(new File("test.php"));
 		runtime.flushOutputWriter();
 		System.out.println("--- end ---");
+
+		System.out.println();
+		System.out.println("---------------------------------------------------------------");
+		System.out.println("---------------------------------------------------------------");
+		System.out.println("---------------------------------------------------------------");
+		System.out.println();
+		
+		for (File file : new File("samples").listFiles()) {
+			System.out.println();
+			System.out.println("---------------------------------------------------------------");
+			System.out.println();
+			System.out.println("testing: " + file.getPath());
+			try {
+				runtime.getInterpreter().dump(file);
+			} catch (Exception e) {
+				System.out.println("ERROR: " + e.getMessage());
+				continue;
+			}
+			System.out.println("done");
+		}
+		
 	}
 	
 }

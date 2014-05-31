@@ -73,7 +73,7 @@ terminal FUNCTION, CLASS, INTERFACE;
 
 // modifier keywords
 terminal PUBLIC, PROTECTED, PRIVATE;
-terminal ABSTRACT, FINAL, STATIC;
+terminal STATIC, ABSTRACT, FINAL;
 terminal VAR;
 
 // statement keywords
@@ -112,13 +112,28 @@ terminal String STRING_LITERAL;
 terminal String IDENTIFIER;
 terminal String LOCAL_VARIABLE;
 
-// non terminals
+// non terminals (general)
 non terminal StatementSequence program;
 non terminal List<Statement> statements;
 non terminal Statement statement;
-non terminal List<Expression> one_or_more_expressions;
 non terminal List<Expression> expressions;
+non terminal List<Expression> one_or_more_expressions;
 non terminal Expression expression;
+non terminal List<String> parameter_declarations;
+non terminal List<String> one_or_more_parameter_declarations;
+non terminal String parameter_declaration;
+
+// non terminals (OOP)
+non terminal OopTypeDefinition oop_type_definition;
+non terminal String oop_class_extends_clause;
+non terminal List<String> oop_class_implements_clause;
+non terminal List<String> oop_interface_extends_clause;
+non terminal List<String> interface_references;
+non terminal List<String> one_or_more_interface_references;
+non terminal String interface_reference;
+non terminal OopMemberDefinition oop_member_definition;
+non terminal List<OopEntityModifier> oop_entity_modifiers;
+non terminal OopEntityModifier oop_entity_modifier;
 
 // precedences
 precedence left PLUS, MINUS;
@@ -128,7 +143,7 @@ precedence left SEMICOLON; // needed for error recovery
 
 
 // ------------------------------------------------------------------------------------
-// --- rules
+// --- general productions
 // ------------------------------------------------------------------------------------
 
 start with program;
@@ -137,7 +152,11 @@ program ::=
 	statements:sts
 		{: RESULT = new StatementSequence(sts); :}
 ;
-	
+
+// ------------------------------------------------------------------------------------
+// --- statement productions
+// ------------------------------------------------------------------------------------
+
 statements ::=
 		{: RESULT = new ArrayList<Statement>(); :}
 	| statements:sts statement:st
@@ -150,13 +169,25 @@ statement ::=
 	| expression:e SEMICOLON
 		{: RESULT = new ExpressionStatement(e); :} 
 	| IDENTIFIER:id expression:e SEMICOLON
-		{: RESULT = new ExpressionStatement(new FunctionCall(id, e)); :}
+		{: RESULT = ParserHelper.buildKeywordExpressionStatement(idxleft, id, e); :}
 	| VERBATIM_CONTENT:c
 		{: RESULT = new ExpressionStatement(new FunctionCall("echo", new LiteralExpression(c))); :}
 	| OPENING_CURLY_BRACE statements:sts CLOSING_CURLY_BRACE
 		{: RESULT = new StatementSequence(sts); :}
+	| FUNCTION IDENTIFIER:id OPENING_PARENTHESIS parameter_declarations:decls CLOSING_PARENTHESIS OPENING_CURLY_BRACE statements:sts CLOSING_CURLY_BRACE
+		{: RESULT = new FunctionDefinition(id, decls.toArray(new String[decls.size()]), new StatementSequence(sts)); :}
 	| error SEMICOLON
 		{: System.err.println("syntax error"); RESULT = new NopStatement(); :}
+;
+
+// ------------------------------------------------------------------------------------
+// --- expression productions
+// ------------------------------------------------------------------------------------
+
+expressions ::=
+		{: RESULT = new ArrayList<Expression>(); :}
+	| one_or_more_expressions:exs
+		{: RESULT = exs; :}
 ;
 
 one_or_more_expressions ::=
@@ -164,12 +195,6 @@ one_or_more_expressions ::=
 		{: RESULT = new ArrayList<Expression>(); RESULT.add(ex); :}
 	| one_or_more_expressions:exs COMMA expression:ex
 		{: exs.add(ex); RESULT = exs; :}
-;
-
-expressions ::=
-		{: RESULT = new ArrayList<Expression>(); :}
-	| one_or_more_expressions:exs
-		{: RESULT = exs; :}
 ;
 
 expression ::=
@@ -194,7 +219,116 @@ expression ::=
 	| expression:e1 ASSIGN expression:e2
 		{: RESULT = new BinaryExpression(e1, BinaryOperator.ASSIGN, e2); :}
 	| IDENTIFIER:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
-		{: RESULT = new FunctionCall(id, exs.toArray(new Expression[exs.size()])); :}
+		{: RESULT = ParserHelper.buildFunctionCallLikeExpression(idxleft, id, exs); :}
 	| error
 		{: RESULT = new LiteralExpression(null); :}
+;
+
+// ------------------------------------------------------------------------------------
+// --- function definition productions
+// ------------------------------------------------------------------------------------
+
+parameter_declarations ::=
+		{: RESULT = new ArrayList<String>(); :}
+	| one_or_more_parameter_declarations:decls
+		{: RESULT = decls; :}
+;
+
+one_or_more_parameter_declarations ::=
+	parameter_declaration:decl
+		{: RESULT = new ArrayList<String>(); RESULT.add(decl); :}
+	| one_or_more_parameter_declarations:decls COMMA parameter_declaration:decl
+		{: decls.add(decl); RESULT = decls; :}
+;
+
+parameter_declaration ::=
+	LOCAL_VARIABLE:v
+		{: RESULT = v; :}
+;
+
+// ------------------------------------------------------------------------------------
+// --- OOP type definition productions
+// ------------------------------------------------------------------------------------
+
+oop_type_definition ::= 
+	CLASS IDENTIFIER:id oop_class_extends_clause oop_class_implements_clause OPENING_CURLY_BRACE oop_member_definitions:members CLOSING_CURLY_BRACE
+		{: :}
+	INTERFACE IDENTIFIER:id oop_interface_extends_clause OPENING_CURLY_BRACE oop_member_definitions:members CLOSING_CURLY_BRACE
+		{: :}
+;
+
+oop_class_extends_clause ::=
+		{: :}
+	| EXTENDS IDENTIFIER:id
+		{: :}
+;		
+
+oop_class_implements_clause ::=
+		{: :}
+	| IMPLEMENTS interface_references:itfs
+		{: :}
+;		
+
+oop_interface_extends_clause ::=
+		{: :}
+	| EXTENDS interface_references:itfs
+		{: :}
+;
+
+interface_references ::=
+		{: RESULT = new ArrayList<String>(); :}
+	| one_or_more_interface_references:itfs
+		{: RESULT = itfs; :}
+;
+
+one_or_more_interface_references ::=
+	interface_reference:itf
+		{: RESULT = new ArrayList<String>(); RESULT.add(itf); :}
+	| one_or_more_interface_references:itfs COMMA interface_reference:itf
+		{: itfs.add(itf); RESULT = itfs; :}
+;
+
+interface_reference ::=
+	IDENTIFIER:id
+		{: RESULT = id; :}
+;
+
+// ------------------------------------------------------------------------------------
+// --- OOP member definition productions
+// ------------------------------------------------------------------------------------
+
+oop_member_definition ::=
+	CONST IDENTIFIER:id ASSIGN EXPRESSION:e SEMICOLON
+		{: :}
+	| VAR LOCAL_VARIABLE:v SEMICOLON
+		{: :}
+	| oop_entity_modifiers:mod LOCAL_VARIABLE:v SEMICOLON
+		{: :}
+	| oop_entity_modifiers:mod FUNCTION IDENTIFIER:id OPENING_PARENTHESIS parameter_declarations:decls CLOSING_PARENTHESIS OPENING_CURLY_BRACE statements:sts CLOSING_CURLY_BRACE
+		{: :}
+;
+
+// ------------------------------------------------------------------------------------
+// --- OOP helper productions
+// ------------------------------------------------------------------------------------
+
+oop_entity_modifiers ::=
+		{: RESULT = new ArrayList<OopEntityModifier>(); :}
+	| oop_entity_modifiers:sts oop_entity_modifier:st
+		{: sts.add(st); RESULT = sts; :}
+;
+
+oop_entity_modifier ::=
+	PUBLIC
+		{: :}
+	| PROTECTED
+		{: :}
+	| PRIVATE
+		{: :}
+	| STATIC
+		{: :}
+	| ABSTRACT
+		{: :}
+	| FINAL
+		{: :}
 ;

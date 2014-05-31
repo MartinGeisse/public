@@ -24,8 +24,11 @@ import java_cup.runtime.ComplexSymbolFactory.Location;
 	return symbolFactory.newSymbol("EOF", Tokens.EOF, location, location); 
 %eofval}
 %{
-	ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
-	StringBuilder stringBuilder = new StringBuilder();
+
+	private ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+	private StringBuilder stringBuilder = new StringBuilder();
+	private String heredocNowdocMarker;
+	private boolean heredocNowdocVariableInterpolation;
 
 	private Symbol symbol(int type) {
 		String text = yytext();
@@ -40,6 +43,34 @@ import java_cup.runtime.ComplexSymbolFactory.Location;
 		Location right = new Location(yyline, yycolumn + text.length());
 		return symbolFactory.newSymbol(text, type, left, right, value);
 	}
+	
+	private void beginHeredocNowdoc(String markerContainer, boolean markerQuoted, boolean interpolateVariables) {
+		markerContainer = markerContainer.trim();
+		this.heredocNowdocMarker = markerContainer.substring(markerQuoted ? 4 : 3, markerContainer.length() - (markerQuoted ? 1 : 0));
+		this.heredocNowdocVariableInterpolation = interpolateVariables;
+		stringBuilder.setLength(0);
+		yybegin(HEREDOC_NOWDOC);
+	}
+	
+	private Symbol handleHeredocNowdocStopperCandidate(String identifier) {
+		if (identifier.equals(heredocNowdocMarker)) {
+			return buildHeredocNowdocString();
+		} else {
+			handleHeredocNowdocContentLine(line);
+			return null;
+		}
+	}
+	
+	private void handleHeredocNowdocContentLine(String line) {
+		stringBuilder.append(line);
+	}
+	
+	private Symbol buildHeredocNowdocString() {
+		// TODO interpolation
+		yybegin(CODE); 
+		return symbol(Tokens.STRING_LITERAL, stringBuilder.toString());
+	}
+	
 %}
 
 
@@ -68,6 +99,11 @@ DecimalIntegerLiteral = 0 | [1-9][0-9]*
 Identifier = [\p{Alpha}\_] [\p{Alnum}\_]*
 LocalVariable = "$" {Identifier}
 
+// heredoc and nowdoc
+UnquotedHeredocStarter = "<<<" {Identifier} {LineTerminator}
+QuotedHeredocStarter = "<<<\"" {Identifier} "\"" {LineTerminator}
+NowdocStarter = "<<<'" {Identifier} "'" {LineTerminator}
+HeredocNowdocContentLine = .* {LineTerminator}
 
 // ---------------------------------------------------------------------------------------------------------
 // --- lexer rules
@@ -77,6 +113,7 @@ LocalVariable = "$" {Identifier}
 %state CODE
 %state SINGLE_QUOTED_STRING
 %state DOUBLE_QUOTED_STRING
+%state HEREDOC_NOWDOC
 %%
 
 // verbatim content outside the PHP tags
@@ -113,6 +150,17 @@ LocalVariable = "$" {Identifier}
 	"?>" \n? {
 		yybegin(YYINITIAL);
 		return symbol(Tokens.SEMICOLON);
+	}
+	
+	// heredoc and nowdoc
+	{UnquotedHeredocStarter} {
+		beginHeredocNowdoc(yytext, false, true);
+	}
+	{QuotedHeredocStarter} {
+		beginHeredocNowdoc(yytext, true, true);
+	}
+	{NowdocStarter} {
+		beginHeredocNowdoc(yytext, true, false);
 	}
 	
 	// punctuation (some of these can be operators too)
@@ -429,6 +477,7 @@ LocalVariable = "$" {Identifier}
 		return symbol(Tokens.STRING_LITERAL, stringBuilder.toString());
 	}
 	[^\n\r\"\\]+ {
+		// TODO interpolate
 		stringBuilder.append(yytext());
 	}
 	\\t {
@@ -445,6 +494,18 @@ LocalVariable = "$" {Identifier}
 	}
 	\\ {
 		stringBuilder.append('\\');
+	}
+}
+
+<HEREDOC_NOWDOC> {
+	{Identifier} / ";"? {LineTerminator} {
+		Symbol s = handleHeredocNowdocStopperCandidate(yytext());
+		if (s != null) {
+			return s;
+		}
+	}
+	{HeredocNowdocContentLine} {
+		handleHeredocNowdocContentLine(yytext());
 	}
 }
 
