@@ -6,6 +6,7 @@
 
 package name.martingeisse.stackd.common.geometry;
 
+
 /**
  *
  */
@@ -30,5 +31,6 @@ public abstract class ReadableVector3i {
 	 * @return the z
 	 */
 	public abstract int getZ();
+
 
 }

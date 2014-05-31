@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Map;
 import name.martingeisse.miner.Main;
 import name.martingeisse.miner.gamegui.GameMenuHandler;
+import name.martingeisse.miner.ingame.network.MinerProtocolClient;
+import name.martingeisse.miner.ingame.network.PlayerResumedMessage;
+import name.martingeisse.miner.ingame.network.SendPositionToServerHandler;
+import name.martingeisse.miner.ingame.player.PlayerProxy;
 import name.martingeisse.stackd.client.frame.AbstractFrameHandler;
 import name.martingeisse.stackd.client.frame.BreakFrameLoopException;
 import name.martingeisse.stackd.client.frame.handlers.FlashMessageHandler;
@@ -161,9 +165,8 @@ public class IngameHandler extends HandlerList {
 				}
 				final PlayerResumedMessage playerResumedMessage = protocolClient.fetchPlayerResumedMessage();
 				if (playerResumedMessage != null) {
-					cubeWorldHandler.getPlayer().setX(playerResumedMessage.getX());
-					cubeWorldHandler.getPlayer().setY(playerResumedMessage.getY());
-					cubeWorldHandler.getPlayer().setZ(playerResumedMessage.getZ());
+					cubeWorldHandler.getPlayer().getPosition().copyFrom(playerResumedMessage.getPosition());
+					cubeWorldHandler.getPlayer().getOrientation().copyFrom(playerResumedMessage.getOrientation());
 					protocolClient.getSectionGridLoader().setViewerPosition(cubeWorldHandler.getPlayer().getSectionId());
 				}
 			}

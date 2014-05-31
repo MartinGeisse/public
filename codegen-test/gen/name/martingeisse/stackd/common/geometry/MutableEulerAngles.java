@@ -6,8 +6,10 @@
 
 package name.martingeisse.stackd.common.geometry;
 
+
 /**
- * TODO angles measured in degrees or radians?
+ * Euler angles (actually, nautical angles), expressed as a horizontal angle (yaw),
+ * vertical angle (pitch) and roll angle. All angles are expressed in degrees, not radians.
  */
 public class MutableEulerAngles extends ReadableEulerAngles {
 
@@ -88,6 +90,17 @@ public class MutableEulerAngles extends ReadableEulerAngles {
 	 */
 	public void setRollAngle(double rollAngle) {
 		this.rollAngle = rollAngle;
+	}
+
+
+	/**
+	 * Copies field values from the specified object.
+	 * @param other the object to copy values from
+	 */
+	public void copyFrom(ReadableEulerAngles other) {
+		horizontalAngle = other.getHorizontalAngle();
+		verticalAngle = other.getVerticalAngle();
+		rollAngle = other.getRollAngle();
 	}
 
 }

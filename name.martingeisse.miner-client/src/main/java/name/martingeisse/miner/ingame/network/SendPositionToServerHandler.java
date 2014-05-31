@@ -4,8 +4,10 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.miner.ingame;
+package name.martingeisse.miner.ingame.network;
 
+import name.martingeisse.miner.ingame.IngameHandler;
+import name.martingeisse.miner.ingame.player.Player;
 import name.martingeisse.stackd.client.frame.AbstractIntervalFrameHandler;
 
 /**
@@ -32,7 +34,7 @@ public class SendPositionToServerHandler extends AbstractIntervalFrameHandler {
 	 */
 	@Override
 	protected void onIntervalTimerExpired() {
-		IngameHandler.protocolClient.sendPositionUpdate(player.getX(), player.getY(), player.getZ(), player.getLeftAngle(), player.getUpAngle());
+		IngameHandler.protocolClient.sendPositionUpdate(player.getPosition(), player.getOrientation());
 	}
 	
 }

@@ -6,6 +6,8 @@
 
 package name.martingeisse.stackd.common.geometry;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  *
  */
@@ -64,6 +66,35 @@ public abstract class BaseVector3i extends ReadableVector3i {
 	@Override
 	public int getZ() {
 		return z;
+	}
+
+
+	/**
+	 * Helper method to implement {@link #equals(Object)}. Checks if all data fields in the base data class are equal.
+	 * @param other the other object to compare to
+	 * @return true if the fields are equal, false if not
+	 */
+	protected final boolean baseFieldsEqual(BaseVector3i other) {
+		return (x == other.x && y == other.y && z == other.z);
+	}
+
+	/**
+	 * Helper method to implement {@link #hashCode()}. Produces a hash code from the fields in the base data class.
+	 * @return the hash code
+	 */
+	protected final int baseFieldsHashCode() {
+		return new HashCodeBuilder().append(x).append(y).append(z).toHashCode();
+	}
+
+	/**
+	 * Helper method to implement {@link #toString()}. Writes a description string from the fields in the base data class.
+	 * to the specified StringBuilder.
+	 * @param builder the string builder
+	 */
+	protected final void buildBaseFieldsDescription(StringBuilder builder) {
+		builder.append("x = ").append(x);
+		builder.append(", y = ").append(y);
+		builder.append(", z = ").append(z);
 	}
 
 }

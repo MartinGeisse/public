@@ -6,6 +6,7 @@
 
 package name.martingeisse.stackd.common.geometry;
 
+
 /**
  *
  */
@@ -24,5 +25,6 @@ public abstract class ReadableVector2d {
 	 * @return the y
 	 */
 	public abstract double getY();
+
 
 }

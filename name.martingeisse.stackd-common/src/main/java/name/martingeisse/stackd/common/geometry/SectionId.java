@@ -13,6 +13,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * A section ID is used as the identifying key for a section, and also
  * stores the location of the section in the grid. The location is measured
  * in cluster-size units.
+ * 
+ * Although possible in general, this class is not derived from {@link BaseVector3i}
+ * since section IDs use coordinates in cluster-size units, not cube units, so
+ * extending a vector class would encourage mistakes that could be caught by the
+ * type system.
  */
 public final class SectionId {
 
@@ -32,7 +37,7 @@ public final class SectionId {
 	private final int z;
 
 	/**
-	 * Constructor.
+	 * Constructor for known (x, y, z) coordinates of the section in cluster-size units.
 	 * @param x the x coordinate of the location in the grid, measured in cluster-size units
 	 * @param y the y coordinate of the location in the grid, measured in cluster-size units
 	 * @param z the z coordinate of the location in the grid, measured in cluster-size units
@@ -41,6 +46,45 @@ public final class SectionId {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+	}
+
+	/**
+	 * Constructor for scaling a cube-unit (x, y, z) position to cluster-size units.
+	 * @param x the x coordinate of the cube position
+	 * @param y the y coordinate of the cube position
+	 * @param z the z coordinate of the cube position
+	 * @param clusterSize the cluster size
+	 */
+	public SectionId(int x, int y, int z, ClusterSize clusterSize) {
+		int shift = clusterSize.getShiftBits();
+		this.x = x >> shift;
+		this.y = y >> shift;
+		this.z = z >> shift;
+		
+	}
+	
+	/**
+	 * Constructor for scaling a cube-unit (x, y, z) position to cluster-size units.
+	 * @param position the cube position
+	 * @param clusterSize the cluster size
+	 */
+	public SectionId(ReadableVector3i position, ClusterSize clusterSize) {
+		int shift = clusterSize.getShiftBits();
+		this.x = position.getX() >> shift;
+		this.y = position.getY() >> shift;
+		this.z = position.getZ() >> shift;
+	}
+
+	/**
+	 * Constructor for scaling a cube-unit (x, y, z) position to cluster-size units.
+	 * @param position the cube position
+	 * @param clusterSize the cluster size
+	 */
+	public SectionId(ReadableVector3d position, ClusterSize clusterSize) {
+		int shift = clusterSize.getShiftBits();
+		this.x = (int)Math.floor(position.getX()) >> shift;
+		this.y = (int)Math.floor(position.getY()) >> shift;
+		this.z = (int)Math.floor(position.getZ()) >> shift;
 	}
 
 	/**

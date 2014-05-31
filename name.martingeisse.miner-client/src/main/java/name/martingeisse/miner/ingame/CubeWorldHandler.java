@@ -61,6 +61,8 @@ import java.util.Random;
 import name.martingeisse.common.util.ThreadUtil;
 import name.martingeisse.miner.common.MinerCommonConstants;
 import name.martingeisse.miner.common.MinerCubeTypes;
+import name.martingeisse.miner.ingame.player.Player;
+import name.martingeisse.miner.ingame.player.PlayerProxy;
 import name.martingeisse.stackd.client.engine.EngineParameters;
 import name.martingeisse.stackd.client.engine.FrameRenderParameters;
 import name.martingeisse.stackd.client.engine.WorldWorkingSet;
@@ -244,12 +246,6 @@ public class CubeWorldHandler {
 	 */
 	public CubeWorldHandler(final int width, final int height, final MinerResources resources) throws IOException {
 
-		// the player
-		player = new Player();
-		player.setX(0);
-		player.setY(10);
-		player.setZ(0);
-
 		// the resources (textures)
 		this.resources = resources;
 
@@ -258,7 +254,12 @@ public class CubeWorldHandler {
 		sectionRenderer.prepareForTextures(resources.getCubeTextures());
 		final EngineParameters engineParameters = new EngineParameters(sectionRenderer, resources.getCubeTextures(), MinerCubeTypes.CUBE_TYPES);
 		workingSet = new WorldWorkingSet(engineParameters, MinerCommonConstants.CLUSTER_SIZE);
-		player.setWorld(workingSet);
+
+		// the player
+		player = new Player(workingSet);
+		player.getPosition().setX(0);
+		player.getPosition().setY(10);
+		player.getPosition().setZ(0);
 
 		// other stuff
 		rayActionSupport = new RayActionSupport(width, height);
@@ -394,10 +395,10 @@ public class CubeWorldHandler {
 			currentCubeType = 50;
 		}
 		if (mouseMovementEnabled) {
-			player.setLeftAngle(player.getLeftAngle() - Mouse.getDX() * 0.5);
-			double newUpAngle = player.getUpAngle() + Mouse.getDY() * 0.5;
+			player.getOrientation().setHorizontalAngle(player.getOrientation().getHorizontalAngle() - Mouse.getDX() * 0.5);
+			double newUpAngle = player.getOrientation().getVerticalAngle() + Mouse.getDY() * 0.5;
 			newUpAngle = (newUpAngle > 90) ? 90 : (newUpAngle < -90) ? -90 : newUpAngle;
-			player.setUpAngle(newUpAngle);
+			player.getOrientation().setVerticalAngle(newUpAngle);
 		}
 		sectionLoadHandler.handleStep();
 
@@ -467,13 +468,13 @@ public class CubeWorldHandler {
 		if (now >= cooldownFinishTime) {
 			if (mouseMovementEnabled && Mouse.isButtonDown(0)) {
 				captureRayActionSupport = true;
-				rayActionSupport.execute(player.getX(), player.getY(), player.getZ(), new RayAction(false) {
+				rayActionSupport.execute(player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ(), new RayAction(false) {
 					@Override
 					public void handleImpact(final int x, final int y, final int z, final double distance) {
 						if (distance < 3.0) {
 							final byte effectiveCubeType;
 							if (currentCubeType == 50) {
-								final int angle = ((int)player.getLeftAngle() % 360 + 360) % 360;
+								final int angle = ((int)player.getOrientation().getHorizontalAngle() % 360 + 360) % 360;
 								if (angle < 45) {
 									effectiveCubeType = 52;
 								} else if (angle < 45 + 90) {
@@ -505,7 +506,7 @@ public class CubeWorldHandler {
 				});
 			} else if (mouseMovementEnabled && Mouse.isButtonDown(1)) {
 				captureRayActionSupport = true;
-				rayActionSupport.execute(player.getX(), player.getY(), player.getZ(), new RayAction(true) {
+				rayActionSupport.execute(player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ(), new RayAction(true) {
 					@Override
 					public void handleImpact(final int x, final int y, final int z, final double distance) {
 						if (distance < 2.0) {
@@ -545,7 +546,7 @@ public class CubeWorldHandler {
 	 * 
 	 */
 	private void breakFree(final CubeModificationPacketBuilder builder) {
-		final RectangularRegion region = new PlayerCollider().createRegion(player.getX(), player.getY(), player.getZ());
+		final RectangularRegion region = player.createCollisionRegion();
 		for (int x = region.getStartX(); x < region.getEndX(); x++) {
 			for (int y = region.getStartY(); y < region.getEndY(); y++) {
 				for (int z = region.getStartZ(); z < region.getEndZ(); z++) {
@@ -567,9 +568,9 @@ public class CubeWorldHandler {
 	public void draw(final GlWorkerLoop glWorkerLoop) {
 
 		// determine player's position as integers
-		final int playerX = (int)(Math.floor(player.getX()));
-		final int playerY = (int)(Math.floor(player.getY()));
-		final int playerZ = (int)(Math.floor(player.getZ()));
+		final int playerX = (int)(Math.floor(player.getPosition().getX()));
+		final int playerY = (int)(Math.floor(player.getPosition().getY()));
+		final int playerZ = (int)(Math.floor(player.getPosition().getZ()));
 
 		// set the GL worker loop for the section renderer
 		((DefaultSectionRenderer)workingSet.getEngineParameters().getSectionRenderer()).setGlWorkerLoop(glWorkerLoop);
@@ -591,9 +592,9 @@ public class CubeWorldHandler {
 				final int geometryDetailFactor = StackdConstants.GEOMETRY_DETAIL_FACTOR;
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity(); // model transformation (direct)
-				glRotatef((float)player.getUpAngle(), -1, 0, 0); // view transformation (reversed)
-				glRotatef((float)player.getLeftAngle(), 0, -1, 0); // ...
-				glTranslated(-player.getX() * geometryDetailFactor, -player.getY() * geometryDetailFactor, -player.getZ() * geometryDetailFactor); // ...
+				glRotatef((float)player.getOrientation().getVerticalAngle(), -1, 0, 0); // view transformation (reversed)
+				glRotatef((float)player.getOrientation().getHorizontalAngle(), 0, -1, 0); // ...
+				glTranslated(-player.getPosition().getX() * geometryDetailFactor, -player.getPosition().getY() * geometryDetailFactor, -player.getPosition().getZ() * geometryDetailFactor); // ...
 
 				// clear the screen
 				glDepthMask(true);
@@ -695,17 +696,17 @@ public class CubeWorldHandler {
 						// Set up inverse modelview matrix, draw, then restore previous matrix.
 						// Also set the raster position for drawing the name.
 						glPushMatrix();
-						glTranslated(geometryDetailFactor * playerProxy.getX(), geometryDetailFactor * playerProxy.getY(), geometryDetailFactor * playerProxy.getZ());
-						glRotatef((float)playerProxy.getLeftAngle(), 0, 1, 0);
+						glTranslated(geometryDetailFactor * playerProxy.getPosition().getX(), geometryDetailFactor * playerProxy.getPosition().getY(), geometryDetailFactor * playerProxy.getPosition().getZ());
+						glRotatef((float)playerProxy.getOrientation().getHorizontalAngle(), 0, 1, 0);
 						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 						new Sphere().draw(0.8f, 10, 10);
 						glRasterPos3f(0f, 1.5f, 0f);
 						glPopMatrix();
 
 						// compute the distance between the players
-						final double dx = player.getX() - playerProxy.getX();
-						final double dy = player.getY() - playerProxy.getY();
-						final double dz = player.getZ() - playerProxy.getZ();
+						final double dx = player.getPosition().getX() - playerProxy.getPosition().getX();
+						final double dy = player.getPosition().getY() - playerProxy.getPosition().getY();
+						final double dz = player.getPosition().getZ() - playerProxy.getPosition().getZ();
 						final double distance = geometryDetailFactor * Math.sqrt(dx * dx + dy * dy + dz * dz);
 						final double zoom = 5.0 / (Math.sqrt(distance) + 0.5);
 

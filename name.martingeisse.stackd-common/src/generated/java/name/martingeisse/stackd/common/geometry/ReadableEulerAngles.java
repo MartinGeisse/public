@@ -6,8 +6,10 @@
 
 package name.martingeisse.stackd.common.geometry;
 
+
 /**
- * TODO angles measured in degrees or radians?
+ * Euler angles (actually, nautical angles), expressed as a horizontal angle (yaw),
+ * vertical angle (pitch) and roll angle. All angles are expressed in degrees, not radians.
  */
 public abstract class ReadableEulerAngles {
 
@@ -30,5 +32,6 @@ public abstract class ReadableEulerAngles {
 	 * @return the rollAngle
 	 */
 	public abstract double getRollAngle();
+
 
 }

@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.miner.ingame;
+package name.martingeisse.miner.ingame.network;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -13,8 +13,14 @@ import java.util.List;
 import java.util.Map;
 import name.martingeisse.miner.common.MinerCommonConstants;
 import name.martingeisse.miner.common.MinerPacketConstants;
+import name.martingeisse.miner.ingame.IngameHandler;
+import name.martingeisse.miner.ingame.player.PlayerProxy;
 import name.martingeisse.miner.startmenu.AccountApiClient;
 import name.martingeisse.stackd.client.network.StackdProtocolClient;
+import name.martingeisse.stackd.common.geometry.EulerAngles;
+import name.martingeisse.stackd.common.geometry.ReadableEulerAngles;
+import name.martingeisse.stackd.common.geometry.ReadableVector3d;
+import name.martingeisse.stackd.common.geometry.Vector3d;
 import name.martingeisse.stackd.common.network.StackdPacket;
 import org.apache.log4j.Logger;
 import org.jboss.netty.buffer.ChannelBuffer;
@@ -59,20 +65,17 @@ public class MinerProtocolClient extends StackdProtocolClient {
 	
 	/**
 	 * Sends an update message for the player's position to the server.
-	 * @param x the player's x position
-	 * @param y the player's y position
-	 * @param z the player's z position
-	 * @param leftAngle the horizontal angle, with left being positive
-	 * @param upAngle the vertical angle, with up being positive
+	 * @param position the player's position
+	 * @param orientation the player's orientation
 	 */
-	public void sendPositionUpdate(double x, double y, double z, double leftAngle, double upAngle) {
+	public void sendPositionUpdate(ReadableVector3d position, ReadableEulerAngles orientation) {
 		StackdPacket packet = new StackdPacket(MinerPacketConstants.TYPE_C2S_UPDATE_POSITION, 40);
 		ChannelBuffer buffer = packet.getBuffer();
-		buffer.writeDouble(x);
-		buffer.writeDouble(y);
-		buffer.writeDouble(z);
-		buffer.writeDouble(leftAngle);
-		buffer.writeDouble(upAngle);
+		buffer.writeDouble(position.getX());
+		buffer.writeDouble(position.getY());
+		buffer.writeDouble(position.getZ());
+		buffer.writeDouble(orientation.getHorizontalAngle());
+		buffer.writeDouble(orientation.getVerticalAngle());
 		send(packet);
 	}
 	
@@ -107,9 +110,15 @@ public class MinerProtocolClient extends StackdProtocolClient {
 				double x = buffer.readDouble();
 				double y = buffer.readDouble();
 				double z = buffer.readDouble();
-				double leftAngle = buffer.readDouble();
-				double upAngle = buffer.readDouble();
-				playerProxiesFromMessage.add(new PlayerProxy(id, x, y, z, leftAngle, upAngle));
+				double horizontalAngle = buffer.readDouble();
+				double verticalAngle = buffer.readDouble();
+				PlayerProxy proxy = new PlayerProxy(id);
+				proxy.getPosition().setX(x);
+				proxy.getPosition().setY(y);
+				proxy.getPosition().setZ(z);
+				proxy.getOrientation().setHorizontalAngle(horizontalAngle);
+				proxy.getOrientation().setVerticalAngle(verticalAngle);
+				playerProxiesFromMessage.add(proxy);
 			}
 			synchronized(this) {
 				this.updatedPlayerProxies = playerProxiesFromMessage;
@@ -138,7 +147,13 @@ public class MinerProtocolClient extends StackdProtocolClient {
 		
 		case MinerPacketConstants.TYPE_S2C_PLAYER_RESUMED: {
 			synchronized(this) {
-				this.playerResumedMessage = new PlayerResumedMessage(buffer.readDouble(), buffer.readDouble(), buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
+				double x = buffer.readDouble();
+				double y = buffer.readDouble();
+				double z = buffer.readDouble();
+				double horizontalAngle = buffer.readDouble();
+				double verticalAngle = buffer.readDouble();
+				double rollAngle = 0;
+				this.playerResumedMessage = new PlayerResumedMessage(new Vector3d(x, y, z), new EulerAngles(horizontalAngle, verticalAngle, rollAngle));
 			}
 			break;
 		}

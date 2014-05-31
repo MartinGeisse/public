@@ -9,11 +9,9 @@ package name.martingeisse.codegen.dataclass;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
-
 import name.martingeisse.codegen.template.JavaFileTemplate;
-
+import name.martingeisse.codegen.template.NopDirective;
 import org.apache.commons.lang3.StringUtils;
-
 import freemarker.core.Environment;
 import freemarker.template.TemplateBooleanModel;
 import freemarker.template.TemplateDirectiveBody;
@@ -124,6 +122,124 @@ public abstract class DataClassTemplate extends JavaFileTemplate {
 				}
 			}
 		});
+		if (dataClassType == DataClassType.IMMUTABLE_BASE) {
+			dataModel.put("equals", new TemplateDirectiveModel() {
+				@Override
+				public void execute(Environment environment, @SuppressWarnings("rawtypes") Map parameters, TemplateModel[] loopVariables, TemplateDirectiveBody body) throws TemplateException, IOException {
+					PrintWriter out = new PrintWriter(environment.getOut());
+					out.println();
+					out.println("	/**");
+					out.println("	 * Helper method to implement {@link #equals(Object)}. Checks if all data fields in the base data class are equal.");
+					out.println("	 * @param other the other object to compare to");
+					out.println("	 * @return true if the fields are equal, false if not");
+					out.println("	 */");
+					out.println("	protected final boolean baseFieldsEqual(" + DataClassType.IMMUTABLE_BASE.getClassPrefix() + nameKernel + " other) {");
+					body.render(out);
+					out.println("	}");
+				}
+			});
+			dataModel.put("hashCode", new TemplateDirectiveModel() {
+				@Override
+				public void execute(Environment environment, @SuppressWarnings("rawtypes") Map parameters, TemplateModel[] loopVariables, TemplateDirectiveBody body) throws TemplateException, IOException {
+					PrintWriter out = new PrintWriter(environment.getOut());
+					out.println();
+					out.println("	/**");
+					out.println("	 * Helper method to implement {@link #hashCode()}. Produces a hash code from the fields in the base data class.");
+					out.println("	 * @return the hash code");
+					out.println("	 */");
+					out.println("	protected final int baseFieldsHashCode() {");
+					body.render(out);
+					out.println("	}");
+				}
+			});
+			dataModel.put("toString", new TemplateDirectiveModel() {
+				@Override
+				public void execute(Environment environment, @SuppressWarnings("rawtypes") Map parameters, TemplateModel[] loopVariables, TemplateDirectiveBody body) throws TemplateException, IOException {
+					PrintWriter out = new PrintWriter(environment.getOut());
+					out.println();
+					out.println("	/**");
+					out.println("	 * Helper method to implement {@link #toString()}. Writes a description string from the fields in the base data class.");
+					out.println("	 * to the specified StringBuilder.");
+					out.println("	 * @param builder the string builder");
+					out.println("	 */");
+					out.println("	protected final void buildBaseFieldsDescription(StringBuilder builder) {");
+					body.render(out);
+					out.println("	}");
+				}
+			});
+		} else if (dataClassType == DataClassType.IMMUTABLE) {
+			dataModel.put("equals", new TemplateDirectiveModel() {
+				@Override
+				public void execute(Environment environment, @SuppressWarnings("rawtypes") Map parameters, TemplateModel[] loopVariables, TemplateDirectiveBody body) throws TemplateException, IOException {
+					PrintWriter out = new PrintWriter(environment.getOut());
+					out.println();
+					out.println("	/* (non-Javadoc)");
+					out.println("	 * @see java.lang.Object#equals(java.lang.Object)");
+					out.println("	 */");
+					out.println("	@Override");
+					out.println("	public boolean equals(Object other) {");
+					out.println("		if (other instanceof " + DataClassType.IMMUTABLE.getClassPrefix() + nameKernel + ") {");
+					out.println("			return baseFieldsEqual((" + DataClassType.IMMUTABLE.getClassPrefix() + nameKernel + ")other);");
+					out.println("		} else {");
+					out.println("			return false;");
+					out.println("		}");
+					out.println("	}");
+				}
+			});
+			dataModel.put("hashCode", new TemplateDirectiveModel() {
+				@Override
+				public void execute(Environment environment, @SuppressWarnings("rawtypes") Map parameters, TemplateModel[] loopVariables, TemplateDirectiveBody body) throws TemplateException, IOException {
+					PrintWriter out = new PrintWriter(environment.getOut());
+					out.println();
+					out.println("	/* (non-Javadoc)");
+					out.println("	 * @see java.lang.Object#hashCode()");
+					out.println("	 */");
+					out.println("	@Override");
+					out.println("	public int hashCode() {");
+					out.println("		return baseFieldsHashCode();");
+					out.println("	}");
+				}
+			});
+			dataModel.put("toString", new TemplateDirectiveModel() {
+				@Override
+				public void execute(Environment environment, @SuppressWarnings("rawtypes") Map parameters, TemplateModel[] loopVariables, TemplateDirectiveBody body) throws TemplateException, IOException {
+					PrintWriter out = new PrintWriter(environment.getOut());
+					out.println();
+					out.println("	/* (non-Javadoc)");
+					out.println("	 * @@see java.lang.Object#toString()");
+					out.println("	 */");
+					out.println("	@Override");
+					out.println("	public String toString() {");
+					out.println("		StringBuilder builder = new StringBuilder(\"{" + DataClassType.IMMUTABLE.getClassPrefix() + nameKernel + " \");");
+					out.println("		buildBaseFieldsDescription(builder);");
+					out.println("		builder.append('}');");
+					out.println("		return builder.toString();");
+					out.println("	}");
+				}
+			});
+		} else {
+			dataModel.put("equals", NopDirective.instance);
+			dataModel.put("hashCode", NopDirective.instance);
+			dataModel.put("toString", NopDirective.instance);
+		}
+		if (dataClassType == DataClassType.MUTABLE) {
+			dataModel.put("copyFrom", new TemplateDirectiveModel() {
+				@Override
+				public void execute(Environment environment, @SuppressWarnings("rawtypes") Map parameters, TemplateModel[] loopVariables, TemplateDirectiveBody body) throws TemplateException, IOException {
+					PrintWriter out = new PrintWriter(environment.getOut());
+					out.println();
+					out.println("	/**");
+					out.println("	 * Copies field values from the specified object.");
+					out.println("	 * @param other the object to copy values from");
+					out.println("	 */");
+					out.println("	public void copyFrom(" + DataClassType.READABLE.getClassPrefix() + nameKernel + " other) {");
+					body.render(out);
+					out.println("	}");
+				}
+			});
+		} else {
+			dataModel.put("copyFrom", NopDirective.instance);
+		}
 	}
 
 }

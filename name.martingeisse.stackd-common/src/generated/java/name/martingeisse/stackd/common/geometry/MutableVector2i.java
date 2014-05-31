@@ -6,6 +6,7 @@
 
 package name.martingeisse.stackd.common.geometry;
 
+
 /**
  *
  */
@@ -64,6 +65,16 @@ public class MutableVector2i extends ReadableVector2i {
 	 */
 	public void setY(int y) {
 		this.y = y;
+	}
+
+
+	/**
+	 * Copies field values from the specified object.
+	 * @param other the object to copy values from
+	 */
+	public void copyFrom(ReadableVector2i other) {
+		x = other.getX();
+		y = other.getY();
 	}
 
 }

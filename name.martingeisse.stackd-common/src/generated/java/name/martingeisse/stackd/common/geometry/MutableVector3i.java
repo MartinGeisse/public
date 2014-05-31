@@ -6,6 +6,7 @@
 
 package name.martingeisse.stackd.common.geometry;
 
+
 /**
  *
  */
@@ -88,6 +89,17 @@ public class MutableVector3i extends ReadableVector3i {
 	 */
 	public void setZ(int z) {
 		this.z = z;
+	}
+
+
+	/**
+	 * Copies field values from the specified object.
+	 * @param other the object to copy values from
+	 */
+	public void copyFrom(ReadableVector3i other) {
+		x = other.getX();
+		y = other.getY();
+		z = other.getZ();
 	}
 
 }
