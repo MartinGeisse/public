@@ -69,7 +69,16 @@ public final class RectangularRegion {
 		this.endY = y + 1;
 		this.endZ = z + 1;
 	}
-
+	
+	/**
+	 * Constructor for a single cube at the specified position.
+	 * 
+	 * @param position the position
+	 */
+	public RectangularRegion(final Vector3i position) {
+		this(position.getX(), position.getY(), position.getZ());
+	}
+	
 	/**
 	 * Constructor.
 	 * @param startX the starting x coordinate of the region
@@ -240,6 +249,15 @@ public final class RectangularRegion {
 	 */
 	public boolean contains(int x, int y, int z) {
 		return (x >= startX && x < endX && y >= startY && y < endY && z >= startZ && z < endZ);
+	}
+
+	/**
+	 * Checks whether the specified cell is within this region.
+	 * @param position the position of the cell
+	 * @return true if the cell is within this region, false if not
+	 */
+	public boolean contains(final Vector3i position) {
+		return contains(position.getX(), position.getY(), position.getZ());
 	}
 
 	/**

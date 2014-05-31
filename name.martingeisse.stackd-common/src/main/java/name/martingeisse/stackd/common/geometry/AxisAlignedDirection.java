@@ -205,6 +205,17 @@ public enum AxisAlignedDirection {
 	}
 
 	/**
+	 * See {@link #select(int, int, int)}.
+	 * 
+	 * @param v the vector that contains the (x, y, z) coordinates.
+	 * @return the signed amount in this direction
+	 */
+	public int select(ReadableVector3i v) {
+		int unsigned = (axis == 0) ? v.getX() : (axis == 1) ? v.getY() : v.getZ();
+		return (negative ? -unsigned : unsigned);
+	}
+
+	/**
 	 * Returns the signed amount in this direction, e.g. the x value for
 	 * the positive x direction, -x for the negative x direction, and so on.
 	 * 
@@ -239,6 +250,17 @@ public enum AxisAlignedDirection {
 	}
 
 	/**
+	 * See {@link #select(double, double, double)}.
+	 * 
+	 * @param v the vector that contains the (x, y, z) coordinates.
+	 * @return the signed amount in this direction
+	 */
+	public double select(ReadableVector3d v) {
+		double unsigned = (axis == 0) ? v.getX() : (axis == 1) ? v.getY() : v.getZ();
+		return (negative ? -unsigned : unsigned);
+	}
+	
+	/**
 	 * Returns the amount along the axis of this direction, e.g. the
 	 * x value for positive or negative x directions, and so on.
 	 * 
@@ -251,6 +273,16 @@ public enum AxisAlignedDirection {
 		return (axis == 0) ? x : (axis == 1) ? y : z;
 	}
 
+	/**
+	 * See {@link #select(int, int, int)}.
+	 * 
+	 * @param v the vector that contains the (x, y, z) coordinates.
+	 * @return the amount along the axis of this direction
+	 */
+	public int selectByAxis(ReadableVector3i v) {
+		return (axis == 0) ? v.getX() : (axis == 1) ? v.getY() : v.getZ();
+	}
+	
 	/**
 	 * Returns the amount along the axis of this direction, e.g. the
 	 * x value for positive or negative x directions, and so on.
@@ -275,6 +307,16 @@ public enum AxisAlignedDirection {
 	 */
 	public double selectByAxis(double x, double y, double z) {
 		return (axis == 0) ? x : (axis == 1) ? y : z;
+	}
+
+	/**
+	 * See {@link #selectByAxis(double, double, double)}.
+	 * 
+	 * @param v the vector that contains the (x, y, z) coordinates.
+	 * @return the amount along the axis of this direction
+	 */
+	public double selectByAxis(ReadableVector3d v) {
+		return (axis == 0) ? v.getX() : (axis == 1) ? v.getY() : v.getZ();
 	}
 	
 }
