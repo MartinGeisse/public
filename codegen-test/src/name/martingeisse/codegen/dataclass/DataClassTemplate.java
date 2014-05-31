@@ -103,6 +103,9 @@ public abstract class DataClassTemplate extends JavaFileTemplate {
 					out.println("	 * Getter method for the " + name + ".");
 					out.println("	 * @return the " + name);
 					out.println("	 */");
+					if (hasConcreteGetters) {
+						out.println("	@Override");
+					}
 					out.println("	public " + (hasAbstractGetters ? "abstract " : "") + type + " get" + capitalizedName + (hasAbstractGetters ? "();" : "() {"));
 					if (hasConcreteGetters) {
 						out.println("		return " + name + ";");

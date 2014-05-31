@@ -36,6 +36,7 @@ public abstract class BaseVector2i extends ReadableVector2i {
 	 * Getter method for the x.
 	 * @return the x
 	 */
+	@Override
 	public int getX() {
 		return x;
 	}
@@ -44,6 +45,7 @@ public abstract class BaseVector2i extends ReadableVector2i {
 	 * Getter method for the y.
 	 * @return the y
 	 */
+	@Override
 	public int getY() {
 		return y;
 	}

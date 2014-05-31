@@ -43,6 +43,7 @@ public abstract class BaseVector3d extends ReadableVector3d {
 	 * Getter method for the x.
 	 * @return the x
 	 */
+	@Override
 	public double getX() {
 		return x;
 	}
@@ -51,6 +52,7 @@ public abstract class BaseVector3d extends ReadableVector3d {
 	 * Getter method for the y.
 	 * @return the y
 	 */
+	@Override
 	public double getY() {
 		return y;
 	}
@@ -59,6 +61,7 @@ public abstract class BaseVector3d extends ReadableVector3d {
 	 * Getter method for the z.
 	 * @return the z
 	 */
+	@Override
 	public double getZ() {
 		return z;
 	}

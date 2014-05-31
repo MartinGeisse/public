@@ -43,6 +43,7 @@ public abstract class BaseEulerAngles extends ReadableEulerAngles {
 	 * Getter method for the horizontalAngle.
 	 * @return the horizontalAngle
 	 */
+	@Override
 	public double getHorizontalAngle() {
 		return horizontalAngle;
 	}
@@ -51,6 +52,7 @@ public abstract class BaseEulerAngles extends ReadableEulerAngles {
 	 * Getter method for the verticalAngle.
 	 * @return the verticalAngle
 	 */
+	@Override
 	public double getVerticalAngle() {
 		return verticalAngle;
 	}
@@ -59,6 +61,7 @@ public abstract class BaseEulerAngles extends ReadableEulerAngles {
 	 * Getter method for the rollAngle.
 	 * @return the rollAngle
 	 */
+	@Override
 	public double getRollAngle() {
 		return rollAngle;
 	}

@@ -104,9 +104,9 @@ public abstract class JavaFileTemplate {
 	 * @throws TemplateException on errors in the template
 	 */
 	public void renderToSourcePath(JavaTemplateContext context) throws IOException, TemplateException {
-		PrintWriter w = context.openTextFile(packageName, className + ".java");
-		renderToWriter(context, w);
-		w.close();
+		try (PrintWriter w = context.openTextFile(packageName, className + ".java")) {
+			renderToWriter(context, w);
+		}
 	}
 	
 	/**

@@ -36,6 +36,7 @@ public class MutableVector2d extends ReadableVector2d {
 	 * Getter method for the x.
 	 * @return the x
 	 */
+	@Override
 	public double getX() {
 		return x;
 	}
@@ -52,6 +53,7 @@ public class MutableVector2d extends ReadableVector2d {
 	 * Getter method for the y.
 	 * @return the y
 	 */
+	@Override
 	public double getY() {
 		return y;
 	}

@@ -43,6 +43,7 @@ public class MutableVector3i extends ReadableVector3i {
 	 * Getter method for the x.
 	 * @return the x
 	 */
+	@Override
 	public int getX() {
 		return x;
 	}
@@ -59,6 +60,7 @@ public class MutableVector3i extends ReadableVector3i {
 	 * Getter method for the y.
 	 * @return the y
 	 */
+	@Override
 	public int getY() {
 		return y;
 	}
@@ -75,6 +77,7 @@ public class MutableVector3i extends ReadableVector3i {
 	 * Getter method for the z.
 	 * @return the z
 	 */
+	@Override
 	public int getZ() {
 		return z;
 	}
