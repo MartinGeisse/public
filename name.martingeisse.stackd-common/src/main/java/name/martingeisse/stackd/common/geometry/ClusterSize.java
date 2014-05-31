@@ -210,8 +210,17 @@ public final class ClusterSize implements Comparable<ClusterSize> {
 			i++;
 		}
 		return result;
-		
 
+	}
+
+	/**
+	 * See {@link #getBorderDirections(int, int, int)}.
+	 * 
+	 * @param v the vector that contains the (x, y, z) coordinates.
+	 * @return the directions toward neighbor clusters
+	 */
+	public AxisAlignedDirection[] getBorderDirections(final Vector3i v) {
+		return getBorderDirections(v.getX(), v.getY(), v.getZ());
 	}
 
 }

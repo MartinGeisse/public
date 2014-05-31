@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import name.martingeisse.stackd.common.geometry.ClusterSize;
+import name.martingeisse.stackd.common.geometry.ReadableVector3i;
 
 /**
  * Base class for cube matrix implementations. This class also provides
@@ -144,6 +145,17 @@ public abstract class Cubes {
 	public abstract byte getCubeRelative(final ClusterSize clusterSize, final int x, final int y, final int z);
 
 	/**
+	 * Returns the cube value for the specified relative position.
+	 * 
+	 * @param clusterSize the cluster size
+	 * @param position the position
+	 * @return the cube value
+	 */
+	public final byte getCubeRelative(final ClusterSize clusterSize, final ReadableVector3i position) {
+		return getCubeRelative(clusterSize, position.getX(), position.getY(), position.getZ());
+	}
+	
+	/**
 	 * Sets the cube value for the specified relative position. This method may fail to update
 	 * this object in-place and return a new {@link Cubes} object instead, which should then
 	 * be used instead of this object. In either case, this method returns the {@link Cubes}
@@ -158,6 +170,22 @@ public abstract class Cubes {
 	 * @return the cubes object to use after the modification
 	 */
 	public abstract Cubes setCubeRelative(final ClusterSize clusterSize, final int x, final int y, final int z, final byte value);
+	
+	/**
+	 * Sets the cube value for the specified relative position. This method may fail to update
+	 * this object in-place and return a new {@link Cubes} object instead, which should then
+	 * be used instead of this object. In either case, this method returns the {@link Cubes}
+	 * instance to use after the modification (which is this object if it was able to handle the
+	 * modification in-place).
+	 * 
+	 * @param clusterSize the cluster size
+	 * @param position the position
+	 * @param value the cube value to set
+	 * @return the cubes object to use after the modification
+	 */
+	public final Cubes setCubeRelative(final ClusterSize clusterSize, final ReadableVector3i position, final byte value) {
+		return setCubeRelative(clusterSize, position.getX(), position.getY(), position.getZ(), value);
+	}
 
 	/**
 	 * Creates a new {@link RawCubes} from the data in this object, or returns
