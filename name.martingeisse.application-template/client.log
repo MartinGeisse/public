@@ -1,0 +1,86 @@
+2014-06-05 07:11:44,542 main name.martingeisse.ucademy.Main INFO: ----- starting frontend with config file: test.properties -----
+2014-06-05 07:11:45,069 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find Snappy class, you should make sure the Snappy library is in the classpath if you intend to use it. Snappy compression will not be available for the protocol.
+2014-06-05 07:11:45,072 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find LZ4 class, you should make sure the LZ4 library is in the classpath if you intend to use it. LZ4 compression will not be available for the protocol.
+2014-06-05 07:11:46,094 Thread-3 org.eclipse.jetty.server.Server INFO: jetty-8.1.15.v20140411
+2014-06-05 07:11:47,535 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-49ab2fa4] init: Wicket core library initializer
+2014-06-05 07:11:47,539 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2014-06-05 07:11:47,540 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2014-06-05 07:11:47,540 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2014-06-05 07:11:47,541 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2014-06-05 07:11:47,541 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2014-06-05 07:11:47,542 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2014-06-05 07:11:47,542 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-49ab2fa4] init: Wicket extensions initializer
+2014-06-05 07:11:47,744 Thread-3 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-49ab2fa4] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2014-06-05 07:11:47,803 Thread-3 org.eclipse.jetty.server.AbstractConnector INFO: Started SelectChannelConnector@0.0.0.0:8080
+2014-06-05 07:11:48,998 main name.martingeisse.ucademy.Main INFO: ----- starting frontend with config file: test.properties -----
+2014-06-05 07:11:49,163 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find Snappy class, you should make sure the Snappy library is in the classpath if you intend to use it. Snappy compression will not be available for the protocol.
+2014-06-05 07:11:49,165 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find LZ4 class, you should make sure the LZ4 library is in the classpath if you intend to use it. LZ4 compression will not be available for the protocol.
+2014-06-05 07:11:49,996 Thread-3 org.eclipse.jetty.server.Server INFO: jetty-8.1.15.v20140411
+2014-06-05 07:11:51,490 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-1111c0d7] init: Wicket core library initializer
+2014-06-05 07:11:51,497 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2014-06-05 07:11:51,498 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2014-06-05 07:11:51,499 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2014-06-05 07:11:51,500 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2014-06-05 07:11:51,500 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2014-06-05 07:11:51,507 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2014-06-05 07:11:51,507 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-1111c0d7] init: Wicket extensions initializer
+2014-06-05 07:11:51,588 Thread-3 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-1111c0d7] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2014-06-05 07:11:51,727 Thread-3 org.eclipse.jetty.util.component.AbstractLifeCycle WARN: FAILED SelectChannelConnector@0.0.0.0:8080: java.net.BindException: Address already in use
+java.net.BindException: Address already in use
+	at sun.nio.ch.Net.bind0(Native Method)
+	at sun.nio.ch.Net.bind(Net.java:444)
+	at sun.nio.ch.Net.bind(Net.java:436)
+	at sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:214)
+	at sun.nio.ch.ServerSocketAdaptor.bind(ServerSocketAdaptor.java:74)
+	at org.eclipse.jetty.server.nio.SelectChannelConnector.open(SelectChannelConnector.java:187)
+	at org.eclipse.jetty.server.AbstractConnector.doStart(AbstractConnector.java:316)
+	at org.eclipse.jetty.server.nio.SelectChannelConnector.doStart(SelectChannelConnector.java:265)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:64)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:293)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:64)
+	at name.martingeisse.ucademy.application.Initializer.initializeWeb(Initializer.java:138)
+	at name.martingeisse.ucademy.Main$4.run(Main.java:74)
+2014-06-05 07:11:51,760 Thread-3 org.eclipse.jetty.util.component.AbstractLifeCycle WARN: FAILED org.eclipse.jetty.server.Server@4e27a127: java.net.BindException: Address already in use
+java.net.BindException: Address already in use
+	at sun.nio.ch.Net.bind0(Native Method)
+	at sun.nio.ch.Net.bind(Net.java:444)
+	at sun.nio.ch.Net.bind(Net.java:436)
+	at sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:214)
+	at sun.nio.ch.ServerSocketAdaptor.bind(ServerSocketAdaptor.java:74)
+	at org.eclipse.jetty.server.nio.SelectChannelConnector.open(SelectChannelConnector.java:187)
+	at org.eclipse.jetty.server.AbstractConnector.doStart(AbstractConnector.java:316)
+	at org.eclipse.jetty.server.nio.SelectChannelConnector.doStart(SelectChannelConnector.java:265)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:64)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:293)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:64)
+	at name.martingeisse.ucademy.application.Initializer.initializeWeb(Initializer.java:138)
+	at name.martingeisse.ucademy.Main$4.run(Main.java:74)
+2014-06-05 07:14:32,248 main name.martingeisse.ucademy.Main INFO: ----- starting frontend with config file: test.properties -----
+2014-06-05 07:14:32,453 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find Snappy class, you should make sure the Snappy library is in the classpath if you intend to use it. Snappy compression will not be available for the protocol.
+2014-06-05 07:14:32,455 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find LZ4 class, you should make sure the LZ4 library is in the classpath if you intend to use it. LZ4 compression will not be available for the protocol.
+2014-06-05 07:14:32,995 Thread-3 org.eclipse.jetty.server.Server INFO: jetty-8.1.15.v20140411
+2014-06-05 07:14:34,165 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-69f46631] init: Wicket core library initializer
+2014-06-05 07:14:34,180 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2014-06-05 07:14:34,210 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2014-06-05 07:14:34,211 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2014-06-05 07:14:34,212 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2014-06-05 07:14:34,212 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2014-06-05 07:14:34,213 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2014-06-05 07:14:34,213 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-69f46631] init: Wicket extensions initializer
+2014-06-05 07:14:34,300 Thread-3 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-69f46631] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2014-06-05 07:14:34,357 Thread-3 org.eclipse.jetty.server.AbstractConnector INFO: Started SelectChannelConnector@0.0.0.0:8080
+2014-06-05 07:14:59,085 main name.martingeisse.ucademy.Main INFO: ----- starting frontend with config file: test.properties -----
+2014-06-05 07:14:59,215 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find Snappy class, you should make sure the Snappy library is in the classpath if you intend to use it. Snappy compression will not be available for the protocol.
+2014-06-05 07:14:59,217 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find LZ4 class, you should make sure the LZ4 library is in the classpath if you intend to use it. LZ4 compression will not be available for the protocol.
+2014-06-05 07:14:59,891 Thread-3 org.eclipse.jetty.server.Server INFO: jetty-8.1.15.v20140411
+2014-06-05 07:15:01,061 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-41ce774e] init: Wicket core library initializer
+2014-06-05 07:15:01,068 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2014-06-05 07:15:01,070 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2014-06-05 07:15:01,071 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2014-06-05 07:15:01,072 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2014-06-05 07:15:01,073 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2014-06-05 07:15:01,074 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2014-06-05 07:15:01,074 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-41ce774e] init: Wicket extensions initializer
+2014-06-05 07:15:01,163 Thread-3 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-41ce774e] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2014-06-05 07:15:01,308 Thread-3 org.eclipse.jetty.server.AbstractConnector INFO: Started SelectChannelConnector@0.0.0.0:8080
+2014-06-05 07:15:01,348 Thread-1 com.datastax.driver.core.policies.DCAwareRoundRobinPolicy INFO: Using data-center name 'datacenter1' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)

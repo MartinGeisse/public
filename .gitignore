@@ -18,6 +18,8 @@
 /jtex/texmf/fonts/
 /pixel/bin/
 .DS_Store
+/name.martingeisse.application-template/bin/
+/name.martingeisse.application-template/target/
 /name.martingeisse.common/bin/
 /name.martingeisse.common/target/
 /name.martingeisse.image/bin/
