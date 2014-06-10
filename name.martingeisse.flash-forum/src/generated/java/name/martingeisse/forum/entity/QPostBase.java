@@ -44,14 +44,14 @@ public class QPostBase extends com.mysema.query.sql.RelationalPathBase<PostBase>
     public final NumberPath<Long> conversationId = createNumber("conversation_id", Long.class);
 
     /**
+     * Metamodel property for property 'creation_instant'
+     */
+    public final NumberPath<Long> creationInstant = createNumber("creation_instant", Long.class);
+
+    /**
      * Metamodel property for property 'id'
      */
     public final NumberPath<Long> id = createNumber("id", Long.class);
-
-    /**
-     * Metamodel property for property 'order_index'
-     */
-    public final NumberPath<Integer> orderIndex = createNumber("order_index", Integer.class);
 
     /**
      * Metamodel property for primary key 'PRIMARY'
@@ -64,9 +64,9 @@ public class QPostBase extends com.mysema.query.sql.RelationalPathBase<PostBase>
     public final com.mysema.query.sql.ForeignKey<Conversation> fk_postBaseFk1 = createForeignKey(conversationId, "id");
 
     /**
-     * Metamodel property for reverse foreign key 'post_image_fk_1'
+     * Metamodel property for reverse foreign key 'post_file_fk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<PostImage> fk__postImageFk1 = createInvForeignKey(id, "post_base_id");
+    public final com.mysema.query.sql.ForeignKey<PostFile> fk__postFileFk1 = createInvForeignKey(id, "post_base_id");
 
     /**
      * Metamodel property for reverse foreign key 'post_text_fk_1'

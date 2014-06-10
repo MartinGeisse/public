@@ -6,7 +6,6 @@ package name.martingeisse.forum.entity;
 import name.martingeisse.wicket.model.database.EntityModel;
 import name.martingeisse.sql.terms.IEntityWithId;
 import com.mysema.query.sql.SQLQuery;
-import name.martingeisse.sql.terms.IEntityWithOrderIndex;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import name.martingeisse.sql.EntityConnectionManager;
 import org.apache.wicket.model.IModel;
@@ -15,7 +14,7 @@ import java.io.Serializable;
 /**
  * This class represents rows from table 'post_base'.
  */
-public class PostBase implements Serializable, IEntityWithId<Long>, IEntityWithOrderIndex {
+public class PostBase implements Serializable, IEntityWithId<Long> {
 
     /**
      * Constructor.
@@ -44,14 +43,14 @@ public class PostBase implements Serializable, IEntityWithId<Long>, IEntityWithO
     private Long conversationId;
 
     /**
+     * the creationInstant
+     */
+    private Long creationInstant;
+
+    /**
      * the id
      */
     private Long id;
-
-    /**
-     * the orderIndex
-     */
-    private Integer orderIndex;
 
     /**
      * Getter method for the authorIdenticonCode.
@@ -118,6 +117,22 @@ public class PostBase implements Serializable, IEntityWithId<Long>, IEntityWithO
     }
 
     /**
+     * Getter method for the creationInstant.
+     * @return the creationInstant
+     */
+    public Long getCreationInstant() {
+        return creationInstant;
+    }
+
+    /**
+     * Setter method for the creationInstant.
+     * @param creationInstant the creationInstant to set
+     */
+    public void setCreationInstant(Long creationInstant) {
+        this.creationInstant = creationInstant;
+    }
+
+    /**
      * Getter method for the id.
      * @return the id
      */
@@ -135,30 +150,12 @@ public class PostBase implements Serializable, IEntityWithId<Long>, IEntityWithO
         this.id = id;
     }
 
-    /**
-     * Getter method for the orderIndex.
-     * @return the orderIndex
-     */
-    @Override
-    public Integer getOrderIndex() {
-        return orderIndex;
-    }
-
-    /**
-     * Setter method for the orderIndex.
-     * @param orderIndex the orderIndex to set
-     */
-    @Override
-    public void setOrderIndex(Integer orderIndex) {
-        this.orderIndex = orderIndex;
-    }
-
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "{PostBase. authorIdenticonCode = " + authorIdenticonCode + ", authorIpAddress = " + authorIpAddress + ", authorName = " + authorName + ", conversationId = " + conversationId + ", id = " + id + ", orderIndex = " + orderIndex + "}";
+        return "{PostBase. authorIdenticonCode = " + authorIdenticonCode + ", authorIpAddress = " + authorIpAddress + ", authorName = " + authorName + ", conversationId = " + conversationId + ", creationInstant = " + creationInstant + ", id = " + id + "}";
     }
 
     /**
@@ -191,7 +188,7 @@ public class PostBase implements Serializable, IEntityWithId<Long>, IEntityWithO
         insert.set(q.authorIpAddress, authorIpAddress);
         insert.set(q.authorName, authorName);
         insert.set(q.conversationId, conversationId);
-        insert.set(q.orderIndex, orderIndex);
+        insert.set(q.creationInstant, creationInstant);
         id = insert.executeWithKey(Long.class);
     }
 

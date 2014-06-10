@@ -11,17 +11,17 @@ import com.mysema.query.types.path.*;
 import static com.mysema.query.types.PathMetadataFactory.*;
 
 /**
- * QPostImage is a Querydsl query type for PostImage
+ * QPostFile is a Querydsl query type for PostFile
  */
 @Generated("name.martingeisse.sql.codegen.MetaDataSerializer")
-public class QPostImage extends com.mysema.query.sql.RelationalPathBase<PostImage> {
+public class QPostFile extends com.mysema.query.sql.RelationalPathBase<PostFile> {
 
-    private static final long serialVersionUID = 893597811;
+    private static final long serialVersionUID = 1552753508;
 
     /**
      * The default instance of this class.
      */
-    public static final QPostImage postImage = new QPostImage("post_image");
+    public static final QPostFile postFile = new QPostFile("post_file");
 
     /**
      * Metamodel property for property 'content_type'
@@ -32,6 +32,11 @@ public class QPostImage extends com.mysema.query.sql.RelationalPathBase<PostImag
      * Metamodel property for property 'data'
      */
     public final SimplePath<byte[]> data = createSimple("data", byte[].class);
+
+    /**
+     * Metamodel property for property 'filename'
+     */
+    public final StringPath filename = createString("filename");
 
     /**
      * Metamodel property for property 'id'
@@ -46,35 +51,35 @@ public class QPostImage extends com.mysema.query.sql.RelationalPathBase<PostImag
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PostImage> pk_primary = createPrimaryKey(id);
+    public final com.mysema.query.sql.PrimaryKey<PostFile> pk_primary = createPrimaryKey(id);
 
     /**
-     * Metamodel property for foreign key 'post_image_fk_1'
+     * Metamodel property for foreign key 'post_file_fk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<PostBase> fk_postImageFk1 = createForeignKey(postBaseId, "id");
+    public final com.mysema.query.sql.ForeignKey<PostBase> fk_postFileFk1 = createForeignKey(postBaseId, "id");
 
     /**
      * Path-variable based constructor.
      * @param variable the path variable for this entity
      */
-    public QPostImage(String variable) {
-        super(PostImage.class, forVariable(variable), "null", "post_image");
+    public QPostFile(String variable) {
+        super(PostFile.class, forVariable(variable), "null", "post_file");
     }
 
     /**
      * Path based constructor
      * @param path the path for this entity
      */
-    public QPostImage(Path<? extends PostImage> path) {
-        super(path.getType(), path.getMetadata(), "null", "post_image");
+    public QPostFile(Path<? extends PostFile> path) {
+        super(path.getType(), path.getMetadata(), "null", "post_file");
     }
 
     /**
      * Path metadata based constructor
      * @param metadata the path metadata for this entity
      */
-    public QPostImage(PathMetadata<?> metadata) {
-        super(PostImage.class, metadata, "null", "post_image");
+    public QPostFile(PathMetadata<?> metadata) {
+        super(PostFile.class, metadata, "null", "post_file");
     }
 
 }

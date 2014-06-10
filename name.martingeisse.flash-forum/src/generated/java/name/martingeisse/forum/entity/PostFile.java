@@ -12,14 +12,14 @@ import org.apache.wicket.model.IModel;
 import java.io.Serializable;
 
 /**
- * This class represents rows from table 'post_image'.
+ * This class represents rows from table 'post_file'.
  */
-public class PostImage implements Serializable, IEntityWithId<Long> {
+public class PostFile implements Serializable, IEntityWithId<Long> {
 
     /**
      * Constructor.
      */
-    public PostImage() {
+    public PostFile() {
     }
 
     /**
@@ -31,6 +31,11 @@ public class PostImage implements Serializable, IEntityWithId<Long> {
      * the data
      */
     private byte[] data;
+
+    /**
+     * the filename
+     */
+    private String filename;
 
     /**
      * the id
@@ -75,6 +80,22 @@ public class PostImage implements Serializable, IEntityWithId<Long> {
     }
 
     /**
+     * Getter method for the filename.
+     * @return the filename
+     */
+    public String getFilename() {
+        return filename;
+    }
+
+    /**
+     * Setter method for the filename.
+     * @param filename the filename to set
+     */
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    /**
      * Getter method for the id.
      * @return the id
      */
@@ -113,7 +134,7 @@ public class PostImage implements Serializable, IEntityWithId<Long> {
      */
     @Override
     public String toString() {
-        return "{PostImage. contentType = " + contentType + ", data = " + data + ", id = " + id + ", postBaseId = " + postBaseId + "}";
+        return "{PostFile. contentType = " + contentType + ", data = " + data + ", filename = " + filename + ", id = " + id + ", postBaseId = " + postBaseId + "}";
     }
 
     /**
@@ -121,8 +142,8 @@ public class PostImage implements Serializable, IEntityWithId<Long> {
      * @param id the id of the record to load
      * @return the loaded record
      */
-    public static PostImage findById(long id) {
-        final QPostImage q = QPostImage.postImage;
+    public static PostFile findById(long id) {
+        final QPostFile q = QPostFile.postFile;
         final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
         return query.from(q).where(q.id.eq(id)).singleResult(q);
     }
@@ -132,18 +153,19 @@ public class PostImage implements Serializable, IEntityWithId<Long> {
      * @param id the id of the record to load
      * @return the model loading the record
      */
-    public static IModel<PostImage> getModelForId(long id) {
-        return new EntityModel<PostImage>(QPostImage.postImage, QPostImage.postImage.id.eq(id));
+    public static IModel<PostFile> getModelForId(long id) {
+        return new EntityModel<PostFile>(QPostFile.postFile, QPostFile.postFile.id.eq(id));
     }
 
     /**
      * Inserts a record into the database using all fields from this object except the ID, then updates the ID.
      */
     public void insert() {
-        final QPostImage q = QPostImage.postImage;
+        final QPostFile q = QPostFile.postFile;
         final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(q);
         insert.set(q.contentType, contentType);
         insert.set(q.data, data);
+        insert.set(q.filename, filename);
         insert.set(q.postBaseId, postBaseId);
         id = insert.executeWithKey(Long.class);
     }

@@ -132,10 +132,7 @@
 						<buildCommand>
 							<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
 							<arguments>
-								<dictionary>
-									<key>LaunchConfigHandle</key>
-									<value>&lt;project&gt;/.externalToolBuilders/Compass.launch</value>
-								</dictionary>
+								<LaunchConfigHandle>&lt;project&gt;/.externalToolBuilders/Compass.launch</LaunchConfigHandle>
 							</arguments>
 						</buildCommand>
 					</additionalBuildcommands>

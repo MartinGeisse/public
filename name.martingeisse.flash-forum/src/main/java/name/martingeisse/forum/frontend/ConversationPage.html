@@ -37,7 +37,8 @@
 	<body>
 		<wicket:extend>
 			<div wicket:id="posts" style="margin-bottom: 20px;">
-				<b wicket:id="authorName">Author</b>
+				<div wicket:id="creationInstant" style="float: right; width: 200px; text-align: right; " />
+				<div><b wicket:id="authorName">Author</b></div>
 				<div wicket:id="body">body</div>
 			</div>
 			<form wicket:id="postForm" id="postForm">
@@ -50,6 +51,9 @@
 			<div id="scrollAnchor" />
 			<wicket:fragment wicket:id="postImageFragment">
 				<img wicket:id="image" />
+			</wicket:fragment>
+			<wicket:fragment wicket:id="postFileFragment">
+				<a wicket:id="link"><span class="glyphicon glyphicon-file" /> <span wicket:id="filename" /></a>
 			</wicket:fragment>
 		</wicket:extend>
 	</body>
