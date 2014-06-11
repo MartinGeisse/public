@@ -1,0 +1,28 @@
+<?php
+
+$x = array(
+	0 => 'zero', // works as int
+	'0' => 's-zero', // converted to int
+	1 => 'eins', // works as int
+	'1' => 's-eins', // converted to int
+	-1 => 'minus-eins', // works as int
+	'-1' => 's-minus-eins', // converted to int
+	23.45 => 'zwo-drei', // rounded to 23
+	'23.45' => 's-zwo-drei', // works as string
+	-56.78 => 'nochntest', // rounded to 56
+	'-56.78' => 's-nochntest', // works as string
+	'foo' => 'bar', // works as string
+	true => 'true', // maps to 1
+	'true' => 's-true', // works as string
+	false => 'false', // maps to 0
+	'false' => 's-false', // works as string
+	null => 'null', // maps to empty string
+	'null' => 's-null', // works as string
+	'' => 'nix', // works as string
+);
+echo '<pre>';
+var_dump($x);
+
+// arrays work as if there were only string indices, except that integer strings
+// are returned to the outside as integers. null, true, false are mapped when
+// used. float values get rounded towards zero, float strings get used as strings.

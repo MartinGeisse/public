@@ -1,0 +1,15 @@
+
+Features needed for simple customizing:
+- arrays (equality/identity = optional)
+- array() special expression
+- various operators
+- variable interpolation in "" strings
+- empty(), isset()
+- explode, implode (+ aliases)
+- foreach loop
+- strlen, strtolower, strtoupper, strpos, strstr, stripos, stristr, str_replace, ...
+- unset, incl. array field unset
+- number_format
+- preg_match, preg_replace, preg_match_all, ...
+- count(), array_slice()
+
