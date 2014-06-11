@@ -2,7 +2,9 @@
 
 $x = <<<FOO
 blarp
-FOO
+blupp
+bar
+FOO;
 $y = 'a';
 
 ?>

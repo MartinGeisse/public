@@ -56,13 +56,13 @@ import java_cup.runtime.ComplexSymbolFactory.Location;
 		if (identifier.equals(heredocNowdocMarker)) {
 			return buildHeredocNowdocString();
 		} else {
-			handleHeredocNowdocContentLine(line);
+			handleHeredocNowdocContent(identifier);
 			return null;
 		}
 	}
 	
-	private void handleHeredocNowdocContentLine(String line) {
-		stringBuilder.append(line);
+	private void handleHeredocNowdocContent(String content) {
+		stringBuilder.append(content);
 	}
 	
 	private Symbol buildHeredocNowdocString() {
@@ -154,13 +154,13 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	
 	// heredoc and nowdoc
 	{UnquotedHeredocStarter} {
-		beginHeredocNowdoc(yytext, false, true);
+		beginHeredocNowdoc(yytext(), false, true);
 	}
 	{QuotedHeredocStarter} {
-		beginHeredocNowdoc(yytext, true, true);
+		beginHeredocNowdoc(yytext(), true, true);
 	}
 	{NowdocStarter} {
-		beginHeredocNowdoc(yytext, true, false);
+		beginHeredocNowdoc(yytext(), true, false);
 	}
 	
 	// punctuation (some of these can be operators too)
@@ -210,6 +210,15 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	}
 	"interface" {
 		return symbol(Tokens.INTERFACE);
+	}
+	"extends" {
+		return symbol(Tokens.EXTENDS);
+	}
+	"implements" {
+		return symbol(Tokens.IMPLEMENTS);
+	}
+	"const" {
+		return symbol(Tokens.CONST);
 	}
 	
 	// modifier keywords
@@ -280,6 +289,12 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	}
 	"finally" {
 		return symbol(Tokens.FINALLY);
+	}
+	"global" {
+		return symbol(Tokens.GLOBAL);
+	}
+	"echo" {
+		return symbol(Tokens.ECHO);
 	}
 	
 	// computation and logical operators
@@ -505,7 +520,7 @@ HeredocNowdocContentLine = .* {LineTerminator}
 		}
 	}
 	{HeredocNowdocContentLine} {
-		handleHeredocNowdocContentLine(yytext());
+		handleHeredocNowdocContent(yytext());
 	}
 }
 

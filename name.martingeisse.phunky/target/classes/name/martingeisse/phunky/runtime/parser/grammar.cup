@@ -12,6 +12,7 @@ import java_cup.runtime.ComplexSymbolFactory.ComplexSymbol;
 import java_cup.runtime.Symbol;
 import java.util.List;
 import java.util.ArrayList;
+import org.apache.commons.lang3.tuple.Pair;
 
 // scanner behavior
 init with {:
@@ -69,18 +70,20 @@ terminal COLON;
 terminal COMMA;
 
 // compilation object keywords
-terminal FUNCTION, CLASS, INTERFACE;
+terminal FUNCTION, CLASS, INTERFACE, EXTENDS, IMPLEMENTS;
 
 // modifier keywords
 terminal PUBLIC, PROTECTED, PRIVATE;
 terminal STATIC, ABSTRACT, FINAL;
-terminal VAR;
+terminal VAR, CONST;
 
 // statement keywords
 terminal FOR, FOREACH, UNTIL, DO, WHILE, BREAK;
 terminal IF, ELSEIF, ELSE;
 terminal RETURN;
 terminal THROW, TRY, CATCH, FINALLY;
+terminal GLOBAL;
+terminal ECHO;
 
 // computation and logical operators
 terminal PLUS, MINUS, TIMES, DIVIDE, MOD;
@@ -119,6 +122,9 @@ non terminal Statement statement;
 non terminal List<Expression> expressions;
 non terminal List<Expression> one_or_more_expressions;
 non terminal Expression expression;
+non terminal List<Pair<Expression, Expression>> array_literal_elements;
+non terminal List<Pair<Expression, Expression>> one_or_more_array_literal_elements;
+non terminal Pair<Expression, Expression> array_literal_element;
 non terminal List<String> parameter_declarations;
 non terminal List<String> one_or_more_parameter_declarations;
 non terminal String parameter_declaration;
@@ -131,15 +137,16 @@ non terminal List<String> oop_interface_extends_clause;
 non terminal List<String> interface_references;
 non terminal List<String> one_or_more_interface_references;
 non terminal String interface_reference;
+non terminal List<OopMemberDefinition> oop_member_definitions;
 non terminal OopMemberDefinition oop_member_definition;
 non terminal List<OopEntityModifier> oop_entity_modifiers;
 non terminal OopEntityModifier oop_entity_modifier;
 
 // precedences
+precedence left SEMICOLON; // needed for error recovery
+precedence right ASSIGN;
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE, MOD;
-precedence right ASSIGN;
-precedence left SEMICOLON; // needed for error recovery
 
 
 // ------------------------------------------------------------------------------------
@@ -167,15 +174,22 @@ statement ::=
 	SEMICOLON
 		{: RESULT = new NopStatement(); :} 
 	| expression:e SEMICOLON
-		{: RESULT = new ExpressionStatement(e); :} 
-	| IDENTIFIER:id expression:e SEMICOLON
-		{: RESULT = ParserHelper.buildKeywordExpressionStatement(idxleft, id, e); :}
-	| VERBATIM_CONTENT:c
-		{: RESULT = new ExpressionStatement(new FunctionCall("echo", new LiteralExpression(c))); :}
+		{: RESULT = new ExpressionStatement(e); :}
 	| OPENING_CURLY_BRACE statements:sts CLOSING_CURLY_BRACE
 		{: RESULT = new StatementSequence(sts); :}
+	| VERBATIM_CONTENT:c
+		{: RESULT = new ExpressionStatement(new FunctionCall("echo", new LiteralExpression(c))); :}
+		 
+	| ECHO one_or_more_expressions:exs SEMICOLON
+		{: RESULT = new ExpressionStatement(new FunctionCall("echo", exs.toArray(new Expression[exs.size()]))); :}
+	| GLOBAL LOCAL_VARIABLE:v SEMICOLON
+		{: RESULT = new GlobalStatement(v); :}
+		
 	| FUNCTION IDENTIFIER:id OPENING_PARENTHESIS parameter_declarations:decls CLOSING_PARENTHESIS OPENING_CURLY_BRACE statements:sts CLOSING_CURLY_BRACE
 		{: RESULT = new FunctionDefinition(id, decls.toArray(new String[decls.size()]), new StatementSequence(sts)); :}
+	| oop_type_definition:def
+		{: RESULT = def; :}
+		
 	| error SEMICOLON
 		{: System.err.println("syntax error"); RESULT = new NopStatement(); :}
 ;
@@ -198,14 +212,20 @@ one_or_more_expressions ::=
 ;
 
 expression ::=
+
 	BOOLEAN_LITERAL:e
 		{: RESULT = new LiteralExpression(e); :}
 	| INTEGER_LITERAL:e
 		{: RESULT = new LiteralExpression(e); :}
 	| STRING_LITERAL:e 
 		{: RESULT = new LiteralExpression(e); :}
-	| LOCAL_VARIABLE:e 
-		{: RESULT = new LocalVariableExpression(e); :}
+	| LOCAL_VARIABLE:id
+		{: RESULT = new LocalVariableExpression(id); :}
+	| IDENTIFIER:id
+		{: RESULT = new ConstantExpression(id); :}
+	| OPENING_PARENTHESIS expression:e CLOSING_PARENTHESIS
+		{: RESULT = e; :}
+	
 	| expression:e1 PLUS expression:e2
 		{: RESULT = new BinaryExpression(e1, BinaryOperator.ADD, e2); :} 
 	| expression:e1 MINUS expression:e2
@@ -218,10 +238,34 @@ expression ::=
 		{: RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
 	| expression:e1 ASSIGN expression:e2
 		{: RESULT = new BinaryExpression(e1, BinaryOperator.ASSIGN, e2); :}
+
 	| IDENTIFIER:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
 		{: RESULT = ParserHelper.buildFunctionCallLikeExpression(idxleft, id, exs); :}
+	| ARRAY OPENING_PARENTHESIS array_literal_elements:els CLOSING_PARENTHESIS
+		{: RESULT = new ArrayConstructionExpression(els); :}
+
 	| error
 		{: RESULT = new LiteralExpression(null); :}
+;
+
+array_literal_elements ::=
+		{: RESULT = new ArrayList<Pair<Expression, Expression>>(); :}
+	| one_or_more_array_literal_elements:els
+		{: RESULT = els; :}
+;
+
+one_or_more_array_literal_elements ::=
+	array_literal_element:el
+		{: RESULT = new ArrayList<Pair<Expression, Expression>>(); RESULT.add(el); :}
+	| one_or_more_array_literal_elements:els COMMA array_literal_element:el
+		{: els.add(el); RESULT = els; :}
+;
+
+array_literal_element ::=
+	expression:v
+		{: RESULT = Pair.of(null, v); :}
+	| expression:k RIGHT_ARROW expression:v
+		{: RESULT = Pair.of(k, v); :}
 ;
 
 // ------------------------------------------------------------------------------------
@@ -253,7 +297,7 @@ parameter_declaration ::=
 oop_type_definition ::= 
 	CLASS IDENTIFIER:id oop_class_extends_clause oop_class_implements_clause OPENING_CURLY_BRACE oop_member_definitions:members CLOSING_CURLY_BRACE
 		{: :}
-	INTERFACE IDENTIFIER:id oop_interface_extends_clause OPENING_CURLY_BRACE oop_member_definitions:members CLOSING_CURLY_BRACE
+	| INTERFACE IDENTIFIER:id oop_interface_extends_clause OPENING_CURLY_BRACE oop_member_definitions:members CLOSING_CURLY_BRACE
 		{: :}
 ;
 
@@ -297,14 +341,20 @@ interface_reference ::=
 // --- OOP member definition productions
 // ------------------------------------------------------------------------------------
 
+oop_member_definitions ::=
+		{: RESULT = new ArrayList<OopMemberDefinition>(); :}
+	| oop_member_definitions:mbrs oop_member_definition:mbr
+		{: mbrs.add(mbr); RESULT = mbrs; :}
+	;
+
 oop_member_definition ::=
-	CONST IDENTIFIER:id ASSIGN EXPRESSION:e SEMICOLON
+	CONST IDENTIFIER:id ASSIGN expression:e SEMICOLON
 		{: :}
 	| VAR LOCAL_VARIABLE:v SEMICOLON
 		{: :}
-	| oop_entity_modifiers:mod LOCAL_VARIABLE:v SEMICOLON
+	| oop_entity_modifiers:mods LOCAL_VARIABLE:v SEMICOLON
 		{: :}
-	| oop_entity_modifiers:mod FUNCTION IDENTIFIER:id OPENING_PARENTHESIS parameter_declarations:decls CLOSING_PARENTHESIS OPENING_CURLY_BRACE statements:sts CLOSING_CURLY_BRACE
+	| oop_entity_modifiers:mods FUNCTION IDENTIFIER:id OPENING_PARENTHESIS parameter_declarations:decls CLOSING_PARENTHESIS OPENING_CURLY_BRACE statements:sts CLOSING_CURLY_BRACE
 		{: :}
 ;
 
@@ -314,8 +364,8 @@ oop_member_definition ::=
 
 oop_entity_modifiers ::=
 		{: RESULT = new ArrayList<OopEntityModifier>(); :}
-	| oop_entity_modifiers:sts oop_entity_modifier:st
-		{: sts.add(st); RESULT = sts; :}
+	| oop_entity_modifiers:mods oop_entity_modifier:mod
+		{: mods.add(mod); RESULT = mods; :}
 ;
 
 oop_entity_modifier ::=

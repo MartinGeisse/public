@@ -23,6 +23,7 @@ public final class ParserGeneratorMain {
 			"-destdir", "src/main/java/name/martingeisse/phunky/runtime/parser",
 			"-parser", "Parser",
 			"-symbols", "Tokens",
+//			"-dump",
 			"src/main/java/name/martingeisse/phunky/runtime/parser/grammar.cup",
 		};
 		java_cup.Main.main(cupArgs);

@@ -4,22 +4,43 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.phunky.runtime.code.declaration;
+package name.martingeisse.phunky.runtime.code.statement;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
-import name.martingeisse.phunky.runtime.code.statement.Statement;
 
 /**
  * TODO
  */
-public class OopTypeDefinition implements Statement {
+public final class GlobalStatement implements Statement {
+
+	/**
+	 * the variableName
+	 */
+	private final String variableName;
+
+	/**
+	 * Constructor.
+	 * @param variableName the variable name to make global
+	 */
+	public GlobalStatement(final String variableName) {
+		this.variableName = variableName;
+	}
+
+	/**
+	 * Getter method for the variableName.
+	 * @return the variableName
+	 */
+	public String getVariableName() {
+		return variableName;
+	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#execute(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
 	public void execute(Environment environment) {
+		// TODO
 	}
 
 	/* (non-Javadoc)
@@ -27,6 +48,9 @@ public class OopTypeDefinition implements Statement {
 	 */
 	@Override
 	public void dump(CodeDumper dumper) {
+		dumper.print("global ");
+		dumper.print(variableName);
+		dumper.println(";");
 	}
-
+	
 }
