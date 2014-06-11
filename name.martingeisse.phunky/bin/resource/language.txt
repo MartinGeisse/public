@@ -1,5 +1,0 @@
-
-class BinaryString: stores bytes, not chars. Required to support PHP strlen() etc. because there
-	might be an encoding mismatch otherwise
-
-
