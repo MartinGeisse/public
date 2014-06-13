@@ -62,7 +62,7 @@ terminal String VERBATIM_CONTENT;
 terminal OPENING_PARENTHESIS, CLOSING_PARENTHESIS;
 terminal OPENING_CURLY_BRACE, CLOSING_CURLY_BRACE;
 terminal OPENING_SQUARE_BRACKET, CLOSING_SQUARE_BRACKET;
-terminal RIGHT_ARROW;
+terminal RIGHT_ARROW, DOUBLE_RIGHT_ARROW;
 terminal SEMICOLON;
 terminal SCOPE_RESOLUTION;
 terminal QUESTION_MARK;
@@ -86,9 +86,10 @@ terminal GLOBAL;
 terminal ECHO;
 
 // computation and logical operators
-terminal PLUS, MINUS, TIMES, DIVIDE, MOD;
-terminal LOGICAL_NOT, SHORTCUT_AND, SHORTCUT_OR;
+terminal PLUS, MINUS, TIMES, DIVIDE, MOD, CONCAT, POWER;
+terminal LOGICAL_NOT, LOGICAL_SHORTCUT_AND, LOGICAL_SHORTCUT_OR;
 terminal BITWISE_NOT, BITWISE_AND, BITWISE_OR, BITWISE_XOR;
+terminal LOW_PRECEDENCE_LOGICAL_SHORTCUT_AND, LOW_PRECEDENCE_LOGICAL_SHORTCUT_OR, LOW_PRECEDENCE_LOGICAL_SHORTCUT_XOR;
 terminal SHIFT_LEFT, SHIFT_RIGHT;
 
 // comparison operators
@@ -106,6 +107,8 @@ terminal SHIFT_LEFT_ASSIGN, SHIFT_RIGHT_ASSIGN;
 terminal ARRAY;
 terminal SELF;
 terminal PARENT;
+terminal NEW;
+terminal INSTANCEOF;
 
 // primitive expressions
 terminal NULL_LITERAL;
@@ -239,10 +242,19 @@ expression ::=
 	| expression:e1 ASSIGN expression:e2
 		{: RESULT = new BinaryExpression(e1, BinaryOperator.ASSIGN, e2); :}
 
-	| IDENTIFIER:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
+	| identifier:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
 		{: RESULT = ParserHelper.buildFunctionCallLikeExpression(idxleft, id, exs); :}
 	| ARRAY OPENING_PARENTHESIS array_literal_elements:els CLOSING_PARENTHESIS
 		{: RESULT = new ArrayConstructionExpression(els); :}
+		
+	| NEW identifier:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
+		{: RESULT = new NewExpression(id, exs); :}
+	| expression:e INSTANCEOF identifier:id
+		{: RESULT = new InstanceofExpression(e, id); :}
+	| expression:obj RIGHT_ARROW identifier:id
+		{: RESULT = new FieldAccess(obj, id); :}
+	| expression:obj RIGHT_ARROW identifier:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
+		{: RESULT = new MethodCall(obj, id, exs); :}
 
 	| error
 		{: RESULT = new LiteralExpression(null); :}
@@ -264,7 +276,7 @@ one_or_more_array_literal_elements ::=
 array_literal_element ::=
 	expression:v
 		{: RESULT = Pair.of(null, v); :}
-	| expression:k RIGHT_ARROW expression:v
+	| expression:k DOUBLE_RIGHT_ARROW expression:v
 		{: RESULT = Pair.of(k, v); :}
 ;
 

@@ -182,8 +182,11 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	"]" {
 		return symbol(Tokens.CLOSING_SQUARE_BRACKET);
 	}
-	"=>" {
+	"->" {
 		return symbol(Tokens.RIGHT_ARROW);
+	}
+	"=>" {
+		return symbol(Tokens.DOUBLE_RIGHT_ARROW);
 	}
 	";" {
 		return symbol(Tokens.SEMICOLON);
@@ -313,6 +316,9 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	"%" {
 		return symbol(Tokens.MOD);
 	}
+	"**" {
+		return symbol(Tokens.POWER);
+	}
 	"!" {
 		return symbol(Tokens.LOGICAL_NOT);
 	}
@@ -346,6 +352,9 @@ HeredocNowdocContentLine = .* {LineTerminator}
 		return symbol(Tokens.EQUAL);
 	}
 	"!=" {
+		return symbol(Tokens.NOT_EQUAL);
+	}
+	"<>" {
 		return symbol(Tokens.NOT_EQUAL);
 	}
 	"===" {
@@ -392,6 +401,9 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	"%=" {
 		return symbol(Tokens.MOD_ASSIGN);
 	}
+	".=" {
+		return symbol(Tokens.CONCAT_ASSIGN);
+	}
 	"&=" {
 		return symbol(Tokens.BITWISE_AND_ASSIGN);
 	}
@@ -417,6 +429,12 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	}
 	"parent" {
 		return symbol(Tokens.PARENT);
+	}
+	"new" {
+		return symbol(Tokens.NEW);
+	}
+	"instanceof" {
+		return symbol(Tokens.INSTANCEOF);
 	}
 	
 	// literals
