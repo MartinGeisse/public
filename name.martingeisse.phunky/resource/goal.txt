@@ -17,3 +17,27 @@ are simply stored in whatever encoding the source file used. Phunky, in contrast
 expects source code to be UTF-8 encoded, and converts string literals to an
 internal encoding (one string element per Unicode character) that PHP doesn't
 even have. 
+
+----------------------------------
+
+Finding the goal of the Phunky project is becoming more important because PHP
+shows more and more weirdness the deeper you dig:
+	
+	$$x = 15; // uses the variable $x as the name of the variable to set...
+		// not really weird but error-prone and marginally useful
+		
+	Operator precendence documentation is wrong, and the English and German
+		versions tell vastly different things. Real operator precedence in the
+		implementation is often not as expected ( == >=, ?:)
+
+	$ is explained as an operator, but actually isn't (can only be used in a few
+		special places)
+		
+	References to array elements do not work as explained, because references
+		in general work different as explained. (Explained: multiple names for
+		one variable; actual: reference flag in zval structure)
+	
+Therefore, it is important to find the purpose of the whole project:
+- drop-in replacement for PHP, runs PHP projects...?
+- PHP-like scripting language for applications...?
+- PHP-like application development language...?

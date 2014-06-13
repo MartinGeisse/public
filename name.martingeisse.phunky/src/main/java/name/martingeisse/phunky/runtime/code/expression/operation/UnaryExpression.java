@@ -2,10 +2,12 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.phunky.runtime.code.expression;
+package name.martingeisse.phunky.runtime.code.expression.operation;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpression;
+import name.martingeisse.phunky.runtime.code.expression.Expression;
 
 /**
  * Applies a {@link UnaryOperator} to a sub-expression.

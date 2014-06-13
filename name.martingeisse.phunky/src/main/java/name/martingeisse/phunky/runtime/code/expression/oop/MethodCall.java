@@ -2,7 +2,11 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.phunky.runtime.code.expression;
+package name.martingeisse.phunky.runtime.code.expression.oop;
+
+import name.martingeisse.phunky.runtime.code.expression.AbstractCallExpression;
+import name.martingeisse.phunky.runtime.code.expression.Expression;
+
 
 /**
  * This expression calls a method of an object.

@@ -2,7 +2,10 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.phunky.runtime.code.expression;
+package name.martingeisse.phunky.runtime.code.expression.oop;
+
+import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpression;
+import name.martingeisse.phunky.runtime.code.expression.Expression;
 
 /**
  * This expression checks whether a value is an instance of a class.

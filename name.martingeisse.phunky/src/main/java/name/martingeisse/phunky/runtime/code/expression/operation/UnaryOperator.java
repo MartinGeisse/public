@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.phunky.runtime.code.expression;
+package name.martingeisse.phunky.runtime.code.expression.operation;
 
 /**
  * This enum contains all unary operators.

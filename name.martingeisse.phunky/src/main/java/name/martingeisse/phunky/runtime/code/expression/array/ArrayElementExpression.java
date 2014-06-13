@@ -4,17 +4,18 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.phunky.runtime.code.expression;
+package name.martingeisse.phunky.runtime.code.expression.array;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.Variable;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.code.expression.AbstractVariableExpression;
+import name.martingeisse.phunky.runtime.code.expression.Expression;
 
 /**
- * This expression can be used to append an element to an array.
- * It can only be used to 
+ * This expression selects one element of an array.
  */
-public final class ArrayAppendExpression extends AbstractVariableExpression {
+public final class ArrayElementExpression extends AbstractVariableExpression {
 
 	/**
 	 * the arrayExpression
@@ -22,13 +23,20 @@ public final class ArrayAppendExpression extends AbstractVariableExpression {
 	private final Expression arrayExpression;
 
 	/**
+	 * the keyExpression
+	 */
+	private final Expression keyExpression;
+
+	/**
 	 * Constructor.
 	 * @param arrayExpression the expression that determines the array
+	 * @param keyExpression the expression that determines the key
 	 */
-	public ArrayAppendExpression(final Expression arrayExpression) {
+	public ArrayElementExpression(final Expression arrayExpression, final Expression keyExpression) {
 		this.arrayExpression = arrayExpression;
+		this.keyExpression = keyExpression;
 	}
-	
+
 	/**
 	 * Getter method for the arrayExpression.
 	 * @return the arrayExpression
@@ -36,12 +44,21 @@ public final class ArrayAppendExpression extends AbstractVariableExpression {
 	public Expression getArrayExpression() {
 		return arrayExpression;
 	}
-	
+
+	/**
+	 * Getter method for the keyExpression.
+	 * @return the keyExpression
+	 */
+	public Expression getKeyExpression() {
+		return keyExpression;
+	}
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#getVariable(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
-	public Variable getVariable(Environment environment) {
+	public Variable getVariable(final Environment environment) {
+		// TODO
 		return null;
 	}
 
@@ -49,7 +66,7 @@ public final class ArrayAppendExpression extends AbstractVariableExpression {
 	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#getOrCreateVariable(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
-	public Variable getOrCreateVariable(Environment environment) {
+	public Variable getOrCreateVariable(final Environment environment) {
 		// TODO
 		return null;
 	}
@@ -58,9 +75,11 @@ public final class ArrayAppendExpression extends AbstractVariableExpression {
 	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#dump(name.martingeisse.phunky.runtime.code.CodeDumper)
 	 */
 	@Override
-	public void dump(CodeDumper dumper) {
+	public void dump(final CodeDumper dumper) {
 		arrayExpression.dump(dumper);
-		dumper.print("[]");
+		dumper.print('[');
+		keyExpression.dump(dumper);
+		dumper.print(']');
 	}
 
 }
