@@ -13,23 +13,30 @@ import name.martingeisse.phunky.runtime.code.expression.Expression;
 
 
 /**
- * Represents a "new SomeClass(...)" expression.
+ * This expression calls a method of an object.
  */
-public class NewExpression extends AbstractCallExpression {
+public class StaticMethodCall extends AbstractCallExpression {
 
 	/**
 	 * the className
 	 */
 	private final String className;
+	
+	/**
+	 * the methodName
+	 */
+	private final String methodName;
 
 	/**
 	 * Constructor.
-	 * @param className the name of the class to instantiate
+	 * @param className the expression that determines the object whose method gets called
+	 * @param methodName the name of the method to call
 	 * @param parameters the constructor parameters
 	 */
-	public NewExpression(String className, Expression... parameters) {
+	public StaticMethodCall(String className, String methodName, Expression... parameters) {
 		super(parameters);
-		this.className = className;
+		this.className = Self.normalize(className);
+		this.methodName = methodName;
 	}
 
 	/**
@@ -38,6 +45,14 @@ public class NewExpression extends AbstractCallExpression {
 	 */
 	public String getClassName() {
 		return className;
+	}
+	
+	/**
+	 * Getter method for the methodName.
+	 * @return the methodName
+	 */
+	public String getMethodName() {
+		return methodName;
 	}
 
 	/* (non-Javadoc)
