@@ -5,47 +5,38 @@
 package name.martingeisse.phunky.runtime.value;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import name.martingeisse.common.util.ImmutableIteratorWrapper;
-import name.martingeisse.phunky.runtime.ErrorReporter;
+import name.martingeisse.phunky.runtime.Environment;
+import name.martingeisse.phunky.runtime.Variable;
+import name.martingeisse.phunky.runtime.code.statement.Statement;
 
 /**
- * PHP Array. This is a key/value map with an additional key order.
+ * PHP Array. This is similar to a {@link LinkedHashMap}, i.e. a map with an
+ * additional imposed order, with a few extra features:
  * 
- * Feature list:
+ * - string keys. PHP key behavior can be reduced to string-only keys, with
+ *   a bit of special behavior for keys that can be parsed as integers.
+ *   Specifically, 42 and "42" are considered to be the same key.
  * 
- * - key/value map using string keys. PHP key behavior can be reduced
- *   to string-only keys, with a bit of special behavior for keys that
- *   can be parsed as integers. Specifically, 42 and "42" are considered
- *   to be the same key.
+ * - each element is a {@link Variable} and can be the target of PHP references
  *   
- * - missing entries are different from entries whose value is null
+ * - missing entries are different from entries whose value is null (the latter have
+ *   a variable, while the former don't)
  * 
- * - key order. All entries have an order that by default is the
- *   insertion order, but can be manipulated separately. Specifically,
- *   this separate order affects numeric and non-numeric indices
- *   equally, and is separate from the numeric order on numeric indices.
- *   
  * - remembers the highest-used numeric index to generate new indices
  *   when appending elements
  */
-public final class PhpArray {
+public final class PhpArray implements PhpIterable {
 
 	/**
-	 * the keyValueMap
+	 * the elements
 	 */
-	private final HashMap<String, Object> keyValueMap = new HashMap<>();
-	
-	/**
-	 * the keyList
-	 */
-	private final ArrayList<String> keyList = new ArrayList<>();
+	private final LinkedHashMap<String, Variable> elements = new LinkedHashMap<>();
 	
 	/**
 	 * the highestNumericIndexUsed
@@ -53,89 +44,59 @@ public final class PhpArray {
 	private int highestNumericIndexUsed = -1;
 	
 	/**
-	 * Checks whether this array is empty.
-	 * @return true if empty, false if not
-	 */
-	public boolean isEmpty() {
-		return keyList.isEmpty();
-	}
-
-	/**
-	 * Appends a value to this array. This is the same as {@link #put(String, Object)},
-	 * using the highest used integer index so far, plus one, as the key. Note that the
-	 * highest-used integer index is remembered separately, even if that index is removed
-	 * from this array.
+	 * Appends an element to this array, using the highest used integer index so far, plus
+	 * one, as the key. Note that the highest-used integer index is remembered separately,
+	 * even if that index is removed from this array.
 	 * 
 	 * The new entry is appended at the end of the array.
 	 * 
-	 * @param value the value to append
+	 * @return the variable for the new element
 	 */
-	public void append(Object value) {
-		putWithIntegerIndex(highestNumericIndexUsed + 1, value);
+	public Variable append() {
+		highestNumericIndexUsed++;
+		Variable variable = new Variable();
+		elements.put(Integer.toString(highestNumericIndexUsed), variable);
+		return variable;
 	}
 	
 	/**
-	 * Gets the value for a key. This method returns null for missing keys.
+	 * Inserts or replaces a variable, using the specified key.
 	 * @param key the key
-	 * @return the value
+	 * @param variable the variable to set
 	 */
-	public Object get(String key) {
-		return keyValueMap.get(key);
-	}
-	
-	/**
-	 * Gets the value for a key. This method returns null for missing keys, but also
-	 * reports them as warnings to the specified error reporter.
-	 * 
-	 * @param key the key
-	 * @param errorReporter the error reporter used to report missing keys
-	 * @return the value
-	 */
-	public Object get(String key, ErrorReporter errorReporter) {
-		if (!keyValueMap.containsKey(key)) {
-			errorReporter.reportWarning("undefined index: " + key);
-		}
-		return keyValueMap.get(key);
-	}
-	
-	/**
-	 * Puts a value into the array. TODO describe exact effect on key order
-	 * @param key the key
-	 * @param value the value
-	 */
-	public void put(String key, Object value) {
-		if (key == null) {
-			key = "";
-		}
+	public void setVariable(String key, Variable variable) {
+		elements.put(key, variable);
 		try {
-			putWithIntegerIndex(Integer.parseInt(key), value);
+			highestNumericIndexUsed = Math.max(highestNumericIndexUsed, Integer.parseInt(key));
 		} catch (NumberFormatException e) {
-			putWithStringIndex(key, value);
 		}
 	}
-
+	
 	/**
-	 * 
+	 * Returns the variable for the specified key, or null TODO
+	 * @param key
+	 * @return
 	 */
-	private void putWithIntegerIndex(int index, Object value) {
-		highestNumericIndexUsed = Math.max(highestNumericIndexUsed, index);
-		// TODO
+	public Variable getVariable(String key) {
+		
 	}
 	
 	/**
-	 * 
+	 * Returns the variable for the specified key, creating it TODO 
+	 * @param key
+	 * @return
 	 */
-	private void putWithStringIndex(String index, Object value) {
-		// TODO
+	public Variable getOrCreateVariable(String key) {
+		
 	}
 	
-	/**
-	 * Unsets an array entry.
-	 * @param key the key to unset
+	/* (non-Javadoc)
+	 * @see java.util.HashMap#put(java.lang.Object, java.lang.Object)
 	 */
-	public void unset(String key) {
-		keyValueMap.remove(key);
-		keyList.remove(key);
+	@Override
+	public Object put(String key, Object value) {
+		Object result = super.put(key, value);
+		return result;
 	}
 	
 	/**
@@ -143,7 +104,7 @@ public final class PhpArray {
 	 * @return the newly created list
 	 */
 	public List<String> getOrderedCopyOfKeys() {
-		return new ArrayList<>(keyList);
+		return new ArrayList<>(keySet());
 	}
 	
 	/**
@@ -151,23 +112,15 @@ public final class PhpArray {
 	 * @return the newly created list
 	 */
 	public List<Object> getOrderedCopyOfValues() {
-		final ArrayList<Object> result = new ArrayList<>();
-		for (String key : keyList) {
-			result.add(keyValueMap.get(key));
-		}
-		return result;
+		return new ArrayList<>(values());
 	}
 	
 	/**
 	 * Builds a list that contains the entries from this array in the order they are stored.
 	 * @return the newly created list
 	 */
-	public List<Pair<String, Object>> getOrderedCopyOfEntries() {
-		final ArrayList<Pair<String, Object>> result = new ArrayList<>();
-		for (String key : keyList) {
-			result.add(Pair.of(key, keyValueMap.get(key)));
-		}
-		return result;
+	public List<Map.Entry<String, Object>> getOrderedCopyOfEntries() {
+		return new ArrayList<>(entrySet());
 	}
 	
 	/**
@@ -214,13 +167,32 @@ public final class PhpArray {
 	 * 
 	 * @return the iterable
 	 */
-	public Iterable<Pair<String, Object>> getCopyingEntryIterable() {
-		return new Iterable<Pair<String, Object>>() {
+	public Iterable<Map.Entry<String, Object>> getCopyingEntryIterable() {
+		return new Iterable<Map.Entry<String, Object>>() {
 			@Override
-			public Iterator<Pair<String, Object>> iterator() {
+			public Iterator<Map.Entry<String, Object>> iterator() {
 				return new ImmutableIteratorWrapper<>(getOrderedCopyOfEntries().iterator());
 			}
 		};
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.value.PhpIterable#iterate(name.martingeisse.phunky.runtime.Environment, java.lang.String, java.lang.String, name.martingeisse.phunky.runtime.code.statement.Statement)
+	 */
+	@Override
+	public void iterate(Environment environment, String keyIterationVariableName, String valueIterationVariableName, Statement body) {
+		if (keyIterationVariableName == null) {
+			for (Object value : getCopyingValueIterable()) {
+				environment.getOrCreate(valueIterationVariableName).setValue(value);
+				body.execute(environment);
+			}
+		} else {
+			for (Map.Entry<String, Object> entry : getCopyingEntryIterable()) {
+				environment.getOrCreate(keyIterationVariableName).setValue(entry.getKey());
+				environment.getOrCreate(valueIterationVariableName).setValue(entry.getValue());
+				body.execute(environment);
+			}
+		}
 	}
 	
 }

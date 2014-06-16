@@ -7,10 +7,13 @@
 package name.martingeisse.phunky.runtime.code.expression.array;
 
 import java.util.List;
+
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.value.PhpArray;
+import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -45,8 +48,13 @@ public class ArrayConstructionExpression extends AbstractComputeExpression {
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-		// TODO
-		return null;
+		PhpArray result = new PhpArray();
+		for (Pair<Expression, Expression> element : elements) {
+			String key = TypeConversionUtil.convertToString(element.getLeft().evaluate(environment));
+			Object value = element.getRight().evaluate(environment);
+			result.put(key, value);
+		}
+		return result;
 	}
 	
 	/* (non-Javadoc)

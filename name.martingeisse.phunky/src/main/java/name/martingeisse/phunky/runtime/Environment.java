@@ -32,4 +32,18 @@ public final class Environment extends HashMap<String, Variable> {
 		return runtime;
 	}
 	
+	/**
+	 * Returns a variable, creating it if it doesn't exist yet.
+	 * @param name the name of the variable
+	 * @return the variable
+	 */
+	public final Variable getOrCreate(String name) {
+		Variable variable = get(name);
+		if (variable == null) {
+			variable = new Variable();
+			put(name, variable);
+		}
+		return variable;
+	}
+	
 }

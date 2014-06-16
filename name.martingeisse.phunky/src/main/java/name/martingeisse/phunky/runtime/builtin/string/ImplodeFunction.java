@@ -4,7 +4,6 @@
 
 package name.martingeisse.phunky.runtime.builtin.string;
 
-import java.util.ArrayList;
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
 import name.martingeisse.phunky.runtime.value.PhpArray;
@@ -50,8 +49,18 @@ public final class ImplodeFunction extends BuiltinCallable {
 			}
 		}
 		
-		// TODO loop
-		return null;
+		// implode the array
+		StringBuilder builder = new StringBuilder();
+		boolean first = true;
+		for (Object value : array.values()) {
+			if (first) {
+				first = false;
+			} else {
+				builder.append(glue);
+			}
+			builder.append(TypeConversionUtil.convertToString(value));
+		}
+		return builder.toString();
 
 	}
 	
