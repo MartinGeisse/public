@@ -13,7 +13,7 @@ import name.martingeisse.phunky.runtime.code.statement.Statement;
 /**
  * TODO
  */
-public class OopTypeDefinition implements Statement {
+public abstract class OopTypeDefinition implements Statement {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#execute(name.martingeisse.phunky.runtime.Environment)

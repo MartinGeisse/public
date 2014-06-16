@@ -41,3 +41,52 @@ Therefore, it is important to find the purpose of the whole project:
 - drop-in replacement for PHP, runs PHP projects...?
 - PHP-like scripting language for applications...?
 - PHP-like application development language...?
+
+----------------------------------
+
+The "goal question" can be mitigated by saying, "Phunky is a framework to implement
+PHP-like languages, including a 100% compatible PHP clone" -- not a language itself.
+I need a good naming scheme then, so the framework won't be confused with the
+language. (-> "Phun" = Language, "Phunky" = Framework ?)
+
+PHP vs. PHP+: 
+- AST classes that support the constructs from both Ls
+- different parsers (or parser with feature flags), e.g.
+	- PHP ?: behavior, PHP+ forbids ?: chaining
+	- indirect variable access ($$x) in PHP, PHP+ forbids these
+	- == vs. >= precedence (this probably needs a different parser)
+- behavior of references -- this is going to be tough
+- string encoding:
+	- parser option how to treat string literals
+	- implementation class BinaryString vs. Java String (uses a byte[] instead of char[],
+		doesn't store an encoding).
+	- alt. implementation: use String (char[]) to store a byte array)
+	- probably needs a different set of built-in string handling functions
+	- going to be cumbersome because this needs to be supported in *all* extensions
+		f.ex. MySQL: Java wants to use Strings and encode them at the end, this itself
+		is a problem with MySQL because the encoding handling of MySQL is unclear; how
+		table encoding and connection encoding work together. Binary Strings add
+		another layer of complexity: a BinaryString needs an encoding to become a String,
+		that is then sent to MySQL.
+			-> JDBC has a connection encoding: http://stackoverflow.com/questions/3040597/jdbc-character-encoding
+			Unclear if it actually re-codes strings if it is using the wrong encoding. Might be
+			that the JDBC encoding is used to turn Java Strings into Binary Strings again
+			and MySQL only uses binary strings.
+			-> MySQL actually *does* a re-coding, but to an encoding that can be configured, so it is
+			   still unclear how this relates to the encoding used in target tables:
+			   http://dev.mysql.com/doc/refman/5.0/en/charset-connection.html
+		-> Extensions need a helper funtion that converts a value to a string of an extension-defined
+			(passed-as-parameter) encoding. This will turn non-string values to string, encode Java
+			strings using that encoding, and re-code BinaryStrings (from what encoding !? -> maybe not
+			re-code but *interpret* binary strings using that encoding).
+
+The encoding issues alone suggest that building a drop-in replacement for PHP is going to be
+extremely hard, not to mention reproducing all weird behavior of the standard library. 
+->
+Seems like building just a PHP-like language for application scripting is much more fun.
+
+
+			
+			
+			
+			

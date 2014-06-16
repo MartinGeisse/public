@@ -135,6 +135,28 @@ public enum BinaryOperator {
 	},
 
 	/**
+	 * Computes x to the power of y.
+	 */
+	POWER("**") {
+
+		/* (non-Javadoc)
+		 * @see name.martingeisse.phunky.runtime.code.BinaryOperator#applyToValues(java.lang.Object, java.lang.Object)
+		 */
+		@Override
+		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
+			final double x = TypeConversionUtil.convertToDouble(leftHandSide);
+			final double y = TypeConversionUtil.convertToDouble(rightHandSide);
+			final double result = Math.pow(x, y);
+			if ((int)result == result) {
+				return (int)result;
+			} else {
+				return result;
+			}
+		}
+
+	},
+
+	/**
 	 * Concatenates the values.
 	 */
 	CONCATENATE(".") {
@@ -217,8 +239,40 @@ public enum BinaryOperator {
 			return !equals;
 		}
 
-	};
+	},
 
+	/**
+	 * Compares the operands for identity.
+	 */
+	IDENTICAL("===") {
+		
+		/* (non-Javadoc)
+		 * @see name.martingeisse.phunky.runtime.code.BinaryOperator#applyToValues(java.lang.Object, java.lang.Object)
+		 */
+		@Override
+		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
+			// TODO
+			return false;
+		}
+		
+	},
+	
+	/**
+	 * Compares the operands for non-identity.
+	 */
+	NOT_IDENTICAL("!==") {
+		
+		/* (non-Javadoc)
+		 * @see name.martingeisse.phunky.runtime.code.BinaryOperator#applyToValues(java.lang.Object, java.lang.Object)
+		 */
+		@Override
+		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
+			// TODO
+			return false;
+		}
+		
+	};
+	
 	/**
 	 * the symbol
 	 */
