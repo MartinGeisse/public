@@ -40,20 +40,20 @@ public final class ExplodeFunction extends BuiltinCallable {
 			throw new RuntimeException("explode() with negative limit not yet implemented");
 		}
 		
-		// TODO PHPArray
+		// explode the string
 		ArrayList<String> segments = new ArrayList<String>();
 		final int delimiterLength = delimiter.length();
 		while (limit > 1) {
 			int index = subject.indexOf(delimiter);
 			if (index == -1) {
 				segments.add(subject);
-				return segments; // TODO PHPArray
+				return PhpArray.fromValues(segments);
 			}
 			segments.add(subject.substring(0, index));
 			subject = subject.substring(index + delimiterLength);
 		}
 		segments.add(subject);
-		return segments; // TODO PHPArray
+		return PhpArray.fromValues(segments);
 
 	}
 	

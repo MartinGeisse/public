@@ -45,6 +45,21 @@ public final class PhpArray implements PhpIterable {
 	private int highestNumericIndexUsed = -1;
 
 	/**
+	 * Returns a new array containing the specified values, in the same order as returned
+	 * by the iterator.
+	 * 
+	 * @param values the values
+	 * @return the array
+	 */
+	public static PhpArray fromValues(Iterable<?> values) {
+		PhpArray array = new PhpArray();
+		for (Object value : values) {
+			array.append().setValue(value);
+		}
+		return array;
+	}
+	
+	/**
 	 * Checks whether this array is empty.
 	 * @return true if empty, false if not
 	 */
