@@ -52,7 +52,7 @@ public final class ImplodeFunction extends BuiltinCallable {
 		// implode the array
 		StringBuilder builder = new StringBuilder();
 		boolean first = true;
-		for (Object value : array.values()) {
+		for (Object value : array.getDirectValueIterable()) {
 			if (first) {
 				first = false;
 			} else {

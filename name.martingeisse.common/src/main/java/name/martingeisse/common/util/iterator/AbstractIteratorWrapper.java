@@ -38,6 +38,11 @@ public abstract class AbstractIteratorWrapper<S, T> implements Iterator<T> {
 	private T next;
 	
 	/**
+	 * the skip
+	 */
+	private boolean skip;
+	
+	/**
 	 * Constructor. Note that before this object can be used, subclasses must invoke
 	 * initialize(). Subclass constructors may have to perform additional preparation
 	 * before that method is invoked, so this cannot be done in this abstract
@@ -57,12 +62,20 @@ public abstract class AbstractIteratorWrapper<S, T> implements Iterator<T> {
 	/**
 	 * This method is invoked for each element (of type S) from the wrapped iterator.
 	 * Subclasses should either return an appropriate element of type T to return
-	 * to client code, or null to skip this element.
+	 * to client code, or call {@link #skip()} to skip the current element. In the
+	 * latter case, the return value is ignored.
 	 * 
 	 * @param element the element from the wrapped iterator
-	 * @return the element to return to client code, or null to skip
+	 * @return the element to return to client code (if not skipped)
 	 */
 	protected abstract T handleElement(S element);
+	
+	/**
+	 * Skips the current element.
+	 */
+	protected final void skip() {
+		skip = true;
+	}
 	
 	/**
 	 * 
@@ -75,8 +88,9 @@ public abstract class AbstractIteratorWrapper<S, T> implements Iterator<T> {
 				return;
 			}
 			S wrappedElement = wrapped.next();
+			skip = false;
 			T mappedElement = handleElement(wrappedElement);
-			if (mappedElement != null) {
+			if (!skip) {
 				next = mappedElement;
 				return;
 			}

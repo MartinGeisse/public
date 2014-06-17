@@ -4,11 +4,10 @@
 
 package name.martingeisse.phunky.runtime.code.expression.oop;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpression;
+import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * Returns the current instance object.

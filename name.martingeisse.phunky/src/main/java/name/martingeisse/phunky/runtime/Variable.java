@@ -4,8 +4,8 @@
 
 package name.martingeisse.phunky.runtime;
 
+import name.martingeisse.phunky.runtime.oop.PhpObject;
 import name.martingeisse.phunky.runtime.value.PhpArray;
-import name.martingeisse.phunky.runtime.value.PhpObject;
 
 /**
  * A variable that can contain a value.

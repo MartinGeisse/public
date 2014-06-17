@@ -11,6 +11,7 @@ import org.apache.commons.collections.iterators.UnmodifiableIterator;
 /**
  * This class wraps another iterator to block off the {@link #remove()} method.
  * It is like {@link UnmodifiableIterator}, just with a type parameter.
+ * @param <T> the element type
  */
 public final class ImmutableIteratorWrapper<T> implements Iterator<T> {
 

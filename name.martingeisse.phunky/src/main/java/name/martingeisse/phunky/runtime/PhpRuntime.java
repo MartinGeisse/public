@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
 import name.martingeisse.phunky.runtime.builtin.EchoFunction;
+import name.martingeisse.phunky.runtime.builtin.string.ImplodeFunction;
 import name.martingeisse.phunky.runtime.builtin.string.StrlenFunction;
 
 /**
@@ -121,6 +122,7 @@ public final class PhpRuntime {
 	public void applyStandardDefinitions() {
 		addBuiltinCallables(new EchoFunction());
 		addBuiltinCallables(new StrlenFunction());
+		addBuiltinCallables(new ImplodeFunction());
 	}
 	
 	/**

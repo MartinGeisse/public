@@ -29,16 +29,6 @@ public abstract class AbstractIterableWrapper<S, T> implements Iterable<T> {
 		this.wrapped = wrapped;
 	}
 
-	/**
-	 * This method is invoked for each element (of type S) from the wrapped iterator.
-	 * Subclasses should either return an appropriate element of type T to return
-	 * to client code, or null to skip this element.
-	 * 
-	 * @param element the element from the wrapped iterator
-	 * @return the element to return to client code, or null to skip
-	 */
-	protected abstract T handleElement(S element);
-	
 	/* (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
 	 */
@@ -53,5 +43,23 @@ public abstract class AbstractIterableWrapper<S, T> implements Iterable<T> {
 		iteratorWrapper.initialize(wrapped.iterator());
 		return iteratorWrapper;
 	}
-	
+
+	/**
+	 * This method is invoked for each element (of type S) from the wrapped iterator.
+	 * Subclasses should either return an appropriate element of type T to return
+	 * to client code, or call {@link #skip(AbstractIteratorWrapper)} to skip the
+	 * current element. In the latter case, the return value is ignored.
+	 * 
+	 * @param element the element from the wrapped iterator
+	 * @return the element to return to client code (if not skipped)
+	 */
+	protected abstract T handleElement(S element);
+
+	/**
+	 * Skips the current element in the specified iterator.
+	 */
+	protected final void skip(AbstractIteratorWrapper<S, T> iterator) {
+		iterator.skip();
+	}
+
 }

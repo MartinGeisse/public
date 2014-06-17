@@ -55,7 +55,7 @@ PHP vs. PHP+:
 	- PHP ?: behavior, PHP+ forbids ?: chaining
 	- indirect variable access ($$x) in PHP, PHP+ forbids these
 	- == vs. >= precedence (this probably needs a different parser)
-- behavior of references -- this is going to be tough
+- behavior of references -- this is going to be tough (but see below)
 - string encoding:
 	- parser option how to treat string literals
 	- implementation class BinaryString vs. Java String (uses a byte[] instead of char[],
@@ -85,8 +85,15 @@ extremely hard, not to mention reproducing all weird behavior of the standard li
 ->
 Seems like building just a PHP-like language for application scripting is much more fun.
 
+----------------------------------
 
-			
-			
-			
-			
+References: I think to rebuild references even remotely they work as in PHP, I have to rebuild the
+"zval" structure. Anything else is going to be different. This isn't going to be nice performance-wise,
+but then, nothing is. Performance lies in optimized libraries that are implemented in Java; the PHP
+code is going to be slow either way.
+
+This also makes aiming for a 100% PHP compatibility mode easier (encodings will still be tough). But if encodings
+are the last hurdle, there's at least some hope to be fully compatible, and this would probably attract *lots*
+of developers.
+
+

@@ -28,9 +28,16 @@ public final class Main {
 	 * @param args command-line arguments (currently ignored)
 	 */
 	public static void main(String[] args) {
-
 		PhpRuntime runtime = new PhpRuntime();
 		runtime.applyStandardDefinitions();
+//		for (File file : new File("samples").listFiles()) {
+//			testSample(runtime, file);
+//		}
+		testSample(runtime, new File("samples/implode.php"));
+	}
+
+	@SuppressWarnings("unused")
+	private static void testAst(PhpRuntime runtime) {
 		StatementSequence program = new StatementSequence(
 
 			// simple tests
@@ -78,34 +85,31 @@ public final class Main {
 		program.execute(runtime.getGlobalEnvironment());
 		runtime.flushOutputWriter();
 		System.out.println();
-		
-		System.out.println("--- test.php ---");
-		runtime.getInterpreter().dump(new File("test.php"));
-		System.out.println("--- execute ---");
-		runtime.getInterpreter().execute(new File("test.php"));
-		runtime.flushOutputWriter();
-		System.out.println("--- end ---");
+	}
 
+	private static void testSample(PhpRuntime runtime, File file) {
 		System.out.println();
 		System.out.println("---------------------------------------------------------------");
 		System.out.println("---------------------------------------------------------------");
 		System.out.println("---------------------------------------------------------------");
 		System.out.println();
-		
-		for (File file : new File("samples").listFiles()) {
-			System.out.println();
-			System.out.println("---------------------------------------------------------------");
-			System.out.println();
-			System.out.println("testing: " + file.getPath());
-			try {
-				runtime.getInterpreter().dump(file);
-			} catch (Exception e) {
-				System.out.println("ERROR: " + e.getMessage());
-				continue;
-			}
-			System.out.println("done");
+		System.out.println("testing: " + file.getPath());
+		try {
+			runtime.getInterpreter().dump(file);
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e.getMessage());
+			return;
 		}
-		
+		System.out.println("---------------------------------------------------------------");
+		try {
+			runtime.getInterpreter().execute(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		runtime.flushOutputWriter();
+		System.out.println();
+		System.out.println("done");
 	}
 	
 }
