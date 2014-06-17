@@ -96,4 +96,64 @@ This also makes aiming for a 100% PHP compatibility mode easier (encodings will 
 are the last hurdle, there's at least some hope to be fully compatible, and this would probably attract *lots*
 of developers.
 
+----------------------------------
+
+Encodings:
+- clearly document the data flow in the Java parts of the system
+- provide configuration switches that can be set from PHP in all relevant places
+- leave it to the system architect to make choices for these switches
+
+Leaving choices to the architect is ok because somebody who just wants a no-work, 100% compatible drop-in
+replacement for PHP won't find one besides PHP itself. Instead of trying to replicate every single weird
+behavior, better provide the tools to implement *expected* behavior. This is a one-time configuration effort
+anyway.
+
+(all this is unlike references, which are not a one-time configuration issue, but part of the core language that
+affects everyday programming)
+
+----------------------------------
+
+There is still the question whether reproducing the exact reference behavior is useful, since most PHP
+programmers don't know about it. This depends, again, on the goals of this project:
+- drop-in replacement: 99% compatibility required
+- unit testing framework: 200% compatibility required
+- PHP-like scripting language: 50% compatibility required
+
+OTOH, I have to check whether a data structure that is 99% PHP-array-like could be implemented in another
+way *at all*. If not, full compatibility might even be the easiest way to implement it. (Aside from leaving
+references out of the language at all, but that's probably a bit over the top).
+->
+For example, implementing references as specified by the PHP documentation requires either of:
+- making a defensive copy of arrays on each assignment
+- using reference flags and checking for them on each assignment
+- propagating the reference flag to "outer" arrays
+--
+The whole problem is basically a "reference to an inner variable of a container data structure", and knowing
+about this when dealing with the container structure. Worse, when using nested arrays, an inner array could
+be passed by-value to a function and that function could create a reference to an element, which would have
+to be propagated to the outer array, which is unknown at that point (barring either a backreference to the
+container array within the inner array, or defensive copies).
+->
+Seems like implementing references "similar to PHP" leaves "exactly like PHP" as the only choice. So I might
+as well do that.
+
+Next question: Can I extend the Variable class to be like _zval_struct, or is zval-like behavior needed not
+only for variables but also for (temporary) *values*? What about returning by reference?
+->
+Could work if Expression.getVariable() is implemented by function calls, and parameters have an "is reference"
+flag that says whether they create a new variable with the same value, or call getVariable() and re-use the
+variable. That way, at least not every expression has to create a zval instance. Not using zval for temporary
+values basically means, "skip the zval in those cases where we know that only its value is used", with
+getVariable() / getOrCreateVariable() telling the expression that we *do* need the zval / Variable and not
+only its value. So using Variable instead of zval is ok.
+--
+But maybe rename getVariable() because it looks too much like a simple getter and not like the side-effect
+loaded thing it is.
+
+Next question: is the refcount part of PhpArray or of Variable? What about is_ref? "Like PHP" would be in
+Variable.
+
+
+
+
 
