@@ -10,7 +10,10 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
 import name.martingeisse.phunky.runtime.builtin.EchoFunction;
+import name.martingeisse.phunky.runtime.builtin.string.ChrFuntion;
 import name.martingeisse.phunky.runtime.builtin.string.ImplodeFunction;
+import name.martingeisse.phunky.runtime.builtin.string.OrdFuntion;
+import name.martingeisse.phunky.runtime.builtin.string.StrRepeatFunction;
 import name.martingeisse.phunky.runtime.builtin.string.StrlenFunction;
 
 /**
@@ -124,6 +127,9 @@ public final class PhpRuntime {
 		addBuiltinCallables(new StrlenFunction().setName("strlen"));
 		addBuiltinCallables(new ImplodeFunction().setName("implode"));
 		addBuiltinCallables(new ImplodeFunction().setName("join"));
+		addBuiltinCallables(new OrdFuntion().setName("ord"));
+		addBuiltinCallables(new ChrFuntion().setName("chr"));
+		addBuiltinCallables(new StrRepeatFunction().setName("str_repeat"));
 	}
 	
 	/**

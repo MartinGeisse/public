@@ -33,7 +33,7 @@ public final class Main {
 //		for (File file : new File("samples").listFiles()) {
 //			testSample(runtime, file);
 //		}
-		testSample(runtime, new File("samples/implode.php"));
+		testSample(runtime, new File("samples/test.php"));
 	}
 
 	@SuppressWarnings("unused")

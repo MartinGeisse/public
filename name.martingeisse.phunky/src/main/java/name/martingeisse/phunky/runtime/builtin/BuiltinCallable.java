@@ -89,5 +89,28 @@ public abstract class BuiltinCallable implements Callable {
 		}
 		return TypeConversionUtil.convertToInt(arguments[position]);
 	}
+	
+	/**
+	 * Returns argument #position as a boolean. If the number of arguments is less than
+	 * that, and a defaultValue is specified, it is returned. Otherwise, this method triggers
+	 * an error and false is returned.
+	 * 
+	 * @param runtime the runtime
+	 * @param arguments the function arguments
+	 * @param position the argument position
+	 * @param defaultValue the default value, or null if none
+	 * @return the value
+	 */
+	protected final boolean getBooleanParameter(PhpRuntime runtime, Object[] arguments, int position, Boolean defaultValue) {
+		if (arguments.length <= position) {
+			if (defaultValue == null) {
+				runtime.triggerError("missing argument #" + position);
+				return false;
+			} else {
+				return defaultValue;
+			}
+		}
+		return TypeConversionUtil.convertToBoolean(arguments[position]);
+	}
 
 }

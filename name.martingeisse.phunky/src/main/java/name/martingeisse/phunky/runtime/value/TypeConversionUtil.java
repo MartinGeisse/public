@@ -112,5 +112,20 @@ public final class TypeConversionUtil {
 		}
 		return value.toString();
 	}
+
+	/**
+	 * Maps a string to a byte array by mapping each character to
+	 * a byte, keeping only the lowest 8 bits of each character code.
+	 * 
+	 * @param s the string
+	 * @return the byte array
+	 */
+	public static byte[] mapStringDirectlyToBinary(String s) {
+		byte[] result = new byte[s.length()];
+		for (int i=0; i<s.length(); i++) {
+			result[i] = (byte)s.charAt(i);
+		}
+		return result;
+	}
 	
 }

@@ -65,8 +65,8 @@ public final class FindSubstringFunction extends BuiltinCallable {
 	 */
 	@Override
 	public Object call(PhpRuntime runtime, Object[] arguments) {
-		final String haystack = getStringParameter(runtime, arguments, 0, "");
-		final String needle = getStringParameter(runtime, arguments, 0, "");
+		final String haystack = getStringParameter(runtime, arguments, 0, null);
+		final String needle = getStringParameter(runtime, arguments, 0, null);
 		final int startPosition;
 		if (caseSensitive) {
 			if (reverseSearch) {

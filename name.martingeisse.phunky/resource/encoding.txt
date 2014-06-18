@@ -1,0 +1,36 @@
+
+Phunky String =^= array of cells. Each cell contains a 16-bit unsigned integer.
+
+Character =^= sequence of one or more cells. Mapping between cells and characters
+depends is called the encoding. A string doesn't know its encoding.
+
+"Java String Encoding": 1 cell = 1 character, storing any character from the 16-bit
+Unicode character set. Used by default for mb_* functions.
+
+String functions like substr() work on cells. String functions like mb_* work
+on characters, but since the default internal encoding is "Java" the normal
+functions and the mb_* functions do the same. Only when another encoding than
+the "Java" encoding is used, either by passing it as a parameter or by calling
+mb_set_encoding() (?) do these functions do different things.
+-> keeping "Java" as the internal enoding avoids suble bugs.
+
+Loading external strings can be done in two ways:
+- using an encoding to map bytes to characters, then mapping characters to cells
+  using the "Java" encoding. This is done with source files, using UTF-8 as
+  the encoding.
+- mapping bytes to cells directly and leaving it to the programmer to apply
+  an encoding.
+Specification should say that bytes are always mapped directly to cells, then
+	optionally an encoding is applied. This is exactly the same but much
+	easier to understand. The direct mapping isn't actually executed internally
+	when an encoding is specified. ("applied" means: transcode from X to "Java")
+Using the "Java" encoding on external strings has no effect, since "using X"
+	here means "transcode from X to 'Java'".
+
+Differences to plain PHP:
+- recommended internal encoding is "Java", not UTF-8
+- source files are stored using a source file encoding (by default UTF-8), yet
+	string literals use "Java" encoding. PHP string literals would use the
+	same encoding as the source code for the literal.
+
+
