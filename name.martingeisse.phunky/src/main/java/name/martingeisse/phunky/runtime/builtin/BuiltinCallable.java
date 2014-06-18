@@ -7,7 +7,6 @@ package name.martingeisse.phunky.runtime.builtin;
 import name.martingeisse.phunky.runtime.Callable;
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
-import name.martingeisse.phunky.util.Name;
 
 /**
  * Helper class to simplify the implementation of built-in functions
@@ -16,14 +15,35 @@ import name.martingeisse.phunky.util.Name;
 public abstract class BuiltinCallable implements Callable {
 
 	/**
-	 * Returns the name of this function, as specified by the {@link Name} annotation.
+	 * the name
+	 */
+	private String name;
+
+	/**
+	 * Constructor.
+	 */
+	public BuiltinCallable() {
+		setName(getClass().getSimpleName());
+	}
+	
+	/**
+	 * Getter method for the name.
 	 * @return the name
 	 */
 	public String getName() {
-		Name name = getClass().getAnnotation(Name.class);
-		return (name != null ? name.value() : getClass().getSimpleName());
+		return name;
 	}
-	
+
+	/**
+	 * Setter method for the name.
+	 * @param name the name to set
+	 * @return this for chaining
+	 */
+	public BuiltinCallable setName(String name) {
+		this.name = name;
+		return this;
+	}
+
 	/**
 	 * Returns argument #position as a string. If the number of arguments is less than
 	 * that, and a defaultValue is specified, it is returned. Otherwise, this method triggers
@@ -46,7 +66,7 @@ public abstract class BuiltinCallable implements Callable {
 		}
 		return TypeConversionUtil.convertToString(arguments[position]);
 	}
-	
+
 	/**
 	 * Returns argument #position as an integer. If the number of arguments is less than
 	 * that, and a defaultValue is specified, it is returned. Otherwise, this method triggers
@@ -69,5 +89,5 @@ public abstract class BuiltinCallable implements Callable {
 		}
 		return TypeConversionUtil.convertToInt(arguments[position]);
 	}
-	
+
 }

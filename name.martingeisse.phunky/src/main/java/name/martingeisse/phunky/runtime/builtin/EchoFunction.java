@@ -8,12 +8,10 @@ package name.martingeisse.phunky.runtime.builtin;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
-import name.martingeisse.phunky.util.Name;
 
 /**
  * The built-in "echo" function.
  */
-@Name("echo")
 public class EchoFunction extends BuiltinCallable {
 
 	/* (non-Javadoc)

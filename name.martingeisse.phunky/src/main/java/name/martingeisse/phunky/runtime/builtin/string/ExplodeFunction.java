@@ -5,15 +5,14 @@
 package name.martingeisse.phunky.runtime.builtin.string;
 
 import java.util.ArrayList;
+
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
 import name.martingeisse.phunky.runtime.value.PhpArray;
-import name.martingeisse.phunky.util.Name;
 
 /**
  * The built-in "explode" function.
  */
-@Name("explode")
 public final class ExplodeFunction extends BuiltinCallable {
 
 	/* (non-Javadoc)

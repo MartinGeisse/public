@@ -120,9 +120,10 @@ public final class PhpRuntime {
 	 * Applies standard definitions to this runtime
 	 */
 	public void applyStandardDefinitions() {
-		addBuiltinCallables(new EchoFunction());
-		addBuiltinCallables(new StrlenFunction());
-		addBuiltinCallables(new ImplodeFunction());
+		addBuiltinCallables(new EchoFunction().setName("echo"));
+		addBuiltinCallables(new StrlenFunction().setName("strlen"));
+		addBuiltinCallables(new ImplodeFunction().setName("implode"));
+		addBuiltinCallables(new ImplodeFunction().setName("join"));
 	}
 	
 	/**

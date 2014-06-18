@@ -6,12 +6,10 @@ package name.martingeisse.phunky.runtime.builtin.string;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
-import name.martingeisse.phunky.util.Name;
 
 /**
  * The built-in "substr" function.
  */
-@Name("substr")
 public final class SubstrFunction extends BuiltinCallable {
 
 	/* (non-Javadoc)
