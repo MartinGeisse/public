@@ -4,25 +4,22 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.phunky.runtime.builtin;
+package name.martingeisse.phunky.runtime.builtin.var;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
-import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
+import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
 
 /**
- * The built-in "echo" function.
+ * The built-in "is_string" function.
  */
-public class EchoFunction extends BuiltinCallable {
+public class IsStringFunction extends BuiltinCallable {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])
 	 */
 	@Override
 	public Object call(PhpRuntime runtime, Object[] arguments) {
-		for (Object argument : arguments) {
-			runtime.getOutputWriter().print(TypeConversionUtil.convertToString(argument));
-		}
-		return null;
+		return (arguments.length > 0 && arguments[0] instanceof String);
 	}
 
 }

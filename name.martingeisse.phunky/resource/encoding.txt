@@ -33,4 +33,14 @@ Differences to plain PHP:
 	string literals use "Java" encoding. PHP string literals would use the
 	same encoding as the source code for the literal.
 
+---------------------------------------------------------------------------
 
+Problems:
+
+Functions that explicitly operate on binary strings, such as bin2hex, expect
+bytes. When they are used on a Phunky string, cells are mapped to bytes directly
+(to replicate PHP behavior), but this won't work when a cell contains a
+non-byte value (> 255). In Phunky, such functions could accept an additional
+"encoding" parameter or simply require the user to map the string to a
+byte string first. In any case, an error should be thrown when trying to
+handle a non-byte-string.

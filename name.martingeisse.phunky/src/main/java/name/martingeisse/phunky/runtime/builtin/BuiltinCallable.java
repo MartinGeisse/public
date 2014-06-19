@@ -45,6 +45,29 @@ public abstract class BuiltinCallable implements Callable {
 	}
 
 	/**
+	 * Returns argument #position without any type conversion. If the number of arguments is less than
+	 * that, the defaultValue is returned. If so, and triggerErrorOnDefault is true, then this method
+	 * also triggers an error.
+	 * 
+	 * @param runtime the runtime
+	 * @param arguments the function arguments
+	 * @param position the argument position
+	 * @param defaultValue the default value
+	 * @param triggerErrorOnDefault whether the absence of an argument is an error
+	 * @return the value
+	 */
+	protected final Object getMixed(PhpRuntime runtime, Object[] arguments, int position, Object defaultValue, boolean triggerErrorOnDefault) {
+		if (arguments.length <= position) {
+			if (triggerErrorOnDefault) {
+				runtime.triggerError("missing argument #" + position);
+			}
+			return defaultValue;
+		} else {
+			return arguments[position];
+		}
+	}
+	
+	/**
 	 * Returns argument #position as a string. If the number of arguments is less than
 	 * that, and a defaultValue is specified, it is returned. Otherwise, this method triggers
 	 * an error and the empty string is returned.

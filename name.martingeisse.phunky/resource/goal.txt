@@ -153,7 +153,13 @@ loaded thing it is.
 Next question: is the refcount part of PhpArray or of Variable? What about is_ref? "Like PHP" would be in
 Variable.
 
+----------------------------------
 
+Just read this: "Not even PHP behaves like PHP". That is, incompatibilities between Phunky and PHP should
+be bounded (in volume) by incompatibilities between different PHP versions; being more compatible is
+desirable but not absolutely necessary. Any re-usable PHP software (e.g. frameworks) have to deal with
+incompatibilities anyway, so it's OK if I cannot avoid then; I just keep them to a minimum and provide
+the tools to deal with them.
 
 
 

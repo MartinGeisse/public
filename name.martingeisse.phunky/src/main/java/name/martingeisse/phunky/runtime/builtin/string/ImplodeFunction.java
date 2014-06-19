@@ -10,7 +10,7 @@ import name.martingeisse.phunky.runtime.value.PhpArray;
 import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
 
 /**
- * The built-in "implode" function.
+ * The built-in "implode" and "join" functions.
  */
 public final class ImplodeFunction extends BuiltinCallable {
 

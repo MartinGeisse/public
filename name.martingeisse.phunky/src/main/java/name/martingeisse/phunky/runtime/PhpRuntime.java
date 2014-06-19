@@ -9,12 +9,34 @@ package name.martingeisse.phunky.runtime;
 import java.io.PrintWriter;
 import java.io.Writer;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
-import name.martingeisse.phunky.runtime.builtin.EchoFunction;
+import name.martingeisse.phunky.runtime.builtin.io.EchoFunction;
+import name.martingeisse.phunky.runtime.builtin.io.PrintFunction;
+import name.martingeisse.phunky.runtime.builtin.string.Bin2HexFunction;
 import name.martingeisse.phunky.runtime.builtin.string.ChrFuntion;
+import name.martingeisse.phunky.runtime.builtin.string.ExplodeFunction;
+import name.martingeisse.phunky.runtime.builtin.string.Hex2BinFunction;
 import name.martingeisse.phunky.runtime.builtin.string.ImplodeFunction;
+import name.martingeisse.phunky.runtime.builtin.string.LevenshteinFunction;
 import name.martingeisse.phunky.runtime.builtin.string.OrdFuntion;
 import name.martingeisse.phunky.runtime.builtin.string.StrRepeatFunction;
+import name.martingeisse.phunky.runtime.builtin.string.StrReplaceFunction;
 import name.martingeisse.phunky.runtime.builtin.string.StrlenFunction;
+import name.martingeisse.phunky.runtime.builtin.string.StrrevFunction;
+import name.martingeisse.phunky.runtime.builtin.string.StrtolowerFunction;
+import name.martingeisse.phunky.runtime.builtin.string.StrtoupperFunction;
+import name.martingeisse.phunky.runtime.builtin.string.SubstrFunction;
+import name.martingeisse.phunky.runtime.builtin.string.TrimFunction;
+import name.martingeisse.phunky.runtime.builtin.string.UcLcFirstCharacterFunction;
+import name.martingeisse.phunky.runtime.builtin.string.hash.Md5Function;
+import name.martingeisse.phunky.runtime.builtin.string.hash.Sha1Function;
+import name.martingeisse.phunky.runtime.builtin.var.IsArrayFunction;
+import name.martingeisse.phunky.runtime.builtin.var.IsBoolFunction;
+import name.martingeisse.phunky.runtime.builtin.var.IsFloatFunction;
+import name.martingeisse.phunky.runtime.builtin.var.IsIntFunction;
+import name.martingeisse.phunky.runtime.builtin.var.IsNumericFunction;
+import name.martingeisse.phunky.runtime.builtin.var.IsScalarFunction;
+import name.martingeisse.phunky.runtime.builtin.var.IsStringFunction;
+import name.martingeisse.phunky.runtime.builtin.var.VarDumpFunction;
 
 /**
  * This class represents the whole PHP runtime environment.
@@ -123,13 +145,53 @@ public final class PhpRuntime {
 	 * Applies standard definitions to this runtime
 	 */
 	public void applyStandardDefinitions() {
+		
+		// I/O functions
 		addBuiltinCallables(new EchoFunction().setName("echo"));
-		addBuiltinCallables(new StrlenFunction().setName("strlen"));
+		addBuiltinCallables(new PrintFunction().setName("print"));
+		
+		// string functions
+		addBuiltinCallables(new Bin2HexFunction().setName("bin2hex"));
+		addBuiltinCallables(new ChrFuntion().setName("chr"));
+		addBuiltinCallables(new ExplodeFunction().setName("explode"));
+		// TODO find-substring functions
+		addBuiltinCallables(new Hex2BinFunction().setName("hex2bin"));
 		addBuiltinCallables(new ImplodeFunction().setName("implode"));
+		addBuiltinCallables(new LevenshteinFunction().setName("levenshtein"));
 		addBuiltinCallables(new ImplodeFunction().setName("join"));
 		addBuiltinCallables(new OrdFuntion().setName("ord"));
-		addBuiltinCallables(new ChrFuntion().setName("chr"));
+		addBuiltinCallables(new StrlenFunction().setName("strlen"));
 		addBuiltinCallables(new StrRepeatFunction().setName("str_repeat"));
+		addBuiltinCallables(new StrReplaceFunction().setName("str_replace"));
+		addBuiltinCallables(new StrrevFunction().setName("strrev"));
+		addBuiltinCallables(new StrtolowerFunction().setName("strtolower"));
+		addBuiltinCallables(new StrtoupperFunction().setName("strtoupper"));
+		addBuiltinCallables(new SubstrFunction().setName("substr"));
+		addBuiltinCallables(new TrimFunction(true, false).setName("ltrim"));
+		addBuiltinCallables(new TrimFunction(false, true).setName("rtrim"));
+		addBuiltinCallables(new TrimFunction(false, true).setName("chop"));
+		addBuiltinCallables(new TrimFunction(true, true).setName("trim"));
+		addBuiltinCallables(new UcLcFirstCharacterFunction(true).setName("ucfirst"));
+		addBuiltinCallables(new UcLcFirstCharacterFunction(false).setName("lcfirst"));
+		
+		// hash functions
+		addBuiltinCallables(new Md5Function().setName("md5"));
+		addBuiltinCallables(new Sha1Function().setName("sha1"));
+		
+		// variable handling
+		addBuiltinCallables(new IsArrayFunction().setName("is_array"));
+		addBuiltinCallables(new IsBoolFunction().setName("is_bool"));
+		addBuiltinCallables(new IsFloatFunction().setName("is_float"));
+		addBuiltinCallables(new IsFloatFunction().setName("is_double"));
+		addBuiltinCallables(new IsFloatFunction().setName("is_real"));
+		addBuiltinCallables(new IsIntFunction().setName("is_int"));
+		addBuiltinCallables(new IsIntFunction().setName("is_integer"));
+		addBuiltinCallables(new IsIntFunction().setName("is_long"));
+		addBuiltinCallables(new IsNumericFunction().setName("is_numeric"));
+		addBuiltinCallables(new IsScalarFunction().setName("is_scalar"));
+		addBuiltinCallables(new IsStringFunction().setName("is_string"));
+		addBuiltinCallables(new VarDumpFunction().setName("var_dump"));
+		
 	}
 	
 	/**
