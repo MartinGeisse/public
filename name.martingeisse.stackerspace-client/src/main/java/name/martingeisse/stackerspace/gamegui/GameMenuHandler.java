@@ -6,13 +6,13 @@
 
 package name.martingeisse.stackerspace.gamegui;
 
-import name.martingeisse.launcher.assets.LauncherAssets;
 import name.martingeisse.stackd.client.frame.BreakFrameLoopException;
 import name.martingeisse.stackd.client.frame.handlers.ExitHandler;
 import name.martingeisse.stackd.client.frame.handlers.HandlerList;
 import name.martingeisse.stackd.client.gui.GuiFrameHandler;
 import name.martingeisse.stackd.client.system.FixedWidthFont;
 import name.martingeisse.stackd.client.util.ResourceLoader;
+import name.martingeisse.stackerspace.assets.Assets;
 
 /**
  * The handler for the in-game GUI.
@@ -30,7 +30,7 @@ public class GameMenuHandler extends HandlerList {
 	public GameMenuHandler() {
 		// TODO share resources properly
 		GuiFrameHandler guiFrameHandler = new GuiFrameHandler();
-		guiFrameHandler.getGui().setDefaultFont(new FixedWidthFont(ResourceLoader.loadAwtImage(LauncherAssets.class, "font.png"), 8, 16));
+		guiFrameHandler.getGui().setDefaultFont(new FixedWidthFont(ResourceLoader.loadAwtImage(Assets.class, "font.png"), 8, 16));
 		guiFrameHandler.getGui().setRootElement(new MainMenuPage());
 		add(guiFrameHandler);
 		add(new ExitHandler(true, null));

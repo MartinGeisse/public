@@ -17,8 +17,8 @@ import name.martingeisse.common.util.SemaphoreWithPublicReducePermits;
  * goal and its requirements have been "sealed". A goal can be scheduled
  * and started at any point after creation, and can be extended until
  * it gets sealed. After that, no extensions are possible anymore. It is,
- * however, possible to schedule and start a goal after it has been
- * sealed, although in that case a simple task would be sufficient.
+ * possible to schedule and start a goal *after* it has been sealed,
+ * although in that case a simple task would be sufficient.
  * 
  * A goal can be waited for, and waiting only finishes when the goal has
  * been sealed *and* achieved.

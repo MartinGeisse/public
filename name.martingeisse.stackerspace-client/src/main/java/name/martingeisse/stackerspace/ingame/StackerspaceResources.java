@@ -13,10 +13,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.imageio.ImageIO;
-import name.martingeisse.launcher.assets.LauncherAssets;
 import name.martingeisse.stackd.client.system.FixedWidthFont;
 import name.martingeisse.stackd.client.system.Font;
 import name.martingeisse.stackd.client.system.StackdTexture;
+import name.martingeisse.stackerspace.assets.Assets;
 import name.martingeisse.stackerspace.common.StackerspaceCubeTypes;
 import org.newdawn.slick.openal.Audio;
 import org.newdawn.slick.openal.AudioLoader;
@@ -94,11 +94,11 @@ public class StackerspaceResources {
 		final String[] cubeTextureNames = StackerspaceCubeTypes.CUBE_TEXTURE_FILENAMES;
 		cubeTextures = new StackdTexture[cubeTextureNames.length];
 		for (int i = 0; i < cubeTextures.length; i++) {
-			cubeTextures[i] = new StackdTexture(LauncherAssets.class, cubeTextureNames[i], false);
+			cubeTextures[i] = new StackdTexture(Assets.class, cubeTextureNames[i], false);
 		}
 
 		// load special textures
-		clouds = new StackdTexture(LauncherAssets.class, "clouds.png", false);
+		clouds = new StackdTexture(Assets.class, "clouds.png", false);
 		font = new FixedWidthFont(loadImage("font.png"), 8, 16);
 
 		// load sounds
@@ -115,7 +115,7 @@ public class StackerspaceResources {
 	 * @throws IOException on I/O errors
 	 */
 	private Audio loadOggSound(final String filename) throws IOException {
-		try (InputStream inputStream = LauncherAssets.class.getResourceAsStream(filename)) {
+		try (InputStream inputStream = Assets.class.getResourceAsStream(filename)) {
 			return AudioLoader.getAudio("OGG", inputStream);
 		}
 	}
@@ -127,7 +127,7 @@ public class StackerspaceResources {
 	 * @throws IOException on I/O errors
 	 */
 	private BufferedImage loadImage(final String filename) throws IOException {
-		try (InputStream inputStream = LauncherAssets.class.getResourceAsStream(filename)) {
+		try (InputStream inputStream = Assets.class.getResourceAsStream(filename)) {
 			return  ImageIO.read(inputStream);
 		}
 	}

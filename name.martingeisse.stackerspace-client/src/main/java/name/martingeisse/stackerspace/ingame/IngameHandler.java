@@ -16,6 +16,7 @@ import name.martingeisse.stackd.client.frame.handlers.HandlerList;
 import name.martingeisse.stackd.client.frame.handlers.SelectedCubeHud;
 import name.martingeisse.stackd.client.frame.handlers.SwappableHandler;
 import name.martingeisse.stackd.client.glworker.GlWorkerLoop;
+import name.martingeisse.stackd.client.util.MouseUtil;
 import name.martingeisse.stackerspace.Main;
 import name.martingeisse.stackerspace.gamegui.GameMenuHandler;
 import name.martingeisse.stackerspace.ingame.network.StackerspaceProtocolClient;
@@ -162,6 +163,7 @@ public class IngameHandler extends HandlerList {
 		// prepare running the game
 		protocolClient.setFlashMessageHandler(flashMessageHandler);
 		protocolClient.waitUntilReady();
+		MouseUtil.grab();
 		
 	}
 
