@@ -58,3 +58,11 @@
 /name.martingeisse.phunky/target/
 /name.martingeisse.miner-client/client.log
 /name.martingeisse.miner-server/server.log
+/name.martingeisse.stackerspace-common/bin/
+/name.martingeisse.stackerspace-common/target/
+/name.martingeisse.stackerspace-server/bin/
+/name.martingeisse.stackerspace-server/target/
+/name.martingeisse.stackerspace-server/server.log
+/name.martingeisse.stackerspace-client/bin/
+/name.martingeisse.stackerspace-client/target/
+/name.martingeisse.stackerspace-client/client.log
