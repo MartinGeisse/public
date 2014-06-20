@@ -269,9 +269,6 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	"if" {
 		return symbol(Tokens.IF);
 	}
-	"elsif" {
-		return symbol(Tokens.ELSEIF);
-	}
 	"elseif" {
 		return symbol(Tokens.ELSEIF);
 	}
@@ -316,6 +313,9 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	"%" {
 		return symbol(Tokens.MOD);
 	}
+	"." {
+		return symbol(Tokens.CONCAT);
+	}
 	"**" {
 		return symbol(Tokens.POWER);
 	}
@@ -323,10 +323,19 @@ HeredocNowdocContentLine = .* {LineTerminator}
 		return symbol(Tokens.LOGICAL_NOT);
 	}
 	"&&" {
-		return symbol(Tokens.SHORTCUT_AND);
+		return symbol(Tokens.LOGICAL_SHORTCUT_AND);
 	}
 	"||" {
-		return symbol(Tokens.SHORTCUT_OR);
+		return symbol(Tokens.LOGICAL_SHORTCUT_OR);
+	}
+	"and" {
+		return symbol(Tokens.LOW_PRECEDENCE_LOGICAL_SHORTCUT_AND);
+	}
+	"or" {
+		return symbol(Tokens.LOW_PRECEDENCE_LOGICAL_SHORTCUT_OR);
+	}
+	"xor" {
+		return symbol(Tokens.LOW_PRECEDENCE_LOGICAL_SHORTCUT_XOR);
 	}
 	"~" {
 		return symbol(Tokens.BITWISE_NOT);
