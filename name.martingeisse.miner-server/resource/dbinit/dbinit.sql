@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `player` (
 	`id` bigint(20) NOT NULL AUTO_INCREMENT,
 	`user_account_id` bigint(20) NOT NULL,
 	`name` VARCHAR(255) NOT NULL,
-	`faction` int NOT NULL,
+	`faction_id` bigint(20) NOT NULL,
 	`x` decimal(10,2) NOT NULL,
 	`y` decimal(10,2) NOT NULL,
 	`z` decimal(10,2) NOT NULL,
@@ -61,6 +61,18 @@ CREATE TABLE IF NOT EXISTS `player_inventory_slot` (
 
 
 
+-- faction data
+-- --------------------------
+
+CREATE TABLE IF NOT EXISTS `faction` (
+	`id` bigint(20) NOT NULL,
+	`score` bigint(20) NOT NULL,
+	`divine_power` bigint(20) NOT NULL,
+	PRIMARY KEY (`id`)
+) ENGINE=InnoDB	DEFAULT CHARSET=utf8;
+
+
+
 
 
 
@@ -71,13 +83,23 @@ CREATE TABLE IF NOT EXISTS `player_inventory_slot` (
 -- -------------------------------------------------------------------------
 
 
+-- factions
+-- --------------------------
+
+INSERT INTO `faction` (`id`, `score`, `divine_power`) VALUES
+(0, 0, 0),
+(1, 0, 0),
+(2, 0, 0),
+(3, 0, 0);
+
+
 -- users, players and related data
 -- --------------------------
 
 INSERT INTO `user_account` (`id`, `username`, `password_hash`) VALUES
 (1, 'martin', '$2a$12$.5KM.jQ/TnPn7bMET7.lO.CnGxUzssEr8w590eYQYl8XRkui2OCg6');
 
-INSERT INTO	`player` (`id`, `user_account_id`, `name`, `faction`, `coins`) VALUES
+INSERT INTO	`player` (`id`, `user_account_id`, `name`, `faction_id`, `coins`) VALUES
 (1,	1, 'Big Boss', 1, 123);
 
 
@@ -89,5 +111,6 @@ INSERT INTO	`player` (`id`, `user_account_id`, `name`, `faction`, `coins`) VALUE
 
 -- player data
 ALTER TABLE `player` ADD CONSTRAINT `player_ibfk_1` FOREIGN KEY (`user_account_id`) REFERENCES `user_account` (`id`);
+ALTER TABLE `player` ADD CONSTRAINT `player_ibfk_2` FOREIGN KEY (`faction_id`) REFERENCES `faction` (`id`);
 ALTER TABLE `player_awarded_achievement` ADD CONSTRAINT `player_awarded_achievement_ibfk_1` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`);
 ALTER TABLE `player_inventory_slot` ADD CONSTRAINT `player_inventory_slot_ibfk_1` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`);

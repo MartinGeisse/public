@@ -32,9 +32,9 @@ public class Player implements Serializable, IEntityWithId<Long>, IEntityWithDel
     private Boolean deleted;
 
     /**
-     * the faction
+     * the factionId
      */
-    private Integer faction;
+    private Long factionId;
 
     /**
      * the id
@@ -111,19 +111,19 @@ public class Player implements Serializable, IEntityWithId<Long>, IEntityWithDel
     }
 
     /**
-     * Getter method for the faction.
-     * @return the faction
+     * Getter method for the factionId.
+     * @return the factionId
      */
-    public Integer getFaction() {
-        return faction;
+    public Long getFactionId() {
+        return factionId;
     }
 
     /**
-     * Setter method for the faction.
-     * @param faction the faction to set
+     * Setter method for the factionId.
+     * @param factionId the factionId to set
      */
-    public void setFaction(Integer faction) {
-        this.faction = faction;
+    public void setFactionId(Long factionId) {
+        this.factionId = factionId;
     }
 
     /**
@@ -261,7 +261,7 @@ public class Player implements Serializable, IEntityWithId<Long>, IEntityWithDel
      */
     @Override
     public String toString() {
-        return "{Player. coins = " + coins + ", deleted = " + deleted + ", faction = " + faction + ", id = " + id + ", leftAngle = " + leftAngle + ", name = " + name + ", upAngle = " + upAngle + ", userAccountId = " + userAccountId + ", x = " + x + ", y = " + y + ", z = " + z + "}";
+        return "{Player. coins = " + coins + ", deleted = " + deleted + ", factionId = " + factionId + ", id = " + id + ", leftAngle = " + leftAngle + ", name = " + name + ", upAngle = " + upAngle + ", userAccountId = " + userAccountId + ", x = " + x + ", y = " + y + ", z = " + z + "}";
     }
 
     /**
@@ -283,7 +283,7 @@ public class Player implements Serializable, IEntityWithId<Long>, IEntityWithDel
         final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(q);
         insert.set(q.coins, coins);
         insert.set(q.deleted, deleted);
-        insert.set(q.faction, faction);
+        insert.set(q.factionId, factionId);
         insert.set(q.leftAngle, leftAngle);
         insert.set(q.name, name);
         insert.set(q.upAngle, upAngle);
@@ -291,8 +291,6 @@ public class Player implements Serializable, IEntityWithId<Long>, IEntityWithDel
         insert.set(q.x, x);
         insert.set(q.y, y);
         insert.set(q.z, z);
-        insert.set(q.leftAngle, leftAngle);
-        insert.set(q.upAngle, upAngle);
         id = insert.executeWithKey(Long.class);
     }
 

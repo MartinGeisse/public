@@ -27,7 +27,7 @@ public final class PlayerDetailsHandler extends AbstractLoggedInHandler {
 		JsonObjectBuilder<?> objectBuilder = output.object();
 		objectBuilder.property("id").number(player.getId());
 		objectBuilder.property("name").string(player.getName());
-		objectBuilder.property("faction").number(player.getFaction());
+		objectBuilder.property("faction").number(player.getFactionId());
 		objectBuilder.property("coins").number(player.getCoins());
 		objectBuilder.end();
 	}

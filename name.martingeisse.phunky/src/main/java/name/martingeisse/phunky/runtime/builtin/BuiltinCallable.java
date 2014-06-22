@@ -56,7 +56,7 @@ public abstract class BuiltinCallable implements Callable {
 	 * @param triggerErrorOnDefault whether the absence of an argument is an error
 	 * @return the value
 	 */
-	protected final Object getMixed(PhpRuntime runtime, Object[] arguments, int position, Object defaultValue, boolean triggerErrorOnDefault) {
+	protected final Object getMixedParameter(PhpRuntime runtime, Object[] arguments, int position, Object defaultValue, boolean triggerErrorOnDefault) {
 		if (arguments.length <= position) {
 			if (triggerErrorOnDefault) {
 				runtime.triggerError("missing argument #" + position);

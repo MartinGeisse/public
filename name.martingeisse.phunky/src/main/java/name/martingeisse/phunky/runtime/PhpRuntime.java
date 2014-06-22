@@ -29,6 +29,11 @@ import name.martingeisse.phunky.runtime.builtin.string.TrimFunction;
 import name.martingeisse.phunky.runtime.builtin.string.UcLcFirstCharacterFunction;
 import name.martingeisse.phunky.runtime.builtin.string.hash.Md5Function;
 import name.martingeisse.phunky.runtime.builtin.string.hash.Sha1Function;
+import name.martingeisse.phunky.runtime.builtin.system.ConstantFunction;
+import name.martingeisse.phunky.runtime.builtin.system.DefineFunction;
+import name.martingeisse.phunky.runtime.builtin.system.DefinedFunction;
+import name.martingeisse.phunky.runtime.builtin.system.DieFunction;
+import name.martingeisse.phunky.runtime.builtin.system.IncludeFunction;
 import name.martingeisse.phunky.runtime.builtin.var.IsArrayFunction;
 import name.martingeisse.phunky.runtime.builtin.var.IsBoolFunction;
 import name.martingeisse.phunky.runtime.builtin.var.IsFloatFunction;
@@ -47,6 +52,11 @@ public final class PhpRuntime {
 	 * the globalEnvironment
 	 */
 	private final Environment globalEnvironment;
+	
+	/**
+	 * the constants
+	 */
+	private final Constants constants;
 	
 	/**
 	 * the functions
@@ -77,6 +87,7 @@ public final class PhpRuntime {
 	 */
 	public PhpRuntime(boolean standardDefinitions) {
 		this.globalEnvironment = new Environment(this);
+		this.constants = new Constants(this);
 		this.functions = new Functions(this);
 		this.interpreter = new SourceFileInterpreter(this);
 		this.outputWriter = new PrintWriter(System.out);
@@ -93,6 +104,14 @@ public final class PhpRuntime {
 		return globalEnvironment;
 	}
 
+	/**
+	 * Getter method for the constants.
+	 * @return the constants
+	 */
+	public Constants getConstants() {
+		return constants;
+	}
+	
 	/**
 	 * Getter method for the functions.
 	 * @return the functions
@@ -178,6 +197,17 @@ public final class PhpRuntime {
 		addBuiltinCallables(new Md5Function().setName("md5"));
 		addBuiltinCallables(new Sha1Function().setName("sha1"));
 		
+		// system functions
+		addBuiltinCallables(new ConstantFunction().setName("constant"));
+		addBuiltinCallables(new DefinedFunction().setName("defined"));
+		addBuiltinCallables(new DefineFunction().setName("define"));
+		addBuiltinCallables(new DieFunction().setName("die"));
+		addBuiltinCallables(new DieFunction().setName("exit"));
+		addBuiltinCallables(new IncludeFunction(false, false).setName("include"));
+		addBuiltinCallables(new IncludeFunction(true, false).setName("include_once"));
+		addBuiltinCallables(new IncludeFunction(false, true).setName("require"));
+		addBuiltinCallables(new IncludeFunction(true, true).setName("require_once"));
+		
 		// variable handling
 		addBuiltinCallables(new IsArrayFunction().setName("is_array"));
 		addBuiltinCallables(new IsBoolFunction().setName("is_bool"));
@@ -204,11 +234,21 @@ public final class PhpRuntime {
 	}
 	
 	/**
-	 * Called when an error occurs. This message prints the error to System.err.
+	 * Called when an error occurs. This method prints the error to System.err.
 	 * @param message the error message
 	 */
 	public void triggerError(String message) {
 		System.err.println(message);
 	}
-	
+
+	/**
+	 * Called when a fatal error occurs. This method prints the error to System.err,
+	 * then throws a {@link FatalErrorException}.
+	 * @param message the error message
+	 */
+	public void triggerFatalError(String message) {
+		System.err.println(message);
+		throw new FatalErrorException(message);
+	}
+
 }

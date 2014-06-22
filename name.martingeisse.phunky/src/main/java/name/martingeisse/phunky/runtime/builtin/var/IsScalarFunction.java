@@ -19,7 +19,7 @@ public class IsScalarFunction extends BuiltinCallable {
 	 */
 	@Override
 	public Object call(PhpRuntime runtime, Object[] arguments) {
-		Object argument = getMixed(runtime, arguments, 0, null, true);
+		Object argument = getMixedParameter(runtime, arguments, 0, null, true);
 		if (argument == null) {
 			return false;
 		}

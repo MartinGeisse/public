@@ -248,14 +248,26 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	}
 	
 	// statement keywords
+	"include" {
+		return symbol(Tokens.INCLUDE);
+	}
+	"include_once" {
+		return symbol(Tokens.INCLUDE_ONCE);
+	}
+	"require" {
+		return symbol(Tokens.REQUIRE);
+	}
+	"require_once" {
+		return symbol(Tokens.REQUIRE_ONCE);
+	}
 	"for" {
 		return symbol(Tokens.FOR);
 	}
 	"foreach" {
 		return symbol(Tokens.FOREACH);
 	}
-	"until" {
-		return symbol(Tokens.UNTIL);
+	"as" {
+		return symbol(Tokens.AS);
 	}
 	"do" {
 		return symbol(Tokens.DO);
@@ -335,7 +347,7 @@ HeredocNowdocContentLine = .* {LineTerminator}
 		return symbol(Tokens.LOW_PRECEDENCE_LOGICAL_SHORTCUT_OR);
 	}
 	"xor" {
-		return symbol(Tokens.LOW_PRECEDENCE_LOGICAL_SHORTCUT_XOR);
+		return symbol(Tokens.LOW_PRECEDENCE_LOGICAL_XOR);
 	}
 	"~" {
 		return symbol(Tokens.BITWISE_NOT);
@@ -427,6 +439,11 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	}
 	">>=" {
 		return symbol(Tokens.SHIFT_RIGHT_ASSIGN);
+	}
+	
+	// cast-operator type names. TODO: case-insensitive!
+	"int" | "integer" | "bool" | "boolean" | "float" | "double" | "real" | "string" | "object" {
+		return symbol(Tokens.CAST_TYPE_NAME, yytext());
 	}
 	
 	// special expressions

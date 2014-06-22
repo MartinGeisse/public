@@ -34,9 +34,9 @@ public class QPlayer extends com.mysema.query.sql.RelationalPathBase<Player> {
     public final BooleanPath deleted = createBoolean("deleted");
 
     /**
-     * Metamodel property for property 'faction'
+     * Metamodel property for property 'faction_id'
      */
-    public final NumberPath<Integer> faction = createNumber("faction", Integer.class);
+    public final NumberPath<Long> factionId = createNumber("faction_id", Long.class);
 
     /**
      * Metamodel property for property 'id'
@@ -87,6 +87,11 @@ public class QPlayer extends com.mysema.query.sql.RelationalPathBase<Player> {
      * Metamodel property for foreign key 'player_ibfk_1'
      */
     public final com.mysema.query.sql.ForeignKey<UserAccount> fk_playerIbfk1 = createForeignKey(userAccountId, "id");
+
+    /**
+     * Metamodel property for foreign key 'player_ibfk_2'
+     */
+    public final com.mysema.query.sql.ForeignKey<Faction> fk_playerIbfk2 = createForeignKey(factionId, "id");
 
     /**
      * Metamodel property for reverse foreign key 'player_awarded_achievement_ibfk_1'

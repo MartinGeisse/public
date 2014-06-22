@@ -39,7 +39,7 @@ public final class PlayerListHandler extends AbstractLoggedInHandler {
 			JsonObjectBuilder<?> playerBuilder = listBuilder.element().object();
 			playerBuilder.property("id").number(player.getId());
 			playerBuilder.property("name").string(player.getName());
-			playerBuilder.property("faction").number(player.getFaction());
+			playerBuilder.property("faction").number(player.getFactionId());
 			playerBuilder.end();
 		}
 		listBuilder.end();

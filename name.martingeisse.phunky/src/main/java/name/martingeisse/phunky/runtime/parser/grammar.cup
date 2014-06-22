@@ -8,7 +8,7 @@ import name.martingeisse.phunky.runtime.code.*;
 import name.martingeisse.phunky.runtime.code.expression.*;
 import name.martingeisse.phunky.runtime.code.expression.array.*;
 import name.martingeisse.phunky.runtime.code.expression.oop.*;
-import name.martingeisse.phunky.runtime.code.expression.operation.*;
+import name.martingeisse.phunky.runtime.code.expression.operator.*;
 import name.martingeisse.phunky.runtime.code.statement.*;
 import name.martingeisse.phunky.runtime.code.declaration.*;
 import java_cup.runtime.ComplexSymbolFactory.ComplexSymbol;
@@ -16,6 +16,7 @@ import java_cup.runtime.Symbol;
 import java.util.List;
 import java.util.ArrayList;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.NotImplementedException;
 
 // scanner behavior
 init with {:
@@ -31,12 +32,8 @@ parser code {:
 	@Override
 	public void syntax_error(final Symbol token) {
 		if (token instanceof ComplexSymbol) {
-			
 			ComplexSymbol complexSymbol = (ComplexSymbol)token;
-			int line = complexSymbol.getLeft().getLine();
-			int column = complexSymbol.getLeft().getColumn();
-			System.err.println("Syntax error at line " + (line + 1) + ", col " + (column + 1) + ", symbol " + complexSymbol.sym + ", value " + complexSymbol.value);
-			
+			syntax_error(complexSymbol.getLeft(), "unexpected symbol: " + complexSymbol.sym + ", value " + complexSymbol.value);
 			System.err.print("Valid symbols at this point:");
 			int state = ((Symbol)stack.peek()).parse_state;
 			short[] actionRow = action_tab[state];
@@ -46,10 +43,20 @@ parser code {:
 				}
 			}
 			System.err.println();
-			
 		} else {
 			super.syntax_error(token);
 		}
+	}
+
+	/**
+	 * Helper method for custom syntax errors. This method will NOT show possible
+	 * transitions from the action table since it assumes that the 'state' variable
+	 * does not have a predictable value.
+	 */
+	public void syntax_error(final Location location, final String message) {
+		int line = location.getLine();
+		int column = location.getColumn();
+		System.err.println("Syntax error at line " + (line + 1) + ", col " + (column + 1) + ": " + message);
 	}
 
 :}
@@ -81,7 +88,8 @@ terminal STATIC, ABSTRACT, FINAL;
 terminal VAR, CONST;
 
 // statement keywords
-terminal FOR, FOREACH, UNTIL, DO, WHILE, BREAK;
+terminal INCLUDE, INCLUDE_ONCE, REQUIRE, REQUIRE_ONCE;
+terminal FOR, FOREACH, AS, DO, WHILE, BREAK;
 terminal IF, ELSEIF, ELSE;
 terminal RETURN;
 terminal THROW, TRY, CATCH, FINALLY;
@@ -92,7 +100,7 @@ terminal ECHO;
 terminal PLUS, MINUS, TIMES, DIVIDE, MOD, CONCAT, POWER;
 terminal LOGICAL_NOT, LOGICAL_SHORTCUT_AND, LOGICAL_SHORTCUT_OR;
 terminal BITWISE_NOT, BITWISE_AND, BITWISE_OR, BITWISE_XOR;
-terminal LOW_PRECEDENCE_LOGICAL_SHORTCUT_AND, LOW_PRECEDENCE_LOGICAL_SHORTCUT_OR, LOW_PRECEDENCE_LOGICAL_SHORTCUT_XOR;
+terminal LOW_PRECEDENCE_LOGICAL_SHORTCUT_AND, LOW_PRECEDENCE_LOGICAL_SHORTCUT_OR, LOW_PRECEDENCE_LOGICAL_XOR;
 terminal SHIFT_LEFT, SHIFT_RIGHT;
 
 // comparison operators
@@ -112,6 +120,8 @@ terminal SELF;
 terminal PARENT;
 terminal NEW;
 terminal INSTANCEOF;
+terminal UNSET;
+terminal String CAST_TYPE_NAME;
 
 // primitive expressions
 terminal NULL_LITERAL;
@@ -123,9 +133,13 @@ terminal String LOCAL_VARIABLE;
 
 // non terminals (general)
 non terminal StatementSequence program;
+non terminal Statement block;
 non terminal List<Statement> statements;
 non terminal Statement statement;
 non terminal Statement if_statement_continuation;
+non terminal Void catch_clauses;
+non terminal Void catch_clause;
+non terminal Void optional_finally_clause;
 non terminal List<Expression> expressions;
 non terminal List<Expression> one_or_more_expressions;
 non terminal Expression expression;
@@ -153,7 +167,7 @@ non terminal OopEntityModifier oop_entity_modifier;
 precedence left SEMICOLON; // needed for error recovery
 precedence right ELSE, ELSEIF; // to resolve nested if/else without curly braces
 precedence left LOW_PRECEDENCE_LOGICAL_SHORTCUT_OR;
-precedence left LOW_PRECEDENCE_LOGICAL_SHORTCUT_XOR;
+precedence left LOW_PRECEDENCE_LOGICAL_XOR;
 precedence left LOW_PRECEDENCE_LOGICAL_SHORTCUT_AND;
 precedence right ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, TIMES_ASSIGN, DIVIDE_ASSIGN, MOD_ASSIGN, CONCAT_ASSIGN, BITWISE_AND_ASSIGN, BITWISE_OR_ASSIGN, BITWISE_XOR_ASSIGN, SHIFT_LEFT_ASSIGN, SHIFT_RIGHT_ASSIGN;
 precedence left QUESTION_MARK, COLON; // yes, *left*. PHP sucks.
@@ -168,8 +182,9 @@ precedence left PLUS, MINUS, CONCAT;
 precedence left TIMES, DIVIDE, MOD;
 precedence right LOGICAL_NOT;
 precedence nonassoc INSTANCEOF;
-precedence right INCREMENT, DECREMENT, BITWISE_NOT; // TODO: casts, error suppression
+precedence right INCREMENT, DECREMENT, BITWISE_NOT, OPENING_PARENTHESIS; // TODO: error suppression
 precedence left POWER;
+precedence left OPENING_SQUARE_BRACKET, RIGHT_ARROW;
 // TODO: clone, new
 
 // ------------------------------------------------------------------------------------
@@ -187,6 +202,11 @@ program ::=
 // --- statement productions
 // ------------------------------------------------------------------------------------
 
+block ::=
+	OPENING_CURLY_BRACE statements:sts CLOSING_CURLY_BRACE
+		{: RESULT = new StatementSequence(sts); :}
+;
+
 statements ::=
 		{: RESULT = new ArrayList<Statement>(); :}
 	| statements:sts statement:st
@@ -194,32 +214,62 @@ statements ::=
 ;
 
 statement ::=
+
+	// basic building blocks for statements
 	SEMICOLON
 		{: RESULT = new NopStatement(); :} 
-	| expression:e SEMICOLON
-		{: RESULT = new ExpressionStatement(e); :}
-	| OPENING_CURLY_BRACE statements:sts CLOSING_CURLY_BRACE
-		{: RESULT = new StatementSequence(sts); :}
+	| block:b
+		{: RESULT = b; :}
 	| VERBATIM_CONTENT:c
 		{: RESULT = new ExpressionStatement(new FunctionCall("echo", new LiteralExpression(c))); :}
-		 
+	| expression:e SEMICOLON
+		{: RESULT = new ExpressionStatement(e); :}
+		
+	// build-in special statements
 	| ECHO one_or_more_expressions:exs SEMICOLON
 		{: RESULT = new ExpressionStatement(new FunctionCall("echo", exs.toArray(new Expression[exs.size()]))); :}
 	| GLOBAL LOCAL_VARIABLE:v SEMICOLON
 		{: RESULT = new GlobalStatement(v); :}
-		
+
+	// control structures
+	| INCLUDE expression:e SEMICOLON
+		{: RESULT = new ExpressionStatement(new FunctionCall("include", e)); :}
+	| INCLUDE_ONCE expression:e SEMICOLON
+		{: RESULT = new ExpressionStatement(new FunctionCall("include_once", e)); :}
+	| REQUIRE expression:e SEMICOLON
+		{: RESULT = new ExpressionStatement(new FunctionCall("require", e)); :}
+	| REQUIRE_ONCE expression:e SEMICOLON
+		{: RESULT = new ExpressionStatement(new FunctionCall("require_once", e)); :}
 	| IF if_statement_continuation:c
 		{: RESULT = c; :}
+	| FOR OPENING_PARENTHESIS statement:init SEMICOLON expression:cond SEMICOLON statement:advance CLOSING_PARENTHESIS block:body
+		{: if (1 == 1) throw new NotImplementedException(""); :}
+	| FOREACH OPENING_PARENTHESIS expression:e AS LOCAL_VARIABLE:v CLOSING_PARENTHESIS block:body
+		{: if (1 == 1) throw new NotImplementedException(""); :}
+	| FOREACH OPENING_PARENTHESIS expression:e AS LOCAL_VARIABLE:k DOUBLE_RIGHT_ARROW LOCAL_VARIABLE:v CLOSING_PARENTHESIS block:body
+		{: if (1 == 1) throw new NotImplementedException(""); :}
 	| WHILE OPENING_PARENTHESIS expression:e CLOSING_PARENTHESIS statement:s
 		{: RESULT = new WhileStatement(e, s); :}
 	| DO statement:s WHILE OPENING_PARENTHESIS expression:e CLOSING_PARENTHESIS
 		{: RESULT = new DoWhileStatement(s, e); :}
-		
-	| FUNCTION IDENTIFIER:id OPENING_PARENTHESIS parameter_declarations:decls CLOSING_PARENTHESIS OPENING_CURLY_BRACE statements:sts CLOSING_CURLY_BRACE
-		{: RESULT = new FunctionDefinition(id, decls.toArray(new String[decls.size()]), new StatementSequence(sts)); :}
+	| BREAK SEMICOLON
+		{: RESULT = new BreakStatement(); :}
+	| RETURN SEMICOLON
+		{: RESULT = new ReturnStatement(null); :}
+	| RETURN expression:e SEMICOLON
+		{: RESULT = new ReturnStatement(e); :}
+	| THROW expression:e SEMICOLON
+		{: RESULT = new ThrowStatement(e); :}
+	| TRY block:tryBody catch_clauses:ccs optional_finally_clause:fc
+		{: if (1 == 1) throw new NotImplementedException(""); :}
+	
+	// definitions
+	| FUNCTION IDENTIFIER:id OPENING_PARENTHESIS parameter_declarations:decls CLOSING_PARENTHESIS block:body
+		{: RESULT = new FunctionDefinition(id, decls.toArray(new String[decls.size()]), body); :}
 	| oop_type_definition:def
 		{: RESULT = def; :}
 		
+	// syntax error recovery
 	| error SEMICOLON
 		{: System.err.println("syntax error"); RESULT = new NopStatement(); :}
 ;
@@ -231,6 +281,23 @@ if_statement_continuation ::=
 		{: RESULT = new IfStatement(e, s1, s2); :}
 	| OPENING_PARENTHESIS expression:e CLOSING_PARENTHESIS statement:s ELSEIF if_statement_continuation:c
 		{: RESULT = new IfStatement(e, s, c); :}
+;
+
+catch_clauses ::=
+		{: if (1 == 1) throw new NotImplementedException(""); :}
+	| catch_clauses:ccs catch_clause:cc
+		{: if (1 == 1) throw new NotImplementedException(""); :}
+;
+
+catch_clause ::=
+	CATCH OPENING_PARENTHESIS IDENTIFIER:id LOCAL_VARIABLE:v CLOSING_PARENTHESIS block:body
+		{: if (1 == 1) throw new NotImplementedException(""); :}
+;
+
+optional_finally_clause ::=
+		{: RESULT = null; :}
+	| FINALLY 
+		{: if (1 == 1) throw new NotImplementedException(""); :}
 ;
 
 // ------------------------------------------------------------------------------------
@@ -252,19 +319,59 @@ one_or_more_expressions ::=
 
 expression ::=
 
-	BOOLEAN_LITERAL:e
+	// parenthesized expressions
+	OPENING_PARENTHESIS expression:e CLOSING_PARENTHESIS
+		{: RESULT = e; :}
+
+	// literals
+	| NULL_LITERAL
+		{: RESULT = new LiteralExpression(null); :}
+	| BOOLEAN_LITERAL:e
 		{: RESULT = new LiteralExpression(e); :}
 	| INTEGER_LITERAL:e
 		{: RESULT = new LiteralExpression(e); :}
 	| STRING_LITERAL:e 
 		{: RESULT = new LiteralExpression(e); :}
-	| LOCAL_VARIABLE:id
-		{: RESULT = new LocalVariableExpression(id); :}
+	
+	// constants and variables
 	| IDENTIFIER:id
 		{: RESULT = new ConstantExpression(id); :}
-	| OPENING_PARENTHESIS expression:e CLOSING_PARENTHESIS
-		{: RESULT = e; :}
+	| LOCAL_VARIABLE:id
+		{: RESULT = new LocalVariableExpression(id); :}
 	
+	// type casting
+	| OPENING_PARENTHESIS CAST_TYPE_NAME:type CLOSING_PARENTHESIS expression:e
+		{:
+			CastOperator op = ParserHelper.recognizeCastOperator(type);
+			if (op == null) {
+				parser.syntax_error(typexleft, "unknown type: " + type);				
+				RESULT = e;
+			} else {
+				RESULT = new CastExpression(op, e);
+			}
+		:} 
+	| OPENING_PARENTHESIS ARRAY CLOSING_PARENTHESIS expression:e
+		{: RESULT = new CastExpression(CastOperator.ARRAY, e); :}
+	| OPENING_PARENTHESIS UNSET CLOSING_PARENTHESIS expression:e
+		{: RESULT = new CastExpression(CastOperator.NULL, e); :}
+	
+	// unary operators
+	| MINUS expression:e
+		{: RESULT = new UnaryExpression(UnaryOperator.NEGATE, e); :} 
+	| LOGICAL_NOT expression:e
+		{: RESULT = new UnaryExpression(UnaryOperator.LOGICAL_NOT, e); :} 
+	| BITWISE_NOT expression:e
+		{: RESULT = new UnaryExpression(UnaryOperator.BITWISE_NOT, e); :} 
+	| expression:e INCREMENT
+		{: RESULT = new UnaryExpression(UnaryOperator.INCREMENT_AND_RETURN_OLD, e); :} 
+	| INCREMENT expression:e
+		{: RESULT = new UnaryExpression(UnaryOperator.INCREMENT_AND_RETURN_NEW, e); :} 
+	| expression:e DECREMENT
+		{: RESULT = new UnaryExpression(UnaryOperator.DECREMENT_AND_RETURN_OLD, e); :} 
+	| DECREMENT expression:e
+		{: RESULT = new UnaryExpression(UnaryOperator.DECREMENT_AND_RETURN_NEW, e); :} 
+	
+	// binary operators
 	| expression:e1 PLUS expression:e2
 		{: RESULT = new BinaryExpression(e1, BinaryOperator.ADD, e2); :} 
 	| expression:e1 MINUS expression:e2
@@ -276,92 +383,108 @@ expression ::=
 	| expression:e1 MOD expression:e2
 		{: RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
 	| expression:e1 CONCAT expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.CONCATENATE, e2); :} 
 	| expression:e1 POWER expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
-	| expression:e1 LOGICAL_NOT expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.POWER, e2); :} 
 	| expression:e1 LOGICAL_SHORTCUT_AND expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.LOGICAL_SHORTCUT_AND, e2); :} 
 	| expression:e1 LOGICAL_SHORTCUT_OR expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.LOGICAL_SHORTCUT_OR, e2); :} 
 	| expression:e1 LOW_PRECEDENCE_LOGICAL_SHORTCUT_AND expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.LOGICAL_SHORTCUT_AND, e2); :} 
 	| expression:e1 LOW_PRECEDENCE_LOGICAL_SHORTCUT_OR expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
-	| expression:e1 LOW_PRECEDENCE_LOGICAL_SHORTCUT_XOR expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
-	| expression:e1 BITWISE_NOT expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.LOGICAL_SHORTCUT_OR, e2); :} 
+	| expression:e1 LOW_PRECEDENCE_LOGICAL_XOR expression:e2
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.LOGICAL_XOR, e2); :} 
 	| expression:e1 BITWISE_AND expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.BITWISE_AND, e2); :} 
 	| expression:e1 BITWISE_OR expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.BITWISE_OR, e2); :} 
 	| expression:e1 BITWISE_XOR expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.BITWISE_XOR, e2); :} 
 	| expression:e1 SHIFT_LEFT expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.SHIFT_LEFT, e2); :} 
 	| expression:e1 SHIFT_RIGHT expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.SHIFT_RIGHT, e2); :} 
 	| expression:e1 EQUAL expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.EQUALS, e2); :} 
 	| expression:e1 NOT_EQUAL expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.NOT_EQUALS, e2); :} 
 	| expression:e1 IDENTICAL expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.IDENTICAL, e2); :} 
 	| expression:e1 NOT_IDENTICAL expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.NOT_IDENTICAL, e2); :} 
 	| expression:e1 GREATER expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.GREATER_THAN, e2); :} 
 	| expression:e1 LESS expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :}
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.LESS_THAN, e2); :}
 	| expression:e1 GREATER_EQUAL expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.GREATER_EQUAL, e2); :} 
 	| expression:e1 LESS_EQUAL expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :}
+		{: RESULT = new BinaryExpression(e1, BinaryOperator.LESS_EQUAL, e2); :}
 	| expression:e1 ASSIGN expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.ASSIGN, e2); :}
-	| expression:e1 INCREMENT expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
-	| expression:e1 DECREMENT expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.RIGHT, e2); :}
 	| expression:e1 PLUS_ASSIGN expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.ADD, e2); :} 
 	| expression:e1 MINUS_ASSIGN expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.SUBTRACT, e2); :} 
 	| expression:e1 TIMES_ASSIGN expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.MULTIPLY, e2); :} 
 	| expression:e1 DIVIDE_ASSIGN expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.DIVIDE, e2); :} 
 	| expression:e1 MOD_ASSIGN expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.REMAINDER, e2); :} 
 	| expression:e1 CONCAT_ASSIGN expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :}
+		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.CONCATENATE, e2); :}
 	| expression:e1 BITWISE_AND_ASSIGN expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.BITWISE_AND, e2); :} 
 	| expression:e1 BITWISE_OR_ASSIGN expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.BITWISE_OR, e2); :} 
 	| expression:e1 BITWISE_XOR_ASSIGN expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.BITWISE_XOR, e2); :} 
 	| expression:e1 SHIFT_LEFT_ASSIGN expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.SHIFT_LEFT, e2); :} 
 	| expression:e1 SHIFT_RIGHT_ASSIGN expression:e2
-		{: if (1==1) throw new RuntimeException(); RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.SHIFT_RIGHT, e2); :}
+	
+	// ternary operator
+	| expression:e1 QUESTION_MARK expression:e2 COLON expression:e3
+		{: if (1 == 1) throw new NotImplementedException(""); :}
 
-	| IDENTIFIER:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
-		{: RESULT = ParserHelper.buildFunctionCallLikeExpression(idxleft, id, exs); :}
+	// arrays
 	| ARRAY OPENING_PARENTHESIS array_literal_elements:els CLOSING_PARENTHESIS
 		{: RESULT = new ArrayConstructionExpression(els); :}
+	| expression:a OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET
+		{: RESULT = new ArrayAppendExpression(a); :}
+	| expression:a OPENING_SQUARE_BRACKET expression:k CLOSING_SQUARE_BRACKET
+		{: RESULT = new ArrayElementExpression(a, k); :}
+
+	// functions
+	| IDENTIFIER:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
+		{: RESULT = ParserHelper.buildFunctionCallLikeExpression(idxleft, id, exs); :}
 		
+	// OOP
 	| NEW IDENTIFIER:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
 		{: RESULT = new NewExpression(id, exs.toArray(new Expression[exs.size()])); :}
 	| expression:e INSTANCEOF IDENTIFIER:id
 		{: RESULT = new InstanceofExpression(e, id); :}
+	| IDENTIFIER:classId SCOPE_RESOLUTION IDENTIFIER:fieldId
+		{: RESULT = new StaticFieldAccess(classId, fieldId); :}
+	| SELF SCOPE_RESOLUTION IDENTIFIER:fieldId
+		{: RESULT = new StaticFieldAccess(null, fieldId); :}
 	| expression:obj RIGHT_ARROW IDENTIFIER:id
 		{: RESULT = new InstanceFieldAccess(obj, id); :}
+	| IDENTIFIER:classId SCOPE_RESOLUTION IDENTIFIER:methodId OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
+		{: RESULT = new StaticMethodCall(classId, methodId, exs.toArray(new Expression[exs.size()])); :}
+	| SELF SCOPE_RESOLUTION IDENTIFIER:methodId OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
+		{: RESULT = new StaticMethodCall(null, methodId, exs.toArray(new Expression[exs.size()])); :}
+	| PARENT SCOPE_RESOLUTION IDENTIFIER:methodId OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
+		{: if (1 == 1) throw new NotImplementedException(""); :}
 	| expression:obj RIGHT_ARROW IDENTIFIER:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
 		{: RESULT = new InstanceMethodCall(obj, id, exs.toArray(new Expression[exs.size()])); :}
 
+
+	// syntax error recovery
 	| error
 		{: RESULT = new LiteralExpression(null); :}
 ;
@@ -472,7 +595,7 @@ oop_member_definition ::=
 		{: :}
 	| oop_entity_modifiers:mods LOCAL_VARIABLE:v SEMICOLON
 		{: :}
-	| oop_entity_modifiers:mods FUNCTION IDENTIFIER:id OPENING_PARENTHESIS parameter_declarations:decls CLOSING_PARENTHESIS OPENING_CURLY_BRACE statements:sts CLOSING_CURLY_BRACE
+	| oop_entity_modifiers:mods FUNCTION IDENTIFIER:id OPENING_PARENTHESIS parameter_declarations:decls CLOSING_PARENTHESIS block:body
 		{: :}
 ;
 

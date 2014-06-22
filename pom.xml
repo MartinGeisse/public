@@ -48,9 +48,6 @@
 		<module>name.martingeisse.miner-server</module>
 		<module>name.martingeisse.miner-launcher</module>
 		<module>name.martingeisse.miner-client</module>
-		<module>name.martingeisse.stackerspace-common</module>
-		<module>name.martingeisse.stackerspace-server</module>
-		<module>name.martingeisse.stackerspace-client</module>
 
 		<!-- other applications -->
 		<module>name.martingeisse.flash-forum</module>

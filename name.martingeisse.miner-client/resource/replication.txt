@@ -1,0 +1,25 @@
+
+Problem: programming a simple new feature like faction score, divine power and
+spells is a significant amount of work:
+- server-side data storage (SQL), not too hard
+- client-side GUI, should be not too hard
+- network protocol, synchronization of the values -- cumbersome and sync is hard
+- server-side logic
+
+Use generic system for this?
+
+initial idea: simplifies development -- only have to modify server
+code, not network code and client code. Also simplifies deployment
+of new features.
+
+- Replicated Object, e.g. NPC
+- non-uniform replicated object, e.g. player
+- Replicated Variable, e.g. faction score
+- non-uniform replicated variable, e.g. player money
+- GUI replication (only replicated to a single session) (?)
+
+-> should simplify network code and manual synchronization
+
+
+
+

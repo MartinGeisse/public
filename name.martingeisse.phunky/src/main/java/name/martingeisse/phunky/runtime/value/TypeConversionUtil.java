@@ -13,6 +13,18 @@ package name.martingeisse.phunky.runtime.value;
 public final class TypeConversionUtil {
 
 	/**
+	 * Checks whether the specified value is a scalar (i.e. an instance of one of: any class that
+	 * implements {@link Number}; {@link Boolean}, or {@link String}). Note that null is not
+	 * considered to be a scalar.
+	 * 
+	 * @param value the value
+	 * @return true if the value is a scalar, false if not
+	 */
+	public static boolean isScalar(Object value) {
+		return ((value instanceof Number) || (value instanceof Boolean) || (value instanceof String));
+	}
+	
+	/**
 	 * Converts the specified value to a double-precision floating point value.
 	 * @param value the original value
 	 * @return the converted value
