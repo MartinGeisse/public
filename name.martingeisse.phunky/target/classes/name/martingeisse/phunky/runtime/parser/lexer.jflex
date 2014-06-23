@@ -446,7 +446,10 @@ HeredocNowdocContentLine = .* {LineTerminator}
 		return symbol(Tokens.CAST_TYPE_NAME, yytext());
 	}
 	
-	// special expressions
+	// special expressions and operators
+	"@" {
+		return symbol(Tokens.SUPPRESS_ERRORS);
+	}
 	"array" {
 		return symbol(Tokens.ARRAY);
 	}

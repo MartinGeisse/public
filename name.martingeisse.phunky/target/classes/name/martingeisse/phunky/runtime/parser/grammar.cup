@@ -114,7 +114,7 @@ terminal PLUS_ASSIGN, MINUS_ASSIGN, TIMES_ASSIGN, DIVIDE_ASSIGN, MOD_ASSIGN, CON
 terminal BITWISE_AND_ASSIGN, BITWISE_OR_ASSIGN, BITWISE_XOR_ASSIGN;
 terminal SHIFT_LEFT_ASSIGN, SHIFT_RIGHT_ASSIGN;
 
-// special expressions
+// special expressions and operators
 terminal ARRAY;
 terminal SELF;
 terminal PARENT;
@@ -122,6 +122,7 @@ terminal NEW;
 terminal INSTANCEOF;
 terminal UNSET;
 terminal String CAST_TYPE_NAME;
+terminal SUPPRESS_ERRORS;
 
 // primitive expressions
 terminal NULL_LITERAL;
@@ -182,7 +183,7 @@ precedence left PLUS, MINUS, CONCAT;
 precedence left TIMES, DIVIDE, MOD;
 precedence right LOGICAL_NOT;
 precedence nonassoc INSTANCEOF;
-precedence right INCREMENT, DECREMENT, BITWISE_NOT, OPENING_PARENTHESIS; // TODO: error suppression
+precedence right INCREMENT, DECREMENT, BITWISE_NOT, OPENING_PARENTHESIS, SUPPRESS_ERRORS;
 precedence left POWER;
 precedence left OPENING_SQUARE_BRACKET, RIGHT_ARROW;
 // TODO: clone, new
@@ -370,6 +371,8 @@ expression ::=
 		{: RESULT = new UnaryExpression(UnaryOperator.DECREMENT_AND_RETURN_OLD, e); :} 
 	| DECREMENT expression:e
 		{: RESULT = new UnaryExpression(UnaryOperator.DECREMENT_AND_RETURN_NEW, e); :} 
+	| SUPPRESS_ERRORS expression:e
+		{: RESULT = new UnaryExpression(UnaryOperator.SUPPRESS_ERRORS, e); :} 
 	
 	// binary operators
 	| expression:e1 PLUS expression:e2

@@ -112,6 +112,21 @@ public enum UnaryOperator {
 			return null;
 		}
 		
+	},
+	
+	/**
+	 * Evaluates an expression, suppressing errors that occur in it.
+	 */
+	SUPPRESS_ERRORS("@", "") {
+		
+		/* (non-Javadoc)
+		 * @see name.martingeisse.phunky.runtime.code.UnaryOperator#apply(java.lang.Object)
+		 */
+		@Override
+		public Object apply(final Object operand) {
+			return null;
+		}
+		
 	};
 	
 	/**

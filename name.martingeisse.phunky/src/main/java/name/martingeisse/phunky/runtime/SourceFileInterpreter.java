@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import java_cup.runtime.ComplexSymbolFactory;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.statement.StatementSequence;
@@ -25,6 +26,11 @@ import name.martingeisse.phunky.runtime.parser.Parser;
  */
 public final class SourceFileInterpreter {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(SourceFileInterpreter.class);
+	
 	/**
 	 * the runtime
 	 */
@@ -64,15 +70,20 @@ public final class SourceFileInterpreter {
 	 * @return the AST
 	 */
 	private StatementSequence parse(final File sourceFile) throws IOException {
+		logger.debug("trying to parse file: " + sourceFile+ ", loading...");
 		try (FileInputStream fileInputStream = new FileInputStream(sourceFile); InputStreamReader reader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8)) {
+			logger.trace("file loaded.");
 			Lexer lexer = new Lexer(reader);
 			Parser parser = new Parser(lexer, new ComplexSymbolFactory());
 			StatementSequence program;
 			try {
 				program = (StatementSequence)parser.parse().value;
 			} catch (Exception e) {
-				throw new RuntimeException("could not parse " + sourceFile);
+				String message = "error parsing file: " + sourceFile;
+				logger.debug(message);
+				throw new RuntimeException(message, e);
 			}
+			logger.debug("file parsed: " + sourceFile);
 			return program;
 		}
 	}
@@ -85,13 +96,19 @@ public final class SourceFileInterpreter {
 		File previousSourceFile = currentSourceFile;
 		try {
 			currentSourceFile = sourceFile;
-			parse(sourceFile).execute(runtime.getGlobalEnvironment());
+			StatementSequence program = parse(sourceFile);
+			logger.debug("executing file: " + sourceFile);
+			program.execute(runtime.getGlobalEnvironment());
+			logger.debug("file terminated normally: " + sourceFile);
 			// TODO exit handler
 		} catch (ExitException e) {
+			logger.debug("file exited: " + sourceFile + ", status code: " + e.getStatusCode());
 			// TODO exit handler
 		} catch (FatalErrorException e) {
+			logger.debug("file triggered a fatal error: " + sourceFile, e);
 			// TODO exit handler
 		} catch (Exception e) {
+			logger.debug("file threw an unhandled exception", e);
 			// TODO exit handler
 			// TODO distinguish PHP exceptions and Java exceptions
 		} finally {
@@ -112,30 +129,35 @@ public final class SourceFileInterpreter {
 	
 	/**
 	 * Includes a source code file.
+	 * 
+	 * TODO merge execute() and include() ? At least make execute() and exception-handling
+	 * wrapper around include, but keep the actual parse/execute logic in include() only.
+	 * 
 	 * @param path the path to the file to include
 	 * @param once whether to skip the file if it has been included before
 	 * TODO: what about different paths to the same file?
 	 * @param required whether to trigger an error if the file cannot be loaded
 	 */
 	public void include(String path, boolean once, boolean required) {
-		
+		logger.debug("including file: " + path);
+
 		// handle the "once" flag
 		if (once && alreadyIncludedFiles.contains(path)) {
+			logger.debug("including 'once' and file is already included.");
 			return;
 		}
 		alreadyIncludedFiles.add(path);
 		File file = new File(currentSourceFile.getParentFile(), path);
+		logger.trace("file resolved to: " + file);
 		
 		// parse the file
 		StatementSequence program;
 		try {
 			program = parse(file);
 		} catch (IOException e) {
-			String message = "failed to load required source file '" + file + "'";
+			logger.debug("could not load or parse file: " + file);
 			if (required) {
-				runtime.triggerError(message);
-			} else {
-				System.out.println("info: "+ message);
+				runtime.triggerError("failed to load required source file '" + file + "'");
 			}
 			return;
 		}
@@ -145,6 +167,10 @@ public final class SourceFileInterpreter {
 		try {
 			currentSourceFile = file;
 			program.execute(runtime.getGlobalEnvironment());
+			logger.debug("file executed: " + file);
+		} catch (RuntimeException e) {
+			logger.debug("exception while executing file: " + file);
+			throw e;
 		} finally {
 			currentSourceFile = previousSourceFile;
 		}

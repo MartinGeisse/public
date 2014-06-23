@@ -42,12 +42,18 @@ import name.martingeisse.phunky.runtime.builtin.var.IsNumericFunction;
 import name.martingeisse.phunky.runtime.builtin.var.IsScalarFunction;
 import name.martingeisse.phunky.runtime.builtin.var.IsStringFunction;
 import name.martingeisse.phunky.runtime.builtin.var.VarDumpFunction;
+import org.apache.log4j.Logger;
 
 /**
  * This class represents the whole PHP runtime environment.
  */
 public final class PhpRuntime {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(PhpRuntime.class);
+	
 	/**
 	 * the globalEnvironment
 	 */
@@ -238,7 +244,7 @@ public final class PhpRuntime {
 	 * @param message the error message
 	 */
 	public void triggerError(String message) {
-		System.err.println(message);
+		logger.error(message);
 	}
 
 	/**
@@ -247,7 +253,7 @@ public final class PhpRuntime {
 	 * @param message the error message
 	 */
 	public void triggerFatalError(String message) {
-		System.err.println(message);
+		logger.fatal(message);
 		throw new FatalErrorException(message);
 	}
 
