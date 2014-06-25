@@ -6,6 +6,7 @@
 
 package name.martingeisse.phunky.runtime.code.expression;
 
+import org.apache.commons.lang3.NotImplementedException;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.statement.Statement;
@@ -89,7 +90,7 @@ public final class FunctionExpression extends AbstractComputeExpression {
 			}
 		});
 		*/
-		return null;
+		throw new NotImplementedException("");
 	}
 
 	/* (non-Javadoc)

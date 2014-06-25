@@ -57,9 +57,15 @@ public final class DoWhileStatement implements Statement {
 	 */
 	@Override
 	public void execute(final Environment environment) {
-		do {
-			body.execute(environment);
-		} while (TypeConversionUtil.convertToBoolean(loopCondition.evaluate(environment)));
+		try {
+			do {
+				body.execute(environment);
+			} while (TypeConversionUtil.convertToBoolean(loopCondition.evaluate(environment)));
+		} catch (BreakException e) {
+			if (e.onBreakLoop()) {
+				throw e;
+			}
+		}
 	}
 
 	/* (non-Javadoc)

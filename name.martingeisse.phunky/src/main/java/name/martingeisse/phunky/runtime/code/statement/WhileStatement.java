@@ -57,8 +57,14 @@ public final class WhileStatement implements Statement {
 	 */
 	@Override
 	public void execute(final Environment environment) {
-		while (TypeConversionUtil.convertToBoolean(loopCondition.evaluate(environment))) {
-			body.execute(environment);
+		try {
+			while (TypeConversionUtil.convertToBoolean(loopCondition.evaluate(environment))) {
+				body.execute(environment);
+			}
+		} catch (BreakException e) {
+			if (e.onBreakLoop()) {
+				throw e;
+			}
 		}
 	}
 

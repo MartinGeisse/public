@@ -38,8 +38,7 @@ public final class ConstantExpression extends AbstractComputeExpression {
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-		// TODO
-		return null;
+		return environment.getRuntime().getConstants().get(name);
 	}
 
 	/* (non-Javadoc)

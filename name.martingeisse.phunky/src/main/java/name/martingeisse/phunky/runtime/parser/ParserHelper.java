@@ -39,23 +39,23 @@ final class ParserHelper {
 		castOperatorMap.put("object", CastOperator.OBJECT);
 		castOperatorMap.put("unset", CastOperator.NULL);
 	}
-	
+
 	/**
 	 * Prevent instantiation.
 	 */
 	private ParserHelper() {
 	}
-	
+
 	/**
 	 * Emits an error for the specified symbol.
 	 * 
 	 * @param location the location of the symbol
 	 * @param message the error message
 	 */
-	public static void error(Location location, String message) {
+	public static void error(final Location location, final String message) {
 		System.err.println("Syntax error at line " + location.getLine() + ", col " + location.getColumn() + ": " + message);
 	}
-	
+
 	/**
 	 * Builds an expression from a "<name>(<expression>, ...)" like syntax.
 	 * 
@@ -64,14 +64,14 @@ final class ParserHelper {
 	 * @param parameterExpressions the parameter expressions
 	 * @return the expression
 	 */
-	public static Expression buildFunctionCallLikeExpression(Location location, String name, List<Expression> parameterExpressions) {
+	public static Expression buildFunctionCallLikeExpression(final Location location, final String name, final List<Expression> parameterExpressions) {
 		if (name.equals("empty")) {
 			return new EmptyExpression(parameterExpressions.toArray(new Expression[parameterExpressions.size()]));
 		} else {
 			return new FunctionCall(name, parameterExpressions.toArray(new Expression[parameterExpressions.size()]));
 		}
 	}
-	
+
 	/**
 	 * Returns the appropriate {@link CastOperator} for the specified operator
 	 * text, or null if not recognized.
@@ -79,7 +79,7 @@ final class ParserHelper {
 	 * @param operatorText the operator text
 	 * @return the operator
 	 */
-	public static CastOperator recognizeCastOperator(String operatorText) {
+	public static CastOperator recognizeCastOperator(final String operatorText) {
 		return castOperatorMap.get(operatorText);
 	}
 

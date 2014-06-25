@@ -88,7 +88,6 @@ terminal STATIC, ABSTRACT, FINAL;
 terminal VAR, CONST;
 
 // statement keywords
-terminal INCLUDE, INCLUDE_ONCE, REQUIRE, REQUIRE_ONCE;
 terminal FOR, FOREACH, AS, DO, WHILE, BREAK;
 terminal IF, ELSEIF, ELSE;
 terminal RETURN;
@@ -123,6 +122,7 @@ terminal INSTANCEOF;
 terminal UNSET;
 terminal String CAST_TYPE_NAME;
 terminal SUPPRESS_ERRORS;
+terminal terminal INCLUDE, INCLUDE_ONCE, REQUIRE, REQUIRE_ONCE, PRINT;
 
 // primitive expressions
 terminal NULL_LITERAL;
@@ -137,6 +137,7 @@ non terminal StatementSequence program;
 non terminal Statement block;
 non terminal List<Statement> statements;
 non terminal Statement statement;
+non terminal Statement simple_statement_without_semicolon;
 non terminal Statement if_statement_continuation;
 non terminal Void catch_clauses;
 non terminal Void catch_clause;
@@ -216,15 +217,13 @@ statements ::=
 
 statement ::=
 
-	// basic building blocks for statements
-	SEMICOLON
-		{: RESULT = new NopStatement(); :} 
+	// simple statements
+	simple_statement_without_semicolon:s SEMICOLON
+		{: RESULT = s; :} 
 	| block:b
 		{: RESULT = b; :}
 	| VERBATIM_CONTENT:c
 		{: RESULT = new ExpressionStatement(new FunctionCall("echo", new LiteralExpression(c))); :}
-	| expression:e SEMICOLON
-		{: RESULT = new ExpressionStatement(e); :}
 		
 	// build-in special statements
 	| ECHO one_or_more_expressions:exs SEMICOLON
@@ -233,22 +232,14 @@ statement ::=
 		{: RESULT = new GlobalStatement(v); :}
 
 	// control structures
-	| INCLUDE expression:e SEMICOLON
-		{: RESULT = new ExpressionStatement(new FunctionCall("include", e)); :}
-	| INCLUDE_ONCE expression:e SEMICOLON
-		{: RESULT = new ExpressionStatement(new FunctionCall("include_once", e)); :}
-	| REQUIRE expression:e SEMICOLON
-		{: RESULT = new ExpressionStatement(new FunctionCall("require", e)); :}
-	| REQUIRE_ONCE expression:e SEMICOLON
-		{: RESULT = new ExpressionStatement(new FunctionCall("require_once", e)); :}
 	| IF if_statement_continuation:c
 		{: RESULT = c; :}
-	| FOR OPENING_PARENTHESIS statement:init SEMICOLON expression:cond SEMICOLON statement:advance CLOSING_PARENTHESIS block:body
-		{: if (1 == 1) throw new NotImplementedException(""); :}
+	| FOR OPENING_PARENTHESIS simple_statement_without_semicolon:init SEMICOLON expression:cond SEMICOLON simple_statement_without_semicolon:advance CLOSING_PARENTHESIS block:body
+		{: RESULT = new ForStatement(init, cond, advance, body); :}
 	| FOREACH OPENING_PARENTHESIS expression:e AS LOCAL_VARIABLE:v CLOSING_PARENTHESIS block:body
-		{: if (1 == 1) throw new NotImplementedException(""); :}
+		{: RESULT = new ForeachStatement(e, null, v, body); :}
 	| FOREACH OPENING_PARENTHESIS expression:e AS LOCAL_VARIABLE:k DOUBLE_RIGHT_ARROW LOCAL_VARIABLE:v CLOSING_PARENTHESIS block:body
-		{: if (1 == 1) throw new NotImplementedException(""); :}
+		{: RESULT = new ForeachStatement(e, k, v, body); :}
 	| WHILE OPENING_PARENTHESIS expression:e CLOSING_PARENTHESIS statement:s
 		{: RESULT = new WhileStatement(e, s); :}
 	| DO statement:s WHILE OPENING_PARENTHESIS expression:e CLOSING_PARENTHESIS
@@ -273,6 +264,12 @@ statement ::=
 	// syntax error recovery
 	| error SEMICOLON
 		{: System.err.println("syntax error"); RESULT = new NopStatement(); :}
+;
+
+simple_statement_without_semicolon ::=
+		{: RESULT = new NopStatement(); :}
+	| expression:e
+		{: RESULT = new ExpressionStatement(e); :}
 ;
 
 if_statement_continuation ::=
@@ -466,6 +463,18 @@ expression ::=
 	| IDENTIFIER:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
 		{: RESULT = ParserHelper.buildFunctionCallLikeExpression(idxleft, id, exs); :}
 		
+	// special built-in expressions
+	| INCLUDE expression:e
+		{: RESULT = new FunctionCall("include", e); :}
+	| INCLUDE_ONCE expression:e
+		{: RESULT = new FunctionCall("include_once", e); :}
+	| REQUIRE expression:e
+		{: RESULT = new FunctionCall("require", e); :}
+	| REQUIRE_ONCE expression:e
+		{: RESULT = new FunctionCall("require_once", e); :}
+	| PRINT expression:e
+		{: RESULT = new FunctionCall("print", e); :}
+	
 	// OOP
 	| NEW IDENTIFIER:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
 		{: RESULT = new NewExpression(id, exs.toArray(new Expression[exs.size()])); :}

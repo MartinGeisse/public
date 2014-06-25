@@ -76,3 +76,49 @@ $a[1] = 111;
 $a[2] = 222;
 $a[3] = 333;
 var_dump($a);
+
+// ----------------------------------------------------------------
+// creating arrays in uninitialized variables through element access
+// ----------------------------------------------------------------
+
+echo "\n\n\n";
+
+// create array by assigning to a specific element
+echo 'creating arrays in uninitialized variables(1):'."\n";
+$newArray1[5] = 9;
+var_dump($newArray1);
+
+// create array by appending
+echo 'creating arrays in uninitialized variables(2):'."\n";
+$newArray2[] = 9;
+var_dump($newArray2);
+
+// DOESN'T WORK: create array by reading an element
+echo 'creating arrays in uninitialized variables(3):'."\n";
+$x = $newArray3[5];
+var_dump($newArray3);
+
+// creating an array also works if the variable exists and is null
+echo 'creating arrays in uninitialized variables(4):'."\n";
+$newArray4 = null;
+$newArray4[1] = 9;
+var_dump($newArray4);
+
+// DOESN'T WORK: if the variable has the value 0
+echo 'creating arrays in uninitialized variables(5):'."\n";
+$newArray5 = 0;
+$newArray5[1] = 9;
+var_dump($newArray5);
+
+// creating an array also works if the variable has the value false
+echo 'creating arrays in uninitialized variables(6):'."\n";
+$newArray6 = false;
+$newArray6[1] = 9;
+var_dump($newArray6);
+
+// DOESN'T WORK: if the variable has the value true
+echo 'creating arrays in uninitialized variables(7):'."\n";
+$newArray7 = true;
+$newArray7[1] = 9;
+var_dump($newArray7);
+

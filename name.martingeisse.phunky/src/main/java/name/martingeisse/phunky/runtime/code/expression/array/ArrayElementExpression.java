@@ -11,6 +11,8 @@ import name.martingeisse.phunky.runtime.Variable;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.AbstractVariableExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.value.PhpArray;
+import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
 
 /**
  * This expression selects one element of an array.
@@ -54,21 +56,98 @@ public final class ArrayElementExpression extends AbstractVariableExpression {
 	}
 
 	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.expression.AbstractVariableExpression#evaluate(name.martingeisse.phunky.runtime.Environment)
+	 */
+	@Override
+	public Object evaluate(Environment environment) {
+		Object arrayCandidate = arrayExpression.evaluate(environment);
+		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
+		if (arrayCandidate instanceof PhpArray) {
+			PhpArray array = (PhpArray)arrayCandidate;
+			return array.getVariable(key).getValue();
+		} else {
+			environment.getRuntime().triggerError("trying to get element of non-array value");
+			return null;
+		}
+	}
+	
+	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#getVariable(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
 	public Variable getVariable(final Environment environment) {
-		// TODO
-		return null;
-	}
 
+		// TODO this wont support empty() correctly
+		// -> new interface EmptyExpressionAwareExpression
+		
+		// note that arrays are a value type, so getting the variable for an element also gets the variable for the array
+		Variable arrayVariable = arrayExpression.getVariable(environment);
+		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
+		if (arrayVariable == null) {
+			return null;
+		}
+		Object arrayCandidate = arrayVariable.getValue();
+		if (arrayCandidate instanceof PhpArray) {
+			PhpArray array = (PhpArray)arrayCandidate;
+			return array.getVariable(key);
+		}
+		environment.getRuntime().triggerError("trying to get element of non-array value");
+		return null;
+		
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#getOrCreateVariable(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
 	public Variable getOrCreateVariable(final Environment environment) {
-		// TODO
-		return null;
+		
+		// note that arrays are a value type, so getting the variable for an element also gets the variable for the array
+		Variable arrayVariable = arrayExpression.getVariable(environment);
+		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
+		if (arrayVariable == null) {
+			CREATE ARRAY IMPLICITLY
+			return null;
+		}
+		Object arrayCandidate = arrayVariable.getValue();
+		if (arrayCandidate instanceof PhpArray) {
+			PhpArray array = (PhpArray)arrayCandidate;
+			CREATE ELEMENT
+			return array.getVariable(key);
+		}
+		if (valueCanBeOverwrittenByImplicitArrayConstruction(arrayCandidate)) {
+			CREATE ARRAY IMPLICITLY
+
+		} else {
+			environment.getRuntime().triggerError("cannot use a scalar value as an array");
+			return null;
+		}
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#isEmpty(name.martingeisse.phunky.runtime.Environment)
+	 */
+	@Override
+	public boolean isEmpty(Environment environment) {
+		TODO
+		return false;
+	}
+
+	/**
+	 * This method is used when creating an array by setting an element in a non-array
+	 * variable. It takes the value currently stored in the variable, and checks
+	 * whether that value allows creating an array this way.
+	 */
+	private boolean valueCanBeOverwrittenByImplicitArrayConstruction(Object value) {
+		if (value == null) {
+			return true;
+		}
+		if (value instanceof Boolean) {
+			Boolean b = (Boolean)value;
+			return (b.booleanValue() == false);
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)

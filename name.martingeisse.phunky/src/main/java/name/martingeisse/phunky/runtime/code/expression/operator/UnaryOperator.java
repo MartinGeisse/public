@@ -4,6 +4,11 @@
 
 package name.martingeisse.phunky.runtime.code.expression.operator;
 
+import name.martingeisse.phunky.runtime.Environment;
+import name.martingeisse.phunky.runtime.Variable;
+import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
+
 /**
  * This enum contains all unary operators.
  */
@@ -18,8 +23,18 @@ public enum UnaryOperator {
 		 * @see name.martingeisse.phunky.runtime.code.UnaryOperator#apply(java.lang.Object)
 		 */
 		@Override
-		public Object apply(final Object operand) {
-			return null;
+		public Object applyToValue(final Object operand) {
+			if (operand instanceof Integer) {
+				return -((Integer)operand);
+			} else if (operand instanceof Long) {
+				return -((Long)operand);
+			} else if (operand instanceof Float) {
+				return -((Float)operand);
+			} else if (operand instanceof Double) {
+				return -((Double)operand);
+			} else {
+				return -TypeConversionUtil.convertToDouble(operand);
+			}
 		}
 
 	},
@@ -33,8 +48,8 @@ public enum UnaryOperator {
 		 * @see name.martingeisse.phunky.runtime.code.UnaryOperator#apply(java.lang.Object)
 		 */
 		@Override
-		public Object apply(final Object operand) {
-			return null;
+		public Object applyToValue(final Object operand) {
+			return !TypeConversionUtil.convertToBoolean(operand);
 		}
 
 	},
@@ -48,8 +63,8 @@ public enum UnaryOperator {
 		 * @see name.martingeisse.phunky.runtime.code.UnaryOperator#apply(java.lang.Object)
 		 */
 		@Override
-		public Object apply(final Object operand) {
-			return null;
+		public Object applyToValue(final Object operand) {
+			return ~TypeConversionUtil.convertToInt(operand);
 		}
 		
 	},
@@ -60,11 +75,20 @@ public enum UnaryOperator {
 	INCREMENT_AND_RETURN_OLD("", "++") {
 		
 		/* (non-Javadoc)
-		 * @see name.martingeisse.phunky.runtime.code.UnaryOperator#apply(java.lang.Object)
+		 * @see name.martingeisse.phunky.runtime.code.expression.operator.UnaryOperator#applyToExpression(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.code.expression.Expression)
 		 */
 		@Override
-		public Object apply(final Object operand) {
-			return null;
+		public Object applyToExpression(Environment environment, Expression expression) {
+			final Variable leftHandVariable = leftHandSide.getOrCreateVariable(environment);
+			if (leftHandVariable == null) {
+				environment.getRuntime().triggerError("cannot assign to " + leftHandSide);
+				return null;
+			}
+			final Object rightHandValue = rightHandSide.evaluate(environment);
+			final Object resultValue = operator.applyToValues(leftHandVariable.getValue(), rightHandValue);
+			leftHandVariable.setValue(resultValue);
+			return resultValue;
+			TODO
 		}
 		
 	},
@@ -75,11 +99,11 @@ public enum UnaryOperator {
 	INCREMENT_AND_RETURN_NEW("++", "") {
 		
 		/* (non-Javadoc)
-		 * @see name.martingeisse.phunky.runtime.code.UnaryOperator#apply(java.lang.Object)
+		 * @see name.martingeisse.phunky.runtime.code.expression.operator.UnaryOperator#applyToExpression(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.code.expression.Expression)
 		 */
 		@Override
-		public Object apply(final Object operand) {
-			return null;
+		public Object applyToExpression(Environment environment, Expression expression) {
+			TODO
 		}
 		
 	},
@@ -90,11 +114,11 @@ public enum UnaryOperator {
 	DECREMENT_AND_RETURN_OLD("", "--") {
 		
 		/* (non-Javadoc)
-		 * @see name.martingeisse.phunky.runtime.code.UnaryOperator#apply(java.lang.Object)
+		 * @see name.martingeisse.phunky.runtime.code.expression.operator.UnaryOperator#applyToExpression(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.code.expression.Expression)
 		 */
 		@Override
-		public Object apply(final Object operand) {
-			return null;
+		public Object applyToExpression(Environment environment, Expression expression) {
+			TODO
 		}
 		
 	},
@@ -105,11 +129,11 @@ public enum UnaryOperator {
 	DECREMENT_AND_RETURN_NEW("--", "") {
 		
 		/* (non-Javadoc)
-		 * @see name.martingeisse.phunky.runtime.code.UnaryOperator#apply(java.lang.Object)
+		 * @see name.martingeisse.phunky.runtime.code.expression.operator.UnaryOperator#applyToExpression(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.code.expression.Expression)
 		 */
 		@Override
-		public Object apply(final Object operand) {
-			return null;
+		public Object applyToExpression(Environment environment, Expression expression) {
+			TODO
 		}
 		
 	},
@@ -123,8 +147,8 @@ public enum UnaryOperator {
 		 * @see name.martingeisse.phunky.runtime.code.UnaryOperator#apply(java.lang.Object)
 		 */
 		@Override
-		public Object apply(final Object operand) {
-			return null;
+		public Object applyToValue(final Object operand) {
+			return operand;
 		}
 		
 	};
@@ -166,10 +190,22 @@ public enum UnaryOperator {
 	}
 	
 	/**
-	 * Applies this operator to the specified operand.
-	 * @param operand the operand
+	 * Applies this operator to the specified expression.
+	 * @param environment the environment
+	 * @param expression the expression
 	 * @return the resulting value
 	 */
-	public abstract Object apply(Object operand);
+	public Object applyToExpression(final Environment environment, Expression expression) {
+		return applyToValue(expression.evaluate(environment));
+	}
 
+	/**
+	 * Applies this operator to the specified value.
+	 * @param value the input value
+	 * @return the resulting value
+	 */
+	public Object applyToValue(Object value) {
+		throw new UnsupportedOperationException("operator " + this + " cannot be applied to a value");
+	}
+	
 }

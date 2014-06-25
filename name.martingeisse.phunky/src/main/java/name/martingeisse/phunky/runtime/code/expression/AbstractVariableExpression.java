@@ -16,10 +16,10 @@ public abstract class AbstractVariableExpression implements Expression {
 	 * @see name.martingeisse.phunky.runtime.code.Expression#evaluate(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
-	public final Object evaluate(Environment environment) {
+	public Object evaluate(Environment environment) {
 		Variable variable = getVariable(environment);
 		if (variable == null) {
-			environment.getRuntime().triggerError("undefined variable: " + this);
+			environment.getRuntime().triggerError("not a variable: " + this);
 			return null;
 		} else {
 			return variable.getValue();

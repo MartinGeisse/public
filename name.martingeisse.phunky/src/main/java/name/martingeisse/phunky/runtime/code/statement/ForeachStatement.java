@@ -87,13 +87,20 @@ public final class ForeachStatement implements Statement {
 	 */
 	@Override
 	public void execute(final Environment environment) {
-		Object container = containerExpression.evaluate(environment);
-		if (!(container instanceof PhpIterable)) {
-			environment.getRuntime().triggerError("invalid argument for foreach: " + container);
-		} else {
-			PhpIterable iterable = (PhpIterable)container;
-			iterable.iterate(environment, keyIterationVariableName, valueIterationVariableName, body);
+		try {
+			Object container = containerExpression.evaluate(environment);
+			if (!(container instanceof PhpIterable)) {
+				environment.getRuntime().triggerError("invalid argument for foreach: " + container);
+			} else {
+				PhpIterable iterable = (PhpIterable)container;
+				iterable.iterate(environment, keyIterationVariableName, valueIterationVariableName, body);
+			}
+		} catch (BreakException e) {
+			if (e.onBreakLoop()) {
+				throw e;
+			}
 		}
+
 	}
 
 	/* (non-Javadoc)

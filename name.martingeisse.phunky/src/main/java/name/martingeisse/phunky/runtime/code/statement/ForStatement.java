@@ -87,10 +87,16 @@ public final class ForStatement implements Statement {
 	 */
 	@Override
 	public void execute(final Environment environment) {
-		initializationStatement.execute(environment);
-		while (TypeConversionUtil.convertToBoolean(loopCondition.evaluate(environment))) {
-			body.execute(environment);
-			advanceStatement.execute(environment);
+		try {
+			initializationStatement.execute(environment);
+			while (TypeConversionUtil.convertToBoolean(loopCondition.evaluate(environment))) {
+				body.execute(environment);
+				advanceStatement.execute(environment);
+			}
+		} catch (BreakException e) {
+			if (e.onBreakLoop()) {
+				throw e;
+			}
 		}
 	}
 

@@ -248,18 +248,6 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	}
 	
 	// statement keywords
-	"include" {
-		return symbol(Tokens.INCLUDE);
-	}
-	"include_once" {
-		return symbol(Tokens.INCLUDE_ONCE);
-	}
-	"require" {
-		return symbol(Tokens.REQUIRE);
-	}
-	"require_once" {
-		return symbol(Tokens.REQUIRE_ONCE);
-	}
 	"for" {
 		return symbol(Tokens.FOR);
 	}
@@ -464,6 +452,21 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	}
 	"instanceof" {
 		return symbol(Tokens.INSTANCEOF);
+	}
+	"include" {
+		return symbol(Tokens.INCLUDE);
+	}
+	"include_once" {
+		return symbol(Tokens.INCLUDE_ONCE);
+	}
+	"require" {
+		return symbol(Tokens.REQUIRE);
+	}
+	"require_once" {
+		return symbol(Tokens.REQUIRE_ONCE);
+	}
+	"print" {
+		return symbol(Tokens.PRINT);
 	}
 	
 	// literals

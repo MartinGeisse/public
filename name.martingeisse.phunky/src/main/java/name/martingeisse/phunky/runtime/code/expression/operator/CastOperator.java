@@ -4,6 +4,9 @@
 
 package name.martingeisse.phunky.runtime.code.expression.operator;
 
+import org.apache.commons.lang3.NotImplementedException;
+import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
+
 /**
  * This enum contains all cast operators.
  */
@@ -19,7 +22,7 @@ public enum CastOperator {
 		 */
 		@Override
 		public Object apply(final Object operand) {
-			return null;
+			return TypeConversionUtil.convertToInt(operand);
 		}
 
 	},
@@ -34,7 +37,7 @@ public enum CastOperator {
 		 */
 		@Override
 		public Object apply(final Object operand) {
-			return null;
+			return TypeConversionUtil.convertToBoolean(operand);
 		}
 		
 	},
@@ -49,7 +52,7 @@ public enum CastOperator {
 		 */
 		@Override
 		public Object apply(final Object operand) {
-			return null;
+			return TypeConversionUtil.convertToDouble(operand);
 		}
 		
 	},
@@ -64,7 +67,7 @@ public enum CastOperator {
 		 */
 		@Override
 		public Object apply(final Object operand) {
-			return null;
+			return TypeConversionUtil.convertToString(operand);
 		}
 		
 	},
@@ -79,7 +82,7 @@ public enum CastOperator {
 		 */
 		@Override
 		public Object apply(final Object operand) {
-			return null;
+			throw new NotImplementedException("");
 		}
 		
 	},
@@ -94,7 +97,7 @@ public enum CastOperator {
 		 */
 		@Override
 		public Object apply(final Object operand) {
-			return null;
+			throw new NotImplementedException("");
 		}
 		
 	},

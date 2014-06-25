@@ -38,6 +38,9 @@ public class EmptyExpression extends AbstractCallExpression {
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
+		
+		TODO .isEmpty()
+		
 		if (isVariable) {
 			Variable variable = ((AbstractVariableExpression)getParameter(0)).getVariable(environment);
 			if (variable == null) {

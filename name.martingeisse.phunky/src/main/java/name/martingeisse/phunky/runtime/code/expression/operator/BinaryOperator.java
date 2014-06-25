@@ -15,6 +15,8 @@ import org.apache.commons.lang3.NotImplementedException;
  */
 public enum BinaryOperator {
 
+	TODO
+
 	/**
 	 * Evaluates both sides but then always returns the left-hand value.
 	 */

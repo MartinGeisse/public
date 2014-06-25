@@ -52,6 +52,7 @@ public final class ArrayAppendExpression extends AbstractVariableExpression {
 	 */
 	@Override
 	public Variable getOrCreateVariable(Environment environment) {
+		TODO
 		// TODO
 		return null;
 	}
