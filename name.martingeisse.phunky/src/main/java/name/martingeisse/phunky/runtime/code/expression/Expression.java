@@ -30,6 +30,15 @@ public interface Expression {
 	public Object evaluate(Environment environment);
 
 	/**
+	 * Evaluates this expression, but returns null for missing variables.
+	 * This is used to implement PHP's empty().
+	 * 
+	 * @param environment the environment
+	 * @return the value of the expression, or null
+	 */
+	public Object evaluateForEmptyCheck(Environment environment);
+
+	/**
 	 * Obtains the variable for this expression, if any.
 	 * @param environment the environment
 	 * @return the variable or null
@@ -44,18 +53,6 @@ public interface Expression {
 	 * @return the variable or null
 	 */
 	public Variable getOrCreateVariable(Environment environment);
-
-	/**
-	 * Checks whether this expression is "empty" in the specified environment,
-	 * as defined by PHP'S empty() special form. This typically just evaluates
-	 * this expression and compares its value to false. Special support is needed,
-	 * for example, to handle undefined variables and nonexisting array
-	 * elements.
-	 * 
-	 * @param environment the environment
-	 * @return true if empty, false if not
-	 */
-	public boolean isEmpty(Environment environment);
 
 	/**
 	 * Dumps this expression using the specified code dumper.

@@ -4,7 +4,9 @@
 
 package name.martingeisse.phunky.runtime.code.expression.operator;
 
+import java.util.Map;
 import name.martingeisse.phunky.runtime.Environment;
+import name.martingeisse.phunky.runtime.Variable;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
 import name.martingeisse.phunky.runtime.value.PhpArray;
 import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
@@ -14,8 +16,6 @@ import org.apache.commons.lang3.NotImplementedException;
  * This enum contains all binary operators.
  */
 public enum BinaryOperator {
-
-	TODO
 
 	/**
 	 * Evaluates both sides but then always returns the left-hand value.
@@ -88,8 +88,13 @@ public enum BinaryOperator {
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
 			if ((leftHandSide instanceof PhpArray) || (rightHandSide instanceof PhpArray)) {
-				// TODO similar to array merge
-				throw new NotImplementedException("");
+				// this is similar to array_merge, but differs in precedence of LHS/RHS
+				// elements and in treatment of numeric indices.
+				// see: http://stackoverflow.com/questions/2140090/operator-for-array-in-php
+				PhpArray result = new PhpArray();
+				addElements((PhpArray)rightHandSide, result);
+				addElements((PhpArray)leftHandSide, result);
+				return result;
 			} else if ((leftHandSide instanceof Double) || (rightHandSide instanceof Double) || (leftHandSide instanceof Float) || (rightHandSide instanceof Float)) {
 				final double x = TypeConversionUtil.convertToDouble(leftHandSide);
 				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
@@ -98,6 +103,12 @@ public enum BinaryOperator {
 				final int x = TypeConversionUtil.convertToInt(leftHandSide);
 				final int y = TypeConversionUtil.convertToInt(rightHandSide);
 				return x + y;
+			}
+		}
+		
+		private void addElements(PhpArray from, PhpArray to) {
+			for (Map.Entry<String, Variable> entry : from.getDirectEntryIterable()) {
+				to.getOrCreateVariable(entry.getKey()).setValue(entry.getValue());
 			}
 		}
 
@@ -241,11 +252,15 @@ public enum BinaryOperator {
 	LOGICAL_SHORTCUT_AND("&&") {
 
 		/* (non-Javadoc)
-		 * @see name.martingeisse.phunky.runtime.code.BinaryOperator#applyToValues(java.lang.Object, java.lang.Object)
+		 * @see name.martingeisse.phunky.runtime.code.expression.operator.BinaryOperator#applyToExpressions(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.code.expression.Expression, name.martingeisse.phunky.runtime.code.expression.Expression)
 		 */
 		@Override
-		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			throw new NotImplementedException("");
+		public Object applyToExpressions(Environment environment, Expression leftHandSide, Expression rightHandSide) {
+			boolean leftValue = TypeConversionUtil.convertToBoolean(leftHandSide.evaluate(environment));
+			if (!leftValue) {
+				return false;
+			}
+			return TypeConversionUtil.convertToBoolean(rightHandSide.evaluate(environment));
 		}
 
 	},
@@ -257,11 +272,15 @@ public enum BinaryOperator {
 	LOGICAL_SHORTCUT_OR("||") {
 		
 		/* (non-Javadoc)
-		 * @see name.martingeisse.phunky.runtime.code.BinaryOperator#applyToValues(java.lang.Object, java.lang.Object)
+		 * @see name.martingeisse.phunky.runtime.code.expression.operator.BinaryOperator#applyToExpressions(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.code.expression.Expression, name.martingeisse.phunky.runtime.code.expression.Expression)
 		 */
 		@Override
-		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			throw new NotImplementedException("");
+		public Object applyToExpressions(Environment environment, Expression leftHandSide, Expression rightHandSide) {
+			boolean leftValue = TypeConversionUtil.convertToBoolean(leftHandSide.evaluate(environment));
+			if (leftValue) {
+				return true;
+			}
+			return TypeConversionUtil.convertToBoolean(rightHandSide.evaluate(environment));
 		}
 		
 	},
@@ -276,7 +295,9 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			throw new NotImplementedException("");
+			boolean leftValue = TypeConversionUtil.convertToBoolean(leftHandSide);
+			boolean rightValue = TypeConversionUtil.convertToBoolean(rightHandSide);
+			return (leftValue ^ rightValue);
 		}
 		
 	},
@@ -291,7 +312,9 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			throw new NotImplementedException("");
+			int leftValue = TypeConversionUtil.convertToInt(leftHandSide);
+			int rightValue = TypeConversionUtil.convertToInt(rightHandSide);
+			return (leftValue & rightValue);
 		}
 
 	},
@@ -306,7 +329,9 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			throw new NotImplementedException("");
+			int leftValue = TypeConversionUtil.convertToInt(leftHandSide);
+			int rightValue = TypeConversionUtil.convertToInt(rightHandSide);
+			return (leftValue | rightValue);
 		}
 		
 	},
@@ -321,7 +346,9 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			throw new NotImplementedException("");
+			int leftValue = TypeConversionUtil.convertToInt(leftHandSide);
+			int rightValue = TypeConversionUtil.convertToInt(rightHandSide);
+			return (leftValue ^ rightValue);
 		}
 		
 	},
@@ -336,7 +363,9 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			throw new NotImplementedException("");
+			int leftValue = TypeConversionUtil.convertToInt(leftHandSide);
+			int rightValue = TypeConversionUtil.convertToInt(rightHandSide);
+			return (leftValue << rightValue);
 		}
 		
 	},
@@ -351,7 +380,9 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			throw new NotImplementedException("");
+			int leftValue = TypeConversionUtil.convertToInt(leftHandSide);
+			int rightValue = TypeConversionUtil.convertToInt(rightHandSide);
+			return (leftValue >> rightValue);
 		}
 		
 	},
@@ -396,8 +427,8 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			final Boolean equals = (Boolean)EQUALS.applyToValues(leftHandSide, rightHandSide);
-			return !equals;
+			final Boolean equal = (Boolean)EQUALS.applyToValues(leftHandSide, rightHandSide);
+			return !equal;
 		}
 
 	},
@@ -412,7 +443,60 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			throw new NotImplementedException("");
+			
+			// compare values of the same Java class
+			if (leftHandSide.getClass() == rightHandSide.getClass()) {
+				if (leftHandSide instanceof String) {
+					final String x = (String)leftHandSide;
+					final String y = (String)rightHandSide;
+					return x.equals(y);
+				} else if (leftHandSide instanceof PhpArray) {
+					// TODO array-identical
+					throw new NotImplementedException("");
+				} else if (leftHandSide instanceof Double) {
+					final double x = (Double)leftHandSide;
+					final double y = (Double)rightHandSide;
+					return x == y;
+				} else if (leftHandSide instanceof Float) {
+					final float x = (Float)leftHandSide;
+					final float y = (Float)rightHandSide;
+					return x == y;
+				} else if (leftHandSide instanceof Long) {
+					final long x = (Long)leftHandSide;
+					final long y = (Long)rightHandSide;
+					return x == y;
+				} else if (leftHandSide instanceof Integer) {
+					final int x = (Integer)leftHandSide;
+					final int y = (Integer)rightHandSide;
+					return x == y;
+				} else {
+					return false;
+				}
+			}
+			
+			// in a few cases, values with a different Java class have the same PHP type
+			if ((leftHandSide instanceof Integer) && (rightHandSide instanceof Long)) {
+				final int x = (Integer)leftHandSide;
+				final long y = (Long)rightHandSide;
+				return (x == y);
+			}
+			if ((leftHandSide instanceof Long) && (rightHandSide instanceof Integer)) {
+				final long x = (Long)leftHandSide;
+				final int y = (Integer)rightHandSide;
+				return (x == y);
+			}
+			if ((leftHandSide instanceof Float) && (rightHandSide instanceof Double)) {
+				final float x = (Float)leftHandSide;
+				final double y = (Double)rightHandSide;
+				return (x == y);
+			}
+			if ((leftHandSide instanceof Double) && (rightHandSide instanceof Float)) {
+				final double x = (Double)leftHandSide;
+				final float y = (Float)rightHandSide;
+				return (x == y);
+			}
+			
+			return false;
 		}
 		
 	},
@@ -427,7 +511,8 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			throw new NotImplementedException("");
+			final Boolean identical = (Boolean)IDENTICAL.applyToValues(leftHandSide, rightHandSide);
+			return !identical;
 		}
 		
 	},
@@ -442,7 +527,15 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			throw new NotImplementedException("");
+			if ((leftHandSide instanceof Double) || (rightHandSide instanceof Double) || (leftHandSide instanceof Float) || (rightHandSide instanceof Float)) {
+				final double x = TypeConversionUtil.convertToDouble(leftHandSide);
+				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
+				return x < y;
+			} else {
+				final int x = TypeConversionUtil.convertToInt(leftHandSide);
+				final int y = TypeConversionUtil.convertToInt(rightHandSide);
+				return x < y;
+			}
 		}
 		
 	},
@@ -457,7 +550,15 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			throw new NotImplementedException("");
+			if ((leftHandSide instanceof Double) || (rightHandSide instanceof Double) || (leftHandSide instanceof Float) || (rightHandSide instanceof Float)) {
+				final double x = TypeConversionUtil.convertToDouble(leftHandSide);
+				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
+				return x <= y;
+			} else {
+				final int x = TypeConversionUtil.convertToInt(leftHandSide);
+				final int y = TypeConversionUtil.convertToInt(rightHandSide);
+				return x <= y;
+			}
 		}
 		
 	},
@@ -472,7 +573,15 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			throw new NotImplementedException("");
+			if ((leftHandSide instanceof Double) || (rightHandSide instanceof Double) || (leftHandSide instanceof Float) || (rightHandSide instanceof Float)) {
+				final double x = TypeConversionUtil.convertToDouble(leftHandSide);
+				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
+				return x > y;
+			} else {
+				final int x = TypeConversionUtil.convertToInt(leftHandSide);
+				final int y = TypeConversionUtil.convertToInt(rightHandSide);
+				return x > y;
+			}
 		}
 		
 	},
@@ -487,7 +596,15 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			throw new NotImplementedException("");
+			if ((leftHandSide instanceof Double) || (rightHandSide instanceof Double) || (leftHandSide instanceof Float) || (rightHandSide instanceof Float)) {
+				final double x = TypeConversionUtil.convertToDouble(leftHandSide);
+				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
+				return x >= y;
+			} else {
+				final int x = TypeConversionUtil.convertToInt(leftHandSide);
+				final int y = TypeConversionUtil.convertToInt(rightHandSide);
+				return x >= y;
+			}
 		}
 		
 	};

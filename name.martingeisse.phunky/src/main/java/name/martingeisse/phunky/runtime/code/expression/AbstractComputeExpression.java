@@ -13,6 +13,14 @@ import name.martingeisse.phunky.runtime.Variable;
 public abstract class AbstractComputeExpression implements Expression {
 
 	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#evaluateForEmptyCheck(name.martingeisse.phunky.runtime.Environment)
+	 */
+	@Override
+	public Object evaluateForEmptyCheck(Environment environment) {
+		return evaluate(environment);
+	}
+	
+	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.code.Expression#getVariable(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
@@ -27,5 +35,5 @@ public abstract class AbstractComputeExpression implements Expression {
 	public final Variable getOrCreateVariable(Environment environment) {
 		return null;
 	}
-	
+
 }

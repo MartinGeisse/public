@@ -25,5 +25,18 @@ public abstract class AbstractVariableExpression implements Expression {
 			return variable.getValue();
 		}
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#evaluateForEmptyCheck(name.martingeisse.phunky.runtime.Environment)
+	 */
+	@Override
+	public Object evaluateForEmptyCheck(Environment environment) {
+		Variable variable = getVariable(environment);
+		if (variable == null) {
+			return null;
+		} else {
+			return variable.getValue();
+		}
+	}
+
 }

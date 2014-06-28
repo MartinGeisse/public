@@ -9,14 +9,20 @@ package name.martingeisse.phunky.runtime.code.expression.array;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.Variable;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpression;
 import name.martingeisse.phunky.runtime.code.expression.AbstractVariableExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.value.PhpArray;
+import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
 
 /**
  * This expression can be used to append an element to an array.
- * It can only be used to 
+ * 
+ * This class does not inherit from either {@link AbstractVariableExpression} or
+ * {@link AbstractComputeExpression} because it can behave like either
+ * one, depending on the context in which it is used. 
  */
-public final class ArrayAppendExpression extends AbstractVariableExpression {
+public final class ArrayAppendExpression implements Expression {
 
 	/**
 	 * the arrayExpression
@@ -40,6 +46,24 @@ public final class ArrayAppendExpression extends AbstractVariableExpression {
 	}
 	
 	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#evaluate(name.martingeisse.phunky.runtime.Environment)
+	 */
+	@Override
+	public Object evaluate(Environment environment) {
+		environment.getRuntime().triggerError("cannot evaluate an append-to-array expression");
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#evaluateForEmptyCheck(name.martingeisse.phunky.runtime.Environment)
+	 */
+	@Override
+	public Object evaluateForEmptyCheck(Environment environment) {
+		environment.getRuntime().triggerError("cannot evaluate-for-empty-check an append-to-array expression");
+		return null;
+	}
+	
+	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#getVariable(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
@@ -52,9 +76,26 @@ public final class ArrayAppendExpression extends AbstractVariableExpression {
 	 */
 	@Override
 	public Variable getOrCreateVariable(Environment environment) {
-		TODO
-		// TODO
-		return null;
+		
+		// note that arrays are a value type, so getting the variable for an element also gets the variable for the array
+		Variable arrayVariable = arrayExpression.getVariable(environment);
+		if (arrayVariable == null) {
+			PhpArray array = new PhpArray();
+			return array.append();
+		}
+		Object arrayCandidate = arrayVariable.getValue();
+		if (arrayCandidate instanceof PhpArray) {
+			PhpArray array = (PhpArray)arrayCandidate;
+			return array.append();
+		}
+		if (TypeConversionUtil.valueCanBeOverwrittenByImplicitArrayConstruction(arrayCandidate)) {
+			PhpArray array = new PhpArray();
+			return array.append();
+		} else {
+			environment.getRuntime().triggerError("cannot use a scalar value as an array");
+			return null;
+		}
+		
 	}
 
 	/* (non-Javadoc)

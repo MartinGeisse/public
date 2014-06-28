@@ -59,6 +59,73 @@ parser code {:
 		System.err.println("Syntax error at line " + (line + 1) + ", col " + (column + 1) + ": " + message);
 	}
 
+	// extracts the parameter names from the parameter declarations
+	String[] extractParameterNames(List<Pair<String, Expression>> parameters) {
+		String[] result = new String[parameters.size()];
+		int i = 0;
+		for (Pair<String, Expression> parameter : parameters) {
+			result[i] = parameter.getLeft();
+			i++;
+		}
+		return result;
+	}
+
+	// extracts the parameter default values from the parameter declarations
+	Object[] extractParameterDefaultValues(List<Pair<String, Expression>> parameters) {
+	
+		// find the first parameter that as a default value, discarding useless default parameters
+		// (i.e. those followed by a parameter without a default).
+		int firstParameterWithDefaultValue = 0;
+		{
+			int i = 0;
+			for (Pair<String, Expression> parameter : parameters) {
+				if (parameter.getRight() == null) {
+					firstParameterWithDefaultValue = i + 1;
+				}
+				i++;
+			}
+		}
+		
+		// collect the default values
+		Expression[] defaultValues = new Expression[parameters.size() - firstParameterWithDefaultValue];
+		for (int i=0; i<defaultValues.length; i++) {
+			defaultValues[i] = parameters.get(firstParameterWithDefaultValue + i).getRight();
+		}
+		return defaultValues;
+		
+	}
+	
+	// extracts proper switch cases from syntactical case constructs
+	SwitchCase[] extractProperCases(List<SwitchCase> switchCases) {
+		int properCaseCount = 0;
+		for (SwitchCase switchCase : switchCases) {
+			if (switchCase.getExpression() != null) {
+				properCaseCount++;
+			}
+		}
+		SwitchCase[] result = new SwitchCase[properCaseCount];
+		int i=0;
+		for (SwitchCase switchCase : switchCases) {
+			if (switchCase.getExpression() != null) {
+				result[i] = switchCase;
+				i++;
+			}
+		}
+		return result;
+	}
+	
+	// extracts the statements for the effective default switch case from syntactical case constructs
+	Statement extractDefaultCaseStatement(List<SwitchCase> switchCases) {
+		Statement result = null;
+		for (SwitchCase switchCase : switchCases) {
+			if (switchCase.getExpression() == null) {
+				result = switchCase.getStatement();
+				// don't break -- for multiple default cases, PHP uses the last one
+			}
+		}
+		return result;
+	}
+
 :}
 
 // ------------------------------------------------------------------------------------
@@ -92,6 +159,7 @@ terminal FOR, FOREACH, AS, DO, WHILE, BREAK;
 terminal IF, ELSEIF, ELSE;
 terminal RETURN;
 terminal THROW, TRY, CATCH, FINALLY;
+terminal SWITCH, CASE, DEFAULT;
 terminal GLOBAL;
 terminal ECHO;
 
@@ -139,6 +207,8 @@ non terminal List<Statement> statements;
 non terminal Statement statement;
 non terminal Statement simple_statement_without_semicolon;
 non terminal Statement if_statement_continuation;
+non terminal List<SwitchCase> switch_cases;
+non terminal SwitchCase switch_case;
 non terminal Void catch_clauses;
 non terminal Void catch_clause;
 non terminal Void optional_finally_clause;
@@ -148,9 +218,9 @@ non terminal Expression expression;
 non terminal List<Pair<Expression, Expression>> array_literal_elements;
 non terminal List<Pair<Expression, Expression>> one_or_more_array_literal_elements;
 non terminal Pair<Expression, Expression> array_literal_element;
-non terminal List<String> parameter_declarations;
-non terminal List<String> one_or_more_parameter_declarations;
-non terminal String parameter_declaration;
+non terminal List<Pair<String, Expression>> parameter_declarations;
+non terminal List<Pair<String, Expression>> one_or_more_parameter_declarations;
+non terminal Pair<String, Expression> parameter_declaration;
 
 // non terminals (OOP)
 non terminal OopTypeDefinition oop_type_definition;
@@ -236,6 +306,8 @@ statement ::=
 		{: RESULT = c; :}
 	| FOR OPENING_PARENTHESIS simple_statement_without_semicolon:init SEMICOLON expression:cond SEMICOLON simple_statement_without_semicolon:advance CLOSING_PARENTHESIS block:body
 		{: RESULT = new ForStatement(init, cond, advance, body); :}
+	| FOR OPENING_PARENTHESIS simple_statement_without_semicolon:init SEMICOLON SEMICOLON simple_statement_without_semicolon:advance CLOSING_PARENTHESIS block:body
+		{: RESULT = new ForStatement(init, new LiteralExpression(true), advance, body); :}
 	| FOREACH OPENING_PARENTHESIS expression:e AS LOCAL_VARIABLE:v CLOSING_PARENTHESIS block:body
 		{: RESULT = new ForeachStatement(e, null, v, body); :}
 	| FOREACH OPENING_PARENTHESIS expression:e AS LOCAL_VARIABLE:k DOUBLE_RIGHT_ARROW LOCAL_VARIABLE:v CLOSING_PARENTHESIS block:body
@@ -254,10 +326,20 @@ statement ::=
 		{: RESULT = new ThrowStatement(e); :}
 	| TRY block:tryBody catch_clauses:ccs optional_finally_clause:fc
 		{: if (1 == 1) throw new NotImplementedException(""); :}
+	| SWITCH OPENING_PARENTHESIS expression:e CLOSING_PARENTHESIS OPENING_CURLY_BRACE switch_cases:cs CLOSING_CURLY_BRACE
+		{:
+			SwitchCase[] properCases = parser.extractProperCases(cs);
+			Statement defaultCaseStatement = parser.extractDefaultCaseStatement(cs);
+			RESULT = new SwitchStatement(e, properCases, defaultCaseStatement);
+		:}
 	
 	// definitions
 	| FUNCTION IDENTIFIER:id OPENING_PARENTHESIS parameter_declarations:decls CLOSING_PARENTHESIS block:body
-		{: RESULT = new FunctionDefinition(id, decls.toArray(new String[decls.size()]), body); :}
+		{:
+			String[] parameterNames = parser.extractParameterNames(decls);
+			Object[] parameterDefaultValues = parser.extractParameterDefaultValues(decls);
+			RESULT = new FunctionDefinition(id, parameterNames, parameterDefaultValues, body);
+		:}
 	| oop_type_definition:def
 		{: RESULT = def; :}
 		
@@ -296,6 +378,19 @@ optional_finally_clause ::=
 		{: RESULT = null; :}
 	| FINALLY 
 		{: if (1 == 1) throw new NotImplementedException(""); :}
+;
+
+switch_cases ::=
+		{: RESULT = new ArrayList<SwitchCase>(); :}
+	| switch_cases:cs switch_case:c
+		{: cs.add(c); RESULT = cs; :}
+;
+
+switch_case ::= 
+	CASE expression:e COLON statements:sts
+		{: RESULT = new SwitchCase(e, new StatementSequence(sts)); :}
+	| DEFAULT COLON statements:sts
+		{: RESULT = new SwitchCase(null, new StatementSequence(sts)); :}
 ;
 
 // ------------------------------------------------------------------------------------
@@ -449,7 +544,7 @@ expression ::=
 	
 	// ternary operator
 	| expression:e1 QUESTION_MARK expression:e2 COLON expression:e3
-		{: if (1 == 1) throw new NotImplementedException(""); :}
+		{: RESULT = new ConditionalExpression(e1, e2, e3); :}
 
 	// arrays
 	| ARRAY OPENING_PARENTHESIS array_literal_elements:els CLOSING_PARENTHESIS
@@ -526,21 +621,23 @@ array_literal_element ::=
 // ------------------------------------------------------------------------------------
 
 parameter_declarations ::=
-		{: RESULT = new ArrayList<String>(); :}
+		{: RESULT = new ArrayList<Pair<String, Expression>>(); :}
 	| one_or_more_parameter_declarations:decls
 		{: RESULT = decls; :}
 ;
 
 one_or_more_parameter_declarations ::=
 	parameter_declaration:decl
-		{: RESULT = new ArrayList<String>(); RESULT.add(decl); :}
+		{: RESULT = new ArrayList<Pair<String, Expression>>(); RESULT.add(decl); :}
 	| one_or_more_parameter_declarations:decls COMMA parameter_declaration:decl
 		{: decls.add(decl); RESULT = decls; :}
 ;
 
 parameter_declaration ::=
 	LOCAL_VARIABLE:v
-		{: RESULT = v; :}
+		{: RESULT = Pair.of(v, null); :}
+	| LOCAL_VARIABLE:v ASSIGN expression:e
+		{: RESULT = Pair.of(v, e); :}
 ;
 
 // ------------------------------------------------------------------------------------

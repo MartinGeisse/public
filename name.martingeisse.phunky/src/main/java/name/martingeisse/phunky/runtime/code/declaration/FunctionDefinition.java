@@ -28,6 +28,11 @@ public final class FunctionDefinition implements Statement {
 	 * the parameterNames
 	 */
 	private final String[] parameterNames;
+	
+	/**
+	 * the parameterDefaultValues
+	 */
+	private final Object[] parameterDefaultValues;
 
 	/**
 	 * the body
@@ -38,11 +43,13 @@ public final class FunctionDefinition implements Statement {
 	 * Constructor.
 	 * @param name the function name
 	 * @param parameterNames the parameter names
+	 * @param parameterDefaultValues the parameter default values
 	 * @param body the function body
 	 */
-	public FunctionDefinition(final String name, final String[] parameterNames, final Statement body) {
+	public FunctionDefinition(final String name, final String[] parameterNames, final Object[] parameterDefaultValues, final Statement body) {
 		this.name = name;
 		this.parameterNames = parameterNames.clone();
+		this.parameterDefaultValues = parameterDefaultValues.clone();
 		this.body = body;
 	}
 
@@ -72,6 +79,23 @@ public final class FunctionDefinition implements Statement {
 	}
 
 	/**
+	 * Getter method for the number of parameter default values.
+	 * @return the number of parameter default values
+	 */
+	public int getParameterDefaultValueCount() {
+		return parameterDefaultValues.length;
+	}
+	
+	/**
+	 * Getter method for a single parameter default value.
+	 * @param index the index
+	 * @return the parameter default value
+	 */
+	public Object getParameterDefaultValue(final int index) {
+		return parameterDefaultValues[index];
+	}
+	
+	/**
 	 * Getter method for the body.
 	 * @return the body
 	 */
@@ -88,14 +112,18 @@ public final class FunctionDefinition implements Statement {
 			@Override
 			public Object call(PhpRuntime runtime, Object[] arguments) {
 				final Environment childEnvironment = new Environment(runtime);
-				final int bindCount;
-				if (arguments.length < parameterNames.length) {
+				final int parameterBindCount;
+				if (arguments.length + parameterDefaultValues.length < parameterNames.length) {
 					runtime.triggerError("too few parameters for function " + FunctionDefinition.this);
-					bindCount = arguments.length;
+					parameterBindCount = arguments.length;
 				} else {
-					bindCount = parameterNames.length;
+					parameterBindCount = parameterNames.length;
 				}
-				for (int i=0; i<bindCount; i++) {
+				int defaultValuesStartIndex = (parameterNames.length - parameterDefaultValues.length);
+				for (int i=0; i<parameterDefaultValues.length; i++) {
+					childEnvironment.put(parameterNames[defaultValuesStartIndex + i], new Variable(parameterDefaultValues[i]));
+				}
+				for (int i=0; i<parameterBindCount; i++) {
 					childEnvironment.put(parameterNames[i], new Variable(arguments[i]));
 				}
 				try {

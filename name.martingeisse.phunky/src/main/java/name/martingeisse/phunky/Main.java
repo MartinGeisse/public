@@ -22,7 +22,8 @@ public final class Main {
 //		for (File file : new File("samples").listFiles()) {
 //			testSample(runtime, file);
 //		}
-		testSample(runtime, new File("samples/test.php"));
+		testSample(runtime, new File("samples/switch-with-early-default.php"));
+//		testSample(runtime, new File("samples/test.php"));
 	}
 
 	private static void testSample(PhpRuntime runtime, File file) {

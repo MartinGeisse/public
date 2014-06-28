@@ -290,6 +290,15 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	"finally" {
 		return symbol(Tokens.FINALLY);
 	}
+	"switch" {
+		return symbol(Tokens.SWITCH);
+	}
+	"case" {
+		return symbol(Tokens.CASE);
+	}
+	"default" {
+		return symbol(Tokens.DEFAULT);
+	}
 	"global" {
 		return symbol(Tokens.GLOBAL);
 	}

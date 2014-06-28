@@ -26,14 +26,17 @@ public final class CodeDumper {
 	 * the startOfLine
 	 */
 	private boolean startOfLine;
+	
+	/**
+	 * the indentationSegment
+	 */
+	private String indentationSegment;
 
 	/**
 	 * Constructor.
 	 */
 	public CodeDumper() {
-		this.builder = new StringBuilder();
-		this.indentationLevel = 0;
-		this.startOfLine = true;
+		this(0);
 	}
 
 	/**
@@ -44,14 +47,7 @@ public final class CodeDumper {
 		this.builder = new StringBuilder();
 		this.indentationLevel = globalIndentationLevel;
 		this.startOfLine = true;
-	}
-	
-	/**
-	 * Getter method for the builder.
-	 * @return the builder
-	 */
-	public StringBuilder getBuilder() {
-		return builder;
+		this.indentationSegment = "    ";
 	}
 	
 	/**
@@ -77,6 +73,22 @@ public final class CodeDumper {
 	}
 	
 	/**
+	 * Getter method for the indentationSegment.
+	 * @return the indentationSegment
+	 */
+	public String getIndentationSegment() {
+		return indentationSegment;
+	}
+	
+	/**
+	 * Setter method for the indentationSegment.
+	 * @param indentationSegment the indentationSegment to set
+	 */
+	public void setIndentationSegment(String indentationSegment) {
+		this.indentationSegment = indentationSegment;
+	}
+	
+	/**
 	 * Prints a single character of code.
 	 * 
 	 * Note that the argument should not be a newline character itself
@@ -85,8 +97,13 @@ public final class CodeDumper {
 	 * @param c the character to print
 	 */
 	public void print(char c) {
-		handleStartOfLine();
-		builder.append(c);
+		if (c == '\n') {
+			builder.append('\n');
+			startOfLine = true;
+		} else {
+			handleStartOfLine();
+			builder.append(c);
+		}
 	}
 	
 	/**
@@ -98,8 +115,23 @@ public final class CodeDumper {
 	 * @param s the string to print
 	 */
 	public void print(String s) {
-		handleStartOfLine();
-		builder.append(s);
+		int position = 0;
+		while (true) {
+			int index = s.indexOf('\n', position);
+			if (index == -1) {
+				break;
+			}
+			if (index > position) {
+				handleStartOfLine();
+				builder.append(s.substring(position, index));
+			}
+			builder.append('\n');
+			position = index + 1;
+		}
+		if (position < s.length()) {
+			handleStartOfLine();
+			builder.append(s.substring(position));
+		}
 	}
 	
 	/**
@@ -111,9 +143,9 @@ public final class CodeDumper {
 	 * @param s the string to print
 	 */
 	public void println(String s) {
-		handleStartOfLine();
-		builder.append(s);
+		print(s);
 		builder.append('\n');
+		startOfLine = true;
 	}
 	
 	/**
@@ -134,7 +166,7 @@ public final class CodeDumper {
 	private void handleStartOfLine() {
 		if (startOfLine) {
 			for (int i=0; i<indentationLevel; i++) {
-				builder.append('\t');
+				builder.append(indentationSegment);
 			}
 			startOfLine = false;
 		}

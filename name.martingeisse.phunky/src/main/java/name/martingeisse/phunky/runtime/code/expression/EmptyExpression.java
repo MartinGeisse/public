@@ -7,7 +7,6 @@
 package name.martingeisse.phunky.runtime.code.expression;
 
 import name.martingeisse.phunky.runtime.Environment;
-import name.martingeisse.phunky.runtime.Variable;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
 
@@ -17,11 +16,6 @@ import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
 public class EmptyExpression extends AbstractCallExpression {
 
 	/**
-	 * the isVariable
-	 */
-	private final boolean isVariable;
-	
-	/**
 	 * Constructor.
 	 * @param parameters the parameter expressions
 	 */
@@ -30,7 +24,6 @@ public class EmptyExpression extends AbstractCallExpression {
 		if (parameters.length != 1) {
 			throw new IllegalArgumentException("empty() requires exactly one parameter");
 		}
-		this.isVariable = (parameters[0] instanceof AbstractVariableExpression);
 	}
 
 	/* (non-Javadoc)
@@ -38,19 +31,7 @@ public class EmptyExpression extends AbstractCallExpression {
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-		
-		TODO .isEmpty()
-		
-		if (isVariable) {
-			Variable variable = ((AbstractVariableExpression)getParameter(0)).getVariable(environment);
-			if (variable == null) {
-				return false;
-			} else {
-				return TypeConversionUtil.convertToBoolean(variable.getValue());
-			}
-		} else {
-			return TypeConversionUtil.convertToBoolean(getParameter(0).evaluate(environment));
-		}
+		return TypeConversionUtil.empty(getParameter(0).evaluateForEmptyCheck(environment));
 	}
 
 	/* (non-Javadoc)

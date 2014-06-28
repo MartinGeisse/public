@@ -17,7 +17,7 @@ import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
- * TODO
+ * This expression constructs an array from keys and values.
  */
 public class ArrayConstructionExpression extends AbstractComputeExpression {
 

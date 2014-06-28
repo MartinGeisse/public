@@ -79,16 +79,7 @@ public enum UnaryOperator {
 		 */
 		@Override
 		public Object applyToExpression(Environment environment, Expression expression) {
-			final Variable leftHandVariable = leftHandSide.getOrCreateVariable(environment);
-			if (leftHandVariable == null) {
-				environment.getRuntime().triggerError("cannot assign to " + leftHandSide);
-				return null;
-			}
-			final Object rightHandValue = rightHandSide.evaluate(environment);
-			final Object resultValue = operator.applyToValues(leftHandVariable.getValue(), rightHandValue);
-			leftHandVariable.setValue(resultValue);
-			return resultValue;
-			TODO
+			return handleIncrementDecrement(environment, expression, 1, true);
 		}
 		
 	},
@@ -103,7 +94,7 @@ public enum UnaryOperator {
 		 */
 		@Override
 		public Object applyToExpression(Environment environment, Expression expression) {
-			TODO
+			return handleIncrementDecrement(environment, expression, 1, false);
 		}
 		
 	},
@@ -118,7 +109,7 @@ public enum UnaryOperator {
 		 */
 		@Override
 		public Object applyToExpression(Environment environment, Expression expression) {
-			TODO
+			return handleIncrementDecrement(environment, expression, -1, true);
 		}
 		
 	},
@@ -133,7 +124,7 @@ public enum UnaryOperator {
 		 */
 		@Override
 		public Object applyToExpression(Environment environment, Expression expression) {
-			TODO
+			return handleIncrementDecrement(environment, expression, -1, false);
 		}
 		
 	},
@@ -207,5 +198,26 @@ public enum UnaryOperator {
 	public Object applyToValue(Object value) {
 		throw new UnsupportedOperationException("operator " + this + " cannot be applied to a value");
 	}
-	
+
+	/**
+	 * 
+	 */
+	protected final Object handleIncrementDecrement(Environment environment, Expression expression, int delta, boolean returnPreviousValue) {
+		final Variable variable = expression.getOrCreateVariable(environment);
+		if (variable == null) {
+			environment.getRuntime().triggerError("cannot assign to " + expression);
+			return null;
+		}
+		final Object previousValue = variable.getValue();
+		final Object newValue;
+		if (previousValue instanceof Double) {
+			newValue = ((Double)previousValue) + delta;
+		} else if (previousValue instanceof Float) {
+			newValue = ((Float)previousValue) + delta;
+		} else {
+			newValue = TypeConversionUtil.convertToInt(previousValue) + delta;
+		}
+		variable.setValue(newValue);
+		return (returnPreviousValue ? previousValue : newValue);
+	}
 }

@@ -107,6 +107,15 @@ public final class TypeConversionUtil {
 	}
 
 	/**
+	 * Checks whether the specified value is empty according to PHP's empty().
+	 * @param value the value
+	 * @return true if empty, false if not
+	 */
+	public static boolean empty(Object value) {
+		return !convertToBoolean(value);
+	}
+	
+	/**
 	 * Converts the specified value to a string value.
 	 * @param value the original value
 	 * @return the converted value
@@ -139,5 +148,25 @@ public final class TypeConversionUtil {
 		}
 		return result;
 	}
-	
+
+	/**
+	 * This method is used when creating an array by setting an element in a non-array
+	 * variable. It takes the value currently stored in the variable, and checks
+	 * whether that value allows creating an array this way.
+	 * 
+	 * @param value the value used in place of an array
+	 * @return true if the value can be overwritten by an implicitly constructed
+	 * array, false if not
+	 */
+	public static boolean valueCanBeOverwrittenByImplicitArrayConstruction(Object value) {
+		if (value == null) {
+			return true;
+		}
+		if (value instanceof Boolean) {
+			Boolean b = (Boolean)value;
+			return (b.booleanValue() == false);
+		}
+		return false;
+	}
+
 }
