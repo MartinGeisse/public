@@ -4,8 +4,8 @@
 
 package name.martingeisse.phunky.runtime.code.expression.operator;
 
-import org.apache.commons.lang3.NotImplementedException;
 import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
+import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * This enum contains all cast operators.

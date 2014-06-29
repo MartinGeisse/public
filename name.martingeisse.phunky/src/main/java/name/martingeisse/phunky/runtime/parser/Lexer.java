@@ -227,6 +227,8 @@ public class Lexer implements java_cup.runtime.Scanner {
 
 	/* user code: */
 
+	private String filePath = null;
+
 	private ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
 
 	private StringBuilder stringBuilder = new StringBuilder();
@@ -235,17 +237,25 @@ public class Lexer implements java_cup.runtime.Scanner {
 
 	private boolean heredocNowdocVariableInterpolation;
 
+	/**
+	 * Setter method for the filePath.
+	 * @param filePath the filePath to set
+	 */
+	public void setFilePath(final String filePath) {
+		this.filePath = filePath;
+	}
+
 	private Symbol symbol(final int type) {
 		final String text = yytext();
-		final Location left = new Location(yyline, yycolumn);
-		final Location right = new Location(yyline, yycolumn + text.length());
+		final Location left = new Location(filePath, yyline, yycolumn);
+		final Location right = new Location(filePath, yyline, yycolumn + text.length());
 		return symbolFactory.newSymbol(text, type, left, right);
 	}
 
 	private Symbol symbol(final int type, final Object value) {
 		final String text = yytext();
-		final Location left = new Location(yyline, yycolumn);
-		final Location right = new Location(yyline, yycolumn + text.length());
+		final Location left = new Location(filePath, yyline, yycolumn);
+		final Location right = new Location(filePath, yyline, yycolumn + text.length());
 		return symbolFactory.newSymbol(text, type, left, right, value);
 	}
 
@@ -1310,7 +1320,7 @@ public class Lexer implements java_cup.runtime.Scanner {
 					zzAtEOF = true;
 					zzDoEOF();
 					{
-						final Location location = new Location(yyline, yycolumn);
+						final Location location = new Location(filePath, yyline, yycolumn);
 						return symbolFactory.newSymbol("EOF", Tokens.EOF, location, location);
 					}
 				} else {

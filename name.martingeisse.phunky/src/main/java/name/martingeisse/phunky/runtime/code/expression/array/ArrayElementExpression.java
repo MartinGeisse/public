@@ -10,6 +10,7 @@ import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.Variable;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpression;
+import name.martingeisse.phunky.runtime.code.expression.AbstractExpression;
 import name.martingeisse.phunky.runtime.code.expression.AbstractVariableExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
 import name.martingeisse.phunky.runtime.value.PhpArray;
@@ -22,7 +23,7 @@ import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
  * {@link AbstractComputeExpression} because it can behave like either
  * one, depending on the context in which it is used. 
  */
-public final class ArrayElementExpression implements Expression {
+public final class ArrayElementExpression extends AbstractExpression {
 
 	/**
 	 * the arrayExpression

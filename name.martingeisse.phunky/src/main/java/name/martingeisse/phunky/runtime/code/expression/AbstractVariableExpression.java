@@ -10,7 +10,7 @@ import name.martingeisse.phunky.runtime.Variable;
 /**
  * Base class for expressions that denote a variable.
  */
-public abstract class AbstractVariableExpression implements Expression {
+public abstract class AbstractVariableExpression extends AbstractExpression {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.code.Expression#evaluate(name.martingeisse.phunky.runtime.Environment)

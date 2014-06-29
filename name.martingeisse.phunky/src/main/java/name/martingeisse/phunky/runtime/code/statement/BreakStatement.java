@@ -12,7 +12,7 @@ import name.martingeisse.phunky.runtime.code.CodeDumper;
 /**
  * The "break" statement.
  */
-public final class BreakStatement implements Statement {
+public final class BreakStatement extends AbstractStatement {
 
 	/**
 	 * Constructor.
@@ -25,6 +25,8 @@ public final class BreakStatement implements Statement {
 	 */
 	@Override
 	public void execute(final Environment environment) {
+		environment.getRuntime().getLog().beginStatement("break");
+		environment.getRuntime().getLog().endStatement("break");
 		throw new BreakException(1);
 	}
 

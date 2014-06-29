@@ -4,10 +4,9 @@
 
 package name.martingeisse.phunky.runtime.builtin.string;
 
-import org.apache.commons.lang3.StringUtils;
-
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * General-purpose function that finds a substring ("needle") within a larger string ("haystack").

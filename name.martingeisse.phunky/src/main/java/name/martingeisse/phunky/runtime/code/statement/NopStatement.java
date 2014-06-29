@@ -12,13 +12,8 @@ import name.martingeisse.phunky.runtime.code.CodeDumper;
 /**
  * This statement does nothing.
  */
-public final class NopStatement implements Statement {
+public final class NopStatement extends AbstractStatement {
 
-	/**
-	 * The shared instance of this class.
-	 */
-	public static final NopStatement INSTANCE = new NopStatement();
-	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.code.Statement#execute(name.martingeisse.phunky.runtime.Environment)
 	 */

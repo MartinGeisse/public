@@ -13,12 +13,12 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
-import org.apache.log4j.Logger;
 import java_cup.runtime.ComplexSymbolFactory;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.statement.StatementSequence;
 import name.martingeisse.phunky.runtime.parser.Lexer;
 import name.martingeisse.phunky.runtime.parser.Parser;
+import org.apache.log4j.Logger;
 
 /**
  * This class makes the connection between PHP source files and the
@@ -74,6 +74,7 @@ public final class SourceFileInterpreter {
 		try (FileInputStream fileInputStream = new FileInputStream(sourceFile); InputStreamReader reader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8)) {
 			logger.trace("file loaded.");
 			Lexer lexer = new Lexer(reader);
+			lexer.setFilePath(sourceFile.getPath());
 			Parser parser = new Parser(lexer, new ComplexSymbolFactory());
 			StatementSequence program;
 			try {
@@ -169,7 +170,7 @@ public final class SourceFileInterpreter {
 			program.execute(runtime.getGlobalEnvironment());
 			logger.debug("file executed: " + file);
 		} catch (RuntimeException e) {
-			logger.debug("exception while executing file: " + file);
+			logger.debug("exception while executing file: " + file, e);
 			throw e;
 		} finally {
 			currentSourceFile = previousSourceFile;

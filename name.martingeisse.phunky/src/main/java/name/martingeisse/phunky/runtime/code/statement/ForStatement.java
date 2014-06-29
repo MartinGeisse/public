@@ -14,7 +14,7 @@ import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
 /**
  * The "for" statement.
  */
-public final class ForStatement implements Statement {
+public final class ForStatement extends AbstractStatement {
 
 	/**
 	 * the initializationStatement
@@ -87,6 +87,7 @@ public final class ForStatement implements Statement {
 	 */
 	@Override
 	public void execute(final Environment environment) {
+		environment.getRuntime().getLog().beginStatement("for");
 		try {
 			initializationStatement.execute(environment);
 			while (TypeConversionUtil.convertToBoolean(loopCondition.evaluate(environment))) {
@@ -94,10 +95,14 @@ public final class ForStatement implements Statement {
 				advanceStatement.execute(environment);
 			}
 		} catch (BreakException e) {
+			environment.getRuntime().getLog().endStatement("for", "break");
 			if (e.onBreakLoop()) {
 				throw e;
+			} else {
+				return;
 			}
 		}
+		environment.getRuntime().getLog().endStatement("for");
 	}
 
 	/* (non-Javadoc)

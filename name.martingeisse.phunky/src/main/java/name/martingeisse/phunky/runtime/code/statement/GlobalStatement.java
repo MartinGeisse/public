@@ -8,11 +8,12 @@ package name.martingeisse.phunky.runtime.code.statement;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * TODO
  */
-public final class GlobalStatement implements Statement {
+public final class GlobalStatement extends AbstractStatement {
 
 	/**
 	 * the variableName
@@ -40,7 +41,7 @@ public final class GlobalStatement implements Statement {
 	 */
 	@Override
 	public void execute(Environment environment) {
-		// TODO
+		throw new NotImplementedException("");
 	}
 
 	/* (non-Javadoc)

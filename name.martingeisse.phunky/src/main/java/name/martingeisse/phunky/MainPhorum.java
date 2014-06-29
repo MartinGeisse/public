@@ -5,7 +5,6 @@
 package name.martingeisse.phunky;
 
 import java.io.File;
-
 import name.martingeisse.phunky.runtime.PhpRuntime;
 
 /**

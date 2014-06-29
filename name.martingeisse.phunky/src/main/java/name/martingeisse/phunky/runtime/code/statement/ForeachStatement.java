@@ -14,7 +14,7 @@ import name.martingeisse.phunky.runtime.value.PhpIterable;
 /**
  * The "foreach" statement.
  */
-public final class ForeachStatement implements Statement {
+public final class ForeachStatement extends AbstractStatement {
 
 	/**
 	 * the containerExpression
@@ -87,6 +87,7 @@ public final class ForeachStatement implements Statement {
 	 */
 	@Override
 	public void execute(final Environment environment) {
+		environment.getRuntime().getLog().beginStatement("foreach");
 		try {
 			Object container = containerExpression.evaluate(environment);
 			if (!(container instanceof PhpIterable)) {
@@ -96,11 +97,14 @@ public final class ForeachStatement implements Statement {
 				iterable.iterate(environment, keyIterationVariableName, valueIterationVariableName, body);
 			}
 		} catch (BreakException e) {
+			environment.getRuntime().getLog().endStatement("foreach", "break");
 			if (e.onBreakLoop()) {
 				throw e;
+			} else {
+				return;
 			}
 		}
-
+		environment.getRuntime().getLog().endStatement("foreach");
 	}
 
 	/* (non-Javadoc)

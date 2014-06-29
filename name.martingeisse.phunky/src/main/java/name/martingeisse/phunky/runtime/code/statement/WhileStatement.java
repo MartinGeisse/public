@@ -14,7 +14,7 @@ import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
 /**
  * The "while" statement.
  */
-public final class WhileStatement implements Statement {
+public final class WhileStatement extends AbstractStatement {
 
 	/**
 	 * the loopCondition
@@ -57,15 +57,20 @@ public final class WhileStatement implements Statement {
 	 */
 	@Override
 	public void execute(final Environment environment) {
+		environment.getRuntime().getLog().beginStatement("while");
 		try {
 			while (TypeConversionUtil.convertToBoolean(loopCondition.evaluate(environment))) {
 				body.execute(environment);
 			}
 		} catch (BreakException e) {
+			environment.getRuntime().getLog().endStatement("while", "break");
 			if (e.onBreakLoop()) {
 				throw e;
+			} else {
+				return;
 			}
 		}
+		environment.getRuntime().getLog().endStatement("while");
 	}
 
 	/* (non-Javadoc)

@@ -8,12 +8,12 @@ package name.martingeisse.phunky.runtime.code.declaration;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
-import name.martingeisse.phunky.runtime.code.statement.Statement;
+import name.martingeisse.phunky.runtime.code.statement.AbstractStatement;
 
 /**
  * TODO
  */
-public abstract class OopTypeDefinition implements Statement {
+public abstract class OopTypeDefinition extends AbstractStatement {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#execute(name.martingeisse.phunky.runtime.Environment)

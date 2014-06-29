@@ -20,27 +20,36 @@ import java_cup.runtime.ComplexSymbolFactory.Location;
 %line
 %column
 %eofval{
-	Location location = new Location(yyline, yycolumn);
+	Location location = new Location(filePath, yyline, yycolumn);
 	return symbolFactory.newSymbol("EOF", Tokens.EOF, location, location); 
 %eofval}
 %{
 
+	private String filePath = null;
 	private ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
 	private StringBuilder stringBuilder = new StringBuilder();
 	private String heredocNowdocMarker;
 	private boolean heredocNowdocVariableInterpolation;
 
+	/**
+	 * Setter method for the filePath.
+	 * @param filePath the filePath to set
+	 */
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
 	private Symbol symbol(int type) {
 		String text = yytext();
-		Location left = new Location(yyline, yycolumn);
-		Location right = new Location(yyline, yycolumn + text.length());
+		Location left = new Location(filePath, yyline, yycolumn);
+		Location right = new Location(filePath, yyline, yycolumn + text.length());
 		return symbolFactory.newSymbol(text, type, left, right);
 	}
   
 	private Symbol symbol(int type, Object value) {
 		String text = yytext();
-		Location left = new Location(yyline, yycolumn);
-		Location right = new Location(yyline, yycolumn + text.length());
+		Location left = new Location(filePath, yyline, yycolumn);
+		Location right = new Location(filePath, yyline, yycolumn + text.length());
 		return symbolFactory.newSymbol(text, type, left, right, value);
 	}
 	

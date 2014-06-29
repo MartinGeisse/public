@@ -6,6 +6,7 @@ package name.martingeisse.phunky.runtime.code.statement;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 
 /**
  * A statement is an object that can be executed using an
@@ -14,6 +15,18 @@ import name.martingeisse.phunky.runtime.code.CodeDumper;
  */
 public interface Statement {
 
+	/**
+	 * Getter method for the location.
+	 * @return the location
+	 */
+	public CodeLocation getLocation();
+	
+	/**
+	 * Setter method for the location.
+	 * @param location the location to set
+	 */
+	public void setLocation(CodeLocation location);
+	
 	/**
 	 * Executes this statement.
 	 * @param environment the environment

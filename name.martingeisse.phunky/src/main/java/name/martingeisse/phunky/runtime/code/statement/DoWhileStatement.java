@@ -14,7 +14,7 @@ import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
 /**
  * The "do..while" statement.
  */
-public final class DoWhileStatement implements Statement {
+public final class DoWhileStatement extends AbstractStatement {
 
 	/**
 	 * the body
@@ -57,15 +57,20 @@ public final class DoWhileStatement implements Statement {
 	 */
 	@Override
 	public void execute(final Environment environment) {
+		environment.getRuntime().getLog().beginStatement("do..while");
 		try {
 			do {
 				body.execute(environment);
 			} while (TypeConversionUtil.convertToBoolean(loopCondition.evaluate(environment)));
 		} catch (BreakException e) {
+			environment.getRuntime().getLog().endStatement("do..while", "break");
 			if (e.onBreakLoop()) {
 				throw e;
+			} else {
+				return;
 			}
 		}
+		environment.getRuntime().getLog().endStatement("do..while");
 	}
 
 	/* (non-Javadoc)

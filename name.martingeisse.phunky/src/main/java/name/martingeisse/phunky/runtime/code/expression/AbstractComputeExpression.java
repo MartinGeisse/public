@@ -10,7 +10,7 @@ import name.martingeisse.phunky.runtime.Variable;
 /**
  * Base class for computed (non-variable) expressions.
  */
-public abstract class AbstractComputeExpression implements Expression {
+public abstract class AbstractComputeExpression extends AbstractExpression {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#evaluateForEmptyCheck(name.martingeisse.phunky.runtime.Environment)

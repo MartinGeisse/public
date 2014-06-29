@@ -14,7 +14,7 @@ import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
 /**
  * An if or if/else statement.
  */
-public final class IfStatement implements Statement {
+public final class IfStatement extends AbstractStatement {
 
 	/**
 	 * the condition
@@ -72,6 +72,7 @@ public final class IfStatement implements Statement {
 	 */
 	@Override
 	public void execute(final Environment environment) {
+		environment.getRuntime().getLog().beginStatement("if");
 		boolean conditionResult = TypeConversionUtil.convertToBoolean(condition.evaluate(environment));
 		if (conditionResult) {
 			if (thenBranch != null) {
@@ -82,6 +83,7 @@ public final class IfStatement implements Statement {
 				elseBranch.execute(environment);
 			}
 		}
+		environment.getRuntime().getLog().endStatement("if");
 	}
 
 	/* (non-Javadoc)

@@ -13,7 +13,7 @@ import name.martingeisse.phunky.runtime.code.expression.Expression;
 /**
  * This statement evaluates an expression and discards the result.
  */
-public final class ExpressionStatement implements Statement {
+public final class ExpressionStatement extends AbstractStatement {
 
 	/**
 	 * the expression
@@ -41,7 +41,9 @@ public final class ExpressionStatement implements Statement {
 	 */
 	@Override
 	public void execute(Environment environment) {
+		environment.getRuntime().getLog().beginStatement("expression");
 		expression.evaluate(environment);
+		environment.getRuntime().getLog().endStatement("expression");
 	}
 	
 	/* (non-Javadoc)

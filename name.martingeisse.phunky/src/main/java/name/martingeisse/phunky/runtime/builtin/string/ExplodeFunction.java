@@ -5,7 +5,6 @@
 package name.martingeisse.phunky.runtime.builtin.string;
 
 import java.util.ArrayList;
-
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
 import name.martingeisse.phunky.runtime.value.PhpArray;

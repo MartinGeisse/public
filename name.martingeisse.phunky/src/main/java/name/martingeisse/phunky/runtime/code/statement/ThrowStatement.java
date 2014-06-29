@@ -6,15 +6,15 @@
 
 package name.martingeisse.phunky.runtime.code.statement;
 
-import org.apache.commons.lang3.NotImplementedException;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * The "throw" statement.
  */
-public final class ThrowStatement implements Statement {
+public final class ThrowStatement extends AbstractStatement {
 
 	/**
 	 * the exceptionExpression

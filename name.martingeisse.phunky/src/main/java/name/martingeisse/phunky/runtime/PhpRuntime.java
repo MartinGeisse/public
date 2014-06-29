@@ -9,6 +9,7 @@ package name.martingeisse.phunky.runtime;
 import java.io.PrintWriter;
 import java.io.Writer;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
+import name.martingeisse.phunky.runtime.builtin.io.BasenameFunction;
 import name.martingeisse.phunky.runtime.builtin.io.EchoFunction;
 import name.martingeisse.phunky.runtime.builtin.io.PrintFunction;
 import name.martingeisse.phunky.runtime.builtin.string.Bin2HexFunction;
@@ -42,6 +43,7 @@ import name.martingeisse.phunky.runtime.builtin.var.IsNumericFunction;
 import name.martingeisse.phunky.runtime.builtin.var.IsScalarFunction;
 import name.martingeisse.phunky.runtime.builtin.var.IsStringFunction;
 import name.martingeisse.phunky.runtime.builtin.var.VarDumpFunction;
+import name.martingeisse.phunky.runtime.code.expression.ConstantExpression;
 import org.apache.log4j.Logger;
 
 /**
@@ -75,6 +77,11 @@ public final class PhpRuntime {
 	private final SourceFileInterpreter interpreter;
 	
 	/**
+	 * the log
+	 */
+	private final RuntimeLog log;
+	
+	/**
 	 * the outputWriter
 	 */
 	private PrintWriter outputWriter;
@@ -96,6 +103,7 @@ public final class PhpRuntime {
 		this.constants = new Constants(this);
 		this.functions = new Functions(this);
 		this.interpreter = new SourceFileInterpreter(this);
+		this.log = new RuntimeLog();
 		this.outputWriter = new PrintWriter(System.out);
 		if (standardDefinitions) {
 			applyStandardDefinitions();
@@ -132,6 +140,14 @@ public final class PhpRuntime {
 	 */
 	public SourceFileInterpreter getInterpreter() {
 		return interpreter;
+	}
+	
+	/**
+	 * Getter method for the log.
+	 * @return the log
+	 */
+	public RuntimeLog getLog() {
+		return log;
 	}
 	
 	/**
@@ -174,6 +190,7 @@ public final class PhpRuntime {
 		// I/O functions
 		addBuiltinCallables(new EchoFunction().setName("echo"));
 		addBuiltinCallables(new PrintFunction().setName("print"));
+		addBuiltinCallables(new BasenameFunction().setName("basename"));
 		
 		// string functions
 		addBuiltinCallables(new Bin2HexFunction().setName("bin2hex"));
@@ -255,6 +272,25 @@ public final class PhpRuntime {
 	public void triggerFatalError(String message) {
 		logger.fatal(message);
 		throw new FatalErrorException(message);
+	}
+	
+	/**
+	 * This method is called when code refers to an undefined constant. It resolves
+	 * certain "magic" constants, and if none of them matches the name, triggers
+	 * an error.
+	 * 
+	 * @param constantExpression the constant expression that referred to an undefined constant
+	 * @return the value
+	 */
+	public Object onUndefinedConstant(ConstantExpression constantExpression) {
+		if (constantExpression.getName().equals("__FILE__")) {
+			return constantExpression.getLocation().getFilePath();
+		} else if (constantExpression.getName().equals("__LINE__")) {
+			return constantExpression.getLocation().getLine() + 1;
+		} else {
+			triggerError("undefined constant: " + constantExpression.getName());
+			return null;
+		}
 	}
 
 }

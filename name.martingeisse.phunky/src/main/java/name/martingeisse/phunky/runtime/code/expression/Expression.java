@@ -7,6 +7,7 @@ package name.martingeisse.phunky.runtime.code.expression;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.Variable;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 
 /**
  * An expression is an object that can be evaluated using an
@@ -22,6 +23,18 @@ import name.martingeisse.phunky.runtime.code.CodeDumper;
  */
 public interface Expression {
 
+	/**
+	 * Getter method for the location.
+	 * @return the location
+	 */
+	public CodeLocation getLocation();
+	
+	/**
+	 * Setter method for the location.
+	 * @param location the location to set
+	 */
+	public void setLocation(CodeLocation location);
+	
 	/**
 	 * Evaluates this expression.
 	 * @param environment the environment

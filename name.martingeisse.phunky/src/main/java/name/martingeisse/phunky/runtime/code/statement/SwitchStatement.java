@@ -6,15 +6,15 @@
 
 package name.martingeisse.phunky.runtime.code.statement;
 
-import org.apache.commons.lang3.NotImplementedException;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.code.expression.operator.BinaryOperator;
 
 /**
  * The "switch (...) {...}" statement.
  */
-public final class SwitchStatement implements Statement {
+public final class SwitchStatement extends AbstractStatement {
 
 	/**
 	 * the expression
@@ -48,7 +48,34 @@ public final class SwitchStatement implements Statement {
 	 */
 	@Override
 	public void execute(final Environment environment) {
-		throw new NotImplementedException("");
+		environment.getRuntime().getLog().beginStatement("switch");
+		Object switchValue = expression.evaluate(environment);
+		environment.getRuntime().getLog().log("switch value: " + switchValue);
+		try {
+			matching: {
+				for (SwitchCase switchCase : properCases) {
+					Object caseValue = switchCase.getExpression().evaluate(environment);
+					boolean match = (Boolean)BinaryOperator.EQUALS.applyToValues(switchValue, caseValue);
+					if (match) {
+						environment.getRuntime().getLog().log("matching case: " + caseValue);
+						switchCase.getStatement().execute(environment);
+						break matching;
+					}
+				}
+				environment.getRuntime().getLog().log("no proper case matched; checking for default case");
+				if (defaultCaseStatement != null) {
+					defaultCaseStatement.execute(environment);
+				}
+			}
+		} catch (BreakException e) {
+			environment.getRuntime().getLog().endStatement("switch", "break");
+			if (e.onBreakLoop()) {
+				throw e;
+			} else {
+				return;
+			}
+		}
+		environment.getRuntime().getLog().endStatement("switch");
 	}
 
 	/* (non-Javadoc)

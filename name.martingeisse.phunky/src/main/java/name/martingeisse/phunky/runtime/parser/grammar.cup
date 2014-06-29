@@ -125,6 +125,30 @@ parser code {:
 		}
 		return result;
 	}
+	
+	// obtains the current location. This isn't very nice as it obtains the location of the *last*
+	// symbol of a production, not the first one, but this is easier to implement
+	CodeLocation obtainLocation() {
+		ComplexSymbolFactory.ComplexSymbol symbol = (ComplexSymbolFactory.ComplexSymbol)stack.peek();
+		Location location = symbol.getLeft();
+		return new CodeLocation(location.getUnit(), location.getLine(), location.getColumn());
+	}
+	
+:}
+
+action code {:
+
+	// location setting for statements
+	<T extends Statement> T setLocation(T statement) {
+		statement.setLocation(parser.obtainLocation());
+		return statement;
+	}
+	
+	// location setting for expressions
+	<T extends Expression> T setLocation(T expression) {
+		expression.setLocation(parser.obtainLocation());
+		return expression;
+	}
 
 :}
 
@@ -267,7 +291,7 @@ start with program;
 
 program ::=
 	statements:sts
-		{: RESULT = new StatementSequence(sts); :}
+		{: RESULT = setLocation(new StatementSequence(sts)); :}
 ;
 
 // ------------------------------------------------------------------------------------
@@ -276,7 +300,7 @@ program ::=
 
 block ::=
 	OPENING_CURLY_BRACE statements:sts CLOSING_CURLY_BRACE
-		{: RESULT = new StatementSequence(sts); :}
+		{: RESULT = setLocation(new StatementSequence(sts)); :}
 ;
 
 statements ::=
@@ -293,44 +317,44 @@ statement ::=
 	| block:b
 		{: RESULT = b; :}
 	| VERBATIM_CONTENT:c
-		{: RESULT = new ExpressionStatement(new FunctionCall("echo", new LiteralExpression(c))); :}
+		{: RESULT = setLocation(new ExpressionStatement(new FunctionCall("echo", new LiteralExpression(c)))); :}
 		
 	// build-in special statements
 	| ECHO one_or_more_expressions:exs SEMICOLON
-		{: RESULT = new ExpressionStatement(new FunctionCall("echo", exs.toArray(new Expression[exs.size()]))); :}
+		{: RESULT = setLocation(new ExpressionStatement(setLocation(new FunctionCall("echo", exs.toArray(new Expression[exs.size()]))))); :}
 	| GLOBAL LOCAL_VARIABLE:v SEMICOLON
-		{: RESULT = new GlobalStatement(v); :}
+		{: RESULT = setLocation(new GlobalStatement(v)); :}
 
 	// control structures
 	| IF if_statement_continuation:c
 		{: RESULT = c; :}
 	| FOR OPENING_PARENTHESIS simple_statement_without_semicolon:init SEMICOLON expression:cond SEMICOLON simple_statement_without_semicolon:advance CLOSING_PARENTHESIS block:body
-		{: RESULT = new ForStatement(init, cond, advance, body); :}
+		{: RESULT = setLocation(new ForStatement(init, cond, advance, body)); :}
 	| FOR OPENING_PARENTHESIS simple_statement_without_semicolon:init SEMICOLON SEMICOLON simple_statement_without_semicolon:advance CLOSING_PARENTHESIS block:body
-		{: RESULT = new ForStatement(init, new LiteralExpression(true), advance, body); :}
+		{: RESULT = setLocation(new ForStatement(init, setLocation(new LiteralExpression(true)), advance, body)); :}
 	| FOREACH OPENING_PARENTHESIS expression:e AS LOCAL_VARIABLE:v CLOSING_PARENTHESIS block:body
-		{: RESULT = new ForeachStatement(e, null, v, body); :}
+		{: RESULT = setLocation(new ForeachStatement(e, null, v, body)); :}
 	| FOREACH OPENING_PARENTHESIS expression:e AS LOCAL_VARIABLE:k DOUBLE_RIGHT_ARROW LOCAL_VARIABLE:v CLOSING_PARENTHESIS block:body
-		{: RESULT = new ForeachStatement(e, k, v, body); :}
+		{: RESULT = setLocation(new ForeachStatement(e, k, v, body)); :}
 	| WHILE OPENING_PARENTHESIS expression:e CLOSING_PARENTHESIS statement:s
-		{: RESULT = new WhileStatement(e, s); :}
+		{: RESULT = setLocation(new WhileStatement(e, s)); :}
 	| DO statement:s WHILE OPENING_PARENTHESIS expression:e CLOSING_PARENTHESIS
-		{: RESULT = new DoWhileStatement(s, e); :}
+		{: RESULT = setLocation(new DoWhileStatement(s, e)); :}
 	| BREAK SEMICOLON
-		{: RESULT = new BreakStatement(); :}
+		{: RESULT = setLocation(new BreakStatement()); :}
 	| RETURN SEMICOLON
-		{: RESULT = new ReturnStatement(null); :}
+		{: RESULT = setLocation(new ReturnStatement(null)); :}
 	| RETURN expression:e SEMICOLON
-		{: RESULT = new ReturnStatement(e); :}
+		{: RESULT = setLocation(new ReturnStatement(e)); :}
 	| THROW expression:e SEMICOLON
-		{: RESULT = new ThrowStatement(e); :}
+		{: RESULT = setLocation(new ThrowStatement(e)); :}
 	| TRY block:tryBody catch_clauses:ccs optional_finally_clause:fc
 		{: if (1 == 1) throw new NotImplementedException(""); :}
 	| SWITCH OPENING_PARENTHESIS expression:e CLOSING_PARENTHESIS OPENING_CURLY_BRACE switch_cases:cs CLOSING_CURLY_BRACE
 		{:
 			SwitchCase[] properCases = parser.extractProperCases(cs);
 			Statement defaultCaseStatement = parser.extractDefaultCaseStatement(cs);
-			RESULT = new SwitchStatement(e, properCases, defaultCaseStatement);
+			RESULT = setLocation(new SwitchStatement(e, properCases, defaultCaseStatement));
 		:}
 	
 	// definitions
@@ -338,29 +362,29 @@ statement ::=
 		{:
 			String[] parameterNames = parser.extractParameterNames(decls);
 			Object[] parameterDefaultValues = parser.extractParameterDefaultValues(decls);
-			RESULT = new FunctionDefinition(id, parameterNames, parameterDefaultValues, body);
+			RESULT = setLocation(new FunctionDefinition(id, parameterNames, parameterDefaultValues, body));
 		:}
 	| oop_type_definition:def
 		{: RESULT = def; :}
 		
 	// syntax error recovery
 	| error SEMICOLON
-		{: System.err.println("syntax error"); RESULT = new NopStatement(); :}
+		{: System.err.println("syntax error"); RESULT = setLocation(new NopStatement()); :}
 ;
 
 simple_statement_without_semicolon ::=
-		{: RESULT = new NopStatement(); :}
+		{: RESULT = setLocation(new NopStatement()); :}
 	| expression:e
-		{: RESULT = new ExpressionStatement(e); :}
+		{: RESULT = setLocation(new ExpressionStatement(e)); :}
 ;
 
 if_statement_continuation ::=
 	OPENING_PARENTHESIS expression:e CLOSING_PARENTHESIS statement:s
-		{: RESULT = new IfStatement(e, s, NopStatement.INSTANCE); :}
+		{: RESULT = setLocation(new IfStatement(e, s, setLocation(new NopStatement()))); :}
 	| OPENING_PARENTHESIS expression:e CLOSING_PARENTHESIS statement:s1 ELSE statement:s2
-		{: RESULT = new IfStatement(e, s1, s2); :}
+		{: RESULT = setLocation(new IfStatement(e, s1, s2)); :}
 	| OPENING_PARENTHESIS expression:e CLOSING_PARENTHESIS statement:s ELSEIF if_statement_continuation:c
-		{: RESULT = new IfStatement(e, s, c); :}
+		{: RESULT = setLocation(new IfStatement(e, s, c)); :}
 ;
 
 catch_clauses ::=
@@ -388,9 +412,9 @@ switch_cases ::=
 
 switch_case ::= 
 	CASE expression:e COLON statements:sts
-		{: RESULT = new SwitchCase(e, new StatementSequence(sts)); :}
+		{: RESULT = new SwitchCase(e, setLocation(new StatementSequence(sts))); :}
 	| DEFAULT COLON statements:sts
-		{: RESULT = new SwitchCase(null, new StatementSequence(sts)); :}
+		{: RESULT = new SwitchCase(null, setLocation(new StatementSequence(sts))); :}
 ;
 
 // ------------------------------------------------------------------------------------
@@ -418,19 +442,19 @@ expression ::=
 
 	// literals
 	| NULL_LITERAL
-		{: RESULT = new LiteralExpression(null); :}
+		{: RESULT = setLocation(new LiteralExpression(null)); :}
 	| BOOLEAN_LITERAL:e
-		{: RESULT = new LiteralExpression(e); :}
+		{: RESULT = setLocation(new LiteralExpression(e)); :}
 	| INTEGER_LITERAL:e
-		{: RESULT = new LiteralExpression(e); :}
+		{: RESULT = setLocation(new LiteralExpression(e)); :}
 	| STRING_LITERAL:e 
-		{: RESULT = new LiteralExpression(e); :}
+		{: RESULT = setLocation(new LiteralExpression(e)); :}
 	
 	// constants and variables
 	| IDENTIFIER:id
-		{: RESULT = new ConstantExpression(id); :}
+		{: RESULT = setLocation(new ConstantExpression(id)); :}
 	| LOCAL_VARIABLE:id
-		{: RESULT = new LocalVariableExpression(id); :}
+		{: RESULT = setLocation(new LocalVariableExpression(id)); :}
 	
 	// type casting
 	| OPENING_PARENTHESIS CAST_TYPE_NAME:type CLOSING_PARENTHESIS expression:e
@@ -440,160 +464,160 @@ expression ::=
 				parser.syntax_error(typexleft, "unknown type: " + type);				
 				RESULT = e;
 			} else {
-				RESULT = new CastExpression(op, e);
+				RESULT = setLocation(new CastExpression(op, e));
 			}
 		:} 
 	| OPENING_PARENTHESIS ARRAY CLOSING_PARENTHESIS expression:e
-		{: RESULT = new CastExpression(CastOperator.ARRAY, e); :}
+		{: RESULT = setLocation(new CastExpression(CastOperator.ARRAY, e)); :}
 	| OPENING_PARENTHESIS UNSET CLOSING_PARENTHESIS expression:e
-		{: RESULT = new CastExpression(CastOperator.NULL, e); :}
+		{: RESULT = setLocation(new CastExpression(CastOperator.NULL, e)); :}
 	
 	// unary operators
 	| MINUS expression:e
-		{: RESULT = new UnaryExpression(UnaryOperator.NEGATE, e); :} 
+		{: RESULT = setLocation(new UnaryExpression(UnaryOperator.NEGATE, e)); :} 
 	| LOGICAL_NOT expression:e
-		{: RESULT = new UnaryExpression(UnaryOperator.LOGICAL_NOT, e); :} 
+		{: RESULT = setLocation(new UnaryExpression(UnaryOperator.LOGICAL_NOT, e)); :} 
 	| BITWISE_NOT expression:e
-		{: RESULT = new UnaryExpression(UnaryOperator.BITWISE_NOT, e); :} 
+		{: RESULT = setLocation(new UnaryExpression(UnaryOperator.BITWISE_NOT, e)); :} 
 	| expression:e INCREMENT
-		{: RESULT = new UnaryExpression(UnaryOperator.INCREMENT_AND_RETURN_OLD, e); :} 
+		{: RESULT = setLocation(new UnaryExpression(UnaryOperator.INCREMENT_AND_RETURN_OLD, e)); :} 
 	| INCREMENT expression:e
-		{: RESULT = new UnaryExpression(UnaryOperator.INCREMENT_AND_RETURN_NEW, e); :} 
+		{: RESULT = setLocation(new UnaryExpression(UnaryOperator.INCREMENT_AND_RETURN_NEW, e)); :} 
 	| expression:e DECREMENT
-		{: RESULT = new UnaryExpression(UnaryOperator.DECREMENT_AND_RETURN_OLD, e); :} 
+		{: RESULT = setLocation(new UnaryExpression(UnaryOperator.DECREMENT_AND_RETURN_OLD, e)); :} 
 	| DECREMENT expression:e
-		{: RESULT = new UnaryExpression(UnaryOperator.DECREMENT_AND_RETURN_NEW, e); :} 
+		{: RESULT = setLocation(new UnaryExpression(UnaryOperator.DECREMENT_AND_RETURN_NEW, e)); :} 
 	| SUPPRESS_ERRORS expression:e
-		{: RESULT = new UnaryExpression(UnaryOperator.SUPPRESS_ERRORS, e); :} 
+		{: RESULT = setLocation(new UnaryExpression(UnaryOperator.SUPPRESS_ERRORS, e)); :} 
 	
 	// binary operators
 	| expression:e1 PLUS expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.ADD, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.ADD, e2)); :} 
 	| expression:e1 MINUS expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.SUBTRACT, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.SUBTRACT, e2)); :} 
 	| expression:e1 TIMES expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.MULTIPLY, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.MULTIPLY, e2)); :} 
 	| expression:e1 DIVIDE expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.DIVIDE, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.DIVIDE, e2)); :} 
 	| expression:e1 MOD expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.REMAINDER, e2)); :} 
 	| expression:e1 CONCAT expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.CONCATENATE, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.CONCATENATE, e2)); :} 
 	| expression:e1 POWER expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.POWER, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.POWER, e2)); :} 
 	| expression:e1 LOGICAL_SHORTCUT_AND expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.LOGICAL_SHORTCUT_AND, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.LOGICAL_SHORTCUT_AND, e2)); :} 
 	| expression:e1 LOGICAL_SHORTCUT_OR expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.LOGICAL_SHORTCUT_OR, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.LOGICAL_SHORTCUT_OR, e2)); :} 
 	| expression:e1 LOW_PRECEDENCE_LOGICAL_SHORTCUT_AND expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.LOGICAL_SHORTCUT_AND, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.LOGICAL_SHORTCUT_AND, e2)); :} 
 	| expression:e1 LOW_PRECEDENCE_LOGICAL_SHORTCUT_OR expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.LOGICAL_SHORTCUT_OR, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.LOGICAL_SHORTCUT_OR, e2)); :} 
 	| expression:e1 LOW_PRECEDENCE_LOGICAL_XOR expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.LOGICAL_XOR, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.LOGICAL_XOR, e2)); :} 
 	| expression:e1 BITWISE_AND expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.BITWISE_AND, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.BITWISE_AND, e2)); :} 
 	| expression:e1 BITWISE_OR expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.BITWISE_OR, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.BITWISE_OR, e2)); :} 
 	| expression:e1 BITWISE_XOR expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.BITWISE_XOR, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.BITWISE_XOR, e2)); :} 
 	| expression:e1 SHIFT_LEFT expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.SHIFT_LEFT, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.SHIFT_LEFT, e2)); :} 
 	| expression:e1 SHIFT_RIGHT expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.SHIFT_RIGHT, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.SHIFT_RIGHT, e2)); :} 
 	| expression:e1 EQUAL expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.EQUALS, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.EQUALS, e2)); :} 
 	| expression:e1 NOT_EQUAL expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.NOT_EQUALS, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.NOT_EQUALS, e2)); :} 
 	| expression:e1 IDENTICAL expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.IDENTICAL, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.IDENTICAL, e2)); :} 
 	| expression:e1 NOT_IDENTICAL expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.NOT_IDENTICAL, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.NOT_IDENTICAL, e2)); :} 
 	| expression:e1 GREATER expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.GREATER_THAN, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.GREATER_THAN, e2)); :} 
 	| expression:e1 LESS expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.LESS_THAN, e2); :}
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.LESS_THAN, e2)); :}
 	| expression:e1 GREATER_EQUAL expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.GREATER_EQUAL, e2); :} 
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.GREATER_EQUAL, e2)); :} 
 	| expression:e1 LESS_EQUAL expression:e2
-		{: RESULT = new BinaryExpression(e1, BinaryOperator.LESS_EQUAL, e2); :}
+		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.LESS_EQUAL, e2)); :}
 	| expression:e1 ASSIGN expression:e2
-		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.RIGHT, e2); :}
+		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.RIGHT, e2)); :}
 	| expression:e1 PLUS_ASSIGN expression:e2
-		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.ADD, e2); :} 
+		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.ADD, e2)); :} 
 	| expression:e1 MINUS_ASSIGN expression:e2
-		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.SUBTRACT, e2); :} 
+		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.SUBTRACT, e2)); :} 
 	| expression:e1 TIMES_ASSIGN expression:e2
-		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.MULTIPLY, e2); :} 
+		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.MULTIPLY, e2)); :} 
 	| expression:e1 DIVIDE_ASSIGN expression:e2
-		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.DIVIDE, e2); :} 
+		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.DIVIDE, e2)); :} 
 	| expression:e1 MOD_ASSIGN expression:e2
-		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.REMAINDER, e2); :} 
+		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.REMAINDER, e2)); :} 
 	| expression:e1 CONCAT_ASSIGN expression:e2
-		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.CONCATENATE, e2); :}
+		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.CONCATENATE, e2)); :}
 	| expression:e1 BITWISE_AND_ASSIGN expression:e2
-		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.BITWISE_AND, e2); :} 
+		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.BITWISE_AND, e2)); :} 
 	| expression:e1 BITWISE_OR_ASSIGN expression:e2
-		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.BITWISE_OR, e2); :} 
+		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.BITWISE_OR, e2)); :} 
 	| expression:e1 BITWISE_XOR_ASSIGN expression:e2
-		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.BITWISE_XOR, e2); :} 
+		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.BITWISE_XOR, e2)); :} 
 	| expression:e1 SHIFT_LEFT_ASSIGN expression:e2
-		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.SHIFT_LEFT, e2); :} 
+		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.SHIFT_LEFT, e2)); :} 
 	| expression:e1 SHIFT_RIGHT_ASSIGN expression:e2
-		{: RESULT = new BinaryAssignmentExpression(e1, BinaryOperator.SHIFT_RIGHT, e2); :}
+		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.SHIFT_RIGHT, e2)); :}
 	
 	// ternary operator
 	| expression:e1 QUESTION_MARK expression:e2 COLON expression:e3
-		{: RESULT = new ConditionalExpression(e1, e2, e3); :}
+		{: RESULT = setLocation(new ConditionalExpression(e1, e2, e3)); :}
 
 	// arrays
 	| ARRAY OPENING_PARENTHESIS array_literal_elements:els CLOSING_PARENTHESIS
-		{: RESULT = new ArrayConstructionExpression(els); :}
+		{: RESULT = setLocation(new ArrayConstructionExpression(els)); :}
 	| expression:a OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET
-		{: RESULT = new ArrayAppendExpression(a); :}
+		{: RESULT = setLocation(new ArrayAppendExpression(a)); :}
 	| expression:a OPENING_SQUARE_BRACKET expression:k CLOSING_SQUARE_BRACKET
-		{: RESULT = new ArrayElementExpression(a, k); :}
+		{: RESULT = setLocation(new ArrayElementExpression(a, k)); :}
 
 	// functions
 	| IDENTIFIER:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
-		{: RESULT = ParserHelper.buildFunctionCallLikeExpression(idxleft, id, exs); :}
+		{: RESULT = setLocation(ParserHelper.buildFunctionCallLikeExpression(idxleft, id, exs)); :}
 		
 	// special built-in expressions
 	| INCLUDE expression:e
-		{: RESULT = new FunctionCall("include", e); :}
+		{: RESULT = setLocation(new FunctionCall("include", e)); :}
 	| INCLUDE_ONCE expression:e
-		{: RESULT = new FunctionCall("include_once", e); :}
+		{: RESULT = setLocation(new FunctionCall("include_once", e)); :}
 	| REQUIRE expression:e
-		{: RESULT = new FunctionCall("require", e); :}
+		{: RESULT = setLocation(new FunctionCall("require", e)); :}
 	| REQUIRE_ONCE expression:e
-		{: RESULT = new FunctionCall("require_once", e); :}
+		{: RESULT = setLocation(new FunctionCall("require_once", e)); :}
 	| PRINT expression:e
-		{: RESULT = new FunctionCall("print", e); :}
+		{: RESULT = setLocation(new FunctionCall("print", e)); :}
 	
 	// OOP
 	| NEW IDENTIFIER:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
-		{: RESULT = new NewExpression(id, exs.toArray(new Expression[exs.size()])); :}
+		{: RESULT = setLocation(new NewExpression(id, exs.toArray(new Expression[exs.size()]))); :}
 	| expression:e INSTANCEOF IDENTIFIER:id
-		{: RESULT = new InstanceofExpression(e, id); :}
+		{: RESULT = setLocation(new InstanceofExpression(e, id)); :}
 	| IDENTIFIER:classId SCOPE_RESOLUTION IDENTIFIER:fieldId
-		{: RESULT = new StaticFieldAccess(classId, fieldId); :}
+		{: RESULT = setLocation(new StaticFieldAccess(classId, fieldId)); :}
 	| SELF SCOPE_RESOLUTION IDENTIFIER:fieldId
-		{: RESULT = new StaticFieldAccess(null, fieldId); :}
+		{: RESULT = setLocation(new StaticFieldAccess(null, fieldId)); :}
 	| expression:obj RIGHT_ARROW IDENTIFIER:id
-		{: RESULT = new InstanceFieldAccess(obj, id); :}
+		{: RESULT = setLocation(new InstanceFieldAccess(obj, id)); :}
 	| IDENTIFIER:classId SCOPE_RESOLUTION IDENTIFIER:methodId OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
-		{: RESULT = new StaticMethodCall(classId, methodId, exs.toArray(new Expression[exs.size()])); :}
+		{: RESULT = setLocation(new StaticMethodCall(classId, methodId, exs.toArray(new Expression[exs.size()]))); :}
 	| SELF SCOPE_RESOLUTION IDENTIFIER:methodId OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
-		{: RESULT = new StaticMethodCall(null, methodId, exs.toArray(new Expression[exs.size()])); :}
+		{: RESULT = setLocation(new StaticMethodCall(null, methodId, exs.toArray(new Expression[exs.size()]))); :}
 	| PARENT SCOPE_RESOLUTION IDENTIFIER:methodId OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
 		{: if (1 == 1) throw new NotImplementedException(""); :}
 	| expression:obj RIGHT_ARROW IDENTIFIER:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
-		{: RESULT = new InstanceMethodCall(obj, id, exs.toArray(new Expression[exs.size()])); :}
+		{: RESULT = setLocation(new InstanceMethodCall(obj, id, exs.toArray(new Expression[exs.size()]))); :}
 
 
 	// syntax error recovery
 	| error
-		{: RESULT = new LiteralExpression(null); :}
+		{: RESULT = setLocation(new LiteralExpression(null)); :}
 ;
 
 array_literal_elements ::=

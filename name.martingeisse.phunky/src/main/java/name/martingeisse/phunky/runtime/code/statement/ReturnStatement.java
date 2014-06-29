@@ -13,7 +13,7 @@ import name.martingeisse.phunky.runtime.code.expression.Expression;
 /**
  * The "return" statement.
  */
-public final class ReturnStatement implements Statement {
+public final class ReturnStatement extends AbstractStatement {
 
 	/**
 	 * the returnValueExpression
@@ -33,7 +33,9 @@ public final class ReturnStatement implements Statement {
 	 */
 	@Override
 	public void execute(final Environment environment) {
+		environment.getRuntime().getLog().beginStatement("return");
 		Object returnValue = (returnValueExpression == null ? null : returnValueExpression.evaluate(environment));
+		environment.getRuntime().getLog().endStatement("return");
 		throw new ReturnException(returnValue);
 	}
 

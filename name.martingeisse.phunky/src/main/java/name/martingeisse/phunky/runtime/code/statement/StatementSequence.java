@@ -16,7 +16,7 @@ import org.apache.commons.collections.iterators.ArrayIterator;
  * A sequence of statements that acts as a single statement by
  * executing the sub-statements one after another.
  */
-public final class StatementSequence implements Statement, Iterable<Statement> {
+public final class StatementSequence extends AbstractStatement implements Iterable<Statement> {
 
 	/**
 	 * the statements

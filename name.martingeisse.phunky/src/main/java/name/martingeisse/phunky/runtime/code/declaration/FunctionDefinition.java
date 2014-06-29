@@ -11,13 +11,14 @@ import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.Variable;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.code.statement.AbstractStatement;
 import name.martingeisse.phunky.runtime.code.statement.ReturnException;
 import name.martingeisse.phunky.runtime.code.statement.Statement;
 
 /**
  * This statement defines a (global) function.
  */
-public final class FunctionDefinition implements Statement {
+public final class FunctionDefinition extends AbstractStatement {
 
 	/**
 	 * the name
@@ -108,6 +109,7 @@ public final class FunctionDefinition implements Statement {
 	 */
 	@Override
 	public void execute(final Environment environment) {
+		environment.getRuntime().getLog().beginStatement("function");
 		environment.getRuntime().getFunctions().put(name, new Callable() {
 			@Override
 			public Object call(PhpRuntime runtime, Object[] arguments) {
@@ -134,6 +136,7 @@ public final class FunctionDefinition implements Statement {
 				}
 			}
 		});
+		environment.getRuntime().getLog().endStatement("function");
 	}
 
 	/* (non-Javadoc)

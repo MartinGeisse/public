@@ -38,7 +38,23 @@ public final class ConstantExpression extends AbstractComputeExpression {
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-		return environment.getRuntime().getConstants().get(name);
+		
+		// optimization: perform hash lookup only once, except for the special case when the value is null
+		Object value = environment.getRuntime().getConstants().get(name);
+		if (value == null) {
+			// constant is undefined or defined with null value
+			if (environment.getRuntime().getConstants().containsKey(name)) {
+				// constant is defined with null value
+				return null;
+			} else {
+				// constant is undefined
+				return environment.getRuntime().onUndefinedConstant(this);
+			}
+		} else {
+			// constant is defined with non-null value
+			return value;
+		}
+		
 	}
 
 	/* (non-Javadoc)
