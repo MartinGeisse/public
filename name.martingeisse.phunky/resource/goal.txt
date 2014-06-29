@@ -161,5 +161,48 @@ desirable but not absolutely necessary. Any re-usable PHP software (e.g. framewo
 incompatibilities anyway, so it's OK if I cannot avoid then; I just keep them to a minimum and provide
 the tools to deal with them.
 
+----------------------------------
+
+I just learned that implementing zval exactly like PHP does is hard, cumbersome, and error-prone. If
+in any way possible, I'd like to avoid that. This would probably imply that references do not behave
+exactly PHP-like (especially references to array elements), but that would be OK. The way PHP does it is
+braindead anyway and programmers do not *expect* that behavior, rather they're *suprised* in a negative
+way when they learn about it.
+
+What would be the alternative? That values are values, variables are containers for values, and references
+are multiple usage sites for a variable. Assigning by value makes a virtual copy of the value. Assigning
+by reference re-uses the variable.
+
+Creating a reference is easy then -- keep a Java reference to the Variable object.
+Writing to a variable is easy then -- replace the value in the Variable object.
+Reading from a variable for "peek" use is easy.
+Reading from a variable for "keep" use is the hard part.
+
+The latter is, for example, the code:
+
+	$a = array(... array( ... ) ... ); // big data structure
+	$b = $a; // virtual copy
+	$c = $a['foo']; // virtual copy of part of the structure
+	$d =& $a['bar']; // ...?
+
+What does virtual copy mean?
+
+---
+
+Maybe it is useful to distinguish "variable arrays" and "value arrays":
+- a variable array is stored in a Variable object, is a key->variable mapping, is mutable, and supports references
+- a value array is passed around as a value, is a key->value mapping, is immutable, and doesn't support references
+- an array view supports the operations of a value array but is not guaranteed to be immutable
+- a variable that contains a value array cannot modify it; the value array must be converted to a variable array first
+	(this is like PHP's zval separation). Nested arrays need not be converted immediately.
+
+This looks like it can be optimized reasonably, though it is not a direct clone of PHP's zval behavior.
+Especially, the weird "array element with reference" behavior isn't reproduced; a reference to an array element
+can only be made for a variable array. Passing this array by value makes a copy of it. This system implicitly
+keeps track, for each array, whether any element or nested array *can* contain a referenced variable. Where PHP
+resorts to weird behavior, this resorts to defensive copying.
+
+
+
 
 
