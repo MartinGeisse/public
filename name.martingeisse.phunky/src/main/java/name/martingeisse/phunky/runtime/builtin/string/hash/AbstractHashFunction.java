@@ -8,7 +8,7 @@ package name.martingeisse.phunky.runtime.builtin.string.hash;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
-import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
+import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 /**
  * Base class for hash code computing functions such as md5() and sha1().

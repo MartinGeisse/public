@@ -9,7 +9,7 @@ package name.martingeisse.phunky.runtime.code.statement;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
-import name.martingeisse.phunky.runtime.value.PhpIterable;
+import name.martingeisse.phunky.runtime.variable.PhpIterable;
 
 /**
  * The "foreach" statement.

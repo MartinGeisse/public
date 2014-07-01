@@ -9,7 +9,7 @@ package name.martingeisse.phunky.runtime.builtin.system;
 import name.martingeisse.phunky.runtime.ExitException;
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
-import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
+import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 /**
  * The built-in "die" function.

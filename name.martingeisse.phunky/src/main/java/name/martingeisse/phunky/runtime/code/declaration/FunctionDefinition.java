@@ -9,11 +9,11 @@ package name.martingeisse.phunky.runtime.code.declaration;
 import name.martingeisse.phunky.runtime.Callable;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.PhpRuntime;
-import name.martingeisse.phunky.runtime.Variable;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.statement.AbstractStatement;
 import name.martingeisse.phunky.runtime.code.statement.ReturnException;
 import name.martingeisse.phunky.runtime.code.statement.Statement;
+import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
  * This statement defines a (global) function.

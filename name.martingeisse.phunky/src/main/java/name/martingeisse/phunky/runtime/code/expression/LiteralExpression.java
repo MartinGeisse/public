@@ -6,7 +6,7 @@ package name.martingeisse.phunky.runtime.code.expression;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
-import name.martingeisse.phunky.runtime.value.PhpArray;
+import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
 import org.apache.commons.lang3.NotImplementedException;
 
 /**
@@ -63,7 +63,7 @@ public final class LiteralExpression extends AbstractComputeExpression {
 			dumper.print('\"');
 			dumper.print(v);
 			dumper.print('\"');
-		} else if (value instanceof PhpArray) {
+		} else if (value instanceof PhpVariableArray) {
 			throw new NotImplementedException("");
 		} else {
 			dumper.print("(!literal: " + value + " !)");

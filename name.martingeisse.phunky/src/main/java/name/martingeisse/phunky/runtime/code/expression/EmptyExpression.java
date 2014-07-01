@@ -8,7 +8,7 @@ package name.martingeisse.phunky.runtime.code.expression;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
-import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
+import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 /**
  * Represents the empty(...) special form.

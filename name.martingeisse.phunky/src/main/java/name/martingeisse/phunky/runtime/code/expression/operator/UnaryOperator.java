@@ -5,9 +5,9 @@
 package name.martingeisse.phunky.runtime.code.expression.operator;
 
 import name.martingeisse.phunky.runtime.Environment;
-import name.martingeisse.phunky.runtime.Variable;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
-import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
+import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
+import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
  * This enum contains all unary operators.

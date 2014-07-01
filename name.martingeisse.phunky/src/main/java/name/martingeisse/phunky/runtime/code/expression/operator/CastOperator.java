@@ -4,7 +4,7 @@
 
 package name.martingeisse.phunky.runtime.code.expression.operator;
 
-import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
+import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 import org.apache.commons.lang3.NotImplementedException;
 
 /**

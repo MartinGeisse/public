@@ -6,10 +6,10 @@ package name.martingeisse.phunky.runtime.code.expression.operator;
 
 import java.util.Map;
 import name.martingeisse.phunky.runtime.Environment;
-import name.martingeisse.phunky.runtime.Variable;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
-import name.martingeisse.phunky.runtime.value.PhpArray;
-import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
+import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
+import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
+import name.martingeisse.phunky.runtime.variable.Variable;
 import org.apache.commons.lang3.NotImplementedException;
 
 /**
@@ -87,13 +87,13 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			if ((leftHandSide instanceof PhpArray) || (rightHandSide instanceof PhpArray)) {
+			if ((leftHandSide instanceof PhpVariableArray) || (rightHandSide instanceof PhpVariableArray)) {
 				// this is similar to array_merge, but differs in precedence of LHS/RHS
 				// elements and in treatment of numeric indices.
 				// see: http://stackoverflow.com/questions/2140090/operator-for-array-in-php
-				PhpArray result = new PhpArray();
-				addElements((PhpArray)rightHandSide, result);
-				addElements((PhpArray)leftHandSide, result);
+				PhpVariableArray result = new PhpVariableArray();
+				addElements((PhpVariableArray)rightHandSide, result);
+				addElements((PhpVariableArray)leftHandSide, result);
 				return result;
 			} else if ((leftHandSide instanceof Double) || (rightHandSide instanceof Double) || (leftHandSide instanceof Float) || (rightHandSide instanceof Float)) {
 				final double x = TypeConversionUtil.convertToDouble(leftHandSide);
@@ -106,7 +106,7 @@ public enum BinaryOperator {
 			}
 		}
 		
-		private void addElements(PhpArray from, PhpArray to) {
+		private void addElements(PhpVariableArray from, PhpVariableArray to) {
 			for (Map.Entry<String, Variable> entry : from.getDirectEntryIterable()) {
 				to.getOrCreateVariable(entry.getKey()).setValue(entry.getValue());
 			}
@@ -401,7 +401,7 @@ public enum BinaryOperator {
 				final String x = TypeConversionUtil.convertToString(leftHandSide);
 				final String y = TypeConversionUtil.convertToString(rightHandSide);
 				return x.equals(y);
-			} else if ((leftHandSide instanceof PhpArray) || (rightHandSide instanceof PhpArray)) {
+			} else if ((leftHandSide instanceof PhpVariableArray) || (rightHandSide instanceof PhpVariableArray)) {
 				// TODO array-equals
 				throw new NotImplementedException("");
 			} else if ((leftHandSide instanceof Double) || (rightHandSide instanceof Double) || (leftHandSide instanceof Float) || (rightHandSide instanceof Float)) {
@@ -450,7 +450,7 @@ public enum BinaryOperator {
 					final String x = (String)leftHandSide;
 					final String y = (String)rightHandSide;
 					return x.equals(y);
-				} else if (leftHandSide instanceof PhpArray) {
+				} else if (leftHandSide instanceof PhpVariableArray) {
 					// TODO array-identical
 					throw new NotImplementedException("");
 				} else if (leftHandSide instanceof Double) {

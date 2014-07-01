@@ -8,7 +8,7 @@ package name.martingeisse.phunky.runtime.builtin.var;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
-import name.martingeisse.phunky.runtime.value.PhpArray;
+import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
 
 /**
  * The built-in "is_array" function.
@@ -20,7 +20,7 @@ public class IsArrayFunction extends BuiltinCallable {
 	 */
 	@Override
 	public Object call(PhpRuntime runtime, Object[] arguments) {
-		return (arguments.length > 0 && arguments[0] instanceof PhpArray);
+		return (arguments.length > 0 && arguments[0] instanceof PhpVariableArray);
 	}
 
 }

@@ -6,8 +6,8 @@ package name.martingeisse.phunky.runtime.builtin.string;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
-import name.martingeisse.phunky.runtime.value.PhpArray;
-import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
+import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
+import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 /**
  * The built-in "implode" and "join" functions.
@@ -25,22 +25,22 @@ public final class ImplodeFunction extends BuiltinCallable {
 			runtime.triggerError("implode() expects exactly 2 arguments, has " + arguments.length);
 			return "";
 		}
-		boolean firstIsArray = (arguments[0] instanceof PhpArray);
-		boolean secondIsArray = (arguments[1] instanceof PhpArray);
-		PhpArray array;
+		boolean firstIsArray = (arguments[0] instanceof PhpVariableArray);
+		boolean secondIsArray = (arguments[1] instanceof PhpVariableArray);
+		PhpVariableArray array;
 		String glue;
 		if (firstIsArray) {
 			if (secondIsArray) {
 				runtime.triggerError("Both arguments to implode() are arrays; cannot determine argument order");
 				return "";
 			} else {
-				array = (PhpArray)arguments[0];
+				array = (PhpVariableArray)arguments[0];
 				glue = TypeConversionUtil.convertToString(arguments[1]);
 			}
 		} else {
 			if (secondIsArray) {
 				glue = TypeConversionUtil.convertToString(arguments[0]);
-				array = (PhpArray)arguments[1];
+				array = (PhpVariableArray)arguments[1];
 			} else {
 				runtime.triggerError("Neither argument to implode() is an array");
 				return "";

@@ -5,6 +5,7 @@
 package name.martingeisse.phunky.runtime;
 
 import java.util.HashMap;
+import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
  * The environment that keeps variables per function call.

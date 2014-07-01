@@ -7,14 +7,14 @@
 package name.martingeisse.phunky.runtime.code.expression.array;
 
 import name.martingeisse.phunky.runtime.Environment;
-import name.martingeisse.phunky.runtime.Variable;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpression;
 import name.martingeisse.phunky.runtime.code.expression.AbstractExpression;
 import name.martingeisse.phunky.runtime.code.expression.AbstractVariableExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
-import name.martingeisse.phunky.runtime.value.PhpArray;
-import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
+import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
+import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
+import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
  * This expression selects one element of an array.
@@ -68,8 +68,8 @@ public final class ArrayElementExpression extends AbstractExpression {
 	public Object evaluate(Environment environment) {
 		Object arrayCandidate = arrayExpression.evaluate(environment);
 		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
-		if (arrayCandidate instanceof PhpArray) {
-			PhpArray array = (PhpArray)arrayCandidate;
+		if (arrayCandidate instanceof PhpVariableArray) {
+			PhpVariableArray array = (PhpVariableArray)arrayCandidate;
 			return array.getVariable(key).getValue();
 		} else {
 			environment.getRuntime().triggerError("trying to get element of non-array value");
@@ -84,8 +84,8 @@ public final class ArrayElementExpression extends AbstractExpression {
 	public Object evaluateForEmptyCheck(Environment environment) {
 		Object arrayCandidate = arrayExpression.evaluateForEmptyCheck(environment);
 		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
-		if (arrayCandidate instanceof PhpArray) {
-			PhpArray array = (PhpArray)arrayCandidate;
+		if (arrayCandidate instanceof PhpVariableArray) {
+			PhpVariableArray array = (PhpVariableArray)arrayCandidate;
 			return array.getVariable(key).getValue();
 		} else {
 			return null;
@@ -105,8 +105,8 @@ public final class ArrayElementExpression extends AbstractExpression {
 			return null;
 		}
 		Object arrayCandidate = arrayVariable.getValue();
-		if (arrayCandidate instanceof PhpArray) {
-			PhpArray array = (PhpArray)arrayCandidate;
+		if (arrayCandidate instanceof PhpVariableArray) {
+			PhpVariableArray array = (PhpVariableArray)arrayCandidate;
 			return array.getVariable(key);
 		}
 		environment.getRuntime().triggerError("trying to get element of non-array value");
@@ -124,16 +124,16 @@ public final class ArrayElementExpression extends AbstractExpression {
 		Variable arrayVariable = arrayExpression.getVariable(environment);
 		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
 		if (arrayVariable == null) {
-			PhpArray array = new PhpArray();
+			PhpVariableArray array = new PhpVariableArray();
 			return array.getOrCreateVariable(key);
 		}
 		Object arrayCandidate = arrayVariable.getValue();
-		if (arrayCandidate instanceof PhpArray) {
-			PhpArray array = (PhpArray)arrayCandidate;
+		if (arrayCandidate instanceof PhpVariableArray) {
+			PhpVariableArray array = (PhpVariableArray)arrayCandidate;
 			return array.getOrCreateVariable(key);
 		}
 		if (TypeConversionUtil.valueCanBeOverwrittenByImplicitArrayConstruction(arrayCandidate)) {
-			PhpArray array = new PhpArray();
+			PhpVariableArray array = new PhpVariableArray();
 			return array.getOrCreateVariable(key);
 		} else {
 			environment.getRuntime().triggerError("cannot use a scalar value as an array");

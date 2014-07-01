@@ -6,7 +6,7 @@ package name.martingeisse.phunky.runtime.builtin;
 
 import name.martingeisse.phunky.runtime.Callable;
 import name.martingeisse.phunky.runtime.PhpRuntime;
-import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
+import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 /**
  * Helper class to simplify the implementation of built-in functions

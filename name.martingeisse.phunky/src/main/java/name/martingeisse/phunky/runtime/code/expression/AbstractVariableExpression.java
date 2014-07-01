@@ -5,7 +5,7 @@
 package name.martingeisse.phunky.runtime.code.expression;
 
 import name.martingeisse.phunky.runtime.Environment;
-import name.martingeisse.phunky.runtime.Variable;
+import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
  * Base class for expressions that denote a variable.

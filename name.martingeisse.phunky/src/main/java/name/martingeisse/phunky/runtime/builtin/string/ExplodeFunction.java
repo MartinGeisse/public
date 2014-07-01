@@ -7,7 +7,7 @@ package name.martingeisse.phunky.runtime.builtin.string;
 import java.util.ArrayList;
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
-import name.martingeisse.phunky.runtime.value.PhpArray;
+import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
 
 /**
  * The built-in "explode" function.
@@ -30,7 +30,7 @@ public final class ExplodeFunction extends BuiltinCallable {
 			return subject;
 		}
 		if (subject.isEmpty()) {
-			return new PhpArray();
+			return new PhpVariableArray();
 		}
 		
 		// TODO implement
@@ -45,13 +45,13 @@ public final class ExplodeFunction extends BuiltinCallable {
 			int index = subject.indexOf(delimiter);
 			if (index == -1) {
 				segments.add(subject);
-				return PhpArray.fromValues(segments);
+				return PhpVariableArray.fromValues(segments);
 			}
 			segments.add(subject.substring(0, index));
 			subject = subject.substring(index + delimiterLength);
 		}
 		segments.add(subject);
-		return PhpArray.fromValues(segments);
+		return PhpVariableArray.fromValues(segments);
 
 	}
 	

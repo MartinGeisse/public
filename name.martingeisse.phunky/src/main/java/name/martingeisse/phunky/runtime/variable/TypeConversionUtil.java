@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.phunky.runtime.value;
+package name.martingeisse.phunky.runtime.variable;
 
 
 /**
@@ -53,8 +53,8 @@ public final class TypeConversionUtil {
 			Boolean v = (Boolean)value;
 			return (v ? 1 : 0);
 		}
-		if (value instanceof PhpArray) {
-			PhpArray v = (PhpArray)value;
+		if (value instanceof PhpVariableArray) {
+			PhpVariableArray v = (PhpVariableArray)value;
 			return (v.isEmpty() ? 0 : 1);
 		}
 		return 1;
@@ -89,8 +89,8 @@ public final class TypeConversionUtil {
 			Boolean v = (Boolean)value;
 			return (v ? 1 : 0);
 		}
-		if (value instanceof PhpArray) {
-			PhpArray v = (PhpArray)value;
+		if (value instanceof PhpVariableArray) {
+			PhpVariableArray v = (PhpVariableArray)value;
 			return (v.isEmpty() ? 0 : 1);
 		}
 		return 1;
@@ -128,7 +128,7 @@ public final class TypeConversionUtil {
 			Boolean v = (Boolean)value;
 			return (v ? "1" : "");
 		}
-		if (value instanceof PhpArray) {
+		if (value instanceof PhpVariableArray) {
 			return "Array";
 		}
 		return value.toString();

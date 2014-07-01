@@ -7,14 +7,14 @@
 package name.martingeisse.phunky.runtime.code.expression.array;
 
 import name.martingeisse.phunky.runtime.Environment;
-import name.martingeisse.phunky.runtime.Variable;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpression;
 import name.martingeisse.phunky.runtime.code.expression.AbstractExpression;
 import name.martingeisse.phunky.runtime.code.expression.AbstractVariableExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
-import name.martingeisse.phunky.runtime.value.PhpArray;
-import name.martingeisse.phunky.runtime.value.TypeConversionUtil;
+import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
+import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
+import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
  * This expression can be used to append an element to an array.
@@ -81,16 +81,16 @@ public final class ArrayAppendExpression extends AbstractExpression {
 		// note that arrays are a value type, so getting the variable for an element also gets the variable for the array
 		Variable arrayVariable = arrayExpression.getVariable(environment);
 		if (arrayVariable == null) {
-			PhpArray array = new PhpArray();
+			PhpVariableArray array = new PhpVariableArray();
 			return array.append();
 		}
 		Object arrayCandidate = arrayVariable.getValue();
-		if (arrayCandidate instanceof PhpArray) {
-			PhpArray array = (PhpArray)arrayCandidate;
+		if (arrayCandidate instanceof PhpVariableArray) {
+			PhpVariableArray array = (PhpVariableArray)arrayCandidate;
 			return array.append();
 		}
 		if (TypeConversionUtil.valueCanBeOverwrittenByImplicitArrayConstruction(arrayCandidate)) {
-			PhpArray array = new PhpArray();
+			PhpVariableArray array = new PhpVariableArray();
 			return array.append();
 		} else {
 			environment.getRuntime().triggerError("cannot use a scalar value as an array");
