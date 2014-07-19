@@ -31,6 +31,8 @@
 			<artifactId>stackd-common</artifactId>
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
+		
+		<!-- other libraries -->
 		<dependency>
 			<groupId>com.datastax.cassandra</groupId>
 			<artifactId>cassandra-driver-core</artifactId>
