@@ -75,7 +75,7 @@ public abstract class ExpandableRepeater<T, E> extends AbstractRepeater {
 	 */
 	public ExpandableRepeater(final String id, final IModel<T> model) {
 		super(id, model);
-		internalInit();
+		construct();
 	}
 
 	/**
@@ -84,13 +84,13 @@ public abstract class ExpandableRepeater<T, E> extends AbstractRepeater {
 	 */
 	public ExpandableRepeater(final String id) {
 		super(id);
-		internalInit();
+		construct();
 	}
 
 	/**
 	 * 
 	 */
-	private void internalInit() {
+	private void construct() {
 		this.batchCount = 1;
 		setOutputMarkupId(true);
 	}
