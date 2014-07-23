@@ -79,7 +79,10 @@ public final class CodeMirrorMode implements Serializable {
 	 */
 	public void renderInitializerForTextArea(IHeaderResponse response, Component textArea) {
 		String escapedId = JavascriptAssemblerUtil.escapeStringLiteralSpecialCharacters(id);
-		String script = "$('#" + textArea.getMarkupId() + "').createCodeMirrorForTextArea('" + escapedId + "', {});";
+		String script =
+			"var q = $('#" + textArea.getMarkupId() + "'); \n" +
+			"var codeMirror = q.createCodeMirrorForTextArea('" + escapedId + "', {}); \n" +
+			"q.data('codeMirrorInstance', codeMirror); ";
 		response.render(OnDomReadyHeaderItem.forScript(script));
 	}
 	

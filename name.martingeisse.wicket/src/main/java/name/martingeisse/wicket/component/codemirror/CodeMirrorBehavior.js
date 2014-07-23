@@ -1,5 +1,6 @@
 
 $.fn.createCodeMirrorForTextArea = function(mode, options) {
+	var result = null;
 	this.each(function() {
 		
 		// determine CodeMirror creation options
@@ -18,5 +19,7 @@ $.fn.createCodeMirrorForTextArea = function(mode, options) {
 		// create the CodeMirror instance
 		var codeMirror = CodeMirror.fromTextArea(this, options);
 		
+		result = codeMirror;
 	});
+	return result;
 }

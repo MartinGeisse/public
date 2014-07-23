@@ -12,6 +12,7 @@ import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
@@ -43,6 +44,11 @@ public class CodeMirrorBehavior extends Behavior {
 		WicketHeadUtil.includeClassJavascript(response, CodeMirrorBehavior.class);
 		mode.renderResourceReferences(response);
 		mode.renderInitializerForTextArea(response, component);
+
+		String script =
+			"var q = $('#" + component.getMarkupId() + "'); \n" +
+			"q.parents('.collapse').on('shown.bs.collapse', function(e) {q.data('codeMirrorInstance').refresh(); });";
+		response.render(OnDomReadyHeaderItem.forScript(script));
 	}
 	
 }
