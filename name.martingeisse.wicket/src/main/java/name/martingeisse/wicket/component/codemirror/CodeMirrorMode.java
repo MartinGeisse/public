@@ -9,10 +9,10 @@ package name.martingeisse.wicket.component.codemirror;
 import java.io.Serializable;
 import name.martingeisse.common.javascript.JavascriptAssemblerUtil;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 /**
@@ -77,7 +77,7 @@ public final class CodeMirrorMode implements Serializable {
 	 * @param response the response to render to
 	 * @param textArea the text area that shall be using CodeMirror
 	 */
-	public void renderInitializerForTextArea(IHeaderResponse response, TextArea<?> textArea) {
+	public void renderInitializerForTextArea(IHeaderResponse response, Component textArea) {
 		String escapedId = JavascriptAssemblerUtil.escapeStringLiteralSpecialCharacters(id);
 		String script = "$('#" + textArea.getMarkupId() + "').createCodeMirrorForTextArea('" + escapedId + "', {});";
 		response.render(OnDomReadyHeaderItem.forScript(script));
