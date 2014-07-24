@@ -7,10 +7,8 @@ package name.martingeisse.wicket.application;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.wicket.request.Request;
 import org.apache.wicket.session.ISessionStore;
 
@@ -64,7 +62,7 @@ public abstract class AbstractSessionStore implements ISessionStore {
 		}
 		return null;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.session.ISessionStore#registerBindListener(org.apache.wicket.session.ISessionStore.BindListener)
 	 */
