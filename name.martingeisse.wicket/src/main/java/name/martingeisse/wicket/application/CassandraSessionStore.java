@@ -8,19 +8,20 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.IRequestLogger;
 import org.apache.wicket.request.Request;
-import com.datastax.driver.core.ColumnDefinitions;
+
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.querybuilder.Assignment;
 import com.datastax.driver.core.querybuilder.Clause;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select.Builder;
+import com.datastax.driver.core.querybuilder.Select.Where;
 
 /**
  * Stores Wicket sessions to a Cassandra database.
@@ -48,12 +49,19 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 	}
 
 	/**
-	 * Returns a Cassandra Clause object for equality to the specified session ID.
+	 * Returns a Cassandra Clause object for session ID equality.
 	 */
 	private final Clause getSessionIdClauseFromSessionId(final String sessionId) {
 		return QueryBuilder.eq("id", sessionId);
 	}
-	
+
+	/**
+	 * Returns a Cassandra Clause object for attribute name equality.
+	 */
+	private final Clause getAttributeNameClauseFromAttributeName(final String attributeName) {
+		return QueryBuilder.eq("attribute_name", attributeName);
+	}
+
 	/**
 	 * Returns a Cassandra Clause object for equality to the session ID
 	 * that was sent as part of a request, or null if not found.
@@ -62,24 +70,22 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 		String id = getSessionIdFromRequest(request);
 		return (id == null ? null : getSessionIdClauseFromSessionId(id));
 	}
-	
+
 	/**
-	 * Returns the database row for the specified clause, or null if the row wasn't found. If a field is specified,
-	 * only that field gets fetched, otherwise all fields get fetched.
+	 * Returns the database row for the specified ID clause and attribute name, or null if the row wasn't found.
 	 */
-	private Row fetchRow(Clause sessionIdClause, final String field) {
-		final Builder builder = (field == null ? QueryBuilder.select().all() : QueryBuilder.select(field));
-		return cassandraSession.execute(builder.from(tableName).where(sessionIdClause)).one();
+	private Row fetchRow(Clause sessionIdClause, final String attributeName) {
+		Where where = QueryBuilder.select("attribute_value").from(tableName).where(sessionIdClause).and(getAttributeNameClauseFromAttributeName(attributeName));
+		return cassandraSession.execute(where).one();
 	}
-	
+
 	/**
-	 * Returns the database row for the session ID that was sent as part of a request, or null
-	 * if either the ID or the row wasn't found. If a field is specified, only that field gets
-	 * fetched, otherwise all fields get fetched.
+	 * Returns the database row for the session ID that was sent as part of a request and the
+	 * specified attribute name, or null if either the ID or the row or the attribute wasn't found.
 	 */
-	private Row fetchRow(final Request request, final String field) {
+	private Row fetchRow(final Request request, final String attributeName) {
 		final Clause sessionIdClause = getSessionIdClauseFromRequest(request);
-		return (sessionIdClause == null ? null : fetchRow(sessionIdClause, field));
+		return (sessionIdClause == null ? null : fetchRow(sessionIdClause, attributeName));
 	}
 
 	/**
@@ -91,7 +97,7 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 		buffer.get(data);
 		return SerializationUtils.deserialize(data);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.session.ISessionStore#getAttribute(org.apache.wicket.request.Request, java.lang.String)
 	 */
@@ -109,14 +115,13 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 	 */
 	@Override
 	public List<String> getAttributeNames(final Request request) {
-		final Row row = fetchRow(request, null);
-		if (row == null) {
+		final Clause sessionIdClause = getSessionIdClauseFromRequest(request);
+		if (sessionIdClause == null) {
 			return new ArrayList<>();
 		}
-		final ColumnDefinitions columnDefinitions = row.getColumnDefinitions();
 		final List<String> result = new ArrayList<>();
-		for (int i = 0; i < columnDefinitions.size(); i++) {
-			result.add(columnDefinitions.getName(i));
+		for (Row row : cassandraSession.execute(QueryBuilder.select("attribute_name").from(tableName).where(sessionIdClause)).all()) {
+			result.add(row.getString(0));
 		}
 		return result;
 	}
@@ -125,14 +130,15 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 	 * @see org.apache.wicket.session.ISessionStore#setAttribute(org.apache.wicket.request.Request, java.lang.String, java.io.Serializable)
 	 */
 	@Override
-	public void setAttribute(final Request request, final String name, final Serializable value) {
-		if (name.equals("id")) {
+	public void setAttribute(final Request request, final String attributeName, final Serializable value) {
+		if (attributeName.equals("id")) {
 			throw new IllegalArgumentException("cannot set the 'id' attribute of a session row");
 		}
 		final Clause sessionIdClause = getSessionIdClauseFromRequest(request);
 		if (sessionIdClause != null) {
-			final Assignment assignment = QueryBuilder.set(name, value);
-			cassandraSession.execute(QueryBuilder.update(tableName).with(assignment).where(sessionIdClause));
+			final Assignment assignment = QueryBuilder.set("attribute_value", value);
+			final Clause attributeNameClause = getAttributeNameClauseFromAttributeName(attributeName);
+			cassandraSession.execute(QueryBuilder.update(tableName).with(assignment).where(sessionIdClause).and(attributeNameClause));
 		}
 	}
 
@@ -140,13 +146,14 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 	 * @see org.apache.wicket.session.ISessionStore#removeAttribute(org.apache.wicket.request.Request, java.lang.String)
 	 */
 	@Override
-	public void removeAttribute(final Request request, final String name) {
-		if (name.equals("id")) {
+	public void removeAttribute(final Request request, final String attributeName) {
+		if (attributeName.equals("id")) {
 			throw new IllegalArgumentException("cannot remove the 'id' attribute of a session row");
 		}
 		final Clause sessionIdClause = getSessionIdClauseFromRequest(request);
 		if (sessionIdClause != null) {
-			cassandraSession.execute(QueryBuilder.delete(name).from(tableName).where(sessionIdClause));
+			final Clause attributeNameClause = getAttributeNameClauseFromAttributeName(attributeName);
+			cassandraSession.execute(QueryBuilder.delete().from(tableName).where(sessionIdClause).and(attributeNameClause));
 		}
 	}
 
@@ -155,9 +162,6 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 	 */
 	@Override
 	public void invalidate(final Request request) {
-		
-		TODO check
-		
 		Session session = lookup(request);
 		if (session != null) {
 			session.onInvalidate();
@@ -179,9 +183,11 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 	 */
 	@Override
 	public String getSessionId(final Request request, final boolean create) {
-		final Row row = fetchRow(request, "id");
-		if (row != null) {
-			return row.getString(0);
+		final String existingSessionId = getSessionIdFromRequest(request);
+		final Clause existingSessionIdClause = (existingSessionId == null ? null : getSessionIdClauseFromSessionId(existingSessionId));
+		final boolean rowExists = (existingSessionIdClause == null ? false : (cassandraSession.execute(QueryBuilder.select("id").from(tableName).where(existingSessionIdClause)).one() != null));
+		if (rowExists) {
+			return existingSessionId;
 		} else if (create) {
 			// TODO avoid collision better than just using a random session ID
 			final String id = RandomStringUtils.randomAlphanumeric(64);
@@ -214,11 +220,15 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 			for (final BindListener listener : getBindListeners()) {
 				listener.bindingSession(request, newSession);
 			}
-			// TODO Wicket's HttpStore only stores the session if the session row already exists...!?
-			// (alternative would be to call getSessionId(request, true) first to create the row)
-			if (getSessionId(request, false) != null) {
-				setAttribute(request, Session.SESSION_ATTRIBUTE_NAME, newSession);
-			}
+			String sessionId = getSessionId(request, true);
+			setAttribute(request, Session.SESSION_ATTRIBUTE_NAME, newSession);
+
+			// TODO this is probably necessary
+			//			Cookie sessionCookie = new Cookie(SESSION_ID_COOKIE_NAME, sessionId);
+			//			sessionCookie.setMaxAge(365 * 24 * 60 * 60); // TODO where should this come from?
+			//			sessionCookie.setPath("/");
+			//			((HttpServletResponse)RequestCycle.get().getResponse().getContainerResponse()).addCookie(sessionCookie);
+
 		}
 	}
 
