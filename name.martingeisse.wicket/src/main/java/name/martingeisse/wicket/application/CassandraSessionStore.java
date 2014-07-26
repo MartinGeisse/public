@@ -8,14 +8,12 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.IRequestLogger;
 import org.apache.wicket.request.Request;
-
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.querybuilder.Assignment;
 import com.datastax.driver.core.querybuilder.Clause;
@@ -25,6 +23,12 @@ import com.datastax.driver.core.querybuilder.Select.Where;
 
 /**
  * Stores Wicket sessions to a Cassandra database.
+ * 
+ * TODO Cassandra 3 will likely support a "SELECT someMap['foo']" (i.e. selecting a
+ * single map element instead of the whole map). Since each field is stored as a
+ * separate column internally, this seems straightforward. When that happens, the
+ * session table layout can be changed to use a map for the attributes, only the
+ * id as the primary key and one row per session.
  */
 public final class CassandraSessionStore extends AbstractSessionStore {
 
@@ -136,7 +140,7 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 		}
 		final Clause sessionIdClause = getSessionIdClauseFromRequest(request);
 		if (sessionIdClause != null) {
-			final Assignment assignment = QueryBuilder.set("attribute_value", value);
+			final Assignment assignment = QueryBuilder.set("attribute_value", ByteBuffer.wrap(SerializationUtils.serialize(value)));
 			final Clause attributeNameClause = getAttributeNameClauseFromAttributeName(attributeName);
 			cassandraSession.execute(QueryBuilder.update(tableName).with(assignment).where(sessionIdClause).and(attributeNameClause));
 		}
@@ -190,14 +194,15 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 			return existingSessionId;
 		} else if (create) {
 			// TODO avoid collision better than just using a random session ID
-			final String id = RandomStringUtils.randomAlphanumeric(64);
-			final Insert insert = QueryBuilder.insertInto(tableName).value("id", id);
+			final String newSessionId = RandomStringUtils.randomAlphanumeric(64);
+			final ByteBuffer emptyBuffer = ByteBuffer.wrap(new byte[0]);
+			final Insert insert = QueryBuilder.insertInto(tableName).value("id", newSessionId).value("attribute_name", "id").value("attribute_value", emptyBuffer);
 			cassandraSession.execute(insert);
 			final IRequestLogger logger = Application.get().getRequestLogger();
 			if (logger != null) {
-				logger.sessionCreated(id);
+				logger.sessionCreated(newSessionId);
 			}
-			return id;
+			return newSessionId;
 		} else {
 			return null;
 		}
