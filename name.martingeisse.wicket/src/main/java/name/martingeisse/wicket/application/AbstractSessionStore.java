@@ -21,6 +21,11 @@ public abstract class AbstractSessionStore implements ISessionStore {
 	 * the SESSION_ID_COOKIE_NAME
 	 */
 	public static final String SESSION_ID_COOKIE_NAME = "sessionId";
+	
+	/**
+	 * the SESSION_COOKIE_OVERRIDE_ATTRIBUTE_NAME
+	 */
+	public static final String SESSION_COOKIE_OVERRIDE_ATTRIBUTE_NAME = "sessionCookieOverride";
 
 	/**
 	 * the bindListeners
@@ -54,13 +59,26 @@ public abstract class AbstractSessionStore implements ISessionStore {
 	 * Returns the session ID that was sent as part of a request, or null if not found.
 	 */
 	protected final String getSessionIdFromRequest(final Request request) {
-		Cookie[] cookies = getHttpServletRequest(request).getCookies();
+		HttpServletRequest httpRequest = getHttpServletRequest(request);
+		Object sessionCookieOverride = httpRequest.getAttribute(SESSION_COOKIE_OVERRIDE_ATTRIBUTE_NAME);
+		if (sessionCookieOverride != null) {
+			return sessionCookieOverride.toString();
+		}
+		Cookie[] cookies = httpRequest.getCookies();
 		for (Cookie cookie : cookies) {
 			if (cookie.getName().equals(SESSION_ID_COOKIE_NAME)) {
 				return cookie.getValue();
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Sets a fake session cookie that gets returned by {@link #getSessionIdFromRequest(Request)}
+	 * instead of the real session cookie.
+	 */
+	protected final void overrideSessionCookie(final Request request, final String value) {
+		getHttpServletRequest(request).setAttribute(SESSION_COOKIE_OVERRIDE_ATTRIBUTE_NAME, value);
 	}
 	
 	/* (non-Javadoc)

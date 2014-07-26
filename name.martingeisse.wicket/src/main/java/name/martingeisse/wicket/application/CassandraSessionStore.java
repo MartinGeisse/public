@@ -8,12 +8,15 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.IRequestLogger;
 import org.apache.wicket.request.Request;
+import org.apache.wicket.request.cycle.RequestCycle;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.querybuilder.Assignment;
 import com.datastax.driver.core.querybuilder.Clause;
@@ -198,6 +201,7 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 			final ByteBuffer emptyBuffer = ByteBuffer.wrap(new byte[0]);
 			final Insert insert = QueryBuilder.insertInto(tableName).value("id", newSessionId).value("attribute_name", "id").value("attribute_value", emptyBuffer);
 			cassandraSession.execute(insert);
+			overrideSessionCookie(request, newSessionId);
 			final IRequestLogger logger = Application.get().getRequestLogger();
 			if (logger != null) {
 				logger.sessionCreated(newSessionId);
@@ -227,13 +231,10 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 			}
 			String sessionId = getSessionId(request, true);
 			setAttribute(request, Session.SESSION_ATTRIBUTE_NAME, newSession);
-
-			// TODO this is probably necessary
-			//			Cookie sessionCookie = new Cookie(SESSION_ID_COOKIE_NAME, sessionId);
-			//			sessionCookie.setMaxAge(365 * 24 * 60 * 60); // TODO where should this come from?
-			//			sessionCookie.setPath("/");
-			//			((HttpServletResponse)RequestCycle.get().getResponse().getContainerResponse()).addCookie(sessionCookie);
-
+			Cookie sessionCookie = new Cookie(SESSION_ID_COOKIE_NAME, sessionId);
+			sessionCookie.setMaxAge(365 * 24 * 60 * 60); // TODO where should this come from?
+			sessionCookie.setPath("/");
+			((HttpServletResponse)RequestCycle.get().getResponse().getContainerResponse()).addCookie(sessionCookie);
 		}
 	}
 
