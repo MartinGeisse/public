@@ -6,6 +6,8 @@
 
 package name.martingeisse.common.security.authorization;
 
+import java.io.Serializable;
+
 /**
  * This is a simple permissions object that can be used to represent
  * the permissions of a "super-user" without any denied permission
@@ -17,5 +19,5 @@ package name.martingeisse.common.security.authorization;
  * "super-user") or deny all permission requests for this permissions
  * object (for systems that do not have "super-users").
  */
-public final class SuperuserPermissions implements IPermissions {
+public final class SuperuserPermissions implements IPermissions, Serializable {
 }

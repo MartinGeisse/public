@@ -6,10 +6,12 @@
 
 package name.martingeisse.common.security.authorization;
 
+import java.io.Serializable;
+
 /**
  * This permission request is used for core actions such as "log in".
  */
-public final class CorePermissionRequest implements IPermissionRequest {
+public final class CorePermissionRequest implements IPermissionRequest, Serializable {
 
 	/**
 	 * the type

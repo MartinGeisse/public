@@ -6,6 +6,7 @@
 
 package name.martingeisse.common.security;
 
+import java.io.Serializable;
 import name.martingeisse.common.security.authentication.IUserIdentity;
 import name.martingeisse.common.security.authentication.IUserProperties;
 import name.martingeisse.common.security.authorization.IPermissions;
@@ -19,7 +20,7 @@ import name.martingeisse.common.util.ParameterUtil;
  * If, on the other hand, the session does not contain an
  * instance of this class, then the user is not logged in.
  */
-public final class LoginData {
+public final class LoginData implements Serializable {
 
 	/**
 	 * the credentials

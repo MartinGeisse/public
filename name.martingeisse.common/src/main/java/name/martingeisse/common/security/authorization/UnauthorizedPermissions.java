@@ -6,6 +6,8 @@
 
 package name.martingeisse.common.security.authorization;
 
+import java.io.Serializable;
+
 /**
  * This is a simple permissions object that can be used to represent
  * the permissions of users that have not otherwise provided any
@@ -20,7 +22,7 @@ package name.martingeisse.common.security.authorization;
  * The authorization strategy specifies which concrete requests
  * for permission are granted for this permissions object. 
  */
-public final class UnauthorizedPermissions implements IPermissions {
+public final class UnauthorizedPermissions implements IPermissions, Serializable {
 	
 	/**
 	 * Shared instance of this class. Note that this is not guaranteed

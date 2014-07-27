@@ -6,6 +6,7 @@
 
 package name.martingeisse.common.security.authorization;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -21,7 +22,7 @@ import java.util.NoSuchElementException;
  * whole bundle is provided at once. An application that uses bundles should
  * provide an authorization strategy that can handle them.
  */
-public final class PermissionBundle implements IPermissions, Iterable<IPermissions> {
+public final class PermissionBundle implements IPermissions, Iterable<IPermissions>, Serializable {
 
 	/**
 	 * the elements

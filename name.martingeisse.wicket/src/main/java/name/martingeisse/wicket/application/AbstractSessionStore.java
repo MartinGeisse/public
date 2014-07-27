@@ -9,7 +9,9 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.wicket.request.Request;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.session.ISessionStore;
 
 /**
@@ -77,8 +79,19 @@ public abstract class AbstractSessionStore implements ISessionStore {
 	 * Sets a fake session cookie that gets returned by {@link #getSessionIdFromRequest(Request)}
 	 * instead of the real session cookie.
 	 */
-	protected final void overrideSessionCookie(final Request request, final String value) {
+	protected final void overrideRequestSessionCookie(final Request request, final String value) {
 		getHttpServletRequest(request).setAttribute(SESSION_COOKIE_OVERRIDE_ATTRIBUTE_NAME, value);
+	}
+	
+	/**
+	 * Adds a session cookie to the current response (obtained from the current thread's
+	 * request cycle).
+	 */
+	protected final void addSessionCookieToCurrentResponse(final String sessionId) {
+		Cookie sessionCookie = new Cookie(SESSION_ID_COOKIE_NAME, sessionId);
+		sessionCookie.setMaxAge(365 * 24 * 60 * 60); // TODO where should this come from?
+		sessionCookie.setPath("/");
+		((HttpServletResponse)RequestCycle.get().getResponse().getContainerResponse()).addCookie(sessionCookie);
 	}
 	
 	/* (non-Javadoc)

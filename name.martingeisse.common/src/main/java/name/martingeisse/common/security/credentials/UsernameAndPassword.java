@@ -6,11 +6,13 @@
 
 package name.martingeisse.common.security.credentials;
 
+import java.io.Serializable;
+
 
 /**
  * Simple username / password pair credentials.
  */
-public final class UsernameAndPassword implements ICredentials {
+public final class UsernameAndPassword implements ICredentials, Serializable {
 
 	/**
 	 * the username
@@ -20,7 +22,7 @@ public final class UsernameAndPassword implements ICredentials {
 	/**
 	 * the password
 	 */
-	private String password;
+	private transient String password;
 
 	/**
 	 * Constructor.

@@ -6,6 +6,7 @@
 
 package name.martingeisse.common.security.authorization;
 
+import java.io.Serializable;
 import name.martingeisse.common.security.authentication.IUserIdentity;
 
 /**
@@ -18,7 +19,7 @@ import name.martingeisse.common.security.authentication.IUserIdentity;
  * either directly (if identity permissions are all the application uses),
  * or as part of a {@link PermissionBundle}.
  */
-public final class UserIdentityPermissions implements IPermissions {
+public final class UserIdentityPermissions implements IPermissions, Serializable {
 
 	/**
 	 * the userIdentity

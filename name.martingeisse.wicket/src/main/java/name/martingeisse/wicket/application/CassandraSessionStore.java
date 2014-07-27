@@ -8,15 +8,12 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.IRequestLogger;
 import org.apache.wicket.request.Request;
-import org.apache.wicket.request.cycle.RequestCycle;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.querybuilder.Assignment;
 import com.datastax.driver.core.querybuilder.Clause;
@@ -74,15 +71,15 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 	 * that was sent as part of a request, or null if not found.
 	 */
 	private final Clause getSessionIdClauseFromRequest(final Request request) {
-		String id = getSessionIdFromRequest(request);
+		final String id = getSessionIdFromRequest(request);
 		return (id == null ? null : getSessionIdClauseFromSessionId(id));
 	}
 
 	/**
 	 * Returns the database row for the specified ID clause and attribute name, or null if the row wasn't found.
 	 */
-	private Row fetchRow(Clause sessionIdClause, final String attributeName) {
-		Where where = QueryBuilder.select("attribute_value").from(tableName).where(sessionIdClause).and(getAttributeNameClauseFromAttributeName(attributeName));
+	private Row fetchRow(final Clause sessionIdClause, final String attributeName) {
+		final Where where = QueryBuilder.select("attribute_value").from(tableName).where(sessionIdClause).and(getAttributeNameClauseFromAttributeName(attributeName));
 		return cassandraSession.execute(where).one();
 	}
 
@@ -104,7 +101,7 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 		buffer.get(data);
 		return SerializationUtils.deserialize(data);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.session.ISessionStore#getAttribute(org.apache.wicket.request.Request, java.lang.String)
 	 */
@@ -127,7 +124,7 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 			return new ArrayList<>();
 		}
 		final List<String> result = new ArrayList<>();
-		for (Row row : cassandraSession.execute(QueryBuilder.select("attribute_name").from(tableName).where(sessionIdClause)).all()) {
+		for (final Row row : cassandraSession.execute(QueryBuilder.select("attribute_name").from(tableName).where(sessionIdClause)).all()) {
 			result.add(row.getString(0));
 		}
 		return result;
@@ -169,7 +166,7 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 	 */
 	@Override
 	public void invalidate(final Request request) {
-		Session session = lookup(request);
+		final Session session = lookup(request);
 		if (session != null) {
 			session.onInvalidate();
 		}
@@ -201,7 +198,8 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 			final ByteBuffer emptyBuffer = ByteBuffer.wrap(new byte[0]);
 			final Insert insert = QueryBuilder.insertInto(tableName).value("id", newSessionId).value("attribute_name", "id").value("attribute_value", emptyBuffer);
 			cassandraSession.execute(insert);
-			overrideSessionCookie(request, newSessionId);
+			overrideRequestSessionCookie(request, newSessionId);
+			addSessionCookieToCurrentResponse(newSessionId);
 			final IRequestLogger logger = Application.get().getRequestLogger();
 			if (logger != null) {
 				logger.sessionCreated(newSessionId);
@@ -229,13 +227,8 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 			for (final BindListener listener : getBindListeners()) {
 				listener.bindingSession(request, newSession);
 			}
-			String sessionId = getSessionId(request, true);
-			setAttribute(request, Session.SESSION_ATTRIBUTE_NAME, newSession);
-			Cookie sessionCookie = new Cookie(SESSION_ID_COOKIE_NAME, sessionId);
-			sessionCookie.setMaxAge(365 * 24 * 60 * 60); // TODO where should this come from?
-			sessionCookie.setPath("/");
-			((HttpServletResponse)RequestCycle.get().getResponse().getContainerResponse()).addCookie(sessionCookie);
 		}
+		setAttribute(request, Session.SESSION_ATTRIBUTE_NAME, newSession);
 	}
 
 	/* (non-Javadoc)
@@ -243,7 +236,7 @@ public final class CassandraSessionStore extends AbstractSessionStore {
 	 */
 	@Override
 	public void flushSession(final Request request, final Session session) {
-		bind(request, session);
+		setAttribute(request, Session.SESSION_ATTRIBUTE_NAME, session);
 	}
 
 	/* (non-Javadoc)

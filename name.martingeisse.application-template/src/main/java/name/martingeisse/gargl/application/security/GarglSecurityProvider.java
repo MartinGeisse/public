@@ -63,6 +63,7 @@ public class GarglSecurityProvider implements ISecurityProvider {
 		// establish new session
 		logger.trace("storing login data");
 		session.getDataContainer().set(LoginData.class, loginData);
+		session.dirty();
 		logger.trace("login data stored");
 		
 	}
