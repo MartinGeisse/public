@@ -19,6 +19,11 @@ $.fn.createCodeMirrorForTextArea = function(mode, options) {
 		// create the CodeMirror instance
 		var codeMirror = CodeMirror.fromTextArea(this, options);
 		
+		// update the underlying text area automatically
+		codeMirror.on('changes', function() {
+			codeMirror.save();
+		});
+		
 		result = codeMirror;
 	});
 	return result;

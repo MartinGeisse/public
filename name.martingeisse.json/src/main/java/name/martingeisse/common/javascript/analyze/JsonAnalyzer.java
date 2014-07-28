@@ -69,7 +69,7 @@ public final class JsonAnalyzer implements Serializable {
 		try {
 			return new JsonAnalyzer(JSONValue.parseWithException(json));
 		} catch (ParseException e) {
-			throw new RuntimeException("Parse exception in JSON input: " + json, e);
+			throw new JsonAnalysisException("Parse exception in JSON input: " + json);
 		}
 	}
 	
@@ -82,7 +82,7 @@ public final class JsonAnalyzer implements Serializable {
 		try {
 			return new JsonAnalyzer(JSONValue.parseWithException(jsonReader));
 		} catch (ParseException e) {
-			throw new RuntimeException("Parse exception in JSON input", e);
+			throw new JsonAnalysisException("Parse exception in JSON input");
 		} catch (IOException e) {
 			throw new RuntimeException("IOException while parsing JSON", e);
 		}
