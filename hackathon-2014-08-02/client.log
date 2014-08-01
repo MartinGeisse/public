@@ -194,3 +194,4 @@ Hello world!
 2014-08-01 18:20:40,924 qtp1430330559-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
 2014-08-01 18:20:40,939 qtp1430330559-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 51
 2014-08-01 18:20:40,951 qtp1430330559-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 26
+2014-08-01 18:23:57,789 ModificationWatcher-Task org.apache.wicket.core.util.resource.UrlResourceStream WARN: getLastModified for file:/Users/martin/git-repos/public/hackathon-2014-08-02/target/classes/name/martingeisse/hackathon/frontend/HelloWorldPage.html failed: /Users/martin/git-repos/public/hackathon-2014-08-02/target/classes/name/martingeisse/hackathon/frontend/HelloWorldPage.html (No such file or directory)
