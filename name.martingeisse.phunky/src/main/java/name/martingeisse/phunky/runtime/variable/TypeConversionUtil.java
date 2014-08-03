@@ -169,4 +169,19 @@ public final class TypeConversionUtil {
 		return false;
 	}
 
+	/**
+	 * If the argument is a {@link MutableValue}, then this method returns the appropriate
+	 * immutable value. Otherwise just returns the argument.
+	 * 
+	 * @param value the value
+	 * @return the immutable value
+	 */
+	public static Object makeImmutable(Object value) {
+		if (value instanceof MutableValue) {
+			return ((MutableValue)value).createImmutableCopy();
+		} else {
+			return value;
+		}
+	}
+	
 }

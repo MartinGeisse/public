@@ -42,6 +42,8 @@ public final class PhpVariableArray extends PhpArray {
 	 * Returns a new array containing the specified values, in the same order as returned
 	 * by the iterator.
 	 * 
+	 * Any {@link MutableValue} from the iterator will be converted to an immutable value first.
+	 * 
 	 * @param values the values
 	 * @return the array
 	 */
@@ -49,7 +51,7 @@ public final class PhpVariableArray extends PhpArray {
 		final PhpVariableArray array = new PhpVariableArray();
 		for (final Object value : values) {
 			// values can be stored directly in variables
-			array.append().setValue(value);
+			array.append().setValue(TypeConversionUtil.makeImmutable(value));
 		}
 		return array;
 	}
@@ -58,14 +60,15 @@ public final class PhpVariableArray extends PhpArray {
 	 * Returns a new array containing the specified keys and values, in the same
 	 * order as returned by the iterator.
 	 * 
+	 * Any {@link MutableValue} from the iterator will be converted to an immutable value first.
+	 * 
 	 * @param keyValueEntries the key/value entries
 	 * @return the array
 	 */
 	public static PhpVariableArray fromKeyValueEntries(Iterable<Map.Entry<String, Object>> keyValueEntries) {
 		PhpVariableArray array = new PhpVariableArray();
 		for (Map.Entry<String, Object> entry : keyValueEntries) {
-			// values can be stored directly in variables
-			array.elements.put(entry.getKey(), new Variable(entry.getValue()));
+			array.setVariable(entry.getKey(), new Variable(TypeConversionUtil.makeImmutable(entry.getValue())));
 		}
 		return array;
 	}
@@ -74,21 +77,24 @@ public final class PhpVariableArray extends PhpArray {
 	 * Returns a new array containing the specified keys and values, in the same
 	 * order as returned by the iterator.
 	 * 
+	 * Any {@link MutableValue} from the iterator will be converted to an immutable value first.
+	 * 
 	 * @param keyValuePairs the key/value pair
 	 * @return the array
 	 */
 	public static PhpVariableArray fromKeyValuePairs(Iterable<Pair<String, Object>> keyValuePairs) {
 		PhpVariableArray array = new PhpVariableArray();
 		for (Pair<String, Object> pair : keyValuePairs) {
-			// values can be stored directly in variables
-			array.elements.put(pair.getKey(), new Variable(pair.getValue()));
+			array.setVariable(pair.getKey(), new Variable(TypeConversionUtil.makeImmutable(pair.getValue())));
 		}
 		return array;
 	}
 
 	/**
-	 * Returns a new array containing the specified keys and variables, in the same
+	 * Returns a new array containing the specified keys and values from variables, in the same
 	 * order as returned by the iterator.
+	 * 
+	 * Any {@link MutableValue} from the iterated variables will be converted to an immutable value first.
 	 * 
 	 * @param keyVariableEntries the key/variable entries
 	 * @return the array
@@ -97,14 +103,16 @@ public final class PhpVariableArray extends PhpArray {
 		PhpVariableArray array = new PhpVariableArray();
 		for (Map.Entry<String, Variable> entry : keyVariableEntries) {
 			// request a value from the original variable (making a copy of any MutableValue) and store it in a new variable
-			array.elements.put(entry.getKey(), new Variable(entry.getValue().getValue()));
+			array.setVariable(entry.getKey(), new Variable(entry.getValue().getValue()));
 		}
 		return array;
 	}
 	
 	/**
-	 * Returns a new array containing the specified keys and variables, in the same
+	 * Returns a new array containing the specified keys and values from variables, in the same
 	 * order as returned by the iterator.
+	 * 
+	 * Any {@link MutableValue} from the iterated variables will be converted to an immutable value first.
 	 * 
 	 * @param keyVariablePairs the key/variable pair
 	 * @return the array
@@ -113,14 +121,15 @@ public final class PhpVariableArray extends PhpArray {
 		PhpVariableArray array = new PhpVariableArray();
 		for (Pair<String, Variable> pair : keyVariablePairs) {
 			// request a value from the original variable (making a copy of any MutableValue) and store it in a new variable
-			array.elements.put(pair.getKey(), new Variable(pair.getValue().getValue()));
+			array.setVariable(pair.getKey(), new Variable(pair.getValue().getValue()));
 		}
 		return array;
 	}
 	
 	/**
-	 * Returns a new array containing the specified keys and variables, in the same
-	 * order as returned by the iterator.
+	 * Returns a new array containing the specified keys and variables, in the same order as
+	 * returned by the iterator. The variables returned by the iterator are shared by the
+	 * newly created array.
 	 * 
 	 * @param keyVariableEntries the key/variable entries
 	 * @return the array
@@ -129,14 +138,15 @@ public final class PhpVariableArray extends PhpArray {
 		PhpVariableArray array = new PhpVariableArray();
 		for (Map.Entry<String, Variable> entry : keyVariableEntries) {
 			// re-use the original variable
-			array.elements.put(entry.getKey(), entry.getValue());
+			array.setVariable(entry.getKey(), entry.getValue());
 		}
 		return array;
 	}
 	
 	/**
-	 * Returns a new array containing the specified keys and variables, in the same
-	 * order as returned by the iterator.
+	 * Returns a new array containing the specified keys and variables, in the same order as
+	 * returned by the iterator. The variables returned by the iterator are shared by the
+	 * newly created array.
 	 * 
 	 * @param keyVariablePairs the key/variable pair
 	 * @return the array
@@ -145,7 +155,7 @@ public final class PhpVariableArray extends PhpArray {
 		PhpVariableArray array = new PhpVariableArray();
 		for (Pair<String, Variable> pair : keyVariablePairs) {
 			// re-use the original variable
-			array.elements.put(pair.getKey(), pair.getValue());
+			array.setVariable(pair.getKey(), pair.getValue());
 		}
 		return array;
 	}
@@ -205,7 +215,7 @@ public final class PhpVariableArray extends PhpArray {
 		Variable variable = elements.get(key);
 		if (variable == null) {
 			variable = new Variable();
-			elements.put(key, variable);
+			setVariable(key, variable);
 		}
 		return variable;
 	}
@@ -249,7 +259,7 @@ public final class PhpVariableArray extends PhpArray {
 	 * Returns an {@link Iterable} that iterates over the current variable list.
 	 * 
 	 * Neither the array structure nor the keys may be modified while iterating;
-	 * however, the values contained in the array *may* be modified. Such
+	 * however, the values contained in the variables *may* be modified. Such
 	 * modifications may or may not be visible through the iterator.
 	 * 
 	 * @return the iterable
@@ -275,7 +285,7 @@ public final class PhpVariableArray extends PhpArray {
 	 * Returns an {@link Iterable} that iterates over the current key/variable entries.
 	 * 
 	 * Neither the array structure nor the keys may be modified while iterating;
-	 * however, the values contained in the array *may* be modified. Such
+	 * however, the values contained in the variables *may* be modified. Such
 	 * modifications may or may not be visible through the iterator.
 	 * 
 	 * @return the iterable
@@ -316,7 +326,7 @@ public final class PhpVariableArray extends PhpArray {
 					@Override
 					public Object setValue(Object value) {
 						Object oldValue = element.getValue().getValue();
-						element.getValue().setValue(value);
+						element.getValue().setValue(TypeConversionUtil.makeImmutable(value));
 						return oldValue;
 					}
 					

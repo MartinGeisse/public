@@ -34,7 +34,8 @@ public interface MutableValue {
 	 * corresponding {@link PhpValueArray}.
 	 * 
 	 * Implementations are allowed to return the same object in
-	 * subsequent calls since (conceptually) immutable objects
+	 * subsequent calls (assuming no modification of this mutable
+	 * value in between) since (conceptually) immutable objects
 	 * can be transparently shared.
 	 * 
 	 * @return the immutable copy

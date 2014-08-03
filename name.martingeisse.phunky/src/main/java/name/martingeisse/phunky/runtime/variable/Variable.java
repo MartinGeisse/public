@@ -20,7 +20,7 @@ import name.martingeisse.phunky.runtime.oop.PhpObject;
  * 
  * Values are either assumed to be immutable, and thus allowed to
  * be transparently shared, or are mutable and implement {@link MutableValue}.
- * This interface is used to distinguish the two cases.
+ * That interface is used to distinguish the two cases.
  */
 public final class Variable {
 
@@ -38,7 +38,8 @@ public final class Variable {
 
 	/**
 	 * Constructor.
-	 * @param value the initial value
+	 * @param value the initial value. This must be an immutable value,
+	 * not a {@link MutableValue}.
 	 */
 	public Variable(final Object value) {
 		setValue(value);
@@ -52,12 +53,7 @@ public final class Variable {
 	 * @return the value
 	 */
 	public Object getValue() {
-		if (value instanceof MutableValue) {
-			MutableValue mutableValue = (MutableValue)value;
-			return mutableValue.createImmutableCopy();
-		} else {
-			return value;
-		}
+		return TypeConversionUtil.makeImmutable(value);
 	}
 
 	/**
@@ -75,8 +71,10 @@ public final class Variable {
 		if (value instanceof PhpVariableArray) {
 			return (PhpVariableArray)value;
 		} else if (value instanceof PhpValueArray) {
-			PhpValueArray array = (PhpValueArray)value;
-			return array.toVariableArray();
+			PhpValueArray valueArray = (PhpValueArray)value;
+			PhpVariableArray variableArray = valueArray.toVariableArray();
+			value = variableArray;
+			return variableArray;
 		} else if (TypeConversionUtil.valueCanBeOverwrittenByImplicitArrayConstruction(value)) {
 			PhpVariableArray array = new PhpVariableArray();
 			value = array;

@@ -22,7 +22,7 @@ import name.martingeisse.phunky.runtime.PhpRuntime;
  *   arrays are stored in variables and contain variables. They and their
  *   elements can be the target of references or contain references. Value
  *   arrays store values only, not variables, and are used for values being
- *   passed around. A variable can store a value array as long as the array
+ *   passed around. A variable can contain a value array as long as the array
  *   isn't modified; any such modification must first clone the array as a 
  *   variable array.
  *   

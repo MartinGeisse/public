@@ -33,6 +33,8 @@ public final class PhpValueArray extends PhpArray {
 	 * Returns a new array containing the specified values, in the same order as returned
 	 * by the iterator.
 	 * 
+	 * Any {@link MutableValue} from the iterator will be converted to an immutable value first.
+	 * 
 	 * @param values the values
 	 * @return the array
 	 */
@@ -40,7 +42,7 @@ public final class PhpValueArray extends PhpArray {
 		PhpValueArray array = new PhpValueArray();
 		int i=0;
 		for (Object value : values) {
-			array.elements.put(Integer.toString(i), value);
+			array.elements.put(Integer.toString(i), TypeConversionUtil.makeImmutable(value));
 			i++;
 		}
 		return array;
@@ -50,13 +52,15 @@ public final class PhpValueArray extends PhpArray {
 	 * Returns a new array containing the specified keys and values, in the same
 	 * order as returned by the iterator.
 	 * 
+	 * Any {@link MutableValue} from the iterator will be converted to an immutable value first.
+	 * 
 	 * @param keyValueEntries the key/value entries
 	 * @return the array
 	 */
 	public static PhpValueArray fromKeyValueEntries(Iterable<Map.Entry<String, Object>> keyValueEntries) {
 		PhpValueArray array = new PhpValueArray();
 		for (Map.Entry<String, Object> entry : keyValueEntries) {
-			array.elements.put(entry.getKey(), entry.getValue());
+			array.elements.put(entry.getKey(), TypeConversionUtil.makeImmutable(entry.getValue()));
 		}
 		return array;
 	}
@@ -65,20 +69,24 @@ public final class PhpValueArray extends PhpArray {
 	 * Returns a new array containing the specified keys and values, in the same
 	 * order as returned by the iterator.
 	 * 
+	 * Any {@link MutableValue} from the iterator will be converted to an immutable value first.
+	 * 
 	 * @param keyValuePairs the key/value pair
 	 * @return the array
 	 */
 	public static PhpValueArray fromKeyValuePairs(Iterable<Pair<String, Object>> keyValuePairs) {
 		PhpValueArray array = new PhpValueArray();
 		for (Pair<String, Object> pair : keyValuePairs) {
-			array.elements.put(pair.getKey(), pair.getValue());
+			array.elements.put(pair.getKey(), TypeConversionUtil.makeImmutable(pair.getValue()));
 		}
 		return array;
 	}
 
 	/**
-	 * Returns a new array containing the specified keys and variables, in the same
-	 * order as returned by the iterator.
+	 * Returns a new array containing the specified keys and values from the variables,
+	 * in the same order as returned by the iterator.
+	 * 
+	 * Any {@link MutableValue} from the iterated variables will be converted to an immutable value first.
 	 * 
 	 * @param keyVariableEntries the key/variable entries
 	 * @return the array
@@ -95,6 +103,8 @@ public final class PhpValueArray extends PhpArray {
 	/**
 	 * Returns a new array containing the specified keys and variables, in the same
 	 * order as returned by the iterator.
+	 * 
+	 * Any {@link MutableValue} from the iterated variables will be converted to an immutable value first.
 	 * 
 	 * @param keyVariablePairs the key/variable pair
 	 * @return the array
@@ -179,8 +189,6 @@ public final class PhpValueArray extends PhpArray {
 	/**
 	 * Iterates over the elements of this object. For each element, the iteration variables are bound, then
 	 * the body is executed.
-	 * 
-	 * This method can be used both for value arrays and variable arrays.
 	 * 
 	 * @param environment the environment
 	 * @param keyIterationVariableName the name of the key iteration variable, or null for none
