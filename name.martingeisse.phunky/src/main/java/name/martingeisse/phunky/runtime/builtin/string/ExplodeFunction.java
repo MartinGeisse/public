@@ -39,6 +39,9 @@ public final class ExplodeFunction extends BuiltinCallable {
 		}
 		
 		// explode the string
+		
+		TODO Variable array!?
+		
 		ArrayList<String> segments = new ArrayList<String>();
 		final int delimiterLength = delimiter.length();
 		while (limit > 1) {

@@ -9,7 +9,7 @@ package name.martingeisse.phunky.runtime.code.statement;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
-import name.martingeisse.phunky.runtime.variable.PhpIterable;
+import name.martingeisse.phunky.runtime.variable.PhpValueIterationProvider;
 
 /**
  * The "foreach" statement.
@@ -90,11 +90,11 @@ public final class ForeachStatement extends AbstractStatement {
 		environment.getRuntime().getLog().beginStatement("foreach");
 		try {
 			Object container = containerExpression.evaluate(environment);
-			if (!(container instanceof PhpIterable)) {
+			if (!(container instanceof PhpValueIterationProvider)) {
 				environment.getRuntime().triggerError("invalid argument for foreach: " + container);
 			} else {
-				PhpIterable iterable = (PhpIterable)container;
-				iterable.iterate(environment, keyIterationVariableName, valueIterationVariableName, body);
+				PhpValueIterationProvider iterationProvider = (PhpValueIterationProvider)container;
+				iterationProvider.iterate(environment, keyIterationVariableName, valueIterationVariableName, body);
 			}
 		} catch (BreakException e) {
 			environment.getRuntime().getLog().endStatement("foreach", "break");

@@ -7,9 +7,11 @@ package name.martingeisse.phunky.runtime.variable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.code.statement.Statement;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -22,7 +24,7 @@ import org.apache.commons.lang3.tuple.Pair;
  * Missing entries are distinguished from null entries in that the latter have
  * an entry in the hash table.
  */
-public final class PhpValueArray extends PhpArray {
+public final class PhpValueArray extends PhpArray implements PhpValueIterationProvider {
 
 	/**
 	 * the elements
@@ -186,15 +188,10 @@ public final class PhpValueArray extends PhpArray {
 		return this;
 	}
 	
-	/**
-	 * Iterates over the elements of this object. For each element, the iteration variables are bound, then
-	 * the body is executed.
-	 * 
-	 * @param environment the environment
-	 * @param keyIterationVariableName the name of the key iteration variable, or null for none
-	 * @param valueIterationVariableName the name of the value iteration variable, or null for none
-	 * @param body the body to execute
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.variable.PhpValueIterationProvider#iterate(name.martingeisse.phunky.runtime.Environment, java.lang.String, java.lang.String, name.martingeisse.phunky.runtime.code.statement.Statement)
 	 */
+	@Override
 	public void iterate(final Environment environment, final String keyIterationVariableName, final String valueIterationVariableName, final Statement body) {
 		for (final Map.Entry<String, Object> entry : elements.entrySet()) {
 			if (keyIterationVariableName != null) {

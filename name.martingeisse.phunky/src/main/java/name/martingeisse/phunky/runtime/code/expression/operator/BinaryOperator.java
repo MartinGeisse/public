@@ -107,6 +107,7 @@ public enum BinaryOperator {
 		}
 		
 		private void addElements(PhpVariableArray from, PhpVariableArray to) {
+			// where is PhpVariableArray / PhpValueArray used when it should be generalized?
 			for (Map.Entry<String, Variable> entry : from.getDirectEntryIterable()) {
 				to.getOrCreateVariable(entry.getKey()).setValue(entry.getValue());
 			}
@@ -402,7 +403,7 @@ public enum BinaryOperator {
 				final String y = TypeConversionUtil.convertToString(rightHandSide);
 				return x.equals(y);
 			} else if ((leftHandSide instanceof PhpVariableArray) || (rightHandSide instanceof PhpVariableArray)) {
-				// TODO array-equals
+				// TODO array-equals; should not use PhpVariableArray
 				throw new NotImplementedException("");
 			} else if ((leftHandSide instanceof Double) || (rightHandSide instanceof Double) || (leftHandSide instanceof Float) || (rightHandSide instanceof Float)) {
 				final double x = TypeConversionUtil.convertToDouble(leftHandSide);
@@ -451,7 +452,7 @@ public enum BinaryOperator {
 					final String y = (String)rightHandSide;
 					return x.equals(y);
 				} else if (leftHandSide instanceof PhpVariableArray) {
-					// TODO array-identical
+					// TODO array-identical; should not use PhpVariableArray
 					throw new NotImplementedException("");
 				} else if (leftHandSide instanceof Double) {
 					final double x = (Double)leftHandSide;

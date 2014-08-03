@@ -20,6 +20,7 @@ public class IsArrayFunction extends BuiltinCallable {
 	 */
 	@Override
 	public Object call(PhpRuntime runtime, Object[] arguments) {
+		TODO
 		return (arguments.length > 0 && arguments[0] instanceof PhpVariableArray);
 	}
 

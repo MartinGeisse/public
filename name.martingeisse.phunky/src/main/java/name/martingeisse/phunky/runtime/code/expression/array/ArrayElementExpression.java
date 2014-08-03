@@ -25,6 +25,8 @@ import name.martingeisse.phunky.runtime.variable.Variable;
  */
 public final class ArrayElementExpression extends AbstractExpression {
 
+	check
+	
 	/**
 	 * the arrayExpression
 	 */

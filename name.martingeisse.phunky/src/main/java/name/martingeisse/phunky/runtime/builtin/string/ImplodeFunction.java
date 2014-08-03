@@ -20,6 +20,8 @@ public final class ImplodeFunction extends BuiltinCallable {
 	@Override
 	public Object call(PhpRuntime runtime, Object[] arguments) {
 		
+		TODO variable array !?
+			
 		// extract parameters
 		if (arguments.length != 2) {
 			runtime.triggerError("implode() expects exactly 2 arguments, has " + arguments.length);

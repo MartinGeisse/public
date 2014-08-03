@@ -21,6 +21,8 @@ import org.apache.commons.lang3.tuple.Pair;
  */
 public class ArrayConstructionExpression extends AbstractComputeExpression {
 
+	check
+	
 	/**
 	 * the elements
 	 */
