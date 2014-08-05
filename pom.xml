@@ -51,6 +51,7 @@
 
 		<!-- other applications -->
 		<module>name.martingeisse.flash-forum</module>
+		<module>name.martingeisse.papyros</module>
 		<module>hackathon-2014-08-02</module>
 
 		<!-- Application template (not actually used directly) -->

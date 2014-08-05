@@ -1,0 +1,45 @@
+
+.navbar {
+	background: #555;
+	color: #eee;
+	min-height: 0px;
+}
+
+.navbar .navbar-nav li a {
+	color: #eee;
+	text-shadow: black 0 1px 0;
+	padding: 7px 10px;
+}
+
+.navbar .navbar-nav > .active > a {
+	@include border-radius(5px);
+	background-color: #e0e0ff;
+	text-shadow: #eee 0 1px 0;
+}
+
+.navbar .navbar-nav > .active > a:hover {
+	background-color: #d0d0ff;
+}
+
+.navbar-form {
+	margin-top: 3px;
+	margin-bottom: 3px;
+	margin-left: 0px;
+	margin-right: 0px;
+	box-shadow: none;
+	padding: 0px 5px;
+}
+
+@media (min-width: 768px) {
+	.navbar-form {
+		margin: 8px 0px;
+		padding: 0px 15px;
+	}
+	.navbar .navbar-nav li a {
+		padding: 15px;
+		text-align: center;
+	}
+	.navbar {
+		min-height: 0px;
+	}
+}
