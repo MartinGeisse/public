@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<script type="text/javascript">
+			$(function() {
+				var content = $('#iframe-content').text();
+				var doc = $('#iframe')[0].contentWindow.document;
+				doc.open();
+				doc.write(content);
+				doc.close();
+			});
+		</script>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Test Rendering</h1>
+			<div>
+				<iframe id="iframe" />
+			</div>
+			<div style="display: none" id="iframe-content" wicket:id="iframeContent" />
+		</div>
+	</body>
+</html>

@@ -7,20 +7,35 @@ USE `papyros`;
 -- - structure
 -- -------------------------------------------------------------------------
 
+CREATE TABLE IF NOT EXISTS `template_family` (
+	`id` bigint(20) NOT NULL AUTO_INCREMENT,
 
--- users and related data
--- --------------------------
+	-- identification
+	`key` varchar(255) NOT NULL,
 
-CREATE TABLE IF NOT EXISTS `dummy` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+	-- data
+	`preview_data` mediumtext NOT NULL,
 
-  -- data fields
-  `foo` varchar(255) NOT NULL,
-  
-  -- indexes
-  PRIMARY KEY (`id`)
-  
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+	-- indexes
+	PRIMARY KEY (`id`)
+	
+) ENGINE=InnoDB	DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `template` (
+	`id` bigint(20) NOT NULL AUTO_INCREMENT,
+
+	-- identification
+	`template_family_id` bigint(20) NOT NULL,
+	`language_key` varchar(255) NOT NULL,
+	
+	-- data
+	`content` mediumtext NOT NULL,
+	
+	-- indexes
+	PRIMARY KEY (`id`)
+	
+) ENGINE=InnoDB	DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
 
 
 
@@ -32,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `dummy` (
 -- -------------------------------------------------------------------------
 
 -- dummy
--- ALTER TABLE `dummy` ADD CONSTRAINT `dummy_fk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE;
+ALTER TABLE `template` ADD CONSTRAINT `template_fk_1` FOREIGN KEY (`template_family_id`) REFERENCES `template_family` (`id`) ON DELETE CASCADE;
 
 
 
@@ -53,6 +68,9 @@ CREATE TABLE IF NOT EXISTS `dummy` (
 -- - test data
 -- -------------------------------------------------------------------------
 
--- INSERT INTO `user` (`id`, `login_name`, `password_hash_hex`, `display_name`, `user_type`, `email`) VALUES
--- (1, 'system', '', 'System', 'SYSTEM', ''),
--- (2, 'martingeisse@googlemail.com', 'foobar', 'Martin Geisse', 'SUPERADMIN', 'martingeisse@googlemail.com');
+INSERT INTO `template_family` (`id`, `key`, `preview_data`) VALUES
+(1, 'foo', 'null');
+
+INSERT INTO `template` (`id`, `template_family_id`, `language_key`, `content`) VALUES
+(1, 1, 'en', 'This is a test template.');
+

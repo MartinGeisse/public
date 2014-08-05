@@ -6,10 +6,12 @@ package name.martingeisse.papyros.application.wicket;
 
 import name.martingeisse.papyros.application.page.AbstractApplicationPage;
 import name.martingeisse.papyros.application.specialpage.CassandraResetPage;
-import name.martingeisse.papyros.frontend.HelloWorldPage;
+import name.martingeisse.papyros.frontend.TestRenderPage;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
+
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.resolver.HtmlHeaderResolver;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -102,7 +104,7 @@ public class PapyrosWicketApplication extends AbstractMyWicketApplication {
 		if (RENDER_PROFILING) {
 			replaceWicketComponentResolver(HtmlHeaderResolver.class, new HtmlHeaderResolver() {
 				@Override
-				protected HtmlHeaderContainer newHtmlHeaderContainer(String id) {
+				protected HtmlHeaderContainer newHtmlHeaderContainer(String id, ComponentTag tag) {
 					return new HtmlHeaderContainer(id) {
 						@Override
 						protected void onRender() {
@@ -125,7 +127,7 @@ public class PapyrosWicketApplication extends AbstractMyWicketApplication {
 	 */
 	@Override
 	public Class<? extends Page> getHomePage() {
-		return HelloWorldPage.class;
+		return TestRenderPage.class;
 	}
 
 	/* (non-Javadoc)
