@@ -4,14 +4,16 @@
 
 package name.martingeisse.papyros.frontend;
 
+import name.martingeisse.wicket.util.ISimpleCallbackListener;
+
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.MarkupStream;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebComponent;
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.parser.XmlTag.TagType;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.IRequestCycle;
+import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebResponse;
 
 /**
  * This component should be used with an iframe HTML element.
@@ -45,15 +47,27 @@ public class Iframe extends WebComponent implements ISimpleCallbackListener {
 		if (tag.isOpenClose()) {
 			tag.setType(TagType.OPEN);
 		}
+		tag.put("src", urlFor(ISimpleCallbackListener.INTERFACE, null));
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.wicket.Component#renderHead(org.apache.wicket.markup.head.IHeaderResponse)
+	 * @see name.martingeisse.wicket.util.ISimpleCallbackListener#onSimpleCallback()
 	 */
 	@Override
-	public void renderHead(IHeaderResponse response) {
-		super.renderHead(response);
-		response.render(OnDomReadyHeaderItem.forScript(""));
+	public void onSimpleCallback() {
+		RequestCycle.get().scheduleRequestHandlerAfterCurrent(new IRequestHandler() {
+			
+			@Override
+			public void respond(IRequestCycle requestCycle) {
+				((WebResponse)requestCycle.getResponse()).setContentType("text/html; charset=utf-8");
+				requestCycle.getResponse().write("Hello World!");
+			}
+			
+			@Override
+			public void detach(IRequestCycle requestCycle) {
+			}
+			
+		});
 	}
-	
+
 }
