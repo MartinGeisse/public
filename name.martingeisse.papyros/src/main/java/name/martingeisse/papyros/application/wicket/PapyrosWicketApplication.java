@@ -5,11 +5,10 @@
 package name.martingeisse.papyros.application.wicket;
 
 import name.martingeisse.papyros.application.page.AbstractApplicationPage;
-import name.martingeisse.papyros.application.specialpage.CassandraResetPage;
 import name.martingeisse.papyros.frontend.EditTemplatePage;
+import name.martingeisse.papyros.frontend.HomePage;
 import name.martingeisse.papyros.frontend.TestRenderPage;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
-
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.ComponentTag;
@@ -86,11 +85,8 @@ public class PapyrosWicketApplication extends AbstractMyWicketApplication {
 
 		// --- mount pages ---
 		// main pages
-// 		mountPage("foo", FooPage.class);
 		mountPage("edit/${key}/${language}", EditTemplatePage.class);
 		mountPage("render/${key}/${language}", TestRenderPage.class);
-		// internal
-		mountPage("cassandra-reset", CassandraResetPage.class);
 
 		// mount Bootstrap fonts
 		{
@@ -129,7 +125,7 @@ public class PapyrosWicketApplication extends AbstractMyWicketApplication {
 	 */
 	@Override
 	public Class<? extends Page> getHomePage() {
-		return TestRenderPage.class;
+		return HomePage.class;
 	}
 
 	/* (non-Javadoc)

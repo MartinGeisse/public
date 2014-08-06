@@ -9,10 +9,8 @@ import name.martingeisse.papyros.entity.QTemplateFamily;
 import name.martingeisse.papyros.entity.Template;
 import name.martingeisse.papyros.entity.TemplateFamily;
 import name.martingeisse.sql.EntityConnectionManager;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-
 import com.mysema.query.sql.SQLQuery;
 
 /**
@@ -35,7 +33,6 @@ public class FrontendDataUtil {
 	 * Loads a template family based on the key.
 	 * 
 	 * @param key the template family key
-	 * @param language the language
 	 * @return the template
 	 */
 	public static TemplateFamily loadTemplateFamily(String key) {

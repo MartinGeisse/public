@@ -38,7 +38,7 @@ public class Main {
 		// TODO use DESCRIBE TABLE to map column IDs to column names and
 		// especially to find which one is the ID
 		
-		final BinaryLogClient client = new BinaryLogClient("localhost", 3306, "ucademy", "username", "password");
+		final BinaryLogClient client = new BinaryLogClient("localhost", 3306, "onlinecourses", "username", "password");
 		client.registerEventListener(new EventListener() {
 			@Override
 			public void onEvent(final Event event) {
@@ -47,7 +47,7 @@ public class Main {
 				
 				case TABLE_MAP: {
 					TableMapEventData data = (TableMapEventData)untypedEventData;
-					if (data.getDatabase().equals("ucademy")) {
+					if (data.getDatabase().equals("onlinecourses")) {
 						tableNames.put(data.getTableId(), data.getTable());
 					}
 					break;

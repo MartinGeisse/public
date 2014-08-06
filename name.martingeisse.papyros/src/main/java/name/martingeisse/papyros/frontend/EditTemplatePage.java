@@ -9,19 +9,16 @@ import name.martingeisse.papyros.entity.Template;
 import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.wicket.component.codemirror.CodeMirrorBehavior;
 import name.martingeisse.wicket.component.codemirror.modes.StandardCodeMirrorModes;
-
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-
 import com.mysema.query.sql.dml.SQLUpdateClause;
 
 /**
  * TODO: document me
  */
-public class EditTemplatePage extends WebPage {
+public class EditTemplatePage extends AbstractFrontendPage {
 
 	/**
 	 * the content
@@ -35,6 +32,7 @@ public class EditTemplatePage extends WebPage {
 	public EditTemplatePage(PageParameters pageParameters) {
 		super(pageParameters);
 		final Template template = FrontendDataUtil.loadTemplate(pageParameters);
+		this.content = template.getContent();
 		
 		Form<Void> form = new Form<Void>("form") {
 			@Override
@@ -46,6 +44,7 @@ public class EditTemplatePage extends WebPage {
 			}
 		};
 		form.add(new TextArea<>("textarea", new PropertyModel<>(this, "content")).add(new CodeMirrorBehavior(StandardCodeMirrorModes.JAVASCRIPT)));
+		add(form);
 	}
 
 	/**

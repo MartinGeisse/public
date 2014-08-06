@@ -2,7 +2,7 @@
 
 # Set this to the root of your project when deployed:
 http_path = "/"
-css_dir = "../../src/name/martingeisse/ucademy/application/page"
+css_dir = "../../src/main/java/name/martingeisse/onlinecourses/application/page"
 sass_dir = "sass"
 images_dir = "images"
 javascripts_dir = "javascripts"

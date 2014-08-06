@@ -5,15 +5,13 @@
 package name.martingeisse.papyros.frontend;
 
 import name.martingeisse.papyros.entity.Template;
-
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
  *
  */
-public final class TestRenderPage extends WebPage {
+public final class TestRenderPage extends AbstractFrontendPage {
 
 	/**
 	 * Constructor.

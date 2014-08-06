@@ -5,7 +5,6 @@
 package name.martingeisse.papyros.frontend;
 
 import name.martingeisse.wicket.util.ISimpleCallbackListener;
-
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.parser.XmlTag.TagType;
