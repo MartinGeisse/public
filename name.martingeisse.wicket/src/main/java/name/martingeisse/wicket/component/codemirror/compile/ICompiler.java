@@ -9,6 +9,12 @@ package name.martingeisse.wicket.component.codemirror.compile;
  */
 public interface ICompiler {
 
-	public void compile(String document);
+	/**
+	 * Compiles a document.
+	 * 
+	 * @param document the document
+	 * @return the compiler result
+	 */
+	public CompilerResult compile(String document);
 	
 }

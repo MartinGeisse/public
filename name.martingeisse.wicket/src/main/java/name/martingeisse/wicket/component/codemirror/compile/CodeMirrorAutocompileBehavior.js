@@ -6,3 +6,7 @@ initializeCodeMirrorAutocompiler = function(id, options, serverCallback) {
 		serverCallback(codeMirror.getDoc().getValue());
 	});
 };
+
+addCodeMirrorAutocompilerMarkerToDocument = function(id, startLine, startColumn, endLine, endColumn, errorLevel, message) {
+	
+}

@@ -46,7 +46,7 @@ public class EditTemplatePage extends AbstractFrontendPage {
 				update.execute();
 			}
 		};
-		form.add(new TextArea<>("textarea", new PropertyModel<>(this, "content")).add(new CodeMirrorBehavior(StandardCodeMirrorModes.JAVASCRIPT)).add(new CodeMirrorAutocompileBehavior()));
+		form.add(new TextArea<>("textarea", new PropertyModel<>(this, "content")).add(new CodeMirrorBehavior(StandardCodeMirrorModes.JAVASCRIPT)).add(new CodeMirrorAutocompileBehavior(new TemplateAutocompiler())));
 		add(form);
 	}
 
