@@ -2437,3 +2437,105 @@ Unable to find component with id 'form' in [Page class = name.martingeisse.papyr
 2014-08-06 21:33:21,577 qtp810134226-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 679
 2014-08-06 21:33:21,600 qtp810134226-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
 2014-08-06 21:33:21,607 qtp810134226-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2014-08-07 12:29:57,904 main name.martingeisse.papyros.Main INFO: ----- starting frontend with config file: test.properties -----
+2014-08-07 12:29:59,281 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find Snappy class, you should make sure the Snappy library is in the classpath if you intend to use it. Snappy compression will not be available for the protocol.
+2014-08-07 12:29:59,293 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find LZ4 class, you should make sure the LZ4 library is in the classpath if you intend to use it. LZ4 compression will not be available for the protocol.
+2014-08-07 12:30:00,671 Thread-3 org.eclipse.jetty.server.Server INFO: jetty-8.1.15.v20140411
+2014-08-07 12:30:02,307 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-4fc64df3] init: Wicket core library initializer
+2014-08-07 12:30:02,312 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2014-08-07 12:30:02,312 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2014-08-07 12:30:02,313 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2014-08-07 12:30:02,313 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2014-08-07 12:30:02,313 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2014-08-07 12:30:02,314 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2014-08-07 12:30:02,314 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-4fc64df3] init: Wicket extensions initializer
+2014-08-07 12:30:02,583 Thread-3 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-4fc64df3] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2014-08-07 12:30:02,625 Thread-3 org.eclipse.jetty.server.AbstractConnector INFO: Started SelectChannelConnector@0.0.0.0:8080
+2014-08-07 12:30:02,814 Thread-1 com.datastax.driver.core.policies.DCAwareRoundRobinPolicy INFO: Using data-center name 'datacenter1' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)
+2014-08-07 12:30:07,104 qtp1103877391-36 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:30:07,721 qtp1103877391-36 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 615
+2014-08-07 12:30:07,782 qtp1103877391-36 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:30:07,807 qtp1103877391-36 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 25
+2014-08-07 12:30:08,019 qtp1103877391-39 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:30:08,059 qtp1103877391-39 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 40
+2014-08-07 12:30:09,118 qtp1103877391-38 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:30:09,479 qtp1103877391-38 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 361
+2014-08-07 12:30:11,739 qtp1103877391-36 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:30:11,753 qtp1103877391-36 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 14
+2014-08-07 12:36:01,858 main name.martingeisse.papyros.Main INFO: ----- starting frontend with config file: test.properties -----
+2014-08-07 12:36:01,997 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find Snappy class, you should make sure the Snappy library is in the classpath if you intend to use it. Snappy compression will not be available for the protocol.
+2014-08-07 12:36:02,011 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find LZ4 class, you should make sure the LZ4 library is in the classpath if you intend to use it. LZ4 compression will not be available for the protocol.
+2014-08-07 12:36:02,348 Thread-3 org.eclipse.jetty.server.Server INFO: jetty-8.1.15.v20140411
+2014-08-07 12:36:03,081 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-517a6a7f] init: Wicket core library initializer
+2014-08-07 12:36:03,100 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2014-08-07 12:36:03,101 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2014-08-07 12:36:03,101 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2014-08-07 12:36:03,112 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2014-08-07 12:36:03,112 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2014-08-07 12:36:03,113 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2014-08-07 12:36:03,113 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-517a6a7f] init: Wicket extensions initializer
+2014-08-07 12:36:03,177 Thread-3 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-517a6a7f] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2014-08-07 12:36:03,206 Thread-3 org.eclipse.jetty.server.AbstractConnector INFO: Started SelectChannelConnector@0.0.0.0:8080
+2014-08-07 12:36:03,213 Thread-1 com.datastax.driver.core.policies.DCAwareRoundRobinPolicy INFO: Using data-center name 'datacenter1' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)
+2014-08-07 12:36:07,270 qtp1822295676-39 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:36:07,576 qtp1822295676-39 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 306
+2014-08-07 12:36:09,036 qtp1822295676-37 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:36:09,188 qtp1822295676-37 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 151
+2014-08-07 12:36:10,652 qtp1822295676-39 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:36:10,735 qtp1822295676-39 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 83
+2014-08-07 12:36:13,291 qtp1822295676-39 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:36:13,306 qtp1822295676-39 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 14
+2014-08-07 12:39:12,903 main name.martingeisse.papyros.Main INFO: ----- starting frontend with config file: test.properties -----
+2014-08-07 12:39:13,065 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find Snappy class, you should make sure the Snappy library is in the classpath if you intend to use it. Snappy compression will not be available for the protocol.
+2014-08-07 12:39:13,068 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find LZ4 class, you should make sure the LZ4 library is in the classpath if you intend to use it. LZ4 compression will not be available for the protocol.
+2014-08-07 12:39:13,488 Thread-3 org.eclipse.jetty.server.Server INFO: jetty-8.1.15.v20140411
+2014-08-07 12:39:14,289 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-76e72c30] init: Wicket core library initializer
+2014-08-07 12:39:14,296 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2014-08-07 12:39:14,297 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2014-08-07 12:39:14,297 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2014-08-07 12:39:14,298 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2014-08-07 12:39:14,298 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2014-08-07 12:39:14,299 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2014-08-07 12:39:14,299 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-76e72c30] init: Wicket extensions initializer
+2014-08-07 12:39:14,393 Thread-3 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-76e72c30] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2014-08-07 12:39:14,461 Thread-3 org.eclipse.jetty.server.AbstractConnector INFO: Started SelectChannelConnector@0.0.0.0:8080
+2014-08-07 12:39:14,487 Thread-1 com.datastax.driver.core.policies.DCAwareRoundRobinPolicy INFO: Using data-center name 'datacenter1' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)
+2014-08-07 12:39:15,074 qtp1501782229-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:15,594 qtp1501782229-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 520
+2014-08-07 12:39:15,621 qtp1501782229-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:15,622 qtp1501782229-36 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:15,672 qtp1501782229-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 50
+2014-08-07 12:39:15,673 qtp1501782229-36 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 50
+2014-08-07 12:39:19,157 qtp1501782229-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:19,206 qtp1501782229-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 12
+2014-08-07 12:39:20,558 qtp1501782229-37 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:20,601 qtp1501782229-37 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 42
+2014-08-07 12:39:21,611 qtp1501782229-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:21,649 qtp1501782229-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 37
+2014-08-07 12:39:22,859 qtp1501782229-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:22,875 qtp1501782229-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 16
+2014-08-07 12:39:24,930 qtp1501782229-36 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:25,193 qtp1501782229-36 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 262
+2014-08-07 12:39:25,195 qtp1501782229-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:25,200 qtp1501782229-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-07 12:39:25,250 qtp1501782229-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:25,250 qtp1501782229-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:25,250 qtp1501782229-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:25,254 qtp1501782229-37 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:25,278 qtp1501782229-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 27
+2014-08-07 12:39:25,279 qtp1501782229-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 28
+2014-08-07 12:39:25,283 qtp1501782229-37 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 28
+2014-08-07 12:39:25,304 qtp1501782229-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 53
+2014-08-07 12:39:27,264 qtp1501782229-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:27,280 qtp1501782229-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 16
+2014-08-07 12:39:28,322 qtp1501782229-36 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:28,342 qtp1501782229-36 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ISimpleCallbackListener, method=public abstract void name.martingeisse.wicket.util.ISimpleCallbackListener.onSimpleCallback()]
+2014-08-07 12:39:28,346 qtp1501782229-36 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 24
+2014-08-07 12:39:28,412 qtp1501782229-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:28,424 qtp1501782229-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 12
+2014-08-07 12:39:30,638 qtp1501782229-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:30,651 qtp1501782229-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 13
+2014-08-07 12:39:31,166 qtp1501782229-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:31,187 qtp1501782229-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 21
+2014-08-07 12:39:31,189 qtp1501782229-37 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-07 12:39:31,191 qtp1501782229-37 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2

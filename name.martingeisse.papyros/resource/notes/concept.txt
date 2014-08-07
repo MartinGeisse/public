@@ -1,0 +1,74 @@
+
+Features
+---------
+
+Komplette History inkl. Undo
+- innerhalb des Template-Editors durch CodeMirror
+- auf DB-Ebene!
+	- könnte Staging-Version ersetzen
+	- mit branching? Dann können zwei Leute ungestört an verschiedenen Teilen arbeiten
+
+
+Daten
+---------
+
+falls git-artige Versionierung: project (template family root folder) -> Einheit für die Versionierung,
+	entspricht dann einem Git-Repo
+
+template family -> parent template family (display: "inherits from ...")
+
+template family folder (parent_folder in family, folder) + name
+-> navigation
+-> noch keine Gute Idee, weil folders vs. key eine doppelte Hierarchie bilden
+	und man für Folders viele Queries senden muss
+
+preview_data_set (template_family_id, order_index, data:json)
+
+---------------------------------------------------------------
+
+Seiten
+---------
+
+Folder-Ansicht (subfolders, families; new folder; new family; delete folder/family "links" (forms))
+Template-Family-Ansicht -> Tabs: templates; data; advanced (client code generator; render POST URLs; ...)
+	templates: liste, new, delete-"links"
+	data: erst mal nur CodeMirror für JSON
+	advanced: erst mal leer
+Template-Edit-Seite (existiert schon) mit Testrendering (existiert noch nicht so)
+	CodeMirror-Behavior erweitern um Serverseitige Validierung ohne echtes Form-Submit
+	auch für JSON sinnvoll, um Syntaxfehler und Inhaltliche Fehler anzuzeigen
+		-> dazu muss das Validierungssystem pluggable sein, weil Inhaltliche Fehler vom Context abhängig sind
+	Testrendering mit Dropdown-Box für verwendetes preview_data_set
+	---
+	Impl.: siehe AjaxFormComponentUpdatingBehavior. Ähnlich wie dieses aufbauen, auch wenn das selbst nicht
+		benutzt werden kann, da der Ajax-Event an anderer Stelle entsteht.
+		
+			// TODO wo würde das aufgerufen?
+			// siehe AbstractDefaultAjaxBehavior -- erben oder code kopieren
+			@Override
+			protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
+			{
+				super.updateAjaxAttributes(attributes);
+				attributes.setMethod(Method.POST);
+			}
+			
+			// aus onEvent() -- validierung und Model-Update nicht nötig, ich brauche nur den input selbst
+			formComponent.inputChanged();
+			
+			
+			
+			
+
+
+POST-Render-URL (keine Seite, sondern direkte URL auf Servlet-Ebene -> Performance)
+	URL gibt Protokoll vor.
+	v1:
+		URL: api.localhost:8080/v1/render/${key}/${language}
+		Template-Key, Sprache über URL -> später einfacher für die Parallelverarbeitung
+		Template-Daten sind JSON-encoded und in einem POST-Parameter verpackt oder direkt als
+			POST-Body; ein URL-Parameter steuert den Unterschied
+		"weniger wichtige" Parameter können über GET oder POST kommen; Fehler falls beides
+
+
+
+

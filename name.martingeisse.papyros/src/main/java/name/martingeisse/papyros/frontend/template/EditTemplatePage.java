@@ -2,12 +2,15 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.papyros.frontend;
+package name.martingeisse.papyros.frontend.template;
 
 import name.martingeisse.papyros.entity.QTemplate;
 import name.martingeisse.papyros.entity.Template;
+import name.martingeisse.papyros.frontend.AbstractFrontendPage;
+import name.martingeisse.papyros.frontend.FrontendDataUtil;
 import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.wicket.component.codemirror.CodeMirrorBehavior;
+import name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior;
 import name.martingeisse.wicket.component.codemirror.modes.StandardCodeMirrorModes;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -43,7 +46,7 @@ public class EditTemplatePage extends AbstractFrontendPage {
 				update.execute();
 			}
 		};
-		form.add(new TextArea<>("textarea", new PropertyModel<>(this, "content")).add(new CodeMirrorBehavior(StandardCodeMirrorModes.JAVASCRIPT)));
+		form.add(new TextArea<>("textarea", new PropertyModel<>(this, "content")).add(new CodeMirrorBehavior(StandardCodeMirrorModes.JAVASCRIPT)).add(new CodeMirrorAutocompileBehavior()));
 		add(form);
 	}
 

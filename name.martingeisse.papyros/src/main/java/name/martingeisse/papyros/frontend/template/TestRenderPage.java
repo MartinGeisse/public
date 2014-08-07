@@ -2,9 +2,13 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.papyros.frontend;
+package name.martingeisse.papyros.frontend.template;
 
 import name.martingeisse.papyros.entity.Template;
+import name.martingeisse.papyros.frontend.AbstractFrontendPage;
+import name.martingeisse.papyros.frontend.FrontendDataUtil;
+import name.martingeisse.papyros.frontend.components.Iframe;
+
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 

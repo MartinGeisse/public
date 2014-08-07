@@ -24,6 +24,7 @@ $.fn.createCodeMirrorForTextArea = function(mode, options) {
 			codeMirror.save();
 		});
 		
+		$(this).data('CodeMirror', codeMirror);
 		result = codeMirror;
 	});
 	return result;
