@@ -1,7 +1,6 @@
 /*
  * This file contains a minified version of:
  * - jQuery (includes Sizzle.js)
- * - jQuery Tools
  * - jQuery ScrollTo
  * - jQuery Hotkeys
  * - jQuery Context Menu

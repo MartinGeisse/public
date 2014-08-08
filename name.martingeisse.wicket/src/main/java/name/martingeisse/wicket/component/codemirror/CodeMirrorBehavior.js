@@ -29,7 +29,7 @@ $.fn.createCodeMirrorForTextArea = function(mode, options) {
 			}
 		});
 		
-		$(this).data('CodeMirror', codeMirror);
+		$(this).data('codeMirror', codeMirror);
 		result = codeMirror;
 	});
 	return result;

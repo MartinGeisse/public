@@ -54,6 +54,7 @@ public class CodeMirrorAutocompileBehavior extends AbstractDefaultAjaxBehavior {
 	public void renderHead(final Component component, final IHeaderResponse response) {
 		super.renderHead(component, response);
 		WicketHeadUtil.includeClassJavascript(response, CodeMirrorAutocompileBehavior.class);
+		WicketHeadUtil.includeClassStylesheet(response, CodeMirrorAutocompileBehavior.class);
 
 		final StringBuilder builder = new StringBuilder();
 		builder.append("initializeCodeMirrorAutocompiler('");
@@ -79,9 +80,12 @@ public class CodeMirrorAutocompileBehavior extends AbstractDefaultAjaxBehavior {
 	@Override
 	protected void respond(final AjaxRequestTarget target) {
 		final String value = RequestCycle.get().getRequest().getPostParameters().getParameterValue("value").toString("");
-		CompilerResult result = compiler.compile(value);
+		final CompilerResult result = compiler.compile(value);
+		final StringBuilder builder = new StringBuilder();
+		builder.append("codeMirrorAutocompilerClearMarkers('");
+		builder.append(getComponent().getMarkupId());
+		builder.append("');");
 		for (CompilerMarker marker : result.getMarkers()) {
-			final StringBuilder builder = new StringBuilder();
 			builder.append("addCodeMirrorAutocompilerMarkerToDocument('");
 			builder.append(getComponent().getMarkupId());
 			builder.append("', ").append(marker.getStartLine());
@@ -92,7 +96,8 @@ public class CodeMirrorAutocompileBehavior extends AbstractDefaultAjaxBehavior {
 			builder.append("', '").append(JavascriptAssemblerUtil.escapeStringLiteralSpecialCharacters(marker.getMessage()));
 			builder.append("');");
 		}
-		target.appendJavaScript("console.log('autocompiling done!');");
+		builder.append("console.log('autocompiling done!');");
+		target.appendJavaScript(builder.toString());
 	}
 
 }

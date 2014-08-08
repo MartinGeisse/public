@@ -7,6 +7,22 @@ initializeCodeMirrorAutocompiler = function(id, options, serverCallback) {
 	});
 };
 
+codeMirrorAutocompilerClearMarkers = function(id) {
+	var q = $('#' + id);
+	var codeMirror = q.data('codeMirror');
+	var markers = codeMirror.getAllMarks();
+	for (i in markers) {
+		markers[i].clear();
+	}
+}
+
 addCodeMirrorAutocompilerMarkerToDocument = function(id, startLine, startColumn, endLine, endColumn, errorLevel, message) {
-	
+	var q = $('#' + id);
+	var codeMirror = q.data('codeMirror');
+	codeMirror.markText({line: startLine, ch: startColumn}, {line: endLine, ch: endColumn}, {
+		className: 'error-underline',
+		inclusiveLeft: false,
+		inclusiveRight: false,
+		title: message,
+	});
 }
