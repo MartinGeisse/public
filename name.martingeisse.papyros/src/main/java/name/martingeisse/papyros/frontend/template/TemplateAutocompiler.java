@@ -59,10 +59,10 @@ public final class TemplateAutocompiler implements ICompiler, Serializable {
 					}
 					int index2 = line.indexOf(')', index1);
 					if (index2 == -1) {
-						result.getMarkers().add(new CompilerMarker(currentLineNumber, index1, currentLineNumber, line.length(), CompilerErrorLevel.ERROR, "foo"));
+						result.getMarkers().add(new CompilerMarker(currentLineNumber, index1, currentLineNumber, line.length(), CompilerErrorLevel.WARNING, "foo"));
 						break;
 					} else {
-						result.getMarkers().add(new CompilerMarker(currentLineNumber, index1, currentLineNumber, index2 + 1, CompilerErrorLevel.ERROR, "foo"));
+						result.getMarkers().add(new CompilerMarker(currentLineNumber, index1, currentLineNumber, index2 + 1, CompilerErrorLevel.WARNING, "foo"));
 						position = index2 + 1;
 					}
 				}

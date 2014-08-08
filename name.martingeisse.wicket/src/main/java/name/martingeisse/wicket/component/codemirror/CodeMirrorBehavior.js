@@ -10,7 +10,7 @@ $.fn.createCodeMirrorForTextArea = function(mode, options) {
 			indentWithTabs: true,
 			indentUnit: 4,
 			lineNumbers: true,
-			gutter: true,
+			gutters: ['marker-gutter', 'CodeMirror-linenumbers'],
 			matchBrackets: true,
 			extraKeys: {
 				'Cmd-S': function() {},

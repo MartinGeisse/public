@@ -1,9 +1,14 @@
 
 /* evtl. mit CSS after: pseudo-element statt border-image wg. browser-unterstützung */
 
+.CodeMirror .marker-gutter {
+	width: 20px;
+	background-color: #ddd;
+}
+
 .CodeMirror .error-underline {
 	border-style: solid;
-	border-width: 0px 0px 4px;
+	border-width: 0px 0px 3px;
 	border-image-width: 0px 0px 4px;
 	border-image-slice: 0 0 4;
 	border-image-outset: 0px;
@@ -13,4 +18,32 @@
 	-webkit-border-image-source: url(/wicket/resource/name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior/error-underline.png);
 	-o-border-image-source: url(/wicket/resource/name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior/error-underline.png);
 	border-image-source: url(/wicket/resource/name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior/error-underline.png);
+}
+
+.CodeMirror .warning-underline {
+	border-style: solid;
+	border-width: 0px 0px 3px;
+	border-image-width: 0px 0px 4px;
+	border-image-slice: 0 0 4;
+	border-image-outset: 0px;
+	border-image-repeat: repeat;
+	
+	-moz-border-image-source: url(/wicket/resource/name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior/warning-underline.png);
+	-webkit-border-image-source: url(/wicket/resource/name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior/warning-underline.png);
+	-o-border-image-source: url(/wicket/resource/name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior/warning-underline.png);
+	border-image-source: url(/wicket/resource/name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior/warning-underline.png);
+}
+
+.CodeMirror .info-underline {
+	border-style: solid;
+	border-width: 0px 0px 3px;
+	border-image-width: 0px 0px 4px;
+	border-image-slice: 0 0 4;
+	border-image-outset: 0px;
+	border-image-repeat: repeat;
+	
+	-moz-border-image-source: url(/wicket/resource/name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior/info-underline.png);
+	-webkit-border-image-source: url(/wicket/resource/name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior/info-underline.png);
+	-o-border-image-source: url(/wicket/resource/name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior/info-underline.png);
+	border-image-source: url(/wicket/resource/name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior/info-underline.png);
 }
