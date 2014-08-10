@@ -9,7 +9,7 @@ package name.martingeisse.miner.server.api.account;
 import javax.servlet.http.Cookie;
 import name.martingeisse.api.handler.jsonapi.AbstractJsonApiHandler;
 import name.martingeisse.api.handler.jsonapi.JsonApiException;
-import name.martingeisse.api.request.RequestCycle;
+import name.martingeisse.api.request.ApiRequestCycle;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.common.javascript.jsonbuilder.JsonValueBuilder;
 import name.martingeisse.common.security.SecurityTokenUtil;
@@ -29,7 +29,7 @@ public abstract class AbstractLoggedInHandler extends AbstractJsonApiHandler {
 	 * @see name.martingeisse.api.handler.jsonapi.AbstractJsonApiHandler#handle(name.martingeisse.api.request.RequestCycle, name.martingeisse.common.javascript.analyze.JsonAnalyzer, name.martingeisse.common.javascript.jsonbuilder.JsonValueBuilder)
 	 */
 	@Override
-	protected final void handle(RequestCycle requestCycle, JsonAnalyzer input, JsonValueBuilder<?> output) throws Exception {
+	protected final void handle(ApiRequestCycle requestCycle, JsonAnalyzer input, JsonValueBuilder<?> output) throws Exception {
 		
 		// find the presented token
 		String presentedToken;
@@ -76,7 +76,7 @@ public abstract class AbstractLoggedInHandler extends AbstractJsonApiHandler {
 	 * @param userAccount the user's account
 	 * @throws Exception on errors
 	 */
-	protected abstract void handle(RequestCycle requestCycle, JsonAnalyzer input, JsonValueBuilder<?> output, UserAccount userAccount) throws Exception;
+	protected abstract void handle(ApiRequestCycle requestCycle, JsonAnalyzer input, JsonValueBuilder<?> output, UserAccount userAccount) throws Exception;
 	
 	
 }

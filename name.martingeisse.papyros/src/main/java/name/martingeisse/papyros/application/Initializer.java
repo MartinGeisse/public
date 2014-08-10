@@ -5,14 +5,26 @@
 package name.martingeisse.papyros.application;
 
 import java.util.EnumSet;
+import java.util.Locale;
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import name.martingeisse.api.handler.DefaultMasterHandler;
+import name.martingeisse.api.handler.misc.NamedResourceFolderHandler;
+import name.martingeisse.api.handler.misc.NotFoundHandler;
+import name.martingeisse.api.request.ApiRequestCycle;
+import name.martingeisse.api.servlet.ApiConfiguration;
+import name.martingeisse.api.servlet.ApiServletFilter;
 import name.martingeisse.common.javascript.JavascriptAssembler;
 import name.martingeisse.common.security.SecurityUtil;
 import name.martingeisse.database.EntityConnectionServletFilter;
+import name.martingeisse.jetty.AntiJsessionidUrlFilter;
 import name.martingeisse.jetty.FlushFilter;
+import name.martingeisse.jetty.GlobalServletContext;
 import name.martingeisse.jetty.NoFlushOrCloseFilter;
 import name.martingeisse.jetty.TimingFilter;
+import name.martingeisse.papyros.api.ApiRootHandler;
 import name.martingeisse.papyros.application.security.PapyrosSecurityProvider;
 import name.martingeisse.papyros.application.wicket.PapyrosWicketApplication;
 import name.martingeisse.sql.EntityConnectionManager;
@@ -20,10 +32,12 @@ import name.martingeisse.sql.MysqlDatabaseDescriptor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.protocol.http.WicketFilter;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ssl.SslSocketConnector;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlets.IncludableGzipFilter;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import com.datastax.driver.core.Cluster;
@@ -97,13 +111,19 @@ public class Initializer {
 	 */
 	public static void initializeWeb() {
 		final EnumSet<DispatcherType> allDispatcherTypes = EnumSet.allOf(DispatcherType.class);
-
+		
 		// create and configure a servlet context
 		final ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 		context.setContextPath("/");
 		context.getSessionHandler().getSessionManager().setMaxInactiveInterval(30 * 60);
 		context.setInitParameter("org.eclipse.jetty.servlet.SessionIdPathParameterName", "none");
+		
+		// make the servlet context globally available
+		context.addEventListener(new GlobalServletContext());
 
+		// prevent JSESSIONID from appearing
+		context.addFilter(AntiJsessionidUrlFilter.class, "/*", allDispatcherTypes);
+		
 		// log timing info for all requests
 		addGlobalFilter(context, new TimingFilter());
 
@@ -118,6 +138,29 @@ public class Initializer {
 		// add sidekicks and helper filters
 		addGlobalFilter(context, new EntityConnectionServletFilter());
 
+		// add API filter
+		{
+			ApiRequestCycle.setUseSessions(false);
+			DefaultMasterHandler masterHandler = new DefaultMasterHandler();
+			masterHandler.setApplicationRequestHandler(new ApiRootHandler());
+			masterHandler.getInterceptHandlers().put("/favicon.ico", new NotFoundHandler(false));
+			ApiConfiguration configuration = new ApiConfiguration();
+			configuration.setMasterRequestHandler(masterHandler);
+			configuration.getLocalizationConfiguration().setGlobalFallback(Locale.US);
+			ApiConfiguration.setInstance(configuration);
+		}
+		addGlobalFilter(context, new ApiServletFilter() {
+			@Override
+			protected boolean isApiRequest(ServletRequest request) {
+				if (request instanceof HttpServletRequest) {
+					HttpServletRequest httpRequest = (HttpServletRequest)request;
+					return httpRequest.getHeader("host").startsWith("api.");
+				} else {
+					return false;
+				}
+			}
+		});
+		
 		// for Wicket, prevent flushing or closing the response
 		addGlobalFilter(context, new NoFlushOrCloseFilter());
 
@@ -131,8 +174,15 @@ public class Initializer {
 		// a default servlet is needed, otherwise the filters cannot catch the request
 		context.addServlet(DefaultServlet.class, "/*");
 
+		// configure SSL / HTTPS
+		SslContextFactory sslContextFactory = new SslContextFactory("/Users/martin/.keystore");
+		sslContextFactory.setKeyStorePassword("changeit");
+		SslSocketConnector sslSocketConnector = new SslSocketConnector(sslContextFactory);
+		sslSocketConnector.setPort(8081);
+		
 		// start the server
 		final Server server = new Server(8080);
+		server.addConnector(sslSocketConnector);
 		server.setHandler(context);
 		try {
 			server.start();
@@ -140,7 +190,7 @@ public class Initializer {
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
-
+		
 	}
 
 	/**

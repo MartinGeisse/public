@@ -13,9 +13,9 @@ import java.util.Locale;
 import java.util.concurrent.Executors;
 import name.martingeisse.api.handler.DefaultMasterHandler;
 import name.martingeisse.api.handler.misc.NotFoundHandler;
-import name.martingeisse.api.request.RequestCycle;
+import name.martingeisse.api.request.ApiRequestCycle;
 import name.martingeisse.api.servlet.ApiConfiguration;
-import name.martingeisse.api.servlet.Launcher;
+import name.martingeisse.api.servlet.ApiLauncher;
 import name.martingeisse.common.javascript.JavascriptAssembler;
 import name.martingeisse.miner.common.MinerCommonConstants;
 import name.martingeisse.miner.server.api.account.AccountApiHandler;
@@ -66,14 +66,14 @@ public class Main {
 			@Override
 			public void run() {
 				try {
-					RequestCycle.setUseSessions(false);
+					ApiRequestCycle.setUseSessions(false);
 					DefaultMasterHandler masterHandler = new DefaultMasterHandler();
 					masterHandler.setApplicationRequestHandler(new AccountApiHandler());
 					masterHandler.getInterceptHandlers().put("/favicon.ico", new NotFoundHandler(false));
 					ApiConfiguration configuration = new ApiConfiguration();
 					configuration.setMasterRequestHandler(masterHandler);
 					configuration.getLocalizationConfiguration().setGlobalFallback(Locale.US);
-					Launcher.launch(configuration);
+					ApiLauncher.launch(configuration);
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}

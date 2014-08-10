@@ -10,7 +10,7 @@ package name.martingeisse.api.request;
  * This exception type indicates that an actual passed parameter was not
  * expected by the handler.
  */
-public class UnexpectedRequestParameterException extends RequestParametersException {
+public class UnexpectedRequestParameterException extends ApiRequestParametersException {
 
 	/**
 	 * the parameterName

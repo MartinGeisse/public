@@ -9,7 +9,7 @@ package name.martingeisse.api.request;
 /**
  * This exception type indicates that a request parameter has an invalid value.
  */
-public class InvalidRequestParameterException extends RequestParametersException {
+public class InvalidRequestParameterException extends ApiRequestParametersException {
 
 	/**
 	 * the parameterName

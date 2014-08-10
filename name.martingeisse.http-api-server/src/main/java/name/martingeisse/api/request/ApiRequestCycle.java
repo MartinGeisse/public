@@ -16,6 +16,7 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,12 +33,17 @@ import org.apache.commons.io.IOUtils;
  * set programmatically (never by the client), but can store values of
  * arbitrary type, not just strings.
  */
-public final class RequestCycle {
+public final class ApiRequestCycle {
 
 	/**
 	 * the EXCEPTION_REQUEST_ATTRIBUTE_KEY
 	 */
-	public static final RequestAttributeKey<Throwable> EXCEPTION_REQUEST_ATTRIBUTE_KEY = new RequestAttributeKey<Throwable>(Throwable.class);
+	public static final ApiRequestAttributeKey<Throwable> EXCEPTION_REQUEST_ATTRIBUTE_KEY = new ApiRequestAttributeKey<Throwable>(Throwable.class);
+	
+	/**
+	 * The session key for the locale setting.
+	 */
+	public static final SessionKey<Locale> LOCALE_SESSION_KEY = new SessionKey<Locale>();
 	
 	/**
 	 * the useSessions
@@ -49,7 +55,7 @@ public final class RequestCycle {
 	 * @param useSessions the useSessions to set
 	 */
 	public static void setUseSessions(boolean useSessions) {
-		RequestCycle.useSessions = useSessions;
+		ApiRequestCycle.useSessions = useSessions;
 	}
 	
 	/**
@@ -65,22 +71,22 @@ public final class RequestCycle {
 	/**
 	 * the requestMethod
 	 */
-	private final RequestMethod requestMethod;
+	private final ApiRequestMethod requestMethod;
 
 	/**
 	 * the requestPath
 	 */
-	private final RequestPathChain requestPath;
+	private final ApiRequestPathChain requestPath;
 
 	/**
 	 * the parameters
 	 */
-	private final RequestParameters parameters;
+	private final ApiRequestParameters parameters;
 
 	/**
 	 * the attributes
 	 */
-	private final Map<RequestAttributeKey<?>, Object> attributes;
+	private final Map<ApiRequestAttributeKey<?>, Object> attributes;
 
 	/**
 	 * Constructor.
@@ -88,16 +94,16 @@ public final class RequestCycle {
 	 * @param response the response
 	 * @throws MalformedRequestPathException if the request path (taken from the request URI) is malformed
 	 */
-	public RequestCycle(final HttpServletRequest request, final HttpServletResponse response) throws MalformedRequestPathException {
+	public ApiRequestCycle(final HttpServletRequest request, final HttpServletResponse response) throws MalformedRequestPathException {
 		this.request = request;
 		this.response = response;
 
-		this.requestMethod = (request.getMethod().equalsIgnoreCase("POST") ? RequestMethod.POST : RequestMethod.GET);
+		this.requestMethod = (request.getMethod().equalsIgnoreCase("POST") ? ApiRequestMethod.POST : ApiRequestMethod.GET);
 		final String uri = request.getRequestURI();
 		final String requestPathText = (uri.startsWith("/") ? uri.substring(1) : uri);
-		this.requestPath = RequestPathChain.parse(requestPathText);
-		this.parameters = new RequestParameters(request);
-		this.attributes = new HashMap<RequestAttributeKey<?>, Object>();
+		this.requestPath = ApiRequestPathChain.parse(requestPathText);
+		this.parameters = new ApiRequestParameters(request);
+		this.attributes = new HashMap<ApiRequestAttributeKey<?>, Object>();
 
 	}
 
@@ -121,7 +127,7 @@ public final class RequestCycle {
 	 * Getter method for the requestMethod.
 	 * @return the requestMethod
 	 */
-	public RequestMethod getRequestMethod() {
+	public ApiRequestMethod getRequestMethod() {
 		return requestMethod;
 	}
 
@@ -129,7 +135,7 @@ public final class RequestCycle {
 	 * Getter method for the requestPath.
 	 * @return the requestPath
 	 */
-	public RequestPathChain getRequestPath() {
+	public ApiRequestPathChain getRequestPath() {
 		return requestPath;
 	}
 
@@ -137,7 +143,7 @@ public final class RequestCycle {
 	 * Getter method for the parameters.
 	 * @return the parameters
 	 */
-	public RequestParameters getParameters() {
+	public ApiRequestParameters getParameters() {
 		return parameters;
 	}
 
@@ -146,7 +152,7 @@ public final class RequestCycle {
 	 * @param key the attribute key
 	 * @return the attribute value
 	 */
-	public <T> T getAttribute(RequestAttributeKey<T> key) {
+	public <T> T getAttribute(ApiRequestAttributeKey<T> key) {
 		return key.cast(attributes.get(key));
 	}
 
@@ -155,7 +161,7 @@ public final class RequestCycle {
 	 * @param key the attribute key
 	 * @param value the attribute value
 	 */
-	public <T> void setAttribute(RequestAttributeKey<T> key, T value) {
+	public <T> void setAttribute(ApiRequestAttributeKey<T> key, T value) {
 		attributes.put(key, value);
 	}
 

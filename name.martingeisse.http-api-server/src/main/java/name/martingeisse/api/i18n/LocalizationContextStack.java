@@ -9,8 +9,7 @@ package name.martingeisse.api.i18n;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Locale;
-
-import name.martingeisse.api.servlet.RestfulServlet;
+import name.martingeisse.api.servlet.ApiConfiguration;
 import name.martingeisse.common.util.ParameterUtil;
 
 /**
@@ -71,7 +70,7 @@ final class LocalizationContextStack extends LinkedList<ILocalizationContext> {
 	 */
 	public String getLocalizationProperty(ILocalizationContext additionalContext, String key) {
 		ParameterUtil.ensureNotNull(key, "key");
-		LocalizationConfiguration configuration = RestfulServlet.getConfiguration().getLocalizationConfiguration();
+		LocalizationConfiguration configuration = ApiConfiguration.getInstance().getLocalizationConfiguration();
 		Locale currentLocale = locale;
 
 		while (currentLocale != null) {

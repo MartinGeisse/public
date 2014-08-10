@@ -19,12 +19,12 @@ import name.martingeisse.common.util.ParameterUtil;
  * chain). The empty chain is the only chain whose head
  * segment is null.
  */
-public final class RequestPathChain implements Iterable<String> {
+public final class ApiRequestPathChain implements Iterable<String> {
 
 	/**
 	 * The empty chain.
 	 */
-	public static final RequestPathChain EMPTY = new RequestPathChain();
+	public static final ApiRequestPathChain EMPTY = new ApiRequestPathChain();
 	
 	/**
 	 * the head
@@ -34,12 +34,12 @@ public final class RequestPathChain implements Iterable<String> {
 	/**
 	 * the tail
 	 */
-	private final RequestPathChain tail;
+	private final ApiRequestPathChain tail;
 	
 	/**
 	 * Constructor.
 	 */
-	private RequestPathChain() {
+	private ApiRequestPathChain() {
 		this.head = null;
 		this.tail = null;
 	}
@@ -49,7 +49,7 @@ public final class RequestPathChain implements Iterable<String> {
 	 * @param head the first segment of the chain
 	 * @param tail the remaining segments of the chain
 	 */
-	public RequestPathChain(String head, RequestPathChain tail) {
+	public ApiRequestPathChain(String head, ApiRequestPathChain tail) {
 		this.head = ParameterUtil.ensureNotNull(head, "head");
 		this.tail = ParameterUtil.ensureNotNull(tail, "tail");
 	}
@@ -60,7 +60,7 @@ public final class RequestPathChain implements Iterable<String> {
 	 * @return the request path chain
 	 * @throws MalformedRequestPathException if the path contains a leading slash or a double-slash
 	 */
-	public static RequestPathChain parse(String requestPath) throws MalformedRequestPathException {
+	public static ApiRequestPathChain parse(String requestPath) throws MalformedRequestPathException {
 		
 		// special case: empty path
 		if (requestPath.isEmpty()) {
@@ -70,14 +70,14 @@ public final class RequestPathChain implements Iterable<String> {
 		// special case: single-segment path
 		int firstSlash = requestPath.indexOf('/');
 		if (firstSlash == -1) {
-			return new RequestPathChain(requestPath, EMPTY);
+			return new ApiRequestPathChain(requestPath, EMPTY);
 		}
 		if (firstSlash == 0) {
 			throw new MalformedRequestPathException("leading slash or double-slash in request path");
 		}
 		
 		// general case: at least one (but possibly multiple) segment-slash prefixes, then a last segment
-		return new RequestPathChain(requestPath.substring(0, firstSlash), parse(requestPath.substring(firstSlash + 1)));
+		return new ApiRequestPathChain(requestPath.substring(0, firstSlash), parse(requestPath.substring(firstSlash + 1)));
 		
 	}
 
@@ -93,7 +93,7 @@ public final class RequestPathChain implements Iterable<String> {
 	 * Getter method for the tail.
 	 * @return the tail
 	 */
-	public RequestPathChain getTail() {
+	public ApiRequestPathChain getTail() {
 		return tail;
 	}
 	
@@ -158,13 +158,13 @@ public final class RequestPathChain implements Iterable<String> {
 		/**
 		 * the nextNode
 		 */
-		private RequestPathChain nextNode;
+		private ApiRequestPathChain nextNode;
 
 		/**
 		 * Constructor.
 		 * @param firstNode the first not of the chain
 		 */
-		public MyIterator(RequestPathChain firstNode) {
+		public MyIterator(ApiRequestPathChain firstNode) {
 			ParameterUtil.ensureNotNull(firstNode, "firstNode");
 			this.nextNode = firstNode;
 		}

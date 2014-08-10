@@ -4,13 +4,14 @@
 
 package name.martingeisse.wicket.component.codemirror.compile;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The result returned by the compiler for a document.
  */
-public final class CompilerResult {
+public final class CompilerResult implements Serializable {
 
 	/**
 	 * the overallErrorLevel

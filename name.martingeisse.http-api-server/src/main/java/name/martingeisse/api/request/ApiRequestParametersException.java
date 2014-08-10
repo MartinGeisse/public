@@ -10,13 +10,13 @@ package name.martingeisse.api.request;
  * This exception type indicates that the request parameters
  * could not be understood.
  */
-public class RequestParametersException extends RequestException {
+public class ApiRequestParametersException extends ApiRequestException {
 
 	/**
 	 * Constructor.
 	 * @param message the message to send as a response
 	 */
-	public RequestParametersException(String message) {
+	public ApiRequestParametersException(String message) {
 		super(message);
 	}
 	

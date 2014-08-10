@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
  * the request or the custom parameter set directly for parameter
  * values.
  */
-public final class RequestParameters {
+public final class ApiRequestParameters {
 
 	/**
 	 * the request
@@ -44,7 +44,7 @@ public final class RequestParameters {
 	 * Constructor.
 	 * @param request the request, or null for an empty parameter set
 	 */
-	public RequestParameters(final HttpServletRequest request) {
+	public ApiRequestParameters(final HttpServletRequest request) {
 		this.request = request;
 		this.customParameters = new HashMap<String, String>();
 	}

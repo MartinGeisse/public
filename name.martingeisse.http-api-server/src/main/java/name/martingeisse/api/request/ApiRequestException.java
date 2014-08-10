@@ -10,12 +10,12 @@ package name.martingeisse.api.request;
  * This exception type indicates a problem with the request. The message
  * of this exception will be sent to the client.
  */
-public class RequestException extends RuntimeException {
+public class ApiRequestException extends RuntimeException {
 
 	/**
 	 * Constructor.
 	 */
-	public RequestException() {
+	public ApiRequestException() {
 		super();
 	}
 
@@ -23,7 +23,7 @@ public class RequestException extends RuntimeException {
 	 * Constructor.
 	 * @param message the exception message
 	 */
-	public RequestException(String message) {
+	public ApiRequestException(String message) {
 		super(message);
 	}
 
@@ -31,7 +31,7 @@ public class RequestException extends RuntimeException {
 	 * Constructor.
 	 * @param cause the exception that caused this exception
 	 */
-	public RequestException(Throwable cause) {
+	public ApiRequestException(Throwable cause) {
 		super(cause);
 	}
 
@@ -40,7 +40,7 @@ public class RequestException extends RuntimeException {
 	 * @param message the exception message
 	 * @param cause the exception that caused this exception
 	 */
-	public RequestException(String message, Throwable cause) {
+	public ApiRequestException(String message, Throwable cause) {
 		super(message, cause);
 	}
 

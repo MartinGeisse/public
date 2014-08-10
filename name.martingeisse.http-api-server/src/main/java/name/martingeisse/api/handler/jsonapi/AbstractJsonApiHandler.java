@@ -9,8 +9,8 @@ package name.martingeisse.api.handler.jsonapi;
 import java.io.IOException;
 import name.martingeisse.api.handler.AbstractRawPostHandler;
 import name.martingeisse.api.handler.ApiNotImplementedException;
-import name.martingeisse.api.request.RequestCycle;
-import name.martingeisse.api.request.RequestPathChain;
+import name.martingeisse.api.request.ApiRequestCycle;
+import name.martingeisse.api.request.ApiRequestPathChain;
 import name.martingeisse.common.javascript.analyze.JsonAnalysisException;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.common.javascript.jsonbuilder.JsonBuilder;
@@ -29,7 +29,7 @@ public abstract class AbstractJsonApiHandler extends AbstractRawPostHandler {
 	 * @see name.martingeisse.api.handler.AbstractRawPostHandler#handlePost(name.martingeisse.api.request.RequestCycle, name.martingeisse.api.request.RequestPathChain)
 	 */
 	@Override
-	protected final void handlePost(RequestCycle requestCycle, RequestPathChain path) throws Exception {
+	protected final void handlePost(ApiRequestCycle requestCycle, ApiRequestPathChain path) throws Exception {
 		
 		// prepare
 		JsonAnalyzer input;
@@ -68,12 +68,12 @@ public abstract class AbstractJsonApiHandler extends AbstractRawPostHandler {
 	 * @param output the output builder
 	 * @throws Exception on errors
 	 */
-	protected abstract void handle(RequestCycle requestCycle, JsonAnalyzer input, JsonValueBuilder<?> output) throws Exception;
+	protected abstract void handle(ApiRequestCycle requestCycle, JsonAnalyzer input, JsonValueBuilder<?> output) throws Exception;
 
 	/**
 	 * 
 	 */
-	private void emitError(RequestCycle requestCycle, int httpStatus, int errorCode, String errorMessage) throws IOException {
+	private void emitError(ApiRequestCycle requestCycle, int httpStatus, int errorCode, String errorMessage) throws IOException {
 		JsonObjectBuilder<String> output = new JsonBuilder().object();
 		output.property("errorCode").number(errorCode);
 		output.property("errorMessage").string(errorMessage);

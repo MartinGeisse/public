@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.papyros.frontend;
+package name.martingeisse.papyros.backend;
 
 import name.martingeisse.papyros.entity.QTemplate;
 import name.martingeisse.papyros.entity.QTemplateFamily;
@@ -16,7 +16,7 @@ import com.mysema.query.sql.SQLQuery;
 /**
  * Utility methods used in front-end pages to handle their data.
  */
-public class FrontendDataUtil {
+public class PapyrosDataUtil {
 
 	/**
 	 * Loads a template family based on the key from the page parameters.

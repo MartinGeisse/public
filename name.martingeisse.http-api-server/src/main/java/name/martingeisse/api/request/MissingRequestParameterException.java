@@ -9,7 +9,7 @@ package name.martingeisse.api.request;
 /**
  * This exception type indicates that a required parameter is missing.
  */
-public class MissingRequestParameterException extends RequestParametersException {
+public class MissingRequestParameterException extends ApiRequestParametersException {
 
 	/**
 	 * the parameterName

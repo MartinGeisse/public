@@ -6,11 +6,11 @@
 
 package name.martingeisse.api.handler;
 
-import name.martingeisse.api.request.RequestCycle;
-import name.martingeisse.api.request.RequestPathChain;
+import name.martingeisse.api.request.ApiRequestCycle;
+import name.martingeisse.api.request.ApiRequestPathChain;
 
 /**
- * Requests are prepared into {@link RequestCycle} instances and passed to
+ * Requests are prepared into {@link ApiRequestCycle} instances and passed to
  * handlers which implement this interface. The application provides a
  * main handler that takes all requests and does the dispatch.
  * 
@@ -19,7 +19,7 @@ import name.martingeisse.api.request.RequestPathChain;
  * A typical way to deal with request handlers is to configure them
  * at startup and not modify them later.
  */
-public interface IRequestHandler {
+public interface IApiRequestHandler {
 
 	/**
 	 * Handles a request.
@@ -27,6 +27,6 @@ public interface IRequestHandler {
 	 * @param path the path of the request, relative to this handler
 	 * @throws Exception on errors
 	 */
-	public void handle(RequestCycle requestCycle, RequestPathChain path) throws Exception;
+	public void handle(ApiRequestCycle requestCycle, ApiRequestPathChain path) throws Exception;
 	
 }

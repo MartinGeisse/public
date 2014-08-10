@@ -20,12 +20,12 @@ package name.martingeisse.api.request;
  * handler, and would not properly finish the wrapping response
  * data in case of an exception. 
  */
-public class RequestHandlingFinishedException extends RuntimeException {
+public class ApiRequestHandlingFinishedException extends RuntimeException {
 
 	/**
 	 * Constructor.
 	 */
-	public RequestHandlingFinishedException() {
+	public ApiRequestHandlingFinishedException() {
 	}
 
 }

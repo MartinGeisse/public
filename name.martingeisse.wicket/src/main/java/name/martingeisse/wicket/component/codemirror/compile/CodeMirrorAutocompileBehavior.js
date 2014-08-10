@@ -38,11 +38,6 @@ addCodeMirrorAutocompilerMarkerToDocument = function(id, startLine, startColumn,
 		warning: 'glyphicon-warning-sign',
 		error: 'glyphicon-exclamation-sign'
 	};
-	var gutterMarkerColors = {
-		info: 'blue',
-		warning: '#f08000',
-		error: 'red'
-	};
 	if (errorLevel != 'info' && errorLevel != 'warning') {
 		errorLevel = 'error';
 	}
@@ -54,10 +49,13 @@ addCodeMirrorAutocompilerMarkerToDocument = function(id, startLine, startColumn,
 		$gutterMarker.attr('title', $gutterMarker.attr('title') + '\n' + message);
 		if (errorLevel == 'warning' && $gutterMarker.hasClass(gutterMarkerGlyphicons.info)) {
 			$gutterMarker.removeClass(gutterMarkerGlyphicons.info);
+			$gutterMarker.removeClass('autocompile-info-color');
 			applyStyles = true;
 		} else if (errorLevel == 'error' && !$gutterMarker.hasClass(gutterMarkerGlyphicons.error)) {
 			$gutterMarker.removeClass(gutterMarkerGlyphicons.info);
+			$gutterMarker.removeClass('autocompile-info-color');
 			$gutterMarker.removeClass(gutterMarkerGlyphicons.warning);
+			$gutterMarker.removeClass('autocompile-warning-color');
 			applyStyles = true;
 		}
 	} else {
@@ -71,7 +69,7 @@ addCodeMirrorAutocompilerMarkerToDocument = function(id, startLine, startColumn,
 	}
 	if (applyStyles) {
 		$gutterMarker.addClass(gutterMarkerGlyphicons[errorLevel]);
-		$gutterMarker.css('color', gutterMarkerColors[errorLevel]);
+		$gutterMarker.addClass('autocompile-' + errorLevel + '-color');
 	}
 	
 }

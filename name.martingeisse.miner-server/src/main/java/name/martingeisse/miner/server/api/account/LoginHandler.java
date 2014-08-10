@@ -10,7 +10,7 @@ import javax.servlet.http.Cookie;
 
 import name.martingeisse.api.handler.jsonapi.AbstractJsonApiHandler;
 import name.martingeisse.api.handler.jsonapi.JsonApiException;
-import name.martingeisse.api.request.RequestCycle;
+import name.martingeisse.api.request.ApiRequestCycle;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.common.javascript.jsonbuilder.JsonValueBuilder;
 import name.martingeisse.common.security.SecurityTokenUtil;
@@ -42,7 +42,7 @@ public final class LoginHandler extends AbstractJsonApiHandler {
 	 * @see name.martingeisse.api.handler.jsonapi.AbstractJsonApiHandler#handle(name.martingeisse.api.request.RequestCycle, name.martingeisse.common.javascript.analyze.JsonAnalyzer, name.martingeisse.common.javascript.jsonbuilder.JsonValueBuilder)
 	 */
 	@Override
-	protected void handle(RequestCycle requestCycle, JsonAnalyzer input, JsonValueBuilder<?> output) throws Exception {
+	protected void handle(ApiRequestCycle requestCycle, JsonAnalyzer input, JsonValueBuilder<?> output) throws Exception {
 		
 		// fetch the user record
 		String username = input.analyzeMapElement("username").expectString();

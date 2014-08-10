@@ -6,11 +6,13 @@
 
 package name.martingeisse.wicket.component.codemirror.compile;
 
+import java.io.Serializable;
+
 /**
  * A marker that tells something about the code and is generated
  * by a compiler.
  */
-public final class CompilerMarker {
+public final class CompilerMarker implements Serializable {
 
 	/**
 	 * the startLine

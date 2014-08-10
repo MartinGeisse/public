@@ -20,12 +20,12 @@ import org.apache.log4j.Logger;
  * 
  * @param <T> the attribute type
  */
-public class RequestAttributeKey<T> {
+public class ApiRequestAttributeKey<T> {
 
 	/**
 	 * the logger
 	 */
-	private static Logger logger = Logger.getLogger(RequestAttributeKey.class);
+	private static Logger logger = Logger.getLogger(ApiRequestAttributeKey.class);
 	
 	/**
 	 * the valueClass
@@ -41,7 +41,7 @@ public class RequestAttributeKey<T> {
 	 * Constructor.
 	 * @param valueClass the class for attribute values
 	 */
-	public RequestAttributeKey(Class<T> valueClass) {
+	public ApiRequestAttributeKey(Class<T> valueClass) {
 		this.valueClass = valueClass;
 		this.description = null;
 	}
@@ -51,7 +51,7 @@ public class RequestAttributeKey<T> {
 	 * @param valueClass the class for attribute values
 	 * @param description the attribute description
 	 */
-	public RequestAttributeKey(Class<T> valueClass, String description) {
+	public ApiRequestAttributeKey(Class<T> valueClass, String description) {
 		this.valueClass = valueClass;
 		this.description = description;
 	}

@@ -14,16 +14,37 @@ public enum CompilerErrorLevel {
 	/**
 	 * Indicates an error.
 	 */
-	ERROR,
-	
+	ERROR("exclamation-sign"),
+
 	/**
 	 * Indicates something that is wrong but not formally an error.
 	 */
-	WARNING,
+	WARNING("warning-sign"),
 	
 	/**
 	 * Indicates an informational message that does not indicate an error.
 	 */
-	INFO;
+	INFO("info-sign");
+
+	/**
+	 * the glyphicon
+	 */
+	private final String glyphicon;
+
+	/**
+	 * Constructor.
+	 * @param glyphicon the glyphicon identifier
+	 */
+	private CompilerErrorLevel(String glyphicon) {
+		this.glyphicon = glyphicon;
+	}
+	
+	/**
+	 * Getter method for the glyphicon.
+	 * @return the glyphicon
+	 */
+	public String getGlyphicon() {
+		return glyphicon;
+	}
 	
 }

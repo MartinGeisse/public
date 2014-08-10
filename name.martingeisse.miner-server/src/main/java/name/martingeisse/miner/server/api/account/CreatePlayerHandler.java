@@ -8,7 +8,7 @@ package name.martingeisse.miner.server.api.account;
 
 import java.math.BigDecimal;
 import name.martingeisse.api.handler.jsonapi.JsonApiException;
-import name.martingeisse.api.request.RequestCycle;
+import name.martingeisse.api.request.ApiRequestCycle;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.common.javascript.jsonbuilder.JsonObjectBuilder;
 import name.martingeisse.common.javascript.jsonbuilder.JsonValueBuilder;
@@ -27,7 +27,7 @@ public final class CreatePlayerHandler extends AbstractLoggedInHandler {
 	 * @see name.martingeisse.miner.server.api.account.AbstractLoggedInHandler#handle(name.martingeisse.api.request.RequestCycle, name.martingeisse.common.javascript.analyze.JsonAnalyzer, name.martingeisse.common.javascript.jsonbuilder.JsonValueBuilder, name.martingeisse.webide.entity.UserAccount)
 	 */
 	@Override
-	protected void handle(RequestCycle requestCycle, JsonAnalyzer input, JsonValueBuilder<?> output, UserAccount userAccount) throws Exception {
+	protected void handle(ApiRequestCycle requestCycle, JsonAnalyzer input, JsonValueBuilder<?> output, UserAccount userAccount) throws Exception {
 		
 		// analyze request data
 		int factionIndex = input.analyzeMapElement("faction").expectInteger();

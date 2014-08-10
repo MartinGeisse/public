@@ -19,15 +19,17 @@ import org.eclipse.jetty.servlets.GzipFilter;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
- * This class starts the admin system and is typically invoked by the
- * main method.
+ * This class starts the API system and is typically invoked by the
+ * main method. Applications are free to ignore this launcher and
+ * perform the initialization themselves; this is useful for example
+ * if the same port is also used for a regular web GUI.
  */
-public class Launcher {
+public class ApiLauncher {
 	
 	/**
 	 * the logger
 	 */
-	private static Logger logger = Logger.getLogger(Launcher.class);
+	private static Logger logger = Logger.getLogger(ApiLauncher.class);
 
 	/**
 	 * Launches the server.
@@ -55,8 +57,8 @@ public class Launcher {
 		context.addFilter(EntityConnectionServletFilter.class, "/*", allDispatcherTypes);
 
 		// add the API Servlet
-		RestfulServlet.configuration = configuration;
-		context.addServlet(RestfulServlet.class, "/*");
+		ApiConfiguration.setInstance(configuration);
+		context.addServlet(RestfulApiServlet.class, "/*");
 
 		// configure SSL / HTTPS
 		SslContextFactory sslContextFactory = new SslContextFactory("/Users/martin/.keystore");

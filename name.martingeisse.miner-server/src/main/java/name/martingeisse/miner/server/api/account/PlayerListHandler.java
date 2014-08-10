@@ -8,7 +8,7 @@ package name.martingeisse.miner.server.api.account;
 
 import java.util.List;
 
-import name.martingeisse.api.request.RequestCycle;
+import name.martingeisse.api.request.ApiRequestCycle;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.common.javascript.jsonbuilder.JsonListBuilder;
 import name.martingeisse.common.javascript.jsonbuilder.JsonObjectBuilder;
@@ -29,7 +29,7 @@ public final class PlayerListHandler extends AbstractLoggedInHandler {
 	 * @see name.martingeisse.miner.server.api.account.AbstractLoggedInHandler#handle(name.martingeisse.api.request.RequestCycle, name.martingeisse.common.javascript.analyze.JsonAnalyzer, name.martingeisse.common.javascript.jsonbuilder.JsonValueBuilder, name.martingeisse.webide.entity.UserAccount)
 	 */
 	@Override
-	protected void handle(RequestCycle requestCycle, JsonAnalyzer input, JsonValueBuilder<?> output, UserAccount userAccount) throws Exception {
+	protected void handle(ApiRequestCycle requestCycle, JsonAnalyzer input, JsonValueBuilder<?> output, UserAccount userAccount) throws Exception {
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		final QPlayer qp = QPlayer.player;
 		final List<Player> players = query.from(qp).where(qp.userAccountId.eq(userAccount.getId()), qp.deleted.isFalse()).list(qp);

@@ -9,7 +9,7 @@ package name.martingeisse.api.request;
 /**
  * The method used to send a request.
  */
-public enum RequestMethod {
+public enum ApiRequestMethod {
 
 	/**
 	 * HTTP GET

@@ -10,12 +10,12 @@ package name.martingeisse.api.request;
  * This exception type indicates that the request contained an
  * unknown path.
  */
-public class RequestPathNotFoundException extends RuntimeException {
+public class ApiRequestPathNotFoundException extends RuntimeException {
 
 	/**
 	 * Constructor.
 	 */
-	public RequestPathNotFoundException() {
+	public ApiRequestPathNotFoundException() {
 		super("path not found");
 	}
 	
@@ -23,7 +23,7 @@ public class RequestPathNotFoundException extends RuntimeException {
 	 * Constructor.
 	 * @param path the path that was not found
 	 */
-	public RequestPathNotFoundException(String path) {
+	public ApiRequestPathNotFoundException(String path) {
 		super("path not found: " + path);
 	}
 	
@@ -31,7 +31,7 @@ public class RequestPathNotFoundException extends RuntimeException {
 	 * Constructor.
 	 * @param path the path that was not found
 	 */
-	public RequestPathNotFoundException(RequestPathChain path) {
+	public ApiRequestPathNotFoundException(ApiRequestPathChain path) {
 		super("path not found: " + path.toString());
 	}
 	

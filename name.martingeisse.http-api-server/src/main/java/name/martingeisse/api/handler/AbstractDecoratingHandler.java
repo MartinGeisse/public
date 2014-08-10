@@ -6,24 +6,24 @@
 
 package name.martingeisse.api.handler;
 
-import name.martingeisse.api.request.RequestCycle;
-import name.martingeisse.api.request.RequestPathChain;
+import name.martingeisse.api.request.ApiRequestCycle;
+import name.martingeisse.api.request.ApiRequestPathChain;
 
 /**
  * Base class for the decorator pattern applied to request handlers.
  */
-public abstract class AbstractDecoratingHandler implements IRequestHandler {
+public abstract class AbstractDecoratingHandler implements IApiRequestHandler {
 
 	/**
 	 * the decoratedHandler
 	 */
-	private IRequestHandler decoratedHandler;
+	private IApiRequestHandler decoratedHandler;
 
 	/**
 	 * Constructor.
 	 * @param decoratedHandler the decorated handler
 	 */
-	public AbstractDecoratingHandler(IRequestHandler decoratedHandler) {
+	public AbstractDecoratingHandler(IApiRequestHandler decoratedHandler) {
 		this.decoratedHandler = decoratedHandler;
 	}
 
@@ -31,7 +31,7 @@ public abstract class AbstractDecoratingHandler implements IRequestHandler {
 	 * Getter method for the decoratedHandler.
 	 * @return the decoratedHandler
 	 */
-	public IRequestHandler getDecoratedHandler() {
+	public IApiRequestHandler getDecoratedHandler() {
 		return decoratedHandler;
 	}
 
@@ -39,17 +39,17 @@ public abstract class AbstractDecoratingHandler implements IRequestHandler {
 	 * Setter method for the decoratedHandler.
 	 * @param decoratedHandler the decoratedHandler to set
 	 */
-	public void setDecoratedHandler(IRequestHandler decoratedHandler) {
+	public void setDecoratedHandler(IApiRequestHandler decoratedHandler) {
 		this.decoratedHandler = decoratedHandler;
 	}
 
 	/**
-	 * Invokes the {@link #handle(RequestCycle, RequestPathChain)} of the decorated handler.
+	 * Invokes the {@link #handle(ApiRequestCycle, ApiRequestPathChain)} of the decorated handler.
 	 * @param requestCycle the request cycle
 	 * @param path the remaining path
 	 * @throws Exception on errors
 	 */
-	protected final void passToDecoratedHandler(RequestCycle requestCycle, RequestPathChain path) throws Exception {
+	protected final void passToDecoratedHandler(ApiRequestCycle requestCycle, ApiRequestPathChain path) throws Exception {
 		decoratedHandler.handle(requestCycle, path);
 	}
 	

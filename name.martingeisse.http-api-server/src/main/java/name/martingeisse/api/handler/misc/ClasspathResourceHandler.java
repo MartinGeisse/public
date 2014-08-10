@@ -11,9 +11,9 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import name.martingeisse.api.handler.IRequestHandler;
-import name.martingeisse.api.request.RequestCycle;
-import name.martingeisse.api.request.RequestPathChain;
+import name.martingeisse.api.handler.IApiRequestHandler;
+import name.martingeisse.api.request.ApiRequestCycle;
+import name.martingeisse.api.request.ApiRequestPathChain;
 
 import org.apache.commons.io.IOUtils;
 
@@ -34,7 +34,7 @@ import org.apache.commons.io.IOUtils;
  *
  * The filename must be specified.
  */
-public class ClasspathResourceHandler implements IRequestHandler {
+public class ClasspathResourceHandler implements IApiRequestHandler {
 
 	/**
 	 * the contentType
@@ -113,7 +113,7 @@ public class ClasspathResourceHandler implements IRequestHandler {
 	 * @see name.martingeisse.api.handler.IRequestHandler#handle(name.martingeisse.api.request.RequestCycle, name.martingeisse.api.request.RequestPathChain)
 	 */
 	@Override
-	public void handle(final RequestCycle requestCycle, final RequestPathChain path) throws Exception {
+	public void handle(final ApiRequestCycle requestCycle, final ApiRequestPathChain path) throws Exception {
 		HttpServletResponse response = requestCycle.getResponse();
 		
 		// set headers

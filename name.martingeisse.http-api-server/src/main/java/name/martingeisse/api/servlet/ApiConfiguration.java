@@ -6,7 +6,7 @@
 
 package name.martingeisse.api.servlet;
 
-import name.martingeisse.api.handler.IRequestHandler;
+import name.martingeisse.api.handler.IApiRequestHandler;
 import name.martingeisse.api.i18n.LocalizationConfiguration;
 
 /**
@@ -15,20 +15,41 @@ import name.martingeisse.api.i18n.LocalizationConfiguration;
 public final class ApiConfiguration {
 
 	/**
+	 * the configuration
+	 */
+	private static ApiConfiguration instance;
+
+	/**
+	 * Getter method for the instance.
+	 * @return the instance
+	 */
+	public static ApiConfiguration getInstance() {
+		return instance;
+	}
+	
+	/**
+	 * Setter method for the instance.
+	 * @param instance the instance to set
+	 */
+	public static void setInstance(ApiConfiguration instance) {
+		ApiConfiguration.instance = instance;
+	}
+	
+	/**
 	 * the masterRequestHandler
 	 */
-	private IRequestHandler masterRequestHandler;
+	private IApiRequestHandler masterRequestHandler;
 	
 	/**
 	 * the localizationConfiguration
 	 */
 	private final LocalizationConfiguration localizationConfiguration = new LocalizationConfiguration();
-
+	
 	/**
 	 * Getter method for the masterRequestHandler.
 	 * @return the masterRequestHandler
 	 */
-	public IRequestHandler getMasterRequestHandler() {
+	public IApiRequestHandler getMasterRequestHandler() {
 		return masterRequestHandler;
 	}
 	
@@ -36,7 +57,7 @@ public final class ApiConfiguration {
 	 * Setter method for the masterRequestHandler.
 	 * @param masterRequestHandler the masterRequestHandler to set
 	 */
-	public void setMasterRequestHandler(IRequestHandler masterRequestHandler) {
+	public void setMasterRequestHandler(IApiRequestHandler masterRequestHandler) {
 		this.masterRequestHandler = masterRequestHandler;
 	}
 	

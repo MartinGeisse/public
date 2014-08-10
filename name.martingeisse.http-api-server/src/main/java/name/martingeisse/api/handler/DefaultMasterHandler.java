@@ -10,11 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import name.martingeisse.api.handler.intercept.JqueryHandler;
-import name.martingeisse.api.request.RequestCycle;
-import name.martingeisse.api.request.RequestHandlingFinishedException;
-import name.martingeisse.api.request.RequestParametersException;
-import name.martingeisse.api.request.RequestPathChain;
-import name.martingeisse.api.request.RequestPathNotFoundException;
+import name.martingeisse.api.request.ApiRequestCycle;
+import name.martingeisse.api.request.ApiRequestHandlingFinishedException;
+import name.martingeisse.api.request.ApiRequestParametersException;
+import name.martingeisse.api.request.ApiRequestPathChain;
+import name.martingeisse.api.request.ApiRequestPathNotFoundException;
 
 import org.apache.log4j.Logger;
 
@@ -32,15 +32,15 @@ import org.apache.log4j.Logger;
  *   other handlers are only invoked if the intercept handler
  *   or application handler throw an exception.
  * 
- * - any {@link RequestHandlingFinishedException} or
- *   {@link RequestParametersException} is re-thrown
+ * - any {@link ApiRequestHandlingFinishedException} or
+ *   {@link ApiRequestParametersException} is re-thrown
  *   to be handled by the servlet
  *   
- * - any {@link RequestPathNotFoundException} causes the request
+ * - any {@link ApiRequestPathNotFoundException} causes the request
  *   to be passed to the "not found" handler
  *   
  * - any other exception, or any exception in the "not found" handler,
- *   or a {@link RequestPathNotFoundException} with no "no found"
+ *   or a {@link ApiRequestPathNotFoundException} with no "no found"
  *   handler set, causes the request to be passed to the "exception"
  *   handler.
  * 
@@ -48,7 +48,7 @@ import org.apache.log4j.Logger;
  *   the exception is passed to the servlet.
  * 
  */
-public class DefaultMasterHandler implements IRequestHandler {
+public class DefaultMasterHandler implements IApiRequestHandler {
 
 	/**
 	 * the logger
@@ -58,28 +58,28 @@ public class DefaultMasterHandler implements IRequestHandler {
 	/**
 	 * the interceptHandlers
 	 */
-	private final Map<String, IRequestHandler> interceptHandlers;
+	private final Map<String, IApiRequestHandler> interceptHandlers;
 	
 	/**
 	 * the applicationRequestHandler
 	 */
-	private IRequestHandler applicationRequestHandler;
+	private IApiRequestHandler applicationRequestHandler;
 
 	/**
 	 * the notFoundRequestHandler
 	 */
-	private IRequestHandler notFoundRequestHandler;
+	private IApiRequestHandler notFoundRequestHandler;
 
 	/**
 	 * the exceptionHandler
 	 */
-	private IRequestHandler exceptionHandler;
+	private IApiRequestHandler exceptionHandler;
 
 	/**
 	 * Constructor.
 	 */
 	public DefaultMasterHandler() {
-		this.interceptHandlers = new HashMap<String, IRequestHandler>();
+		this.interceptHandlers = new HashMap<String, IApiRequestHandler>();
 		this.interceptHandlers.put("/jquery.js", new JqueryHandler());
 	}
 
@@ -87,7 +87,7 @@ public class DefaultMasterHandler implements IRequestHandler {
 	 * Getter method for the interceptHandlers.
 	 * @return the interceptHandlers
 	 */
-	public Map<String, IRequestHandler> getInterceptHandlers() {
+	public Map<String, IApiRequestHandler> getInterceptHandlers() {
 		return interceptHandlers;
 	}
 	
@@ -95,7 +95,7 @@ public class DefaultMasterHandler implements IRequestHandler {
 	 * Getter method for the applicationRequestHandler.
 	 * @return the applicationRequestHandler
 	 */
-	public IRequestHandler getApplicationRequestHandler() {
+	public IApiRequestHandler getApplicationRequestHandler() {
 		return applicationRequestHandler;
 	}
 
@@ -103,7 +103,7 @@ public class DefaultMasterHandler implements IRequestHandler {
 	 * Setter method for the applicationRequestHandler.
 	 * @param applicationRequestHandler the applicationRequestHandler to set
 	 */
-	public void setApplicationRequestHandler(final IRequestHandler applicationRequestHandler) {
+	public void setApplicationRequestHandler(final IApiRequestHandler applicationRequestHandler) {
 		this.applicationRequestHandler = applicationRequestHandler;
 	}
 
@@ -111,7 +111,7 @@ public class DefaultMasterHandler implements IRequestHandler {
 	 * Getter method for the notFoundRequestHandler.
 	 * @return the notFoundRequestHandler
 	 */
-	public IRequestHandler getNotFoundRequestHandler() {
+	public IApiRequestHandler getNotFoundRequestHandler() {
 		return notFoundRequestHandler;
 	}
 
@@ -119,7 +119,7 @@ public class DefaultMasterHandler implements IRequestHandler {
 	 * Setter method for the notFoundRequestHandler.
 	 * @param notFoundRequestHandler the notFoundRequestHandler to set
 	 */
-	public void setNotFoundRequestHandler(final IRequestHandler notFoundRequestHandler) {
+	public void setNotFoundRequestHandler(final IApiRequestHandler notFoundRequestHandler) {
 		this.notFoundRequestHandler = notFoundRequestHandler;
 	}
 
@@ -127,7 +127,7 @@ public class DefaultMasterHandler implements IRequestHandler {
 	 * Getter method for the exceptionHandler.
 	 * @return the exceptionHandler
 	 */
-	public IRequestHandler getExceptionHandler() {
+	public IApiRequestHandler getExceptionHandler() {
 		return exceptionHandler;
 	}
 
@@ -135,7 +135,7 @@ public class DefaultMasterHandler implements IRequestHandler {
 	 * Setter method for the exceptionHandler.
 	 * @param exceptionHandler the exceptionHandler to set
 	 */
-	public void setExceptionHandler(final IRequestHandler exceptionHandler) {
+	public void setExceptionHandler(final IApiRequestHandler exceptionHandler) {
 		this.exceptionHandler = exceptionHandler;
 	}
 
@@ -143,11 +143,11 @@ public class DefaultMasterHandler implements IRequestHandler {
 	 * @see name.martingeisse.api.handler.IRequestHandler#handle(name.martingeisse.api.request.RequestCycle, name.martingeisse.api.request.RequestPathChain)
 	 */
 	@Override
-	public void handle(RequestCycle requestCycle, RequestPathChain path) throws Exception {
+	public void handle(ApiRequestCycle requestCycle, ApiRequestPathChain path) throws Exception {
 		logger.debug("DefaultMasterHandler: dispatching request");
 		try {
 			try {
-				IRequestHandler interceptHandler = interceptHandlers.get(path.getUri());
+				IApiRequestHandler interceptHandler = interceptHandlers.get(path.getUri());
 				if (interceptHandler == null) {
 					logger.debug("DefaultMasterHandler: invoking application handler");
 					applicationRequestHandler.handle(requestCycle, path);
@@ -158,17 +158,17 @@ public class DefaultMasterHandler implements IRequestHandler {
 					logger.debug("DefaultMasterHandler: intercept handler finished normally");
 				}
 				return;
-			} catch (RequestPathNotFoundException e) {
+			} catch (ApiRequestPathNotFoundException e) {
 				logger.debug("DefaultMasterHandler: caught RequestPathNotFoundException");
 				if (notFoundRequestHandler == null) {
 					logger.debug("DefaultMasterHandler: no notFoundRequestHandler -- rethrowing");
 					throw e;
 				} else {
-					requestCycle.setAttribute(RequestCycle.EXCEPTION_REQUEST_ATTRIBUTE_KEY, e);
+					requestCycle.setAttribute(ApiRequestCycle.EXCEPTION_REQUEST_ATTRIBUTE_KEY, e);
 					logger.debug("DefaultMasterHandler: invoking notFoundRequestHandler handler");
 					notFoundRequestHandler.handle(requestCycle, path);
 					logger.debug("DefaultMasterHandler: notFoundRequestHandler finished normally");
-					requestCycle.setAttribute(RequestCycle.EXCEPTION_REQUEST_ATTRIBUTE_KEY, null);
+					requestCycle.setAttribute(ApiRequestCycle.EXCEPTION_REQUEST_ATTRIBUTE_KEY, null);
 					return;
 				}
 			}
@@ -178,11 +178,11 @@ public class DefaultMasterHandler implements IRequestHandler {
 				logger.debug("DefaultMasterHandler: no exceptionHandler -- rethrowing");
 				throw e;
 			} else {
-				requestCycle.setAttribute(RequestCycle.EXCEPTION_REQUEST_ATTRIBUTE_KEY, e);
+				requestCycle.setAttribute(ApiRequestCycle.EXCEPTION_REQUEST_ATTRIBUTE_KEY, e);
 				logger.debug("DefaultMasterHandler: invoking exceptionHandler handler");
 				exceptionHandler.handle(requestCycle, path);
 				logger.debug("DefaultMasterHandler: exceptionHandler finished normally");
-				requestCycle.setAttribute(RequestCycle.EXCEPTION_REQUEST_ATTRIBUTE_KEY, null);
+				requestCycle.setAttribute(ApiRequestCycle.EXCEPTION_REQUEST_ATTRIBUTE_KEY, null);
 				return;
 			}
 		}

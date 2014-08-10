@@ -4,11 +4,10 @@
 
 package name.martingeisse.papyros.frontend.template;
 
+import name.martingeisse.papyros.backend.PapyrosDataUtil;
 import name.martingeisse.papyros.entity.Template;
 import name.martingeisse.papyros.frontend.AbstractFrontendPage;
-import name.martingeisse.papyros.frontend.FrontendDataUtil;
 import name.martingeisse.papyros.frontend.components.Iframe;
-
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
@@ -23,7 +22,7 @@ public final class TestRenderPage extends AbstractFrontendPage {
 	 */
 	public TestRenderPage(PageParameters pageParameters) {
 		super(pageParameters);
-		final Template template = FrontendDataUtil.loadTemplate(pageParameters);
+		final Template template = PapyrosDataUtil.loadTemplate(pageParameters);
 		
 		// fake rendering
 		final String renderedContent = template.getContent();

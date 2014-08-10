@@ -5,14 +5,12 @@
 package name.martingeisse.papyros.frontend.family;
 
 import java.util.List;
-
+import name.martingeisse.papyros.backend.PapyrosDataUtil;
 import name.martingeisse.papyros.entity.QTemplate;
 import name.martingeisse.papyros.entity.TemplateFamily;
 import name.martingeisse.papyros.frontend.AbstractFrontendPage;
-import name.martingeisse.papyros.frontend.FrontendDataUtil;
 import name.martingeisse.papyros.frontend.template.TemplatePage;
 import name.martingeisse.sql.EntityConnectionManager;
-
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
@@ -21,7 +19,6 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-
 import com.mysema.query.sql.SQLQuery;
 
 /**
@@ -35,7 +32,7 @@ public final class TemplateFamilyPage extends AbstractFrontendPage {
 	 */
 	public TemplateFamilyPage(PageParameters pageParameters) {
 		
-		final TemplateFamily family = FrontendDataUtil.loadTemplateFamily(pageParameters);
+		final TemplateFamily family = PapyrosDataUtil.loadTemplateFamily(pageParameters);
 		add(new Label("templateFamilyKey", family.getKey()));
 		
 		IModel<List<String>> templateListModel = new AbstractReadOnlyModel<List<String>>() {

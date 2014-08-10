@@ -60,7 +60,7 @@ public final class SessionKey<T extends Serializable> {
 	 * @param requestCycle the current request cycle
 	 * @param value the parameter object to set
 	 */
-	public void set(RequestCycle requestCycle, T value) {
+	public void set(ApiRequestCycle requestCycle, T value) {
 		requestCycle.setSessionValue(this, value);
 	}
 
@@ -69,7 +69,7 @@ public final class SessionKey<T extends Serializable> {
 	 * @param requestCycle the current request cycle
 	 * @return the parameter object
 	 */
-	public T get(RequestCycle requestCycle) {
+	public T get(ApiRequestCycle requestCycle) {
 		return requestCycle.getSessionValue(this);
 	}
 	
