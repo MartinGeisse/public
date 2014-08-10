@@ -7931,3 +7931,780 @@ Caused by: java.lang.RuntimeException: template not found; key=''; language=''
 2014-08-08 16:37:10,580 qtp7197142-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
 2014-08-08 16:37:16,225 qtp7197142-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
 2014-08-08 16:37:16,228 qtp7197142-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-08 20:22:37,966 main name.martingeisse.papyros.Main INFO: ----- starting frontend with config file: test.properties -----
+2014-08-08 20:22:38,690 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find Snappy class, you should make sure the Snappy library is in the classpath if you intend to use it. Snappy compression will not be available for the protocol.
+2014-08-08 20:22:38,692 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find LZ4 class, you should make sure the LZ4 library is in the classpath if you intend to use it. LZ4 compression will not be available for the protocol.
+2014-08-08 20:22:40,046 Thread-3 org.eclipse.jetty.server.Server INFO: jetty-8.1.15.v20140411
+2014-08-08 20:22:41,854 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-435867fa] init: Wicket core library initializer
+2014-08-08 20:22:41,886 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2014-08-08 20:22:41,889 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2014-08-08 20:22:41,890 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2014-08-08 20:22:41,891 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2014-08-08 20:22:41,891 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2014-08-08 20:22:41,891 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2014-08-08 20:22:41,891 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-435867fa] init: Wicket extensions initializer
+2014-08-08 20:22:42,392 Thread-3 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-435867fa] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2014-08-08 20:22:42,474 Thread-3 org.eclipse.jetty.server.AbstractConnector INFO: Started SelectChannelConnector@0.0.0.0:8080
+2014-08-08 20:22:42,647 Thread-1 com.datastax.driver.core.policies.DCAwareRoundRobinPolicy INFO: Using data-center name 'datacenter1' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)
+2014-08-08 20:22:51,690 qtp591939208-27 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:22:52,482 qtp591939208-27 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 792
+2014-08-08 20:22:52,679 qtp591939208-27 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:22:52,773 qtp591939208-27 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 94
+2014-08-08 20:22:52,932 qtp591939208-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:22:52,971 qtp591939208-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 39
+2014-08-08 20:22:54,730 qtp591939208-27 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:22:54,842 qtp591939208-27 RequestCycleExtra WARN: ********************************
+2014-08-08 20:22:54,843 qtp591939208-27 RequestCycleExtra WARN: Handling the following exception
+org.apache.wicket.WicketRuntimeException: Error attaching this container for rendering: [Page class = name.martingeisse.papyros.frontend.family.TemplateFamilyListPage, id = 2523073, render count = 1]
+	at org.apache.wicket.MarkupContainer.onBeforeRenderChildren(MarkupContainer.java:1696)
+	at org.apache.wicket.Component.onBeforeRender(Component.java:3863)
+	at org.apache.wicket.Page.onBeforeRender(Page.java:809)
+	at org.apache.wicket.Component.internalBeforeRender(Component.java:935)
+	at org.apache.wicket.Component.beforeRender(Component.java:1003)
+	at org.apache.wicket.Component.internalPrepareForRender(Component.java:2228)
+	at org.apache.wicket.Page.internalPrepareForRender(Page.java:240)
+	at org.apache.wicket.Component.render(Component.java:2317)
+	at org.apache.wicket.Page.renderPage(Page.java:1024)
+	at org.apache.wicket.request.handler.render.WebPageRenderer.renderPage(WebPageRenderer.java:122)
+	at org.apache.wicket.request.handler.render.WebPageRenderer.respond(WebPageRenderer.java:276)
+	at org.apache.wicket.core.request.handler.RenderPageRequestHandler.respond(RenderPageRequestHandler.java:175)
+	at org.apache.wicket.request.cycle.RequestCycle$HandlerExecutor.respond(RequestCycle.java:862)
+	at org.apache.wicket.request.RequestHandlerStack.execute(RequestHandlerStack.java:64)
+	at org.apache.wicket.request.cycle.RequestCycle.execute(RequestCycle.java:261)
+	at org.apache.wicket.request.cycle.RequestCycle.processRequest(RequestCycle.java:218)
+	at org.apache.wicket.request.cycle.RequestCycle.processRequestAndDetach(RequestCycle.java:289)
+	at org.apache.wicket.protocol.http.WicketFilter.processRequestCycle(WicketFilter.java:259)
+	at org.apache.wicket.protocol.http.WicketFilter.processRequest(WicketFilter.java:201)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:282)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at name.martingeisse.jetty.NoFlushOrCloseFilter.doFilter(NoFlushOrCloseFilter.java:41)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at name.martingeisse.database.EntityConnectionServletFilter.doFilter(EntityConnectionServletFilter.java:38)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at org.eclipse.jetty.servlets.UserAgentFilter.doFilter(UserAgentFilter.java:82)
+	at org.eclipse.jetty.servlets.GzipFilter.doFilter(GzipFilter.java:294)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at name.martingeisse.jetty.FlushFilter.doFilter(FlushFilter.java:36)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at name.martingeisse.jetty.TimingFilter.doFilter(TimingFilter.java:50)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:501)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:229)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1086)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:429)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1020)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:370)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:494)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:971)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:1033)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:644)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.AsyncHttpConnection.handle(AsyncHttpConnection.java:82)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint.handle(SelectChannelEndPoint.java:696)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint$1.run(SelectChannelEndPoint.java:53)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: java.lang.RuntimeException: An error occurred while getting the model object for Component: [ListView [Component id = families, page = name.martingeisse.papyros.frontend.family.TemplateFamilyListPage, path = 2523073:families.ListView, isVisible = true, isVersioned = true]]
+	at org.apache.wicket.Component.getDefaultModelObject(Component.java:1644)
+	at org.apache.wicket.markup.html.list.ListView.getViewSize(ListView.java:218)
+	at org.apache.wicket.markup.html.list.ListView.onPopulate(ListView.java:472)
+	at org.apache.wicket.markup.repeater.AbstractRepeater.onBeforeRender(AbstractRepeater.java:116)
+	at org.apache.wicket.Component.internalBeforeRender(Component.java:935)
+	at org.apache.wicket.Component.beforeRender(Component.java:1003)
+	at org.apache.wicket.MarkupContainer.onBeforeRenderChildren(MarkupContainer.java:1684)
+	... 51 more
+Caused by: java.lang.NullPointerException
+	at name.martingeisse.sql.EntityConnectionManager.getConnection(EntityConnectionManager.java:115)
+	at name.martingeisse.sql.EntityConnectionManager.getConnection(EntityConnectionManager.java:96)
+	at name.martingeisse.papyros.frontend.family.TemplateFamilyListPage$1.getObject(TemplateFamilyListPage.java:37)
+	at name.martingeisse.papyros.frontend.family.TemplateFamilyListPage$1.getObject(TemplateFamilyListPage.java:1)
+	at org.apache.wicket.Component.getDefaultModelObject(Component.java:1639)
+	... 57 more
+2014-08-08 20:22:54,848 qtp591939208-27 RequestCycleExtra WARN: ********************************
+2014-08-08 20:22:54,864 qtp591939208-27 org.apache.wicket.DefaultExceptionMapper ERROR: Unexpected error occurred
+org.apache.wicket.WicketRuntimeException: Error attaching this container for rendering: [Page class = name.martingeisse.papyros.frontend.family.TemplateFamilyListPage, id = 2523073, render count = 1]
+	at org.apache.wicket.MarkupContainer.onBeforeRenderChildren(MarkupContainer.java:1696)
+	at org.apache.wicket.Component.onBeforeRender(Component.java:3863)
+	at org.apache.wicket.Page.onBeforeRender(Page.java:809)
+	at org.apache.wicket.Component.internalBeforeRender(Component.java:935)
+	at org.apache.wicket.Component.beforeRender(Component.java:1003)
+	at org.apache.wicket.Component.internalPrepareForRender(Component.java:2228)
+	at org.apache.wicket.Page.internalPrepareForRender(Page.java:240)
+	at org.apache.wicket.Component.render(Component.java:2317)
+	at org.apache.wicket.Page.renderPage(Page.java:1024)
+	at org.apache.wicket.request.handler.render.WebPageRenderer.renderPage(WebPageRenderer.java:122)
+	at org.apache.wicket.request.handler.render.WebPageRenderer.respond(WebPageRenderer.java:276)
+	at org.apache.wicket.core.request.handler.RenderPageRequestHandler.respond(RenderPageRequestHandler.java:175)
+	at org.apache.wicket.request.cycle.RequestCycle$HandlerExecutor.respond(RequestCycle.java:862)
+	at org.apache.wicket.request.RequestHandlerStack.execute(RequestHandlerStack.java:64)
+	at org.apache.wicket.request.cycle.RequestCycle.execute(RequestCycle.java:261)
+	at org.apache.wicket.request.cycle.RequestCycle.processRequest(RequestCycle.java:218)
+	at org.apache.wicket.request.cycle.RequestCycle.processRequestAndDetach(RequestCycle.java:289)
+	at org.apache.wicket.protocol.http.WicketFilter.processRequestCycle(WicketFilter.java:259)
+	at org.apache.wicket.protocol.http.WicketFilter.processRequest(WicketFilter.java:201)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:282)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at name.martingeisse.jetty.NoFlushOrCloseFilter.doFilter(NoFlushOrCloseFilter.java:41)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at name.martingeisse.database.EntityConnectionServletFilter.doFilter(EntityConnectionServletFilter.java:38)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at org.eclipse.jetty.servlets.UserAgentFilter.doFilter(UserAgentFilter.java:82)
+	at org.eclipse.jetty.servlets.GzipFilter.doFilter(GzipFilter.java:294)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at name.martingeisse.jetty.FlushFilter.doFilter(FlushFilter.java:36)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at name.martingeisse.jetty.TimingFilter.doFilter(TimingFilter.java:50)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:501)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:229)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1086)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:429)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1020)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:370)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:494)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:971)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:1033)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:644)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.AsyncHttpConnection.handle(AsyncHttpConnection.java:82)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint.handle(SelectChannelEndPoint.java:696)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint$1.run(SelectChannelEndPoint.java:53)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:744)
+Caused by: java.lang.RuntimeException: An error occurred while getting the model object for Component: [ListView [Component id = families, page = name.martingeisse.papyros.frontend.family.TemplateFamilyListPage, path = 2523073:families.ListView, isVisible = true, isVersioned = true]]
+	at org.apache.wicket.Component.getDefaultModelObject(Component.java:1644)
+	at org.apache.wicket.markup.html.list.ListView.getViewSize(ListView.java:218)
+	at org.apache.wicket.markup.html.list.ListView.onPopulate(ListView.java:472)
+	at org.apache.wicket.markup.repeater.AbstractRepeater.onBeforeRender(AbstractRepeater.java:116)
+	at org.apache.wicket.Component.internalBeforeRender(Component.java:935)
+	at org.apache.wicket.Component.beforeRender(Component.java:1003)
+	at org.apache.wicket.MarkupContainer.onBeforeRenderChildren(MarkupContainer.java:1684)
+	... 51 more
+Caused by: java.lang.NullPointerException
+	at name.martingeisse.sql.EntityConnectionManager.getConnection(EntityConnectionManager.java:115)
+	at name.martingeisse.sql.EntityConnectionManager.getConnection(EntityConnectionManager.java:96)
+	at name.martingeisse.papyros.frontend.family.TemplateFamilyListPage$1.getObject(TemplateFamilyListPage.java:37)
+	at name.martingeisse.papyros.frontend.family.TemplateFamilyListPage$1.getObject(TemplateFamilyListPage.java:1)
+	at org.apache.wicket.Component.getDefaultModelObject(Component.java:1639)
+	... 57 more
+2014-08-08 20:22:55,063 qtp591939208-27 org.eclipse.jetty.servlet.ServletHandler WARN: /template-family
+java.lang.NullPointerException
+	at name.martingeisse.sql.EntityConnectionManager.disposeConnections(EntityConnectionManager.java:132)
+	at name.martingeisse.database.EntityConnectionServletFilter.doFilter(EntityConnectionServletFilter.java:40)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at org.eclipse.jetty.servlets.UserAgentFilter.doFilter(UserAgentFilter.java:82)
+	at org.eclipse.jetty.servlets.GzipFilter.doFilter(GzipFilter.java:294)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at name.martingeisse.jetty.FlushFilter.doFilter(FlushFilter.java:36)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at name.martingeisse.jetty.TimingFilter.doFilter(TimingFilter.java:50)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:501)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:229)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1086)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:429)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1020)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:370)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:494)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:971)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:1033)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:644)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.AsyncHttpConnection.handle(AsyncHttpConnection.java:82)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint.handle(SelectChannelEndPoint.java:696)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint$1.run(SelectChannelEndPoint.java:53)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:744)
+2014-08-08 20:24:01,653 main name.martingeisse.papyros.Main INFO: ----- starting frontend with config file: test.properties -----
+2014-08-08 20:24:01,861 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find Snappy class, you should make sure the Snappy library is in the classpath if you intend to use it. Snappy compression will not be available for the protocol.
+2014-08-08 20:24:01,864 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find LZ4 class, you should make sure the LZ4 library is in the classpath if you intend to use it. LZ4 compression will not be available for the protocol.
+2014-08-08 20:24:02,670 Thread-3 org.eclipse.jetty.server.Server INFO: jetty-8.1.15.v20140411
+2014-08-08 20:24:04,329 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-699b7b7d] init: Wicket core library initializer
+2014-08-08 20:24:04,345 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2014-08-08 20:24:04,348 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2014-08-08 20:24:04,349 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2014-08-08 20:24:04,351 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2014-08-08 20:24:04,352 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2014-08-08 20:24:04,353 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2014-08-08 20:24:04,353 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-699b7b7d] init: Wicket extensions initializer
+2014-08-08 20:24:04,569 Thread-3 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-699b7b7d] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2014-08-08 20:24:04,571 Thread-1 com.datastax.driver.core.policies.DCAwareRoundRobinPolicy INFO: Using data-center name 'datacenter1' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)
+2014-08-08 20:24:04,778 Thread-3 org.eclipse.jetty.server.AbstractConnector INFO: Started SelectChannelConnector@0.0.0.0:8080
+2014-08-08 20:24:06,714 qtp912124243-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:07,642 qtp912124243-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:07,651 qtp912124243-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:07,671 qtp912124243-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 20
+2014-08-08 20:24:07,673 qtp912124243-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 30
+2014-08-08 20:24:07,746 qtp912124243-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 1032
+2014-08-08 20:24:08,687 qtp912124243-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:08,868 qtp912124243-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 180
+2014-08-08 20:24:10,124 qtp912124243-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:10,247 qtp912124243-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 123
+2014-08-08 20:24:11,132 qtp912124243-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:11,481 qtp912124243-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 348
+2014-08-08 20:24:11,483 qtp912124243-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:11,520 qtp912124243-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 37
+2014-08-08 20:24:11,592 qtp912124243-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:11,598 qtp912124243-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:11,603 qtp912124243-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:11,607 qtp912124243-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 15
+2014-08-08 20:24:11,608 qtp912124243-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-08 20:24:11,609 qtp912124243-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 10
+2014-08-08 20:24:13,976 qtp912124243-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:14,081 qtp912124243-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 105
+2014-08-08 20:24:14,995 qtp912124243-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:15,003 qtp912124243-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2014-08-08 20:24:15,012 qtp912124243-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:15,021 qtp912124243-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 9
+2014-08-08 20:24:16,514 qtp912124243-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:16,520 qtp912124243-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-08 20:24:17,621 qtp912124243-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:17,627 qtp912124243-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-08 20:24:18,103 qtp912124243-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:18,108 qtp912124243-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-08 20:24:22,698 qtp912124243-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:22,701 qtp912124243-34 name.martingeisse.papyros.frontend.template.TemplateAutocompiler ERROR: compiler exception
+java.lang.Exception: bla
+	at name.martingeisse.papyros.frontend.template.TemplateAutocompiler.compile(TemplateAutocompiler.java:51)
+	at name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior.respond(CodeMirrorAutocompileBehavior.java:83)
+	at org.apache.wicket.ajax.AbstractDefaultAjaxBehavior.onRequest(AbstractDefaultAjaxBehavior.java:633)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.apache.wicket.RequestListenerInterface.internalInvoke(RequestListenerInterface.java:258)
+	at org.apache.wicket.RequestListenerInterface.invoke(RequestListenerInterface.java:241)
+	at org.apache.wicket.core.request.handler.ListenerInterfaceRequestHandler.invokeListener(ListenerInterfaceRequestHandler.java:250)
+	at org.apache.wicket.core.request.handler.ListenerInterfaceRequestHandler.respond(ListenerInterfaceRequestHandler.java:236)
+	at org.apache.wicket.request.cycle.RequestCycle$HandlerExecutor.respond(RequestCycle.java:862)
+	at org.apache.wicket.request.RequestHandlerStack.execute(RequestHandlerStack.java:64)
+	at org.apache.wicket.request.cycle.RequestCycle.execute(RequestCycle.java:261)
+	at org.apache.wicket.request.cycle.RequestCycle.processRequest(RequestCycle.java:218)
+	at org.apache.wicket.request.cycle.RequestCycle.processRequestAndDetach(RequestCycle.java:289)
+	at org.apache.wicket.protocol.http.WicketFilter.processRequestCycle(WicketFilter.java:259)
+	at org.apache.wicket.protocol.http.WicketFilter.processRequest(WicketFilter.java:201)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:282)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at name.martingeisse.jetty.NoFlushOrCloseFilter.doFilter(NoFlushOrCloseFilter.java:41)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at name.martingeisse.database.EntityConnectionServletFilter.doFilter(EntityConnectionServletFilter.java:38)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at org.eclipse.jetty.servlets.UserAgentFilter.doFilter(UserAgentFilter.java:82)
+	at org.eclipse.jetty.servlets.GzipFilter.doFilter(GzipFilter.java:256)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at name.martingeisse.jetty.FlushFilter.doFilter(FlushFilter.java:36)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at name.martingeisse.jetty.TimingFilter.doFilter(TimingFilter.java:50)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1467)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:501)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:229)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1086)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:429)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1020)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:370)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:494)
+	at org.eclipse.jetty.server.AbstractHttpConnection.content(AbstractHttpConnection.java:982)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.content(AbstractHttpConnection.java:1043)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:865)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:240)
+	at org.eclipse.jetty.server.AsyncHttpConnection.handle(AsyncHttpConnection.java:82)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint.handle(SelectChannelEndPoint.java:696)
+	at org.eclipse.jetty.io.nio.SelectChannelEndPoint$1.run(SelectChannelEndPoint.java:53)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:744)
+2014-08-08 20:24:22,707 qtp912124243-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 9
+2014-08-08 20:24:22,748 qtp912124243-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-08 20:24:22,759 qtp912124243-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 11
+2014-08-09 10:35:27,128 main name.martingeisse.papyros.Main INFO: ----- starting frontend with config file: test.properties -----
+2014-08-09 10:35:27,895 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find Snappy class, you should make sure the Snappy library is in the classpath if you intend to use it. Snappy compression will not be available for the protocol.
+2014-08-09 10:35:27,896 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find LZ4 class, you should make sure the LZ4 library is in the classpath if you intend to use it. LZ4 compression will not be available for the protocol.
+2014-08-09 10:35:29,191 Thread-3 org.eclipse.jetty.server.Server INFO: jetty-8.1.15.v20140411
+2014-08-09 10:35:30,416 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-74e93fd8] init: Wicket core library initializer
+2014-08-09 10:35:30,420 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2014-08-09 10:35:30,447 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2014-08-09 10:35:30,448 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2014-08-09 10:35:30,449 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2014-08-09 10:35:30,449 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2014-08-09 10:35:30,450 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2014-08-09 10:35:30,450 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-74e93fd8] init: Wicket extensions initializer
+2014-08-09 10:35:30,889 Thread-3 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-74e93fd8] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2014-08-09 10:35:30,955 Thread-3 org.eclipse.jetty.server.AbstractConnector INFO: Started SelectChannelConnector@0.0.0.0:8080
+2014-08-09 10:35:31,123 Thread-1 com.datastax.driver.core.policies.DCAwareRoundRobinPolicy INFO: Using data-center name 'datacenter1' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)
+2014-08-09 10:35:37,854 qtp108940648-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:35:38,571 qtp108940648-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 717
+2014-08-09 10:35:39,011 qtp108940648-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:35:39,055 qtp108940648-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 44
+2014-08-09 10:35:41,056 qtp108940648-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:35:41,573 qtp108940648-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 516
+2014-08-09 10:35:42,487 qtp108940648-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:35:42,718 qtp108940648-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 231
+2014-08-09 10:35:44,159 qtp108940648-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:35:44,332 qtp108940648-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 172
+2014-08-09 10:35:45,749 qtp108940648-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:35:46,223 qtp108940648-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 474
+2014-08-09 10:35:46,227 qtp108940648-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:35:46,251 qtp108940648-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 24
+2014-08-09 10:35:49,328 qtp108940648-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:35:49,413 qtp108940648-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 85
+2014-08-09 10:35:49,827 qtp108940648-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:35:49,833 qtp108940648-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-09 10:35:50,588 qtp108940648-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:35:50,594 qtp108940648-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-09 10:35:50,926 qtp108940648-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:35:50,931 qtp108940648-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-09 10:35:56,394 qtp108940648-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:35:56,400 qtp108940648-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-09 10:35:58,408 qtp108940648-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:35:58,414 qtp108940648-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-09 10:36:06,918 qtp108940648-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:36:06,924 qtp108940648-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-09 10:36:08,484 qtp108940648-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:36:08,492 qtp108940648-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2014-08-09 10:40:44,919 main name.martingeisse.papyros.Main INFO: ----- starting frontend with config file: test.properties -----
+2014-08-09 10:40:45,063 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find Snappy class, you should make sure the Snappy library is in the classpath if you intend to use it. Snappy compression will not be available for the protocol.
+2014-08-09 10:40:45,065 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find LZ4 class, you should make sure the LZ4 library is in the classpath if you intend to use it. LZ4 compression will not be available for the protocol.
+2014-08-09 10:40:45,713 Thread-3 org.eclipse.jetty.server.Server INFO: jetty-8.1.15.v20140411
+2014-08-09 10:40:46,939 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-3f7f6423] init: Wicket core library initializer
+2014-08-09 10:40:46,947 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2014-08-09 10:40:46,948 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2014-08-09 10:40:46,948 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2014-08-09 10:40:46,949 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2014-08-09 10:40:46,950 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2014-08-09 10:40:46,950 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2014-08-09 10:40:46,951 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-3f7f6423] init: Wicket extensions initializer
+2014-08-09 10:40:47,035 Thread-3 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-3f7f6423] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2014-08-09 10:40:47,170 Thread-3 org.eclipse.jetty.server.AbstractConnector INFO: Started SelectChannelConnector@0.0.0.0:8080
+2014-08-09 10:40:47,183 Thread-1 com.datastax.driver.core.policies.DCAwareRoundRobinPolicy INFO: Using data-center name 'datacenter1' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)
+2014-08-09 10:40:48,513 qtp186516178-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:48,618 qtp186516178-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 104
+2014-08-09 10:40:48,624 qtp186516178-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:49,234 qtp186516178-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 610
+2014-08-09 10:40:49,260 qtp186516178-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:49,272 qtp186516178-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 12
+2014-08-09 10:40:49,306 qtp186516178-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:49,307 qtp186516178-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:49,306 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:49,313 qtp186516178-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:49,318 qtp186516178-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:49,319 qtp186516178-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:49,345 qtp186516178-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 38
+2014-08-09 10:40:49,349 qtp186516178-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:49,353 qtp186516178-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-09 10:40:49,353 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 44
+2014-08-09 10:40:49,354 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:49,358 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-09 10:40:49,365 qtp186516178-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 58
+2014-08-09 10:40:49,369 qtp186516178-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 56
+2014-08-09 10:40:49,374 qtp186516178-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:49,378 qtp186516178-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-09 10:40:49,380 qtp186516178-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 61
+2014-08-09 10:40:49,400 qtp186516178-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 81
+2014-08-09 10:40:50,989 qtp186516178-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:51,011 qtp186516178-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 21
+2014-08-09 10:40:51,030 qtp186516178-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:51,036 qtp186516178-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-09 10:40:52,197 qtp186516178-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:52,209 qtp186516178-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 11
+2014-08-09 10:40:52,976 qtp186516178-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:52,982 qtp186516178-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-09 10:40:53,647 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:53,652 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-09 10:40:54,918 qtp186516178-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:54,923 qtp186516178-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-09 10:40:56,079 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:56,084 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-09 10:40:59,822 qtp186516178-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:40:59,827 qtp186516178-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-09 10:41:01,078 qtp186516178-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:41:01,084 qtp186516178-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-09 10:41:02,072 qtp186516178-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:41:02,078 qtp186516178-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-09 10:41:03,110 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:41:03,116 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-09 10:41:04,694 qtp186516178-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:41:04,699 qtp186516178-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-09 10:41:06,981 qtp186516178-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:41:06,985 qtp186516178-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-09 10:55:07,287 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:07,328 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 41
+2014-08-09 10:55:07,362 qtp186516178-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:07,367 qtp186516178-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-09 10:55:07,370 qtp186516178-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:07,375 qtp186516178-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-09 10:55:07,375 qtp186516178-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:07,381 qtp186516178-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-09 10:55:07,381 qtp186516178-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:07,381 qtp186516178-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:07,385 qtp186516178-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-09 10:55:07,386 qtp186516178-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:07,388 qtp186516178-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-09 10:55:07,399 qtp186516178-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:07,401 qtp186516178-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-09 10:55:07,402 qtp186516178-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 21
+2014-08-09 10:55:07,404 qtp186516178-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:07,404 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:07,407 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-09 10:55:07,410 qtp186516178-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-09 10:55:08,872 qtp186516178-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:08,877 qtp186516178-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-09 10:55:08,898 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:08,901 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-09 10:55:09,231 qtp186516178-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:09,237 qtp186516178-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-09 10:55:10,499 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:10,504 qtp186516178-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-09 10:55:11,746 qtp186516178-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:11,751 qtp186516178-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-09 10:55:17,481 qtp186516178-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:17,488 qtp186516178-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-09 10:55:18,548 qtp186516178-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 10:55:18,553 qtp186516178-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-09 11:19:18,401 main name.martingeisse.papyros.Main INFO: ----- starting frontend with config file: test.properties -----
+2014-08-09 11:19:18,542 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find Snappy class, you should make sure the Snappy library is in the classpath if you intend to use it. Snappy compression will not be available for the protocol.
+2014-08-09 11:19:18,589 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find LZ4 class, you should make sure the LZ4 library is in the classpath if you intend to use it. LZ4 compression will not be available for the protocol.
+2014-08-09 11:19:19,372 Thread-4 org.eclipse.jetty.server.Server INFO: jetty-8.1.15.v20140411
+2014-08-09 11:19:20,397 Thread-4 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-32408add] init: Wicket core library initializer
+2014-08-09 11:19:20,405 Thread-4 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2014-08-09 11:19:20,406 Thread-4 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2014-08-09 11:19:20,407 Thread-4 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2014-08-09 11:19:20,408 Thread-4 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2014-08-09 11:19:20,409 Thread-4 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2014-08-09 11:19:20,411 Thread-4 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2014-08-09 11:19:20,411 Thread-4 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-32408add] init: Wicket extensions initializer
+2014-08-09 11:19:20,494 Thread-4 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-32408add] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2014-08-09 11:19:20,545 Thread-4 org.eclipse.jetty.server.AbstractConnector INFO: Started SelectChannelConnector@0.0.0.0:8080
+2014-08-09 11:19:20,651 Thread-1 com.datastax.driver.core.policies.DCAwareRoundRobinPolicy INFO: Using data-center name 'datacenter1' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)
+2014-08-09 11:19:22,911 qtp665935931-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 11:19:23,022 qtp665935931-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 111
+2014-08-09 11:19:23,031 qtp665935931-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 11:19:23,784 qtp665935931-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 753
+2014-08-09 11:19:23,785 qtp665935931-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 11:19:23,829 qtp665935931-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 11:19:23,829 qtp665935931-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 11:19:23,830 qtp665935931-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 11:19:23,844 qtp665935931-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 15
+2014-08-09 11:19:23,846 qtp665935931-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 11:19:23,856 qtp665935931-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2014-08-09 11:19:23,857 qtp665935931-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 11:19:23,860 qtp665935931-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-09 11:19:23,861 qtp665935931-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 30
+2014-08-09 11:19:23,863 qtp665935931-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 11:19:23,866 qtp665935931-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 37
+2014-08-09 11:19:23,867 qtp665935931-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 11:19:23,869 qtp665935931-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-09 11:19:23,871 qtp665935931-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 86
+2014-08-09 11:19:23,876 qtp665935931-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 11:19:23,879 qtp665935931-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-09 11:19:23,873 qtp665935931-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-09 11:19:23,910 qtp665935931-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 43
+2014-08-09 11:19:23,919 qtp665935931-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 37
+2014-08-10 10:08:04,432 main name.martingeisse.papyros.Main INFO: ----- starting frontend with config file: test.properties -----
+2014-08-10 10:08:05,218 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find Snappy class, you should make sure the Snappy library is in the classpath if you intend to use it. Snappy compression will not be available for the protocol.
+2014-08-10 10:08:05,243 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find LZ4 class, you should make sure the LZ4 library is in the classpath if you intend to use it. LZ4 compression will not be available for the protocol.
+2014-08-10 10:08:07,191 Thread-3 org.eclipse.jetty.server.Server INFO: jetty-8.1.15.v20140411
+2014-08-10 10:08:08,697 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-5d003b] init: Wicket core library initializer
+2014-08-10 10:08:08,767 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2014-08-10 10:08:08,795 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2014-08-10 10:08:08,795 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2014-08-10 10:08:08,796 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2014-08-10 10:08:08,797 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2014-08-10 10:08:08,797 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2014-08-10 10:08:08,798 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-5d003b] init: Wicket extensions initializer
+2014-08-10 10:08:09,073 Thread-3 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-5d003b] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2014-08-10 10:08:09,137 Thread-3 org.eclipse.jetty.server.AbstractConnector INFO: Started SelectChannelConnector@0.0.0.0:8080
+2014-08-10 10:08:09,140 Thread-1 com.datastax.driver.core.policies.DCAwareRoundRobinPolicy INFO: Using data-center name 'datacenter1' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)
+2014-08-10 10:09:43,129 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:43,852 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 721
+2014-08-10 10:09:44,180 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:44,233 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 53
+2014-08-10 10:09:45,344 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:45,850 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 505
+2014-08-10 10:09:46,518 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:46,726 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 208
+2014-08-10 10:09:47,773 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:47,848 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 74
+2014-08-10 10:09:49,173 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:49,649 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 475
+2014-08-10 10:09:49,650 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:49,658 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 8
+2014-08-10 10:09:59,634 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:59,699 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 64
+2014-08-10 10:09:59,715 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:59,719 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:59,726 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:59,735 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:59,748 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 33
+2014-08-10 10:09:59,752 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:59,757 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:09:59,758 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:59,763 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:09:59,764 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 28
+2014-08-10 10:09:59,765 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:59,777 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 12
+2014-08-10 10:09:59,779 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 53
+2014-08-10 10:09:59,780 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 61
+2014-08-10 10:09:59,782 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:59,785 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:09:59,787 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:09:59,791 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:10:36,198 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:36,228 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 30
+2014-08-10 10:10:36,250 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:36,255 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:10:36,256 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:36,261 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:10:36,262 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:36,267 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:10:36,267 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:36,275 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2014-08-10 10:10:36,287 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:36,288 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:36,290 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:10:36,297 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:36,300 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:36,301 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 14
+2014-08-10 10:10:36,303 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-10 10:10:36,305 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:10:36,308 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:36,310 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:10:44,970 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:45,020 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 50
+2014-08-10 10:10:45,044 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:45,046 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:10:45,047 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:45,051 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:10:45,052 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:45,054 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:10:45,056 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:45,059 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:10:45,060 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:45,064 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:10:45,065 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:45,067 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:10:45,069 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:45,075 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-10 10:10:45,080 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:45,085 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:10:45,086 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:45,088 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:10:48,901 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:48,932 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 30
+2014-08-10 10:10:48,954 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:48,956 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 1
+2014-08-10 10:10:48,963 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:48,966 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:48,966 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:10:48,969 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:48,970 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:10:48,972 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:10:48,974 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:48,976 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:10:48,977 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:49,019 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 42
+2014-08-10 10:10:49,048 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:49,049 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:49,051 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:10:49,052 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:10:49,048 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:10:49,055 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:11:27,408 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:11:27,444 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 35
+2014-08-10 10:11:27,474 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:11:27,475 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:11:27,476 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:11:27,478 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:11:27,479 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:11:27,480 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:11:27,481 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:11:27,485 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:11:27,486 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-10 10:11:27,488 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:11:27,489 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:11:27,491 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:11:27,493 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:11:27,500 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2014-08-10 10:11:27,501 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:11:27,503 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:11:27,505 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:11:27,509 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 8
+2014-08-10 10:11:29,593 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:11:29,639 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 46
+2014-08-10 10:11:30,881 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:11:30,886 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:12:11,637 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:12:11,661 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 23
+2014-08-10 10:12:11,685 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:12:11,687 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:12:11,688 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:12:11,691 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:12:11,695 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:12:11,698 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:12:11,700 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:12:11,702 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:12:11,708 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:12:11,712 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:12:11,713 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:12:11,715 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:12:11,716 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:12:11,718 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:12:11,720 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:12:11,723 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:12:11,724 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:12:11,730 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-10 10:12:13,498 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:12:13,503 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:12:14,599 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:12:14,607 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 8
+2014-08-10 10:12:15,505 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:12:15,510 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:12:16,020 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:12:16,025 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:15:09,112 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:09,142 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 29
+2014-08-10 10:15:09,163 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:09,163 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:09,170 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2014-08-10 10:15:09,177 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 14
+2014-08-10 10:15:09,177 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:09,181 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:15:09,182 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:09,186 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:15:09,187 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:09,187 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:09,190 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:15:09,190 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:09,190 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:15:09,191 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:09,192 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:15:09,193 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:15:09,193 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:09,195 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2014-08-10 10:15:12,862 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:12,866 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:15:12,918 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:12,927 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 9
+2014-08-10 10:15:13,286 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:13,291 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:15:13,963 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:13,966 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:15:14,387 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:14,391 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:15:16,931 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:16,936 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:15:18,395 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:18,401 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:15:20,321 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:20,326 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:15:21,251 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:21,255 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:15:21,890 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:21,893 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:15:23,712 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:23,718 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-10 10:15:52,583 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:52,588 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:15:55,470 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:55,475 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:15:56,884 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:15:56,887 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:16:04,148 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:04,152 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:16:04,577 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:04,581 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:16:06,803 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:06,807 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:16:07,398 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:07,401 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:16:07,665 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:07,668 qtp1890466358-34 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:16:12,882 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:12,887 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:16:15,354 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:15,359 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:16:17,042 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:17,048 qtp1890466358-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-10 10:16:18,089 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:18,094 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:16:18,303 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:18,307 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:16:18,416 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:18,420 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:16:23,641 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:23,647 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:16:23,862 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:23,866 qtp1890466358-35 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:16:24,055 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:24,059 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:16:24,195 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:24,201 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-10 10:16:27,185 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:27,190 qtp1890466358-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:16:28,761 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:28,773 qtp1890466358-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 12
+2014-08-10 10:16:29,791 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:16:29,796 qtp1890466358-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2014-08-10 10:34:46,307 main name.martingeisse.papyros.Main INFO: ----- starting frontend with config file: test.properties -----
+2014-08-10 10:34:46,442 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find Snappy class, you should make sure the Snappy library is in the classpath if you intend to use it. Snappy compression will not be available for the protocol.
+2014-08-10 10:34:46,443 Thread-1 com.datastax.driver.core.FrameCompressor WARN: Cannot find LZ4 class, you should make sure the LZ4 library is in the classpath if you intend to use it. LZ4 compression will not be available for the protocol.
+2014-08-10 10:34:47,057 Thread-3 org.eclipse.jetty.server.Server INFO: jetty-8.1.15.v20140411
+2014-08-10 10:34:48,190 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-20ca3f2d] init: Wicket core library initializer
+2014-08-10 10:34:48,194 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2014-08-10 10:34:48,194 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2014-08-10 10:34:48,195 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2014-08-10 10:34:48,195 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2014-08-10 10:34:48,196 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2014-08-10 10:34:48,196 Thread-3 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2014-08-10 10:34:48,196 Thread-3 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-20ca3f2d] init: Wicket extensions initializer
+2014-08-10 10:34:48,310 Thread-3 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-20ca3f2d] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2014-08-10 10:34:48,360 Thread-3 org.eclipse.jetty.server.AbstractConnector INFO: Started SelectChannelConnector@0.0.0.0:8080
+2014-08-10 10:34:48,508 Thread-1 com.datastax.driver.core.policies.DCAwareRoundRobinPolicy INFO: Using data-center name 'datacenter1' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)
+2014-08-10 10:37:26,667 qtp350348759-28 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:26,774 qtp350348759-28 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 107
+2014-08-10 10:37:26,780 qtp350348759-28 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:27,411 qtp350348759-28 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 631
+2014-08-10 10:37:27,412 qtp350348759-28 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:27,450 qtp350348759-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:27,475 qtp350348759-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:27,478 qtp350348759-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:37:27,481 qtp350348759-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:27,486 qtp350348759-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:37:27,489 qtp350348759-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 39
+2014-08-10 10:37:27,540 qtp350348759-29 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:27,562 qtp350348759-28 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 147
+2014-08-10 10:37:27,592 qtp350348759-29 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 52
+2014-08-10 10:37:27,595 qtp350348759-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:27,596 qtp350348759-28 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:27,617 qtp350348759-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:27,617 qtp350348759-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:27,604 qtp350348759-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:27,602 qtp350348759-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2014-08-10 10:37:27,622 qtp350348759-33 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 3
+2014-08-10 10:37:27,624 qtp350348759-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:37:27,633 qtp350348759-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 14
+2014-08-10 10:37:27,688 qtp350348759-28 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 69
+2014-08-10 10:37:29,630 qtp350348759-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:29,659 qtp350348759-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 29
+2014-08-10 10:37:29,699 qtp350348759-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:29,704 qtp350348759-30 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2014-08-10 10:37:30,278 qtp350348759-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:30,285 qtp350348759-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2014-08-10 10:37:31,202 qtp350348759-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:31,209 qtp350348759-32 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2014-08-10 10:37:32,708 qtp350348759-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2014-08-10 10:37:32,712 qtp350348759-31 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4

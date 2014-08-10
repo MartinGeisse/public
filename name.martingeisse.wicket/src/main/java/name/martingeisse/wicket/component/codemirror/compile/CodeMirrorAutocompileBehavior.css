@@ -6,7 +6,7 @@
 	background-color: #ddd;
 }
 
-.CodeMirror .error-underline {
+.CodeMirror .error-underline, .autocompile-error-icon {
 	border-style: solid;
 	border-width: 0px 0px 3px;
 	border-image-width: 0px 0px 4px;
@@ -20,7 +20,7 @@
 	border-image-source: url(/wicket/resource/name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior/error-underline.png);
 }
 
-.CodeMirror .warning-underline {
+.CodeMirror .warning-underline, .autocompile-warning-icon {
 	border-style: solid;
 	border-width: 0px 0px 3px;
 	border-image-width: 0px 0px 4px;
@@ -34,7 +34,7 @@
 	border-image-source: url(/wicket/resource/name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior/warning-underline.png);
 }
 
-.CodeMirror .info-underline {
+.CodeMirror .info-underline, .autocompile-info-icon {
 	border-style: solid;
 	border-width: 0px 0px 3px;
 	border-image-width: 0px 0px 4px;

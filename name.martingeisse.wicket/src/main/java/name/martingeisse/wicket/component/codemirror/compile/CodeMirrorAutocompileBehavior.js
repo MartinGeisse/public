@@ -33,35 +33,45 @@ addCodeMirrorAutocompilerMarkerToDocument = function(id, startLine, startColumn,
 	});
 	
 	// add a gutter marker
-	// TODO: overwrites previous marker for the same line; should be merged
-	if (errorLevel == 'info') {
-		var gutterMarkerGlyphicon = 'info-sign';
-		var gutterMarkerColor = 'blue';
-	} else if (errorLevel == 'warning') {
-		var gutterMarkerGlyphicon = 'warning-sign';
-		var gutterMarkerColor = '#f08000';
-	} else {
-		var gutterMarkerGlyphicon = 'exclamation-sign';
-		var gutterMarkerColor = 'red';
+	var gutterMarkerGlyphicons = {
+		info: 'glyphicon-info-sign',
+		warning: 'glyphicon-warning-sign',
+		error: 'glyphicon-exclamation-sign'
+	};
+	var gutterMarkerColors = {
+		info: 'blue',
+		warning: '#f08000',
+		error: 'red'
+	};
+	if (errorLevel != 'info' && errorLevel != 'warning') {
+		errorLevel = 'error';
 	}
+	var gutterMarker, $gutterMarker, applyStyles = false;
 	var lineInfo = codeMirror.lineInfo(startLine);
 	if (lineInfo.gutterMarkers && lineInfo.gutterMarkers['marker-gutter']) {
-		var $element = $(lineInfo.gutterMarkers['marker-gutter']);
-		$element.attr('title', $element.attr('title') + '\n' + message);
+		gutterMarker = lineInfo.gutterMarkers && lineInfo.gutterMarkers['marker-gutter'];
+		$gutterMarker = $(gutterMarker);
+		$gutterMarker.attr('title', $gutterMarker.attr('title') + '\n' + message);
+		if (errorLevel == 'warning' && $gutterMarker.hasClass(gutterMarkerGlyphicons.info)) {
+			$gutterMarker.removeClass(gutterMarkerGlyphicons.info);
+			applyStyles = true;
+		} else if (errorLevel == 'error' && !$gutterMarker.hasClass(gutterMarkerGlyphicons.error)) {
+			$gutterMarker.removeClass(gutterMarkerGlyphicons.info);
+			$gutterMarker.removeClass(gutterMarkerGlyphicons.warning);
+			applyStyles = true;
+		}
 	} else {
-		var gutterMarker = document.createElement('div');
+		gutterMarker = document.createElement('div');
 		gutterMarker.setAttribute('title', message);
-		gutterMarker.setAttribute('class', 'glyphicon glyphicon-' + gutterMarkerGlyphicon);
-		gutterMarker.setAttribute('style', 'padding-left: 3px; color: ' + gutterMarkerColor);
+		gutterMarker.setAttribute('style', 'padding-left: 3px;');
+		gutterMarker.setAttribute('class', 'glyphicon');
 		codeMirror.setGutterMarker(startLine, 'marker-gutter', gutterMarker);
+		$gutterMarker = $(gutterMarker);
+		applyStyles = true;
 	}
-	
-	// add a message to the error view, if any
-	var errorView = q.data('autocompile-errorview');
-	if (errorView) {
-		var $icon = $('<span/>').addClass('glyphicon glyphicon-' + gutterMarkerGlyphicon);
-		var $entry = $('<div/>').css('color', gutterMarkerColor).append($icon).append(message);
-		$(errorView).append($entry);
+	if (applyStyles) {
+		$gutterMarker.addClass(gutterMarkerGlyphicons[errorLevel]);
+		$gutterMarker.css('color', gutterMarkerColors[errorLevel]);
 	}
 	
 }

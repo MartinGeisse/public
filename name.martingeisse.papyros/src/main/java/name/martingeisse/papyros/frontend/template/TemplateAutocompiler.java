@@ -51,19 +51,45 @@ public final class TemplateAutocompiler implements ICompiler, Serializable {
 						throw new Exception("bla");
 					}
 				}
-				int position = 0;
-				while (true) {
-					int index1 = line.indexOf('(', position);
-					if (index1 == -1) {
-						break;
+				{
+					int position = 0;
+					while (true) {
+						int index1 = line.indexOf('(', position);
+						if (index1 == -1) {
+							break;
+						}
+						int index2 = line.indexOf(')', index1);
+						if (index2 == -1) {
+							result.getMarkers().add(new CompilerMarker(currentLineNumber, index1, currentLineNumber, line.length(), CompilerErrorLevel.WARNING, "foo"));
+							break;
+						} else {
+							result.getMarkers().add(new CompilerMarker(currentLineNumber, index1, currentLineNumber, index2 + 1, CompilerErrorLevel.WARNING, "foo"));
+							position = index2 + 1;
+						}
 					}
-					int index2 = line.indexOf(')', index1);
-					if (index2 == -1) {
-						result.getMarkers().add(new CompilerMarker(currentLineNumber, index1, currentLineNumber, line.length(), CompilerErrorLevel.WARNING, "foo"));
-						break;
-					} else {
-						result.getMarkers().add(new CompilerMarker(currentLineNumber, index1, currentLineNumber, index2 + 1, CompilerErrorLevel.WARNING, "foo"));
-						position = index2 + 1;
+				}
+				// ---
+				{
+					int index = line.indexOf('!');
+					if (index != -1) {
+						throw new Exception("bla");
+					}
+				}
+				{
+					int position = 0;
+					while (true) {
+						int index1 = line.indexOf('{', position);
+						if (index1 == -1) {
+							break;
+						}
+						int index2 = line.indexOf('}', index1);
+						if (index2 == -1) {
+							result.getMarkers().add(new CompilerMarker(currentLineNumber, index1, currentLineNumber, line.length(), CompilerErrorLevel.ERROR, "bar"));
+							break;
+						} else {
+							result.getMarkers().add(new CompilerMarker(currentLineNumber, index1, currentLineNumber, index2 + 1, CompilerErrorLevel.ERROR, "bar"));
+							position = index2 + 1;
+						}
 					}
 				}
 				// ----- TODO fake compiler
