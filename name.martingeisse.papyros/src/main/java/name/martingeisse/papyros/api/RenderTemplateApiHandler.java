@@ -12,7 +12,14 @@ import name.martingeisse.api.request.ApiRequestHandlingFinishedException;
 import name.martingeisse.api.request.ApiRequestPathChain;
 import name.martingeisse.api.request.MissingRequestParameterException;
 import name.martingeisse.papyros.backend.PapyrosDataUtil;
+import name.martingeisse.papyros.backend.RenderTemplateAction;
+import name.martingeisse.papyros.entity.QPreviewDataSet;
 import name.martingeisse.papyros.entity.Template;
+import name.martingeisse.sql.EntityConnectionManager;
+
+import org.json.simple.JSONValue;
+
+import com.mysema.query.sql.SQLQuery;
 
 /**
  * This request handler renders templates.
@@ -30,6 +37,8 @@ public class RenderTemplateApiHandler implements IApiRequestHandler {
 	 */
 	@Override
 	public void handle(final ApiRequestCycle requestCycle, final ApiRequestPathChain path) throws Exception {
+		
+		// parse request
 		if (path.isEmpty()) {
 			throw new MissingRequestParameterException("template key");
 		}
@@ -48,8 +57,20 @@ public class RenderTemplateApiHandler implements IApiRequestHandler {
 			throw new ApiRequestHandlingFinishedException();
 		}
 		
+		// TODO currently loads first preview data set
+		Object previewData;
+		{
+			final QPreviewDataSet qpds = QPreviewDataSet.previewDataSet;
+			final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
+			String previewDataJson = query.from(qpds).where(qpds.templateFamilyId.eq(template.getTemplateFamilyId())).singleResult(qpds.data);
+			previewData = JSONValue.parse(previewDataJson);
+		}
+		
 		// fake rendering
-		final String renderedContent = template.getContent();
+		final RenderTemplateAction renderTemplateAction = new RenderTemplateAction();
+		renderTemplateAction.setTemplate(template.getContent());
+		renderTemplateAction.setData(previewData);
+		final String renderedContent = renderTemplateAction.render();
 		requestCycle.getResponse().setContentType("text/plain");
 		requestCycle.getResponse().getWriter().write(renderedContent);
 		

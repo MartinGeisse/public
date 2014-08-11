@@ -49,6 +49,11 @@ public class QTemplateFamily extends com.mysema.query.sql.RelationalPathBase<Tem
     public final com.mysema.query.sql.ForeignKey<Template> fk__templateFk1 = createInvForeignKey(id, "template_family_id");
 
     /**
+     * Metamodel property for reverse foreign key 'preview_data_set_fk_1'
+     */
+    public final com.mysema.query.sql.ForeignKey<PreviewDataSet> fk__previewDataSetFk1 = createInvForeignKey(id, "template_family_id");
+
+    /**
      * Path-variable based constructor.
      * @param variable the path variable for this entity
      */
