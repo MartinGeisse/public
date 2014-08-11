@@ -4,7 +4,9 @@
 
 package name.martingeisse.papyros.frontend.components;
 
+import name.martingeisse.wicket.util.AjaxRequestUtil;
 import name.martingeisse.wicket.util.ISimpleCallbackListener;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.parser.XmlTag.TagType;
@@ -26,6 +28,7 @@ public class Iframe extends WebComponent implements ISimpleCallbackListener {
 	 */
 	public Iframe(String id) {
 		super(id);
+		setOutputMarkupId(true);
 	}
 
 	/**
@@ -35,6 +38,7 @@ public class Iframe extends WebComponent implements ISimpleCallbackListener {
 	 */
 	public Iframe(String id, IModel<?> model) {
 		super(id, model);
+		setOutputMarkupId(true);
 	}
 	
 	/* (non-Javadoc)
@@ -59,7 +63,7 @@ public class Iframe extends WebComponent implements ISimpleCallbackListener {
 			@Override
 			public void respond(IRequestCycle requestCycle) {
 				((WebResponse)requestCycle.getResponse()).setContentType("text/html; charset=utf-8");
-				requestCycle.getResponse().write("Hello World!");
+				requestCycle.getResponse().write(Iframe.this.getDefaultModelObjectAsString());
 			}
 			
 			@Override
@@ -69,4 +73,21 @@ public class Iframe extends WebComponent implements ISimpleCallbackListener {
 		});
 	}
 
+	/**
+	 * Renders a javascript snipped to the current {@link AjaxRequestTarget} that
+	 * reloads the iframe.
+	 */
+	public void renderReloadScript() {
+		renderReloadScript(AjaxRequestUtil.getAjaxRequestTarget());
+	}
+	
+	/**
+	 * Renders a javascript snipped to the specified {@link AjaxRequestTarget} that
+	 * reloads the iframe.
+	 * @param target the target to render to
+	 */
+	public void renderReloadScript(AjaxRequestTarget target) {
+		target.appendJavaScript("document.getElementById('" + getMarkupId() + "').contentWindow.location.reload(true);");
+	}
+	
 }

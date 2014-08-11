@@ -8,12 +8,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import name.martingeisse.common.terms.IConsumer;
 import name.martingeisse.papyros.backend.PapyrosDataUtil;
+import name.martingeisse.papyros.backend.RenderTemplateAction;
+import name.martingeisse.papyros.entity.PreviewDataSet;
 import name.martingeisse.papyros.entity.QTemplate;
 import name.martingeisse.papyros.entity.Template;
 import name.martingeisse.papyros.frontend.AbstractFrontendPage;
+import name.martingeisse.papyros.frontend.components.Iframe;
 import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.wicket.component.codemirror.CodeMirrorBehavior;
 import name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior;
@@ -22,7 +24,6 @@ import name.martingeisse.wicket.component.codemirror.compile.CompilerResult;
 import name.martingeisse.wicket.component.codemirror.modes.StandardCodeMirrorModes;
 import name.martingeisse.wicket.component.misc.GlyphiconComponent;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
-
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -33,7 +34,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-
+import org.json.simple.JSONValue;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 
 /**
@@ -47,9 +48,24 @@ public class EditTemplatePage extends AbstractFrontendPage implements IConsumer<
 	private String content;
 
 	/**
+	 * the previewDataSet
+	 */
+	private PreviewDataSet previewDataSet;
+	
+	/**
+	 * the parsedPreviewData
+	 */
+	private Object parsedPreviewData;
+	
+	/**
 	 * the compilerMarkers
 	 */
 	private List<CompilerMarker> compilerMarkers;
+	
+	/**
+	 * the preview
+	 */
+	private String preview;
 
 	/**
 	 * Constructor.
@@ -59,6 +75,8 @@ public class EditTemplatePage extends AbstractFrontendPage implements IConsumer<
 		super(pageParameters);
 		final Template template = PapyrosDataUtil.loadTemplate(pageParameters);
 		this.content = template.getContent();
+		this.previewDataSet = PapyrosDataUtil.loadPreviewDataSet(template.getTemplateFamilyId(), 0);
+		this.parsedPreviewData = (previewDataSet == null ? null : JSONValue.parse(previewDataSet.getData()));
 
 		final Form<Void> form = new Form<Void>("form") {
 			@Override
@@ -106,6 +124,10 @@ public class EditTemplatePage extends AbstractFrontendPage implements IConsumer<
 
 			}
 		});
+		
+		add(new Iframe("testRenderIframe", new PropertyModel<>(this, "preview")).setOutputMarkupId(true));
+
+		renderPreview(content);
 	}
 
 	/**
@@ -139,13 +161,23 @@ public class EditTemplatePage extends AbstractFrontendPage implements IConsumer<
 	public void setCompilerMarkers(final List<CompilerMarker> compilerMarkers) {
 		this.compilerMarkers = compilerMarkers;
 	}
+	
+	/**
+	 * Getter method for the preview.
+	 * @return the preview
+	 */
+	public String getPreview() {
+		return preview;
+	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.common.terms.IConsumer#consume(java.lang.Object)
 	 */
 	@Override
-	public void consume(final CompilerResult value) {
-		this.compilerMarkers = new ArrayList<>(value.getMarkers());
+	public void consume(final CompilerResult compilerResult) {
+		
+		// render markers
+		this.compilerMarkers = new ArrayList<>(compilerResult.getMarkers());
 		Collections.sort(this.compilerMarkers, new Comparator<CompilerMarker>() {
 			@Override
 			public int compare(CompilerMarker o1, CompilerMarker o2) {
@@ -153,6 +185,21 @@ public class EditTemplatePage extends AbstractFrontendPage implements IConsumer<
 			}
 		});
 		AjaxRequestUtil.markForRender(get("compilerMarkersContainer"));
+		
+		// render the template for preview
+		renderPreview(compilerResult.getDocument());
+		((Iframe)get("testRenderIframe")).renderReloadScript();
+		
+	}
+	
+	/**
+	 * 
+	 */
+	private void renderPreview(String document) {
+		final RenderTemplateAction renderTemplateAction = new RenderTemplateAction();
+		renderTemplateAction.setTemplate(document);
+		renderTemplateAction.setData(parsedPreviewData);
+		this.preview = renderTemplateAction.render();
 	}
 
 }

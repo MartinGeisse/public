@@ -14,6 +14,11 @@ import java.util.List;
 public final class CompilerResult implements Serializable {
 
 	/**
+	 * the document
+	 */
+	private final String document;
+
+	/**
 	 * the overallErrorLevel
 	 */
 	private CompilerErrorLevel overallErrorLevel;
@@ -22,6 +27,22 @@ public final class CompilerResult implements Serializable {
 	 * the markers
 	 */
 	private final List<CompilerMarker> markers = new ArrayList<>();
+
+	/**
+	 * Constructor.
+	 * @param document the document being compiled
+	 */
+	public CompilerResult(final String document) {
+		this.document = document;
+	}
+	
+	/**
+	 * Getter method for the document.
+	 * @return the document
+	 */
+	public String getDocument() {
+		return document;
+	}
 
 	/**
 	 * Getter method for the overallErrorLevel.

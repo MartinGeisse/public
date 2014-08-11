@@ -32,7 +32,7 @@ public final class TemplateAutocompiler implements ICompiler, Serializable {
 	 */
 	@Override
 	public CompilerResult compile(String document) {
-		CompilerResult result = new CompilerResult();
+		CompilerResult result = new CompilerResult(document);
 		int currentLineNumber = 0, currentLineLength = 0;
 		try {
 			LineNumberReader r = new LineNumberReader(new StringReader(document));
