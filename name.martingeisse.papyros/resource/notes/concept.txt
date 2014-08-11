@@ -35,40 +35,4 @@ Template-Family-Ansicht -> Tabs: templates; data; advanced (client code generato
 	data: erst mal nur CodeMirror für JSON
 	advanced: erst mal leer
 Template-Edit-Seite (existiert schon) mit Testrendering (existiert noch nicht so)
-	CodeMirror-Behavior erweitern um Serverseitige Validierung ohne echtes Form-Submit
-	auch für JSON sinnvoll, um Syntaxfehler und Inhaltliche Fehler anzuzeigen
-		-> dazu muss das Validierungssystem pluggable sein, weil Inhaltliche Fehler vom Context abhängig sind
 	Testrendering mit Dropdown-Box für verwendetes preview_data_set
-	---
-	Impl.: siehe AjaxFormComponentUpdatingBehavior. Ähnlich wie dieses aufbauen, auch wenn das selbst nicht
-		benutzt werden kann, da der Ajax-Event an anderer Stelle entsteht.
-		
-			// TODO wo würde das aufgerufen?
-			// siehe AbstractDefaultAjaxBehavior -- erben oder code kopieren
-			@Override
-			protected void updateAjaxAttributes(AjaxRequestAttributes attributes)
-			{
-				super.updateAjaxAttributes(attributes);
-				attributes.setMethod(Method.POST);
-			}
-			
-			// aus onEvent() -- validierung und Model-Update nicht nötig, ich brauche nur den input selbst
-			formComponent.inputChanged();
-			
-			
-			
-			
-
-
-POST-Render-URL (keine Seite, sondern direkte URL auf Servlet-Ebene -> Performance)
-	URL gibt Protokoll vor.
-	v1:
-		URL: api.localhost:8080/v1/render/${key}/${language}
-		Template-Key, Sprache über URL -> später einfacher für die Parallelverarbeitung
-		Template-Daten sind JSON-encoded und in einem POST-Parameter verpackt oder direkt als
-			POST-Body; ein URL-Parameter steuert den Unterschied
-		"weniger wichtige" Parameter können über GET oder POST kommen; Fehler falls beides
-
-
-
-

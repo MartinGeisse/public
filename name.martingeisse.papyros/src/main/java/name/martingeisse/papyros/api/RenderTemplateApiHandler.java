@@ -9,13 +9,12 @@ package name.martingeisse.papyros.api;
 import name.martingeisse.api.handler.IApiRequestHandler;
 import name.martingeisse.api.request.ApiRequestCycle;
 import name.martingeisse.api.request.ApiRequestHandlingFinishedException;
+import name.martingeisse.api.request.ApiRequestMethod;
 import name.martingeisse.api.request.ApiRequestPathChain;
 import name.martingeisse.api.request.MissingRequestParameterException;
 import name.martingeisse.papyros.backend.PapyrosDataUtil;
 import name.martingeisse.papyros.backend.RenderTemplateAction;
-import name.martingeisse.papyros.entity.PreviewDataSet;
 import name.martingeisse.papyros.entity.Template;
-
 import org.json.simple.JSONValue;
 
 /**
@@ -35,7 +34,7 @@ public class RenderTemplateApiHandler implements IApiRequestHandler {
 	@Override
 	public void handle(final ApiRequestCycle requestCycle, final ApiRequestPathChain path) throws Exception {
 		
-		// parse request and load data
+		// parse request URI and load data
 		if (path.isEmpty()) {
 			throw new MissingRequestParameterException("template key");
 		}
@@ -43,10 +42,8 @@ public class RenderTemplateApiHandler implements IApiRequestHandler {
 		if (subpath1.isEmpty()) {
 			throw new MissingRequestParameterException("language key");
 		}
-		ApiRequestPathChain subpath2 = subpath1.getTail();
 		String templateKey = path.getHead();
 		String languageKey = subpath1.getHead();
-		int previewDataSetNumber = (subpath2.isEmpty() ? 0 : Integer.parseInt(subpath2.getHead()));
 		final Template template;
 		try {
 			template = PapyrosDataUtil.loadTemplate(templateKey, languageKey);
@@ -55,8 +52,23 @@ public class RenderTemplateApiHandler implements IApiRequestHandler {
 			requestCycle.emitMessageResponse(400, e.getMessage());
 			throw new ApiRequestHandlingFinishedException();
 		}
-		final PreviewDataSet previewDataSet = PapyrosDataUtil.loadPreviewDataSet(template.getTemplateFamilyId(), previewDataSetNumber);
-		final Object previewData = (previewDataSet == null ? null : JSONValue.parse(previewDataSet.getData()));
+		
+		// parse the request body, containing the template data
+		final String requestContentType = requestCycle.getRequest().getContentType();
+		final Object previewData;
+		if (requestCycle.getRequestMethod() != ApiRequestMethod.POST || requestContentType == null) {
+			// TODO should be specific exception type so we know we may print the message to the client
+			requestCycle.emitMessageResponse(400, "missing request content type (or not a POST request)");
+			throw new ApiRequestHandlingFinishedException();
+		} else if (requestContentType.equals("application/json") || requestContentType.equals("text/json")) {
+			previewData = JSONValue.parse(requestCycle.getBodyAsReader());
+		} else if (requestContentType.equals("application/x-www-form-urlencoded")) {
+			previewData = JSONValue.parse(requestCycle.getParameters().getString("data", true));
+		} else {
+			// TODO should be specific exception type so we know we may print the message to the client
+			requestCycle.emitMessageResponse(400, "invalid request content type: " + requestContentType);
+			throw new ApiRequestHandlingFinishedException();
+		}
 		
 		// fake rendering
 		final RenderTemplateAction renderTemplateAction = new RenderTemplateAction();
