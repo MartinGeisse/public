@@ -6,6 +6,7 @@ package name.martingeisse.papyros.entity;
 import name.martingeisse.wicket.model.database.EntityModel;
 import name.martingeisse.sql.terms.IEntityWithId;
 import com.mysema.query.sql.SQLQuery;
+import name.martingeisse.sql.terms.IEntityWithOrderIndex;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import name.martingeisse.sql.EntityConnectionManager;
 import org.apache.wicket.model.IModel;
@@ -14,7 +15,7 @@ import java.io.Serializable;
 /**
  * This class represents rows from table 'preview_data_set'.
  */
-public class PreviewDataSet implements Serializable, IEntityWithId<Long> {
+public class PreviewDataSet implements Serializable, IEntityWithId<Long>, IEntityWithOrderIndex {
 
     /**
      * Constructor.
@@ -31,6 +32,21 @@ public class PreviewDataSet implements Serializable, IEntityWithId<Long> {
      * the id
      */
     private Long id;
+
+    /**
+     * the name
+     */
+    private String name;
+
+    /**
+     * the orderIndex
+     */
+    private Integer orderIndex;
+
+    /**
+     * the previewDataSetNumber
+     */
+    private Integer previewDataSetNumber;
 
     /**
      * the templateFamilyId
@@ -72,6 +88,56 @@ public class PreviewDataSet implements Serializable, IEntityWithId<Long> {
     }
 
     /**
+     * Getter method for the name.
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Setter method for the name.
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Getter method for the orderIndex.
+     * @return the orderIndex
+     */
+    @Override
+    public Integer getOrderIndex() {
+        return orderIndex;
+    }
+
+    /**
+     * Setter method for the orderIndex.
+     * @param orderIndex the orderIndex to set
+     */
+    @Override
+    public void setOrderIndex(Integer orderIndex) {
+        this.orderIndex = orderIndex;
+    }
+
+    /**
+     * Getter method for the previewDataSetNumber.
+     * @return the previewDataSetNumber
+     */
+    public Integer getPreviewDataSetNumber() {
+        return previewDataSetNumber;
+    }
+
+    /**
+     * Setter method for the previewDataSetNumber.
+     * @param previewDataSetNumber the previewDataSetNumber to set
+     */
+    public void setPreviewDataSetNumber(Integer previewDataSetNumber) {
+        this.previewDataSetNumber = previewDataSetNumber;
+    }
+
+    /**
      * Getter method for the templateFamilyId.
      * @return the templateFamilyId
      */
@@ -92,7 +158,7 @@ public class PreviewDataSet implements Serializable, IEntityWithId<Long> {
      */
     @Override
     public String toString() {
-        return "{PreviewDataSet. data = " + data + ", id = " + id + ", templateFamilyId = " + templateFamilyId + "}";
+        return "{PreviewDataSet. data = " + data + ", id = " + id + ", name = " + name + ", orderIndex = " + orderIndex + ", previewDataSetNumber = " + previewDataSetNumber + ", templateFamilyId = " + templateFamilyId + "}";
     }
 
     /**
@@ -122,6 +188,9 @@ public class PreviewDataSet implements Serializable, IEntityWithId<Long> {
         final QPreviewDataSet q = QPreviewDataSet.previewDataSet;
         final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(q);
         insert.set(q.data, data);
+        insert.set(q.name, name);
+        insert.set(q.orderIndex, orderIndex);
+        insert.set(q.previewDataSetNumber, previewDataSetNumber);
         insert.set(q.templateFamilyId, templateFamilyId);
         id = insert.executeWithKey(Long.class);
     }

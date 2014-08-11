@@ -34,6 +34,21 @@ public class QPreviewDataSet extends com.mysema.query.sql.RelationalPathBase<Pre
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     /**
+     * Metamodel property for property 'name'
+     */
+    public final StringPath name = createString("name");
+
+    /**
+     * Metamodel property for property 'order_index'
+     */
+    public final NumberPath<Integer> orderIndex = createNumber("order_index", Integer.class);
+
+    /**
+     * Metamodel property for property 'preview_data_set_number'
+     */
+    public final NumberPath<Integer> previewDataSetNumber = createNumber("preview_data_set_number", Integer.class);
+
+    /**
      * Metamodel property for property 'template_family_id'
      */
     public final NumberPath<Long> templateFamilyId = createNumber("template_family_id", Long.class);

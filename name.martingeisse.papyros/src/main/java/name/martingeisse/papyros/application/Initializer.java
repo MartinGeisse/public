@@ -6,12 +6,13 @@ package name.martingeisse.papyros.application;
 
 import java.util.EnumSet;
 import java.util.Locale;
+
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+
 import name.martingeisse.api.handler.DefaultMasterHandler;
-import name.martingeisse.api.handler.misc.NamedResourceFolderHandler;
 import name.martingeisse.api.handler.misc.NotFoundHandler;
 import name.martingeisse.api.request.ApiRequestCycle;
 import name.martingeisse.api.servlet.ApiConfiguration;
@@ -29,6 +30,7 @@ import name.martingeisse.papyros.application.security.PapyrosSecurityProvider;
 import name.martingeisse.papyros.application.wicket.PapyrosWicketApplication;
 import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.sql.MysqlDatabaseDescriptor;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.protocol.http.WicketFilter;
 import org.eclipse.jetty.server.Server;
@@ -40,6 +42,7 @@ import org.eclipse.jetty.servlets.IncludableGzipFilter;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
+
 import com.datastax.driver.core.Cluster;
 import com.hazelcast.core.Hazelcast;
 /**

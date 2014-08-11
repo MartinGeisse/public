@@ -4,14 +4,22 @@
 
 package name.martingeisse.papyros.backend;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import name.martingeisse.papyros.entity.PreviewDataSet;
+import name.martingeisse.papyros.entity.QPreviewDataSet;
 import name.martingeisse.papyros.entity.QTemplate;
 import name.martingeisse.papyros.entity.QTemplateFamily;
 import name.martingeisse.papyros.entity.Template;
 import name.martingeisse.papyros.entity.TemplateFamily;
 import name.martingeisse.sql.EntityConnectionManager;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+
 import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.support.Expressions;
 
 /**
  * Utility methods used in front-end pages to handle their data.
@@ -98,4 +106,49 @@ public class PapyrosDataUtil {
 		return Pair.of(template, templateFamily);
 	}
 
+	/**
+	 * @param templateFamilyId the ID of the the template family to which the preview data sets belong
+	 * @param includeData whether to load the actual preview data. If this flag is false then the data
+	 * field will be loaded as null.
+	 * @return the list of preview data set
+	 */
+	public static List<PreviewDataSet> loadPreviewDataSetList(long templateFamilyId, boolean includeData) {
+		final QPreviewDataSet qpds = QPreviewDataSet.previewDataSet;
+		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
+		query.from(qpds).where(qpds.templateFamilyId.eq(templateFamilyId));
+		List<PreviewDataSet> result = new ArrayList<>();
+		for (Object[] row : query.list(qpds.id, qpds.previewDataSetNumber, qpds.orderIndex, qpds.name, includeData ? qpds.data : Expressions.constant(null))) {
+			PreviewDataSet previewDataSet = new PreviewDataSet();
+			previewDataSet.setId((long)row[0]);
+			previewDataSet.setTemplateFamilyId(templateFamilyId);
+			previewDataSet.setPreviewDataSetNumber((int)row[1]);
+			previewDataSet.setOrderIndex((int)row[2]);
+			previewDataSet.setName((String)row[3]);
+			previewDataSet.setData((String)row[4]);
+			result.add(previewDataSet);
+		}
+		return result;
+	}
+
+	/**
+	 * @param templateFamilyId the ID of the the template family to which the preview data set belongs
+	 * @param pageParameters the page parameters object that contains the preview data set number
+	 * @return the preview data set
+	 */
+	public static PreviewDataSet loadPreviewDataSet(long templateFamilyId, PageParameters pageParameters) {
+		int previewDataSetNumber = pageParameters.get("previewDataSetNumber").toInt(0);
+		return loadPreviewDataSet(templateFamilyId, previewDataSetNumber);
+	}
+
+	/**
+	 * @param templateFamilyId the ID of the the template family to which the preview data set belongs
+	 * @param previewDataSetNumber the preview data set number
+	 * @return the preview data set
+	 */
+	public static PreviewDataSet loadPreviewDataSet(long templateFamilyId, int previewDataSetNumber) {
+		final QPreviewDataSet qpds = QPreviewDataSet.previewDataSet;
+		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
+		return query.from(qpds).where(qpds.templateFamilyId.eq(templateFamilyId), qpds.previewDataSetNumber.eq(previewDataSetNumber)).singleResult(qpds);
+	}
+	
 }

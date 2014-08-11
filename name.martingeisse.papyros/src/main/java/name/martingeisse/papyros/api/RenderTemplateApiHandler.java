@@ -13,13 +13,10 @@ import name.martingeisse.api.request.ApiRequestPathChain;
 import name.martingeisse.api.request.MissingRequestParameterException;
 import name.martingeisse.papyros.backend.PapyrosDataUtil;
 import name.martingeisse.papyros.backend.RenderTemplateAction;
-import name.martingeisse.papyros.entity.QPreviewDataSet;
+import name.martingeisse.papyros.entity.PreviewDataSet;
 import name.martingeisse.papyros.entity.Template;
-import name.martingeisse.sql.EntityConnectionManager;
 
 import org.json.simple.JSONValue;
-
-import com.mysema.query.sql.SQLQuery;
 
 /**
  * This request handler renders templates.
@@ -38,7 +35,7 @@ public class RenderTemplateApiHandler implements IApiRequestHandler {
 	@Override
 	public void handle(final ApiRequestCycle requestCycle, final ApiRequestPathChain path) throws Exception {
 		
-		// parse request
+		// parse request and load data
 		if (path.isEmpty()) {
 			throw new MissingRequestParameterException("template key");
 		}
@@ -46,8 +43,10 @@ public class RenderTemplateApiHandler implements IApiRequestHandler {
 		if (subpath1.isEmpty()) {
 			throw new MissingRequestParameterException("language key");
 		}
+		ApiRequestPathChain subpath2 = subpath1.getTail();
 		String templateKey = path.getHead();
 		String languageKey = subpath1.getHead();
+		int previewDataSetNumber = (subpath2.isEmpty() ? 0 : Integer.parseInt(subpath2.getHead()));
 		final Template template;
 		try {
 			template = PapyrosDataUtil.loadTemplate(templateKey, languageKey);
@@ -56,15 +55,8 @@ public class RenderTemplateApiHandler implements IApiRequestHandler {
 			requestCycle.emitMessageResponse(400, e.getMessage());
 			throw new ApiRequestHandlingFinishedException();
 		}
-		
-		// TODO currently loads first preview data set
-		Object previewData;
-		{
-			final QPreviewDataSet qpds = QPreviewDataSet.previewDataSet;
-			final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-			String previewDataJson = query.from(qpds).where(qpds.templateFamilyId.eq(template.getTemplateFamilyId())).singleResult(qpds.data);
-			previewData = JSONValue.parse(previewDataJson);
-		}
+		final PreviewDataSet previewDataSet = PapyrosDataUtil.loadPreviewDataSet(template.getTemplateFamilyId(), previewDataSetNumber);
+		final Object previewData = (previewDataSet == null ? null : JSONValue.parse(previewDataSet.getData()));
 		
 		// fake rendering
 		final RenderTemplateAction renderTemplateAction = new RenderTemplateAction();

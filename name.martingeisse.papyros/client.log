@@ -10235,3 +10235,6 @@ java.lang.RuntimeException: template not found; key='a'; language='b'
 2014-08-11 08:32:36,647 qtp1610307172-37 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 8
 2014-08-11 08:32:38,653 qtp1610307172-37 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
 2014-08-11 08:32:38,661 qtp1610307172-37 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2014-08-11 14:13:14,519 main com.mysema.query.sql.codegen.MetaDataExporter INFO: Exported preview_data_set successfully
+2014-08-11 14:13:14,583 main com.mysema.query.sql.codegen.MetaDataExporter INFO: Exported template successfully
+2014-08-11 14:13:14,598 main com.mysema.query.sql.codegen.MetaDataExporter INFO: Exported template_family successfully

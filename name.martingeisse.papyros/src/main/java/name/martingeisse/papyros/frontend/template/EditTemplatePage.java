@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 import name.martingeisse.common.terms.IConsumer;
 import name.martingeisse.papyros.backend.PapyrosDataUtil;
 import name.martingeisse.papyros.entity.QTemplate;
@@ -21,7 +22,7 @@ import name.martingeisse.wicket.component.codemirror.compile.CompilerResult;
 import name.martingeisse.wicket.component.codemirror.modes.StandardCodeMirrorModes;
 import name.martingeisse.wicket.component.misc.GlyphiconComponent;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
-import org.apache.commons.collections.ListUtils;
+
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -32,6 +33,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+
 import com.mysema.query.sql.dml.SQLUpdateClause;
 
 /**
