@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+	<wicket:head>
+		<style type="text/css">
+		
+			.feedbackPanel {
+				margin: 0px;
+				padding: 2px 10px;
+			}
+			
+			.feedbackPanel > li {
+				list-style-type: none;
+			}
+			
+		</style>
+	</wicket:head>
+	<body>
+		<wicket:panel>
+			<ul wicket:id="feedbackul" class="feedbackPanel alert alert-danger">
+				<li wicket:id="messages">
+					<span wicket:id="message">A message</span>
+				</li>
+			</ul>
+		</wicket:panel>
+	</body>
+</html>

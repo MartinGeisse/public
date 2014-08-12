@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+	<wicket:head>
+		<style type="text/css">
+		
+			.standard-form .help-block {
+				margin: 0px;
+			}
+			
+			.standard-form .submit-button {
+				margin-top: 30px;
+			}
+		
+		</style>
+	</wicket:head>
+	<body>
+		<wicket:panel>
+
+			<!-- this is the actual per-element markup -->
+			<form wicket:id="form" class="standard-form">
+				<div class="form-group" wicket:id="formElements" />
+			</form>
+			
+			<!-- general wrapper for form controls -->
+			<wicket:fragment wicket:id="formControlWrapperFragment">
+				<div>
+					<label wicket:id="label"><span wicket:id="text">Label</span></label>
+					<a wicket:id="toolLinks" class="btn btn-default">TOOL</a>
+				</div>
+				<div class="help-block" wicket:id="helpText">Help text ...</div>
+				<div wicket:id="error">...</div>
+				<div wicket:id="formControl">The actual form control</div>
+			</wicket:fragment>
+			
+			<!-- form control markup for a simple text field -->
+			<wicket:fragment wicket:id="textFieldFragment">
+				<input type="text" class="form-control" wicket:id="textField" />
+			</wicket:fragment>
+			
+			<!-- form control markup for an email text field -->
+			<wicket:fragment wicket:id="emailTextFieldFragment">
+				<div class="input-group">
+					<span class="input-group-addon" style="font-size: larger; font-weight: bold">@</span>
+					<input type="email" class="form-control" placeholder="you@example.com" wicket:id="textField" />
+				</div>
+			</wicket:fragment>
+			
+			<!-- form control markup for a password text field -->
+			<wicket:fragment wicket:id="passwordTextFieldFragment">
+				<div class="input-group">
+					<span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+					<input type="password" class="form-control" id="password" placeholder="Password" wicket:id="textField" />
+				</div>
+			</wicket:fragment>
+			
+			<!-- form control markup for a text area -->
+			<wicket:fragment wicket:id="textAreaFragment">
+				<textarea class="form-control" wicket:id="textArea" />
+			</wicket:fragment>
+			
+			<!-- raw element for an info text box -->
+			<wicket:fragment wicket:id="infoHtmlFragment">
+				<div class="alert alert-info">
+					<span class="glyphicon glyphicon-info-sign" />
+					<span wicket:id="html">...</span>
+				</div>
+			</wicket:fragment>
+
+			<!-- raw element for a submit button -->
+			<wicket:fragment wicket:id="submitButtonFragment">
+				<button type="submit" class="btn btn-primary btn-lg btn-block submit-button" wicket:id="button">... submit button text ...</button>
+			</wicket:fragment>
+			
+		</wicket:panel>
+	</body>
+</html>
