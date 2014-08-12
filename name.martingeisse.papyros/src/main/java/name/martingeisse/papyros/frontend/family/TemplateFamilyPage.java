@@ -52,6 +52,8 @@ public final class TemplateFamilyPage extends AbstractFrontendPage {
 				item.add(link);
 			}
 		});
+	
+		add(new BookmarkablePageLink<>("changeKeyLink", ChangeTemplateFamilyKeyPage.class, new PageParameters().add("key", family.getKey())));
 	}
 
 }

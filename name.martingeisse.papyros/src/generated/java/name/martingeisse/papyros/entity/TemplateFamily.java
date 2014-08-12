@@ -33,11 +33,6 @@ public class TemplateFamily implements Serializable, IEntityWithId<Long> {
     private String key;
 
     /**
-     * the previewData
-     */
-    private String previewData;
-
-    /**
      * Getter method for the id.
      * @return the id
      */
@@ -71,28 +66,12 @@ public class TemplateFamily implements Serializable, IEntityWithId<Long> {
         this.key = key;
     }
 
-    /**
-     * Getter method for the previewData.
-     * @return the previewData
-     */
-    public String getPreviewData() {
-        return previewData;
-    }
-
-    /**
-     * Setter method for the previewData.
-     * @param previewData the previewData to set
-     */
-    public void setPreviewData(String previewData) {
-        this.previewData = previewData;
-    }
-
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "{TemplateFamily. id = " + id + ", key = " + key + ", previewData = " + previewData + "}";
+        return "{TemplateFamily. id = " + id + ", key = " + key + "}";
     }
 
     /**
@@ -122,7 +101,6 @@ public class TemplateFamily implements Serializable, IEntityWithId<Long> {
         final QTemplateFamily q = QTemplateFamily.templateFamily;
         final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(q);
         insert.set(q.key, key);
-        insert.set(q.previewData, previewData);
         id = insert.executeWithKey(Long.class);
     }
 

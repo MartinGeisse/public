@@ -5,6 +5,8 @@
 package name.martingeisse.papyros.application.wicket;
 
 import name.martingeisse.papyros.application.page.AbstractApplicationPage;
+import name.martingeisse.papyros.frontend.family.ChangeTemplateFamilyKeyPage;
+import name.martingeisse.papyros.frontend.family.CreateTemplateFamilyPage;
 import name.martingeisse.papyros.frontend.family.TemplateFamilyListPage;
 import name.martingeisse.papyros.frontend.family.TemplateFamilyPage;
 import name.martingeisse.papyros.frontend.meta.HomePage;
@@ -12,7 +14,6 @@ import name.martingeisse.papyros.frontend.template.EditTemplatePage;
 import name.martingeisse.papyros.frontend.template.TemplatePage;
 import name.martingeisse.papyros.frontend.template.TestRenderPage;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
-
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.ComponentTag;
@@ -90,7 +91,9 @@ public class PapyrosWicketApplication extends AbstractMyWicketApplication {
 		// --- mount pages ---
 		// main pages
 		mountPage("template-family", TemplateFamilyListPage.class);
+		mountPage("template-family//new", CreateTemplateFamilyPage.class);
 		mountPage("template-family/${key}", TemplateFamilyPage.class);
+		mountPage("template-family/${key}/change-key", ChangeTemplateFamilyKeyPage.class);
 		mountPage("template/${key}/${language}", TemplatePage.class);
 		mountPage("template/${key}/${language}/edit", EditTemplatePage.class);
 		mountPage("template/${key}/${language}/render", TestRenderPage.class);

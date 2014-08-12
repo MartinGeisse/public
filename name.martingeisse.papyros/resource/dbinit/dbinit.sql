@@ -14,10 +14,10 @@ CREATE TABLE IF NOT EXISTS `template_family` (
 	`key` varchar(255) NOT NULL,
 
 	-- data
-	`preview_data` mediumtext NOT NULL,
 
 	-- indexes
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `key_index` (`key`)
 	
 ) ENGINE=InnoDB	DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS `template` (
 	`content` mediumtext NOT NULL,
 	
 	-- indexes
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `language_key_index` (`template_family_id`, `language_key`)
 	
 ) ENGINE=InnoDB	DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -88,8 +89,8 @@ ALTER TABLE `preview_data_set` ADD CONSTRAINT `preview_data_set_fk_1` FOREIGN KE
 -- - test data
 -- -------------------------------------------------------------------------
 
-INSERT INTO `template_family` (`id`, `key`, `preview_data`) VALUES
-(1, 'foo', 'null');
+INSERT INTO `template_family` (`id`, `key`) VALUES
+(1, 'foo');
 
 INSERT INTO `template` (`id`, `template_family_id`, `language_key`, `content`) VALUES
 (1, 1, 'en', 'This is a test template.');
