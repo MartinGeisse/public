@@ -47,6 +47,8 @@ public final class TemplateFamilyListPage extends AbstractFrontendPage {
 				item.add(link);
 			}
 		});
+		add(new BookmarkablePageLink<>("createLink1", CreateTemplateFamilyPage.class));
+		add(new BookmarkablePageLink<>("createLink2", CreateTemplateFamilyPage.class));
 	}
 	
 }
