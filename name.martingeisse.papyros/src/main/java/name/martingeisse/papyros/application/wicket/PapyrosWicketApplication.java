@@ -90,13 +90,13 @@ public class PapyrosWicketApplication extends AbstractMyWicketApplication {
 
 		// --- mount pages ---
 		// main pages
-		mountPage("template-family", TemplateFamilyListPage.class);
-		mountPage("template-family//new", CreateTemplateFamilyPage.class);
-		mountPage("template-family/${key}", TemplateFamilyPage.class);
-		mountPage("template-family/${key}/change-key", ChangeTemplateFamilyKeyPage.class);
-		mountPage("template/${key}/${language}", TemplatePage.class);
-		mountPage("template/${key}/${language}/edit", EditTemplatePage.class);
-		mountPage("template/${key}/${language}/render", TestRenderPage.class);
+		mountPage("templates", TemplateFamilyListPage.class);
+		mountPage("templates/.new", CreateTemplateFamilyPage.class);
+		mountPage("templates/${key}", TemplateFamilyPage.class);
+		mountPage("templates/${key}/.change-key", ChangeTemplateFamilyKeyPage.class);
+		mountPage("templates/${key}/${language}", TemplatePage.class);
+		mountPage("templates/${key}/${language}/.edit", EditTemplatePage.class);
+		mountPage("templates/${key}/${language}/.render", TestRenderPage.class);
 
 		// mount Bootstrap fonts
 		{
