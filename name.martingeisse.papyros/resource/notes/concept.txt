@@ -9,6 +9,7 @@ Komplette History inkl. Undo
 	- mit branching? Dann können zwei Leute ungestört an verschiedenen Teilen arbeiten
 
 
+
 Daten
 ---------
 
@@ -24,7 +25,7 @@ template family folder (parent_folder in family, folder) + name
 
 preview_data_set (template_family_id, order_index, data:json)
 
----------------------------------------------------------------
+
 
 Seiten
 ---------
@@ -36,3 +37,40 @@ Template-Family-Ansicht -> Tabs: templates; data; advanced (client code generato
 	advanced: erst mal leer
 Template-Edit-Seite (existiert schon) mit Testrendering (existiert noch nicht so)
 	Testrendering mit Dropdown-Box für verwendetes preview_data_set
+
+
+
+Layout
+---------
+
+Keine "Top" Navigationsleiste -- die ex. schon im Adminbereich. Wenn Navi dann "frei schwebende" Navi.
+
+Layout der "Seite" (wird im Guru dann innerhalb eines iframe angezeigt):
+
+	[-- ggf. frei schwebende Navi | eins | zwei | drei --]
+	
+	<< backlink								[alt. Navi-Dropdown, aber das wäre nicht sehr responsive außer es flippt nach oben auf kleinen screens]
+	SEITENTITEL
+
+	... content ...
+	
+Navi wäre:
+- Templates (incl. families, preview-data)
+- Languages (incl. language config, templates by language)
+- TODO (nach neu anlegen / ändern geflaggte andere templates) -- falls das nicht als filter auf den anderen seiten ist
+
+wenn TODO nicht im Navi-Menü, dann könnten dort stattdessen (toplevel-)Folder stehen, und abgetrennt ein Link zur Sprachconfig
+und ggf. anderen Sonderbereichen. Besser wäre aber: Folders im HAuptbereich navigieren (falls überhaupt folders) und das Menü/Navbar
+nur für Hauptbereiche: Templates, Languages, Config. Dann als frei schwebende Navbar und kein Dropdown
+
+Ansonsten ist vor allem mal etwas Stil nötig, z.B. für die Template-(Family-)Liste.
+
+Bootstrap templates:
+- eckig: http://bootswatch.com/cosmo/
+	das erst mal versuchen
+- https://github.com/almasaeed2010/AdminLTE/
+- http://devoops.me/themes/devoops/index.html
+- komische farben aber sonst gut: http://bootswatch.com/flatly/
+
+
+

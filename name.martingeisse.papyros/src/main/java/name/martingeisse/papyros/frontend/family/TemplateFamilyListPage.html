@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <html>
-	<wicket:head>
-	</wicket:head>
-	<body>
-		<wicket:extend>
-			<div><a wicket:id="createLink1">Create</a></div>
-			<ul>
-				<li wicket:id="families">
-					<a wicket:id="link"><span wicket:id="text" /></a>
-				</li>
-			</ul>
-			<div><a wicket:id="createLink2">Create</a></div>
-		</wicket:extend>
-	</body>
+<wicket:head>
+</wicket:head>
+<body>
+	<wicket:extend>
+		<h1>Template Families</h1>
+		<div>
+			<a wicket:id="createLink1">Create</a>
+		</div>
+		<br />
+		<table class="table table-striped table-hover link-list-table">
+			<tbody>
+				<tr wicket:id="families">
+					<td><a wicket:id="link"><span wicket:id="text" /></a></td>
+				</tr>
+			</tbody>
+		</table>
+		<div>
+			<a wicket:id="createLink2">Create</a>
+		</div>
+	</wicket:extend>
+</body>
 </html>
