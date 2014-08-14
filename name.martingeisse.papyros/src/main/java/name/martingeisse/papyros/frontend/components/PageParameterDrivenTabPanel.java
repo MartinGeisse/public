@@ -9,9 +9,9 @@ package name.martingeisse.papyros.frontend.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.ajax.markup.html.tabs.AjaxTabbedPanel;
 import org.apache.wicket.extensions.markup.html.tabs.TabbedPanel;
 import org.apache.wicket.markup.html.basic.Label;
@@ -103,13 +103,26 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 
 	/**
 	 * Convenience method to add a simple tab.
-	 * @param selector the selector that is used as the parameter value
 	 * @param title the tab title
+	 * @param selector the selector that is used as the parameter value
 	 */
-	public final void addTab(String selector, String title) {
-		tabInfos.add(new TabInfo(selector, title));
+	public final void addTab(String title, String selector) {
+		tabInfos.add(new TabInfo(title, selector));
 	}
 
+	/**
+	 * Convenience method to add a dropdown tab. The returned tab header can be used to add
+	 * entries to the dropdown menu.
+	 * 
+	 * @param title the tab title
+	 * @return the dropdown tab info
+	 */
+	public final DropdownTabInfo addDropdownTab(String title) {
+		DropdownTabInfo tabInfo = new DropdownTabInfo(title);
+		tabInfos.add(tabInfo);
+		return tabInfo;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Component#onInitialize()
 	 */
@@ -127,9 +140,17 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 		});
 
 		// add tab body
-		StringValue currentTabSelector = getPage().getPageParameters().get(parameterName);
-		add(createBody("tabBody", currentTabSelector));
+		add(createBody("tabBody", getCurrentSelector()));
 
+	}
+
+	/**
+	 * Convenience method to get the current selector value from the page parameters. This only works
+	 * after the parent class's {@link #onInitialize()} has finished.
+	 * @return
+	 */
+	public final StringValue getCurrentSelector() {
+		return getPage().getPageParameters().get(parameterName);
 	}
 
 	/**
@@ -148,7 +169,7 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 	 * @param selector the selector for the tab to open
 	 * @return the link
 	 */
-	protected final Link<?> createTabLink(String id, Object selector) {
+	protected final Link<?> createTabLink(String id, String selector) {
 		Page page = getPage();
 		PageParameters parameters = new PageParameters(page.getPageParameters());
 		parameters.remove(parameterName).add(parameterName, selector);
@@ -177,25 +198,41 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 	public static final class TabInfo extends AbstractTabInfo {
 
 		/**
-		 * the selector
-		 */
-		private final Object selector;
-
-		/**
 		 * the title
 		 */
 		private final String title;
 
 		/**
-		 * Constructor.
-		 * @param selector the tab selector that is used as the parameter value
-		 * @param title the tab title
+		 * the selector
 		 */
-		public TabInfo(Object selector, String title) {
-			this.selector = selector;
+		private final String selector;
+		
+		/**
+		 * Constructor.
+		 * @param title the tab title
+		 * @param selector the tab selector that is used as the parameter value
+		 */
+		public TabInfo(String title, String selector) {
 			this.title = title;
+			this.selector = selector;
 		}
 
+		/**
+		 * Getter method for the title.
+		 * @return the title
+		 */
+		public String getTitle() {
+			return title;
+		}
+		
+		/**
+		 * Getter method for the selector.
+		 * @return the selector
+		 */
+		public String getSelector() {
+			return selector;
+		}
+		
 		/* (non-Javadoc)
 		 * @see name.martingeisse.papyros.frontend.components.PageParameterDrivenTabPanel.AbstractTabInfo#createTabHeaderComponent(name.martingeisse.papyros.frontend.components.PageParameterDrivenTabPanel, java.lang.String)
 		 */
@@ -205,6 +242,9 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 			link.add(new Label("title", title));
 			Fragment fragment = new Fragment(id, "simpleTabHeader", tabPanel);
 			fragment.add(link);
+			if (selector.equals(tabPanel.getCurrentSelector().toString())) {
+				fragment.add(new AttributeAppender("class", " active"));
+			}
 			return fragment;
 		}
 
@@ -213,27 +253,76 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 	/**
 	 * Describes a sub-menu that contains a list of {@link AbstractTabInfo} objects.
 	 */
-	public static final class SubmenuInfo extends AbstractTabInfo {
+	public static final class DropdownTabInfo extends AbstractTabInfo {
+
+		/**
+		 * the title
+		 */
+		private final String title;
 
 		/**
 		 * the tabInfos
 		 */
-		private final List<AbstractTabInfo> tabInfos = new ArrayList<>();
+		private final List<TabInfo> tabInfos = new ArrayList<>();
+
+		/**
+		 * Constructor.
+		 * @param title the tab title
+		 */
+		public DropdownTabInfo(String title) {
+			this.title = title;
+		}
 
 		/**
 		 * Getter method for the tabInfos.
 		 * @return the tabInfos
 		 */
-		public List<AbstractTabInfo> getTabInfos() {
+		public List<TabInfo> getTabInfos() {
 			return tabInfos;
 		}
 
+		/**
+		 * Convenience method to add a tab.
+		 * @param tabInfo the info record for the tab
+		 * @return this
+		 */
+		public final DropdownTabInfo addTab(TabInfo tabInfo) {
+			tabInfos.add(tabInfo);
+			return this;
+		}
+
+		/**
+		 * Convenience method to add a tab.
+		 * @param title the tab title
+		 * @param selector the selector that is used as the parameter value
+		 * @return this
+		 */
+		public final DropdownTabInfo addTab(String title, String selector) {
+			tabInfos.add(new TabInfo(title, selector));
+			return this;
+		}
+		
 		/* (non-Javadoc)
 		 * @see name.martingeisse.papyros.frontend.components.PageParameterDrivenTabPanel.AbstractTabInfo#createTabHeaderComponent(name.martingeisse.papyros.frontend.components.PageParameterDrivenTabPanel, java.lang.String)
 		 */
 		@Override
-		protected Component createTabHeaderComponent(PageParameterDrivenTabPanel tabPanel, String id) {
-			throw new NotImplementedException("");
+		protected Component createTabHeaderComponent(final PageParameterDrivenTabPanel tabPanel, String id) {
+			final Fragment dropdownHeaderFragment = new Fragment(id, "dropdownTabHeader", tabPanel);
+			dropdownHeaderFragment.add(new Label("title", title));
+			dropdownHeaderFragment.add(new ListView<TabInfo>("entries", new PropertyModel<List<TabInfo>>(this, "tabInfos")) {
+				@Override
+				protected void populateItem(ListItem<TabInfo> item) {
+					TabInfo tabInfo = item.getModelObject();
+					Link<?> link = tabPanel.createTabLink("link", tabInfo.getSelector());
+					link.add(new Label("title", tabInfo.getTitle()));
+					item.add(link);
+					if (tabInfo.getSelector().equals(tabPanel.getCurrentSelector().toString())) {
+						item.add(new AttributeAppender("class", " active"));
+						dropdownHeaderFragment.add(new AttributeAppender("class", " active"));
+					}
+				}
+			});
+			return dropdownHeaderFragment;
 		}
 
 	}

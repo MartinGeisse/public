@@ -50,9 +50,9 @@ public class TemplatePage extends AbstractFrontendPage {
 				return new Fragment(id, selector.toString("tabTestBody1"), TemplatePage.this);
 			}
 		};
-		tabPanel.addTab("tabTestBody1", "Foo");
-		tabPanel.addTab("tabTestBody2", "Bar");
-		tabPanel.addTab("tabTestBody3", "Fupp");
+		tabPanel.addTab("Foo", "tabTestBody1");
+		tabPanel.addTab("Bar", "tabTestBody2");
+		tabPanel.addDropdownTab("Dröpdöun").addTab("Eins", "tabTestBody3a").addTab("Zwei", "tabTestBody3b").addTab("Drei", "tabTestBody3c");
 		add(tabPanel);
 		
 	}
