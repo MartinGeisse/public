@@ -15,33 +15,25 @@
 					style="font-family: monospace;"></span>
 			</h1>
 		</div>
+		<div wicket:id="tabs" />
 		
+		<!-- preview -->
+		<wicket:fragment wicket:id="tabPreview">
+			<iframe wicket:id="iframe" />
+		</wicket:fragment>
 		
+		<!-- edit -->
+		<wicket:fragment wicket:id="tabEdit"><a wicket:id="editLink">edit</a></wicket:fragment>
 		
+		<!-- preview data -->
+		<wicket:fragment wicket:id="tabPreviewData">preview data</wicket:fragment>
 		
-		<br /><br /><br /><hr /><hr /><br /><br /><br />
+		<!-- schema -->
+		<wicket:fragment wicket:id="tabSchema">schema</wicket:fragment>
 		
-		<div wicket:id="tabTest" />
+		<!-- configuration -->
+		<wicket:fragment wicket:id="tabConfiguration">configuration</wicket:fragment>
 		
-		<wicket:fragment wicket:id="tabTestBody1">BODY 1</wicket:fragment>
-		<wicket:fragment wicket:id="tabTestBody2">BODY 2</wicket:fragment>
-		<wicket:fragment wicket:id="tabTestBody3a">BODY 3-A</wicket:fragment>
-		<wicket:fragment wicket:id="tabTestBody3b">BODY 3-B</wicket:fragment>
-		<wicket:fragment wicket:id="tabTestBody3c">BODY 3-C</wicket:fragment>
-
-		<br /><br /><br /><hr /><hr /><br /><br /><br />
-
-
-
-
-
-		
-		<div>
-			<a wicket:id="editLink">edit</a>
-		</div>
-		<div>
-			<a wicket:id="renderLink">render</a>
-		</div>
 	</wicket:extend>
 </body>
 </html>

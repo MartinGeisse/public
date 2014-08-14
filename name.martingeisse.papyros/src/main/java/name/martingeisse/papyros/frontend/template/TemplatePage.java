@@ -14,6 +14,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
@@ -33,26 +34,36 @@ public class TemplatePage extends AbstractFrontendPage {
 		final Template template = pair.getLeft();
 		final TemplateFamily family = pair.getRight();
 		
+		add(new BookmarkablePageLink<>("templateFamilyLink", TemplateFamilyPage.class, new PageParameters().add("key", family.getKey())));
 		add(new Label("templateFamilyKey", family.getKey()));
 		add(new Label("languageKey", template.getLanguageKey()));
-		add(new BookmarkablePageLink<Void>("editLink", EditTemplatePage.class, new PageParameters().add("key", family.getKey()).add("language", template.getLanguageKey())));
-		add(new BookmarkablePageLink<Void>("renderLink", TestRenderPage.class, new PageParameters().add("key", family.getKey()).add("language", template.getLanguageKey())));
 		
-		add(new BookmarkablePageLink<>("templateFamilyLink", TemplateFamilyPage.class, new PageParameters().add("key", family.getKey())));
-		
-		
-		
-		
-		// tab test
-		PageParameterDrivenTabPanel tabPanel = new PageParameterDrivenTabPanel("tabTest", "tab") {
+		PageParameterDrivenTabPanel tabPanel = new PageParameterDrivenTabPanel("tabs", "tab") {
 			@Override
 			protected Component createBody(String id, StringValue selector) {
-				return new Fragment(id, selector.toString("tabTestBody1"), TemplatePage.this);
+				String selectorValue = selector.toString(".preview");
+				if (selectorValue.equals(".preview")) {
+					Fragment fragment = new Fragment(id, "tabPreview", TemplatePage.this);
+					fragment.add(new BookmarkablePageLink<Void>("renderLink", TestRenderPage.class, new PageParameters().add("key", family.getKey()).add("language", template.getLanguageKey())));
+					return fragment;
+				} else if (selectorValue.equals(".edit")) {
+					Fragment fragment = new Fragment(id, "tabEdit", TemplatePage.this);
+					fragment.add(new BookmarkablePageLink<Void>("editLink", EditTemplatePage.class, new PageParameters().add("key", family.getKey()).add("language", template.getLanguageKey())));
+					return fragment;
+				} else if (selectorValue.equals(".preview-data")) {
+					return new Fragment(id, "tabPreviewData", TemplatePage.this);
+				} else if (selectorValue.equals(".schema")) {
+					return new Fragment(id, "tabSchema", TemplatePage.this);
+				} else if (selectorValue.equals(".configuration")) {
+					return new Fragment(id, "tabConfiguration", TemplatePage.this);
+				} else {
+					return new EmptyPanel(id);
+				}
 			}
 		};
-		tabPanel.addTab("Foo", "tabTestBody1");
-		tabPanel.addTab("Bar", "tabTestBody2");
-		tabPanel.addDropdownTab("Dröpdöun").addTab("Eins", "tabTestBody3a").addTab("Zwei", "tabTestBody3b").addTab("Drei", "tabTestBody3c");
+		tabPanel.addTab("Preview", ".preview");
+		tabPanel.addTab("Edit", ".edit");
+		tabPanel.addDropdownTab("Advanced").addTab("Preview Data", ".preview-data").addTab("Schema", ".schema").addTab("Configuration", ".configuration");
 		add(tabPanel);
 		
 	}
