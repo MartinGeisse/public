@@ -9,6 +9,7 @@ import name.martingeisse.papyros.backend.PapyrosDataUtil;
 import name.martingeisse.papyros.entity.QTemplate;
 import name.martingeisse.papyros.entity.TemplateFamily;
 import name.martingeisse.papyros.frontend.AbstractFrontendPage;
+import name.martingeisse.papyros.frontend.template.CreateTemplatePage;
 import name.martingeisse.papyros.frontend.template.TemplatePage;
 import name.martingeisse.sql.EntityConnectionManager;
 import org.apache.wicket.markup.html.basic.Label;
@@ -55,6 +56,8 @@ public final class TemplateFamilyPage extends AbstractFrontendPage {
 	
 		add(new BookmarkablePageLink<>("templateFamilyListLink", TemplateFamilyListPage.class));
 		add(new BookmarkablePageLink<>("changeKeyLink", ChangeTemplateFamilyKeyPage.class, new PageParameters().add("key", family.getKey())));
+		add(new BookmarkablePageLink<>("createLink1", CreateTemplatePage.class, new PageParameters().add("key", family.getKey())));
+		add(new BookmarkablePageLink<>("createLink2", CreateTemplatePage.class, new PageParameters().add("key", family.getKey())));
 	}
 
 }
