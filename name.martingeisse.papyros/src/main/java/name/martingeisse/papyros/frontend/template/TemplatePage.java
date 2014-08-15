@@ -5,9 +5,12 @@
 package name.martingeisse.papyros.frontend.template;
 
 import name.martingeisse.papyros.backend.PapyrosDataUtil;
+import name.martingeisse.papyros.backend.RenderTemplateAction;
+import name.martingeisse.papyros.entity.PreviewDataSet;
 import name.martingeisse.papyros.entity.Template;
 import name.martingeisse.papyros.entity.TemplateFamily;
 import name.martingeisse.papyros.frontend.AbstractFrontendPage;
+import name.martingeisse.papyros.frontend.components.Iframe;
 import name.martingeisse.papyros.frontend.components.PageParameterDrivenTabPanel;
 import name.martingeisse.papyros.frontend.family.TemplateFamilyPage;
 import org.apache.commons.lang3.tuple.Pair;
@@ -16,8 +19,10 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
+import org.json.simple.JSONValue;
 
 /**
  * The main page to manage a template.
@@ -43,9 +48,18 @@ public class TemplatePage extends AbstractFrontendPage {
 			protected Component createBody(String id, StringValue selector) {
 				String selectorValue = selector.toString(".preview");
 				if (selectorValue.equals(".preview")) {
+					
+					final PreviewDataSet previewDataSet = PapyrosDataUtil.loadPreviewDataSet(template.getTemplateFamilyId(), 0);
+					final Object previewData = (previewDataSet == null ? null : JSONValue.parse(previewDataSet.getData()));
+					final RenderTemplateAction renderTemplateAction = new RenderTemplateAction();
+					renderTemplateAction.setTemplate(template.getContent());
+					renderTemplateAction.setData(previewData);
+					final String renderedContent = renderTemplateAction.render();
+					
 					Fragment fragment = new Fragment(id, "tabPreview", TemplatePage.this);
-					fragment.add(new BookmarkablePageLink<Void>("renderLink", TestRenderPage.class, new PageParameters().add("key", family.getKey()).add("language", template.getLanguageKey())));
+					fragment.add(new Iframe("iframe", Model.of(renderedContent)));
 					return fragment;
+					
 				} else if (selectorValue.equals(".edit")) {
 					Fragment fragment = new Fragment(id, "tabEdit", TemplatePage.this);
 					fragment.add(new BookmarkablePageLink<Void>("editLink", EditTemplatePage.class, new PageParameters().add("key", family.getKey()).add("language", template.getLanguageKey())));
