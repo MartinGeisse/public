@@ -5,11 +5,10 @@
 package name.martingeisse.papyros.frontend.family;
 
 import java.util.List;
-
 import name.martingeisse.papyros.entity.QTemplateFamily;
+import name.martingeisse.papyros.entity.TemplateFamily;
 import name.martingeisse.papyros.frontend.AbstractFrontendPage;
 import name.martingeisse.sql.EntityConnectionManager;
-
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
@@ -18,7 +17,6 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-
 import com.mysema.query.sql.SQLQuery;
 
 /**
@@ -30,20 +28,22 @@ public final class TemplateFamilyListPage extends AbstractFrontendPage {
 	 * Constructor.
 	 */
 	public TemplateFamilyListPage() {
-		IModel<List<String>> model = new AbstractReadOnlyModel<List<String>>() {
+		IModel<List<TemplateFamily>> model = new AbstractReadOnlyModel<List<TemplateFamily>>() {
 			@Override
-			public List<String> getObject() {
+			public List<TemplateFamily> getObject() {
 				final QTemplateFamily qtf = QTemplateFamily.templateFamily;
 				final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-				return query.from(qtf).list(qtf.key);
+				return query.from(qtf).list(qtf);
 			}
 		};
-		add(new ListView<String>("families", model) {
+		add(new ListView<TemplateFamily>("families", model) {
 			@Override
-			protected void populateItem(ListItem<String> item) {
-				String templateFamilyKey = item.getModelObject();
+			protected void populateItem(ListItem<TemplateFamily> item) {
+				TemplateFamily templateFamily = item.getModelObject();
+				String templateFamilyKey = templateFamily.getKey();
 				Link<Void> link = new BookmarkablePageLink<>("link", TemplateFamilyPage.class, new PageParameters().add("key", templateFamilyKey));
-				link.add(new Label("text", templateFamilyKey));
+				link.add(new Label("name", templateFamily.getName()));
+				link.add(new Label("key", templateFamilyKey));
 				item.add(link);
 			}
 		});

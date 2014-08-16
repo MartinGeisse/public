@@ -117,11 +117,11 @@ public class PapyrosDataUtil {
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		query.from(qpds).where(qpds.templateFamilyId.eq(templateFamilyId));
 		List<PreviewDataSet> result = new ArrayList<>();
-		for (Object[] row : query.list(qpds.id, qpds.previewDataSetNumber, qpds.orderIndex, qpds.name, includeData ? qpds.data : Expressions.constant(null))) {
+		for (Object[] row : query.list(qpds.id, qpds.previewDataKey, qpds.orderIndex, qpds.name, includeData ? qpds.data : Expressions.constant(null))) {
 			PreviewDataSet previewDataSet = new PreviewDataSet();
 			previewDataSet.setId((long)row[0]);
 			previewDataSet.setTemplateFamilyId(templateFamilyId);
-			previewDataSet.setPreviewDataSetNumber((int)row[1]);
+			previewDataSet.setPreviewDataKey((String)row[1]);
 			previewDataSet.setOrderIndex((int)row[2]);
 			previewDataSet.setName((String)row[3]);
 			previewDataSet.setData((String)row[4]);
@@ -132,23 +132,33 @@ public class PapyrosDataUtil {
 
 	/**
 	 * @param templateFamilyId the ID of the the template family to which the preview data set belongs
-	 * @param pageParameters the page parameters object that contains the preview data set number
-	 * @return the preview data set
+	 * @return the first preview data set
 	 */
-	public static PreviewDataSet loadPreviewDataSet(long templateFamilyId, PageParameters pageParameters) {
-		int previewDataSetNumber = pageParameters.get("previewDataSetNumber").toInt(0);
-		return loadPreviewDataSet(templateFamilyId, previewDataSetNumber);
+	public static PreviewDataSet loadFirstPreviewDataSet(long templateFamilyId) {
+		final QPreviewDataSet qpds = QPreviewDataSet.previewDataSet;
+		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
+		return query.from(qpds).where(qpds.templateFamilyId.eq(templateFamilyId)).orderBy(qpds.orderIndex.asc()).singleResult(qpds);
 	}
 
 	/**
 	 * @param templateFamilyId the ID of the the template family to which the preview data set belongs
-	 * @param previewDataSetNumber the preview data set number
+	 * @param pageParameters the page parameters object that contains the preview data set number
 	 * @return the preview data set
 	 */
-	public static PreviewDataSet loadPreviewDataSet(long templateFamilyId, int previewDataSetNumber) {
+	public static PreviewDataSet loadPreviewDataSet(long templateFamilyId, PageParameters pageParameters) {
+		String previewDataKey = pageParameters.get("previewDataKey").toString("");
+		return loadPreviewDataSet(templateFamilyId, previewDataKey);
+	}
+
+	/**
+	 * @param templateFamilyId the ID of the the template family to which the preview data set belongs
+	 * @param previewDataKey the preview data key
+	 * @return the preview data set
+	 */
+	public static PreviewDataSet loadPreviewDataSet(long templateFamilyId, String previewDataKey) {
 		final QPreviewDataSet qpds = QPreviewDataSet.previewDataSet;
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-		return query.from(qpds).where(qpds.templateFamilyId.eq(templateFamilyId), qpds.previewDataSetNumber.eq(previewDataSetNumber)).singleResult(qpds);
+		return query.from(qpds).where(qpds.templateFamilyId.eq(templateFamilyId), qpds.previewDataKey.eq(previewDataKey)).singleResult(qpds);
 	}
 	
 }

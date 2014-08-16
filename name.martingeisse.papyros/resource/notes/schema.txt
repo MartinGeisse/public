@@ -1,0 +1,9 @@
+
+- Tabelle für Schema-defs
+- Template Family verweist auf *einen* Eintrag darin (braucht nur genau 1 Schema)
+- Schema-Defs können wiederum auf andere Schema-defs verweisen
+- Rekursion erlaubt? Müsste grundsätzlich gehen, weil die Daten selbst nicht
+  unendlich verschachtelt sind. Falls Rek. nicht erlaubt: nur auf Rek. Prüfen,
+  wenn schon eine mindest-Schachtelungstiefe erreicht ist (auf den üblichen
+  Fall optimieren)
+

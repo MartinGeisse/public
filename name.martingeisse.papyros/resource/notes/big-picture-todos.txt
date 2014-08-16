@@ -1,0 +1,6 @@
+
+Live Update process
+fault tolerance
+load tests
+security hardening
+bug testing / unit testing

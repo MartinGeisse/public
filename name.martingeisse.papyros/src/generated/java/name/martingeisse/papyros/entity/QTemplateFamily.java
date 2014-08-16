@@ -34,6 +34,11 @@ public class QTemplateFamily extends com.mysema.query.sql.RelationalPathBase<Tem
     public final StringPath key = createString("key");
 
     /**
+     * Metamodel property for property 'name'
+     */
+    public final StringPath name = createString("name");
+
+    /**
      * Metamodel property for primary key 'PRIMARY'
      */
     public final com.mysema.query.sql.PrimaryKey<TemplateFamily> pk_primary = createPrimaryKey(id);

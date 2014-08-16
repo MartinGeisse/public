@@ -6,9 +6,9 @@
 
 package name.martingeisse.papyros.frontend.components;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -24,7 +24,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.string.StringValue;
 
 /**
  * Shows a tabbed panel that uses a page parameter to select the
@@ -58,7 +57,7 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 	 * the parameterName
 	 */
 	private final String parameterName;
-
+	
 	/**
 	 * the tabInfos
 	 */
@@ -146,11 +145,19 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 
 	/**
 	 * Convenience method to get the current selector value from the page parameters. This only works
-	 * after the parent class's {@link #onInitialize()} has finished.
-	 * @return
+	 * after this panel has been added to a page.
+	 * @return the current selector
 	 */
-	public final StringValue getCurrentSelector() {
-		return getPage().getPageParameters().get(parameterName);
+	public final String getCurrentSelector() {
+		String explicitValue = getPage().getPageParameters().get(parameterName).toString();
+		if (explicitValue != null) {
+			return explicitValue;
+		}
+		if (tabInfos.isEmpty()) {
+			return "";
+		}
+		AbstractTabInfo tabInfo = tabInfos.get(0);
+		return tabInfo.getDefaultSelector();
 	}
 
 	/**
@@ -161,7 +168,7 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 	 * @param selector the current tab selector
 	 * @return the tab body component
 	 */
-	protected abstract Component createBody(String id, StringValue selector);
+	protected abstract Component createBody(String id, String selector);
 
 	/**
 	 * Creates a link that opens a tab.
@@ -180,7 +187,7 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 	 * Base class for "tab info" records that can be added to the panel to make
 	 * tabs selectable.
 	 */
-	public static abstract class AbstractTabInfo {
+	public static abstract class AbstractTabInfo implements Serializable {
 
 		/**
 		 * Creates the component for the tab header.
@@ -190,6 +197,12 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 		 */
 		protected abstract Component createTabHeaderComponent(PageParameterDrivenTabPanel tabPanel, String id);
 
+		/**
+		 * Returns the default selector, assuming that this tab is active.
+		 * @return the default selector
+		 */
+		protected abstract String getDefaultSelector();
+		
 	}
 
 	/**
@@ -242,12 +255,20 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 			link.add(new Label("title", title));
 			Fragment fragment = new Fragment(id, "simpleTabHeader", tabPanel);
 			fragment.add(link);
-			if (selector.equals(tabPanel.getCurrentSelector().toString())) {
+			if (selector.equals(tabPanel.getCurrentSelector())) {
 				fragment.add(new AttributeAppender("class", " active"));
 			}
 			return fragment;
 		}
 
+		/* (non-Javadoc)
+		 * @see name.martingeisse.papyros.frontend.components.PageParameterDrivenTabPanel.AbstractTabInfo#getDefaultSelector()
+		 */
+		@Override
+		protected String getDefaultSelector() {
+			return selector;
+		}
+		
 	}
 
 	/**
@@ -323,6 +344,17 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 				}
 			});
 			return dropdownHeaderFragment;
+		}
+		
+		/* (non-Javadoc)
+		 * @see name.martingeisse.papyros.frontend.components.PageParameterDrivenTabPanel.AbstractTabInfo#getDefaultSelector()
+		 */
+		@Override
+		protected String getDefaultSelector() {
+			if (tabInfos.isEmpty()) {
+				return "";
+			}
+			return tabInfos.get(0).getDefaultSelector();
 		}
 
 	}

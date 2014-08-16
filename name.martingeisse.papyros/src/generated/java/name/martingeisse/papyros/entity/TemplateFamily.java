@@ -33,6 +33,11 @@ public class TemplateFamily implements Serializable, IEntityWithId<Long> {
     private String key;
 
     /**
+     * the name
+     */
+    private String name;
+
+    /**
      * Getter method for the id.
      * @return the id
      */
@@ -66,12 +71,28 @@ public class TemplateFamily implements Serializable, IEntityWithId<Long> {
         this.key = key;
     }
 
+    /**
+     * Getter method for the name.
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Setter method for the name.
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "{TemplateFamily. id = " + id + ", key = " + key + "}";
+        return "{TemplateFamily. id = " + id + ", key = " + key + ", name = " + name + "}";
     }
 
     /**
@@ -101,6 +122,7 @@ public class TemplateFamily implements Serializable, IEntityWithId<Long> {
         final QTemplateFamily q = QTemplateFamily.templateFamily;
         final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(q);
         insert.set(q.key, key);
+        insert.set(q.name, name);
         id = insert.executeWithKey(Long.class);
     }
 

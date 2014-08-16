@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS `template_family` (
 	`key` varchar(255) NOT NULL,
 
 	-- data
+	`name` varchar(255) NOT NULL,
 
 	-- indexes
 	PRIMARY KEY (`id`),
@@ -42,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `preview_data_set` (
 
 	-- identification
 	`template_family_id` bigint(20) NOT NULL,
-	`preview_data_set_number` int NOT NULL,
+	`preview_data_key` varchar(255) NOT NULL,
 	`order_index` int NOT NULL,
 	
 	-- data
@@ -51,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `preview_data_set` (
 	
 	-- indexes
 	PRIMARY KEY (`id`),
-	UNIQUE INDEX `preview_data_set_number_index` (`template_family_id`, `preview_data_set_number`),
+	UNIQUE INDEX `preview_data_key_index` (`template_family_id`, `preview_data_key`),
 	INDEX `order_index_index` (`template_family_id`, `order_index`)
 	
 ) ENGINE=InnoDB	DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
@@ -89,12 +90,16 @@ ALTER TABLE `preview_data_set` ADD CONSTRAINT `preview_data_set_fk_1` FOREIGN KE
 -- - test data
 -- -------------------------------------------------------------------------
 
-INSERT INTO `template_family` (`id`, `key`) VALUES
-(1, 'foo');
+INSERT INTO `template_family` (`id`, `key`, `name`) VALUES
+(1, 'order.confirmation.consumer', 'Bestellbestätigung (Endkunde)'),
+(2, 'order.confirmation.merchant', 'Bestellbestätigung (Händler)');
 
 INSERT INTO `template` (`id`, `template_family_id`, `language_key`, `content`) VALUES
-(1, 1, 'en', 'This is a test template.');
+(1, 1, 'en', 'Thank you for your order.'),
+(2, 1, 'de', 'Vielen Dank für Ihre Bestellung.'),
+(3, 2, 'en', 'A new order has been placed.'),
+(4, 2, 'de', 'Eine neue Bestellung wurde aufgegeben.');
 
-INSERT INTO `preview_data_set` (`id`, `template_family_id`, `preview_data_set_number`, `order_index`, `name`, `data`) VALUES
-(1, 1, 0, 0, 'Testdaten Eins', '{"foo": "bar", "baz": "blubber"}'),
-(2, 1, 1, 1, 'Testdaten Zwei', '{"foo": "eins", "baz": "zwei"}');
+INSERT INTO `preview_data_set` (`id`, `template_family_id`, `preview_data_key`, `order_index`, `name`, `data`) VALUES
+(1, 1, 'eins', 0, 'Testdaten Eins', '{"foo": "bar", "baz": "blubber"}'),
+(2, 1, 'zwei', 1, 'Testdaten Zwei', '{"foo": "eins", "baz": "zwei"}');

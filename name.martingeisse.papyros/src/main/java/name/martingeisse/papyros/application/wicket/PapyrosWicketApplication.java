@@ -5,14 +5,12 @@
 package name.martingeisse.papyros.application.wicket;
 
 import name.martingeisse.papyros.application.page.AbstractApplicationPage;
-import name.martingeisse.papyros.frontend.family.ChangeTemplateFamilyKeyPage;
+import name.martingeisse.papyros.frontend.family.EditTemplateFamilyPage;
 import name.martingeisse.papyros.frontend.family.CreateTemplateFamilyPage;
 import name.martingeisse.papyros.frontend.family.TemplateFamilyListPage;
 import name.martingeisse.papyros.frontend.family.TemplateFamilyPage;
 import name.martingeisse.papyros.frontend.meta.HomePage;
-import name.martingeisse.papyros.frontend.template.EditTemplatePage;
 import name.martingeisse.papyros.frontend.template.TemplatePage;
-import name.martingeisse.papyros.frontend.template.TestRenderPage;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
@@ -93,9 +91,8 @@ public class PapyrosWicketApplication extends AbstractMyWicketApplication {
 		mountPage("templates", TemplateFamilyListPage.class);
 		mountPage("templates/.new", CreateTemplateFamilyPage.class);
 		mountPage("templates/${key}", TemplateFamilyPage.class);
-		mountPage("templates/${key}/.change-key", ChangeTemplateFamilyKeyPage.class);
+		mountPage("templates/${key}/.edit", EditTemplateFamilyPage.class);
 		mountPage("templates/${key}/${language}", TemplatePage.class);
-		mountPage("templates/${key}/${language}/.edit", EditTemplatePage.class);
 
 		// mount Bootstrap fonts
 		{

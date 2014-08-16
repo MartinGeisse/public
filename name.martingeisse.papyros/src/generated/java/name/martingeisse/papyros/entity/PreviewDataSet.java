@@ -44,9 +44,9 @@ public class PreviewDataSet implements Serializable, IEntityWithId<Long>, IEntit
     private Integer orderIndex;
 
     /**
-     * the previewDataSetNumber
+     * the previewDataKey
      */
-    private Integer previewDataSetNumber;
+    private String previewDataKey;
 
     /**
      * the templateFamilyId
@@ -122,19 +122,19 @@ public class PreviewDataSet implements Serializable, IEntityWithId<Long>, IEntit
     }
 
     /**
-     * Getter method for the previewDataSetNumber.
-     * @return the previewDataSetNumber
+     * Getter method for the previewDataKey.
+     * @return the previewDataKey
      */
-    public Integer getPreviewDataSetNumber() {
-        return previewDataSetNumber;
+    public String getPreviewDataKey() {
+        return previewDataKey;
     }
 
     /**
-     * Setter method for the previewDataSetNumber.
-     * @param previewDataSetNumber the previewDataSetNumber to set
+     * Setter method for the previewDataKey.
+     * @param previewDataKey the previewDataKey to set
      */
-    public void setPreviewDataSetNumber(Integer previewDataSetNumber) {
-        this.previewDataSetNumber = previewDataSetNumber;
+    public void setPreviewDataKey(String previewDataKey) {
+        this.previewDataKey = previewDataKey;
     }
 
     /**
@@ -158,7 +158,7 @@ public class PreviewDataSet implements Serializable, IEntityWithId<Long>, IEntit
      */
     @Override
     public String toString() {
-        return "{PreviewDataSet. data = " + data + ", id = " + id + ", name = " + name + ", orderIndex = " + orderIndex + ", previewDataSetNumber = " + previewDataSetNumber + ", templateFamilyId = " + templateFamilyId + "}";
+        return "{PreviewDataSet. data = " + data + ", id = " + id + ", name = " + name + ", orderIndex = " + orderIndex + ", previewDataKey = " + previewDataKey + ", templateFamilyId = " + templateFamilyId + "}";
     }
 
     /**
@@ -190,7 +190,7 @@ public class PreviewDataSet implements Serializable, IEntityWithId<Long>, IEntit
         insert.set(q.data, data);
         insert.set(q.name, name);
         insert.set(q.orderIndex, orderIndex);
-        insert.set(q.previewDataSetNumber, previewDataSetNumber);
+        insert.set(q.previewDataKey, previewDataKey);
         insert.set(q.templateFamilyId, templateFamilyId);
         id = insert.executeWithKey(Long.class);
     }

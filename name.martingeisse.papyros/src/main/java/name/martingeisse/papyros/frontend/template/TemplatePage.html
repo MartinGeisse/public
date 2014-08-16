@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <html>
+<wicket:head>
+	<style type="text/css">
+
+		.CodeMirror {
+			border: 1px solid #444;
+		}
+		
+	</style>
+</wicket:head>
 <body>
 	<wicket:extend>
 		<div>
@@ -7,12 +16,8 @@
 		</div>
 		<div class="page-header">
 			<h1>
-				Template family: <span wicket:id="templateFamilyKey"
-					style="font-family: monospace;"></span>
-			</h1>
-			<h1>
-				Language: <span wicket:id="languageKey"
-					style="font-family: monospace;"></span>
+				<div><span wicket:id="templateFamilyName" /> – <span wicket:id="languageKey" style="font-family: monospace;" /></div>
+				<div style="font-size: 0.5em; font-family: monospace" wicket:id="templateFamilyKey" />
 			</h1>
 		</div>
 		<div wicket:id="tabs" />
@@ -23,16 +28,28 @@
 		</wicket:fragment>
 		
 		<!-- edit -->
-		<wicket:fragment wicket:id="tabEdit"><a wicket:id="editLink">edit</a></wicket:fragment>
-		
-		<!-- preview data -->
-		<wicket:fragment wicket:id="tabPreviewData">preview data</wicket:fragment>
-		
-		<!-- schema -->
-		<wicket:fragment wicket:id="tabSchema">schema</wicket:fragment>
-		
-		<!-- configuration -->
-		<wicket:fragment wicket:id="tabConfiguration">configuration</wicket:fragment>
+		<wicket:fragment wicket:id="tabEdit">
+			<div class="col-xs-12">
+				<form wicket:id="form">
+					<textarea wicket:id="textarea" />
+					<input type="submit" />
+				</form>
+			</div>
+			<div class="col-xs-12">
+				<ul wicket:id="compilerMarkersContainer">
+					<li wicket:id="compilerMarkers">
+						<span wicket:id="icon" />
+						<span wicket:id="message" />
+					</li>
+				</ul>
+			</div>
+			<div class="col-xs-12">
+				<h2>Preview:</h2>
+				<iframe wicket:id="previewIframe" style="width: 100%" />
+			</div>
+			
+			<br /><br />
+		</wicket:fragment>
 		
 	</wicket:extend>
 </body>

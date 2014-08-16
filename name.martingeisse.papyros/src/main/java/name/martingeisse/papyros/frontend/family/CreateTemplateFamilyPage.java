@@ -45,6 +45,7 @@ public final class CreateTemplateFamilyPage extends AbstractFrontendPage {
 			};
 		};
 		keyComponent = stdform.addTextField("Key", "key").setRequired().getFormComponent();
+		stdform.addTextField("Name", "name").setRequired();
 		stdform.addSubmitButton();
 		add(stdform);
 	}

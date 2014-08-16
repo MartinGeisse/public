@@ -1,0 +1,7 @@
+
+if a template has errors, those errors aren't shown when opening the
+edit page, only after making a change.
+
+field name wrong in validation errors, e.g. leave template family name empty:
+	Bitte tragen Sie einen Wert im Feld 'textField' ein.
+
