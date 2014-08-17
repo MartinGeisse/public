@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.papyros.frontend.previewdata;
+package name.martingeisse.papyros.frontend.schema;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,8 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import name.martingeisse.common.terms.IConsumer;
 import name.martingeisse.papyros.backend.PapyrosDataUtil;
-import name.martingeisse.papyros.entity.PreviewDataSet;
-import name.martingeisse.papyros.entity.QPreviewDataSet;
+import name.martingeisse.papyros.entity.QTemplateFamily;
 import name.martingeisse.papyros.entity.TemplateFamily;
 import name.martingeisse.papyros.frontend.AbstractFrontendPage;
 import name.martingeisse.papyros.frontend.components.CompilerMarkerListPanel;
@@ -34,9 +33,9 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 
 /**
- * This page allows to edit a preview set.
+ * This page allows to edit a schema.
  */
-public class PreviewDataPage extends AbstractFrontendPage {
+public class SchemaPage extends AbstractFrontendPage {
 
 	/**
 	 * the editableContent
@@ -52,35 +51,32 @@ public class PreviewDataPage extends AbstractFrontendPage {
 	 * Constructor.
 	 * @param pageParameters the page parameters
 	 */
-	public PreviewDataPage(final PageParameters pageParameters) {
+	public SchemaPage(final PageParameters pageParameters) {
 		super(pageParameters);
 		final TemplateFamily templateFamily = PapyrosDataUtil.loadTemplateFamily(pageParameters);
-		final PreviewDataSet previewData = PapyrosDataUtil.loadPreviewDataSet(templateFamily.getId(), pageParameters);
-		this.editableContent = previewData.getData();
+		this.editableContent = templateFamily.getSchema();
 		
-		add(new BookmarkablePageLink<>("templateFamilyLink", TemplateFamilyPage.class, new PageParameters().add("key", templateFamily.getKey()).add("tab", ".preview-data")));
+		add(new BookmarkablePageLink<>("templateFamilyLink", TemplateFamilyPage.class, new PageParameters().add("key", templateFamily.getKey()).add("tab", ".schema")));
 		add(new Label("templateFamilyName", templateFamily.getName()));
 		add(new Label("templateFamilyKey", templateFamily.getKey()));
-		add(new Label("previewDataName", previewData.getName()));
-		add(new Label("previewDataKey", previewData.getPreviewDataKey()));
 		
 		//
-		final PreviewDataAutocompiler previewDataAutocompiler = new PreviewDataAutocompiler();
-		setCompilerMarkersFromResult(previewDataAutocompiler.compile(editableContent));
+		final SchemaAutocompiler schemaAutocompiler = new SchemaAutocompiler();
+		setCompilerMarkersFromResult(schemaAutocompiler.compile(editableContent));
 		
 		// build the edit form and CodeMirror
 		final Form<Void> form = new Form<Void>("form") {
 			@Override
 			protected void onSubmit() {
-				final QPreviewDataSet q = QPreviewDataSet.previewDataSet;
+				final QTemplateFamily q = QTemplateFamily.templateFamily;
 				final SQLUpdateClause update = EntityConnectionManager.getConnection().createUpdate(q);
-				update.set(q.data, editableContent).where(q.id.eq(previewData.getId()));
+				update.set(q.schema, editableContent).where(q.id.eq(templateFamily.getId()));
 				update.execute();
-				setResponsePage(TemplateFamilyPage.class, new PageParameters().add("key", templateFamily.getKey()).add("tab", ".preview-data"));
+				setResponsePage(TemplateFamilyPage.class, new PageParameters().add("key", templateFamily.getKey()).add("tab", ".schema"));
 			}
 		};
 		final CodeMirrorBehavior codeMirrorBehavior = new CodeMirrorBehavior(StandardCodeMirrorModes.JAVASCRIPT);
-		final CodeMirrorAutocompileBehavior autocompileBehavior = new CodeMirrorAutocompileBehavior(previewDataAutocompiler);
+		final CodeMirrorAutocompileBehavior autocompileBehavior = new CodeMirrorAutocompileBehavior(schemaAutocompiler);
 		form.add(new TextArea<>("textarea", new PropertyModel<>(this, "content")).add(codeMirrorBehavior).add(autocompileBehavior));
 		add(form);
 

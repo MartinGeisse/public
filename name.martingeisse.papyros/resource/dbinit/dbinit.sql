@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS `template_family` (
 
 	-- data
 	`name` varchar(255) NOT NULL,
+	`schema` mediumtext NOT NULL,
 
 	-- indexes
 	PRIMARY KEY (`id`),
@@ -90,9 +91,9 @@ ALTER TABLE `preview_data_set` ADD CONSTRAINT `preview_data_set_fk_1` FOREIGN KE
 -- - test data
 -- -------------------------------------------------------------------------
 
-INSERT INTO `template_family` (`id`, `key`, `name`) VALUES
-(1, 'order.confirmation.consumer', 'Bestellbestätigung (Endkunde)'),
-(2, 'order.confirmation.merchant', 'Bestellbestätigung (Händler)');
+INSERT INTO `template_family` (`id`, `key`, `name`, `schema`) VALUES
+(1, 'order.confirmation.consumer', 'Bestellbestätigung (Endkunde)', 'null'),
+(2, 'order.confirmation.merchant', 'Bestellbestätigung (Händler)', 'null');
 
 INSERT INTO `template` (`id`, `template_family_id`, `language_key`, `content`) VALUES
 (1, 1, 'en', 'Thank you for your order.'),

@@ -42,7 +42,11 @@
 				</tfoot>
 				<tbody>
 					<tr wicket:id="templates">
-						<td><a wicket:id="link"><span wicket:id="text" /></a></td>
+						<td>
+							<a wicket:id="link" style="text-decoration: inherit; ">
+								<span wicket:id="text" />
+							</a>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -71,17 +75,26 @@
 				</tfoot>
 				<tbody>
 					<tr wicket:id="previewDataSets">
-						<td><a wicket:id="link"><span wicket:id="text" /></a></td>
+						<td>
+							<a wicket:id="link" style="text-decoration: inherit; ">
+								<div wicket:id="name" />
+								<div wicket:id="key" style="font-size: 0.5em" />
+							</a>
+						</td>
 					</tr>
 				</tbody>
 			</table>
 		</wicket:fragment>
 		
 		<!-- schema -->
-		<wicket:fragment wicket:id="tabSchema">schema</wicket:fragment>
+		<wicket:fragment wicket:id="tabSchema">
+			<br />
+			<div wicket:id="linkPanel" />
+		</wicket:fragment>
 		
 		<!-- configuration -->
-		<wicket:fragment wicket:id="tabConfiguration">configuration</wicket:fragment>
+		<wicket:fragment wicket:id="tabConfiguration">
+		</wicket:fragment>
 
 	</wicket:extend>
 </body>

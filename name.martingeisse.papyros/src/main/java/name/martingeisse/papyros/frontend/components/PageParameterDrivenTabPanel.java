@@ -176,13 +176,30 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 	 * @param selector the selector for the tab to open
 	 * @return the link
 	 */
-	protected final Link<?> createTabLink(String id, String selector) {
+	public final Link<?> createTabLink(String id, String selector) {
 		Page page = getPage();
-		PageParameters parameters = new PageParameters(page.getPageParameters());
-		parameters.remove(parameterName).add(parameterName, selector);
-		return new BookmarkablePageLink<>(id, page.getClass(), parameters);
+		return new BookmarkablePageLink<>(id, page.getClass(), createTabLinkPageParameters(page, selector));
 	}
 
+	/**
+	 * Creates the {@link PageParameters} for a link that opens a tab.
+	 * @param selector the selector for the tab to open
+	 * @return the parameters
+	 */
+	public final PageParameters createTabLinkPageParameters(String selector) {
+		return createTabLinkPageParameters(getPage(), selector);
+	}
+	
+	/**
+	 * 
+	 */
+	private final PageParameters createTabLinkPageParameters(Page page, String selector) {
+		PageParameters parameters = new PageParameters(page.getPageParameters());
+		parameters.remove(parameterName).add(parameterName, selector);
+		return parameters;
+	}
+	
+	
 	/**
 	 * Base class for "tab info" records that can be added to the panel to make
 	 * tabs selectable.

@@ -6,7 +6,6 @@ package name.martingeisse.papyros.frontend.previewdata;
 
 import name.martingeisse.papyros.backend.PapyrosDataUtil;
 import name.martingeisse.papyros.entity.PreviewDataSet;
-import name.martingeisse.papyros.entity.Template;
 import name.martingeisse.papyros.entity.TemplateFamily;
 import name.martingeisse.papyros.frontend.AbstractFrontendPage;
 import name.martingeisse.papyros.frontend.family.TemplateFamilyPage;
@@ -23,9 +22,9 @@ import com.mysema.query.QueryException;
 public final class CreatePreviewDataPage extends AbstractFrontendPage {
 
 	/**
-	 * the nameComponent
+	 * the keyComponent
 	 */
-	// private final FormComponent<?> nameComponent;
+	private final FormComponent<?> keyComponent;
 	
 	/**
 	 * Constructor.
@@ -34,33 +33,29 @@ public final class CreatePreviewDataPage extends AbstractFrontendPage {
 	public CreatePreviewDataPage(PageParameters pageParameters) {
 		final TemplateFamily family = PapyrosDataUtil.loadTemplateFamily(pageParameters);
 		add(new BookmarkablePageLink<>("templateFamilyLink", TemplateFamilyPage.class, new PageParameters().add("key", family.getKey())));
-		/*
 		BeanStandardFormPanel<PreviewDataSet> stdform = new BeanStandardFormPanel<PreviewDataSet>("stdform", Model.of(new PreviewDataSet()), true) {
 			@Override
 			protected void onSubmit() {
 				PreviewDataSet previewDataSet = getBean();
 				previewDataSet.setTemplateFamilyId(family.getId());
-				previewDataSet.setPreviewDataSetNumber(0); // TODO assign a number
 				previewDataSet.setOrderIndex(0);
 				previewDataSet.setData("null");
-				previewDataSet.set
-				previewDataSet.setContent("");
 				try {
 					previewDataSet.insert();
 				} catch (QueryException e) {
 					System.out.println(e);
 				}
 				if (previewDataSet.getId() == null) {
-					languageKeyComponent.error("could not create template");
+					keyComponent.error("could not create template");
 				} else {
-					setResponsePage(TemplatePage.class, new PageParameters().add("key", family.getKey()).add("language", previewDataSet.getLanguageKey()));
+					setResponsePage(PreviewDataPage.class, new PageParameters().add("key", family.getKey()).add("previewDataKey", previewDataSet.getPreviewDataKey()));
 				}
 			};
 		};
-		languageKeyComponent = stdform.addTextField("Language Key", "languageKey").setRequired().getFormComponent();
+		keyComponent = stdform.addTextField("Preview Data Key", "previewDataKey").setRequired().getFormComponent();
+		stdform.addTextField("Name", "name").setRequired();
 		stdform.addSubmitButton();
 		add(stdform);
-		*/
 	}
 	
 }

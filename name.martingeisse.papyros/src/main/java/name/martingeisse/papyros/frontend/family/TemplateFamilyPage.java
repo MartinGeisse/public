@@ -6,10 +6,16 @@ package name.martingeisse.papyros.frontend.family;
 
 import java.util.List;
 import name.martingeisse.papyros.backend.PapyrosDataUtil;
+import name.martingeisse.papyros.entity.PreviewDataSet;
+import name.martingeisse.papyros.entity.QPreviewDataSet;
 import name.martingeisse.papyros.entity.QTemplate;
 import name.martingeisse.papyros.entity.TemplateFamily;
 import name.martingeisse.papyros.frontend.AbstractFrontendPage;
+import name.martingeisse.papyros.frontend.components.NerdsOnlyLinkPanel;
 import name.martingeisse.papyros.frontend.components.PageParameterDrivenTabPanel;
+import name.martingeisse.papyros.frontend.previewdata.CreatePreviewDataPage;
+import name.martingeisse.papyros.frontend.previewdata.PreviewDataPage;
+import name.martingeisse.papyros.frontend.schema.SchemaPage;
 import name.martingeisse.papyros.frontend.template.CreateTemplatePage;
 import name.martingeisse.papyros.frontend.template.TemplatePage;
 import name.martingeisse.sql.EntityConnectionManager;
@@ -76,24 +82,26 @@ public final class TemplateFamilyPage extends AbstractFrontendPage {
 					
 					final Fragment fragment = new Fragment(id, "tabPreviewData", TemplateFamilyPage.this);
 					// TODO link to correct page
-					fragment.add(new BookmarkablePageLink<>("createLink1", CreateTemplatePage.class, new PageParameters().add("key", family.getKey())));
-					fragment.add(new BookmarkablePageLink<>("createLink2", CreateTemplatePage.class, new PageParameters().add("key", family.getKey())));
+					fragment.add(new BookmarkablePageLink<>("createLink1", CreatePreviewDataPage.class, new PageParameters().add("key", family.getKey())));
+					fragment.add(new BookmarkablePageLink<>("createLink2", CreatePreviewDataPage.class, new PageParameters().add("key", family.getKey())));
 
 					// TODO list preview data sets, not templates
-					IModel<List<String>> templateListModel = new AbstractReadOnlyModel<List<String>>() {
+					IModel<List<PreviewDataSet>> previewDataListModel = new AbstractReadOnlyModel<List<PreviewDataSet>>() {
 						@Override
-						public List<String> getObject() {
-							final QTemplate qt = QTemplate.template;
+						public List<PreviewDataSet> getObject() {
+							final QPreviewDataSet qpds = QPreviewDataSet.previewDataSet;
 							final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
-							return query.from(qt).where(qt.templateFamilyId.eq(family.getId())).list(qt.languageKey);
+							return query.from(qpds).where(qpds.templateFamilyId.eq(family.getId())).orderBy(qpds.orderIndex.asc()).list(qpds);
 						}
 					};
-					fragment.add(new ListView<String>("previewDataSets", templateListModel) {
+					fragment.add(new ListView<PreviewDataSet>("previewDataSets", previewDataListModel) {
 						@Override
-						protected void populateItem(ListItem<String> item) {
-							String languageKey = item.getModelObject();
-							Link<Void> link = new BookmarkablePageLink<>("link", TemplatePage.class, new PageParameters().add("key", family.getKey()).add("language", languageKey));
-							link.add(new Label("text", languageKey));
+						protected void populateItem(ListItem<PreviewDataSet> item) {
+							PreviewDataSet previewDataSet = item.getModelObject();
+							String previewDataKey = previewDataSet.getPreviewDataKey();
+							Link<Void> link = new BookmarkablePageLink<>("link", PreviewDataPage.class, new PageParameters().add("key", family.getKey()).add("previewDataKey", previewDataKey));
+							link.add(new Label("name", previewDataSet.getName()));
+							link.add(new Label("key", previewDataKey));
 							item.add(link);
 						}
 					});
@@ -101,7 +109,9 @@ public final class TemplateFamilyPage extends AbstractFrontendPage {
 					return fragment;
 					
 				} else if (selector.equals(".schema")) {
-					return new Fragment(id, "tabSchema", TemplateFamilyPage.this);
+					Fragment fragment = new Fragment(id, "tabSchema", TemplateFamilyPage.this);
+					fragment.add(new NerdsOnlyLinkPanel("linkPanel", SchemaPage.class, new PageParameters().add("key", family.getKey())));
+					return fragment;
 				} else if (selector.equals(".configuration")) {
 					return new Fragment(id, "tabConfiguration", TemplateFamilyPage.this);
 				} else {

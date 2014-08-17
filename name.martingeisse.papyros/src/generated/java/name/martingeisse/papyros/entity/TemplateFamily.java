@@ -38,6 +38,11 @@ public class TemplateFamily implements Serializable, IEntityWithId<Long> {
     private String name;
 
     /**
+     * the schema
+     */
+    private String schema;
+
+    /**
      * Getter method for the id.
      * @return the id
      */
@@ -87,12 +92,28 @@ public class TemplateFamily implements Serializable, IEntityWithId<Long> {
         this.name = name;
     }
 
+    /**
+     * Getter method for the schema.
+     * @return the schema
+     */
+    public String getSchema() {
+        return schema;
+    }
+
+    /**
+     * Setter method for the schema.
+     * @param schema the schema to set
+     */
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "{TemplateFamily. id = " + id + ", key = " + key + ", name = " + name + "}";
+        return "{TemplateFamily. id = " + id + ", key = " + key + ", name = " + name + ", schema = " + schema + "}";
     }
 
     /**
@@ -123,6 +144,7 @@ public class TemplateFamily implements Serializable, IEntityWithId<Long> {
         final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(q);
         insert.set(q.key, key);
         insert.set(q.name, name);
+        insert.set(q.schema, schema);
         id = insert.executeWithKey(Long.class);
     }
 

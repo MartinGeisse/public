@@ -7,7 +7,6 @@ package name.martingeisse.papyros.frontend.template;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import name.martingeisse.common.terms.IConsumer;
 import name.martingeisse.papyros.backend.PapyrosDataUtil;
@@ -17,6 +16,7 @@ import name.martingeisse.papyros.entity.QTemplate;
 import name.martingeisse.papyros.entity.Template;
 import name.martingeisse.papyros.entity.TemplateFamily;
 import name.martingeisse.papyros.frontend.AbstractFrontendPage;
+import name.martingeisse.papyros.frontend.components.CompilerMarkerListPanel;
 import name.martingeisse.papyros.frontend.components.Iframe;
 import name.martingeisse.papyros.frontend.components.PageParameterDrivenTabPanel;
 import name.martingeisse.papyros.frontend.family.TemplateFamilyPage;
@@ -24,20 +24,17 @@ import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.wicket.component.codemirror.CodeMirrorBehavior;
 import name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior;
 import name.martingeisse.wicket.component.codemirror.compile.CompilerMarker;
+import name.martingeisse.wicket.component.codemirror.compile.CompilerMarkerErrorLevelComparator;
 import name.martingeisse.wicket.component.codemirror.compile.CompilerResult;
 import name.martingeisse.wicket.component.codemirror.modes.StandardCodeMirrorModes;
-import name.martingeisse.wicket.component.misc.GlyphiconComponent;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.Model;
@@ -121,6 +118,7 @@ public class TemplatePage extends AbstractFrontendPage {
 							final SQLUpdateClause update = EntityConnectionManager.getConnection().createUpdate(q);
 							update.set(q.content, editableContent).where(q.id.eq(template.getId()));
 							update.execute();
+							setResponsePage(TemplatePage.class, createTabLinkPageParameters(".preview"));
 						}
 					};
 					final CodeMirrorBehavior codeMirrorBehavior = new CodeMirrorBehavior(StandardCodeMirrorModes.JAVASCRIPT);
@@ -128,45 +126,16 @@ public class TemplatePage extends AbstractFrontendPage {
 					form.add(new TextArea<>("textarea", new PropertyModel<>(TemplatePage.this, "content")).add(codeMirrorBehavior).add(autocompileBehavior));
 					fragment.add(form);
 
-					// build the markers list
-					WebMarkupContainer compilerMarkersContainer = new WebMarkupContainer("compilerMarkersContainer");
-					compilerMarkersContainer.setOutputMarkupId(true);
-					fragment.add(compilerMarkersContainer);
-					compilerMarkersContainer.add(new ListView<CompilerMarker>("compilerMarkers", new PropertyModel<List<CompilerMarker>>(TemplatePage.this, "compilerMarkers")) {
-						@Override
-						protected void populateItem(final ListItem<CompilerMarker> item) {
-
-							// add color class
-							final CompilerMarker marker = item.getModelObject();
-							final String cssClassName = "autocompile-" + marker.getErrorLevel().name().toLowerCase() + "-color";
-							item.add(new AttributeAppender("class", Model.of(cssClassName), " "));
-
-							// add icon
-							item.add(new GlyphiconComponent("icon") {
-								@Override
-								protected String getGlyphiconIdentifier() {
-									return marker.getErrorLevel().getGlyphicon();
-								}
-							});
-
-							// add message
-							final StringBuilder builder = new StringBuilder();
-							builder.append(marker.getStartLine() + 1);
-							builder.append(", ");
-							builder.append(marker.getStartColumn() + 1);
-							builder.append(": ");
-							builder.append(marker.getMessage());
-							item.add(new Label("message", builder));
-
-						}
-					});
-					
 					// build the preview
 					Iframe previewIframe = new Iframe("previewIframe", new PropertyModel<>(TemplatePage.this, "renderedPreview"));
 					previewIframe.setOutputMarkupId(true);
 					fragment.add(previewIframe);
 					
-					autocompileBehavior.setResultConsumer(new CompilerResultConsumer(previewIframe, compilerMarkersContainer));
+					// build the markers list
+					CompilerMarkerListPanel compilerMarkersListPanel = new CompilerMarkerListPanel("compilerMarkers", new PropertyModel<List<CompilerMarker>>(TemplatePage.this, "compilerMarkers"));
+					fragment.add(compilerMarkersListPanel);
+					autocompileBehavior.setResultConsumer(new CompilerResultConsumer(previewIframe, compilerMarkersListPanel));
+					
 					return fragment;
 
 				} else {
@@ -209,12 +178,7 @@ public class TemplatePage extends AbstractFrontendPage {
 	 */
 	private void setCompilerMarkersFromResult(final CompilerResult compilerResult) {
 		compilerMarkers = new ArrayList<>(compilerResult.getMarkers());
-		Collections.sort(compilerMarkers, new Comparator<CompilerMarker>() {
-			@Override
-			public int compare(final CompilerMarker o1, final CompilerMarker o2) {
-				return o1.getErrorLevel().ordinal() - o2.getErrorLevel().ordinal();
-			}
-		});
+		Collections.sort(compilerMarkers, new CompilerMarkerErrorLevelComparator());
 	}
 
 	/**

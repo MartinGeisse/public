@@ -6,12 +6,10 @@ package name.martingeisse.papyros.application;
 
 import java.util.EnumSet;
 import java.util.Locale;
-
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-
 import name.martingeisse.api.handler.DefaultMasterHandler;
 import name.martingeisse.api.handler.misc.NotFoundHandler;
 import name.martingeisse.api.request.ApiRequestCycle;
@@ -24,13 +22,11 @@ import name.martingeisse.jetty.AntiJsessionidUrlFilter;
 import name.martingeisse.jetty.FlushFilter;
 import name.martingeisse.jetty.GlobalServletContext;
 import name.martingeisse.jetty.NoFlushOrCloseFilter;
-import name.martingeisse.jetty.TimingFilter;
 import name.martingeisse.papyros.api.ApiRootHandler;
 import name.martingeisse.papyros.application.security.PapyrosSecurityProvider;
 import name.martingeisse.papyros.application.wicket.PapyrosWicketApplication;
 import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.sql.MysqlDatabaseDescriptor;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.protocol.http.WicketFilter;
 import org.eclipse.jetty.server.Server;
@@ -42,7 +38,6 @@ import org.eclipse.jetty.servlets.IncludableGzipFilter;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
-
 import com.datastax.driver.core.Cluster;
 import com.hazelcast.core.Hazelcast;
 /**
@@ -128,7 +123,7 @@ public class Initializer {
 		context.addFilter(AntiJsessionidUrlFilter.class, "/*", allDispatcherTypes);
 		
 		// log timing info for all requests
-		addGlobalFilter(context, new TimingFilter());
+		// addGlobalFilter(context, new TimingFilter());
 
 		// make sure all responses get flushed
 		addGlobalFilter(context, new FlushFilter());
@@ -172,6 +167,7 @@ public class Initializer {
 		final FilterHolder wicketFilterHolder = new FilterHolder(wicketFilter);
 		wicketFilterHolder.setInitParameter(WicketFilter.FILTER_MAPPING_PARAM, "/*");
 		wicketFilterHolder.setInitParameter("applicationClassName", PapyrosWicketApplication.class.getCanonicalName());
+		// wicketFilterHolder.setInitParameter("configuration", "deployment");
 		context.addFilter(wicketFilterHolder, "/*", allDispatcherTypes);
 
 		// a default servlet is needed, otherwise the filters cannot catch the request
