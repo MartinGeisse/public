@@ -1,0 +1,34 @@
+
+- need a sample application that can be customized
+	- shopping system -> too complicated
+	- chat application (web + socket.io)?
+	- customization:
+		- toolbar
+		- content objects
+
+- write a few customizations
+	- chat: add boldface (previous: only plaintext)
+	- chat: quote previous message from other user
+	- chat: drag'n'drop image
+
+- explain: architecture problems (nur kurz, das ist nicht der Kern)
+	system must be prepared to accept such customizations
+	
+- need for sandboxing
+	- server-installed plugins from untrusted sources
+		- this is going to be a problem, even with sandboxing
+	- client-installed plugins (sources & client untrusted)
+		- even more of a problem
+	-->
+	upper limit on usefulness for plugins from untrusted sources!
+	- cannot give sensitive data to untrusted code
+
+- sandboxing
+
+- workarounds for problems with untrusted code
+	- handles instead of data
+	-->
+	if the customization code is untrusted, then more customization
+	implies more handling code on the "trusted" side
+
+
