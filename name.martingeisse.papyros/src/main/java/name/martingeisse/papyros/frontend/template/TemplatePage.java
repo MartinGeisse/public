@@ -26,7 +26,7 @@ import name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompi
 import name.martingeisse.wicket.component.codemirror.compile.CompilerMarker;
 import name.martingeisse.wicket.component.codemirror.compile.CompilerMarkerErrorLevelComparator;
 import name.martingeisse.wicket.component.codemirror.compile.CompilerResult;
-import name.martingeisse.wicket.component.codemirror.modes.StandardCodeMirrorModes;
+import name.martingeisse.wicket.component.codemirror.modes.CodeMirrorModes;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
@@ -121,7 +121,7 @@ public class TemplatePage extends AbstractFrontendPage {
 							setResponsePage(TemplatePage.class, createTabLinkPageParameters(".preview"));
 						}
 					};
-					final CodeMirrorBehavior codeMirrorBehavior = new CodeMirrorBehavior(StandardCodeMirrorModes.JAVASCRIPT);
+					final CodeMirrorBehavior codeMirrorBehavior = new CodeMirrorBehavior(CodeMirrorModes.JAVASCRIPT);
 					final CodeMirrorAutocompileBehavior autocompileBehavior = new CodeMirrorAutocompileBehavior(templateAutocompiler);
 					form.add(new TextArea<>("textarea", new PropertyModel<>(TemplatePage.this, "content")).add(codeMirrorBehavior).add(autocompileBehavior));
 					fragment.add(form);

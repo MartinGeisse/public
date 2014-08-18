@@ -22,7 +22,7 @@ import name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompi
 import name.martingeisse.wicket.component.codemirror.compile.CompilerMarker;
 import name.martingeisse.wicket.component.codemirror.compile.CompilerMarkerErrorLevelComparator;
 import name.martingeisse.wicket.component.codemirror.compile.CompilerResult;
-import name.martingeisse.wicket.component.codemirror.modes.StandardCodeMirrorModes;
+import name.martingeisse.wicket.component.codemirror.modes.CodeMirrorModes;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -79,7 +79,7 @@ public class PreviewDataPage extends AbstractFrontendPage {
 				setResponsePage(TemplateFamilyPage.class, new PageParameters().add("key", templateFamily.getKey()).add("tab", ".preview-data"));
 			}
 		};
-		final CodeMirrorBehavior codeMirrorBehavior = new CodeMirrorBehavior(StandardCodeMirrorModes.JAVASCRIPT);
+		final CodeMirrorBehavior codeMirrorBehavior = new CodeMirrorBehavior(CodeMirrorModes.JSON);
 		final CodeMirrorAutocompileBehavior autocompileBehavior = new CodeMirrorAutocompileBehavior(previewDataAutocompiler);
 		form.add(new TextArea<>("textarea", new PropertyModel<>(this, "content")).add(codeMirrorBehavior).add(autocompileBehavior));
 		add(form);

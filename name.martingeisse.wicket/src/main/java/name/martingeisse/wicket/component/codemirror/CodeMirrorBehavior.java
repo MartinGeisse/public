@@ -7,6 +7,7 @@
 package name.martingeisse.wicket.component.codemirror;
 
 import name.martingeisse.wicket.util.WicketHeadUtil;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -43,12 +44,28 @@ public class CodeMirrorBehavior extends Behavior {
 		response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(CodeMirrorBehavior.class, "codemirror.js")));
 		WicketHeadUtil.includeClassJavascript(response, CodeMirrorBehavior.class);
 		mode.renderResourceReferences(response);
-		mode.renderInitializerForTextArea(response, component);
+		renderInitializerForTextArea(component, response);
 
 		String script =
 			"var q = $('#" + component.getMarkupId() + "'); \n" +
 			"q.parents('.collapse').on('shown.bs.collapse', function(e) {q.data('codeMirrorInstance').refresh(); });";
 		response.render(OnDomReadyHeaderItem.forScript(script));
+	}
+
+	/**
+	 * Renders a Javascript fragment to the specified header response that initializes CodeMirror in this mode for the specified text area.
+	 * 
+	 * @param textArea the text area that shall be using CodeMirror
+	 * @param response the response to render to
+	 */
+	private void renderInitializerForTextArea(Component textArea, IHeaderResponse response) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("var q = $('#").append(textArea.getMarkupId()).append("'); \n");
+		builder.append("var codeMirror = q.createCodeMirrorForTextArea(");
+		mode.renderModeParameter(builder);
+		builder.append(", {}); \n");
+		builder.append("q.data('codeMirrorInstance', codeMirror); ");
+		response.render(OnDomReadyHeaderItem.forScript(builder.toString()));
 	}
 	
 }
