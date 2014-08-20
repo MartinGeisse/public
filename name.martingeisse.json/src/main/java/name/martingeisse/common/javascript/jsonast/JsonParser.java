@@ -15,6 +15,14 @@ public final class JsonParser extends AbstractJsonParser {
 	private JsonAstValue value;
 	
 	/**
+	 * Constructor.
+	 * @param lexer the lexical analyzer
+	 */
+	public JsonParser(JsonLexer lexer) {
+		super(lexer);
+	}
+	
+	/**
 	 * Parses and returns the next value.
 	 * @return the parsed value
 	 */

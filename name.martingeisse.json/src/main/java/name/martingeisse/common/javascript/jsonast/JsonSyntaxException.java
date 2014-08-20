@@ -18,16 +18,11 @@ public final class JsonSyntaxException extends RuntimeException {
 	 * the column
 	 */
 	private final int column;
-
+	
 	/**
-	 * the expected
+	 * the rawMessage
 	 */
-	private final String expected;
-
-	/**
-	 * the actual
-	 */
-	private final String actual;
+	private final String rawMessage;
 
 	/**
 	 * Constructor.
@@ -37,13 +32,22 @@ public final class JsonSyntaxException extends RuntimeException {
 	 * @param actual the actual input
 	 */
 	public JsonSyntaxException(int line, int column, String expected, String actual) {
-		super("syntax error in line " + (line + 1) + ", column " + (column + 1) + ": expected " + expected + ", found " + actual);
-		this.line = line;
-		this.column = column;
-		this.expected = expected;
-		this.actual = actual;
+		this(line, column, "expected " + expected + ", found " + actual);
 	}
 
+	/**
+	 * Constructor.
+	 * @param line the line number
+	 * @param column the column number
+	 * @param rawMessage the "raw" message, without line/column information
+	 */
+	public JsonSyntaxException(int line, int column, String rawMessage) {
+		super("syntax error in line " + (line + 1) + ", column " + (column + 1) + ": " + rawMessage);
+		this.line = line;
+		this.column = column;
+		this.rawMessage = rawMessage;
+	}
+	
 	/**
 	 * Getter method for the line.
 	 * @return the line
@@ -61,19 +65,11 @@ public final class JsonSyntaxException extends RuntimeException {
 	}
 
 	/**
-	 * Getter method for the expected.
-	 * @return the expected
+	 * Getter method for the rawMessage.
+	 * @return the rawMessage
 	 */
-	public String getExpected() {
-		return expected;
+	public String getRawMessage() {
+		return rawMessage;
 	}
-
-	/**
-	 * Getter method for the actual.
-	 * @return the actual
-	 */
-	public String getActual() {
-		return actual;
-	}
-
+	
 }

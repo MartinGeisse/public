@@ -39,7 +39,7 @@ final class JsonLexerInput {
 	/**
 	 * the segment
 	 */
-	private String segment;
+	private StringBuilder segment;
 	
 	/**
 	 * the floatingPoint
@@ -86,7 +86,7 @@ final class JsonLexerInput {
 	 * Getter method for the segment.
 	 * @return the segment
 	 */
-	public String getSegment() {
+	public StringBuilder getSegment() {
 		return segment;
 	}
 	
@@ -135,12 +135,20 @@ final class JsonLexerInput {
 	}
 
 	/**
+	 * 
+	 */
+	private void stepInternalNoNewline() {
+		column++;
+		inputPosition++;
+	}
+	
+	/**
 	 * Reads a segment that represents a number and stores it as the current
 	 * segment. This method also sets the 'floatingPoint' flag to indicate
 	 * whether a decimal point or exponent sign was found.
 	 */
 	public void readNumber() {
-		int startPosition = inputPosition;
+		segment.setLength(0);
 		floatingPoint = false;
 		while (inputPosition < inputLength) {
 			char c = input.charAt(inputPosition);
@@ -149,10 +157,9 @@ final class JsonLexerInput {
 			} else if (c < '0' || c > '9') {
 				break;
 			}
-			column++;
-			inputPosition++;
+			stepInternalNoNewline();
+			segment.append(c);
 		}
-		segment = input.subSequence(startPosition, inputPosition).toString();
 	}
 
 	/**
@@ -160,66 +167,100 @@ final class JsonLexerInput {
 	 * segment.
 	 */
 	public void readKeyword() {
-		int startPosition = inputPosition;
+		segment.setLength(0);
 		while (inputPosition < inputLength) {
 			char c = input.charAt(inputPosition);
 			if (c < 'a' || c > 'z') {
 				break;
 			}
-			column++;
-			inputPosition++;
+			stepInternalNoNewline();
+			segment.append(c);
 		}
-		segment = input.subSequence(startPosition, inputPosition).toString();
 	}
 
 	/**
 	 * Reads a segment that represents a string literal and stores it as the current
 	 * segment.
-	 * 
-	 * TODO cannot handle unicode escapes yet
 	 */
 	public void readString() {
-		
-		// skip the initial quote character
-		this.column++;
-		this.inputPosition++;
-		int contentStartPosition = inputPosition;
-		
-		// find content
-		boolean escaped = false;
+		stepInternalNoNewline();
+		segment.setLength(0);
 		while (inputPosition < inputLength) {
 			char c = input.charAt(inputPosition);
-			if (escaped) {
-				if (isEscapableCharacter(c)) {
-					escaped = false;
-				} else {
-					// TODO error
-					escaped = false;
-				}
-			} else if (c == '\\') {
-				escaped = true;
-			} else if (c == '"') {
+			if (c == '"') {
+				stepInternalNoNewline();
 				break;
-			}
-			inputPosition++;
-		}
-		int contentEndPosition = inputPosition;
-		
-		// skip the final quote character
-		this.column++;
-		this.inputPosition++;
+			} else if (c == '\\') {
+				stepInternalNoNewline();
+				if (inputPosition == inputLength) {
+					throw new JsonLexerInputException("backslash right before EOF");
+				}
+				c = input.charAt(inputPosition);
+				if (!isEscapableCharacter(c)) {
+					throw new JsonLexerInputException("invalid escape sequence");
+				}
+				switch (c) {
+				
+				// literal escapes
+				case '"':
+				case '\\':
+				case '/':
+					segment.append(c);
+					stepInternalNoNewline();
+					break;
+					
+				// ASCII backspace
+				case 'b':
+					segment.append('\b');
+					stepInternalNoNewline();
+					break;
+					
+				// ASCII form feed
+				case 'f':
+					segment.append('\f');
+					stepInternalNoNewline();
+					break;
 
-		// extract content and apply escaping TODO slow
-		segment = input.subSequence(contentStartPosition, contentEndPosition).toString();
-		segment = segment.replace("\\b", "\b");
-		segment = segment.replace("\\f", "\f");
-		segment = segment.replace("\\n", "\n");
-		segment = segment.replace("\\r", "\r");
-		segment = segment.replace("\\t", "\t");
-		segment = segment.replace("\\\"", "\"");
-		segment = segment.replace("\\/", "/");
-		segment = segment.replace("\\\\", "\\");
-		
+				// ASCII form feed
+				case 'n':
+					segment.append('\n');
+					stepInternalNoNewline();
+					break;
+					
+				// ASCII form feed
+				case 'r':
+					segment.append('\r');
+					stepInternalNoNewline();
+					break;
+					
+				// ASCII form feed
+				case 't':
+					segment.append('\t');
+					stepInternalNoNewline();
+					break;
+					
+				// Unicode escapes
+				case 'u':
+					stepInternalNoNewline();
+					if (inputLength - inputPosition < 4) {
+						throw new JsonLexerInputException("partial unicode escape before EOF");
+					}
+					int unicodeValue;
+					try {
+						unicodeValue = Integer.parseInt(input.subSequence(inputPosition, inputPosition + 4).toString(), 16);
+					} catch (NumberFormatException e) {
+						throw new JsonLexerInputException("malformed unicode escape");
+					}
+					segment.append((char)unicodeValue);
+					stepInternalNoNewline();
+					break;
+				}
+				
+			} else {
+				segment.append(c);
+				stepInternal(c);
+			}
+		}
 	}
 	
 	/**
@@ -235,7 +276,7 @@ final class JsonLexerInput {
 		} else if (c < 'o') {
 			return (c == 'b' || c == 'f' || c == 'n');
 		} else {
-			return (c == 'r' || c == 't'); // TODO || c == 'u');
+			return (c == 'r' || c == 't' || c == 'u');
 		}
 	}
 	
