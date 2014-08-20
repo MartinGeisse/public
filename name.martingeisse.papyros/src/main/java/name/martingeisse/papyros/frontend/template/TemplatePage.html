@@ -29,19 +29,41 @@
 		
 		<!-- edit -->
 		<wicket:fragment wicket:id="tabEdit">
-			<div class="col-xs-12">
+			<div class="col-xs-12 col-lg-6">
 				<form wicket:id="form">
 					<textarea wicket:id="textarea" />
 					<input type="submit" />
 				</form>
 			</div>
-			<div class="col-xs-12">
+			<div class="col-xs-12" id="compilerMarkersParent">
 				<ul wicket:id="compilerMarkers" />
 			</div>
-			<div class="col-xs-12">
+			<div class="col-xs-12 col-lg-6" id="previewParent">
 				<h2>Preview:</h2>
 				<iframe wicket:id="previewIframe" style="width: 100%" />
 			</div>
+			<script type="text/javascript">
+				$(function() {
+					function place() {
+						var w = $(document).width();
+						var small = (w < 1200);
+						var id1 = (small ? 'previewParent' : 'compilerMarkersParent');
+						var id2 = (small ? 'compilerMarkersParent' : 'previewParent');
+						$('#' + id1).insertAfter($('#' + id2));
+					}
+					var timerRunning = false;
+					$(window).resize(function() {
+						if (!timerRunning) {
+							timerRunning = true;
+							setTimeout(function() {
+								timerRunning = false;
+								place();
+							}, 500);
+						}
+					});
+					place();
+				});
+			</script>
 			
 			<br /><br />
 		</wicket:fragment>

@@ -6,6 +6,10 @@
 
 package name.martingeisse.common.javascript.jsonast;
 
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 /**
  * 
  */
@@ -14,9 +18,12 @@ public class JsonLexerInputTest {
 	/**
 	 * 
 	 */
-	@test
+	@Test
 	public void testInitialState() {
-		
+		JsonLexerInput input = new JsonLexerInput("foo");
+		assertEquals(0, input.getLine());
+		assertEquals(0, input.getColumn());
+		assertEquals('f', input.getCurrentCharacter());
 	}
 	
 }
