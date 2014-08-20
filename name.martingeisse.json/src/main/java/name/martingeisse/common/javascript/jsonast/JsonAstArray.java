@@ -20,7 +20,7 @@ public final class JsonAstArray extends JsonAstValue {
 	 * Constructor.
 	 * @param line the line number
 	 * @param column the column number
-	 * @param value the value of this node
+	 * @param elements the elements of this node
 	 */
 	public JsonAstArray(int line, int column, JsonAstNode[] elements) {
 		this(line, column, elements, true);
