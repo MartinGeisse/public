@@ -155,7 +155,7 @@ public final class JsonLexer {
 			tokenFloatingPointValue = Double.parseDouble(input.getSegment().toString());
 		} else {
 			token = JsonToken.INTEGER;
-			tokenFloatingPointValue = Long.parseLong(input.getSegment().toString());
+			tokenIntegerValue = Long.parseLong(input.getSegment().toString());
 		}
 	}
 

@@ -45,6 +45,9 @@ import com.mysema.query.sql.dml.SQLUpdateClause;
 
 /**
  * The main page to manage a template.
+ * 
+ * TODO edit ohne save, dann reload -- editor-inhalt enthält noch das original, aber preview die editierte version.
+ * sollte einheitlich sein.
  */
 public class TemplatePage extends AbstractFrontendPage {
 

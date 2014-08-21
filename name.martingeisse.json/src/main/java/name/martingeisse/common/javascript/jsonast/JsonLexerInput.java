@@ -145,6 +145,14 @@ final class JsonLexerInput {
 		column++;
 		inputPosition++;
 	}
+
+	/**
+	 * 
+	 */
+	private void stepInternalNoNewline(int steps) {
+		column += steps;
+		inputPosition += steps;
+	}
 	
 	/**
 	 * Reads a segment that represents a number and stores it as the current
@@ -256,7 +264,7 @@ final class JsonLexerInput {
 						throw new JsonLexerInputException("malformed unicode escape");
 					}
 					segment.append((char)unicodeValue);
-					stepInternalNoNewline();
+					stepInternalNoNewline(4);
 					break;
 				}
 				
