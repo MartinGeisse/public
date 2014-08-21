@@ -201,7 +201,7 @@ final class JsonLexerInput {
 			char c = input.charAt(inputPosition);
 			if (c == '"') {
 				stepInternalNoNewline();
-				break;
+				return;
 			} else if (c == '\\') {
 				stepInternalNoNewline();
 				if (inputPosition == inputLength) {
@@ -273,6 +273,7 @@ final class JsonLexerInput {
 				stepInternal(c);
 			}
 		}
+		throw new JsonLexerInputException("unterminated string");
 	}
 	
 	/**

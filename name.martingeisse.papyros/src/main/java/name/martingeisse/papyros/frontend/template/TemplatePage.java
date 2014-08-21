@@ -26,6 +26,7 @@ import name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompi
 import name.martingeisse.wicket.component.codemirror.compile.CompilerMarker;
 import name.martingeisse.wicket.component.codemirror.compile.CompilerMarkerErrorLevelComparator;
 import name.martingeisse.wicket.component.codemirror.compile.CompilerResult;
+import name.martingeisse.wicket.component.codemirror.compile.ICompiler;
 import name.martingeisse.wicket.component.codemirror.modes.CodeMirrorModes;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 import org.apache.commons.lang3.tuple.Pair;
@@ -109,7 +110,7 @@ public class TemplatePage extends AbstractFrontendPage {
 					final TemplateAutocompiler templateAutocompiler = new TemplateAutocompiler();
 					loadPreviewData(template.getTemplateFamilyId());
 					renderPreview(editableContent);
-					setCompilerMarkersFromResult(templateAutocompiler.compile(editableContent));
+					setCompilerMarkersFromResult(ICompiler.Util.compileSafe(templateAutocompiler, editableContent));
 					
 					final Fragment fragment = new Fragment(id, "tabEdit", TemplatePage.this);
 					

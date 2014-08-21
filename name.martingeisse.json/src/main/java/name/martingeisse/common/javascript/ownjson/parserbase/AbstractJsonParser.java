@@ -39,6 +39,10 @@ public abstract class AbstractJsonParser {
 		this.state = initialState;
 		parse(false);
 		this.state = null;
+		JsonToken suffixToken = lexer.readToken("end of input");
+		if (suffixToken != JsonToken.EOF) {
+			throw newSyntaxException("end of input", suffixToken.getDescription());
+		}
 	}
 
 	/**
@@ -47,7 +51,8 @@ public abstract class AbstractJsonParser {
 	 * @return true for values, false for end-of-array
 	 */
 	private final boolean parse(boolean acceptEndOfArray) {
-		JsonToken token = lexer.readToken(acceptEndOfArray ? "JSON value or end of array" : "JSON value");
+		String expected = (acceptEndOfArray ? "JSON value or end of array" : "JSON value");
+		JsonToken token = lexer.readToken(expected);
 		int line = lexer.getTokenLine();
 		int column = lexer.getTokenColumn();
 		switch (token) {
@@ -82,7 +87,7 @@ public abstract class AbstractJsonParser {
 		}
 			
 		case EOF:
-			throw newSyntaxException("JSON value", "end-of-input");
+			throw newSyntaxException(expected, "end-of-input");
 			
 		case OPENING_SQUARE_BRACKET:
 			state = state.handleBeginArray(line, column);
@@ -119,19 +124,19 @@ public abstract class AbstractJsonParser {
 			
 		case CLOSING_SQUARE_BRACKET:
 			if (!acceptEndOfArray) {
-				throw newSyntaxException("JSON value", "']'");
+				throw newSyntaxException(expected, "']'");
 			} else {
 				return false;
 			}
 			
 		case CLOSING_CURLY_BRACE:
-			throw newSyntaxException("JSON value", "'}'");
+			throw newSyntaxException(expected, "'}'");
 			
 		case COMMA:
-			throw newSyntaxException("JSON value", "','");
+			throw newSyntaxException(expected, "','");
 			
 		case COLON:
-			throw newSyntaxException("JSON value", "':'");
+			throw newSyntaxException(expected, "':'");
 			
 		}
 		return true;

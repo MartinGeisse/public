@@ -22,13 +22,11 @@ public final class JsonAstObjectProperty extends JsonAstNode {
 
 	/**
 	 * Constructor.
-	 * @param line the line number
-	 * @param column the column number
 	 * @param name the property name
 	 * @param value the property value
 	 */
-	public JsonAstObjectProperty(int line, int column, JsonAstString name, JsonAstNode value) {
-		super(line, column);
+	public JsonAstObjectProperty(JsonAstString name, JsonAstNode value) {
+		super(name.getLine(), name.getColumn());
 		this.name = name;
 		this.value = value;
 	}

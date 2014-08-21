@@ -22,6 +22,7 @@ import name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompi
 import name.martingeisse.wicket.component.codemirror.compile.CompilerMarker;
 import name.martingeisse.wicket.component.codemirror.compile.CompilerMarkerErrorLevelComparator;
 import name.martingeisse.wicket.component.codemirror.compile.CompilerResult;
+import name.martingeisse.wicket.component.codemirror.compile.ICompiler;
 import name.martingeisse.wicket.component.codemirror.modes.CodeMirrorModes;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -66,7 +67,7 @@ public class PreviewDataPage extends AbstractFrontendPage {
 		
 		//
 		final PreviewDataAutocompiler previewDataAutocompiler = new PreviewDataAutocompiler();
-		setCompilerMarkersFromResult(previewDataAutocompiler.compile(editableContent));
+		setCompilerMarkersFromResult(ICompiler.Util.compileSafe(previewDataAutocompiler, editableContent));
 		
 		// build the edit form and CodeMirror
 		final Form<Void> form = new Form<Void>("form") {

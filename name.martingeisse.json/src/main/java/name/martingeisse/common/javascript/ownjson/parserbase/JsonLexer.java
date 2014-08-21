@@ -51,6 +51,14 @@ public final class JsonLexer {
 	 * Constructor.
 	 * @param input the input to tokenize
 	 */
+	public JsonLexer(String input) {
+		this(new JsonLexerInput(input));
+	}
+	
+	/**
+	 * Constructor.
+	 * @param input the input to tokenize
+	 */
 	public JsonLexer(JsonLexerInput input) {
 		this.input = input;
 	}
@@ -114,7 +122,7 @@ public final class JsonLexer {
 			input.skipSpaces();
 			int c = input.getCurrentCharacter();
 			if (c < 0) {
-				token = null;
+				token = JsonToken.EOF;
 				return token;
 			}
 			tokenLine = input.getLine();
