@@ -4,12 +4,11 @@
 
 package name.martingeisse.phunky.runtime.code.expression.operator;
 
-import java.util.Map;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
 import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
-import name.martingeisse.phunky.runtime.variable.Variable;
+
 import org.apache.commons.lang3.NotImplementedException;
 
 /**
@@ -107,10 +106,11 @@ public enum BinaryOperator {
 		}
 		
 		private void addElements(PhpVariableArray from, PhpVariableArray to) {
+			throw new NotImplementedException(""); // TODO
 			// where is PhpVariableArray / PhpValueArray used when it should be generalized?
-			for (Map.Entry<String, Variable> entry : from.getDirectEntryIterable()) {
-				to.getOrCreateVariable(entry.getKey()).setValue(entry.getValue());
-			}
+//			for (Map.Entry<String, Variable> entry : from.getDirectEntryIterable()) {
+//				to.getOrCreateVariable(entry.getKey()).setValue(entry.getValue());
+//			}
 		}
 
 	},

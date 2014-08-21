@@ -8,7 +8,8 @@ package name.martingeisse.phunky.runtime.builtin.var;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
-import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
+
+import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * The built-in "is_array" function.
@@ -20,8 +21,10 @@ public class IsArrayFunction extends BuiltinCallable {
 	 */
 	@Override
 	public Object call(PhpRuntime runtime, Object[] arguments) {
-		TODO
-		return (arguments.length > 0 && arguments[0] instanceof PhpVariableArray);
+		throw new NotImplementedException(""); // TODO
+		
+//		TODO
+//		return (arguments.length > 0 && arguments[0] instanceof PhpVariableArray);
 	}
 
 }
