@@ -28,7 +28,7 @@ public final class SchemaAutocompiler implements ICompiler, Serializable {
 		try {
 			parser.parseValue();
 		} catch (JsonSyntaxException e) {
-			result.getMarkers().add(new CompilerMarker(e.getLine(), e.getColumn(), e.getLine(), e.getColumn() + 1, CompilerErrorLevel.ERROR, e.getRawMessage()));
+			result.getMarkers().add(new CompilerMarker(e.getStartLine(), e.getStartColumn(), e.getEndLine(), e.getEndColumn(), CompilerErrorLevel.ERROR, e.getRawMessage()));
 		}
 		
 	}

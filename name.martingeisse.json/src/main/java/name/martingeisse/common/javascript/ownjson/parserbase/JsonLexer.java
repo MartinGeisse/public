@@ -146,11 +146,11 @@ public final class JsonLexer {
 			} else if (c == ':') {
 				handlePunctuation(JsonToken.COLON);
 			} else {
-				throw new JsonSyntaxException(input.getLine(), input.getColumn(), expected.toString(), Character.toString((char)c));
+				throw new JsonSyntaxException(input.getLine(), input.getColumn(), input.getLine(), input.getColumn() + 1, expected.toString(), Character.toString((char)c));
 			}
 			return token;
 		} catch (JsonLexerInputException e) {
-			throw new JsonSyntaxException(input.getLine(), input.getColumn(), e.getMessage());
+			throw new JsonSyntaxException(input.getLine(), input.getColumn(), input.getLine(), input.getColumn() + 1, e.getMessage());
 		}
 	}
 	

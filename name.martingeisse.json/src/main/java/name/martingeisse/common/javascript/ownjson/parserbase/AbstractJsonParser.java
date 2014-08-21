@@ -175,14 +175,14 @@ public abstract class AbstractJsonParser {
 	 * 
 	 */
 	private JsonSyntaxException newSyntaxException(String message) {
-		return new JsonSyntaxException(lexer.getTokenLine(), lexer.getTokenColumn(), message);
+		return new JsonSyntaxException(lexer.getTokenLine(), lexer.getTokenColumn(), lexer.getTokenLine(), lexer.getTokenColumn() + 1, message);
 	}
 	
 	/**
 	 * 
 	 */
 	private JsonSyntaxException newSyntaxException(String expected, String actual) {
-		return new JsonSyntaxException(lexer.getTokenLine(), lexer.getTokenColumn(), expected, actual);
+		return new JsonSyntaxException(lexer.getTokenLine(), lexer.getTokenColumn(), lexer.getTokenLine(), lexer.getTokenColumn() + 1, expected, actual);
 	}
 
 }
