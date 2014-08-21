@@ -19,6 +19,9 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 /**
  * This behavior turns a text area into a CodeMirror editor.
+ * 
+ * TODO should clean up different newline encodings (NL, CR/NL)
+ * on submit and before autocompile.
  */
 public class CodeMirrorBehavior extends Behavior {
 

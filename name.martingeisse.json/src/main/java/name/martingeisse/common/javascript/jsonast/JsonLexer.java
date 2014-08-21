@@ -103,15 +103,18 @@ public final class JsonLexer {
 	}
 	
 	/**
-	 * Reads the next token.
+	 * Reads the next token, and returns it just like {@link #getToken()} does.
+	 * 
 	 * @param expected a description of the expected input, for error messages
+	 * @return the token just read
 	 */
-	public void readToken(String expected) {
+	public JsonToken readToken(String expected) {
 		try {
 			input.skipSpaces();
 			int c = input.getCurrentCharacter();
 			if (c < 0) {
-				return;
+				token = null;
+				return token;
 			}
 			tokenLine = input.getLine();
 			tokenColumn = input.getColumn();
@@ -136,6 +139,7 @@ public final class JsonLexer {
 			} else {
 				throw new JsonSyntaxException(input.getLine(), input.getColumn(), expected, Character.toString((char)c));
 			}
+			return token;
 		} catch (JsonLexerInputException e) {
 			throw new JsonSyntaxException(input.getLine(), input.getColumn(), e.getMessage());
 		}

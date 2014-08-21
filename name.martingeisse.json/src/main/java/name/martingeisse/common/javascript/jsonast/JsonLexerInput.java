@@ -8,6 +8,9 @@ package name.martingeisse.common.javascript.jsonast;
 
 /**
  * Helper class for the {@link JsonLexer}.
+ * 
+ * This class treats both CR and NL as newline characters
+ * independently.
  */
 final class JsonLexerInput {
 
@@ -56,6 +59,7 @@ final class JsonLexerInput {
 		this.inputPosition = 0;
 		this.line = 0;
 		this.column = 0;
+		this.segment = new StringBuilder();
 	}
 
 	/**
