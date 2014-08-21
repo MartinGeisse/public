@@ -2,17 +2,17 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.common.javascript.jsonast;
+package name.martingeisse.common.javascript.ownjson.ast;
 
 /**
- * A node that contains a boolean value.
+ * A node that contains a (double-precision) floating-point value.
  */
-public final class JsonAstBoolean extends JsonAstValue {
+public final class JsonAstFloat extends JsonAstValue {
 
 	/**
 	 * the value
 	 */
-	private final boolean value;
+	private final double value;
 
 	/**
 	 * Constructor.
@@ -20,7 +20,7 @@ public final class JsonAstBoolean extends JsonAstValue {
 	 * @param column the column number
 	 * @param value the value of this node
 	 */
-	public JsonAstBoolean(int line, int column, boolean value) {
+	public JsonAstFloat(int line, int column, double value) {
 		super(line, column);
 		this.value = value;
 	}
@@ -29,7 +29,7 @@ public final class JsonAstBoolean extends JsonAstValue {
 	 * Getter method for the value.
 	 * @return the value
 	 */
-	public boolean isValue() {
+	public double getValue() {
 		return value;
 	}
 	

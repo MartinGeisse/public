@@ -6,6 +6,10 @@
 
 package name.martingeisse.common.javascript.jsonast;
 
+import name.martingeisse.common.javascript.ownjson.parserbase.JsonLexer;
+import name.martingeisse.common.javascript.ownjson.parserbase.JsonLexerInput;
+import name.martingeisse.common.javascript.ownjson.parserbase.JsonToken;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;

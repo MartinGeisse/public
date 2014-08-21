@@ -6,6 +6,8 @@
 
 package name.martingeisse.common.javascript.jsonast;
 
+import name.martingeisse.common.javascript.ownjson.parserbase.JsonLexerInput;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;

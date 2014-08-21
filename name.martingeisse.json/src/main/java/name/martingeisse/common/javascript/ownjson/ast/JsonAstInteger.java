@@ -2,17 +2,17 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.common.javascript.jsonast;
+package name.martingeisse.common.javascript.ownjson.ast;
 
 /**
- * A node that contains a (double-precision) floating-point value.
+ * A node that contains a (long) integer value.
  */
-public final class JsonAstFloat extends JsonAstValue {
+public final class JsonAstInteger extends JsonAstValue {
 
 	/**
 	 * the value
 	 */
-	private final double value;
+	private final long value;
 
 	/**
 	 * Constructor.
@@ -20,7 +20,7 @@ public final class JsonAstFloat extends JsonAstValue {
 	 * @param column the column number
 	 * @param value the value of this node
 	 */
-	public JsonAstFloat(int line, int column, double value) {
+	public JsonAstInteger(int line, int column, long value) {
 		super(line, column);
 		this.value = value;
 	}
@@ -29,7 +29,7 @@ public final class JsonAstFloat extends JsonAstValue {
 	 * Getter method for the value.
 	 * @return the value
 	 */
-	public double getValue() {
+	public long getValue() {
 		return value;
 	}
 	

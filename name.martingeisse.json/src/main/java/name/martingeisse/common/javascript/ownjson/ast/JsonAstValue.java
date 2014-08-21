@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.common.javascript.jsonast;
+package name.martingeisse.common.javascript.ownjson.ast;
 
 /**
  * Base class for JSON AST value nodes.

@@ -2,17 +2,17 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.common.javascript.jsonast;
+package name.martingeisse.common.javascript.ownjson.ast;
 
 /**
- * A node that contains a (long) integer value.
+ * A node that contains a boolean value.
  */
-public final class JsonAstInteger extends JsonAstValue {
+public final class JsonAstBoolean extends JsonAstValue {
 
 	/**
 	 * the value
 	 */
-	private final long value;
+	private final boolean value;
 
 	/**
 	 * Constructor.
@@ -20,7 +20,7 @@ public final class JsonAstInteger extends JsonAstValue {
 	 * @param column the column number
 	 * @param value the value of this node
 	 */
-	public JsonAstInteger(int line, int column, long value) {
+	public JsonAstBoolean(int line, int column, boolean value) {
 		super(line, column);
 		this.value = value;
 	}
@@ -29,7 +29,7 @@ public final class JsonAstInteger extends JsonAstValue {
 	 * Getter method for the value.
 	 * @return the value
 	 */
-	public long getValue() {
+	public boolean isValue() {
 		return value;
 	}
 	

@@ -4,7 +4,8 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.common.javascript.jsonast;
+package name.martingeisse.common.javascript.ownjson.parserbase;
+
 
 /**
  * This class splits JSON into tokens.
@@ -108,7 +109,7 @@ public final class JsonLexer {
 	 * @param expected a description of the expected input, for error messages
 	 * @return the token just read
 	 */
-	public JsonToken readToken(String expected) {
+	public JsonToken readToken(Object expected) {
 		try {
 			input.skipSpaces();
 			int c = input.getCurrentCharacter();
@@ -137,7 +138,7 @@ public final class JsonLexer {
 			} else if (c == ':') {
 				handlePunctuation(JsonToken.COLON);
 			} else {
-				throw new JsonSyntaxException(input.getLine(), input.getColumn(), expected, Character.toString((char)c));
+				throw new JsonSyntaxException(input.getLine(), input.getColumn(), expected.toString(), Character.toString((char)c));
 			}
 			return token;
 		} catch (JsonLexerInputException e) {
