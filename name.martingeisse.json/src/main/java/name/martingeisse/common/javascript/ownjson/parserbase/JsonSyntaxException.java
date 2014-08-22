@@ -10,15 +10,25 @@ package name.martingeisse.common.javascript.ownjson.parserbase;
 public final class JsonSyntaxException extends RuntimeException {
 
 	/**
-	 * the line
+	 * the startLine
 	 */
-	private final int line;
+	private final int startLine;
 
 	/**
-	 * the column
+	 * the startColumn
 	 */
-	private final int column;
-	
+	private final int startColumn;
+
+	/**
+	 * the endLine
+	 */
+	private final int endLine;
+
+	/**
+	 * the endColumn
+	 */
+	private final int endColumn;
+
 	/**
 	 * the rawMessage
 	 */
@@ -26,42 +36,64 @@ public final class JsonSyntaxException extends RuntimeException {
 
 	/**
 	 * Constructor.
-	 * @param line the line number
-	 * @param column the column number
+	 * @param startLine the start line number
+	 * @param startColumn the start column number
+	 * @param endLine the end line number
+	 * @param endColumn the end column number
 	 * @param expected the expected input
 	 * @param actual the actual input
 	 */
-	public JsonSyntaxException(int line, int column, String expected, String actual) {
-		this(line, column, "expected " + expected + ", found " + actual);
+	public JsonSyntaxException(final int startLine, final int startColumn, final int endLine, final int endColumn, final String expected, final String actual) {
+		this(startLine, startColumn, endLine, endColumn, "expected " + expected + ", found " + actual);
 	}
 
 	/**
 	 * Constructor.
-	 * @param line the line number
-	 * @param column the column number
+	 * @param startLine the start line number
+	 * @param startColumn the start column number
+	 * @param endLine the end line number
+	 * @param endColumn the end column number
 	 * @param rawMessage the "raw" message, without line/column information
 	 */
-	public JsonSyntaxException(int line, int column, String rawMessage) {
-		super("syntax error in line " + (line + 1) + ", column " + (column + 1) + ": " + rawMessage);
-		this.line = line;
-		this.column = column;
+	public JsonSyntaxException(final int startLine, final int startColumn, final int endLine, final int endColumn, final String rawMessage) {
+		super("syntax error in line " + (startLine + 1) + ", column " + (startColumn + 1) + ": " + rawMessage);
+		this.startLine = startLine;
+		this.startColumn = startColumn;
+		this.endLine = endLine;
+		this.endColumn = endColumn;
 		this.rawMessage = rawMessage;
-	}
-	
-	/**
-	 * Getter method for the line.
-	 * @return the line
-	 */
-	public int getLine() {
-		return line;
 	}
 
 	/**
-	 * Getter method for the column.
-	 * @return the column
+	 * Getter method for the startLine.
+	 * @return the startLine
 	 */
-	public int getColumn() {
-		return column;
+	public int getStartLine() {
+		return startLine;
+	}
+
+	/**
+	 * Getter method for the startColumn.
+	 * @return the startColumn
+	 */
+	public int getStartColumn() {
+		return startColumn;
+	}
+
+	/**
+	 * Getter method for the endLine.
+	 * @return the endLine
+	 */
+	public int getEndLine() {
+		return endLine;
+	}
+
+	/**
+	 * Getter method for the endColumn.
+	 * @return the endColumn
+	 */
+	public int getEndColumn() {
+		return endColumn;
 	}
 
 	/**
@@ -71,5 +103,5 @@ public final class JsonSyntaxException extends RuntimeException {
 	public String getRawMessage() {
 		return rawMessage;
 	}
-	
+
 }

@@ -11,6 +11,8 @@ package name.martingeisse.common.javascript.ownjson.parserbase;
  * 
  * This class treats both CR and NL as newline characters
  * independently.
+ * 
+ * TODO disallow literal ASCII control characters inside string literals
  */
 final class JsonLexerInput {
 
@@ -195,21 +197,22 @@ final class JsonLexerInput {
 	 * segment.
 	 */
 	public void readString() {
+		int stringStartLine = line, stringStartColumn = column;
 		stepInternalNoNewline();
 		segment.setLength(0);
 		while (inputPosition < inputLength) {
 			char c = input.charAt(inputPosition);
 			if (c == '"') {
 				stepInternalNoNewline();
-				break;
+				return;
 			} else if (c == '\\') {
 				stepInternalNoNewline();
 				if (inputPosition == inputLength) {
-					throw new JsonLexerInputException("backslash right before EOF");
+					throw new JsonSyntaxException(line, column - 1, line, column, "backslash right before EOF");
 				}
 				c = input.charAt(inputPosition);
 				if (!isEscapableCharacter(c)) {
-					throw new JsonLexerInputException("invalid escape sequence");
+					throw new JsonSyntaxException(line, column - 1, line, column + 1, "invalid escape sequence");
 				}
 				switch (c) {
 				
@@ -255,24 +258,31 @@ final class JsonLexerInput {
 				case 'u':
 					stepInternalNoNewline();
 					if (inputLength - inputPosition < 4) {
-						throw new JsonLexerInputException("partial unicode escape before EOF");
+						throw new JsonSyntaxException(line, column - 1, line, column + 1, "partial unicode escape before EOF");
 					}
 					int unicodeValue;
 					try {
 						unicodeValue = Integer.parseInt(input.subSequence(inputPosition, inputPosition + 4).toString(), 16);
 					} catch (NumberFormatException e) {
-						throw new JsonLexerInputException("malformed unicode escape");
+						throw new JsonSyntaxException(line, column - 1, line, column + 1, "malformed unicode escape");
 					}
 					segment.append((char)unicodeValue);
 					stepInternalNoNewline(4);
 					break;
 				}
 				
+			} else if (c < 32) {
+				if (c == '\n' || c == '\r') {
+					break;
+				} else {
+					throw new JsonSyntaxException(line, column, line, column + 1, "control characters not allowed in strings");
+				}
 			} else {
 				segment.append(c);
 				stepInternal(c);
 			}
 		}
+		throw new JsonSyntaxException(stringStartLine, stringStartColumn, line, column, "unterminated string");
 	}
 	
 	/**

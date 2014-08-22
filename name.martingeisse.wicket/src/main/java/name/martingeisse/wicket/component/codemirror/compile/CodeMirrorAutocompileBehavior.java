@@ -109,7 +109,7 @@ public class CodeMirrorAutocompileBehavior extends AbstractDefaultAjaxBehavior {
 		
 		// compile the document
 		final String document = RequestCycle.get().getRequest().getPostParameters().getParameterValue("value").toString("");
-		final CompilerResult result = compiler.compile(document);
+		final CompilerResult result = ICompiler.Util.compileSafe(compiler, document);
 		
 		// build the AJAX response script snippets that modify CodeMirror
 		final StringBuilder builder = new StringBuilder();

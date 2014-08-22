@@ -51,6 +51,14 @@ public final class JsonLexer {
 	 * Constructor.
 	 * @param input the input to tokenize
 	 */
+	public JsonLexer(String input) {
+		this(new JsonLexerInput(input));
+	}
+	
+	/**
+	 * Constructor.
+	 * @param input the input to tokenize
+	 */
 	public JsonLexer(JsonLexerInput input) {
 		this.input = input;
 	}
@@ -114,7 +122,7 @@ public final class JsonLexer {
 			input.skipSpaces();
 			int c = input.getCurrentCharacter();
 			if (c < 0) {
-				token = null;
+				token = JsonToken.EOF;
 				return token;
 			}
 			tokenLine = input.getLine();
@@ -138,11 +146,11 @@ public final class JsonLexer {
 			} else if (c == ':') {
 				handlePunctuation(JsonToken.COLON);
 			} else {
-				throw new JsonSyntaxException(input.getLine(), input.getColumn(), expected.toString(), Character.toString((char)c));
+				throw new JsonSyntaxException(input.getLine(), input.getColumn(), input.getLine(), input.getColumn() + 1, expected.toString(), Character.toString((char)c));
 			}
 			return token;
 		} catch (JsonLexerInputException e) {
-			throw new JsonSyntaxException(input.getLine(), input.getColumn(), e.getMessage());
+			throw new JsonSyntaxException(input.getLine(), input.getColumn(), input.getLine(), input.getColumn() + 1, e.getMessage());
 		}
 	}
 	

@@ -20,6 +20,14 @@ public final class JsonParser extends AbstractJsonParser {
 	
 	/**
 	 * Constructor.
+	 * @param input the input to parse
+	 */
+	public JsonParser(String input) {
+		super(new JsonLexer(input));
+	}
+	
+	/**
+	 * Constructor.
 	 * @param lexer the lexical analyzer
 	 */
 	public JsonParser(JsonLexer lexer) {

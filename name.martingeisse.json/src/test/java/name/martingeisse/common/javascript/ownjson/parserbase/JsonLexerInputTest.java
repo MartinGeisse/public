@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.common.javascript.jsonast;
+package name.martingeisse.common.javascript.ownjson.parserbase;
 
 import name.martingeisse.common.javascript.ownjson.parserbase.JsonLexerInput;
 
