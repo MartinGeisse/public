@@ -53,18 +53,20 @@ public abstract class AbstractJsonParser {
 	private final boolean parse(boolean acceptEndOfArray) {
 		String expected = (acceptEndOfArray ? "JSON value or end of array" : "JSON value");
 		JsonToken token = lexer.readToken(expected);
-		int line = lexer.getTokenLine();
-		int column = lexer.getTokenColumn();
+		int startLine = lexer.getTokenStartLine();
+		int startColumn = lexer.getTokenStartColumn();
+		int endLine = lexer.getTokenEndLine();
+		int endColumn = lexer.getTokenEndColumn();
 		switch (token) {
 		
 		case KEYWORD: {
 			String keyword = lexer.getTokenStringValue();
 			if (keyword.equals("null")) {
-				state = state.handleNullValue(line, column);
+				state = state.handleNullValue(startLine, startColumn, endLine, endColumn);
 			} else if (keyword.equals("true")) {
-				state = state.handleBooleanValue(line, column, true);
+				state = state.handleBooleanValue(startLine, startColumn, endLine, endColumn, true);
 			} else if (keyword.equals("false")) {
-				state = state.handleBooleanValue(line, column, false);
+				state = state.handleBooleanValue(startLine, startColumn, endLine, endColumn, false);
 			} else {
 				throw newSyntaxException("invalid keyword: " + keyword);
 			}
@@ -72,17 +74,17 @@ public abstract class AbstractJsonParser {
 		}
 			
 		case INTEGER: {
-			state = state.handleIntegerValue(line, column, lexer.getTokenIntegerValue());
+			state = state.handleIntegerValue(startLine, startColumn, endLine, endColumn, lexer.getTokenIntegerValue());
 			break;
 		}
 			
 		case FLOAT: {
-			state = state.handleFloatingPointValue(line, column, lexer.getTokenFloatingPointValue());
+			state = state.handleFloatingPointValue(startLine, startColumn, endLine, endColumn, lexer.getTokenFloatingPointValue());
 			break;
 		}
 			
 		case STRING: {
-			state = state.handleStringValue(line, column, lexer.getTokenStringValue());
+			state = state.handleStringValue(startLine, startColumn, endLine, endColumn, lexer.getTokenStringValue());
 			break;
 		}
 			
@@ -90,7 +92,7 @@ public abstract class AbstractJsonParser {
 			throw newSyntaxException(expected, "end-of-input");
 			
 		case OPENING_SQUARE_BRACKET:
-			state = state.handleBeginArray(line, column);
+			state = state.handleBeginArray(startLine, startColumn, endLine, endColumn);
 			if (parse(true)) {
 				while (true) {
 					JsonToken commaToken = lexer.readToken("comma or end of array");
@@ -102,11 +104,11 @@ public abstract class AbstractJsonParser {
 					parse(false);
 				}
 			}
-			state = state.handleEndArray(line, column);
+			state = state.handleEndArray(startLine, startColumn, endLine, endColumn);
 			break;
 			
 		case OPENING_CURLY_BRACE: {
-			state = state.handleBeginObject(line, column);
+			state = state.handleBeginObject(startLine, startColumn, endLine, endColumn);
 			if (parseObjectProperty(true)) {
 				while (true) {
 					JsonToken commaToken = lexer.readToken("comma or end of object");
@@ -118,7 +120,7 @@ public abstract class AbstractJsonParser {
 					parseObjectProperty(false);
 				}
 			}
-			state = state.handleEndObject(line, column);
+			state = state.handleEndObject(startLine, startColumn, endLine, endColumn);
 			break;
 		}
 			
@@ -148,8 +150,10 @@ public abstract class AbstractJsonParser {
 	private boolean parseObjectProperty(boolean first) {
 		
 		// parse name (also handling empty objects)
-		int line = lexer.getTokenLine();
-		int column = lexer.getTokenColumn();
+		int startLine = lexer.getTokenStartLine();
+		int startColumn = lexer.getTokenStartColumn();
+		int endLine = lexer.getTokenEndLine();
+		int endColumn = lexer.getTokenEndColumn();
 		String nameExpected = (first ? "property name or end of object" : "property name");
 		JsonToken nameToken = lexer.readToken(nameExpected);
 		if (first && nameToken == JsonToken.CLOSING_CURLY_BRACE) {
@@ -157,7 +161,7 @@ public abstract class AbstractJsonParser {
 		} else if (nameToken != JsonToken.STRING) {
 			throw newSyntaxException(nameExpected, nameToken.getDescription());
 		}
-		state = state.handleObjectPropertyName(line, column, lexer.getTokenStringValue());
+		state = state.handleObjectPropertyName(startLine, startColumn, endLine, endColumn, lexer.getTokenStringValue());
 		
 		// parse colon
 		JsonToken colonToken = lexer.readToken("':'");
@@ -175,14 +179,22 @@ public abstract class AbstractJsonParser {
 	 * 
 	 */
 	private JsonSyntaxException newSyntaxException(String message) {
-		return new JsonSyntaxException(lexer.getTokenLine(), lexer.getTokenColumn(), lexer.getTokenLine(), lexer.getTokenColumn() + 1, message);
+		int startLine = lexer.getTokenStartLine();
+		int startColumn = lexer.getTokenStartColumn();
+		int endLine = lexer.getTokenEndLine();
+		int endColumn = lexer.getTokenEndColumn();
+		return new JsonSyntaxException(startLine, startColumn, endLine, endColumn, message);
 	}
 	
 	/**
 	 * 
 	 */
 	private JsonSyntaxException newSyntaxException(String expected, String actual) {
-		return new JsonSyntaxException(lexer.getTokenLine(), lexer.getTokenColumn(), lexer.getTokenLine(), lexer.getTokenColumn() + 1, expected, actual);
+		int startLine = lexer.getTokenStartLine();
+		int startColumn = lexer.getTokenStartColumn();
+		int endLine = lexer.getTokenEndLine();
+		int endColumn = lexer.getTokenEndColumn();
+		return new JsonSyntaxException(startLine, startColumn, endLine, endColumn, expected, actual);
 	}
 
 }

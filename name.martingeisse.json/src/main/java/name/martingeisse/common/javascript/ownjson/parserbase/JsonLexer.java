@@ -18,15 +18,25 @@ public final class JsonLexer {
 	private final JsonLexerInput input;
 	
 	/**
-	 * the tokenLine
+	 * the tokenStartLine
 	 */
-	private int tokenLine;
+	private int tokenStartLine;
 	
 	/**
-	 * the tokenColumn
+	 * the tokenStartColumn
 	 */
-	private int tokenColumn;
+	private int tokenStartColumn;
+
+	/**
+	 * the tokenEndLine
+	 */
+	private int tokenEndLine;
 	
+	/**
+	 * the tokenEndColumn
+	 */
+	private int tokenEndColumn;
+
 	/**
 	 * the token
 	 */
@@ -70,21 +80,37 @@ public final class JsonLexer {
 	public JsonToken getToken() {
 		return token;
 	}
-	
+
 	/**
-	 * Getter method for the tokenLine.
-	 * @return the tokenLine
+	 * Getter method for the tokenStartLine.
+	 * @return the tokenStartLine
 	 */
-	public int getTokenLine() {
-		return tokenLine;
+	public int getTokenStartLine() {
+		return tokenStartLine;
 	}
 	
 	/**
-	 * Getter method for the tokenColumn.
-	 * @return the tokenColumn
+	 * Getter method for the tokenStartColumn.
+	 * @return the tokenStartColumn
 	 */
-	public int getTokenColumn() {
-		return tokenColumn;
+	public int getTokenStartColumn() {
+		return tokenStartColumn;
+	}
+	
+	/**
+	 * Getter method for the tokenEndLine.
+	 * @return the tokenEndLine
+	 */
+	public int getTokenEndLine() {
+		return tokenEndLine;
+	}
+	
+	/**
+	 * Getter method for the tokenEndColumn.
+	 * @return the tokenEndColumn
+	 */
+	public int getTokenEndColumn() {
+		return tokenEndColumn;
 	}
 	
 	/**
@@ -118,40 +144,38 @@ public final class JsonLexer {
 	 * @return the token just read
 	 */
 	public JsonToken readToken(Object expected) {
-		try {
-			input.skipSpaces();
-			int c = input.getCurrentCharacter();
-			if (c < 0) {
-				token = JsonToken.EOF;
-				return token;
-			}
-			tokenLine = input.getLine();
-			tokenColumn = input.getColumn();
-			if ((c >= '0' && c <= '9') || c == '.') {
-				handleNumber();
-			} else if (c >= 'a' && c <= 'z') {
-				handleKeyword();
-			} else if (c == '"') {
-				handleString();
-			} else if (c == '[') {
-				handlePunctuation(JsonToken.OPENING_SQUARE_BRACKET);
-			} else if (c == ']') {
-				handlePunctuation(JsonToken.CLOSING_SQUARE_BRACKET);
-			} else if (c == '{') {
-				handlePunctuation(JsonToken.OPENING_CURLY_BRACE);
-			} else if (c == '}') {
-				handlePunctuation(JsonToken.CLOSING_CURLY_BRACE);
-			} else if (c == ',') {
-				handlePunctuation(JsonToken.COMMA);
-			} else if (c == ':') {
-				handlePunctuation(JsonToken.COLON);
-			} else {
-				throw new JsonSyntaxException(input.getLine(), input.getColumn(), input.getLine(), input.getColumn() + 1, expected.toString(), Character.toString((char)c));
-			}
+		input.skipSpaces();
+		int c = input.getCurrentCharacter();
+		if (c < 0) {
+			token = JsonToken.EOF;
 			return token;
-		} catch (JsonLexerInputException e) {
-			throw new JsonSyntaxException(input.getLine(), input.getColumn(), input.getLine(), input.getColumn() + 1, e.getMessage());
 		}
+		tokenStartLine = input.getLine();
+		tokenStartColumn = input.getColumn();
+		if ((c >= '0' && c <= '9') || c == '.') {
+			handleNumber();
+		} else if (c >= 'a' && c <= 'z') {
+			handleKeyword();
+		} else if (c == '"') {
+			handleString();
+		} else if (c == '[') {
+			handlePunctuation(JsonToken.OPENING_SQUARE_BRACKET);
+		} else if (c == ']') {
+			handlePunctuation(JsonToken.CLOSING_SQUARE_BRACKET);
+		} else if (c == '{') {
+			handlePunctuation(JsonToken.OPENING_CURLY_BRACE);
+		} else if (c == '}') {
+			handlePunctuation(JsonToken.CLOSING_CURLY_BRACE);
+		} else if (c == ',') {
+			handlePunctuation(JsonToken.COMMA);
+		} else if (c == ':') {
+			handlePunctuation(JsonToken.COLON);
+		} else {
+			throw new JsonSyntaxException(input.getLine(), input.getColumn(), input.getLine(), input.getColumn() + 1, expected.toString(), "'" + (char)c + "'");
+		}
+		tokenEndLine = input.getLine();
+		tokenEndColumn = input.getColumn();
+		return token;
 	}
 	
 	/**

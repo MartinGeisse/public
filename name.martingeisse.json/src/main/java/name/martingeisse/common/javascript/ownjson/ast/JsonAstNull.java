@@ -11,11 +11,13 @@ public final class JsonAstNull extends JsonAstValue {
 
 	/**
 	 * Constructor.
-	 * @param line the line number
-	 * @param column the column number
+	 * @param startLine the starting line of the node
+	 * @param startColumn the starting column of the node
+	 * @param endLine the ending line of the node
+	 * @param endColumn the ending column of the node
 	 */
-	public JsonAstNull(int line, int column) {
-		super(line, column);
+	public JsonAstNull(final int startLine, final int startColumn, final int endLine, final int endColumn) {
+		super(startLine, startColumn, endLine, endColumn);
 	}
 
 }

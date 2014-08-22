@@ -32,19 +32,19 @@ public final class ObjectState extends AbstractJsonParserAstBuilderState {
 	/**
 	 * Constructor.
 	 * @param parentState the parent state
-	 * @param line the line where this state starts in the source code
-	 * @param column the column where this state starts in the source code 
+	 * @param startLine the line where this state starts in the source code
+	 * @param startColumn the column where this state starts in the source code 
 	 */
-	public ObjectState(final AbstractJsonParserAstBuilderState parentState, final int line, final int column) {
-		super(parentState, line, column);
+	public ObjectState(final AbstractJsonParserAstBuilderState parentState, final int startLine, final int startColumn) {
+		super(parentState, startLine, startColumn);
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.common.javascript.ownjson.parser.AbstractJsonParserAstBuilderState#handleObjectPropertyName(int, int, java.lang.String)
+	 * @see name.martingeisse.common.javascript.ownjson.parser.AbstractJsonParserAstBuilderState#handleObjectPropertyName(int, int, int, int, java.lang.String)
 	 */
 	@Override
-	protected AbstractJsonParserState handleObjectPropertyName(final int line, final int column, final String name) {
-		this.propertyName = new JsonAstString(line, column, name);
+	protected AbstractJsonParserState handleObjectPropertyName(int startLine, int startColumn, int endLine, int endColumn, String name) {
+		this.propertyName = new JsonAstString(startLine, startColumn, endLine, endColumn, name);
 		return this;
 	}
 
@@ -57,12 +57,12 @@ public final class ObjectState extends AbstractJsonParserAstBuilderState {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.common.javascript.ownjson.parser.AbstractJsonParserAstBuilderState#handleEndObject(int, int)
+	 * @see name.martingeisse.common.javascript.ownjson.parser.AbstractJsonParserAstBuilderState#handleEndObject(int, int, int, int)
 	 */
 	@Override
-	protected AbstractJsonParserState handleEndObject(int line, int column) {
+	protected AbstractJsonParserState handleEndObject(int startLine, int startColumn, int endLine, int endColumn) {
 		JsonAstObjectProperty[] propertyArray = properties.toArray(new JsonAstObjectProperty[properties.size()]);
-		getParentState().handleJsonValue(new JsonAstObject(getLine(), getColumn(), propertyArray));
+		getParentState().handleJsonValue(new JsonAstObject(getStartLine(), getStartColumn(), endLine, endColumn, propertyArray));
 		return getParentState();
 	}
 	

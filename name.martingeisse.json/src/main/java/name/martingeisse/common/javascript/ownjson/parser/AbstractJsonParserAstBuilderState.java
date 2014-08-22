@@ -23,25 +23,25 @@ public abstract class AbstractJsonParserAstBuilderState extends AbstractJsonPars
 	private final AbstractJsonParserAstBuilderState parentState;
 	
 	/**
-	 * the line
+	 * the startLine
 	 */
-	private final int line;
+	private final int startLine;
 	
 	/**
-	 * the column
+	 * the startLine
 	 */
-	private final int column;
+	private final int startColumn;
 
 	/**
 	 * Constructor.
 	 * @param parentState the parent state
-	 * @param line the line where this state starts in the source code
-	 * @param column the column where this state starts in the source code 
+	 * @param startLine the line where this state starts in the source code
+	 * @param startColumn the column where this state starts in the source code 
 	 */
-	public AbstractJsonParserAstBuilderState(final AbstractJsonParserAstBuilderState parentState, final int line, final int column) {
+	public AbstractJsonParserAstBuilderState(final AbstractJsonParserAstBuilderState parentState, final int startLine, final int startColumn) {
 		this.parentState = parentState;
-		this.line = line;
-		this.column = column;
+		this.startLine = startLine;
+		this.startColumn = startColumn;
 	}
 	
 	/**
@@ -53,103 +53,103 @@ public abstract class AbstractJsonParserAstBuilderState extends AbstractJsonPars
 	}
 	
 	/**
-	 * Getter method for the line.
-	 * @return the line
+	 * Getter method for the startLine.
+	 * @return the startLine
 	 */
-	int getLine() {
-		return line;
+	int getStartLine() {
+		return startLine;
 	}
-	
+
 	/**
-	 * Getter method for the column.
-	 * @return the column
+	 * Getter method for the startColumn.
+	 * @return the startColumn
 	 */
-	int getColumn() {
-		return column;
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleNullValue(int, int)
-	 */
-	@Override
-	protected final AbstractJsonParserState handleNullValue(final int line, final int column) {
-		handleJsonValue(new JsonAstNull(line, column));
-		return this;
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleBooleanValue(int, int, boolean)
-	 */
-	@Override
-	protected final AbstractJsonParserState handleBooleanValue(final int line, final int column, final boolean value) {
-		handleJsonValue(new JsonAstBoolean(line, column, value));
-		return this;
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleIntegerValue(int, int, long)
-	 */
-	@Override
-	protected final AbstractJsonParserState handleIntegerValue(final int line, final int column, final long value) {
-		handleJsonValue(new JsonAstInteger(line, column, value));
-		return this;
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleFloatingPointValue(int, int, double)
-	 */
-	@Override
-	protected final AbstractJsonParserState handleFloatingPointValue(final int line, final int column, final double value) {
-		handleJsonValue(new JsonAstFloat(line, column, value));
-		return this;
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleStringValue(int, int, java.lang.String)
-	 */
-	@Override
-	protected final AbstractJsonParserState handleStringValue(final int line, final int column, final String value) {
-		handleJsonValue(new JsonAstString(line, column, value));
-		return this;
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleBeginArray(int, int)
-	 */
-	@Override
-	protected AbstractJsonParserState handleBeginArray(int line, int column) {
-		return new ArrayState(this, line, column);
+	int getStartColumn() {
+		return startColumn;
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleEndArray(int, int)
+	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleNullValue(int, int, int, int)
 	 */
 	@Override
-	protected AbstractJsonParserState handleEndArray(int line, int column) {
+	protected AbstractJsonParserState handleNullValue(int startLine, int startColumn, int endLine, int endColumn) {
+		handleJsonValue(new JsonAstNull(startLine, startColumn, endLine, endColumn));
+		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleBooleanValue(int, int, int, int, boolean)
+	 */
+	@Override
+	protected AbstractJsonParserState handleBooleanValue(int startLine, int startColumn, int endLine, int endColumn, boolean value) {
+		handleJsonValue(new JsonAstBoolean(startLine, startColumn, endLine, endColumn, value));
+		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleIntegerValue(int, int, int, int, long)
+	 */
+	@Override
+	protected AbstractJsonParserState handleIntegerValue(int startLine, int startColumn, int endLine, int endColumn, long value) {
+		handleJsonValue(new JsonAstInteger(startLine, startColumn, endLine, endColumn, value));
+		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleFloatingPointValue(int, int, int, int, double)
+	 */
+	@Override
+	protected AbstractJsonParserState handleFloatingPointValue(int startLine, int startColumn, int endLine, int endColumn, double value) {
+		handleJsonValue(new JsonAstFloat(startLine, startColumn, endLine, endColumn, value));
+		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleStringValue(int, int, int, int, java.lang.String)
+	 */
+	@Override
+	protected AbstractJsonParserState handleStringValue(int startLine, int startColumn, int endLine, int endColumn, String value) {
+		handleJsonValue(new JsonAstString(startLine, startColumn, endLine, endColumn, value));
+		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleBeginArray(int, int, int, int)
+	 */
+	@Override
+	protected AbstractJsonParserState handleBeginArray(int startLine, int startColumn, int endLine, int endColumn) {
+		return new ArrayState(this, startLine, startColumn);
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleEndArray(int, int, int, int)
+	 */
+	@Override
+	protected AbstractJsonParserState handleEndArray(int startLine, int startColumn, int endLine, int endColumn) {
 		throw new IllegalStateException("cannot handle end-of-array in state " + this);
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleBeginObject(int, int)
+	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleBeginObject(int, int, int, int)
 	 */
 	@Override
-	protected AbstractJsonParserState handleBeginObject(int line, int column) {
-		return new ObjectState(this, line, column);
+	protected AbstractJsonParserState handleBeginObject(int startLine, int startColumn, int endLine, int endColumn) {
+		return new ObjectState(this, startLine, startColumn);
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleObjectPropertyName(int, int, java.lang.String)
+	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleObjectPropertyName(int, int, int, int, java.lang.String)
 	 */
 	@Override
-	protected AbstractJsonParserState handleObjectPropertyName(final int line, final int column, final String name) {
+	protected AbstractJsonParserState handleObjectPropertyName(int startLine, int startColumn, int endLine, int endColumn, String name) {
 		throw new IllegalStateException("cannot handle object property in state " + this);
 	};
-	
+
 	/* (non-Javadoc)
-	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleEndObject(int, int)
+	 * @see name.martingeisse.common.javascript.ownjson.parserbase.AbstractJsonParserState#handleEndObject(int, int, int, int)
 	 */
 	@Override
-	protected AbstractJsonParserState handleEndObject(int line, int column) {
+	protected AbstractJsonParserState handleEndObject(int startLine, int startColumn, int endLine, int endColumn) {
 		throw new IllegalStateException("cannot handle end-of-object in state " + this);
 	}
 

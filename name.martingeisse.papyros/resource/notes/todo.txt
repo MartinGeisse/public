@@ -6,3 +6,7 @@ field name wrong in validation errors, e.g. leave template family name empty:
 	Bitte tragen Sie einen Wert im Feld 'textField' ein.
 
 assign uniform names for template family key, language key, preview data key
+
+select all by CMD+a, then replacing by an opening curly brace, crashes CodeMirror
+
+validate against duplicate object property

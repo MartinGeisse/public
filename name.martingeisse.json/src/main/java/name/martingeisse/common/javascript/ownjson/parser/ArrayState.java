@@ -25,11 +25,11 @@ public final class ArrayState extends AbstractJsonParserAstBuilderState {
 	/**
 	 * Constructor.
 	 * @param parentState the parent state
-	 * @param line the line where this state starts in the source code
-	 * @param column the column where this state starts in the source code 
+	 * @param startLine the line where this state starts in the source code
+	 * @param startColumn the column where this state starts in the source code 
 	 */
-	public ArrayState(final AbstractJsonParserAstBuilderState parentState, final int line, final int column) {
-		super(parentState, line, column);
+	public ArrayState(final AbstractJsonParserAstBuilderState parentState, final int startLine, final int startColumn) {
+		super(parentState, startLine, startColumn);
 	}
 	
 	/* (non-Javadoc)
@@ -41,12 +41,12 @@ public final class ArrayState extends AbstractJsonParserAstBuilderState {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.common.javascript.ownjson.parser.AbstractJsonParserAstBuilderState#handleEndArray(int, int)
+	 * @see name.martingeisse.common.javascript.ownjson.parser.AbstractJsonParserAstBuilderState#handleEndArray(int, int, int, int)
 	 */
 	@Override
-	protected AbstractJsonParserState handleEndArray(int line, int column) {
+	protected AbstractJsonParserState handleEndArray(int startLine, int startColumn, int endLine, int endColumn) {
 		JsonAstValue[] elementArray = elements.toArray(new JsonAstValue[elements.size()]);
-		getParentState().handleJsonValue(new JsonAstArray(getLine(), getColumn(), elementArray));
+		getParentState().handleJsonValue(new JsonAstArray(getStartLine(), getStartColumn(), endLine, endColumn, elementArray));
 		return getParentState();
 	}
 	

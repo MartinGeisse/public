@@ -18,23 +18,27 @@ public final class JsonAstArray extends JsonAstValue {
 
 	/**
 	 * Constructor.
-	 * @param line the line number
-	 * @param column the column number
+	 * @param startLine the starting line of the node
+	 * @param startColumn the starting column of the node
+	 * @param endLine the ending line of the node
+	 * @param endColumn the ending column of the node
 	 * @param elements the elements of this node
 	 */
-	public JsonAstArray(int line, int column, JsonAstNode[] elements) {
-		this(line, column, elements, true);
+	public JsonAstArray(final int startLine, final int startColumn, final int endLine, final int endColumn, JsonAstNode[] elements) {
+		this(startLine, startColumn, endLine, endColumn, elements, true);
 	}
 
 	/**
 	 * Internal Constructor that controls copying behavior.
-	 * @param line the line number
-	 * @param column the column number
+	 * @param startLine the starting line of the node
+	 * @param startColumn the starting column of the node
+	 * @param endLine the ending line of the node
+	 * @param endColumn the ending column of the node
 	 * @param elements the elements of this node
 	 * @param copyElementsArray whether the elements array should be copied
 	 */
-	JsonAstArray(int line, int column, JsonAstNode[] elements, boolean copyElementsArray) {
-		super(line, column);
+	JsonAstArray(final int startLine, final int startColumn, final int endLine, final int endColumn, JsonAstNode[] elements, boolean copyElementsArray) {
+		super(startLine, startColumn, endLine, endColumn);
 		this.elements = (copyElementsArray ? Arrays.copyOf(elements, elements.length) : elements);
 	}
 
