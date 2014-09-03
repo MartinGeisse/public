@@ -44,6 +44,17 @@ public abstract class JsonAstNode {
 	}
 
 	/**
+	 * Constructor.
+	 * @param location a node that specifies the location of this node
+	 */
+	public JsonAstNode(final JsonAstNode location) {
+		this.startLine = location.getStartLine();
+		this.startColumn = location.getStartColumn();
+		this.endLine = location.getEndLine();
+		this.endColumn = location.getEndColumn();
+	}
+
+	/**
 	 * Getter method for the startLine.
 	 * @return the startLine
 	 */

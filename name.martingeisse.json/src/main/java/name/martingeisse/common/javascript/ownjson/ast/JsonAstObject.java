@@ -27,10 +27,28 @@ public final class JsonAstObject extends JsonAstValue {
 	 */
 	public JsonAstObject(final int startLine, final int startColumn, final int endLine, final int endColumn, JsonAstObjectProperty[] properties) {
 		super(startLine, startColumn, endLine, endColumn);
-		this.properties = new HashMap<>();
+		this.properties = buildProperties(properties);
+	}
+	
+	/**
+	 * Constructor.
+	 * @param location a node that specifies the location of this node
+	 * @param properties the properties of this node
+	 */
+	public JsonAstObject(final JsonAstNode location, JsonAstObjectProperty[] properties) {
+		super(location);
+		this.properties = buildProperties(properties);
+	}
+	
+	/**
+	 * 
+	 */
+	private static Map<String, JsonAstObjectProperty> buildProperties(JsonAstObjectProperty[] properties) {
+		Map<String, JsonAstObjectProperty> result = new HashMap<>();
 		for (JsonAstObjectProperty property : properties) {
-			this.properties.put(property.getName().getValue(), property);
+			result.put(property.getName().getValue(), property);
 		}
+		return result;
 	}
 
 	/**

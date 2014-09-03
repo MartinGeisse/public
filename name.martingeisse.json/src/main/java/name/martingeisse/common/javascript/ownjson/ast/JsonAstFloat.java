@@ -26,7 +26,17 @@ public final class JsonAstFloat extends JsonAstValue {
 		super(startLine, startColumn, endLine, endColumn);
 		this.value = value;
 	}
-
+	
+	/**
+	 * Constructor.
+	 * @param location a node that specifies the location of this node
+	 * @param value the value of this node
+	 */
+	public JsonAstFloat(final JsonAstNode location, double value) {
+		super(location);
+		this.value = value;
+	}
+	
 	/**
 	 * Getter method for the value.
 	 * @return the value

@@ -25,7 +25,18 @@ public final class JsonAstArray extends JsonAstValue {
 	 * @param elements the elements of this node
 	 */
 	public JsonAstArray(final int startLine, final int startColumn, final int endLine, final int endColumn, JsonAstNode[] elements) {
-		this(startLine, startColumn, endLine, endColumn, elements, true);
+		super(startLine, startColumn, endLine, endColumn);
+		this.elements = buildElements(elements, true);
+	}
+
+	/**
+	 * Constructor.
+	 * @param location a node that specifies the location of this node
+	 * @param elements the elements of this node
+	 */
+	public JsonAstArray(final JsonAstNode location, JsonAstNode[] elements) {
+		super(location);
+		this.elements = buildElements(elements, true);
 	}
 
 	/**
@@ -39,7 +50,14 @@ public final class JsonAstArray extends JsonAstValue {
 	 */
 	JsonAstArray(final int startLine, final int startColumn, final int endLine, final int endColumn, JsonAstNode[] elements, boolean copyElementsArray) {
 		super(startLine, startColumn, endLine, endColumn);
-		this.elements = (copyElementsArray ? Arrays.copyOf(elements, elements.length) : elements);
+		this.elements = buildElements(elements, copyElementsArray);
+	}
+	
+	/**
+	 * 
+	 */
+	private static JsonAstNode[] buildElements(JsonAstNode[] elements, boolean copyElementsArray) {
+		return (copyElementsArray ? Arrays.copyOf(elements, elements.length) : elements);
 	}
 
 	/**

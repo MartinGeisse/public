@@ -30,6 +30,16 @@ public final class JsonAstString extends JsonAstValue {
 	}
 
 	/**
+	 * Constructor.
+	 * @param location a node that specifies the location of this node
+	 * @param value the value of this node
+	 */
+	public JsonAstString(final JsonAstNode location, String value) {
+		super(location);
+		this.value = ParameterUtil.ensureNotNull(value, "value");
+	}
+	
+	/**
 	 * Getter method for the value.
 	 * @return the value
 	 */

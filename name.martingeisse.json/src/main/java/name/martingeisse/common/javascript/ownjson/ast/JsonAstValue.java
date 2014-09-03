@@ -20,4 +20,12 @@ public abstract class JsonAstValue extends JsonAstNode {
 		super(startLine, startColumn, endLine, endColumn);
 	}
 
+	/**
+	 * Constructor.
+	 * @param location a node that specifies the location of this node
+	 */
+	public JsonAstValue(final JsonAstNode location) {
+		super(location);
+	}
+	
 }

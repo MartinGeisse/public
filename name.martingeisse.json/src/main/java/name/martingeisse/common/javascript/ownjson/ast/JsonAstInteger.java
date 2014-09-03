@@ -26,6 +26,16 @@ public final class JsonAstInteger extends JsonAstValue {
 		super(startLine, startColumn, endLine, endColumn);
 		this.value = value;
 	}
+	
+	/**
+	 * Constructor.
+	 * @param location a node that specifies the location of this node
+	 * @param value the value of this node
+	 */
+	public JsonAstInteger(final JsonAstNode location, long value) {
+		super(location);
+		this.value = value;
+	}
 
 	/**
 	 * Getter method for the value.

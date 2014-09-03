@@ -58,12 +58,6 @@ public class Main {
 		new Thread() {
 			@Override
 			public void run() {
-				Initializer.initializeCassandraDatabase();
-			}
-		}.start();
-		new Thread() {
-			@Override
-			public void run() {
 				Initializer.initializeHazelcast();
 			}
 		}.start();

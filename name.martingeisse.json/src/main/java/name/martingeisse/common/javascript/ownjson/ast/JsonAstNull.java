@@ -20,4 +20,12 @@ public final class JsonAstNull extends JsonAstValue {
 		super(startLine, startColumn, endLine, endColumn);
 	}
 
+	/**
+	 * Constructor.
+	 * @param location a node that specifies the location of this node
+	 */
+	public JsonAstNull(final JsonAstNode location) {
+		super(location);
+	}
+	
 }
