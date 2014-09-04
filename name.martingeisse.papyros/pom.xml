@@ -78,6 +78,11 @@
 			<artifactId>hazelcast</artifactId>
 			<version>3.2.2</version>
 		</dependency>
+		<dependency>
+			<groupId>com.lyncode</groupId>
+			<artifactId>jtwig-spring</artifactId>
+			<version>3.0.0</version>
+		</dependency>
 
 	</dependencies>
 
