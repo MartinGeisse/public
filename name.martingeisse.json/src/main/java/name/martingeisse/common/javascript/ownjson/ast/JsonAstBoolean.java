@@ -44,5 +44,13 @@ public final class JsonAstBoolean extends JsonAstValue {
 	public boolean isValue() {
 		return value;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.javascript.ownjson.ast.JsonAstValue#withLocation(name.martingeisse.common.javascript.ownjson.ast.JsonAstNode)
+	 */
+	@Override
+	public JsonAstBoolean withLocation(JsonAstNode location) {
+		return new JsonAstBoolean(location, value);
+	}
+
 }

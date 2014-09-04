@@ -85,5 +85,14 @@ public abstract class JsonAstNode {
 	public int getEndColumn() {
 		return endColumn;
 	}
+	
+	/**
+	 * Builds a node that is equivalent to this one but using the location
+	 * from the specified node.
+	 * 
+	 * @param location the location-providing node
+	 * @return the newly constructed node
+	 */
+	public abstract JsonAstNode withLocation(JsonAstNode location);
 
 }

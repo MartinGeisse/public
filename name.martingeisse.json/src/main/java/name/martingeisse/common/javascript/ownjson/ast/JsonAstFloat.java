@@ -44,5 +44,13 @@ public final class JsonAstFloat extends JsonAstValue {
 	public double getValue() {
 		return value;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.javascript.ownjson.ast.JsonAstValue#withLocation(name.martingeisse.common.javascript.ownjson.ast.JsonAstNode)
+	 */
+	@Override
+	public JsonAstFloat withLocation(JsonAstNode location) {
+		return new JsonAstFloat(location, value);
+	}
+
 }

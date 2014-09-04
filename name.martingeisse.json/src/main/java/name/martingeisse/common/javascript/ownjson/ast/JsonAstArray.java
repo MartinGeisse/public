@@ -77,4 +77,16 @@ public final class JsonAstArray extends JsonAstValue {
 		return elements[index];
 	}
 	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.javascript.ownjson.ast.JsonAstValue#withLocation(name.martingeisse.common.javascript.ownjson.ast.JsonAstNode)
+	 */
+	@Override
+	public JsonAstArray withLocation(JsonAstNode location) {
+		JsonAstNode[] copyOfElements = new JsonAstNode[elements.length];
+		for (int i=0; i<elements.length; i++) {
+			copyOfElements[i] = elements[i].withLocation(location);
+		}
+		return new JsonAstArray(location, copyOfElements);
+	}
+	
 }

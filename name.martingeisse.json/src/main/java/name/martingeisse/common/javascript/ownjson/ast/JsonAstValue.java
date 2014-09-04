@@ -28,4 +28,10 @@ public abstract class JsonAstValue extends JsonAstNode {
 		super(location);
 	}
 	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.javascript.ownjson.ast.JsonAstNode#withLocation(name.martingeisse.common.javascript.ownjson.ast.JsonAstNode)
+	 */
+	@Override
+	public abstract JsonAstValue withLocation(JsonAstNode location);
+
 }

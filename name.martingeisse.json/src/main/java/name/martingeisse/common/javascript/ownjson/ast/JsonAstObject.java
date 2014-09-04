@@ -41,6 +41,16 @@ public final class JsonAstObject extends JsonAstValue {
 	}
 	
 	/**
+	 * Constructor.
+	 * @param location a node that specifies the location of this node
+	 * @param properties the properties of this node
+	 */
+	private JsonAstObject(final JsonAstNode location, Map<String, JsonAstObjectProperty> properties) {
+		super(location);
+		this.properties = properties;
+	}
+	
+	/**
 	 * 
 	 */
 	private static Map<String, JsonAstObjectProperty> buildProperties(JsonAstObjectProperty[] properties) {
@@ -75,6 +85,18 @@ public final class JsonAstObject extends JsonAstValue {
 	 */
 	public JsonAstNode getValue(String propertyName) {
 		return properties.get(propertyName).getValue();
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.javascript.ownjson.ast.JsonAstValue#withLocation(name.martingeisse.common.javascript.ownjson.ast.JsonAstNode)
+	 */
+	@Override
+	public JsonAstValue withLocation(JsonAstNode location) {
+		Map<String, JsonAstObjectProperty> copyOfProperties = new HashMap<>();
+		for (Map.Entry<String, JsonAstObjectProperty> entry : properties.entrySet()) {
+			copyOfProperties.put(entry.getKey(), entry.getValue().withLocation(location));
+		}
+		return new JsonAstObject(location, copyOfProperties);
 	}
 	
 }

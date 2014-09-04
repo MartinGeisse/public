@@ -46,5 +46,13 @@ public final class JsonAstString extends JsonAstValue {
 	public String getValue() {
 		return value;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.javascript.ownjson.ast.JsonAstValue#withLocation(name.martingeisse.common.javascript.ownjson.ast.JsonAstNode)
+	 */
+	@Override
+	public JsonAstString withLocation(JsonAstNode location) {
+		return new JsonAstString(location, value);
+	}
+
 }

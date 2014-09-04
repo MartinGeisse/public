@@ -47,4 +47,12 @@ public final class JsonAstObjectProperty extends JsonAstNode {
 		return value;
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.javascript.ownjson.ast.JsonAstNode#withLocation(name.martingeisse.common.javascript.ownjson.ast.JsonAstNode)
+	 */
+	@Override
+	public JsonAstObjectProperty withLocation(JsonAstNode location) {
+		return new JsonAstObjectProperty(name.withLocation(location), value.withLocation(location));
+	}
+	
 }

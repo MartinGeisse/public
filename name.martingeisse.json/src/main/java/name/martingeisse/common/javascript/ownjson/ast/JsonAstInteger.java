@@ -44,5 +44,13 @@ public final class JsonAstInteger extends JsonAstValue {
 	public long getValue() {
 		return value;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.javascript.ownjson.ast.JsonAstValue#withLocation(name.martingeisse.common.javascript.ownjson.ast.JsonAstNode)
+	 */
+	@Override
+	public JsonAstInteger withLocation(JsonAstNode location) {
+		return new JsonAstInteger(location, value);
+	}
+
 }

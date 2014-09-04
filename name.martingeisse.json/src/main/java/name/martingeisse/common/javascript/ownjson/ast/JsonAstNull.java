@@ -27,5 +27,13 @@ public final class JsonAstNull extends JsonAstValue {
 	public JsonAstNull(final JsonAstNode location) {
 		super(location);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.common.javascript.ownjson.ast.JsonAstValue#withLocation(name.martingeisse.common.javascript.ownjson.ast.JsonAstNode)
+	 */
+	@Override
+	public JsonAstNull withLocation(JsonAstNode location) {
+		return new JsonAstNull(location);
+	}
+
 }
