@@ -38,10 +38,11 @@ public interface JsonPropertySchema {
 	 * 
 	 * @param parentObject the parent object from which the property is missing (used
 	 * to obtain the "location" of the missing property)
+	 * @param propertyName the name of the missing property
 	 * @param validationReport the validation report to write results into
 	 * @return the normalized property, or null to indicate that the property is
 	 * still absent after normalization
 	 */
-	public JsonAstObjectProperty validateAndNormalizeMissingProperty(JsonAstObject parentObject, JsonValidationReport validationReport);
+	public JsonAstObjectProperty validateAndNormalizeMissingProperty(JsonAstObject parentObject, String propertyName, JsonValidationReport validationReport);
 
 }

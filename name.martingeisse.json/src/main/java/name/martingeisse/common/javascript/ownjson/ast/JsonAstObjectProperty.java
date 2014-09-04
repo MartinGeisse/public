@@ -18,14 +18,14 @@ public final class JsonAstObjectProperty extends JsonAstNode {
 	/**
 	 * the value
 	 */
-	private final JsonAstNode value;
+	private final JsonAstValue value;
 
 	/**
 	 * Constructor.
 	 * @param name the property name
 	 * @param value the property value
 	 */
-	public JsonAstObjectProperty(JsonAstString name, JsonAstNode value) {
+	public JsonAstObjectProperty(JsonAstString name, JsonAstValue value) {
 		super(name.getStartLine(), name.getStartColumn(), value.getEndLine(), value.getEndColumn());
 		this.name = name;
 		this.value = value;
@@ -43,7 +43,7 @@ public final class JsonAstObjectProperty extends JsonAstNode {
 	 * Getter method for the value.
 	 * @return the value
 	 */
-	public JsonAstNode getValue() {
+	public JsonAstValue getValue() {
 		return value;
 	}
 

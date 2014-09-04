@@ -8,6 +8,7 @@ package name.martingeisse.common.javascript.ownjson.schema;
 
 import name.martingeisse.common.javascript.ownjson.ast.JsonAstObject;
 import name.martingeisse.common.javascript.ownjson.ast.JsonAstObjectProperty;
+import name.martingeisse.common.javascript.ownjson.ast.JsonAstValue;
 
 /**
  * Base class that can act both as a value schema and a property schema.
@@ -22,16 +23,21 @@ public abstract class JsonValueOrPropertySchema implements JsonValueSchema, Json
 	 */
 	@Override
 	public final JsonAstObjectProperty validateAndNormalizeProperty(final JsonAstObjectProperty property, final JsonValidationReport validationReport) {
-		// TODO
-		return null;
+		JsonAstValue oldValue = property.getValue();
+		JsonAstValue newValue = validateAndNormalizeValue(oldValue, validationReport);
+		if (newValue != oldValue) {
+			return new JsonAstObjectProperty(property.getName(), newValue);
+		} else {
+			return property;
+		}
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.common.javascript.ownjson.schema.JsonPropertySchema#validateAndNormalizeMissingProperty(name.martingeisse.common.javascript.ownjson.ast.JsonAstObject, name.martingeisse.common.javascript.ownjson.schema.JsonValidationReport)
+	 * @see name.martingeisse.common.javascript.ownjson.schema.JsonPropertySchema#validateAndNormalizeMissingProperty(name.martingeisse.common.javascript.ownjson.ast.JsonAstObject, java.lang.String, name.martingeisse.common.javascript.ownjson.schema.JsonValidationReport)
 	 */
 	@Override
-	public final JsonAstObjectProperty validateAndNormalizeMissingProperty(final JsonAstObject parentObject, final JsonValidationReport validationReport) {
-		// TODO
+	public JsonAstObjectProperty validateAndNormalizeMissingProperty(JsonAstObject parentObject, String propertyName, JsonValidationReport validationReport) {
+		validationReport.addMissingPropertyError(parentObject, propertyName);
 		return null;
 	}
 
