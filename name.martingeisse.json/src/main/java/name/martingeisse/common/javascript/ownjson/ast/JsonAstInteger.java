@@ -16,12 +16,24 @@ public final class JsonAstInteger extends JsonAstValue {
 
 	/**
 	 * Constructor.
-	 * @param line the line number
-	 * @param column the column number
+	 * @param startLine the starting line of the node
+	 * @param startColumn the starting column of the node
+	 * @param endLine the ending line of the node
+	 * @param endColumn the ending column of the node
 	 * @param value the value of this node
 	 */
-	public JsonAstInteger(int line, int column, long value) {
-		super(line, column);
+	public JsonAstInteger(final int startLine, final int startColumn, final int endLine, final int endColumn, long value) {
+		super(startLine, startColumn, endLine, endColumn);
+		this.value = value;
+	}
+	
+	/**
+	 * Constructor.
+	 * @param location a node that specifies the location of this node
+	 * @param value the value of this node
+	 */
+	public JsonAstInteger(final JsonAstNode location, long value) {
+		super(location);
 		this.value = value;
 	}
 

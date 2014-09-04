@@ -212,7 +212,7 @@ final class JsonLexerInput {
 				}
 				c = input.charAt(inputPosition);
 				if (!isEscapableCharacter(c)) {
-					throw new JsonSyntaxException(line, column - 1, line, column + 1, "invalid escape sequence");
+					throw new JsonSyntaxException(line, column - 1, line, column + 1, "invalid escape sequence: \\" + c);
 				}
 				switch (c) {
 				
@@ -258,13 +258,13 @@ final class JsonLexerInput {
 				case 'u':
 					stepInternalNoNewline();
 					if (inputLength - inputPosition < 4) {
-						throw new JsonSyntaxException(line, column - 1, line, column + 1, "partial unicode escape before EOF");
+						throw new JsonSyntaxException(line, column - 2, line, column, "partial unicode escape before EOF");
 					}
 					int unicodeValue;
 					try {
 						unicodeValue = Integer.parseInt(input.subSequence(inputPosition, inputPosition + 4).toString(), 16);
 					} catch (NumberFormatException e) {
-						throw new JsonSyntaxException(line, column - 1, line, column + 1, "malformed unicode escape");
+						throw new JsonSyntaxException(line, column - 2, line, column + 4, "malformed unicode escape");
 					}
 					segment.append((char)unicodeValue);
 					stepInternalNoNewline(4);

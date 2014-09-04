@@ -38,7 +38,6 @@ import org.eclipse.jetty.servlets.IncludableGzipFilter;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
-import com.datastax.driver.core.Cluster;
 import com.hazelcast.core.Hazelcast;
 /**
  * This class initializes various parts of the system through a single
@@ -87,14 +86,6 @@ public class Initializer {
 		database.initialize();
 		EntityConnectionManager.initializeDatabaseDescriptors(database);
 		PapyrosSqldb.database = database;
-	}
-
-	/**
-	 * Initializes the Cassandra DB connection.
-	 */
-	public static void initializeCassandraDatabase() {
-		PapyrosCassandra.cluster = Cluster.builder().addContactPoint("localhost").build();
-		PapyrosCassandra.session = PapyrosCassandra.cluster.connect("papyros");
 	}
 
 	/**

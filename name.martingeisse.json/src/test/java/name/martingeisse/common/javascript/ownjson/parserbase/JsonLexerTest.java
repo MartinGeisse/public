@@ -27,13 +27,13 @@ public class JsonLexerTest {
 		
 		JsonLexer lexer = new JsonLexer(new JsonLexerInput("   ,"));
 		lexer.readToken("test");
-		assertEquals(0, lexer.getTokenLine());
-		assertEquals(3, lexer.getTokenColumn());
+		assertEquals(0, lexer.getTokenStartLine());
+		assertEquals(3, lexer.getTokenStartColumn());
 		
 		lexer = new JsonLexer(new JsonLexerInput("  \n ,"));
 		lexer.readToken("test");
-		assertEquals(1, lexer.getTokenLine());
-		assertEquals(1, lexer.getTokenColumn());
+		assertEquals(1, lexer.getTokenStartLine());
+		assertEquals(1, lexer.getTokenStartColumn());
 		
 	}
 	

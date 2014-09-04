@@ -16,12 +16,24 @@ public final class JsonAstBoolean extends JsonAstValue {
 
 	/**
 	 * Constructor.
-	 * @param line the line number
-	 * @param column the column number
+	 * @param startLine the starting line of the node
+	 * @param startColumn the starting column of the node
+	 * @param endLine the ending line of the node
+	 * @param endColumn the ending column of the node
 	 * @param value the value of this node
 	 */
-	public JsonAstBoolean(int line, int column, boolean value) {
-		super(line, column);
+	public JsonAstBoolean(final int startLine, final int startColumn, final int endLine, final int endColumn, boolean value) {
+		super(startLine, startColumn, endLine, endColumn);
+		this.value = value;
+	}
+	
+	/**
+	 * Constructor.
+	 * @param location a node that specifies the location of this node
+	 * @param value the value of this node
+	 */
+	public JsonAstBoolean(final JsonAstNode location, boolean value) {
+		super(location);
 		this.value = value;
 	}
 

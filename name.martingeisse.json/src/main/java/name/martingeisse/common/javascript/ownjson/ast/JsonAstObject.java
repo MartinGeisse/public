@@ -19,16 +19,36 @@ public final class JsonAstObject extends JsonAstValue {
 
 	/**
 	 * Constructor.
-	 * @param line the line number
-	 * @param column the column number
+	 * @param startLine the starting line of the node
+	 * @param startColumn the starting column of the node
+	 * @param endLine the ending line of the node
+	 * @param endColumn the ending column of the node
 	 * @param properties the properties of this node
 	 */
-	public JsonAstObject(int line, int column, JsonAstObjectProperty[] properties) {
-		super(line, column);
-		this.properties = new HashMap<>();
+	public JsonAstObject(final int startLine, final int startColumn, final int endLine, final int endColumn, JsonAstObjectProperty[] properties) {
+		super(startLine, startColumn, endLine, endColumn);
+		this.properties = buildProperties(properties);
+	}
+	
+	/**
+	 * Constructor.
+	 * @param location a node that specifies the location of this node
+	 * @param properties the properties of this node
+	 */
+	public JsonAstObject(final JsonAstNode location, JsonAstObjectProperty[] properties) {
+		super(location);
+		this.properties = buildProperties(properties);
+	}
+	
+	/**
+	 * 
+	 */
+	private static Map<String, JsonAstObjectProperty> buildProperties(JsonAstObjectProperty[] properties) {
+		Map<String, JsonAstObjectProperty> result = new HashMap<>();
 		for (JsonAstObjectProperty property : properties) {
-			this.properties.put(property.getName().getValue(), property);
+			result.put(property.getName().getValue(), property);
 		}
+		return result;
 	}
 
 	/**
