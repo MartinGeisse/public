@@ -102,6 +102,7 @@ public final class FrameLoop {
 					});
 					glWorkerLoop.scheduleFrameBoundary();
 				} else {
+					glFlush();
 					Display.update();
 					Display.processMessages();
 				}
