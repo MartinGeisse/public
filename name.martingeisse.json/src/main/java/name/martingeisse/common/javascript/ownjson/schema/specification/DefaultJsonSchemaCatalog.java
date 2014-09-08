@@ -9,6 +9,8 @@ package name.martingeisse.common.javascript.ownjson.schema.specification;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import name.martingeisse.common.javascript.ownjson.ast.JsonAstNull;
 import name.martingeisse.common.javascript.ownjson.ast.JsonAstObject;
 import name.martingeisse.common.javascript.ownjson.ast.JsonAstObjectProperty;
@@ -104,6 +106,7 @@ public final class DefaultJsonSchemaCatalog implements JsonSchemaCatalog {
 			return valueSchemas.get(schemaName);
 		}
 		// TODO schema with default value
+		throw new NotImplementedException("");
 	}
 
 	/* (non-Javadoc)
@@ -116,6 +119,7 @@ public final class DefaultJsonSchemaCatalog implements JsonSchemaCatalog {
 			return propertySchemas.get(schemaName);
 		}
 		// TODO schema with default value
+		throw new NotImplementedException("");
 	}
 
 	/**
