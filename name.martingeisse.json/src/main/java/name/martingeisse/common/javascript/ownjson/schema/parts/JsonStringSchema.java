@@ -16,6 +16,19 @@ import name.martingeisse.common.javascript.ownjson.schema.JsonValidationReport;
  */
 public class JsonStringSchema extends AbstractJsonValueOrPropertySchema {
 
+	/**
+	 * the emptyAllowed
+	 */
+	private final boolean emptyAllowed;
+	
+	/**
+	 * Constructor.
+	 * @param emptyAllowed whether the empty string is allowed as a value
+	 */
+	public JsonStringSchema(boolean emptyAllowed) {
+		this.emptyAllowed = emptyAllowed;
+	}
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.common.javascript.ownjson.schema.JsonValueSchema#validateAndNormalizeValue(name.martingeisse.common.javascript.ownjson.ast.JsonAstValue, name.martingeisse.common.javascript.ownjson.schema.JsonValidationReport)
 	 */
@@ -33,7 +46,12 @@ public class JsonStringSchema extends AbstractJsonValueOrPropertySchema {
 	 * 
 	 */
 	private final JsonAstValue handleStringInternal(JsonAstString value, JsonValidationReport validationReport) {
-		return handleStringInternal(value, validationReport);
+		if (!emptyAllowed && value.getValue().isEmpty()) {
+			validationReport.addError(value, "empty string not allowed here");
+			return value;
+		} else {
+			return handleString(value, validationReport);
+		}
 	}
 	
 	/**

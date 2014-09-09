@@ -9,8 +9,6 @@ package name.martingeisse.common.javascript.ownjson.schema.specification;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import name.martingeisse.common.javascript.ownjson.ast.JsonAstNull;
 import name.martingeisse.common.javascript.ownjson.ast.JsonAstObject;
 import name.martingeisse.common.javascript.ownjson.ast.JsonAstObjectProperty;
@@ -19,7 +17,13 @@ import name.martingeisse.common.javascript.ownjson.schema.JsonPropertySchema;
 import name.martingeisse.common.javascript.ownjson.schema.JsonValidationReport;
 import name.martingeisse.common.javascript.ownjson.schema.JsonValueOrPropertySchema;
 import name.martingeisse.common.javascript.ownjson.schema.JsonValueSchema;
+import name.martingeisse.common.javascript.ownjson.schema.parts.JsonBooleanSchema;
+import name.martingeisse.common.javascript.ownjson.schema.parts.JsonFloatSchema;
+import name.martingeisse.common.javascript.ownjson.schema.parts.JsonIntegerSchema;
+import name.martingeisse.common.javascript.ownjson.schema.parts.JsonStringSchema;
 import name.martingeisse.common.javascript.ownjson.schema.parts.OptionalSchema;
+
+import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * Default implementation of {@link JsonSchemaCatalog}. Defines the following
@@ -72,7 +76,16 @@ public final class DefaultJsonSchemaCatalog implements JsonSchemaCatalog {
 	public DefaultJsonSchemaCatalog() {
 		
 		// primitive types
-		// TODO
+		addPrimitive("int", new JsonIntegerSchema(true, true));
+		addPrimitive("int+", new JsonIntegerSchema(false, false));
+		addPrimitive("int+0", new JsonIntegerSchema(false, true));
+		addPrimitive("float", new JsonFloatSchema(true, true));
+		addPrimitive("float+", new JsonFloatSchema(false, false));
+		addPrimitive("float+0", new JsonFloatSchema(false, true));
+		addPrimitive("string", new JsonStringSchema(true));
+		addPrimitive("string+", new JsonStringSchema(false));
+		addPrimitive("bool", new JsonBooleanSchema());
+		addPrimitive("boolean", new JsonBooleanSchema());
 		
 		// other types
 		add("ignore", IGNORE);
