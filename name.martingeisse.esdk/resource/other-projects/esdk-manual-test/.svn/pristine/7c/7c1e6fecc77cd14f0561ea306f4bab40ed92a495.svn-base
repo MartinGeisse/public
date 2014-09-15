@@ -1,8 +1,0 @@
-
-start:
-	LOAD s0, 00
-
-loop:
-	OUTPUT s0, 00
-	ADD s0, 01
-	JUMP loop
