@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ESDK-Library
+Bundle-SymbolicName: name.martingeisse.esdklib; singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Martin Geisse
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: name.martingeisse.esdk.hdl,
+ name.martingeisse.esdk.hdl.components,
+ name.martingeisse.esdk.hdl.core,
+ name.martingeisse.esdk.hdl.experiment,
+ name.martingeisse.esdk.hdl.probe,
+ name.martingeisse.esdk.hdl.synthesis.codegen,
+ name.martingeisse.esdk.picoblaze,
+ name.martingeisse.esdk.picoblaze.assembler,
+ name.martingeisse.esdk.picoblaze.assembler.ast,
+ name.martingeisse.esdk.picoblaze.assembler.parser,
+ name.martingeisse.esdk.picoblaze.simulator,
+ name.martingeisse.esdk.util
+Bundle-Classpath: ., bin, lib/java/freemarker.jar, lib/java/commons-io-1.4.jar

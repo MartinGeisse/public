@@ -1,0 +1,46 @@
+
+start:
+	LOAD s0, 00
+	LOAD s1, 01
+
+loop:
+	OUTPUT s0, 00
+	OUTPUT s0, 01
+	CALL delay
+
+	OUTPUT s1, 00
+	OUTPUT s0, 01
+	CALL delay
+
+	OUTPUT s1, 00
+	OUTPUT s1, 01
+	CALL delay
+
+	OUTPUT s0, 00
+	OUTPUT s1, 01
+	CALL delay
+
+	JUMP loop
+
+delay:
+	LOAD s2, FF
+delayLoop:
+	SUB s2, 01
+	RETURN Z
+	CALL delay2
+	JUMP delayLoop
+
+delay2:
+	CALL delay3
+	CALL delay3
+	CALL delay3
+	CALL delay3
+	CALL delay3
+	CALL delay3
+	RETURN
+
+delay3:
+	RETURN
+	
+	
+	
