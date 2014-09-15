@@ -39,6 +39,7 @@
 		<module>name.martingeisse.http-api-server</module>
 		<module>name.martingeisse.wicket</module>
 		<module>name.martingeisse.phunky</module>
+		<module>name.martingeisse.esdk</module>
 
 		<!-- Stack'd / Miner project -->
 		<module>name.martingeisse.stackd-common</module>
