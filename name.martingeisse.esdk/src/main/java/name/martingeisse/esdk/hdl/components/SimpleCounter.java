@@ -14,12 +14,12 @@ import name.martingeisse.esdk.hdl.core.IValueSource;
  * created with a specific width, but rather value sources
  * are created taking a specific width from the counter.
  */
-public class SimpleCounter implements IClockSignalConsumer {
+public final class SimpleCounter implements IClockSignalConsumer {
 
 	/**
-	 * the value
+	 * the currentValue
 	 */
-	private int value;
+	private int currentValue;
 	
 	/**
 	 * the nextValue
@@ -33,26 +33,40 @@ public class SimpleCounter implements IClockSignalConsumer {
 	}
 
 	/**
-	 * @param bit ...
-	 * @return ...
+	 * Returns a value source for the full counter value.
+	 * @return the value source
 	 */
-	public IValueSource<Boolean> createValueSource(int bit) {
-		final int mask = (1 << bit);
-		return new IValueSource<Boolean>() {
-			
+	public IValueSource<Integer> getValueSource() {
+		return new IValueSource<Integer>() {
 			@Override
-			public Boolean getValue() {
-				return (value & mask) != 0;
+			public Integer getValue() {
+				return currentValue;
 			}
 		};
 	}
 
+	/**
+	 * Returns a value source for a single bit of the counter.
+	 * 
+	 * @param bit the bit index
+	 * @return the value source
+	 */
+	public IValueSource<Boolean> getBitValueSource(int bit) {
+		final int mask = (1 << bit);
+		return new IValueSource<Boolean>() {
+			@Override
+			public Boolean getValue() {
+				return (currentValue & mask) != 0;
+			}
+		};
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.esdk.hdl.core.IClockSignalConsumer#computeNextState()
 	 */
 	@Override
 	public void computeNextState() {
-		nextValue = value + 1;
+		nextValue = currentValue + 1;
 	}
 
 	/* (non-Javadoc)
@@ -60,7 +74,7 @@ public class SimpleCounter implements IClockSignalConsumer {
 	 */
 	@Override
 	public void enterNextState() {
-		value = nextValue;
+		currentValue = nextValue;
 	}
 
 }

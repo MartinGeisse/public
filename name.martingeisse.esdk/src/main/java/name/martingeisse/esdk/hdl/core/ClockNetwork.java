@@ -11,14 +11,15 @@ import java.util.Set;
 /**
  * This class keeps a set of clock signal consumers and is
  * able to send a simulated clock signal to them.
+ * 
  * @see IClockSignalConsumer for details on how clock signals are modeled
  */
-public class ClockNetwork {
+public final class ClockNetwork {
 
 	/**
 	 * the consumers
 	 */
-	private Set<IClockSignalConsumer> consumers;
+	private final Set<IClockSignalConsumer> consumers;
 	
 	/**
 	 * Constructor

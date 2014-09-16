@@ -6,11 +6,11 @@
 
 package name.martingeisse.esdk.picoblaze.simulator.port;
 
-import name.martingeisse.esdk.bus.generic.IGenericBusSlave;
+import name.martingeisse.esdk.bus.BusSlave32;
 import name.martingeisse.esdk.picoblaze.simulator.IPicoblazePortHandler;
 
 /**
- * PicoBlaze port handler for an {@link IGenericBusSlave}. Note that
+ * PicoBlaze port handler for an {@link BusSlave32}. Note that
  * instances are usually created by convenience methods, for example
  * by {@link AggregatePicoblazePortHandler}.
  */
@@ -19,7 +19,7 @@ public class GenericBusSlavePortHandler implements IPicoblazePortHandler {
 	/**
 	 * the slave
 	 */
-	private IGenericBusSlave slave;
+	private BusSlave32 slave;
 
 	/**
 	 * Constructor.
@@ -31,7 +31,7 @@ public class GenericBusSlavePortHandler implements IPicoblazePortHandler {
 	 * Constructor.
 	 * @param slave the bus slave to wrap
 	 */
-	public GenericBusSlavePortHandler(IGenericBusSlave slave) {
+	public GenericBusSlavePortHandler(BusSlave32 slave) {
 		this.slave = slave;
 	}
 
@@ -39,7 +39,7 @@ public class GenericBusSlavePortHandler implements IPicoblazePortHandler {
 	 * Getter method for the slave.
 	 * @return the slave
 	 */
-	public IGenericBusSlave getSlave() {
+	public BusSlave32 getSlave() {
 		return slave;
 	}
 
@@ -47,7 +47,7 @@ public class GenericBusSlavePortHandler implements IPicoblazePortHandler {
 	 * Setter method for the slave.
 	 * @param slave the slave to set
 	 */
-	public void setSlave(IGenericBusSlave slave) {
+	public void setSlave(BusSlave32 slave) {
 		this.slave = slave;
 	}
 
@@ -77,7 +77,7 @@ public class GenericBusSlavePortHandler implements IPicoblazePortHandler {
 	 * @return true if valid, false if invalid
 	 */
 	private boolean isAddressValid(int address) {
-		return (slave != null) && (address < (1 << slave.getLocalAddressBitCount()));
+		return (slave != null) && (address < (1 << slave.getLocalAddressBits()));
 	}
 	
 }

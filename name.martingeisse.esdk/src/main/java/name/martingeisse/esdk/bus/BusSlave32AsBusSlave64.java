@@ -4,29 +4,38 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.esdk.connect;
+package name.martingeisse.esdk.bus;
+
 
 /**
- * This class wraps an {@link IBusSlave32} and behaves as an {@link IBusSlave64}.
+ * This class wraps an {@link BusSlave32} and behaves as an {@link BusSlave64}.
+ * 
+ * Device-local addresses are truncated to the 32 bits the device understands.
+ * 
+ * Values written to the device are truncated to 32 bits.
+ * 
+ * Values read from the device are zero-extended to 64 bits. If sign-extension
+ * is needed, this must be performed either using a specialized bus adapter
+ * (instead of this class) or by the master that reads the value.
  */
-public final class BusSlave64FromBusSlave32 implements IBusSlave64 {
+public final class BusSlave32AsBusSlave64 implements BusSlave64 {
 
 	/**
 	 * the wrapped
 	 */
-	private IBusSlave32 wrapped;
+	private BusSlave32 wrapped;
 
 	/**
 	 * Constructor.
 	 */
-	public BusSlave64FromBusSlave32() {
+	public BusSlave32AsBusSlave64() {
 	}
 
 	/**
 	 * Constructor.
 	 * @param wrapped the wrapped bus slave
 	 */
-	public BusSlave64FromBusSlave32(final IBusSlave32 wrapped) {
+	public BusSlave32AsBusSlave64(final BusSlave32 wrapped) {
 		this.wrapped = wrapped;
 	}
 
@@ -34,7 +43,7 @@ public final class BusSlave64FromBusSlave32 implements IBusSlave64 {
 	 * Getter method for the wrapped bus slave.
 	 * @return the wrapped bus slave
 	 */
-	public IBusSlave32 getWrapped() {
+	public BusSlave32 getWrapped() {
 		return wrapped;
 	}
 
@@ -42,7 +51,7 @@ public final class BusSlave64FromBusSlave32 implements IBusSlave64 {
 	 * Setter method for the wrapped bus slave.
 	 * @param wrapped the wrapped bus slave to set
 	 */
-	public void setWrapped(final IBusSlave32 wrapped) {
+	public void setWrapped(final BusSlave32 wrapped) {
 		this.wrapped = wrapped;
 	}
 

@@ -11,9 +11,10 @@ package name.martingeisse.esdk.util;
  * using inner classes to create closures. In such a case, local variables
  * accessed from the closure must be final, but they may be references
  * to a {@link VariableObject} whose value is NOT final.
+ * 
  * @param <T> the type of the variable
  */
-public class VariableObject<T> {
+public final class VariableObject<T> {
 
 	/**
 	 * the value

@@ -8,7 +8,8 @@ package name.martingeisse.esdk.picoblaze.simulator.port;
 
 import java.util.ArrayList;
 import java.util.List;
-import name.martingeisse.esdk.bus.generic.IGenericBusSlave;
+
+import name.martingeisse.esdk.bus.BusSlave32;
 import name.martingeisse.esdk.picoblaze.simulator.IPicoblazePortHandler;
 
 /**
@@ -125,8 +126,8 @@ public final class AggregatePicoblazePortHandler implements IPicoblazePortHandle
 	 * @param baseAddress the base address
 	 * @param slave the salve to add
 	 */
-	public void addEntry(int baseAddress, final IGenericBusSlave slave) {
-		addEntry(baseAddress, 1 << slave.getLocalAddressBitCount(), new GenericBusSlavePortHandler(slave));
+	public void addEntry(int baseAddress, final BusSlave32 slave) {
+		addEntry(baseAddress, 1 << slave.getLocalAddressBits(), new GenericBusSlavePortHandler(slave));
 	}
 
 	/**

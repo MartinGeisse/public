@@ -10,7 +10,9 @@ import name.martingeisse.esdk.hdl.core.IClockSignalConsumer;
 import name.martingeisse.esdk.hdl.core.IValueSource;
 
 /**
- * Base class for probe implementations.
+ * Base class for probe implementations. See {@link Probe} for the
+ * default implementation. 
+ * 
  * @param <T> the type of probed value
  */
 public abstract class AbstractProbe<T> implements IClockSignalConsumer {
@@ -23,7 +25,7 @@ public abstract class AbstractProbe<T> implements IClockSignalConsumer {
 	/**
 	 * the source
 	 */
-	private IValueSource<T> source;
+	private IValueSource<? extends T> source;
 
 	/**
 	 * the value
@@ -32,18 +34,13 @@ public abstract class AbstractProbe<T> implements IClockSignalConsumer {
 
 	/**
 	 * Constructor.
-	 */
-	public AbstractProbe() {
-	}
-
-	/**
-	 * Constructor.
 	 * @param name the name (for logging the probed value)
 	 * @param source the source to probe
 	 */
-	public AbstractProbe(final String name, final IValueSource<T> source) {
+	public AbstractProbe(final String name, final IValueSource<? extends T> source) {
 		this.name = name;
 		this.source = source;
+		this.value = null;
 	}
 
 	/**
@@ -66,7 +63,7 @@ public abstract class AbstractProbe<T> implements IClockSignalConsumer {
 	 * Getter method for the source.
 	 * @return the source
 	 */
-	public IValueSource<T> getSource() {
+	public IValueSource<? extends T> getSource() {
 		return source;
 	}
 
@@ -74,7 +71,7 @@ public abstract class AbstractProbe<T> implements IClockSignalConsumer {
 	 * Setter method for the source.
 	 * @param source the source to set
 	 */
-	public void setSource(final IValueSource<T> source) {
+	public void setSource(IValueSource<? extends T> source) {
 		this.source = source;
 	}
 
@@ -100,5 +97,5 @@ public abstract class AbstractProbe<T> implements IClockSignalConsumer {
 	 * @param value the probed value
 	 */
 	protected abstract void logValue(String name, T value);
-	
+
 }

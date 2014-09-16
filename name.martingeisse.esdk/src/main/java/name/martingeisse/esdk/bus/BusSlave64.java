@@ -4,13 +4,13 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.esdk.connect;
+package name.martingeisse.esdk.bus;
 
 /**
  * This interface is used by devices that can be connected as
- * a slave device to a simplified 32-bit bus.
+ * a slave device to a 64-bit bus.
  */
-public interface IBusSlave32 extends IConnectable {
+public interface BusSlave64 {
 
 	/**
 	 * Returns the number of device-local address bits.
@@ -22,22 +22,22 @@ public interface IBusSlave32 extends IConnectable {
 	 * then local addresses must be fully covered by that mask:
 	 *   (localAddress == (localAddress & localMask)).
 	 * 
-	 * @return the number of device-local address bits, in the range 0..32
+	 * @return the number of device-local address bits, in the range 0..64
 	 */
 	public int getLocalAddressBits();
 	
 	/**
 	 * Handles a read operation from the specified address.
-	 * @param address the address to read from
+	 * @param localAddress the device-local address to read from
 	 * @return the value read
 	 */
-	public int read(int address);
+	public long read(long localAddress);
 
 	/**
 	 * Handles a write operation to the specified address.
-	 * @param address the address to write to
+	 * @param localAddress the device-local address to read from
 	 * @param value the value to write
 	 */
-	public void write(int address, int value);
+	public void write(long localAddress, long value);
 	
 }

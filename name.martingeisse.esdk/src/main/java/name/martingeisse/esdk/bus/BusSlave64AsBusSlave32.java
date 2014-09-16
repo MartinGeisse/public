@@ -4,29 +4,42 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.esdk.connect;
+package name.martingeisse.esdk.bus;
+
 
 /**
- * This class wraps an {@link IBusSlave64} and behaves as an {@link IBusSlave32}.
+ * This class wraps an {@link BusSlave64} and behaves as an {@link BusSlave32}.
+ * 
+ * Device-local addresses are zero-extended to the 64 bits the device understands.
+ * This obviously means that devices with large local address spaces cannot be
+ * fully addressed, which is obviously a fundamental problem when accessing such
+ * a device over a 32-bit bus.
+ * 
+ * Values written to the device are zero-extended to 64 bits. There is no way
+ * to specify the upper 32 bits with this class; use a specialized bus adapter
+ * if that is needed.
+ * 
+ * Values read from the device are truncated to 32 bits. This class does not
+ * provide a way to obtain the upper 32 bits.
  */
-public final class BusSlave32FromBusSlave64 implements IBusSlave32 {
+public final class BusSlave64AsBusSlave32 implements BusSlave32 {
 
 	/**
 	 * the wrapped
 	 */
-	private IBusSlave64 wrapped;
+	private BusSlave64 wrapped;
 
 	/**
 	 * Constructor.
 	 */
-	public BusSlave32FromBusSlave64() {
+	public BusSlave64AsBusSlave32() {
 	}
 
 	/**
 	 * Constructor.
 	 * @param wrapped the wrapped bus slave
 	 */
-	public BusSlave32FromBusSlave64(final IBusSlave64 wrapped) {
+	public BusSlave64AsBusSlave32(final BusSlave64 wrapped) {
 		this.wrapped = wrapped;
 	}
 
@@ -34,7 +47,7 @@ public final class BusSlave32FromBusSlave64 implements IBusSlave32 {
 	 * Getter method for the wrapped bus slave.
 	 * @return the wrapped bus slave
 	 */
-	public IBusSlave64 getWrapped() {
+	public BusSlave64 getWrapped() {
 		return wrapped;
 	}
 
@@ -42,7 +55,7 @@ public final class BusSlave32FromBusSlave64 implements IBusSlave32 {
 	 * Setter method for the wrapped bus slave.
 	 * @param wrapped the wrapped bus slave to set
 	 */
-	public void setWrapped(final IBusSlave64 wrapped) {
+	public void setWrapped(final BusSlave64 wrapped) {
 		this.wrapped = wrapped;
 	}
 
