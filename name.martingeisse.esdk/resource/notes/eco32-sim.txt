@@ -11,3 +11,8 @@ benutzt werden. Command-Line options für den Simulator sind dann nicht mehr nö
 Zusatzfeatures: Fast-boot (ROM überspringen); Hibernate (Speicherabbild nach Boot-Prozess schreiben).
 Hibernate-Image benutzen, wenn sich an den Kernel-Sourcen nichts geändert hat. (Oder am Compiler --
 wie könnte man das erkennen? Versionsnummer in static-variable?)
+
+Unused opcodes als Simulations-Speedup-Befehle (built-in memcpy; built-in "instant storage device with
+DMA" --> kopiert daten aus einer host-datei direkt in den speicher). Diese Befehle in einer virtuellen
+C-Datei direkt aus dem Compiler dem OS-Source-Code zur Verfügung stellen (impliziter Include-/Link-
+Pfad, der aus dem Compiler selbst kommt).
