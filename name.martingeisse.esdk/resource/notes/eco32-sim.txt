@@ -1,0 +1,13 @@
+
+Eco32 code liegt als associated files im Classpath. Simulation, indem on-the-fly compiled wird und
+dann die simulator-Klassen  benutzt werden.
+
+Ordner "cache". Der Compiler lagert dort die Object-Files und lädt sie, statt zu compilen. Erkennung
+am last-modified date, optional md5 der Datei.
+
+Die Simulator-Oberfäche liegt auch mit im Project und kann aus einer dafür geschriebenen Main-Klasse
+benutzt werden. Command-Line options für den Simulator sind dann nicht mehr nötig.
+
+Zusatzfeatures: Fast-boot (ROM überspringen); Hibernate (Speicherabbild nach Boot-Prozess schreiben).
+Hibernate-Image benutzen, wenn sich an den Kernel-Sourcen nichts geändert hat. (Oder am Compiler --
+wie könnte man das erkennen? Versionsnummer in static-variable?)

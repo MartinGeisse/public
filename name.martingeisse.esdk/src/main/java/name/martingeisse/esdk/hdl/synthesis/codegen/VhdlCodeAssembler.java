@@ -7,6 +7,8 @@ package name.martingeisse.esdk.hdl.synthesis.codegen;
 
 import java.io.PrintWriter;
 
+import org.apache.commons.lang3.StringUtils;
+
 import name.martingeisse.esdk.hdl.PortDirection;
 
 /**
@@ -53,36 +55,40 @@ public class VhdlCodeAssembler extends CodeAssembler {
 	
 	/**
 	 * Prints a "library" declaration for the library with the specified name
+	 * 
 	 * @param name the name of the library
 	 */
 	public void printLibraryDeclaration(String name) {
-		printIndentation();
-		getPrintWriter().append("library ").append(name).append(";\n");
+		print("library ");
+		print(name);
+		println(";");
 	}
 
 	/**
 	 * Prints a "use" declaration for the library element with the specified name
+	 * 
 	 * @param name the name of the library element
 	 */
 	public void printUseDeclaration(String name) {
-		printIndentation();
-		getPrintWriter().append("use ").append(name).append(";\n");
+		print("use ");
+		print(name);
+		println(";");
 	}
 	
 	/**
 	 * Begins an entity with the specified name
+	 * 
 	 * @param name the name of the entity
 	 */
 	public void beginEntity(String name) {
 		if (currentEntityName != null) {
 			throw new IllegalStateException("not at top level");
 		}
-		printIndentation();
 		print("entity ");
 		print(name);
 		println(" is");
 		this.currentEntityName = name;
-		startIndentation();
+		increaseIndentation();
 	}
 	
 	/**
@@ -94,8 +100,7 @@ public class VhdlCodeAssembler extends CodeAssembler {
 		} else if (currentArchitectureName != null) {
 			throw new IllegalStateException("currently printing an architecture");
 		}
-		endIndentation();
-		printIndentation();
+		decreaseIndentation();
 		print("end ");
 		print(currentEntityName);
 		println(";");
@@ -106,10 +111,9 @@ public class VhdlCodeAssembler extends CodeAssembler {
 	 * Begins a port set declaration.
 	 */
 	public void beginPorts() {
-		printIndentation();
 		print("port (");
 		firstPort = true;
-		startIndentation();
+		increaseIndentation();
 	}
 	
 	/**
@@ -133,7 +137,6 @@ public class VhdlCodeAssembler extends CodeAssembler {
 		}
 		
 		/** print the port declaration **/
-		printIndentation();
 		print(name);
 		print(": ");
 		print(direction == PortDirection.IN ? "in " : "out ");
@@ -143,6 +146,7 @@ public class VhdlCodeAssembler extends CodeAssembler {
 	
 	/**
 	 * Prints a single vector port declaration.
+	 * 
 	 * @param name the name of the port
 	 * @param direction the signal flow direction
 	 * @param high the highest valid vector index
@@ -165,7 +169,6 @@ public class VhdlCodeAssembler extends CodeAssembler {
 		}
 		
 		/** print the port declaration **/
-		printIndentation();
 		print(name);
 		print(": ");
 		print(direction == PortDirection.IN ? "in " : "out ");
@@ -177,9 +180,9 @@ public class VhdlCodeAssembler extends CodeAssembler {
 	 * Ends a port set declaration.
 	 */
 	public void endPorts() {
-		endIndentation();
+		decreaseIndentation();
 		println();
-		printWholeLine(");");
+		println(");");
 	}
 	
 	/**
@@ -194,13 +197,12 @@ public class VhdlCodeAssembler extends CodeAssembler {
 		this.currentEntityName = entityName;
 		this.currentArchitectureName = architectureName;
 
-		printIndentation();
 		print("architecture ");
 		print(architectureName);
 		print(" of ");
 		print(entityName);
 		println(" is");
-		startIndentation();
+		increaseIndentation();
 	}
 	
 	/**
@@ -210,9 +212,9 @@ public class VhdlCodeAssembler extends CodeAssembler {
 		if (currentArchitectureName == null) {
 			throw new IllegalStateException("no current architecture");
 		}
-		endIndentation();
-		printWholeLine("begin");
-		startIndentation();
+		decreaseIndentation();
+		println("begin");
+		increaseIndentation();
 	}
 	
 	/**
@@ -222,8 +224,7 @@ public class VhdlCodeAssembler extends CodeAssembler {
 		if (currentArchitectureName == null) {
 			throw new IllegalStateException("no current architecture");
 		}
-		endIndentation();
-		printIndentation();
+		decreaseIndentation();
 		print("end ");
 		print(currentArchitectureName);
 		println(";");
@@ -236,7 +237,6 @@ public class VhdlCodeAssembler extends CodeAssembler {
 	 * @param name the name of the signal
 	 */
 	public void printScalarSignalDeclaration(String name) {
-		printIndentation();
 		print("signal ");
 		print(name);
 		print(": ");
@@ -252,7 +252,6 @@ public class VhdlCodeAssembler extends CodeAssembler {
 	 */
 	public void printVectorSignalDeclaration(String name, int high, int low) {
 		checkVectorRange(high, low);
-		printIndentation();
 		print("signal ");
 		print(name);
 		print(": ");
@@ -287,8 +286,7 @@ public class VhdlCodeAssembler extends CodeAssembler {
 	 * @param comment the comment to print
 	 */
 	public void printComment(String comment) {
-		for (String line : comment.split("\\n")) {
-			printIndentation();
+		for (String line : StringUtils.split(comment, '\n')) {
 			print("-- ");
 			println(line);
 		}
@@ -299,26 +297,32 @@ public class VhdlCodeAssembler extends CodeAssembler {
 	 * @param clockSignalName the name of the clock signal.
 	 */
 	public void beginClockedProcess(String clockSignalName) {
-		printIndentation();
 		print("process (");
 		print(clockSignalName);
 		println(") begin");
-		startIndentation();
+		increaseIndentation();
+		print("if ");
+		print(clockSignalName);
+		print("'event and ");
+		print(clockSignalName);
+		print(" = 1 then");
+		increaseIndentation();
 	}
 	
 	/**
 	 * Ends the current clocked process.
 	 */
 	public void endClockedProcess() {
-		endIndentation();
-		printWholeLine("end process;");
+		decreaseIndentation();
+		println("end if;");
+		decreaseIndentation();
+		println("end process;");
 	}
 
 	/**
 	 * Begins an if statement and prepares generating the condition.
 	 */
 	public void beginIfCondition() {
-		printIndentation();
 		print("if ");
 	}
 	
@@ -328,7 +332,7 @@ public class VhdlCodeAssembler extends CodeAssembler {
 	 */
 	public void beginThenBranch() {
 		println(" then");
-		startIndentation();
+		increaseIndentation();
 	}
 	
 	/**
@@ -336,8 +340,7 @@ public class VhdlCodeAssembler extends CodeAssembler {
 	 * generating an 'elseif' condition.
 	 */
 	public void beginElseIfCondition() {
-		endIndentation();
-		printIndentation();
+		decreaseIndentation();
 		print("elseif ");
 	}
 	
@@ -346,9 +349,9 @@ public class VhdlCodeAssembler extends CodeAssembler {
 	 * the 'else' branch.
 	 */
 	public void beginElseBranch() {
-		endIndentation();
-		printWholeLine("else");
-		startIndentation();
+		decreaseIndentation();
+		println("else");
+		increaseIndentation();
 	}
 	
 	/**
@@ -356,8 +359,8 @@ public class VhdlCodeAssembler extends CodeAssembler {
 	 * finishes the if statement.
 	 */
 	public void endIf() {
-		endIndentation();
-		printWholeLine("end if;");
+		decreaseIndentation();
+		println("end if;");
 	}
 	
 }
