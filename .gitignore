@@ -66,9 +66,9 @@
 /name.martingeisse.stackerspace-client/bin/
 /name.martingeisse.stackerspace-client/target/
 /name.martingeisse.stackerspace-client/client.log
-/name.martingeisse.papyros/bin/
-/name.martingeisse.papyros/target/
-/name.martingeisse.papyros/papyros.log
+/name.martingeisse.slave-services/bin/
+/name.martingeisse.slave-services/target/
+/name.martingeisse.slave-services/slave-services.log
 /hackathon-2014-08-02/bin
 /hackathon-2014-08-02/target
 /esdk/bin

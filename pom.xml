@@ -51,7 +51,7 @@
 		<module>name.martingeisse.miner-client</module>
 
 		<!-- other applications -->
-		<module>name.martingeisse.papyros</module>
+		<module>name.martingeisse.slave-services</module>
 
 		<!-- Application template (not actually used directly) -->
 		<module>name.martingeisse.application-template</module>
