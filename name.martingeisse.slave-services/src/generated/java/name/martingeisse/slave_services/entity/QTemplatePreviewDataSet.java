@@ -11,17 +11,17 @@ import com.mysema.query.types.path.*;
 import static com.mysema.query.types.PathMetadataFactory.*;
 
 /**
- * QPreviewDataSet is a Querydsl query type for PreviewDataSet
+ * QTemplatePreviewDataSet is a Querydsl query type for TemplatePreviewDataSet
  */
 @Generated("name.martingeisse.sql.codegen.MetaDataSerializer")
-public class QPreviewDataSet extends com.mysema.query.sql.RelationalPathBase<PreviewDataSet> {
+public class QTemplatePreviewDataSet extends com.mysema.query.sql.RelationalPathBase<TemplatePreviewDataSet> {
 
-    private static final long serialVersionUID = -1903527789;
+    private static final long serialVersionUID = -1992875645;
 
     /**
      * The default instance of this class.
      */
-    public static final QPreviewDataSet previewDataSet = new QPreviewDataSet("preview_data_set");
+    public static final QTemplatePreviewDataSet templatePreviewDataSet = new QTemplatePreviewDataSet("template_preview_data_set");
 
     /**
      * Metamodel property for property 'data'
@@ -56,35 +56,35 @@ public class QPreviewDataSet extends com.mysema.query.sql.RelationalPathBase<Pre
     /**
      * Metamodel property for primary key 'PRIMARY'
      */
-    public final com.mysema.query.sql.PrimaryKey<PreviewDataSet> pk_primary = createPrimaryKey(id);
+    public final com.mysema.query.sql.PrimaryKey<TemplatePreviewDataSet> pk_primary = createPrimaryKey(id);
 
     /**
-     * Metamodel property for foreign key 'preview_data_set_fk_1'
+     * Metamodel property for foreign key 'template_preview_data_set_fk_1'
      */
-    public final com.mysema.query.sql.ForeignKey<TemplateFamily> fk_previewDataSetFk1 = createForeignKey(templateFamilyId, "id");
+    public final com.mysema.query.sql.ForeignKey<TemplateFamily> fk_templatePreviewDataSetFk1 = createForeignKey(templateFamilyId, "id");
 
     /**
      * Path-variable based constructor.
      * @param variable the path variable for this entity
      */
-    public QPreviewDataSet(String variable) {
-        super(PreviewDataSet.class, forVariable(variable), "null", "preview_data_set");
+    public QTemplatePreviewDataSet(String variable) {
+        super(TemplatePreviewDataSet.class, forVariable(variable), "null", "template_preview_data_set");
     }
 
     /**
      * Path based constructor
      * @param path the path for this entity
      */
-    public QPreviewDataSet(Path<? extends PreviewDataSet> path) {
-        super(path.getType(), path.getMetadata(), "null", "preview_data_set");
+    public QTemplatePreviewDataSet(Path<? extends TemplatePreviewDataSet> path) {
+        super(path.getType(), path.getMetadata(), "null", "template_preview_data_set");
     }
 
     /**
      * Path metadata based constructor
      * @param metadata the path metadata for this entity
      */
-    public QPreviewDataSet(PathMetadata<?> metadata) {
-        super(PreviewDataSet.class, metadata, "null", "preview_data_set");
+    public QTemplatePreviewDataSet(PathMetadata<?> metadata) {
+        super(TemplatePreviewDataSet.class, metadata, "null", "template_preview_data_set");
     }
 
 }

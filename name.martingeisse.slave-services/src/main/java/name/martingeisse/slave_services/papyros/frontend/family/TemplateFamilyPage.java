@@ -8,10 +8,10 @@ import java.util.List;
 
 import name.martingeisse.slave_services.common.frontend.AbstractFrontendPage;
 import name.martingeisse.slave_services.common.frontend.components.PageParameterDrivenTabPanel;
-import name.martingeisse.slave_services.entity.PreviewDataSet;
-import name.martingeisse.slave_services.entity.QPreviewDataSet;
 import name.martingeisse.slave_services.entity.QTemplate;
+import name.martingeisse.slave_services.entity.QTemplatePreviewDataSet;
 import name.martingeisse.slave_services.entity.TemplateFamily;
+import name.martingeisse.slave_services.entity.TemplatePreviewDataSet;
 import name.martingeisse.slave_services.papyros.backend.PapyrosDataUtil;
 import name.martingeisse.slave_services.papyros.frontend.components.NerdsOnlyLinkPanel;
 import name.martingeisse.slave_services.papyros.frontend.previewdata.CreatePreviewDataPage;
@@ -89,18 +89,18 @@ public final class TemplateFamilyPage extends AbstractFrontendPage {
 					fragment.add(new BookmarkablePageLink<>("createLink2", CreatePreviewDataPage.class, new PageParameters().add("key", family.getKey())));
 
 					// TODO list preview data sets, not templates
-					IModel<List<PreviewDataSet>> previewDataListModel = new AbstractReadOnlyModel<List<PreviewDataSet>>() {
+					IModel<List<TemplatePreviewDataSet>> previewDataListModel = new AbstractReadOnlyModel<List<TemplatePreviewDataSet>>() {
 						@Override
-						public List<PreviewDataSet> getObject() {
-							final QPreviewDataSet qpds = QPreviewDataSet.previewDataSet;
+						public List<TemplatePreviewDataSet> getObject() {
+							final QTemplatePreviewDataSet qpds = QTemplatePreviewDataSet.templatePreviewDataSet;
 							final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 							return query.from(qpds).where(qpds.templateFamilyId.eq(family.getId())).orderBy(qpds.orderIndex.asc()).list(qpds);
 						}
 					};
-					fragment.add(new ListView<PreviewDataSet>("previewDataSets", previewDataListModel) {
+					fragment.add(new ListView<TemplatePreviewDataSet>("previewDataSets", previewDataListModel) {
 						@Override
-						protected void populateItem(ListItem<PreviewDataSet> item) {
-							PreviewDataSet previewDataSet = item.getModelObject();
+						protected void populateItem(ListItem<TemplatePreviewDataSet> item) {
+							TemplatePreviewDataSet previewDataSet = item.getModelObject();
 							String previewDataKey = previewDataSet.getPreviewDataKey();
 							Link<Void> link = new BookmarkablePageLink<>("link", PreviewDataPage.class, new PageParameters().add("key", family.getKey()).add("previewDataKey", previewDataKey));
 							link.add(new Label("name", previewDataSet.getName()));

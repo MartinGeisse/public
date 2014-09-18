@@ -12,9 +12,9 @@ import java.util.List;
 import name.martingeisse.common.terms.IConsumer;
 import name.martingeisse.slave_services.common.frontend.AbstractFrontendPage;
 import name.martingeisse.slave_services.common.frontend.components.CompilerMarkerListPanel;
-import name.martingeisse.slave_services.entity.PreviewDataSet;
-import name.martingeisse.slave_services.entity.QPreviewDataSet;
+import name.martingeisse.slave_services.entity.QTemplatePreviewDataSet;
 import name.martingeisse.slave_services.entity.TemplateFamily;
+import name.martingeisse.slave_services.entity.TemplatePreviewDataSet;
 import name.martingeisse.slave_services.papyros.backend.PapyrosDataUtil;
 import name.martingeisse.slave_services.papyros.frontend.family.TemplateFamilyPage;
 import name.martingeisse.sql.EntityConnectionManager;
@@ -59,7 +59,7 @@ public class PreviewDataPage extends AbstractFrontendPage {
 	public PreviewDataPage(final PageParameters pageParameters) {
 		super(pageParameters);
 		final TemplateFamily templateFamily = PapyrosDataUtil.loadTemplateFamily(pageParameters);
-		final PreviewDataSet previewData = PapyrosDataUtil.loadPreviewDataSet(templateFamily.getId(), pageParameters);
+		final TemplatePreviewDataSet previewData = PapyrosDataUtil.loadPreviewDataSet(templateFamily.getId(), pageParameters);
 		this.editableContent = previewData.getData();
 		
 		add(new BookmarkablePageLink<>("templateFamilyLink", TemplateFamilyPage.class, new PageParameters().add("key", templateFamily.getKey()).add("tab", ".preview-data")));
@@ -76,7 +76,7 @@ public class PreviewDataPage extends AbstractFrontendPage {
 		final Form<Void> form = new Form<Void>("form") {
 			@Override
 			protected void onSubmit() {
-				final QPreviewDataSet q = QPreviewDataSet.previewDataSet;
+				final QTemplatePreviewDataSet q = QTemplatePreviewDataSet.templatePreviewDataSet;
 				final SQLUpdateClause update = EntityConnectionManager.getConnection().createUpdate(q);
 				update.set(q.data, editableContent).where(q.id.eq(previewData.getId()));
 				update.execute();

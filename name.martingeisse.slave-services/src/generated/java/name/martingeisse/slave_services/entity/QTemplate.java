@@ -16,7 +16,7 @@ import static com.mysema.query.types.PathMetadataFactory.*;
 @Generated("name.martingeisse.sql.codegen.MetaDataSerializer")
 public class QTemplate extends com.mysema.query.sql.RelationalPathBase<Template> {
 
-    private static final long serialVersionUID = -529466403;
+    private static final long serialVersionUID = -879834317;
 
     /**
      * The default instance of this class.

@@ -13,14 +13,14 @@ import org.apache.wicket.model.IModel;
 import java.io.Serializable;
 
 /**
- * This class represents rows from table 'preview_data_set'.
+ * This class represents rows from table 'template_preview_data_set'.
  */
-public class PreviewDataSet implements Serializable, IEntityWithId<Long>, IEntityWithOrderIndex {
+public class TemplatePreviewDataSet implements Serializable, IEntityWithId<Long>, IEntityWithOrderIndex {
 
     /**
      * Constructor.
      */
-    public PreviewDataSet() {
+    public TemplatePreviewDataSet() {
     }
 
     /**
@@ -158,7 +158,7 @@ public class PreviewDataSet implements Serializable, IEntityWithId<Long>, IEntit
      */
     @Override
     public String toString() {
-        return "{PreviewDataSet. data = " + data + ", id = " + id + ", name = " + name + ", orderIndex = " + orderIndex + ", previewDataKey = " + previewDataKey + ", templateFamilyId = " + templateFamilyId + "}";
+        return "{TemplatePreviewDataSet. data = " + data + ", id = " + id + ", name = " + name + ", orderIndex = " + orderIndex + ", previewDataKey = " + previewDataKey + ", templateFamilyId = " + templateFamilyId + "}";
     }
 
     /**
@@ -166,8 +166,8 @@ public class PreviewDataSet implements Serializable, IEntityWithId<Long>, IEntit
      * @param id the id of the record to load
      * @return the loaded record
      */
-    public static PreviewDataSet findById(long id) {
-        final QPreviewDataSet q = QPreviewDataSet.previewDataSet;
+    public static TemplatePreviewDataSet findById(long id) {
+        final QTemplatePreviewDataSet q = QTemplatePreviewDataSet.templatePreviewDataSet;
         final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
         return query.from(q).where(q.id.eq(id)).singleResult(q);
     }
@@ -177,15 +177,15 @@ public class PreviewDataSet implements Serializable, IEntityWithId<Long>, IEntit
      * @param id the id of the record to load
      * @return the model loading the record
      */
-    public static IModel<PreviewDataSet> getModelForId(long id) {
-        return new EntityModel<PreviewDataSet>(QPreviewDataSet.previewDataSet, QPreviewDataSet.previewDataSet.id.eq(id));
+    public static IModel<TemplatePreviewDataSet> getModelForId(long id) {
+        return new EntityModel<TemplatePreviewDataSet>(QTemplatePreviewDataSet.templatePreviewDataSet, QTemplatePreviewDataSet.templatePreviewDataSet.id.eq(id));
     }
 
     /**
      * Inserts a record into the database using all fields from this object except the ID, then updates the ID.
      */
     public void insert() {
-        final QPreviewDataSet q = QPreviewDataSet.previewDataSet;
+        final QTemplatePreviewDataSet q = QTemplatePreviewDataSet.templatePreviewDataSet;
         final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(q);
         insert.set(q.data, data);
         insert.set(q.name, name);

@@ -16,7 +16,7 @@ import static com.mysema.query.types.PathMetadataFactory.*;
 @Generated("name.martingeisse.sql.codegen.MetaDataSerializer")
 public class QTemplateFamily extends com.mysema.query.sql.RelationalPathBase<TemplateFamily> {
 
-    private static final long serialVersionUID = -1337513567;
+    private static final long serialVersionUID = 15048823;
 
     /**
      * The default instance of this class.
@@ -49,14 +49,14 @@ public class QTemplateFamily extends com.mysema.query.sql.RelationalPathBase<Tem
     public final com.mysema.query.sql.PrimaryKey<TemplateFamily> pk_primary = createPrimaryKey(id);
 
     /**
+     * Metamodel property for reverse foreign key 'template_preview_data_set_fk_1'
+     */
+    public final com.mysema.query.sql.ForeignKey<TemplatePreviewDataSet> fk__templatePreviewDataSetFk1 = createInvForeignKey(id, "template_family_id");
+
+    /**
      * Metamodel property for reverse foreign key 'template_fk_1'
      */
     public final com.mysema.query.sql.ForeignKey<Template> fk__templateFk1 = createInvForeignKey(id, "template_family_id");
-
-    /**
-     * Metamodel property for reverse foreign key 'preview_data_set_fk_1'
-     */
-    public final com.mysema.query.sql.ForeignKey<PreviewDataSet> fk__previewDataSetFk1 = createInvForeignKey(id, "template_family_id");
 
     /**
      * Path-variable based constructor.

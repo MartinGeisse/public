@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+<wicket:head>
+</wicket:head>
+<body>
+	<wicket:extend>
+		<div>
+			&laquo; <a wicket:id="mainPageLink">Main page</a>
+		</div>
+		<div class="page-header">
+			<h1>Translations</h1>
+		</div>
+		<div wicket:id="tabs" />
+		
+		<!-- preview -->
+		<wicket:fragment wicket:id="tabMessageKeys">
+			<iframe wicket:id="iframe" />
+		</wicket:fragment>
+		
+		<!-- edit -->
+		<wicket:fragment wicket:id="tabMessageTranslations">
+			<div style="position: relative">
+				<div class="col-xs-12 col-lg-6">
+					<form wicket:id="form">
+						<textarea wicket:id="textarea" />
+						<input type="submit" />
+					</form>
+				</div>
+				<div class="col-xs-12">
+					<ul wicket:id="compilerMarkers" />
+				</div>
+				<div class="col-xs-12 col-lg-6" id="previewParent">
+					<iframe wicket:id="previewIframe" style="width: 100%" />
+				</div>
+			</div>
+			<br /><br />
+		</wicket:fragment>
+
+
+
+		<form wicket:id="searchForm">
+			<select wicket:id="domain" />
+			<select wicket:id="language" />
+			<input type="text" wicket:id="query">
+			<input type="submit">
+		</form>
+		<table class="table table-striped table-hover link-list-table">
+			<thead>
+				<tr>
+					<th>
+						Domain
+					</th>
+					<th>
+						<div style="float: right">
+							<a wicket:id="createLink1" class="btn btn-default btn-xs">Create</a>
+						</div> Message Key
+					</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<td>
+						<div style="float: right">
+							<a wicket:id="createLink2" class="btn btn-default btn-xs">Create</a>
+						</div>
+					</td>
+				</tr>
+			</tfoot>
+			<tbody>
+				<tr wicket:id="families">
+					<td>
+						<a wicket:id="link" style="text-decoration: inherit; ">
+							<div wicket:id="name" />
+							<div wicket:id="key" style="font-size: 0.5em" />
+						</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</wicket:extend>
+</body>
+</html>

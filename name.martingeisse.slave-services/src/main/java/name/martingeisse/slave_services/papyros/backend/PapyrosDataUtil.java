@@ -7,12 +7,12 @@ package name.martingeisse.slave_services.papyros.backend;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.slave_services.entity.PreviewDataSet;
-import name.martingeisse.slave_services.entity.QPreviewDataSet;
 import name.martingeisse.slave_services.entity.QTemplate;
 import name.martingeisse.slave_services.entity.QTemplateFamily;
+import name.martingeisse.slave_services.entity.QTemplatePreviewDataSet;
 import name.martingeisse.slave_services.entity.Template;
 import name.martingeisse.slave_services.entity.TemplateFamily;
+import name.martingeisse.slave_services.entity.TemplatePreviewDataSet;
 import name.martingeisse.sql.EntityConnectionManager;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -112,13 +112,13 @@ public class PapyrosDataUtil {
 	 * field will be loaded as null.
 	 * @return the list of preview data set
 	 */
-	public static List<PreviewDataSet> loadPreviewDataSetList(long templateFamilyId, boolean includeData) {
-		final QPreviewDataSet qpds = QPreviewDataSet.previewDataSet;
+	public static List<TemplatePreviewDataSet> loadPreviewDataSetList(long templateFamilyId, boolean includeData) {
+		final QTemplatePreviewDataSet qpds = QTemplatePreviewDataSet.templatePreviewDataSet;
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		query.from(qpds).where(qpds.templateFamilyId.eq(templateFamilyId));
-		List<PreviewDataSet> result = new ArrayList<>();
+		List<TemplatePreviewDataSet> result = new ArrayList<>();
 		for (Object[] row : query.list(qpds.id, qpds.previewDataKey, qpds.orderIndex, qpds.name, includeData ? qpds.data : Expressions.constant(null))) {
-			PreviewDataSet previewDataSet = new PreviewDataSet();
+			TemplatePreviewDataSet previewDataSet = new TemplatePreviewDataSet();
 			previewDataSet.setId((long)row[0]);
 			previewDataSet.setTemplateFamilyId(templateFamilyId);
 			previewDataSet.setPreviewDataKey((String)row[1]);
@@ -134,8 +134,8 @@ public class PapyrosDataUtil {
 	 * @param templateFamilyId the ID of the the template family to which the preview data set belongs
 	 * @return the first preview data set
 	 */
-	public static PreviewDataSet loadFirstPreviewDataSet(long templateFamilyId) {
-		final QPreviewDataSet qpds = QPreviewDataSet.previewDataSet;
+	public static TemplatePreviewDataSet loadFirstPreviewDataSet(long templateFamilyId) {
+		final QTemplatePreviewDataSet qpds = QTemplatePreviewDataSet.templatePreviewDataSet;
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		return query.from(qpds).where(qpds.templateFamilyId.eq(templateFamilyId)).orderBy(qpds.orderIndex.asc()).singleResult(qpds);
 	}
@@ -145,7 +145,7 @@ public class PapyrosDataUtil {
 	 * @param pageParameters the page parameters object that contains the preview data set number
 	 * @return the preview data set
 	 */
-	public static PreviewDataSet loadPreviewDataSet(long templateFamilyId, PageParameters pageParameters) {
+	public static TemplatePreviewDataSet loadPreviewDataSet(long templateFamilyId, PageParameters pageParameters) {
 		String previewDataKey = pageParameters.get("previewDataKey").toString("");
 		return loadPreviewDataSet(templateFamilyId, previewDataKey);
 	}
@@ -155,8 +155,8 @@ public class PapyrosDataUtil {
 	 * @param previewDataKey the preview data key
 	 * @return the preview data set
 	 */
-	public static PreviewDataSet loadPreviewDataSet(long templateFamilyId, String previewDataKey) {
-		final QPreviewDataSet qpds = QPreviewDataSet.previewDataSet;
+	public static TemplatePreviewDataSet loadPreviewDataSet(long templateFamilyId, String previewDataKey) {
+		final QTemplatePreviewDataSet qpds = QTemplatePreviewDataSet.templatePreviewDataSet;
 		final SQLQuery query = EntityConnectionManager.getConnection().createQuery();
 		return query.from(qpds).where(qpds.templateFamilyId.eq(templateFamilyId), qpds.previewDataKey.eq(previewDataKey)).singleResult(qpds);
 	}

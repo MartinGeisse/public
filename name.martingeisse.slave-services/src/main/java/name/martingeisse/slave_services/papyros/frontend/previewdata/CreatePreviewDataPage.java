@@ -5,8 +5,8 @@
 package name.martingeisse.slave_services.papyros.frontend.previewdata;
 
 import name.martingeisse.slave_services.common.frontend.AbstractFrontendPage;
-import name.martingeisse.slave_services.entity.PreviewDataSet;
 import name.martingeisse.slave_services.entity.TemplateFamily;
+import name.martingeisse.slave_services.entity.TemplatePreviewDataSet;
 import name.martingeisse.slave_services.papyros.backend.PapyrosDataUtil;
 import name.martingeisse.slave_services.papyros.frontend.family.TemplateFamilyPage;
 import name.martingeisse.wicket.component.stdform.BeanStandardFormPanel;
@@ -35,10 +35,10 @@ public final class CreatePreviewDataPage extends AbstractFrontendPage {
 	public CreatePreviewDataPage(PageParameters pageParameters) {
 		final TemplateFamily family = PapyrosDataUtil.loadTemplateFamily(pageParameters);
 		add(new BookmarkablePageLink<>("templateFamilyLink", TemplateFamilyPage.class, new PageParameters().add("key", family.getKey())));
-		BeanStandardFormPanel<PreviewDataSet> stdform = new BeanStandardFormPanel<PreviewDataSet>("stdform", Model.of(new PreviewDataSet()), true) {
+		BeanStandardFormPanel<TemplatePreviewDataSet> stdform = new BeanStandardFormPanel<TemplatePreviewDataSet>("stdform", Model.of(new TemplatePreviewDataSet()), true) {
 			@Override
 			protected void onSubmit() {
-				PreviewDataSet previewDataSet = getBean();
+				TemplatePreviewDataSet previewDataSet = getBean();
 				previewDataSet.setTemplateFamilyId(family.getId());
 				previewDataSet.setOrderIndex(0);
 				previewDataSet.setData("null");
