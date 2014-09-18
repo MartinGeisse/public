@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.slave_services.papyros.frontend.components;
+package name.martingeisse.slave_services.common.frontend.components;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -265,7 +265,7 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 		}
 		
 		/* (non-Javadoc)
-		 * @see name.martingeisse.slave_services.papyros.frontend.components.PageParameterDrivenTabPanel.AbstractTabInfo#createTabHeaderComponent(name.martingeisse.slave_services.papyros.frontend.components.PageParameterDrivenTabPanel, java.lang.String)
+		 * @see name.martingeisse.slave_services.common.frontend.components.PageParameterDrivenTabPanel.AbstractTabInfo#createTabHeaderComponent(name.martingeisse.slave_services.common.frontend.components.PageParameterDrivenTabPanel, java.lang.String)
 		 */
 		@Override
 		protected Component createTabHeaderComponent(PageParameterDrivenTabPanel tabPanel, String id) {
@@ -280,7 +280,7 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 		}
 
 		/* (non-Javadoc)
-		 * @see name.martingeisse.slave_services.papyros.frontend.components.PageParameterDrivenTabPanel.AbstractTabInfo#getDefaultSelector()
+		 * @see name.martingeisse.slave_services.common.frontend.components.PageParameterDrivenTabPanel.AbstractTabInfo#getDefaultSelector()
 		 */
 		@Override
 		protected String getDefaultSelector() {
@@ -342,7 +342,7 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 		}
 		
 		/* (non-Javadoc)
-		 * @see name.martingeisse.slave_services.papyros.frontend.components.PageParameterDrivenTabPanel.AbstractTabInfo#createTabHeaderComponent(name.martingeisse.slave_services.papyros.frontend.components.PageParameterDrivenTabPanel, java.lang.String)
+		 * @see name.martingeisse.slave_services.common.frontend.components.PageParameterDrivenTabPanel.AbstractTabInfo#createTabHeaderComponent(name.martingeisse.slave_services.common.frontend.components.PageParameterDrivenTabPanel, java.lang.String)
 		 */
 		@Override
 		protected Component createTabHeaderComponent(final PageParameterDrivenTabPanel tabPanel, String id) {
@@ -365,7 +365,7 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 		}
 		
 		/* (non-Javadoc)
-		 * @see name.martingeisse.slave_services.papyros.frontend.components.PageParameterDrivenTabPanel.AbstractTabInfo#getDefaultSelector()
+		 * @see name.martingeisse.slave_services.common.frontend.components.PageParameterDrivenTabPanel.AbstractTabInfo#getDefaultSelector()
 		 */
 		@Override
 		protected String getDefaultSelector() {

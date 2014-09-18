@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.slave_services.papyros.frontend.components;
+package name.martingeisse.slave_services.common.frontend.components;
 
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 import name.martingeisse.wicket.util.ISimpleCallbackListener;

@@ -11,11 +11,11 @@ import java.util.List;
 
 import name.martingeisse.common.terms.IConsumer;
 import name.martingeisse.slave_services.common.frontend.AbstractFrontendPage;
+import name.martingeisse.slave_services.common.frontend.components.CompilerMarkerListPanel;
 import name.martingeisse.slave_services.entity.PreviewDataSet;
 import name.martingeisse.slave_services.entity.QPreviewDataSet;
 import name.martingeisse.slave_services.entity.TemplateFamily;
 import name.martingeisse.slave_services.papyros.backend.PapyrosDataUtil;
-import name.martingeisse.slave_services.papyros.frontend.components.CompilerMarkerListPanel;
 import name.martingeisse.slave_services.papyros.frontend.family.TemplateFamilyPage;
 import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.wicket.component.codemirror.CodeMirrorBehavior;

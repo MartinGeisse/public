@@ -5,11 +5,11 @@
 package name.martingeisse.slave_services.application.wicket;
 
 import name.martingeisse.slave_services.application.page.AbstractApplicationPage;
+import name.martingeisse.slave_services.common.frontend.HomePage;
 import name.martingeisse.slave_services.papyros.frontend.family.CreateTemplateFamilyPage;
 import name.martingeisse.slave_services.papyros.frontend.family.EditTemplateFamilyPage;
 import name.martingeisse.slave_services.papyros.frontend.family.TemplateFamilyListPage;
 import name.martingeisse.slave_services.papyros.frontend.family.TemplateFamilyPage;
-import name.martingeisse.slave_services.papyros.frontend.meta.HomePage;
 import name.martingeisse.slave_services.papyros.frontend.template.TemplatePage;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
 

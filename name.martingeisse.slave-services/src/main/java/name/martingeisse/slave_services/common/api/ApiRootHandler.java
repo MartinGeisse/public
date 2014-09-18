@@ -24,7 +24,6 @@ public final class ApiRootHandler extends NamedResourceFolderHandler {
 		getResources().put("v1", v1);
 		v1.getResources().put("render", new RenderTemplateApiHandler());
 		
-		
 	}
 	
 }

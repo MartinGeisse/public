@@ -7,13 +7,13 @@ package name.martingeisse.slave_services.papyros.frontend.family;
 import java.util.List;
 
 import name.martingeisse.slave_services.common.frontend.AbstractFrontendPage;
+import name.martingeisse.slave_services.common.frontend.components.PageParameterDrivenTabPanel;
 import name.martingeisse.slave_services.entity.PreviewDataSet;
 import name.martingeisse.slave_services.entity.QPreviewDataSet;
 import name.martingeisse.slave_services.entity.QTemplate;
 import name.martingeisse.slave_services.entity.TemplateFamily;
 import name.martingeisse.slave_services.papyros.backend.PapyrosDataUtil;
 import name.martingeisse.slave_services.papyros.frontend.components.NerdsOnlyLinkPanel;
-import name.martingeisse.slave_services.papyros.frontend.components.PageParameterDrivenTabPanel;
 import name.martingeisse.slave_services.papyros.frontend.previewdata.CreatePreviewDataPage;
 import name.martingeisse.slave_services.papyros.frontend.previewdata.PreviewDataPage;
 import name.martingeisse.slave_services.papyros.frontend.schema.SchemaPage;
