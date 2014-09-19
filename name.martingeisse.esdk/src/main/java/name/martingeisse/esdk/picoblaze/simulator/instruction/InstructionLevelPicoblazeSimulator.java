@@ -9,9 +9,9 @@ package name.martingeisse.esdk.picoblaze.simulator.instruction;
 import java.io.File;
 import java.io.IOException;
 
-import name.martingeisse.esdk.picoblaze.simulator.IPicoblazePortHandler;
 import name.martingeisse.esdk.picoblaze.simulator.PicoblazeSimulatorException;
 import name.martingeisse.esdk.picoblaze.simulator.PicoblazeState;
+import name.martingeisse.esdk.picoblaze.simulator.port.IPicoblazePortHandler;
 
 /**
  * An instruction-level simulated PicoBlaze instance.

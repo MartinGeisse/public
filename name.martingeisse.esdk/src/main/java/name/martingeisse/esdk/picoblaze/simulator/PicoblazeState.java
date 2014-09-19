@@ -6,6 +6,8 @@
 
 package name.martingeisse.esdk.picoblaze.simulator;
 
+import name.martingeisse.esdk.picoblaze.simulator.port.IPicoblazePortHandler;
+
 /**
  * An abstraction level-neutral representation of the internal state of a PicoBlaze
  * instance. This state model can be used both for simulating a PB program within

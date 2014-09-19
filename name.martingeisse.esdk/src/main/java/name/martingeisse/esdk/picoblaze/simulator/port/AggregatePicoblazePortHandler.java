@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import name.martingeisse.esdk.bus.BusSlave32;
-import name.martingeisse.esdk.picoblaze.simulator.IPicoblazePortHandler;
 
 /**
  * This port handler stores a list of sub-handlers, each with a

@@ -7,7 +7,6 @@
 package name.martingeisse.esdk.picoblaze.simulator.port;
 
 import name.martingeisse.esdk.bus.BusSlave32;
-import name.martingeisse.esdk.picoblaze.simulator.IPicoblazePortHandler;
 
 /**
  * PicoBlaze port handler for an {@link BusSlave32}. Note that
