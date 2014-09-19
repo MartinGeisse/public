@@ -3,7 +3,7 @@
  *
  * This file is distributed under the terms of the MIT license.
  */
-package name.martingeisse.esdk.hdl.core;
+package name.martingeisse.esdk.rtl;
 
 /**
  * This interface is implemented by clocked components. Such components

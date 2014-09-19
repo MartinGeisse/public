@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.esdk.hdl.probe.formatter;
+package name.martingeisse.esdk.rtl.probe.formatter;
 
 /**
  * This interface is able to turn a value into a string. It is

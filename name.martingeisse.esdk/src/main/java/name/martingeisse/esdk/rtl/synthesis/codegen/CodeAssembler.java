@@ -3,7 +3,7 @@
  *
  * This file is distributed under the terms of the MIT license.
  */
-package name.martingeisse.esdk.hdl.synthesis.codegen;
+package name.martingeisse.esdk.rtl.synthesis.codegen;
 
 import java.io.PrintWriter;
 

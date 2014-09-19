@@ -4,10 +4,10 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.esdk.hdl.probe;
+package name.martingeisse.esdk.rtl.probe;
 
-import name.martingeisse.esdk.hdl.core.IClockSignalConsumer;
-import name.martingeisse.esdk.hdl.core.IValueSource;
+import name.martingeisse.esdk.rtl.IClockSignalConsumer;
+import name.martingeisse.esdk.rtl.IValueSource;
 
 /**
  * Base class for probe implementations. See {@link Probe} for the

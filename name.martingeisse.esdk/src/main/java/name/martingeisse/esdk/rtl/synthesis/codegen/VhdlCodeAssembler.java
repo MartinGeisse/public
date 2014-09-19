@@ -3,13 +3,13 @@
  *
  * This file is distributed under the terms of the MIT license.
  */
-package name.martingeisse.esdk.hdl.synthesis.codegen;
+package name.martingeisse.esdk.rtl.synthesis.codegen;
 
 import java.io.PrintWriter;
 
 import org.apache.commons.lang3.StringUtils;
 
-import name.martingeisse.esdk.hdl.PortDirection;
+import name.martingeisse.esdk.rtl.PortDirection;
 
 /**
  * VHDL-specific code assembler.

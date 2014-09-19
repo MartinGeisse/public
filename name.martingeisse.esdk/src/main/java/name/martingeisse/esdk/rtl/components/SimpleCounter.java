@@ -3,10 +3,10 @@
  *
  * This file is distributed under the terms of the MIT license.
  */
-package name.martingeisse.esdk.hdl.components;
+package name.martingeisse.esdk.rtl.components;
 
-import name.martingeisse.esdk.hdl.core.IClockSignalConsumer;
-import name.martingeisse.esdk.hdl.core.IValueSource;
+import name.martingeisse.esdk.rtl.IClockSignalConsumer;
+import name.martingeisse.esdk.rtl.IValueSource;
 
 /**
  * A 32-bit counter that allows to get value sources for

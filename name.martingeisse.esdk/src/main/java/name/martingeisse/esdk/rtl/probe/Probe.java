@@ -4,11 +4,11 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.esdk.hdl.probe;
+package name.martingeisse.esdk.rtl.probe;
 
-import name.martingeisse.esdk.hdl.core.IValueSource;
-import name.martingeisse.esdk.hdl.probe.formatter.DefaultValueFormatter;
-import name.martingeisse.esdk.hdl.probe.formatter.ValueFormatter;
+import name.martingeisse.esdk.rtl.IValueSource;
+import name.martingeisse.esdk.rtl.probe.formatter.DefaultValueFormatter;
+import name.martingeisse.esdk.rtl.probe.formatter.ValueFormatter;
 
 /**
  * Default probe implementation that uses a {@link ValueFormatter} to

@@ -4,9 +4,9 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.esdk.hdl.experiment;
+package name.martingeisse.esdk.rtl.experiment;
 
-import name.martingeisse.esdk.hdl.core.ClockNetwork;
+import name.martingeisse.esdk.rtl.ClockNetwork;
 
 /**
  * Utility class that helps experimenting with HDL models.

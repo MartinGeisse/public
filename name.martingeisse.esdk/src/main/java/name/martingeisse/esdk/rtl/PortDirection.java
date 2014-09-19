@@ -3,7 +3,7 @@
  *
  * This file is distributed under the terms of the MIT license.
  */
-package name.martingeisse.esdk.hdl;
+package name.martingeisse.esdk.rtl;
 
 /**
  * The signal flow direction of a module port.
