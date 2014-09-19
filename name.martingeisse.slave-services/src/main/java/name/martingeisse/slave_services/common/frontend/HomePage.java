@@ -6,6 +6,7 @@
 
 package name.martingeisse.slave_services.common.frontend;
 
+import name.martingeisse.slave_services.babel.frontend.OverviewPage;
 import name.martingeisse.slave_services.papyros.frontend.family.TemplateFamilyListPage;
 
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -20,7 +21,8 @@ public class HomePage extends AbstractFrontendPage {
 	 * Constructor.
 	 */
 	public HomePage() {
-		add(new BookmarkablePageLink<Void>("templateFamiliesLink", TemplateFamilyListPage.class));
+		add(new BookmarkablePageLink<Void>("papyrosLink", TemplateFamilyListPage.class));
+		add(new BookmarkablePageLink<Void>("babelLink", OverviewPage.class));
 	}
 	
 }

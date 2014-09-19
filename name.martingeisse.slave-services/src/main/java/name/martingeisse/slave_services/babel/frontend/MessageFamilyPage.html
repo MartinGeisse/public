@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html>
+<wicket:head>
+</wicket:head>
+<body>
+	<wicket:extend>
+		<div>
+			&laquo; <a wicket:id="messageFamilyListLink">Message families</a>
+		</div>
+		<div class="page-header">
+			<h1>
+				<span style="font-family: monospace" wicket:id="domain" /> /
+				<span style="font-family: monospace" wicket:id="messageKey" />
+			</h1>
+		</div>
+
+		<!-- translations -->
+		<table class="table table-striped table-hover link-list-table">
+			<thead>
+				<tr>
+					<th style="width: 200px">
+						Language
+					</th>
+					<th>
+						<div style="float: right">
+							<a wicket:id="createLink1" class="btn btn-default btn-xs">Create</a>
+						</div> Translation
+					</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<td>
+					</td>
+					<td>
+						<div style="float: right">
+							<a wicket:id="createLink2" class="btn btn-default btn-xs">Create</a>
+						</div>
+					</td>
+				</tr>
+			</tfoot>
+			<tbody>
+				<tr wicket:id="translations">
+					<td>
+						<div wicket:id="languageKey" style="font-family: monospace" />
+					</td>
+					<td>
+						<div wicket:id="text" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		
+	</wicket:extend>
+</body>
+</html>
