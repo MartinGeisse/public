@@ -6,7 +6,7 @@
 package name.martingeisse.esdk.rtl.components;
 
 import name.martingeisse.esdk.rtl.IClockSignalConsumer;
-import name.martingeisse.esdk.rtl.IValueSource;
+import name.martingeisse.esdk.util.IValueSource;
 
 /**
  * A 32-bit counter that allows to get value sources for

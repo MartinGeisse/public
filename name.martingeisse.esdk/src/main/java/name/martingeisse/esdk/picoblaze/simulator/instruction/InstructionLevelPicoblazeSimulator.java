@@ -12,6 +12,7 @@ import java.io.IOException;
 import name.martingeisse.esdk.picoblaze.simulator.PicoblazeSimulatorException;
 import name.martingeisse.esdk.picoblaze.simulator.PicoblazeState;
 import name.martingeisse.esdk.picoblaze.simulator.port.IPicoblazePortHandler;
+import name.martingeisse.esdk.util.IValueSource;
 
 /**
  * An instruction-level simulated PicoBlaze instance.
@@ -26,7 +27,7 @@ public final class InstructionLevelPicoblazeSimulator {
 	/**
 	 * the interruptSignal
 	 */
-	private IPicoblazeInterruptSignal interruptSignal;
+	private IValueSource<Boolean> interruptSignal;
 
 	/**
 	 * the state
@@ -70,7 +71,7 @@ public final class InstructionLevelPicoblazeSimulator {
 	 * Getter method for the interruptSignal.
 	 * @return the interruptSignal
 	 */
-	public IPicoblazeInterruptSignal getInterruptSignal() {
+	public IValueSource<Boolean> getInterruptSignal() {
 		return interruptSignal;
 	}
 
@@ -78,7 +79,7 @@ public final class InstructionLevelPicoblazeSimulator {
 	 * Setter method for the interruptSignal.
 	 * @param interruptSignal the interruptSignal to set
 	 */
-	public void setInterruptSignal(final IPicoblazeInterruptSignal interruptSignal) {
+	public void setInterruptSignal(final IValueSource<Boolean> interruptSignal) {
 		this.interruptSignal = interruptSignal;
 	}
 
@@ -125,7 +126,7 @@ public final class InstructionLevelPicoblazeSimulator {
 	 * @throws PicoblazeSimulatorException when this model fails
 	 */
 	public void performInstructionCycle() throws PicoblazeSimulatorException {
-		if (interruptSignal != null && interruptSignal.isActive()) {
+		if (interruptSignal != null && interruptSignal.getValue()) {
 			state.performInterrupt();
 		} else if (instructionMemory == null) {
 			throw new PicoblazeSimulatorException("no instruction memory");

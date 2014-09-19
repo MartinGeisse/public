@@ -3,11 +3,12 @@
  *
  * This file is distributed under the terms of the MIT license.
  */
-package name.martingeisse.esdk.rtl;
+package name.martingeisse.esdk.util;
 
 /**
- * This interface is implemented by components that produce a value.
- * It is the high-level equivalent of an HDL signal.
+ * This interface is implemented by objects that provide a value.
+ * 
+ * It can be used, for example, as the high-level equivalent of an HDL signal.
  * 
  * @param <T> the value type
  */

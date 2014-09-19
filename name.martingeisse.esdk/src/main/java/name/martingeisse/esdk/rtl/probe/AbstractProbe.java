@@ -7,7 +7,7 @@
 package name.martingeisse.esdk.rtl.probe;
 
 import name.martingeisse.esdk.rtl.IClockSignalConsumer;
-import name.martingeisse.esdk.rtl.IValueSource;
+import name.martingeisse.esdk.util.IValueSource;
 
 /**
  * Base class for probe implementations. See {@link Probe} for the
