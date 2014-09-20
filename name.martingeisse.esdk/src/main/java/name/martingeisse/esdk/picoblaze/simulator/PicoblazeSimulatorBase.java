@@ -15,6 +15,11 @@ import name.martingeisse.esdk.util.IValueSource;
 public class PicoblazeSimulatorBase {
 
 	/**
+	 * the state
+	 */
+	private final PicoblazeState state;
+
+	/**
 	 * the instructionMemory
 	 */
 	private IPicoblazeInstructionMemory instructionMemory;
@@ -25,15 +30,18 @@ public class PicoblazeSimulatorBase {
 	private IValueSource<Boolean> interruptSignal;
 
 	/**
-	 * the state
-	 */
-	private PicoblazeState state;
-
-	/**
 	 * Constructor.
 	 */
 	public PicoblazeSimulatorBase() {
 		this.state = new PicoblazeState();
+	}
+
+	/**
+	 * Getter method for the state.
+	 * @return the state
+	 */
+	public PicoblazeState getState() {
+		return state;
 	}
 
 	/**
@@ -69,25 +77,6 @@ public class PicoblazeSimulatorBase {
 	}
 
 	/**
-	 * Getter method for the state.
-	 * @return the state
-	 */
-	public PicoblazeState getState() {
-		return state;
-	}
-
-	/**
-	 * Setter method for the state.
-	 * @param state the state to set
-	 */
-	public void setState(final PicoblazeState state) {
-		if (state == null) {
-			throw new IllegalArgumentException("cannot set the state to null");
-		}
-		this.state = state;
-	}
-
-	/**
 	 * Convenience getter method for the portHandler of the state.
 	 * @return the portHandler
 	 */
@@ -102,5 +91,21 @@ public class PicoblazeSimulatorBase {
 	public void setPortHandler(IPicoblazePortHandler portHandler) {
 		state.setPortHandler(portHandler);
 	}
-	
+
+	/**
+	 * Getter method for the magicInstructionHandler.
+	 * @return the magicInstructionHandler
+	 */
+	public IMagicInstructionHandler getMagicInstructionHandler() {
+		return state.getMagicInstructionHandler();
+	}
+
+	/**
+	 * Setter method for the magicInstructionHandler.
+	 * @param magicInstructionHandler the magicInstructionHandler to set
+	 */
+	public void setMagicInstructionHandler(IMagicInstructionHandler magicInstructionHandler) {
+		state.setMagicInstructionHandler(magicInstructionHandler);
+	}
+
 }

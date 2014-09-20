@@ -1,0 +1,7 @@
+
+	LOAD s0, 00
+foo:
+	; @magic 02000
+	ADD s0, 01
+	JUMP foo
+

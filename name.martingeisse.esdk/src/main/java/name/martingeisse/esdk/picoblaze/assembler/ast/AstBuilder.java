@@ -20,6 +20,11 @@ public class AstBuilder implements IParserClient {
 	 * the psmFile
 	 */
 	private final PsmFile psmFile;
+	
+	/**
+	 * the errorHandler
+	 */
+	private IPicoblazeAssemblerErrorHandler errorHandler;
 
 	/**
 	 * Constructor.
@@ -35,6 +40,7 @@ public class AstBuilder implements IParserClient {
 	 * @throws IOException on I/O errors
 	 */
 	public void parse(final Reader in, final IPicoblazeAssemblerErrorHandler errorHandler) throws IOException {
+		this.errorHandler = errorHandler;
 		final Tokenizer tokenizer = new Tokenizer(in, errorHandler);
 		final Parser parser = new Parser(tokenizer, errorHandler);
 		parser.parse(this);
@@ -125,7 +131,16 @@ public class AstBuilder implements IParserClient {
 	 */
 	@Override
 	public void pragma(Range fullRange, String identifier, String parameter) {
-		// ignore pragma comments by default
+		if (identifier.equals("magic")) {
+			int encodedInstruction;
+			try {
+				encodedInstruction = Integer.parseInt(parameter, 16);
+			} catch (NumberFormatException e) {
+				errorHandler.handleError(fullRange, "invalid magic instruction code: " + parameter);
+				return;
+			}
+			psmFile.add(new MagicInstruction(fullRange, encodedInstruction));
+		}
 	}
 	
 }

@@ -42,7 +42,7 @@ public class PicoblazeInstructionMemory implements IPicoblazeInstructionMemory {
 	 * Getter method for the instructions.
 	 * @return the instructions
 	 */
-	public int[] getInstructions() {
+	public final int[] getInstructions() {
 		return instructions;
 	}
 
@@ -50,7 +50,7 @@ public class PicoblazeInstructionMemory implements IPicoblazeInstructionMemory {
 	 * Setter method for the instructions.
 	 * @param instructions the instructions to set
 	 */
-	public void setInstructions(final int[] instructions) {
+	public final void setInstructions(final int[] instructions) {
 		if (instructions.length != 1024) {
 			throw new IllegalArgumentException("invalid instruction array length (1024 expected): " + instructions);
 		}
@@ -61,7 +61,7 @@ public class PicoblazeInstructionMemory implements IPicoblazeInstructionMemory {
 	 * @see name.martingeisse.esdk.picoblaze.simulator.instruction.IPicoblazeInstructionMemory#getInstruction(int)
 	 */
 	@Override
-	public int getInstruction(int address) throws PicoblazeSimulatorException {
+	public final int getInstruction(int address) throws PicoblazeSimulatorException {
 		if (address < 0 || address >= 1024) {
 			throw new PicoblazeSimulatorException("invalid instruction address: " + address);
 		}

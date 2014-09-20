@@ -67,6 +67,11 @@ public final class PicoblazeState {
 	 * the portHandler
 	 */
 	private IPicoblazePortHandler portHandler;
+	
+	/**
+	 * the magicInstructionHandler
+	 */
+	private IMagicInstructionHandler magicInstructionHandler;
 
 	/**
 	 * Constructor.
@@ -240,6 +245,22 @@ public final class PicoblazeState {
 		this.portHandler = portHandler;
 	}
 
+	/**
+	 * Getter method for the magicInstructionHandler.
+	 * @return the magicInstructionHandler
+	 */
+	public IMagicInstructionHandler getMagicInstructionHandler() {
+		return magicInstructionHandler;
+	}
+	
+	/**
+	 * Setter method for the magicInstructionHandler.
+	 * @param magicInstructionHandler the magicInstructionHandler to set
+	 */
+	public void setMagicInstructionHandler(IMagicInstructionHandler magicInstructionHandler) {
+		this.magicInstructionHandler = magicInstructionHandler;
+	}
+	
 	/**
 	 * Returns the value of the specified register
 	 * @param registerNumber the register number (only the lowest four bits are considered)
@@ -758,7 +779,7 @@ public final class PicoblazeState {
 
 		// undefined shift sub-opcodes: 1, 3, 5, 9, 11, 13
 		default:
-			throw new UndefinedInstructionCodeException("Unknown shift instruction sub-opcode: " + subOpcode);
+			undefinedInstruction(encodedInstruction, "Unknown shift instruction sub-opcode: " + subOpcode);
 			
 		}
 	}
@@ -887,9 +908,23 @@ public final class PicoblazeState {
 
 		// undefined primary opcodes: 1, 4, 8, 11, 17-20, 25, 27, 29, 31
 		default:
-			throw new UndefinedInstructionCodeException("unknown primary opcode (highest five bits): " + primaryOpcode);
+			undefinedInstruction(encodedInstruction, "unknown primary opcode (highest five bits): " + primaryOpcode);
+			break;
 			
 		}
+	}
+
+	/**
+	 * 
+	 */
+	private void undefinedInstruction(int encodedInstruction, String message) throws UndefinedInstructionCodeException {
+		if (magicInstructionHandler != null) {
+			if (magicInstructionHandler.handleInstruction(this, encodedInstruction)) {
+				incrementPc();
+				return;
+			}
+		}
+		throw new UndefinedInstructionCodeException(message);
 	}
 	
 }
