@@ -4,20 +4,15 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.esdk.picoblaze.simulator.instruction;
+package name.martingeisse.esdk.picoblaze.simulator;
 
-import java.io.File;
-import java.io.IOException;
-
-import name.martingeisse.esdk.picoblaze.simulator.PicoblazeSimulatorException;
-import name.martingeisse.esdk.picoblaze.simulator.PicoblazeState;
 import name.martingeisse.esdk.picoblaze.simulator.port.IPicoblazePortHandler;
 import name.martingeisse.esdk.util.IValueSource;
 
 /**
  * An instruction-level simulated PicoBlaze instance.
  */
-public final class InstructionLevelPicoblazeSimulator {
+public class PicoblazeSimulatorBase {
 
 	/**
 	 * the instructionMemory
@@ -37,7 +32,7 @@ public final class InstructionLevelPicoblazeSimulator {
 	/**
 	 * Constructor.
 	 */
-	public InstructionLevelPicoblazeSimulator() {
+	public PicoblazeSimulatorBase() {
 		this.state = new PicoblazeState();
 	}
 
@@ -55,16 +50,6 @@ public final class InstructionLevelPicoblazeSimulator {
 	 */
 	public void setInstructionMemory(final IPicoblazeInstructionMemory instructionMemory) {
 		this.instructionMemory = instructionMemory;
-	}
-	
-	/**
-	 * Loads the specified PSMBIN file and creates and uses an instruction memory
-	 * from the instructions contained in the file.
-	 * @param file the file to load
-	 * @throws IOException on I/O errors
-	 */
-	public void setInstructionMemoryFromPsmBinFile(File file) throws IOException {
-		setInstructionMemory(PicoblazeInstructionMemory.createFromPsmBinFile(file));
 	}
 
 	/**
@@ -116,34 +101,6 @@ public final class InstructionLevelPicoblazeSimulator {
 	 */
 	public void setPortHandler(IPicoblazePortHandler portHandler) {
 		state.setPortHandler(portHandler);
-	}
-
-	/**
-	 * Performs a single instruction cycle. This either executes one instruction or
-	 * performs an interrupt entry, depending on the interrupt signal. If an instruction
-	 * is executed, a program memory is needed and used. Depending on the instruction,
-	 * a port handler is also needed and used.
-	 * @throws PicoblazeSimulatorException when this model fails
-	 */
-	public void performInstructionCycle() throws PicoblazeSimulatorException {
-		if (interruptSignal != null && interruptSignal.getValue()) {
-			state.performInterrupt();
-		} else if (instructionMemory == null) {
-			throw new PicoblazeSimulatorException("no instruction memory");
-		} else {
-			state.performInstruction(instructionMemory.getInstruction(state.getPc()));
-		}
-	}
-	
-	/**
-	 * Performs the specified number of instruction cycles.
-	 * @param count the number of instruction cycles to perform
-	 * @throws PicoblazeSimulatorException when this model fails
-	 */
-	public void performMultipleInstructionCycles(int count) throws PicoblazeSimulatorException {
-		for (int i=0; i<count; i++) {
-			performInstructionCycle();
-		}
 	}
 	
 }

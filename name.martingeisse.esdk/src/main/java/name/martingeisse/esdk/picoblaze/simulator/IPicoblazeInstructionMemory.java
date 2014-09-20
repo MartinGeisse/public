@@ -4,9 +4,8 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.esdk.picoblaze.simulator.instruction;
+package name.martingeisse.esdk.picoblaze.simulator;
 
-import name.martingeisse.esdk.picoblaze.simulator.PicoblazeSimulatorException;
 
 /**
  * A model for the instruction memory used by the PicoBlaze.

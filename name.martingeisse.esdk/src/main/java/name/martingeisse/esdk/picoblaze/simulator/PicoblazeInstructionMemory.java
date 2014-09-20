@@ -4,13 +4,12 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.esdk.picoblaze.simulator.instruction;
+package name.martingeisse.esdk.picoblaze.simulator;
 
 import java.io.File;
 import java.io.IOException;
 
 import name.martingeisse.esdk.picoblaze.PsmBinUtil;
-import name.martingeisse.esdk.picoblaze.simulator.PicoblazeSimulatorException;
 
 import org.apache.commons.io.FileUtils;
 
