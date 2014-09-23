@@ -74,7 +74,7 @@ public class BeanSerializer extends AbstractSerializer {
 
 		// determine primary key
 		PrimaryKeyData primaryKey;
-		if (primaryKeys.size() == 0) {
+		if (primaryKeys == null || primaryKeys.size() == 0) {
 			primaryKey = null;
 		} else if (primaryKeys.size() == 1) {
 			primaryKey = primaryKeys.iterator().next();
@@ -158,7 +158,9 @@ public class BeanSerializer extends AbstractSerializer {
 		} else {
 			final List<Type> interfaces = new ArrayList<>();
 			interfaces.add(new SimpleType("Serializable"));
-			interfaces.add(new SimpleType(new SimpleType("IEntityWithId"), idProperty.getType()));
+			if (idProperty != null) {
+				interfaces.add(new SimpleType(new SimpleType("IEntityWithId"), idProperty.getType()));
+			}
 			if (deletedFlagProperty != null) {
 				interfaces.add(new SimpleType("IEntityWithDeletedFlag"));
 			}
@@ -284,8 +286,13 @@ public class BeanSerializer extends AbstractSerializer {
 				w.line("insert.execute();");
 			} else {
 				final String idName = primaryKey.getColumns().iterator().next();
-				final Type idType = propertiesByName.get(idName).getType();
-				w.line(idName + " = insert.executeWithKey(" + idType.getSimpleName() + ".class);");
+				if (propertiesByName.get(idName) == null) {
+					// WTF!? This happened.
+					w.line("insert.execute();");
+				} else {
+					final Type idType = propertiesByName.get(idName).getType();
+					w.line(idName + " = insert.executeWithKey(" + idType.getSimpleName() + ".class);");
+				}
 			}
 			w.end();
 		}
