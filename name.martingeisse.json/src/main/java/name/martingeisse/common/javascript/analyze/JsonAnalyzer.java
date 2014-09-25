@@ -102,12 +102,10 @@ public final class JsonAnalyzer implements Serializable {
 	private void buildContextDescription(final StringBuilder builder) {
 		if (parent != null) {
 			parent.buildContextDescription(builder);
-			if (parent.parent != null) {
-				builder.append('.');
-			}
+			builder.append('.');
 			builder.append(contextName);
 		} else {
-			builder.append("(TOPLEVEL)");
+			builder.append("TOPLEVEL");
 		}
 	}
 
@@ -518,8 +516,10 @@ public final class JsonAnalyzer implements Serializable {
 	
 	/**
 	 * Helper method to create {@link JsonAnalysisException}s.
+	 * @param message a description of the problem
+	 * @return the exception
 	 */
-	private JsonAnalysisException exception(final String message) {
+	public JsonAnalysisException exception(final String message) {
 		final StringBuilder builder = new StringBuilder();
 		buildContextDescription(builder);
 		if (parent != null) {
