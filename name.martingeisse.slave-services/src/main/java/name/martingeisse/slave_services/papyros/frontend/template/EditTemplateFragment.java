@@ -11,12 +11,12 @@ import java.util.List;
 
 import name.martingeisse.common.terms.IConsumer;
 import name.martingeisse.slave_services.common.frontend.components.CompilerMarkerListPanel;
-import name.martingeisse.slave_services.common.frontend.components.Iframe;
 import name.martingeisse.slave_services.entity.QTemplate;
 import name.martingeisse.slave_services.entity.Template;
 import name.martingeisse.slave_services.entity.TemplateFamily;
 import name.martingeisse.slave_services.entity.TemplatePreviewDataSet;
 import name.martingeisse.slave_services.papyros.backend.PapyrosDataUtil;
+import name.martingeisse.slave_services.papyros.frontend.components.PreviewTemplateIframe;
 import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.wicket.component.codemirror.CodeMirrorBehavior;
 import name.martingeisse.wicket.component.codemirror.compile.CodeMirrorAutocompileBehavior;
@@ -34,8 +34,9 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
 import com.mysema.query.sql.dml.SQLUpdateClause;
@@ -56,19 +57,9 @@ public abstract class EditTemplateFragment extends Fragment {
 	private TemplatePreviewDataSet previewDataSet;
 
 	/**
-	 * the parsedPreviewData
-	 */
-	private Object parsedPreviewData;
-
-	/**
 	 * the compilerMarkers
 	 */
 	private List<CompilerMarker> compilerMarkers;
-
-	/**
-	 * the renderedPreview
-	 */
-	private String renderedPreview;
 
 	/**
 	 * Constructor.
@@ -84,9 +75,9 @@ public abstract class EditTemplateFragment extends Fragment {
 
 		// build the drop-down menu for the preview data set
 		IModel<TemplatePreviewDataSet> previewDataSetModel = new PropertyModel<>(this, "previewDataSet");
-		IModel<List<TemplatePreviewDataSet>> previewDataSetListModel = new AbstractReadOnlyModel<List<TemplatePreviewDataSet>>() {
+		IModel<List<TemplatePreviewDataSet>> previewDataSetListModel = new LoadableDetachableModel<List<TemplatePreviewDataSet>>() {
 			@Override
-			public List<TemplatePreviewDataSet> getObject() {
+			protected List<TemplatePreviewDataSet> load() {
 				return PapyrosDataUtil.loadPreviewDataSetList(family.getId(), true);
 			}
 		};
@@ -104,11 +95,10 @@ public abstract class EditTemplateFragment extends Fragment {
 
 		};
 		add(new DropDownChoice<>("previewDataSetDropdown", previewDataSetModel, previewDataSetListModel, previewDataSetRenderer));
+		this.previewDataSet = (previewDataSetListModel.getObject().isEmpty() ? null : previewDataSetListModel.getObject().get(0));
 
 		// prepare the auto-compiler
 		final TemplateAutocompiler templateAutocompiler = new TemplateAutocompiler();
-		loadPreviewData(template.getTemplateFamilyId());
-		renderPreview(editableContent);
 		setCompilerMarkersFromResult(ICompiler.Util.compileSafe(templateAutocompiler, editableContent));
 		
 		// build the edit form and CodeMirror
@@ -128,7 +118,7 @@ public abstract class EditTemplateFragment extends Fragment {
 		add(form);
 
 		// build the preview
-		Iframe previewIframe = new Iframe("previewIframe", new PropertyModel<>(this, "renderedPreview"));
+		PreviewTemplateIframe previewIframe = new PreviewTemplateIframe("previewIframe", new PropertyModel<String>(this, "editableContent"), Model.of(previewDataSet));
 		previewIframe.setOutputMarkupId(true);
 		add(previewIframe);
 
@@ -162,7 +152,7 @@ public abstract class EditTemplateFragment extends Fragment {
 		/**
 		 * the previewIframe
 		 */
-		private final Iframe previewIframe;
+		private final PreviewTemplateIframe previewIframe;
 		
 		/**
 		 * the compilerMarkersContainer
@@ -174,7 +164,7 @@ public abstract class EditTemplateFragment extends Fragment {
 		 * @param previewIframe the iframe used for preview
 		 * @param compilerMarkersContainer the container for the markers list
 		 */
-		public CompilerResultConsumer(final Iframe previewIframe, final WebMarkupContainer compilerMarkersContainer) {
+		public CompilerResultConsumer(final PreviewTemplateIframe previewIframe, final WebMarkupContainer compilerMarkersContainer) {
 			this.previewIframe = previewIframe;
 			this.compilerMarkersContainer = compilerMarkersContainer;
 		}
@@ -184,9 +174,13 @@ public abstract class EditTemplateFragment extends Fragment {
 		 */
 		@Override
 		public void consume(final CompilerResult compilerResult) {
+
+			// update marker list
 			setCompilerMarkersFromResult(compilerResult);
 			AjaxRequestUtil.markForRender(compilerMarkersContainer);
-			renderPreview(compilerResult.getDocument());
+
+			// update preview
+			editableContent = compilerResult.getDocument();
 			previewIframe.renderReloadScript();
 		}
 
