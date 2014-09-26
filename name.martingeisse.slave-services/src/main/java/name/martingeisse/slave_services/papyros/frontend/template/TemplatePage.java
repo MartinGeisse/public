@@ -4,8 +4,6 @@
 
 package name.martingeisse.slave_services.papyros.frontend.template;
 
-import java.util.List;
-
 import name.martingeisse.slave_services.common.frontend.AbstractFrontendPage;
 import name.martingeisse.slave_services.common.frontend.components.PageParameterDrivenTabPanel;
 import name.martingeisse.slave_services.entity.Template;
@@ -14,7 +12,6 @@ import name.martingeisse.slave_services.entity.TemplatePreviewDataSet;
 import name.martingeisse.slave_services.papyros.backend.PapyrosDataUtil;
 import name.martingeisse.slave_services.papyros.frontend.components.PreviewTemplateIframe;
 import name.martingeisse.slave_services.papyros.frontend.family.TemplateFamilyPage;
-import name.martingeisse.wicket.component.codemirror.compile.CompilerMarker;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
@@ -32,21 +29,6 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 public class TemplatePage extends AbstractFrontendPage {
 
 	/**
-	 * the editableContent
-	 */
-	private String editableContent;
-
-	/**
-	 * the previewDataSet
-	 */
-	private TemplatePreviewDataSet previewDataSet;
-
-	/**
-	 * the compilerMarkers
-	 */
-	private List<CompilerMarker> compilerMarkers;
-
-	/**
 	 * Constructor.
 	 * @param pageParameters the page parameters
 	 */
@@ -55,7 +37,6 @@ public class TemplatePage extends AbstractFrontendPage {
 		final Pair<Template, TemplateFamily> pair = PapyrosDataUtil.loadTemplateAndTemplateFamily(pageParameters);
 		final Template template = pair.getLeft();
 		final TemplateFamily family = pair.getRight();
-		this.editableContent = template.getContent();
 
 		add(new BookmarkablePageLink<>("templateFamilyLink", TemplateFamilyPage.class, new PageParameters().add("key", family.getKey())));
 		add(new Label("templateFamilyName", family.getName()));
@@ -90,54 +71,6 @@ public class TemplatePage extends AbstractFrontendPage {
 		tabPanel.addTab("Edit", ".edit");
 		add(tabPanel);
 
-	}
-
-	/**
-	 * Getter method for the editableContent.
-	 * @return the editableContent
-	 */
-	public String getEditableContent() {
-		return editableContent;
-	}
-
-	/**
-	 * Setter method for the editableContent.
-	 * @param editableContent the editableContent to set
-	 */
-	public void setEditableContent(String editableContent) {
-		this.editableContent = editableContent;
-	}
-
-	/**
-	 * Getter method for the previewDataSet.
-	 * @return the previewDataSet
-	 */
-	public TemplatePreviewDataSet getPreviewDataSet() {
-		return previewDataSet;
-	}
-
-	/**
-	 * Setter method for the previewDataSet.
-	 * @param previewDataSet the previewDataSet to set
-	 */
-	public void setPreviewDataSet(TemplatePreviewDataSet previewDataSet) {
-		this.previewDataSet = previewDataSet;
-	}
-
-	/**
-	 * Getter method for the compilerMarkers.
-	 * @return the compilerMarkers
-	 */
-	public List<CompilerMarker> getCompilerMarkers() {
-		return compilerMarkers;
-	}
-
-	/**
-	 * Setter method for the compilerMarkers.
-	 * @param compilerMarkers the compilerMarkers to set
-	 */
-	public void setCompilerMarkers(List<CompilerMarker> compilerMarkers) {
-		this.compilerMarkers = compilerMarkers;
 	}
 
 }

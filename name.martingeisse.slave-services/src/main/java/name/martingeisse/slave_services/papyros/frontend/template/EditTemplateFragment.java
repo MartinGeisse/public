@@ -28,6 +28,8 @@ import name.martingeisse.wicket.component.codemirror.modes.CodeMirrorModes;
 import name.martingeisse.wicket.util.AjaxRequestUtil;
 
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -36,7 +38,6 @@ import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
 import com.mysema.query.sql.dml.SQLUpdateClause;
@@ -50,7 +51,7 @@ public abstract class EditTemplateFragment extends Fragment {
 	 * the editableContent
 	 */
 	private String editableContent;
-	
+
 	/**
 	 * the previewDataSet
 	 */
@@ -74,8 +75,8 @@ public abstract class EditTemplateFragment extends Fragment {
 		this.editableContent = template.getContent();
 
 		// build the drop-down menu for the preview data set
-		IModel<TemplatePreviewDataSet> previewDataSetModel = new PropertyModel<>(this, "previewDataSet");
-		IModel<List<TemplatePreviewDataSet>> previewDataSetListModel = new LoadableDetachableModel<List<TemplatePreviewDataSet>>() {
+		final IModel<TemplatePreviewDataSet> previewDataSetModel = new PropertyModel<>(this, "previewDataSet");
+		final IModel<List<TemplatePreviewDataSet>> previewDataSetListModel = new LoadableDetachableModel<List<TemplatePreviewDataSet>>() {
 			@Override
 			protected List<TemplatePreviewDataSet> load() {
 				return PapyrosDataUtil.loadPreviewDataSetList(family.getId(), true);
@@ -94,13 +95,20 @@ public abstract class EditTemplateFragment extends Fragment {
 			}
 
 		};
-		add(new DropDownChoice<>("previewDataSetDropdown", previewDataSetModel, previewDataSetListModel, previewDataSetRenderer));
+		DropDownChoice<?> previewDataDropDownChoice = new DropDownChoice<>("previewDataSetDropdown", previewDataSetModel, previewDataSetListModel, previewDataSetRenderer);
+		previewDataDropDownChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
+			@Override
+			protected void onUpdate(AjaxRequestTarget target) {
+				((PreviewTemplateIframe)EditTemplateFragment.this.get("previewIframe")).renderReloadScript();
+			}
+		});
+		add(previewDataDropDownChoice);
 		this.previewDataSet = (previewDataSetListModel.getObject().isEmpty() ? null : previewDataSetListModel.getObject().get(0));
 
 		// prepare the auto-compiler
 		final TemplateAutocompiler templateAutocompiler = new TemplateAutocompiler();
 		setCompilerMarkersFromResult(ICompiler.Util.compileSafe(templateAutocompiler, editableContent));
-		
+
 		// build the edit form and CodeMirror
 		final Form<Void> form = new Form<Void>("form") {
 			@Override
@@ -118,7 +126,7 @@ public abstract class EditTemplateFragment extends Fragment {
 		add(form);
 
 		// build the preview
-		PreviewTemplateIframe previewIframe = new PreviewTemplateIframe("previewIframe", new PropertyModel<String>(this, "editableContent"), Model.of(previewDataSet));
+		PreviewTemplateIframe previewIframe = new PreviewTemplateIframe("previewIframe", new PropertyModel<String>(this, "editableContent"), previewDataSetModel);
 		previewIframe.setOutputMarkupId(true);
 		add(previewIframe);
 
@@ -127,9 +135,16 @@ public abstract class EditTemplateFragment extends Fragment {
 		add(compilerMarkersListPanel);
 		autocompileBehavior.setResultConsumer(new CompilerResultConsumer(previewIframe, compilerMarkersListPanel));
 
-
 	}
 	
+	/**
+	 * Getter method for the previewDataSet.
+	 * @return the previewDataSet
+	 */
+	public TemplatePreviewDataSet getPreviewDataSet() {
+		return previewDataSet;
+	}
+
 	/**
 	 * Called when the user submits the edited content.
 	 */
@@ -142,7 +157,7 @@ public abstract class EditTemplateFragment extends Fragment {
 		compilerMarkers = new ArrayList<>(compilerResult.getMarkers());
 		Collections.sort(compilerMarkers, new CompilerMarkerErrorLevelComparator());
 	}
-	
+
 	/**
 	 * Consumes the compiler result after auto-compilation, in addition to the
 	 * CodeMirror component adding markers in the editor automatically.
@@ -153,7 +168,7 @@ public abstract class EditTemplateFragment extends Fragment {
 		 * the previewIframe
 		 */
 		private final PreviewTemplateIframe previewIframe;
-		
+
 		/**
 		 * the compilerMarkersContainer
 		 */
@@ -185,5 +200,5 @@ public abstract class EditTemplateFragment extends Fragment {
 		}
 
 	}
-	
+
 }
