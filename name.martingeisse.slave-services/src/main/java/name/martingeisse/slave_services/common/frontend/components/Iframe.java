@@ -78,7 +78,7 @@ public class Iframe extends WebComponent implements ISimpleCallbackListener {
 	 * Renders a javascript snipped to the current {@link AjaxRequestTarget} that
 	 * reloads the iframe.
 	 */
-	public void renderReloadScript() {
+	public final void renderReloadScript() {
 		renderReloadScript(AjaxRequestUtil.getAjaxRequestTarget());
 	}
 	

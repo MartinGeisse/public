@@ -19,7 +19,7 @@ import name.martingeisse.slave_services.entity.Template;
 import name.martingeisse.slave_services.entity.TemplateFamily;
 import name.martingeisse.slave_services.entity.TemplatePreviewDataSet;
 import name.martingeisse.slave_services.papyros.backend.PapyrosDataUtil;
-import name.martingeisse.slave_services.papyros.backend.RenderTemplateAction;
+import name.martingeisse.slave_services.papyros.frontend.components.PreviewTemplateIframe;
 import name.martingeisse.slave_services.papyros.frontend.family.TemplateFamilyPage;
 import name.martingeisse.sql.EntityConnectionManager;
 import name.martingeisse.wicket.component.codemirror.CodeMirrorBehavior;
@@ -43,7 +43,6 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.json.simple.JSONValue;
 
 import com.mysema.query.sql.dml.SQLUpdateClause;
 
@@ -66,19 +65,9 @@ public class TemplatePage extends AbstractFrontendPage {
 	private TemplatePreviewDataSet previewDataSet;
 
 	/**
-	 * the parsedPreviewData
-	 */
-	private Object parsedPreviewData;
-
-	/**
 	 * the compilerMarkers
 	 */
 	private List<CompilerMarker> compilerMarkers;
-
-	/**
-	 * the renderedPreview
-	 */
-	private String renderedPreview;
 
 	/**
 	 * Constructor.
@@ -101,18 +90,16 @@ public class TemplatePage extends AbstractFrontendPage {
 			protected Component createBody(String id, String selector) {
 				if (selector.equals(".preview")) {
 
-					loadPreviewData(template.getTemplateFamilyId());
-					renderPreview(editableContent);
+					TemplatePreviewDataSet previewDataSet = PapyrosDataUtil.loadFirstPreviewDataSet(family.getId());
 					final Fragment fragment = new Fragment(id, "tabPreview", TemplatePage.this);
-					fragment.add(new Iframe("iframe", Model.of(renderedPreview)));
+					fragment.add(new PreviewTemplateIframe("iframe", new PropertyModel<String>(template, "content"), Model.of(previewDataSet)));
 					return fragment;
 
 				} else if (selector.equals(".edit")) {
 
 					//
 					final TemplateAutocompiler templateAutocompiler = new TemplateAutocompiler();
-					loadPreviewData(template.getTemplateFamilyId());
-					renderPreview(editableContent);
+					previewDataSet = PapyrosDataUtil.loadFirstPreviewDataSet(template.getTemplateFamilyId());
 					setCompilerMarkersFromResult(ICompiler.Util.compileSafe(templateAutocompiler, editableContent));
 					
 					final Fragment fragment = new Fragment(id, "tabEdit", TemplatePage.this);
@@ -134,7 +121,7 @@ public class TemplatePage extends AbstractFrontendPage {
 					fragment.add(form);
 
 					// build the preview
-					Iframe previewIframe = new Iframe("previewIframe", new PropertyModel<>(TemplatePage.this, "renderedPreview"));
+					Iframe previewIframe = new PreviewTemplateIframe("previewIframe", new PropertyModel<String>(TemplatePage.this, "editableContent"), Model.of(previewDataSet));
 					previewIframe.setOutputMarkupId(true);
 					fragment.add(previewIframe);
 					
@@ -189,32 +176,6 @@ public class TemplatePage extends AbstractFrontendPage {
 	}
 
 	/**
-	 * Getter method for the renderedPreview.
-	 * @return the renderedPreview
-	 */
-	public String getRenderedPreview() {
-		return renderedPreview;
-	}
-
-	/**
-	 * 
-	 */
-	private void loadPreviewData(final long templateFamilyId) {
-		previewDataSet = PapyrosDataUtil.loadFirstPreviewDataSet(templateFamilyId);
-		parsedPreviewData = (previewDataSet == null ? null : JSONValue.parse(previewDataSet.getData()));
-	}
-
-	/**
-	 * 
-	 */
-	private void renderPreview(String document) {
-		final RenderTemplateAction renderTemplateAction = new RenderTemplateAction();
-		renderTemplateAction.setTemplate(document);
-		renderTemplateAction.setData(parsedPreviewData);
-		renderedPreview = renderTemplateAction.render();
-	}
-	
-	/**
 	 * Consumes the compiler result after auto-compilation, in addition to the
 	 * CodeMirror component adding markers in the editor automatically.
 	 */
@@ -247,7 +208,7 @@ public class TemplatePage extends AbstractFrontendPage {
 		public void consume(final CompilerResult compilerResult) {
 			setCompilerMarkersFromResult(compilerResult);
 			AjaxRequestUtil.markForRender(compilerMarkersContainer);
-			renderPreview(compilerResult.getDocument());
+			editableContent = compilerResult.getDocument();
 			previewIframe.renderReloadScript();
 		}
 
