@@ -39,11 +39,18 @@
 		
 		<!-- preview -->
 		<wicket:fragment wicket:id="tabPreview">
+			<br />
 			<iframe wicket:id="iframe" />
 		</wicket:fragment>
 		
 		<!-- edit -->
 		<wicket:fragment wicket:id="tabEdit">
+			<div class="col-xs-6" style="margin: 10px 0px;">
+			</div>
+			<div class="col-xs-6" style="margin: 10px 0px;">
+				Preview data: <select xwicket:id="previewDataSetDropdown" />
+			</div>
+			<div class="clearfix" />
 			<div style="position: relative">
 				<div class="col-xs-12 col-lg-6">
 					<form wicket:id="form">
