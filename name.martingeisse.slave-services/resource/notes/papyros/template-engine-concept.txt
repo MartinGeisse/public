@@ -1,0 +1,48 @@
+
+original problem: jtwig isn't very cool; uses platform default encoding
+instead of UTF-8 etc.
+
+next problem: jtwig still doesn't solve the "template language vs. normal
+user" mismatch. This is serious because normal users are going to modify
+the templates. nice template languages won't solve this, nor will
+WYSIWIG editors (they cause lots of new problems: they still have to
+visualize variables as placeholders. They cause the same presentation
+glitches as all WYSIWIG editors, because they won't just let you fix
+minor markup corruptions causing a single wrong lineskip etc.)
+
+next problem: jtwig, as all simple template engines, mix up logic and
+texts, causing the logic to be repeated for each translation. These
+will go out of sync!
+
+solution: separate logic and translations. The logic belongs into
+the template family, and is basically using a programming language,
+not a template language. The translation content is a set of strings,
+with no embedded logic; just enhanced by declarative information
+where language rules dictate a more complicated treatment than
+just using the translation strings instead of placeholders.
+
+The translation strings will need to mark up parts of the text,
+with the meaning of that markup defined by the family's logic.
+Only a few pre-defined markup elements might be useful for
+simple formatting (may be just an "emphasis" tag; even strike-through
+is something that is better imposed by template family logic than
+by the translation itself. Maybe not even emphasis -- which would
+be nice because this means there is no special behavior for some
+tags, and even less chance for mess-up due to copy&paste between
+translations for different languages. Missing tags could be detected
+automatically.)
+
+Which programming language should be used for the family logic?
+PHP would be nice! --> needs the Phunky project in a useful state
+first. Should also provide a nice default library of formatting
+functions that work regardless of whether the output is plain
+text, html or PDF (e.g. to produce a table that shows a price
+calculation).
+	function emit($key) -- emits translated string
+	function translate($key) -- returns translated string
+	or just
+		<?= t($key) ?>
+		<?= headline1($key) ?>
+		<?= separator() ?>
+		
+

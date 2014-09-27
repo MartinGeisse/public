@@ -61,5 +61,26 @@ public class RenderTemplateAction {
 	public String render() {
 		return new PropertyVariableInterpolator(template, data).toString();
 	}
-	
+
+	/**
+	 * Renders this template.
+	 * @return the render result
+	 * @throws ParseException on Jtwig parse errors
+	 * @throws CompileException on Jtwig compile errors
+	 * @throws RenderException on Jtwig render errors
+	 */
+	/*
+	public String render() throws ParseException, CompileException, RenderException {
+		JtwigResource templateResource = new PapyrosTemplateJtwigResource(template);
+		JtwigConfiguration configuration = new JtwigConfiguration();
+		// TODO uses the platform's default encoding!
+        JtwigTemplate template = new JtwigTemplate(templateResource, configuration);
+        JtwigModelMap modelMap = new JtwigModelMap();
+        modelMap.add("data", data);
+        ByteArrayOutputStream resultOutputStream = new ByteArrayOutputStream();
+       	template.output(resultOutputStream, modelMap);
+       	return new String(resultOutputStream.toByteArray(), StandardCharsets.UTF_8);
+	}
+	*/
+
 }

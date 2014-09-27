@@ -145,11 +145,11 @@ INSERT INTO `template_family` (`id`, `key`, `name`, `schema`) VALUES
 (2, 'order.confirmation.merchant', 'Bestellbestätigung (Händler)', 'null');
 
 INSERT INTO `template` (`id`, `template_family_id`, `language_key`, `content`) VALUES
-(1, 1, 'en', 'Thank you for your order.'),
-(2, 1, 'de', 'Vielen Dank für Ihre Bestellung.'),
+(1, 1, 'en', 'Hello {{name}}! Thank you for your order.'),
+(2, 1, 'de', 'Hallo {{name}}! Vielen Dank für Ihre Bestellung.'),
 (3, 2, 'en', 'A new order has been placed.'),
 (4, 2, 'de', 'Eine neue Bestellung wurde aufgegeben.');
 
 INSERT INTO `template_preview_data_set` (`id`, `template_family_id`, `preview_data_key`, `order_index`, `name`, `data`) VALUES
-(1, 1, 'eins', 0, 'Testdaten Eins', '{"foo": "bar", "baz": "blubber"}'),
-(2, 1, 'zwei', 1, 'Testdaten Zwei', '{"foo": "eins", "baz": "zwei"}');
+(1, 1, 'eins', 0, 'Testdaten Eins', '{"name": "Max Mustermann"}'),
+(2, 1, 'zwei', 1, 'Testdaten Zwei', '{"name": "Thomas Test"}');
