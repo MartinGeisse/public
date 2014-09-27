@@ -8,6 +8,10 @@ package name.martingeisse.slave_services.papyros.frontend.previewdata;
 
 import java.io.Serializable;
 
+import name.martingeisse.common.javascript.ownjson.parser.JsonParser;
+import name.martingeisse.common.javascript.ownjson.parserbase.JsonSyntaxException;
+import name.martingeisse.wicket.component.codemirror.compile.CompilerErrorLevel;
+import name.martingeisse.wicket.component.codemirror.compile.CompilerMarker;
 import name.martingeisse.wicket.component.codemirror.compile.CompilerResult;
 import name.martingeisse.wicket.component.codemirror.compile.ICompiler;
 
@@ -21,6 +25,12 @@ public final class PreviewDataAutocompiler implements ICompiler, Serializable {
 	 */
 	@Override
 	public void compile(String document, CompilerResult result) throws Exception {
+		JsonParser parser = new JsonParser(document);
+		try {
+			parser.parseValue();
+		} catch (JsonSyntaxException e) {
+			result.getMarkers().add(new CompilerMarker(e.getStartLine(), e.getStartColumn(), e.getEndLine(), e.getEndColumn(), CompilerErrorLevel.ERROR, e.getRawMessage()));
+		}
 	}
 	
 }
