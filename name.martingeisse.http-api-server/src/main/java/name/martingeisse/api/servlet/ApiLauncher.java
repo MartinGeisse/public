@@ -7,13 +7,20 @@
 package name.martingeisse.api.servlet;
 
 import java.util.EnumSet;
+
 import javax.servlet.DispatcherType;
+
 import name.martingeisse.database.EntityConnectionServletFilter;
 import name.martingeisse.jetty.AntiJsessionidUrlFilter;
 import name.martingeisse.jetty.GlobalServletContext;
+
 import org.apache.log4j.Logger;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlets.GzipFilter;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -60,17 +67,40 @@ public class ApiLauncher {
 		ApiConfiguration.setInstance(configuration);
 		context.addServlet(RestfulApiServlet.class, "/*");
 
-		// configure SSL / HTTPS
+		// build SSL configuration
 		SslContextFactory sslContextFactory = new SslContextFactory("/Users/martin/.keystore");
 		sslContextFactory.setKeyStorePassword("changeit");
-		SslSocketConnector sslSocketConnector = new SslSocketConnector(sslContextFactory);
-		sslSocketConnector.setPort(8889);
-
-		final Server server = new Server(8888);
-		server.addConnector(sslSocketConnector);
+		
+		// build the server object
+		final Server server = new Server();
+		
+		// build HTTP(S) configurations
+		HttpConfiguration httpConfiguration = new HttpConfiguration();
+		httpConfiguration.setSecurePort(8443);
+		HttpConfiguration httpsConfiguration = new HttpConfiguration(httpConfiguration);
+		httpsConfiguration.addCustomizer(new SecureRequestCustomizer());
+		
+		// build connection factories
+		HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfiguration);
+		HttpConnectionFactory httpsConnectionFactory = new HttpConnectionFactory(httpsConfiguration);
+		SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, "http/1.1");
+		
+		// build connectors and add them to the server
+		ServerConnector httpConnector = new ServerConnector(server, httpConnectionFactory);
+		httpConnector.setPort(8080);
+		server.addConnector(httpConnector);
+		ServerConnector httpsConnector = new ServerConnector(server, sslConnectionFactory, httpsConnectionFactory);
+		httpsConnector.setPort(8443);
+		server.addConnector(httpsConnector);
+		
+		// start the server
 		server.setHandler(context);
-		server.start();
-		server.join();
+		try {
+			server.start();
+			server.join();
+		} catch (final Exception e) {
+			throw new RuntimeException(e);
+		}
 
 		logger.debug("Launcher.launch(): end");
 	}

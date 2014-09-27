@@ -32,8 +32,12 @@ import name.martingeisse.sql.MysqlDatabaseDescriptor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.protocol.http.WicketFilter;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -168,15 +172,33 @@ public class Initializer {
 		// a default servlet is needed, otherwise the filters cannot catch the request
 		context.addServlet(DefaultServlet.class, "/*");
 
-		// configure SSL / HTTPS
+		// build SSL configuration
 		SslContextFactory sslContextFactory = new SslContextFactory("/Users/martin/.keystore");
 		sslContextFactory.setKeyStorePassword("changeit");
-		SslSocketConnector sslSocketConnector = new SslSocketConnector(sslContextFactory);
-		sslSocketConnector.setPort(8081);
+		
+		// build the server object
+		final Server server = new Server();
+		
+		// build HTTP(S) configurations
+		HttpConfiguration httpConfiguration = new HttpConfiguration();
+		httpConfiguration.setSecurePort(8443);
+		HttpConfiguration httpsConfiguration = new HttpConfiguration(httpConfiguration);
+		httpsConfiguration.addCustomizer(new SecureRequestCustomizer());
+		
+		// build connection factories
+		HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfiguration);
+		HttpConnectionFactory httpsConnectionFactory = new HttpConnectionFactory(httpsConfiguration);
+		SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, "http/1.1");
+		
+		// build connectors and add them to the server
+		ServerConnector httpConnector = new ServerConnector(server, httpConnectionFactory);
+		httpConnector.setPort(8080);
+		server.addConnector(httpConnector);
+		ServerConnector httpsConnector = new ServerConnector(server, sslConnectionFactory, httpsConnectionFactory);
+		httpsConnector.setPort(8443);
+		server.addConnector(httpsConnector);
 		
 		// start the server
-		final Server server = new Server(8080);
-		server.addConnector(sslSocketConnector);
 		server.setHandler(context);
 		try {
 			server.start();
