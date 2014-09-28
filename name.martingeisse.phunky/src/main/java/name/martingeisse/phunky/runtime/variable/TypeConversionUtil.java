@@ -53,8 +53,8 @@ public final class TypeConversionUtil {
 			Boolean v = (Boolean)value;
 			return (v ? 1 : 0);
 		}
-		if (value instanceof PhpVariableArray) {
-			PhpVariableArray v = (PhpVariableArray)value;
+		if (value instanceof PhpValueArray) {
+			PhpValueArray v = (PhpValueArray)value;
 			return (v.isEmpty() ? 0 : 1);
 		}
 		return 1;
@@ -89,8 +89,8 @@ public final class TypeConversionUtil {
 			Boolean v = (Boolean)value;
 			return (v ? 1 : 0);
 		}
-		if (value instanceof PhpVariableArray) {
-			PhpVariableArray v = (PhpVariableArray)value;
+		if (value instanceof PhpValueArray) {
+			PhpValueArray v = (PhpValueArray)value;
 			return (v.isEmpty() ? 0 : 1);
 		}
 		return 1;
@@ -128,7 +128,7 @@ public final class TypeConversionUtil {
 			Boolean v = (Boolean)value;
 			return (v ? "1" : "");
 		}
-		if (value instanceof PhpVariableArray) {
+		if (value instanceof PhpValueArray) {
 			return "Array";
 		}
 		return value.toString();
@@ -170,15 +170,15 @@ public final class TypeConversionUtil {
 	}
 
 	/**
-	 * If the argument is a {@link MutableValue}, then this method returns the appropriate
+	 * If the argument is a {@link MutableVariableContent}, then this method returns the appropriate
 	 * immutable value. Otherwise just returns the argument.
 	 * 
 	 * @param value the value
 	 * @return the immutable value
 	 */
 	public static Object makeImmutable(Object value) {
-		if (value instanceof MutableValue) {
-			return ((MutableValue)value).createImmutableCopy();
+		if (value instanceof MutableVariableContent) {
+			return ((MutableVariableContent)value).createImmutableCopy();
 		} else {
 			return value;
 		}

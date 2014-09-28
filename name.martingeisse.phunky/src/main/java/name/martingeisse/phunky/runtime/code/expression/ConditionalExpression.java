@@ -37,7 +37,6 @@ public final class ConditionalExpression extends AbstractComputeExpression {
 	 * @param elseExpression the expression to evaluate if the condition returns false
 	 */
 	public ConditionalExpression(final Expression condition, final Expression thenExpression, final Expression elseExpression) {
-		super();
 		this.condition = condition;
 		this.thenExpression = thenExpression;
 		this.elseExpression = elseExpression;

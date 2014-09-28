@@ -47,12 +47,7 @@ public final class LocalVariableExpression extends AbstractVariableExpression {
 	 */
 	@Override
 	public Variable getOrCreateVariable(Environment environment) {
-		Variable variable = environment.get(name);
-		if (variable == null) {
-			variable = new Variable();
-			environment.put(name, variable);
-		}
-		return variable;
+		return environment.getOrCreate(name);
 	}
 	
 	/* (non-Javadoc)

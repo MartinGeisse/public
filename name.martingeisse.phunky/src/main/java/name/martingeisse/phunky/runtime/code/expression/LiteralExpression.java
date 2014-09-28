@@ -6,7 +6,8 @@ package name.martingeisse.phunky.runtime.code.expression;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
-import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
+import name.martingeisse.phunky.runtime.variable.PhpValueArray;
+
 import org.apache.commons.lang3.NotImplementedException;
 
 /**
@@ -63,7 +64,12 @@ public final class LiteralExpression extends AbstractComputeExpression {
 			dumper.print('\"');
 			dumper.print(v);
 			dumper.print('\"');
-		} else if (value instanceof PhpVariableArray) {
+		} else if (value instanceof PhpValueArray) {
+			// PHP syntax cannot build an array literal directly
+			// (instead it uses an array construction expression on
+			// literal primitive values), but for generated code
+			// there's no problem with that. dumping that could
+			// just write down an array construction expression.
 			throw new NotImplementedException("");
 		} else {
 			dumper.print("(!literal: " + value + " !)");

@@ -7,10 +7,12 @@ package name.martingeisse.phunky.runtime.variable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import name.martingeisse.common.util.iterator.AbstractIterableWrapper;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.code.statement.Statement;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -26,7 +28,7 @@ import org.apache.commons.lang3.tuple.Pair;
  * This class remembers the highest-used numeric index to generate new indices
  * when appending elements.
  */
-public final class PhpVariableArray extends PhpArray {
+public final class PhpVariableArray extends PhpArray implements MutableVariableContent {
 
 	/**
 	 * the elements
@@ -42,7 +44,7 @@ public final class PhpVariableArray extends PhpArray {
 	 * Returns a new array containing the specified values, in the same order as returned
 	 * by the iterator.
 	 * 
-	 * Any {@link MutableValue} from the iterator will be converted to an immutable value first.
+	 * Any {@link MutableVariableContent} from the iterator will be converted to an immutable value first.
 	 * 
 	 * @param values the values
 	 * @return the array
@@ -60,7 +62,7 @@ public final class PhpVariableArray extends PhpArray {
 	 * Returns a new array containing the specified keys and values, in the same
 	 * order as returned by the iterator.
 	 * 
-	 * Any {@link MutableValue} from the iterator will be converted to an immutable value first.
+	 * Any {@link MutableVariableContent} from the iterator will be converted to an immutable value first.
 	 * 
 	 * @param keyValueEntries the key/value entries
 	 * @return the array
@@ -77,7 +79,7 @@ public final class PhpVariableArray extends PhpArray {
 	 * Returns a new array containing the specified keys and values, in the same
 	 * order as returned by the iterator.
 	 * 
-	 * Any {@link MutableValue} from the iterator will be converted to an immutable value first.
+	 * Any {@link MutableVariableContent} from the iterator will be converted to an immutable value first.
 	 * 
 	 * @param keyValuePairs the key/value pair
 	 * @return the array
@@ -94,7 +96,7 @@ public final class PhpVariableArray extends PhpArray {
 	 * Returns a new array containing the specified keys and values from variables, in the same
 	 * order as returned by the iterator.
 	 * 
-	 * Any {@link MutableValue} from the iterated variables will be converted to an immutable value first.
+	 * Any {@link MutableVariableContent} from the iterated variables will be converted to an immutable value first.
 	 * 
 	 * @param keyVariableEntries the key/variable entries
 	 * @return the array
@@ -102,7 +104,7 @@ public final class PhpVariableArray extends PhpArray {
 	public static PhpVariableArray fromCopiedKeyVariableEntries(Iterable<Map.Entry<String, Variable>> keyVariableEntries) {
 		PhpVariableArray array = new PhpVariableArray();
 		for (Map.Entry<String, Variable> entry : keyVariableEntries) {
-			// request a value from the original variable (making a copy of any MutableValue) and store it in a new variable
+			// request a value from the original variable (making a copy of any MutableVariableContent) and store it in a new variable
 			array.setVariable(entry.getKey(), new Variable(entry.getValue().getValue()));
 		}
 		return array;
@@ -112,7 +114,7 @@ public final class PhpVariableArray extends PhpArray {
 	 * Returns a new array containing the specified keys and values from variables, in the same
 	 * order as returned by the iterator.
 	 * 
-	 * Any {@link MutableValue} from the iterated variables will be converted to an immutable value first.
+	 * Any {@link MutableVariableContent} from the iterated variables will be converted to an immutable value first.
 	 * 
 	 * @param keyVariablePairs the key/variable pair
 	 * @return the array
@@ -120,7 +122,7 @@ public final class PhpVariableArray extends PhpArray {
 	public static PhpVariableArray fromCopiedKeyVariablePairs(Iterable<Pair<String, Variable>> keyVariablePairs) {
 		PhpVariableArray array = new PhpVariableArray();
 		for (Pair<String, Variable> pair : keyVariablePairs) {
-			// request a value from the original variable (making a copy of any MutableValue) and store it in a new variable
+			// request a value from the original variable (making a copy of any MutableVariableContent) and store it in a new variable
 			array.setVariable(pair.getKey(), new Variable(pair.getValue().getValue()));
 		}
 		return array;
@@ -351,6 +353,14 @@ public final class PhpVariableArray extends PhpArray {
 		return PhpValueArray.fromKeyVariableEntries(elements.entrySet());
 	}
 	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.variable.MutableVariableContent#createImmutableCopy()
+	 */
+	@Override
+	public Object createImmutableCopy() {
+		return toValueArray();
+	}
+
 	/**
 	 * Iterates over the elements of this object. For each element, the key iteration variable is bound
 	 * by-value and the value iteration variable is bound by-reference. Then the body is executed. 

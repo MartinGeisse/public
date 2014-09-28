@@ -6,7 +6,7 @@ package name.martingeisse.phunky.runtime.code.expression.operator;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
-import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
+import name.martingeisse.phunky.runtime.variable.PhpValueArray;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 import org.apache.commons.lang3.NotImplementedException;
@@ -86,13 +86,13 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			if ((leftHandSide instanceof PhpVariableArray) || (rightHandSide instanceof PhpVariableArray)) {
+			if ((leftHandSide instanceof PhpValueArray) || (rightHandSide instanceof PhpValueArray)) {
 				// this is similar to array_merge, but differs in precedence of LHS/RHS
 				// elements and in treatment of numeric indices.
 				// see: http://stackoverflow.com/questions/2140090/operator-for-array-in-php
-				PhpVariableArray result = new PhpVariableArray();
-				addElements((PhpVariableArray)rightHandSide, result);
-				addElements((PhpVariableArray)leftHandSide, result);
+				PhpValueArray result = new PhpValueArray();
+				addElements((PhpValueArray)rightHandSide, result);
+				addElements((PhpValueArray)leftHandSide, result);
 				return result;
 			} else if ((leftHandSide instanceof Double) || (rightHandSide instanceof Double) || (leftHandSide instanceof Float) || (rightHandSide instanceof Float)) {
 				final double x = TypeConversionUtil.convertToDouble(leftHandSide);
@@ -105,7 +105,7 @@ public enum BinaryOperator {
 			}
 		}
 		
-		private void addElements(PhpVariableArray from, PhpVariableArray to) {
+		private void addElements(PhpValueArray from, PhpValueArray to) {
 			throw new NotImplementedException(""); // TODO
 			// where is PhpVariableArray / PhpValueArray used when it should be generalized?
 //			for (Map.Entry<String, Variable> entry : from.getDirectEntryIterable()) {
@@ -402,8 +402,7 @@ public enum BinaryOperator {
 				final String x = TypeConversionUtil.convertToString(leftHandSide);
 				final String y = TypeConversionUtil.convertToString(rightHandSide);
 				return x.equals(y);
-			} else if ((leftHandSide instanceof PhpVariableArray) || (rightHandSide instanceof PhpVariableArray)) {
-				// TODO array-equals; should not use PhpVariableArray
+			} else if ((leftHandSide instanceof PhpValueArray) || (rightHandSide instanceof PhpValueArray)) {
 				throw new NotImplementedException("");
 			} else if ((leftHandSide instanceof Double) || (rightHandSide instanceof Double) || (leftHandSide instanceof Float) || (rightHandSide instanceof Float)) {
 				final double x = TypeConversionUtil.convertToDouble(leftHandSide);
@@ -445,14 +444,20 @@ public enum BinaryOperator {
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
 			
+			// handle null and identical Java objects
+			if (leftHandSide == rightHandSide) {
+				return true;
+			} else if (leftHandSide == null || rightHandSide == null) {
+				return false;
+			}
+			
 			// compare values of the same Java class
 			if (leftHandSide.getClass() == rightHandSide.getClass()) {
 				if (leftHandSide instanceof String) {
 					final String x = (String)leftHandSide;
 					final String y = (String)rightHandSide;
 					return x.equals(y);
-				} else if (leftHandSide instanceof PhpVariableArray) {
-					// TODO array-identical; should not use PhpVariableArray
+				} else if (leftHandSide instanceof PhpValueArray) {
 					throw new NotImplementedException("");
 				} else if (leftHandSide instanceof Double) {
 					final double x = (Double)leftHandSide;

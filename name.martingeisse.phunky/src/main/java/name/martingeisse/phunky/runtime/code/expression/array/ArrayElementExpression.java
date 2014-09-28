@@ -12,9 +12,10 @@ import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpressio
 import name.martingeisse.phunky.runtime.code.expression.AbstractExpression;
 import name.martingeisse.phunky.runtime.code.expression.AbstractVariableExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.variable.PhpValueArray;
+import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
+import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 import name.martingeisse.phunky.runtime.variable.Variable;
-
-import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * This expression selects one element of an array.
@@ -66,16 +67,15 @@ public final class ArrayElementExpression extends AbstractExpression {
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-		throw new NotImplementedException(""); // TODO
-//		Object arrayCandidate = arrayExpression.evaluate(environment);
-//		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
-//		if (arrayCandidate instanceof PhpVariableArray) {
-//			PhpVariableArray array = (PhpVariableArray)arrayCandidate;
-//			return array.getVariable(key).getValue();
-//		} else {
-//			environment.getRuntime().triggerError("trying to get element of non-array value");
-//			return null;
-//		}
+		Object arrayCandidate = arrayExpression.evaluate(environment);
+		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
+		if (arrayCandidate instanceof PhpValueArray) {
+			PhpValueArray array = (PhpValueArray)arrayCandidate;
+			return array.getValueOrError(environment.getRuntime(), key);
+		} else {
+			environment.getRuntime().triggerError("trying to get element of non-array value");
+			return null;
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -83,15 +83,14 @@ public final class ArrayElementExpression extends AbstractExpression {
 	 */
 	@Override
 	public Object evaluateForEmptyCheck(Environment environment) {
-		throw new NotImplementedException(""); // TODO
-//		Object arrayCandidate = arrayExpression.evaluateForEmptyCheck(environment);
-//		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
-//		if (arrayCandidate instanceof PhpVariableArray) {
-//			PhpVariableArray array = (PhpVariableArray)arrayCandidate;
-//			return array.getVariable(key).getValue();
-//		} else {
-//			return null;
-//		}
+		Object arrayCandidate = arrayExpression.evaluateForEmptyCheck(environment);
+		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
+		if (arrayCandidate instanceof PhpValueArray) {
+			PhpValueArray array = (PhpValueArray)arrayCandidate;
+			return array.getValue(key);
+		} else {
+			return null;
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -99,22 +98,19 @@ public final class ArrayElementExpression extends AbstractExpression {
 	 */
 	@Override
 	public Variable getVariable(final Environment environment) {
-		throw new NotImplementedException(""); // TODO
-
-//		// note that arrays are a value type, so getting the variable for an element also gets the variable for the array
-//		Variable arrayVariable = arrayExpression.getVariable(environment);
-//		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
-//		if (arrayVariable == null) {
-//			return null;
-//		}
-//		Object arrayCandidate = arrayVariable.getValue();
-//		if (arrayCandidate instanceof PhpVariableArray) {
-//			PhpVariableArray array = (PhpVariableArray)arrayCandidate;
-//			return array.getVariable(key);
-//		}
-//		environment.getRuntime().triggerError("trying to get element of non-array value");
-//		return null;
-		
+		// note that arrays are a value type, so getting the variable for an element also gets the variable for the array
+		Variable arrayVariable = arrayExpression.getVariable(environment);
+		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
+		if (arrayVariable == null) {
+			environment.getRuntime().triggerError("cannot use this expression as an array: " + arrayExpression);
+			return null;
+		}
+		PhpVariableArray variableArray = arrayVariable.getVariableArray(environment.getRuntime());
+		if (variableArray != null) {
+			return variableArray.getVariable(key);
+		}
+		environment.getRuntime().triggerError("trying to get element of non-array value");
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -122,28 +118,18 @@ public final class ArrayElementExpression extends AbstractExpression {
 	 */
 	@Override
 	public Variable getOrCreateVariable(final Environment environment) {
-		throw new NotImplementedException(""); // TODO
-		
-//		// note that arrays are a value type, so getting the variable for an element also gets the variable for the array
-//		Variable arrayVariable = arrayExpression.getVariable(environment);
-//		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
-//		if (arrayVariable == null) {
-//			PhpVariableArray array = new PhpVariableArray();
-//			return array.getOrCreateVariable(key);
-//		}
-//		Object arrayCandidate = arrayVariable.getValue();
-//		if (arrayCandidate instanceof PhpVariableArray) {
-//			PhpVariableArray array = (PhpVariableArray)arrayCandidate;
-//			return array.getOrCreateVariable(key);
-//		}
-//		if (TypeConversionUtil.valueCanBeOverwrittenByImplicitArrayConstruction(arrayCandidate)) {
-//			PhpVariableArray array = new PhpVariableArray();
-//			return array.getOrCreateVariable(key);
-//		} else {
-//			environment.getRuntime().triggerError("cannot use a scalar value as an array");
-//			return null;
-//		}
-		
+		// note that arrays are a value type, so getting the variable for an element also gets the variable for the array
+		Variable arrayVariable = arrayExpression.getOrCreateVariable(environment);
+		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
+		if (arrayVariable == null) {
+			environment.getRuntime().triggerError("cannot use this expression as an array: " + arrayExpression);
+			return null;
+		}
+		PhpVariableArray variableArray = arrayVariable.getVariableArray(environment.getRuntime());
+		if (variableArray != null) {
+			return variableArray.getOrCreateVariable(key);
+		}
+		return null;
 	}
 	
 	/* (non-Javadoc)

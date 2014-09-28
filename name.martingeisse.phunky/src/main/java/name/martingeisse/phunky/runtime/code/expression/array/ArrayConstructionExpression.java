@@ -6,14 +6,17 @@
 
 package name.martingeisse.phunky.runtime.code.expression.array;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.variable.PhpValueArray;
+import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -47,19 +50,19 @@ public class ArrayConstructionExpression extends AbstractComputeExpression {
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-		throw new NotImplementedException(""); // TODO
-		
-//		PhpVariableArray result = new PhpVariableArray();
-//		for (Pair<Expression, Expression> element : elements) {
-//			Object value = element.getRight().evaluate(environment);
-//			if (element.getLeft() == null) {
-//				result.append().setValue(value);
-//			} else {
-//				String key = TypeConversionUtil.convertToString(element.getLeft().evaluate(environment));
-//				result.setVariable(key, new Variable(value));
-//			}
-//		}
-//		return result;
+		Map<String, Object> evaluatedElements = new HashMap<>();
+		int autoIndex = 0;
+		for (Pair<Expression, Expression> element : elements) {
+			Object value = element.getRight().evaluate(environment);
+			if (element.getLeft() == null) {
+				evaluatedElements.put(Integer.toString(autoIndex), value);
+				autoIndex++;
+			} else {
+				String key = TypeConversionUtil.convertToString(element.getLeft().evaluate(environment));
+				evaluatedElements.put(key, value);
+			}
+		}
+		return PhpValueArray.fromKeyValueEntries(evaluatedElements.entrySet());
 	}
 	
 	/* (non-Javadoc)

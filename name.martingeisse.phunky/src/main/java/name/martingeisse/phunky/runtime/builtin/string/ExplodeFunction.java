@@ -4,10 +4,11 @@
 
 package name.martingeisse.phunky.runtime.builtin.string;
 
+import java.util.ArrayList;
+
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
-
-import org.apache.commons.lang3.NotImplementedException;
+import name.martingeisse.phunky.runtime.variable.PhpValueArray;
 
 /**
  * The built-in "explode" function.
@@ -19,43 +20,41 @@ public final class ExplodeFunction extends BuiltinCallable {
 	 */
 	@Override
 	public Object call(PhpRuntime runtime, Object[] arguments) {
-		throw new NotImplementedException(""); // TODO
 		
-//		// extract parameters
-//		final String delimiter = getStringParameter(runtime, arguments, 0, null);
-//		String subject = getStringParameter(runtime, arguments, 1, null);
-//		final int limit = getIntParameter(runtime, arguments, 2, Integer.MAX_VALUE);
-//		
-//		// special cases
-//		if (limit == 0 || limit == 1) {
-//			return subject;
-//		}
-//		if (subject.isEmpty()) {
-//			return new PhpVariableArray();
-//		}
-//		
-//		// TODO implement
-//		if (limit < 0) {
-//			throw new RuntimeException("explode() with negative limit not yet implemented");
-//		}
-//		
-//		// explode the string
-//		
-//		TODO Variable array!?
-//		
-//		ArrayList<String> segments = new ArrayList<String>();
-//		final int delimiterLength = delimiter.length();
-//		while (limit > 1) {
-//			int index = subject.indexOf(delimiter);
-//			if (index == -1) {
-//				segments.add(subject);
-//				return PhpVariableArray.fromValues(segments);
-//			}
-//			segments.add(subject.substring(0, index));
-//			subject = subject.substring(index + delimiterLength);
-//		}
-//		segments.add(subject);
-//		return PhpVariableArray.fromValues(segments);
+		// extract parameters
+		final String delimiter = getStringParameter(runtime, arguments, 0, null);
+		String subject = getStringParameter(runtime, arguments, 1, null);
+		final int limit = getIntParameter(runtime, arguments, 2, Integer.MAX_VALUE);
+		
+		// special cases
+		if (limit == 0 || limit == 1) {
+			return subject;
+		}
+		if (subject.isEmpty()) {
+			return new PhpValueArray();
+		}
+		
+		// TODO implement
+		if (limit < 0) {
+			throw new RuntimeException("explode() with negative limit not yet implemented");
+		}
+		
+		// explode the string		
+		ArrayList<String> segments = new ArrayList<String>();
+		final int delimiterLength = delimiter.length();
+		int remainingLimit = limit;
+		while (remainingLimit > 1) {
+			int index = subject.indexOf(delimiter);
+			if (index == -1) {
+				segments.add(subject);
+				return PhpValueArray.fromValues(segments);
+			}
+			segments.add(subject.substring(0, index));
+			subject = subject.substring(index + delimiterLength);
+			remainingLimit--;
+		}
+		segments.add(subject);
+		return PhpValueArray.fromValues(segments);
 
 	}
 	

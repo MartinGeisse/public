@@ -8,20 +8,13 @@ package name.martingeisse.phunky.runtime.code.expression.array;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
-import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpression;
 import name.martingeisse.phunky.runtime.code.expression.AbstractExpression;
-import name.martingeisse.phunky.runtime.code.expression.AbstractVariableExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
 import name.martingeisse.phunky.runtime.variable.Variable;
-
-import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * This expression can be used to append an element to an array.
- * 
- * This class does not inherit from either {@link AbstractVariableExpression} or
- * {@link AbstractComputeExpression} because it can behave like either
- * one, depending on the context in which it is used. 
  */
 public final class ArrayAppendExpression extends AbstractExpression {
 
@@ -77,27 +70,18 @@ public final class ArrayAppendExpression extends AbstractExpression {
 	 */
 	@Override
 	public Variable getOrCreateVariable(Environment environment) {
-		throw new NotImplementedException(""); // TODO
-		
-//		// note that arrays are a value type, so getting the variable for an element also gets the variable for the array
-//		Variable arrayVariable = arrayExpression.getVariable(environment);
-//		if (arrayVariable == null) {
-//			PhpVariableArray array = new PhpVariableArray();
-//			return array.append();
-//		}
-//		Object arrayCandidate = arrayVariable.getValue();
-//		if (arrayCandidate instanceof PhpVariableArray) {
-//			PhpVariableArray array = (PhpVariableArray)arrayCandidate;
-//			return array.append();
-//		}
-//		if (TypeConversionUtil.valueCanBeOverwrittenByImplicitArrayConstruction(arrayCandidate)) {
-//			PhpVariableArray array = new PhpVariableArray();
-//			return array.append();
-//		} else {
-//			environment.getRuntime().triggerError("cannot use a scalar value as an array");
-//			return null;
-//		}
-		
+		// note that arrays are a value type, so getting the variable for an element also gets the variable for the array
+		Variable arrayVariable = arrayExpression.getOrCreateVariable(environment);
+		if (arrayVariable == null) {
+			environment.getRuntime().triggerError("cannot use this expression as an array: " + arrayExpression);
+			return null;
+		}
+		PhpVariableArray variableArray = arrayVariable.getVariableArray(environment.getRuntime());
+		if (variableArray == null) {
+			return null;
+		} else {
+			return variableArray.append();
+		}
 	}
 
 	/* (non-Javadoc)

@@ -9,37 +9,36 @@ import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.oop.PhpObject;
 
 /**
- * A variable that can contain a value.
+ * A variable that can contain either a value or a {@link MutableVariableContent}.
  *
  * A variable does not simply have a name. Instead, it is referred to
  * by one or more names in one or more {@link Environment}s,
  * {@link PhpVariableArray}s or {@link PhpObject}s.
  * 
- * Values can be arbitrary Java objects. Simple values like
- * integers use their java.lang counterpart.
- * 
- * Values are either assumed to be immutable, and thus allowed to
- * be transparently shared, or are mutable and implement {@link MutableValue}.
- * That interface is used to distinguish the two cases.
+ * Values can be arbitrary Java objects that behave as value objects, that is,
+ * they are conceptually immutable. Simple values like integers use their
+ * java.lang counterpart. Mutable (non-value) contents are distinguished from
+ * values by the {@link MutableVariableContent} interface.
  */
 public final class Variable {
 
 	/**
-	 * the value
+	 * the content
 	 */
-	private Object value;
+	private Object content;
 
 	/**
 	 * Constructor.
 	 */
 	public Variable() {
-		value = null;
+		content = null;
 	}
 
 	/**
 	 * Constructor.
+	 * 
 	 * @param value the initial value. This must be an immutable value,
-	 * not a {@link MutableValue}.
+	 * not a {@link MutableVariableContent}.
 	 */
 	public Variable(final Object value) {
 		setValue(value);
@@ -47,13 +46,13 @@ public final class Variable {
 
 	/**
 	 * Getter method for the (immutable) value of this variable. If this
-	 * variable currently contains a mutable value, and immutable copy
-	 * is made.
+	 * variable currently contains a {@link MutableVariableContent}, an
+	 * immutable copy is made.
 	 * 
 	 * @return the value
 	 */
 	public Object getValue() {
-		return TypeConversionUtil.makeImmutable(value);
+		return TypeConversionUtil.makeImmutable(content);
 	}
 
 	/**
@@ -68,16 +67,16 @@ public final class Variable {
 	 * @return the variable array
 	 */
 	public PhpVariableArray getVariableArray(PhpRuntime runtime) {
-		if (value instanceof PhpVariableArray) {
-			return (PhpVariableArray)value;
-		} else if (value instanceof PhpValueArray) {
-			PhpValueArray valueArray = (PhpValueArray)value;
+		if (content instanceof PhpVariableArray) {
+			return (PhpVariableArray)content;
+		} else if (content instanceof PhpValueArray) {
+			PhpValueArray valueArray = (PhpValueArray)content;
 			PhpVariableArray variableArray = valueArray.toVariableArray();
-			value = variableArray;
+			content = variableArray;
 			return variableArray;
-		} else if (TypeConversionUtil.valueCanBeOverwrittenByImplicitArrayConstruction(value)) {
+		} else if (TypeConversionUtil.valueCanBeOverwrittenByImplicitArrayConstruction(content)) {
 			PhpVariableArray array = new PhpVariableArray();
-			value = array;
+			content = array;
 			return array;
 		} else {
 			runtime.triggerError("cannot use a scalar value as an array");
@@ -90,10 +89,10 @@ public final class Variable {
 	 * @param value the value to set
 	 */
 	public void setValue(final Object value) {
-		if (value instanceof MutableValue) {
-			throw new RuntimeException("cannot assign a MutableValue to a variable");
+		if (value instanceof MutableVariableContent) {
+			throw new RuntimeException("cannot assign a MutableVariableContent to a variable");
 		}
-		this.value = value;
+		this.content = value;
 	}
 
 }

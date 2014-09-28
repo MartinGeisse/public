@@ -6,8 +6,8 @@ package name.martingeisse.phunky.runtime.builtin.string;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
-
-import org.apache.commons.lang3.NotImplementedException;
+import name.martingeisse.phunky.runtime.variable.PhpValueArray;
+import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 /**
  * The built-in "implode" and "join" functions.
@@ -19,49 +19,46 @@ public final class ImplodeFunction extends BuiltinCallable {
 	 */
 	@Override
 	public Object call(PhpRuntime runtime, Object[] arguments) {
-		throw new NotImplementedException(""); // TODO
+			
+		// extract parameters
+		if (arguments.length != 2) {
+			runtime.triggerError("implode() expects exactly 2 arguments, has " + arguments.length);
+			return "";
+		}
+		boolean firstIsArray = (arguments[0] instanceof PhpValueArray);
+		boolean secondIsArray = (arguments[1] instanceof PhpValueArray);
+		PhpValueArray array;
+		String glue;
+		if (firstIsArray) {
+			if (secondIsArray) {
+				runtime.triggerError("Both arguments to implode() are arrays; cannot determine argument order");
+				return "";
+			} else {
+				array = (PhpValueArray)arguments[0];
+				glue = TypeConversionUtil.convertToString(arguments[1]);
+			}
+		} else {
+			if (secondIsArray) {
+				glue = TypeConversionUtil.convertToString(arguments[0]);
+				array = (PhpValueArray)arguments[1];
+			} else {
+				runtime.triggerError("Neither argument to implode() is an array");
+				return "";
+			}
+		}
 		
-//		TODO variable array !?
-//			
-//		// extract parameters
-//		if (arguments.length != 2) {
-//			runtime.triggerError("implode() expects exactly 2 arguments, has " + arguments.length);
-//			return "";
-//		}
-//		boolean firstIsArray = (arguments[0] instanceof PhpVariableArray);
-//		boolean secondIsArray = (arguments[1] instanceof PhpVariableArray);
-//		PhpVariableArray array;
-//		String glue;
-//		if (firstIsArray) {
-//			if (secondIsArray) {
-//				runtime.triggerError("Both arguments to implode() are arrays; cannot determine argument order");
-//				return "";
-//			} else {
-//				array = (PhpVariableArray)arguments[0];
-//				glue = TypeConversionUtil.convertToString(arguments[1]);
-//			}
-//		} else {
-//			if (secondIsArray) {
-//				glue = TypeConversionUtil.convertToString(arguments[0]);
-//				array = (PhpVariableArray)arguments[1];
-//			} else {
-//				runtime.triggerError("Neither argument to implode() is an array");
-//				return "";
-//			}
-//		}
-//		
-//		// implode the array
-//		StringBuilder builder = new StringBuilder();
-//		boolean first = true;
-//		for (Object value : array.getDirectValueIterable()) {
-//			if (first) {
-//				first = false;
-//			} else {
-//				builder.append(glue);
-//			}
-//			builder.append(TypeConversionUtil.convertToString(value));
-//		}
-//		return builder.toString();
+		// implode the array
+		StringBuilder builder = new StringBuilder();
+		boolean first = true;
+		for (Object value : array.getValueIterable()) {
+			if (first) {
+				first = false;
+			} else {
+				builder.append(glue);
+			}
+			builder.append(TypeConversionUtil.convertToString(value));
+		}
+		return builder.toString();
 
 	}
 	

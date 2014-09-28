@@ -35,7 +35,7 @@ public final class PhpValueArray extends PhpArray implements PhpValueIterationPr
 	 * Returns a new array containing the specified values, in the same order as returned
 	 * by the iterator.
 	 * 
-	 * Any {@link MutableValue} from the iterator will be converted to an immutable value first.
+	 * Any {@link MutableVariableContent} from the iterator will be converted to an immutable value first.
 	 * 
 	 * @param values the values
 	 * @return the array
@@ -54,7 +54,7 @@ public final class PhpValueArray extends PhpArray implements PhpValueIterationPr
 	 * Returns a new array containing the specified keys and values, in the same
 	 * order as returned by the iterator.
 	 * 
-	 * Any {@link MutableValue} from the iterator will be converted to an immutable value first.
+	 * Any {@link MutableVariableContent} from the iterator will be converted to an immutable value first.
 	 * 
 	 * @param keyValueEntries the key/value entries
 	 * @return the array
@@ -71,7 +71,7 @@ public final class PhpValueArray extends PhpArray implements PhpValueIterationPr
 	 * Returns a new array containing the specified keys and values, in the same
 	 * order as returned by the iterator.
 	 * 
-	 * Any {@link MutableValue} from the iterator will be converted to an immutable value first.
+	 * Any {@link MutableVariableContent} from the iterator will be converted to an immutable value first.
 	 * 
 	 * @param keyValuePairs the key/value pair
 	 * @return the array
@@ -88,7 +88,7 @@ public final class PhpValueArray extends PhpArray implements PhpValueIterationPr
 	 * Returns a new array containing the specified keys and values from the variables,
 	 * in the same order as returned by the iterator.
 	 * 
-	 * Any {@link MutableValue} from the iterated variables will be converted to an immutable value first.
+	 * Any {@link MutableVariableContent} from the iterated variables will be converted to an immutable value first.
 	 * 
 	 * @param keyVariableEntries the key/variable entries
 	 * @return the array
@@ -96,7 +96,7 @@ public final class PhpValueArray extends PhpArray implements PhpValueIterationPr
 	public static PhpValueArray fromKeyVariableEntries(Iterable<Map.Entry<String, Variable>> keyVariableEntries) {
 		PhpValueArray array = new PhpValueArray();
 		for (Map.Entry<String, Variable> entry : keyVariableEntries) {
-			// if the variable's value is a MutableValue, then this makes a copy
+			// if the variable's value is a MutableVariableContent, then this makes a copy
 			array.elements.put(entry.getKey(), entry.getValue().getValue());
 		}
 		return array;
@@ -106,7 +106,7 @@ public final class PhpValueArray extends PhpArray implements PhpValueIterationPr
 	 * Returns a new array containing the specified keys and variables, in the same
 	 * order as returned by the iterator.
 	 * 
-	 * Any {@link MutableValue} from the iterated variables will be converted to an immutable value first.
+	 * Any {@link MutableVariableContent} from the iterated variables will be converted to an immutable value first.
 	 * 
 	 * @param keyVariablePairs the key/variable pair
 	 * @return the array
@@ -114,7 +114,7 @@ public final class PhpValueArray extends PhpArray implements PhpValueIterationPr
 	public static PhpValueArray fromKeyVariablePairs(Iterable<Pair<String, Variable>> keyVariablePairs) {
 		PhpValueArray array = new PhpValueArray();
 		for (Pair<String, Variable> pair : keyVariablePairs) {
-			// if the variable's value is a MutableValue, then this makes a copy
+			// if the variable's value is a MutableVariableContent, then this makes a copy
 			array.elements.put(pair.getKey(), pair.getValue().getValue());
 		}
 		return array;
