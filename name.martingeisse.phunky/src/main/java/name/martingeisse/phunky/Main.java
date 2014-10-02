@@ -5,6 +5,7 @@
 package name.martingeisse.phunky;
 
 import java.io.File;
+
 import name.martingeisse.phunky.runtime.PhpRuntime;
 
 /**
@@ -23,7 +24,6 @@ public final class Main {
 //			testSample(runtime, file);
 //		}
 		testSample(runtime, new File("samples/switch-with-early-default.php"));
-//		testSample(runtime, new File("samples/test.php"));
 	}
 
 	private static void testSample(PhpRuntime runtime, File file) {

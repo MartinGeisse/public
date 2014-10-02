@@ -6,6 +6,7 @@ package name.martingeisse.phunky.runtime.variable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import name.martingeisse.phunky.runtime.PhpRuntime;
 
 /**

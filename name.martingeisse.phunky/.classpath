@@ -3,7 +3,6 @@
   <classpathentry kind="src" path="src/main/java"/>
   <classpathentry kind="output" path="target/classes"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-  <classpathentry kind="src" path="/common"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar" sourcepath="M2_REPO/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2-sources.jar">
     <attributes>
       <attribute value="jar:file:/Users/geisse/.m2/repository/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2-javadoc.jar!/" name="javadoc_location"/>
@@ -44,6 +43,15 @@
       <attribute value="jar:file:/Users/geisse/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
+  <classpathentry kind="lib" path="lib/java/java-cup-11b.jar"/>
+  <classpathentry kind="lib" path="lib/java/java-cup-11b-runtime.jar"/>
+  <classpathentry kind="var" path="M2_REPO/de/jflex/jflex/1.5.1/jflex-1.5.1.jar" sourcepath="M2_REPO/de/jflex/jflex/1.5.1/jflex-1.5.1-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/geisse/.m2/repository/de/jflex/jflex/1.5.1/jflex-1.5.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/apache/ant/ant/1.7.0/ant-1.7.0.jar" sourcepath="M2_REPO/org/apache/ant/ant/1.7.0/ant-1.7.0-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/ant/ant-launcher/1.7.0/ant-launcher-1.7.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.3/joda-time-2.3.jar" sourcepath="M2_REPO/joda-time/joda-time/2.3/joda-time-2.3-sources.jar">
     <attributes>
       <attribute value="jar:file:/Users/geisse/.m2/repository/joda-time/joda-time/2.3/joda-time-2.3-javadoc.jar!/" name="javadoc_location"/>
@@ -59,15 +67,6 @@
       <attribute value="jar:file:/Users/geisse/.m2/repository/com/google/code/findbugs/jsr305/2.0.3/jsr305-2.0.3-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
-  <classpathentry kind="lib" path="lib/java/java-cup-11b.jar"/>
-  <classpathentry kind="lib" path="lib/java/java-cup-11b-runtime.jar"/>
-  <classpathentry kind="var" path="M2_REPO/de/jflex/jflex/1.5.1/jflex-1.5.1.jar" sourcepath="M2_REPO/de/jflex/jflex/1.5.1/jflex-1.5.1-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/Users/geisse/.m2/repository/de/jflex/jflex/1.5.1/jflex-1.5.1-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/apache/ant/ant/1.7.0/ant-1.7.0.jar" sourcepath="M2_REPO/org/apache/ant/ant/1.7.0/ant-1.7.0-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/ant/ant-launcher/1.7.0/ant-launcher-1.7.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/4.11/junit-4.11.jar" sourcepath="M2_REPO/junit/junit/4.11/junit-4.11-sources.jar">
     <attributes>
       <attribute value="jar:file:/Users/geisse/.m2/repository/junit/junit/4.11/junit-4.11-javadoc.jar!/" name="javadoc_location"/>

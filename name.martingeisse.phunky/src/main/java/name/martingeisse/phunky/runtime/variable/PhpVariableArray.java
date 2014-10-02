@@ -8,10 +8,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import name.martingeisse.common.util.iterator.AbstractIterableWrapper;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.code.statement.Statement;
+import name.martingeisse.phunky.util.AbstractIterableWrapper;
 
 import org.apache.commons.lang3.tuple.Pair;
 

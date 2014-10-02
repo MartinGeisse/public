@@ -5,6 +5,7 @@
 package name.martingeisse.phunky;
 
 import java.io.File;
+
 import name.martingeisse.phunky.runtime.PhpRuntime;
 
 /**
@@ -20,7 +21,7 @@ public final class MainPhorum {
 		PhpRuntime runtime = new PhpRuntime();
 		runtime.applyStandardDefinitions();
 		try {
-			runtime.getInterpreter().execute(new File("/Users/martin/phorum/index.php"));
+			runtime.getInterpreter().execute(new File("/Users/geisse/Sites/phorum/index.php"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
