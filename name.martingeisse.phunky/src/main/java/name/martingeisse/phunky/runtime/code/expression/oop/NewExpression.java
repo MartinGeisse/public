@@ -18,26 +18,26 @@ import org.apache.commons.lang3.NotImplementedException;
 public class NewExpression extends AbstractCallExpression {
 
 	/**
-	 * the className
+	 * the classNameExpression
 	 */
-	private final String className;
+	private final Expression classNameExpression;
 
 	/**
 	 * Constructor.
-	 * @param className the name of the class to instantiate
+	 * @param classNameExpression the expression that determines the name of the class to instantiate
 	 * @param parameters the constructor parameters
 	 */
-	public NewExpression(String className, Expression... parameters) {
+	public NewExpression(Expression classNameExpression, Expression... parameters) {
 		super(parameters);
-		this.className = className;
+		this.classNameExpression = classNameExpression;
 	}
 
 	/**
-	 * Getter method for the className.
-	 * @return the className
+	 * Getter method for the classNameExpression.
+	 * @return the classNameExpression
 	 */
-	public String getClassName() {
-		return className;
+	public Expression getClassNameExpression() {
+		return classNameExpression;
 	}
 
 	/* (non-Javadoc)

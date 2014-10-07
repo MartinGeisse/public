@@ -8,6 +8,7 @@
 package name.martingeisse.phunky.runtime.parser;
 import java_cup.runtime.*;
 import java_cup.runtime.ComplexSymbolFactory.Location;
+import name.martingeisse.phunky.runtime.code.expression.LocalVariableExpression;
 
 /**
  * The Lexer.
@@ -97,16 +98,23 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 // comments
 Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
 TraditionalComment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
-EndOfLineComment = "//" {InputCharacter}* {LineTerminator}
+EndOfLineComment = "//" {InputCharacter}* {LineTerminator}?
 DocumentationComment = "/**" {CommentContent} "*"+ "/"
 CommentContent = ( [^*] | \*+ [^/*] )*
 
 // numbers
-DecimalIntegerLiteral = 0 | [1-9][0-9]*
+// note the braindead syntax for octals: the literals *may* contain '8' and
+// '9' digits, causing that and the remaining digits to be skipped as if they
+// weren't there
+DecimalIntegerLiteral = "0" | ([1-9][0-9]*)
+HexadecimalIntegerLiteral = "0x" [0-9a-fA-F]+
+OctalIntegerLiteral = "0" [0-9]+
+BinaryIntegerLiteral = ("0b" | "0B") [01]+
 
 // identifiers and keywords
 Identifier = [\p{Alpha}\_] [\p{Alnum}\_]*
-LocalVariable = "$" {Identifier}
+LocalVariableSingleIndirection = "$" {Identifier}
+LocalVariableMultiIndirection = "$"+ {Identifier}
 
 // heredoc and nowdoc
 UnquotedHeredocStarter = "<<<" {Identifier} {LineTerminator}
@@ -500,6 +508,24 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	{DecimalIntegerLiteral} {
 		return symbol(Tokens.INTEGER_LITERAL, Integer.parseInt(yytext()));
 	}
+	{HexadecimalIntegerLiteral} {
+		return symbol(Tokens.INTEGER_LITERAL, Integer.parseInt(yytext().substring(2), 16));
+	}
+	{OctalIntegerLiteral} {
+		String s = yytext();
+		int index1 = s.indexOf('8');
+		if (index1 != -1) {
+			s = s.substring(0, index1);
+		}
+		int index2 = s.indexOf('9');
+		if (index2 != -1) {
+			s = s.substring(0, index2);
+		}
+		return symbol(Tokens.INTEGER_LITERAL, Integer.parseInt(s, 8));
+	}
+	{BinaryIntegerLiteral} {
+		return symbol(Tokens.INTEGER_LITERAL, Integer.parseInt(yytext().substring(2), 2));
+	}
 	\' {
 		stringBuilder.setLength(0);
 		yybegin(SINGLE_QUOTED_STRING);
@@ -513,8 +539,11 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	{Identifier} {
 		return symbol(Tokens.IDENTIFIER, yytext());
 	}
-	{LocalVariable} {
-		return symbol(Tokens.LOCAL_VARIABLE, yytext().substring(1));
+	{LocalVariableSingleIndirection} {
+		return symbol(Tokens.LOCAL_VARIABLE_SINGLE_INDIRECTION, yytext().substring(1));
+	}
+	{LocalVariableMultiIndirection} {
+		return symbol(Tokens.LOCAL_VARIABLE_MULTI_INDIRECTION, LocalVariableExpression.parse(yytext()));
 	}
 
 	// comments and whitespace

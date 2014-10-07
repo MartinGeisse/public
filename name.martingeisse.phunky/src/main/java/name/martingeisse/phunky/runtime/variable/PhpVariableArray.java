@@ -169,6 +169,14 @@ public final class PhpVariableArray extends PhpArray implements MutableVariableC
 	public boolean isEmpty() {
 		return elements.isEmpty();
 	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.variable.PhpArray#size()
+	 */
+	@Override
+	public int size() {
+		return elements.size();
+	}
 
 	/**
 	 * Appends an element to this array, using the highest used integer index so far, plus

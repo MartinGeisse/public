@@ -6,6 +6,7 @@ package name.martingeisse.phunky.runtime.variable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 
@@ -46,10 +47,21 @@ import name.martingeisse.phunky.runtime.PhpRuntime;
 public abstract class PhpArray {
 	
 	/**
+	 * the numericKeyPattern
+	 */
+	private static final Pattern numericKeyPattern = Pattern.compile("\\-?[0-9]+");
+	
+	/**
 	 * Checks whether this array is empty.
 	 * @return true if empty, false if not
 	 */
 	public abstract boolean isEmpty();
+	
+	/**
+	 * Returns the size of this array, i.e. the number of elements in this array.
+	 * @return the array size
+	 */
+	public abstract int size();
 
 	/**
 	 * Returns the value for the specified key, or null if the key doesn't exist.
@@ -128,4 +140,14 @@ public abstract class PhpArray {
 	 */
 	public abstract PhpValueArray toValueArray();
 
+	/**
+	 * Checks whether the specified array key is a key that PHP considers to be
+	 * a numeric key.
+	 * 
+	 * @param key the key
+	 * @return true if the key is numeric, false if it is a string key 
+	 */
+	public static boolean isNumericKey(String key) {
+		return numericKeyPattern.matcher(key).matches();
+	}
 }

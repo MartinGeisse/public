@@ -6,8 +6,13 @@
 
 package name.martingeisse.phunky.runtime.builtin.var;
 
+import java.io.PrintWriter;
+import java.util.Map.Entry;
+
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
+import name.martingeisse.phunky.runtime.variable.PhpArray;
+import name.martingeisse.phunky.runtime.variable.PhpValueArray;
 
 /**
  * The built-in "var_dump" function.
@@ -29,19 +34,36 @@ public class VarDumpFunction extends BuiltinCallable {
 	 * 
 	 */
 	private void dump(PhpRuntime runtime, Object value, int indentation) {
+		PrintWriter w = runtime.getOutputWriter();
 		printIndentation(runtime, indentation);
 		if (value == null) {
-			runtime.getOutputWriter().print("NULL");
-		} else if (value instanceof Integer) {
-			runtime.getOutputWriter().print("int(" + value + ")");
+			w.println("NULL");
+		} else if (value instanceof Integer || value instanceof Long) {
+			w.println("int(" + value + ")");
+		} else if (value instanceof Float || value instanceof Double) {
+			w.println("float(" + value + ")");
 		} else if (value instanceof Boolean) {
-			runtime.getOutputWriter().print("bool(" + value + ")");
+			w.println("bool(" + value + ")");
 		} else if (value instanceof String) {
 			String s = (String)value;
-			runtime.getOutputWriter().print("string(" + s.length() + ") \"" + s + "\"");
+			w.println("string(" + s.length() + ") \"" + s + "\"");
+		} else if (value instanceof PhpValueArray) {
+			PhpValueArray array = (PhpValueArray)value;
+			w.println("array(" + array.size() + ") {");
+			for (Entry<String, Object> entry : array.getKeyValueEntryIterable()) {
+				printIndentation(runtime, indentation + 1);
+				if (PhpArray.isNumericKey(entry.getKey())) {
+					w.println("[" + entry.getKey() + "]=>");
+				} else {
+					w.println("[\"" + entry.getKey() + "\"]=>");
+				}
+				dump(runtime, entry.getValue(), indentation + 1);
+			}
+			printIndentation(runtime, indentation);
+			w.println("}");
 		} else {
-			// TODO: arrays, floats, objects, ...
-			runtime.getOutputWriter().print("OTHER");
+			// TODO: objects, ...
+			w.println("OTHER");
 		}
 	}
 	

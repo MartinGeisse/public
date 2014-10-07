@@ -16,26 +16,35 @@ import name.martingeisse.phunky.runtime.code.CodeDumper;
 public final class FunctionCall extends AbstractCallExpression {
 
 	/**
-	 * the name
+	 * the nameExpression
 	 */
-	private final String name;
+	private final Expression nameExpression;
 
 	/**
-	 * Constructor.
+	 * Convenience constructor.
 	 * @param name the function name
 	 * @param parameters the parameters
 	 */
 	public FunctionCall(final String name, final Expression... parameters) {
-		super(parameters);
-		this.name = name;
+		this(new LiteralExpression(name), parameters);
 	}
 
 	/**
-	 * Getter method for the name.
-	 * @return the name
+	 * Constructor.
+	 * @param nameExpression the expression that determines the function name
+	 * @param parameters the parameters
 	 */
-	public String getName() {
-		return name;
+	public FunctionCall(final Expression nameExpression, final Expression... parameters) {
+		super(parameters);
+		this.nameExpression = nameExpression;
+	}
+	
+	/**
+	 * Getter method for the nameExpression.
+	 * @return the nameExpression
+	 */
+	public Expression getNameExpression() {
+		return nameExpression;
 	}
 
 	/* (non-Javadoc)
@@ -43,6 +52,11 @@ public final class FunctionCall extends AbstractCallExpression {
 	 */
 	@Override
 	public Object evaluate(final Environment environment) {
+		Object name = nameExpression.evaluate(environment);
+		if (!(name instanceof String)) {
+			environment.getRuntime().triggerError("function name must be a string: " + name);
+			return null;
+		}
 		Callable function = environment.getRuntime().getFunctions().get(name);
 		if (function == null) {
 			environment.getRuntime().triggerError("undefined function: " + name);
@@ -57,7 +71,7 @@ public final class FunctionCall extends AbstractCallExpression {
 	 */
 	@Override
 	public void dump(CodeDumper dumper) {
-		dumper.print(name);
+		nameExpression.dump(dumper);
 		dumpParameters(dumper);
 	}
 	

@@ -127,6 +127,14 @@ public final class PhpValueArray extends PhpArray implements PhpValueIterationPr
 	public boolean isEmpty() {
 		return elements.isEmpty();
 	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.variable.PhpArray#size()
+	 */
+	@Override
+	public int size() {
+		return elements.size();
+	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.value.PhpArray#getValue(java.lang.String)

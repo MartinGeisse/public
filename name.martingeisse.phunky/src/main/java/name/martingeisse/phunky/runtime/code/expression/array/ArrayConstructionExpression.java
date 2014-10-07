@@ -6,7 +6,7 @@
 
 package name.martingeisse.phunky.runtime.code.expression.array;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +50,7 @@ public class ArrayConstructionExpression extends AbstractComputeExpression {
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-		Map<String, Object> evaluatedElements = new HashMap<>();
+		Map<String, Object> evaluatedElements = new LinkedHashMap<>();
 		int autoIndex = 0;
 		for (Pair<Expression, Expression> element : elements) {
 			Object value = element.getRight().evaluate(environment);

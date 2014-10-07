@@ -18,41 +18,41 @@ import org.apache.commons.lang3.NotImplementedException;
 public class StaticMethodCall extends AbstractCallExpression {
 
 	/**
-	 * the className
+	 * the classNameExpression
 	 */
-	private final String className;
+	private final Expression classNameExpression;
 	
 	/**
-	 * the methodName
+	 * the methodNameExpression
 	 */
-	private final String methodName;
+	private final Expression methodNameExpression;
 
 	/**
 	 * Constructor.
-	 * @param className the expression that determines the object whose method gets called
-	 * @param methodName the name of the method to call
+	 * @param classNameExpression the expression that determines the object whose method gets called
+	 * @param methodNameExpression the name of the method to call
 	 * @param parameters the constructor parameters
 	 */
-	public StaticMethodCall(String className, String methodName, Expression... parameters) {
+	public StaticMethodCall(Expression classNameExpression, Expression methodNameExpression, Expression... parameters) {
 		super(parameters);
-		this.className = Self.normalize(className);
-		this.methodName = methodName;
+		this.classNameExpression = classNameExpression;
+		this.methodNameExpression = methodNameExpression;
 	}
 
 	/**
-	 * Getter method for the className.
-	 * @return the className
+	 * Getter method for the classNameExpression.
+	 * @return the classNameExpression
 	 */
-	public String getClassName() {
-		return className;
+	public Expression getClassNameExpression() {
+		return classNameExpression;
 	}
 	
 	/**
-	 * Getter method for the methodName.
-	 * @return the methodName
+	 * Getter method for the methodNameExpression.
+	 * @return the methodNameExpression
 	 */
-	public String getMethodName() {
-		return methodName;
+	public Expression getMethodNameExpression() {
+		return methodNameExpression;
 	}
 
 	/* (non-Javadoc)

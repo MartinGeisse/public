@@ -131,7 +131,11 @@ parser code {:
 	CodeLocation obtainLocation() {
 		ComplexSymbolFactory.ComplexSymbol symbol = (ComplexSymbolFactory.ComplexSymbol)stack.peek();
 		Location location = symbol.getLeft();
-		return new CodeLocation(location.getUnit(), location.getLine(), location.getColumn());
+		if (location == null) {
+			return null;
+		} else {
+			return new CodeLocation(location.getUnit(), location.getLine(), location.getColumn());
+		}
 	}
 	
 :}
@@ -140,13 +144,19 @@ action code {:
 
 	// location setting for statements
 	<T extends Statement> T setLocation(T statement) {
-		statement.setLocation(parser.obtainLocation());
+		CodeLocation location = parser.obtainLocation();
+		if (location != null) {
+			statement.setLocation(location);
+		}
 		return statement;
 	}
 	
 	// location setting for expressions
 	<T extends Expression> T setLocation(T expression) {
-		expression.setLocation(parser.obtainLocation());
+		CodeLocation location = parser.obtainLocation();
+		if (location != null) {
+			expression.setLocation(location);
+		}
 		return expression;
 	}
 
@@ -222,7 +232,8 @@ terminal Boolean BOOLEAN_LITERAL;
 terminal Integer INTEGER_LITERAL;
 terminal String STRING_LITERAL;
 terminal String IDENTIFIER;
-terminal String LOCAL_VARIABLE;
+terminal String LOCAL_VARIABLE_SINGLE_INDIRECTION;
+terminal LocalVariableExpression LOCAL_VARIABLE_MULTI_INDIRECTION;
 
 // non terminals (general)
 non terminal StatementSequence program;
@@ -236,6 +247,8 @@ non terminal SwitchCase switch_case;
 non terminal Void catch_clauses;
 non terminal Void catch_clause;
 non terminal Void optional_finally_clause;
+non terminal List<Object> static_statement_variables;
+non terminal Object static_statement_variable;
 non terminal List<Expression> expressions;
 non terminal List<Expression> one_or_more_expressions;
 non terminal Expression expression;
@@ -245,6 +258,7 @@ non terminal Pair<Expression, Expression> array_literal_element;
 non terminal List<Pair<String, Expression>> parameter_declarations;
 non terminal List<Pair<String, Expression>> one_or_more_parameter_declarations;
 non terminal Pair<String, Expression> parameter_declaration;
+non terminal Expression potentiallyDynamicName;
 
 // non terminals (OOP)
 non terminal OopTypeDefinition oop_type_definition;
@@ -322,8 +336,10 @@ statement ::=
 	// build-in special statements
 	| ECHO one_or_more_expressions:exs SEMICOLON
 		{: RESULT = setLocation(new ExpressionStatement(setLocation(new FunctionCall("echo", exs.toArray(new Expression[exs.size()]))))); :}
-	| GLOBAL LOCAL_VARIABLE:v SEMICOLON
+	| GLOBAL LOCAL_VARIABLE_SINGLE_INDIRECTION:v SEMICOLON
 		{: RESULT = setLocation(new GlobalStatement(v)); :}
+	| STATIC static_statement_variables:vars SEMICOLON
+		{: RESULT = null; /* TODO */ :}
 
 	// control structures
 	| IF if_statement_continuation:c
@@ -332,9 +348,9 @@ statement ::=
 		{: RESULT = setLocation(new ForStatement(init, cond, advance, body)); :}
 	| FOR OPENING_PARENTHESIS simple_statement_without_semicolon:init SEMICOLON SEMICOLON simple_statement_without_semicolon:advance CLOSING_PARENTHESIS block:body
 		{: RESULT = setLocation(new ForStatement(init, setLocation(new LiteralExpression(true)), advance, body)); :}
-	| FOREACH OPENING_PARENTHESIS expression:e AS LOCAL_VARIABLE:v CLOSING_PARENTHESIS block:body
+	| FOREACH OPENING_PARENTHESIS expression:e AS LOCAL_VARIABLE_SINGLE_INDIRECTION:v CLOSING_PARENTHESIS block:body
 		{: RESULT = setLocation(new ForeachStatement(e, null, v, body)); :}
-	| FOREACH OPENING_PARENTHESIS expression:e AS LOCAL_VARIABLE:k DOUBLE_RIGHT_ARROW LOCAL_VARIABLE:v CLOSING_PARENTHESIS block:body
+	| FOREACH OPENING_PARENTHESIS expression:e AS LOCAL_VARIABLE_SINGLE_INDIRECTION:k DOUBLE_RIGHT_ARROW LOCAL_VARIABLE_SINGLE_INDIRECTION:v CLOSING_PARENTHESIS block:body
 		{: RESULT = setLocation(new ForeachStatement(e, k, v, body)); :}
 	| WHILE OPENING_PARENTHESIS expression:e CLOSING_PARENTHESIS statement:s
 		{: RESULT = setLocation(new WhileStatement(e, s)); :}
@@ -372,6 +388,20 @@ statement ::=
 		{: System.err.println("syntax error"); RESULT = setLocation(new NopStatement()); :}
 ;
 
+static_statement_variables ::=
+	static_statement_variable:v
+		{: RESULT = null; /* TODO */ :}
+	| static_statement_variables:vs COMMA static_statement_variable:v
+		{: RESULT = null; /* TODO */ :}
+;
+
+static_statement_variable ::=
+	LOCAL_VARIABLE_SINGLE_INDIRECTION:v
+		{: RESULT = null; /* TODO */ :}
+	| LOCAL_VARIABLE_SINGLE_INDIRECTION:v ASSIGN expression:e
+		{: RESULT = null; /* TODO */ :}
+;
+
 simple_statement_without_semicolon ::=
 		{: RESULT = setLocation(new NopStatement()); :}
 	| expression:e
@@ -394,7 +424,7 @@ catch_clauses ::=
 ;
 
 catch_clause ::=
-	CATCH OPENING_PARENTHESIS IDENTIFIER:id LOCAL_VARIABLE:v CLOSING_PARENTHESIS block:body
+	CATCH OPENING_PARENTHESIS IDENTIFIER:id LOCAL_VARIABLE_SINGLE_INDIRECTION:v CLOSING_PARENTHESIS block:body
 		{: if (1 == 1) throw new NotImplementedException(""); :}
 ;
 
@@ -453,8 +483,10 @@ expression ::=
 	// constants and variables
 	| IDENTIFIER:id
 		{: RESULT = setLocation(new ConstantExpression(id)); :}
-	| LOCAL_VARIABLE:id
-		{: RESULT = setLocation(new LocalVariableExpression(id)); :}
+	| LOCAL_VARIABLE_SINGLE_INDIRECTION:id
+		{: RESULT = setLocation(new LocalVariableExpression(id, 1)); :}
+	| LOCAL_VARIABLE_MULTI_INDIRECTION:var
+		{: RESULT = var; :}
 	
 	// type casting
 	| OPENING_PARENTHESIS CAST_TYPE_NAME:type CLOSING_PARENTHESIS expression:e
@@ -543,6 +575,8 @@ expression ::=
 		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.LESS_EQUAL, e2)); :}
 	| expression:e1 ASSIGN expression:e2
 		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.RIGHT, e2)); :}
+	| expression:e1 ASSIGN BITWISE_AND expression:e2
+		{: RESULT = setLocation(new ReferenceAssignmentExpression(e1, e2)); :}
 	| expression:e1 PLUS_ASSIGN expression:e2
 		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.ADD, e2)); :} 
 	| expression:e1 MINUS_ASSIGN expression:e2
@@ -573,14 +607,16 @@ expression ::=
 	// arrays
 	| ARRAY OPENING_PARENTHESIS array_literal_elements:els CLOSING_PARENTHESIS
 		{: RESULT = setLocation(new ArrayConstructionExpression(els)); :}
+	| OPENING_SQUARE_BRACKET array_literal_elements:els CLOSING_SQUARE_BRACKET
+		{: RESULT = setLocation(new ArrayConstructionExpression(els)); :}
 	| expression:a OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET
 		{: RESULT = setLocation(new ArrayAppendExpression(a)); :}
 	| expression:a OPENING_SQUARE_BRACKET expression:k CLOSING_SQUARE_BRACKET
 		{: RESULT = setLocation(new ArrayElementExpression(a, k)); :}
 
 	// functions
-	| IDENTIFIER:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
-		{: RESULT = setLocation(ParserHelper.buildFunctionCallLikeExpression(idxleft, id, exs)); :}
+	| potentiallyDynamicName:name OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
+		{: RESULT = setLocation(ParserHelper.buildFunctionCallLikeExpression(namexleft, name, exs)); :}
 		
 	// special built-in expressions
 	| INCLUDE expression:e
@@ -595,24 +631,24 @@ expression ::=
 		{: RESULT = setLocation(new FunctionCall("print", e)); :}
 	
 	// OOP
-	| NEW IDENTIFIER:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
-		{: RESULT = setLocation(new NewExpression(id, exs.toArray(new Expression[exs.size()]))); :}
+	| NEW potentiallyDynamicName:name OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
+		{: RESULT = setLocation(new NewExpression(name, exs.toArray(new Expression[exs.size()]))); :}
 	| expression:e INSTANCEOF IDENTIFIER:id
 		{: RESULT = setLocation(new InstanceofExpression(e, id)); :}
-	| IDENTIFIER:classId SCOPE_RESOLUTION IDENTIFIER:fieldId
+	| potentiallyDynamicName:classId SCOPE_RESOLUTION potentiallyDynamicName:fieldId
 		{: RESULT = setLocation(new StaticFieldAccess(classId, fieldId)); :}
-	| SELF SCOPE_RESOLUTION IDENTIFIER:fieldId
+	| SELF SCOPE_RESOLUTION potentiallyDynamicName:fieldId
 		{: RESULT = setLocation(new StaticFieldAccess(null, fieldId)); :}
-	| expression:obj RIGHT_ARROW IDENTIFIER:id
-		{: RESULT = setLocation(new InstanceFieldAccess(obj, id)); :}
-	| IDENTIFIER:classId SCOPE_RESOLUTION IDENTIFIER:methodId OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
+	| expression:obj RIGHT_ARROW potentiallyDynamicName:name
+		{: RESULT = setLocation(new InstanceFieldAccess(obj, name)); :}
+	| potentiallyDynamicName:classId SCOPE_RESOLUTION potentiallyDynamicName:methodId OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
 		{: RESULT = setLocation(new StaticMethodCall(classId, methodId, exs.toArray(new Expression[exs.size()]))); :}
-	| SELF SCOPE_RESOLUTION IDENTIFIER:methodId OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
+	| SELF SCOPE_RESOLUTION potentiallyDynamicName:methodId OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
 		{: RESULT = setLocation(new StaticMethodCall(null, methodId, exs.toArray(new Expression[exs.size()]))); :}
-	| PARENT SCOPE_RESOLUTION IDENTIFIER:methodId OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
+	| PARENT SCOPE_RESOLUTION potentiallyDynamicName:methodId OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
 		{: if (1 == 1) throw new NotImplementedException(""); :}
-	| expression:obj RIGHT_ARROW IDENTIFIER:id OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
-		{: RESULT = setLocation(new InstanceMethodCall(obj, id, exs.toArray(new Expression[exs.size()]))); :}
+	| expression:obj RIGHT_ARROW potentiallyDynamicName:name OPENING_PARENTHESIS expressions:exs CLOSING_PARENTHESIS
+		{: RESULT = setLocation(new InstanceMethodCall(obj, name, exs.toArray(new Expression[exs.size()]))); :}
 
 
 	// syntax error recovery
@@ -623,6 +659,8 @@ expression ::=
 array_literal_elements ::=
 		{: RESULT = new ArrayList<Pair<Expression, Expression>>(); :}
 	| one_or_more_array_literal_elements:els
+		{: RESULT = els; :}
+	| one_or_more_array_literal_elements:els COMMA
 		{: RESULT = els; :}
 ;
 
@@ -638,6 +676,15 @@ array_literal_element ::=
 		{: RESULT = Pair.of(null, v); :}
 	| expression:k DOUBLE_RIGHT_ARROW expression:v
 		{: RESULT = Pair.of(k, v); :}
+;
+
+potentiallyDynamicName ::=
+	IDENTIFIER:id
+		{: RESULT = setLocation(new LiteralExpression(id)); :}
+	| LOCAL_VARIABLE_SINGLE_INDIRECTION:id
+		{: RESULT = setLocation(new LocalVariableExpression(id, 1)); :}
+	| LOCAL_VARIABLE_MULTI_INDIRECTION:var
+		{: RESULT = var; :}
 ;
 
 // ------------------------------------------------------------------------------------
@@ -658,10 +705,12 @@ one_or_more_parameter_declarations ::=
 ;
 
 parameter_declaration ::=
-	LOCAL_VARIABLE:v
+	LOCAL_VARIABLE_SINGLE_INDIRECTION:v
 		{: RESULT = Pair.of(v, null); :}
-	| LOCAL_VARIABLE:v ASSIGN expression:e
+	| LOCAL_VARIABLE_SINGLE_INDIRECTION:v ASSIGN expression:e
 		{: RESULT = Pair.of(v, e); :}
+	| BITWISE_AND LOCAL_VARIABLE_SINGLE_INDIRECTION:v
+		{: RESULT = Pair.of(v, null); /* TODO reference parameters */ :}
 ;
 
 // ------------------------------------------------------------------------------------
@@ -724,9 +773,13 @@ oop_member_definitions ::=
 oop_member_definition ::=
 	CONST IDENTIFIER:id ASSIGN expression:e SEMICOLON
 		{: :}
-	| VAR LOCAL_VARIABLE:v SEMICOLON
+	| VAR LOCAL_VARIABLE_SINGLE_INDIRECTION:v SEMICOLON
 		{: :}
-	| oop_entity_modifiers:mods LOCAL_VARIABLE:v SEMICOLON
+	| VAR LOCAL_VARIABLE_SINGLE_INDIRECTION:v ASSIGN expression:e SEMICOLON
+		{: :}
+	| oop_entity_modifiers:mods LOCAL_VARIABLE_SINGLE_INDIRECTION:v SEMICOLON
+		{: :}
+	| oop_entity_modifiers:mods LOCAL_VARIABLE_SINGLE_INDIRECTION:v ASSIGN expression:e SEMICOLON
 		{: :}
 	| oop_entity_modifiers:mods FUNCTION IDENTIFIER:id OPENING_PARENTHESIS parameter_declarations:decls CLOSING_PARENTHESIS block:body
 		{: :}

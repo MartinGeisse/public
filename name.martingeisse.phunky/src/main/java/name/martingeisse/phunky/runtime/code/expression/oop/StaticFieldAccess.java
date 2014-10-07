@@ -7,6 +7,7 @@ package name.martingeisse.phunky.runtime.code.expression.oop;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.AbstractVariableExpression;
+import name.martingeisse.phunky.runtime.code.expression.Expression;
 import name.martingeisse.phunky.runtime.variable.Variable;
 
 import org.apache.commons.lang3.NotImplementedException;
@@ -18,39 +19,39 @@ import org.apache.commons.lang3.NotImplementedException;
 public final class StaticFieldAccess extends AbstractVariableExpression {
 
 	/**
-	 * the className
+	 * the classNameExpression
 	 */
-	private final String className;
+	private final Expression classNameExpression;
 	
 	/**
-	 * the fieldName
+	 * the fieldNameExpression
 	 */
-	private final String fieldName;
+	private final Expression fieldNameExpression;
 
 	/**
 	 * Constructor.
-	 * @param className the name of the class that contains the field
-	 * @param fieldName the name of the field to access
+	 * @param classNameExpression the expression that determines the name of the class that contains the field
+	 * @param fieldNameExpression the expression that determines the name of the field to access
 	 */
-	public StaticFieldAccess(String className, String fieldName) {
-		this.className = Self.normalize(className);
-		this.fieldName = fieldName;
+	public StaticFieldAccess(Expression classNameExpression, Expression fieldNameExpression) {
+		this.classNameExpression = classNameExpression;
+		this.fieldNameExpression = fieldNameExpression;
 	}
 
 	/**
-	 * Getter method for the className.
-	 * @return the className
+	 * Getter method for the classNameExpression.
+	 * @return the classNameExpression
 	 */
-	public String getClassName() {
-		return className;
+	public Expression getClassNameExpression() {
+		return classNameExpression;
 	}
-
+	
 	/**
-	 * Getter method for the fieldName.
-	 * @return the fieldName
+	 * Getter method for the fieldNameExpression.
+	 * @return the fieldNameExpression
 	 */
-	public String getFieldName() {
-		return fieldName;
+	public Expression getFieldNameExpression() {
+		return fieldNameExpression;
 	}
 
 	/* (non-Javadoc)

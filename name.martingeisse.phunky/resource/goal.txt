@@ -26,7 +26,7 @@ shows more and more weirdness the deeper you dig:
 	$$x = 15; // uses the variable $x as the name of the variable to set...
 		// not really weird but error-prone and marginally useful
 		
-	Operator precendence documentation is wrong, and the English and German
+	Operator precedence documentation is wrong, and the English and German
 		versions tell vastly different things. Real operator precedence in the
 		implementation is often not as expected ( == >=, ?:)
 

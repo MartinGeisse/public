@@ -38,6 +38,11 @@
       <attribute value="jar:file:/Users/geisse/.m2/repository/org/apache/commons/commons-compress/1.8.1/commons-compress-1.8.1-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-exec/1.2/commons-exec-1.2.jar" sourcepath="M2_REPO/org/apache/commons/commons-exec/1.2/commons-exec-1.2-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/geisse/.m2/repository/org/apache/commons/commons-exec/1.2/commons-exec-1.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
   <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.17/log4j-1.2.17.jar" sourcepath="M2_REPO/log4j/log4j/1.2.17/log4j-1.2.17-sources.jar">
     <attributes>
       <attribute value="jar:file:/Users/geisse/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17-javadoc.jar!/" name="javadoc_location"/>

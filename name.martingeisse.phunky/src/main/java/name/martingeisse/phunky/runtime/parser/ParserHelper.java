@@ -14,6 +14,7 @@ import java_cup.runtime.ComplexSymbolFactory.Location;
 import name.martingeisse.phunky.runtime.code.expression.EmptyExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
 import name.martingeisse.phunky.runtime.code.expression.FunctionCall;
+import name.martingeisse.phunky.runtime.code.expression.LiteralExpression;
 import name.martingeisse.phunky.runtime.code.expression.operator.CastOperator;
 
 /**
@@ -61,15 +62,15 @@ final class ParserHelper {
 	 * Builds an expression from a "<name>(<expression>, ...)" like syntax.
 	 * 
 	 * @param location the location of the keyword
-	 * @param name the function name
+	 * @param nameExpression the expression that determines the function name
 	 * @param parameterExpressions the parameter expressions
 	 * @return the expression
 	 */
-	public static Expression buildFunctionCallLikeExpression(final Location location, final String name, final List<Expression> parameterExpressions) {
-		if (name.equals("empty")) {
+	public static Expression buildFunctionCallLikeExpression(final Location location, final Expression nameExpression, final List<Expression> parameterExpressions) {
+		if (nameExpression instanceof LiteralExpression && nameExpression.evaluate(null).equals("empty")) {
 			return new EmptyExpression(parameterExpressions.toArray(new Expression[parameterExpressions.size()]));
 		} else {
-			return new FunctionCall(name, parameterExpressions.toArray(new Expression[parameterExpressions.size()]));
+			return new FunctionCall(nameExpression, parameterExpressions.toArray(new Expression[parameterExpressions.size()]));
 		}
 	}
 

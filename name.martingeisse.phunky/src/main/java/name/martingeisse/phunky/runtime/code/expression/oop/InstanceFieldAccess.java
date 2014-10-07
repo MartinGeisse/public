@@ -24,18 +24,18 @@ public final class InstanceFieldAccess extends AbstractVariableExpression {
 	private final Expression objectExpression;
 	
 	/**
-	 * the fieldName
+	 * the fieldNameExpression
 	 */
-	private final String fieldName;
+	private final Expression fieldNameExpression;
 
 	/**
 	 * Constructor.
 	 * @param objectExpression the expression that determines the object that contains the field
-	 * @param fieldName the name of the field to access
+	 * @param fieldNameExpression the expression that determines the name of the field to access
 	 */
-	public InstanceFieldAccess(Expression objectExpression, String fieldName) {
+	public InstanceFieldAccess(Expression objectExpression, Expression fieldNameExpression) {
 		this.objectExpression = objectExpression;
-		this.fieldName = fieldName;
+		this.fieldNameExpression = fieldNameExpression;
 	}
 
 	/**
@@ -47,11 +47,11 @@ public final class InstanceFieldAccess extends AbstractVariableExpression {
 	}
 
 	/**
-	 * Getter method for the fieldName.
-	 * @return the fieldName
+	 * Getter method for the fieldNameExpression.
+	 * @return the fieldNameExpression
 	 */
-	public String getFieldName() {
-		return fieldName;
+	public Expression getFieldNameExpression() {
+		return fieldNameExpression;
 	}
 
 	/* (non-Javadoc)

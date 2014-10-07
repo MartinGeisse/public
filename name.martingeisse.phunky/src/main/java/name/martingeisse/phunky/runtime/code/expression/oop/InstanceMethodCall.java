@@ -23,20 +23,20 @@ public class InstanceMethodCall extends AbstractCallExpression {
 	private final Expression objectExpression;
 	
 	/**
-	 * the methodName
+	 * the methodNameExpression
 	 */
-	private final String methodName;
+	private final Expression methodNameExpression;
 
 	/**
 	 * Constructor.
 	 * @param objectExpression the expression that determines the object whose method gets called
-	 * @param methodName the name of the method to call
+	 * @param methodNameExpression the expression that determines the name of the method to call
 	 * @param parameters the constructor parameters
 	 */
-	public InstanceMethodCall(Expression objectExpression, String methodName, Expression... parameters) {
+	public InstanceMethodCall(Expression objectExpression, Expression methodNameExpression, Expression... parameters) {
 		super(parameters);
 		this.objectExpression = objectExpression;
-		this.methodName = methodName;
+		this.methodNameExpression = methodNameExpression;
 	}
 
 	/**
@@ -46,13 +46,13 @@ public class InstanceMethodCall extends AbstractCallExpression {
 	public Expression getObjectExpression() {
 		return objectExpression;
 	}
-	
+
 	/**
-	 * Getter method for the methodName.
-	 * @return the methodName
+	 * Getter method for the methodNameExpression.
+	 * @return the methodNameExpression
 	 */
-	public String getMethodName() {
-		return methodName;
+	public Expression getMethodNameExpression() {
+		return methodNameExpression;
 	}
 
 	/* (non-Javadoc)

@@ -105,13 +105,13 @@ public final class SourceFileInterpreter {
 			logger.debug("file terminated normally: " + sourceFile);
 			// TODO exit handler
 		} catch (ExitException e) {
-			logger.debug("file exited: " + sourceFile + ", status code: " + e.getStatusCode());
+			logger.info("file exited: " + sourceFile + ", status code: " + e.getStatusCode());
 			// TODO exit handler
 		} catch (FatalErrorException e) {
-			logger.debug("file triggered a fatal error: " + sourceFile, e);
+			logger.error("file triggered a fatal error: " + sourceFile, e);
 			// TODO exit handler
 		} catch (Exception e) {
-			logger.debug("file threw an unhandled exception", e);
+			logger.error("file threw an unhandled exception", e);
 			// TODO exit handler
 			// TODO distinguish PHP exceptions and Java exceptions
 		} finally {
