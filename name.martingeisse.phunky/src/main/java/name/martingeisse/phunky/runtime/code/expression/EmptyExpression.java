@@ -8,6 +8,8 @@ package name.martingeisse.phunky.runtime.code.expression;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 /**
@@ -42,6 +44,16 @@ public class EmptyExpression extends AbstractCallExpression {
 		dumper.print("empty(");
 		getParameter(0).dump(dumper);
 		dumper.print(")");
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		JsonObjectBuilder<?> sub = builder.object().property("type").string("empty");
+		getParameter(0).toJson(sub.property("expression"));
+		sub.end();
 	}
 
 }

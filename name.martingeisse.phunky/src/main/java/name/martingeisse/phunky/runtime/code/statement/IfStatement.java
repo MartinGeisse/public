@@ -9,6 +9,8 @@ package name.martingeisse.phunky.runtime.code.statement;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 /**
@@ -107,5 +109,17 @@ public final class IfStatement extends AbstractStatement {
 		}
 		dumper.println("}");
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		JsonObjectBuilder<?> sub = builder.object().property("type").string("if");
+		condition.toJson(sub.property("condition"));
+		thenBranch.toJson(sub.property("thenBranch"));
+		elseBranch.toJson(sub.property("elseBranch"));
+		sub.end();
+	}
+
 }

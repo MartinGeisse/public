@@ -8,6 +8,7 @@ import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -66,6 +67,15 @@ public class InstanceofExpression extends AbstractComputeExpression {
 	 */
 	@Override
 	public void dump(CodeDumper dumper) {
+		// TODO
+		throw new NotImplementedException("");
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
 		// TODO
 		throw new NotImplementedException("");
 	}

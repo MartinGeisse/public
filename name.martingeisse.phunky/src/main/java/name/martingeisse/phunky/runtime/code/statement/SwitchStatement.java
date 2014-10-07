@@ -10,6 +10,9 @@ import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
 import name.martingeisse.phunky.runtime.code.expression.operator.BinaryOperator;
+import name.martingeisse.phunky.runtime.json.JsonListBuilder;
+import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 
 /**
  * The "switch (...) {...}" statement.
@@ -99,6 +102,22 @@ public final class SwitchStatement extends AbstractStatement {
 		dumper.println("");
 		dumper.decreaseIndentation();
 		dumper.println("}");
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		JsonObjectBuilder<?> sub = builder.object().property("type").string("switch");
+		expression.toJson(sub.property("expression"));
+		JsonListBuilder<?> subsub = sub.property("cases").list();
+		for (SwitchCase switchCase : properCases) {
+			switchCase.toJson(subsub.element());
+		}
+		subsub.end();
+		defaultCaseStatement.toJson(sub.property("default"));
+		sub.end();
 	}
 
 }

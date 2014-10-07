@@ -8,6 +8,8 @@ import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
@@ -104,5 +106,17 @@ public final class BinaryAssignmentExpression extends AbstractComputeExpression 
 		rightHandSide.dump(dumper);
 		dumper.print(')');
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		JsonObjectBuilder<?> sub = builder.object().property("type").string("binaryAssignment");
+		sub.property("operator").string(operator.name());
+		leftHandSide.toJson(sub.property("leftHandSide"));
+		rightHandSide.toJson(sub.property("rightHandSide"));
+		sub.end();
+	}
+
 }

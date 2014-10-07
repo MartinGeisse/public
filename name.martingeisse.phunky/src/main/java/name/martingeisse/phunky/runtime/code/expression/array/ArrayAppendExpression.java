@@ -10,6 +10,8 @@ import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.AbstractExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
 import name.martingeisse.phunky.runtime.variable.Variable;
 
@@ -91,6 +93,16 @@ public final class ArrayAppendExpression extends AbstractExpression {
 	public void dump(CodeDumper dumper) {
 		arrayExpression.dump(dumper);
 		dumper.print("[]");
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		JsonObjectBuilder<?> sub = builder.object().property("type").string("arrayAppend");
+		arrayExpression.toJson(sub.property("array"));
+		sub.end();
 	}
 
 }

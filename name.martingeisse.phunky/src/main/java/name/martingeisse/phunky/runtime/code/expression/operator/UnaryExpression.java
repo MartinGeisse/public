@@ -8,6 +8,8 @@ import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 
 /**
  * Applies a {@link UnaryOperator} to a sub-expression.
@@ -69,6 +71,17 @@ public final class UnaryExpression extends AbstractComputeExpression {
 		operand.dump(dumper);
 		dumper.print(operator.getPostfixSymbol());
 		dumper.print(')');
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		JsonObjectBuilder<?> sub = builder.object().property("type").string("unary");
+		sub.property("operator").string(operator.name());
+		operand.toJson(sub.property("operand"));
+		sub.end();
 	}
 
 }

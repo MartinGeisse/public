@@ -9,6 +9,9 @@ package name.martingeisse.phunky.runtime.code.expression;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.statement.Statement;
+import name.martingeisse.phunky.runtime.json.JsonListBuilder;
+import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -115,5 +118,20 @@ public final class FunctionExpression extends AbstractComputeExpression {
 		dumper.decreaseIndentation();
 		dumper.println("}");
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		JsonObjectBuilder<?> sub = builder.object().property("type").string("function");
+		JsonListBuilder<?> subsub = sub.property("parameters").list();
+		for (String parameterName : parameterNames) {
+			subsub.element().string(parameterName);
+		}
+		subsub.end();
+		body.toJson(sub.property("body"));
+		sub.end();
+	}
+
 }

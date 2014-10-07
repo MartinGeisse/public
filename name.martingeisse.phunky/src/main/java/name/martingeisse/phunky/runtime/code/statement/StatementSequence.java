@@ -11,6 +11,9 @@ import java.util.List;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.json.JsonListBuilder;
+import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 
 import org.apache.commons.collections.iterators.ArrayIterator;
 
@@ -86,5 +89,19 @@ public final class StatementSequence extends AbstractStatement implements Iterab
 			statement.dump(dumper);
 		}
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		JsonObjectBuilder<?> sub = builder.object().property("type").string("sequence");
+		JsonListBuilder<?> subsub = sub.property("statements").list();
+		for (Statement statement : statements) {
+			statement.toJson(subsub.element());
+		}
+		subsub.end();
+		sub.end();
+	}
+
 }

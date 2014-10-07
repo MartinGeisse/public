@@ -9,6 +9,8 @@ package name.martingeisse.phunky.runtime.code.statement;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 import name.martingeisse.phunky.runtime.variable.PhpValueIterationProvider;
 
 /**
@@ -125,6 +127,19 @@ public final class ForeachStatement extends AbstractStatement {
 		body.dump(dumper);
 		dumper.decreaseIndentation();
 		dumper.println("}");
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		JsonObjectBuilder<?> sub = builder.object().property("type").string("foreach");
+		containerExpression.toJson(sub.property("containerExpression"));
+		sub.property("keyIterationVariableName").stringOrNull(keyIterationVariableName);
+		sub.property("valueIterationVariableName").stringOrNull(valueIterationVariableName);
+		body.toJson(sub.property("body"));
+		sub.end();
 	}
 
 }

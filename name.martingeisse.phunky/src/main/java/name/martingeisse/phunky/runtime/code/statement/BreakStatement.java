@@ -8,6 +8,7 @@ package name.martingeisse.phunky.runtime.code.statement;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 
 /**
  * The "break" statement.
@@ -37,5 +38,13 @@ public final class BreakStatement extends AbstractStatement {
 	public void dump(CodeDumper dumper) {
 		dumper.println("break;");
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		builder.object().property("type").string("break").end();
+	}
+
 }

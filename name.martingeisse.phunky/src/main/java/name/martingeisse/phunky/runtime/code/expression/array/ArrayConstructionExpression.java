@@ -14,6 +14,9 @@ import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.json.JsonListBuilder;
+import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 import name.martingeisse.phunky.runtime.variable.PhpValueArray;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
@@ -85,6 +88,23 @@ public class ArrayConstructionExpression extends AbstractComputeExpression {
 			element.getRight().dump(dumper);
 		}
 		dumper.print(')');
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		JsonObjectBuilder<?> sub = builder.object().property("type").string("arrayConstruction");
+		JsonListBuilder<?> subsub = sub.property("elements").list();
+		for (Pair<Expression, Expression> element : elements) {
+			JsonObjectBuilder<?> subsubsub = subsub.element().object();
+			element.getKey().toJson(subsubsub.property("key"));
+			element.getValue().toJson(subsubsub.property("value"));
+			subsubsub.end();
+		}
+		subsub.end();
+		sub.end();
 	}
 
 }

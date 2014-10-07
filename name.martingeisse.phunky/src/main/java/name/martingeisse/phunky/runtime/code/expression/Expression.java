@@ -7,6 +7,7 @@ package name.martingeisse.phunky.runtime.code.expression;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.CodeLocation;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
@@ -72,5 +73,14 @@ public interface Expression {
 	 * @param dumper the code dumper
 	 */
 	public void dump(CodeDumper dumper);
-	
+
+	/**
+	 * Converts this expression to a JSON representation of the code, by using
+	 * the provided JSON builder to generate a JSON value that represents this
+	 * expression.
+	 * 
+	 * @param builder the JSON builder to use for the conversion
+	 */
+	public void toJson(JsonValueBuilder<?> builder);
+
 }

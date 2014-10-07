@@ -7,6 +7,7 @@ package name.martingeisse.phunky.runtime.code.statement;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.CodeLocation;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 
 /**
  * A statement is an object that can be executed using an
@@ -39,4 +40,13 @@ public interface Statement {
 	 */
 	public void dump(CodeDumper dumper);
 
+	/**
+	 * Converts this statement to a JSON representation of the code, by using
+	 * the provided JSON builder to generate a JSON value that represents this
+	 * statement.
+	 * 
+	 * @param builder the JSON builder to use for the conversion
+	 */
+	public void toJson(JsonValueBuilder<?> builder);
+	
 }

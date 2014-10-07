@@ -8,6 +8,8 @@ package name.martingeisse.phunky.runtime.code.statement;
 
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 
 /**
  * A single case (or "default" case) in a switch statement.
@@ -61,6 +63,17 @@ public final class SwitchCase {
 		dumper.increaseIndentation();
 		statement.dump(dumper);
 		dumper.decreaseIndentation();
+	}
+
+	/**
+	 * See {@link Statement#toJson(JsonValueBuilder)} for an explanation of this method.
+	 * @param builder the JSON builder
+	 */
+	public void toJson(JsonValueBuilder<?> builder) {
+		JsonObjectBuilder<?> sub = builder.object();
+		expression.toJson(sub.property("expression"));
+		statement.toJson(sub.property("statement"));
+		sub.end();
 	}
 
 }

@@ -8,6 +8,7 @@ package name.martingeisse.phunky.runtime.code.statement;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -54,5 +55,13 @@ public final class GlobalStatement extends AbstractStatement {
 		dumper.print(variableName);
 		dumper.println(";");
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		builder.object().property("type").string("global").property("variableName").string(variableName).end();
+	}
+
 }

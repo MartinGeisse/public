@@ -12,6 +12,8 @@ import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpressio
 import name.martingeisse.phunky.runtime.code.expression.AbstractExpression;
 import name.martingeisse.phunky.runtime.code.expression.AbstractVariableExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 import name.martingeisse.phunky.runtime.variable.PhpValueArray;
 import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
@@ -141,6 +143,17 @@ public final class ArrayElementExpression extends AbstractExpression {
 		dumper.print('[');
 		keyExpression.dump(dumper);
 		dumper.print(']');
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		JsonObjectBuilder<?> sub = builder.object().property("type").string("arrayElement");
+		arrayExpression.toJson(sub.property("array"));
+		keyExpression.toJson(sub.property("key"));
+		sub.end();
 	}
 
 }

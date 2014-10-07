@@ -9,6 +9,9 @@ package name.martingeisse.phunky.runtime.code.expression;
 import name.martingeisse.phunky.runtime.Callable;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.json.JsonListBuilder;
+import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 
 /**
  * This expression calls a globally defined function.
@@ -74,5 +77,20 @@ public final class FunctionCall extends AbstractCallExpression {
 		nameExpression.dump(dumper);
 		dumpParameters(dumper);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		JsonObjectBuilder<?> sub = builder.object().property("type").string("functionCall");
+		nameExpression.toJson(sub.property("name"));
+		JsonListBuilder<?> subsub = sub.property("parameters").list();
+		for (int i=0; i<getParameterCount(); i++) {
+			getParameter(i).toJson(subsub.element());
+		}
+		subsub.end();
+		sub.end();
+	}
+
 }

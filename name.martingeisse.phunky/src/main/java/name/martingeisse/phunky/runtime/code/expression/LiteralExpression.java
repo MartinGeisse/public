@@ -6,6 +6,8 @@ package name.martingeisse.phunky.runtime.code.expression;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 import name.martingeisse.phunky.runtime.variable.PhpValueArray;
 
 import org.apache.commons.lang3.NotImplementedException;
@@ -76,4 +78,46 @@ public final class LiteralExpression extends AbstractComputeExpression {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		JsonObjectBuilder<?> sub = builder.object().property("type").string("literal");
+		if (!literalToJsonValue(value, sub.property("value"))) {
+			sub.property("status").string("UNKNOWN_TYPE");
+		}
+		sub.end();
+	}
+	
+	/**
+	 * Converts a literal value to a JSON value, just as it is done for the value of a {@link LiteralExpression}.
+	 * 
+	 * This function may fail if the value is of unknown type. This is reported via the return value.
+	 * 
+	 * @param value the value
+	 * @param builder the JSON builder to use
+	 * @return true if successful, false if the value was of unknown type
+	 */
+	public static boolean literalToJsonValue(Object value, JsonValueBuilder<?> builder) {
+		if (value == null) {
+			builder.nullLiteral();
+		} else if (value instanceof Boolean) {
+			builder.bool((Boolean)value);
+		} else if (value instanceof Integer) {
+			builder.number((Integer)value);
+		} else if (value instanceof Long) {
+			builder.number((Long)value);
+		} else if (value instanceof Float) {
+			builder.number((Float)value);
+		} else if (value instanceof Double) {
+			builder.number((Double)value);
+		} else if (value instanceof String) {
+			builder.string((String)value);
+		} else {
+			return false;
+		}
+		return true;
+	}
+
 }

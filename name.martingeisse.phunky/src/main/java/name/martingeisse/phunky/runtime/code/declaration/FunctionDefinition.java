@@ -10,9 +10,13 @@ import name.martingeisse.phunky.runtime.Callable;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.code.expression.LiteralExpression;
 import name.martingeisse.phunky.runtime.code.statement.AbstractStatement;
 import name.martingeisse.phunky.runtime.code.statement.ReturnException;
 import name.martingeisse.phunky.runtime.code.statement.Statement;
+import name.martingeisse.phunky.runtime.json.JsonListBuilder;
+import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
@@ -162,5 +166,36 @@ public final class FunctionDefinition extends AbstractStatement {
 		dumper.decreaseIndentation();
 		dumper.println("}");
 	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		JsonObjectBuilder<?> sub = builder.object().property("type").string("functionDefinition");
+		sub.property("name").string(name);
+		JsonListBuilder<?> subsub = sub.property("parameters").list();
+		for (int i=0; i<parameterNames.length; i++) {
+			JsonObjectBuilder<?> subsubsub = subsub.element().object();
+			parameterToJson(subsubsub, i);
+			subsubsub.end();
+		}
+		subsub.end();
+		body.toJson(sub.property("body"));
+		sub.end();
+	}
 	
+	/**
+	 * 
+	 */
+	private void parameterToJson(JsonObjectBuilder<?> builder, int parameterIndex) {
+		builder.property("name").string(parameterNames[parameterIndex]);
+		int defaultIndex = (parameterIndex - (parameterNames.length - parameterDefaultValues.length));
+		if (defaultIndex >= 0) {
+			if (!LiteralExpression.literalToJsonValue(parameterDefaultValues[defaultIndex], builder.property("default"))) {
+				builder.property("defaultValueStatus").string("UNKNOWN_TYPE");
+			}
+		}
+	}
+
 }

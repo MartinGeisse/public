@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
@@ -96,5 +97,17 @@ public final class LocalVariableExpression extends AbstractVariableExpression {
 		}
 		return new LocalVariableExpression(specification.substring(indirections), indirections);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		if (indirections == 1) {
+			builder.object().property("type").string("localVariable").property("name").string(name).end();
+		} else {
+			builder.object().property("type").string("multiIndirectionLocalVariable").property("name").string(name).property("indirections").number(indirections).end();
+		}
+	}
+
 }

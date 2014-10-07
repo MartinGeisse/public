@@ -8,6 +8,7 @@ package name.martingeisse.phunky.runtime.code.statement;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 
 /**
  * This statement does nothing.
@@ -27,6 +28,14 @@ public final class NopStatement extends AbstractStatement {
 	@Override
 	public void dump(CodeDumper dumper) {
 		dumper.println(";");
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		builder.object().property("type").string("nop").end();
 	}
 	
 }

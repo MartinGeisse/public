@@ -9,6 +9,8 @@ package name.martingeisse.phunky.runtime.code.statement;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
+import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
+import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 /**
@@ -124,5 +126,18 @@ public final class ForStatement extends AbstractStatement {
 		dumper.decreaseIndentation();
 		dumper.println("}");
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.statement.Statement#toJson(name.martingeisse.phunky.runtime.json.JsonValueBuilder)
+	 */
+	@Override
+	public void toJson(JsonValueBuilder<?> builder) {
+		JsonObjectBuilder<?> sub = builder.object().property("type").string("for");
+		initializationStatement.toJson(sub.property("initializationStatement"));
+		loopCondition.toJson(sub.property("loopCondition"));
+		advanceStatement.toJson(sub.property("advanceStatement"));
+		body.toJson(sub.property("body"));
+		sub.end();
+	}
+
 }
