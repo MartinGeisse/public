@@ -70,8 +70,10 @@ public class StaticMethodCall extends AbstractCallExpression {
 	 */
 	@Override
 	public void dump(CodeDumper dumper) {
-		// TODO
-		throw new NotImplementedException("");
+		classNameExpression.dump(dumper);
+		dumper.print("::");
+		methodNameExpression.dump(dumper);
+		dumpArgumentExpressions(dumper);
 	}
 
 	/* (non-Javadoc)

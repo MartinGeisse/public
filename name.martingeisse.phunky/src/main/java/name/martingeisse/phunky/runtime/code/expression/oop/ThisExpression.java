@@ -30,8 +30,7 @@ public final class ThisExpression extends AbstractComputeExpression {
 	 */
 	@Override
 	public void dump(CodeDumper dumper) {
-		// TODO
-		throw new NotImplementedException("");
+		dumper.print("$this");
 	}
 
 	/* (non-Javadoc)

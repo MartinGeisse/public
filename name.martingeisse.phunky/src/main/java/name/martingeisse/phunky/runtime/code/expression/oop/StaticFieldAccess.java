@@ -72,14 +72,24 @@ public final class StaticFieldAccess extends AbstractVariableExpression {
 		// TODO
 		throw new NotImplementedException("");
 	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#bindVariableReference(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.variable.Variable)
+	 */
+	@Override
+	public void bindVariableReference(Environment environment, Variable variable) {
+		// TODO
+		throw new NotImplementedException("");
+	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#dump(name.martingeisse.phunky.runtime.code.CodeDumper)
 	 */
 	@Override
 	public void dump(CodeDumper dumper) {
-		// TODO
-		throw new NotImplementedException("");
+		classNameExpression.dump(dumper);
+		dumper.print("::");
+		fieldNameExpression.dump(dumper);
 	}
 
 	/* (non-Javadoc)

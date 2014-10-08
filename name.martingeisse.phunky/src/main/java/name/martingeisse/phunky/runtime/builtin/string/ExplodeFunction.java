@@ -7,13 +7,13 @@ package name.martingeisse.phunky.runtime.builtin.string;
 import java.util.ArrayList;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
-import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
+import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
 import name.martingeisse.phunky.runtime.variable.PhpValueArray;
 
 /**
  * The built-in "explode" function.
  */
-public final class ExplodeFunction extends BuiltinCallable {
+public final class ExplodeFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])

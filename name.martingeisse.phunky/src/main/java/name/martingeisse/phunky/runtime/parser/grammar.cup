@@ -59,42 +59,6 @@ parser code {:
 		System.err.println("Syntax error at line " + (line + 1) + ", col " + (column + 1) + ": " + message);
 	}
 
-	// extracts the parameter names from the parameter declarations
-	String[] extractParameterNames(List<Pair<String, Expression>> parameters) {
-		String[] result = new String[parameters.size()];
-		int i = 0;
-		for (Pair<String, Expression> parameter : parameters) {
-			result[i] = parameter.getLeft();
-			i++;
-		}
-		return result;
-	}
-
-	// extracts the parameter default values from the parameter declarations
-	Object[] extractParameterDefaultValues(List<Pair<String, Expression>> parameters) {
-	
-		// find the first parameter that as a default value, discarding useless default parameters
-		// (i.e. those followed by a parameter without a default).
-		int firstParameterWithDefaultValue = 0;
-		{
-			int i = 0;
-			for (Pair<String, Expression> parameter : parameters) {
-				if (parameter.getRight() == null) {
-					firstParameterWithDefaultValue = i + 1;
-				}
-				i++;
-			}
-		}
-		
-		// collect the default values
-		Expression[] defaultValues = new Expression[parameters.size() - firstParameterWithDefaultValue];
-		for (int i=0; i<defaultValues.length; i++) {
-			defaultValues[i] = parameters.get(firstParameterWithDefaultValue + i).getRight();
-		}
-		return defaultValues;
-		
-	}
-	
 	// extracts proper switch cases from syntactical case constructs
 	SwitchCase[] extractProperCases(List<SwitchCase> switchCases) {
 		int properCaseCount = 0;
@@ -229,7 +193,8 @@ terminal terminal INCLUDE, INCLUDE_ONCE, REQUIRE, REQUIRE_ONCE, PRINT;
 // primitive expressions
 terminal NULL_LITERAL;
 terminal Boolean BOOLEAN_LITERAL;
-terminal Integer INTEGER_LITERAL;
+terminal Number INTEGER_LITERAL;
+terminal Double FLOAT_LITERAL;
 terminal String STRING_LITERAL;
 terminal String IDENTIFIER;
 terminal String LOCAL_VARIABLE_SINGLE_INDIRECTION;
@@ -255,9 +220,9 @@ non terminal Expression expression;
 non terminal List<Pair<Expression, Expression>> array_literal_elements;
 non terminal List<Pair<Expression, Expression>> one_or_more_array_literal_elements;
 non terminal Pair<Expression, Expression> array_literal_element;
-non terminal List<Pair<String, Expression>> parameter_declarations;
-non terminal List<Pair<String, Expression>> one_or_more_parameter_declarations;
-non terminal Pair<String, Expression> parameter_declaration;
+non terminal List<ParameterDeclaration> parameter_declarations;
+non terminal List<ParameterDeclaration> one_or_more_parameter_declarations;
+non terminal ParameterDeclaration parameter_declaration;
 non terminal Expression potentiallyDynamicName;
 
 // non terminals (OOP)
@@ -295,7 +260,7 @@ precedence nonassoc INSTANCEOF;
 precedence right INCREMENT, DECREMENT, BITWISE_NOT, OPENING_PARENTHESIS, SUPPRESS_ERRORS;
 precedence left POWER;
 precedence left OPENING_SQUARE_BRACKET, RIGHT_ARROW;
-// TODO: clone, new
+// TODO: clone
 
 // ------------------------------------------------------------------------------------
 // --- general productions
@@ -376,9 +341,7 @@ statement ::=
 	// definitions
 	| FUNCTION IDENTIFIER:id OPENING_PARENTHESIS parameter_declarations:decls CLOSING_PARENTHESIS block:body
 		{:
-			String[] parameterNames = parser.extractParameterNames(decls);
-			Object[] parameterDefaultValues = parser.extractParameterDefaultValues(decls);
-			RESULT = setLocation(new FunctionDefinition(id, parameterNames, parameterDefaultValues, body));
+			RESULT = setLocation(new FunctionDefinition(id, decls.toArray(new ParameterDeclaration[decls.size()]), body));
 		:}
 	| oop_type_definition:def
 		{: RESULT = def; :}
@@ -478,6 +441,8 @@ expression ::=
 	| INTEGER_LITERAL:e
 		{: RESULT = setLocation(new LiteralExpression(e)); :}
 	| STRING_LITERAL:e 
+		{: RESULT = setLocation(new LiteralExpression(e)); :}
+	| FLOAT_LITERAL:e 
 		{: RESULT = setLocation(new LiteralExpression(e)); :}
 	
 	// constants and variables
@@ -692,25 +657,27 @@ potentiallyDynamicName ::=
 // ------------------------------------------------------------------------------------
 
 parameter_declarations ::=
-		{: RESULT = new ArrayList<Pair<String, Expression>>(); :}
+		{: RESULT = new ArrayList<ParameterDeclaration>(); :}
 	| one_or_more_parameter_declarations:decls
 		{: RESULT = decls; :}
 ;
 
 one_or_more_parameter_declarations ::=
 	parameter_declaration:decl
-		{: RESULT = new ArrayList<Pair<String, Expression>>(); RESULT.add(decl); :}
+		{: RESULT = new ArrayList<ParameterDeclaration>(); RESULT.add(decl); :}
 	| one_or_more_parameter_declarations:decls COMMA parameter_declaration:decl
 		{: decls.add(decl); RESULT = decls; :}
 ;
 
 parameter_declaration ::=
 	LOCAL_VARIABLE_SINGLE_INDIRECTION:v
-		{: RESULT = Pair.of(v, null); :}
+		{: RESULT = new ParameterDeclaration(v, false); :}
 	| LOCAL_VARIABLE_SINGLE_INDIRECTION:v ASSIGN expression:e
-		{: RESULT = Pair.of(v, e); :}
+		{: RESULT = new ParameterDeclaration(v, false, e.evaluate(null)); // TODO catch errors due to missing environment :}
 	| BITWISE_AND LOCAL_VARIABLE_SINGLE_INDIRECTION:v
-		{: RESULT = Pair.of(v, null); /* TODO reference parameters */ :}
+		{: RESULT = new ParameterDeclaration(v, true); :}
+	| BITWISE_AND LOCAL_VARIABLE_SINGLE_INDIRECTION:v ASSIGN expression:e
+		{: RESULT = new ParameterDeclaration(v, true, e.evaluate(null)); // TODO catch errors due to missing environment :}
 ;
 
 // ------------------------------------------------------------------------------------

@@ -33,7 +33,7 @@ public class EmptyExpression extends AbstractCallExpression {
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-		return TypeConversionUtil.empty(getParameter(0).evaluateForEmptyCheck(environment));
+		return TypeConversionUtil.empty(getArgumentExpression(0).evaluateForEmptyCheck(environment));
 	}
 
 	/* (non-Javadoc)
@@ -42,7 +42,7 @@ public class EmptyExpression extends AbstractCallExpression {
 	@Override
 	public void dump(CodeDumper dumper) {
 		dumper.print("empty(");
-		getParameter(0).dump(dumper);
+		getArgumentExpression(0).dump(dumper);
 		dumper.print(")");
 	}
 
@@ -52,7 +52,7 @@ public class EmptyExpression extends AbstractCallExpression {
 	@Override
 	public void toJson(JsonValueBuilder<?> builder) {
 		JsonObjectBuilder<?> sub = builder.object().property("type").string("empty");
-		getParameter(0).toJson(sub.property("expression"));
+		getArgumentExpression(0).toJson(sub.property("expression"));
 		sub.end();
 	}
 

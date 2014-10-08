@@ -70,8 +70,10 @@ public class InstanceMethodCall extends AbstractCallExpression {
 	 */
 	@Override
 	public void dump(CodeDumper dumper) {
-		// TODO
-		throw new NotImplementedException("");
+		objectExpression.dump(dumper);
+		dumper.print("->");
+		methodNameExpression.dump(dumper);
+		dumpArgumentExpressions(dumper);
 	}
 
 	/* (non-Javadoc)

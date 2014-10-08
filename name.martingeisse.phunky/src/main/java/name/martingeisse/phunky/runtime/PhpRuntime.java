@@ -43,6 +43,8 @@ import name.martingeisse.phunky.runtime.builtin.var.IsIntFunction;
 import name.martingeisse.phunky.runtime.builtin.var.IsNumericFunction;
 import name.martingeisse.phunky.runtime.builtin.var.IsScalarFunction;
 import name.martingeisse.phunky.runtime.builtin.var.IsStringFunction;
+import name.martingeisse.phunky.runtime.builtin.var.PrintrFunction;
+import name.martingeisse.phunky.runtime.builtin.var.UnsetFunction;
 import name.martingeisse.phunky.runtime.builtin.var.VarDumpFunction;
 import name.martingeisse.phunky.runtime.code.expression.ConstantExpression;
 
@@ -246,6 +248,8 @@ public final class PhpRuntime {
 		addBuiltinCallables(new IsScalarFunction().setName("is_scalar"));
 		addBuiltinCallables(new IsStringFunction().setName("is_string"));
 		addBuiltinCallables(new VarDumpFunction().setName("var_dump"));
+		addBuiltinCallables(new PrintrFunction().setName("print_r"));
+		addBuiltinCallables(new UnsetFunction().setName("unset"));
 		
 	}
 	

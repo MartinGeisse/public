@@ -27,8 +27,11 @@ public final class Main {
 	 * @param args command-line arguments (currently ignored)
 	 */
 	public static void main(String[] args) {
+//		dumpSample(new File("samples/sample87.php"));
 		for (File file : new File("samples").listFiles()) {
-			testSample(file);
+			if (file.isFile()) {
+				testSample(file);
+			}
 		}
 	}
 

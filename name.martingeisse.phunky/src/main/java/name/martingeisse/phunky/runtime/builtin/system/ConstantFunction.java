@@ -7,12 +7,12 @@
 package name.martingeisse.phunky.runtime.builtin.system;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
-import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
+import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
 
 /**
  * The built-in "constant" function.
  */
-public class ConstantFunction extends BuiltinCallable {
+public class ConstantFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])

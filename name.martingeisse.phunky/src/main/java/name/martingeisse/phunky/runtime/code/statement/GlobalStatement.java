@@ -10,8 +10,6 @@ import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 /**
  * TODO
  */
@@ -43,7 +41,8 @@ public final class GlobalStatement extends AbstractStatement {
 	 */
 	@Override
 	public void execute(Environment environment) {
-		throw new NotImplementedException("");
+		Environment globalEnvironment = environment.getRuntime().getGlobalEnvironment();
+		environment.put(variableName, globalEnvironment.get(variableName));
 	}
 
 	/* (non-Javadoc)

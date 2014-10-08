@@ -10,11 +10,13 @@ import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpressio
 import name.martingeisse.phunky.runtime.code.expression.Expression;
 import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
 import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
-
-import org.apache.commons.lang3.NotImplementedException;
+import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
- * TODO define exactly what this operator does! It's actually not that easy.
+ * This expression type expects the left-hand side to denote a variable
+ * name, and the right-hand side to denote a variable. It binds the
+ * left-hand name to that variable, unbinding from whatever variable
+ * it was previously bound to (if any).
  */
 public final class ReferenceAssignmentExpression extends AbstractComputeExpression {
 
@@ -59,16 +61,19 @@ public final class ReferenceAssignmentExpression extends AbstractComputeExpressi
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-//		final Variable leftHandVariable = leftHandSide.getOrCreateVariable(environment);
-//		if (leftHandVariable == null) {
-//			environment.getRuntime().triggerError("cannot assign to " + leftHandSide);
-//			return null;
-//		}
-//		final Object rightHandValue = rightHandSide.evaluate(environment);
-//		final Object resultValue = operator.applyToValues(leftHandVariable.getValue(), rightHandValue);
-//		leftHandVariable.setValue(resultValue);
-//		return resultValue;
-		throw new NotImplementedException(""); // TODO
+		
+		// TODO this will evaluate LHS/RHS in wrong order!
+		// TODO this will not evaluate the LHS if there was an error in the RHS
+		// ...
+		// I'll probably need a new concept of "variable location" to implement
+		// reference assignment properly.
+		
+		final Variable rightHandVariable = rightHandSide.getVariable(environment);
+		if (rightHandVariable != null) {
+			leftHandSide.bindVariableReference(environment, rightHandVariable);
+		}
+		return rightHandVariable.getValue();
+		
 	}
 
 	/* (non-Javadoc)

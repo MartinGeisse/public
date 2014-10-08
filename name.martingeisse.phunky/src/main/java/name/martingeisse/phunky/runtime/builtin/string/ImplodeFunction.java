@@ -5,14 +5,14 @@
 package name.martingeisse.phunky.runtime.builtin.string;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
-import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
+import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
 import name.martingeisse.phunky.runtime.variable.PhpValueArray;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 /**
  * The built-in "implode" and "join" functions.
  */
-public final class ImplodeFunction extends BuiltinCallable {
+public final class ImplodeFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])

@@ -35,5 +35,13 @@ public abstract class AbstractComputeExpression extends AbstractExpression {
 	public final Variable getOrCreateVariable(Environment environment) {
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#bindVariableReference(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.variable.Variable)
+	 */
+	@Override
+	public void bindVariableReference(Environment environment, Variable variable) {
+		environment.getRuntime().triggerError("cannot bind a reference to " + this);
+	}
 
 }

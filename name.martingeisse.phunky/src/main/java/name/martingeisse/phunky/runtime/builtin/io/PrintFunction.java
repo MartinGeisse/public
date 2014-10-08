@@ -7,12 +7,12 @@
 package name.martingeisse.phunky.runtime.builtin.io;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
-import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
+import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
 
 /**
  * The built-in "print" function.
  */
-public class PrintFunction extends BuiltinCallable {
+public class PrintFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])

@@ -7,13 +7,13 @@
 package name.martingeisse.phunky.runtime.builtin.string.hash;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
-import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
+import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 /**
  * Base class for hash code computing functions such as md5() and sha1().
  */
-public abstract class AbstractHashFunction extends BuiltinCallable {
+public abstract class AbstractHashFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])

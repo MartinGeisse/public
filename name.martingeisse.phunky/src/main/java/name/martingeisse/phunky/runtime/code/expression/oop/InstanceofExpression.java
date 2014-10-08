@@ -67,8 +67,11 @@ public class InstanceofExpression extends AbstractComputeExpression {
 	 */
 	@Override
 	public void dump(CodeDumper dumper) {
-		// TODO
-		throw new NotImplementedException("");
+		dumper.print('(');
+		objectExpression.dump(dumper);
+		dumper.print(" instanceof ");
+		dumper.print(className);
+		dumper.print(')');
 	}
 
 	/* (non-Javadoc)

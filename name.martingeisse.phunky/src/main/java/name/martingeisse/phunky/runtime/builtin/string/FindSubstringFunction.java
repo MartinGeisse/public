@@ -5,14 +5,14 @@
 package name.martingeisse.phunky.runtime.builtin.string;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
-import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
+import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
 
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * General-purpose function that finds a substring ("needle") within a larger string ("haystack").
  */
-public final class FindSubstringFunction extends BuiltinCallable {
+public final class FindSubstringFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/**
 	 * the caseSensitive

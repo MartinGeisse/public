@@ -4,7 +4,7 @@
 
 package name.martingeisse.phunky.runtime.builtin;
 
-import name.martingeisse.phunky.runtime.Callable;
+import name.martingeisse.phunky.runtime.PhpCallable;
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
@@ -12,7 +12,7 @@ import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
  * Helper class to simplify the implementation of built-in functions
  * and special forms
  */
-public abstract class BuiltinCallable implements Callable {
+public abstract class BuiltinCallable implements PhpCallable {
 
 	/**
 	 * the name

@@ -19,6 +19,8 @@ import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 import name.martingeisse.phunky.runtime.variable.Variable;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 /**
  * This expression selects one element of an array.
  * 
@@ -74,6 +76,20 @@ public final class ArrayElementExpression extends AbstractExpression {
 		if (arrayCandidate instanceof PhpValueArray) {
 			PhpValueArray array = (PhpValueArray)arrayCandidate;
 			return array.getValueOrError(environment.getRuntime(), key);
+		} else if (arrayCandidate instanceof String) {
+			String s = (String)arrayCandidate;
+			int index;
+			try {
+				index = Integer.parseInt(key);
+			} catch (NumberFormatException e) {
+				environment.getRuntime().triggerError("Illegal string offset '" + key + "'");
+				return null;
+			}
+			if (index < 0 || index >= s.length()) {
+				return "";
+			} else {
+				return s.substring(index, index + 1);
+			}
 		} else {
 			environment.getRuntime().triggerError("trying to get element of non-array value");
 			return null;
@@ -100,19 +116,19 @@ public final class ArrayElementExpression extends AbstractExpression {
 	 */
 	@Override
 	public Variable getVariable(final Environment environment) {
-		// note that arrays are a value type, so getting the variable for an element also gets the variable for the array
-		Variable arrayVariable = arrayExpression.getVariable(environment);
-		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
-		if (arrayVariable == null) {
-			environment.getRuntime().triggerError("cannot use this expression as an array: " + arrayExpression);
+		// TODO there's no such thing as "get variable but don't create",
+		// neither for array elements nor for local variables. Using a
+		// non-existing variable as a reference target creates it.
+		
+		Pair<PhpVariableArray, String> variableArrayAndKey = obtainVariableArrayAndKey(environment);
+		if (variableArrayAndKey == null) {
+			environment.getRuntime().triggerError("trying to get element of non-array value");
 			return null;
-		}
-		PhpVariableArray variableArray = arrayVariable.getVariableArray(environment.getRuntime());
-		if (variableArray != null) {
+		} else {
+			PhpVariableArray variableArray = variableArrayAndKey.getLeft();
+			String key = variableArrayAndKey.getRight();
 			return variableArray.getVariable(key);
 		}
-		environment.getRuntime().triggerError("trying to get element of non-array value");
-		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -120,6 +136,33 @@ public final class ArrayElementExpression extends AbstractExpression {
 	 */
 	@Override
 	public Variable getOrCreateVariable(final Environment environment) {
+		Pair<PhpVariableArray, String> variableArrayAndKey = obtainVariableArrayAndKey(environment);
+		if (variableArrayAndKey == null) {
+			return null;
+		} else {
+			PhpVariableArray variableArray = variableArrayAndKey.getLeft();
+			String key = variableArrayAndKey.getRight();
+			return variableArray.getOrCreateVariable(key);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#bindVariableReference(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.variable.Variable)
+	 */
+	@Override
+	public void bindVariableReference(Environment environment, Variable variable) {
+		Pair<PhpVariableArray, String> variableArrayAndKey = obtainVariableArrayAndKey(environment);
+		if (variableArrayAndKey != null) {
+			PhpVariableArray variableArray = variableArrayAndKey.getLeft();
+			String key = variableArrayAndKey.getRight();
+			variableArray.setVariable(key, variable);
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private Pair<PhpVariableArray, String> obtainVariableArrayAndKey(Environment environment) {
 		// note that arrays are a value type, so getting the variable for an element also gets the variable for the array
 		Variable arrayVariable = arrayExpression.getOrCreateVariable(environment);
 		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
@@ -127,11 +170,7 @@ public final class ArrayElementExpression extends AbstractExpression {
 			environment.getRuntime().triggerError("cannot use this expression as an array: " + arrayExpression);
 			return null;
 		}
-		PhpVariableArray variableArray = arrayVariable.getVariableArray(environment.getRuntime());
-		if (variableArray != null) {
-			return variableArray.getOrCreateVariable(key);
-		}
-		return null;
+		return Pair.of(arrayVariable.getVariableArray(environment.getRuntime()), key);
 	}
 	
 	/* (non-Javadoc)

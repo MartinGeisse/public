@@ -9,7 +9,7 @@ import java.util.HashMap;
 /**
  * This map keeps globally callable functions.
  */
-public final class Functions extends HashMap<String, Callable> {
+public final class Functions extends HashMap<String, PhpCallable> {
 
 	/**
 	 * the runtime

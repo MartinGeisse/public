@@ -7,12 +7,12 @@
 package name.martingeisse.phunky.runtime.builtin.var;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
-import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
+import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
 
 /**
  * The built-in "is_float" function.
  */
-public class IsFloatFunction extends BuiltinCallable {
+public class IsFloatFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])

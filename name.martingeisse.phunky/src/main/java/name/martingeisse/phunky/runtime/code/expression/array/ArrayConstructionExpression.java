@@ -61,8 +61,14 @@ public class ArrayConstructionExpression extends AbstractComputeExpression {
 				evaluatedElements.put(Integer.toString(autoIndex), value);
 				autoIndex++;
 			} else {
-				String key = TypeConversionUtil.convertToString(element.getLeft().evaluate(environment));
-				evaluatedElements.put(key, value);
+				Object originalKey = element.getLeft().evaluate(environment);
+				String convertedKey;
+				if (originalKey instanceof Number) {
+					convertedKey = Long.toString(((Number)originalKey).longValue());
+				} else {
+					convertedKey = TypeConversionUtil.convertToString(originalKey);
+				}
+				evaluatedElements.put(convertedKey, value);
 			}
 		}
 		return PhpValueArray.fromKeyValueEntries(evaluatedElements.entrySet());
@@ -99,7 +105,9 @@ public class ArrayConstructionExpression extends AbstractComputeExpression {
 		JsonListBuilder<?> subsub = sub.property("elements").list();
 		for (Pair<Expression, Expression> element : elements) {
 			JsonObjectBuilder<?> subsubsub = subsub.element().object();
-			element.getKey().toJson(subsubsub.property("key"));
+			if (element.getKey() != null) {
+				element.getKey().toJson(subsubsub.property("key"));
+			}
 			element.getValue().toJson(subsubsub.property("value"));
 			subsubsub.end();
 		}

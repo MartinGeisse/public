@@ -86,7 +86,11 @@ public final class StatementSequence extends AbstractStatement implements Iterab
 	@Override
 	public void dump(CodeDumper dumper) {
 		for (Statement statement : statements) {
-			statement.dump(dumper);
+			if (statement == null) {
+				dumper.println("(null instead of statement);");
+			} else {
+				statement.dump(dumper);
+			}
 		}
 	}
 

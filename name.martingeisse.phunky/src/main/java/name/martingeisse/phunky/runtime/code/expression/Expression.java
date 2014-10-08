@@ -67,6 +67,22 @@ public interface Expression {
 	 * @return the variable or null
 	 */
 	public Variable getOrCreateVariable(Environment environment);
+	
+	/**
+	 * Expects this expression to denote the name for a variable, unbinds
+	 * from the previous variable, and binds it to the specified variable.
+	 * This occurs when this expression is used for the left-hand side of
+	 * a reference assignment.
+	 * 
+	 * If the variable argument is null then this method just unbinds from
+	 * the previous variable. This is used to implement PHP's unset()
+	 * special form.
+	 * 
+	 * @param environment the environment that is needed to resolve the name
+	 * denoted by this expression
+	 * @param variable the variable to bind to, or null to unbind only
+	 */
+	public void bindVariableReference(Environment environment, Variable variable);
 
 	/**
 	 * Dumps this expression using the specified code dumper.

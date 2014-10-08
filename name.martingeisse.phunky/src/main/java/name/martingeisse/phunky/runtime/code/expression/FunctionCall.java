@@ -6,7 +6,7 @@
 
 package name.martingeisse.phunky.runtime.code.expression;
 
-import name.martingeisse.phunky.runtime.Callable;
+import name.martingeisse.phunky.runtime.PhpCallable;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.json.JsonListBuilder;
@@ -60,12 +60,12 @@ public final class FunctionCall extends AbstractCallExpression {
 			environment.getRuntime().triggerError("function name must be a string: " + name);
 			return null;
 		}
-		Callable function = environment.getRuntime().getFunctions().get(name);
+		PhpCallable function = environment.getRuntime().getFunctions().get(name);
 		if (function == null) {
 			environment.getRuntime().triggerError("undefined function: " + name);
 			return null;
 		} else {
-			return function.call(environment.getRuntime(), evaluateParameters(environment));
+			return call(function, environment);
 		}
 	}
 
@@ -75,7 +75,7 @@ public final class FunctionCall extends AbstractCallExpression {
 	@Override
 	public void dump(CodeDumper dumper) {
 		nameExpression.dump(dumper);
-		dumpParameters(dumper);
+		dumpArgumentExpressions(dumper);
 	}
 
 	/* (non-Javadoc)
@@ -86,8 +86,8 @@ public final class FunctionCall extends AbstractCallExpression {
 		JsonObjectBuilder<?> sub = builder.object().property("type").string("functionCall");
 		nameExpression.toJson(sub.property("name"));
 		JsonListBuilder<?> subsub = sub.property("parameters").list();
-		for (int i=0; i<getParameterCount(); i++) {
-			getParameter(i).toJson(subsub.element());
+		for (int i=0; i<getArgumentExpressionCount(); i++) {
+			getArgumentExpression(i).toJson(subsub.element());
 		}
 		subsub.end();
 		sub.end();

@@ -8,13 +8,13 @@ package name.martingeisse.phunky.runtime.builtin.system;
 
 import name.martingeisse.phunky.runtime.ExitException;
 import name.martingeisse.phunky.runtime.PhpRuntime;
-import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
+import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 /**
  * The built-in "die" function.
  */
-public class DieFunction extends BuiltinCallable {
+public class DieFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])

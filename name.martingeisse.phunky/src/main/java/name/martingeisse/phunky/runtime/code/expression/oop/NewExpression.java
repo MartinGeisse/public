@@ -55,8 +55,9 @@ public class NewExpression extends AbstractCallExpression {
 	 */
 	@Override
 	public void dump(CodeDumper dumper) {
-		// TODO
-		throw new NotImplementedException("");
+		dumper.print("new ");
+		classNameExpression.dump(dumper);
+		dumpArgumentExpressions(dumper);
 	}
 
 	/* (non-Javadoc)

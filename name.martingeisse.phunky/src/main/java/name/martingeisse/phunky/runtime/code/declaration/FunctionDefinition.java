@@ -6,10 +6,10 @@
 
 package name.martingeisse.phunky.runtime.code.declaration;
 
-import name.martingeisse.phunky.runtime.Callable;
 import name.martingeisse.phunky.runtime.Environment;
-import name.martingeisse.phunky.runtime.PhpRuntime;
+import name.martingeisse.phunky.runtime.PhpCallable;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.code.expression.Expression;
 import name.martingeisse.phunky.runtime.code.expression.LiteralExpression;
 import name.martingeisse.phunky.runtime.code.statement.AbstractStatement;
 import name.martingeisse.phunky.runtime.code.statement.ReturnException;
@@ -17,7 +17,6 @@ import name.martingeisse.phunky.runtime.code.statement.Statement;
 import name.martingeisse.phunky.runtime.json.JsonListBuilder;
 import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
 import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
-import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
  * This statement defines a (global) function.
@@ -30,14 +29,9 @@ public final class FunctionDefinition extends AbstractStatement {
 	private final String name;
 
 	/**
-	 * the parameterNames
+	 * the parameters
 	 */
-	private final String[] parameterNames;
-	
-	/**
-	 * the parameterDefaultValues
-	 */
-	private final Object[] parameterDefaultValues;
+	private final ParameterDeclaration[] parameters;
 
 	/**
 	 * the body
@@ -47,14 +41,12 @@ public final class FunctionDefinition extends AbstractStatement {
 	/**
 	 * Constructor.
 	 * @param name the function name
-	 * @param parameterNames the parameter names
-	 * @param parameterDefaultValues the parameter default values
+	 * @param parameters the parameters
 	 * @param body the function body
 	 */
-	public FunctionDefinition(final String name, final String[] parameterNames, final Object[] parameterDefaultValues, final Statement body) {
+	public FunctionDefinition(final String name, final ParameterDeclaration[] parameters, final Statement body) {
 		this.name = name;
-		this.parameterNames = parameterNames.clone();
-		this.parameterDefaultValues = parameterDefaultValues.clone();
+		this.parameters = parameters;
 		this.body = body;
 	}
 
@@ -71,7 +63,7 @@ public final class FunctionDefinition extends AbstractStatement {
 	 * @return the number of parameter names
 	 */
 	public int getParameterCount() {
-		return parameterNames.length;
+		return parameters.length;
 	}
 
 	/**
@@ -79,25 +71,8 @@ public final class FunctionDefinition extends AbstractStatement {
 	 * @param index the index
 	 * @return the parameter
 	 */
-	public String getParameter(final int index) {
-		return parameterNames[index];
-	}
-
-	/**
-	 * Getter method for the number of parameter default values.
-	 * @return the number of parameter default values
-	 */
-	public int getParameterDefaultValueCount() {
-		return parameterDefaultValues.length;
-	}
-	
-	/**
-	 * Getter method for a single parameter default value.
-	 * @param index the index
-	 * @return the parameter default value
-	 */
-	public Object getParameterDefaultValue(final int index) {
-		return parameterDefaultValues[index];
+	public ParameterDeclaration getParameter(final int index) {
+		return parameters[index];
 	}
 	
 	/**
@@ -112,35 +87,26 @@ public final class FunctionDefinition extends AbstractStatement {
 	 * @see name.martingeisse.phunky.runtime.code.Statement#execute(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
-	public void execute(final Environment environment) {
-		environment.getRuntime().getLog().beginStatement("function");
-		environment.getRuntime().getFunctions().put(name, new Callable() {
+	public void execute(final Environment definitionEnvironment) {
+		definitionEnvironment.getRuntime().getLog().beginStatement("function");
+		definitionEnvironment.getRuntime().getFunctions().put(name, new PhpCallable() {
 			@Override
-			public Object call(PhpRuntime runtime, Object[] arguments) {
-				final Environment childEnvironment = new Environment(runtime);
-				final int parameterBindCount;
-				if (arguments.length + parameterDefaultValues.length < parameterNames.length) {
-					runtime.triggerError("too few parameters for function " + FunctionDefinition.this);
-					parameterBindCount = arguments.length;
-				} else {
-					parameterBindCount = parameterNames.length;
-				}
-				int defaultValuesStartIndex = (parameterNames.length - parameterDefaultValues.length);
-				for (int i=0; i<parameterDefaultValues.length; i++) {
-					childEnvironment.put(parameterNames[defaultValuesStartIndex + i], new Variable(parameterDefaultValues[i]));
-				}
-				for (int i=0; i<parameterBindCount; i++) {
-					childEnvironment.put(parameterNames[i], new Variable(arguments[i]));
+			public Object call(Environment callerEnvironment, Expression[] argumentExpressions) {
+				final String contextDescription = "function " + name + "()";
+				final Environment calleeEnvironment = new Environment(callerEnvironment.getRuntime());
+				for (int i=0; i<parameters.length; i++) {
+					Expression argumentExpression = (i < argumentExpressions.length ? argumentExpressions[i] : null);
+					parameters[i].bind(callerEnvironment, calleeEnvironment, argumentExpression, contextDescription);
 				}
 				try {
-					body.execute(childEnvironment);
+					body.execute(calleeEnvironment);
 					return null;
 				} catch (ReturnException e) {
 					return e.getReturnValue();
 				}
 			}
 		});
-		environment.getRuntime().getLog().endStatement("function");
+		definitionEnvironment.getRuntime().getLog().endStatement("function");
 	}
 
 	/* (non-Javadoc)
@@ -152,13 +118,20 @@ public final class FunctionDefinition extends AbstractStatement {
 		dumper.print(name);
 		dumper.print('(');
 		boolean first = true;
-		for (String parameterName : parameterNames) {
+		for (ParameterDeclaration parameter : parameters) {
 			if (first) {
 				first = false;
 			} else {
 				dumper.print(", ");
 			}
-			dumper.print(parameterName);
+			if (parameter.isReferenceParameter()) {
+				dumper.print('&');
+			}
+			dumper.print(parameter.getName());
+			if (parameter.isHasDefaultValue()) {
+				dumper.print(" = ");
+				LiteralExpression.dumpLiteral(parameter.getDefaultValue(), dumper);
+			}
 		}
 		dumper.println(") {");
 		dumper.increaseIndentation();
@@ -175,9 +148,9 @@ public final class FunctionDefinition extends AbstractStatement {
 		JsonObjectBuilder<?> sub = builder.object().property("type").string("functionDefinition");
 		sub.property("name").string(name);
 		JsonListBuilder<?> subsub = sub.property("parameters").list();
-		for (int i=0; i<parameterNames.length; i++) {
+		for (ParameterDeclaration parameter : parameters) {
 			JsonObjectBuilder<?> subsubsub = subsub.element().object();
-			parameterToJson(subsubsub, i);
+			parameterToJson(subsubsub, parameter);
 			subsubsub.end();
 		}
 		subsub.end();
@@ -188,11 +161,11 @@ public final class FunctionDefinition extends AbstractStatement {
 	/**
 	 * 
 	 */
-	private void parameterToJson(JsonObjectBuilder<?> builder, int parameterIndex) {
-		builder.property("name").string(parameterNames[parameterIndex]);
-		int defaultIndex = (parameterIndex - (parameterNames.length - parameterDefaultValues.length));
-		if (defaultIndex >= 0) {
-			if (!LiteralExpression.literalToJsonValue(parameterDefaultValues[defaultIndex], builder.property("default"))) {
+	private void parameterToJson(JsonObjectBuilder<?> builder, ParameterDeclaration parameter) {
+		builder.property("name").string(parameter.getName());
+		builder.property("reference").bool(parameter.isReferenceParameter());
+		if (parameter.isHasDefaultValue()) {
+			if (!LiteralExpression.literalToJsonValue(parameter.getDefaultValue(), builder.property("default"))) {
 				builder.property("defaultValueStatus").string("UNKNOWN_TYPE");
 			}
 		}

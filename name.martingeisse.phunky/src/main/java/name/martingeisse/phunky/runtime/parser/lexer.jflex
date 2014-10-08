@@ -6,6 +6,7 @@
 
 // imports
 package name.martingeisse.phunky.runtime.parser;
+import java.math.BigInteger;
 import java_cup.runtime.*;
 import java_cup.runtime.ComplexSymbolFactory.Location;
 import name.martingeisse.phunky.runtime.code.expression.LocalVariableExpression;
@@ -81,6 +82,15 @@ import name.martingeisse.phunky.runtime.code.expression.LocalVariableExpression;
 		return symbol(Tokens.STRING_LITERAL, stringBuilder.toString());
 	}
 	
+	// may yield a float due to overflow
+	private Number parseIntegerLiteral(String text, int radix) {
+		try {
+			return Integer.parseInt(text, radix);
+		} catch (NumberFormatException e) {
+			return new BigInteger(text, radix).doubleValue();
+		}
+	}
+	
 %}
 
 
@@ -110,6 +120,7 @@ DecimalIntegerLiteral = "0" | ([1-9][0-9]*)
 HexadecimalIntegerLiteral = "0x" [0-9a-fA-F]+
 OctalIntegerLiteral = "0" [0-9]+
 BinaryIntegerLiteral = ("0b" | "0B") [01]+
+FloatLiteral = [\+\-]? ([0-9]+ "." [0-9]* | [0-9]* "." [0-9]+) ([eE] [\+\-]? [0-9]+)?
 
 // identifiers and keywords
 Identifier = [\p{Alpha}\_] [\p{Alnum}\_]*
@@ -506,10 +517,10 @@ HeredocNowdocContentLine = .* {LineTerminator}
 		return symbol(Tokens.BOOLEAN_LITERAL, false);
 	}
 	{DecimalIntegerLiteral} {
-		return symbol(Tokens.INTEGER_LITERAL, Integer.parseInt(yytext()));
+		return symbol(Tokens.INTEGER_LITERAL, parseIntegerLiteral(yytext(), 10));
 	}
 	{HexadecimalIntegerLiteral} {
-		return symbol(Tokens.INTEGER_LITERAL, Integer.parseInt(yytext().substring(2), 16));
+		return symbol(Tokens.INTEGER_LITERAL, parseIntegerLiteral(yytext().substring(2), 16));
 	}
 	{OctalIntegerLiteral} {
 		String s = yytext();
@@ -521,10 +532,13 @@ HeredocNowdocContentLine = .* {LineTerminator}
 		if (index2 != -1) {
 			s = s.substring(0, index2);
 		}
-		return symbol(Tokens.INTEGER_LITERAL, Integer.parseInt(s, 8));
+		return symbol(Tokens.INTEGER_LITERAL, parseIntegerLiteral(s, 8));
 	}
 	{BinaryIntegerLiteral} {
-		return symbol(Tokens.INTEGER_LITERAL, Integer.parseInt(yytext().substring(2), 2));
+		return symbol(Tokens.INTEGER_LITERAL, parseIntegerLiteral(yytext().substring(2), 2));
+	}
+	{FloatLiteral} {
+		return symbol(Tokens.FLOAT_LITERAL, Double.parseDouble(yytext()));
 	}
 	\' {
 		stringBuilder.setLength(0);

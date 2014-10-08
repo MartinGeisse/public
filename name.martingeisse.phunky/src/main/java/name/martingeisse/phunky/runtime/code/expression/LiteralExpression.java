@@ -51,6 +51,16 @@ public final class LiteralExpression extends AbstractComputeExpression {
 	 */
 	@Override
 	public void dump(CodeDumper dumper) {
+		dumpLiteral(value, dumper);
+	}
+	
+	/**
+	 * Dumps a literal value using the specified code dumper, just as it is done for the value of a LiteralExpression.
+	 * 
+	 * @param value the value
+	 * @param dumper the code dumper to use
+	 */
+	public static void dumpLiteral(Object value, CodeDumper dumper) {
 		if (value == null) {
 			dumper.print("null");
 		} else if (value instanceof Boolean || value instanceof Integer || value instanceof Float || value instanceof Double) {
@@ -67,11 +77,13 @@ public final class LiteralExpression extends AbstractComputeExpression {
 			dumper.print(v);
 			dumper.print('\"');
 		} else if (value instanceof PhpValueArray) {
-			// PHP syntax cannot build an array literal directly
+			// TODO: PHP syntax cannot build an array literal directly
 			// (instead it uses an array construction expression on
 			// literal primitive values), but for generated code
 			// there's no problem with that. dumping that could
 			// just write down an array construction expression.
+			// ...
+			// Also needed for parameter default values and class constant initializers.
 			throw new NotImplementedException("");
 		} else {
 			dumper.print("(!literal: " + value + " !)");
@@ -91,7 +103,7 @@ public final class LiteralExpression extends AbstractComputeExpression {
 	}
 	
 	/**
-	 * Converts a literal value to a JSON value, just as it is done for the value of a {@link LiteralExpression}.
+	 * Converts a literal value to a JSON value, just as it is done for the value of a LiteralExpression.
 	 * 
 	 * This function may fail if the value is of unknown type. This is reported via the return value.
 	 * 

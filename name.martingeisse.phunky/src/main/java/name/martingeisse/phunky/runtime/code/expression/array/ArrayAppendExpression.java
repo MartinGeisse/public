@@ -72,18 +72,36 @@ public final class ArrayAppendExpression extends AbstractExpression {
 	 */
 	@Override
 	public Variable getOrCreateVariable(Environment environment) {
+		PhpVariableArray variableArray = obtainArray(environment);
+		return (variableArray == null ? null : variableArray.append());
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#bindVariableReference(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.variable.Variable)
+	 */
+	@Override
+	public void bindVariableReference(Environment environment, Variable variable) {
+		if (variable == null) {
+			environment.getRuntime().triggerError("trying to unset() an array-append expression");
+			return;
+		}
+		PhpVariableArray variableArray = obtainArray(environment);
+		if (variableArray != null) {
+			variableArray.append(variable);
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private PhpVariableArray obtainArray(Environment environment) {
 		// note that arrays are a value type, so getting the variable for an element also gets the variable for the array
 		Variable arrayVariable = arrayExpression.getOrCreateVariable(environment);
 		if (arrayVariable == null) {
 			environment.getRuntime().triggerError("cannot use this expression as an array: " + arrayExpression);
 			return null;
 		}
-		PhpVariableArray variableArray = arrayVariable.getVariableArray(environment.getRuntime());
-		if (variableArray == null) {
-			return null;
-		} else {
-			return variableArray.append();
-		}
+		return arrayVariable.getVariableArray(environment.getRuntime());
 	}
 
 	/* (non-Javadoc)

@@ -183,13 +183,29 @@ public final class PhpVariableArray extends PhpArray implements MutableVariableC
 	 * one, as the key. Note that the highest-used integer index is remembered separately,
 	 * even if that index is removed from this array.
 	 * 
+	 * The appended entry's value-part uses a new variable initialized to null.
+	 * 
 	 * The new entry is appended at the end of the array.
 	 * 
 	 * @return the variable for the new element
 	 */
 	public Variable append() {
+		return append(new Variable());
+	}
+	
+	/**
+	 * Appends an element to this array, using the highest used integer index so far, plus
+	 * one, as the key. Note that the highest-used integer index is remembered separately,
+	 * even if that index is removed from this array.
+	 * 
+	 * The appended entry's value-part uses the specified variable.
+	 * 
+	 * The new entry is appended at the end of the array.
+	 * 
+	 * @return the variable for the new element
+	 */
+	public Variable append(Variable variable) {
 		highestNumericIndexUsed++;
-		final Variable variable = new Variable();
 		elements.put(Integer.toString(highestNumericIndexUsed), variable);
 		return variable;
 	}

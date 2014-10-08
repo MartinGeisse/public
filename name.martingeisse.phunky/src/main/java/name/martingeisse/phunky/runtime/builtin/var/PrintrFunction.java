@@ -11,13 +11,12 @@ import java.util.Map.Entry;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
-import name.martingeisse.phunky.runtime.variable.PhpArray;
 import name.martingeisse.phunky.runtime.variable.PhpValueArray;
 
 /**
- * The built-in "var_dump" function.
+ * The built-in "print_r" function.
  */
-public class VarDumpFunction extends BuiltinFunctionWithValueParametersOnly {
+public class PrintrFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])
@@ -35,32 +34,21 @@ public class VarDumpFunction extends BuiltinFunctionWithValueParametersOnly {
 	 */
 	private void dump(PhpRuntime runtime, Object value, int indentation) {
 		PrintWriter w = runtime.getOutputWriter();
-		printIndentation(runtime, indentation);
 		if (value == null) {
 			w.println("NULL");
-		} else if (value instanceof Integer || value instanceof Long) {
-			w.println("int(" + value + ")");
-		} else if (value instanceof Float || value instanceof Double) {
-			w.println("float(" + value + ")");
-		} else if (value instanceof Boolean) {
-			w.println("bool(" + value + ")");
-		} else if (value instanceof String) {
-			String s = (String)value;
-			w.println("string(" + s.length() + ") \"" + s + "\"");
+		} else if (value instanceof Integer || value instanceof Long || value instanceof Float || value instanceof Double || value instanceof Boolean || value instanceof String) {
+			w.println(value);
 		} else if (value instanceof PhpValueArray) {
 			PhpValueArray array = (PhpValueArray)value;
-			w.println("array(" + array.size() + ") {");
+			w.println("Array");
+			w.println("(");
 			for (Entry<String, Object> entry : array.getKeyValueEntryIterable()) {
 				printIndentation(runtime, indentation + 1);
-				if (PhpArray.isNumericKey(entry.getKey())) {
-					w.println("[" + entry.getKey() + "]=>");
-				} else {
-					w.println("[\"" + entry.getKey() + "\"]=>");
-				}
+				w.print("[" + entry.getKey() + "] => ");
 				dump(runtime, entry.getValue(), indentation + 1);
 			}
 			printIndentation(runtime, indentation);
-			w.println("}");
+			w.println(")");
 		} else {
 			// TODO: objects, ...
 			w.println("OTHER");
@@ -72,7 +60,7 @@ public class VarDumpFunction extends BuiltinFunctionWithValueParametersOnly {
 	 */
 	private void printIndentation(PhpRuntime runtime, int indentation) {
 		for (int i=0; i<indentation; i++) {
-			runtime.getOutputWriter().print("  ");
+			runtime.getOutputWriter().print("    ");
 		}
 	}
 

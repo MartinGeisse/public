@@ -5,14 +5,14 @@
 package name.martingeisse.phunky.runtime.builtin.string;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
-import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
+import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
 
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * The built-in "trim", "ltrim", "rtrim" and "chop" functions.
  */
-public final class TrimFunction extends BuiltinCallable {
+public final class TrimFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/**
 	 * the left

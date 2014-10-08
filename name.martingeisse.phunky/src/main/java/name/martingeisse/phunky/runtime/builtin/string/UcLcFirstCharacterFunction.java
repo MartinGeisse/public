@@ -5,12 +5,12 @@
 package name.martingeisse.phunky.runtime.builtin.string;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
-import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
+import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
 
 /**
  * The built-in "ucfirst" and "lcfirst" functions.
  */
-public final class UcLcFirstCharacterFunction extends BuiltinCallable {
+public final class UcLcFirstCharacterFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/**
 	 * the upper

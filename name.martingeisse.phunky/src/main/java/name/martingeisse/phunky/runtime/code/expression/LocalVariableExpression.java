@@ -58,6 +58,9 @@ public final class LocalVariableExpression extends AbstractVariableExpression {
 	 */
 	@Override
 	public Variable getVariable(Environment environment) {
+		// TODO there's no such thing as "get variable but don't create",
+		// neither for array elements nor for local variables. Using a
+		// non-existing variable as a reference target creates it.
 		return environment.get(name);
 	}
 
@@ -67,6 +70,18 @@ public final class LocalVariableExpression extends AbstractVariableExpression {
 	@Override
 	public Variable getOrCreateVariable(Environment environment) {
 		return environment.getOrCreate(name);
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#bindVariableReference(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.variable.Variable)
+	 */
+	@Override
+	public void bindVariableReference(Environment environment, Variable variable) {
+		if (variable == null) {
+			environment.remove(name);
+		} else {
+			environment.put(name, variable);
+		}
 	}
 	
 	/* (non-Javadoc)

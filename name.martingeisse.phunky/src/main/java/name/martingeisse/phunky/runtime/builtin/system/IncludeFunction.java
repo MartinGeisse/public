@@ -7,7 +7,7 @@
 package name.martingeisse.phunky.runtime.builtin.system;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
-import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
+import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
 
 /**
  * Implements the "include", "include_once", "require" and "require_once" functions.
@@ -15,7 +15,7 @@ import name.martingeisse.phunky.runtime.builtin.BuiltinCallable;
  * If the "once" flag is set, then any requested file will first be checked against
  * the set.
  */
-public final class IncludeFunction extends BuiltinCallable {
+public final class IncludeFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/**
 	 * the once
