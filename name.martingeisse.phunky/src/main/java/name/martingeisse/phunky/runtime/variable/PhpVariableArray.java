@@ -222,6 +222,14 @@ public final class PhpVariableArray extends PhpArray implements MutableVariableC
 		} catch (final NumberFormatException e) {
 		}
 	}
+	
+	/**
+	 * Removes a variable, using the specified key.
+	 * @param key the key
+	 */
+	public void removeVariable(final String key) {
+		elements.remove(key);
+	}
 
 	/**
 	 * Returns the variable for the specified key, or null if the key doesn't exist.

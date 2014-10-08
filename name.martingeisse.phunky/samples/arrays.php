@@ -94,9 +94,9 @@ $newArray2[] = 9;
 var_dump($newArray2);
 
 // DOESN'T WORK: create array by reading an element
-echo 'creating arrays in uninitialized variables(3):'."\n";
-$x = $newArray3[5];
-var_dump($newArray3);
+// echo 'creating arrays in uninitialized variables(3):'."\n";
+// $x = $newArray3[5];
+// var_dump($newArray3);
 
 // creating an array also works if the variable exists and is null
 echo 'creating arrays in uninitialized variables(4):'."\n";
@@ -105,10 +105,10 @@ $newArray4[1] = 9;
 var_dump($newArray4);
 
 // DOESN'T WORK: if the variable has the value 0
-echo 'creating arrays in uninitialized variables(5):'."\n";
-$newArray5 = 0;
-$newArray5[1] = 9;
-var_dump($newArray5);
+// echo 'creating arrays in uninitialized variables(5):'."\n";
+// $newArray5 = 0;
+// $newArray5[1] = 9;
+// var_dump($newArray5);
 
 // creating an array also works if the variable has the value false
 echo 'creating arrays in uninitialized variables(6):'."\n";
@@ -117,8 +117,8 @@ $newArray6[1] = 9;
 var_dump($newArray6);
 
 // DOESN'T WORK: if the variable has the value true
-echo 'creating arrays in uninitialized variables(7):'."\n";
-$newArray7 = true;
-$newArray7[1] = 9;
-var_dump($newArray7);
+// echo 'creating arrays in uninitialized variables(7):'."\n";
+// $newArray7 = true;
+// $newArray7[1] = 9;
+// var_dump($newArray7);
 

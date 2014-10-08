@@ -195,7 +195,8 @@ terminal NULL_LITERAL;
 terminal Boolean BOOLEAN_LITERAL;
 terminal Number INTEGER_LITERAL;
 terminal Double FLOAT_LITERAL;
-terminal String STRING_LITERAL;
+terminal String SINGLE_QUOTED_STRING_LITERAL;
+terminal String DOUBLE_QUOTED_STRING_LITERAL;
 terminal String IDENTIFIER;
 terminal String LOCAL_VARIABLE_SINGLE_INDIRECTION;
 terminal LocalVariableExpression LOCAL_VARIABLE_MULTI_INDIRECTION;
@@ -440,8 +441,10 @@ expression ::=
 		{: RESULT = setLocation(new LiteralExpression(e)); :}
 	| INTEGER_LITERAL:e
 		{: RESULT = setLocation(new LiteralExpression(e)); :}
-	| STRING_LITERAL:e 
+	| SINGLE_QUOTED_STRING_LITERAL:e 
 		{: RESULT = setLocation(new LiteralExpression(e)); :}
+	| DOUBLE_QUOTED_STRING_LITERAL:e 
+		{: RESULT = setLocation(ParserHelper.parseDoubleQuotedStringContents(e)); :}
 	| FLOAT_LITERAL:e 
 		{: RESULT = setLocation(new LiteralExpression(e)); :}
 	

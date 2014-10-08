@@ -79,7 +79,7 @@ import name.martingeisse.phunky.runtime.code.expression.LocalVariableExpression;
 	private Symbol buildHeredocNowdocString() {
 		// TODO interpolation
 		yybegin(CODE); 
-		return symbol(Tokens.STRING_LITERAL, stringBuilder.toString());
+		return symbol(Tokens.SINGLE_QUOTED_STRING_LITERAL, stringBuilder.toString());
 	}
 	
 	// may yield a float due to overflow
@@ -572,54 +572,50 @@ HeredocNowdocContentLine = .* {LineTerminator}
 
 // scanning single-quoted string literals
 <SINGLE_QUOTED_STRING> {
-	\' {
+	"'" {
 		yybegin(CODE); 
-		return symbol(Tokens.STRING_LITERAL, stringBuilder.toString());
+		return symbol(Tokens.SINGLE_QUOTED_STRING_LITERAL, stringBuilder.toString());
 	}
-	[^\n\r\'\\]+ {
-		stringBuilder.append(yytext());
-	}
-	\\t {
-		stringBuilder.append('\t');
-	}
-	\\n {
-		stringBuilder.append('\n');
-	}
-	\\r {
-		stringBuilder.append('\r');
-	}
-	\\\' {
+	"\\'" {
 		stringBuilder.append('\'');
 	}
-	\\ {
+	"\\\\" {
 		stringBuilder.append('\\');
+	}
+	[^\\\']+ {
+		stringBuilder.append(yytext());
+	}
+	. {
+		stringBuilder.append(yytext());
 	}
 }
 
 // scanning double-quoted string literals
 <DOUBLE_QUOTED_STRING> {
-	\" {
+	"\"" {
 		yybegin(CODE); 
-		return symbol(Tokens.STRING_LITERAL, stringBuilder.toString());
+		return symbol(Tokens.DOUBLE_QUOTED_STRING_LITERAL, stringBuilder.toString());
 	}
-	[^\n\r\"\\]+ {
-		// TODO interpolate
-		stringBuilder.append(yytext());
-	}
-	\\t {
-		stringBuilder.append('\t');
-	}
-	\\n {
-		stringBuilder.append('\n');
-	}
-	\\r {
-		stringBuilder.append('\r');
-	}
-	\\\" {
+	"\\\"" {
 		stringBuilder.append('\"');
 	}
-	\\ {
+	"\\\\" {
 		stringBuilder.append('\\');
+	}
+	"\\n" {
+		stringBuilder.append('\n');
+	}
+	"\\r" {
+		stringBuilder.append('\r');
+	}
+	"\\t" {
+		stringBuilder.append('\t');
+	}
+	[^\\\"]+ {
+		stringBuilder.append(yytext());
+	}
+	. {
+		stringBuilder.append(yytext());
 	}
 }
 

@@ -10,7 +10,7 @@ function firstMethod($a) {
 }
 
 // represents another method of that object
-function secondMethod($a) {
+function secondMethod() {
 	global $objectVariable;
 	var_dump($objectVariable);
 }
@@ -34,7 +34,6 @@ $data = array(
 // manipulate data (sometimes easier using references)
 $ref =& $data['Shop'];
 $ref['name'] = 'liveshop';
-unset($ref);
 
 // store in object
 firstMethod($data);
@@ -45,3 +44,4 @@ $data['Shop']['name'] = 'foobar';
 // use the object again
 secondMethod();
 
+// echoes "foobar" in PHP (unexpected), "liveshop" in Phunky

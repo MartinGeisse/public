@@ -155,7 +155,11 @@ public final class ArrayElementExpression extends AbstractExpression {
 		if (variableArrayAndKey != null) {
 			PhpVariableArray variableArray = variableArrayAndKey.getLeft();
 			String key = variableArrayAndKey.getRight();
-			variableArray.setVariable(key, variable);
+			if (variable == null) {
+				variableArray.removeVariable(key);
+			} else {
+				variableArray.setVariable(key, variable);
+			}
 		}
 	}
 	
