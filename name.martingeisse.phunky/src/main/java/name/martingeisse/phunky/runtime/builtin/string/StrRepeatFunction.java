@@ -20,7 +20,7 @@ public final class StrRepeatFunction extends BuiltinFunctionWithValueParametersO
 	@Override
 	public Object call(PhpRuntime runtime, Object[] arguments) {
 		String s = getStringParameter(runtime, arguments, 0, null);
-		int multiplier = getIntParameter(runtime, arguments, 1, null);
+		int multiplier = (int)getIntegerParameter(runtime, arguments, 1, null);
 		StringBuilder builder = new StringBuilder(s.length() * multiplier);
 		while (multiplier > 0) {
 			builder.append(s);

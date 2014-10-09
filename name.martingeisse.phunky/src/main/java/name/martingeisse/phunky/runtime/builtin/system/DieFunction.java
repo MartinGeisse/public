@@ -26,6 +26,8 @@ public class DieFunction extends BuiltinFunctionWithValueParametersOnly {
 		if (arguments.length > 0) {
 			if (arguments[0] instanceof Integer) {
 				exitCode = (Integer)arguments[0];
+			} else if (arguments[0] instanceof Long) {
+				exitCode = ((Long)arguments[0]).intValue();
 			} else {
 				exitMessage = TypeConversionUtil.convertToString(arguments[0]);
 			}

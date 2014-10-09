@@ -19,7 +19,7 @@ public class SleepFunction extends BuiltinFunctionWithValueParametersOnly {
 	 */
 	@Override
 	public Object call(PhpRuntime runtime, Object[] arguments) {
-		int seconds = getIntParameter(runtime, arguments, 0, 0);
+		long seconds = getIntegerParameter(runtime, arguments, 0, 0L);
 		if (seconds < 0) {
 			runtime.triggerError("sleep() called with a negative argument");
 			return false;
@@ -29,7 +29,7 @@ public class SleepFunction extends BuiltinFunctionWithValueParametersOnly {
 			Thread.sleep(seconds * 1000);
 		} catch (InterruptedException e) {
 			long endTime = System.currentTimeMillis();
-			return (int)((endTime - startTime) / 1000);
+			return (long)((endTime - startTime) / 1000);
 		}
 		return 0;
 	}

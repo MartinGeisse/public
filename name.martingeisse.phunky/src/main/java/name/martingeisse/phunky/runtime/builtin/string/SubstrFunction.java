@@ -21,8 +21,8 @@ public final class SubstrFunction extends BuiltinFunctionWithValueParametersOnly
 		// extract parameters
 		final String string = getStringParameter(runtime, arguments, 0, null);
 		final int stringLength = string.length();
-		final int declaredStart = getIntParameter(runtime, arguments, 1, null);
-		final int declaredLength = getIntParameter(runtime, arguments, 2, stringLength);
+		final int declaredStart = (int)getIntegerParameter(runtime, arguments, 1, null);
+		final int declaredLength = (int)getIntegerParameter(runtime, arguments, 2, (long)stringLength);
 		
 		// shortcut with different return value behavior
 		if (declaredLength == 0) {

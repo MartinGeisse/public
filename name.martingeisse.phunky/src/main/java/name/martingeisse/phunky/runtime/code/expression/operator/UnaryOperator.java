@@ -64,7 +64,7 @@ public enum UnaryOperator {
 		 */
 		@Override
 		public Object applyToValue(final Object operand) {
-			return ~TypeConversionUtil.convertToInt(operand);
+			return ~TypeConversionUtil.convertToInteger(operand);
 		}
 		
 	},
@@ -215,7 +215,7 @@ public enum UnaryOperator {
 		} else if (previousValue instanceof Float) {
 			newValue = ((Float)previousValue) + delta;
 		} else {
-			newValue = TypeConversionUtil.convertToInt(previousValue) + delta;
+			newValue = TypeConversionUtil.convertToInteger(previousValue) + delta;
 		}
 		variable.setValue(newValue);
 		return (returnPreviousValue ? previousValue : newValue);

@@ -65,13 +65,13 @@ public final class TypeConversionUtil {
 	 * @param value the original value
 	 * @return the converted value
 	 */
-	public static int convertToInt(Object value) {
+	public static long convertToInteger(Object value) {
 		if (value == null) {
 			return 0;
 		}
 		if (value instanceof Number) {
 			Number v = (Number)value;
-			return v.intValue();
+			return v.longValue();
 		}
 		if (value instanceof String) {
 			String v = (String)value;
@@ -80,7 +80,7 @@ public final class TypeConversionUtil {
 			}
 			// TODO parse int *prefix* of the string
 			try {
-				return Integer.parseInt(v);
+				return Long.parseLong(v);
 			} catch (NumberFormatException e) {
 				return 1;
 			}
@@ -102,8 +102,7 @@ public final class TypeConversionUtil {
 	 * @return the converted value
 	 */
 	public static boolean convertToBoolean(Object value) {
-		int intValue = convertToInt(value);
-		return (intValue != 0);
+		return (convertToInteger(value) != 0);
 	}
 
 	/**
@@ -134,6 +133,23 @@ public final class TypeConversionUtil {
 		return value.toString();
 	}
 
+	/**
+	 * Converts the specified value to an array key. This is
+	 * also a to-string conversion, but the rules are slightly
+	 * different with respect to floating-point values
+	 * (they'll be rounded first).
+	 * 
+	 * @param value the original value
+	 * @return the converted value
+	 */
+	public static String convertToArrayKey(Object value) {
+		if (value instanceof Number) {
+			return Long.toString(((Number)value).longValue());
+		} else {
+			return convertToString(value);
+		}
+	}
+	
 	/**
 	 * Maps a string to a byte array by mapping each character to
 	 * a byte, keeping only the lowest 8 bits of each character code.

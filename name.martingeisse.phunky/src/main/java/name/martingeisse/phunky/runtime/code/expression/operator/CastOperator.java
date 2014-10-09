@@ -23,7 +23,7 @@ public enum CastOperator {
 		 */
 		@Override
 		public Object apply(final Object operand) {
-			return TypeConversionUtil.convertToInt(operand);
+			return TypeConversionUtil.convertToInteger(operand);
 		}
 
 	},

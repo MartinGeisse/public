@@ -20,7 +20,7 @@ public class OrdFuntion extends BuiltinFunctionWithValueParametersOnly {
 	@Override
 	public Object call(PhpRuntime runtime, Object[] arguments) {
 		String s = getStringParameter(runtime, arguments, 0, null);
-		return (s.isEmpty() ? 0 : s.charAt(0));
+		return (s.isEmpty() ? 0 : (long)s.charAt(0));
 	}
 
 }

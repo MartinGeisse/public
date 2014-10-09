@@ -99,8 +99,8 @@ public enum BinaryOperator {
 				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
 				return x + y;
 			} else {
-				final int x = TypeConversionUtil.convertToInt(leftHandSide);
-				final int y = TypeConversionUtil.convertToInt(rightHandSide);
+				final long x = TypeConversionUtil.convertToInteger(leftHandSide);
+				final long y = TypeConversionUtil.convertToInteger(rightHandSide);
 				return x + y;
 			}
 		}
@@ -130,8 +130,8 @@ public enum BinaryOperator {
 				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
 				return x - y;
 			} else {
-				final int x = TypeConversionUtil.convertToInt(leftHandSide);
-				final int y = TypeConversionUtil.convertToInt(rightHandSide);
+				final long x = TypeConversionUtil.convertToInteger(leftHandSide);
+				final long y = TypeConversionUtil.convertToInteger(rightHandSide);
 				return x - y;
 			}
 		}
@@ -170,8 +170,8 @@ public enum BinaryOperator {
 				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
 				return x * y;
 			} else {
-				final int x = TypeConversionUtil.convertToInt(leftHandSide);
-				final int y = TypeConversionUtil.convertToInt(rightHandSide);
+				final long x = TypeConversionUtil.convertToInteger(leftHandSide);
+				final long y = TypeConversionUtil.convertToInteger(rightHandSide);
 				return x * y;
 			}
 		}
@@ -193,8 +193,8 @@ public enum BinaryOperator {
 				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
 				return x / y;
 			} else {
-				final int x = TypeConversionUtil.convertToInt(leftHandSide);
-				final int y = TypeConversionUtil.convertToInt(rightHandSide);
+				final long x = TypeConversionUtil.convertToInteger(leftHandSide);
+				final long y = TypeConversionUtil.convertToInteger(rightHandSide);
 				return x / y;
 			}
 		}
@@ -216,8 +216,8 @@ public enum BinaryOperator {
 				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
 				return x % y;
 			} else {
-				final int x = TypeConversionUtil.convertToInt(leftHandSide);
-				final int y = TypeConversionUtil.convertToInt(rightHandSide);
+				final long x = TypeConversionUtil.convertToInteger(leftHandSide);
+				final long y = TypeConversionUtil.convertToInteger(rightHandSide);
 				return x % y;
 			}
 		}
@@ -237,8 +237,8 @@ public enum BinaryOperator {
 			final double x = TypeConversionUtil.convertToDouble(leftHandSide);
 			final double y = TypeConversionUtil.convertToDouble(rightHandSide);
 			final double result = Math.pow(x, y);
-			if ((int)result == result) {
-				return (int)result;
+			if ((long)result == result) {
+				return (long)result;
 			} else {
 				return result;
 			}
@@ -313,8 +313,8 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			int leftValue = TypeConversionUtil.convertToInt(leftHandSide);
-			int rightValue = TypeConversionUtil.convertToInt(rightHandSide);
+			long leftValue = TypeConversionUtil.convertToInteger(leftHandSide);
+			long rightValue = TypeConversionUtil.convertToInteger(rightHandSide);
 			return (leftValue & rightValue);
 		}
 
@@ -330,8 +330,8 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			int leftValue = TypeConversionUtil.convertToInt(leftHandSide);
-			int rightValue = TypeConversionUtil.convertToInt(rightHandSide);
+			long leftValue = TypeConversionUtil.convertToInteger(leftHandSide);
+			long rightValue = TypeConversionUtil.convertToInteger(rightHandSide);
 			return (leftValue | rightValue);
 		}
 		
@@ -347,8 +347,8 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			int leftValue = TypeConversionUtil.convertToInt(leftHandSide);
-			int rightValue = TypeConversionUtil.convertToInt(rightHandSide);
+			long leftValue = TypeConversionUtil.convertToInteger(leftHandSide);
+			long rightValue = TypeConversionUtil.convertToInteger(rightHandSide);
 			return (leftValue ^ rightValue);
 		}
 		
@@ -364,8 +364,8 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			int leftValue = TypeConversionUtil.convertToInt(leftHandSide);
-			int rightValue = TypeConversionUtil.convertToInt(rightHandSide);
+			long leftValue = TypeConversionUtil.convertToInteger(leftHandSide);
+			long rightValue = TypeConversionUtil.convertToInteger(rightHandSide);
 			return (leftValue << rightValue);
 		}
 		
@@ -381,8 +381,8 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			int leftValue = TypeConversionUtil.convertToInt(leftHandSide);
-			int rightValue = TypeConversionUtil.convertToInt(rightHandSide);
+			long leftValue = TypeConversionUtil.convertToInteger(leftHandSide);
+			long rightValue = TypeConversionUtil.convertToInteger(rightHandSide);
 			return (leftValue >> rightValue);
 		}
 		
@@ -409,8 +409,8 @@ public enum BinaryOperator {
 				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
 				return x == y;
 			} else {
-				final int x = TypeConversionUtil.convertToInt(leftHandSide);
-				final int y = TypeConversionUtil.convertToInt(rightHandSide);
+				final long x = TypeConversionUtil.convertToInteger(leftHandSide);
+				final long y = TypeConversionUtil.convertToInteger(rightHandSide);
 				return x == y;
 			}
 		}
@@ -538,8 +538,8 @@ public enum BinaryOperator {
 				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
 				return x < y;
 			} else {
-				final int x = TypeConversionUtil.convertToInt(leftHandSide);
-				final int y = TypeConversionUtil.convertToInt(rightHandSide);
+				final long x = TypeConversionUtil.convertToInteger(leftHandSide);
+				final long y = TypeConversionUtil.convertToInteger(rightHandSide);
 				return x < y;
 			}
 		}
@@ -561,8 +561,8 @@ public enum BinaryOperator {
 				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
 				return x <= y;
 			} else {
-				final int x = TypeConversionUtil.convertToInt(leftHandSide);
-				final int y = TypeConversionUtil.convertToInt(rightHandSide);
+				final long x = TypeConversionUtil.convertToInteger(leftHandSide);
+				final long y = TypeConversionUtil.convertToInteger(rightHandSide);
 				return x <= y;
 			}
 		}
@@ -584,8 +584,8 @@ public enum BinaryOperator {
 				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
 				return x > y;
 			} else {
-				final int x = TypeConversionUtil.convertToInt(leftHandSide);
-				final int y = TypeConversionUtil.convertToInt(rightHandSide);
+				final long x = TypeConversionUtil.convertToInteger(leftHandSide);
+				final long y = TypeConversionUtil.convertToInteger(rightHandSide);
 				return x > y;
 			}
 		}
@@ -607,8 +607,8 @@ public enum BinaryOperator {
 				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
 				return x >= y;
 			} else {
-				final int x = TypeConversionUtil.convertToInt(leftHandSide);
-				final int y = TypeConversionUtil.convertToInt(rightHandSide);
+				final long x = TypeConversionUtil.convertToInteger(leftHandSide);
+				final long y = TypeConversionUtil.convertToInteger(rightHandSide);
 				return x >= y;
 			}
 		}

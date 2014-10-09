@@ -1,5 +1,5 @@
 <?php
-if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== FALSE) {
+if (!defined('PHUNKY_VERSION') && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== FALSE) {
 ?>
 <h3>strpos() must have returned non-false</h3>
 <p>You are using Internet Explorer</p>

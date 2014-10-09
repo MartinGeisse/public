@@ -31,6 +31,7 @@ import name.martingeisse.phunky.runtime.builtin.string.TrimFunction;
 import name.martingeisse.phunky.runtime.builtin.string.UcLcFirstCharacterFunction;
 import name.martingeisse.phunky.runtime.builtin.string.hash.Md5Function;
 import name.martingeisse.phunky.runtime.builtin.string.hash.Sha1Function;
+import name.martingeisse.phunky.runtime.builtin.string.search.StrposFunction;
 import name.martingeisse.phunky.runtime.builtin.system.ConstantFunction;
 import name.martingeisse.phunky.runtime.builtin.system.DefineFunction;
 import name.martingeisse.phunky.runtime.builtin.system.DefinedFunction;
@@ -191,6 +192,9 @@ public final class PhpRuntime {
 	 */
 	public void applyStandardDefinitions() {
 		
+		// core
+		getConstants().put("PHUNKY_VERSION", "0.1");
+		
 		// I/O functions
 		addBuiltinCallables(new EchoFunction().setName("echo"));
 		addBuiltinCallables(new PrintFunction().setName("print"));
@@ -219,6 +223,8 @@ public final class PhpRuntime {
 		addBuiltinCallables(new TrimFunction(true, true).setName("trim"));
 		addBuiltinCallables(new UcLcFirstCharacterFunction(true).setName("ucfirst"));
 		addBuiltinCallables(new UcLcFirstCharacterFunction(false).setName("lcfirst"));
+		// ... search
+		addBuiltinCallables(new StrposFunction().setName("strpos"));
 		
 		// hash functions
 		addBuiltinCallables(new Md5Function().setName("md5"));

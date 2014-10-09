@@ -19,7 +19,7 @@ public class ChrFuntion extends BuiltinFunctionWithValueParametersOnly {
 	 */
 	@Override
 	public Object call(PhpRuntime runtime, Object[] arguments) {
-		int characterCode = getIntParameter(runtime, arguments, 0, null); 
+		long characterCode = getIntegerParameter(runtime, arguments, 0, null); 
 		return Character.toString((char)characterCode);
 	}
 

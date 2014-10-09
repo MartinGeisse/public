@@ -24,7 +24,7 @@ public final class ExplodeFunction extends BuiltinFunctionWithValueParametersOnl
 		// extract parameters
 		final String delimiter = getStringParameter(runtime, arguments, 0, null);
 		String subject = getStringParameter(runtime, arguments, 1, null);
-		final int limit = getIntParameter(runtime, arguments, 2, Integer.MAX_VALUE);
+		final long limit = getIntegerParameter(runtime, arguments, 2, Long.MAX_VALUE);
 		
 		// special cases
 		if (limit == 0 || limit == 1) {
@@ -42,7 +42,7 @@ public final class ExplodeFunction extends BuiltinFunctionWithValueParametersOnl
 		// explode the string		
 		ArrayList<String> segments = new ArrayList<String>();
 		final int delimiterLength = delimiter.length();
-		int remainingLimit = limit;
+		long remainingLimit = limit;
 		while (remainingLimit > 1) {
 			int index = subject.indexOf(delimiter);
 			if (index == -1) {

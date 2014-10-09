@@ -58,7 +58,7 @@ public final class UnaryExpression extends AbstractComputeExpression {
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-		return operator.applyToValue(operand.evaluate(environment));
+		return operator.applyToExpression(environment, operand);
 	}
 
 	/* (non-Javadoc)

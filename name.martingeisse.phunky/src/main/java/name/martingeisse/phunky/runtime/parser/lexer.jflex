@@ -77,15 +77,21 @@ import name.martingeisse.phunky.runtime.code.expression.LocalVariableExpression;
 	}
 	
 	private Symbol buildHeredocNowdocString() {
-		// TODO interpolation
-		yybegin(CODE); 
-		return symbol(Tokens.SINGLE_QUOTED_STRING_LITERAL, stringBuilder.toString());
+		// the newline character that separates the content from the end marker
+		// is NOT part of the content
+		if (stringBuilder.length() > 0 && stringBuilder.charAt(stringBuilder.length() - 1) == '\n') {
+			stringBuilder.setLength(stringBuilder.length() - 1);
+		}
+	
+		yybegin(CODE);
+		int token = (heredocNowdocVariableInterpolation ? Tokens.DOUBLE_QUOTED_STRING_LITERAL : Tokens.SINGLE_QUOTED_STRING_LITERAL);
+		return symbol(token, stringBuilder.toString());
 	}
 	
 	// may yield a float due to overflow
 	private Number parseIntegerLiteral(String text, int radix) {
 		try {
-			return Integer.parseInt(text, radix);
+			return Long.parseLong(text, radix);
 		} catch (NumberFormatException e) {
 			return new BigInteger(text, radix).doubleValue();
 		}
@@ -467,7 +473,7 @@ HeredocNowdocContentLine = .* {LineTerminator}
 	}
 	
 	// cast-operator type names. TODO: case-insensitive!
-	"int" | "integer" | "bool" | "boolean" | "float" | "double" | "real" | "string" | "object" {
+	"int" | "integer" | "long" | "bool" | "boolean" | "float" | "double" | "real" | "string" | "object" {
 		return symbol(Tokens.CAST_TYPE_NAME, yytext());
 	}
 	

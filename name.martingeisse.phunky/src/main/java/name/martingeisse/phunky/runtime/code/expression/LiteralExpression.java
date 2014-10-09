@@ -63,7 +63,7 @@ public final class LiteralExpression extends AbstractComputeExpression {
 	public static void dumpLiteral(Object value, CodeDumper dumper) {
 		if (value == null) {
 			dumper.print("null");
-		} else if (value instanceof Boolean || value instanceof Integer || value instanceof Float || value instanceof Double) {
+		} else if (value instanceof Boolean || value instanceof Integer || value instanceof Long || value instanceof Float || value instanceof Double) {
 			dumper.print(value.toString());
 		} else if (value instanceof String) {
 			String v = (String)value;

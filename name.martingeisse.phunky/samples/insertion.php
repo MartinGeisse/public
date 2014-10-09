@@ -1,4 +1,11 @@
 <?php
+
+/*
+ * DOESN'T WORK YET, because PHP will not only insist on its
+ * zval magic for references, but even print out the reference
+ * flag in var_dump. So the output differs by that flag marker.
+ */
+
 echo "\n";
 
 function f(&$x) {

@@ -6,9 +6,7 @@
 
 package name.martingeisse.phunky.runtime.code.expression.array;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
@@ -17,7 +15,7 @@ import name.martingeisse.phunky.runtime.code.expression.Expression;
 import name.martingeisse.phunky.runtime.json.JsonListBuilder;
 import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
 import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
-import name.martingeisse.phunky.runtime.variable.PhpValueArray;
+import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -53,25 +51,19 @@ public class ArrayConstructionExpression extends AbstractComputeExpression {
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-		Map<String, Object> evaluatedElements = new LinkedHashMap<>();
-		int autoIndex = 0;
+		PhpVariableArray builder = new PhpVariableArray();
 		for (Pair<Expression, Expression> element : elements) {
+			boolean hasKey = (element.getLeft() != null);
+			Object originalKey = (hasKey ? element.getLeft().evaluate(environment) : null);
 			Object value = element.getRight().evaluate(environment);
-			if (element.getLeft() == null) {
-				evaluatedElements.put(Integer.toString(autoIndex), value);
-				autoIndex++;
+			if (!hasKey) {
+				builder.append().setValue(value);
 			} else {
-				Object originalKey = element.getLeft().evaluate(environment);
-				String convertedKey;
-				if (originalKey instanceof Number) {
-					convertedKey = Long.toString(((Number)originalKey).longValue());
-				} else {
-					convertedKey = TypeConversionUtil.convertToString(originalKey);
-				}
-				evaluatedElements.put(convertedKey, value);
+				String key = TypeConversionUtil.convertToArrayKey(originalKey);
+				builder.getOrCreateVariable(key).setValue(value);
 			}
 		}
-		return PhpValueArray.fromKeyValueEntries(evaluatedElements.entrySet());
+		return builder.toValueArray();
 	}
 	
 	/* (non-Javadoc)

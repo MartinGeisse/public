@@ -1,6 +1,7 @@
 <?php
 
 // works
+define('ech', 'O');
 echo ech;
 
 // parse error

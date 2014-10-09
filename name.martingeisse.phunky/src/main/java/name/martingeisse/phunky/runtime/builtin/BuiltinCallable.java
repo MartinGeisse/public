@@ -101,7 +101,7 @@ public abstract class BuiltinCallable implements PhpCallable {
 	 * @param defaultValue the default value, or null if none
 	 * @return the value
 	 */
-	protected final int getIntParameter(PhpRuntime runtime, Object[] arguments, int position, Integer defaultValue) {
+	protected final long getIntegerParameter(PhpRuntime runtime, Object[] arguments, int position, Long defaultValue) {
 		if (arguments.length <= position) {
 			if (defaultValue == null) {
 				runtime.triggerError("missing argument #" + position);
@@ -110,7 +110,7 @@ public abstract class BuiltinCallable implements PhpCallable {
 				return defaultValue;
 			}
 		}
-		return TypeConversionUtil.convertToInt(arguments[position]);
+		return TypeConversionUtil.convertToInteger(arguments[position]);
 	}
 	
 	/**

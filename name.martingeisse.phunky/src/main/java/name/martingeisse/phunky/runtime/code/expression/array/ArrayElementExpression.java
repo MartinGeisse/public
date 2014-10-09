@@ -78,9 +78,9 @@ public final class ArrayElementExpression extends AbstractExpression {
 			return array.getValueOrError(environment.getRuntime(), key);
 		} else if (arrayCandidate instanceof String) {
 			String s = (String)arrayCandidate;
-			int index;
+			long index;
 			try {
-				index = Integer.parseInt(key);
+				index = Long.parseLong(key);
 			} catch (NumberFormatException e) {
 				environment.getRuntime().triggerError("Illegal string offset '" + key + "'");
 				return null;
@@ -88,7 +88,8 @@ public final class ArrayElementExpression extends AbstractExpression {
 			if (index < 0 || index >= s.length()) {
 				return "";
 			} else {
-				return s.substring(index, index + 1);
+				int intIndex = (int)index;
+				return s.substring(intIndex, intIndex + 1);
 			}
 		} else {
 			environment.getRuntime().triggerError("trying to get element of non-array value");
