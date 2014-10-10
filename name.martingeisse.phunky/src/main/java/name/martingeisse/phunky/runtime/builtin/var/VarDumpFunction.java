@@ -13,6 +13,7 @@ import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
 import name.martingeisse.phunky.runtime.variable.PhpArray;
 import name.martingeisse.phunky.runtime.variable.PhpValueArray;
+import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 /**
  * The built-in "var_dump" function.
@@ -41,7 +42,7 @@ public class VarDumpFunction extends BuiltinFunctionWithValueParametersOnly {
 		} else if (value instanceof Integer || value instanceof Long) {
 			w.println("int(" + value + ")");
 		} else if (value instanceof Float || value instanceof Double) {
-			w.println("float(" + value + ")");
+			w.println("float(" + TypeConversionUtil.convertToString(value) + ")");
 		} else if (value instanceof Boolean) {
 			w.println("bool(" + value + ")");
 		} else if (value instanceof String) {

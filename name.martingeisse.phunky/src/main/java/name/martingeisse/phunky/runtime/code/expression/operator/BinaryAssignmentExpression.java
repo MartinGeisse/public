@@ -10,6 +10,7 @@ import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpressio
 import name.martingeisse.phunky.runtime.code.expression.Expression;
 import name.martingeisse.phunky.runtime.json.JsonObjectBuilder;
 import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
+import name.martingeisse.phunky.runtime.variable.ValueAcceptor;
 import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
@@ -81,14 +82,17 @@ public final class BinaryAssignmentExpression extends AbstractComputeExpression 
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-		final Variable leftHandVariable = leftHandSide.getOrCreateVariable(environment);
-		if (leftHandVariable == null) {
+		final ValueAcceptor leftHandValueAcceptor = leftHandSide.getOrCreateVariable(environment);
+		if (leftHandValueAcceptor == null) {
 			environment.getRuntime().triggerError("cannot assign to " + leftHandSide);
 			return null;
 		}
+		
+		WHAT ABOUT $s[5] .= 'foo' ???
+		
 		final Object rightHandValue = rightHandSide.evaluate(environment);
 		final Object resultValue = operator.applyToValues(leftHandVariable.getValue(), rightHandValue);
-		leftHandVariable.setValue(resultValue);
+		leftHandValueAcceptor.acceptValue(resultValue);
 		return resultValue;
 	}
 

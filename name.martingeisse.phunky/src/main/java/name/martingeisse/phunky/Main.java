@@ -27,7 +27,7 @@ public final class Main {
 	 * @param args command-line arguments (currently ignored)
 	 */
 	public static void main(String[] args) {
-		int skip = 20, max = 5;
+		int skip = 26, max = 5;
 //		dumpSample(new File("samples/sample87.php"));
 		
 		for (File file : new File("samples").listFiles()) {

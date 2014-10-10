@@ -25,9 +25,19 @@ public enum UnaryOperator {
 		@Override
 		public Object applyToValue(final Object operand) {
 			if (operand instanceof Integer) {
-				return -((Integer)operand);
+				Integer i = (Integer)operand;
+				if (i.intValue() == Integer.MIN_VALUE) {
+					return -(long)i;
+				} else {
+					return -i;
+				}
 			} else if (operand instanceof Long) {
-				return -((Long)operand);
+				Long l = (Long)operand;
+				if (l.longValue() == Long.MIN_VALUE) {
+					return -(double)l;
+				} else {
+					return -l;
+				}
 			} else if (operand instanceof Float) {
 				return -((Float)operand);
 			} else if (operand instanceof Double) {
@@ -203,20 +213,13 @@ public enum UnaryOperator {
 	 * 
 	 */
 	protected final Object handleIncrementDecrement(Environment environment, Expression expression, int delta, boolean returnPreviousValue) {
-		final Variable variable = expression.getOrCreateVariable(environment);
+		final Variable variable = expression.resolveOrCreateVariable(environment);
 		if (variable == null) {
 			environment.getRuntime().triggerError("cannot assign to " + expression);
 			return null;
 		}
 		final Object previousValue = variable.getValue();
-		final Object newValue;
-		if (previousValue instanceof Double) {
-			newValue = ((Double)previousValue) + delta;
-		} else if (previousValue instanceof Float) {
-			newValue = ((Float)previousValue) + delta;
-		} else {
-			newValue = TypeConversionUtil.convertToInteger(previousValue) + delta;
-		}
+		final Object newValue = BinaryOperator.ADD.applyToValues(previousValue, delta);
 		variable.setValue(newValue);
 		return (returnPreviousValue ? previousValue : newValue);
 	}

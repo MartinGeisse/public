@@ -6,6 +6,8 @@
 
 package name.martingeisse.phunky.runtime.variable;
 
+import org.apache.commons.lang3.StringUtils;
+
 
 /**
  * Utility methods for type conversion.
@@ -129,6 +131,24 @@ public final class TypeConversionUtil {
 		}
 		if (value instanceof PhpValueArray) {
 			return "Array";
+		}
+		if (value instanceof Float || value instanceof Double) {
+			String s = String.format("%.14g", value);
+			int decimalPointIndex = s.indexOf('.');
+			if (decimalPointIndex == -1) {
+				return s.toUpperCase();
+			}
+			int exponentSeparatorIndex = s.indexOf('e', decimalPointIndex + 1);
+			if (exponentSeparatorIndex == -1) {
+				s = StringUtils.stripEnd(s, "0");
+				s = StringUtils.stripEnd(s, ".");
+				return s;
+			}
+			String mantissa = StringUtils.stripEnd(s.substring(0, exponentSeparatorIndex), "0");
+			if (mantissa.charAt(mantissa.length() - 1) == '.') {
+				mantissa += '0';
+			}
+			return mantissa + 'E' + s.substring(exponentSeparatorIndex + 1);
 		}
 		return value.toString();
 	}

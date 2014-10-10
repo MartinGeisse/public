@@ -5,6 +5,7 @@
 package name.martingeisse.phunky.runtime.code.expression;
 
 import name.martingeisse.phunky.runtime.Environment;
+import name.martingeisse.phunky.runtime.assignment.AssignmentTarget;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.CodeLocation;
 import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
@@ -37,7 +38,10 @@ public interface Expression {
 	public void setLocation(CodeLocation location);
 	
 	/**
-	 * Evaluates this expression.
+	 * Evaluates this expression. This is used when this expression is
+	 * used as part of another expression or as the value source in an
+	 * assignment.
+	 * 
 	 * @param environment the environment
 	 * @return the value of the expression
 	 */
@@ -53,37 +57,34 @@ public interface Expression {
 	public Object evaluateForEmptyCheck(Environment environment);
 
 	/**
-	 * Obtains the variable for this expression, if any.
-	 * @param environment the environment
-	 * @return the variable or null
-	 */
-	public Variable getVariable(Environment environment);
-	
-	/**
 	 * Obtains the variable for this expression; creates the variable if there could be
 	 * one but isn't; returns null if this expression cannot denote a variable.
+	 * This is used to implement the right-hand side for reference
+	 * assignments.
+	 * 
+	 * Note that this cannot be used to implement the left-hand side of a
+	 * value assignment because the evaluation order would be wrong.
+	 * The target variable of a value assignment is resolved partly before,
+	 * partly after resolving the right-hand side. Use {@link #resolveValueAcceptor(Environment)}
+	 * to implement the "before" part and use the value acceptor itself
+	 * to implement the "after" part.
 	 * 
 	 * @param environment the environment
 	 * @return the variable or null
 	 */
-	public Variable getOrCreateVariable(Environment environment);
+	public Variable resolveOrCreateVariable(Environment environment);
 	
 	/**
-	 * Expects this expression to denote the name for a variable, unbinds
-	 * from the previous variable, and binds it to the specified variable.
-	 * This occurs when this expression is used for the left-hand side of
-	 * a reference assignment.
+	 * Obtains the value acceptor for this expression; returns null if this
+	 * expression cannot denote a value acceptor. This is used to
+	 * implement the left-hand side of both value assignments and
+	 * reference assignments.
 	 * 
-	 * If the variable argument is null then this method just unbinds from
-	 * the previous variable. This is used to implement PHP's unset()
-	 * special form.
-	 * 
-	 * @param environment the environment that is needed to resolve the name
-	 * denoted by this expression
-	 * @param variable the variable to bind to, or null to unbind only
+	 * @param environment the environment
+	 * @return the value acceptor or null
 	 */
-	public void bindVariableReference(Environment environment, Variable variable);
-
+	public AssignmentTarget resolveValueAcceptor(Environment environment);
+	
 	/**
 	 * Dumps this expression using the specified code dumper.
 	 * @param dumper the code dumper

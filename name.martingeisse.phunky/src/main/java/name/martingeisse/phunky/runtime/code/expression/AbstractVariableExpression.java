@@ -17,7 +17,7 @@ public abstract class AbstractVariableExpression extends AbstractExpression {
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-		Variable variable = getVariable(environment);
+		Variable variable = resolveVariable(environment);
 		if (variable == null) {
 			environment.getRuntime().triggerError("not a variable: " + this);
 			return null;
@@ -31,12 +31,19 @@ public abstract class AbstractVariableExpression extends AbstractExpression {
 	 */
 	@Override
 	public Object evaluateForEmptyCheck(Environment environment) {
-		Variable variable = getVariable(environment);
+		Variable variable = resolveVariable(environment);
 		if (variable == null) {
 			return null;
 		} else {
 			return variable.getValue();
 		}
 	}
+
+	/**
+	 * Obtains the variable for this expression, if any.
+	 * @param environment the environment
+	 * @return the variable or null
+	 */
+	public abstract Variable resolveVariable(Environment environment);
 
 }

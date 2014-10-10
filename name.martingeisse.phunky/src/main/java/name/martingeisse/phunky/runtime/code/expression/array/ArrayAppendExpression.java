@@ -63,7 +63,7 @@ public final class ArrayAppendExpression extends AbstractExpression {
 	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#getVariable(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
-	public Variable getVariable(Environment environment) {
+	public Variable resolveVariable(Environment environment) {
 		return null;
 	}
 
@@ -71,7 +71,7 @@ public final class ArrayAppendExpression extends AbstractExpression {
 	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#getOrCreateVariable(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
-	public Variable getOrCreateVariable(Environment environment) {
+	public Variable resolveOrCreateVariable(Environment environment) {
 		PhpVariableArray variableArray = obtainArray(environment);
 		return (variableArray == null ? null : variableArray.append());
 	}
@@ -96,7 +96,7 @@ public final class ArrayAppendExpression extends AbstractExpression {
 	 */
 	private PhpVariableArray obtainArray(Environment environment) {
 		// note that arrays are a value type, so getting the variable for an element also gets the variable for the array
-		Variable arrayVariable = arrayExpression.getOrCreateVariable(environment);
+		Variable arrayVariable = arrayExpression.resolveOrCreateVariable(environment);
 		if (arrayVariable == null) {
 			environment.getRuntime().triggerError("cannot use this expression as an array: " + arrayExpression);
 			return null;

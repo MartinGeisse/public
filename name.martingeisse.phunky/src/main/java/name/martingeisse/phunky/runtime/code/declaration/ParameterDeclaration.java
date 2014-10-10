@@ -136,7 +136,7 @@ public final class ParameterDeclaration {
 		} else {
 			if (referenceParameter) {
 				// reference parameter
-				calleeEnvironment.put(name, argumentExpression.getOrCreateVariable(callerEnvironment));
+				calleeEnvironment.put(name, argumentExpression.resolveOrCreateVariable(callerEnvironment));
 			} else {
 				// value parameter
 				calleeEnvironment.put(name, new Variable(argumentExpression.evaluate(callerEnvironment)));

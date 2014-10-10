@@ -5,6 +5,7 @@
 package name.martingeisse.phunky.runtime.code.expression;
 
 import name.martingeisse.phunky.runtime.Environment;
+import name.martingeisse.phunky.runtime.assignment.AssignmentTarget;
 import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
@@ -21,27 +22,20 @@ public abstract class AbstractComputeExpression extends AbstractExpression {
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.code.Expression#getVariable(name.martingeisse.phunky.runtime.Environment)
-	 */
-	@Override
-	public final Variable getVariable(Environment environment) {
-		return null;
-	}
-	
-	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.code.Expression#getOrCreateVariable(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
-	public final Variable getOrCreateVariable(Environment environment) {
+	public final Variable resolveOrCreateVariable(Environment environment) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#resolveValueAcceptor(name.martingeisse.phunky.runtime.Environment)
+	 */
+	@Override
+	public AssignmentTarget resolveValueAcceptor(Environment environment) {
+		environment.getRuntime().triggerError("cannot assign to " + this);
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#bindVariableReference(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.variable.Variable)
-	 */
-	@Override
-	public void bindVariableReference(Environment environment, Variable variable) {
-		environment.getRuntime().triggerError("cannot bind a reference to " + this);
-	}
-
 }

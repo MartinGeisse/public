@@ -68,7 +68,7 @@ public final class ReferenceAssignmentExpression extends AbstractComputeExpressi
 		// I'll probably need a new concept of "variable location" to implement
 		// reference assignment properly.
 		
-		final Variable rightHandVariable = rightHandSide.getVariable(environment);
+		final Variable rightHandVariable = rightHandSide.resolveOrCreateVariable(environment);
 		if (rightHandVariable != null) {
 			leftHandSide.bindVariableReference(environment, rightHandVariable);
 		}

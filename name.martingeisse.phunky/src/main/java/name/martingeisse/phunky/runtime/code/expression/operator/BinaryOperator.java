@@ -94,14 +94,10 @@ public enum BinaryOperator {
 				addElements((PhpValueArray)rightHandSide, result);
 				addElements((PhpValueArray)leftHandSide, result);
 				return result;
-			} else if ((leftHandSide instanceof Double) || (rightHandSide instanceof Double) || (leftHandSide instanceof Float) || (rightHandSide instanceof Float)) {
+			} else {
 				final double x = TypeConversionUtil.convertToDouble(leftHandSide);
 				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
-				return x + y;
-			} else {
-				final long x = TypeConversionUtil.convertToInteger(leftHandSide);
-				final long y = TypeConversionUtil.convertToInteger(rightHandSide);
-				return x + y;
+				return normalizeNumber(x + y);
 			}
 		}
 		
@@ -125,15 +121,9 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			if ((leftHandSide instanceof Double) || (rightHandSide instanceof Double) || (leftHandSide instanceof Float) || (rightHandSide instanceof Float)) {
-				final double x = TypeConversionUtil.convertToDouble(leftHandSide);
-				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
-				return x - y;
-			} else {
-				final long x = TypeConversionUtil.convertToInteger(leftHandSide);
-				final long y = TypeConversionUtil.convertToInteger(rightHandSide);
-				return x - y;
-			}
+			final double x = TypeConversionUtil.convertToDouble(leftHandSide);
+			final double y = TypeConversionUtil.convertToDouble(rightHandSide);
+			return normalizeNumber(x - y);
 		}
 
 	},
@@ -165,15 +155,9 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			if ((leftHandSide instanceof Double) || (rightHandSide instanceof Double) || (leftHandSide instanceof Float) || (rightHandSide instanceof Float)) {
-				final double x = TypeConversionUtil.convertToDouble(leftHandSide);
-				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
-				return x * y;
-			} else {
-				final long x = TypeConversionUtil.convertToInteger(leftHandSide);
-				final long y = TypeConversionUtil.convertToInteger(rightHandSide);
-				return x * y;
-			}
+			final double x = TypeConversionUtil.convertToDouble(leftHandSide);
+			final double y = TypeConversionUtil.convertToDouble(rightHandSide);
+			return normalizeNumber(x * y);
 		}
 
 	},
@@ -188,15 +172,9 @@ public enum BinaryOperator {
 		 */
 		@Override
 		public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
-			if ((leftHandSide instanceof Double) || (rightHandSide instanceof Double) || (leftHandSide instanceof Float) || (rightHandSide instanceof Float)) {
-				final double x = TypeConversionUtil.convertToDouble(leftHandSide);
-				final double y = TypeConversionUtil.convertToDouble(rightHandSide);
-				return x / y;
-			} else {
-				final long x = TypeConversionUtil.convertToInteger(leftHandSide);
-				final long y = TypeConversionUtil.convertToInteger(rightHandSide);
-				return x / y;
-			}
+			final double x = TypeConversionUtil.convertToDouble(leftHandSide);
+			final double y = TypeConversionUtil.convertToDouble(rightHandSide);
+			return normalizeNumber(x / y);
 		}
 
 	},
@@ -665,6 +643,18 @@ public enum BinaryOperator {
 	 */
 	public Object applyToValues(final Object leftHandSide, final Object rightHandSide) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("operator " + this + " cannot be applied to values");
+	}
+	
+	/**
+	 * Converts the specified number fo long type if possible without rounding, otherwise keeps
+	 * it at double type.
+	 * 
+	 * @param x the number to normalize
+	 * @return the result
+	 */
+	protected final Number normalizeNumber(double x) {
+		long l = (long)x;
+		return (l == x ? new Long(l) : new Double(x));
 	}
 
 }

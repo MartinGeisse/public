@@ -116,7 +116,7 @@ public final class ArrayElementExpression extends AbstractExpression {
 	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#getVariable(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
-	public Variable getVariable(final Environment environment) {
+	public Variable resolveVariable(final Environment environment) {
 		// TODO there's no such thing as "get variable but don't create",
 		// neither for array elements nor for local variables. Using a
 		// non-existing variable as a reference target creates it.
@@ -136,7 +136,7 @@ public final class ArrayElementExpression extends AbstractExpression {
 	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#getOrCreateVariable(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
-	public Variable getOrCreateVariable(final Environment environment) {
+	public Variable resolveOrCreateVariable(final Environment environment) {
 		Pair<PhpVariableArray, String> variableArrayAndKey = obtainVariableArrayAndKey(environment);
 		if (variableArrayAndKey == null) {
 			return null;
@@ -169,7 +169,7 @@ public final class ArrayElementExpression extends AbstractExpression {
 	 */
 	private Pair<PhpVariableArray, String> obtainVariableArrayAndKey(Environment environment) {
 		// note that arrays are a value type, so getting the variable for an element also gets the variable for the array
-		Variable arrayVariable = arrayExpression.getOrCreateVariable(environment);
+		Variable arrayVariable = arrayExpression.resolveOrCreateVariable(environment);
 		String key = TypeConversionUtil.convertToString(keyExpression.evaluate(environment));
 		if (arrayVariable == null) {
 			environment.getRuntime().triggerError("cannot use this expression as an array: " + arrayExpression);

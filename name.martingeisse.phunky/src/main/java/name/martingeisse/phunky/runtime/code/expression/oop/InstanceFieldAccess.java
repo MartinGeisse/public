@@ -5,6 +5,7 @@
 package name.martingeisse.phunky.runtime.code.expression.oop;
 
 import name.martingeisse.phunky.runtime.Environment;
+import name.martingeisse.phunky.runtime.assignment.AssignmentTarget;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.AbstractVariableExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
@@ -12,7 +13,6 @@ import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
 import name.martingeisse.phunky.runtime.variable.Variable;
 
 import org.apache.commons.lang3.NotImplementedException;
-
 
 /**
  * This expression accesses a field of an object.
@@ -23,7 +23,7 @@ public final class InstanceFieldAccess extends AbstractVariableExpression {
 	 * the objectExpression
 	 */
 	private final Expression objectExpression;
-	
+
 	/**
 	 * the fieldNameExpression
 	 */
@@ -59,7 +59,7 @@ public final class InstanceFieldAccess extends AbstractVariableExpression {
 	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#getVariable(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
-	public Variable getVariable(Environment environment) {
+	public Variable resolveVariable(Environment environment) {
 		// TODO
 		throw new NotImplementedException("");
 	}
@@ -68,16 +68,16 @@ public final class InstanceFieldAccess extends AbstractVariableExpression {
 	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#getOrCreateVariable(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
-	public Variable getOrCreateVariable(Environment environment) {
+	public Variable resolveOrCreateVariable(Environment environment) {
 		// TODO
 		throw new NotImplementedException("");
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#bindVariableReference(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.variable.Variable)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#resolveValueAcceptor(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
-	public void bindVariableReference(Environment environment, Variable variable) {
+	public AssignmentTarget resolveValueAcceptor(Environment environment) {
 		// TODO
 		throw new NotImplementedException("");
 	}
@@ -100,5 +100,5 @@ public final class InstanceFieldAccess extends AbstractVariableExpression {
 		// TODO
 		throw new NotImplementedException("");
 	}
-	
+
 }

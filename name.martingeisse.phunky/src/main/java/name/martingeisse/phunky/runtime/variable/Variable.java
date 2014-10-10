@@ -83,7 +83,7 @@ public final class Variable {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Setter method for the value.
 	 * @param value the value to set
