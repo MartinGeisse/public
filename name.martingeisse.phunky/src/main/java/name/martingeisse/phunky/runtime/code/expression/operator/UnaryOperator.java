@@ -215,7 +215,7 @@ public enum UnaryOperator {
 	protected final Object handleIncrementDecrement(Environment environment, Expression expression, int delta, boolean returnPreviousValue) {
 		final Variable variable = expression.resolveOrCreateVariable(environment);
 		if (variable == null) {
-			environment.getRuntime().triggerError("cannot assign to " + expression);
+			environment.getRuntime().triggerError("cannot assign to " + expression, expression.getLocation());
 			return null;
 		}
 		final Object previousValue = variable.getValue();

@@ -93,7 +93,7 @@ public final class ForeachStatement extends AbstractStatement {
 		try {
 			Object container = containerExpression.evaluate(environment);
 			if (!(container instanceof PhpValueIterationProvider)) {
-				environment.getRuntime().triggerError("invalid argument for foreach: " + container);
+				environment.getRuntime().triggerError("invalid argument for foreach: " + container, getLocation());
 			} else {
 				PhpValueIterationProvider iterationProvider = (PhpValueIterationProvider)container;
 				iterationProvider.iterate(environment, keyIterationVariableName, valueIterationVariableName, body);

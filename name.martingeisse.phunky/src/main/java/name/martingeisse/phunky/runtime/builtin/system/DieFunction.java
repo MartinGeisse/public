@@ -9,6 +9,7 @@ package name.martingeisse.phunky.runtime.builtin.system;
 import name.martingeisse.phunky.runtime.ExitException;
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 /**
@@ -17,10 +18,10 @@ import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 public class DieFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])
+	 * @see name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly#call(name.martingeisse.phunky.runtime.PhpRuntime, name.martingeisse.phunky.runtime.code.CodeLocation, java.lang.Object[])
 	 */
 	@Override
-	public Object call(PhpRuntime runtime, Object[] arguments) {
+	public Object call(PhpRuntime runtime, CodeLocation location, Object[] arguments) {
 		int exitCode = 0;
 		String exitMessage = "";
 		if (arguments.length > 0) {

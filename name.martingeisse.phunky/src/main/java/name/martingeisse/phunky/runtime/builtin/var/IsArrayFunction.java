@@ -8,6 +8,7 @@ package name.martingeisse.phunky.runtime.builtin.var;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 import name.martingeisse.phunky.runtime.variable.PhpValueArray;
 
 /**
@@ -16,10 +17,10 @@ import name.martingeisse.phunky.runtime.variable.PhpValueArray;
 public class IsArrayFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])
+	 * @see name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly#call(name.martingeisse.phunky.runtime.PhpRuntime, name.martingeisse.phunky.runtime.code.CodeLocation, java.lang.Object[])
 	 */
 	@Override
-	public Object call(PhpRuntime runtime, Object[] arguments) {
+	public Object call(PhpRuntime runtime, CodeLocation location, Object[] arguments) {
 		return (arguments.length > 0 && arguments[0] instanceof PhpValueArray);
 	}
 

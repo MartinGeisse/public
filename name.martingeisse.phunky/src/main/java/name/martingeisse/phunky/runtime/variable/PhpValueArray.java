@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.PhpRuntime;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 import name.martingeisse.phunky.runtime.code.statement.Statement;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -145,13 +146,13 @@ public final class PhpValueArray extends PhpArray implements PhpValueIterationPr
 	}
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.value.PhpArray#getValueOrError(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.String)
+	 * @see name.martingeisse.phunky.runtime.variable.PhpArray#getValueOrError(name.martingeisse.phunky.runtime.PhpRuntime, name.martingeisse.phunky.runtime.code.CodeLocation, java.lang.String)
 	 */
 	@Override
-	public Object getValueOrError(PhpRuntime runtime, String key) {
+	public Object getValueOrError(PhpRuntime runtime, CodeLocation location, String key) {
 		Object value = elements.get(key);
 		if (value == null && !elements.containsKey(key)) {
-			runtime.triggerError("undefined index: " + key);
+			runtime.triggerError("undefined index: " + key, location);
 		}
 		return value;
 	}

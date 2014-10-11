@@ -6,6 +6,7 @@ package name.martingeisse.phunky.runtime.builtin;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.PhpRuntime;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
 
 /**
@@ -15,23 +16,24 @@ import name.martingeisse.phunky.runtime.code.expression.Expression;
 public abstract class BuiltinFunctionWithValueParametersOnly extends BuiltinCallable {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.PhpCallable#call(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.code.expression.Expression[])
+	 * @see name.martingeisse.phunky.runtime.PhpCallable#call(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.code.CodeLocation, name.martingeisse.phunky.runtime.code.expression.Expression[])
 	 */
 	@Override
-	public final Object call(Environment environment, Expression[] argumentExpressions) {
+	public Object call(Environment environment, CodeLocation location, Expression[] argumentExpressions) {
 		final Object[] arguments = new Object[argumentExpressions.length];
 		for (int i=0; i<arguments.length; i++) {
 			arguments[i] = argumentExpressions[i].evaluate(environment);
 		}
-		return call(environment.getRuntime(), arguments);
+		return call(environment.getRuntime(), location, arguments);
 	}
 
 	/**
 	 * The actual implementation of this function.
 	 * @param runtime the PHP runtime
+	 * @param location the location in code, used for error reporting
 	 * @param arguments the argument values
 	 * @return the return value
 	 */
-	public abstract Object call(PhpRuntime runtime, Object[] arguments);
+	public abstract Object call(PhpRuntime runtime, CodeLocation location, Object[] arguments);
 
 }

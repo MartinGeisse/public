@@ -6,6 +6,7 @@ package name.martingeisse.phunky.runtime.builtin.string.search;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 
 /**
  * Base class for the built-in string searching functions. These all take 
@@ -30,34 +31,35 @@ import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParamete
 public abstract class AbstractStringSearchFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])
+	 * @see name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly#call(name.martingeisse.phunky.runtime.PhpRuntime, name.martingeisse.phunky.runtime.code.CodeLocation, java.lang.Object[])
 	 */
 	@Override
-	public Object call(PhpRuntime runtime, Object[] arguments) {
-		final String haystack = getStringParameter(runtime, arguments, 0, null);
-		final Object rawNeedle = getMixedParameter(runtime, arguments, 1, null, true);
-		final int offset = (int)getIntegerParameter(runtime, arguments, 2, 0L);
+	public Object call(PhpRuntime runtime, CodeLocation location, Object[] arguments) {
+		final String haystack = getStringParameter(runtime, location, arguments, 0, null);
+		final Object rawNeedle = getMixedParameter(runtime, location, arguments, 1, null, true);
+		final int offset = (int)getIntegerParameter(runtime, location, arguments, 2, 0L);
 		if (rawNeedle == null) {
 			return null;
 		} else if (rawNeedle instanceof String) {
-			return search(runtime, haystack, (String)rawNeedle, offset, arguments);
+			return search(runtime, location, haystack, (String)rawNeedle, offset, arguments);
 		} else {
-			char needle = (char)getIntegerParameter(runtime, arguments, 1, null);
-			return search(runtime, haystack, needle, offset, arguments);
+			char needle = (char)getIntegerParameter(runtime, location, arguments, 1, null);
+			return search(runtime, location, haystack, needle, offset, arguments);
 		}
 	}
 
 	/**
 	 * Searches the haystack for the needle.
 	 * @param runtime the runtime
+	 * @param location the location in code (used for error reporting)
 	 * @param haystack the haystack to search
 	 * @param needle the needle to look for
 	 * @param arguments the arguments, in case additional arguments can be recognized
 	 * @return the function return value
 	 */
-	protected Object search(PhpRuntime runtime, String haystack, String needle, int offset, Object[] arguments) {
+	protected Object search(PhpRuntime runtime, CodeLocation location, String haystack, String needle, int offset, Object[] arguments) {
 		char needleCharacter = (needle.isEmpty() ? 0 : needle.charAt(0));
-		return search(runtime, haystack, needleCharacter, offset, arguments);
+		return search(runtime, location, haystack, needleCharacter, offset, arguments);
 	}
 
 	/**
@@ -68,13 +70,14 @@ public abstract class AbstractStringSearchFunction extends BuiltinFunctionWithVa
 	 * Subclasses are free to implement a 
 	 * 
 	 * @param runtime the runtime
+	 * @param location the location in code (used for error reporting)
 	 * @param haystack the haystack to search
 	 * @param needle the needle to look for
 	 * @param arguments the arguments, in case additional arguments can be recognized
 	 * @return the function return value
 	 */
-	protected Object search(PhpRuntime runtime, String haystack, char needle, int offset, Object[] arguments) {
-		return search(runtime, haystack, Character.toString(needle), offset, arguments);
+	protected Object search(PhpRuntime runtime, CodeLocation location, String haystack, char needle, int offset, Object[] arguments) {
+		return search(runtime, location, haystack, Character.toString(needle), offset, arguments);
 	}
 
 }

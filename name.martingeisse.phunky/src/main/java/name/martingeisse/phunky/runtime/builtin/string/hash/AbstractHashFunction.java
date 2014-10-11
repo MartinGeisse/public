@@ -8,6 +8,7 @@ package name.martingeisse.phunky.runtime.builtin.string.hash;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 /**
@@ -16,12 +17,12 @@ import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 public abstract class AbstractHashFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])
+	 * @see name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly#call(name.martingeisse.phunky.runtime.PhpRuntime, name.martingeisse.phunky.runtime.code.CodeLocation, java.lang.Object[])
 	 */
 	@Override
-	public Object call(PhpRuntime runtime, Object[] arguments) {
-		String s = getStringParameter(runtime, arguments, 0, null);
-		boolean raw = getBooleanParameter(runtime, arguments, 1, false);
+	public Object call(PhpRuntime runtime, CodeLocation location, Object[] arguments) {
+		String s = getStringParameter(runtime, location, arguments, 0, null);
+		boolean raw = getBooleanParameter(runtime, location, arguments, 1, false);
 		byte[] hashCode = hash(TypeConversionUtil.mapStringDirectlyToBinary(s));
 		StringBuilder builder = new StringBuilder();
 		for (byte b : hashCode) {

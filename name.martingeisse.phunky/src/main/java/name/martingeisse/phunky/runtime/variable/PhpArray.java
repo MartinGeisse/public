@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 
 /**
  * PHP Array. This is similar to a {@link LinkedHashMap}, i.e. a map with an
@@ -83,10 +84,11 @@ public abstract class PhpArray {
 	 * this object itself.
 	 * 
 	 * @param runtime the runtime used to trigger an error
+	 * @param location the location in code used to trigger an error
 	 * @param key the key
 	 * @return the value
 	 */
-	public abstract Object getValueOrError(final PhpRuntime runtime, final String key);
+	public abstract Object getValueOrError(final PhpRuntime runtime, final CodeLocation location, final String key);
 	
 	/**
 	 * Returns an {@link Iterable} that directly iterates over the current keys.

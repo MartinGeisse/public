@@ -9,6 +9,7 @@ package name.martingeisse.phunky.runtime.code.declaration;
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.PhpCallable;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
 import name.martingeisse.phunky.runtime.code.expression.LiteralExpression;
 import name.martingeisse.phunky.runtime.code.statement.AbstractStatement;
@@ -91,7 +92,7 @@ public final class FunctionDefinition extends AbstractStatement {
 		definitionEnvironment.getRuntime().getLog().beginStatement("function");
 		definitionEnvironment.getRuntime().getFunctions().put(name, new PhpCallable() {
 			@Override
-			public Object call(Environment callerEnvironment, Expression[] argumentExpressions) {
+			public Object call(Environment callerEnvironment, CodeLocation location, Expression[] argumentExpressions) {
 				final String contextDescription = "function " + name + "()";
 				final Environment calleeEnvironment = new Environment(callerEnvironment.getRuntime());
 				for (int i=0; i<parameters.length; i++) {

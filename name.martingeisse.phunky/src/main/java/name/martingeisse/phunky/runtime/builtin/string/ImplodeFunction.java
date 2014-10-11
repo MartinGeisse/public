@@ -6,6 +6,7 @@ package name.martingeisse.phunky.runtime.builtin.string;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 import name.martingeisse.phunky.runtime.variable.PhpValueArray;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
@@ -15,14 +16,14 @@ import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 public final class ImplodeFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])
+	 * @see name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly#call(name.martingeisse.phunky.runtime.PhpRuntime, name.martingeisse.phunky.runtime.code.CodeLocation, java.lang.Object[])
 	 */
 	@Override
-	public Object call(PhpRuntime runtime, Object[] arguments) {
+	public Object call(PhpRuntime runtime, CodeLocation location, Object[] arguments) {
 			
 		// extract parameters
 		if (arguments.length != 2) {
-			runtime.triggerError("implode() expects exactly 2 arguments, has " + arguments.length);
+			runtime.triggerError("implode() expects exactly 2 arguments, has " + arguments.length, location);
 			return "";
 		}
 		boolean firstIsArray = (arguments[0] instanceof PhpValueArray);
@@ -31,7 +32,7 @@ public final class ImplodeFunction extends BuiltinFunctionWithValueParametersOnl
 		String glue;
 		if (firstIsArray) {
 			if (secondIsArray) {
-				runtime.triggerError("Both arguments to implode() are arrays; cannot determine argument order");
+				runtime.triggerError("Both arguments to implode() are arrays; cannot determine argument order", location);
 				return "";
 			} else {
 				array = (PhpValueArray)arguments[0];
@@ -42,7 +43,7 @@ public final class ImplodeFunction extends BuiltinFunctionWithValueParametersOnl
 				glue = TypeConversionUtil.convertToString(arguments[0]);
 				array = (PhpValueArray)arguments[1];
 			} else {
-				runtime.triggerError("Neither argument to implode() is an array");
+				runtime.triggerError("Neither argument to implode() is an array", location);
 				return "";
 			}
 		}

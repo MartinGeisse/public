@@ -7,6 +7,8 @@
 package name.martingeisse.phunky.runtime.code.expression.array;
 
 import name.martingeisse.phunky.runtime.Environment;
+import name.martingeisse.phunky.runtime.assignment.ArrayAppendAssignmentTarget;
+import name.martingeisse.phunky.runtime.assignment.AssignmentTarget;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.AbstractExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
@@ -32,7 +34,7 @@ public final class ArrayAppendExpression extends AbstractExpression {
 	public ArrayAppendExpression(final Expression arrayExpression) {
 		this.arrayExpression = arrayExpression;
 	}
-	
+
 	/**
 	 * Getter method for the arrayExpression.
 	 * @return the arrayExpression
@@ -40,30 +42,22 @@ public final class ArrayAppendExpression extends AbstractExpression {
 	public Expression getArrayExpression() {
 		return arrayExpression;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#evaluate(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-		environment.getRuntime().triggerError("cannot evaluate an append-to-array expression");
+		environment.getRuntime().triggerError("cannot evaluate an append-to-array expression", getLocation());
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#evaluateForEmptyCheck(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
 	public Object evaluateForEmptyCheck(Environment environment) {
-		environment.getRuntime().triggerError("cannot evaluate-for-empty-check an append-to-array expression");
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#getVariable(name.martingeisse.phunky.runtime.Environment)
-	 */
-	@Override
-	public Variable resolveVariable(Environment environment) {
+		environment.getRuntime().triggerError("cannot evaluate-for-empty-check an append-to-array expression", getLocation());
 		return null;
 	}
 
@@ -75,22 +69,15 @@ public final class ArrayAppendExpression extends AbstractExpression {
 		PhpVariableArray variableArray = obtainArray(environment);
 		return (variableArray == null ? null : variableArray.append());
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#bindVariableReference(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.variable.Variable)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#resolveAssignmentTarget(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
-	public void bindVariableReference(Environment environment, Variable variable) {
-		if (variable == null) {
-			environment.getRuntime().triggerError("trying to unset() an array-append expression");
-			return;
-		}
-		PhpVariableArray variableArray = obtainArray(environment);
-		if (variableArray != null) {
-			variableArray.append(variable);
-		}
+	public AssignmentTarget resolveAssignmentTarget(Environment environment) {
+		return new ArrayAppendAssignmentTarget(obtainArray(environment));
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -98,10 +85,10 @@ public final class ArrayAppendExpression extends AbstractExpression {
 		// note that arrays are a value type, so getting the variable for an element also gets the variable for the array
 		Variable arrayVariable = arrayExpression.resolveOrCreateVariable(environment);
 		if (arrayVariable == null) {
-			environment.getRuntime().triggerError("cannot use this expression as an array: " + arrayExpression);
+			environment.getRuntime().triggerError("cannot use this expression as an array: " + arrayExpression, arrayExpression.getLocation());
 			return null;
 		}
-		return arrayVariable.getVariableArray(environment.getRuntime());
+		return arrayVariable.getVariableArray(environment.getRuntime(), getLocation());
 	}
 
 	/* (non-Javadoc)

@@ -6,6 +6,7 @@ package name.martingeisse.phunky.runtime.builtin.string;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -35,14 +36,14 @@ public final class TrimFunction extends BuiltinFunctionWithValueParametersOnly {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])
+	 * @see name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly#call(name.martingeisse.phunky.runtime.PhpRuntime, name.martingeisse.phunky.runtime.code.CodeLocation, java.lang.Object[])
 	 */
 	@Override
-	public Object call(final PhpRuntime runtime, final Object[] arguments) {
+	public Object call(PhpRuntime runtime, CodeLocation location, Object[] arguments) {
 
 		// extract parameters
-		final String string = getStringParameter(runtime, arguments, 0, null);
-		final String charlist = getStringParameter(runtime, arguments, 1, " \t\n\r\0\13"); // TODO support "..." syntax
+		final String string = getStringParameter(runtime, location, arguments, 0, null);
+		final String charlist = getStringParameter(runtime, location, arguments, 1, " \t\n\r\0\13"); // TODO support "..." syntax
 		
 		// trim the string
 		if (trimLeft) {

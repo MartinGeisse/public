@@ -7,8 +7,11 @@ package name.martingeisse.phunky.runtime.code.expression;
 import org.apache.commons.lang3.StringUtils;
 
 import name.martingeisse.phunky.runtime.Environment;
+import name.martingeisse.phunky.runtime.assignment.AssignmentTarget;
+import name.martingeisse.phunky.runtime.assignment.LocalVariableAssignmentTarget;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.json.JsonValueBuilder;
+import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
@@ -52,6 +55,26 @@ public final class LocalVariableExpression extends AbstractVariableExpression {
 	public int getIndirections() {
 		return indirections;
 	}
+	
+	/**
+	 * Determines the effective name by resolving the indirections except
+	 * the last one.
+	 * 
+	 * @param environment the environment
+	 * @return the effective name
+	 */
+	private String getEffectiveName(Environment environment) {
+		String effectiveName = name;
+		for (int i=1; i<indirections; i++) {
+			Variable variable = environment.get(effectiveName);
+			if (variable == null) {
+				environment.getRuntime().triggerError("no such local variable in variable indirection: " + effectiveName, getLocation());
+				return null;
+			}
+			effectiveName = TypeConversionUtil.convertToString(variable.getValue());
+		}
+		return effectiveName;
+	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.phunky.runtime.code.Expression#getVariable(name.martingeisse.phunky.runtime.Environment)
@@ -61,7 +84,7 @@ public final class LocalVariableExpression extends AbstractVariableExpression {
 		// TODO there's no such thing as "get variable but don't create",
 		// neither for array elements nor for local variables. Using a
 		// non-existing variable as a reference target creates it.
-		return environment.get(name);
+		return environment.get(getEffectiveName(environment));
 	}
 
 	/* (non-Javadoc)
@@ -69,21 +92,17 @@ public final class LocalVariableExpression extends AbstractVariableExpression {
 	 */
 	@Override
 	public Variable resolveOrCreateVariable(Environment environment) {
-		return environment.getOrCreate(name);
+		return environment.getOrCreate(getEffectiveName(environment));
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#bindVariableReference(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.variable.Variable)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#resolveAssignmentTarget(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
-	public void bindVariableReference(Environment environment, Variable variable) {
-		if (variable == null) {
-			environment.remove(name);
-		} else {
-			environment.put(name, variable);
-		}
+	public AssignmentTarget resolveAssignmentTarget(Environment environment) {
+		return new LocalVariableAssignmentTarget(environment, getEffectiveName(environment));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

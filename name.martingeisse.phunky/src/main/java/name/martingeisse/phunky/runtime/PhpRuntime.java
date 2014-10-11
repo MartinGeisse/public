@@ -47,6 +47,7 @@ import name.martingeisse.phunky.runtime.builtin.var.IsStringFunction;
 import name.martingeisse.phunky.runtime.builtin.var.PrintrFunction;
 import name.martingeisse.phunky.runtime.builtin.var.UnsetFunction;
 import name.martingeisse.phunky.runtime.builtin.var.VarDumpFunction;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 import name.martingeisse.phunky.runtime.code.expression.ConstantExpression;
 
 import org.apache.log4j.Logger;
@@ -271,17 +272,20 @@ public final class PhpRuntime {
 	/**
 	 * Called when an error occurs. This method prints the error to System.err.
 	 * @param message the error message
+	 * @param location the location in code where the error happened
 	 */
-	public void triggerError(String message) {
-		logger.error(message);
+	public void triggerError(String message, CodeLocation location) {
+		logger.error(message + " at " + location);
 	}
 
 	/**
 	 * Called when a fatal error occurs. This method prints the error to System.err,
 	 * then throws a {@link FatalErrorException}.
 	 * @param message the error message
+	 * @param location the location in code where the error happened
 	 */
-	public void triggerFatalError(String message) {
+	public void triggerFatalError(String message, CodeLocation location) {
+		message = message + " at " + location;
 		logger.fatal(message);
 		throw new FatalErrorException(message);
 	}
@@ -300,7 +304,7 @@ public final class PhpRuntime {
 		} else if (constantExpression.getName().equals("__LINE__")) {
 			return constantExpression.getLocation().getLine() + 1;
 		} else {
-			triggerError("undefined constant: " + constantExpression.getName());
+			triggerError("undefined constant: " + constantExpression.getName(), constantExpression.getLocation());
 			return null;
 		}
 	}

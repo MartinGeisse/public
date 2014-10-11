@@ -5,6 +5,7 @@
 package name.martingeisse.phunky.runtime.assignment;
 
 import name.martingeisse.phunky.runtime.Environment;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
@@ -31,28 +32,34 @@ public final class LocalVariableAssignmentTarget implements AssignmentTarget {
 		this.environment = environment;
 		this.name = name;
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.assignment.AssignmentTarget#getValue()
+	 * @see name.martingeisse.phunky.runtime.assignment.AssignmentTarget#getValue(name.martingeisse.phunky.runtime.code.CodeLocation)
 	 */
 	@Override
-	public Object getValue() {
-		return environment.get(name).getValue();
+	public Object getValue(CodeLocation location) {
+		Variable variable = environment.get(name);
+		if (variable == null) {
+			environment.getRuntime().triggerError("no such local variable: " + name, location);
+			return null;
+		} else {
+			return variable.getValue();
+		}
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.assignment.AssignmentTarget#assignValue(java.lang.Object)
+	 * @see name.martingeisse.phunky.runtime.assignment.AssignmentTarget#assignValue(name.martingeisse.phunky.runtime.code.CodeLocation, java.lang.Object)
 	 */
 	@Override
-	public void assignValue(Object value) {
-		environment.get(name).setValue(value);
+	public void assignValue(CodeLocation location, Object value) {
+		environment.getOrCreate(name).setValue(value);
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.assignment.AssignmentTarget#assignReference(name.martingeisse.phunky.runtime.variable.Variable)
+	 * @see name.martingeisse.phunky.runtime.assignment.AssignmentTarget#assignReference(name.martingeisse.phunky.runtime.code.CodeLocation, name.martingeisse.phunky.runtime.variable.Variable)
 	 */
 	@Override
-	public void assignReference(Variable target) {
+	public void assignReference(CodeLocation location, Variable target) {
 		environment.put(name, target);
 	}
 

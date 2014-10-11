@@ -8,6 +8,7 @@ package name.martingeisse.phunky.runtime.builtin.system;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 
 /**
  * The built-in "constant" function.
@@ -15,13 +16,13 @@ import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParamete
 public class ConstantFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])
+	 * @see name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly#call(name.martingeisse.phunky.runtime.PhpRuntime, name.martingeisse.phunky.runtime.code.CodeLocation, java.lang.Object[])
 	 */
 	@Override
-	public Object call(PhpRuntime runtime, Object[] arguments) {
-		String name = getStringParameter(runtime, arguments, 0, null);
+	public Object call(PhpRuntime runtime, CodeLocation location, Object[] arguments) {
+		String name = getStringParameter(runtime, location, arguments, 0, null);
 		if (!runtime.getConstants().containsKey(name)) {
-			runtime.triggerError("constant '" + name + "' not defined");
+			runtime.triggerError("constant '" + name + "' not defined", location);
 		}
 		return runtime.getConstants().get(name);
 	}

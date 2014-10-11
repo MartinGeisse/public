@@ -57,12 +57,12 @@ public final class FunctionCall extends AbstractCallExpression {
 	public Object evaluate(final Environment environment) {
 		Object name = nameExpression.evaluate(environment);
 		if (!(name instanceof String)) {
-			environment.getRuntime().triggerError("function name must be a string: " + name);
+			environment.getRuntime().triggerError("function name must be a string: " + name, getLocation());
 			return null;
 		}
 		PhpCallable function = environment.getRuntime().getFunctions().get(name);
 		if (function == null) {
-			environment.getRuntime().triggerError("undefined function: " + name);
+			environment.getRuntime().triggerError("undefined function: " + name, getLocation());
 			return null;
 		} else {
 			return call(function, environment);

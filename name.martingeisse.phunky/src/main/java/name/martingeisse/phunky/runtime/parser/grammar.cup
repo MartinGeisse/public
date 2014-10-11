@@ -542,31 +542,31 @@ expression ::=
 	| expression:e1 LESS_EQUAL expression:e2
 		{: RESULT = setLocation(new BinaryExpression(e1, BinaryOperator.LESS_EQUAL, e2)); :}
 	| expression:e1 ASSIGN expression:e2
-		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.RIGHT, e2)); :}
+		{: RESULT = setLocation(new BinaryValueAssignmentExpression(e1, BinaryOperator.RIGHT, e2)); :}
 	| expression:e1 ASSIGN BITWISE_AND expression:e2
 		{: RESULT = setLocation(new ReferenceAssignmentExpression(e1, e2)); :}
 	| expression:e1 PLUS_ASSIGN expression:e2
-		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.ADD, e2)); :} 
+		{: RESULT = setLocation(new BinaryValueAssignmentExpression(e1, BinaryOperator.ADD, e2)); :} 
 	| expression:e1 MINUS_ASSIGN expression:e2
-		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.SUBTRACT, e2)); :} 
+		{: RESULT = setLocation(new BinaryValueAssignmentExpression(e1, BinaryOperator.SUBTRACT, e2)); :} 
 	| expression:e1 TIMES_ASSIGN expression:e2
-		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.MULTIPLY, e2)); :} 
+		{: RESULT = setLocation(new BinaryValueAssignmentExpression(e1, BinaryOperator.MULTIPLY, e2)); :} 
 	| expression:e1 DIVIDE_ASSIGN expression:e2
-		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.DIVIDE, e2)); :} 
+		{: RESULT = setLocation(new BinaryValueAssignmentExpression(e1, BinaryOperator.DIVIDE, e2)); :} 
 	| expression:e1 MOD_ASSIGN expression:e2
-		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.REMAINDER, e2)); :} 
+		{: RESULT = setLocation(new BinaryValueAssignmentExpression(e1, BinaryOperator.REMAINDER, e2)); :} 
 	| expression:e1 CONCAT_ASSIGN expression:e2
-		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.CONCATENATE, e2)); :}
+		{: RESULT = setLocation(new BinaryValueAssignmentExpression(e1, BinaryOperator.CONCATENATE, e2)); :}
 	| expression:e1 BITWISE_AND_ASSIGN expression:e2
-		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.BITWISE_AND, e2)); :} 
+		{: RESULT = setLocation(new BinaryValueAssignmentExpression(e1, BinaryOperator.BITWISE_AND, e2)); :} 
 	| expression:e1 BITWISE_OR_ASSIGN expression:e2
-		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.BITWISE_OR, e2)); :} 
+		{: RESULT = setLocation(new BinaryValueAssignmentExpression(e1, BinaryOperator.BITWISE_OR, e2)); :} 
 	| expression:e1 BITWISE_XOR_ASSIGN expression:e2
-		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.BITWISE_XOR, e2)); :} 
+		{: RESULT = setLocation(new BinaryValueAssignmentExpression(e1, BinaryOperator.BITWISE_XOR, e2)); :} 
 	| expression:e1 SHIFT_LEFT_ASSIGN expression:e2
-		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.SHIFT_LEFT, e2)); :} 
+		{: RESULT = setLocation(new BinaryValueAssignmentExpression(e1, BinaryOperator.SHIFT_LEFT, e2)); :} 
 	| expression:e1 SHIFT_RIGHT_ASSIGN expression:e2
-		{: RESULT = setLocation(new BinaryAssignmentExpression(e1, BinaryOperator.SHIFT_RIGHT, e2)); :}
+		{: RESULT = setLocation(new BinaryValueAssignmentExpression(e1, BinaryOperator.SHIFT_RIGHT, e2)); :}
 	
 	// ternary operator
 	| expression:e1 QUESTION_MARK expression:e2 COLON expression:e3
@@ -674,13 +674,13 @@ one_or_more_parameter_declarations ::=
 
 parameter_declaration ::=
 	LOCAL_VARIABLE_SINGLE_INDIRECTION:v
-		{: RESULT = new ParameterDeclaration(v, false); :}
+		{: RESULT = new ParameterDeclaration(parser.obtainLocation(), v, false); :}
 	| LOCAL_VARIABLE_SINGLE_INDIRECTION:v ASSIGN expression:e
-		{: RESULT = new ParameterDeclaration(v, false, e.evaluate(null)); // TODO catch errors due to missing environment :}
+		{: RESULT = new ParameterDeclaration(parser.obtainLocation(), v, false, e.evaluate(null)); // TODO catch errors due to missing environment :}
 	| BITWISE_AND LOCAL_VARIABLE_SINGLE_INDIRECTION:v
-		{: RESULT = new ParameterDeclaration(v, true); :}
+		{: RESULT = new ParameterDeclaration(parser.obtainLocation(), v, true); :}
 	| BITWISE_AND LOCAL_VARIABLE_SINGLE_INDIRECTION:v ASSIGN expression:e
-		{: RESULT = new ParameterDeclaration(v, true, e.evaluate(null)); // TODO catch errors due to missing environment :}
+		{: RESULT = new ParameterDeclaration(parser.obtainLocation(), v, true, e.evaluate(null)); // TODO catch errors due to missing environment :}
 ;
 
 // ------------------------------------------------------------------------------------

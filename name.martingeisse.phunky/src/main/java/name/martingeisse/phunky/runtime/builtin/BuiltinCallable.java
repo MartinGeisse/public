@@ -6,6 +6,7 @@ package name.martingeisse.phunky.runtime.builtin;
 
 import name.martingeisse.phunky.runtime.PhpCallable;
 import name.martingeisse.phunky.runtime.PhpRuntime;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 import name.martingeisse.phunky.runtime.variable.TypeConversionUtil;
 
 /**
@@ -56,10 +57,10 @@ public abstract class BuiltinCallable implements PhpCallable {
 	 * @param triggerErrorOnDefault whether the absence of an argument is an error
 	 * @return the value
 	 */
-	protected final Object getMixedParameter(PhpRuntime runtime, Object[] arguments, int position, Object defaultValue, boolean triggerErrorOnDefault) {
+	protected final Object getMixedParameter(PhpRuntime runtime, CodeLocation location, Object[] arguments, int position, Object defaultValue, boolean triggerErrorOnDefault) {
 		if (arguments.length <= position) {
 			if (triggerErrorOnDefault) {
-				runtime.triggerError("missing argument #" + position);
+				runtime.triggerError("missing argument #" + position, location);
 			}
 			return defaultValue;
 		} else {
@@ -78,10 +79,10 @@ public abstract class BuiltinCallable implements PhpCallable {
 	 * @param defaultValue the default value, or null if none
 	 * @return the value (never null)
 	 */
-	protected final String getStringParameter(PhpRuntime runtime, Object[] arguments, int position, String defaultValue) {
+	protected final String getStringParameter(PhpRuntime runtime, CodeLocation location, Object[] arguments, int position, String defaultValue) {
 		if (arguments.length <= position) {
 			if (defaultValue == null) {
-				runtime.triggerError("missing argument #" + position);
+				runtime.triggerError("missing argument #" + position, location);
 				return "";
 			} else {
 				return defaultValue;
@@ -101,10 +102,10 @@ public abstract class BuiltinCallable implements PhpCallable {
 	 * @param defaultValue the default value, or null if none
 	 * @return the value
 	 */
-	protected final long getIntegerParameter(PhpRuntime runtime, Object[] arguments, int position, Long defaultValue) {
+	protected final long getIntegerParameter(PhpRuntime runtime, CodeLocation location, Object[] arguments, int position, Long defaultValue) {
 		if (arguments.length <= position) {
 			if (defaultValue == null) {
-				runtime.triggerError("missing argument #" + position);
+				runtime.triggerError("missing argument #" + position, location);
 				return 0;
 			} else {
 				return defaultValue;
@@ -124,10 +125,10 @@ public abstract class BuiltinCallable implements PhpCallable {
 	 * @param defaultValue the default value, or null if none
 	 * @return the value
 	 */
-	protected final boolean getBooleanParameter(PhpRuntime runtime, Object[] arguments, int position, Boolean defaultValue) {
+	protected final boolean getBooleanParameter(PhpRuntime runtime, CodeLocation location, Object[] arguments, int position, Boolean defaultValue) {
 		if (arguments.length <= position) {
 			if (defaultValue == null) {
-				runtime.triggerError("missing argument #" + position);
+				runtime.triggerError("missing argument #" + position, location);
 				return false;
 			} else {
 				return defaultValue;

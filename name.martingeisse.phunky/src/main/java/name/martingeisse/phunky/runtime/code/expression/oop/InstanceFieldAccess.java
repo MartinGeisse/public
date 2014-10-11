@@ -74,10 +74,10 @@ public final class InstanceFieldAccess extends AbstractVariableExpression {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#resolveValueAcceptor(name.martingeisse.phunky.runtime.Environment)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#resolveAssignmentTarget(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
-	public AssignmentTarget resolveValueAcceptor(Environment environment) {
+	public AssignmentTarget resolveAssignmentTarget(Environment environment) {
 		// TODO
 		throw new NotImplementedException("");
 	}

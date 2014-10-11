@@ -4,6 +4,7 @@
 
 package name.martingeisse.phunky.runtime.assignment;
 
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 import name.martingeisse.phunky.runtime.variable.Variable;
 
 /**
@@ -30,25 +31,28 @@ public interface AssignmentTarget {
 	 * Reads the value of this assignment target (used to implement
 	 * computed assignment operators).
 	 * 
+	 * @param location the location in code, used to trigger errors
 	 * @return the value
 	 */
-	public Object getValue();
+	public Object getValue(CodeLocation location);
 	
 	/**
 	 * Assigns a value to this assignment target (used to implement
 	 * value assignments).
 	 * 
+	 * @param location the location in code, used to trigger errors
 	 * @param value the value
 	 */
-	public void assignValue(Object value);
+	public void assignValue(CodeLocation location, Object value);
 	
 	/**
 	 * Assigns a reference to this assignment target (used to implement
 	 * reference assignments).
 	 * 
+	 * @param location the location in code, used to trigger errors
 	 * @param target the reference target
 	 */
-	public void assignReference(Variable target);
+	public void assignReference(CodeLocation location, Variable target);
 	
 	/**
 	 * Unsets the target.

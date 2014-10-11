@@ -30,11 +30,11 @@ public abstract class AbstractComputeExpression extends AbstractExpression {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#resolveValueAcceptor(name.martingeisse.phunky.runtime.Environment)
+	 * @see name.martingeisse.phunky.runtime.code.expression.Expression#resolveAssignmentTarget(name.martingeisse.phunky.runtime.Environment)
 	 */
 	@Override
-	public AssignmentTarget resolveValueAcceptor(Environment environment) {
-		environment.getRuntime().triggerError("cannot assign to " + this);
+	public AssignmentTarget resolveAssignmentTarget(Environment environment) {
+		environment.getRuntime().triggerError("cannot assign to " + this, getLocation());
 		return null;
 	}
 	

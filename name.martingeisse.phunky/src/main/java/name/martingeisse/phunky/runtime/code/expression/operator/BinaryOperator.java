@@ -34,7 +34,7 @@ public enum BinaryOperator {
 	/**
 	 * Evaluates both sides but then always returns the right-hand value.
 	 */
-	RIGHT("") {
+	RIGHT("", false) {
 		
 		/* (non-Javadoc)
 		 * @see name.martingeisse.phunky.runtime.code.BinaryOperator#applyToValues(java.lang.Object, java.lang.Object)
@@ -64,7 +64,7 @@ public enum BinaryOperator {
 	/**
 	 * Only evaluates the right-hand side and returns its value.
 	 */
-	SHORTCUT_RIGHT("") {
+	SHORTCUT_RIGHT("", false) {
 		
 		/* (non-Javadoc)
 		 * @see name.martingeisse.phunky.runtime.code.expression.operation.BinaryOperator#applyToExpressions(name.martingeisse.phunky.runtime.Environment, name.martingeisse.phunky.runtime.code.expression.Expression, name.martingeisse.phunky.runtime.code.expression.Expression)
@@ -597,6 +597,11 @@ public enum BinaryOperator {
 	 * the symbol
 	 */
 	private final String symbol;
+	
+	/**
+	 * the needsLeftHandValue
+	 */
+	private final boolean needsLeftHandValue;
 
 	/**
 	 * Constructor.
@@ -604,6 +609,18 @@ public enum BinaryOperator {
 	 */
 	private BinaryOperator(final String symbol) {
 		this.symbol = symbol;
+		this.needsLeftHandValue = true;
+	}
+	
+	/**
+	 * Constructor.
+	 * @param symbol the operator symbol
+	 * @param needsLeftHandValue whether this operator requires the left-hand value
+	 * to be present for the computation
+	 */
+	private BinaryOperator(final String symbol, boolean needsLeftHandValue) {
+		this.symbol = symbol;
+		this.needsLeftHandValue = needsLeftHandValue;
 	}
 
 	/**
@@ -612,6 +629,14 @@ public enum BinaryOperator {
 	 */
 	public String getSymbol() {
 		return symbol;
+	}
+	
+	/**
+	 * Getter method for the needsLeftHandValue.
+	 * @return the needsLeftHandValue
+	 */
+	public boolean isNeedsLeftHandValue() {
+		return needsLeftHandValue;
 	}
 	
 	/**

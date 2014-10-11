@@ -65,7 +65,7 @@ public interface Expression {
 	 * Note that this cannot be used to implement the left-hand side of a
 	 * value assignment because the evaluation order would be wrong.
 	 * The target variable of a value assignment is resolved partly before,
-	 * partly after resolving the right-hand side. Use {@link #resolveValueAcceptor(Environment)}
+	 * partly after resolving the right-hand side. Use {@link #resolveAssignmentTarget(Environment)}
 	 * to implement the "before" part and use the value acceptor itself
 	 * to implement the "after" part.
 	 * 
@@ -83,7 +83,7 @@ public interface Expression {
 	 * @param environment the environment
 	 * @return the value acceptor or null
 	 */
-	public AssignmentTarget resolveValueAcceptor(Environment environment);
+	public AssignmentTarget resolveAssignmentTarget(Environment environment);
 	
 	/**
 	 * Dumps this expression using the specified code dumper.

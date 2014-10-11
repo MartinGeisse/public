@@ -69,7 +69,7 @@ public abstract class AbstractCallExpression extends AbstractComputeExpression i
 	 * @return the return value
 	 */
 	protected final Object call(PhpCallable callable, Environment callerEnvironment) {
-		return callable.call(callerEnvironment, argumentExpressions);
+		return callable.call(callerEnvironment, getLocation(), argumentExpressions);
 	}
 	
 	/**

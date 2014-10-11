@@ -52,6 +52,7 @@
 
 		<!-- other applications -->
 		<module>name.martingeisse.slave-services</module>
+		<module>name.martingeisse.osm</module>
 
 		<!-- Application template (not actually used directly) -->
 		<module>name.martingeisse.application-template</module>

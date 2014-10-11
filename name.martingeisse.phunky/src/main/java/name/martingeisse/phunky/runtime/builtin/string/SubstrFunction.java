@@ -6,6 +6,7 @@ package name.martingeisse.phunky.runtime.builtin.string;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 
 /**
  * The built-in "substr" function.
@@ -13,16 +14,16 @@ import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParamete
 public final class SubstrFunction extends BuiltinFunctionWithValueParametersOnly {
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])
+	 * @see name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly#call(name.martingeisse.phunky.runtime.PhpRuntime, name.martingeisse.phunky.runtime.code.CodeLocation, java.lang.Object[])
 	 */
 	@Override
-	public Object call(PhpRuntime runtime, Object[] arguments) {
+	public Object call(PhpRuntime runtime, CodeLocation location, Object[] arguments) {
 		
 		// extract parameters
-		final String string = getStringParameter(runtime, arguments, 0, null);
+		final String string = getStringParameter(runtime, location, arguments, 0, null);
 		final int stringLength = string.length();
-		final int declaredStart = (int)getIntegerParameter(runtime, arguments, 1, null);
-		final int declaredLength = (int)getIntegerParameter(runtime, arguments, 2, (long)stringLength);
+		final int declaredStart = (int)getIntegerParameter(runtime, location, arguments, 1, null);
+		final int declaredLength = (int)getIntegerParameter(runtime, location, arguments, 2, (long)stringLength);
 		
 		// shortcut with different return value behavior
 		if (declaredLength == 0) {

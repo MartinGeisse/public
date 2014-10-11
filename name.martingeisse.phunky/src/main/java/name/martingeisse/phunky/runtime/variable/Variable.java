@@ -6,6 +6,7 @@ package name.martingeisse.phunky.runtime.variable;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.PhpRuntime;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 import name.martingeisse.phunky.runtime.oop.PhpObject;
 
 /**
@@ -64,9 +65,10 @@ public final class Variable {
 	 * a newly created variable array, which is then returned.
 	 * 
 	 * @param runtime the runtime, used to trigger errors
+	 * @param location the location in code, used to trigger errors
 	 * @return the variable array
 	 */
-	public PhpVariableArray getVariableArray(PhpRuntime runtime) {
+	public PhpVariableArray getVariableArray(PhpRuntime runtime, CodeLocation location) {
 		if (content instanceof PhpVariableArray) {
 			return (PhpVariableArray)content;
 		} else if (content instanceof PhpValueArray) {
@@ -79,7 +81,7 @@ public final class Variable {
 			content = array;
 			return array;
 		} else {
-			runtime.triggerError("cannot use a scalar value as an array");
+			runtime.triggerError("cannot use a scalar value as an array", location);
 			return null;
 		}
 	}

@@ -5,6 +5,7 @@
 package name.martingeisse.phunky.runtime.code.expression.operator;
 
 import name.martingeisse.phunky.runtime.Environment;
+import name.martingeisse.phunky.runtime.assignment.AssignmentTarget;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
 import name.martingeisse.phunky.runtime.code.expression.AbstractComputeExpression;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
@@ -61,19 +62,19 @@ public final class ReferenceAssignmentExpression extends AbstractComputeExpressi
 	 */
 	@Override
 	public Object evaluate(Environment environment) {
-		
-		// TODO this will evaluate LHS/RHS in wrong order!
-		// TODO this will not evaluate the LHS if there was an error in the RHS
-		// ...
-		// I'll probably need a new concept of "variable location" to implement
-		// reference assignment properly.
-		
-		final Variable rightHandVariable = rightHandSide.resolveOrCreateVariable(environment);
-		if (rightHandVariable != null) {
-			leftHandSide.bindVariableReference(environment, rightHandVariable);
+		final AssignmentTarget target = leftHandSide.resolveAssignmentTarget(environment);
+		if (target == null) {
+			return null;
 		}
+		// note: this order should be the correct one. the value from the left-hand
+		// side is read *after* resolving the right-hand side since the RHS might
+		// cause a side-effect to re-bind the LHS target.
+		final Variable rightHandVariable = rightHandSide.resolveOrCreateVariable(environment);
+		if (rightHandVariable == null) {
+			return null;
+		}
+		target.assignReference(leftHandSide.getLocation(), rightHandVariable);
 		return rightHandVariable.getValue();
-		
 	}
 
 	/* (non-Javadoc)

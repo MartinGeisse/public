@@ -19,7 +19,7 @@ public abstract class AbstractVariableExpression extends AbstractExpression {
 	public Object evaluate(Environment environment) {
 		Variable variable = resolveVariable(environment);
 		if (variable == null) {
-			environment.getRuntime().triggerError("not a variable: " + this);
+			environment.getRuntime().triggerError("not a variable: " + this, getLocation());
 			return null;
 		} else {
 			return variable.getValue();

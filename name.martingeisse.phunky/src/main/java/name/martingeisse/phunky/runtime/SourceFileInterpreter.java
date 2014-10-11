@@ -16,6 +16,7 @@ import java.util.Set;
 
 import java_cup.runtime.ComplexSymbolFactory;
 import name.martingeisse.phunky.runtime.code.CodeDumper;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 import name.martingeisse.phunky.runtime.code.statement.StatementSequence;
 import name.martingeisse.phunky.runtime.parser.Lexer;
 import name.martingeisse.phunky.runtime.parser.Parser;
@@ -136,12 +137,13 @@ public final class SourceFileInterpreter {
 	 * TODO merge execute() and include() ? At least make execute() and exception-handling
 	 * wrapper around include, but keep the actual parse/execute logic in include() only.
 	 * 
+	 * @param callerLocation the caller's location, used to trigger errors
 	 * @param path the path to the file to include
 	 * @param once whether to skip the file if it has been included before
 	 * TODO: what about different paths to the same file?
 	 * @param required whether to trigger an error if the file cannot be loaded
 	 */
-	public void include(String path, boolean once, boolean required) {
+	public void include(CodeLocation callerLocation, String path, boolean once, boolean required) {
 		logger.debug("including file: " + path);
 
 		// handle the "once" flag
@@ -160,7 +162,7 @@ public final class SourceFileInterpreter {
 		} catch (IOException e) {
 			logger.debug("could not load or parse file: " + file);
 			if (required) {
-				runtime.triggerError("failed to load required source file '" + file + "'");
+				runtime.triggerError("failed to load required source file '" + file + "'", callerLocation);
 			}
 			return;
 		}

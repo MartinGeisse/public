@@ -4,6 +4,7 @@
 
 package name.martingeisse.phunky.runtime.assignment;
 
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 import name.martingeisse.phunky.runtime.variable.PhpVariableArray;
 import name.martingeisse.phunky.runtime.variable.Variable;
 
@@ -26,26 +27,26 @@ public class ArrayAppendAssignmentTarget implements AssignmentTarget {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.assignment.AssignmentTarget#getValue()
+	 * @see name.martingeisse.phunky.runtime.assignment.AssignmentTarget#getValue(name.martingeisse.phunky.runtime.code.CodeLocation)
 	 */
 	@Override
-	public Object getValue() {
+	public Object getValue(CodeLocation location) {
 		throw new UnsupportedOperationException("cannot get the value from an array-append expression");
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.assignment.AssignmentTarget#assignValue(java.lang.Object)
+	 * @see name.martingeisse.phunky.runtime.assignment.AssignmentTarget#assignValue(name.martingeisse.phunky.runtime.code.CodeLocation, java.lang.Object)
 	 */
 	@Override
-	public void assignValue(Object value) {
+	public void assignValue(CodeLocation location, Object value) {
 		array.append().setValue(value);
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.assignment.AssignmentTarget#assignReference(name.martingeisse.phunky.runtime.variable.Variable)
+	 * @see name.martingeisse.phunky.runtime.assignment.AssignmentTarget#assignReference(name.martingeisse.phunky.runtime.code.CodeLocation, name.martingeisse.phunky.runtime.variable.Variable)
 	 */
 	@Override
-	public void assignReference(Variable target) {
+	public void assignReference(CodeLocation location, Variable target) {
 		array.append(target);
 	}
 

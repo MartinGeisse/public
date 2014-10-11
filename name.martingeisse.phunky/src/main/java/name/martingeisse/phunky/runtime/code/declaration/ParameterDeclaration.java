@@ -6,6 +6,7 @@ package name.martingeisse.phunky.runtime.code.declaration;
 
 import name.martingeisse.phunky.runtime.Environment;
 import name.martingeisse.phunky.runtime.PhpRuntime;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 import name.martingeisse.phunky.runtime.code.expression.Expression;
 import name.martingeisse.phunky.runtime.variable.Variable;
 
@@ -28,6 +29,11 @@ import name.martingeisse.phunky.runtime.variable.Variable;
 public final class ParameterDeclaration {
 
 	/**
+	 * the location
+	 */
+	private final CodeLocation location;
+	
+	/**
 	 * the name
 	 */
 	private final String name;
@@ -35,7 +41,7 @@ public final class ParameterDeclaration {
 	/**
 	 * the referenceParameter
 	 */
-	private boolean referenceParameter;
+	private final boolean referenceParameter;
 
 	/**
 	 * the hasDefaultValue
@@ -49,10 +55,12 @@ public final class ParameterDeclaration {
 
 	/**
 	 * Constructor.
+	 * @param location the location in code
 	 * @param name the parameter name
 	 * @param referenceParameter whether the parameter is a reference parameter
 	 */
-	public ParameterDeclaration(String name, boolean referenceParameter) {
+	public ParameterDeclaration(CodeLocation location, String name, boolean referenceParameter) {
+		this.location = location;
 		this.name = name;
 		this.referenceParameter = referenceParameter;
 		this.hasDefaultValue = false;
@@ -61,11 +69,13 @@ public final class ParameterDeclaration {
 
 	/**
 	 * Constructor.
+	 * @param location the location in code
 	 * @param name the parameter name
 	 * @param referenceParameter whether the parameter is a reference parameter
 	 * @param defaultValue the default value
 	 */
-	public ParameterDeclaration(String name, boolean referenceParameter, Object defaultValue) {
+	public ParameterDeclaration(CodeLocation location, String name, boolean referenceParameter, Object defaultValue) {
+		this.location = location;
 		this.name = name;
 		this.referenceParameter = referenceParameter;
 		this.hasDefaultValue = true;
@@ -78,14 +88,6 @@ public final class ParameterDeclaration {
 	 */
 	public boolean isReferenceParameter() {
 		return referenceParameter;
-	}
-
-	/**
-	 * Setter method for the referenceParameter.
-	 * @param referenceParameter the referenceParameter to set
-	 */
-	public void setReferenceParameter(boolean referenceParameter) {
-		this.referenceParameter = referenceParameter;
 	}
 
 	/**
@@ -131,7 +133,7 @@ public final class ParameterDeclaration {
 				calleeEnvironment.put(name, new Variable(defaultValue));
 			} else {
 				// not providing a value in absence of a default value leaves the variable unbound in the callee environment.
-				runtime.triggerError("missing argument " + name + " for " + contextDescription);
+				runtime.triggerError("missing argument " + name + " for " + contextDescription, location);
 			}
 		} else {
 			if (referenceParameter) {

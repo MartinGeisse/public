@@ -8,6 +8,7 @@ package name.martingeisse.phunky.runtime.builtin.system;
 
 import name.martingeisse.phunky.runtime.PhpRuntime;
 import name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly;
+import name.martingeisse.phunky.runtime.code.CodeLocation;
 
 /**
  * Implements the "include", "include_once", "require" and "require_once" functions.
@@ -39,11 +40,11 @@ public final class IncludeFunction extends BuiltinFunctionWithValueParametersOnl
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.phunky.runtime.Callable#call(name.martingeisse.phunky.runtime.PhpRuntime, java.lang.Object[])
+	 * @see name.martingeisse.phunky.runtime.builtin.BuiltinFunctionWithValueParametersOnly#call(name.martingeisse.phunky.runtime.PhpRuntime, name.martingeisse.phunky.runtime.code.CodeLocation, java.lang.Object[])
 	 */
 	@Override
-	public Object call(PhpRuntime runtime, Object[] arguments) {
-		runtime.getInterpreter().include(getStringParameter(runtime, arguments, 0, null), once, required);
+	public Object call(PhpRuntime runtime, CodeLocation location, Object[] arguments) {
+		runtime.getInterpreter().include(location, getStringParameter(runtime, location, arguments, 0, null), once, required);
 		return null;
 	}
 	
