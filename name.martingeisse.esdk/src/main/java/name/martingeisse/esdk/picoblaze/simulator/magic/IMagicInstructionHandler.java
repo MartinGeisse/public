@@ -2,7 +2,10 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.esdk.picoblaze.simulator;
+package name.martingeisse.esdk.picoblaze.simulator.magic;
+
+import name.martingeisse.esdk.picoblaze.simulator.core.PicoblazeState;
+import name.martingeisse.esdk.picoblaze.simulator.core.UndefinedInstructionCodeException;
 
 /**
  * This interface can be used to implement "magic" 

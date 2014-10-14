@@ -4,9 +4,11 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.esdk.picoblaze.simulator;
+package name.martingeisse.esdk.picoblaze.simulator.core;
 
+import name.martingeisse.esdk.picoblaze.simulator.magic.IMagicInstructionHandler;
 import name.martingeisse.esdk.picoblaze.simulator.port.IPicoblazePortHandler;
+import name.martingeisse.esdk.picoblaze.simulator.progmem.IPicoblazeInstructionMemory;
 
 /**
  * An instruction-level simulated PicoBlaze instance.

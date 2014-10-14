@@ -4,10 +4,10 @@
 
 package name.martingeisse.esdk.experiment;
 
-import name.martingeisse.esdk.picoblaze.simulator.AssociatedPicoblazeSourceCode;
-import name.martingeisse.esdk.picoblaze.simulator.IMagicInstructionHandler;
-import name.martingeisse.esdk.picoblaze.simulator.InstructionCyclePicoblazeSimulator;
-import name.martingeisse.esdk.picoblaze.simulator.PicoblazeState;
+import name.martingeisse.esdk.picoblaze.simulator.core.PicoblazeState;
+import name.martingeisse.esdk.picoblaze.simulator.cycle.InstructionCyclePicoblazeSimulator;
+import name.martingeisse.esdk.picoblaze.simulator.magic.IMagicInstructionHandler;
+import name.martingeisse.esdk.picoblaze.simulator.progmem.AssociatedPicoblazeSourceCode;
 
 /**
  * TODO: document me

@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.esdk.picoblaze.simulator;
+package name.martingeisse.esdk.picoblaze.simulator.core;
 
 /**
  * This interace can be implemented by code outside the picoblaze to

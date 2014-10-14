@@ -4,7 +4,7 @@
 
 package name.martingeisse.esdk.components.ascii_gpu;
 
-import name.martingeisse.esdk.picoblaze.simulator.AssociatedPicoblazeSourceCode;
+import name.martingeisse.esdk.picoblaze.simulator.progmem.AssociatedPicoblazeSourceCode;
 
 /**
  * Program memory for the main controller of the ASCII GPU.
