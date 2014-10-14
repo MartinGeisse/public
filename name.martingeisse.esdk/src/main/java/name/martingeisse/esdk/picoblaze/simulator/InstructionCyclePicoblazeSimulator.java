@@ -21,7 +21,7 @@ public final class InstructionCyclePicoblazeSimulator extends PicoblazeSimulator
 	 * @throws PicoblazeSimulatorException when this model fails
 	 */
 	public void performInstructionCycle() throws PicoblazeSimulatorException {
-		if (getInterruptSignal() != null && getInterruptSignal().getValue()) {
+		if (getInterruptSignal() != null && getInterruptSignal().isInterruptPending()) {
 			getState().performInterrupt();
 		} else if (getInstructionMemory() == null) {
 			throw new PicoblazeSimulatorException("no instruction memory");

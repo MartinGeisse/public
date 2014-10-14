@@ -9,7 +9,7 @@ package name.martingeisse.esdk.picoblaze.simulator.rtl;
 import name.martingeisse.esdk.picoblaze.simulator.PicoblazeSimulatorBase;
 import name.martingeisse.esdk.picoblaze.simulator.PicoblazeSimulatorException;
 import name.martingeisse.esdk.rtl.IClockSignalConsumer;
-import name.martingeisse.esdk.util.IValueSource;
+import name.martingeisse.esdk.util.Signal;
 
 /**
  * An RTL-simulated PicoBlaze instance.
@@ -19,7 +19,7 @@ public final class RtlPicoblazeSimulator extends PicoblazeSimulatorBase implemen
 	/**
 	 * the pcValueSource
 	 */
-	private final IValueSource<Integer> pcValueSource = new IValueSource<Integer>() {
+	private final Signal<Integer> pcValueSource = new Signal<Integer>() {
 		@Override
 		public Integer getValue() {
 			return getState().getPc();
@@ -40,7 +40,7 @@ public final class RtlPicoblazeSimulator extends PicoblazeSimulatorBase implemen
 	 * Getter method for the pcValueSource.
 	 * @return the pcValueSource
 	 */
-	public IValueSource<Integer> getPcValueSource() {
+	public Signal<Integer> getPcValueSource() {
 		return pcValueSource;
 	}
 	

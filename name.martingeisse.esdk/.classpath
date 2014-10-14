@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+  <classpathentry kind="src" path="src/test/java" output="target/test-classes" including="**/*.java"/>
   <classpathentry kind="src" path="src/main/java"/>
   <classpathentry kind="output" path="target/classes"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
@@ -59,6 +60,7 @@
       <attribute value="jar:file:/Users/geisse/.m2/repository/com/google/code/findbugs/jsr305/2.0.3/jsr305-2.0.3-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/swt/org.eclipse.swt.cocoa.macosx.x86_64/4.4/org.eclipse.swt.cocoa.macosx.x86_64-4.4.jar" sourcepath="M2_REPO/org/eclipse/swt/org.eclipse.swt.cocoa.macosx.x86_64/4.4/org.eclipse.swt.cocoa.macosx.x86_64-4.4-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/4.11/junit-4.11.jar" sourcepath="M2_REPO/junit/junit/4.11/junit-4.11-sources.jar">
     <attributes>
       <attribute value="jar:file:/Users/geisse/.m2/repository/junit/junit/4.11/junit-4.11-javadoc.jar!/" name="javadoc_location"/>

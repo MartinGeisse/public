@@ -6,11 +6,11 @@ package name.martingeisse.esdk.picoblaze.simulator.rtl;
 
 import name.martingeisse.esdk.picoblaze.simulator.IPicoblazeInstructionMemory;
 import name.martingeisse.esdk.picoblaze.simulator.PicoblazeSimulatorException;
-import name.martingeisse.esdk.util.IValueSource;
+import name.martingeisse.esdk.util.Signal;
 
 /**
  * An {@link IPicoblazeInstructionMemory} implementation that simply
- * returns the value of an {@link IValueSource}. This is typically
+ * returns the value of an {@link Signal}. This is typically
  * used together with some mechanism that determines the value of that
  * value source based on the Picoblaze's current PC, taken from
  * {@link RtlPicoblazeSimulator#getPcValueSource()}.
@@ -20,13 +20,13 @@ public final class ValueSourcePicoblazeInstructionMemory implements IPicoblazeIn
 	/**
 	 * the valueSource
 	 */
-	private final IValueSource<Integer> valueSource;
+	private final Signal<Integer> valueSource;
 
 	/**
 	 * Constructor.
 	 * @param valueSource the value source
 	 */
-	public ValueSourcePicoblazeInstructionMemory(IValueSource<Integer> valueSource) {
+	public ValueSourcePicoblazeInstructionMemory(Signal<Integer> valueSource) {
 		this.valueSource = valueSource;
 	}
 

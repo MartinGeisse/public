@@ -1,0 +1,94 @@
+
+Idee: ASCII-Arts basierte GPU.
+
+Keine Touchscreen-Unterstützung, die geht direkt zwischen Arduino und Display.
+
+Display:
+- 1024 x 600
+- Bei 8x16 großen Characters sind das 128x37.5
+
+Kommunikation: Unidirektional Arduino -> FPGA -> Display.
+
+Kommunikations-Schichten:
+
+- elektrisch:
+	- Ground verbinden (selbe Steckdosenleiste !)
+	- Betriebsspannung: 5v oder 3,3v?
+	- 1-bit Leitung, indem Pins verbunden werden
+	- Übertragung erst mal mit niedriger Datenrate, um Fehler zu vermeiden (1 kbaud oder so)
+	- synchronisierung = ?
+		- evtl einfach als normaler serial port, dann ist schon definiert, wie das geht.
+			Man könnte sogar auf dem Arduino dieselbe Lib für die Testumgebung und den
+			echten Display-Controller nehmen.
+
+- packet interface:
+	- 2 Bytes Paketlänge
+	- Paketdaten (messsages)
+	- (später bei höheren Datenraten: Fehlerkorrektur ? Für Checksum bräuchte man
+		einen Rückkanal, um Fehler zu melden.)
+
+- Paketdaten sind Liste von Messsages:
+	- und zwar so viele, wie ins Paket passen
+	- jede Message besteht aus 1 byte message type, danach Daten
+	- Größe der Message hängt vom type ab
+	- Größe ist auch nicht redundant angegeben, d.h. man muss die Größe je type
+		kennen, um die restlichen Messages überhaupt zu "finden"
+	
+- Messages sind ASCII-Arts draw commands:
+	- A/C = 1 byte attribute, 1 byte ASCII character
+	- Operationen werden gegen den Bildschirmrand geclippt
+	- 0: fill screen
+		2 bytes C/A
+	- 1: set character:
+		1 byte x
+		1 byte y
+		2 bytes A/C
+	- 2: draw string
+		1 byte x
+		1 byte y
+		1 byte attribute
+		1 byte Länge
+		(Länge) bytes ASCII-Daten
+	- 3: fill rectangle		
+		1 byte x
+		1 byte y
+		1 byte w
+		1 byte h
+		2 bytes A/C
+
+- Testversion 1:
+	- In Java simulierter Picoblaze, der diese Befehle versteht und in read/write Operationen
+		an die Character Matrix umsetzt
+	- Eingabe kommt aus Testcase per externem 8-bit Buffer Register und Interrupt -- extern
+		in Verilog definiert; gesetzt durch den Java-Testcase und per Pipe an den Icarus-Prozess
+		übergeben.
+	- Ausgabe per Character-Matrix-Mock aufgefangen und dann an den Parent-Prozess übergeben
+		(Bus-Writes übergeben)
+	- kein Icarus beteiligt
+
+- Demoversion:
+	- genauso, nur die Character-Matrix wird per SWT dargestellt
+	
+- Tool:
+	- die SWT-Komponente benutzen, um Messages über den USB-Serial-Port zu empfangen, welche
+		von einer modifizierten Lib auf dem Arduino gesendet werden. Dann kann der
+		Arduino-Code schon mal parallel entwickelt werden.
+
+- Arduino-Testapp: Taschenrechner!
+
+- Testversion 2:
+	- Message Interface in Verilog schreiben (8-bit buffer und interrupt am Picoblaze)
+	- Eingabe als 1-bit Werte vom Testcase
+	- Ausgabe als 8-bit Werte und Interruptsignal an den Testcase
+
+- Testversion 3:
+	- Kommunikation zwischen den Prozessen jetzt per 1-bit Signal
+	- Eingabe als 1-bit-Signal
+	- dazwischen irgendwo ein Picoblaze, der im Host-Prozess simuliert wird!
+	- Ausgabe als Bus-Writes an das Character-Matrix-Mock
+
+- Demoversion:
+	- genauso, nur die Character-Matrix wird per SWT dargestellt
+
+- Demoversion:
+	- volle Funktionalität

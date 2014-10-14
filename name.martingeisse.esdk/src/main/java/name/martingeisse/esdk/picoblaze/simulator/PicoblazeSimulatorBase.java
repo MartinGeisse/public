@@ -7,7 +7,6 @@
 package name.martingeisse.esdk.picoblaze.simulator;
 
 import name.martingeisse.esdk.picoblaze.simulator.port.IPicoblazePortHandler;
-import name.martingeisse.esdk.util.IValueSource;
 
 /**
  * An instruction-level simulated PicoBlaze instance.
@@ -27,7 +26,7 @@ public class PicoblazeSimulatorBase {
 	/**
 	 * the interruptSignal
 	 */
-	private IValueSource<Boolean> interruptSignal;
+	private IPicoblazeInterruptSignal interruptSignal;
 
 	/**
 	 * Constructor.
@@ -64,7 +63,7 @@ public class PicoblazeSimulatorBase {
 	 * Getter method for the interruptSignal.
 	 * @return the interruptSignal
 	 */
-	public IValueSource<Boolean> getInterruptSignal() {
+	public IPicoblazeInterruptSignal getInterruptSignal() {
 		return interruptSignal;
 	}
 
@@ -72,7 +71,7 @@ public class PicoblazeSimulatorBase {
 	 * Setter method for the interruptSignal.
 	 * @param interruptSignal the interruptSignal to set
 	 */
-	public void setInterruptSignal(final IValueSource<Boolean> interruptSignal) {
+	public void setInterruptSignal(final IPicoblazeInterruptSignal interruptSignal) {
 		this.interruptSignal = interruptSignal;
 	}
 
