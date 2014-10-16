@@ -15,13 +15,24 @@ import org.junit.Test;
 public class AsciiGpuControllerProgramMemoryTest {
 
 	/**
+	 * the programMemory
+	 */
+	private AsciiGpuControllerProgramMemory programMemory = new AsciiGpuControllerProgramMemory();
+	
+	/**
+	 * the testHarness
+	 */
+	private IsolatedPicoblazeTestHarness testHarness = new IsolatedPicoblazeTestHarness(programMemory);
+
+	/**
 	 * @throws Exception ...
 	 */
 	@Test
 	public void testFoo() throws Exception {
-		AsciiGpuControllerProgramMemory programMemory = new AsciiGpuControllerProgramMemory();
-		IsolatedPicoblazeTestHarness testHarness = new IsolatedPicoblazeTestHarness();
-		testHarness.addToRoadmap(new ExpectedBusTransaction(false, 1, 1));
+		testHarness.addToRoadmap(new ExpectedBusTransaction(true, 0, 0));
+		testHarness.addToRoadmap(new ExpectedBusTransaction(true, 0, 1));
+		testHarness.addToRoadmap(new ExpectedBusTransaction(true, 0, 2));
+		testHarness.addToRoadmap(new ExpectedBusTransaction(true, 0, 3));
 		testHarness.run();
 	}
 	

@@ -6,10 +6,12 @@
 
 package name.martingeisse.esdk.picoblaze.simulator.cycle.test;
 
-import org.junit.Assert;
-
 import name.martingeisse.esdk.picoblaze.simulator.core.PicoblazeSimulatorException;
 import name.martingeisse.esdk.picoblaze.simulator.cycle.InstructionCyclePicoblazeSimulator;
+import name.martingeisse.esdk.picoblaze.simulator.port.IPicoblazePortHandler;
+import name.martingeisse.esdk.picoblaze.simulator.progmem.IPicoblazeInstructionMemory;
+
+import org.junit.Assert;
 
 
 
@@ -38,7 +40,37 @@ public final class IsolatedPicoblazeTestHarness {
 	/**
 	 * Constructor.
 	 */
-	public IsolatedPicoblazeTestHarness() {
+	public IsolatedPicoblazeTestHarness(IPicoblazeInstructionMemory instructionMemory) {
+		simulator.setInstructionMemory(instructionMemory);
+		simulator.setPortHandler(new IPicoblazePortHandler() {
+			
+			@Override
+			public void handleOutput(int address, int value) {
+				roadmap.handleBusTransaction(true, address, value);
+			}
+			
+			@Override
+			public int handleInput(int address) {
+				return roadmap.handleBusTransaction(false, address, 0);
+			}
+			
+		});
+	}
+	
+	/**
+	 * Getter method for the simulator.
+	 * @return the simulator
+	 */
+	public InstructionCyclePicoblazeSimulator getSimulator() {
+		return simulator;
+	}
+	
+	/**
+	 * Getter method for the roadmap.
+	 * @return the roadmap
+	 */
+	public SimulationRoadmap getRoadmap() {
+		return roadmap;
 	}
 	
 	/**

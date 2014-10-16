@@ -73,7 +73,7 @@ public final class SimulationRoadmap {
 	 * @return the data read, or 0 for writes
 	 */
 	public int handleBusTransaction(boolean write, int address, int data) throws RoadmapFinishedException {
-		SimulationMilestone nextMilestone = milestones.peek();
+		SimulationMilestone nextMilestone = milestones.poll();
 		if (nextMilestone == null) {
 			Assert.fail("handleBusTransaction() -- no more milestones in the roadmap");
 		}

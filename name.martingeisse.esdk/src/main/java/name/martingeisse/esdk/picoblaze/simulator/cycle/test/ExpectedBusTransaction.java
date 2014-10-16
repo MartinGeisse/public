@@ -4,7 +4,7 @@
 
 package name.martingeisse.esdk.picoblaze.simulator.cycle.test;
 
-import static org.junit.Assert.*;
+import org.junit.Assert;
 
 /**
  * A single expected bus transaction during a simulation. This
@@ -91,14 +91,23 @@ public final class ExpectedBusTransaction implements SimulationMilestone {
 	 */
 	@Override
 	public int handleBusTransaction(boolean write, int address, int data) {
-		assertEquals(this.write, write);
-		assertEquals(this.address, address);
-		if (write) {
-			assertEquals(this.data, data);
-			return 0;
-		} else {
-			return this.data;
+		if (this.write != write || this.address != address || (write && this.data != data)) {
+			ExpectedBusTransaction actual = new ExpectedBusTransaction(write, address, data);
+			Assert.fail("expected bus transaction [" + this + "], actual: [" + actual + "]");
 		}
+		return (write ? 0 : this.data);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		if (write) {
+			return String.format("write %2h to %2h", data, address); 
+		} else {
+			return String.format("read %2h");
+		}
+	}
+	
 }

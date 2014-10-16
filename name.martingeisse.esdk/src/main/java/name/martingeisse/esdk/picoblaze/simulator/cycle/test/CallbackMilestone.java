@@ -36,5 +36,13 @@ public abstract class CallbackMilestone implements SimulationMilestone {
 	 * Runs this callback.
 	 */
 	protected abstract void run();
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "(callback)";
+	}
 	
 }

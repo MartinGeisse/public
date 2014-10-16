@@ -9,5 +9,5 @@ package name.martingeisse.esdk.picoblaze.simulator.cycle.test;
  * remaining milestones. This in turn causes the test harness
  * to finish the simulation successfully.
  */
-public final class RoadmapFinishedException extends Exception {
+public final class RoadmapFinishedException extends RuntimeException {
 }
