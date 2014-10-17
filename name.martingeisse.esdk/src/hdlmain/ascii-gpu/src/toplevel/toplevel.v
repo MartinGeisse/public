@@ -1,9 +1,9 @@
 //
-// eco32.v -- ECO32 top-level description
+// toplevel.v -- ECO32 top-level description
 //
 
 
-module eco32(clk_in,
+module toplevel(clk_in,
              reset_in,
              sdram_ck_p,
              sdram_ck_n,
