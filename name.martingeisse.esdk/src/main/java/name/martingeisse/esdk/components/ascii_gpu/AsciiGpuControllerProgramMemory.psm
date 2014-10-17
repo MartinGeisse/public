@@ -1,8 +1,72 @@
 
-start:
-	LOAD s0, 00
+NAMEREG s0, returnValue0
+NAMEREG s1, argument0
+NAMEREG s2, temp0
+NAMEREG s3, temp1
+NAMEREG s4, temp2
+NAMEREG s5, temp3
 
-loop:
-	OUTPUT s0, 00
-	ADD s0, 01
-	JUMP loop
+
+;
+; main routines
+;
+
+fetchCommand:
+	CALL receiveMessageByte
+	COMPARE returnValue0, 01
+	JUMP C, fillScreenCommand
+	JUMP Z, setCellCommand
+	COMPARE returnValue0, 03
+	JUMP C, drawStringCommand
+	JUMP Z, fillRectangleCommand
+	JUMP fetchCommand
+
+fillScreenCommand:
+	LOAD temp1, 00
+	CALL receiveMessageByte
+	LOAD temp2, returnValue0
+	CALL receiveMessageByte
+fillScreenCommand_yloop:	
+	OUTPUT temp1, 04
+	LOAD temp0, 00
+fillScreenCommand_xloop:
+	OUTPUT temp0, 02
+	OUTPUT temp2, 08
+	OUTPUT returnValue0, 10
+	ADD temp0, 01
+	COMPARE temp0, 80
+	JUMP NZ, fillScreenCommand_xloop
+	ADD temp1, 01
+	COMPARE temp1, 25
+	JUMP NZ, fillScreenCommand_yloop
+	JUMP fetchCommand
+
+setCellCommand:
+	CALL receiveMessageByte
+	OUTPUT returnValue0, 02
+	CALL receiveMessageByte
+	OUTPUT returnValue0, 04
+	CALL receiveMessageByte
+	OUTPUT returnValue0, 08
+	CALL receiveMessageByte
+	OUTPUT returnValue0, 10
+	JUMP fetchCommand
+
+drawStringCommand:
+	; TODO
+	JUMP fetchCommand
+
+fillRectangleCommand:
+	; TODO
+	JUMP fetchCommand
+
+;
+; subroutines
+;
+
+receiveMessageByte:
+	INPUT returnValue0, 00
+	COMPARE returnValue0, 00
+	JUMP Z, receiveMessageByte
+	INPUT returnValue0, 01
+	RETURN

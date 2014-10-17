@@ -104,9 +104,9 @@ public final class ExpectedBusTransaction implements SimulationMilestone {
 	@Override
 	public String toString() {
 		if (write) {
-			return String.format("write %2h to %2h", data, address); 
+			return String.format("write 0x%2h to 0x%2h", data, address); 
 		} else {
-			return String.format("read %2h");
+			return String.format("read 0x%2h", address);
 		}
 	}
 	

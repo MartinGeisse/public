@@ -10,30 +10,40 @@ import java.util.Queue;
 import org.junit.Assert;
 
 /**
- * A list of {@link SimulationMilestone}s that get processed during
+ * A list of {@link ISimulationRoadmapSection}s that get processed during
  * a simulation.
  */
 public final class SimulationRoadmap {
 
 	/**
-	 * the milestones
+	 * the sections
 	 */
-	private final Queue<SimulationMilestone> milestones = new LinkedList<SimulationMilestone>();
+	private final Queue<ISimulationRoadmapSection> sections = new LinkedList<ISimulationRoadmapSection>();
 	
 	/**
-	 * Adds a milestone to this roadmap.
-	 * @param milestone the milestone to add
+	 * Adds a section to this roadmap.
+	 * @param section the section to add
 	 */
-	public void addMilestone(SimulationMilestone milestone) {
-		milestones.add(milestone);
+	public void addSection(ISimulationRoadmapSection section) {
+		sections.add(section);
 	}
 
+	/**
+	 * 
+	 */
+	private void removeEmptySections() {
+		while (!sections.isEmpty() && sections.peek().peek() == null) {
+			sections.poll();
+		}
+	}
+	
 	/**
 	 * Peeks into the roadmap to return the next pending milestone.
 	 * @return the milestone
 	 */
 	public SimulationMilestone peek() {
-		return milestones.peek();
+		removeEmptySections();
+		return (sections.peek() == null ? null : sections.peek().peek());
 	}
 	
 	/**
@@ -49,12 +59,14 @@ public final class SimulationRoadmap {
 	 */
 	private void notifyVisibleAsNextMilestone() throws RoadmapFinishedException {
 		while (true) {
-			SimulationMilestone nextMilestone = milestones.peek();
-			if (nextMilestone == null) {
+			removeEmptySections();
+			if (sections.peek() == null) {
 				throw new RoadmapFinishedException();
 			}
+			SimulationMilestone nextMilestone = sections.peek().peek();
 			if (nextMilestone.notifyVisibleAsNextMilestone()) {
-				milestones.poll();
+				sections.peek().fetch();
+				removeEmptySections();
 			} else {
 				break;
 			}
@@ -73,10 +85,11 @@ public final class SimulationRoadmap {
 	 * @return the data read, or 0 for writes
 	 */
 	public int handleBusTransaction(boolean write, int address, int data) throws RoadmapFinishedException {
-		SimulationMilestone nextMilestone = milestones.poll();
-		if (nextMilestone == null) {
+		removeEmptySections();
+		if (sections.peek() == null) {
 			Assert.fail("handleBusTransaction() -- no more milestones in the roadmap");
 		}
+		SimulationMilestone nextMilestone = sections.peek().fetch();
 		int result = nextMilestone.handleBusTransaction(write, address, data);
 		notifyVisibleAsNextMilestone();
 		return result;

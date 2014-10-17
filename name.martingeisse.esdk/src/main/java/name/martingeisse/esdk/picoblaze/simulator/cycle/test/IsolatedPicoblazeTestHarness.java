@@ -74,13 +74,21 @@ public final class IsolatedPicoblazeTestHarness {
 	}
 	
 	/**
-	 * Adds the specified milestone to the simulation roadmap.
-	 * @param milestone the milestone to add
+	 * Adds the specified section to the simulation roadmap.
+	 * @param section the section to add
 	 */
-	public void addToRoadmap(SimulationMilestone milestone) {
-		roadmap.addMilestone(milestone);
+	public void addToRoadmap(ISimulationRoadmapSection section) {
+		roadmap.addSection(section);
 	}
 
+	/**
+	 * Adds a section containing the specified milestones to the simulation roadmap.
+	 * @param milestones the milestones to add
+	 */
+	public void addToRoadmap(SimulationMilestone... milestones) {
+		addToRoadmap(new SimulationRoadmapSection(milestones));
+	}
+	
 	/**
 	 * Getter method for the timeoutInstructionCount.
 	 * @return the timeoutInstructionCount
