@@ -1,0 +1,2 @@
+cd work
+rm -rf *
