@@ -5,10 +5,13 @@ NAMEREG s2, temp0
 NAMEREG s3, temp1
 NAMEREG s4, temp2
 NAMEREG s5, temp3
+NAMEREG s6, temp4
+NAMEREG s7, temp5
+NAMEREG s8, temp6
 
 
 ;
-; main routines
+; command dispatcher
 ;
 
 fetchCommand:
@@ -20,6 +23,10 @@ fetchCommand:
 	JUMP C, drawStringCommand
 	JUMP Z, fillRectangleCommand
 	JUMP fetchCommand
+
+;
+; command: fill screen
+;
 
 fillScreenCommand:
 	LOAD temp1, 00
@@ -41,6 +48,10 @@ fillScreenCommand_xloop:
 	JUMP NZ, fillScreenCommand_yloop
 	JUMP fetchCommand
 
+;
+; command: set cell
+;
+
 setCellCommand:
 	CALL receiveMessageByte
 	OUTPUT returnValue0, 02
@@ -52,13 +63,94 @@ setCellCommand:
 	OUTPUT returnValue0, 10
 	JUMP fetchCommand
 
-drawStringCommand:
-	; TODO
-	JUMP fetchCommand
+;
+; Command: draw string
+;
 
+NAMEREG temp0, x
+NAMEREG temp1, attribute
+NAMEREG temp2, endX
+drawStringCommand:
+	CALL receiveMessageByte ; x
+	LOAD x, returnValue0
+	CALL receiveMessageByte ; y
+	OUTPUT returnValue0, 04
+	CALL receiveMessageByte ; attribtue
+	LOAD attribute, returnValue0
+	CALL receiveMessageByte ; length
+	LOAD endX, returnValue0
+	ADD endX, x
+drawStringCommand_lengthLoop:
+	COMPARE x, endX
+	JUMP Z, fetchCommand
+	CALL receiveMessageByte ; ASCII code
+	OUTPUT x, 02
+	OUTPUT attribute, 08
+	OUTPUT returnValue0, 10
+	ADD x, 01
+	JUMP drawStringCommand_lengthLoop
+NAMEREG x, temp0
+NAMEREG attribute, temp1
+NAMEREG endX, temp2
+
+;
+; Command: fill rectangle
+;
+
+NAMEREG temp0, baseX
+NAMEREG temp1, x
+NAMEREG temp2, y
+NAMEREG temp3, endX
+NAMEREG temp4, endY
+NAMEREG temp5, attribute
+NAMEREG temp6, character
 fillRectangleCommand:
-	; TODO
+	; load x parameter and store as baseX
+	CALL receiveMessageByte
+	LOAD baseX, returnValue0
+	; load y parameter
+	CALL receiveMessageByte
+	LOAD y, returnValue0
+	; load width parameter and compute endX
+	CALL receiveMessageByte
+	LOAD endX, returnValue0
+	ADD endX, baseX
+	; load height parameter end compute endY
+	CALL receiveMessageByte
+	LOAD endY, returnValue0
+	ADD endY, y
+	; load attribute parameter
+	CALL receiveMessageByte
+	LOAD attribute, returnValue0
+	; load character parameter
+	CALL receiveMessageByte
+	LOAD character, returnValue0
+	; check if empty
+	COMPARE baseX, endX
+	JUMP Z, fetchCommand
+	COMPARE y, endY
+	JUMP Z, fetchCommand
+fillRectangleCommand_yLoop:
+	OUTPUT y, 04
+	LOAD x, baseX
+fillRectangleCommand_xLoop:
+	OUTPUT x, 02
+	OUTPUT attribute, 08
+	OUTPUT character, 10
+	ADD x, 01
+	COMPARE x, endX
+	JUMP NZ, fillRectangleCommand_xLoop
+	ADD y, 01
+	COMPARE y, endY
+	JUMP NZ, fillRectangleCommand_yLoop
 	JUMP fetchCommand
+NAMEREG baseX, temp0
+NAMEREG x, temp1
+NAMEREG y, temp2
+NAMEREG endX, temp3
+NAMEREG endY, temp4
+NAMEREG attribute, temp5
+NAMEREG character, temp6
 
 ;
 ; subroutines

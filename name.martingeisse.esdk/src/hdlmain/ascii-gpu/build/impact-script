@@ -1,0 +1,5 @@
+setMode -bs
+setCable -p usb1
+identify
+assignFile -p 1 -file toplevel.bit
+program -e -p 1

@@ -107,11 +107,8 @@ Picoblaze port map:
 
 - 02: cursor x (write)
 - 04: cursor y (write)
-- 08: character matrix (write)
-- 10: attribute matrix (write)
-	
-	
-	
+- 08: attribute matrix (write)
+- 10: character matrix (write)
 	
 	
 	

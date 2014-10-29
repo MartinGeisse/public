@@ -1,0 +1,109 @@
+2014-10-25 10:16:42,107 main name.martingeisse.esdk.experiment.ArduinoAsciiGpuEmulator ERROR: test
+2014-10-25 10:16:50,013 main name.martingeisse.esdk.experiment.ArduinoAsciiGpuEmulator INFO: test
+2014-10-25 10:17:05,730 main name.martingeisse.esdk.experiment.ArduinoAsciiGpuEmulator DEBUG: test
+2014-10-25 10:55:15,111 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-1063008577455602245
+2014-10-25 10:55:15,112 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 10:55:43,681 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-1452082079379679358
+2014-10-25 10:55:43,682 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 10:57:08,504 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-7710260956864699806
+2014-10-25 10:57:08,505 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 10:58:34,778 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-1320088681294346193
+2014-10-25 10:58:34,779 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 10:58:58,688 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-7307369172522414586
+2014-10-25 10:58:58,690 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 11:09:54,396 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-6369993736159952777
+2014-10-25 11:09:54,398 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 11:11:00,466 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-2962941087404364381
+2014-10-25 11:11:00,467 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 11:11:24,175 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-5259561130132703607
+2014-10-25 11:11:24,176 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 11:12:13,355 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-560576268910802317
+2014-10-25 11:12:13,356 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 11:13:18,060 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-5692773361083459238
+2014-10-25 11:13:18,061 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 17:48:34,015 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-8115344878060971691
+2014-10-25 17:48:34,024 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 17:50:08,430 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-441567388229012986
+2014-10-25 17:50:08,431 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 17:53:16,269 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-1111689777698305499
+2014-10-25 17:53:16,270 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 17:53:40,927 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-8812751357067983565
+2014-10-25 17:53:40,929 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 17:53:47,490 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-4758474152013240959
+2014-10-25 17:53:47,491 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 17:53:54,840 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-995469704272663369
+2014-10-25 17:53:54,842 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 18:22:29,952 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-2548532517358633345
+2014-10-25 18:22:29,953 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 18:30:39,223 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-173275051103850023
+2014-10-25 18:30:39,225 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 18:31:28,408 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-2572394861507735583
+2014-10-25 18:31:28,410 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 18:32:07,498 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-9030751641963018486
+2014-10-25 18:32:07,499 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 18:35:58,809 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-2142353393114795326
+2014-10-25 18:35:58,810 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 18:36:35,435 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-4209687305363547711
+2014-10-25 18:36:35,436 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 18:37:32,486 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-5757385888839614540
+2014-10-25 18:37:32,487 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 18:37:51,147 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-477244628154797920
+2014-10-25 18:37:51,148 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 18:42:16,686 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-1935503775693682496
+2014-10-25 18:42:16,687 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 18:48:29,052 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-3619330480029691201
+2014-10-25 18:48:29,053 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 18:50:05,103 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-5987090609520559389
+2014-10-25 18:50:05,104 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 19:26:36,532 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-7172882255204049065
+2014-10-25 19:26:36,533 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 19:27:24,295 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-1010941461268032491
+2014-10-25 19:27:24,296 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 19:31:12,836 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-5871479146986306720
+2014-10-25 19:31:12,837 main name.martingeisse.esdk.simulation.LwjglNativeLibraryHelper DEBUG: native library path: 
+2014-10-25 20:27:52,112 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-6419496209450057233
+2014-10-25 20:27:52,114 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-25 20:28:59,415 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-4038047183804063860
+2014-10-25 20:28:59,417 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-25 20:29:12,379 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-7782178083077875946
+2014-10-25 20:29:12,381 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-25 20:35:17,210 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-75439626754032778
+2014-10-25 20:35:17,211 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-25 20:36:55,565 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-3446174557983636134
+2014-10-25 20:36:55,566 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-25 20:37:34,855 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-3800588127465229371
+2014-10-25 20:37:34,856 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-25 20:38:03,246 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-291298588081879786
+2014-10-25 20:38:03,248 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-25 20:38:53,519 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-6615427361793557656
+2014-10-25 20:38:53,521 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-25 20:39:21,167 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-6391005052595938064
+2014-10-25 20:39:21,169 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-25 20:44:55,315 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-3891797997354545648
+2014-10-25 20:44:55,317 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-25 20:46:47,872 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-8894519957783534846
+2014-10-25 20:46:47,874 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-25 20:57:04,263 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-2774207107696016051
+2014-10-25 20:57:04,265 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-25 21:18:47,668 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-8510095922883334911
+2014-10-25 21:18:47,670 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-25 21:58:33,668 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-8864495847292058349
+2014-10-25 21:58:33,669 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-25 21:59:18,221 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-6216814889317885050
+2014-10-25 21:59:18,222 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-25 21:59:32,013 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-543640332638751665
+2014-10-25 21:59:32,015 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-25 21:59:42,038 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-3992749843907076270
+2014-10-25 21:59:42,040 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-26 12:52:14,142 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-4179964888982738518
+2014-10-26 12:52:14,144 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-26 12:54:09,420 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-5959420398525481836
+2014-10-26 12:54:09,421 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-26 13:05:00,511 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-2459289034600245373
+2014-10-26 13:05:00,512 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-26 15:21:22,113 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-2704616473973844097
+2014-10-26 15:21:22,114 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-26 15:21:41,624 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-4105658778075268533
+2014-10-26 15:21:41,626 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
+2014-10-26 15:31:56,131 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: temp: /var/folders/gd/wyg2hvsj3xl3_c4qc2j0f4yw0000gn/T/miner-launcher-6857722127316326906
+2014-10-26 15:31:56,133 main name.martingeisse.esdk.simulation.lwjgl.NativeLibraryHelper DEBUG: native library path: 
