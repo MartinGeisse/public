@@ -1,0 +1,29 @@
+
+Idea:
+
+4-tier architecture:
+
+- Server: Connects all Tiers; Runs game-independent logic
+	(Section management; multiplayer coordination)
+
+- Clients: Display game, handle user input
+
+- Game Logic: Connects to the server and implements game logic
+	direct connection to DB possible; maybe game needs to connect
+	only to game logic DB (SQL) and server only needs to connect
+	to world DB (cassandra)
+
+- Database: Stores data for worl, players, game logic
+	Cassandra for world DB
+	SQL for game logic DB
+
+Advantage:
+- Can replace game logic without shutting down server
+- at least while there is no multi-server, failover-based architecture
+- game rules can be changed dynamically
+- multiple game logic nodes can act simultaneously --> very rapid development
+
+Disadvantage:
+- game logic reaction has high latency
+	--> game logic devisions need to be cached in the server and possibly in the client
+

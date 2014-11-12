@@ -97,15 +97,15 @@ public abstract class PlayerBase {
 		
 		// try to move along x and z independently (for wall sliding). If any one of them failed, try
 		// stair climbing.
-		boolean xok = checkAndMove(position.getX() + dx, position.getY(), position.getZ());
-		boolean zok = checkAndMove(position.getX(), position.getY(), position.getZ() + dz);
+		boolean xok = checkAndMoveTo(position.getX() + dx, position.getY(), position.getZ());
+		boolean zok = checkAndMoveTo(position.getX(), position.getY(), position.getZ() + dz);
 		if (!xok || !zok) {
 			moveUp(maxStairsHeight);
 			if (!xok) {
-				checkAndMove(position.getX() + dx, position.getY(), position.getZ());
+				checkAndMoveTo(position.getX() + dx, position.getY(), position.getZ());
 			}
 			if (!zok) {
-				checkAndMove(position.getX(), position.getY(), position.getZ() + dz);
+				checkAndMoveTo(position.getX(), position.getY(), position.getZ() + dz);
 			}
 			moveUp(-maxStairsHeight / 4);
 			moveUp(-maxStairsHeight / 4);
@@ -121,7 +121,7 @@ public abstract class PlayerBase {
 	 * @return whether movement succeeded
 	 */
 	public final boolean moveUp(final double amount) {
-		return checkAndMove(position.getX(), position.getY() + amount, position.getZ());
+		return checkAndMoveTo(position.getX(), position.getY() + amount, position.getZ());
 	}
 
 	/**
@@ -130,7 +130,7 @@ public abstract class PlayerBase {
 	 * @param nz the new z position
 	 * @return whether movement succeeded
 	 */
-	public final boolean checkAndMove(final double nx, final double ny, final double nz) {
+	public final boolean checkAndMoveTo(final double nx, final double ny, final double nz) {
 		if (!isBlockedAt(nx, ny, nz)) {
 			position.setX(nx);
 			position.setY(ny);
@@ -149,7 +149,7 @@ public abstract class PlayerBase {
 	 * @return whether the player is blocked at that position
 	 */
 	public final boolean isBlockedAt(final double nx, final double ny, final double nz) {
-		return world.getCompositeCollider().collides(createDetailCollisionRegion());
+		return world.getCompositeCollider().collides(createDetailCollisionRegion(nx, ny, nz));
 	}
 	
 	/**
@@ -183,16 +183,23 @@ public abstract class PlayerBase {
 	 * @return a new {@link RectangularRegion} that describes the occupied region.
 	 */
 	public final RectangularRegion createDetailCollisionRegion() {
-
+		return createDetailCollisionRegion(position.getX(), position.getY(), position.getZ());
+	}
+	
+	/**
+	 * 
+	 */
+	private static final RectangularRegion createDetailCollisionRegion(double x, double y, double z) {
+		
 		// collider size
 		int width = 2;
 		int height = 2;
 		int depth = 13;
 		
 		// scale the player's position to detail coordinates
-		int detailX = (int)(position.getX() * StackdConstants.GEOMETRY_DETAIL_FACTOR);
-		int detailY = (int)(position.getY() * StackdConstants.GEOMETRY_DETAIL_FACTOR);
-		int detailZ = (int)(position.getZ() * StackdConstants.GEOMETRY_DETAIL_FACTOR);
+		int detailX = (int)(x * StackdConstants.GEOMETRY_DETAIL_FACTOR);
+		int detailY = (int)(y * StackdConstants.GEOMETRY_DETAIL_FACTOR);
+		int detailZ = (int)(z * StackdConstants.GEOMETRY_DETAIL_FACTOR);
 		
 		// create the occupied region. note: +1 because "end" is exclusive
 		return new RectangularRegion(detailX - width, detailY - depth, detailZ - width, detailX + width + 1, detailY + height + 1, detailZ + width + 1);

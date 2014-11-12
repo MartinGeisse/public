@@ -1,0 +1,22 @@
+
+
+Basis for HDL projects is ValueSource and ClockSignalListener.
+
+Objective: Build a project as a netlist out of that.
+
+Modules are just a tool, and only one of them. Modules are not
+central, since no matter how the module system is designed, it
+will be too restrictive. There is no "one true way" to define
+what modules are.
+
+Any DSL that is used to define modules will be too restrictive.
+
+Either allow to mix toplevel DSLs, or just say,
+- use classes everywhere to define the system
+- use DSLs to define the interior of those classes
+- no toplevel DSLs
+
+Mixing toplevel DSLs still leaves the question: What are the
+constructs defined by such DSL snippets? How and where are they
+managed? For classes that's simple because Groovy manages them.
+

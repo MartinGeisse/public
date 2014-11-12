@@ -92,6 +92,7 @@ public class MinerServer extends StackdServer<MinerSession> {
 	 * @throws Exception on errors 
 	 */
 	public void initializeWorld() throws Exception {
+		logger.info("initializing world...");
 		
 		TestRegionImporter importer = new TestRegionImporter(getSectionWorkingSet().getStorage());
 		// importer.setTranslation(-15, -9, -72);
@@ -100,7 +101,6 @@ public class MinerServer extends StackdServer<MinerSession> {
 		
 		getSectionWorkingSet().clearCache();
 		logger.info("world initialized");
-		
 	}
 	
 	/**

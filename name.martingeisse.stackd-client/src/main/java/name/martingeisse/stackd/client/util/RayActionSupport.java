@@ -15,9 +15,10 @@ import static org.lwjgl.opengl.GL11.glGetFloat;
 import static org.lwjgl.opengl.GL11.glGetInteger;
 import static org.lwjgl.opengl.GL11.glReadPixels;
 import static org.lwjgl.util.glu.GLU.gluUnProject;
+
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import name.martingeisse.stackd.common.StackdConstants;
+
 import org.lwjgl.BufferUtils;
 
 /**
@@ -134,9 +135,9 @@ public class RayActionSupport {
 
 		// compute the impact position
 		gluUnProject(width >> 1, height >> 1, depthBufferValue, modelviewTransform, projectionTransform, viewport, objectPosition);
-		impactX = objectPosition.get(0) / StackdConstants.GEOMETRY_DETAIL_FACTOR;
-		impactY = objectPosition.get(1) / StackdConstants.GEOMETRY_DETAIL_FACTOR;
-		impactZ = objectPosition.get(2) / StackdConstants.GEOMETRY_DETAIL_FACTOR;
+		impactX = objectPosition.get(0);
+		impactY = objectPosition.get(1);
+		impactZ = objectPosition.get(2);
 		captured = true;
 		
 	}

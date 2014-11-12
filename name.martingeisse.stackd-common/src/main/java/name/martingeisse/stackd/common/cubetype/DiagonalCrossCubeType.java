@@ -6,7 +6,6 @@
 
 package name.martingeisse.stackd.common.cubetype;
 
-import name.martingeisse.stackd.common.cubes.MeshBuilderBase;
 import name.martingeisse.stackd.common.geometry.AxisAlignedDirection;
 
 /**

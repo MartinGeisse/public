@@ -7,7 +7,6 @@
 package name.martingeisse.stackd.common.cubetype;
 
 import name.martingeisse.stackd.common.StackdConstants;
-import name.martingeisse.stackd.common.cubes.MeshBuilderBase;
 import name.martingeisse.stackd.common.geometry.AxisAlignedDirection;
 import name.martingeisse.stackd.common.geometry.RectangularRegion;
 
@@ -30,7 +29,10 @@ public abstract class CubeType {
 
 	/**
 	 * Checks whether this cube blocks any movement to the neighbor in the
-	 * specified direction during collision detection.
+	 * specified direction during collision detection. This method isn't
+	 * actually used for collision detected but for data hiding: If the
+	 * neighbor cube is both obscured and blocked for movement, then it is
+	 * not sent to the client.
 	 * 
 	 * @param direction the direction towards the neighbor
 	 * @return true if this cube blocks movement, false if not

@@ -46,6 +46,7 @@ public class StackdConstants {
 	public static final byte[] INTERACTIVE_SECTION_DATA_COMPRESSION_DICTIONARY;
 	static {
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		// TODO reverse order (0xff first) might shorten the pointers and improve compression!
 		for (int i=0; i<30; i++) {
 			s.write(0x00);
 		}

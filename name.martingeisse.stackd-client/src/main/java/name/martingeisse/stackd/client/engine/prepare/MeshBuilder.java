@@ -5,6 +5,7 @@
 package name.martingeisse.stackd.client.engine.prepare;
 
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -12,14 +13,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 import name.martingeisse.stackd.client.engine.RenderUnit;
 import name.martingeisse.stackd.client.glworker.GlWorkUnit;
 import name.martingeisse.stackd.client.glworker.GlWorkerLoop;
 import name.martingeisse.stackd.client.system.OpenGlVertexBuffer;
 import name.martingeisse.stackd.client.system.SystemResourceNode;
-import name.martingeisse.stackd.common.cubes.MeshBuilderBase;
+import name.martingeisse.stackd.common.cubetype.MeshBuilderBase;
 import name.martingeisse.stackd.common.geometry.AxisAlignedDirection;
 import name.martingeisse.stackd.common.geometry.RectangularRegion;
+
 import org.apache.log4j.Logger;
 
 /**

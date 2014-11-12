@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.stackd.common.cubes;
+package name.martingeisse.stackd.common.cubetype;
 
 import java.util.ArrayList;
 import java.util.List;

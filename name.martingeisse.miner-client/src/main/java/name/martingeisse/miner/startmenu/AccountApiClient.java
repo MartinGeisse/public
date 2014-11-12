@@ -76,7 +76,7 @@ public final class AccountApiClient {
 	 */
 	private JsonAnalyzer request(final String action, final String requestData) {
 		try {
-			final HttpPost post = new HttpPost("http://localhost:8888/" + action);
+			final HttpPost post = new HttpPost("http://localhost:8080/" + action);
 			post.setEntity(new StringEntity(requestData, StandardCharsets.UTF_8));
 			final HttpResponse response = httpClient.execute(post);
 			if (response.getStatusLine().getStatusCode() != 200) {
