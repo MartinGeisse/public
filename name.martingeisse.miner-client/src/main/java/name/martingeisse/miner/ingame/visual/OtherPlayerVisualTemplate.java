@@ -7,14 +7,14 @@ package name.martingeisse.miner.ingame.visual;
 import static org.lwjgl.opengl.GL11.GL_ALWAYS;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_LESS;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glColor4ub;
 import static org.lwjgl.opengl.GL11.glDepthFunc;
 import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glRasterPos3f;
@@ -27,10 +27,10 @@ import name.martingeisse.miner.ingame.CubeWorldHandler;
 import name.martingeisse.miner.ingame.MinerResources;
 import name.martingeisse.miner.ingame.player.Player;
 import name.martingeisse.miner.ingame.player.PlayerProxy;
+import name.martingeisse.miner.util.GlUtil;
 import name.martingeisse.stackd.client.glworker.AbstractSingleWorkUnitVisualTemplate;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.Sphere;
 
 /**
  * Represents another player (i.e. a {@link PlayerProxy}).
@@ -73,16 +73,22 @@ public final class OtherPlayerVisualTemplate extends AbstractSingleWorkUnitVisua
 
 		// set a color that is computed from the player's session ID
 		final Random random = new Random(playerProxy.getId());
-		glColor4ub((byte)random.nextInt(255), (byte)random.nextInt(255), (byte)random.nextInt(255), (byte)127);
+		glColor4ub((byte)random.nextInt(255), (byte)random.nextInt(255), (byte)random.nextInt(255), (byte)255);
 
 		// Set up inverse modelview matrix, draw, then restore previous matrix.
 		// Also set the raster position for drawing the name.
 		glPushMatrix();
 		glTranslated(playerProxy.getPosition().getX(), playerProxy.getPosition().getY(), playerProxy.getPosition().getZ());
 		glRotatef((float)playerProxy.getOrientation().getHorizontalAngle(), 0, 1, 0);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		new Sphere().draw(0.8f, 10, 10);
-		glRasterPos3f(0f, 1.5f, 0f);
+		glBegin(GL_TRIANGLES);
+		GlUtil.sendAxisAlignedBoxVertices(-0.2, -0.2, -0.2, 0.2, 0.2, 0.2);
+		GlUtil.sendAxisAlignedBoxVertices(-0.35, -1.0, -0.3, 0.35, -0.25, 0.3);
+		GlUtil.sendAxisAlignedBoxVertices(-0.3, -1.625, -0.2, -0.05, -1.0, 0.2);
+		GlUtil.sendAxisAlignedBoxVertices(0.05, -1.625, -0.2, 0.3, -1.0, 0.2);
+		GlUtil.sendAxisAlignedBoxVertices(-0.6, -1.0, -0.1, -0.4, -0.25, 0.1);
+		GlUtil.sendAxisAlignedBoxVertices(0.4, -1.0, -0.1, 0.6, -0.25, 0.1);
+		glEnd();
+		glRasterPos3f(0f, 0.5f, 0f);
 		glPopMatrix();
 
 		// compute the distance between the players
