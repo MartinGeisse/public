@@ -6,7 +6,6 @@
 
 package name.martingeisse.miner.ingame;
 
-import static org.lwjgl.opengl.GL11.GL_ALWAYS;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
@@ -31,7 +30,6 @@ import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glColor3f;
-import static org.lwjgl.opengl.GL11.glColor4ub;
 import static org.lwjgl.opengl.GL11.glDepthFunc;
 import static org.lwjgl.opengl.GL11.glDepthMask;
 import static org.lwjgl.opengl.GL11.glDisable;
@@ -42,7 +40,6 @@ import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glRasterPos3f;
 import static org.lwjgl.opengl.GL11.glRotatef;
 import static org.lwjgl.opengl.GL11.glScalef;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
@@ -59,13 +56,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import name.martingeisse.common.util.ThreadUtil;
 import name.martingeisse.miner.common.MinerCommonConstants;
 import name.martingeisse.miner.common.MinerCubeTypes;
 import name.martingeisse.miner.ingame.player.Player;
 import name.martingeisse.miner.ingame.player.PlayerProxy;
+import name.martingeisse.miner.ingame.visual.OtherPlayerVisualTemplate;
 import name.martingeisse.stackd.client.engine.EngineParameters;
 import name.martingeisse.stackd.client.engine.FrameRenderParameters;
 import name.martingeisse.stackd.client.engine.WorldWorkingSet;
@@ -93,7 +90,6 @@ import org.joda.time.Instant;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.Sphere;
 
 /**
  * TODO: document me
@@ -215,6 +211,11 @@ public class CubeWorldHandler {
 	 * the previousConnectionProblemInstant
 	 */
 	private Instant previousConnectionProblemInstant = new Instant();
+	
+	/**
+	 * the otherPlayerVisualTemplate
+	 */
+	private final OtherPlayerVisualTemplate otherPlayerVisualTemplate;
 
 	/**
 	 * The sectionLoadHandler -- checks often (100 ms), but doesn't re-request frequently (5 sec)
@@ -275,6 +276,7 @@ public class CubeWorldHandler {
 		playerNames = new HashMap<Integer, String>();
 		footstepSound = new RegularSound(resources.getFootstep(), 500);
 		cooldownFinishTime = System.currentTimeMillis();
+		otherPlayerVisualTemplate = new OtherPlayerVisualTemplate(resources, player, this);
 
 		// TODO: implement better checking for connection problems: only stall when surrounding sections
 		// are missing AND the player is in that half of the current section. currently using collider
@@ -698,45 +700,7 @@ public class CubeWorldHandler {
 				glMatrixMode(GL_MODELVIEW);
 				for (final PlayerProxy playerProxy : playerProxies) {
 					if (playerProxy.getId() != IngameHandler.protocolClient.getSessionId()) {
-
-						// set a color that is computed from the player's session ID
-						final Random random = new Random(playerProxy.getId());
-						glColor4ub((byte)random.nextInt(255), (byte)random.nextInt(255), (byte)random.nextInt(255), (byte)127);
-
-						// Set up inverse modelview matrix, draw, then restore previous matrix.
-						// Also set the raster position for drawing the name.
-						glPushMatrix();
-						glTranslated(playerProxy.getPosition().getX(), playerProxy.getPosition().getY(), playerProxy.getPosition().getZ());
-						glRotatef((float)playerProxy.getOrientation().getHorizontalAngle(), 0, 1, 0);
-						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-						new Sphere().draw(0.8f, 10, 10);
-						glRasterPos3f(0f, 1.5f, 0f);
-						glPopMatrix();
-
-						// compute the distance between the players
-						final double dx = player.getPosition().getX() - playerProxy.getPosition().getX();
-						final double dy = player.getPosition().getY() - playerProxy.getPosition().getY();
-						final double dz = player.getPosition().getZ() - playerProxy.getPosition().getZ();
-						final double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-						final double zoom = 5.0 / (Math.sqrt(distance) + 0.5);
-
-						// draw the player's name
-						String name = playerNames.get(playerProxy.getId());
-						if (name == null) {
-							name = "...";
-						}
-						glBindTexture(GL_TEXTURE_2D, 0);
-						glDisable(GL_BLEND);
-						glDepthFunc(GL_ALWAYS);
-						GL11.glPixelTransferf(GL11.GL_RED_BIAS, 1.0f);
-						GL11.glPixelTransferf(GL11.GL_GREEN_BIAS, 1.0f);
-						GL11.glPixelTransferf(GL11.GL_BLUE_BIAS, 1.0f);
-						resources.drawText(name, (float)zoom);
-						GL11.glPixelTransferf(GL11.GL_RED_BIAS, 0.0f);
-						GL11.glPixelTransferf(GL11.GL_GREEN_BIAS, 0.0f);
-						GL11.glPixelTransferf(GL11.GL_BLUE_BIAS, 0.0f);
-						glDepthFunc(GL_LESS);
-
+						otherPlayerVisualTemplate.renderEmbedded(playerProxy);
 					}
 				}
 				glDisable(GL_BLEND);
