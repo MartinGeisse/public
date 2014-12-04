@@ -163,8 +163,8 @@ public abstract class AbstractDatabaseDescriptor implements IDatabaseDescriptor 
 		config.setJdbcUrl(url);
 		config.setUsername(username); 
 		config.setPassword(password);
-		config.setMinConnectionsPerPartition(5);
-		config.setMaxConnectionsPerPartition(10);
+		config.setMinConnectionsPerPartition(20); // won't go greater than the mininum for some reason
+		config.setMaxConnectionsPerPartition(20);
 		config.setPartitionCount(1);
 		config.setDisableJMX(true);
 		return new BoneCP(config);
