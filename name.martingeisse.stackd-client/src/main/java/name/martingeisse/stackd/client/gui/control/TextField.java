@@ -327,7 +327,7 @@ public final class TextField extends Control implements IFocusableElement {
 				
 				String textBeforeCursor = textLine.getText().substring(0, cursorPosition);
 				Font font = textLine.getEffectiveFont();
-				int x = getAbsoluteX() + getGui().pixelsToUnits(font.getStringWidth(textBeforeCursor));
+				int x = getAbsoluteX() + getGui().pixelsToUnitsInt(font.getStringWidth(textBeforeCursor));
 				int y1 = getAbsoluteY();
 				int y2 = y1 + getHeight();
 				

@@ -120,8 +120,8 @@ public final class FillTexture extends AbstractFillElement {
 		texture.glBindTexture();
 		final int x = getAbsoluteX(), y = getAbsoluteY(), w = getWidth(), h = getHeight();
 		final Gui gui = getGui();
-		final float effectiveRepetitionLengthX = (repetitionLengthX < 1 ? gui.pixelsToUnits(texture.getWidth()) : repetitionLengthX);
-		final float effectiveRepetitionLengthY = (repetitionLengthY < 1 ? gui.pixelsToUnits(texture.getHeight()) : repetitionLengthY);
+		final float effectiveRepetitionLengthX = (repetitionLengthX < 1 ? gui.pixelsToUnitsInt(texture.getWidth()) : repetitionLengthX);
+		final float effectiveRepetitionLengthY = (repetitionLengthY < 1 ? gui.pixelsToUnitsInt(texture.getHeight()) : repetitionLengthY);
 		final float s = (w / effectiveRepetitionLengthX);
 		final float t = (h / effectiveRepetitionLengthY);
 

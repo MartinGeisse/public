@@ -79,6 +79,7 @@ public final class ThickBorder extends AbstractWrapperElement {
 	 */
 	public ThickBorder setThickness(int thickness) {
 		this.thickness = thickness;
+		requestLayout();
 		return this;
 	}
 
@@ -93,7 +94,7 @@ public final class ThickBorder extends AbstractWrapperElement {
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glDisable(GL11.GL_BLEND);
 			color.glColor();
-			int sizeDelta = getGui().pixelsToUnits(thickness);
+			int sizeDelta = getGui().pixelsToUnitsInt(thickness);
 			int borderOffset = sizeDelta / 2;
 			int x = getAbsoluteX() + borderOffset;
 			int y = getAbsoluteY() + borderOffset;

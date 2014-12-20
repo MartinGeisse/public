@@ -96,7 +96,7 @@ public final class Gui {
 	public Gui(int widthPixels, int heightPixels) {
 		this.widthPixels = widthPixels;
 		this.heightPixels = heightPixels;
-		this.widthUnits = pixelsToUnits(widthPixels);
+		this.widthUnits = pixelsToUnitsInt(widthPixels);
 		this.followupLogicActions = new LinkedList<Runnable>();
 		this.followupOpenglActions = new LinkedList<Runnable>();
 	}
@@ -181,7 +181,7 @@ public final class Gui {
 	 * @return the mouseX
 	 */
 	public int getMouseX() {
-		return pixelsToUnits(Mouse.getX());
+		return pixelsToUnitsInt(Mouse.getX());
 	}
 	
 	/**
@@ -189,7 +189,7 @@ public final class Gui {
 	 * @return the mouseY
 	 */
 	public int getMouseY() {
-		return pixelsToUnits(heightPixels - Mouse.getY());
+		return pixelsToUnitsInt(heightPixels - Mouse.getY());
 	}
 	
 	/**
@@ -197,7 +197,7 @@ public final class Gui {
 	 * @param units the units
 	 * @return the pixels
 	 */
-	public int unitsToPixels(int units) {
+	public int unitsToPixelsInt(int units) {
 		return units * heightPixels / HEIGHT_UNITS;
 	}
 	
@@ -206,21 +206,26 @@ public final class Gui {
 	 * @param pixels the pixels
 	 * @return the coordinate units
 	 */
-	public int pixelsToUnits(int pixels) {
+	public int pixelsToUnitsInt(int pixels) {
 		return pixels * HEIGHT_UNITS / heightPixels;
 	}
 	
 	/**
-	 * Returns the number of length units per display pixel.
-	 * 
-	 * Note that you should NOT call this function and then multiply the result
-	 * by a number of pixels to convert pixels to units -- use
-	 * {@link #pixelsToUnits(int)} for that to minimize rounding errors.
-	 * 
-	 * @return the number of units per pixel
+	 * Converts coordinate units to pixels.
+	 * @param units the units
+	 * @return the pixels
 	 */
-	public int getUnitsPerPixel() {
-		return HEIGHT_UNITS / heightPixels;
+	public float unitsToPixelsFloat(float units) {
+		return units * heightPixels / HEIGHT_UNITS;
+	}
+	
+	/**
+	 * Converts pixels to coordinate units.
+	 * @param pixels the pixels
+	 * @return the coordinate units
+	 */
+	public float pixelsToUnitsFloat(float pixels) {
+		return pixels * HEIGHT_UNITS / heightPixels;
 	}
 	
 	/**

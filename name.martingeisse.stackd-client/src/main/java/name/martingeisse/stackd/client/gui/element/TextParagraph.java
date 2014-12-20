@@ -152,7 +152,7 @@ public final class TextParagraph extends GuiElement {
 			}
 			int previousCharacterCount = lineBuilder.length();
 			lineBuilder.append(word);
-			int newSize = gui.pixelsToUnits(effectiveFont.getStringWidth(lineBuilder.toString()));
+			int newSize = gui.pixelsToUnitsInt(effectiveFont.getStringWidth(lineBuilder.toString()));
 			if (newSize > width) {
 				lineBuilder.setLength(previousCharacterCount);
 				lines.add(lineBuilder.toString());
@@ -166,7 +166,7 @@ public final class TextParagraph extends GuiElement {
 		this.lines = lines.toArray(new String[lines.size()]);
 		
 		// determine the size of the paragraph
-		final int lineHeight = gui.pixelsToUnits(effectiveFont.getCharacterHeight());
+		final int lineHeight = gui.pixelsToUnitsInt(effectiveFont.getCharacterHeight());
 		setSize(width, lineHeight * this.lines.length);
 			
 	}
@@ -192,8 +192,8 @@ public final class TextParagraph extends GuiElement {
 
 			// TODO scale font so text doesn't become smaller with higher resolution
 			final Gui gui = getGui();
-			final int x = gui.unitsToPixels(getAbsoluteX());
-			final int y = getGui().getHeightPixels() - gui.unitsToPixels(getAbsoluteY());
+			final int x = gui.unitsToPixelsInt(getAbsoluteX());
+			final int y = getGui().getHeightPixels() - gui.unitsToPixelsInt(getAbsoluteY());
 			
 			final int lineHeight = effectiveFont.getCharacterHeight();
 			int i = 0;

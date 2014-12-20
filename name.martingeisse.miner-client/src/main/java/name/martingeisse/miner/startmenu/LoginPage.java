@@ -9,7 +9,11 @@ package name.martingeisse.miner.startmenu;
 import java.util.prefs.Preferences;
 
 import name.martingeisse.stackd.client.gui.Gui;
+import name.martingeisse.stackd.client.gui.GuiElement;
+import name.martingeisse.stackd.client.gui.element.Grid;
+import name.martingeisse.stackd.client.gui.element.Margin;
 import name.martingeisse.stackd.client.gui.element.Spacer;
+import name.martingeisse.stackd.client.gui.element.TextLine;
 import name.martingeisse.stackd.client.gui.element.VerticalLayout;
 
 /**
@@ -63,6 +67,14 @@ public class LoginPage extends AbstractStartmenuPage {
 		});
 		menu.addElement(new Spacer(2 * Gui.GRID));
 		menu.addElement(EXIT_BUTTON);
+		
+		menu.addElement(new Spacer(Gui.GRID));
+		menu.addElement(new Grid(8, 5) {
+			@Override
+			protected GuiElement newChild(int x, int y) {
+				return new Margin(new TextLine().setText("foo"), 1 * Gui.GRID);
+			}
+		}.setThickness(1).initialize());
 		
 		initializeStartmenuPage(menu);
 		

@@ -125,8 +125,8 @@ public final class TextLine extends GuiElement {
 			setSize(0, 0);
 		} else {
 			Gui gui = getGui();
-			int textWidth = gui.pixelsToUnits(effectiveFont.getStringWidth(text));
-			int textHeight = gui.pixelsToUnits(effectiveFont.getCharacterHeight());
+			int textWidth = gui.pixelsToUnitsInt(effectiveFont.getStringWidth(text));
+			int textHeight = gui.pixelsToUnitsInt(effectiveFont.getCharacterHeight());
 			setSize(textWidth, textHeight);
 		}
 	}
@@ -152,8 +152,8 @@ public final class TextLine extends GuiElement {
 			
 			// TODO scale font so text doesn't become smaller with higher resolution
 			Gui gui = getGui();
-			int x = gui.unitsToPixels(getAbsoluteX());
-			int y = getGui().getHeightPixels() - gui.unitsToPixels(getAbsoluteY());
+			int x = gui.unitsToPixelsInt(getAbsoluteX());
+			int y = getGui().getHeightPixels() - gui.unitsToPixelsInt(getAbsoluteY());
 			glWindowPos2i(x, y);
 			
 			effectiveFont.drawText(text, 1.0f, Font.ALIGN_LEFT, Font.ALIGN_TOP);
