@@ -9,6 +9,7 @@ package name.martingeisse.stackd.client.gui.control;
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.GuiElement;
 import name.martingeisse.stackd.client.gui.GuiEvent;
+import name.martingeisse.stackd.client.gui.element.AbstractFillElement;
 import name.martingeisse.stackd.client.gui.element.FillColor;
 import name.martingeisse.stackd.client.gui.element.IFocusableElement;
 import name.martingeisse.stackd.client.gui.element.Margin;
@@ -17,7 +18,10 @@ import name.martingeisse.stackd.client.gui.element.TextLine;
 import name.martingeisse.stackd.client.gui.element.ThinBorder;
 import name.martingeisse.stackd.client.gui.util.AreaAlignment;
 import name.martingeisse.stackd.client.gui.util.Color;
+import name.martingeisse.stackd.client.system.Font;
+
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 /**
  * A text input field.
@@ -30,14 +34,19 @@ public final class TextField extends Control implements IFocusableElement {
 	private final TextLine textLine;
 
 	/**
-	 * the overlayStack
+	 * the outerOverlayStack
 	 */
-	private final OverlayStack overlayStack;
+	private final OverlayStack outerOverlayStack;
 
 	/**
 	 * the margin
 	 */
 	private final Margin margin;
+
+	/**
+	 * the innerOverlayStack
+	 */
+	private final OverlayStack innerOverlayStack;
 
 	/**
 	 * the border
@@ -58,20 +67,37 @@ public final class TextField extends Control implements IFocusableElement {
 	 * the nextFocusableElement
 	 */
 	private IFocusableElement nextFocusableElement;
+	
+	/**
+	 * the cursorPosition
+	 */
+	private int cursorPosition;
 
 	/**
 	 * Constructor.
 	 */
 	public TextField() {
+		
+		// text line and cursor
 		this.textLine = new TextLine();
-		this.margin = new Margin(textLine, 5 * Gui.MINIGRID);
-		this.overlayStack = new OverlayStack().setAlignment(AreaAlignment.LEFT_CENTER);
-		overlayStack.addElement(new FillColor(new Color(0, 0, 64, 255)));
-		overlayStack.addElement(margin);
-		this.border = new ThinBorder(overlayStack);
+		this.innerOverlayStack = new OverlayStack().setAlignment(AreaAlignment.LEFT_CENTER);
+		this.innerOverlayStack.addElement(textLine);
+		this.innerOverlayStack.addElement(new CursorLayer());
+		
+		// embed into margin
+		this.margin = new Margin(innerOverlayStack, 5 * Gui.MINIGRID);
+		this.outerOverlayStack = new OverlayStack().setAlignment(AreaAlignment.LEFT_CENTER);
+		outerOverlayStack.addElement(new FillColor(new Color(0, 0, 64, 255)));
+		outerOverlayStack.addElement(margin);
+		
+		// add border
+		this.border = new ThinBorder(outerOverlayStack);
+		
+		// initialize fields
 		this.value = "";
 		this.passwordCharacter = (char)0;
 		setControlRootElement(border);
+		
 	}
 
 	/**
@@ -103,7 +129,7 @@ public final class TextField extends Control implements IFocusableElement {
 	 * @return the backgroundElement
 	 */
 	public GuiElement getBackgroundElement() {
-		return overlayStack.getWrappedElements().get(0);
+		return outerOverlayStack.getWrappedElements().get(0);
 	}
 
 	/**
@@ -111,7 +137,7 @@ public final class TextField extends Control implements IFocusableElement {
 	 * @param backgroundElement the backgroundElement to set
 	 */
 	public void setBackgroundElement(final GuiElement backgroundElement) {
-		overlayStack.replaceElement(0, backgroundElement);
+		outerOverlayStack.replaceElement(0, backgroundElement);
 	}
 
 	/**
@@ -133,8 +159,9 @@ public final class TextField extends Control implements IFocusableElement {
 	/**
 	 * Setter method for the value.
 	 * @param value the value to set
+	 * @return this for chaining
 	 */
-	public void setValue(final String value) {
+	public TextField setValue(final String value) {
 		if (value == null) {
 			throw new IllegalArgumentException("value is null");
 		}
@@ -148,6 +175,10 @@ public final class TextField extends Control implements IFocusableElement {
 			}
 			textLine.setText(tempBuilder.toString());
 		}
+		if (cursorPosition > value.length()) {
+			cursorPosition = value.length();
+		}
+		return this;
 	}
 
 	/**
@@ -184,6 +215,33 @@ public final class TextField extends Control implements IFocusableElement {
 		this.nextFocusableElement = nextFocusableElement;
 		return this;
 	}
+	
+	/**
+	 * Getter method for the cursorPosition.
+	 * @return the cursorPosition
+	 */
+	public int getCursorPosition() {
+		return cursorPosition;
+	}
+	
+	/**
+	 * Setter method for the cursorPosition.
+	 * @param cursorPosition the cursorPosition to set
+	 * @return this
+	 */
+	public TextField setCursorPosition(int cursorPosition) {
+		this.cursorPosition = cursorPosition;
+		return this;
+	}
+	
+	/**
+	 * Moves the cursor to the position after the last character.
+	 * @return this
+	 */
+	public TextField moveCursorToEnd() {
+		this.cursorPosition = value.length();
+		return this;
+	}
 
 	/* (non-Javadoc)
 	 * @see name.martingeisse.stackd.client.gui.control.Control#handleEvent(name.martingeisse.stackd.client.gui.GuiEvent)
@@ -204,10 +262,19 @@ public final class TextField extends Control implements IFocusableElement {
 				char character = Keyboard.getEventCharacter();
 				int code = Keyboard.getEventKey();
 				if (code == Keyboard.KEY_BACK) {
-					if (!value.isEmpty()) {
-						setValue(value.substring(0, value.length() - 1));
+					if (cursorPosition > 0) {
+						int newPosition = cursorPosition - 1;
+						String prefix = value.substring(0, cursorPosition - 1);
+						String suffix = value.substring(cursorPosition);
+						setValue(prefix + suffix);
+						cursorPosition = newPosition;
 					}
 				} else if (code == Keyboard.KEY_DELETE) {
+					if (cursorPosition < value.length()) {
+						String prefix = value.substring(0, cursorPosition);
+						String suffix = value.substring(cursorPosition + 1);
+						setValue(prefix + suffix);
+					}
 				} else if (character == '\t') {
 					if (nextFocusableElement != null) {
 						getGui().addFollowupLogicAction(new Runnable() {
@@ -217,8 +284,19 @@ public final class TextField extends Control implements IFocusableElement {
 							}
 						});
 					}
+				} else if (code == Keyboard.KEY_LEFT) {
+					if (cursorPosition > 0) {
+						cursorPosition--;
+					}
+				} else if (code == Keyboard.KEY_RIGHT) {
+					if (cursorPosition < value.length()) {
+						cursorPosition++;
+					}
 				} else if (character >= 32) {
-					setValue(value + character);
+					String prefix = value.substring(0, cursorPosition);
+					String suffix = value.substring(cursorPosition);
+					setValue(prefix + character + suffix);
+					cursorPosition++;
 				}
 			}
 			break;
@@ -235,4 +313,30 @@ public final class TextField extends Control implements IFocusableElement {
 		border.setColor(focused ? new Color(128, 128, 255, 255) : Color.WHITE);
 	}
 
+	/**
+	 *
+	 */
+	private final class CursorLayer extends AbstractFillElement {
+		@Override
+		protected void draw() {
+			if (getGui().getFocus() == TextField.this) {
+				GL11.glDisable(GL11.GL_TEXTURE_2D);
+				GL11.glDisable(GL11.GL_BLEND);
+				Color.WHITE.glColor();
+				GL11.glLineWidth(1);
+				
+				String textBeforeCursor = textLine.getText().substring(0, cursorPosition);
+				Font font = textLine.getEffectiveFont();
+				int x = getAbsoluteX() + getGui().pixelsToUnits(font.getStringWidth(textBeforeCursor));
+				int y1 = getAbsoluteY();
+				int y2 = y1 + getHeight();
+				
+				GL11.glBegin(GL11.GL_LINES);
+				GL11.glVertex2i(x, y1);
+				GL11.glVertex2i(x, y2);
+				GL11.glEnd();
+			}
+		}
+	}
+	
 }

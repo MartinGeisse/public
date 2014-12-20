@@ -18,6 +18,9 @@ import name.martingeisse.stackd.client.gui.util.AreaAlignment;
  * 
  * Boolean parameters are used to control whether any space is
  * actually filled along both the horizontal and vertical axes.
+ * 
+ * TODO why make the wrapped element as small as possible and not
+ * pass on the requested size?
  */
 public final class Glue extends AbstractWrapperElement {
 

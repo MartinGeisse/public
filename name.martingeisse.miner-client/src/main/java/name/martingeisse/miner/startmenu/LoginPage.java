@@ -7,6 +7,7 @@
 package name.martingeisse.miner.startmenu;
 
 import java.util.prefs.Preferences;
+
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.element.Spacer;
 import name.martingeisse.stackd.client.gui.element.VerticalLayout;
@@ -39,7 +40,7 @@ public class LoginPage extends AbstractStartmenuPage {
 
 		username = new LabeledTextField("Username");
 		password = new LabeledTextField("Password");
-		username.getTextField().setNextFocusableElement(password.getTextField()).setValue(defaultUsername);
+		username.getTextField().setNextFocusableElement(password.getTextField()).setValue(defaultUsername).moveCursorToEnd();
 		password.getTextField().setNextFocusableElement(username.getTextField());
 		password.getTextField().setPasswordCharacter('*');
 		
@@ -51,11 +52,18 @@ public class LoginPage extends AbstractStartmenuPage {
 		menu.addElement(new StartmenuButton("Log in") {
 			@Override
 			protected void onClick() {
-				login();
+				// TODO show a loading indicator
+				getGui().addFollowupLogicAction(new Runnable() {
+					@Override
+					public void run() {
+						login();
+					}
+				});
 			}
 		});
 		menu.addElement(new Spacer(2 * Gui.GRID));
 		menu.addElement(EXIT_BUTTON);
+		
 		initializeStartmenuPage(menu);
 		
 	}

@@ -22,7 +22,7 @@ public class NewUserAccountMain {
 
 		// parameters
 		String username = "martin";
-		String password = "hgiuwehgiuehwgehuiewghuiewhuigwehiuewghiugewehiuw";
+		String password = "password";
 		
 		// prepare data
 		String salt = BCrypt.gensalt(MinerCommonConstants.BCRYPT_COST);

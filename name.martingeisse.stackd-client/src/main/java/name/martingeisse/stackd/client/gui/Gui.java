@@ -211,6 +211,19 @@ public final class Gui {
 	}
 	
 	/**
+	 * Returns the number of length units per display pixel.
+	 * 
+	 * Note that you should NOT call this function and then multiply the result
+	 * by a number of pixels to convert pixels to units -- use
+	 * {@link #pixelsToUnits(int)} for that to minimize rounding errors.
+	 * 
+	 * @return the number of units per pixel
+	 */
+	public int getUnitsPerPixel() {
+		return HEIGHT_UNITS / heightPixels;
+	}
+	
+	/**
 	 * Getter method for the current time.
 	 * @return the time
 	 */
@@ -304,7 +317,7 @@ public final class Gui {
 	
 	/**
 	 * Executes all pending followup OpenGL actions. This should generally be done after
-	 * firing the DRAW event.
+	 * firing the DRAW event, from within the OpenGL thread.
 	 */
 	public void executeFollowupOpenglActions() {
 		while (true) {

@@ -6,8 +6,6 @@
 
 package name.martingeisse.stackd.client.gui;
 
-
-
 /**
  * The root class for all GUI elements.
  */
@@ -17,38 +15,38 @@ public abstract class GuiElement {
 	 * the gui
 	 */
 	private Gui gui;
-	
+
 	/**
 	 * the parent
 	 */
 	private GuiElement parent;
-	
+
 	/**
 	 * the absoluteX
 	 */
 	private int absoluteX;
-	
+
 	/**
 	 * the absoluteY
 	 */
 	private int absoluteY;
-	
+
 	/**
 	 * the width
 	 */
 	private int width;
-	
+
 	/**
 	 * the height
 	 */
 	private int height;
-	
+
 	/**
 	 * Constructor.
 	 */
 	public GuiElement() {
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -56,7 +54,7 @@ public abstract class GuiElement {
 		this.gui = gui;
 		this.parent = null;
 	}
-	
+
 	/**
 	 * Setter method for the parent. This method should only be used by the
 	 * new parent to inform the child about it.
@@ -67,7 +65,7 @@ public abstract class GuiElement {
 		this.parent = parent;
 		this.gui = null;
 	}
-	
+
 	/**
 	 * Getter method for the parent.
 	 * @return the parent
@@ -75,7 +73,7 @@ public abstract class GuiElement {
 	public final GuiElement getParent() {
 		return parent;
 	}
-	
+
 	/**
 	 * Getter method for the gui. Returns null if not added to a gui yet.
 	 * @return the gui or null
@@ -109,7 +107,7 @@ public abstract class GuiElement {
 	 * @param event the event to handle
 	 */
 	public abstract void handleEvent(GuiEvent event);
-	
+
 	/**
 	 * Requests a re-layout from the GUI.
 	 * 
@@ -131,7 +129,7 @@ public abstract class GuiElement {
 	 * @param height the height
 	 */
 	public abstract void requestSize(int width, int height);
-	
+
 	/**
 	 * Sets the effective size of this element, called from {@link #requestSize(int, int)}.
 	 * 
@@ -142,7 +140,7 @@ public abstract class GuiElement {
 		this.width = width;
 		this.height = height;
 	}
-	
+
 	/**
 	 * Getter method for the width.
 	 * @return the width
@@ -150,7 +148,7 @@ public abstract class GuiElement {
 	public final int getWidth() {
 		return width;
 	}
-	
+
 	/**
 	 * Getter method for the height.
 	 * @return the height
@@ -182,7 +180,7 @@ public abstract class GuiElement {
 	 */
 	protected void setChildrenLayoutPosition(int absoluteX, int absoluteY) {
 	}
-	
+
 	/**
 	 * Getter method for the absoluteX.
 	 * @return the absoluteX
@@ -190,7 +188,7 @@ public abstract class GuiElement {
 	public final int getAbsoluteX() {
 		return absoluteX;
 	}
-	
+
 	/**
 	 * Getter method for the absoluteY.
 	 * @return the absoluteY
@@ -208,5 +206,5 @@ public abstract class GuiElement {
 		int y = getGui().getMouseY();
 		return (x >= absoluteX && x < absoluteX + getWidth() && y >= absoluteY && y < absoluteY + getHeight());
 	}
-	
+
 }

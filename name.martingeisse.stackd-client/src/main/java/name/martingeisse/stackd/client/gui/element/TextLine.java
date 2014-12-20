@@ -107,7 +107,7 @@ public final class TextLine extends GuiElement {
 	/**
 	 * 
 	 */
-	private Font getEffectiveFont() {
+	public Font getEffectiveFont() {
 		if (font == null) {
 			final Gui gui = getGuiOrNull();
 			return (gui == null ? null : gui.getDefaultFont());

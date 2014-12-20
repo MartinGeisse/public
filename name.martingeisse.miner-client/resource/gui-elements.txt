@@ -1,0 +1,26 @@
+
+Überlegung: Ein "Frame"-Element mit Margin/Border/Padding/Background wäre praktisch. Dann kommt
+aber die Überlegung, ob nicht einfach jedes Element das bietet, was zu HTML+CSS führt. Das würde
+auch Styling mit lösen. Aber Stylesheets in HTML+CSS sind zu unflexibel, also eher ein
+verallgemeinertes Stylesheet wie bei XSLT, nur ohne eigene Sprache sondern in Java-Code.
+
+Ist das so sinnvoll? Oder mache ich hier ein riesen-Faß auf für etwas ganz einfaches? 
+-> In das bisherige GUI-System würde gut reinpassen:
+	- Frame-Element: ja, weil oft benötigt
+	- jedes Element so: nein, weil Elemente nur einzelne Aufgaben übernehmen
+	- Basisklasse für Controls: nein, weil das ein Implementierungsdetail ist
+
+Features eines Frames:
+- (weggelassen: outer margin)
+- border
+- inner margin (heißt nicht "padding" weil es die Klasse "Margin" benutzt)
+- background (v1: does not include border)
+
+Ein Problem im Konzept (unintuitiv) ist, dass das *Hintergrund* eine aktive
+Auswirkung hat: dadurch kann ein Frame beliebig groß werden. Z.B. nimmt der Frame
+dadurch innerhalb eines VerticalLayout die volle Breite ein (Höhe nur begrenzt, weil
+das VL das so vorgibt). Ohne Hintergrund wäre das nicht so.
+-->
+FALSCH. Der OverlayStack nimmt so oder so die volle Größe ein, ob mit Hintergrund
+oder ohne. Nachteil ist aber deutlich, dass ich das nicht gleich wusste, was ein
+Hinweis ist, dass das System nicht intuitiv ist.

@@ -61,10 +61,8 @@ public final class OverlayStack extends AbstractListElement {
 			requiredWidth = Math.max(requiredWidth, element.getWidth());
 			requiredHeight = Math.max(requiredHeight, element.getHeight());
 		}
-		if (requiredWidth != width || requiredHeight != height) {
-			for (GuiElement element : getWrappedElements()) {
-				element.requestSize(requiredWidth, requiredHeight);
-			}
+		for (GuiElement element : getWrappedElements()) {
+			element.requestSize(requiredWidth, requiredHeight);
 		}
 		setSize(requiredWidth, requiredHeight);
 	}

@@ -217,3 +217,36 @@ Darin sind sowieso serialisierte Java-Objekte enthalten. Von daher
 macht es Sinn, einen Message-Code SERIALIZED_MESSAGE_OBJECT zu
 definieren und andere Codes werden nur für "fest eingebaute" Messages
 mit High-Performance-Anforderungen benutzt.
+
+
+--- PLAN ---
+
+- Neuer Message-Typ mit serialisierten Messages, nimmt beliebige Serializable
+	Objekte. Werden an Application weitergegeben.
+- JSON-Messages weg (alter Mechanismus zum selben Zweck)
+
+--- rethink ---
+
+Sounds very complex for little gain. I'll try first to build a "fat client"
+instead. Transmitting serialized message objects is still useful, but a
+PassiveActorProxy would be transmitted as part of a section, and
+interacting with it happens completely on the client side. Only transactions
+such as buying/selling something would be transmitted to the server, as
+a serialized message. The PassiveActorProxy need not actually be built
+on the service side (in principle), only serialized, but it's probably
+easier to build and then serialize them. This requires the PAP to be
+buildable without client-side classes being available!
+
+The JME approach to this is to make all code available server-side, with
+just the renderer missing. Actually, the approach is that the PA and the
+PAP are the same. Using a "fat client", JME might make things easier.
+
+--> that's still wrong. Passive actors that are handled completely within
+a fat client need no server-side actor *at all*. The PA is part of the
+section data and never really gets unserialized on the server side.
+--> It *does* get unserialized on the server side. When the client sends
+a transaction / interaction, that server-side object is needed to
+process it. This is only sometimes possible using a global identifier
+e.g. of the store's inventory, and that would allow cheating.
+
+
