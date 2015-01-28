@@ -75,8 +75,7 @@
       <attribute value="jar:file:/Users/geisse/.m2/repository/com/google/code/findbugs/jsr305/2.0.3/jsr305-2.0.3-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
-  <classpathentry kind="src" path="/stackd-server"/>
-  <classpathentry kind="src" path="/stackd-common"/>
+  <classpathentry kind="src" path="/stackd-core-common"/>
   <classpathentry kind="src" path="/json"/>
   <classpathentry kind="var" path="M2_REPO/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar" sourcepath="M2_REPO/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1-sources.jar">
     <attributes>
@@ -98,9 +97,10 @@
       <attribute value="jar:file:/Users/geisse/.m2/repository/io/netty/netty/3.6.5.Final/netty-3.6.5.Final-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/com/datastax/cassandra/cassandra-driver-core/2.0.2/cassandra-driver-core-2.0.2.jar" sourcepath="M2_REPO/com/datastax/cassandra/cassandra-driver-core/2.0.2/cassandra-driver-core-2.0.2-sources.jar">
+  <classpathentry kind="src" path="/stackd-core-server"/>
+  <classpathentry kind="var" path="M2_REPO/com/datastax/cassandra/cassandra-driver-core/2.1.2/cassandra-driver-core-2.1.2.jar" sourcepath="M2_REPO/com/datastax/cassandra/cassandra-driver-core/2.1.2/cassandra-driver-core-2.1.2-sources.jar">
     <attributes>
-      <attribute value="jar:file:/Users/geisse/.m2/repository/com/datastax/cassandra/cassandra-driver-core/2.0.2/cassandra-driver-core-2.0.2-javadoc.jar!/" name="javadoc_location"/>
+      <attribute value="jar:file:/Users/geisse/.m2/repository/com/datastax/cassandra/cassandra-driver-core/2.1.2/cassandra-driver-core-2.1.2-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
   <classpathentry kind="var" path="M2_REPO/com/codahale/metrics/metrics-core/3.0.2/metrics-core-3.0.2.jar" sourcepath="M2_REPO/com/codahale/metrics/metrics-core/3.0.2/metrics-core-3.0.2-sources.jar">
@@ -113,6 +113,8 @@
       <attribute value="jar:file:/Users/geisse/.m2/repository/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
+  <classpathentry kind="src" path="/stackd-mmo-common"/>
+  <classpathentry kind="src" path="/stackd-mmo-server"/>
   <classpathentry kind="src" path="/miner-common"/>
   <classpathentry kind="src" path="/jetty"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-server/9.2.3.v20140905/jetty-server-9.2.3.v20140905.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-server/9.2.3.v20140905/jetty-server-9.2.3.v20140905-sources.jar">

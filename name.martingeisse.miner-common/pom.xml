@@ -7,14 +7,14 @@
 		<artifactId>public</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
-	
+
 	<groupId>name.martingeisse</groupId>
 	<artifactId>miner-common</artifactId>
 	<version>0.1-SNAPSHOT</version>
-	
+
 	<name>Martin Geisse -- Miner Common Core</name>
 	<url>https://github.com/MartinGeisse/public</url>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -25,15 +25,20 @@
 			<groupId>name.martingeisse</groupId>
 			<artifactId>common</artifactId>
 			<version>0.1-SNAPSHOT</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>name.martingeisse</groupId>
-			<artifactId>stackd-common</artifactId>
+			<artifactId>stackd-core-common</artifactId>
 			<version>0.1-SNAPSHOT</version>
-		</dependency>		
+		</dependency>
+		<dependency>
+			<groupId>name.martingeisse</groupId>
+			<artifactId>stackd-mmo-common</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
 
 	</dependencies>
-	
+
 	<build>
 		<resources>
 			<resource>
@@ -47,5 +52,5 @@
 			</resource>
 		</resources>
 	</build>
-	
+
 </project>

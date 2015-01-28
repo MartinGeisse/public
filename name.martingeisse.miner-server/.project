@@ -4,9 +4,11 @@
   <comment>NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects>
     <project>common</project>
-    <project>stackd-server</project>
-    <project>stackd-common</project>
+    <project>stackd-core-common</project>
     <project>json</project>
+    <project>stackd-core-server</project>
+    <project>stackd-mmo-common</project>
+    <project>stackd-mmo-server</project>
     <project>miner-common</project>
     <project>jetty</project>
     <project>sql</project>

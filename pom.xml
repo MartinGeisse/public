@@ -42,9 +42,12 @@
 		<module>name.martingeisse.esdk</module>
 
 		<!-- Stack'd / Miner project -->
-		<module>name.martingeisse.stackd-common</module>
-		<module>name.martingeisse.stackd-server</module>
-		<module>name.martingeisse.stackd-client</module>
+		<module>name.martingeisse.stackd-core-common</module>
+		<module>name.martingeisse.stackd-core-server</module>
+		<module>name.martingeisse.stackd-core-client</module>
+		<module>name.martingeisse.stackd-mmo-common</module>
+		<module>name.martingeisse.stackd-mmo-server</module>
+		<module>name.martingeisse.stackd-mmo-client</module>
 		<module>name.martingeisse.miner-common</module>
 		<module>name.martingeisse.miner-server</module>
 		<module>name.martingeisse.miner-launcher</module>

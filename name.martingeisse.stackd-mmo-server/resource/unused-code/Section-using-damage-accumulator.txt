@@ -1,0 +1,28 @@
+	/**
+	 * Sets the cube value for the specified section-relative position.
+	 * 
+	 * @param x the x position
+	 * @param y the y position
+	 * @param z the z position
+	 * @param value the cube value to set
+	 */
+	public final void setCubeRelative(final int x, final int y, final int z, final byte value) {
+		/*
+		 * TODO should setData do this too?
+		final byte previousValue = getCubeRelative(x, y, z);
+		renderModelDamageAccumulator.addDamage(false, x, y, z, previousValue, value);
+		for (final AxisAlignedDirection affectedNeighborDirection : clusterSize.getBorderDirections(x, y, z)) {
+			final SectionId neighborId = id.getNeighbor(affectedNeighborDirection);
+			final Section neighbor = workingSet.getSections().get(neighborId);
+			if (neighbor != null) {
+				final int clusterSize = this.clusterSize.getSize();
+				final int neighborDamageX = (x - affectedNeighborDirection.select(clusterSize, 0, 0));
+				final int neighborDamageY = (y - affectedNeighborDirection.select(0, clusterSize, 0));
+				final int neighborDamageZ = (z - affectedNeighborDirection.select(0, 0, clusterSize));
+				neighbor.renderModelDamageAccumulator.addDamage(true, neighborDamageX, neighborDamageY, neighborDamageZ, previousValue, value);
+			}
+		}
+		*/
+		setData(getData().setCubeRelative(clusterSize, x, y, z, value));
+		// TODO: workingSet.fireSectionModification(this, x, y, z); -> setData ?
+	}

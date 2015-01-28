@@ -59,7 +59,7 @@
       <attribute value="jar:file:/Users/geisse/.m2/repository/com/google/code/findbugs/jsr305/2.0.3/jsr305-2.0.3-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
-  <classpathentry kind="src" path="/stackd-common"/>
+  <classpathentry kind="src" path="/stackd-core-common"/>
   <classpathentry kind="src" path="/json"/>
   <classpathentry kind="var" path="M2_REPO/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar" sourcepath="M2_REPO/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1-sources.jar">
     <attributes>
@@ -81,4 +81,5 @@
       <attribute value="jar:file:/Users/geisse/.m2/repository/io/netty/netty/3.6.5.Final/netty-3.6.5.Final-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
+  <classpathentry kind="src" path="/stackd-mmo-common"/>
 </classpath>

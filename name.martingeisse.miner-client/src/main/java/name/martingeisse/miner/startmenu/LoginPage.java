@@ -10,6 +10,7 @@ import java.util.prefs.Preferences;
 
 import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.GuiElement;
+import name.martingeisse.stackd.client.gui.control.Button;
 import name.martingeisse.stackd.client.gui.element.Grid;
 import name.martingeisse.stackd.client.gui.element.Margin;
 import name.martingeisse.stackd.client.gui.element.Spacer;
@@ -69,12 +70,20 @@ public class LoginPage extends AbstractStartmenuPage {
 		menu.addElement(EXIT_BUTTON);
 		
 		menu.addElement(new Spacer(Gui.GRID));
-		menu.addElement(new Grid(8, 5) {
+		menu.addElement(new Grid(10, 5) {
 			@Override
-			protected GuiElement newChild(int x, int y) {
-				return new Margin(new TextLine().setText("foo"), 1 * Gui.GRID);
+			protected GuiElement newChild(final int x, final int y) {
+				Button button = new Button() {
+					@Override
+					protected void onClick() {
+						System.out.println("* " + x + ", " + y);
+						
+					}
+				};
+				button.getTextLine().setText("foo");
+				return button;
 			}
-		}.setThickness(1).initialize());
+		}.initialize());
 		
 		initializeStartmenuPage(menu);
 		

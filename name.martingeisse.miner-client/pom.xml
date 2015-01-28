@@ -28,7 +28,22 @@
 		</dependency>
 		<dependency>
 			<groupId>name.martingeisse</groupId>
-			<artifactId>stackd-client</artifactId>
+			<artifactId>stackd-core-common</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>name.martingeisse</groupId>
+			<artifactId>stackd-core-client</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>name.martingeisse</groupId>
+			<artifactId>stackd-mmo-common</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>name.martingeisse</groupId>
+			<artifactId>stackd-mmo-client</artifactId>
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
