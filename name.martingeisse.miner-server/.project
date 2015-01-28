@@ -6,7 +6,6 @@
     <project>common</project>
     <project>stackd-core-common</project>
     <project>json</project>
-    <project>stackd-core-server</project>
     <project>stackd-mmo-common</project>
     <project>stackd-mmo-server</project>
     <project>miner-common</project>

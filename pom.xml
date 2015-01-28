@@ -43,7 +43,6 @@
 
 		<!-- Stack'd / Miner project -->
 		<module>name.martingeisse.stackd-core-common</module>
-		<module>name.martingeisse.stackd-core-server</module>
 		<module>name.martingeisse.stackd-core-client</module>
 		<module>name.martingeisse.stackd-mmo-common</module>
 		<module>name.martingeisse.stackd-mmo-server</module>

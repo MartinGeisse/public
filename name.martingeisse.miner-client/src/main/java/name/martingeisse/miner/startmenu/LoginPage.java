@@ -12,9 +12,7 @@ import name.martingeisse.stackd.client.gui.Gui;
 import name.martingeisse.stackd.client.gui.GuiElement;
 import name.martingeisse.stackd.client.gui.control.Button;
 import name.martingeisse.stackd.client.gui.element.Grid;
-import name.martingeisse.stackd.client.gui.element.Margin;
 import name.martingeisse.stackd.client.gui.element.Spacer;
-import name.martingeisse.stackd.client.gui.element.TextLine;
 import name.martingeisse.stackd.client.gui.element.VerticalLayout;
 
 /**

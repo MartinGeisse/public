@@ -11,7 +11,7 @@ import name.martingeisse.stackd.common.geometry.AxisAlignedDirection;
 import name.martingeisse.stackd.common.geometry.ClusterSize;
 
 /**
- * A (u, v) plane of codes describing the adjacent plane of a neigbor section
+ * A (u, v) plane of codes describing the adjacent plane of a neighbor section
  * while building the render model of the current section.
  */
 public interface IWrapPlane {

@@ -81,7 +81,7 @@
       <attribute value="jar:file:/Users/geisse/.m2/repository/io/netty/netty/3.6.5.Final/netty-3.6.5.Final-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
-  <classpathentry kind="src" path="/stackd-core-server"/>
+  <classpathentry kind="src" path="/stackd-mmo-common"/>
   <classpathentry kind="var" path="M2_REPO/com/datastax/cassandra/cassandra-driver-core/2.1.2/cassandra-driver-core-2.1.2.jar" sourcepath="M2_REPO/com/datastax/cassandra/cassandra-driver-core/2.1.2/cassandra-driver-core-2.1.2-sources.jar">
     <attributes>
       <attribute value="jar:file:/Users/geisse/.m2/repository/com/datastax/cassandra/cassandra-driver-core/2.1.2/cassandra-driver-core-2.1.2-javadoc.jar!/" name="javadoc_location"/>
@@ -97,5 +97,4 @@
       <attribute value="jar:file:/Users/geisse/.m2/repository/org/slf4j/slf4j-api/1.7.5/slf4j-api-1.7.5-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
-  <classpathentry kind="src" path="/stackd-mmo-common"/>
 </classpath>
