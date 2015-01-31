@@ -18,7 +18,7 @@ public final class Configuration {
 	 * the instance
 	 */
 	private static final Configuration instance;
-
+	
 	//
 	static {
 		try {
@@ -42,13 +42,28 @@ public final class Configuration {
 	private final ConfigurationNamespace rootNamespace;
 	
 	/**
+	 * the rootUrlPageConfiguration
+	 */
+	private final PageConfiguration rootUrlPageConfiguration;
+	
+	/**
 	 * Constructor.
 	 * 
 	 * @throws IOException on I/O errors
 	 * @throws ConfigurationException on errors in a configuration file
 	 */
 	public Configuration() throws IOException, ConfigurationException {
-		this.rootNamespace = ConfigurationParser.parse(new File("resource/demo/gui.json"));
+		rootNamespace = ConfigurationParser.parse(new File("resource/demo/gui.json"));
+		rootNamespace.initializeRoot();
+		rootUrlPageConfiguration = new SingleConfigurationElementSearch<PageConfiguration>(PageConfiguration.class) {
+			@Override
+			public boolean checkMatch(PageConfiguration element) {
+				return element.getUrlPath().equals("");
+			}
+		}.execute();
+		if (rootUrlPageConfiguration == null) {
+			throw new ConfigurationException("no page defined for the root URL");
+		}
 	}
 
 	/**
@@ -57,6 +72,14 @@ public final class Configuration {
 	 */
 	public ConfigurationNamespace getRootNamespace() {
 		return rootNamespace;
+	}
+	
+	/**
+	 * Getter method for the rootUrlPageConfiguration.
+	 * @return the rootUrlPageConfiguration
+	 */
+	public PageConfiguration getRootUrlPageConfiguration() {
+		return rootUrlPageConfiguration;
 	}
 
 	/**

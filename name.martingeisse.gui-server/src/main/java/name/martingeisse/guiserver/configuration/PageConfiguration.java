@@ -11,8 +11,13 @@ import com.google.common.collect.ImmutableList;
 /**
  * The configuration for a page.
  */
-public final class PageConfiguration implements ConfigurationElement {
+public final class PageConfiguration extends AbstractConfigurationElement {
 
+	/**
+	 * the urlPath
+	 */
+	private final String urlPath;
+	
 	/**
 	 * the contentElements
 	 */
@@ -20,10 +25,21 @@ public final class PageConfiguration implements ConfigurationElement {
 
 	/**
 	 * Constructor.
+	 * 
+	 * @param urlPath the URL path
 	 * @param contentElements the content elements
 	 */
-	public PageConfiguration(ImmutableList<ContentElementConfiguration> contentElements) {
+	public PageConfiguration(String urlPath, ImmutableList<ContentElementConfiguration> contentElements) {
+		this.urlPath = urlPath;
 		this.contentElements = contentElements;
+	}
+	
+	/**
+	 * Getter method for the urlPath.
+	 * @return the urlPath
+	 */
+	public String getUrlPath() {
+		return urlPath;
 	}
 
 	/**

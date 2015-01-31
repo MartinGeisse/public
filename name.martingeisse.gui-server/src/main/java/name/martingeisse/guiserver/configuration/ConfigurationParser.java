@@ -114,11 +114,15 @@ final class ConfigurationParser {
 	 * @throws ConfigurationException on errors in a configuration file
 	 */
 	static PageConfiguration parsePageConfiguration(JsonAnalyzer json) throws ConfigurationException {
+		String urlPath = json.analyzeMapElement("url").expectString();
+		if (urlPath.startsWith("/")) {
+			urlPath = urlPath.substring(1);
+		}
 		List<ContentElementConfiguration> contentElements = new ArrayList<>();
 		for (JsonAnalyzer element : json.analyzeMapElement("contentElements").analyzeList()) {
 			contentElements.add(parseContentElement(element));
 		}
-		return new PageConfiguration(ImmutableList.copyOf(contentElements));
+		return new PageConfiguration(urlPath, ImmutableList.copyOf(contentElements));
 	}
 
 	/**

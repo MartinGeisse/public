@@ -4,12 +4,14 @@
 
 package name.martingeisse.guiserver.configuration;
 
+import java.util.Map;
+
 import com.google.common.collect.ImmutableMap;
 
 /**
  * A namespace that groups configuration elements.
  */
-public final class ConfigurationNamespace implements ConfigurationElement {
+public final class ConfigurationNamespace extends AbstractConfigurationElement {
 
 	/**
 	 * the elements
@@ -50,4 +52,31 @@ public final class ConfigurationNamespace implements ConfigurationElement {
 		return defaultPageId;
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configuration.AbstractConfigurationElement#initializeRoot()
+	 */
+	@Override
+	void initializeRoot() {
+		super.initializeRoot();
+		initializeElements();
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configuration.AbstractConfigurationElement#initialize(name.martingeisse.guiserver.configuration.ConfigurationNamespace, java.lang.String)
+	 */
+	@Override
+	public void initialize(ConfigurationNamespace parentNamespace, String key) {
+		super.initialize(parentNamespace, key);
+		initializeElements();
+	}
+
+	/**
+	 * 
+	 */
+	private void initializeElements() {
+		for (Map.Entry<String, ConfigurationElement> entry : elements.entrySet()) {
+			entry.getValue().initialize(this, entry.getKey());
+		}
+	}
+	
 }
