@@ -17,6 +17,7 @@ import java.util.Map;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.guiserver.configuration.content.ContentElementConfiguration;
 import name.martingeisse.guiserver.configuration.content.HtmlContentConfiguration;
+import name.martingeisse.guiserver.configuration.content.NavigationBarContentConfiguration;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -138,6 +139,9 @@ final class ConfigurationParser {
 
 		case "html":
 			return new HtmlContentConfiguration(json.analyzeMapElement("html").expectString());
+
+		case "navbar":
+			return new NavigationBarContentConfiguration();
 
 		default:
 			throw new ConfigurationException("unknown content element type: " + type);

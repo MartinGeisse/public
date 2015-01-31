@@ -6,6 +6,8 @@ package name.martingeisse.guiserver.gui;
 
 import name.martingeisse.guiserver.configuration.content.ContentElementConfiguration;
 import name.martingeisse.guiserver.configuration.content.HtmlContentConfiguration;
+import name.martingeisse.guiserver.configuration.content.NavigationBarContentConfiguration;
+import name.martingeisse.guiserver.gui.navbar.NavigationBar;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
@@ -34,6 +36,8 @@ public class DefaultContentElementComponentBuilder implements ContentElementComp
 		if (configuration instanceof HtmlContentConfiguration) {
 			HtmlContentConfiguration config = (HtmlContentConfiguration)configuration;
 			return new Label(id, config.getHtml()).setEscapeModelStrings(false);
+		} else if (configuration instanceof NavigationBarContentConfiguration) {
+			return new NavigationBar(id);
 		} else {
 			throw new RuntimeException("this ContentElementComponentBuilder doesn't understand a " + configuration.getClass());
 		}

@@ -5,8 +5,39 @@
 			"url": "/",
 			"contentElements": [
 				{
+					"type": "navbar"
+				},
+				{
 					"type": "html",
 					"html": "<h1>Hello World</h1>"
+				},
+				{
+					"type": "html",
+					"html": "This is just a test page."
+				}
+			]
+		}
+		"foo": {
+			"type": "page",
+			"url": "/foo",
+			"contentElements": [
+				{
+					"type": "html",
+					"html": "<h1>Foo</h1>"
+				},
+				{
+					"type": "html",
+					"html": "This is just a test page."
+				}
+			]
+		}
+		"barbar": {
+			"type": "page",
+			"url": "/bar",
+			"contentElements": [
+				{
+					"type": "html",
+					"html": "<h1>Bar</h1>"
 				},
 				{
 					"type": "html",
