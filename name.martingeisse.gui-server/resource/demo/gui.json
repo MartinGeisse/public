@@ -1,15 +1,17 @@
 {
-	"home": {
-		"type": "page",
-		"contentElements": [
-			{
-				"type": "html",
-				"content": "<h1>Hello World</h1>"
-			},
-			{
-				"type": "html",
-				"content": "This is just a test page."
-			}
-		]
+	"elements": {
+		"home": {
+			"type": "page",
+			"contentElements": [
+				{
+					"type": "html",
+					"html": "<h1>Hello World</h1>"
+				},
+				{
+					"type": "html",
+					"html": "This is just a test page."
+				}
+			]
+		}
 	}
 }
