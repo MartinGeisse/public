@@ -1,0 +1,24 @@
+
+Slabs (Halbe Blöcke), Stairs (Designentscheidung ob 1/4 oder 3/4 Blöcke, MC: 3/4).
+
+Dazu:
+- 4 Ausrichtungen einer Treppe sind 4 Cube Types.
+- "solid for rendering" im CubeType je Seite festlegen. Das kann so direkt im
+	SectionRenderModelBuilder beachtet werden
+- custom Polygons im CubeType festlegen. Oder besser als Custom generell ein
+	Polygon Model, wobei die 6 Seiten aber eine Sonderrolle spielen und andere
+	Polygone zusätzlich gespeichert werden.
+- damit werden die Seiten von Treppen erst mal immer gerendert, auch wenn daneben
+	direkt noch eine Treppe steht. Erst mal schauen, ob das überhaupt ein
+	Problem ist, das würde nur bei breiten UND langen Treppen überhaupt auffallen.
+- Slabs analog, nur ohne 4 Ausrichtungen.
+
+- Koordinaten der Special-Polygone als int oder float? Möglich wäre z.B. alles
+	x8 skalieren und dann int für alles im Cube-Raster.
+
+- Collider: ???
+
+- Analog mit Cube-sized Collider: Schild, Zaun (je 2 Ausrichtungen)
+
+- Blumen, Büsche usw. ohne Collider mit derselben Technik refactoren
+

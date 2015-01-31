@@ -1,0 +1,252 @@
+
+Simple version: allow selling resources in certain buildings.
+
+- recognize that you are in a building
+--> hotkey to open buy/sell GUI
+--> transmit as part of the section
+
+Client/Server interactions become complex now. It's not programming in Java
+itself that is becoming complex, but the "distributed" part of it. Need
+an abstraction layer for the distributed computing. This is made even more
+complex by the separation between server and client code. The abstraction
+layer should make it possible to program "the game" as a single project.
+(Side note: AFAIK engines like U4 don't solve that either, they only solve
+the "distributed 3d engine" part, but not distributed game logic)
+
+The best example for distributed logic I can think of is Node.js -- the
+event system works as an abstraction so the boundary between client/server
+is almost invisible. But not completely: When a function accepts a callback,
+then that callback wouldn't be executed on another node transparently
+(it could not access the enclosed environment from the original node). The
+node.js sandboxing examples also draw a boundary. But then, sandboxing
+might be the model closest to what I need.
+
+Let's try building the store system:
+
+---
+
+SERVER:
+
+	onSellItem: function(inventoryEntryId, callback) {
+		var (item, inventoryUpdate) = player.inventory.remove(inventoryEntryId);
+		var money = computeValue(item);
+		player.addMoney(money);
+		callback({
+			inventoryUpdate: inventoryUpdate,
+			message: 'sold for ' + money
+		});
+	}
+
+CLIENT:
+
+section contains a special zone with script:
+
+	onEnter: function() {
+		setZoneMessage('You are in a store. Press S to sell items.');
+	}
+	
+	onKey: function(key) {
+		if (key == 'S') {
+			var sellFunction = function (item) {
+				server.emit('sellItem', item.getInventoryEntryId(), function (response) {
+					// TODO maybe the response simply contains all necessary information
+					// and no callback is needed
+					inventory.consume(response.getInventoryUpdate());
+					showFlashMessage(response.getMessage());
+				});
+			};
+			openStoreGui(sellFunction);
+		}
+	}
+
+function openStoreGui(sellFunction) {
+	
+	// ... build GUI ...
+	// ... call sellFcuntion on appropriate event ...
+
+}	
+
+--- 
+
+Note: This system is better than low-level Java code, but still not good.
+There's still too much distributed logic in it. Most of the logic should
+happen on the server side, since that's the center of information and thus
+easiest to program in. The clients should be dumber.
+
+However, high-performance code on the client side requires to instruct the
+client how to react to events autonomously. This *is* scripting the client.
+So what I actually need is to transfer logic into the client, without it
+feeling like moving the logic -- OR, ALTERNATIVELY -- making client code
+feel like client code and, at a higher level, make decisions so game logic
+stays out of it.
+
+Modularity might solve the problem. Basic idea:
+- split client/server code as done above
+- define standard events (incl. client-side handling) to
+	- add/remove/modify quantity of an item from the inventory
+		- prints standard flash message unless suppress=true
+	- add/subtract player's money
+		- prints standard flash message unless suppress=true
+	- open store gui that sends buy/sell events to the server
+		either knows prices or sends "offer" events to the server
+		(knowing prices is better because it can list prices)
+- implement store logic on the server using those client-side events
+
+Implementation:
+	- node.js subprocess
+	- Nashorn
+Performance?
+	- Quelle 1: Nashorn um factor 1.5-2 langsamer
+	- Quelle 2: ähnlich
+	- Quelle 3: ähnlich
+	--> das lässt sich möglicherweise in den Griff bekommen, jedenfalls
+		ist es nicht ganz daneben. Frage ist, ob 0.5x Performance schlimmer
+		ist als der Overhead für die Kommunikation mit einem Node-Subprozess.
+		Das kommt darauf an, wie viel Kommunikation passiert, wie viel
+		man nach JS auslagert und was man als verpackte High-Performance-Lib
+		zur Verfügung stellen kann. 
+	--> es wird aber größtenteils einfache Logik in JS ausgelagert, von daher
+	ist die Performance nebensächlich. Viel wichtiger ist z.B. dass die
+	Kommunikation zwischen Java und JS nicht selbst wieder umständlich ist!
+Using:
+	http://www.infoq.com/articles/nashorn
+
+----
+
+As a long-term solution, using Groovy might be an alternative.
+
+----
+
+The scripts would be part of the server project. The client should be
+as slim as possible, to avoid frequent updates. Downloading new scripts
+should not be considered an "update" to the client, since the latter
+usually requires a restart. However, in version 1, the scripts will be
+part of the client/server code just as they are executed, to keep things
+simple.
+
+The basis for simple client/server communication is the event system.
+This requires event emitters to be identified in a cross-node way. The
+same problem exists for socket.io, so I'll first have a look how it is
+handled there. In fact, the event system itself will probably simplify
+things considerable, even while the code is 100% Java.
+-->
+The same problem does NOT occur for socket.io, so I should re-think why
+it occurs for me.
+
+----
+
+Client-side prediction is irrelevant for now -- it's not important because
+this is not an FPS. What is more important is super-simple distributed
+programming. Thus client-side proxies of players and NPCs can be "simple"
+proxies and need not be distributed-programmed. As a first version,
+stores can be similar: sub-regions of sections, with an attached
+"when inside" message and a to-server event attached to the "action"
+key. The server then sends a command to open the GUI.
+
+Next problem is how the GUI works. By the same reason, the logic should
+be on the server, but then the GUI itself must be client-server aware.
+Simple idea: build the GUI on the server, serialize it, send it to
+the client and execute it there.
+
+"Active Regions" (like the store) could be instances of a (subclass of
+an) ActiveRegion class on the server. On the client, a single generic
+ClientActiveRegion is used which might or might not be another subclass
+of ActiveRegion, depending on which works better. This detects the
+player actually being inside the region.
+
+-----
+
+Distributed-Schicht sollte ermöglichen, dass man im Server
+somePlayer().getGui().setRootComponent() macht, und das passiert im client.
+So ähnlich sollte das nicht nur mit der GUI, sondern insgesamt gehen.
+
+-----
+
+Actors sollte man in "active" und "passive" actors aufteilen.
+- active: Spielelogik muss auch weiterlaufen, wenn kein Spieler da ist.
+  Können theoretisch in eine andere Section wechseln.
+- semi-active: eigentlich active, aber aus Optimierungsgründen
+  nur aktiv, wenn ein Spieler in der Nähe ist
+- passive: Keine Spielelogik, wenn kein Spieler da ist. Bewegen sich
+  nicht, da das nur mit Spielelogik gehen würde, insbesondere da
+  ein Wechsel in eine andere Section möglich wäre.
+
+Idee: ActiveActor und PassiveActor. PAs sind Teil der Spielewelt.
+	ActiveActor (aktive NPCs, sich bewegende Maschinen und Spieler)
+	werden nicht vom inneren GameServer selbst gesteuert, sondern
+	von einem NPC-Control-Server, zumindest von der Programmstruktur
+	her. Dann würde der Game-Server die entsprechenden Sections
+	"offen" halten, solange ActiveActors drin sind. NPC und erst recht
+	Maschinen hätten einen verkürzten View-Radius.
+
+Erst mal werden nur PAs umgesetzt, und zwar für Stores, Crafting Tables
+usw. Dafür müssen PAs in Sections gespeichert werden (SectionStore)
+und als Teil der Section-Daten übertragen werden. Das passiert erst
+mal bei allen SectionDataTypes.
+
+Wenn der Spieler die Figur zu einem Actor anvisiert und die "action"
+Taste drückt, wird eine Message an den Server gesendet und Serverseitig
+ein Callback aufgerufen. Dadurch kann dann z.B. wiederum eine GUI
+geöffnet werden.
+
+Begriff für die Clientseitige Darstellung: -Proxy, ActorProxy. Bei
+dem eigenen Player wird zukünftig (wenn alles darauf ausgelegt ist)
+ein ControlledPlayerProxy benutzt, aber erst mal wird das nicht als
+Proxy gebaut sondern "ist" der Spieler. Die anderen Spieler werden dann
+als OtherPlayerProxy dargestellt.
+
+Input wird erst mal lokal verarbeitet, u.a. wegen Latency. Das heißt
+vor allem, dass kein allgemeiner "input" event existiert, der zum
+Server gesendet werden könnte.
+
+Bestimmte GUI-Controls können Clientseitige Logik enthalten, soll heißen
+nicht nur die GUI-Basis-Components können das. Default ist aber
+Serverseitige Logik. In Einzelfällen kann durch die Clientseitige
+Logik die Latenz reduziert werden, vor allem bei den immer wieder
+verwendeten Controls wie Buttons, TextFields usw.
+
+Side Note: jMonkeyEngine hat selbst keinen Network-fähigen Game-Engine-Teil.
+Das heißt, ich könnte JME als lokalen Teil benutzen (und würde damit vieles
+vereinfachen), aber was den Network-Teil angeht ist es jetzt nicht so, dass
+ich hier das Rad neu erfinde. Für den Lowlevel-Network-Code wäre JME denkbar,
+aber alleine für den Network-Code gehe ich jetzt aber nicht auf JME, das ist
+zu viel Umstellung für zu wenig Nutzen.
+
+Es werden Messages mit komplexen Inhalten (GUI-Objekte etc.) nötig.
+Darin sind sowieso serialisierte Java-Objekte enthalten. Von daher
+macht es Sinn, einen Message-Code SERIALIZED_MESSAGE_OBJECT zu
+definieren und andere Codes werden nur für "fest eingebaute" Messages
+mit High-Performance-Anforderungen benutzt.
+
+
+--- PLAN ---
+
+- Neuer Message-Typ mit serialisierten Messages, nimmt beliebige Serializable
+	Objekte. Werden an Application weitergegeben.
+- JSON-Messages weg (alter Mechanismus zum selben Zweck)
+
+--- rethink ---
+
+Sounds very complex for little gain. I'll try first to build a "fat client"
+instead. Transmitting serialized message objects is still useful, but a
+PassiveActorProxy would be transmitted as part of a section, and
+interacting with it happens completely on the client side. Only transactions
+such as buying/selling something would be transmitted to the server, as
+a serialized message. The PassiveActorProxy need not actually be built
+on the service side (in principle), only serialized, but it's probably
+easier to build and then serialize them. This requires the PAP to be
+buildable without client-side classes being available!
+
+The JME approach to this is to make all code available server-side, with
+just the renderer missing. Actually, the approach is that the PA and the
+PAP are the same. Using a "fat client", JME might make things easier.
+
+--> that's still wrong. Passive actors that are handled completely within
+a fat client need no server-side actor *at all*. The PA is part of the
+section data and never really gets unserialized on the server side.
+--> It *does* get unserialized on the server side. When the client sends
+a transaction / interaction, that server-side object is needed to
+process it. This is only sometimes possible using a global identifier
+e.g. of the store's inventory, and that would allow cheating.
+
+

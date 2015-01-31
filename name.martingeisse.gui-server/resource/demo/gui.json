@@ -1,0 +1,15 @@
+{
+	"home": {
+		"type": "page",
+		"contentElements": [
+			{
+				"type": "html",
+				"content": "<h1>Hello World</h1>"
+			},
+			{
+				"type": "html",
+				"content": "This is just a test page."
+			}
+		]
+	}
+}

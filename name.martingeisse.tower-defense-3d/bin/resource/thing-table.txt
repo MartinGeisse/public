@@ -1,0 +1,110 @@
+		thingDetectionTable.put(31, 1);
+		thingDetectionTable.put(32, 1);
+		thingDetectionTable.put(39, 2);
+		thingDetectionTable.put(40, 3);
+		thingDetectionTable.put(37, 4);
+		thingDetectionTable.put(38, 7);
+		thingDetectionTable.put(6, 8);
+		thingDetectionTable.put(50, 9);
+		thingDetectionTable.put(30, 10);
+
+		
+		
+	private void renderThings() {
+		if (things == null) {
+			return;
+		}
+		int[] xArray = things.getXArray();
+		int[] yArray = things.getYArray();
+		int[] zArray = things.getZArray();
+		int[] typeArray = things.getTypeArray();
+		EngineParameters engineParameters = workingSet.getEngineParameters();
+		
+		// prepare OpenGL state
+		glDisable(GL11.GL_CULL_FACE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL11.GL_FILL);
+		glEnable(GL_TEXTURE_2D);
+		glDisable(GL_TEXTURE_GEN_S);
+		glDisable(GL_TEXTURE_GEN_T);
+		glDisable(GL_TEXTURE_GEN_Q);
+		glDisable(GL_TEXTURE_GEN_R);
+		glDepthMask(true);
+		glColor3f(1.0f, 1.0f, 1.0f);
+
+		int shift = clusterSize.getShiftBits();
+		int baseX = (sectionId.getX() << shift);
+		int baseY = (sectionId.getY() << shift);
+		int baseZ = (sectionId.getZ() << shift);
+		for (int i=0; i<xArray.length; i++) {
+			ThingType type = engineParameters.getThingType(typeArray[i]);
+			Texture texture = engineParameters.getThingTexture(type.getTextureIndex());
+			texture.bind();
+
+			int x = (xArray[i] + baseX) << 3;
+			int y = (yArray[i] + baseY) << 3;
+			int z = (zArray[i] + baseZ) << 3;
+			
+			glBegin(GL_TRIANGLES);
+			
+			glTexCoord2f(0, 0);
+			glVertex3i(x, y, z);
+			glTexCoord2f(1, 0);
+			glVertex3i(x + 8, y, z + 8);
+			glTexCoord2f(1, 1);
+			glVertex3i(x + 8, y + 8, z + 8);
+			
+			glTexCoord2f(0, 0);
+			glVertex3i(x, y, z);
+			glTexCoord2f(1, 1);
+			glVertex3i(x + 8, y + 8, z + 8);
+			glTexCoord2f(0, 1);
+			glVertex3i(x, y + 8, z);
+			
+			glTexCoord2f(0, 0);
+			glVertex3i(x, y, z + 8);
+			glTexCoord2f(1, 0);
+			glVertex3i(x + 8, y, z);
+			glTexCoord2f(1, 1);
+			glVertex3i(x + 8, y + 8, z);
+			
+			glTexCoord2f(0, 0);
+			glVertex3i(x, y, z + 8);
+			glTexCoord2f(1, 1);
+			glVertex3i(x + 8, y + 8, z);
+			glTexCoord2f(0, 1);
+			glVertex3i(x, y + 8, z + 8);
+			
+			glEnd();
+			
+		}
+	}		
+	
+	
+	public static final String[] THING_TEXTURE_FILENAMES = {
+		"invalid.png", // 0
+		"dead-shrub.png",
+		"brown-mushroom.png",
+		"red-mushroom.png",
+		"dandelion.png", // 4
+		"fern.png",
+		"grass-thing.png",
+		"poppy.png",
+		"sapling.png", // 8
+		"torch.png",
+		"web.png",
+	};
+	
+	public static final ThingType[] THING_TYPES = {
+		new ThingType(0), // 0: invalid
+		new ThingType(1), // 1: dead shrub
+		new ThingType(2), // 2: brown mushroom
+		new ThingType(3), // 3: red mushroom
+		new ThingType(4), // 4: dandelion
+		new ThingType(5), // 5: fern
+		new ThingType(6), // 6: grass
+		new ThingType(7), // 7: poppy
+		new ThingType(8), // 8: sapling
+		new ThingType(9), // 9: torch
+		new ThingType(10), // 10: web
+	};
+	

@@ -1,0 +1,99 @@
+
+// general / global styles
+
+h1, h2 {
+	margin-top: 40px;
+}
+
+input[type=text] {
+	margin-top: 2px;
+}
+
+.progress {
+	background-image: none;
+	background-color: #e0e0e0;
+	@include single-box-shadow(rgba(0,0,0,0.2), 1px, 1px, 1px, 1px, true);
+}
+
+.progress-bar {
+	white-space: nowrap;
+	color: black;
+	padding-top: 2px;
+}
+
+textarea {
+	resize: none;
+}
+
+dt {
+	margin-top: 5px;
+}
+
+dt:first-child {
+	margin-top: 0px;
+}
+
+.user-long-text {
+	white-space: pre-line;
+}
+
+.user-comment-section-header {
+	margin-top: 40px;
+	margin-bottom: 10px;
+	border-bottom: 2px solid #aaa;
+	padding-bottom: 10px;
+}
+
+.type-thumbnail-wrapper {
+	@extend .col-xs-4;
+	@extend .col-sm-2;
+}
+
+.type-thumbnail {
+	display: block;			
+	text-decoration: none;
+	color: #aaa;
+	text-align: center;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	height: 120px;
+}
+
+.type-thumbnail .glyphicon {
+	font-size: 3em;
+}
+
+.type-thumbnail .caption {
+}
+
+.object-list-element {
+	display: block;
+	margin: 15px 10px;
+	background-color: #eee;
+	padding: 10px;
+	@include border-radius(3px);
+	@include single-box-shadow(#000, 1px, 1px, 1px, 1px);
+}
+
+a.object-list-element {
+	display: block;
+	text-decoration: none;
+	color: #333333;
+}
+
+.object-list-element.load-trigger.loading {
+	background-color: #bdf;
+}
+
+
+
+
+
+// ---------------------------------------------------------------------------------------------------------
+// the following elements can be links, but should not change appearance when they are 
+// ---------------------------------------------------------------------------------------------------------
+
+.panel-heading, .panel-heading:hover {
+	display: block;
+	text-decoration: none;
+}

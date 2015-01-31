@@ -1,0 +1,67 @@
+
+Überlegung: Ein "Frame"-Element mit Margin/Border/Padding/Background wäre praktisch. Dann kommt
+aber die Überlegung, ob nicht einfach jedes Element das bietet, was zu HTML+CSS führt. Das würde
+auch Styling mit lösen. Aber Stylesheets in HTML+CSS sind zu unflexibel, also eher ein
+verallgemeinertes Stylesheet wie bei XSLT, nur ohne eigene Sprache sondern in Java-Code.
+
+Ist das so sinnvoll? Oder mache ich hier ein riesen-Faß auf für etwas ganz einfaches? 
+-> In das bisherige GUI-System würde gut reinpassen:
+	- Frame-Element: ja, weil oft benötigt
+	- jedes Element so: nein, weil Elemente nur einzelne Aufgaben übernehmen
+	- Basisklasse für Controls: nein, weil das ein Implementierungsdetail ist
+
+Features eines Frames:
+- (weggelassen: outer margin)
+- border
+- inner margin (heißt nicht "padding" weil es die Klasse "Margin" benutzt)
+- background (v1: does not include border)
+
+Ein Problem im Konzept (unintuitiv) ist, dass das *Hintergrund* eine aktive
+Auswirkung hat: dadurch kann ein Frame beliebig groß werden. Z.B. nimmt der Frame
+dadurch innerhalb eines VerticalLayout die volle Breite ein (Höhe nur begrenzt, weil
+das VL das so vorgibt). Ohne Hintergrund wäre das nicht so.
+-->
+FALSCH. Der OverlayStack nimmt so oder so die volle Größe ein, ob mit Hintergrund
+oder ohne. Nachteil ist aber deutlich, dass ich das nicht gleich wusste, was ein
+Hinweis ist, dass das System nicht intuitiv ist.
+
+------------
+
+GUI Elements sind so schon OK und ein "Frame" bringt nichts wesentlich neues.
+
+Stylesheets wären trotzdem interessant, weil es so möglich wäre, die Entwicklung
+zu Crowdsourcen (der Versuch alleine macht schlau!).
+
+Idee: Element-Klassenhierarchie ändern sich nicht, und die Klasse "Control"
+ist die Basis fürs Styling. Hier wird das Root Element nicht mehr direkt, sondern
+per Stylesheet gesetzt. Dafür gibt es grundsätzlich verschiedene Möglichkeiten:
+
+- Stylesheet hat Methode determineStyle(Control c). Diese probiert verschiedene
+	*Styleable-Interfaces des Controls durch. Dieses Interface hat dann eine
+	Methode apply*Style(), und es soll nur eine dieser Methoden aufgerufen werden,
+	da jedesmal das Root-Element neu erzeugt wird und sich die erzeugten Elemente
+	gegenseitig überschreiben.
+
+- Stylesheet hat Getter-Methoden für Style-Eigentschaften. Klingt erst mal einfacher.
+	Allerdings muss dafür eine Art Kennung übergeben werden (z.B. Klasse des Controls
+	analog zu HTML-Element, zusätzlich vergebene Style-Tags analog zu CSS-Klassen,
+	GUI-Hierarchie für Hierarchie-Selektoren wie in CSS).
+	-
+	Hier wäre es dann eher so, dass das Control verschiedene Getter-Interfaces
+	des Stylesheets (oder eines Control-Style-Objekts) durchprobiert.
+
+- Control definiert "intrinsische" Style-Tags, caller fügt "extrinsische" Style-Tags
+	hinzu. Diese werden an das Stylesheet übergeben, um einen Style zu finden.
+	Problem ist auch hierbei, dass der "Style" auch ein zum Control passendes
+	Format haben muss (Instanz einer bestimmten ControlStyle-Klasse sein muss).
+
+- Idee deshalb: Control fragt Stylesheet nach Styles unter Angabe von
+	- Control-Klasse
+	- intrinsischen Style-Tags der Control-Klasse (andere Wiederverwendung-Art)
+	- extrinsischen Style-Tags vom Caller (analog CSS-Klassen)
+	- GUI-Hierarchie
+	- erwartetes Style-Format (Class-object welches den Returntyp angibt)
+		Diese Klasse kann auch ein Factory-Interface sein! Allerdings sollte alles
+		darauf ausgelegt sein, dass nicht in jedem Frame alles neu erzeugt wird.
+		Weniger wegen Performance, sondern weil dadurch vieles kompliziert wird.
+

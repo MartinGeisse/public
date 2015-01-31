@@ -51,10 +51,12 @@
 		<module>name.martingeisse.miner-server</module>
 		<module>name.martingeisse.miner-launcher</module>
 		<module>name.martingeisse.miner-client</module>
+		<module>name.martingeisse.tower-defense-3d</module>
 
 		<!-- other applications -->
 		<module>name.martingeisse.slave-services</module>
 		<module>name.martingeisse.osm</module>
+		<module>name.martingeisse.gui-server</module>
 
 		<!-- Application template (not actually used directly) -->
 		<module>name.martingeisse.application-template</module>

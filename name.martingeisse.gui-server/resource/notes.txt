@@ -1,0 +1,70 @@
+
+- downloaded config files should be cached on a file-by-file basis
+	(multiple files possible using includes)
+	
+- files are represented by the configuration data system as one big
+	structure, with the splitting into files made invisible
+
+- this big structure loads files on demand and *may* build an abstract
+	structure out of it (also not visible to the outside)
+	
+- the files can be XML/JSON/whatever. parsing the files is handled by a
+	configuration file format strategy, which for XML and JSON is a 
+	common "hierarchy expressed in text" strategy which delegates
+	to another object to make the disctinction between the two formats
+	(favor composition over inheritance)
+ 
+- pages state their URL (though this may be done implicitly)
+
+- certain components on a page may make content public using a sub-URL
+	(e.g. a non-JS, non-AJAX TabPanel). These URLs *may* be configurable,
+	and *may* be outside the containing page's URL. This depends on
+	the component.
+
+- "virtual configuration": different from the specified configuration (the
+	one in the config files) by applying defaults and traits, resolving
+	syntactic shortcuts, etc. The VC is "the" configuration as seen from
+	the actual GUI system, but resolving the VC is not defined in the
+	syntax layer as it should be the same for XML, JSON, ... (only
+	syntactic shortcuts *may* be defined there -- this could be done
+	either by resolving them early, or by having the syntax layer provide
+	resolution rules to the VC layer.
+
+- I first thought that the VC layer might provide caching support to the
+	upper layers to exploit common definitions from the config files in
+	caching. However, I'm not sure about this -- it would mean to lose
+	caching just by restructuring the config file in a way that should
+	not have any effect. It's probably better to have the upper layer
+	cache on virtual properties and detect common properties *after*
+	resolution -- maybe have the VC layer provide support for *detecting*
+	common properties in a way that detects common properties even when
+	not using traits, just with the detection being a bit slower. But
+	then, this "bit slower" might be acceptable to reduce that complexity
+	altogether.	
+
+--- PAGE GROUPS ---
+
+First idea:
+- pages are expressed in the config file in pageGroups to give them
+	common properties (same base URL, same wrapping Border component,
+	etc.) Page groups also allow to link to the group, with the group
+	defining the default page. Groups are a way to structure the
+	configuration and NOT visible to the user!
+
+Bad! I had common properties AND namespacing AND common entry points
+in mind when I wrote this. Any kind of grouping seems bad to me
+*because* there isn't just one single thing that grouping could mean.
+--> Grouping is a bit like favoring inheritance over composition! 
+- Namespacing: Just use hierarchical names.
+	- doesn't force usage like groups in the config do
+	- but this is only about pageIds, not about anything visible.
+- common entry points when defining links
+	Not really a separate issue from namespacing as both are about making the
+	configuration itself modular and well-structured. 
+- Common properties
+	- should use "traits" or "property sets"
+	- namespaces may still choose to apply traits by default, but the definition
+		is NOT in the namespace but in the trait.
+
+
+

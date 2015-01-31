@@ -1,0 +1,58 @@
+
+Idea: Use PHP as a scripting language for Miner, because there's a lot of PHP programmers
+"out there" that might have good ideas for the game, even though PHP doesn't fit that
+niche well.
+
+Should be usable for server and client scripting; should not require a server restart.
+The scripts should be stored on the server and be downloadable, so the client fetches
+all scripts it needs.
+
+This might also be useful as a secondary project next to miner that also uses Stack'd,
+and is oriented towards game "matches" instead of a persistent world. Name suggestion:
+"Stackerspace"; connects to "Stack'd" and also reminds of the "playground" nature of
+the game.
+
+------------------------------------------------------------------------------------------------
+
+Server usage:
+Each server has a list of games running. To start a new game, point to the game description
+file (JSON) which also links to PHP scripts, assets etc. Clients will download all
+required assets and cache using a file hash.
+
+Should the server load all files to a private area to guard against later modification?
+Probably not -> overpowered. Just load the game description file once, and guard against
+modification of *that*.
+
+Each game type would be represented as a folder with a game.json file that is the game
+description file.
+
+------------------------------------------------------------------------------------------------
+
+Idea:
+
+It would be cool to have a client application that contains the mechanisms, but content-wise
+does whatever the server tells it. The whole game logic would be on the server; building
+a super-custom game means hacking the server, but the client just needs to be up-to-date
+to support the mechanisms. This would be ideal for Stackerspace. Add scripting to the client
+for even more customization without changing the client.
+
+At the same time, the mechanisms could be moved to Stack'd step-by-step, and thus support
+building the Miner game. Ideally the game would be mostly server-side code, just like a
+custom Stackerspace server, with maybe *some* modifications to the client (such as a start
+menu GUI)
+
+Neccessary features:
+- server-side game objects; application-agnostic client-side replicas
+- application-agnostic key binding system on the client
+- generic asset storage system on the client, using timestamps and file hashes
+	(the client only knows about a generic file ID, esp. no timestamps to avoid
+	desynchronized clocks. Server builds the file ID from filename, last modified TS,
+	size, hashcode)
+- simple demo game: generate a labyrinth to walk through
+- server might allow clients to create new games (game types are fixed by server-side code,
+	e.g. plugins if possible) or just offer existing games to join
+
+
+
+
+
