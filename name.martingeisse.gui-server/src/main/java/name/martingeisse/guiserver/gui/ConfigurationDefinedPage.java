@@ -54,4 +54,14 @@ public class ConfigurationDefinedPage extends AbstractApplicationPage {
 		return Configuration.getInstance().getElementAbsolute(pageConfigurationPath, PageConfiguration.class);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.Page#onInitialize()
+	 */
+	@Override
+	protected void onInitialize() {
+		super.onInitialize();
+		PageConfiguration pageConfiguration = getPageConfiguration();
+		add(new ContentElementRepeater("elements", pageConfiguration.getContentElements()));
+	}
+	
 }

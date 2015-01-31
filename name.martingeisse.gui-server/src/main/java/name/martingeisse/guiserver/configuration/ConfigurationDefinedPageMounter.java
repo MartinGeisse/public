@@ -52,7 +52,9 @@ public final class ConfigurationDefinedPageMounter {
 				PageParameters identifyingParameters = new PageParameters();
 				identifyingParameters.add(CONFIGURATION_PATH_PAGE_PARAMETER_NAME, configurationPath);
 				String urlPath = pageConfiguration.getUrlPath();
-				application.mount(new ParameterMountedRequestMapper(urlPath, ConfigurationDefinedPage.class, identifyingParameters));
+				if (!urlPath.isEmpty()) {
+					application.mount(new ParameterMountedRequestMapper(urlPath, ConfigurationDefinedPage.class, identifyingParameters));
+				}
 			}
 		}
 	}

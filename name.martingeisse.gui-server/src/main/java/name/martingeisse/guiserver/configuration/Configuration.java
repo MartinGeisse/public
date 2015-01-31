@@ -60,7 +60,7 @@ public final class Configuration {
 			public boolean checkMatch(PageConfiguration element) {
 				return element.getUrlPath().equals("");
 			}
-		}.execute();
+		}.execute(rootNamespace);
 		if (rootUrlPageConfiguration == null) {
 			throw new ConfigurationException("no page defined for the root URL");
 		}

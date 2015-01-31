@@ -2,6 +2,7 @@
 	"elements": {
 		"home": {
 			"type": "page",
+			"url": "/",
 			"contentElements": [
 				{
 					"type": "html",

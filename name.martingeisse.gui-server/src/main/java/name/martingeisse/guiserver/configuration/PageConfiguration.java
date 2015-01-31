@@ -30,6 +30,12 @@ public final class PageConfiguration extends AbstractConfigurationElement {
 	 * @param contentElements the content elements
 	 */
 	public PageConfiguration(String urlPath, ImmutableList<ContentElementConfiguration> contentElements) {
+		if (urlPath == null) {
+			throw new IllegalArgumentException("urlPath argument is null");
+		}
+		if (contentElements == null) {
+			throw new IllegalArgumentException("contentElements argument is null");
+		}
 		this.urlPath = urlPath;
 		this.contentElements = contentElements;
 	}
