@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 Shopgate GmbH
+ * Copyright (c) 2015 Martin Geisse
  */
 
 package name.martingeisse.common.util;

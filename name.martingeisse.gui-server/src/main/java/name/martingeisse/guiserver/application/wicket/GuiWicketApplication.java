@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012 Shopgate GmbH
+ * Copyright (c) 2015 Martin Geisse
  */
 
 package name.martingeisse.guiserver.application.wicket;
