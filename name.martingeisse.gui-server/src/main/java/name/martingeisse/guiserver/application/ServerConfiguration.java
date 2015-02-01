@@ -27,6 +27,11 @@ public final class ServerConfiguration {
 	public static StringProperty guiConfigurationFile;
 
 	/**
+	 * the configurationRoot
+	 */
+	public static StringProperty configurationRoot;
+	
+	/**
 	 * Initializes this class from the specified .properties file.
 	 * @param configFilePath the path of the configuration file
 	 * @throws IOException on I/O errors
@@ -34,6 +39,7 @@ public final class ServerConfiguration {
 	public static void initialize(String configFilePath) throws IOException {
 		configurationProperties = new ConfigurationPropertiesFile(new File(configFilePath));
 		guiConfigurationFile = new StringProperty(configurationProperties, "guiConfigurationFile");
+		configurationRoot = new StringProperty(configurationProperties, "configurationRoot");
 	}
 
 }
