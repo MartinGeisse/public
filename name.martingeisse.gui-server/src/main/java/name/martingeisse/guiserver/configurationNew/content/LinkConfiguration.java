@@ -5,7 +5,7 @@
 package name.martingeisse.guiserver.configurationNew.content;
 
 import name.martingeisse.guiserver.configurationNew.PageConfiguration;
-import name.martingeisse.guiserver.gui.ConfigurationDefinedPage;
+import name.martingeisse.guiserver.gui2.ConfigurationDefinedPage;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
