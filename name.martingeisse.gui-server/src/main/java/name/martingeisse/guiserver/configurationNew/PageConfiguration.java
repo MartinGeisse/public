@@ -5,6 +5,7 @@
 package name.martingeisse.guiserver.configurationNew;
 
 import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
+import name.martingeisse.guiserver.configurationNew.content.ConfigurationElementContent;
 import name.martingeisse.guiserver.gui2.ConfigurationDefinedPage;
 import name.martingeisse.wicket.util.ParameterMountedRequestMapper;
 
@@ -27,26 +28,26 @@ public final class PageConfiguration extends ConfigurationElement {
 	public static final String CONFIGURATION_FILENAME_SUFFIX = ".page.xml";
 	
 	/**
-	 * the markupSourceCode
+	 * the content
 	 */
-	private String markupSourceCode;
+	private ConfigurationElementContent content;
 	
 	/**
 	 * Constructor.
 	 * @param path the path to this page
 	 * @param markupSourceCode the source code for the page's markup
 	 */
-	public PageConfiguration(String path, String markupSourceCode) {
+	public PageConfiguration(String path, ConfigurationElementContent content) {
 		super(path);
-		this.markupSourceCode = markupSourceCode;
+		this.content = content;
 	}
 
 	/**
-	 * Getter method for the markupSourceCode.
-	 * @return the markupSourceCode
+	 * Getter method for the content.
+	 * @return the content
 	 */
-	public String getMarkupSourceCode() {
-		return markupSourceCode;
+	public ConfigurationElementContent getContent() {
+		return content;
 	}
 	
 	/* (non-Javadoc)

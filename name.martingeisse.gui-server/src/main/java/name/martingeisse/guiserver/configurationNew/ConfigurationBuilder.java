@@ -11,8 +11,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import name.martingeisse.guiserver.configurationNew.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configurationNew.content.ComponentConfigurationList;
+import name.martingeisse.guiserver.configurationNew.content.ConfigurationElementContent;
+
 import org.apache.commons.io.FileUtils;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -72,7 +77,9 @@ final class ConfigurationBuilder {
 		String filename = file.getName();
 		if (filename.endsWith(PageConfiguration.CONFIGURATION_FILENAME_SUFFIX)) {
 			String path = getPath(PageConfiguration.CONFIGURATION_FILENAME_SUFFIX);
-			putElement(path, new PageConfiguration(path, FileUtils.readFileToString(file, StandardCharsets.UTF_8)));
+			String markup = "<html><body>" + FileUtils.readFileToString(file, StandardCharsets.UTF_8) + "</body></html>";
+			ImmutableList<ComponentConfiguration> children = ImmutableList.of();
+			putElement(path, new PageConfiguration(path, new ConfigurationElementContent(markup, new ComponentConfigurationList(children))));
 		} else if (filename.endsWith(PanelConfiguration.CONFIGURATION_FILENAME_SUFFIX)) {
 			String path = getPath(PanelConfiguration.CONFIGURATION_FILENAME_SUFFIX);
 			putElement(path, new PanelConfiguration(path));

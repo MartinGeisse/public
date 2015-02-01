@@ -78,7 +78,7 @@ public class ConfigurationDefinedPage extends AbstractApplicationPage implements
 		if (container != this) {
 			throw new IllegalArgumentException("a ConfigurationDefinedPage cannot be used to provide a markup resource stream for other components than itself");
 		}
-		return new StringResourceStream(getPageConfiguration().getMarkupSourceCode());
+		return new StringResourceStream(getPageConfiguration().getContent().getWicketMarkup());
 	}
 
 	/* (non-Javadoc)
@@ -87,9 +87,8 @@ public class ConfigurationDefinedPage extends AbstractApplicationPage implements
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-
-		// TODO add components
 		PageConfiguration pageConfiguration = getPageConfiguration();
+		pageConfiguration.getContent().getComponents().buildAndAddComponents(this);
 		// TODO add(new ContentElementRepeater("elements", pageConfiguration.getContentElements()));
 	}
 

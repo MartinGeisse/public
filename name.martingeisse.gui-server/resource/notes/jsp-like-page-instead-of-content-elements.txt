@@ -1,4 +1,15 @@
 
+<!-- Note: The "magic" should probably happen while parsing the XML files into configuration objects,
+	not when mapping the configuration objects to Wicket components. It should happen during
+	parsing because of special syntax needed, and it should happen only during parsing because there
+	is no use in having two layers with complex logic, since there is no clear guideline on
+	what logic goes where.
+	-
+	Specifically, this means that any logic that happens during the component building phase,
+	must already be contained in the configuration objects. The configuration objects only
+	present a simple "buildComponent" method.
+-->
+
 <!-- the server renders a proper DOCTYPE etc. whatever is needed -->
 <!-- the configuration can define default page borders that get applied too -->
 <!-- e.g. default CSS, JS and a default layout HTML snippet -->

@@ -9,7 +9,7 @@ import name.martingeisse.guiserver.configuration.content.LinkConfiguration;
 import name.martingeisse.guiserver.gui.ConfigurationDefinedPage;
 import name.martingeisse.wicket.component.misc.InvisibleWebMarkupContainer;
 
-import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
@@ -18,7 +18,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 /**
  * Builds link components from {@link LinkConfiguration} objects. To allow
  * maximum flexibility, the type of returned component is just
- * {@link WebMarkupContainer}.
+ * {@link MarkupContainer}.
  */
 public class LinkBuilder {
 
@@ -41,7 +41,7 @@ public class LinkBuilder {
 	 * @param configuration the configuration. May be null to hide the link.
 	 * @return the link
 	 */
-	public static WebMarkupContainer buildLink(String id, LinkConfiguration configuration) {
+	public static MarkupContainer buildLink(String id, LinkConfiguration configuration) {
 		if (configuration == null) {
 			return new InvisibleWebMarkupContainer(id);
 		} else {
