@@ -5,9 +5,13 @@
 package name.martingeisse.guiserver.configurationNew;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+
+import org.apache.commons.io.FileUtils;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -32,8 +36,9 @@ final class ConfigurationBuilder {
 	 * Builds the configuration using the files in the specified root folder and its subfolders.
 	 * @param rootFolder the root folder
 	 * @return the configuration elements
+	 * @throws IOException on I/O errors
 	 */
-	public Map<Class<? extends ConfigurationElement>, Map<String, ConfigurationElement>> build(File rootFolder) {
+	public Map<Class<? extends ConfigurationElement>, Map<String, ConfigurationElement>> build(File rootFolder) throws IOException {
 		elements.clear();
 		pathSegments.clear();
 		if (!rootFolder.isDirectory()) {
@@ -46,7 +51,7 @@ final class ConfigurationBuilder {
 	/**
 	 * 
 	 */
-	private void handleFolder(File folder) {
+	private void handleFolder(File folder) throws IOException {
 		for (File element : folder.listFiles()) {
 			pathSegments.push(element.getName());
 			if (element.isDirectory()) {
@@ -63,11 +68,11 @@ final class ConfigurationBuilder {
 	/**
 	 * 
 	 */
-	private void handleFile(File file) {
+	private void handleFile(File file) throws IOException {
 		String filename = file.getName();
 		if (filename.endsWith(PageConfiguration.CONFIGURATION_FILENAME_SUFFIX)) {
 			String path = getPath(PageConfiguration.CONFIGURATION_FILENAME_SUFFIX);
-			putElement(path, new PageConfiguration(path));
+			putElement(path, new PageConfiguration(path, FileUtils.readFileToString(file, StandardCharsets.UTF_8)));
 		} else if (filename.endsWith(PanelConfiguration.CONFIGURATION_FILENAME_SUFFIX)) {
 			String path = getPath(PanelConfiguration.CONFIGURATION_FILENAME_SUFFIX);
 			putElement(path, new PanelConfiguration(path));

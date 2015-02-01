@@ -27,13 +27,28 @@ public final class PageConfiguration extends ConfigurationElement {
 	public static final String CONFIGURATION_FILENAME_SUFFIX = ".page.xml";
 	
 	/**
+	 * the markupSourceCode
+	 */
+	private String markupSourceCode;
+	
+	/**
 	 * Constructor.
 	 * @param path the path to this page
+	 * @param markupSourceCode the source code for the page's markup
 	 */
-	public PageConfiguration(String path) {
+	public PageConfiguration(String path, String markupSourceCode) {
 		super(path);
+		this.markupSourceCode = markupSourceCode;
 	}
 
+	/**
+	 * Getter method for the markupSourceCode.
+	 * @return the markupSourceCode
+	 */
+	public String getMarkupSourceCode() {
+		return markupSourceCode;
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.configurationNew.ConfigurationElement#getBackendUriPath()
 	 */
