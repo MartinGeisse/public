@@ -11,6 +11,8 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
+import com.google.common.collect.ImmutableList;
+
 
 /**
  * Configuration for a link. This class tries to cover only the common
@@ -22,6 +24,18 @@ public final class LinkConfiguration extends AbstractContainerConfiguration {
 	 * the targetPagePath
 	 */
 	private final String targetPagePath;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param id the wicket id
+	 * @param children the children
+	 * @param targetPagePath the path of the page to link to
+	 */
+	public LinkConfiguration(String id, ImmutableList<ComponentConfiguration> children, String targetPagePath) {
+		super(id, children);
+		this.targetPagePath = targetPagePath;
+	}
 
 	/**
 	 * Constructor.

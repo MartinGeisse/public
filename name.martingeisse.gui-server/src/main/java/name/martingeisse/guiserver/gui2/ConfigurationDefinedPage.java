@@ -11,7 +11,6 @@ import name.martingeisse.guiserver.configurationNew.PageConfiguration;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.IMarkupCacheKeyProvider;
 import org.apache.wicket.markup.IMarkupResourceStreamProvider;
-import org.apache.wicket.markup.Markup;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.StringResourceStream;
@@ -89,7 +88,6 @@ public class ConfigurationDefinedPage extends AbstractApplicationPage implements
 		super.onInitialize();
 		PageConfiguration pageConfiguration = getPageConfiguration();
 		pageConfiguration.getContent().getComponents().buildAndAddComponents(this);
-		// TODO add(new ContentElementRepeater("elements", pageConfiguration.getContentElements()));
 	}
 
 }

@@ -7,6 +7,8 @@ package name.martingeisse.guiserver.configurationNew.content;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * Base class for {@link MarkupContainer} component configurations.
  */
@@ -22,6 +24,15 @@ public abstract class AbstractContainerConfiguration extends AbstractComponentCo
 	 * @param id the wicket id
 	 * @param children the children
 	 */
+	public AbstractContainerConfiguration(String id, ImmutableList<ComponentConfiguration> children) {
+		this(id, new ComponentConfigurationList(children));
+	}
+
+	/**
+	 * Constructor.
+	 * @param id the wicket id
+	 * @param children the children
+	 */
 	public AbstractContainerConfiguration(String id, ComponentConfigurationList children) {
 		super(id);
 		this.children = children;
@@ -31,7 +42,7 @@ public abstract class AbstractContainerConfiguration extends AbstractComponentCo
 	 * Getter method for the children.
 	 * @return the children
 	 */
-	public final ComponentConfigurationList getChildren() {
+	protected final ComponentConfigurationList getChildren() {
 		return children;
 	}
 
@@ -44,11 +55,11 @@ public abstract class AbstractContainerConfiguration extends AbstractComponentCo
 		children.buildAndAddComponents(container);
 		return container;
 	}
-	
+
 	/**
 	 * Builds the container itself, not adding any children.
 	 * @return the container
 	 */
 	protected abstract MarkupContainer buildContainer();
-	
+
 }
