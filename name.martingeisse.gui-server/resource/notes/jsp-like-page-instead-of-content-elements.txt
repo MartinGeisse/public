@@ -1,0 +1,125 @@
+
+<!-- the server renders a proper DOCTYPE etc. whatever is needed -->
+<!-- the configuration can define default page borders that get applied too -->
+<!-- e.g. default CSS, JS and a default layout HTML snippet -->
+<!-- this file is always XML (XHTML with special component elements) -->
+
+<!-- the file name of this would be something like /admin/customer.page.xml to recognize it's a page -->
+<!-- this way, GUI and API need not use separate folders, since for example this page and its
+	API are more closely related than this page and another page -->
+<!-- panels would use customer-name.panel.xml so the customer cannot directly open a panel -->
+<!-- the file/folder structure of the XML files is used for includes AND to represent the URLs (for simplicity) -->
+<!-- so while the backend URL for this page is /admin/customer.page.xml, its frontend URL is /admin/customer --> 
+<!-- simplicity: a page cannot take path parameters if there's a folder with the same name, otherwise there
+	would have to be special logic to determine which one the client means -->
+<!-- the form on this page specifies the backend action /admin/customer/sendMail.
+	POSTing the form doesn't use a specific frontend URL unless specified otherwise.
+		By default, it's a wicket component-selecting URL.
+		Page-less forms (that can be called from "everywhere" might need a new type of
+		GUI object (in addition to pages and panels) since they work different and e.g.
+		validation errors cannot be shown the same way. For now, let's just ignore them. -->
+	GETing/POSTing the form with successful validation sends the data to /admin/customer/sendMail.api
+		(using the same method, might allow an override that turns GET into POST for the backend, but
+			the other way round might not work)
+		Form API responses need a defined format that specifies errors from complex validation,
+			flash messages, redirects etc. -- in fact, returning HTML content for forms probably
+			doesn't happen at all.
+
+<gui:with-models>
+
+	<!-- define the models that are valid in this context -->
+	<!-- data is loaded from a URL and parsed as JSON -->
+	<!-- the URL may refer to variables, such as page parameters -->
+	<!-- the JSON defines conversion rules for parameters->variables to avoid
+		accidental collisions like with PHP's parameter auto-import and
+		the security implications -->
+	<!-- the id is used to refer to the model in the content below -->
+	<gui:model id="customerData" src="/api/customer/${customerId}/data" type="json">
+	<gui:model id="customerOrders" src="/api/customer/${customerId}/orders" type="json">
+	<gui:model id="adminUser" src="/api/adminUser/${adminId}" type="json">
+	
+	<!-- now comes the content (indicated by the first non-MODEL XML element) -->
+	<h1>
+		Customer:
+		<gui:insert model="customerData" field="personal.firstName" />
+		<gui:insert model="customerData" field="personal.lastName" />
+	</h1>
+	
+	<!-- the same again, this time with a re-usable, client-defined panel -->
+	<!-- the panel's XML file is just like this one for the page -->
+	<gui:panel src="/gui/customer-name-panel.xml" model="customerData" />
+	
+	<!-- and a third time, now with that panel defined in code by a plugin called "shop" -->
+	<!-- (actually, "shop" here is an XML namespace identifier and the namespace URL selects the plugin -->
+	<!-- Note that for the job of a simple panel, a plugin-defined component isn't very impressive... -->
+	<shop:customerName model="customerData" />
+
+	<!-- let's see a repeater for the orders -->
+	<h1>Orders:</h1>
+	<ul>
+	
+		<!-- which one looks best? I like the 3rd one most because it separates the control / markup info -->
+		<!-- Note that the 3rd one doesn't need a wicket:container -- it could still place a wicket:id on the LI. -->
+		<!-- It only needs a container if there's more than one child element -->
+		<!-- This component is like a foreach, and the elementModel defines the iteration variable -->
+		<li gui:repeatForModel="customerOrders" elementModel="order">
+			...
+		</li>
+		<gui:repeat element="li" model="customerOrders" elementModel="order">
+			...
+		</gui:repeat>
+		<gui:repeat model="customerOrders" elementModel="order">
+			<li class="foo">
+				<b><gui:insert model="order" field="orderNumber" /></b>
+				<gui:insert model="order" field="date" />
+			</li>
+		</gui:repeat>
+		
+	</ul>
+	
+	<!-- and finally, a form! -->
+	<!-- This GUI server system defines that fields are *read* from models, but changing data
+		happens by sending forms / commands without touching models. Internally, the system
+		uses models that connect to a form data object, and if validation is successful,
+		sends that data to the business logic. Connecting models to form components only
+		initializes the components with values from the models, but it cannot write data back. -->
+	<gui:form method="POST" action="/admin/customer/sendMail">
+	
+		<!-- default is required=true, trim=true -->
+		<gui:form.text name="subject" label="Subject Line" required="true" trim="true">
+		
+			<!-- doesn't make sense for a subject line, just for demonstration -->
+			<gui:normalize id="lowercase">
+			
+			<!-- some validation (only some make sense for a subject line) -->
+			<gui:validate id="string" minLength="3" maxLength="50" regex="foo[^a-zA-Z]+" glob="foo*" />
+			
+			<!-- place keyboard focus here -->
+			<gui:focus />
+			
+		</gui:form.text>
+
+		<!-- another field that takes its default value from a model -->
+		<gui:form.text name="targetAddress" label="Target Address" model="customerData" field="contact.email" />
+		
+		<!-- another field that assembles its default value -->
+		<gui:form.textarea name="message" label="Message">
+			<gui:value>
+				Dear <gui:panel src="/gui/customer-salutation-with-name-panel.xml" model="customerData" />,
+				
+				<!-- this defines where the initial cursor is for this field, but without initial focus, this
+					doesn't have any effect until the component is focused. Also it has no effect if the
+					user overrides the cursor position with a mouse click, only when changing focus without
+					overriding the cursor position (i.e. with the tab key) -->
+				<gui:cursor />
+				
+				Yours,
+				<gui:panel src="/gui/shop-employee-panel.xml" model="adminUser" />
+				
+				<gui:panel src="/gui/email-footer.xml" />
+			</gui:value>
+		</gui:form.textarea> 
+	
+	</gui:form>
+	
+</gui:with-models>

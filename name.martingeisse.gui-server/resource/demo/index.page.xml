@@ -1,0 +1,6 @@
+<gui:page>
+	<h1>Hello World!</h1>
+	<div>
+		This is a page using the new XML format.
+	</div>
+</gui:page>

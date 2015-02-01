@@ -2,27 +2,27 @@
  * Copyright (c) 2015 Martin Geisse
  */
 
-package name.martingeisse.guiserver.gui;
+package name.martingeisse.guiserver.gui.navbar;
 
 import name.martingeisse.guiserver.configuration.content.ContentElementConfiguration;
 import name.martingeisse.guiserver.configuration.content.HtmlContentConfiguration;
 import name.martingeisse.guiserver.configuration.content.LinkConfiguration;
-import name.martingeisse.guiserver.configuration.content.NavigationBarConfiguration;
+import name.martingeisse.guiserver.gui.ContentElementComponentBuilder;
 import name.martingeisse.guiserver.gui.link.SimpleLinkPanel;
-import name.martingeisse.guiserver.gui.navbar.NavigationBar;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 
 /**
- * The default implementation of {@link ContentElementComponentBuilder}.
+ * The implementation of {@link ContentElementComponentBuilder} used for navigation
+ * bar elements.
  */
-public final class DefaultContentElementComponentBuilder implements ContentElementComponentBuilder {
+public final class NavigationBarContentElementComponentBuilder implements ContentElementComponentBuilder {
 
 	/**
 	 * The shared instance of this class.
 	 */
-	public static final DefaultContentElementComponentBuilder INSTANCE = new DefaultContentElementComponentBuilder();
+	public static final NavigationBarContentElementComponentBuilder INSTANCE = new NavigationBarContentElementComponentBuilder();
 	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.gui.ContentElementComponentBuilder#buildComponent(java.lang.String, name.martingeisse.guiserver.configuration.content.ContentElementConfiguration)
@@ -40,10 +40,8 @@ public final class DefaultContentElementComponentBuilder implements ContentEleme
 			return new Label(id, config.getHtml()).setEscapeModelStrings(false);
 		} else if (configuration instanceof LinkConfiguration) {
 			return new SimpleLinkPanel(id, (LinkConfiguration)configuration);
-		} else if (configuration instanceof NavigationBarConfiguration) {
-			return new NavigationBar(id, (NavigationBarConfiguration)configuration);
 		} else {
-			throw new RuntimeException("the DefaultContentElementComponentBuilder doesn't understand a " + configuration.getClass());
+			throw new RuntimeException("the NavigationBarContentElementComponentBuilder doesn't understand a " + configuration.getClass());
 		}
 	}
 

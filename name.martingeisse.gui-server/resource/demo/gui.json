@@ -5,7 +5,24 @@
 			"url": "/",
 			"contentElements": [
 				{
-					"type": "navbar"
+					"type": "navbar",
+					"brandLink": {
+						"type": "link",
+						"page": "/foo",
+						"label": "h-Foo-link"
+					},
+					"elements": [
+						{
+							"type": "link",
+							"page": "/foo",
+							"label": "Foo-link"
+						},
+						{
+							"type": "link",
+							"page": "/bar",
+							"label": "Bar-link"
+						}
+					]
 				},
 				{
 					"type": "html",
@@ -14,6 +31,11 @@
 				{
 					"type": "html",
 					"html": "This is just a test page."
+				},
+				{
+					"type": "link",
+					"page": "/foo",
+					"label": "Link to foo"
 				}
 			]
 		}
