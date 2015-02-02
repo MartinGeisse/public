@@ -2,10 +2,9 @@
  * Copyright (c) 2015 Martin Geisse
  */
 
-package name.martingeisse.guiserver.configuration;
+package name.martingeisse.guiserver.configuration.elements;
 
 import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
-import name.martingeisse.guiserver.configuration.content.ConfigurationElementContent;
 import name.martingeisse.guiserver.gui.ConfigurationDefinedPage;
 import name.martingeisse.wicket.util.ParameterMountedRequestMapper;
 

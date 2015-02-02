@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.configuration;
+package name.martingeisse.guiserver.configuration.elements;
 
 import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
 

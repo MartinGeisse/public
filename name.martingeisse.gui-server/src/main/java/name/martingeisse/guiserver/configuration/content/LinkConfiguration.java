@@ -4,7 +4,7 @@
 
 package name.martingeisse.guiserver.configuration.content;
 
-import name.martingeisse.guiserver.configuration.PageConfiguration;
+import name.martingeisse.guiserver.configuration.elements.PageConfiguration;
 import name.martingeisse.guiserver.gui.ConfigurationDefinedPage;
 
 import org.apache.wicket.MarkupContainer;

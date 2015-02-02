@@ -6,7 +6,7 @@ package name.martingeisse.guiserver.gui;
 
 import name.martingeisse.guiserver.application.page.AbstractApplicationPage;
 import name.martingeisse.guiserver.configuration.Configuration;
-import name.martingeisse.guiserver.configuration.PageConfiguration;
+import name.martingeisse.guiserver.configuration.elements.PageConfiguration;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.IMarkupCacheKeyProvider;

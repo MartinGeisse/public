@@ -10,6 +10,7 @@ import java.util.Map;
 
 import name.martingeisse.guiserver.application.ServerConfiguration;
 import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
+import name.martingeisse.guiserver.configuration.elements.ConfigurationElement;
 
 /**
  * This singleton class provides the data from the configuration.

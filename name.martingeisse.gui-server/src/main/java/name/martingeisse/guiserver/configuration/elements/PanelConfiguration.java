@@ -2,7 +2,7 @@
  * Copyright (c) 2015 Martin Geisse
  */
 
-package name.martingeisse.guiserver.configuration;
+package name.martingeisse.guiserver.configuration.elements;
 
 
 /**

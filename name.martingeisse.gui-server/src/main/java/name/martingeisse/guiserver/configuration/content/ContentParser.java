@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.configuration.content.parser;
+package name.martingeisse.guiserver.configuration.content;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +11,6 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
-import name.martingeisse.guiserver.configuration.content.LinkConfiguration;
-import name.martingeisse.guiserver.configuration.content.NavigationBarConfiguration;
 
 import com.google.common.collect.ImmutableList;
 

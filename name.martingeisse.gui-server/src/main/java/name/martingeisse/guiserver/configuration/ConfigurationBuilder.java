@@ -22,8 +22,12 @@ import javax.xml.stream.XMLStreamWriter;
 
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentConfigurationList;
-import name.martingeisse.guiserver.configuration.content.ConfigurationElementContent;
-import name.martingeisse.guiserver.configuration.content.parser.ContentParser;
+import name.martingeisse.guiserver.configuration.content.ContentParser;
+import name.martingeisse.guiserver.configuration.elements.ConfigurationElement;
+import name.martingeisse.guiserver.configuration.elements.ConfigurationElementContent;
+import name.martingeisse.guiserver.configuration.elements.FormApiConfiguration;
+import name.martingeisse.guiserver.configuration.elements.PageConfiguration;
+import name.martingeisse.guiserver.configuration.elements.PanelConfiguration;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
