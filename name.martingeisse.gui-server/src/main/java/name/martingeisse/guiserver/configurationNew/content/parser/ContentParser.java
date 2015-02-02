@@ -14,6 +14,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import name.martingeisse.guiserver.configurationNew.content.ComponentConfiguration;
 import name.martingeisse.guiserver.configurationNew.content.LinkConfiguration;
+import name.martingeisse.guiserver.configurationNew.content.NavigationBarConfiguration;
 
 import com.google.common.collect.ImmutableList;
 
@@ -108,7 +109,11 @@ public final class ContentParser {
 					writer.writeStartElement(reader.getLocalName());
 					int count = reader.getAttributeCount();
 					for (int i = 0; i < count; i++) {
-						writer.writeAttribute(reader.getAttributeNamespace(i), reader.getAttributeLocalName(i), reader.getAttributeValue(i));
+						if (reader.getAttributeNamespace(i) == null) {
+							writer.writeAttribute(reader.getAttributeLocalName(i), reader.getAttributeValue(i));
+						} else {
+							writer.writeAttribute(reader.getAttributeNamespace(i), reader.getAttributeLocalName(i), reader.getAttributeValue(i));
+						}
 					}
 					reader.next();
 					nesting++;
@@ -156,11 +161,26 @@ public final class ContentParser {
 			writer.writeStartElement("a");
 			writer.writeAttribute("wicket:id", componentId);
 			reader.next();
-			List<ComponentConfiguration> oldComponentAccumulator = componentAccumulator;
-			List<ComponentConfiguration> newComponentAccumulator = componentAccumulator = new ArrayList<>();
-			handleNestedContent();
-			componentAccumulator = oldComponentAccumulator;
-			componentAccumulator.add(new LinkConfiguration(componentId, ImmutableList.copyOf(newComponentAccumulator), path));
+			componentAccumulator.add(new LinkConfiguration(componentId, handleComponentContent(), path));
+			writer.writeEndElement();
+			reader.next();
+			break;
+		}
+
+		case "navbar": {
+			String componentId = "navbar" + componentCount;
+			componentCount++;
+			writer.writeStartElement("div");
+			writer.writeAttribute("wicket:id", componentId);
+			reader.next();
+			
+			LinkConfiguration brandLink = null;
+//			if (reader.getLocalName().equals("brandLink")) {
+//				reader.next();
+//				// parse brand link
+//			}
+			componentAccumulator.add(new NavigationBarConfiguration(componentId, handleComponentContent(), brandLink));
+			
 			writer.writeEndElement();
 			reader.next();
 			break;
@@ -170,6 +190,14 @@ public final class ContentParser {
 			throw new RuntimeException("unknown special tag: " + reader.getLocalName());
 
 		}
+	}
+	
+	private ImmutableList<ComponentConfiguration> handleComponentContent() throws XMLStreamException {
+		List<ComponentConfiguration> oldComponentAccumulator = componentAccumulator;
+		List<ComponentConfiguration> newComponentAccumulator = componentAccumulator = new ArrayList<>();
+		handleNestedContent();
+		componentAccumulator = oldComponentAccumulator;
+		return ImmutableList.copyOf(newComponentAccumulator);
 	}
 
 }
