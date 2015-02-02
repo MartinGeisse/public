@@ -6,8 +6,10 @@ package name.martingeisse.guiserver.configuration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
+import name.martingeisse.guiserver.application.ServerConfiguration;
+import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
 
 /**
  * This singleton class provides the data from the configuration.
@@ -35,16 +37,11 @@ public final class Configuration {
 	public static Configuration getInstance() {
 		return instance;
 	}
-	
+		
 	/**
-	 * the rootNamespace
+	 * the elements
 	 */
-	private final ConfigurationNamespace rootNamespace;
-	
-	/**
-	 * the rootUrlPageConfiguration
-	 */
-	private final PageConfiguration rootUrlPageConfiguration;
+	private final Map<Class<? extends ConfigurationElement>, Map<String, ConfigurationElement>> elements;
 	
 	/**
 	 * Constructor.
@@ -53,79 +50,49 @@ public final class Configuration {
 	 * @throws ConfigurationException on errors in a configuration file
 	 */
 	public Configuration() throws IOException, ConfigurationException {
-		rootNamespace = ConfigurationParser.parse(new File("resource/demo/gui.json"));
-		rootNamespace.initializeRoot();
-		rootUrlPageConfiguration = new SingleConfigurationElementSearch<PageConfiguration>(PageConfiguration.class) {
-			@Override
-			public boolean checkMatch(PageConfiguration element) {
-				return element.getUrlPath().equals("");
-			}
-		}.execute(rootNamespace);
-		if (rootUrlPageConfiguration == null) {
-			throw new ConfigurationException("no page defined for the root URL");
-		}
-	}
-
-	/**
-	 * Getter method for the rootNamespace.
-	 * @return the rootNamespace
-	 */
-	public ConfigurationNamespace getRootNamespace() {
-		return rootNamespace;
+		File configurationRoot = new File(ServerConfiguration.configurationRoot.getMandatoryValue());
+		elements = new ConfigurationBuilder().build(configurationRoot);
 	}
 	
 	/**
-	 * Getter method for the rootUrlPageConfiguration.
-	 * @return the rootUrlPageConfiguration
-	 */
-	public PageConfiguration getRootUrlPageConfiguration() {
-		return rootUrlPageConfiguration;
-	}
-
-	/**
-	 * Returns a typed configuration element using its absolute path. This method is
-	 * like calling {@link #getElementAbsolute(String)} and then type-casting the
-	 * result, but gives better error messages in case of a type error.
+	 * Mounts the Wicket URLs needed by this configuration.
 	 * 
-	 * @param path the path to the configuration element (must be absolute)
-	 * @return the configuration element
+	 * @param application the Wicket application
 	 */
-	public <T extends ConfigurationElement> T getElementAbsolute(String path, Class<T> theClass) {
-		ConfigurationElement result = getElementAbsolute(path);
-		try {
-			return theClass.cast(result);
-		} catch (ClassCastException e) {
-			throw new ClassCastException("configuration element at path '" + path + "' is not a " + theClass.getSimpleName());
+	public void mountWicketUrls(GuiWicketApplication application) {
+		for (Map<String, ConfigurationElement> subMap : elements.values()) {
+			for (ConfigurationElement element : subMap.values()) {
+				element.mountWicketUrls(application);
+			}
 		}
 	}
 
 	/**
-	 * Returns a configuration element using its absolute path.
-	 * @param path the path to the configuration element (must be absolute)
+	 * Obtains a specific configuration element. Throws an exception if the element
+	 * doesn't exist.
+	 * 
+	 * @param type the type of configuration element to obtain
+	 * @param path the path to the element
 	 * @return the configuration element
 	 */
-	public ConfigurationElement getElementAbsolute(String path) {
-		if (path.equals("/")) {
-			return rootNamespace;
+	public <T extends ConfigurationElement> T getElement(Class<T> type, String path) {
+		T element = getElementOrNull(type, path);
+		if (element == null) {
+			throw new RuntimeException("configuration element with type " + type + " and path " + path + " doesn't exist");
 		}
-		if (path.contains("//") || path.endsWith("/")) {
-			throw new IllegalArgumentException("invalid path: " + path);
-		}
-		if (path.isEmpty() || path.charAt(0) != '/') {
-			throw new IllegalArgumentException("not an absolute path: " + path);
-		}
-		String[] segments = StringUtils.split(path.substring(1), '/');
-		ConfigurationElement currentElement = rootNamespace;
-		for (String segment : segments) {
-			if (!(currentElement instanceof ConfigurationNamespace)) {
-				throw new RuntimeException("segment '" + segment + "' in path '" + path + "' is not a namespace");
-			}
-			currentElement = ((ConfigurationNamespace)currentElement).getElements().get(segment);
-			if (currentElement == null) {
-				throw new RuntimeException("segment '" + segment + "' in path '" + path + "' does not exist");
-			}
-		}
-		return currentElement;
+		return element;
 	}
-	
+
+	/**
+	 * Obtains a specific configuration element. Returns null if the element doesn't exist.
+	 * 
+	 * @param type the type of configuration element to obtain
+	 * @param path the path to the element
+	 * @return the configuration element
+	 */
+	public <T extends ConfigurationElement> T getElementOrNull(Class<T> type, String path) {
+		Map<String, ConfigurationElement> subMap = elements.get(type);
+		return (subMap == null ? null : type.cast(subMap.get(path)));
+	}
+
 }

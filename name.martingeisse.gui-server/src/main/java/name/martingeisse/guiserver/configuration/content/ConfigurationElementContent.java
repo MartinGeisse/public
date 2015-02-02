@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.configurationNew.content;
+package name.martingeisse.guiserver.configuration.content;
 
 
 /**

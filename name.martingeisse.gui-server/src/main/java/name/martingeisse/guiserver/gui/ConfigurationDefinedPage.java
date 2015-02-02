@@ -4,24 +4,28 @@
 
 package name.martingeisse.guiserver.gui;
 
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-
 import name.martingeisse.guiserver.application.page.AbstractApplicationPage;
 import name.martingeisse.guiserver.configuration.Configuration;
-import name.martingeisse.guiserver.configuration.ConfigurationDefinedPageMounter;
 import name.martingeisse.guiserver.configuration.PageConfiguration;
+
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.IMarkupCacheKeyProvider;
+import org.apache.wicket.markup.IMarkupResourceStreamProvider;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.resource.IResourceStream;
+import org.apache.wicket.util.resource.StringResourceStream;
 
 /**
  * The most common kind of page. The configuration defines this page using content
  * elements.
  */
-public class ConfigurationDefinedPage extends AbstractApplicationPage {
+public class ConfigurationDefinedPage extends AbstractApplicationPage implements IMarkupCacheKeyProvider, IMarkupResourceStreamProvider {
 
 	/**
 	 * the cachedPageConfiguration
 	 */
 	private transient PageConfiguration cachedPageConfiguration = null;
-	
+
 	/**
 	 * Constructor.
 	 * 
@@ -30,7 +34,7 @@ public class ConfigurationDefinedPage extends AbstractApplicationPage {
 	public ConfigurationDefinedPage(PageParameters pageParameters) {
 		super(pageParameters);
 	}
-	
+
 	/**
 	 * Getter method for the page configuration.
 	 * @return the page configuration.
@@ -41,19 +45,41 @@ public class ConfigurationDefinedPage extends AbstractApplicationPage {
 		}
 		return cachedPageConfiguration;
 	}
-	
+
 	/**
 	 * Getter method for the page configuration path.
 	 * @return the page configuration path
 	 */
 	protected PageConfiguration resolvePageConfiguration() {
-		String pageConfigurationPath = getPageParameters().get(ConfigurationDefinedPageMounter.CONFIGURATION_PATH_PAGE_PARAMETER_NAME).toString();
+		String pageConfigurationPath = getPageParameters().get(PageConfiguration.CONFIGURATION_ELEMENT_PATH_PAGE_PARAMETER_NAME).toString();
 		if (pageConfigurationPath == null) {
-			throw new RuntimeException("page configuration key not specified in page parameters");
+			throw new RuntimeException("page configuration path not specified in page parameters");
 		}
-		return Configuration.getInstance().getElementAbsolute(pageConfigurationPath, PageConfiguration.class);
+		return Configuration.getInstance().getElement(PageConfiguration.class, pageConfigurationPath);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.markup.IMarkupCacheKeyProvider#getCacheKey(org.apache.wicket.MarkupContainer, java.lang.Class)
+	 */
+	@Override
+	public String getCacheKey(MarkupContainer container, Class<?> containerClass) {
+		if (container != this) {
+			throw new IllegalArgumentException("a ConfigurationDefinedPage cannot be used to provide a markup cache key for other components than itself");
+		}
+		return getClass().getName() + ':' + getPageConfiguration().getPath();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.wicket.markup.IMarkupResourceStreamProvider#getMarkupResourceStream(org.apache.wicket.MarkupContainer, java.lang.Class)
+	 */
+	@Override
+	public IResourceStream getMarkupResourceStream(MarkupContainer container, Class<?> containerClass) {
+		if (container != this) {
+			throw new IllegalArgumentException("a ConfigurationDefinedPage cannot be used to provide a markup resource stream for other components than itself");
+		}
+		return new StringResourceStream(getPageConfiguration().getContent().getWicketMarkup());
+	}
+
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.Page#onInitialize()
 	 */
@@ -61,7 +87,7 @@ public class ConfigurationDefinedPage extends AbstractApplicationPage {
 	protected void onInitialize() {
 		super.onInitialize();
 		PageConfiguration pageConfiguration = getPageConfiguration();
-		add(new ContentElementRepeater("elements", pageConfiguration.getContentElements()));
+		pageConfiguration.getContent().getComponents().buildAndAddComponents(this);
 	}
-	
+
 }

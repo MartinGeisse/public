@@ -2,24 +2,24 @@
  * Copyright (c) 2015 Martin Geisse
  */
 
-package name.martingeisse.guiserver.configurationNew;
+package name.martingeisse.guiserver.configuration;
 
 
 /**
- * The configuration for a panel.
+ * The configuration for a form-processing API.
  */
-public final class PanelConfiguration extends ConfigurationElement {
+public final class FormApiConfiguration extends ConfigurationElement {
 
 	/**
 	 * the CONFIGURATION_FILENAME_SUFFIX
 	 */
-	public static final String CONFIGURATION_FILENAME_SUFFIX = ".panel.xml";
+	public static final String CONFIGURATION_FILENAME_SUFFIX = ".api";
 	
 	/**
 	 * Constructor.
-	 * @param path the path to this panel
+	 * @param path the path to this form API
 	 */
-	public PanelConfiguration(String path) {
+	public FormApiConfiguration(String path) {
 		super(path);
 	}
 

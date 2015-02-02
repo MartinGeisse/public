@@ -2,9 +2,9 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.gui2;
+package name.martingeisse.guiserver.gui;
 
-import name.martingeisse.guiserver.configurationNew.content.LinkConfiguration;
+import name.martingeisse.guiserver.configuration.content.LinkConfiguration;
 import name.martingeisse.wicket.component.misc.InvisibleWebMarkupContainer;
 
 import org.apache.wicket.markup.html.border.Border;

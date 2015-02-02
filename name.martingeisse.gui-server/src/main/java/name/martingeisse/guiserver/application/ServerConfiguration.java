@@ -20,11 +20,6 @@ public final class ServerConfiguration {
 	 * the configurationProperties
 	 */
 	private static ConfigurationPropertiesFile configurationProperties;
-	
-	/**
-	 * the guiConfigurationFile
-	 */
-	public static StringProperty guiConfigurationFile;
 
 	/**
 	 * the configurationRoot
@@ -38,7 +33,6 @@ public final class ServerConfiguration {
 	 */
 	public static void initialize(String configFilePath) throws IOException {
 		configurationProperties = new ConfigurationPropertiesFile(new File(configFilePath));
-		guiConfigurationFile = new StringProperty(configurationProperties, "guiConfigurationFile");
 		configurationRoot = new StringProperty(configurationProperties, "configurationRoot");
 	}
 

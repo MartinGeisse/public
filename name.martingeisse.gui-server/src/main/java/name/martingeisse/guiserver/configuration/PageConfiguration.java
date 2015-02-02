@@ -4,56 +4,69 @@
 
 package name.martingeisse.guiserver.configuration;
 
-import name.martingeisse.guiserver.configuration.content.ContentElementConfiguration;
+import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
+import name.martingeisse.guiserver.configuration.content.ConfigurationElementContent;
+import name.martingeisse.guiserver.gui.ConfigurationDefinedPage;
+import name.martingeisse.wicket.util.ParameterMountedRequestMapper;
 
-import com.google.common.collect.ImmutableList;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+
 
 /**
  * The configuration for a page.
  */
-public final class PageConfiguration extends AbstractConfigurationElement {
+public final class PageConfiguration extends ConfigurationElement {
 
 	/**
-	 * the urlPath
+	 * the CONFIGURATION_ELEMENT_PATH_PAGE_PARAMETER_NAME
 	 */
-	private final String urlPath;
+	public static final String CONFIGURATION_ELEMENT_PATH_PAGE_PARAMETER_NAME = "__INTERNAL_CONFIGURATION_ELEMENT_PATH__";
 	
 	/**
-	 * the contentElements
+	 * the CONFIGURATION_FILENAME_SUFFIX
 	 */
-	private final ImmutableList<ContentElementConfiguration> contentElements;
-
+	public static final String CONFIGURATION_FILENAME_SUFFIX = ".page.xml";
+	
+	/**
+	 * the content
+	 */
+	private ConfigurationElementContent content;
+	
 	/**
 	 * Constructor.
-	 * 
-	 * @param urlPath the URL path
-	 * @param contentElements the content elements
+	 * @param path the path to this page
+	 * @param markupSourceCode the source code for the page's markup
 	 */
-	public PageConfiguration(String urlPath, ImmutableList<ContentElementConfiguration> contentElements) {
-		if (urlPath == null) {
-			throw new IllegalArgumentException("urlPath argument is null");
-		}
-		if (contentElements == null) {
-			throw new IllegalArgumentException("contentElements argument is null");
-		}
-		this.urlPath = urlPath;
-		this.contentElements = contentElements;
+	public PageConfiguration(String path, ConfigurationElementContent content) {
+		super(path);
+		this.content = content;
+	}
+
+	/**
+	 * Getter method for the content.
+	 * @return the content
+	 */
+	public ConfigurationElementContent getContent() {
+		return content;
 	}
 	
-	/**
-	 * Getter method for the urlPath.
-	 * @return the urlPath
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configurationNew.ConfigurationElement#getBackendUriPath()
 	 */
-	public String getUrlPath() {
-		return urlPath;
+	@Override
+	public String getBackendUriPath() {
+		return getPath() + CONFIGURATION_FILENAME_SUFFIX;
 	}
 
-	/**
-	 * Getter method for the contentElements.
-	 * @return the contentElements
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configurationNew.ConfigurationElement#mountWicketUrls(name.martingeisse.guiserver.application.wicket.GuiWicketApplication)
 	 */
-	public ImmutableList<ContentElementConfiguration> getContentElements() {
-		return contentElements;
+	@Override
+	public void mountWicketUrls(GuiWicketApplication application) {
+		String path = getPath();
+		PageParameters identifyingParameters = new PageParameters();
+		identifyingParameters.add(CONFIGURATION_ELEMENT_PATH_PAGE_PARAMETER_NAME, path);
+		application.mount(new ParameterMountedRequestMapper(getPath(), ConfigurationDefinedPage.class, identifyingParameters));
 	}
-
+	
 }

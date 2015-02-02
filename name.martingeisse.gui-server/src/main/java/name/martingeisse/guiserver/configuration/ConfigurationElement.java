@@ -1,37 +1,56 @@
 /**
- * Copyright (c) 2015 Martin Geisse
+ * Copyright (c) 2013 Shopgate GmbH
  */
 
 package name.martingeisse.guiserver.configuration;
 
+import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
+
 /**
- * Common interface for all configuration elements (pages, namespaces, ...)
+ * The base class for configuration elements.
+ * 
+ * Each element has a path that identifies it among elements of the
+ * same type. Elements with different type may use the same path. This
+ * is useful, for example, to define a page with a form and a
+ * corresponding form API with the same name, which keeps things simple. 
+ * 
+ * Each element has a backend URL that is used to access it in the
+ * backend server. This URL is built from the element's path and type.
  */
-public interface ConfigurationElement {
-	
+public abstract class ConfigurationElement {
+
 	/**
-	 * Initializes this element.
-	 * @param parentNamespace the parent namespace that contains this element
-	 * @param key the key used for this element within the parent namespace
+	 * the path
 	 */
-	public void initialize(ConfigurationNamespace parentNamespace, String key);
-	
+	private final String path;
+
 	/**
-	 * Returns the parent namespace
-	 * @return the parent namespace
+	 * Constructor.
+	 * @param path the path to this element
 	 */
-	public ConfigurationNamespace getParentNamespace();
-	
+	public ConfigurationElement(String path) {
+		this.path = path;
+	}
+
 	/**
-	 * Returns the key used for this element within the parent namespace
-	 * @return the key used for this element within the parent namespace
+	 * Getter method for the path.
+	 * @return the path
 	 */
-	public String getKey();
-	
+	public String getPath() {
+		return path;
+	}
+
 	/**
-	 * Returns the absolute path of this element in the configuration
-	 * @return the absolute path of this element in the configuration
+	 * Returns the path for the backend URI.
+	 * @return the path for the backend URI.
 	 */
-	public String getPath();
+	public abstract String getBackendUriPath();
+
+	/**
+	 * Mounts all Wicket URLs needed by this element.
+	 * @param application the application used to mount URLs
+	 */
+	public void mountWicketUrls(GuiWicketApplication application) {		
+	}
 	
 }

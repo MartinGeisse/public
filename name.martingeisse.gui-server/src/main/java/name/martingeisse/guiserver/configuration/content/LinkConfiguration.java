@@ -4,57 +4,67 @@
 
 package name.martingeisse.guiserver.configuration.content;
 
+import name.martingeisse.guiserver.configuration.PageConfiguration;
+import name.martingeisse.guiserver.gui.ConfigurationDefinedPage;
+
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+
+import com.google.common.collect.ImmutableList;
+
 
 /**
- * Standard link component. This component supports a limited feature set
- * that satisfies many use cases, but is intentionally limited to be
- * simple to use.
+ * Configuration for a link. This class tries to cover only the common
+ * cases to keep it simple.
  */
-public final class LinkConfiguration implements ContentElementConfiguration {
+public final class LinkConfiguration extends AbstractContainerConfiguration {
 
 	/**
-	 * the targetPageConfigurationPath
+	 * the targetPagePath
 	 */
-	private final String targetPageConfigurationPath;
-
-	/**
-	 * the label
-	 */
-	private final String label;
+	private final String targetPagePath;
 
 	/**
 	 * Constructor.
-	 */
-	private LinkConfiguration(String targetPageConfigurationPath, String label) {
-		this.targetPageConfigurationPath = targetPageConfigurationPath;
-		this.label = label;
-	}
-
-	/**
-	 * Getter method for the targetPageConfigurationPath.
-	 * @return the targetPageConfigurationPath
-	 */
-	public String getTargetPageConfigurationPath() {
-		return targetPageConfigurationPath;
-	}
-
-	/**
-	 * Getter method for the label.
-	 * @return the label
-	 */
-	public String getLabel() {
-		return label;
-	}
-
-	/**
-	 * Creates a link to the specified page.
 	 * 
-	 * @param targetPageConfigurationPath the path configuration page of the page to link to
-	 * @param label the link label text
-	 * @return the link configuration
+	 * @param id the wicket id
+	 * @param children the children
+	 * @param targetPagePath the path of the page to link to
 	 */
-	public static LinkConfiguration forPageConfiguration(String targetPageConfigurationPath, String label) {
-		return new LinkConfiguration(targetPageConfigurationPath, label);
+	public LinkConfiguration(String id, ImmutableList<ComponentConfiguration> children, String targetPagePath) {
+		super(id, children);
+		this.targetPagePath = targetPagePath;
 	}
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param id the wicket id
+	 * @param children the children
+	 * @param targetPagePath the path of the page to link to
+	 */
+	public LinkConfiguration(String id, ComponentConfigurationList children, String targetPagePath) {
+		super(id, children);
+		this.targetPagePath = targetPagePath;
+	}
+
+	/**
+	 * Getter method for the targetPagePath.
+	 * @return the targetPagePath
+	 */
+	public String getTargetPagePath() {
+		return targetPagePath;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configurationNew.content.AbstractContainerConfiguration#buildContainer()
+	 */
+	@Override
+	protected MarkupContainer buildContainer() {
+		PageParameters targetPageParameters = new PageParameters();
+		targetPageParameters.add(PageConfiguration.CONFIGURATION_ELEMENT_PATH_PAGE_PARAMETER_NAME, targetPagePath);
+		return new BookmarkablePageLink<>(getId(), ConfigurationDefinedPage.class, targetPageParameters);
+	}
+	
 }

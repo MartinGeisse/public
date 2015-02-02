@@ -5,9 +5,8 @@
 package name.martingeisse.guiserver.application.wicket;
 
 import name.martingeisse.guiserver.application.page.AbstractApplicationPage;
-import name.martingeisse.guiserver.configuration.ConfigurationDefinedPageMounter;
-import name.martingeisse.guiserver.configurationNew.Configuration;
-import name.martingeisse.guiserver.gui.ConfigurationDefinedRootUrlPage;
+import name.martingeisse.guiserver.configuration.Configuration;
+import name.martingeisse.guiserver.gui.HelloWorldPage;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
 
 import org.apache.wicket.Page;
@@ -86,7 +85,6 @@ public class GuiWicketApplication extends AbstractMyWicketApplication {
 		//		);
 
 		// --- mount pages ---
-		ConfigurationDefinedPageMounter.mount(this);
 		Configuration.getInstance().mountWicketUrls(this);
 		
 		// main pages
@@ -155,7 +153,7 @@ public class GuiWicketApplication extends AbstractMyWicketApplication {
 	 */
 	@Override
 	public Class<? extends Page> getHomePage() {
-		return ConfigurationDefinedRootUrlPage.class;
+		return HelloWorldPage.class;
 	}
 
 	/* (non-Javadoc)

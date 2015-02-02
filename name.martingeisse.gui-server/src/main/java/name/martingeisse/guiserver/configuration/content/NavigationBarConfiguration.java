@@ -4,12 +4,16 @@
 
 package name.martingeisse.guiserver.configuration.content;
 
+import name.martingeisse.guiserver.gui.NavigationBar;
+
+import org.apache.wicket.MarkupContainer;
+
 import com.google.common.collect.ImmutableList;
 
 /**
- * This content element shows a navigation bar.
+ * The configuration for a navigation bar.
  */
-public final class NavigationBarConfiguration implements ContentElementConfiguration {
+public final class NavigationBarConfiguration extends AbstractContainerConfiguration {
 
 	/**
 	 * the brandLink
@@ -17,18 +21,14 @@ public final class NavigationBarConfiguration implements ContentElementConfigura
 	private final LinkConfiguration brandLink;
 
 	/**
-	 * the elements
-	 */
-	private final ImmutableList<ContentElementConfiguration> elements;
-
-	/**
 	 * Constructor.
-	 * @param brandLink the brand link, or null if none
-	 * @param elements the navigation bar elements
+	 * @param id the wicket id
+	 * @param children the children
+	 * @param brandLink the brand link, or null for none
 	 */
-	public NavigationBarConfiguration(LinkConfiguration brandLink, ImmutableList<ContentElementConfiguration> elements) {
+	public NavigationBarConfiguration(String id, ImmutableList<ComponentConfiguration> children, LinkConfiguration brandLink) {
+		super(id, children);
 		this.brandLink = brandLink;
-		this.elements = elements;
 	}
 
 	/**
@@ -39,12 +39,12 @@ public final class NavigationBarConfiguration implements ContentElementConfigura
 		return brandLink;
 	}
 
-	/**
-	 * Getter method for the elements.
-	 * @return the elements
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configurationNew.content.AbstractContainerConfiguration#buildContainer()
 	 */
-	public ImmutableList<ContentElementConfiguration> getElements() {
-		return elements;
+	@Override
+	protected MarkupContainer buildContainer() {
+		return new NavigationBar(getId(), brandLink);
 	}
 
 }

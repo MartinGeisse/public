@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.configurationNew;
+package name.martingeisse.guiserver.configuration;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,10 +20,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-import name.martingeisse.guiserver.configurationNew.content.ComponentConfiguration;
-import name.martingeisse.guiserver.configurationNew.content.ComponentConfigurationList;
-import name.martingeisse.guiserver.configurationNew.content.ConfigurationElementContent;
-import name.martingeisse.guiserver.configurationNew.content.parser.ContentParser;
+import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentConfigurationList;
+import name.martingeisse.guiserver.configuration.content.ConfigurationElementContent;
+import name.martingeisse.guiserver.configuration.content.parser.ContentParser;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
