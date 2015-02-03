@@ -7,22 +7,16 @@ package name.martingeisse.guiserver.configuration;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
 
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentConfigurationList;
-import name.martingeisse.guiserver.configuration.content.ContentParser;
+import name.martingeisse.guiserver.configuration.content.parser.ContentStreams;
+import name.martingeisse.guiserver.configuration.content.parser.RootContentParser;
 import name.martingeisse.guiserver.configuration.elements.ConfigurationElement;
 import name.martingeisse.guiserver.configuration.elements.ConfigurationElementContent;
 import name.martingeisse.guiserver.configuration.elements.FormApiConfiguration;
@@ -89,24 +83,23 @@ final class ConfigurationBuilder {
 		String filename = file.getName();
 		if (filename.endsWith(PageConfiguration.CONFIGURATION_FILENAME_SUFFIX)) {
 			String path = getPath(PageConfiguration.CONFIGURATION_FILENAME_SUFFIX);
-			StringWriter wicketMarkupWriter = new StringWriter();
-			List<ComponentConfiguration> componentAccumulator = new ArrayList<ComponentConfiguration>();
+			String wicketMarkup;
+			ImmutableList<ComponentConfiguration> components;
 			try (FileInputStream fileInputStream = new FileInputStream(file)) {
-				XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(fileInputStream);
-				XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(wicketMarkupWriter);
-				ContentParser parser = new ContentParser(reader, writer, componentAccumulator);
-				parser.parse();
+				ContentStreams streams = new ContentStreams(fileInputStream);
+				RootContentParser parser = new RootContentParser(streams);
+				parser.parseRootContent();
+				wicketMarkup = parser.getStreams().getMarkup();
+				components = parser.getStreams().finishRootComponentAccumulator();
 			} catch (XMLStreamException e) {
 				throw new RuntimeException(e);
 			}
-			String wicketMarkup = wicketMarkupWriter.toString();
 			// TODO
 			System.out.println("------------------------------------------");
 			System.out.println(wicketMarkup);
 			System.out.println("------------------------------------------");
 			// TODO
-			ComponentConfigurationList components = new ComponentConfigurationList(ImmutableList.copyOf(componentAccumulator));
-			ConfigurationElementContent content = new ConfigurationElementContent(wicketMarkup, components);
+			ConfigurationElementContent content = new ConfigurationElementContent(wicketMarkup, new ComponentConfigurationList(components));
 			PageConfiguration pageConfiguration = new PageConfiguration(path, content);
 			putElement(path, pageConfiguration);
 		} else if (filename.endsWith(PanelConfiguration.CONFIGURATION_FILENAME_SUFFIX)) {

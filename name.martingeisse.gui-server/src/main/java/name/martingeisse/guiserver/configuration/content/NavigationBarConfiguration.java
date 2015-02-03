@@ -18,7 +18,7 @@ public final class NavigationBarConfiguration extends AbstractContainerConfigura
 	/**
 	 * the brandLink
 	 */
-	private final LinkConfiguration brandLink;
+	private final ComponentConfiguration brandLink;
 
 	/**
 	 * Constructor.
@@ -26,7 +26,7 @@ public final class NavigationBarConfiguration extends AbstractContainerConfigura
 	 * @param children the children
 	 * @param brandLink the brand link, or null for none
 	 */
-	public NavigationBarConfiguration(String id, ImmutableList<ComponentConfiguration> children, LinkConfiguration brandLink) {
+	public NavigationBarConfiguration(String id, ImmutableList<ComponentConfiguration> children, ComponentConfiguration brandLink) {
 		super(id, children);
 		this.brandLink = brandLink;
 	}
@@ -35,7 +35,7 @@ public final class NavigationBarConfiguration extends AbstractContainerConfigura
 	 * Getter method for the brandLink.
 	 * @return the brandLink
 	 */
-	public LinkConfiguration getBrandLink() {
+	public ComponentConfiguration getBrandLink() {
 		return brandLink;
 	}
 
