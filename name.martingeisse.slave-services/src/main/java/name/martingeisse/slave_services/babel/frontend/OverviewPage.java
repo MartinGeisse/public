@@ -8,10 +8,10 @@ import java.util.List;
 
 import name.martingeisse.slave_services.common.frontend.AbstractFrontendPage;
 import name.martingeisse.slave_services.common.frontend.HomePage;
-import name.martingeisse.slave_services.common.frontend.components.PageParameterDrivenTabPanel;
 import name.martingeisse.slave_services.entity.MessageFamily;
 import name.martingeisse.slave_services.entity.QMessageFamily;
 import name.martingeisse.sql.EntityConnectionManager;
+import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;

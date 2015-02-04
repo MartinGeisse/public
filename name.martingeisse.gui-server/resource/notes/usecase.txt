@@ -6,7 +6,7 @@ enclosure
 popup window (lazy-loading content)
 pagination
 caching
-lazy-loading (benötigt eigenes model im lazy-part)
+[ok] lazy-loading
 
 formulare mit eingebauter und externer validierung
 - benötigt entweder vorgebautes markup, z.B. formular mit bootstrap-markup

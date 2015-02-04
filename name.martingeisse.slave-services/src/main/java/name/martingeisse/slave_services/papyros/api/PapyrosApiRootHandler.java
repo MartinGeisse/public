@@ -7,7 +7,6 @@
 package name.martingeisse.slave_services.papyros.api;
 
 import name.martingeisse.api.handler.misc.NamedResourceFolderHandler;
-import name.martingeisse.slave_services.papyros.api.RenderTemplateApiHandler;
 
 /**
  * The "root" folder handler.

@@ -13,6 +13,9 @@ import name.martingeisse.guiserver.configuration.content.IncludeBackendConfigura
 import name.martingeisse.guiserver.configuration.content.LazyLoadContainerConfiguration;
 import name.martingeisse.guiserver.configuration.content.LinkConfiguration;
 import name.martingeisse.guiserver.configuration.content.NavigationBarConfiguration;
+import name.martingeisse.guiserver.configuration.content.TabPanelConfiguration;
+import name.martingeisse.guiserver.configuration.content.TabPanelConfiguration.TabEntry;
+import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel;
 
 import com.google.common.collect.ImmutableList;
 
@@ -109,7 +112,45 @@ public class DefaultContentParser extends ContentParser {
 			writer.writeEndElement();
 			break;
 		}
+		
+		case "tabPanel": {
 			
+			// build the tab panel component configuration
+			final String tabPanelComponentId = newComponentId("link");
+			final TabPanelConfiguration tabPanelConfiguration = new TabPanelConfiguration(tabPanelComponentId, tabPanelComponentId);
+			streams.addComponent(tabPanelConfiguration);
+			writer.writeEmptyElement("div");
+			writer.writeAttribute("wicket:id", tabPanelComponentId);
+
+			// parse the contents, build markup fragments for them and add the TabInfo objects to the panel configuration
+			// TODO throw error on non-special-tag content
+			streams.next();
+			new ContentParser(streams) {
+				@Override
+				protected void handleSpecialElement(String localName) throws XMLStreamException {
+					ContentStreams streams = getStreams();
+					XMLStreamWriter writer = streams.getWriter();
+					if (!localName.equals("tab")) {
+						throw new RuntimeException("invalid special tag inside a TabPanel: " + localName);
+					}
+					String selector = streams.getMandatoryAttribute("selector");
+					String tabComponentId = tabPanelComponentId + "-" + selector;
+					String title = streams.getMandatoryAttribute("title");
+					streams.next();
+					writer.writeStartElement("wicket:fragment");
+					writer.writeAttribute("wicket:id", tabComponentId);
+					ImmutableList<ComponentConfiguration> tabContentComponents = DefaultContentParser.this.parseComponentContent();
+					streams.next();
+					writer.writeEndElement();
+					PageParameterDrivenTabPanel.TabInfo tabInfo = new PageParameterDrivenTabPanel.TabInfo(title, selector);
+					TabEntry tabEntry = new TabEntry(tabComponentId, tabInfo, tabContentComponents);
+					tabPanelConfiguration.addTab(tabEntry);
+				}
+			}.parseNestedContent();
+			streams.next();
+			
+		}
+
 		default:
 			throw new RuntimeException("unknown special tag: " + reader.getLocalName());
 

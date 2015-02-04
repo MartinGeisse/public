@@ -4,7 +4,7 @@
  * This file is distributed under the terms of the MIT license.
  */
 
-package name.martingeisse.slave_services.common.frontend.components;
+package name.martingeisse.wicket.component.misc;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -54,6 +54,11 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  */
 public abstract class PageParameterDrivenTabPanel extends Panel {
 
+	/**
+	 * The markup ID used for the tab body.
+	 */
+	public static final String TAB_BODY_MARKUP_ID = "tabBody";
+	
 	/**
 	 * the parameterName
 	 */
@@ -140,7 +145,7 @@ public abstract class PageParameterDrivenTabPanel extends Panel {
 		});
 
 		// add tab body
-		add(createBody("tabBody", getCurrentSelector()));
+		add(createBody(TAB_BODY_MARKUP_ID, getCurrentSelector()));
 
 	}
 

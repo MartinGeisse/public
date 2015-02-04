@@ -7,7 +7,6 @@ package name.martingeisse.slave_services.papyros.frontend.family;
 import java.util.List;
 
 import name.martingeisse.slave_services.common.frontend.AbstractFrontendPage;
-import name.martingeisse.slave_services.common.frontend.components.PageParameterDrivenTabPanel;
 import name.martingeisse.slave_services.entity.QTemplate;
 import name.martingeisse.slave_services.entity.QTemplatePreviewDataSet;
 import name.martingeisse.slave_services.entity.TemplateFamily;
@@ -20,6 +19,7 @@ import name.martingeisse.slave_services.papyros.frontend.schema.SchemaPage;
 import name.martingeisse.slave_services.papyros.frontend.template.CreateTemplatePage;
 import name.martingeisse.slave_services.papyros.frontend.template.TemplatePage;
 import name.martingeisse.sql.EntityConnectionManager;
+import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;

@@ -5,13 +5,13 @@
 package name.martingeisse.slave_services.papyros.frontend.template;
 
 import name.martingeisse.slave_services.common.frontend.AbstractFrontendPage;
-import name.martingeisse.slave_services.common.frontend.components.PageParameterDrivenTabPanel;
 import name.martingeisse.slave_services.entity.Template;
 import name.martingeisse.slave_services.entity.TemplateFamily;
 import name.martingeisse.slave_services.entity.TemplatePreviewDataSet;
 import name.martingeisse.slave_services.papyros.backend.PapyrosDataUtil;
 import name.martingeisse.slave_services.papyros.frontend.components.PreviewTemplateIframe;
 import name.martingeisse.slave_services.papyros.frontend.family.TemplateFamilyPage;
+import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
