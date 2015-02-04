@@ -9,8 +9,11 @@ import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.markup.html.panel.IMarkupSourcingStrategy;
+import org.apache.wicket.markup.html.panel.PanelMarkupSourcingStrategy;
 
 import com.google.common.collect.ImmutableList;
 
@@ -57,14 +60,16 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 	 */
 	@Override
 	public Component buildComponent() {
-		return new PageParameterDrivenTabPanel(getId(), parameterName) {
+		final WebMarkupContainer tabPanelContainer = new WebMarkupContainer(getId() + "-container");
+		final PageParameterDrivenTabPanel tabPanel = new PageParameterDrivenTabPanel(getId(), parameterName) {
+			
 			@Override
 			protected Component createBody(String id, String selector) {
 				for (TabEntry tabEntry : tabs) {
 					AbstractTabInfo tabInfo = tabEntry.getTabInfo();
 					if (tabInfo instanceof TabInfo) {
 						if (selector.equals(((TabInfo)tabInfo).getSelector())) {
-							return tabEntry.buildComponent();
+							return tabEntry.buildTabEntry(id, tabPanelContainer);
 						}
 					} else {
 						throw new RuntimeException("cannot handle AbstractTabInfo objects other than TabInfo right now");
@@ -72,7 +77,21 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 				}
 				return new EmptyPanel(id);
 			}
+			
+			/* (non-Javadoc)
+			 * @see org.apache.wicket.markup.html.panel.Panel#newMarkupSourcingStrategy()
+			 */
+			@Override
+			protected IMarkupSourcingStrategy newMarkupSourcingStrategy() {
+				return new PanelMarkupSourcingStrategy(true);
+			}
+			
 		};
+		for (TabEntry tab : tabs) {
+			tabPanel.addTab(tab.getTabInfo());
+		}
+		tabPanelContainer.add(tabPanel);
+		return tabPanelContainer;
 	}
 
 	/**
@@ -105,11 +124,30 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 		}
 
 		/* (non-Javadoc)
+		 * @see name.martingeisse.guiserver.configurationNew.content.ComponentConfiguration#buildComponent()
+		 */
+		@Override
+		public Component buildComponent() {
+			throw new UnsupportedOperationException();
+		}
+
+		/* (non-Javadoc)
 		 * @see name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration#buildContainer()
 		 */
 		@Override
 		protected MarkupContainer buildContainer() {
-			return new Fragment(PageParameterDrivenTabPanel.TAB_BODY_MARKUP_ID, getId(), markupProvider);
+			throw new UnsupportedOperationException();
+		}
+		
+		/**
+		 * Builds the component for a TabEntry.
+		 * 
+		 * @return the component
+		 */
+		public MarkupContainer buildTabEntry(String callingMarkupId, MarkupContainer markupProvider) {
+			MarkupContainer container = new Fragment(callingMarkupId, getId(), markupProvider);
+			getChildren().buildAndAddComponents(container);
+			return container;
 		}
 
 	}

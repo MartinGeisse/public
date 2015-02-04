@@ -1,0 +1,29 @@
+<gui:page xmlns:gui="http://guiserver.martingeisse.name/v1">
+	<h1>Hello Again!</h1>
+	<div>
+		Try clicking the tab headers!
+	</div>
+	<div>
+		<gui:tabPanel>
+			<gui:tab selector="tab1" title="One">
+				This is the first tab.
+			</gui:tab>
+			<gui:tab selector="tab2" title="Two">
+				This is another tab.
+			</gui:tab>
+			<gui:tab selector="tab3" title="Three">
+				You can have <gui:link href="/index">links</gui:link> in tabs!
+			</gui:tab>
+			<gui:tab selector="tab4" title="Four">
+				This is a tab with long-loading content:
+				<gui:includeBackend url="http://localhost/geisse/demo-backend/html-snippet-slow.php" escape="false" />
+			</gui:tab>
+			<gui:tab selector="tab5" title="Five">
+				This is a tab with lazy loading content:
+				<gui:lazy>
+					<gui:includeBackend url="http://localhost/geisse/demo-backend/html-snippet-slow.php" escape="false" />
+				</gui:lazy>
+			</gui:tab>
+		</gui:tabPanel>
+	</div>
+</gui:page>

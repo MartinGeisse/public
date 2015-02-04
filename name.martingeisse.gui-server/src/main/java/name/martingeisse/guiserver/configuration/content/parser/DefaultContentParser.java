@@ -116,13 +116,16 @@ public class DefaultContentParser extends ContentParser {
 		case "tabPanel": {
 			
 			// build the tab panel component configuration
-			final String tabPanelComponentId = newComponentId("link");
+			final String tabPanelComponentId = newComponentId("tabPanel");
 			final TabPanelConfiguration tabPanelConfiguration = new TabPanelConfiguration(tabPanelComponentId, tabPanelComponentId);
 			streams.addComponent(tabPanelConfiguration);
+			writer.writeStartElement("div");
+			writer.writeAttribute("wicket:id", tabPanelComponentId + "-container");
 			writer.writeEmptyElement("div");
 			writer.writeAttribute("wicket:id", tabPanelComponentId);
 
 			// parse the contents, build markup fragments for them and add the TabInfo objects to the panel configuration
+			// the markup for the fragments will be inside the tab panel tags (i.e. in the part that gets replaced by the Panel code)
 			// TODO throw error on non-special-tag content
 			streams.next();
 			new ContentParser(streams) {
@@ -148,6 +151,10 @@ public class DefaultContentParser extends ContentParser {
 				}
 			}.parseNestedContent();
 			streams.next();
+			
+			// finish the tab panel
+			writer.writeEndElement();
+			break;
 			
 		}
 

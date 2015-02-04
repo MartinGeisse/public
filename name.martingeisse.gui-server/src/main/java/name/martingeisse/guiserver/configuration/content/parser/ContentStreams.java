@@ -276,7 +276,7 @@ public final class ContentStreams {
 	public String getMandatoryAttribute(String name) {
 		String value = reader.getAttributeValue(null, name);
 		if (value == null) {
-			throw new RuntimeException("expected href attribute");
+			throw new RuntimeException("expected " + name + " attribute");
 		}
 		return value;
 	}
