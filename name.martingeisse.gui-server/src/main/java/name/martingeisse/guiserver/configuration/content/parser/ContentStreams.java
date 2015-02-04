@@ -203,6 +203,10 @@ public final class ContentStreams {
 			writer.writeCharacters(reader.getText());
 			break;
 			
+		case XMLStreamConstants.COMMENT:
+			writer.writeComment(reader.getText());
+			break;
+			
 		default:
 			throw new RuntimeException("invalid XML event: " + reader.getEventType());
 			
@@ -229,7 +233,9 @@ public final class ContentStreams {
 			switch (reader.getEventType()) {
 
 			case XMLStreamConstants.SPACE:
+			case XMLStreamConstants.COMMENT:
 				reader.next();
+				break;
 
 			case XMLStreamConstants.CDATA:
 			case XMLStreamConstants.CHARACTERS:

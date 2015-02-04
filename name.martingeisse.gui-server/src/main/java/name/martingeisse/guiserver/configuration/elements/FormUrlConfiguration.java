@@ -6,20 +6,20 @@ package name.martingeisse.guiserver.configuration.elements;
 
 
 /**
- * The configuration for a form-processing API.
+ * The configuration for a URL that is directly targeted by a form.
  */
-public final class FormApiConfiguration extends ConfigurationElement {
+public final class FormUrlConfiguration extends ConfigurationElement {
 
 	/**
 	 * the CONFIGURATION_FILENAME_SUFFIX
 	 */
-	public static final String CONFIGURATION_FILENAME_SUFFIX = ".api";
+	public static final String CONFIGURATION_FILENAME_SUFFIX = ".form.properties";
 	
 	/**
 	 * Constructor.
 	 * @param path the path to this form API
 	 */
-	public FormApiConfiguration(String path) {
+	public FormUrlConfiguration(String path) {
 		super(path);
 	}
 

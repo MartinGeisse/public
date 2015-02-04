@@ -98,20 +98,34 @@
 	};
 
 	/**
-	 * Functions executer takes array of functions and executes them. Each function gets
-	 * the notify object, which needs to be called for the next function to be executed.
-	 * This way the functions can be executed synchronously.
+	 * Functions executer takes array of functions and executes them.
+	 * The functions are executed one by one as far as the return value is FunctionsExecuter.DONE.
+	 * If the return value is FunctionsExecuter.ASYNC or undefined then the execution of
+	 * the functions will be resumed once the `notify` callback function is called.
 	 * This is needed because header contributions need to do asynchronous download of JS and/or CSS
 	 * and they have to let next function to run only after the download.
-	 * Each function has to call the notify object at some point, otherwise the functions after it wont be executed.
-	 * After the FunctionsExecuter is initiatialized, the start methods triggers the first function.
+	 * After the FunctionsExecuter is initialized, the start methods triggers the first function.
+	 *
+	 * @param functions {Array} - an array of functions to execute
 	 */
 	var FunctionsExecuter = function (functions) {
 
 		this.functions = functions;
 
+		/**
+		 * The index of the currently executed function
+		 * @type {number}
+		 */
 		this.current = 0;
 
+		/**
+		 * Tracks the depth of the call stack when `notify` is used for
+		 * asynchronous notification that a function execution has finished.
+		 * Should be reset to 0 when at some point to avoid problems like
+		 * "too much recursion". The reset may break the atomicity by allowing
+		 * another instance of FunctionExecuter to run its functions
+		 * @type {number}
+		 */
 		this.depth = 0; // we need to limit call stack depth
 
 		this.processNext = function () {
@@ -122,35 +136,71 @@
 				run = function () {
 					try {
 						var n = jQuery.proxy(this.notify, this);
-						f(n);
+						return f(n);
 					}
 					catch (e) {
 						Wicket.Log.error("FunctionsExecuter.processNext: " + e);
+						return FunctionsExecuter.FAIL;
 					}
 				};
 				run = jQuery.proxy(run, this);
 				this.current++;
 
-				if (this.depth > 1000) {
+				if (this.depth > FunctionsExecuter.DEPTH_LIMIT) {
 					// to prevent stack overflow (see WICKET-4675)
 					this.depth = 0;
 					window.setTimeout(run, 1);
 				} else {
-					this.depth ++;
-					run();
+					var retValue = run();
+					if (isUndef(retValue) || retValue === FunctionsExecuter.ASYNC) {
+						this.depth++;
+					}
+					return retValue;
 				}
 			}
 		};
 
 		this.start = function () {
-			this.processNext();
+			var retValue = FunctionsExecuter.DONE;
+			while (retValue === FunctionsExecuter.DONE) {
+				retValue = this.processNext();
+			}
 		};
 
 		this.notify = function () {
-			this.processNext();
+			this.start();
 		};
 	};
 
+	/**
+	 * Response that should be used by a function when it finishes successfully
+	 * in synchronous manner
+	 * @type {number}
+	 */
+	FunctionsExecuter.DONE = 1;
+
+	/**
+	 * Response that should be used by a function when it finishes abnormally
+	 * in synchronous manner
+	 * @type {number}
+	 */
+	FunctionsExecuter.FAIL = 2;
+
+	/**
+	 * Response that may be used by a function when it executes asynchronous
+	 * code and must wait `notify()` to be executed.
+	 * @type {number}
+	 */
+	FunctionsExecuter.ASYNC = 3;
+
+	/**
+	 * An artificial number used as a limit of the call stack depth to avoid
+	 * problems like "too much recursion" in the browser.
+	 * The depth is not easy to be calculated because the memory used by the
+	 * stack depends on many factors
+	 * @type {number}
+	 */
+	FunctionsExecuter.DEPTH_LIMIT = 1000;
 
 	// API start
 
@@ -522,14 +572,16 @@
 
 					// initialize the array for steps (closures that execute each action)
 					steps: []
-				};
+				},
+				we = Wicket.Event,
+				topic = we.Topic;
 
 			if (Wicket.Focus.lastFocusId) {
 				headers["Wicket-FocusedElementId"] = Wicket.Focus.lastFocusId;
 			}
 
 			self._executeHandlers(attrs.bh, attrs);
-			Wicket.Event.publish('/ajax/call/before', attrs);
+			we.publish(topic.AJAX_CALL_BEFORE, attrs);
 
 			var preconditions = attrs.pre || [];
 			preconditions = defaultPrecondition.concat(preconditions);
@@ -554,7 +606,7 @@
 				}
 			}
 
-			Wicket.Event.publish('/ajax/call/precondition', attrs);
+			we.publish(topic.AJAX_CALL_PRECONDITION, attrs);
 
 			if (attrs.mp) { // multipart form. jQuery.ajax() doesn't help here ...
 				var ret = self.submitMultipartForm(context);
@@ -605,7 +657,7 @@
 					}
 
 					self._executeHandlers(attrs.bsh, attrs, jqXHR, settings);
-					Wicket.Event.publish('/ajax/call/beforeSend', attrs, jqXHR, settings);
+					we.publish(topic.AJAX_CALL_BEFORE_SEND, attrs, jqXHR, settings);
 
 					if (attrs.i) {
 						// show the indicator
@@ -623,7 +675,7 @@
 						self.processAjaxResponse(data, textStatus, jqXHR, context);
 					} else {
 						self._executeHandlers(attrs.sh, attrs, jqXHR, data, textStatus);
-						Wicket.Event.publish('/ajax/call/success', attrs, jqXHR, data, textStatus);
+						we.publish(topic.AJAX_CALL_SUCCESS, attrs, jqXHR, data, textStatus);
 					}
 				},
 				error: function(jqXHR, textStatus, errorMessage) {
@@ -637,10 +689,10 @@
 						}
 
 						self._executeHandlers(attrs.coh, attrs, jqXHR, textStatus);
-						Wicket.Event.publish('/ajax/call/complete', attrs, jqXHR, textStatus);
+						we.publish(topic.AJAX_CALL_COMPLETE, attrs, jqXHR, textStatus);
 
 						self.done();
-
+						return FunctionsExecuter.DONE;
 					}, self));
 
 					var executer = new FunctionsExecuter(context.steps);
@@ -650,7 +702,7 @@
 
 			// execute after handlers right after the Ajax request is fired
 			self._executeHandlers(attrs.ah, attrs);
-			Wicket.Event.publish('/ajax/call/after', attrs);
+			we.publish(topic.AJAX_CALL_AFTER, attrs);
 
 			return jqXHR;
 		},
@@ -777,11 +829,12 @@
 
 			if (form.onsubmit && !form.getAttribute(submittingAttribute)) {
 				form.setAttribute(submittingAttribute, submittingAttribute);
-				var retValue = form.onsubmit();
-				if (typeof(retValue) === "undefined") {
-					retValue = true;
+				var retValue = true;
+				try {
+					retValue = form.onsubmit();
+				} finally {
+					form.removeAttribute(submittingAttribute);
 				}
-				form.removeAttribute(submittingAttribute);
 				if (!retValue) {
 					return;
 				}
@@ -820,8 +873,8 @@
 					form.action = form.action + '&' + dynamicExtraParameters;
 				}
 			}
-
-			form.method = "post";
+			// PhantomJS cannot submit with POST to iframe
+			form.method = /PhantomJS/.test(navigator.userAgent) ? 'get' : 'post';
 			form.enctype = "multipart/form-data";
 			form.encoding = "multipart/form-data";
 
@@ -831,8 +884,11 @@
 				form.appendChild($btn[0]);
 			}
 
+			var we = Wicket.Event;
+			var topic = we.Topic;
+
 			this._executeHandlers(attrs.bsh, attrs, null, null);
-			Wicket.Event.publish('/ajax/call/beforeSend', attrs, null, null);
+			we.publish(topic.AJAX_CALL_BEFORE_SEND, attrs, null, null);
 
 			if (attrs.i) {
 				// show the indicator
@@ -843,11 +899,11 @@
 			form.submit();
 
 			this._executeHandlers(attrs.ah, attrs);
-			Wicket.Event.publish('/ajax/call/after', attrs);
+			we.publish(topic.AJAX_CALL_AFTER, attrs);
 
 			// install handler to deal with the ajax response
 			// ... we add the onload event after form submit because chrome fires it prematurely
-			Wicket.Event.add(iframe, "load.handleMultipartComplete", jQuery.proxy(this.handleMultipartComplete, this), context);
+			we.add(iframe, "load.handleMultipartComplete", jQuery.proxy(this.handleMultipartComplete, this), context);
 
 			// handled, restore state and return true
 			form.action = originalFormAction;
@@ -907,9 +963,10 @@
 				}
 
 				this._executeHandlers(attrs.coh, attrs, null, null);
-				Wicket.Event.publish('/ajax/call/complete', attrs, null, null);
+				Wicket.Event.publish(Wicket.Event.Topic.AJAX_CALL_COMPLETE, attrs, null, null);
 
 				this.done();
+				return FunctionsExecuter.DONE;
 			}, this));
 
 			var executer = new FunctionsExecuter(context.steps);
@@ -988,7 +1045,7 @@
 
 				var attrs = context.attrs;
 				this._executeHandlers(attrs.sh, attrs, null, null, 'success');
-				Wicket.Event.publish('/ajax/call/success', attrs, null, null, 'success');
+				Wicket.Event.publish(Wicket.Event.Topic.AJAX_CALL_SUCCESS, attrs, null, null, 'success');
 
 				// re-attach the events to the new components (a bit blunt method...)
 				// This should be changed for IE See comments in wicket-event.js add (attachEvent/detachEvent)
@@ -999,7 +1056,7 @@
 				window.setTimeout("Wicket.Focus.requestFocus();", 0);
 
 				// continue to next step (which should make the processing stop, as success should be the final step)
-				notify();
+				return FunctionsExecuter.DONE;
 			}, this));
 		},
 
@@ -1011,9 +1068,9 @@
 				}
 				var attrs = context.attrs;
 				this._executeHandlers(attrs.fh, attrs, errorMessage);
-				Wicket.Event.publish('/ajax/call/failure', attrs, jqXHR, errorMessage, textStatus);
+				Wicket.Event.publish(Wicket.Event.Topic.AJAX_CALL_FAILURE, attrs, jqXHR, errorMessage, textStatus);
 
-				notify();
+				return FunctionsExecuter.DONE;
 			}, this));
 		},
 
@@ -1026,7 +1083,7 @@
 			context.steps.push(function (notify) {
 				// get the component id
 				var compId = node.getAttribute("id");
-				var text = jQuery(node).text();
+				var text = Wicket.DOM.text(node);
 
 				// if the text was escaped, unascape it
 				// (escaping is done when the component body contains a CDATA section)
@@ -1047,7 +1104,7 @@
 					Wicket.DOM.replace(element, text);
 				}
 				// continue to next step
-				notify();
+				return FunctionsExecuter.DONE;
 			});
 		},
 
@@ -1066,23 +1123,7 @@
 			 * when there are scripts which require manual call of 'FunctionExecutor#notify()'
 			 * @type {RegExp}
 			 */
-			var scriptSplitterR = new RegExp("(\\(function\\(\\)\\{.*?}\\)\\(\\);)");
-
-			/**
-			 * Removes all empty items from an Array of String's
-			 * @param original The array is empty string elements
-			 * @returns {Array[String]} An array that has no empty elements
-			 */
-			// Needed because String.split(scriptSplitterR) returns something like ["", "script1", "", "script2", ""]
-			var cleanArray = function (original) {
-				var result = [];
-				for(var i = 0; i < original.length; i++){
-					if (original[i]) {
-						result.push(original[i]);
-					}
-				}
-				return result;
-			};
+			var scriptSplitterR = new RegExp("\\(function\\(\\)\\{[\\s\\S]*?}\\)\\(\\);", 'gi');
 
 			// get the javascript body
 			var text = Wicket.DOM.text(node);
@@ -1109,6 +1150,7 @@
 					} catch (exception) {
 						log.error("Wicket.Ajax.Call.processEvaluation: Exception evaluating javascript: " + exception + ", text: " + text);
 					}
+					return FunctionsExecuter.ASYNC;
 				};
 			};
 
@@ -1122,7 +1164,7 @@
 						log.error("Wicket.Ajax.Call.processEvaluation: Exception evaluating javascript: " + exception + ", text: " + text);
 					}
 					// continue to next step
-					notify();
+					return FunctionsExecuter.DONE;
 				};
 			};
 
@@ -1131,7 +1173,11 @@
 			// by invoking identifier();. This allows usage of some asynchronous/deferred logic before the next script
 			// See WICKET-5039
 			if (scriptWithIdentifierR.test(text)) {
-				var scripts = cleanArray(text.split(scriptSplitterR));
+				var scripts = [];
+				var scr;
+				while ( (scr = scriptSplitterR.exec(text) ) != null ) {
+					scripts.push(scr[0]);
+				}
 
 				for (var s = 0; s < scripts.length; s++) {
 					var script = scripts[s];
@@ -1158,7 +1204,7 @@
 
 		// Adds a closure that processes a redirect
 		processRedirect: function (context, node) {
-			var text = jQuery(node).text();
+			var text = Wicket.DOM.text(node);
 			Wicket.Log.info("Redirecting to: " + text);
 			window.location = text;
 		},
@@ -1169,7 +1215,7 @@
 				Wicket.Focus.markFocusedComponent();
 
 				// continue to next step
-				notify();
+				return FunctionsExecuter.DONE;
 			});
 		},
 
@@ -1180,7 +1226,7 @@
 				Wicket.Focus.checkFocusedComponentReplaced();
 
 				// continue to next step
-				notify();
+				return FunctionsExecuter.DONE;
 			});
 		}
 	};
@@ -1533,11 +1579,23 @@
 		 */
 		DOM: {
 
-			/** shows an element */
-			show: function (e) {
+			/**
+			 * Shows an element
+			 * @param {HTMLElement | String} e   The HTML element (or its id) to show
+			 * @param {String} display  The value of CSS display property to use,
+			 *      e.g. 'block', 'inline'. Optional
+			 */
+			show: function (e, display) {
 				e = Wicket.$(e);
 				if (e !== null) {
-					e.style.display = "";
+					if (isUndef(display)) {
+						// no explicit 'display' value is requested so
+						// use jQuery. It has special logic to decide which is the
+						// best value for an HTMLElement
+						jQuery(e).show();
+					} else {
+						e.style.display = display;
+					}
 				}
 			},
 
@@ -1545,8 +1603,23 @@
 			hide: function (e) {
 				e = Wicket.$(e);
 				if (e !== null) {
-					e.style.display = "none";
+					jQuery(e).hide();
 				}
+			},
+
+			/**
+			 * Add or remove one or more classes from each element in the
+			 * set of matched elements, depending on either the class's presence
+			 * or the value of the switch argument.
+			 *
+			 * @param {String} elementId The markup id of the element that will be manipulated.
+			 * @param {String} cssClass One or more class names (separated by spaces)
+			 *        to be toggled for each element in the matched set.
+			 * @param {Boolean} Switch A Boolean (not just truthy/falsy) value to
+			 *        determine whether the class should be added or removed.
+			 */
+			toggleClass: function(elementId, cssClass, Switch) {
+				jQuery('#'+elementId).toggleClass(cssClass, Switch);
 			},
 
 			/** call-counting implementation of Wicket.DOM.show() */
@@ -1634,7 +1707,10 @@
 			 */
 			replace: function (element, text) {
 
-				Wicket.Event.publish('/dom/node/removing', element);
+				var we = Wicket.Event;
+				var topic = we.Topic;
+
+				we.publish(topic.DOM_NODE_REMOVING, element);
 
 				if (element.tagName.toLowerCase() === "title") {
 					// match the text between the tags
@@ -1651,7 +1727,7 @@
 
 				var newElement = Wicket.$(element.id);
 				if (newElement) {
-					Wicket.Event.publish('/dom/node/added', newElement);
+					we.publish(topic.DOM_NODE_ADDED, newElement);
 				}
 			},
 
@@ -1737,8 +1813,10 @@
 			},
 
 			/**
-			 * Reads the text from the node's children nodes
-			 * @param node the root node
+			 * Reads the text from the node's children nodes.
+			 * Used instead of jQuery.text() because it is very slow in IE10/11.
+			 * WICKET-5132, WICKET-5510
+			 * @param node {DOMElement} the root node
 			 */
 			text: function (node) {
 				if (isUndef(node)) {
@@ -1849,7 +1927,7 @@
 							call.ajax(attributes);
 						}
 						Wicket.Ajax._handleEventCancelation(attributes);
-					});
+					}, null, attrs.sel);
 				});
 			},
 			
@@ -1902,7 +1980,7 @@
 					// need to replace that first
 
 					// get the header contribution text and unescape it if necessary
-					var text = jQuery(headerNode).text();
+					var text = Wicket.DOM.text(headerNode);
 					var encoding = headerNode.getAttribute("encoding");
 
 					if (encoding !== null && encoding !== "") {
@@ -1988,8 +2066,7 @@
 					context.steps.push(function (notify) {
 						// if the element is already in head, skip it
 						if (Wicket.Head.containsElement(node, "href")) {
-							notify();
-							return;
+							return FunctionsExecuter.DONE;
 						}
 						// create link element
 						var css = Wicket.Head.createElement("link");
@@ -2022,6 +2099,8 @@
 							notify();
 						  }
 						}
+
+						return FunctionsExecuter.ASYNC;
 					});
 				},
 
@@ -2030,22 +2109,16 @@
 					context.steps.push(function (notify) {
 						// if element with same id is already in document, skip it
 						if (Wicket.DOM.containsElement(node)) {
-							notify();
-							return;
+							return FunctionsExecuter.DONE;
 						}
 						// serialize the style to string
 						var content = Wicket.DOM.serializeNodeChildren(node);
 
-						// create style element
-						var style = Wicket.Head.createElement("style");
-
-						// copy id attribute
-						style.id = node.getAttribute("id");
-
 						// create stylesheet
-						if (Wicket.Browser.isIE()) {
+						if (Wicket.Browser.isIELessThan11()) {
 							try  {
 								document.createStyleSheet().cssText = content;
+								return FunctionsExecuter.DONE;
 							}
 							catch (ignore) {
 								var run = function() {
@@ -2055,17 +2128,26 @@
 									catch(e) {
 										Wicket.Log.error("Wicket.Head.Contributor.processStyle: " + e);
 									}
+									notify();
 								};
 								window.setTimeout(run, 1);
+								return FunctionsExecuter.ASYNC;
 							}
 						} else {
+							// create style element
+							var style = Wicket.Head.createElement("style");
+
+							// copy id attribute
+							style.id = node.getAttribute("id");
+
 							var textNode = document.createTextNode(content);
 							style.appendChild(textNode);
+
+							Wicket.Head.addElement(style);
 						}
-						Wicket.Head.addElement(style);
 
 						// continue to next step
-						notify();
+						return FunctionsExecuter.DONE;
 					});
 				},
 
@@ -2076,8 +2158,7 @@
 						// or element with same src attribute is in document, skip it
 						if (Wicket.DOM.containsElement(node) ||
 							Wicket.Head.containsElement(node, "src")) {
-							notify();
-							return;
+							return FunctionsExecuter.DONE;
 						}
 
 						// determine whether it is external javascript (has src attribute set)
@@ -2117,6 +2198,7 @@
 
 							Wicket.Head.addElement(scriptDomNode);
 
+							return FunctionsExecuter.ASYNC;
 						} else {
 							// serialize the element content to string
 							var text = Wicket.DOM.serializeNodeChildren(node);
@@ -2139,7 +2221,7 @@
 							}
 
 							// continue to next step
-							notify();
+							return FunctionsExecuter.DONE;
 						}
 					});
 				},
@@ -2149,7 +2231,7 @@
 					context.steps.push(function (notify) {
 						var comment = document.createComment(node.nodeValue);
 						Wicket.Head.addElement(comment);
-						notify();
+						return FunctionsExecuter.DONE;
 					});
 				}
 			},
@@ -2629,7 +2711,7 @@
 
 		setup: function () {
 
-			if (Wicket.Browser.isIE()) {
+			if (Wicket.Browser.isIELessThan11()) {
 
 				jQuery(this).on('keydown', function (event) {
 					jQuery.event.special.inputchange.keyDownPressed = true;

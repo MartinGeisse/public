@@ -53,7 +53,7 @@
 			},
 
 			isIE: function () {
-				return !Wicket.Browser.isSafari() && typeof(document.all) !== "undefined" && typeof(window.opera) === "undefined";
+				return !Wicket.Browser.isSafari() && (typeof(document.all) !== "undefined" || window.navigator.userAgent.indexOf("Trident/")>-1) && typeof(window.opera) === "undefined";
 			},
 
 			isIEQuirks: function () {
@@ -77,6 +77,17 @@
 				var index = window.navigator.userAgent.indexOf("MSIE");
 				var version = parseFloat(window.navigator.userAgent.substring(index + 5));
 				return Wicket.Browser.isIE() && version < 9;
+			},
+			
+			isIELessThan11: function () {
+				return !Wicket.Browser.isSafari() && typeof(document.all) !== "undefined" && typeof(window.opera) === "undefined";
+			},
+
+			isIE11: function () {
+				var userAgent = window.navigator.userAgent;
+				var isTrident = userAgent.indexOf("Trident");
+				var is11 = userAgent.indexOf("rv:11");
+				return isTrident && is11;
 			},
 
 			isGecko: function () {
@@ -137,10 +148,22 @@
 				jQuery(element).trigger(event);
 			},
 
-			// adds an event of specified type to the element
-			// also supports the domready event on window
-			// domready is event fired when the DOM is complete, but before loading external resources (images, ...)
-			add: function (element, type, fn, data) {
+			/**
+			 * Binds an event listener for an element
+			 *
+			 * Also supports the special 'domready' event on window.
+			 * 'domready' is event fired when the DOM is complete, but
+			 * before loading external resources (images, scripts, ...)
+			 *
+			 * @param element {HTMLElement} The host HTML element
+			 * @param type {String} The type of the DOM event
+			 * @param fn {Function} The event handler to unbind
+			 * @param data {Object} Extra data for the event
+			 * @param selector {String} A selector string to filter the descendants of the selected
+			 *      elements that trigger the event. If the selector is null or omitted,
+			 *      the event is always triggered when it reaches the selected element.
+			 */
+			add: function (element, type, fn, data, selector) {
 				if (type === 'domready') {
 					jQuery(fn);
 				} else {
@@ -153,13 +176,25 @@
 						}
 
 						if (!el && Wicket.Log) {
-							Wicket.Log.error('Cannot find element with id: ' + element);
+							Wicket.Log.error('Cannot bind a listener for event "' + type +
+								'" on element "' + element + '" because the element is not in the DOM');
 						}
 
-						jQuery(el).on(type, data, fn);
+						jQuery(el).on(type, selector, data, fn);
 					});
 				}
 				return element;
+			},
+
+			/**
+			 * Unbinds an event listener for an element
+			 *
+			 * @param element {HTMLElement} The host HTML element
+			 * @param type {String} The type of the DOM event
+			 * @param fn {Function} The event handler to unbind
+			 */
+			remove: function (element, type, fn) {
+				jQuery(element).off(type, fn);
 			},
 
 			/**
@@ -173,6 +208,25 @@
 				
 				if (topic) {
 					jQuery(document).on(topic, subscriber);
+				}
+			},
+
+			/**
+			 * Un-subscribes a subscriber from a topic.
+			 * @param topic {String} - the topic name. If omitted un-subscribes all
+			 *      subscribers from all topics
+			 * @param subscriber {Function} - the handler to un-subscribe. If omitted then
+			 *      all subscribers are removed from this topic
+			 */
+			unsubscribe: function(topic, subscriber) {
+				if (topic) {
+					if (subscriber) {
+						jQuery(document).off(topic, subscriber);
+					} else {
+						jQuery(document).off(topic);
+					}
+				} else {
+					jQuery(document).off();
 				}
 			},
 
@@ -192,6 +246,21 @@
 					jQuery(document).triggerHandler(topic, args);
 					jQuery(document).triggerHandler('*', args);
 				}
+			},
+
+			/**
+			 * The names of the topics on which Wicket notifies
+			 */
+			Topic: {
+				DOM_NODE_REMOVING      : '/dom/node/removing',
+				DOM_NODE_ADDED         : '/dom/node/added',
+				AJAX_CALL_BEFORE       : '/ajax/call/before',
+				AJAX_CALL_PRECONDITION : '/ajax/call/precondition',
+				AJAX_CALL_BEFORE_SEND  : '/ajax/call/beforeSend',
+				AJAX_CALL_SUCCESS      : '/ajax/call/success',
+				AJAX_CALL_COMPLETE     : '/ajax/call/complete',
+				AJAX_CALL_AFTER        : '/ajax/call/after',
+				AJAX_CALL_FAILURE      : '/ajax/call/failure'
 			}
 		}
 	});

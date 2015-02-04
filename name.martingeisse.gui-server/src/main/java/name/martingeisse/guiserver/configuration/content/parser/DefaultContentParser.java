@@ -9,6 +9,8 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.IncludeBackendConfiguration;
+import name.martingeisse.guiserver.configuration.content.LazyLoadContainerConfiguration;
 import name.martingeisse.guiserver.configuration.content.LinkConfiguration;
 import name.martingeisse.guiserver.configuration.content.NavigationBarConfiguration;
 
@@ -82,7 +84,32 @@ public class DefaultContentParser extends ContentParser {
 			reader.next();
 			break;
 		}
+		
+		case "includeBackend": {
+			String url = streams.getMandatoryAttribute("url");
+			String escapeSpec = streams.getOptionalAttribute("escape");
+			boolean escape = (escapeSpec == null ? true : Boolean.valueOf(escapeSpec));
+			String componentId = newComponentId("include");
+			streams.next();
+			skipNestedContent();
+			streams.next();
+			writer.writeEmptyElement("wicket:container");
+			writer.writeAttribute("wicket:id", componentId);
+			streams.addComponent(new IncludeBackendConfiguration(componentId, url, escape));
+			break;
+		}
 
+		case "lazy": {
+			String componentId = newComponentId("lazy");
+			writer.writeStartElement("div");
+			writer.writeAttribute("wicket:id", componentId);
+			streams.next();
+			streams.addComponent(new LazyLoadContainerConfiguration(componentId, parseComponentContent()));
+			streams.next();
+			writer.writeEndElement();
+			break;
+		}
+			
 		default:
 			throw new RuntimeException("unknown special tag: " + reader.getLocalName());
 

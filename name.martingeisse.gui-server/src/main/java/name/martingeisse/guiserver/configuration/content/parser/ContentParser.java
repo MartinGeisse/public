@@ -56,6 +56,47 @@ public abstract class ContentParser {
 	}
 
 	/**
+	 * Skips content until a closing tag is encountered to which the start tag has already
+	 * been handled, i.e. this method only skips a snippet of properly nested content.
+	 */
+	public void skipNestedContent() throws XMLStreamException {
+		int nesting = 0;
+		loop: while (true) {
+			switch (streams.getReader().getEventType()) {
+
+			case XMLStreamConstants.START_ELEMENT:
+				streams.next();
+				nesting++;
+				break;
+
+			case XMLStreamConstants.END_ELEMENT:
+				if (nesting > 0) {
+					streams.next();
+					nesting--;
+					break;
+				} else {
+					break loop;
+				}
+
+			case XMLStreamConstants.CDATA:
+			case XMLStreamConstants.CHARACTERS:
+			case XMLStreamConstants.SPACE:
+			case XMLStreamConstants.ENTITY_REFERENCE:
+				streams.next();
+				break;
+
+			case XMLStreamConstants.COMMENT:
+				streams.next();
+				break;
+				
+			default:
+				throw new RuntimeException("invalid XML event while skipping nested content: " + streams.getReader().getEventType());
+
+			}
+		}
+	}
+
+	/**
 	 * Handles content until a closing tag is encountered to which the start tag has already
 	 * been handled, i.e. this method only parses a snippet of properly nested content.
 	 *
@@ -96,9 +137,13 @@ public abstract class ContentParser {
 				streams.copyEvent();
 				streams.next();
 				break;
+				
+			case XMLStreamConstants.COMMENT:
+				streams.next();
+				break;
 
 			default:
-				throw new RuntimeException("invalid XML event: " + streams.getReader().getEventType());
+				throw new RuntimeException("invalid XML event while parsing nested content: " + streams.getReader().getEventType());
 
 			}
 		}

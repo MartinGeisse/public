@@ -19,7 +19,7 @@ import name.martingeisse.guiserver.configuration.content.parser.ContentStreams;
 import name.martingeisse.guiserver.configuration.content.parser.RootContentParser;
 import name.martingeisse.guiserver.configuration.elements.ConfigurationElement;
 import name.martingeisse.guiserver.configuration.elements.ConfigurationElementContent;
-import name.martingeisse.guiserver.configuration.elements.FormApiConfiguration;
+import name.martingeisse.guiserver.configuration.elements.FormUrlConfiguration;
 import name.martingeisse.guiserver.configuration.elements.PageConfiguration;
 import name.martingeisse.guiserver.configuration.elements.PanelConfiguration;
 
@@ -105,9 +105,9 @@ final class ConfigurationBuilder {
 		} else if (filename.endsWith(PanelConfiguration.CONFIGURATION_FILENAME_SUFFIX)) {
 			String path = getPath(PanelConfiguration.CONFIGURATION_FILENAME_SUFFIX);
 			putElement(path, new PanelConfiguration(path));
-		} else if (filename.endsWith(FormApiConfiguration.CONFIGURATION_FILENAME_SUFFIX)) {
-			String path = getPath(FormApiConfiguration.CONFIGURATION_FILENAME_SUFFIX);
-			putElement(path, new FormApiConfiguration(path));
+		} else if (filename.endsWith(FormUrlConfiguration.CONFIGURATION_FILENAME_SUFFIX)) {
+			String path = getPath(FormUrlConfiguration.CONFIGURATION_FILENAME_SUFFIX);
+			putElement(path, new FormUrlConfiguration(path));
 		} else {
 			throw new RuntimeException("ConfigurationBuilder doesn't understand configuration element: " + getPath());
 		}
