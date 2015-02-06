@@ -1,0 +1,14 @@
+<gui:page xmlns:gui="http://guiserver.martingeisse.name/v1">
+	<div class="container">
+		<h1>Form Page</h1>
+		<div>
+			This is a page with a form.
+		</div>
+		<div>
+			<gui:form backendUrl="http://localhost/geisse/demo-backend/form.php">
+				<gui:textField name="foo" />
+				<gui:submit />
+			</gui:form>
+		</div>
+	</div>
+</gui:page>

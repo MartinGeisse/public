@@ -1,7 +1,8 @@
 
 ja:
 
-tab panel (esp. lazy-loading), links die trotzdem relativ zur page-url sind
+[ok] tab panel (esp. lazy-loading)
+tab panel: links die trotzdem relativ zur page-url sind
 enclosure
 popup window (lazy-loading content)
 pagination
@@ -16,6 +17,13 @@ formulare mit eingebauter und externer validierung
     passende enclosure, usw. (wäre dann statt mit bootstrap mit allem
     möglichen kombinierbar)
 
-nein:
+jein:
 
-vorgebautes markup (passt im Zweifel nicht)
+vorgebautes markup (passt im Zweifel nicht). Dafür gibt es "core replacement" plugins.
+Diese stellen dieselben special tags zur verfügung wie der core, aber die elemente
+machen teilweise andere dinge. Z.B. macht ein textField nicht nur das Feld selber sondern
+auch alles runrum (layout, validation error, ...) mit vorgebautem markup, z.B. bootstrap.
+Man benutzt dann einfach übrerall dieses Plugin *statt* dem core, was geht, weil alle
+core tags vom plugin gespiegelt werden (dafür ist kein besonderer code nötig, das plugin
+definiert einfach elemente die dasselbe tun. Man bindet dann das plugin statt dem core
+unter dem prefix gui: im XML ein.

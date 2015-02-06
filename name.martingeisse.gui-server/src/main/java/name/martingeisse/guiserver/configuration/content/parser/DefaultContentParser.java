@@ -9,11 +9,13 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.FormConfiguration;
 import name.martingeisse.guiserver.configuration.content.IncludeBackendConfiguration;
 import name.martingeisse.guiserver.configuration.content.LazyLoadContainerConfiguration;
 import name.martingeisse.guiserver.configuration.content.LinkConfiguration;
 import name.martingeisse.guiserver.configuration.content.NavigationBarConfiguration;
 import name.martingeisse.guiserver.configuration.content.TabPanelConfiguration;
+import name.martingeisse.guiserver.configuration.content.TextFieldConfiguration;
 import name.martingeisse.guiserver.configuration.content.TabPanelConfiguration.TabEntry;
 import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel;
 
@@ -156,6 +158,40 @@ public class DefaultContentParser extends ContentParser {
 			writer.writeEndElement();
 			break;
 			
+		}
+		
+		case "form": {
+			String componentId = newComponentId("form");
+			String backendUrl = streams.getMandatoryAttribute("backendUrl");
+			writer.writeStartElement("form");
+			writer.writeAttribute("wicket:id", componentId);
+			reader.next();
+			FormConfiguration formConfiguration = new FormConfiguration(componentId, parseComponentContent(), backendUrl);
+			formConfiguration.setConfigurationHandle(streams.addSnippet(formConfiguration));
+			streams.addComponent(formConfiguration);
+			writer.writeEndElement();
+			reader.next();
+			break;
+		}
+		
+		case "textField": {
+			String componentId = newComponentId("field");
+			String fieldName = streams.getMandatoryAttribute("name");
+			writer.writeEmptyElement("input");
+			writer.writeAttribute("wicket:id", componentId);
+			streams.expectAndSkipEmptyElement();
+			streams.addComponent(new TextFieldConfiguration(componentId, fieldName));
+			break;
+		}
+		
+		case "submit": {
+			reader.next();
+			writer.writeStartElement("input");
+			writer.writeAttribute("type", "submit");
+			parseNestedContent();
+			reader.next();
+			writer.writeEndElement();
+			break;
 		}
 
 		default:

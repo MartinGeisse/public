@@ -6,6 +6,7 @@ package name.martingeisse.guiserver.configuration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import name.martingeisse.guiserver.application.ServerConfiguration;
@@ -45,6 +46,11 @@ public final class Configuration {
 	private final Map<Class<? extends ConfigurationElement>, Map<String, ConfigurationElement>> elements;
 	
 	/**
+	 * the snippets
+	 */
+	private final List<Object> snippets;
+	
+	/**
 	 * Constructor.
 	 * 
 	 * @throws IOException on I/O errors
@@ -52,7 +58,10 @@ public final class Configuration {
 	 */
 	public Configuration() throws IOException, ConfigurationException {
 		File configurationRoot = new File(ServerConfiguration.configurationRoot.getMandatoryValue());
-		elements = new ConfigurationBuilder().build(configurationRoot);
+		ConfigurationBuilder builder = new ConfigurationBuilder();
+		builder.build(configurationRoot);
+		elements = builder.getElements();
+		snippets = builder.getSnippets();
 	}
 	
 	/**
@@ -96,4 +105,14 @@ public final class Configuration {
 		return (subMap == null ? null : type.cast(subMap.get(path)));
 	}
 
+	/**
+	 * Obtains a configuration snippet.
+	 * 
+	 * @param handle the snippet handle
+	 * @return the snippet
+	 */
+	public Object getSnippet(int handle) {
+		return snippets.get(handle);
+	}
+	
 }

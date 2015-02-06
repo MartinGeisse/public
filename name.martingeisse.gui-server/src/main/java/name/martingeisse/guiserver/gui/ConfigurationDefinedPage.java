@@ -22,6 +22,11 @@ import org.apache.wicket.util.resource.StringResourceStream;
 public class ConfigurationDefinedPage extends AbstractApplicationPage implements IMarkupCacheKeyProvider, IMarkupResourceStreamProvider {
 
 	/**
+	 * the pageConfigurationPath
+	 */
+	private final String pageConfigurationPath;
+	
+	/**
 	 * the cachedPageConfiguration
 	 */
 	private transient PageConfiguration cachedPageConfiguration = null;
@@ -33,6 +38,14 @@ public class ConfigurationDefinedPage extends AbstractApplicationPage implements
 	 */
 	public ConfigurationDefinedPage(PageParameters pageParameters) {
 		super(pageParameters);
+		
+		// the implicit page parameters will be lost when re-visiting a stateful page
+		// through a component URL, so we save it here
+		pageConfigurationPath = getPageParameters().get(PageConfiguration.CONFIGURATION_ELEMENT_PATH_PAGE_PARAMETER_NAME).toString();
+		if (pageConfigurationPath == null) {
+			throw new RuntimeException("page configuration path not specified in page parameters");
+		}
+		
 	}
 
 	/**
@@ -41,21 +54,9 @@ public class ConfigurationDefinedPage extends AbstractApplicationPage implements
 	 */
 	public final PageConfiguration getPageConfiguration() {
 		if (cachedPageConfiguration == null) {
-			cachedPageConfiguration = resolvePageConfiguration();
+			cachedPageConfiguration = Configuration.getInstance().getElement(PageConfiguration.class, pageConfigurationPath);
 		}
 		return cachedPageConfiguration;
-	}
-
-	/**
-	 * Getter method for the page configuration path.
-	 * @return the page configuration path
-	 */
-	protected PageConfiguration resolvePageConfiguration() {
-		String pageConfigurationPath = getPageParameters().get(PageConfiguration.CONFIGURATION_ELEMENT_PATH_PAGE_PARAMETER_NAME).toString();
-		if (pageConfigurationPath == null) {
-			throw new RuntimeException("page configuration path not specified in page parameters");
-		}
-		return Configuration.getInstance().getElement(PageConfiguration.class, pageConfigurationPath);
 	}
 
 	/* (non-Javadoc)

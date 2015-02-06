@@ -47,6 +47,11 @@ public final class ContentStreams {
 	 * the writer
 	 */
 	private final XMLStreamWriter writer;
+	
+	/**
+	 * the snippets
+	 */
+	private final List<Object> snippets;
 
 	/**
 	 * the componentAccumulatorStack
@@ -61,12 +66,14 @@ public final class ContentStreams {
 	/**
 	 * Constructor.
 	 * @param inputStream the input stream to read the configuration from
+	 * @param snippets the global list that collects configuration snippets
 	 * @throws XMLStreamException on XML processing errors
 	 */
-	public ContentStreams(InputStream inputStream) throws XMLStreamException {
+	public ContentStreams(InputStream inputStream, List<Object> snippets) throws XMLStreamException {
 		this.reader = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
 		this.stringWriter = new StringWriter();
 		this.writer = XMLOutputFactory.newInstance().createXMLStreamWriter(stringWriter);
+		this.snippets = snippets;
 		this.componentAccumulatorStack = new Stack<>();
 		this.componentAccumulator = new ArrayList<>();
 	}
@@ -221,7 +228,24 @@ public final class ContentStreams {
 	public void next() throws XMLStreamException {
 		reader.next();
 	}
-	
+
+	/**
+	 * Expects the current event to be the start of an empty element,
+	 * and skips both the start and end tag.
+	 * 
+	 * @throws XMLStreamException on XML processing errors
+	 */
+	public void expectAndSkipEmptyElement() throws XMLStreamException {
+		if (reader.getEventType() != XMLStreamConstants.START_ELEMENT) {
+			throw new IllegalStateException("current event is not a START_ELEMENT");
+		}
+		reader.next();
+		if (reader.getEventType() != XMLStreamConstants.END_ELEMENT) {
+			throw new RuntimeException("expected empty element");
+		}
+		reader.next();
+	}
+
 	/**
 	 * Skips all pure-whitespace events. If any non-whitespace text events are encountered, this
 	 * method throws an exception.
@@ -279,6 +303,17 @@ public final class ContentStreams {
 			throw new RuntimeException("expected " + name + " attribute");
 		}
 		return value;
+	}
+	
+	/**
+	 * Adds a snippet and returns its handle.
+	 * @param snippet the snippet to add
+	 * @return the handle
+	 */
+	public int addSnippet(Object snippet) {
+		int handle = snippets.size();
+		snippets.add(snippet);
+		return handle;
 	}
 	
 }

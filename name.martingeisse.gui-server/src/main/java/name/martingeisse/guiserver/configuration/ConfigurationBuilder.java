@@ -7,7 +7,9 @@ package name.martingeisse.guiserver.configuration;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -42,6 +44,11 @@ final class ConfigurationBuilder {
 	 * the pathSegments
 	 */
 	private final Stack<String> pathSegments = new Stack<>();
+	
+	/**
+	 * the snippetHandles
+	 */
+	private final List<Object> snippets = new ArrayList<>();
 
 	/**
 	 * Builds the configuration using the files in the specified root folder and its subfolders.
@@ -49,16 +56,32 @@ final class ConfigurationBuilder {
 	 * @return the configuration elements
 	 * @throws IOException on I/O errors
 	 */
-	public Map<Class<? extends ConfigurationElement>, Map<String, ConfigurationElement>> build(File rootFolder) throws IOException {
+	public void build(File rootFolder) throws IOException {
 		elements.clear();
 		pathSegments.clear();
+		snippets.clear();
 		if (!rootFolder.isDirectory()) {
 			throw new RuntimeException("root configuration folder " + rootFolder + " doesn't exist or is not a folder");
 		}
 		handleFolder(rootFolder);
+	}
+	
+	/**
+	 * Getter method for the elements.
+	 * @return the elements
+	 */
+	public Map<Class<? extends ConfigurationElement>, Map<String, ConfigurationElement>> getElements() {
 		return ImmutableMap.copyOf(elements);
 	}
 
+	/**
+	 * Getter method for the snippetHandles.
+	 * @return the snippetHandles
+	 */
+	public List<Object> getSnippets() {
+		return ImmutableList.copyOf(snippets);
+	}
+	
 	/**
 	 * 
 	 */
@@ -86,7 +109,7 @@ final class ConfigurationBuilder {
 			String wicketMarkup;
 			ImmutableList<ComponentConfiguration> components;
 			try (FileInputStream fileInputStream = new FileInputStream(file)) {
-				ContentStreams streams = new ContentStreams(fileInputStream);
+				ContentStreams streams = new ContentStreams(fileInputStream, snippets);
 				RootContentParser parser = new RootContentParser(streams);
 				parser.parseRootContent();
 				wicketMarkup = parser.getStreams().getMarkup();
