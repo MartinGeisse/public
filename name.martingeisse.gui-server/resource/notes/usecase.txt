@@ -1,23 +1,25 @@
 
-ja:
+------------------------------------------------------------------------------------------------
+General Features
 
 [ok] tab panel (esp. lazy-loading)
-tab panel: links die trotzdem relativ zur page-url sind
-enclosure
-popup window (lazy-loading content)
-pagination
-caching
+[..]tab panel: links die trotzdem relativ zur page-url sind
+[ok] enclosure
+[..]popup window (lazy-loading content)
+[..]pagination
+[..]caching
 [ok] lazy-loading
 
-formulare mit eingebauter und externer validierung
-- benötigt entweder vorgebautes markup, z.B. formular mit bootstrap-markup
-- oder hingeschriebenes markup wo die relevanten teile markiert sind, z.B.
-    welches element enthält den feldwert, welches element enthält die
-    validierungs-fehlermeldung, welches element außenrum ist ggf. die dazu
-    passende enclosure, usw. (wäre dann statt mit bootstrap mit allem
-    möglichen kombinierbar)
+------------------------------------------------------------------------------------------------
+Forms
 
-jein:
+[ok] forms mit backend processing
+[ok] required
+[..] GUI-side validation rules
+[..] Bootstrap core replacement + form markup
+
+------------------------------------------------------------------------------------------------
+Core Plugins
 
 vorgebautes markup (passt im Zweifel nicht). Dafür gibt es "core replacement" plugins.
 Diese stellen dieselben special tags zur verfügung wie der core, aber die elemente
