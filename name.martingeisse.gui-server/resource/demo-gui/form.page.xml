@@ -6,8 +6,13 @@
 		</div>
 		<div>
 			<gui:form backendUrl="http://localhost/geisse/demo-backend/form.php">
-				<gui:textField name="foo" />
-				<gui:submit />
+				<div>
+					<gui:validation name="foo" />
+					<gui:textField name="foo" />
+				</div>
+				<div>
+					<gui:submit />
+				</div>
 			</gui:form>
 		</div>
 	</div>

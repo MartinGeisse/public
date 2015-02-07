@@ -9,6 +9,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.FieldPathFeedbackPanelConfiguration;
 import name.martingeisse.guiserver.configuration.content.FormConfiguration;
 import name.martingeisse.guiserver.configuration.content.IncludeBackendConfiguration;
 import name.martingeisse.guiserver.configuration.content.LazyLoadContainerConfiguration;
@@ -191,6 +192,18 @@ public class DefaultContentParser extends ContentParser {
 			parseNestedContent();
 			reader.next();
 			writer.writeEndElement();
+			break;
+		}
+		
+		case "validation": {
+			String componentId = newComponentId("field");
+			String fieldPath = streams.getMandatoryAttribute("name");
+			reader.next();
+			writer.writeEmptyElement("div");
+			writer.writeAttribute("wicket:id", componentId);
+			skipNestedContent();
+			reader.next();
+			streams.addComponent(new FieldPathFeedbackPanelConfiguration(componentId, fieldPath));
 			break;
 		}
 

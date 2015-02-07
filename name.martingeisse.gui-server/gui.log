@@ -4778,3 +4778,616 @@ Caused by: java.io.IOException: Attempted read from closed stream.
 2015-02-06 06:49:58,662 qtp426991574-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 12
 2015-02-06 06:49:58,667 qtp426991574-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
 2015-02-06 06:49:58,669 qtp426991574-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2015-02-07 11:03:37,784 main name.martingeisse.guiserver.Main INFO: ----- starting frontend with config file: test.properties -----
+2015-02-07 11:03:37,981 Thread-0 org.eclipse.jetty.util.log INFO: Logging initialized @504ms
+2015-02-07 11:03:38,115 Thread-0 org.eclipse.jetty.server.Server INFO: jetty-9.2.3.v20140905
+2015-02-07 11:03:38,402 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-2cb1009a] init: Wicket core library initializer
+2015-02-07 11:03:38,406 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2015-02-07 11:03:38,406 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2015-02-07 11:03:38,407 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2015-02-07 11:03:38,407 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2015-02-07 11:03:38,407 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2015-02-07 11:03:38,408 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2015-02-07 11:03:38,408 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-2cb1009a] init: Wicket extensions initializer
+2015-02-07 11:03:38,540 Thread-0 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-2cb1009a] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2015-02-07 11:03:38,542 Thread-0 org.eclipse.jetty.server.handler.ContextHandler INFO: Started o.e.j.s.ServletContextHandler@178c3b1e{/,null,AVAILABLE}
+2015-02-07 11:03:38,578 Thread-0 org.eclipse.jetty.server.ServerConnector INFO: Started ServerConnector@16868bb6{HTTP/1.1}{0.0.0.0:8080}
+2015-02-07 11:03:38,578 Thread-0 org.eclipse.jetty.server.Server INFO: Started @1140ms
+2015-02-07 11:03:58,456 main name.martingeisse.guiserver.Main INFO: ----- starting frontend with config file: test.properties -----
+2015-02-07 11:03:58,613 Thread-0 org.eclipse.jetty.util.log INFO: Logging initialized @491ms
+2015-02-07 11:03:58,701 Thread-0 org.eclipse.jetty.server.Server INFO: jetty-9.2.3.v20140905
+2015-02-07 11:03:58,968 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-b62b6ac] init: Wicket core library initializer
+2015-02-07 11:03:58,971 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2015-02-07 11:03:58,972 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2015-02-07 11:03:58,972 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2015-02-07 11:03:58,973 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2015-02-07 11:03:58,973 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2015-02-07 11:03:58,974 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2015-02-07 11:03:58,974 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-b62b6ac] init: Wicket extensions initializer
+2015-02-07 11:03:59,095 Thread-0 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-b62b6ac] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2015-02-07 11:03:59,098 Thread-0 org.eclipse.jetty.server.handler.ContextHandler INFO: Started o.e.j.s.ServletContextHandler@29156b3b{/,null,AVAILABLE}
+2015-02-07 11:03:59,112 Thread-0 org.eclipse.jetty.util.component.AbstractLifeCycle WARN: FAILED ServerConnector@733832b1{HTTP/1.1}{0.0.0.0:8080}: java.net.BindException: Address already in use
+java.net.BindException: Address already in use
+	at sun.nio.ch.Net.bind0(Native Method)
+	at sun.nio.ch.Net.bind(Net.java:436)
+	at sun.nio.ch.Net.bind(Net.java:428)
+	at sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:214)
+	at sun.nio.ch.ServerSocketAdaptor.bind(ServerSocketAdaptor.java:74)
+	at org.eclipse.jetty.server.ServerConnector.open(ServerConnector.java:320)
+	at org.eclipse.jetty.server.AbstractNetworkConnector.doStart(AbstractNetworkConnector.java:80)
+	at org.eclipse.jetty.server.ServerConnector.doStart(ServerConnector.java:236)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:366)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at name.martingeisse.guiserver.application.Initializer.initializeWeb(Initializer.java:107)
+	at name.martingeisse.guiserver.Main$1.run(Main.java:56)
+2015-02-07 11:03:59,115 Thread-0 org.eclipse.jetty.util.component.AbstractLifeCycle WARN: FAILED org.eclipse.jetty.server.Server@1492119e: java.net.BindException: Address already in use
+java.net.BindException: Address already in use
+	at sun.nio.ch.Net.bind0(Native Method)
+	at sun.nio.ch.Net.bind(Net.java:436)
+	at sun.nio.ch.Net.bind(Net.java:428)
+	at sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:214)
+	at sun.nio.ch.ServerSocketAdaptor.bind(ServerSocketAdaptor.java:74)
+	at org.eclipse.jetty.server.ServerConnector.open(ServerConnector.java:320)
+	at org.eclipse.jetty.server.AbstractNetworkConnector.doStart(AbstractNetworkConnector.java:80)
+	at org.eclipse.jetty.server.ServerConnector.doStart(ServerConnector.java:236)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:366)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at name.martingeisse.guiserver.application.Initializer.initializeWeb(Initializer.java:107)
+	at name.martingeisse.guiserver.Main$1.run(Main.java:56)
+2015-02-07 11:04:06,002 qtp1568447987-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:04:06,264 qtp1568447987-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 262
+2015-02-07 11:04:06,348 qtp1568447987-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:04:06,348 qtp1568447987-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:04:06,381 qtp1568447987-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 31
+2015-02-07 11:04:06,393 qtp1568447987-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 45
+2015-02-07 11:04:06,554 qtp1568447987-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:04:06,567 qtp1568447987-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 13
+2015-02-07 11:04:09,290 qtp1568447987-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:04:09,325 qtp1568447987-19 org.apache.wicket.markup.html.form.AbstractTextComponent WARN: Couldn't resolve model type of Model:classname=[name.martingeisse.guiserver.gui.InheritedFormDataModel]:nestedModel=[Model:classname=[name.martingeisse.guiserver.gui.FormDataModel]] for [TextField [Component id = field1]], please set the type yourself.
+2015-02-07 11:04:09,379 qtp1568447987-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 89
+2015-02-07 11:04:09,396 qtp1568447987-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:04:09,412 qtp1568447987-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 16
+2015-02-07 11:04:09,422 qtp1568447987-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:04:09,423 qtp1568447987-13 org.apache.wicket.markup.html.form.AbstractTextComponent WARN: Couldn't resolve model type of Model:classname=[name.martingeisse.guiserver.gui.InheritedFormDataModel]:nestedModel=[Model:classname=[name.martingeisse.guiserver.gui.FormDataModel]] for [TextField [Component id = field1]], please set the type yourself.
+2015-02-07 11:04:09,431 qtp1568447987-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 9
+2015-02-07 11:04:09,452 qtp1568447987-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:04:09,457 qtp1568447987-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2015-02-07 11:04:11,533 qtp1568447987-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:04:11,924 qtp1568447987-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 390
+2015-02-07 11:04:11,930 qtp1568447987-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:04:11,932 qtp1568447987-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2015-02-07 11:52:44,564 main name.martingeisse.guiserver.Main INFO: ----- starting frontend with config file: test.properties -----
+2015-02-07 11:52:44,723 Thread-0 org.eclipse.jetty.util.log INFO: Logging initialized @460ms
+2015-02-07 11:52:44,877 Thread-0 org.eclipse.jetty.server.Server INFO: jetty-9.2.3.v20140905
+2015-02-07 11:52:45,290 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-64a85c6e] init: Wicket core library initializer
+2015-02-07 11:52:45,293 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2015-02-07 11:52:45,293 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2015-02-07 11:52:45,294 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2015-02-07 11:52:45,294 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2015-02-07 11:52:45,294 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2015-02-07 11:52:45,295 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2015-02-07 11:52:45,295 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-64a85c6e] init: Wicket extensions initializer
+2015-02-07 11:52:45,408 Thread-0 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-64a85c6e] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2015-02-07 11:52:45,410 Thread-0 org.eclipse.jetty.server.handler.ContextHandler INFO: Started o.e.j.s.ServletContextHandler@32f3922b{/,null,AVAILABLE}
+2015-02-07 11:52:45,429 Thread-0 org.eclipse.jetty.server.ServerConnector INFO: Started ServerConnector@5d2b7ed8{HTTP/1.1}{0.0.0.0:8080}
+2015-02-07 11:52:45,429 Thread-0 org.eclipse.jetty.server.Server INFO: Started @1203ms
+2015-02-07 11:52:47,769 qtp426991574-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:52:47,826 qtp426991574-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 57
+2015-02-07 11:52:47,834 qtp426991574-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:52:47,856 qtp426991574-16 org.apache.wicket.markup.html.form.AbstractTextComponent WARN: Couldn't resolve model type of Model:classname=[name.martingeisse.guiserver.gui.InheritedFormDataModel]:nestedModel=[Model:classname=[name.martingeisse.guiserver.gui.FormDataModel]] for [TextField [Component id = field1]], please set the type yourself.
+2015-02-07 11:52:48,030 qtp426991574-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 196
+2015-02-07 11:52:48,038 qtp426991574-12 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:52:48,046 qtp426991574-12 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 8
+2015-02-07 11:52:48,094 qtp426991574-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:52:48,095 qtp426991574-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:52:48,117 qtp426991574-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 22
+2015-02-07 11:52:48,118 qtp426991574-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 22
+2015-02-07 11:52:50,270 qtp426991574-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:52:50,592 qtp426991574-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 322
+2015-02-07 11:52:50,597 qtp426991574-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:52:50,598 qtp426991574-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 1
+2015-02-07 11:52:52,122 qtp426991574-12 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:52:52,137 qtp426991574-12 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 15
+2015-02-07 11:52:52,141 qtp426991574-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:52:52,144 qtp426991574-14 RequestCycleExtra WARN: ********************************
+2015-02-07 11:52:52,145 qtp426991574-14 RequestCycleExtra WARN: Handling the following exception
+java.lang.RuntimeException: configuration element with type class name.martingeisse.guiserver.configuration.elements.PageConfiguration and path / doesn't exist
+	at name.martingeisse.guiserver.configuration.Configuration.getElement(Configuration.java:91)
+	at name.martingeisse.guiserver.gui.ConfigurationDefinedPage.getPageConfiguration(ConfigurationDefinedPage.java:57)
+	at name.martingeisse.guiserver.gui.ConfigurationDefinedPage.onInitialize(ConfigurationDefinedPage.java:90)
+	at org.apache.wicket.Component.fireInitialize(Component.java:876)
+	at org.apache.wicket.MarkupContainer.internalInitialize(MarkupContainer.java:961)
+	at org.apache.wicket.Page.isPageStateless(Page.java:463)
+	at org.apache.wicket.core.request.mapper.AbstractBookmarkableMapper.getPageInfo(AbstractBookmarkableMapper.java:447)
+	at org.apache.wicket.core.request.mapper.AbstractBookmarkableMapper.mapHandler(AbstractBookmarkableMapper.java:391)
+	at org.apache.wicket.core.request.mapper.MountedMapper.mapHandler(MountedMapper.java:395)
+	at org.apache.wicket.request.mapper.CompoundRequestMapper.mapHandler(CompoundRequestMapper.java:215)
+	at org.apache.wicket.request.cycle.RequestCycle.mapUrlFor(RequestCycle.java:429)
+	at org.apache.wicket.request.handler.render.WebPageRenderer.respond(WebPageRenderer.java:273)
+	at org.apache.wicket.core.request.handler.RenderPageRequestHandler.respond(RenderPageRequestHandler.java:175)
+	at org.apache.wicket.request.cycle.RequestCycle$HandlerExecutor.respond(RequestCycle.java:862)
+	at org.apache.wicket.request.RequestHandlerStack.execute(RequestHandlerStack.java:64)
+	at org.apache.wicket.request.cycle.RequestCycle.execute(RequestCycle.java:261)
+	at org.apache.wicket.request.cycle.RequestCycle.processRequest(RequestCycle.java:218)
+	at org.apache.wicket.request.cycle.RequestCycle.processRequestAndDetach(RequestCycle.java:289)
+	at org.apache.wicket.protocol.http.WicketFilter.processRequestCycle(WicketFilter.java:259)
+	at org.apache.wicket.protocol.http.WicketFilter.processRequest(WicketFilter.java:201)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:282)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at name.martingeisse.jetty.NoFlushOrCloseFilter.doFilter(NoFlushOrCloseFilter.java:41)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at name.martingeisse.database.EntityConnectionServletFilter.doFilter(EntityConnectionServletFilter.java:38)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at org.eclipse.jetty.servlets.UserAgentFilter.doFilter(UserAgentFilter.java:83)
+	at org.eclipse.jetty.servlets.GzipFilter.doFilter(GzipFilter.java:364)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at name.martingeisse.jetty.FlushFilter.doFilter(FlushFilter.java:36)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at name.martingeisse.jetty.TimingFilter.doFilter(TimingFilter.java:50)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:583)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:221)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1125)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1059)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:497)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:311)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:248)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:610)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:539)
+	at java.lang.Thread.run(Thread.java:745)
+2015-02-07 11:52:52,151 qtp426991574-14 RequestCycleExtra WARN: ********************************
+2015-02-07 11:52:52,158 qtp426991574-14 org.apache.wicket.DefaultExceptionMapper ERROR: Unexpected error occurred
+java.lang.RuntimeException: configuration element with type class name.martingeisse.guiserver.configuration.elements.PageConfiguration and path / doesn't exist
+	at name.martingeisse.guiserver.configuration.Configuration.getElement(Configuration.java:91)
+	at name.martingeisse.guiserver.gui.ConfigurationDefinedPage.getPageConfiguration(ConfigurationDefinedPage.java:57)
+	at name.martingeisse.guiserver.gui.ConfigurationDefinedPage.onInitialize(ConfigurationDefinedPage.java:90)
+	at org.apache.wicket.Component.fireInitialize(Component.java:876)
+	at org.apache.wicket.MarkupContainer.internalInitialize(MarkupContainer.java:961)
+	at org.apache.wicket.Page.isPageStateless(Page.java:463)
+	at org.apache.wicket.core.request.mapper.AbstractBookmarkableMapper.getPageInfo(AbstractBookmarkableMapper.java:447)
+	at org.apache.wicket.core.request.mapper.AbstractBookmarkableMapper.mapHandler(AbstractBookmarkableMapper.java:391)
+	at org.apache.wicket.core.request.mapper.MountedMapper.mapHandler(MountedMapper.java:395)
+	at org.apache.wicket.request.mapper.CompoundRequestMapper.mapHandler(CompoundRequestMapper.java:215)
+	at org.apache.wicket.request.cycle.RequestCycle.mapUrlFor(RequestCycle.java:429)
+	at org.apache.wicket.request.handler.render.WebPageRenderer.respond(WebPageRenderer.java:273)
+	at org.apache.wicket.core.request.handler.RenderPageRequestHandler.respond(RenderPageRequestHandler.java:175)
+	at org.apache.wicket.request.cycle.RequestCycle$HandlerExecutor.respond(RequestCycle.java:862)
+	at org.apache.wicket.request.RequestHandlerStack.execute(RequestHandlerStack.java:64)
+	at org.apache.wicket.request.cycle.RequestCycle.execute(RequestCycle.java:261)
+	at org.apache.wicket.request.cycle.RequestCycle.processRequest(RequestCycle.java:218)
+	at org.apache.wicket.request.cycle.RequestCycle.processRequestAndDetach(RequestCycle.java:289)
+	at org.apache.wicket.protocol.http.WicketFilter.processRequestCycle(WicketFilter.java:259)
+	at org.apache.wicket.protocol.http.WicketFilter.processRequest(WicketFilter.java:201)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:282)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at name.martingeisse.jetty.NoFlushOrCloseFilter.doFilter(NoFlushOrCloseFilter.java:41)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at name.martingeisse.database.EntityConnectionServletFilter.doFilter(EntityConnectionServletFilter.java:38)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at org.eclipse.jetty.servlets.UserAgentFilter.doFilter(UserAgentFilter.java:83)
+	at org.eclipse.jetty.servlets.GzipFilter.doFilter(GzipFilter.java:364)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at name.martingeisse.jetty.FlushFilter.doFilter(FlushFilter.java:36)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at name.martingeisse.jetty.TimingFilter.doFilter(TimingFilter.java:50)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:583)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:221)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1125)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1059)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:497)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:311)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:248)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:610)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:539)
+	at java.lang.Thread.run(Thread.java:745)
+2015-02-07 11:52:52,214 qtp426991574-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 72
+2015-02-07 11:53:13,634 main name.martingeisse.guiserver.Main INFO: ----- starting frontend with config file: test.properties -----
+2015-02-07 11:53:13,747 Thread-0 org.eclipse.jetty.util.log INFO: Logging initialized @292ms
+2015-02-07 11:53:13,844 Thread-0 org.eclipse.jetty.server.Server INFO: jetty-9.2.3.v20140905
+2015-02-07 11:53:14,093 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-1561ee3f] init: Wicket core library initializer
+2015-02-07 11:53:14,096 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2015-02-07 11:53:14,097 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2015-02-07 11:53:14,097 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2015-02-07 11:53:14,098 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2015-02-07 11:53:14,098 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2015-02-07 11:53:14,098 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2015-02-07 11:53:14,099 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-1561ee3f] init: Wicket extensions initializer
+2015-02-07 11:53:14,206 Thread-0 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-1561ee3f] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2015-02-07 11:53:14,209 Thread-0 org.eclipse.jetty.server.handler.ContextHandler INFO: Started o.e.j.s.ServletContextHandler@3706890{/,null,AVAILABLE}
+2015-02-07 11:53:14,234 Thread-0 org.eclipse.jetty.server.ServerConnector INFO: Started ServerConnector@60b80413{HTTP/1.1}{0.0.0.0:8080}
+2015-02-07 11:53:14,234 Thread-0 org.eclipse.jetty.server.Server INFO: Started @804ms
+2015-02-07 11:53:16,860 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:16,927 qtp411399635-16 RequestCycleExtra WARN: ********************************
+2015-02-07 11:53:16,927 qtp411399635-16 RequestCycleExtra WARN: Handling the following exception
+java.lang.RuntimeException: configuration element with type class name.martingeisse.guiserver.configuration.elements.PageConfiguration and path / doesn't exist
+	at name.martingeisse.guiserver.configuration.Configuration.getElement(Configuration.java:91)
+	at name.martingeisse.guiserver.gui.ConfigurationDefinedPage.getPageConfiguration(ConfigurationDefinedPage.java:57)
+	at name.martingeisse.guiserver.gui.ConfigurationDefinedPage.onInitialize(ConfigurationDefinedPage.java:90)
+	at org.apache.wicket.Component.fireInitialize(Component.java:876)
+	at org.apache.wicket.MarkupContainer.internalInitialize(MarkupContainer.java:961)
+	at org.apache.wicket.Page.isPageStateless(Page.java:463)
+	at org.apache.wicket.core.request.mapper.AbstractBookmarkableMapper.getPageInfo(AbstractBookmarkableMapper.java:447)
+	at org.apache.wicket.core.request.mapper.AbstractBookmarkableMapper.mapHandler(AbstractBookmarkableMapper.java:391)
+	at org.apache.wicket.core.request.mapper.MountedMapper.mapHandler(MountedMapper.java:395)
+	at org.apache.wicket.request.mapper.CompoundRequestMapper.mapHandler(CompoundRequestMapper.java:215)
+	at org.apache.wicket.request.cycle.RequestCycle.mapUrlFor(RequestCycle.java:429)
+	at org.apache.wicket.request.handler.render.WebPageRenderer.respond(WebPageRenderer.java:273)
+	at org.apache.wicket.core.request.handler.RenderPageRequestHandler.respond(RenderPageRequestHandler.java:175)
+	at org.apache.wicket.request.cycle.RequestCycle$HandlerExecutor.respond(RequestCycle.java:862)
+	at org.apache.wicket.request.RequestHandlerStack.execute(RequestHandlerStack.java:64)
+	at org.apache.wicket.request.cycle.RequestCycle.execute(RequestCycle.java:261)
+	at org.apache.wicket.request.cycle.RequestCycle.processRequest(RequestCycle.java:218)
+	at org.apache.wicket.request.cycle.RequestCycle.processRequestAndDetach(RequestCycle.java:289)
+	at org.apache.wicket.protocol.http.WicketFilter.processRequestCycle(WicketFilter.java:259)
+	at org.apache.wicket.protocol.http.WicketFilter.processRequest(WicketFilter.java:201)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:282)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at name.martingeisse.jetty.NoFlushOrCloseFilter.doFilter(NoFlushOrCloseFilter.java:41)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at name.martingeisse.database.EntityConnectionServletFilter.doFilter(EntityConnectionServletFilter.java:38)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at org.eclipse.jetty.servlets.UserAgentFilter.doFilter(UserAgentFilter.java:83)
+	at org.eclipse.jetty.servlets.GzipFilter.doFilter(GzipFilter.java:364)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at name.martingeisse.jetty.FlushFilter.doFilter(FlushFilter.java:36)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at name.martingeisse.jetty.TimingFilter.doFilter(TimingFilter.java:50)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:583)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:221)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1125)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1059)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:497)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:311)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:248)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:610)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:539)
+	at java.lang.Thread.run(Thread.java:745)
+2015-02-07 11:53:16,930 qtp411399635-16 RequestCycleExtra WARN: ********************************
+2015-02-07 11:53:16,934 qtp411399635-16 org.apache.wicket.DefaultExceptionMapper ERROR: Unexpected error occurred
+java.lang.RuntimeException: configuration element with type class name.martingeisse.guiserver.configuration.elements.PageConfiguration and path / doesn't exist
+	at name.martingeisse.guiserver.configuration.Configuration.getElement(Configuration.java:91)
+	at name.martingeisse.guiserver.gui.ConfigurationDefinedPage.getPageConfiguration(ConfigurationDefinedPage.java:57)
+	at name.martingeisse.guiserver.gui.ConfigurationDefinedPage.onInitialize(ConfigurationDefinedPage.java:90)
+	at org.apache.wicket.Component.fireInitialize(Component.java:876)
+	at org.apache.wicket.MarkupContainer.internalInitialize(MarkupContainer.java:961)
+	at org.apache.wicket.Page.isPageStateless(Page.java:463)
+	at org.apache.wicket.core.request.mapper.AbstractBookmarkableMapper.getPageInfo(AbstractBookmarkableMapper.java:447)
+	at org.apache.wicket.core.request.mapper.AbstractBookmarkableMapper.mapHandler(AbstractBookmarkableMapper.java:391)
+	at org.apache.wicket.core.request.mapper.MountedMapper.mapHandler(MountedMapper.java:395)
+	at org.apache.wicket.request.mapper.CompoundRequestMapper.mapHandler(CompoundRequestMapper.java:215)
+	at org.apache.wicket.request.cycle.RequestCycle.mapUrlFor(RequestCycle.java:429)
+	at org.apache.wicket.request.handler.render.WebPageRenderer.respond(WebPageRenderer.java:273)
+	at org.apache.wicket.core.request.handler.RenderPageRequestHandler.respond(RenderPageRequestHandler.java:175)
+	at org.apache.wicket.request.cycle.RequestCycle$HandlerExecutor.respond(RequestCycle.java:862)
+	at org.apache.wicket.request.RequestHandlerStack.execute(RequestHandlerStack.java:64)
+	at org.apache.wicket.request.cycle.RequestCycle.execute(RequestCycle.java:261)
+	at org.apache.wicket.request.cycle.RequestCycle.processRequest(RequestCycle.java:218)
+	at org.apache.wicket.request.cycle.RequestCycle.processRequestAndDetach(RequestCycle.java:289)
+	at org.apache.wicket.protocol.http.WicketFilter.processRequestCycle(WicketFilter.java:259)
+	at org.apache.wicket.protocol.http.WicketFilter.processRequest(WicketFilter.java:201)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:282)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at name.martingeisse.jetty.NoFlushOrCloseFilter.doFilter(NoFlushOrCloseFilter.java:41)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at name.martingeisse.database.EntityConnectionServletFilter.doFilter(EntityConnectionServletFilter.java:38)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at org.eclipse.jetty.servlets.UserAgentFilter.doFilter(UserAgentFilter.java:83)
+	at org.eclipse.jetty.servlets.GzipFilter.doFilter(GzipFilter.java:364)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at name.martingeisse.jetty.FlushFilter.doFilter(FlushFilter.java:36)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at name.martingeisse.jetty.TimingFilter.doFilter(TimingFilter.java:50)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1650)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:583)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:221)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1125)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1059)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:497)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:311)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:248)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:610)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:539)
+	at java.lang.Thread.run(Thread.java:745)
+2015-02-07 11:53:17,114 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 250
+2015-02-07 11:53:21,974 qtp411399635-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:21,992 qtp411399635-15 org.apache.wicket.markup.html.form.AbstractTextComponent WARN: Couldn't resolve model type of Model:classname=[name.martingeisse.guiserver.gui.InheritedFormDataModel]:nestedModel=[Model:classname=[name.martingeisse.guiserver.gui.FormDataModel]] for [TextField [Component id = field1]], please set the type yourself.
+2015-02-07 11:53:22,049 qtp411399635-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 74
+2015-02-07 11:53:22,064 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:22,069 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2015-02-07 11:53:22,088 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:22,090 qtp411399635-14 org.apache.wicket.markup.html.form.AbstractTextComponent WARN: Couldn't resolve model type of Model:classname=[name.martingeisse.guiserver.gui.InheritedFormDataModel]:nestedModel=[Model:classname=[name.martingeisse.guiserver.gui.FormDataModel]] for [TextField [Component id = field1]], please set the type yourself.
+2015-02-07 11:53:22,103 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 15
+2015-02-07 11:53:22,108 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:22,110 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2015-02-07 11:53:23,680 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:23,980 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 300
+2015-02-07 11:53:23,985 qtp411399635-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:23,987 qtp411399635-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2015-02-07 11:53:24,938 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:24,950 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 12
+2015-02-07 11:53:24,956 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:24,957 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 1
+2015-02-07 11:53:26,156 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:26,170 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 13
+2015-02-07 11:53:26,177 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:26,179 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2015-02-07 11:53:29,117 qtp411399635-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:29,126 qtp411399635-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 9
+2015-02-07 11:53:29,132 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:29,139 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2015-02-07 11:53:33,365 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:33,372 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2015-02-07 11:53:34,325 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:34,330 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2015-02-07 11:53:34,392 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:34,394 qtp411399635-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:34,405 qtp411399635-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 11
+2015-02-07 11:53:34,405 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 13
+2015-02-07 11:53:36,781 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:36,793 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 12
+2015-02-07 11:53:36,798 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:36,805 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2015-02-07 11:53:40,322 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:40,329 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2015-02-07 11:53:41,829 qtp411399635-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:41,840 qtp411399635-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 10
+2015-02-07 11:53:41,849 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:41,854 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2015-02-07 11:53:46,130 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:46,198 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 68
+2015-02-07 11:53:46,202 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:46,204 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2015-02-07 11:53:46,255 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:46,262 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2015-02-07 11:53:46,270 qtp411399635-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:46,274 qtp411399635-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2015-02-07 11:53:46,281 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:51,318 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5037
+2015-02-07 11:53:51,332 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:51,351 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 19
+2015-02-07 11:53:51,380 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:51,382 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2015-02-07 11:53:51,396 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 11:53:51,402 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2015-02-07 11:54:37,378 main name.martingeisse.guiserver.Main INFO: ----- starting frontend with config file: test.properties -----
+2015-02-07 11:54:37,496 Thread-0 org.eclipse.jetty.util.log INFO: Logging initialized @305ms
+2015-02-07 11:54:37,599 Thread-0 org.eclipse.jetty.server.Server INFO: jetty-9.2.3.v20140905
+2015-02-07 11:54:37,863 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-b62b6ac] init: Wicket core library initializer
+2015-02-07 11:54:37,866 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2015-02-07 11:54:37,867 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2015-02-07 11:54:37,867 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2015-02-07 11:54:37,868 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2015-02-07 11:54:37,868 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2015-02-07 11:54:37,869 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2015-02-07 11:54:37,869 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-b62b6ac] init: Wicket extensions initializer
+2015-02-07 11:54:37,934 Thread-0 org.eclipse.jetty.util.component.AbstractLifeCycle WARN: FAILED o.e.j.s.ServletContextHandler@334043b2{/,null,STARTING}: java.lang.ExceptionInInitializerError
+java.lang.ExceptionInInitializerError
+	at name.martingeisse.guiserver.application.wicket.GuiWicketApplication.init(GuiWicketApplication.java:88)
+	at org.apache.wicket.Application.initApplication(Application.java:819)
+	at org.apache.wicket.protocol.http.WicketFilter.init(WicketFilter.java:424)
+	at org.apache.wicket.protocol.http.WicketFilter.init(WicketFilter.java:351)
+	at org.eclipse.jetty.servlet.FilterHolder.initialize(FilterHolder.java:138)
+	at org.eclipse.jetty.servlet.ServletHandler.initialize(ServletHandler.java:850)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:298)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:741)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:387)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:114)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:354)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at name.martingeisse.guiserver.application.Initializer.initializeWeb(Initializer.java:107)
+	at name.martingeisse.guiserver.Main$1.run(Main.java:56)
+Caused by: java.lang.RuntimeException: could not load configuration
+	at name.martingeisse.guiserver.configuration.Configuration.<clinit>(Configuration.java:31)
+	... 17 more
+Caused by: java.lang.IllegalStateException: Method getLocalName() cannot be called for CHARACTERS event.
+	at com.sun.org.apache.xerces.internal.impl.XMLStreamReaderImpl.getLocalName(XMLStreamReaderImpl.java:332)
+	at name.martingeisse.guiserver.configuration.content.parser.DefaultContentParser.handleSpecialElement(DefaultContentParser.java:210)
+	at name.martingeisse.guiserver.configuration.content.parser.ContentParser.parseNestedContent(ContentParser.java:113)
+	at name.martingeisse.guiserver.configuration.content.parser.ContentParser.parseComponentContent(ContentParser.java:159)
+	at name.martingeisse.guiserver.configuration.content.parser.DefaultContentParser.handleSpecialElement(DefaultContentParser.java:170)
+	at name.martingeisse.guiserver.configuration.content.parser.ContentParser.parseNestedContent(ContentParser.java:113)
+	at name.martingeisse.guiserver.configuration.content.parser.RootContentParser.parseRootContent(RootContentParser.java:37)
+	at name.martingeisse.guiserver.configuration.ConfigurationBuilder.handleFile(ConfigurationBuilder.java:114)
+	at name.martingeisse.guiserver.configuration.ConfigurationBuilder.handleFolder(ConfigurationBuilder.java:94)
+	at name.martingeisse.guiserver.configuration.ConfigurationBuilder.build(ConfigurationBuilder.java:66)
+	at name.martingeisse.guiserver.configuration.Configuration.<init>(Configuration.java:62)
+	at name.martingeisse.guiserver.configuration.Configuration.<clinit>(Configuration.java:29)
+	... 17 more
+2015-02-07 11:54:37,970 Thread-0 org.eclipse.jetty.server.ServerConnector INFO: Started ServerConnector@7e50cbd4{HTTP/1.1}{0.0.0.0:8080}
+2015-02-07 11:54:37,970 Thread-0 org.eclipse.jetty.util.component.AbstractLifeCycle WARN: FAILED org.eclipse.jetty.server.Server@6ff811a0: java.lang.ExceptionInInitializerError
+java.lang.ExceptionInInitializerError
+	at name.martingeisse.guiserver.application.wicket.GuiWicketApplication.init(GuiWicketApplication.java:88)
+	at org.apache.wicket.Application.initApplication(Application.java:819)
+	at org.apache.wicket.protocol.http.WicketFilter.init(WicketFilter.java:424)
+	at org.apache.wicket.protocol.http.WicketFilter.init(WicketFilter.java:351)
+	at org.eclipse.jetty.servlet.FilterHolder.initialize(FilterHolder.java:138)
+	at org.eclipse.jetty.servlet.ServletHandler.initialize(ServletHandler.java:850)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:298)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:741)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:387)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:114)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:354)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at name.martingeisse.guiserver.application.Initializer.initializeWeb(Initializer.java:107)
+	at name.martingeisse.guiserver.Main$1.run(Main.java:56)
+Caused by: java.lang.RuntimeException: could not load configuration
+	at name.martingeisse.guiserver.configuration.Configuration.<clinit>(Configuration.java:31)
+	... 17 more
+Caused by: java.lang.IllegalStateException: Method getLocalName() cannot be called for CHARACTERS event.
+	at com.sun.org.apache.xerces.internal.impl.XMLStreamReaderImpl.getLocalName(XMLStreamReaderImpl.java:332)
+	at name.martingeisse.guiserver.configuration.content.parser.DefaultContentParser.handleSpecialElement(DefaultContentParser.java:210)
+	at name.martingeisse.guiserver.configuration.content.parser.ContentParser.parseNestedContent(ContentParser.java:113)
+	at name.martingeisse.guiserver.configuration.content.parser.ContentParser.parseComponentContent(ContentParser.java:159)
+	at name.martingeisse.guiserver.configuration.content.parser.DefaultContentParser.handleSpecialElement(DefaultContentParser.java:170)
+	at name.martingeisse.guiserver.configuration.content.parser.ContentParser.parseNestedContent(ContentParser.java:113)
+	at name.martingeisse.guiserver.configuration.content.parser.RootContentParser.parseRootContent(RootContentParser.java:37)
+	at name.martingeisse.guiserver.configuration.ConfigurationBuilder.handleFile(ConfigurationBuilder.java:114)
+	at name.martingeisse.guiserver.configuration.ConfigurationBuilder.handleFolder(ConfigurationBuilder.java:94)
+	at name.martingeisse.guiserver.configuration.ConfigurationBuilder.build(ConfigurationBuilder.java:66)
+	at name.martingeisse.guiserver.configuration.Configuration.<init>(Configuration.java:62)
+	at name.martingeisse.guiserver.configuration.Configuration.<clinit>(Configuration.java:29)
+	... 17 more
+2015-02-07 12:05:02,699 main name.martingeisse.guiserver.Main INFO: ----- starting frontend with config file: test.properties -----
+2015-02-07 12:05:02,815 Thread-0 org.eclipse.jetty.util.log INFO: Logging initialized @299ms
+2015-02-07 12:05:02,902 Thread-0 org.eclipse.jetty.server.Server INFO: jetty-9.2.3.v20140905
+2015-02-07 12:05:03,173 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-1561ee3f] init: Wicket core library initializer
+2015-02-07 12:05:03,175 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2015-02-07 12:05:03,176 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2015-02-07 12:05:03,176 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2015-02-07 12:05:03,177 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2015-02-07 12:05:03,177 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2015-02-07 12:05:03,178 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2015-02-07 12:05:03,178 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-1561ee3f] init: Wicket extensions initializer
+2015-02-07 12:05:03,312 Thread-0 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-1561ee3f] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2015-02-07 12:05:03,315 Thread-0 org.eclipse.jetty.server.handler.ContextHandler INFO: Started o.e.j.s.ServletContextHandler@54406197{/,null,AVAILABLE}
+2015-02-07 12:05:03,344 Thread-0 org.eclipse.jetty.server.ServerConnector INFO: Started ServerConnector@6b0ed21{HTTP/1.1}{0.0.0.0:8080}
+2015-02-07 12:05:03,344 Thread-0 org.eclipse.jetty.server.Server INFO: Started @856ms
+2015-02-07 12:05:09,853 qtp411399635-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:05:10,040 qtp411399635-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 187
+2015-02-07 12:05:12,984 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:05:13,004 qtp411399635-14 org.apache.wicket.markup.html.form.AbstractTextComponent WARN: Couldn't resolve model type of Model:classname=[name.martingeisse.guiserver.gui.InheritedFormDataModel]:nestedModel=[Model:classname=[name.martingeisse.guiserver.gui.FormDataModel]] for [TextField [Component id = field1]], please set the type yourself.
+2015-02-07 12:05:13,089 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 105
+2015-02-07 12:05:13,101 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:05:13,104 qtp411399635-13 org.apache.wicket.markup.html.form.AbstractTextComponent WARN: Couldn't resolve model type of Model:classname=[name.martingeisse.guiserver.gui.InheritedFormDataModel]:nestedModel=[Model:classname=[name.martingeisse.guiserver.gui.FormDataModel]] for [TextField [Component id = field1]], please set the type yourself.
+2015-02-07 12:05:13,115 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 13
+2015-02-07 12:05:13,123 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:05:13,128 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5
+2015-02-07 12:05:15,868 qtp411399635-12 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:05:16,202 qtp411399635-12 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 334
+2015-02-07 12:05:16,207 qtp411399635-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:05:16,211 qtp411399635-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4
+2015-02-07 12:05:18,964 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:05:18,975 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 11
+2015-02-07 12:05:18,980 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:05:18,994 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 14
+2015-02-07 12:06:18,730 main name.martingeisse.guiserver.Main INFO: ----- starting frontend with config file: test.properties -----
+2015-02-07 12:06:18,848 Thread-0 org.eclipse.jetty.util.log INFO: Logging initialized @311ms
+2015-02-07 12:06:18,942 Thread-0 org.eclipse.jetty.server.Server INFO: jetty-9.2.3.v20140905
+2015-02-07 12:06:19,209 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-1561ee3f] init: Wicket core library initializer
+2015-02-07 12:06:19,213 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2015-02-07 12:06:19,213 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2015-02-07 12:06:19,214 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2015-02-07 12:06:19,214 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2015-02-07 12:06:19,214 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2015-02-07 12:06:19,215 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2015-02-07 12:06:19,215 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-1561ee3f] init: Wicket extensions initializer
+2015-02-07 12:06:19,334 Thread-0 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-1561ee3f] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2015-02-07 12:06:19,336 Thread-0 org.eclipse.jetty.server.handler.ContextHandler INFO: Started o.e.j.s.ServletContextHandler@54406197{/,null,AVAILABLE}
+2015-02-07 12:06:19,359 Thread-0 org.eclipse.jetty.server.ServerConnector INFO: Started ServerConnector@6b0ed21{HTTP/1.1}{0.0.0.0:8080}
+2015-02-07 12:06:19,359 Thread-0 org.eclipse.jetty.server.Server INFO: Started @850ms
+2015-02-07 12:06:24,873 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:06:24,933 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 60
+2015-02-07 12:06:24,938 qtp411399635-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:06:24,965 qtp411399635-18 org.apache.wicket.markup.html.form.AbstractTextComponent WARN: Couldn't resolve model type of Model:classname=[name.martingeisse.guiserver.gui.InheritedFormDataModel]:nestedModel=[Model:classname=[name.martingeisse.guiserver.gui.FormDataModel]] for [TextField [Component id = field1]], please set the type yourself.
+2015-02-07 12:06:25,165 qtp411399635-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 227
+2015-02-07 12:06:25,171 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:06:25,177 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2015-02-07 12:06:26,001 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:06:26,009 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 8
+2015-02-07 12:06:26,043 qtp411399635-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:06:26,047 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:06:26,060 qtp411399635-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 17
+2015-02-07 12:06:26,061 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 13
+2015-02-07 12:06:31,510 qtp411399635-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:06:31,809 qtp411399635-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 298
+2015-02-07 12:06:31,813 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:06:31,815 qtp411399635-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2015-02-07 12:06:59,425 main name.martingeisse.guiserver.Main INFO: ----- starting frontend with config file: test.properties -----
+2015-02-07 12:06:59,534 Thread-0 org.eclipse.jetty.util.log INFO: Logging initialized @307ms
+2015-02-07 12:06:59,631 Thread-0 org.eclipse.jetty.server.Server INFO: jetty-9.2.3.v20140905
+2015-02-07 12:06:59,936 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-1561ee3f] init: Wicket core library initializer
+2015-02-07 12:06:59,939 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2015-02-07 12:06:59,940 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2015-02-07 12:06:59,940 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2015-02-07 12:06:59,941 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2015-02-07 12:06:59,941 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2015-02-07 12:06:59,942 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2015-02-07 12:06:59,942 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-1561ee3f] init: Wicket extensions initializer
+2015-02-07 12:07:00,073 Thread-0 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-1561ee3f] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2015-02-07 12:07:00,075 Thread-0 org.eclipse.jetty.server.handler.ContextHandler INFO: Started o.e.j.s.ServletContextHandler@54406197{/,null,AVAILABLE}
+2015-02-07 12:07:00,100 Thread-0 org.eclipse.jetty.server.ServerConnector INFO: Started ServerConnector@6b0ed21{HTTP/1.1}{0.0.0.0:8080}
+2015-02-07 12:07:00,100 Thread-0 org.eclipse.jetty.server.Server INFO: Started @897ms
+2015-02-07 12:07:02,303 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:02,359 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 56
+2015-02-07 12:07:02,363 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:02,390 qtp411399635-13 org.apache.wicket.markup.html.form.AbstractTextComponent WARN: Couldn't resolve model type of Model:classname=[name.martingeisse.guiserver.gui.InheritedFormDataModel]:nestedModel=[Model:classname=[name.martingeisse.guiserver.gui.FormDataModel]] for [TextField [Component id = field1]], please set the type yourself.
+2015-02-07 12:07:02,600 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 236
+2015-02-07 12:07:02,607 qtp411399635-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:02,614 qtp411399635-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2015-02-07 12:07:02,646 qtp411399635-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:02,650 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:02,662 qtp411399635-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 15
+2015-02-07 12:07:02,663 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 13
+2015-02-07 12:07:03,570 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:03,882 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 312
+2015-02-07 12:07:03,886 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:03,888 qtp411399635-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2015-02-07 12:07:06,172 qtp411399635-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:06,187 qtp411399635-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 14
+2015-02-07 12:07:06,192 qtp411399635-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:06,193 qtp411399635-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 1
+2015-02-07 12:07:07,733 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:07,742 qtp411399635-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 9
+2015-02-07 12:07:07,746 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:07,761 qtp411399635-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 15
+2015-02-07 12:07:22,011 main name.martingeisse.guiserver.Main INFO: ----- starting frontend with config file: test.properties -----
+2015-02-07 12:07:22,119 Thread-0 org.eclipse.jetty.util.log INFO: Logging initialized @297ms
+2015-02-07 12:07:22,210 Thread-0 org.eclipse.jetty.server.Server INFO: jetty-9.2.3.v20140905
+2015-02-07 12:07:22,476 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-b62b6ac] init: Wicket core library initializer
+2015-02-07 12:07:22,479 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2015-02-07 12:07:22,480 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2015-02-07 12:07:22,481 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2015-02-07 12:07:22,481 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2015-02-07 12:07:22,482 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2015-02-07 12:07:22,482 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2015-02-07 12:07:22,482 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-b62b6ac] init: Wicket extensions initializer
+2015-02-07 12:07:22,600 Thread-0 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-b62b6ac] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2015-02-07 12:07:22,602 Thread-0 org.eclipse.jetty.server.handler.ContextHandler INFO: Started o.e.j.s.ServletContextHandler@733832b1{/,null,AVAILABLE}
+2015-02-07 12:07:22,630 Thread-0 org.eclipse.jetty.server.ServerConnector INFO: Started ServerConnector@3ef993aa{HTTP/1.1}{0.0.0.0:8080}
+2015-02-07 12:07:22,631 Thread-0 org.eclipse.jetty.server.Server INFO: Started @831ms
+2015-02-07 12:07:27,911 qtp1629938300-12 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:27,967 qtp1629938300-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:28,022 qtp1629938300-12 org.apache.wicket.markup.html.form.AbstractTextComponent WARN: Couldn't resolve model type of Model:classname=[name.martingeisse.guiserver.gui.InheritedFormDataModel]:nestedModel=[Model:classname=[name.martingeisse.guiserver.gui.FormDataModel]] for [TextField [Component id = field2]], please set the type yourself.
+2015-02-07 12:07:28,022 qtp1629938300-19 org.apache.wicket.markup.html.form.AbstractTextComponent WARN: Couldn't resolve model type of Model:classname=[name.martingeisse.guiserver.gui.InheritedFormDataModel]:nestedModel=[Model:classname=[name.martingeisse.guiserver.gui.FormDataModel]] for [TextField [Component id = field2]], please set the type yourself.
+2015-02-07 12:07:28,270 qtp1629938300-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 302
+2015-02-07 12:07:28,270 qtp1629938300-12 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 359
+2015-02-07 12:07:28,281 qtp1629938300-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:28,291 qtp1629938300-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 10
+2015-02-07 12:07:29,898 qtp1629938300-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:30,218 qtp1629938300-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 319
+2015-02-07 12:07:30,227 qtp1629938300-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:30,229 qtp1629938300-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2015-02-07 12:07:32,991 qtp1629938300-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:33,004 qtp1629938300-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 13
+2015-02-07 12:07:33,009 qtp1629938300-12 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-07 12:07:33,016 qtp1629938300-12 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
