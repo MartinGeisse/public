@@ -9,6 +9,7 @@ import name.martingeisse.guiserver.configuration.Configuration;
 import name.martingeisse.guiserver.gui.HelloWorldPage;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
 
+import org.apache.log4j.Logger;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.ComponentTag;
@@ -27,6 +28,11 @@ import org.apache.wicket.util.IProvider;
  */
 public class GuiWicketApplication extends AbstractMyWicketApplication {
 
+	/**
+	 * the logger
+	 */
+	private static Logger logger = Logger.getLogger(GuiWicketApplication.class);
+	
 	/**
 	 * the RENDER_PROFILING
 	 */
@@ -113,11 +119,11 @@ public class GuiWicketApplication extends AbstractMyWicketApplication {
 						@Override
 						protected void onRender() {
 							long timingNow = System.currentTimeMillis();
-							System.out.println("* at " + timingNow + ": HtmlHeaderContainer onRender start");
+							logger.info("at " + timingNow + ": HtmlHeaderContainer onRender start");
 							super.onRender();
 							long timingNewNow = System.currentTimeMillis();
 							long timingTime = (timingNewNow - timingNow);
-							System.out.println("* at " + timingNewNow + ": HtmlHeaderContainer onRender end, time = " + timingTime);
+							logger.info("at " + timingNewNow + ": HtmlHeaderContainer onRender end, time = " + timingTime);
 						}
 					};
 				}
@@ -130,11 +136,11 @@ public class GuiWicketApplication extends AbstractMyWicketApplication {
 							@Override
 							protected void onRender() {
 								long timingNow = System.currentTimeMillis();
-								System.out.println("* at " + timingNow + ": HtmlHeaderContainer onRender start");
+								logger.info("at " + timingNow + ": HtmlHeaderContainer onRender start");
 								super.onRender();
 								long timingNewNow = System.currentTimeMillis();
 								long timingTime = (timingNewNow - timingNow);
-								System.out.println("* at " + timingNewNow + ": HtmlHeaderContainer onRender end, time = " + timingTime);
+								logger.info("at " + timingNewNow + ": HtmlHeaderContainer onRender end, time = " + timingTime);
 							}
 						};
 					} else {

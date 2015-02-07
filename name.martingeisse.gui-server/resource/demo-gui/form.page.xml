@@ -7,7 +7,11 @@
 		<div>
 			<gui:form backendUrl="http://localhost/geisse/demo-backend/form.php">
 				<div>
-					<gui:validation name="foo" />
+					<gui:enclosure>
+						<div style="color: red; background-color: #fcc; border: 1px solid #faa">
+							ERROR: <gui:validation name="foo" />
+						</div>
+					</gui:enclosure>
 					<gui:textField name="foo" />
 				</div>
 				<div>

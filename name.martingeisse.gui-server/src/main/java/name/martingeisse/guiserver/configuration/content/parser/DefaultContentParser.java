@@ -9,6 +9,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.EnclosureConfiguration;
 import name.martingeisse.guiserver.configuration.content.FieldPathFeedbackPanelConfiguration;
 import name.martingeisse.guiserver.configuration.content.FormConfiguration;
 import name.martingeisse.guiserver.configuration.content.IncludeBackendConfiguration;
@@ -178,10 +179,12 @@ public class DefaultContentParser extends ContentParser {
 		case "textField": {
 			String componentId = newComponentId("field");
 			String fieldName = streams.getMandatoryAttribute("name");
+			String requiredText = streams.getOptionalAttribute("required");
+			boolean required = (requiredText == null ? true : !requiredText.equals("false"));
 			writer.writeEmptyElement("input");
 			writer.writeAttribute("wicket:id", componentId);
 			streams.expectAndSkipEmptyElement();
-			streams.addComponent(new TextFieldConfiguration(componentId, fieldName));
+			streams.addComponent(new TextFieldConfiguration(componentId, fieldName, required));
 			break;
 		}
 		
@@ -204,6 +207,17 @@ public class DefaultContentParser extends ContentParser {
 			skipNestedContent();
 			reader.next();
 			streams.addComponent(new FieldPathFeedbackPanelConfiguration(componentId, fieldPath));
+			break;
+		}
+		
+		case "enclosure": {
+			String componentId = newComponentId("link");
+			writer.writeStartElement("div");
+			writer.writeAttribute("wicket:id", componentId);
+			reader.next();
+			streams.addComponent(new EnclosureConfiguration(componentId, parseComponentContent()));
+			writer.writeEndElement();
+			reader.next();
 			break;
 		}
 

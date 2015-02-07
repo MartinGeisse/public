@@ -93,7 +93,6 @@ public final class ConfigurationDefinedForm extends Form<Map<String, Object>> {
 		if (redirectUrl != null) {
 			getRequestCycle().scheduleRequestHandlerAfterCurrent(new RedirectRequestHandler(redirectUrl));
 		}
-		System.out.println("* done");
 	}
 	
 }

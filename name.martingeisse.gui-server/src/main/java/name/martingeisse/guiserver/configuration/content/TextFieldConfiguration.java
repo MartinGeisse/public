@@ -18,15 +18,22 @@ public final class TextFieldConfiguration extends AbstractComponentConfiguration
 	 * the name
 	 */
 	private final String name;
+	
+	/**
+	 * the required
+	 */
+	private final boolean required;
 
 	/**
 	 * Constructor.
 	 * @param id the wicket ID
 	 * @param name the field name
+	 * @param required whether the field is a required field
 	 */
-	public TextFieldConfiguration(String id, String name) {
+	public TextFieldConfiguration(String id, String name, boolean required) {
 		super(id);
 		this.name = name;
+		this.required = required;
 	}
 
 	/* (non-Javadoc)
@@ -34,7 +41,7 @@ public final class TextFieldConfiguration extends AbstractComponentConfiguration
 	 */
 	@Override
 	public Component buildComponent() {
-		return new TextField<>(getId()).add(new FieldPathBehavior(name));
+		return new TextField<>(getId()).setRequired(required).add(new FieldPathBehavior(name));
 	}
 	
 }

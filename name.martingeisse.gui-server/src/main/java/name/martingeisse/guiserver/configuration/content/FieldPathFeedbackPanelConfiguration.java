@@ -4,11 +4,11 @@
 
 package name.martingeisse.guiserver.configuration.content;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
-
+import name.martingeisse.guiserver.gui.DisappearingFeedbackPanel;
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
 import name.martingeisse.guiserver.gui.FieldPathFeedbackMessageFilter;
+
+import org.apache.wicket.Component;
 
 /**
  * A panel that shows feedback messages for a form component with a {@link FieldPathBehavior}.
@@ -35,7 +35,7 @@ public final class FieldPathFeedbackPanelConfiguration extends AbstractComponent
 	 */
 	@Override
 	public Component buildComponent() {
-		return new FeedbackPanel(getId(), new FieldPathFeedbackMessageFilter(path));
+		return new DisappearingFeedbackPanel(getId(), new FieldPathFeedbackMessageFilter(path));
 	}
 
 }
