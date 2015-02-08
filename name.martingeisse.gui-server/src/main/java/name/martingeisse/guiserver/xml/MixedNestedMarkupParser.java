@@ -16,19 +16,19 @@ import javax.xml.stream.XMLStreamException;
  * passed to a set of named {@link IElementParser}s. If none matches, the
  * element gets passed to a subclass method.
  */
-public class MixedNestedMarkupParser implements INestedMarkupParser<Void> {
+public class MixedNestedMarkupParser implements INestedMarkupParser {
 
 	/**
 	 * the specialElementParsers
 	 */
-	private final Map<String, IElementParser<?>> specialElementParsers = new HashMap<>();
+	private final Map<String, IElementParser> specialElementParsers = new HashMap<>();
 	
 	/**
 	 * Adds a parser for a special element.
 	 * @param localName the local name of the special element
 	 * @param parser the parser to add
 	 */
-	public final void addSpecialElementParser(String localName, IElementParser<?> parser) {
+	public final void addSpecialElementParser(String localName, IElementParser parser) {
 		specialElementParsers.put(localName, parser);
 	}
 	
@@ -36,7 +36,7 @@ public class MixedNestedMarkupParser implements INestedMarkupParser<Void> {
 	 * @see name.martingeisse.guiserver.xml.INestedMarkupParser#parse(name.martingeisse.guiserver.xml.ContentStreams)
 	 */
 	@Override
-	public final Void parse(ContentStreams streams) throws XMLStreamException {
+	public final void parse(ContentStreams streams) throws XMLStreamException {
 		int nesting = 0;
 		loop: while (true) {
 			switch (streams.getReader().getEventType()) {
@@ -81,7 +81,6 @@ public class MixedNestedMarkupParser implements INestedMarkupParser<Void> {
 
 			}
 		}
-		return null;
 	}
 
 	/**
@@ -98,7 +97,7 @@ public class MixedNestedMarkupParser implements INestedMarkupParser<Void> {
 	 */
 	protected final void handleSpecialElementInParserOrSubclass(ContentStreams streams) throws XMLStreamException {
 		String localName = streams.getReader().getLocalName();
-		IElementParser<?> parser = specialElementParsers.get(localName);
+		IElementParser parser = specialElementParsers.get(localName);
 		if (parser != null) {
 			parser.parse(streams);
 		} else {

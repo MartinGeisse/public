@@ -10,17 +10,15 @@ import javax.xml.stream.XMLStreamException;
  * Implementations can pick up parsing at a starting tag and
  * continue until they encounter the corresponding closing tag.
  * This parser will skip that final closing tag before returning.
- *  
- * @param <R> the type of an additional return value returned by this parser
  */
-public interface IElementParser<R> {
+public interface IElementParser {
 
 	/**
 	 * Parses nested content.
+	 * 
 	 * @param streams the streams used for parsing
-	 * @return some return value that can be consumed by the calling parser
 	 * @throws XMLStreamException on XML processing errors
 	 */
-	public R parse(ContentStreams streams) throws XMLStreamException;
+	public void parse(ContentStreams streams) throws XMLStreamException;
 	
 }
