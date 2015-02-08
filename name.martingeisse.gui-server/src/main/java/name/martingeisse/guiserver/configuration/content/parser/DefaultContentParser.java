@@ -28,7 +28,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * This parser is used on top level to parse a content XML file.
  */
-public class DefaultContentParser extends MixedNestedMarkupParser {
+public class DefaultContentParser extends MixedNestedMarkupParser<ComponentConfiguration> {
 
 	/**
 	 * the shared instance of this class
@@ -39,7 +39,7 @@ public class DefaultContentParser extends MixedNestedMarkupParser {
 	 * @see name.martingeisse.guiserver.xml.MixedNestedMarkupParser#handleSpecialElement(name.martingeisse.guiserver.xml.ContentStreams)
 	 */
 	@Override
-	protected void handleSpecialElement(ContentStreams streams) throws XMLStreamException {
+	protected void handleSpecialElement(ContentStreams<ComponentConfiguration> streams) throws XMLStreamException {
 		XMLStreamWriter writer = streams.getWriter();
 		XMLStreamReader reader = streams.getReader();
 		switch (streams.getReader().getLocalName()) {
@@ -131,7 +131,7 @@ public class DefaultContentParser extends MixedNestedMarkupParser {
 			streams.next();
 			new DefaultContentParser() {
 				@Override
-				protected void handleSpecialElement(ContentStreams streams) throws XMLStreamException {
+				protected void handleSpecialElement(ContentStreams<ComponentConfiguration> streams) throws XMLStreamException {
 					String localName = streams.getReader().getLocalName();
 					XMLStreamWriter writer = streams.getWriter();
 					if (!localName.equals("tab")) {
@@ -229,7 +229,7 @@ public class DefaultContentParser extends MixedNestedMarkupParser {
 	 * except that it uses a new component accumulator for the contents and returns the
 	 * elements of that accumulator.
 	 */
-	public ImmutableList<ComponentConfiguration> parseComponentContent(ContentStreams streams) throws XMLStreamException {
+	public ImmutableList<ComponentConfiguration> parseComponentContent(ContentStreams<ComponentConfiguration> streams) throws XMLStreamException {
 		streams.beginComponentAccumulator();
 		parse(streams);
 		return streams.finishComponentAccumulator();

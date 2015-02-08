@@ -15,20 +15,22 @@ import javax.xml.stream.XMLStreamException;
  * the usual "raw markup with embedded components". Any special elements are
  * passed to a set of named {@link IElementParser}s. If none matches, the
  * element gets passed to a subclass method.
+ *
+ * @param <C> the component type
  */
-public class MixedNestedMarkupParser implements INestedMarkupParser {
+public class MixedNestedMarkupParser<C> implements INestedMarkupParser<C> {
 
 	/**
 	 * the specialElementParsers
 	 */
-	private final Map<String, IElementParser> specialElementParsers = new HashMap<>();
+	private final Map<String, IElementParser<C>> specialElementParsers = new HashMap<>();
 	
 	/**
 	 * Adds a parser for a special element.
 	 * @param localName the local name of the special element
 	 * @param parser the parser to add
 	 */
-	public final void addSpecialElementParser(String localName, IElementParser parser) {
+	public final void addSpecialElementParser(String localName, IElementParser<C> parser) {
 		specialElementParsers.put(localName, parser);
 	}
 	
@@ -36,7 +38,7 @@ public class MixedNestedMarkupParser implements INestedMarkupParser {
 	 * @see name.martingeisse.guiserver.xml.INestedMarkupParser#parse(name.martingeisse.guiserver.xml.ContentStreams)
 	 */
 	@Override
-	public final void parse(ContentStreams streams) throws XMLStreamException {
+	public final void parse(ContentStreams<C> streams) throws XMLStreamException {
 		int nesting = 0;
 		loop: while (true) {
 			switch (streams.getReader().getEventType()) {
@@ -95,9 +97,9 @@ public class MixedNestedMarkupParser implements INestedMarkupParser {
 	 * @param streams the content streams
 	 * @throws XMLStreamException on XML processing errors
 	 */
-	protected final void handleSpecialElementInParserOrSubclass(ContentStreams streams) throws XMLStreamException {
+	protected final void handleSpecialElementInParserOrSubclass(ContentStreams<C> streams) throws XMLStreamException {
 		String localName = streams.getReader().getLocalName();
-		IElementParser parser = specialElementParsers.get(localName);
+		IElementParser<C> parser = specialElementParsers.get(localName);
 		if (parser != null) {
 			parser.parse(streams);
 		} else {
@@ -119,7 +121,7 @@ public class MixedNestedMarkupParser implements INestedMarkupParser {
 	 * @param streams the content streams
 	 * @throws XMLStreamException on XML processing errors
 	 */
-	protected void handleSpecialElement(ContentStreams streams) throws XMLStreamException {
+	protected void handleSpecialElement(ContentStreams<C> streams) throws XMLStreamException {
 		throw new InvalidSpecialElementException("unknown special element: " + streams.getReader().getLocalName());
 	}
 

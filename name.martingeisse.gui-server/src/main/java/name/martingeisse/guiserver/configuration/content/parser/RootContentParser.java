@@ -7,6 +7,7 @@ package name.martingeisse.guiserver.configuration.content.parser;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
 import name.martingeisse.guiserver.xml.ContentStreams;
 
 /**
@@ -25,7 +26,7 @@ public final class RootContentParser extends DefaultContentParser {
 	 * @param streams the content streams
 	 * @throws XMLStreamException on XML processing errors
 	 */
-	public void parseRootContent(ContentStreams streams) throws XMLStreamException {
+	public void parseRootContent(ContentStreams<ComponentConfiguration> streams) throws XMLStreamException {
 		XMLStreamWriter writer = streams.getWriter();
 
 		// handle document start

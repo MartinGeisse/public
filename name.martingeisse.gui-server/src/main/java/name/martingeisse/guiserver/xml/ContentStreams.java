@@ -17,16 +17,16 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
-
 import com.google.common.collect.ImmutableList;
 
 /**
  * This class keeps track of the XML reader and writer as well as the current component
  * accumulation list. It provides convenience methods to deal with the content being
  * processed.
+ *
+ * @param <C> the component type
  */
-public final class ContentStreams {
+public final class ContentStreams<C> {
 
 	/**
 	 * The namespace URI for special GUI elements.
@@ -56,12 +56,12 @@ public final class ContentStreams {
 	/**
 	 * the componentAccumulatorStack
 	 */
-	private final Stack<List<ComponentConfiguration>> componentAccumulatorStack;
+	private final Stack<List<C>> componentAccumulatorStack;
 	
 	/**
 	 * the componentAccumulator
 	 */
-	private List<ComponentConfiguration> componentAccumulator;
+	private List<C> componentAccumulator;
 
 	/**
 	 * Constructor.
@@ -106,7 +106,7 @@ public final class ContentStreams {
 	 * Adds a component configuration to the current component accumulator.
 	 * @param configuration the configuration to add
 	 */
-	public void addComponent(ComponentConfiguration configuration) {
+	public void addComponent(C configuration) {
 		componentAccumulator.add(configuration);
 	}
 	
@@ -123,8 +123,8 @@ public final class ContentStreams {
 	 * Finishes the current component accumulator, returning its accumulated components
 	 * as an immutable list and returning to the previous one.
 	 */
-	public ImmutableList<ComponentConfiguration> finishComponentAccumulator() {
-		ImmutableList<ComponentConfiguration> result = ImmutableList.copyOf(componentAccumulator);
+	public ImmutableList<C> finishComponentAccumulator() {
+		ImmutableList<C> result = ImmutableList.copyOf(componentAccumulator);
 		componentAccumulator = componentAccumulatorStack.pop();
 		return result;
 	}
@@ -133,7 +133,7 @@ public final class ContentStreams {
 	 * Finishes the root component accumulator, returning its accumulated components
 	 * as an immutable list.
 	 */
-	public ImmutableList<ComponentConfiguration> finishRootComponentAccumulator() {
+	public ImmutableList<C> finishRootComponentAccumulator() {
 		if (!componentAccumulatorStack.isEmpty()) {
 			throw new IllegalStateException("cannot finish the root component accumulator -- stack is not empty");
 		}

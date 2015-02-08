@@ -8,19 +8,19 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-import name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration;
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
-
 import com.google.common.collect.ImmutableList;
 
 /**
- * Parses a special element that corresponds to an
- * {@link AbstractContainerConfiguration}. Parses the contents of
- * the element to recognize components to add to the container.
+ * Parses a special element that corresponds to a container configuration.
+ * Parses the contents of the element to recognize components to add to
+ * the container.
  * 
- * This class is abstract to make the XML parsing package self-contained.
+ * Certain functionality is missing from this base class to make the XML
+ * parsing package self-contained.
+ *
+ * @param <C> the component type
  */
-public abstract class AbstractContainerElementParserBase implements IElementParser {
+public abstract class AbstractContainerElementParserBase<C> implements IElementParser<C> {
 
 	/**
 	 * the componentIdPrefix
@@ -62,7 +62,7 @@ public abstract class AbstractContainerElementParserBase implements IElementPars
 	 * @see name.martingeisse.guiserver.xml.IElementParser#parse(name.martingeisse.guiserver.xml.ContentStreams)
 	 */
 	@Override
-	public void parse(ContentStreams streams) throws XMLStreamException {
+	public void parse(ContentStreams<C> streams) throws XMLStreamException {
 		XMLStreamReader reader = streams.getReader();
 
 		// read and skip over the opening input tag
@@ -76,7 +76,7 @@ public abstract class AbstractContainerElementParserBase implements IElementPars
 		// parse the container contents
 		streams.beginComponentAccumulator();
 		parseContainerContents(streams);
-		ImmutableList<ComponentConfiguration> children = streams.finishComponentAccumulator();
+		ImmutableList<C> children = streams.finishComponentAccumulator();
 		
 		// build the container
 		streams.addComponent(createContainerConfiguration(children));
@@ -96,7 +96,7 @@ public abstract class AbstractContainerElementParserBase implements IElementPars
 	 * @param componentId the component ID
 	 * @throws XMLStreamException on XML processing errors
 	 */
-	protected void writeOpeningTag(ContentStreams streams, String componentId) throws XMLStreamException {
+	protected void writeOpeningTag(ContentStreams<C> streams, String componentId) throws XMLStreamException {
 		XMLStreamWriter writer = streams.getWriter();
 		writer.writeStartElement(getOutputElementName());
 		writer.writeAttribute("wicket:id", getComponentIdPrefix());
@@ -109,7 +109,7 @@ public abstract class AbstractContainerElementParserBase implements IElementPars
 	 * @param streams the content streams
 	 * @throws XMLStreamException on XML processing errors
 	 */
-	protected abstract void parseContainerContents(ContentStreams streams) throws XMLStreamException;
+	protected abstract void parseContainerContents(ContentStreams<C> streams) throws XMLStreamException;
 
 	/**
 	 * Creates the configuration for the resulting container.
@@ -118,6 +118,6 @@ public abstract class AbstractContainerElementParserBase implements IElementPars
 	 * @return the container configuration
 	 * @throws XMLStreamException on XML processing errors
 	 */
-	protected abstract ComponentConfiguration createContainerConfiguration(ImmutableList<ComponentConfiguration> children) throws XMLStreamException;
+	protected abstract C createContainerConfiguration(ImmutableList<C> children) throws XMLStreamException;
 	
 }
