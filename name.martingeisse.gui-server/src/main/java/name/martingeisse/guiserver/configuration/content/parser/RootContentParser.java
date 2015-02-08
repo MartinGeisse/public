@@ -7,24 +7,25 @@ package name.martingeisse.guiserver.configuration.content.parser;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import name.martingeisse.guiserver.xml.ContentStreams;
+
 /**
  * This parser is used on top level to parse a content XML file.
  */
 public final class RootContentParser extends DefaultContentParser {
 
 	/**
-	 * Constructor.
-	 * @param streams the content streams
+	 * the shared instance of this class
 	 */
-	public RootContentParser(ContentStreams streams) {
-		super(streams);
-	}
+	public static final RootContentParser ROOT_PARSER_INSTANCE = new RootContentParser();
 
 	/**
 	 * Parses the root content.
+	 * 
+	 * @param streams the content streams
+	 * @throws XMLStreamException on XML processing errors
 	 */
-	public void parseRootContent() throws XMLStreamException {
-		ContentStreams streams = getStreams();
+	public void parseRootContent(ContentStreams streams) throws XMLStreamException {
 		XMLStreamWriter writer = streams.getWriter();
 
 		// handle document start
@@ -34,7 +35,7 @@ public final class RootContentParser extends DefaultContentParser {
 		writer.writeStartElement("body");
 
 		// handle content
-		parseNestedContent();
+		parse(streams);
 
 		// handle document end
 		writer.writeEndElement();

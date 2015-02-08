@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.configuration.content.parser;
+package name.martingeisse.guiserver.xml;
 
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -141,6 +141,14 @@ public final class ContentStreams {
 	}
 	
 	/**
+	 * Returns the number of components in the component accumulator
+	 * @return the accumulator size
+	 */
+	public int getComponentAccumulatorSize() {
+		return componentAccumulator.size();
+	}
+	
+	/**
 	 * This method should only be called directly after creating the reader and this streams object. It checks that
 	 * the document element is a special element with the specified local name and skips over the opening tag,
 	 * otherwise throws an exception.
@@ -275,6 +283,68 @@ public final class ContentStreams {
 			default:
 				return;
 				
+			}
+		}
+	}
+
+	/**
+	 * Skips content until a closing tag is encountered to which the start tag has already
+	 * been handled, i.e. this method only skips a snippet of properly nested content.
+	 * 
+	 * Any special elements in the skipped content trigger an error.
+	 * 
+	 * @throws XMLStreamException on XML processing errors
+	 */
+	public void skipNestedContent() throws XMLStreamException {
+		skipNestedContent(false);
+	}
+
+	/**
+	 * Skips content until a closing tag is encountered to which the start tag has already
+	 * been handled, i.e. this method only skips a snippet of properly nested content.
+	 * 
+	 * If any special elements are found while skipping, the allowSpecialElements parameter
+	 * decides whether those are allowed and skipped, or if they should trigger an error.
+	 * 
+	 * @param allowSpecialElements whether special elements are allowed in the skipped content
+	 * @throws XMLStreamException on XML processing errors
+	 */
+	public void skipNestedContent(boolean allowSpecialElements) throws XMLStreamException {
+		int nesting = 0;
+		loop: while (true) {
+			switch (reader.getEventType()) {
+
+			case XMLStreamConstants.START_ELEMENT:
+				if (!allowSpecialElements && recognizeStartSpecialElement() != null) {
+					throw new InvalidSpecialElementException("no special elements allowed here");
+				}
+				next();
+				nesting++;
+				break;
+
+			case XMLStreamConstants.END_ELEMENT:
+				if (nesting > 0) {
+					next();
+					nesting--;
+					break;
+				} else {
+					break loop;
+				}
+
+			case XMLStreamConstants.CDATA:
+			case XMLStreamConstants.CHARACTERS:
+			case XMLStreamConstants.SPACE:
+			case XMLStreamConstants.ENTITY_REFERENCE:
+				next();
+				break;
+
+			case XMLStreamConstants.COMMENT:
+				next();
+				break;
+				
+			default:
+				throw new RuntimeException("invalid XML event while skipping nested content: " + reader.getEventType());
+
 			}
 		}
 	}

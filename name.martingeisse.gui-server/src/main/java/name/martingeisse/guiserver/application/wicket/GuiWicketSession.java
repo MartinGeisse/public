@@ -7,6 +7,7 @@
 package name.martingeisse.guiserver.application.wicket;
 
 import name.martingeisse.wicket.application.MyWicketSession;
+
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.Request;
 

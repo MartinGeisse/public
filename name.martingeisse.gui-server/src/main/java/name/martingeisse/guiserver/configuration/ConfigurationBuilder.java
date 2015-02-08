@@ -17,13 +17,13 @@ import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentConfigurationList;
-import name.martingeisse.guiserver.configuration.content.parser.ContentStreams;
 import name.martingeisse.guiserver.configuration.content.parser.RootContentParser;
 import name.martingeisse.guiserver.configuration.elements.ConfigurationElement;
 import name.martingeisse.guiserver.configuration.elements.ConfigurationElementContent;
 import name.martingeisse.guiserver.configuration.elements.FormUrlConfiguration;
 import name.martingeisse.guiserver.configuration.elements.PageConfiguration;
 import name.martingeisse.guiserver.configuration.elements.PanelConfiguration;
+import name.martingeisse.guiserver.xml.ContentStreams;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -110,10 +110,9 @@ final class ConfigurationBuilder {
 			ImmutableList<ComponentConfiguration> components;
 			try (FileInputStream fileInputStream = new FileInputStream(file)) {
 				ContentStreams streams = new ContentStreams(fileInputStream, snippets);
-				RootContentParser parser = new RootContentParser(streams);
-				parser.parseRootContent();
-				wicketMarkup = parser.getStreams().getMarkup();
-				components = parser.getStreams().finishRootComponentAccumulator();
+				RootContentParser.ROOT_PARSER_INSTANCE.parseRootContent(streams);
+				wicketMarkup = streams.getMarkup();
+				components = streams.finishRootComponentAccumulator();
 			} catch (XMLStreamException e) {
 				throw new RuntimeException(e);
 			}

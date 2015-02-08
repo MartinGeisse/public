@@ -9,6 +9,7 @@ import name.martingeisse.common.security.LoginData;
 import name.martingeisse.common.security.authentication.IAuthenticationStrategy;
 import name.martingeisse.common.security.authorization.IAuthorizationStrategy;
 import name.martingeisse.wicket.application.MyWicketSession;
+
 import org.apache.log4j.Logger;
 
 /**

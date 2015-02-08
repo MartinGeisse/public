@@ -7,6 +7,9 @@ package name.martingeisse.guiserver.configuration.content;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel;
+import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel.AbstractTabInfo;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -16,9 +19,6 @@ import org.apache.wicket.markup.html.panel.IMarkupSourcingStrategy;
 import org.apache.wicket.markup.html.panel.PanelMarkupSourcingStrategy;
 
 import com.google.common.collect.ImmutableList;
-
-import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel;
-import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel.AbstractTabInfo;
 
 /**
  * Represents a tab panel.
