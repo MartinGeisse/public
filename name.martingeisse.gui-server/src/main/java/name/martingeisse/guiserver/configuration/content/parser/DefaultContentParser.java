@@ -35,6 +35,18 @@ public class DefaultContentParser extends MixedNestedMarkupParser<ComponentConfi
 	 */
 	public static final DefaultContentParser INSTANCE = new DefaultContentParser();
 	
+	/**
+	 * Constructor.
+	 */
+	public DefaultContentParser() {
+		addSpecialElementParser("enclosure", new AbstractContainerElementParser("enclosure", "div") {
+			@Override
+			protected ComponentConfiguration createContainerConfiguration(String componentId, ImmutableList<ComponentConfiguration> children) throws XMLStreamException {
+				return new EnclosureConfiguration(componentId, children);
+			}
+		});
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.xml.MixedNestedMarkupParser#handleSpecialElement(name.martingeisse.guiserver.xml.ContentStreams)
 	 */
@@ -207,17 +219,6 @@ public class DefaultContentParser extends MixedNestedMarkupParser<ComponentConfi
 			break;
 		}
 		
-		case "enclosure": {
-			String componentId = ("enclosure" + streams.getComponentAccumulatorSize());
-			writer.writeStartElement("div");
-			writer.writeAttribute("wicket:id", componentId);
-			reader.next();
-			streams.addComponent(new EnclosureConfiguration(componentId, parseComponentContent(streams)));
-			writer.writeEndElement();
-			reader.next();
-			break;
-		}
-
 		default:
 			throw new RuntimeException("unknown special tag: " + reader.getLocalName());
 

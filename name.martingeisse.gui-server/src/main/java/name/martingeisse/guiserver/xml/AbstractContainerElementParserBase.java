@@ -79,7 +79,7 @@ public abstract class AbstractContainerElementParserBase<C> implements IElementP
 		ImmutableList<C> children = streams.finishComponentAccumulator();
 		
 		// build the container
-		streams.addComponent(createContainerConfiguration(children));
+		streams.addComponent(createContainerConfiguration(componentId, children));
 		
 		// finish the component element
 		streams.getWriter().writeEndElement();
@@ -99,7 +99,7 @@ public abstract class AbstractContainerElementParserBase<C> implements IElementP
 	protected void writeOpeningTag(ContentStreams<C> streams, String componentId) throws XMLStreamException {
 		XMLStreamWriter writer = streams.getWriter();
 		writer.writeStartElement(getOutputElementName());
-		writer.writeAttribute("wicket:id", getComponentIdPrefix());
+		writer.writeAttribute("wicket:id", componentId);
 	}
 	
 	/**
@@ -114,10 +114,11 @@ public abstract class AbstractContainerElementParserBase<C> implements IElementP
 	/**
 	 * Creates the configuration for the resulting container.
 	 * 
+	 * @param componentId the wicket id of the container component
 	 * @param children the configuration for the container's children
 	 * @return the container configuration
 	 * @throws XMLStreamException on XML processing errors
 	 */
-	protected abstract C createContainerConfiguration(ImmutableList<C> children) throws XMLStreamException;
+	protected abstract C createContainerConfiguration(String componentId, ImmutableList<C> children) throws XMLStreamException;
 	
 }
