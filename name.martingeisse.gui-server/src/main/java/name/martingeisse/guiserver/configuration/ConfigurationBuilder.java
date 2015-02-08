@@ -17,6 +17,7 @@ import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentConfigurationList;
+import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.configuration.content.parser.RootContentParser;
 import name.martingeisse.guiserver.configuration.elements.ConfigurationElement;
 import name.martingeisse.guiserver.configuration.elements.ConfigurationElementContent;
@@ -46,9 +47,9 @@ final class ConfigurationBuilder {
 	private final Stack<String> pathSegments = new Stack<>();
 	
 	/**
-	 * the snippetHandles
+	 * the snippets
 	 */
-	private final List<Object> snippets = new ArrayList<>();
+	private final List<IConfigurationSnippet> snippets = new ArrayList<>();
 
 	/**
 	 * Builds the configuration using the files in the specified root folder and its subfolders.
@@ -75,10 +76,10 @@ final class ConfigurationBuilder {
 	}
 
 	/**
-	 * Getter method for the snippetHandles.
-	 * @return the snippetHandles
+	 * Getter method for the snippets.
+	 * @return the snippetss
 	 */
-	public List<Object> getSnippets() {
+	public List<IConfigurationSnippet> getSnippets() {
 		return ImmutableList.copyOf(snippets);
 	}
 	

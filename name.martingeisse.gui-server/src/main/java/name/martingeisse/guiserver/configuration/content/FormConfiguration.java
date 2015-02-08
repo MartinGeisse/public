@@ -28,7 +28,7 @@ import com.google.common.collect.ImmutableList;
  * reflected in other components that pull values from the
  * same models.
  */
-public final class FormConfiguration extends AbstractContainerConfiguration {
+public final class FormConfiguration extends AbstractContainerConfiguration implements IConfigurationSnippet {
 
 	/**
 	 * the backendUrl
@@ -36,9 +36,9 @@ public final class FormConfiguration extends AbstractContainerConfiguration {
 	private final String backendUrl;
 
 	/**
-	 * the configurationHandle
+	 * the snippetHandle
 	 */
-	private int configurationHandle;
+	private int snippetHandle;
 
 	/**
 	 * Constructor.
@@ -70,20 +70,20 @@ public final class FormConfiguration extends AbstractContainerConfiguration {
 		return backendUrl;
 	}
 
-	/**
-	 * Getter method for the configurationHandle.
-	 * @return the configurationHandle
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configuration.content.IConfigurationSnippet#setSnippetHandle(int)
 	 */
-	public int getConfigurationHandle() {
-		return configurationHandle;
+	@Override
+	public void setSnippetHandle(int handle) {
+		this.snippetHandle = handle;
 	}
-
+	
 	/**
-	 * Setter method for the configurationHandle.
-	 * @param configurationHandle the configurationHandle to set
+	 * Getter method for the snippetHandle.
+	 * @return the snippetHandle
 	 */
-	public void setConfigurationHandle(int configurationHandle) {
-		this.configurationHandle = configurationHandle;
+	public int getSnippetHandle() {
+		return snippetHandle;
 	}
 
 	/* (non-Javadoc)

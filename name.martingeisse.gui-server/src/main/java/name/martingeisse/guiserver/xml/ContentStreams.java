@@ -17,6 +17,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
+
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -51,7 +53,7 @@ public final class ContentStreams<C> {
 	/**
 	 * the snippets
 	 */
-	private final List<Object> snippets;
+	private final List<IConfigurationSnippet> snippets;
 
 	/**
 	 * the componentAccumulatorStack
@@ -69,7 +71,7 @@ public final class ContentStreams<C> {
 	 * @param snippets the global list that collects configuration snippets
 	 * @throws XMLStreamException on XML processing errors
 	 */
-	public ContentStreams(InputStream inputStream, List<Object> snippets) throws XMLStreamException {
+	public ContentStreams(InputStream inputStream, List<IConfigurationSnippet> snippets) throws XMLStreamException {
 		this.reader = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
 		this.stringWriter = new StringWriter();
 		this.writer = XMLOutputFactory.newInstance().createXMLStreamWriter(stringWriter);
@@ -289,7 +291,7 @@ public final class ContentStreams<C> {
 
 	/**
 	 * Skips content until a closing tag is encountered to which the start tag has already
-	 * been handled, i.e. this method only skips a snippet of properly nested content.
+	 * been handled, i.e. this method only skips a piece of properly nested content.
 	 * 
 	 * Any special elements in the skipped content trigger an error.
 	 * 
@@ -301,7 +303,7 @@ public final class ContentStreams<C> {
 
 	/**
 	 * Skips content until a closing tag is encountered to which the start tag has already
-	 * been handled, i.e. this method only skips a snippet of properly nested content.
+	 * been handled, i.e. this method only skips a piece of properly nested content.
 	 * 
 	 * If any special elements are found while skipping, the allowSpecialElements parameter
 	 * decides whether those are allowed and skipped, or if they should trigger an error.
@@ -380,7 +382,7 @@ public final class ContentStreams<C> {
 	 * @param snippet the snippet to add
 	 * @return the handle
 	 */
-	public int addSnippet(Object snippet) {
+	public int addSnippet(IConfigurationSnippet snippet) {
 		int handle = snippets.size();
 		snippets.add(snippet);
 		return handle;

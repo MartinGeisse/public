@@ -11,6 +11,7 @@ import java.util.Map;
 
 import name.martingeisse.guiserver.application.ServerConfiguration;
 import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
+import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.configuration.elements.ConfigurationElement;
 
 /**
@@ -48,7 +49,7 @@ public final class Configuration {
 	/**
 	 * the snippets
 	 */
-	private final List<Object> snippets;
+	private final List<IConfigurationSnippet> snippets;
 	
 	/**
 	 * Constructor.
@@ -111,7 +112,7 @@ public final class Configuration {
 	 * @param handle the snippet handle
 	 * @return the snippet
 	 */
-	public Object getSnippet(int handle) {
+	public IConfigurationSnippet getSnippet(int handle) {
 		return snippets.get(handle);
 	}
 	

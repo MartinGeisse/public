@@ -7,6 +7,8 @@ package name.martingeisse.guiserver.xml;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.primitives.Primitives;
 
 /**
@@ -56,7 +58,7 @@ public final class XmlReflectionUtil {
 			}
 			
 		}
-		throw new RuntimeException("no viable constructor found for class: " + theClass);
+		throw new RuntimeException("no suitable constructor found for class: " + theClass + " and arguments " + StringUtils.join(arguments, ", ") + ". found constructors: [" + StringUtils.join(theClass.getConstructors(), ", ") + "]");
 	}
 	
 }

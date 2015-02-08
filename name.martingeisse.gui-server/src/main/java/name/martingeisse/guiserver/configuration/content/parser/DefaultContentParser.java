@@ -19,9 +19,11 @@ import name.martingeisse.guiserver.configuration.content.NavigationBarConfigurat
 import name.martingeisse.guiserver.configuration.content.TabPanelConfiguration;
 import name.martingeisse.guiserver.configuration.content.TabPanelConfiguration.TabEntry;
 import name.martingeisse.guiserver.configuration.content.TextFieldConfiguration;
+import name.martingeisse.guiserver.xml.AbstractReplacingMacroElementParser;
 import name.martingeisse.guiserver.xml.ContentStreams;
 import name.martingeisse.guiserver.xml.MixedNestedMarkupParser;
 import name.martingeisse.guiserver.xml.attribute.AttributeSpecification;
+import name.martingeisse.guiserver.xml.attribute.BooleanAttributeParser;
 import name.martingeisse.guiserver.xml.attribute.TextAttributeParser;
 import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel;
 
@@ -41,9 +43,36 @@ public class DefaultContentParser extends MixedNestedMarkupParser<ComponentConfi
 	 * Constructor.
 	 */
 	public DefaultContentParser() {
-		addSpecialElementParser("enclosure", new ContainerElementParser("enclosure", "div", EnclosureConfiguration.class));
-		addSpecialElementParser("link", new ContainerElementParser("link", "a", LinkConfiguration.class,
-			new AttributeSpecification("href", TextAttributeParser.INSTANCE)));
+		addSpecialElementParser("enclosure",
+			new ContainerElementParser("enclosure", "div", EnclosureConfiguration.class));
+		addSpecialElementParser("lazy",
+			new ContainerElementParser("lazy", "div", LazyLoadContainerConfiguration.class));
+		addSpecialElementParser("link",
+			new ContainerElementParser("link", "a", LinkConfiguration.class,
+				new AttributeSpecification("href", TextAttributeParser.INSTANCE)));
+		addSpecialElementParser("includeBackend",
+			new SkippedContentComponentElementParser("include", "wicket:container", IncludeBackendConfiguration.class,
+				new AttributeSpecification("url", TextAttributeParser.INSTANCE),
+				new AttributeSpecification("escape", true, true, BooleanAttributeParser.INSTANCE)));
+		addSpecialElementParser("form",
+			new ContainerElementParser("form", "form", FormConfiguration.class,
+				new AttributeSpecification("backendUrl", TextAttributeParser.INSTANCE)));
+		addSpecialElementParser("textField",
+			new SkippedContentComponentElementParser("field", "input", TextFieldConfiguration.class,
+				new AttributeSpecification("name", TextAttributeParser.INSTANCE),
+				new AttributeSpecification("required", true, true, BooleanAttributeParser.INSTANCE)));
+		addSpecialElementParser("validation",
+			new SkippedContentComponentElementParser("validation", "div", FieldPathFeedbackPanelConfiguration.class,
+				new AttributeSpecification("name", TextAttributeParser.INSTANCE)));
+		addSpecialElementParser("submit",
+			new AbstractReplacingMacroElementParser<ComponentConfiguration>() {
+				@Override
+				protected void writeMarkup(ContentStreams<ComponentConfiguration> streams, Object[] attributeValues) throws XMLStreamException {
+					streams.getWriter().writeEmptyElement("input");
+					streams.getWriter().writeAttribute("type", "submit");
+				}
+			}
+		);
 	}
 	
 	/* (non-Javadoc)
@@ -87,32 +116,7 @@ public class DefaultContentParser extends MixedNestedMarkupParser<ComponentConfi
 			reader.next();
 			break;
 		}
-		
-		case "includeBackend": {
-			String url = streams.getMandatoryAttribute("url");
-			String escapeSpec = streams.getOptionalAttribute("escape");
-			boolean escape = (escapeSpec == null ? true : Boolean.valueOf(escapeSpec));
-			String componentId = ("include" + streams.getComponentAccumulatorSize());
-			streams.next();
-			streams.skipNestedContent();
-			streams.next();
-			writer.writeEmptyElement("wicket:container");
-			writer.writeAttribute("wicket:id", componentId);
-			streams.addComponent(new IncludeBackendConfiguration(componentId, url, escape));
-			break;
-		}
-
-		case "lazy": {
-			String componentId = ("lazy" + streams.getComponentAccumulatorSize());
-			writer.writeStartElement("div");
-			writer.writeAttribute("wicket:id", componentId);
-			streams.next();
-			streams.addComponent(new LazyLoadContainerConfiguration(componentId, parseComponentContent(streams)));
-			streams.next();
-			writer.writeEndElement();
-			break;
-		}
-		
+				
 		case "tabPanel": {
 			
 			// build the tab panel component configuration
@@ -157,54 +161,7 @@ public class DefaultContentParser extends MixedNestedMarkupParser<ComponentConfi
 			break;
 			
 		}
-		
-		case "form": {
-			String componentId = ("form" + streams.getComponentAccumulatorSize());
-			String backendUrl = streams.getMandatoryAttribute("backendUrl");
-			writer.writeStartElement("form");
-			writer.writeAttribute("wicket:id", componentId);
-			reader.next();
-			FormConfiguration formConfiguration = new FormConfiguration(componentId, parseComponentContent(streams), backendUrl);
-			formConfiguration.setConfigurationHandle(streams.addSnippet(formConfiguration));
-			streams.addComponent(formConfiguration);
-			writer.writeEndElement();
-			reader.next();
-			break;
-		}
-		
-		case "textField": {
-			String componentId = ("field" + streams.getComponentAccumulatorSize());
-			String fieldName = streams.getMandatoryAttribute("name");
-			String requiredText = streams.getOptionalAttribute("required");
-			boolean required = (requiredText == null ? true : !requiredText.equals("false"));
-			writer.writeEmptyElement("input");
-			writer.writeAttribute("wicket:id", componentId);
-			streams.expectAndSkipEmptyElement();
-			streams.addComponent(new TextFieldConfiguration(componentId, fieldName, required));
-			break;
-		}
-		
-		case "submit": {
-			reader.next();
-			writer.writeStartElement("input");
-			writer.writeAttribute("type", "submit");
-			streams.skipNestedContent();
-			reader.next();
-			writer.writeEndElement();
-			break;
-		}
-		
-		case "validation": {
-			String componentId = ("validation" + streams.getComponentAccumulatorSize());
-			String fieldPath = streams.getMandatoryAttribute("name");
-			reader.next();
-			writer.writeEmptyElement("div");
-			writer.writeAttribute("wicket:id", componentId);
-			streams.skipNestedContent();
-			reader.next();
-			streams.addComponent(new FieldPathFeedbackPanelConfiguration(componentId, fieldPath));
-			break;
-		}
+
 		
 		default:
 			throw new RuntimeException("unknown special tag: " + reader.getLocalName());

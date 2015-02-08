@@ -43,7 +43,7 @@ public final class ConfigurationDefinedForm extends Form<Map<String, Object>> {
 	 */
 	public ConfigurationDefinedForm(String id, FormConfiguration formConfiguration, IModel<Map<String, Object>> model) {
 		super(id, model);
-		this.formConfigurationHandle = formConfiguration.getConfigurationHandle();
+		this.formConfigurationHandle = formConfiguration.getSnippetHandle();
 		this.cachedFormConfiguration = formConfiguration;
 	}
 

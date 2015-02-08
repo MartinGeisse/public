@@ -10,19 +10,18 @@ import javax.xml.stream.XMLStreamWriter;
 
 import name.martingeisse.guiserver.xml.attribute.AttributeSpecification;
 
-import com.google.common.collect.ImmutableList;
-
 /**
- * Parses a special element that corresponds to a container configuration.
- * Parses the contents of the element to recognize components to add to
- * the container.
+ * Parses a special element for a component, skipping its contents in the input.
+ * 
+ * This base class also produces an empty output element. Subclasses may override
+ * this behavior.
  * 
  * Certain functionality is missing from this base class to make the XML
  * parsing package self-contained.
  *
  * @param <C> the component type
  */
-public abstract class AbstractContainerElementParserBase<C> implements IElementParser<C> {
+public abstract class AbstractSkippedContentComponentElementParserBase<C> implements IElementParser<C> {
 
 	/**
 	 * the componentIdPrefix
@@ -45,7 +44,7 @@ public abstract class AbstractContainerElementParserBase<C> implements IElementP
 	 * @param outputElementName the element name to write to the output for the component
 	 * @param attributes the attributes, in the order they should be passed to component construction
 	 */
-	public AbstractContainerElementParserBase(String componentIdPrefix, String outputElementName, AttributeSpecification... attributes) {
+	public AbstractSkippedContentComponentElementParserBase(String componentIdPrefix, String outputElementName, AttributeSpecification... attributes) {
 		this.componentIdPrefix = componentIdPrefix;
 		this.outputElementName = outputElementName;
 		this.attributes = attributes;
@@ -74,7 +73,7 @@ public abstract class AbstractContainerElementParserBase<C> implements IElementP
 	public void parse(ContentStreams<C> streams) throws XMLStreamException {
 		XMLStreamReader reader = streams.getReader();
 
-		// read and skip over the opening input tag
+		// read and skip over the element
 		Object[] attributeValues = new Object[reader.getAttributeCount()];
 		for (int i=0; i<reader.getAttributeCount(); i++) {
 			if (reader.getAttributeNamespace(i) != null) {
@@ -83,60 +82,46 @@ public abstract class AbstractContainerElementParserBase<C> implements IElementP
 			attributeValues[i] = attributes[i].parse(reader);
 		}
 		reader.next();
-
-		// write the opening wicket tag for the container
-		String componentId = (getComponentIdPrefix() + streams.getComponentAccumulatorSize());
-		writeOpeningTag(streams, componentId);
-
-		// parse the container contents
-		streams.beginComponentAccumulator();
-		parseContainerContents(streams);
-		ImmutableList<C> children = streams.finishComponentAccumulator();
-		
-		// build the container
-		streams.addComponent(createContainerConfiguration(streams, componentId, children, attributeValues));
-		
-		// finish the component element
-		streams.getWriter().writeEndElement();
+		streams.skipNestedContent();
 		reader.next();
+
+		// build the component
+		String componentId = (getComponentIdPrefix() + streams.getComponentAccumulatorSize());
+		createComponentConfiguration(streams, componentId, attributeValues);
+		
+		// write the output eleent
+		writeElement(streams, componentId);
 		
 	}
 
 	/**
-	 * Writes the opening tag to the output.
+	 * Writes the output element.
 	 * 
-	 * To add some attributes to that tag, just override, call super and then call
+	 * To add some attributes to that tag, just override, call super and then and call
 	 * writer.writeAttribute() at the end.
+	 * 
+	 * To override the output with something completely different, override this method
+	 * and don't call super. 
 	 * 
 	 * @param streams the content streams
 	 * @param componentId the component ID
 	 * @throws XMLStreamException on XML processing errors
 	 */
-	protected void writeOpeningTag(ContentStreams<C> streams, String componentId) throws XMLStreamException {
+	protected void writeElement(ContentStreams<C> streams, String componentId) throws XMLStreamException {
 		XMLStreamWriter writer = streams.getWriter();
-		writer.writeStartElement(getOutputElementName());
+		writer.writeEmptyElement(getOutputElementName());
 		writer.writeAttribute("wicket:id", componentId);
 	}
 	
 	/**
-	 * Parses the container contents, writing markup and generating components
-	 * using the provided streams object.
+	 * Creates the configuration for the resulting component.
 	 * 
 	 * @param streams the content streams
-	 * @throws XMLStreamException on XML processing errors
-	 */
-	protected abstract void parseContainerContents(ContentStreams<C> streams) throws XMLStreamException;
-
-	/**
-	 * Creates the configuration for the resulting container.
-	 * 
-	 * @param streams the content streams
-	 * @param componentId the wicket id of the container component
-	 * @param children the configuration for the container's children
+	 * @param componentId the wicket id of the component
 	 * @param attributeValues the parsed attribute values
-	 * @return the container configuration
+	 * @return the component configuration
 	 * @throws XMLStreamException on XML processing errors
 	 */
-	protected abstract C createContainerConfiguration(ContentStreams<C> streams, String componentId, ImmutableList<C> children, Object[] attributeValues) throws XMLStreamException;
+	protected abstract C createComponentConfiguration(ContentStreams<C> streams, String componentId, Object[] attributeValues) throws XMLStreamException;
 	
 }
