@@ -7084,3 +7084,50 @@ java.net.BindException: Address already in use
 2015-02-08 11:08:43,868 qtp1629938300-14 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
 2015-02-08 11:08:43,872 qtp1629938300-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
 2015-02-08 11:08:43,881 qtp1629938300-13 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 9
+2015-02-08 12:00:25,910 main name.martingeisse.guiserver.Main INFO: ----- starting frontend with config file: test.properties -----
+2015-02-08 12:00:26,014 Thread-0 org.eclipse.jetty.util.log INFO: Logging initialized @307ms
+2015-02-08 12:00:26,104 Thread-0 org.eclipse.jetty.server.Server INFO: jetty-9.2.3.v20140905
+2015-02-08 12:00:26,364 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-b62b6ac] init: Wicket core library initializer
+2015-02-08 12:00:26,367 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IBehaviorListener, method=public abstract void org.apache.wicket.behavior.IBehaviorListener.onRequest()]
+2015-02-08 12:00:26,368 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IFormSubmitListener, method=public abstract void org.apache.wicket.markup.html.form.IFormSubmitListener.onFormSubmitted()]
+2015-02-08 12:00:26,368 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=ILinkListener, method=public abstract void org.apache.wicket.markup.html.link.ILinkListener.onLinkClicked()]
+2015-02-08 12:00:26,369 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IOnChangeListener, method=public abstract void org.apache.wicket.markup.html.form.IOnChangeListener.onSelectionChanged()]
+2015-02-08 12:00:26,369 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IRedirectListener, method=public abstract void org.apache.wicket.IRedirectListener.onRedirect()]
+2015-02-08 12:00:26,369 Thread-0 org.apache.wicket.RequestListenerInterface INFO: registered listener interface [RequestListenerInterface name=IResourceListener, method=public abstract void org.apache.wicket.IResourceListener.onResourceRequested()]
+2015-02-08 12:00:26,369 Thread-0 org.apache.wicket.Application INFO: [org.apache.wicket.protocol.http.WicketFilter-b62b6ac] init: Wicket extensions initializer
+2015-02-08 12:00:26,488 Thread-0 org.apache.wicket.protocol.http.WebApplication INFO: [org.apache.wicket.protocol.http.WicketFilter-b62b6ac] Started Wicket version 6.15.0 in DEVELOPMENT mode
+2015-02-08 12:00:26,491 Thread-0 org.eclipse.jetty.server.handler.ContextHandler INFO: Started o.e.j.s.ServletContextHandler@733832b1{/,null,AVAILABLE}
+2015-02-08 12:00:26,523 Thread-0 org.eclipse.jetty.server.ServerConnector INFO: Started ServerConnector@3ef993aa{HTTP/1.1}{0.0.0.0:8080}
+2015-02-08 12:00:26,523 Thread-0 org.eclipse.jetty.server.Server INFO: Started @839ms
+2015-02-08 12:00:30,104 qtp1629938300-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-08 12:00:30,286 qtp1629938300-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 182
+2015-02-08 12:00:30,353 qtp1629938300-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-08 12:00:30,356 qtp1629938300-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-08 12:00:30,371 qtp1629938300-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 18
+2015-02-08 12:00:30,372 qtp1629938300-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 16
+2015-02-08 12:00:31,486 qtp1629938300-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-08 12:00:31,840 qtp1629938300-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 354
+2015-02-08 12:00:31,848 qtp1629938300-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-08 12:00:31,854 qtp1629938300-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 6
+2015-02-08 12:00:31,971 qtp1629938300-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-08 12:00:37,015 qtp1629938300-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 5044
+2015-02-08 12:00:39,345 qtp1629938300-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-08 12:00:39,366 qtp1629938300-16 org.apache.wicket.markup.html.form.AbstractTextComponent WARN: Couldn't resolve model type of Model:classname=[name.martingeisse.guiserver.gui.InheritedFormDataModel]:nestedModel=[Model:classname=[name.martingeisse.guiserver.gui.FormDataModel]] for [TextField [Component id = field1]], please set the type yourself.
+2015-02-08 12:00:39,386 qtp1629938300-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 41
+2015-02-08 12:00:39,390 qtp1629938300-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-08 12:00:39,391 qtp1629938300-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 1
+2015-02-08 12:00:41,201 qtp1629938300-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-08 12:00:41,225 qtp1629938300-18 org.apache.wicket.resource.PropertiesFactory INFO: Loading properties files from file:/Users/geisse/git-repos/public/name.martingeisse.gui-server/target/classes/name/martingeisse/guiserver/gui/ConfigurationDefinedPage.properties with loader org.apache.wicket.resource.IsoPropertiesFilePropertiesLoader@188333bb
+2015-02-08 12:00:41,382 qtp1629938300-18 org.apache.wicket.resource.PropertiesFactory INFO: Loading properties files from jar:file:/Users/geisse/.m2/repository/org/apache/wicket/wicket-core/6.15.0/wicket-core-6.15.0.jar!/org/apache/wicket/Application.properties with loader org.apache.wicket.resource.IsoPropertiesFilePropertiesLoader@188333bb
+2015-02-08 12:00:41,402 qtp1629938300-18 org.apache.wicket.resource.PropertiesFactory INFO: Loading properties files from jar:file:/Users/geisse/.m2/repository/org/apache/wicket/wicket-extensions/6.15.0/wicket-extensions-6.15.0.jar!/org/apache/wicket/extensions/Initializer.properties with loader org.apache.wicket.resource.IsoPropertiesFilePropertiesLoader@188333bb
+2015-02-08 12:00:41,429 qtp1629938300-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 228
+2015-02-08 12:00:41,433 qtp1629938300-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-08 12:00:41,435 qtp1629938300-19 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 2
+2015-02-08 12:00:43,762 qtp1629938300-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-08 12:00:43,786 qtp1629938300-15 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 24
+2015-02-08 12:00:43,790 qtp1629938300-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-08 12:00:43,791 qtp1629938300-16 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 1
+2015-02-08 12:00:45,724 qtp1629938300-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-08 12:00:45,731 qtp1629938300-17 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 7
+2015-02-08 12:00:45,737 qtp1629938300-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter start
+2015-02-08 12:00:45,741 qtp1629938300-18 name.martingeisse.jetty.TimingFilter INFO: TimingFilter end, time = 4

@@ -8,6 +8,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import name.martingeisse.guiserver.xml.attribute.AttributeSpecification;
+
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -31,15 +33,22 @@ public abstract class AbstractContainerElementParserBase<C> implements IElementP
 	 * the outputElementName
 	 */
 	private final String outputElementName;
+	
+	/**
+	 * the attributes
+	 */
+	private final AttributeSpecification[] attributes;
 
 	/**
 	 * Constructor.
 	 * @param componentIdPrefix the prefix to use for the component ID
 	 * @param outputElementName the element name to write to the output for the component
+	 * @param attributes the attributes, in the order they should be passed to component construction
 	 */
-	public AbstractContainerElementParserBase(String componentIdPrefix, String outputElementName) {
+	public AbstractContainerElementParserBase(String componentIdPrefix, String outputElementName, AttributeSpecification... attributes) {
 		this.componentIdPrefix = componentIdPrefix;
 		this.outputElementName = outputElementName;
+		this.attributes = attributes;
 	}
 
 	/**
@@ -66,7 +75,13 @@ public abstract class AbstractContainerElementParserBase<C> implements IElementP
 		XMLStreamReader reader = streams.getReader();
 
 		// read and skip over the opening input tag
-		// TODO extract important attributes
+		Object[] attributeValues = new Object[reader.getAttributeCount()];
+		for (int i=0; i<reader.getAttributeCount(); i++) {
+			if (reader.getAttributeNamespace(i) != null) {
+				throw new RuntimeException("cannot handle attribute with namespace");
+			}
+			attributeValues[i] = attributes[i].parse(reader);
+		}
 		reader.next();
 
 		// write the opening wicket tag for the container
@@ -79,7 +94,7 @@ public abstract class AbstractContainerElementParserBase<C> implements IElementP
 		ImmutableList<C> children = streams.finishComponentAccumulator();
 		
 		// build the container
-		streams.addComponent(createContainerConfiguration(componentId, children));
+		streams.addComponent(createContainerConfiguration(componentId, children, attributeValues));
 		
 		// finish the component element
 		streams.getWriter().writeEndElement();
@@ -116,9 +131,10 @@ public abstract class AbstractContainerElementParserBase<C> implements IElementP
 	 * 
 	 * @param componentId the wicket id of the container component
 	 * @param children the configuration for the container's children
+	 * @param attributeValues the parsed attribute values
 	 * @return the container configuration
 	 * @throws XMLStreamException on XML processing errors
 	 */
-	protected abstract C createContainerConfiguration(String componentId, ImmutableList<C> children) throws XMLStreamException;
+	protected abstract C createContainerConfiguration(String componentId, ImmutableList<C> children, Object[] attributeValues) throws XMLStreamException;
 	
 }

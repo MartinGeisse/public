@@ -39,12 +39,7 @@ public class DefaultContentParser extends MixedNestedMarkupParser<ComponentConfi
 	 * Constructor.
 	 */
 	public DefaultContentParser() {
-		addSpecialElementParser("enclosure", new AbstractContainerElementParser("enclosure", "div") {
-			@Override
-			protected ComponentConfiguration createContainerConfiguration(String componentId, ImmutableList<ComponentConfiguration> children) throws XMLStreamException {
-				return new EnclosureConfiguration(componentId, children);
-			}
-		});
+		addSpecialElementParser("enclosure", new ContainerElementParser("enclosure", "div", EnclosureConfiguration.class));
 	}
 	
 	/* (non-Javadoc)

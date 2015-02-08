@@ -109,7 +109,7 @@ final class ConfigurationBuilder {
 			String wicketMarkup;
 			ImmutableList<ComponentConfiguration> components;
 			try (FileInputStream fileInputStream = new FileInputStream(file)) {
-				ContentStreams streams = new ContentStreams(fileInputStream, snippets);
+				ContentStreams<ComponentConfiguration> streams = new ContentStreams<ComponentConfiguration>(fileInputStream, snippets);
 				RootContentParser.ROOT_PARSER_INSTANCE.parseRootContent(streams);
 				wicketMarkup = streams.getMarkup();
 				components = streams.finishRootComponentAccumulator();
