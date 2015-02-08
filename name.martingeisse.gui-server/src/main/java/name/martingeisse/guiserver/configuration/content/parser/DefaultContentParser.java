@@ -21,6 +21,8 @@ import name.martingeisse.guiserver.configuration.content.TabPanelConfiguration.T
 import name.martingeisse.guiserver.configuration.content.TextFieldConfiguration;
 import name.martingeisse.guiserver.xml.ContentStreams;
 import name.martingeisse.guiserver.xml.MixedNestedMarkupParser;
+import name.martingeisse.guiserver.xml.attribute.AttributeSpecification;
+import name.martingeisse.guiserver.xml.attribute.TextAttributeParser;
 import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel;
 
 import com.google.common.collect.ImmutableList;
@@ -40,6 +42,8 @@ public class DefaultContentParser extends MixedNestedMarkupParser<ComponentConfi
 	 */
 	public DefaultContentParser() {
 		addSpecialElementParser("enclosure", new ContainerElementParser("enclosure", "div", EnclosureConfiguration.class));
+		addSpecialElementParser("link", new ContainerElementParser("link", "a", LinkConfiguration.class,
+			new AttributeSpecification("href", TextAttributeParser.INSTANCE)));
 	}
 	
 	/* (non-Javadoc)
@@ -50,18 +54,6 @@ public class DefaultContentParser extends MixedNestedMarkupParser<ComponentConfi
 		XMLStreamWriter writer = streams.getWriter();
 		XMLStreamReader reader = streams.getReader();
 		switch (streams.getReader().getLocalName()) {
-
-		case "link": {
-			String href = streams.getMandatoryAttribute("href");
-			String componentId = ("link" + streams.getComponentAccumulatorSize());
-			writer.writeStartElement("a");
-			writer.writeAttribute("wicket:id", componentId);
-			reader.next();
-			streams.addComponent(new LinkConfiguration(componentId, parseComponentContent(streams), href));
-			writer.writeEndElement();
-			reader.next();
-			break;
-		}
 
 		case "navbar": {
 			String componentId = ("navbar" + streams.getComponentAccumulatorSize());

@@ -4,9 +4,6 @@
 
 package name.martingeisse.guiserver.configuration.content.parser;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Parameter;
-
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration;
@@ -14,10 +11,10 @@ import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentConfigurationList;
 import name.martingeisse.guiserver.xml.AbstractContainerElementParserBase;
 import name.martingeisse.guiserver.xml.ContentStreams;
+import name.martingeisse.guiserver.xml.XmlReflectionUtil;
 import name.martingeisse.guiserver.xml.attribute.AttributeSpecification;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Primitives;
 
 /**
  * This class contains the component-creation logic for AbstractContainerElementParserBase
@@ -50,52 +47,8 @@ public class ContainerElementParser extends AbstractContainerElementParserBase<C
 		Object[] arguments = new Object[2 + attributeValues.length];
 		arguments[0] = componentId;
 		arguments[1] = new ComponentConfigurationList(children);
-		constructorLoop: for (Constructor<?> constructor : containerClass.getConstructors()) {
-			
-			// check if this constructor matches the (id, children, ...) pattern at all
-			if (constructor.getParameterCount() != attributeValues.length + 2) {
-				continue;
-			}
-			Parameter[] parameters = constructor.getParameters();
-			if (!parameters[0].getType().isAssignableFrom(String.class)) {
-				continue;
-			}
-			if (!parameters[1].getType().isAssignableFrom(ComponentConfigurationList.class)) {
-				continue;
-			}
-			
-			// match the parsed attributes against the constructor parameters
-			for (int i=0; i<attributeValues.length; i++) {
-				Parameter parameter = parameters[2 + i];
-				Object argument = attributeValues[i];
-				arguments[2 + i] = argument;
-				if (parameter.getType().isPrimitive()) {
-					if (argument == null) {
-						// passing null for a primitive type
-						continue constructorLoop;
-					} else if (Primitives.wrap(parameter.getType()) != argument.getClass()) {
-						// passing some unrelated value for a primitive type
-						continue constructorLoop;
-					} // else: passing a value of the boxed type for the primitive type is ok
-				} else if (argument == null) {
-					// passing null is ok for non-primitive types
-				} else {
-					if (!parameter.getType().isAssignableFrom(argument.getClass())) {
-						// passing a value of the wrong type for this constructor
-						continue constructorLoop;
-					} // else: passing a value of the exact type or subtype is ok
-				}
-			}
-			
-			// this constructor will work for us
-			try {
-				return (AbstractContainerConfiguration)constructor.newInstance(arguments);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-			
-		}
-		throw new RuntimeException("no viable constructor found for class: " + containerClass);
+		System.arraycopy(attributeValues, 0, arguments, 2, attributeValues.length);
+		return XmlReflectionUtil.invokeSuitableConstructor(containerClass, arguments);
 	}
 
 	/* (non-Javadoc)
