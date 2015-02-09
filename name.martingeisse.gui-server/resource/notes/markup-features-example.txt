@@ -1,41 +1,4 @@
 
-<!-- Note: The "magic" should probably happen while parsing the XML files into configuration objects,
-	not when mapping the configuration objects to Wicket components. It should happen during
-	parsing because of special syntax needed, and it should happen only during parsing because there
-	is no use in having two layers with complex logic, since there is no clear guideline on
-	what logic goes where.
-	-
-	Specifically, this means that any logic that happens during the component building phase,
-	must already be contained in the configuration objects. The configuration objects only
-	present a simple "buildComponent" method.
--->
-
-<!-- the server renders a proper DOCTYPE etc. whatever is needed -->
-<!-- the configuration can define default page borders that get applied too -->
-<!-- e.g. default CSS, JS and a default layout HTML snippet -->
-<!-- this file is always XML (XHTML with special component elements) -->
-
-<!-- the file name of this would be something like /admin/customer.page.xml to recognize it's a page -->
-<!-- this way, GUI and API need not use separate folders, since for example this page and its
-	API are more closely related than this page and another page -->
-<!-- panels would use customer-name.panel.xml so the customer cannot directly open a panel -->
-<!-- the file/folder structure of the XML files is used for includes AND to represent the URLs (for simplicity) -->
-<!-- so while the backend URL for this page is /admin/customer.page.xml, its frontend URL is /admin/customer --> 
-<!-- simplicity: a page cannot take path parameters if there's a folder with the same name, otherwise there
-	would have to be special logic to determine which one the client means -->
-<!-- the form on this page specifies the backend action /admin/customer/sendMail.
-	POSTing the form doesn't use a specific frontend URL unless specified otherwise.
-		By default, it's a wicket component-selecting URL.
-		Page-less forms (that can be called from "everywhere" might need a new type of
-		GUI object (in addition to pages and panels) since they work different and e.g.
-		validation errors cannot be shown the same way. For now, let's just ignore them. -->
-	GETing/POSTing the form with successful validation sends the data to /admin/customer/sendMail.api
-		(using the same method, might allow an override that turns GET into POST for the backend, but
-			the other way round might not work)
-		Form API responses need a defined format that specifies errors from complex validation,
-			flash messages, redirects etc. -- in fact, returning HTML content for forms probably
-			doesn't happen at all.
-
 <gui:with-models>
 
 	<!-- define the models that are valid in this context -->

@@ -3,11 +3,11 @@
 General Features
 
 [ok] tab panel (esp. lazy-loading)
-[..]tab panel: links die trotzdem relativ zur page-url sind
+[..] tab panel: links die trotzdem relativ zur page-url sind
 [ok] enclosure
-[..]popup window (lazy-loading content)
-[..]pagination
-[..]caching
+[..] popup window (lazy-loading content)
+[..] pagination
+[..] caching
 [ok] lazy-loading
 
 ------------------------------------------------------------------------------------------------
