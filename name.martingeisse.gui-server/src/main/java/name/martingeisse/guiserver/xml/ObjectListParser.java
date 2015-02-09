@@ -101,8 +101,14 @@ public abstract class ObjectListParser<C> implements INestedMarkupParser<C> {
 
 			case XMLStreamConstants.CDATA:
 			case XMLStreamConstants.CHARACTERS:
-			case XMLStreamConstants.SPACE:
 			case XMLStreamConstants.ENTITY_REFERENCE:
+				if (!StringUtils.isBlank(streams.getReader().getText())) {
+					throw new RuntimeException("found text content in object list: '" + streams.getReader().getText().trim() + "'");
+				}
+				streams.next();
+				break;
+
+			case XMLStreamConstants.SPACE:
 			case XMLStreamConstants.COMMENT:
 				streams.next();
 				break;

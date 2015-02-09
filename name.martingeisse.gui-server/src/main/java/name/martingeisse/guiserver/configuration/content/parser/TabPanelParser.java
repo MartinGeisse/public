@@ -12,7 +12,7 @@ import name.martingeisse.guiserver.configuration.content.TabPanelConfiguration;
 import name.martingeisse.guiserver.configuration.content.TabPanelConfiguration.TabEntry;
 import name.martingeisse.guiserver.xml.ContentStreams;
 import name.martingeisse.guiserver.xml.IElementParser;
-import name.martingeisse.guiserver.xml.MixedNestedMarkupParser;
+import name.martingeisse.guiserver.xml.ObjectListParser;
 import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel;
 
 import com.google.common.collect.ImmutableList;
@@ -40,16 +40,11 @@ public final class TabPanelParser implements IElementParser<ComponentConfigurati
 
 		// parse the contents, build markup fragments for them and add the TabInfo objects to the panel configuration
 		// the markup for the fragments will be inside the tab panel tags (i.e. in the part that gets replaced by the Panel code)
-		// TODO throw error on non-special-tag content
 		streams.next();
-		new MixedNestedMarkupParser<ComponentConfiguration>() {
+		new ObjectListParser<ComponentConfiguration>("tab") {
 			@Override
 			protected void handleSpecialElement(ContentStreams<ComponentConfiguration> streams) throws XMLStreamException {
-				String localName = streams.getReader().getLocalName();
 				XMLStreamWriter writer = streams.getWriter();
-				if (!localName.equals("tab")) {
-					throw new RuntimeException("invalid special tag inside a TabPanel: " + localName);
-				}
 				String selector = streams.getMandatoryAttribute("selector");
 				String tabComponentId = tabPanelComponentId + "-" + selector;
 				String title = streams.getMandatoryAttribute("title");
