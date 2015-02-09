@@ -47,4 +47,16 @@ public final class NavigationBarConfiguration extends AbstractContainerConfigura
 		return new NavigationBar(getId(), brandLink);
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configuration.content.ComponentConfiguration#accept(name.martingeisse.guiserver.configuration.content.IComponentConfigurationVisitor)
+	 */
+	@Override
+	public void accept(IComponentConfigurationVisitor visitor) {
+		if (visitor.beginVisit(this)) {
+			brandLink.accept(visitor);
+			getChildren().accept(visitor);
+			visitor.endVisit(this);
+		}
+	}
+	
 }

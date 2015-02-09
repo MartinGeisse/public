@@ -15,7 +15,7 @@ import org.apache.wicket.Component;
  * specification, i.e. between the configuration files and the
  * configuration objects.
  */
-public interface ComponentConfiguration {
+public interface ComponentConfiguration extends IComponentConfigurationVisitorAcceptor {
 	
 	/**
 	 * Builds the wicket component.

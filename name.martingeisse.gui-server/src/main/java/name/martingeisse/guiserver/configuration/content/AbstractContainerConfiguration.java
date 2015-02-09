@@ -62,4 +62,15 @@ public abstract class AbstractContainerConfiguration extends AbstractComponentCo
 	 */
 	protected abstract MarkupContainer buildContainer();
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configuration.content.ComponentConfiguration#accept(name.martingeisse.guiserver.configuration.content.IComponentConfigurationVisitor)
+	 */
+	@Override
+	public void accept(IComponentConfigurationVisitor visitor) {
+		if (visitor.beginVisit(this)) {
+			children.accept(visitor);
+			visitor.endVisit(this);
+		}
+	}
+
 }

@@ -13,6 +13,7 @@ import name.martingeisse.guiserver.configuration.content.FormConfiguration;
 import name.martingeisse.guiserver.configuration.content.IncludeBackendConfiguration;
 import name.martingeisse.guiserver.configuration.content.LazyLoadContainerConfiguration;
 import name.martingeisse.guiserver.configuration.content.LinkConfiguration;
+import name.martingeisse.guiserver.configuration.content.PieChartConfiguration;
 import name.martingeisse.guiserver.configuration.content.TextFieldConfiguration;
 import name.martingeisse.guiserver.xml.AbstractReplacingMacroElementParser;
 import name.martingeisse.guiserver.xml.ContentStreams;
@@ -20,8 +21,6 @@ import name.martingeisse.guiserver.xml.MixedNestedMarkupParser;
 import name.martingeisse.guiserver.xml.attribute.AttributeSpecification;
 import name.martingeisse.guiserver.xml.attribute.BooleanAttributeParser;
 import name.martingeisse.guiserver.xml.attribute.TextAttributeParser;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * This parser is used on top level to parse a content XML file.
@@ -69,17 +68,8 @@ public class DefaultContentParser extends MixedNestedMarkupParser<ComponentConfi
 		);
 		addSpecialElementParser("navbar", new NavigationBarParser());
 		addSpecialElementParser("tabPanel", new TabPanelParser());
-	}
-	
-	/**
-	 * Parses the content of a component. This is similar to {@link #parseNestedContent()},
-	 * except that it uses a new component accumulator for the contents and returns the
-	 * elements of that accumulator.
-	 */
-	private ImmutableList<ComponentConfiguration> parseComponentContent(ContentStreams<ComponentConfiguration> streams) throws XMLStreamException {
-		streams.beginComponentAccumulator();
-		parse(streams);
-		return streams.finishComponentAccumulator();
+		addSpecialElementParser("pieChart", new SkippedContentComponentElementParser("pie", "img", PieChartConfiguration.class,
+			new AttributeSpecification("backendUrl", TextAttributeParser.INSTANCE)));
 	}
 
 }

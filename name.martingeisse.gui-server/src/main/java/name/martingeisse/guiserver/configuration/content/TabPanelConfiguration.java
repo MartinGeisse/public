@@ -24,7 +24,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * Represents a tab panel.
  */
-public final class TabPanelConfiguration extends AbstractComponentConfiguration implements IConfigurationSnippet {
+public final class TabPanelConfiguration extends AbstractComponentConfiguration implements IConfigurationSnippet, UrlSubpathComponentConfiguration {
 
 	/**
 	 * the parameterName
@@ -40,7 +40,7 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 	 * the snippetHandle
 	 */
 	private int snippetHandle;
-	
+
 	/**
 	 * Constructor.
 	 * @param id the wicket id
@@ -59,7 +59,7 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 	public void setSnippetHandle(int handle) {
 		this.snippetHandle = handle;
 	}
-	
+
 	/**
 	 * Getter method for the snippetHandle.
 	 * @return the snippetHandle
@@ -76,7 +76,7 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 	public void addTab(TabEntry tabEntry) {
 		tabs.add(tabEntry);
 	}
-	
+
 	/**
 	 * Getter method for the tabs.
 	 * @return the tabs
@@ -97,6 +97,27 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 		}
 		tabPanelContainer.add(tabPanel);
 		return tabPanelContainer;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#accept(name.martingeisse.guiserver.configuration.content.IComponentConfigurationVisitor)
+	 */
+	@Override
+	public void accept(IComponentConfigurationVisitor visitor) {
+		if (visitor.beginVisit(this)) {
+			for (TabEntry tab : tabs) {
+				tab.accept(visitor);
+			}
+			visitor.endVisit(this);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configuration.content.UrlSubpathComponentConfiguration#getSubpathSegmentParameterNames()
+	 */
+	@Override
+	public String[] getSubpathSegmentParameterNames() {
+		return new String[] {parameterName};
 	}
 
 	/**
@@ -161,7 +182,7 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 	 * Specialized tab panel implementation.
 	 */
 	public static final class MyTabPanel extends PageParameterDrivenTabPanel {
-		
+
 		/**
 		 * the markupProvider
 		 */
@@ -171,12 +192,12 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 		 * the snippetHandle
 		 */
 		private final int snippetHandle;
-		
+
 		/**
 		 * the cachedTabPanelConfiguration
 		 */
 		private transient TabPanelConfiguration cachedTabPanelConfiguration;
-		
+
 		/**
 		 * Constructor.
 		 * @param id the wicket id
@@ -201,7 +222,7 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 			}
 			return cachedTabPanelConfiguration;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel#createBody(java.lang.String, java.lang.String)
 		 */

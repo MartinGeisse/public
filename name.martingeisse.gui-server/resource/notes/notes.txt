@@ -1,30 +1,7 @@
 
-- downloaded config files should be cached on a file-by-file basis
-	(multiple files possible using includes)
 	
 - certain components on a page may make content public using a sub-URL
 	(e.g. a non-JS, non-AJAX TabPanel). These URLs *may* be configurable,
 	and *may* be outside the containing page's URL. This depends on
 	the component. TODO auto-mounting of these URLs? For TabPanels this
 	currently uses querystring parameters
-
-- "virtual configuration": different from the specified configuration (the
-	one in the config files) by applying defaults and traits, resolving
-	syntactic shortcuts, etc. The VC is "the" configuration as seen from
-	the actual GUI system, but resolving the VC is not defined in the
-	syntax layer as it should be the same for XML, JSON, ... (only
-	syntactic shortcuts *may* be defined there -- this could be done
-	either by resolving them early, or by having the syntax layer provide
-	resolution rules to the VC layer.
-
-- I first thought that the VC layer might provide caching support to the
-	upper layers to exploit common definitions from the config files in
-	caching. However, I'm not sure about this -- it would mean to lose
-	caching just by restructuring the config file in a way that should
-	not have any effect. It's probably better to have the upper layer
-	cache on virtual properties and detect common properties *after*
-	resolution -- maybe have the VC layer provide support for *detecting*
-	common properties in a way that detects common properties even when
-	not using traits, just with the detection being a bit slower. But
-	then, this "bit slower" might be acceptable to reduce that complexity
-	altogether.	

@@ -1,0 +1,11 @@
+<gui:page xmlns:gui="http://guiserver.martingeisse.name/v1">
+	<div class="container">
+		<h1>Charts Page</h1>
+		<div>
+			Here's a pie chart:
+		</div>
+		<div>
+			<gui:pieChart backendUrl="http://localhost/geisse/demo-backend/pie-chart.php" />
+		</div>
+	</div>
+</gui:page>

@@ -3,12 +3,17 @@
 General Features
 
 [ok] tab panel (esp. lazy-loading)
+[..] tab panel: URL segment für active tab
 [..] tab panel: links die trotzdem relativ zur page-url sind
 [ok] enclosure
 [..] popup window (lazy-loading content)
 [..] pagination
 [..] caching
 [ok] lazy-loading
+[..] 1-tag: kitten-captcha als tags um einen geschützten Bereich herum + ständig variierende Captcha-Sammlung mit einfachen Rätseln
+[..] charts mit Daten aus dem Backend
+[..] 1-tag: WebMarkupContainer zum Aufklappen und Lazyload
+[..] 1-tag: WebMarkupContainer nur sichtbar wenn eingeloggt + authorisiert
 
 ------------------------------------------------------------------------------------------------
 Forms

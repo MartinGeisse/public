@@ -29,5 +29,15 @@ public abstract class AbstractComponentConfiguration implements ComponentConfigu
 	public final String getId() {
 		return id;
 	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configuration.content.ComponentConfiguration#accept(name.martingeisse.guiserver.configuration.content.IComponentConfigurationVisitor)
+	 */
+	@Override
+	public void accept(IComponentConfigurationVisitor visitor) {
+		if (visitor.beginVisit(this)) {
+			visitor.endVisit(this);
+		}
+	}
 	
 }

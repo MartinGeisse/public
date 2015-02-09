@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableList;
  * Contains the configuration for multiple components, usually for the
  * children of a {@link MarkupContainer}.
  */
-public final class ComponentConfigurationList {
+public final class ComponentConfigurationList implements IComponentConfigurationVisitorAcceptor {
 
 	/**
 	 * the configurations
@@ -44,6 +44,16 @@ public final class ComponentConfigurationList {
 	public void buildAndAddComponents(MarkupContainer parent) {
 		for (ComponentConfiguration configuration : configurations) {
 			parent.add(configuration.buildComponent());
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configuration.content.IComponentConfigurationVisitorAcceptor#accept(name.martingeisse.guiserver.configuration.content.IComponentConfigurationVisitor)
+	 */
+	@Override
+	public void accept(IComponentConfigurationVisitor visitor) {
+		for (ComponentConfiguration configuration : configurations) {
+			configuration.accept(visitor);
 		}
 	}
 	

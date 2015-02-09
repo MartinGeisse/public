@@ -31,7 +31,9 @@ public final class TabPanelParser implements IElementParser<ComponentConfigurati
 
 		// build the tab panel component configuration
 		final String tabPanelComponentId = ("tabPanel" + streams.getComponentAccumulatorSize());
-		final TabPanelConfiguration tabPanelConfiguration = new TabPanelConfiguration(tabPanelComponentId, tabPanelComponentId);
+		final String explicitParameterName = streams.getOptionalAttribute("parameter");
+		final String parameterName = (explicitParameterName == null ? tabPanelComponentId : explicitParameterName);
+		final TabPanelConfiguration tabPanelConfiguration = new TabPanelConfiguration(tabPanelComponentId, parameterName);
 		streams.addComponent(tabPanelConfiguration);
 		writer.writeStartElement("div");
 		writer.writeAttribute("wicket:id", tabPanelComponentId + "-container");

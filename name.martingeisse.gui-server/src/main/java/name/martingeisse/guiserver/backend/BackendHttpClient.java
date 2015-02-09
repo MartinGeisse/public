@@ -110,6 +110,26 @@ public final class BackendHttpClient {
 	}
 	
 	/**
+	 * Expects a JSON response and returns a {@link JsonAnalyzer} for it.
+	 * 
+	 * @return the analyzer
+	 */
+	private static JsonAnalyzer expectJsonResponse(HttpResponse response) {
+		String baseContentType = getBaseContentType(response);
+		if (!("application/json".equals(baseContentType) || "text/x-json".equals(baseContentType))) {
+			logger.error("backend didn't return JSON");
+			throw new BackendConnectionException();
+		}
+		// JSON always uses UTF-8
+		try (Reader reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8)) {
+			return JsonAnalyzer.parse(reader);
+		} catch (IOException e) {
+			logger.error("couldn't handle backend response", e);
+			throw new BackendConnectionException();
+		}
+	}
+	
+	/**
 	 * Fetches a response from the backend using a GET request.
 	 * Throws an exception on errors.
 	 * 
@@ -148,6 +168,17 @@ public final class BackendHttpClient {
 			logger.error("couldn't handle backend response", e);
 			throw new BackendConnectionException();
 		}
+	}
+	
+	/**
+	 * Fetches JSON content from the backend using a GET request.
+	 * Throws an exception on errors.
+	 * 
+	 * @param url the URL to fetch from
+	 * @return the JSON
+	 */
+	public static JsonAnalyzer getJson(String url) {
+		return expectJsonResponse(get(url));
 	}
 	
 	/**
@@ -207,19 +238,7 @@ public final class BackendHttpClient {
 	 * @return the response
 	 */
 	public static JsonAnalyzer postParametersForJson(String url, Map<String, Object> parameters) {
-		final HttpResponse response = postParametersForResponse(url, parameters);
-		String baseContentType = getBaseContentType(response);
-		if (!("application/json".equals(baseContentType) || "text/x-json".equals(baseContentType))) {
-			logger.error("backend didn't return JSON");
-			throw new BackendConnectionException();
-		}
-		// JSON always uses UTF-8
-		try (Reader reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8)) {
-			return JsonAnalyzer.parse(reader);
-		} catch (IOException e) {
-			logger.error("couldn't handle backend response", e);
-			throw new BackendConnectionException();
-		}
+		return expectJsonResponse(postParametersForResponse(url, parameters));
 	}
 	
 	/**
