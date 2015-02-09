@@ -35,20 +35,20 @@ public abstract class AbstractContainerElementParserBase<C> implements IElementP
 	private final String outputElementName;
 	
 	/**
-	 * the attributes
+	 * the attributeSpecifications
 	 */
-	private final AttributeSpecification[] attributes;
+	private final AttributeSpecification[] attributeSpecifications;
 
 	/**
 	 * Constructor.
 	 * @param componentIdPrefix the prefix to use for the component ID
 	 * @param outputElementName the element name to write to the output for the component
-	 * @param attributes the attributes, in the order they should be passed to component construction
+	 * @param attributeSpecifications the attribute specifications, in the order they should be passed to component construction
 	 */
-	public AbstractContainerElementParserBase(String componentIdPrefix, String outputElementName, AttributeSpecification... attributes) {
+	public AbstractContainerElementParserBase(String componentIdPrefix, String outputElementName, AttributeSpecification... attributeSpecifications) {
 		this.componentIdPrefix = componentIdPrefix;
 		this.outputElementName = outputElementName;
-		this.attributes = attributes;
+		this.attributeSpecifications = attributeSpecifications;
 	}
 
 	/**
@@ -75,12 +75,9 @@ public abstract class AbstractContainerElementParserBase<C> implements IElementP
 		XMLStreamReader reader = streams.getReader();
 
 		// read and skip over the opening input tag
-		Object[] attributeValues = new Object[reader.getAttributeCount()];
-		for (int i=0; i<reader.getAttributeCount(); i++) {
-			if (reader.getAttributeNamespace(i) != null) {
-				throw new RuntimeException("cannot handle attribute with namespace");
-			}
-			attributeValues[i] = attributes[i].parse(reader);
+		Object[] attributeValues = new Object[attributeSpecifications.length];
+		for (int i=0; i<attributeSpecifications.length; i++) {
+			attributeValues[i] = attributeSpecifications[i].parse(reader);
 		}
 		reader.next();
 

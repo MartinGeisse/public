@@ -23,7 +23,7 @@ public final class BooleanAttributeParser implements IAttributeParser {
 		if (value.equals("true")) {
 			return true;
 		} else if (value.equals("false")) {
-			return true;
+			return false;
 		} else {
 			throw new RuntimeException("invalid value for boolean attribute: " + value);
 		}

@@ -7,8 +7,6 @@ package name.martingeisse.guiserver.xml;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.common.primitives.Primitives;
 
 /**
@@ -58,7 +56,49 @@ public final class XmlReflectionUtil {
 			}
 			
 		}
-		throw new RuntimeException("no suitable constructor found for class: " + theClass + " and arguments " + StringUtils.join(arguments, ", ") + ". found constructors: [" + StringUtils.join(theClass.getConstructors(), ", ") + "]");
+	
+		// no constructor found, so build an error message
+		StringBuilder builder = new StringBuilder();
+		builder.append("no suitable constructor found for class: ").append(theClass.getSimpleName());
+		builder.append(" and arguments (");
+		{
+			boolean first = true;
+			for (Object argument : arguments) {
+				if (first) {
+					first = false;
+				} else {
+					builder.append(", ");
+				}
+				builder.append(argument);
+				if (argument != null) {
+					builder.append(": ").append(argument.getClass().getSimpleName());
+				}
+			}
+		}
+		builder.append("). found constructors: [");
+		{
+			boolean firstConstructor = true;
+			for (Constructor<?> constructor : theClass.getConstructors()) {
+				if (firstConstructor) {
+					firstConstructor = false;
+				} else {
+					builder.append(", ");
+				}
+				builder.append(theClass.getSimpleName()).append('(');
+				boolean firstParameter = true;
+				for (Parameter parameter : constructor.getParameters()) {
+					if (firstParameter) {
+						firstParameter = false;
+					} else {
+						builder.append(", ");
+					}
+					builder.append(parameter.getType().getSimpleName());
+				}
+				builder.append(')');
+			}
+		}
+		builder.append(']');
+		throw new RuntimeException(builder.toString());
 	}
 	
 }

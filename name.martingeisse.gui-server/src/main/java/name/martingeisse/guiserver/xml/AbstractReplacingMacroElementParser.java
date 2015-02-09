@@ -41,11 +41,8 @@ public abstract class AbstractReplacingMacroElementParser<C> implements IElement
 		XMLStreamReader reader = streams.getReader();
 
 		// read and skip over the element
-		Object[] attributeValues = new Object[reader.getAttributeCount()];
-		for (int i=0; i<reader.getAttributeCount(); i++) {
-			if (reader.getAttributeNamespace(i) != null) {
-				throw new RuntimeException("cannot handle attribute with namespace");
-			}
+		Object[] attributeValues = new Object[attributeSpecifications.length];
+		for (int i=0; i<attributeSpecifications.length; i++) {
 			attributeValues[i] = attributeSpecifications[i].parse(reader);
 		}
 		reader.next();
