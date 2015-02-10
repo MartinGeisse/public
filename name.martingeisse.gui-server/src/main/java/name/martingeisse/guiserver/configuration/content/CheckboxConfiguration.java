@@ -7,12 +7,12 @@ package name.martingeisse.guiserver.configuration.content;
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.CheckBox;
 
 /**
- * Represents a text field.
+ * Represents a checkbox.
  */
-public final class TextFieldConfiguration extends AbstractComponentConfiguration {
+public final class CheckboxConfiguration extends AbstractComponentConfiguration {
 
 	/**
 	 * the metadata
@@ -24,7 +24,7 @@ public final class TextFieldConfiguration extends AbstractComponentConfiguration
 	 * @param id the wicket ID
 	 * @param metadata the meta-data for this form field
 	 */
-	public TextFieldConfiguration(String id, FormFieldMetadata metadata) {
+	public CheckboxConfiguration(String id, FormFieldMetadata metadata) {
 		super(id);
 		this.metadata = metadata;
 	}
@@ -34,10 +34,10 @@ public final class TextFieldConfiguration extends AbstractComponentConfiguration
 	 */
 	@Override
 	public Component buildComponent() {
-		TextField<?> textField = new TextField<>(getId());
-		textField.setRequired(metadata.isRequired());
-		textField.add(new FieldPathBehavior(metadata.getName()));
-		return textField;
+		CheckBox checkbox = new CheckBox(getId());
+		checkbox.setRequired(metadata.isRequired());
+		checkbox.add(new FieldPathBehavior(metadata.getName()));
+		return checkbox;
 	}
 	
 }

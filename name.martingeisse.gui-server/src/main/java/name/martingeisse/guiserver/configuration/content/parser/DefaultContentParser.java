@@ -6,6 +6,7 @@ package name.martingeisse.guiserver.configuration.content.parser;
 
 import javax.xml.stream.XMLStreamException;
 
+import name.martingeisse.guiserver.configuration.content.CheckboxConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
 import name.martingeisse.guiserver.configuration.content.EnclosureConfiguration;
 import name.martingeisse.guiserver.configuration.content.FieldPathFeedbackPanelConfiguration;
@@ -50,12 +51,10 @@ public class DefaultContentParser extends MixedNestedMarkupParser<ComponentConfi
 		addSpecialElementParser("form",
 			new ContainerElementParser("form", "form", FormConfiguration.class,
 				new AttributeSpecification("backendUrl", TextAttributeParser.INSTANCE)));
-		addSpecialElementParser("textField",
-			new SkippedContentComponentElementParser("field", "input", TextFieldConfiguration.class,
-				new AttributeSpecification("name", TextAttributeParser.INSTANCE),
-				new AttributeSpecification("required", true, true, BooleanAttributeParser.INSTANCE)));
-		addSpecialElementParser("validation",
-			new SkippedContentComponentElementParser("validation", "div", FieldPathFeedbackPanelConfiguration.class,
+		addSpecialElementParser("textField", new FormFieldParser("text", TextFieldConfiguration.class));
+		addSpecialElementParser("checkbox", new FormFieldParser("checkbox", CheckboxConfiguration.class));
+		addSpecialElementParser("feedback",
+			new SkippedContentComponentElementParser("feedback", "div", FieldPathFeedbackPanelConfiguration.class,
 				new AttributeSpecification("name", TextAttributeParser.INSTANCE)));
 		addSpecialElementParser("submit",
 			new AbstractReplacingMacroElementParser<ComponentConfiguration>() {

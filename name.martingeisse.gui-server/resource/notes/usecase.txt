@@ -14,6 +14,8 @@ General Features
 [..] charts mit Daten aus dem Backend
 [..] 1-tag: WebMarkupContainer zum Aufklappen und Lazyload
 [..] 1-tag: WebMarkupContainer nur sichtbar wenn eingeloggt + authorisiert
+[..] OT-editor
+[..] wizards
 
 ------------------------------------------------------------------------------------------------
 Forms

@@ -9,11 +9,24 @@
 				<div>
 					<gui:enclosure>
 						<div style="color: red; background-color: #fcc; border: 1px solid #faa">
-							ERROR: <gui:validation name="foo" />
+							ERROR: <gui:feedback name="foo" />
 						</div>
 					</gui:enclosure>
-					<gui:textField name="foo" />
+					<div>
+						Name: <gui:textField name="foo" />
+					</div>
 				</div>
+				<div>
+					<gui:enclosure>
+						<div style="color: red; background-color: #fcc; border: 1px solid #faa">
+							ERROR: <gui:feedback name="bar" />
+						</div>
+					</gui:enclosure>
+					<div>
+						<gui:checkbox name="bar" /> I agree to the terms and conditions.
+					</div>
+				</div>
+				<br />
 				<div>
 					<gui:submit />
 				</div>
