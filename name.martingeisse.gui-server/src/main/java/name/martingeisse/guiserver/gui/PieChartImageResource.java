@@ -9,6 +9,8 @@ import java.awt.Rectangle;
 
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.guiserver.backend.BackendHttpClient;
+import name.martingeisse.guiserver.configuration.Configuration;
+import name.martingeisse.guiserver.configuration.content.PieChartConfiguration;
 
 import org.apache.wicket.markup.html.image.resource.RenderedDynamicImageResource;
 import org.jfree.chart.ChartFactory;
@@ -23,21 +25,38 @@ import org.jfree.util.Rotation;
 public final class PieChartImageResource extends RenderedDynamicImageResource {
 
 	/**
-	 * the backendUrl
+	 * the snippetHandle
 	 */
-	private final String backendUrl;
+	private int snippetHandle;
 
+	/**
+	 * the cachedConfiguration
+	 */
+	private transient PieChartConfiguration cachedConfiguration;
+	
 	/**
 	 * Constructor.
 	 * @param width the image width
 	 * @param height the image height
-	 * @param backendUrl the backend URL to load data from
+	 * @param configuration the configuration object
 	 */
-	public PieChartImageResource(int width, int height, String backendUrl) {
+	public PieChartImageResource(int width, int height, PieChartConfiguration configuration) {
 		super(width, height);
-		this.backendUrl = backendUrl;
+		this.snippetHandle = configuration.getSnippetHandle();
+		this.cachedConfiguration = configuration;
 	}
-
+	
+	/**
+	 * Getter method for the configuration.
+	 * @return the configuration.
+	 */
+	public final PieChartConfiguration getConfiguration() {
+		if (cachedConfiguration == null) {
+			cachedConfiguration = (PieChartConfiguration)Configuration.getInstance().getSnippet(snippetHandle);
+		}
+		return cachedConfiguration;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.markup.html.image.resource.RenderedDynamicImageResource#render(java.awt.Graphics2D, org.apache.wicket.request.resource.IResource.Attributes)
 	 */
@@ -45,7 +64,7 @@ public final class PieChartImageResource extends RenderedDynamicImageResource {
 	protected boolean render(Graphics2D graphics, Attributes attributes) {
 		
 		// fetch data from the backend
-		JsonAnalyzer response = BackendHttpClient.getJson(backendUrl);
+		JsonAnalyzer response = BackendHttpClient.getJson(getConfiguration().getBackendUrl());
 		DefaultPieDataset dataset = new DefaultPieDataset();
 		for (JsonAnalyzer segment : response.analyzeMapElement("segments").analyzeList()) {
 			String title = segment.analyzeMapElement("title").expectString();
@@ -54,7 +73,8 @@ public final class PieChartImageResource extends RenderedDynamicImageResource {
 		}
 		
 		// create the chart
-		JFreeChart chart = ChartFactory.createPieChart(null, dataset, false, false, false);
+		boolean legend = getConfiguration().isLegend();
+		JFreeChart chart = ChartFactory.createPieChart(null, dataset, legend, false, false);
 		PiePlot plot = (PiePlot)chart.getPlot();
 		plot.setStartAngle(290);
 		plot.setDirection(Rotation.CLOCKWISE);

@@ -5,7 +5,7 @@
 			Here's a pie chart:
 		</div>
 		<div>
-			<gui:pieChart backendUrl="http://localhost/geisse/demo-backend/pie-chart.php" />
+			<gui:pieChart backendUrl="http://localhost/geisse/demo-backend/pie-chart.php" legend="false" />
 		</div>
 	</div>
 </gui:page>

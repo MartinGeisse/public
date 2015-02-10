@@ -69,7 +69,8 @@ public class DefaultContentParser extends MixedNestedMarkupParser<ComponentConfi
 		addSpecialElementParser("navbar", new NavigationBarParser());
 		addSpecialElementParser("tabPanel", new TabPanelParser());
 		addSpecialElementParser("pieChart", new SkippedContentComponentElementParser("pie", "img", PieChartConfiguration.class,
-			new AttributeSpecification("backendUrl", TextAttributeParser.INSTANCE)));
+			new AttributeSpecification("backendUrl", TextAttributeParser.INSTANCE),
+			new AttributeSpecification("legend", true, false, BooleanAttributeParser.INSTANCE)));
 	}
 
 }
