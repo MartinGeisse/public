@@ -11,7 +11,7 @@ General Features
 [..] caching
 [ok] lazy-loading
 [..] 1-tag: kitten-captcha als tags um einen geschützten Bereich herum + ständig variierende Captcha-Sammlung mit einfachen Rätseln
-[..] charts mit Daten aus dem Backend; erzeugung als SVG mit JFreeSVG
+[ok] charts mit Daten aus dem Backend; erzeugung als SVG mit JFreeSVG
 [..] 1-tag: WebMarkupContainer zum Aufklappen und Lazyload
 [..] 1-tag: WebMarkupContainer nur sichtbar wenn eingeloggt + authorisiert
 [..] OT-editor

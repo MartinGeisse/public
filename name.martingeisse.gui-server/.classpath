@@ -271,4 +271,9 @@
       <attribute value="jar:file:/Users/geisse/.m2/repository/org/jfree/jcommon/1.0.23/jcommon-1.0.23-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/jfree/jfreesvg/2.1/jfreesvg-2.1.jar" sourcepath="M2_REPO/org/jfree/jfreesvg/2.1/jfreesvg-2.1-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/geisse/.m2/repository/org/jfree/jfreesvg/2.1/jfreesvg-2.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
 </classpath>

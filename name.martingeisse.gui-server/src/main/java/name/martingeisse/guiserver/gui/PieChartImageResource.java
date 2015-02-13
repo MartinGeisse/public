@@ -4,15 +4,12 @@
 
 package name.martingeisse.guiserver.gui;
 
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.guiserver.backend.BackendHttpClient;
 import name.martingeisse.guiserver.configuration.Configuration;
 import name.martingeisse.guiserver.configuration.content.PieChartConfiguration;
+import name.martingeisse.guiserver.gui.util.ChartImageResource;
 
-import org.apache.wicket.markup.html.image.resource.RenderedDynamicImageResource;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
@@ -22,7 +19,7 @@ import org.jfree.util.Rotation;
 /**
  * The image resource for a dynamically rendered pie chart.
  */
-public final class PieChartImageResource extends RenderedDynamicImageResource {
+public final class PieChartImageResource extends ChartImageResource {
 
 	/**
 	 * the snippetHandle
@@ -58,10 +55,10 @@ public final class PieChartImageResource extends RenderedDynamicImageResource {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.apache.wicket.markup.html.image.resource.RenderedDynamicImageResource#render(java.awt.Graphics2D, org.apache.wicket.request.resource.IResource.Attributes)
+	 * @see name.martingeisse.guiserver.gui.ChartImageResource#createChart(org.apache.wicket.request.resource.IResource.Attributes)
 	 */
 	@Override
-	protected boolean render(Graphics2D graphics, Attributes attributes) {
+	protected JFreeChart createChart(Attributes attributes) {
 		
 		// fetch data from the backend
 		JsonAnalyzer response = BackendHttpClient.getJson(getConfiguration().getBackendUrl());
@@ -82,10 +79,7 @@ public final class PieChartImageResource extends RenderedDynamicImageResource {
 		plot.setBackgroundPaint(null);
 		plot.setOutlineVisible(false);
 
-		// draw the chart
-		chart.draw(graphics, new Rectangle(0, 0, getWidth(), getHeight()), null, null);
-
-		return true;
+		return chart;
 	}
 
 }
