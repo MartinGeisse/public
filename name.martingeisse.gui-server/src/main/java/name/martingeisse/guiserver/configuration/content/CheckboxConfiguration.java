@@ -8,6 +8,7 @@ import name.martingeisse.guiserver.gui.FieldPathBehavior;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.validation.IValidator;
 
 /**
  * Represents a checkbox.
@@ -37,7 +38,17 @@ public final class CheckboxConfiguration extends AbstractComponentConfiguration 
 		CheckBox checkbox = new CheckBox(getId());
 		checkbox.setRequired(metadata.isRequired());
 		checkbox.add(new FieldPathBehavior(metadata.getName()));
+		for (IValidator<?> validator : metadata.getValidators()) {
+			addValidator(checkbox, validator);
+		}
 		return checkbox;
 	}
-	
+
+	@SuppressWarnings({
+		"unchecked", "rawtypes"
+	})
+	private void addValidator(CheckBox checkbox, IValidator validator) {
+		checkbox.add(validator);
+	}
+
 }

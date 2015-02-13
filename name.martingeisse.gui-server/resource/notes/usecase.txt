@@ -11,18 +11,19 @@ General Features
 [..] caching
 [ok] lazy-loading
 [..] 1-tag: kitten-captcha als tags um einen geschützten Bereich herum + ständig variierende Captcha-Sammlung mit einfachen Rätseln
-[..] charts mit Daten aus dem Backend
+[..] charts mit Daten aus dem Backend; erzeugung als SVG mit JFreeSVG
 [..] 1-tag: WebMarkupContainer zum Aufklappen und Lazyload
 [..] 1-tag: WebMarkupContainer nur sichtbar wenn eingeloggt + authorisiert
 [..] OT-editor
 [..] wizards
+[..] translations (will have to override .properties files for built-in components)
 
 ------------------------------------------------------------------------------------------------
 Forms
 
 [ok] forms mit backend processing
 [ok] required
-[..] GUI-side validation rules
+[ok] GUI-side validation rules
 [..] Bootstrap core replacement + form markup
 
 ------------------------------------------------------------------------------------------------
@@ -36,3 +37,15 @@ Man benutzt dann einfach übrerall dieses Plugin *statt* dem core, was geht, wei
 core tags vom plugin gespiegelt werden (dafür ist kein besonderer code nötig, das plugin
 definiert einfach elemente die dasselbe tun. Man bindet dann das plugin statt dem core
 unter dem prefix gui: im XML ein.
+
+------------------------------------------------------------------------------------------------
+AJAX Links
+
+Werden auch vom GUI-Server als AJAX-Links ausgegeben. Submit als Wicket/AJAX an den
+GUI-Server, dann als Backend-JSON-request, als BAckend-JSON-response zurück vom Backend,
+dann als Wicket/AJAX Response zurück an die GUI. Das Backend-JSON-Objekt hat dann
+ähnliche Fähigkeiten wie Wicket/AJAX, aber auf höherer Ebene.
+
+Ladedreher: Der gui:ajaxLink steht in einem gui:ajaxLinkContext (default: page)
+und innerhalb von diesem werden *alle* / der *erste* Ladedreher sichtbar, diese
+sind per gui:ajaxLoadingIndicator gekennzeichnet.

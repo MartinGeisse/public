@@ -7,16 +7,13 @@ package name.martingeisse.guiserver.configuration.content.parser;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.validation.IValidator;
-
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
 import name.martingeisse.guiserver.configuration.content.FormFieldMetadata;
-import name.martingeisse.guiserver.configuration.content.TextFieldConfiguration;
 import name.martingeisse.guiserver.xml.ContentStreams;
 import name.martingeisse.guiserver.xml.IElementParser;
 import name.martingeisse.guiserver.xml.InvalidSpecialElementException;
@@ -25,6 +22,10 @@ import name.martingeisse.guiserver.xml.XmlReflectionUtil;
 import name.martingeisse.guiserver.xml.attribute.AttributeSpecification;
 import name.martingeisse.guiserver.xml.attribute.BooleanAttributeParser;
 import name.martingeisse.guiserver.xml.attribute.TextAttributeParser;
+
+import org.apache.wicket.validation.IValidator;
+import org.apache.wicket.validation.validator.PatternValidator;
+import org.apache.wicket.validation.validator.StringValidator;
 
 /**
  * The base class for parses for all kinds of form fields. This
@@ -83,7 +84,10 @@ public class FormFieldParser implements IElementParser<ComponentConfiguration> {
 				switch (streams.getReader().getLocalName()) {
 				
 				case "validation": {
-					validators.add(parseValidator(streams));
+					IValidator<?> validator = parseValidator(streams);
+					if (validator != null) {
+						validators.add(validator);
+					}
 					break;
 				}
 					
@@ -110,27 +114,42 @@ public class FormFieldParser implements IElementParser<ComponentConfiguration> {
 	 */
 	private IValidator<?> parseValidator(ContentStreams<ComponentConfiguration> streams) throws XMLStreamException {
 		String type = streams.getMandatoryAttribute("type");
+		switch (type) {
 
+		case "length": {
+			IValidator<?> validator = new StringValidator(parseOptionalInteger(streams, "min"), parseOptionalInteger(streams, "max"));
+			skipValidatorElement(streams);
+			return validator;
+		}
 		
-		/* 
-		 * TODO example code copied from tab panel
-		 * 
-		XMLStreamWriter writer = streams.getWriter();
-		String selector = streams.getMandatoryAttribute("selector");
-		String tabComponentId = tabPanelComponentId + "-" + selector;
-		String title = streams.getMandatoryAttribute("title");
-		streams.next();
-		writer.writeStartElement("wicket:fragment");
-		writer.writeAttribute("wicket:id", tabComponentId);
-		streams.beginComponentAccumulator();
-		DefaultContentParser.INSTANCE.parse(streams);
-		ImmutableList<ComponentConfiguration> tabContentComponents = streams.finishComponentAccumulator();
-		streams.next();
-		writer.writeEndElement();
-		PageParameterDrivenTabPanel.TabInfo tabInfo = new PageParameterDrivenTabPanel.TabInfo(title, selector);
-		TabEntry tabEntry = new TabEntry(tabComponentId, tabInfo, tabContentComponents);
-		tabPanelConfiguration.addTab(tabEntry);
-		*/
+		case "pattern": {
+			IValidator<?> validator =  new PatternValidator(streams.getMandatoryAttribute("pattern"));
+			skipValidatorElement(streams);
+			return validator;
+		}
+		
+		default:
+			throw new RuntimeException("unknown validator type: " + type);
+			
+		}
 	}
 	
+	private Integer parseOptionalInteger(ContentStreams<?> streams, String attributeName) {
+		String attributeValue = streams.getOptionalAttribute(attributeName);
+		return (attributeValue == null ? null : Integer.valueOf(attributeValue));
+	}
+
+	private void skipValidatorElement(ContentStreams<?> streams) throws XMLStreamException {
+		XMLStreamReader reader = streams.getReader();
+		if (reader.getEventType() != XMLStreamConstants.START_ELEMENT) {
+			throw new IllegalStateException("this method must be called while at a START_ELEMENT");
+		}
+		reader.next();
+		streams.skipWhitespace();
+		if (reader.getEventType() != XMLStreamConstants.END_ELEMENT) {
+			throw new RuntimeException("validator element should be empty");
+		}
+		reader.next();
+	}
+
 }

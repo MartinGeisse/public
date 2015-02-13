@@ -13,7 +13,10 @@
 						</div>
 					</gui:enclosure>
 					<div>
-						Name: <gui:textField name="foo" />
+						Name:
+						<gui:textField name="foo">
+							<gui:validation type="length" min="2" max="10" />
+						</gui:textField>
 					</div>
 				</div>
 				<div>
