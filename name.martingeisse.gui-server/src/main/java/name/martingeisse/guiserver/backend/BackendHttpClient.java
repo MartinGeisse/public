@@ -55,6 +55,11 @@ public final class BackendHttpClient {
 	 * the urlCodec
 	 */
 	private static final URLCodec urlCodec = new URLCodec();
+	
+	/**
+	 * the commandResponseParser
+	 */
+	private static final IBackendCommandResponseParser commandResponseParser;
 
 	//
 	static {
@@ -62,6 +67,7 @@ public final class BackendHttpClient {
 		connectionManager.setMaxTotal(200);
 		connectionManager.setDefaultMaxPerRoute(20);
 		httpClient = HttpClients.custom().setConnectionManager(connectionManager).setDefaultCookieStore(new NullCookieStore()).build();
+		commandResponseParser = new DefaultBackendCommandResponseParser();
 	}
 
 	/**
@@ -128,7 +134,16 @@ public final class BackendHttpClient {
 			throw new BackendConnectionException();
 		}
 	}
-	
+
+	/**
+	 * Expects a (JSON-encoded) backend command response and returns it.
+	 * 
+	 * @return the response
+	 */
+	private static BackendCommandResponse expectCommandResponse(HttpResponse response) {
+		return commandResponseParser.parseBackendCommandResponse(expectJsonResponse(response));
+	}
+
 	/**
 	 * Fetches a response from the backend using a GET request.
 	 * Throws an exception on errors.
@@ -180,7 +195,18 @@ public final class BackendHttpClient {
 	public static JsonAnalyzer getJson(String url) {
 		return expectJsonResponse(get(url));
 	}
-	
+
+	/**
+	 * Fetches a command response from the backend using a GET request.
+	 * Throws an exception on errors.
+	 * 
+	 * @param url the URL to fetch from
+	 * @return the command response
+	 */
+	public static BackendCommandResponse getCommandResponse(String url) {
+		return expectCommandResponse(get(url));
+	}
+
 	/**
 	 * Sends a POST request with the specified parameters to the backend.
 	 * 
@@ -239,6 +265,18 @@ public final class BackendHttpClient {
 	 */
 	public static JsonAnalyzer postParametersForJson(String url, Map<String, Object> parameters) {
 		return expectJsonResponse(postParametersForResponse(url, parameters));
+	}
+	
+	/**
+	 * Sends a POST request with the specified parameters to the backend and expects
+	 * a command response.
+	 * 
+	 * @param url the URL to POST to
+	 * @param parameters the parameters
+	 * @return the command response
+	 */
+	public static BackendCommandResponse postParametersForCommandResponse(String url, Map<String, Object> parameters) {
+		return expectCommandResponse(postParametersForResponse(url, parameters));
 	}
 	
 	/**

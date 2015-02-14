@@ -15,7 +15,7 @@ General Features
 [..] 1-tag: WebMarkupContainer zum Aufklappen und Lazyload
 [..] 1-tag: WebMarkupContainer nur sichtbar wenn eingeloggt + authorisiert
 [..] OT-editor
-[..] wizards
+[..] wizards (AJAX-Wizards ähnlich Popups mit <ajaxWizard; Page-Wizards mit Pages, die <gui:wizard> als Root-Element haben
 [..] translations (will have to override .properties files for built-in components)
 
 ------------------------------------------------------------------------------------------------

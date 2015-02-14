@@ -1,0 +1,17 @@
+
+"using backend commands everywhere":
+
+Links do not link to URLs nor to pages. Links fire backend commands when
+clicked. (name -> "GUI commands" ?)
+
+A link may fire a backend command to open a page. A link that only fires
+a single "open page" command gets rendered as a "simple URL" link.
+
+A link may fire other commands. This generates "javascript links",
+"AJAX links" and "wicket component links".
+
+A link may fire a request to the backend, and the backend responds with
+commands. This gets implemented as an AJAX link or wicket component links.
+Further effects depend on the response from the backend.
+
+OPEN QUESTION: when to use AJAX links; when to use wicket component links.
