@@ -1,7 +1,0 @@
-
-	
-- certain components on a page may make content public using a sub-URL
-	(e.g. a non-JS, non-AJAX TabPanel). These URLs *may* be configurable,
-	and *may* be outside the containing page's URL. This depends on
-	the component. TODO auto-mounting of these URLs? For TabPanels this
-	currently uses querystring parameters
