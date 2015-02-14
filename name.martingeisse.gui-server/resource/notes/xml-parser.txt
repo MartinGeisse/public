@@ -1,11 +1,69 @@
 
-Idee: Statt des Konzepts "XML Parser" als zentrale Idee das "XML databinding".
-Es geht also weniger darum, wie das XML geparsed wird, sondern wie das XML auf die
-Component Configs abgebildet wird. Das geht leicht per Annotations an den
-Component Configs. Allerdings ist damit noch nicht geklärt, wer das Markup dazu
-erzeugt, und wie es in einer Taglib definiert wird.
-
 Markup kann aus der XML kommen oder aus der Taglib. Dazu die Idee, dass immer die
 ComponentConfig das Markup erzeugt (der Code dazu kommt also aus der Taglib),
 und dieser hat Zugriff auf das Markup aus der XML, indem es per Databinding in
 einer Variable gelegt wird.
+
+	interface ComponentConfiguration ...
+	
+		public void writeWicketMarkup(XMLStreamWriter w);
+
+------------------------------------------------------------------------------------------
+XML Databinding
+
+Dieses spielt eine entscheidende Rolle, um das ganze cool zu machen.
+
+(Root einer Page könnte dann auch eine ComponentConfig sein, keine Liste derselben.)
+
+Containers:
+- variante 1: AbstractContainerConfiguration übernimmt auch die Aufgabe, "mixed markup"
+	zu speichern
+- variante 2: AbstractContainerConfiguration fällt weg. Die Container-Configs erben nicht
+	davon, sondern haben ein Field vom Typ "mixed markup", wo das Databinding Markup und
+	Children reinlegt. Davon kann es dann nur ein Field geben.
+-->
+Variante 2 gefällt mir aktuell besser, weil das Databinding kein Sonderwissen über die
+Container-Klasse haben muss.
+
+Die restlichen Fields haben dann Bindings an XML-Attribute.
+
+Begriff für das Binding eines Special Elements: ElementObjectBinding
+Begriff für das Binding eines Attributs an ein Feld: AttributeFieldBinding
+Begriff für das Binding von mixed markup (markup + components) content an ein Feld: MixedMarkupFieldBinding
+Begriff für das Binding von raw markup content (no components) an ein Feld: RawMarkupFieldBinding
+Begriff für das Binding von Element Lists an ein oder mehrere Felder:
+	ObjectListFieldsDistributorBinding, ObjectListFieldBinding
+	Distributor hält ein Mapping anhand des Typs
+Alternative dafür, die der Element Content verarbeitet wird: ContentBinding an der Config-Klasse,
+	zusätzlich zu / statt Bindings an den Feldern. Das scheint aber mehr Schreibarbeit, und wenn
+	man den Feldnamen darin schreiben muss, ist es auch Fehleranfälliger (keine ernsthaften
+	Fehler, aber nervig). So oder so sind Objektlisten und sowas wie der BrandLink in Navbar
+	das komplizierteste und ist in keiner der beiden Varianten bisher gelöst.
+
+Objektlisten:
+- erkennen nur Objekte am Anfang des Contents, also *vor* evtl. mixed/raw Markup
+- ObjectFieldBinding für 1x auftretende Objekte, z.B. BrandLink
+- ObjectListFieldBinding für Nx auftretende Objekte (Reihenfolge egal, nur eben *vor* Markup)
+
+Type Indicators:
+- Die Validatoren eines FormFields sind per ObjectListFieldBinding an ein Feld vom Typ
+	List<IValidator<?>> gebunden. Das Databinding kann damit so nichts anfangen, da
+	IValidator<?> kein Typ ist, für den ein "einfaches" Databinding definiert werden kann,
+	da es ein Interface ist und nicht instanziiert werden kann. Also braucht es hier ein
+	ElementObjectBinding, welches die zu instanziierende Klasse anhand eines Type-Selectors
+	auswählt. Dieser steht in einem Attribut des XML-Elements.
+- Das hat eine Ähnlichkeit damit, dass eine ComponentConfig eine Klasse auswählt, die
+	ComponentConfig implementiert, nur diesmal nicht anhand eines Attributs, sondern anhand
+	des Elementnamens.
+- Bei Validatoren ist es ggf. sogar zweistufig, abhängig vom Design der Klasse FormField:
+	Der Elementname <validation> wählt ein Feld. Falls Validations und andere Objekte
+	zusammen in einer Liste stehen, wählt <validation> außerdem eine Basisklasse und deren
+	ElementObjectBinding. Danach schaut dieses Binding auf das "type"-Attribut und wählt
+	anhand dessen wiederum eine Klasse. Wenn man das jetzt möglichst einfach formuliert,
+	dann würde es auch wieder ein Binding für diese Klasse wählen, welches durch eine
+	Annotation automatisch erzeugt wurde oder manuell definiert wurde (letzteres z.B. für
+	die Standard-Wicket-Validator-Klassen wie StringValidator).
+
+	
+Nebenbei bemerkt muss es möglich sein, ein ElementObjectBinding per Annotation oder manuell
+zu erzeugen, da Klassen wie String, IValidator etc. nicht annotated werden können.
