@@ -1,0 +1,35 @@
+
+Simple architecture:
+
+Browser
+(HTTP with HTML/CSS/JS/image payload)
+GUI Server
+(HTTP with HTML/JSON payload)
+GUI Controller + Backend
+(SQL)
+MySQL
+
+Advanced Architecture Using a Separate GUI Controller
+
+Browser
+(HTTP with HTML/CSS/JS/image payload)
+GUI Server
+(HTTP with HTML/JSON payload)
+GUI Controller
+(HTTP with JSON/SOAP/XML payload)
+Backend
+(SQL)
+MySQL
+
+Super-Advanced Architecture Using a Separate GUI Controller and Separation of Business Logic and Data Layer
+Browser
+(HTTP with HTML/CSS/JS/image payload)
+GUI Server
+(HTTP with HTML/JSON payload)
+GUI Controller
+(HTTP with JSON/SOAP/XML payload)
+Business Logic
+(HTTP with JSON/SOAP/XML payload)
+Data Layer
+(SQL)
+MySQL

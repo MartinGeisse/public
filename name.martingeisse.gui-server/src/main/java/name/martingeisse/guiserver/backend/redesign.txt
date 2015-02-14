@@ -1,0 +1,12 @@
+
+interface IBackendResponseParser<T extends BackendResponse>
+Klasse BackendResponseParserSystem, agiert als Registry für IBackendResponseParser
+mit Map: Class<T> -> IBackendResponseParser<T>, parsed eine Response vom angegebenen erwarteten Typ
+indem es den entsprechenden Parser aufruft
+
+generelle Basis-Impl. BackendResponse mit Feld "error"
+Implementierung: BackendDataResponse -- enthält Feld "data"
+Basis-Implementierung: BackendResponseWithGuiCommands -- speichert IGuiCommand (rename von IBackendCommand)
+Implementierung: BackendFormResponse + validation
+
+Parser evtl. per JSON-Databinding

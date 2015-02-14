@@ -1,0 +1,11 @@
+
+Idee: Statt des Konzepts "XML Parser" als zentrale Idee das "XML databinding".
+Es geht also weniger darum, wie das XML geparsed wird, sondern wie das XML auf die
+Component Configs abgebildet wird. Das geht leicht per Annotations an den
+Component Configs. Allerdings ist damit noch nicht geklärt, wer das Markup dazu
+erzeugt, und wie es in einer Taglib definiert wird.
+
+Markup kann aus der XML kommen oder aus der Taglib. Dazu die Idee, dass immer die
+ComponentConfig das Markup erzeugt (der Code dazu kommt also aus der Taglib),
+und dieser hat Zugriff auf das Markup aus der XML, indem es per Databinding in
+einer Variable gelegt wird.

@@ -9,10 +9,8 @@ import java.util.List;
 /**
  * A response from the backend containing "commands" to control
  * the GUI server. This kind of response can only be sent by
- * backend URLs for which the GUI server expects them; however,
- * this is the case for most backend URLs. Only cases such as
- * simple HTML includes from the backend do not support command
- * responses.
+ * backend URLs for which the GUI server expects them, not by
+ * URLs that return raw HTML snippets or JSON data records.
  */
 public class BackendCommandResponse {
 
