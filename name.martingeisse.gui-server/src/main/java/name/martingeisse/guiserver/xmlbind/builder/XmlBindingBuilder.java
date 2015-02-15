@@ -5,7 +5,11 @@
 package name.martingeisse.guiserver.xmlbind.builder;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import name.martingeisse.common.terms.Multiplicity;
@@ -16,6 +20,8 @@ import name.martingeisse.guiserver.xmlbind.attribute.BindAttribute;
 import name.martingeisse.guiserver.xmlbind.attribute.DefaultAttributeValueBinding;
 import name.martingeisse.guiserver.xmlbind.content.DelegatingXmlContentObjectBinding;
 import name.martingeisse.guiserver.xmlbind.content.MarkupContentBinding;
+import name.martingeisse.guiserver.xmlbind.content.MultiChildObjectBinding;
+import name.martingeisse.guiserver.xmlbind.content.SingleChildObjectBinding;
 import name.martingeisse.guiserver.xmlbind.content.XmlContentObjectBinding;
 import name.martingeisse.guiserver.xmlbind.element.BindComponentElement;
 import name.martingeisse.guiserver.xmlbind.element.ElementClassInstanceBinding;
@@ -23,8 +29,6 @@ import name.martingeisse.guiserver.xmlbind.element.ElementNameSelectedObjectBind
 import name.martingeisse.guiserver.xmlbind.element.ElementObjectBinding;
 import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
 import name.martingeisse.guiserver.xmlbind.value.TextValueBinding;
-
-import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * This class builds the databinding for the XML format.
@@ -41,16 +45,21 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 	 * the recursiveMarkupBinding
 	 */
 	private final DelegatingXmlContentObjectBinding<MarkupContent<C>> recursiveMarkupBinding;
-	
+
 	/**
 	 * the bindings
 	 */
 	private final Map<String, ElementObjectBinding<? extends C>> componentBindings;
-	
+
 	/**
 	 * the attributeTextValueBindingRegistry
 	 */
 	private final AttributeTextValueBindingRegistry attributeTextValueBindingRegistry;
+
+	/**
+	 * the childElementObjectBindingRegistry
+	 */
+	private final ChildElementObjectBindingRegistry childElementObjectBindingRegistry;
 
 	/**
 	 * Constructor.
@@ -59,6 +68,7 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 		recursiveMarkupBinding = new DelegatingXmlContentObjectBinding<>();
 		componentBindings = new HashMap<>();
 		attributeTextValueBindingRegistry = new AttributeTextValueBindingRegistry();
+		childElementObjectBindingRegistry = new ChildElementObjectBindingRegistry();
 	}
 
 	/**
@@ -73,13 +83,24 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 	}
 
 	/**
+	 * Adds a child-element-to-object binding that can be used to map child elements to
+	 * child objects.
+	 * 
+	 * @param childObjectType the constructor parameter child object type
+	 * @param binding the element-to-object binding that parses the child element
+	 */
+	public <T> void addChildElementObjectBinding(Class<T> childObjectType, ElementObjectBinding<T> binding) {
+		childElementObjectBindingRegistry.addBinding(childObjectType, binding);
+	}
+
+	/**
 	 * Getter method for the recursiveMarkupBinding.
 	 * @return the recursiveMarkupBinding
 	 */
 	public DelegatingXmlContentObjectBinding<MarkupContent<C>> getRecursiveMarkupBinding() {
 		return recursiveMarkupBinding;
 	}
-	
+
 	/**
 	 * Adds a component configuration class to this builder. The class must be annotated
 	 * with {@link BindComponentElement}.
@@ -87,43 +108,43 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 	 * @param theClass the class to add
 	 */
 	public void addComponentConfigurationClass(Class<? extends C> theClass) {
-		
+
 		// obtain the class annotation
 		BindComponentElement classAnnotation = theClass.getAnnotation(BindComponentElement.class);
 		if (classAnnotation == null) {
 			throw new IllegalArgumentException("class is not annotated with @BindComponentElement: " + theClass);
 		}
-		
+
 		// handle attribute bindings
 		AttributeValueBinding<?>[] attributeBindings = new AttributeValueBinding<?>[classAnnotation.attributes().length];
 		Constructor<?> constructor = ElementClassInstanceBinding.chooseConstructor(theClass);
-		if (constructor.getParameterTypes().length < attributeBindings.length) {
+		if (constructor.getParameterCount() < attributeBindings.length) {
 			throw new RuntimeException("constructor for class " + theClass + " has too few arguments for the attribute bindings specified in @BindComponentElement");
 		}
-		for (int i=0; i<attributeBindings.length; i++) {
+		for (int i = 0; i < attributeBindings.length; i++) {
 			Class<?> parameterType = constructor.getParameterTypes()[i];
 			BindAttribute attributeAnnotation = classAnnotation.attributes()[i];
 			attributeBindings[i] = createAttributeBinding(parameterType, attributeAnnotation);
 		}
-		
+
 		// handle either child objects or markup content
 		XmlContentObjectBinding<?> contentBinding;
 		if (classAnnotation.childObjectMultiplicity() != Multiplicity.ZERO && classAnnotation.acceptsMarkupContent()) {
 			throw new RuntimeException("@BindComponentElement doesn't support child objects AND markup content at the same time: " + theClass);
 		} else if (classAnnotation.childObjectMultiplicity() != Multiplicity.ZERO) {
-			throw new NotImplementedException("child objects not yet implemented");
+			contentBinding = createContentChildObjectBinding(classAnnotation, constructor);
 		} else if (classAnnotation.acceptsMarkupContent()) {
 			contentBinding = recursiveMarkupBinding;
 		} else {
 			contentBinding = null;
 		}
-		
+
 		// build the binding for the component
 		ElementClassInstanceBinding<? extends C> componentBinding = new ElementClassInstanceBinding<>(theClass, attributeBindings, contentBinding);
 		addComponentConfigurationBinding(classAnnotation.localName(), componentBinding);
 
 	}
-	
+
 	/**
 	 * Creates a binding between an attribute and a constructor parameter. This is a separate
 	 * method to allow T (the type of the constructor parameter) to be used as a static
@@ -142,7 +163,49 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 		}
 		return new DefaultAttributeValueBinding<T>(name, optional, defaultValue, textValueBinding);
 	}
-	
+
+	/**
+	 * Creates a binding from content to child object(s).
+	 */
+	private XmlContentObjectBinding<?> createContentChildObjectBinding(BindComponentElement classAnnotation, Constructor<?> constructor) {
+		if (constructor.getParameterCount() != classAnnotation.attributes().length + 1) {
+			throw new RuntimeException("expected 1 more constructor parameter to class " + constructor.getDeclaringClass() + " than bound attribtues to handle the content argument");
+		}
+		Parameter contentParameter = constructor.getParameters()[constructor.getParameterCount() - 1];
+		Class<?> contentParameterClass = constructor.getParameterTypes()[constructor.getParameterCount() - 1];
+		boolean parameterTypeIndicatesList = (contentParameter.getType() == List.class);
+		boolean multiplicityIndicatesList = classAnnotation.childObjectMultiplicity().indicatesList();
+		if (parameterTypeIndicatesList != multiplicityIndicatesList) {
+			throw new RuntimeException("content parameter list-ness different in parameter type (" + parameterTypeIndicatesList + ") and annotation (" + multiplicityIndicatesList + ")");
+		}
+		Class<?> childObjectClass;
+		if (multiplicityIndicatesList) {
+			ParameterizedType contentParameterType = (ParameterizedType)contentParameter.getParameterizedType();
+			Type listElementType = contentParameterType.getActualTypeArguments()[0];
+			if (listElementType instanceof Class<?>) {
+				childObjectClass = (Class<?>)listElementType;
+			} else if (listElementType instanceof ParameterizedType) {
+				ParameterizedType parameterizedListelementType = (ParameterizedType)listElementType;
+				childObjectClass = (Class<?>)parameterizedListelementType.getRawType();
+			} else {
+				throw new RuntimeException("invalid list element type: " + listElementType);
+			}
+		} else {
+			childObjectClass = contentParameterClass;
+		}
+		ElementObjectBinding<?> childElementObjectBinding = childElementObjectBindingRegistry.getBinding(childObjectClass);
+		if (childElementObjectBinding == null) {
+			throw new RuntimeException("no child-element-to-object binding registered for child object class " + childObjectClass);
+		}
+		boolean optional = classAnnotation.childObjectMultiplicity().optional();
+		String[] elementNameFilter = (classAnnotation.childObjectElementNameFilter().length == 0 ? null : classAnnotation.childObjectElementNameFilter());
+		if (multiplicityIndicatesList) {
+			return new MultiChildObjectBinding<>(optional, elementNameFilter, childElementObjectBinding);
+		} else {
+			return new SingleChildObjectBinding<>(optional, elementNameFilter, childElementObjectBinding);
+		}
+	}
+
 	/**
 	 * Adds a component configuration binding to this builder.
 	 * 
@@ -159,7 +222,7 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 	 * @return the databinding
 	 */
 	public XmlContentObjectBinding<MarkupContent<C>> build() {
-		ElementNameSelectedObjectBinding<C> elementObjectBinding = new ElementNameSelectedObjectBinding<>(componentBindings); 
+		ElementNameSelectedObjectBinding<C> elementObjectBinding = new ElementNameSelectedObjectBinding<>(componentBindings);
 		MarkupContentBinding<C> markupContentBinding = new MarkupContentBinding<C>(elementObjectBinding);
 		recursiveMarkupBinding.setDelegate(markupContentBinding);
 		return markupContentBinding;

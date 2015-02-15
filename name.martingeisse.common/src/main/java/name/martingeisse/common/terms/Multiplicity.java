@@ -40,5 +40,20 @@ public enum Multiplicity {
 	 * Accepts any number of objects, i.e. denotes a (possibly empty) list.
 	 */
 	ANY;
+
+	/**
+	 * @return true if this multiplicity allows zero objects, false if not
+	 */
+	public boolean optional() {
+		return (this != ONE && this != NONZERO);
+	}
+
+	/**
+	 * @return true if this multiplicity indicates a list of object references,
+	 * false if it indicates a single object reference
+	 */
+	public boolean indicatesList() {
+		return (this == NONZERO || this == ANY);
+	}
 	
 }

@@ -41,6 +41,9 @@ public final class MultiChildObjectBinding<T> implements XmlContentObjectBinding
 	 * @param childElementObjectBinding the element-to-object binding for the child object 
 	 */
 	public MultiChildObjectBinding(boolean optional, String[] childObjectElementNameFilter, ElementObjectBinding<T> childElementObjectBinding) {
+		if (childElementObjectBinding == null) {
+			throw new IllegalArgumentException("childElementObjectBinding argument is null");
+		}
 		this.optional = optional;
 		this.childObjectElementNameFilter = childObjectElementNameFilter;
 		this.childElementObjectBinding = childElementObjectBinding;

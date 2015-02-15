@@ -4,12 +4,19 @@
 
 package name.martingeisse.guiserver.configuration.content;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import name.martingeisse.common.terms.Multiplicity;
 import name.martingeisse.guiserver.configuration.Configuration;
+import name.martingeisse.guiserver.xmlbind.attribute.AttributeValueBindingOptionality;
+import name.martingeisse.guiserver.xmlbind.attribute.BindAttribute;
+import name.martingeisse.guiserver.xmlbind.element.BindComponentElement;
+import name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler;
+import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
 import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel;
-import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel.AbstractTabInfo;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -19,11 +26,14 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.IMarkupSourcingStrategy;
 import org.apache.wicket.markup.html.panel.PanelMarkupSourcingStrategy;
 
-import com.google.common.collect.ImmutableList;
-
 /**
  * Represents a tab panel.
  */
+@BindComponentElement(localName = "tabPanel", attributes = {
+	@BindAttribute(name = "parameter", optionality = AttributeValueBindingOptionality.OPTIONAL),
+}, childObjectMultiplicity = Multiplicity.NONZERO, childObjectElementNameFilter = {
+	"tab"
+})
 public final class TabPanelConfiguration extends AbstractComponentConfiguration implements IConfigurationSnippet, UrlSubpathComponentConfiguration {
 
 	/**
@@ -43,13 +53,42 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 
 	/**
 	 * Constructor.
-	 * @param id the wicket id
-	 * @param parameterName
+	 * @param parameterName the name of the tab-selecting parameter
+	 * @param tabs the tabs
 	 */
-	public TabPanelConfiguration(String id, String parameterName) {
-		super(id);
+	public TabPanelConfiguration(String parameterName, List<TabEntry> tabs) {
 		this.parameterName = parameterName;
-		this.tabs = new ArrayList<>();
+		this.tabs = tabs;
+	}
+
+	/**
+	 * Getter method for the parameterName.
+	 * @return the parameterName
+	 */
+	public String getParameterName() {
+		String id = getId();
+		if (id == null) {
+			throw new IllegalStateException("cannot determine parameter name before an ID has been assigned");
+		}
+		return (parameterName == null ? id : parameterName);
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#assemble(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
+	 */
+	@Override
+	public void assemble(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+		super.assemble(assembler);
+		XMLStreamWriter writer = assembler.getMarkupWriter();
+		String id = getId();
+		writer.writeStartElement("div");
+		writer.writeAttribute("wicket:id", id + "-container");
+		writer.writeEmptyElement("div");
+		writer.writeAttribute("wicket:id", id);
+		for (TabEntry tab : tabs) {
+			tab.assemble(assembler);
+		}
+		writer.writeEndElement();
 	}
 
 	/* (non-Javadoc)
@@ -69,15 +108,6 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 	}
 
 	/**
-	 * Adds a tab.
-	 * 
-	 * @param tabEntry the TabEntry object that describes the tab.
-	 */
-	public void addTab(TabEntry tabEntry) {
-		tabs.add(tabEntry);
-	}
-
-	/**
 	 * Getter method for the tabs.
 	 * @return the tabs
 	 */
@@ -91,7 +121,7 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 	@Override
 	public Component buildComponent() {
 		final WebMarkupContainer tabPanelContainer = new WebMarkupContainer(getId() + "-container");
-		final PageParameterDrivenTabPanel tabPanel = new MyTabPanel(getId(), parameterName, this, tabPanelContainer);
+		final PageParameterDrivenTabPanel tabPanel = new MyTabPanel(getId(), getParameterName(), this, tabPanelContainer);
 		for (TabEntry tab : tabs) {
 			tabPanel.addTab(tab.getTabInfo());
 		}
@@ -117,7 +147,9 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 	 */
 	@Override
 	public String[] getSubpathSegmentParameterNames() {
-		return new String[] {parameterName};
+		return new String[] {
+			getParameterName()
+		};
 	}
 
 	/**
@@ -126,21 +158,49 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 	public static final class TabEntry extends AbstractContainerConfiguration {
 
 		/**
+		 * the title
+		 */
+		private final String title;
+		
+		/**
+		 * the selector
+		 */
+		private final String selector;
+
+		/**
 		 * the tabInfo
 		 */
 		private final PageParameterDrivenTabPanel.AbstractTabInfo tabInfo;
 
 		/**
 		 * Constructor.
-		 * @param id the wicket id
-		 * @param tabInfo the tab info
-		 * @param children the children
+		 * @param title the title text
+		 * @param selector the selector
+		 * @param markupContent the markup content
 		 */
-		public TabEntry(String id, AbstractTabInfo tabInfo, ImmutableList<ComponentConfiguration> children) {
-			super(id, children);
-			this.tabInfo = tabInfo;
+		public TabEntry(String title, String selector, MarkupContent<ComponentConfiguration> markupContent) {
+			super(markupContent);
+			this.title = title;
+			this.selector = selector;
+			this.tabInfo = new PageParameterDrivenTabPanel.TabInfo(title, selector);
 		}
 
+		/**
+		 * Getter method for the title.
+		 * @return the title
+		 */
+		public String getTitle() {
+			return title;
+		}
+		
+		/**
+		 * Getter method for the selector.
+		 * @return the selector
+		 */
+		public String getSelector() {
+			return selector;
+		}
+		
 		/**
 		 * Getter method for the tabInfo.
 		 * @return the tabInfo
@@ -150,11 +210,19 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 		}
 
 		/* (non-Javadoc)
+		 * @see name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration#assembleContainerIntro(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
+		 */
+		@Override
+		protected void assembleContainerIntro(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+			writeOpeningComponentTag(assembler, "wicket:fragment");
+		}
+		
+		/* (non-Javadoc)
 		 * @see name.martingeisse.guiserver.configurationNew.content.ComponentConfiguration#buildComponent()
 		 */
 		@Override
 		public Component buildComponent() {
-			throw new UnsupportedOperationException();
+			return null;
 		}
 
 		/* (non-Javadoc)

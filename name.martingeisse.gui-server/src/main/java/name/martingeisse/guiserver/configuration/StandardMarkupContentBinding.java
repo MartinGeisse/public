@@ -15,9 +15,13 @@ import name.martingeisse.guiserver.configuration.content.LazyLoadContainerConfig
 import name.martingeisse.guiserver.configuration.content.LinkConfiguration;
 import name.martingeisse.guiserver.configuration.content.PieChartConfiguration;
 import name.martingeisse.guiserver.configuration.content.SubmitButtonConfiguration;
+import name.martingeisse.guiserver.configuration.content.TabPanelConfiguration;
 import name.martingeisse.guiserver.xmlbind.DatabindingXmlStreamReader;
+import name.martingeisse.guiserver.xmlbind.attribute.AttributeValueBinding;
+import name.martingeisse.guiserver.xmlbind.attribute.DefaultAttributeValueBinding;
 import name.martingeisse.guiserver.xmlbind.builder.XmlBindingBuilder;
 import name.martingeisse.guiserver.xmlbind.content.XmlContentObjectBinding;
+import name.martingeisse.guiserver.xmlbind.element.ElementClassInstanceBinding;
 import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
 import name.martingeisse.guiserver.xmlbind.value.TextBooleanBinding;
 import name.martingeisse.guiserver.xmlbind.value.TextStringBinding;
@@ -49,6 +53,13 @@ public final class StandardMarkupContentBinding implements XmlContentObjectBindi
 		builder.addAttributeTextValueBinding(Boolean.class, TextBooleanBinding.INSTANCE);
 		builder.addAttributeTextValueBinding(Boolean.TYPE, TextBooleanBinding.INSTANCE);
 		
+		// known child object classes
+		AttributeValueBinding<?>[] attributeBindings = {
+			new DefaultAttributeValueBinding<>("title", TextStringBinding.INSTANCE),
+			new DefaultAttributeValueBinding<>("selector", TextStringBinding.INSTANCE),
+		};
+		builder.addChildElementObjectBinding(TabPanelConfiguration.TabEntry.class, new ElementClassInstanceBinding<>(TabPanelConfiguration.TabEntry.class, attributeBindings, builder.getRecursiveMarkupBinding()));
+		
 		// known component special tags
 		builder.addComponentConfigurationClass(EnclosureConfiguration.class);
 		builder.addComponentConfigurationClass(IncludeBackendConfiguration.class);
@@ -58,6 +69,7 @@ public final class StandardMarkupContentBinding implements XmlContentObjectBindi
 		builder.addComponentConfigurationClass(FormConfiguration.class);
 		builder.addComponentConfigurationClass(PieChartConfiguration.class);
 		builder.addComponentConfigurationClass(SubmitButtonConfiguration.class);
+		builder.addComponentConfigurationClass(TabPanelConfiguration.class);
 		
 		binding = builder.build();
 	}
