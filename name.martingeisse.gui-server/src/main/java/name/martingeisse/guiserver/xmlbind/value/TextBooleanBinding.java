@@ -25,7 +25,7 @@ public final class TextBooleanBinding implements TextValueBinding<Boolean> {
 		} else if (value.equals("false")) {
 			return false;
 		} else {
-			throw new RuntimeException("invalid boolean value for: " + value);
+			throw new RuntimeException("invalid boolean value: " + value);
 		}
 	}
 	

@@ -37,17 +37,6 @@
 //	 * Constructor.
 //	 */
 //	public DefaultContentParser() {
-//		addSpecialElementParser("enclosure",
-//			new ContainerElementParser("enclosure", "div", EnclosureConfiguration.class));
-//		addSpecialElementParser("lazy",
-//			new ContainerElementParser("lazy", "div", LazyLoadContainerConfiguration.class));
-//		addSpecialElementParser("link",
-//			new ContainerElementParser("link", "a", LinkConfiguration.class,
-//				new AttributeSpecification("href", TextAttributeParser.INSTANCE)));
-//		addSpecialElementParser("includeBackend",
-//			new SkippedContentComponentElementParser("include", "wicket:container", IncludeBackendConfiguration.class,
-//				new AttributeSpecification("url", TextAttributeParser.INSTANCE),
-//				new AttributeSpecification("escape", true, true, BooleanAttributeParser.INSTANCE)));
 //		addSpecialElementParser("form",
 //			new ContainerElementParser("form", "form", FormConfiguration.class,
 //				new AttributeSpecification("backendUrl", TextAttributeParser.INSTANCE)));

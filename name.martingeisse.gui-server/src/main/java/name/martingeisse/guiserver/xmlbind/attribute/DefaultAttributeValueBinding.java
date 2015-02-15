@@ -75,10 +75,20 @@ public final class DefaultAttributeValueBinding<T> implements AttributeValueBind
 	 * @param textValueBinding the binding for the attribute value
 	 */
 	public DefaultAttributeValueBinding(String name, boolean optional, String defaultValue, TextValueBinding<T> textValueBinding) {
+		if (name == null) {
+			throw new IllegalArgumentException("name argument is null");
+		}
+		if (textValueBinding == null) {
+			throw new IllegalArgumentException("textValueBinding argument is null");
+		}
 		this.name = name;
 		this.optional = optional;
 		this.defaultValue = defaultValue;
-		this.parsedDefaultValue = (defaultValue == null ? null : textValueBinding.parse(defaultValue));
+		try {
+			this.parsedDefaultValue = (defaultValue == null ? null : textValueBinding.parse(defaultValue));
+		} catch (Exception e) {
+			throw new RuntimeException("failed to parse default value for attribute " + name, e);
+		}
 		this.textValueBinding = textValueBinding;
 	}
 

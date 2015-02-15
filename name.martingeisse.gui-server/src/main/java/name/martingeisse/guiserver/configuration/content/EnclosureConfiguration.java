@@ -5,32 +5,23 @@
 package name.martingeisse.guiserver.configuration.content;
 
 import name.martingeisse.guiserver.gui.FirstChildEnclosureContainer;
+import name.martingeisse.guiserver.xmlbind.element.BindComponentElement;
+import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
 
 import org.apache.wicket.MarkupContainer;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * Configuration for a (wicket:enclosure)-like container.
  */
+@BindComponentElement(localName = "enclosure", acceptsMarkupContent = true)
 public final class EnclosureConfiguration extends AbstractContainerConfiguration {
 
 	/**
 	 * Constructor.
-	 * @param id the wicket id
-	 * @param children the children
+	 * @param markupContent the markup content
 	 */
-	public EnclosureConfiguration(String id, ComponentConfigurationList children) {
-		super(id, children);
-	}
-
-	/**
-	 * Constructor.
-	 * @param id the wicket id
-	 * @param children the children
-	 */
-	public EnclosureConfiguration(String id, ImmutableList<ComponentConfiguration> children) {
-		super(id, children);
+	public EnclosureConfiguration(MarkupContent<ComponentConfiguration> markupContent) {
+		super(markupContent);
 	}
 
 	/* (non-Javadoc)

@@ -134,6 +134,12 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 		boolean optional = (attributeAnnotation.optionality() != AttributeValueBindingOptionality.MANDATORY);
 		String defaultValue = (attributeAnnotation.optionality() == AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT ? attributeAnnotation.defaultValue() : null);
 		TextValueBinding<T> textValueBinding = attributeTextValueBindingRegistry.getBinding(parameterType);
+		if (textValueBinding == null) {
+			throw new RuntimeException("no attribute text-to-value binding registered for type " + parameterType);
+		}
+		if (attributeAnnotation.optionality() == AttributeValueBindingOptionality.OPTIONAL && parameterType.isPrimitive()) {
+			throw new RuntimeException("cannot bind an optional attribute without default value to a parameter of primitive type. Attribute name: " + name);
+		}
 		return new DefaultAttributeValueBinding<T>(name, optional, defaultValue, textValueBinding);
 	}
 	

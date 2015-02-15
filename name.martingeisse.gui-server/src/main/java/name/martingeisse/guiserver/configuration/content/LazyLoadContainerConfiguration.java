@@ -4,33 +4,24 @@
 
 package name.martingeisse.guiserver.configuration.content;
 
+import name.martingeisse.guiserver.xmlbind.element.BindComponentElement;
+import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
 import name.martingeisse.wicket.component.misc.LongLoadingContainer;
 
 import org.apache.wicket.MarkupContainer;
 
-import com.google.common.collect.ImmutableList;
-
 /**
  * A lazy-loading container.
  */
+@BindComponentElement(localName = "lazy", acceptsMarkupContent = true)
 public final class LazyLoadContainerConfiguration extends AbstractContainerConfiguration {
 
 	/**
 	 * Constructor.
-	 * @param id the wicket id
-	 * @param children the children
+	 * @param markupContent the markup content
 	 */
-	public LazyLoadContainerConfiguration(String id, ComponentConfigurationList children) {
-		super(id, children);
-	}
-
-	/**
-	 * Constructor.
-	 * @param id the wicket id
-	 * @param children the children
-	 */
-	public LazyLoadContainerConfiguration(String id, ImmutableList<ComponentConfiguration> children) {
-		super(id, children);
+	public LazyLoadContainerConfiguration(MarkupContent<ComponentConfiguration> markupContent) {
+		super(markupContent);
 	}
 
 	/* (non-Javadoc)
