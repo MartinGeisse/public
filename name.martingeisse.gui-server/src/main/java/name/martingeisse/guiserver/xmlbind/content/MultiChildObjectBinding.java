@@ -17,7 +17,7 @@ import name.martingeisse.guiserver.xmlbind.element.ElementObjectBinding;
  * Binds XML content to potentially multiple child objects of the object to which the enclosing element
  * was bound.
  */
-public final class MultiChildObjectBinding<T> implements ElementObjectBinding<List<T>> {
+public final class MultiChildObjectBinding<T> implements XmlContentObjectBinding<List<T>> {
 
 	/**
 	 * the optional

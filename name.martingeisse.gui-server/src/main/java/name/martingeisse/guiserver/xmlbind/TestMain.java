@@ -20,12 +20,16 @@ import javax.xml.stream.XMLStreamWriter;
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
 import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.configuration.content.LinkConfiguration;
+import name.martingeisse.guiserver.xmlbind.attribute.AttributeValueBinding;
+import name.martingeisse.guiserver.xmlbind.attribute.DefaultAttributeValueBinding;
+import name.martingeisse.guiserver.xmlbind.content.DelegatingXmlContentObjectBinding;
 import name.martingeisse.guiserver.xmlbind.content.MarkupContentBinding;
 import name.martingeisse.guiserver.xmlbind.element.ElementClassInstanceBinding;
 import name.martingeisse.guiserver.xmlbind.element.ElementNameSelectedObjectBinding;
 import name.martingeisse.guiserver.xmlbind.element.ElementObjectBinding;
 import name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler;
 import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
+import name.martingeisse.guiserver.xmlbind.value.TextStringBinding;
 
 /**
  * TODO: document me
@@ -35,10 +39,18 @@ public class TestMain {
 
 	public static void main(String[] args) throws Exception {
 		
-		Map<String, ElementObjectBinding<ComponentConfiguration>> bindings = new HashMap<>();
-		bindings.put("link", new ElementClassInstanceBinding<>(LinkConfiguration.class, attributeBindings, contentBinding));
+		DelegatingXmlContentObjectBinding<MarkupContent<ComponentConfiguration>> delegatingXmlContentObjectBinding = new DelegatingXmlContentObjectBinding<>();
+		
+		AttributeValueBinding<?> linkHrefBinding = new DefaultAttributeValueBinding<>("href", TextStringBinding.INSTANCE);
+		AttributeValueBinding<?>[] linkAttributeBindings = new AttributeValueBinding<?>[] {linkHrefBinding};
+		ElementClassInstanceBinding<? extends ComponentConfiguration> linkBinding = new ElementClassInstanceBinding<>(LinkConfiguration.class, linkAttributeBindings, delegatingXmlContentObjectBinding);
+		
+		Map<String, ElementObjectBinding<? extends ComponentConfiguration>> bindings = new HashMap<>();
+		bindings.put("link", linkBinding);
 		ElementNameSelectedObjectBinding<ComponentConfiguration> elementObjectBinding = new ElementNameSelectedObjectBinding<>(bindings); 
 		MarkupContentBinding<ComponentConfiguration> markupContentBinding = new MarkupContentBinding<>(elementObjectBinding);
+		
+		delegatingXmlContentObjectBinding.setDelegate(markupContentBinding);
 		
 		MarkupContent<ComponentConfiguration> markupContent;
 		try (FileInputStream fileInputStream = new FileInputStream("resource/demo-gui-2/index.page.xml")) {

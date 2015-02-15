@@ -20,7 +20,7 @@ import name.martingeisse.guiserver.xmlbind.result.MarkupContentEntry;
  * 
  * @param <C> the type of components used in markup content
  */
-public final class MarkupContentBinding<C> implements ElementObjectBinding<MarkupContent<C>> {
+public final class MarkupContentBinding<C> implements XmlContentObjectBinding<MarkupContent<C>> {
 
 	/**
 	 * the specialElementComponentBinding

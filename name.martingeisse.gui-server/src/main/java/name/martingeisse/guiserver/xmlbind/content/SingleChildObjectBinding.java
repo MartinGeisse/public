@@ -16,7 +16,7 @@ import name.martingeisse.guiserver.xmlbind.element.ElementObjectBinding;
  * Binds XML content to zero or one child of the object to which the enclosing element
  * was bound.
  */
-public final class SingleChildObjectBinding<T> implements ElementObjectBinding<T> {
+public final class SingleChildObjectBinding<T> implements XmlContentObjectBinding<T> {
 
 	/**
 	 * the optional
