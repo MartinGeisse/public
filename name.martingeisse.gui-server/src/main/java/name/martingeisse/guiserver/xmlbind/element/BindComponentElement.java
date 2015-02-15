@@ -4,13 +4,20 @@
 
 package name.martingeisse.guiserver.xmlbind.element;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import name.martingeisse.common.terms.Multiplicity;
 import name.martingeisse.guiserver.xmlbind.attribute.BindAttribute;
 import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
 
 /**
- * This annotation can be used to bind an element to a class. Parsing
- * the element means creating an instance of that class.
+ * This annotation can be used to bind a component element to a class.
+ * Component elements are those that appear within markup content, not
+ * within an object list inside another component. Parsing the element
+ * means creating an instance of that class.
  * 
  * An element bound using this annotation can either accept child objects
  * or markup content, but not both.
@@ -23,8 +30,15 @@ import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
  * - if acceptsMarkupContent, a parameter of type {@link MarkupContent}
  * 
  */
-public @interface BindElement {
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface BindComponentElement {
 
+	/**
+	 * @return the local element name
+	 */
+	public String localName();
+	
 	/**
 	 * @return the attribute bindings
 	 */

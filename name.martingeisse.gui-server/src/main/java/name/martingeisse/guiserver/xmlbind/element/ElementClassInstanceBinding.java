@@ -47,7 +47,7 @@ public final class ElementClassInstanceBinding<T> implements ElementObjectBindin
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	private static <T> Constructor<T> chooseConstructor(Class<T> targetClass) {
+	public static <T> Constructor<T> chooseConstructor(Class<T> targetClass) {
 		if (targetClass.getConstructors().length != 1) {
 			throw new RuntimeException("expecting exactly one constructor in class " + targetClass);
 		}

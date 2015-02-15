@@ -8,12 +8,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import name.martingeisse.guiserver.xmlbind.element.BindElement;
+import name.martingeisse.guiserver.xmlbind.element.BindComponentElement;
 import name.martingeisse.guiserver.xmlbind.value.TextValueBinding;
 
 /**
  * This annotation can be used to bind an attribute to a constructor parameter.
- * It should be used inside the 'attributes' section of a {@link BindElement}.
+ * It should be used inside the 'attributes' section of a {@link BindComponentElement}.
  * 
  * The text-to-value binding that parses the attribute value can be specified
  * explicitly. If not specified (or if specified to the default,
@@ -33,7 +33,7 @@ public @interface BindAttribute {
 	 * @return whether the attribute is mandatory or optional and whether it has
 	 * a default value
 	 */
-	public AttributeValueBindingOptionality optionality();
+	public AttributeValueBindingOptionality optionality() default AttributeValueBindingOptionality.MANDATORY;
 	
 	/**
 	 * @return the default value (only used if the optionality is

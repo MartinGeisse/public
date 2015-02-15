@@ -38,7 +38,7 @@ public final class ElementNameSelectedObjectBinding<T> implements ElementObjectB
 	public T parse(DatabindingXmlStreamReader reader) throws XMLStreamException {
 		ElementObjectBinding<? extends T> selectedBinding = bindings.get(reader.getLocalName());
 		if (selectedBinding == null) {
-			throw new RuntimeException("unknown element: " + reader.getLocalName());
+			throw new RuntimeException("unknown special element: " + reader.getLocalName());
 		}
 		return selectedBinding.parse(reader);
 	}
