@@ -7,24 +7,31 @@ package name.martingeisse.guiserver.configuration;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentConfigurationList;
 import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
-import name.martingeisse.guiserver.configuration.content.parser.RootContentParser;
 import name.martingeisse.guiserver.configuration.elements.ConfigurationElement;
 import name.martingeisse.guiserver.configuration.elements.ConfigurationElementContent;
 import name.martingeisse.guiserver.configuration.elements.FormUrlConfiguration;
 import name.martingeisse.guiserver.configuration.elements.PageConfiguration;
 import name.martingeisse.guiserver.configuration.elements.PanelConfiguration;
-import name.martingeisse.guiserver.xml.ContentStreams;
+import name.martingeisse.guiserver.xmlbind.DatabindingXmlStreamReader;
+import name.martingeisse.guiserver.xmlbind.content.XmlContentObjectBinding;
+import name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler;
+import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -37,19 +44,32 @@ import com.google.common.collect.ImmutableMap;
 final class ConfigurationBuilder {
 
 	/**
+	 * the xmlContentObjectBinding
+	 */
+	private final XmlContentObjectBinding<MarkupContent<ComponentConfiguration>> xmlContentObjectBinding;
+
+	/**
 	 * the elements
 	 */
 	private final Map<Class<? extends ConfigurationElement>, Map<String, ConfigurationElement>> elements = new HashMap<>();
-	
+
 	/**
 	 * the pathSegments
 	 */
 	private final Stack<String> pathSegments = new Stack<>();
-	
+
 	/**
 	 * the snippets
 	 */
 	private final List<IConfigurationSnippet> snippets = new ArrayList<>();
+
+	/**
+	 * Constructor.
+	 * @param xmlContentObjectBinding the XML-content-to-object-binding
+	 */
+	public ConfigurationBuilder(XmlContentObjectBinding<MarkupContent<ComponentConfiguration>> xmlContentObjectBinding) {
+		this.xmlContentObjectBinding = xmlContentObjectBinding;
+	}
 
 	/**
 	 * Builds the configuration using the files in the specified root folder and its subfolders.
@@ -66,7 +86,7 @@ final class ConfigurationBuilder {
 		}
 		handleFolder(rootFolder);
 	}
-	
+
 	/**
 	 * Getter method for the elements.
 	 * @return the elements
@@ -82,7 +102,7 @@ final class ConfigurationBuilder {
 	public List<IConfigurationSnippet> getSnippets() {
 		return ImmutableList.copyOf(snippets);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -99,7 +119,7 @@ final class ConfigurationBuilder {
 			pathSegments.pop();
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -107,22 +127,46 @@ final class ConfigurationBuilder {
 		String filename = file.getName();
 		if (filename.endsWith(PageConfiguration.CONFIGURATION_FILENAME_SUFFIX)) {
 			String path = getPath(PageConfiguration.CONFIGURATION_FILENAME_SUFFIX);
-			String wicketMarkup;
-			ImmutableList<ComponentConfiguration> components;
+
+			// parse the file to obtain markup content
+			MarkupContent<ComponentConfiguration> markupContent;
 			try (FileInputStream fileInputStream = new FileInputStream(file)) {
-				ContentStreams<ComponentConfiguration> streams = new ContentStreams<ComponentConfiguration>(fileInputStream, snippets);
-				RootContentParser.ROOT_PARSER_INSTANCE.parseRootContent(streams);
-				wicketMarkup = streams.getMarkup();
-				components = streams.finishRootComponentAccumulator();
+				XMLStreamReader xmlStreamReader = XMLInputFactory.newFactory().createXMLStreamReader(fileInputStream);
+				DatabindingXmlStreamReader reader = new DatabindingXmlStreamReader(xmlStreamReader);
+				reader.expectSpecialDocumentElement("page");
+				markupContent = xmlContentObjectBinding.parse(reader);
 			} catch (XMLStreamException e) {
 				throw new RuntimeException(e);
 			}
+
+			// assemble the final component configuration tree from the markup content
+			String wicketMarkup;
+			ComponentConfigurationList components;
+			try {
+				StringWriter stringWriter = new StringWriter();
+				XMLStreamWriter markupWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(stringWriter);
+				markupWriter.writeStartDocument();
+				markupWriter.writeStartElement("html");
+				markupWriter.writeStartElement("body");
+				List<ComponentConfiguration> componentAccumulator = new ArrayList<>();
+				ConfigurationAssembler<ComponentConfiguration> assembler = new ConfigurationAssembler<>(markupWriter, componentAccumulator, snippets);
+				markupContent.assemble(assembler);
+				markupWriter.writeEndElement();
+				markupWriter.writeEndElement();
+				markupWriter.writeEndDocument();
+				wicketMarkup = stringWriter.toString();
+				components = new ComponentConfigurationList(ImmutableList.copyOf(componentAccumulator));
+			} catch (XMLStreamException e) {
+				throw new RuntimeException(e);
+			}
+			
 			// TODO
 			System.out.println("------------------------------------------");
 			System.out.println(wicketMarkup);
 			System.out.println("------------------------------------------");
 			// TODO
-			ConfigurationElementContent content = new ConfigurationElementContent(wicketMarkup, new ComponentConfigurationList(components));
+			
+			ConfigurationElementContent content = new ConfigurationElementContent(wicketMarkup, components);
 			PageConfiguration pageConfiguration = new PageConfiguration(path, content);
 			putElement(path, pageConfiguration);
 		} else if (filename.endsWith(PanelConfiguration.CONFIGURATION_FILENAME_SUFFIX)) {
@@ -173,5 +217,5 @@ final class ConfigurationBuilder {
 		}
 		subMap.put(path, element);
 	}
-	
+
 }

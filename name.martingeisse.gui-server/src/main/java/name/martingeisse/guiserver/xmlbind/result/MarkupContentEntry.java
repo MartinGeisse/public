@@ -7,12 +7,14 @@ package name.martingeisse.guiserver.xmlbind.result;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import name.martingeisse.guiserver.xmlbind.ConfigurationAssemblerAcceptor;
+
 /**
  * Used to represent the actual contents of a {@link MarkupContent} object.
  *
  * @param <C> the component type
  */
-public abstract class MarkupContentEntry<C> {
+public abstract class MarkupContentEntry<C extends ConfigurationAssemblerAcceptor<C>> {
 
 	/**
 	 * Assembles the configuration.
@@ -63,7 +65,7 @@ public abstract class MarkupContentEntry<C> {
 	 *
 	 * @param <C> the component type
 	 */
-	public static final class RawOpeningTag<C> extends MarkupContentEntry<C> {
+	public static final class RawOpeningTag<C extends ConfigurationAssemblerAcceptor<C>> extends MarkupContentEntry<C> {
 
 		/**
 		 * the localName
@@ -102,7 +104,7 @@ public abstract class MarkupContentEntry<C> {
 	 *
 	 * @param <C> the component type
 	 */
-	public static final class RawClosingTag<C> extends MarkupContentEntry<C> {
+	public static final class RawClosingTag<C extends ConfigurationAssemblerAcceptor<C>> extends MarkupContentEntry<C> {
 
 		/* (non-Javadoc)
 		 * @see name.martingeisse.guiserver.xmlbind.result.MarkupContentEntry#assemble(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
@@ -119,7 +121,7 @@ public abstract class MarkupContentEntry<C> {
 	 *
 	 * @param <C> the component type
 	 */
-	public static final class Characters<C> extends MarkupContentEntry<C> {
+	public static final class Characters<C extends ConfigurationAssemblerAcceptor<C>> extends MarkupContentEntry<C> {
 
 		/**
 		 * the text
@@ -149,7 +151,7 @@ public abstract class MarkupContentEntry<C> {
 	 *
 	 * @param <C> the component type
 	 */
-	public static final class Component<C> extends MarkupContentEntry<C> {
+	public static final class Component<C extends ConfigurationAssemblerAcceptor<C>> extends MarkupContentEntry<C> {
 
 		/**
 		 * the configuration

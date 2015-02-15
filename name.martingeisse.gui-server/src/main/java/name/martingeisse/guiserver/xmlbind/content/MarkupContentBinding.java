@@ -10,6 +10,7 @@ import java.util.List;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 
+import name.martingeisse.guiserver.xmlbind.ConfigurationAssemblerAcceptor;
 import name.martingeisse.guiserver.xmlbind.DatabindingXmlStreamReader;
 import name.martingeisse.guiserver.xmlbind.element.ElementObjectBinding;
 import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
@@ -20,7 +21,7 @@ import name.martingeisse.guiserver.xmlbind.result.MarkupContentEntry;
  * 
  * @param <C> the type of components used in markup content
  */
-public final class MarkupContentBinding<C> implements XmlContentObjectBinding<MarkupContent<C>> {
+public final class MarkupContentBinding<C extends ConfigurationAssemblerAcceptor<C>> implements XmlContentObjectBinding<MarkupContent<C>> {
 
 	/**
 	 * the specialElementComponentBinding

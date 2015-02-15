@@ -9,6 +9,7 @@ import java.util.List;
 import javax.xml.stream.XMLStreamWriter;
 
 import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
+import name.martingeisse.guiserver.xmlbind.ConfigurationAssemblerAcceptor;
 
 /**
  * Helper class that takes component-enhanced markup and
@@ -17,7 +18,7 @@ import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
  *
  * @param <C> the component type
  */
-public final class ConfigurationAssembler<C> {
+public final class ConfigurationAssembler<C extends ConfigurationAssemblerAcceptor<C>> {
 
 	/**
 	 * the markupWriter
@@ -52,6 +53,16 @@ public final class ConfigurationAssembler<C> {
 	 */
 	public XMLStreamWriter getMarkupWriter() {
 		return markupWriter;
+	}
+	
+	/**
+	 * Returns the size of the component accumulator, i.e. the number of
+	 * components accumulated so far.
+	 * 
+	 * @return the component accumulator size
+	 */
+	public int getComponentAccumulatorSize() {
+		return componentAccumulator.size();
 	}
 	
 	/**

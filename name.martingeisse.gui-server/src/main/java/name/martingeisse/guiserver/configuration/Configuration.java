@@ -59,7 +59,7 @@ public final class Configuration {
 	 */
 	public Configuration() throws IOException, ConfigurationException {
 		File configurationRoot = new File(ServerConfiguration.configurationRoot.getMandatoryValue());
-		ConfigurationBuilder builder = new ConfigurationBuilder();
+		ConfigurationBuilder builder = new ConfigurationBuilder(StandardMarkupContentBinding.INSTANCE);
 		builder.build(configurationRoot);
 		elements = builder.getElements();
 		snippets = builder.getSnippets();

@@ -4,15 +4,16 @@
 
 package name.martingeisse.guiserver.configuration.content;
 
+import javax.xml.stream.XMLStreamException;
+
 import name.martingeisse.guiserver.configuration.elements.PageConfiguration;
 import name.martingeisse.guiserver.gui.ConfigurationDefinedPage;
+import name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler;
+import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-
-import com.google.common.collect.ImmutableList;
-
 
 /**
  * Configuration for a link. This class tries to cover only the common
@@ -27,25 +28,11 @@ public final class LinkConfiguration extends AbstractContainerConfiguration {
 
 	/**
 	 * Constructor.
-	 * 
-	 * @param id the wicket id
-	 * @param children the children
 	 * @param targetPagePath the path of the page to link to
+	 * @param markupContent the markup content
 	 */
-	public LinkConfiguration(String id, ImmutableList<ComponentConfiguration> children, String targetPagePath) {
-		super(id, children);
-		this.targetPagePath = targetPagePath;
-	}
-
-	/**
-	 * Constructor.
-	 * 
-	 * @param id the wicket id
-	 * @param children the children
-	 * @param targetPagePath the path of the page to link to
-	 */
-	public LinkConfiguration(String id, ComponentConfigurationList children, String targetPagePath) {
-		super(id, children);
+	public LinkConfiguration(String targetPagePath, MarkupContent<ComponentConfiguration> markupContent) {
+		super(markupContent);
 		this.targetPagePath = targetPagePath;
 	}
 
@@ -55,6 +42,14 @@ public final class LinkConfiguration extends AbstractContainerConfiguration {
 	 */
 	public String getTargetPagePath() {
 		return targetPagePath;
+	}
+	
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration#assembleContainerIntro(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
+	 */
+	@Override
+	protected void assembleContainerIntro(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+		writeOpeningComponentTag(assembler, "a");
 	}
 
 	/* (non-Javadoc)
@@ -66,5 +61,5 @@ public final class LinkConfiguration extends AbstractContainerConfiguration {
 		targetPageParameters.add(PageConfiguration.CONFIGURATION_ELEMENT_PATH_PAGE_PARAMETER_NAME, targetPagePath);
 		return new BookmarkablePageLink<>(getId(), ConfigurationDefinedPage.class, targetPageParameters);
 	}
-	
+
 }

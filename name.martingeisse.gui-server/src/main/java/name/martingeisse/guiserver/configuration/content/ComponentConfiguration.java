@@ -4,6 +4,8 @@
 
 package name.martingeisse.guiserver.configuration.content;
 
+import name.martingeisse.guiserver.xmlbind.ConfigurationAssemblerAcceptor;
+
 import org.apache.wicket.Component;
 
 /**
@@ -15,7 +17,7 @@ import org.apache.wicket.Component;
  * specification, i.e. between the configuration files and the
  * configuration objects.
  */
-public interface ComponentConfiguration extends IComponentConfigurationVisitorAcceptor {
+public interface ComponentConfiguration extends ConfigurationAssemblerAcceptor<ComponentConfiguration>, IComponentConfigurationVisitorAcceptor {
 	
 	/**
 	 * Builds the wicket component.

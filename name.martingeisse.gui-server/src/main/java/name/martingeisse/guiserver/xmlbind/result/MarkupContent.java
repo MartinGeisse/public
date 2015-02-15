@@ -6,12 +6,14 @@ package name.martingeisse.guiserver.xmlbind.result;
 
 import javax.xml.stream.XMLStreamException;
 
+import name.martingeisse.guiserver.xmlbind.ConfigurationAssemblerAcceptor;
+
 /**
  * A piece of properly nested markup that may contain components of type C.
  *
  * @param <C> the type of components used in markup content
  */
-public final class MarkupContent<C> {
+public final class MarkupContent<C extends ConfigurationAssemblerAcceptor<C>> {
 
 	/**
 	 * the entries

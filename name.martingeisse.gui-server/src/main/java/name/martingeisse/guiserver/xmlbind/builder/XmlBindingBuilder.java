@@ -4,6 +4,7 @@
 
 package name.martingeisse.guiserver.xmlbind.builder;
 
+import name.martingeisse.guiserver.xmlbind.ConfigurationAssemblerAcceptor;
 import name.martingeisse.guiserver.xmlbind.content.MarkupContentBinding;
 import name.martingeisse.guiserver.xmlbind.element.ElementNameSelectedObjectBinding;
 
@@ -12,7 +13,7 @@ import name.martingeisse.guiserver.xmlbind.element.ElementNameSelectedObjectBind
  *
  * @param <C> the type of components used in markup content
  */
-public final class XmlBindingBuilder<C> {
+public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>> {
 
 	/**
 	 * the elementComponentBinding
