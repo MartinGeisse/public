@@ -67,3 +67,20 @@ Type Indicators:
 	
 Nebenbei bemerkt muss es möglich sein, ein ElementObjectBinding per Annotation oder manuell
 zu erzeugen, da Klassen wie String, IValidator etc. nicht annotated werden können.
+
+------------------------------------------------------------------------------------------
+
+Der Parser geht durch das Input-XML durch und erzeugt dabei Components (jeweils *nachdem*
+der Content dfür geparsed wurde, damit die Verarbeitung einfach ist). Die Component Configs
+bekommen dann den *MarkupContent* übergeben. Ohne diesen können sie nicht ihr eigenes
+Markup erzeugen, was aber gerade die Bootstrap-Components tun sollen.
+
+Die Component Configs können dann entweder gleich oder später die children aus dem
+MarkupConfig extrahieren. Um es einfach zu halten, könnte das in der "assemble"-Phase
+passieren. In dieser wird auch das Wicket-Markup geschrieben und Snippets gesammelt.
+Also passt der ConfigurationAssembler so wie gecoded. Es bedeutet aber, dass eine
+ComponentConfig nicht gleich nach Erzeugung die Kind-Components kennt, weil diese zu
+diesem Zeitpunkt nur als MarkupContent vorliegen.
+
+
+

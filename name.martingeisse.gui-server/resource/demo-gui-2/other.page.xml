@@ -1,0 +1,6 @@
+<gui:page xmlns:gui="http://guiserver.martingeisse.name/v1">
+	<h1>Hello Again!</h1>
+	<div>
+		This is a another page using the new XML format.
+	</div>
+</gui:page>

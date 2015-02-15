@@ -5,8 +5,8 @@
 package name.martingeisse.guiserver.xmlbind.element;
 
 import name.martingeisse.common.terms.Multiplicity;
-import name.martingeisse.guiserver.xmlbind.MarkupContent;
 import name.martingeisse.guiserver.xmlbind.attribute.BindAttribute;
+import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
 
 /**
  * This annotation can be used to bind an element to a class. Parsing

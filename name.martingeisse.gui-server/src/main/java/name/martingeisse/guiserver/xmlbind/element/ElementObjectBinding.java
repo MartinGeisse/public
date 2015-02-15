@@ -17,8 +17,9 @@ import name.martingeisse.guiserver.xmlbind.DatabindingXmlStreamReader;
 public interface ElementObjectBinding<T> {
 
 	/**
-	 * Parses an object from an XML element and returns it. This moves
-	 * the XML stream reader right after the closing tag of the element.
+	 * Parses an object from an XML element and returns it. The stream must
+	 * be at the opening tag of the element. This method moves the stream
+	 * right after the closing tag of the element.
 	 * 
 	 * @param reader the XML stream reader
 	 * @return the parsed object

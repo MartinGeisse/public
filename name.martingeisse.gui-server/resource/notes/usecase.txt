@@ -3,8 +3,8 @@
 General Features
 
 [ok] tab panel (esp. lazy-loading)
-[..] tab panel: URL segment für active tab
-[..] tab panel: links die trotzdem relativ zur page-url sind (funzt noch nicht richtig)
+[..] tab panel: URL segment für active tab (funzt noch nicht richtig)
+[..] tab panel: links die trotzdem relativ zur page-url sind
 [ok] enclosure
 [..] popup window (lazy-loading content)
 [..] pagination
