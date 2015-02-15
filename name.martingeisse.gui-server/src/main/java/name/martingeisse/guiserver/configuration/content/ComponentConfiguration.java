@@ -20,9 +20,11 @@ import org.apache.wicket.Component;
 public interface ComponentConfiguration extends ConfigurationAssemblerAcceptor<ComponentConfiguration>, IComponentConfigurationVisitorAcceptor {
 	
 	/**
-	 * Builds the wicket component.
+	 * Builds the wicket component. May return null to indicate that
+	 * this configuration works without a wicket component, i.e. it
+	 * was just a macro for raw markup.
 	 * 
-	 * @return the component
+	 * @return the component or null
 	 */
 	public Component buildComponent();
 	

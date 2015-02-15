@@ -4,6 +4,7 @@
 
 package name.martingeisse.guiserver.configuration.content;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 
 import com.google.common.collect.ImmutableList;
@@ -43,7 +44,10 @@ public final class ComponentConfigurationList implements IComponentConfiguration
 	 */
 	public void buildAndAddComponents(MarkupContainer parent) {
 		for (ComponentConfiguration configuration : configurations) {
-			parent.add(configuration.buildComponent());
+			Component child = configuration.buildComponent();
+			if (child != null) {
+				parent.add(child);
+			}
 		}
 	}
 

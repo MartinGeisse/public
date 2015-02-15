@@ -7,13 +7,17 @@ package name.martingeisse.guiserver.configuration.content;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.stream.XMLStreamException;
+
 import name.martingeisse.guiserver.gui.ConfigurationDefinedForm;
 import name.martingeisse.guiserver.gui.FormDataModel;
+import name.martingeisse.guiserver.xmlbind.attribute.BindAttribute;
+import name.martingeisse.guiserver.xmlbind.element.BindComponentElement;
+import name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler;
+import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.model.IModel;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * Represents a form on a page. The form loads initial
@@ -28,6 +32,7 @@ import com.google.common.collect.ImmutableList;
  * reflected in other components that pull values from the
  * same models.
  */
+@BindComponentElement(localName = "form", attributes = {@BindAttribute(name = "backendUrl")}, acceptsMarkupContent = true)
 public final class FormConfiguration extends AbstractContainerConfiguration implements IConfigurationSnippet {
 
 	/**
@@ -42,23 +47,11 @@ public final class FormConfiguration extends AbstractContainerConfiguration impl
 
 	/**
 	 * Constructor.
-	 * @param id the wicket id
-	 * @param children the children
 	 * @param backendUrl the backend URL
+	 * @param markupContent the markup content
 	 */
-	public FormConfiguration(String id, ComponentConfigurationList children, String backendUrl) {
-		super(id, children);
-		this.backendUrl = backendUrl;
-	}
-
-	/**
-	 * Constructor.
-	 * @param id the wicket id
-	 * @param children the children
-	 * @param backendUrl the backend URL
-	 */
-	public FormConfiguration(String id, ImmutableList<ComponentConfiguration> children, String backendUrl) {
-		super(id, children);
+	public FormConfiguration(String backendUrl, MarkupContent<ComponentConfiguration> markupContent) {
+		super(markupContent);
 		this.backendUrl = backendUrl;
 	}
 
@@ -77,7 +70,7 @@ public final class FormConfiguration extends AbstractContainerConfiguration impl
 	public void setSnippetHandle(int handle) {
 		this.snippetHandle = handle;
 	}
-	
+
 	/**
 	 * Getter method for the snippetHandle.
 	 * @return the snippetHandle
@@ -86,6 +79,14 @@ public final class FormConfiguration extends AbstractContainerConfiguration impl
 		return snippetHandle;
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration#assembleContainerIntro(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
+	 */
+	@Override
+	protected void assembleContainerIntro(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+		writeOpeningComponentTag(assembler, "form");
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration#buildContainer()
 	 */

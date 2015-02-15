@@ -37,28 +37,12 @@
 //	 * Constructor.
 //	 */
 //	public DefaultContentParser() {
-//		addSpecialElementParser("form",
-//			new ContainerElementParser("form", "form", FormConfiguration.class,
-//				new AttributeSpecification("backendUrl", TextAttributeParser.INSTANCE)));
 //		addSpecialElementParser("textField", new FormFieldParser("text", TextFieldConfiguration.class));
 //		addSpecialElementParser("checkbox", new FormFieldParser("checkbox", CheckboxConfiguration.class));
-//		addSpecialElementParser("feedback",
-//			new SkippedContentComponentElementParser("feedback", "div", FieldPathFeedbackPanelConfiguration.class,
-//				new AttributeSpecification("name", TextAttributeParser.INSTANCE)));
-//		addSpecialElementParser("submit",
-//			new AbstractReplacingMacroElementParser<ComponentConfiguration>() {
-//				@Override
-//				protected void writeMarkup(ContentStreams<ComponentConfiguration> streams, Object[] attributeValues) throws XMLStreamException {
-//					streams.getWriter().writeEmptyElement("input");
-//					streams.getWriter().writeAttribute("type", "submit");
-//				}
-//			}
-//		);
+
+
 //		addSpecialElementParser("navbar", new NavigationBarParser());
 //		addSpecialElementParser("tabPanel", new TabPanelParser());
-//		addSpecialElementParser("pieChart", new SkippedContentComponentElementParser("pie", "img", PieChartConfiguration.class,
-//			new AttributeSpecification("backendUrl", TextAttributeParser.INSTANCE),
-//			new AttributeSpecification("legend", true, false, BooleanAttributeParser.INSTANCE)));
-//	}
+
 //
 //}

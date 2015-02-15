@@ -4,7 +4,13 @@
 
 package name.martingeisse.guiserver.configuration.content;
 
+import javax.xml.stream.XMLStreamException;
+
 import name.martingeisse.guiserver.gui.PieChartImageResource;
+import name.martingeisse.guiserver.xmlbind.attribute.AttributeValueBindingOptionality;
+import name.martingeisse.guiserver.xmlbind.attribute.BindAttribute;
+import name.martingeisse.guiserver.xmlbind.element.BindComponentElement;
+import name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.image.Image;
@@ -12,13 +18,16 @@ import org.apache.wicket.markup.html.image.Image;
 /**
  * Configuration for a pie chart component.
  */
+@BindComponentElement(localName = "pieChart", attributes = {
+	@BindAttribute(name = "backendUrl"), @BindAttribute(name = "legend", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "false")
+})
 public final class PieChartConfiguration extends AbstractComponentConfiguration implements IConfigurationSnippet {
 
 	/**
 	 * the backendUrl
 	 */
 	private final String backendUrl;
-	
+
 	/**
 	 * the legend
 	 */
@@ -31,16 +40,14 @@ public final class PieChartConfiguration extends AbstractComponentConfiguration 
 
 	/**
 	 * Constructor.
-	 * @param id the wicket id
 	 * @param backendUrl the URL to load chart data from
 	 * @param legend whether to draw a legend
 	 */
-	public PieChartConfiguration(String id, String backendUrl, boolean legend) {
-		super(id);
+	public PieChartConfiguration(String backendUrl, boolean legend) {
 		this.backendUrl = backendUrl;
 		this.legend = legend;
 	}
-	
+
 	/**
 	 * Getter method for the backendUrl.
 	 * @return the backendUrl
@@ -48,7 +55,7 @@ public final class PieChartConfiguration extends AbstractComponentConfiguration 
 	public String getBackendUrl() {
 		return backendUrl;
 	}
-	
+
 	/**
 	 * Getter method for the legend.
 	 * @return the legend
@@ -57,6 +64,16 @@ public final class PieChartConfiguration extends AbstractComponentConfiguration 
 		return legend;
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#assemble(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
+	 */
+	@Override
+	public void assemble(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+		super.assemble(assembler);
+		assembler.getMarkupWriter().writeEmptyElement("img");
+		assembler.getMarkupWriter().writeAttribute("wicket:id", getId());
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.configuration.content.ComponentConfiguration#buildComponent()
 	 */
@@ -72,7 +89,7 @@ public final class PieChartConfiguration extends AbstractComponentConfiguration 
 	public void setSnippetHandle(int handle) {
 		this.snippetHandle = handle;
 	}
-	
+
 	/**
 	 * Getter method for the snippetHandle.
 	 * @return the snippetHandle
