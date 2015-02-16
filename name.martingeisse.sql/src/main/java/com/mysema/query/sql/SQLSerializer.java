@@ -95,7 +95,7 @@ public class SQLSerializer extends SerializerBase<SQLSerializer> {
 
     private boolean dmlWithSchema;
     
-    private RelationalPath<?> entity;
+    private RelationalPath<?> relationalPath;
 
     private final SQLTemplates templates;
     
@@ -286,14 +286,14 @@ public class SQLSerializer extends SerializerBase<SQLSerializer> {
 
     }
 
-    public void serializeForDelete(QueryMetadata metadata, RelationalPath<?> entity) {
-        this.entity = entity;
+    public void serializeForDelete(QueryMetadata metadata, RelationalPath<?> relationalPath) {
+        this.relationalPath = relationalPath;
         serialize(Position.START, metadata.getFlags());        
         if (!serialize(Position.START_OVERRIDE, metadata.getFlags())) {
             append(templates.getDeleteFrom());    
         }        
         dmlWithSchema = true;
-        handle(entity);
+        handle(relationalPath);
         dmlWithSchema = false;
         
         if (metadata.getWhere() != null) {
@@ -303,9 +303,9 @@ public class SQLSerializer extends SerializerBase<SQLSerializer> {
         
     }
 
-    public void serializeForMerge(QueryMetadata metadata, RelationalPath<?> entity, List<Path<?>> keys,
+    public void serializeForMerge(QueryMetadata metadata, RelationalPath<?> relationalPath, List<Path<?>> keys,
             List<Path<?>> columns, List<Expression<?>> values, @Nullable SubQueryExpression<?> subQuery) {
-        this.entity = entity;
+        this.relationalPath = relationalPath;
         
         serialize(Position.START, metadata.getFlags());
         
@@ -313,7 +313,7 @@ public class SQLSerializer extends SerializerBase<SQLSerializer> {
             append(templates.getMergeInto());    
         }        
         dmlWithSchema = true;
-        handle(entity);
+        handle(relationalPath);
         dmlWithSchema = false;
         append(" ");
         // columns
@@ -349,9 +349,9 @@ public class SQLSerializer extends SerializerBase<SQLSerializer> {
         serialize(Position.END, metadata.getFlags());
     }
 
-    public void serializeForInsert(QueryMetadata metadata, RelationalPath<?> entity, List<Path<?>> columns,
+    public void serializeForInsert(QueryMetadata metadata, RelationalPath<?> relationalPath, List<Path<?>> columns,
             List<Expression<?>> values, @Nullable SubQueryExpression<?> subQuery) {
-        this.entity = entity;
+        this.relationalPath = relationalPath;
         
         serialize(Position.START, metadata.getFlags());
         
@@ -359,7 +359,7 @@ public class SQLSerializer extends SerializerBase<SQLSerializer> {
             append(templates.getInsertInto());    
         }        
         dmlWithSchema = true;
-        handle(entity);
+        handle(relationalPath);
         dmlWithSchema = false;
         // columns
         if (!columns.isEmpty()) {
@@ -392,9 +392,9 @@ public class SQLSerializer extends SerializerBase<SQLSerializer> {
         
     }
 
-    public void serializeForUpdate(QueryMetadata metadata, RelationalPath<?> entity, 
+    public void serializeForUpdate(QueryMetadata metadata, RelationalPath<?> relationalPath, 
             List<Pair<Path<?>, Expression<?>>> updates) {
-        this.entity = entity;
+        this.relationalPath = relationalPath;
         
         serialize(Position.START, metadata.getFlags());
         
@@ -402,7 +402,7 @@ public class SQLSerializer extends SerializerBase<SQLSerializer> {
             append(templates.getUpdate());    
         }        
         dmlWithSchema = true;
-        handle(entity);
+        handle(relationalPath);
         dmlWithSchema = false;
         append("\n");
         append(templates.getSet());
@@ -559,14 +559,14 @@ public class SQLSerializer extends SerializerBase<SQLSerializer> {
     @Override
     public Void visit(Path<?> path, Void context) {
         if (dml) {
-            if (path.equals(entity) && path instanceof RelationalPath<?>) {
+            if (path.equals(relationalPath) && path instanceof RelationalPath<?>) {
                 if (dmlWithSchema && templates.isPrintSchema()) {
                     appendAsSchemaName((RelationalPath<?>)path);
                     append(".");
                 }                
                 appendAsTableName((RelationalPath<?>)path);
                 return null;
-            }else if (entity.equals(path.getMetadata().getParent()) && skipParent) {
+            }else if (relationalPath.equals(path.getMetadata().getParent()) && skipParent) {
                 appendAsColumnName(path);
                 return null;
             }

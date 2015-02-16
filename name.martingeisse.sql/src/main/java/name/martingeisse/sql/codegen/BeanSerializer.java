@@ -16,7 +16,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import com.mysema.codegen.CodeWriter;
 import com.mysema.codegen.model.Parameter;
 import com.mysema.codegen.model.SimpleType;
@@ -71,6 +74,10 @@ public class BeanSerializer extends AbstractSerializer {
 		final Collection<PrimaryKeyData> primaryKeys = (Collection<PrimaryKeyData>)entityType.getData().get(PrimaryKeyData.class);
 		// @SuppressWarnings("unchecked")
 		// Collection<ForeignKeyData> foreignKeys = (Collection<ForeignKeyData>) entityType.getData().get(ForeignKeyData.class);
+		final String entityName = entityType.getSimpleName();
+		final String entityNameBase = (entityName.endsWith("Record") ? entityName.substring(0, entityName.length() - "Record".length()) : entityName);
+		final String relationalPathClassName = "Q" + entityNameBase;
+		final String relationalPathSingletonName = StringUtils.uncapitalize(entityNameBase);
 
 		// determine primary key
 		PrimaryKeyData primaryKey;
@@ -248,8 +255,6 @@ public class BeanSerializer extends AbstractSerializer {
 
 		// generate findById() method and corresponding Wicket model (only works if there is a single-column primary key)
 		if (idProperty != null) {
-			final String entityName = entityType.getSimpleName();
-			final String uncapEntityName = entityType.getUncapSimpleName();
 
 			Type idType = idProperty.getType();
 			if (ClassUtils.wrapperToPrimitive(idType.getJavaClass()) != null) {
@@ -258,7 +263,7 @@ public class BeanSerializer extends AbstractSerializer {
 
 			w.javadoc("Loads a record by id.", "@param id the id of the record to load", "@return the loaded record");
 			w.beginStaticMethod(entityType, "findById", new Parameter("id", idType));
-			w.line("final Q" + entityName + " q = Q" + entityName + "." + entityType.getUncapSimpleName() + ";");
+			w.line("final " + relationalPathClassName + " q = " + relationalPathClassName + "." + relationalPathSingletonName + ";");
 			w.line("final SQLQuery query = EntityConnectionManager.getConnection().createQuery();");
 			w.line("return query.from(q).where(q." + idProperty.getName() + ".eq(id)).singleResult(q);");
 			w.end();
@@ -266,7 +271,7 @@ public class BeanSerializer extends AbstractSerializer {
 			if (forWicket) {
 				w.javadoc("Creates a model that loads a record by id.", "@param id the id of the record to load", "@return the model loading the record");
 				w.beginStaticMethod(new SimpleType(new SimpleType("IModel"), entityType), "getModelForId", new Parameter("id", idType));
-				w.line("return new EntityModel<" + entityName + ">(Q" + entityName + "." + uncapEntityName + ", Q" + entityName + "." + uncapEntityName + ".id.eq(id));");
+				w.line("return new EntityModel<" + entityName + ">(" + relationalPathClassName + "." + relationalPathSingletonName + ", " + relationalPathClassName + "." + relationalPathSingletonName + ".id.eq(id));");
 				w.end();
 			}
 
@@ -276,7 +281,7 @@ public class BeanSerializer extends AbstractSerializer {
 		if (primaryKey == null || primaryKey.getColumns().size() < 2) {
 			w.javadoc("Inserts a record into the database using all fields from this object except the ID, then updates the ID.");
 			w.beginPublicMethod(Types.VOID, "insert");
-			w.line("final Q" + entityType.getSimpleName() + " q = Q" + entityType.getSimpleName() + "." + entityType.getUncapSimpleName() + ";");
+			w.line("final " + relationalPathClassName + " q = " + relationalPathClassName + "." + relationalPathSingletonName + ";");
 			w.line("final SQLInsertClause insert = EntityConnectionManager.getConnection().createInsert(q);");
 			for (final Property property : nonPrimaryKeyProperties) {
 				final String propertyName = property.getEscapedName();
