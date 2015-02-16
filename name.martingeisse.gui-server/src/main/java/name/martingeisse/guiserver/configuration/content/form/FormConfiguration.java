@@ -2,13 +2,16 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.configuration.content;
+package name.martingeisse.guiserver.configuration.content.form;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
+import name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.gui.ConfigurationDefinedForm;
 import name.martingeisse.guiserver.gui.FormDataModel;
 import name.martingeisse.guiserver.xml.attribute.BindAttribute;

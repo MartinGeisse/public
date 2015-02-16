@@ -8,14 +8,17 @@ import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
 import name.martingeisse.guiserver.configuration.content.EnclosureConfiguration;
-import name.martingeisse.guiserver.configuration.content.FieldPathFeedbackPanelConfiguration;
-import name.martingeisse.guiserver.configuration.content.FormConfiguration;
 import name.martingeisse.guiserver.configuration.content.IncludeBackendConfiguration;
 import name.martingeisse.guiserver.configuration.content.LazyLoadContainerConfiguration;
 import name.martingeisse.guiserver.configuration.content.LinkConfiguration;
 import name.martingeisse.guiserver.configuration.content.PieChartConfiguration;
-import name.martingeisse.guiserver.configuration.content.SubmitButtonConfiguration;
 import name.martingeisse.guiserver.configuration.content.TabPanelConfiguration;
+import name.martingeisse.guiserver.configuration.content.form.FieldPathFeedbackPanelConfiguration;
+import name.martingeisse.guiserver.configuration.content.form.FormConfiguration;
+import name.martingeisse.guiserver.configuration.content.form.FormFieldModifier;
+import name.martingeisse.guiserver.configuration.content.form.FormFieldModifierBinding;
+import name.martingeisse.guiserver.configuration.content.form.SubmitButtonConfiguration;
+import name.martingeisse.guiserver.configuration.content.form.TextFieldConfiguration;
 import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
 import name.martingeisse.guiserver.xml.attribute.AttributeValueBinding;
 import name.martingeisse.guiserver.xml.attribute.DefaultAttributeValueBinding;
@@ -54,11 +57,14 @@ public final class StandardMarkupContentBinding implements XmlContentObjectBindi
 		builder.addAttributeTextValueBinding(Boolean.TYPE, TextBooleanBinding.INSTANCE);
 		
 		// known child object classes
-		AttributeValueBinding<?>[] attributeBindings = {
-			new DefaultAttributeValueBinding<>("title", TextStringBinding.INSTANCE),
-			new DefaultAttributeValueBinding<>("selector", TextStringBinding.INSTANCE),
-		};
-		builder.addChildElementObjectBinding(TabPanelConfiguration.TabEntry.class, new ElementClassInstanceBinding<>(TabPanelConfiguration.TabEntry.class, attributeBindings, builder.getRecursiveMarkupBinding()));
+		{
+			AttributeValueBinding<?>[] attributeBindings = {
+				new DefaultAttributeValueBinding<>("title", TextStringBinding.INSTANCE),
+				new DefaultAttributeValueBinding<>("selector", TextStringBinding.INSTANCE),
+			};
+			builder.addChildElementObjectBinding(TabPanelConfiguration.TabEntry.class, new ElementClassInstanceBinding<>(TabPanelConfiguration.TabEntry.class, attributeBindings, builder.getRecursiveMarkupBinding()));
+		}
+		builder.addChildElementObjectBinding(FormFieldModifier.class, new FormFieldModifierBinding());
 		
 		// known component special tags
 		builder.addComponentConfigurationClass(EnclosureConfiguration.class);
@@ -70,6 +76,7 @@ public final class StandardMarkupContentBinding implements XmlContentObjectBindi
 		builder.addComponentConfigurationClass(PieChartConfiguration.class);
 		builder.addComponentConfigurationClass(SubmitButtonConfiguration.class);
 		builder.addComponentConfigurationClass(TabPanelConfiguration.class);
+		builder.addComponentConfigurationClass(TextFieldConfiguration.class);
 		
 		binding = builder.build();
 	}

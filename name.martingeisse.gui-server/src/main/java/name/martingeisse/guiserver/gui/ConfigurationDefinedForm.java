@@ -9,7 +9,7 @@ import java.util.Map;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.guiserver.backend.BackendHttpClient;
 import name.martingeisse.guiserver.configuration.Configuration;
-import name.martingeisse.guiserver.configuration.content.FormConfiguration;
+import name.martingeisse.guiserver.configuration.content.form.FormConfiguration;
 import name.martingeisse.guiserver.configuration.elements.PageConfiguration;
 
 import org.apache.wicket.markup.html.form.Form;
