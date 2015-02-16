@@ -14,7 +14,7 @@ import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
  * This element-to-object binding selects one of several bindings based on
  * the value of an attribute.
  */
-public final class ElementAttributeSelectedObjectBinding<T> implements ElementObjectBinding<T> {
+public class ElementAttributeSelectedObjectBinding<T> implements ElementObjectBinding<T> {
 
 	/**
 	 * the attributeName
@@ -40,7 +40,7 @@ public final class ElementAttributeSelectedObjectBinding<T> implements ElementOb
 	 * @see name.martingeisse.guiserver.xmlbind.element.ElementObjectBinding#parse(name.martingeisse.guiserver.xmlbind.DatabindingXmlStreamReader)
 	 */
 	@Override
-	public T parse(DatabindingXmlStreamReader reader) throws XMLStreamException {
+	public final T parse(DatabindingXmlStreamReader reader) throws XMLStreamException {
 		String attributeValue = reader.getAttributeValue(null, attributeName);
 		if (attributeValue == null) {
 			throw new RuntimeException("missing '" + attributeName + "' attribute");

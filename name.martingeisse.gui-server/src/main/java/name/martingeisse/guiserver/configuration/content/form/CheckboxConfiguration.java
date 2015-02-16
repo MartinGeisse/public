@@ -7,8 +7,16 @@ package name.martingeisse.guiserver.configuration.content.form;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.stream.XMLStreamException;
+
+import name.martingeisse.common.terms.Multiplicity;
 import name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
+import name.martingeisse.guiserver.xml.attribute.AttributeValueBindingOptionality;
+import name.martingeisse.guiserver.xml.attribute.BindAttribute;
+import name.martingeisse.guiserver.xml.element.BindComponentElement;
+import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -17,6 +25,9 @@ import org.apache.wicket.validation.IValidator;
 /**
  * Represents a checkbox.
  */
+@BindComponentElement(localName = "checkbox", attributes = {
+	@BindAttribute(name = "name"), @BindAttribute(name = "required", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
+}, childObjectMultiplicity = Multiplicity.ANY, childObjectElementNameFilter = "validation")
 public final class CheckboxConfiguration extends AbstractComponentConfiguration {
 
 	/**
@@ -95,6 +106,17 @@ public final class CheckboxConfiguration extends AbstractComponentConfiguration 
 	 */
 	public FormFieldMetadata getMetadata() {
 		return metadata;
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#assemble(name.martingeisse.guiserver.xml.result.ConfigurationAssembler)
+	 */
+	@Override
+	public void assemble(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+		super.assemble(assembler);
+		assembler.getMarkupWriter().writeEmptyElement("input");
+		assembler.getMarkupWriter().writeAttribute("type", "checkbox");
+		assembler.getMarkupWriter().writeAttribute("wicket:id", getId());
 	}
 	
 	/* (non-Javadoc)

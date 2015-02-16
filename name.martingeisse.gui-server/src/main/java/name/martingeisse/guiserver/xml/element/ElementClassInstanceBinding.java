@@ -16,12 +16,12 @@ import name.martingeisse.guiserver.xml.content.XmlContentObjectBinding;
 /**
  * Binds an XML element to a constructor of a Java class.
  */
-public final class ElementClassInstanceBinding<T> implements ElementObjectBinding<T> {
+public class ElementClassInstanceBinding<T> implements ElementObjectBinding<T> {
 
 	/**
 	 * the constructor
 	 */
-	private final Constructor<T> constructor;
+	private final Constructor<? extends T> constructor;
 
 	/**
 	 * the attributeBindings
@@ -39,7 +39,7 @@ public final class ElementClassInstanceBinding<T> implements ElementObjectBindin
 	 * @param attributeBindings the attribute bindings
 	 * @param contentBinding the content binding, or null if no content is allowed for the element
 	 */
-	public ElementClassInstanceBinding(Class<T> targetClass, AttributeValueBinding<?>[] attributeBindings, XmlContentObjectBinding<?> contentBinding) {
+	public ElementClassInstanceBinding(Class<? extends T> targetClass, AttributeValueBinding<?>[] attributeBindings, XmlContentObjectBinding<?> contentBinding) {
 		this(chooseConstructor(targetClass), attributeBindings, contentBinding);
 	}
 	
@@ -47,7 +47,7 @@ public final class ElementClassInstanceBinding<T> implements ElementObjectBindin
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> Constructor<T> chooseConstructor(Class<T> targetClass) {
+	public static <T> Constructor<T> chooseConstructor(Class<? extends T> targetClass) {
 		if (targetClass.getConstructors().length != 1) {
 			throw new RuntimeException("expecting exactly one constructor in class " + targetClass);
 		}
@@ -60,7 +60,7 @@ public final class ElementClassInstanceBinding<T> implements ElementObjectBindin
 	 * @param attributeBindings the attribute bindings
 	 * @param contentBinding the content binding, or null if no content is allowed for the element
 	 */
-	public ElementClassInstanceBinding(Constructor<T> constructor, AttributeValueBinding<?>[] attributeBindings, XmlContentObjectBinding<?> contentBinding) {
+	public ElementClassInstanceBinding(Constructor<? extends T> constructor, AttributeValueBinding<?>[] attributeBindings, XmlContentObjectBinding<?> contentBinding) {
 
 		// assign fields
 		this.constructor = constructor;
@@ -86,7 +86,7 @@ public final class ElementClassInstanceBinding<T> implements ElementObjectBindin
 	 * @see name.martingeisse.guiserver.xmlbind.element.ElementObjectBinding#parse(name.martingeisse.guiserver.xmlbind.DatabindingXmlStreamReader)
 	 */
 	@Override
-	public T parse(DatabindingXmlStreamReader reader) throws XMLStreamException {
+	public final T parse(DatabindingXmlStreamReader reader) throws XMLStreamException {
 		String elementLocalName = reader.getLocalName();
 		
 		// create the constructor argument array

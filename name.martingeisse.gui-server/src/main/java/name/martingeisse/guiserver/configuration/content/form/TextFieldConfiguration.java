@@ -7,12 +7,16 @@ package name.martingeisse.guiserver.configuration.content.form;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.stream.XMLStreamException;
+
 import name.martingeisse.common.terms.Multiplicity;
 import name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
 import name.martingeisse.guiserver.xml.attribute.AttributeValueBindingOptionality;
 import name.martingeisse.guiserver.xml.attribute.BindAttribute;
 import name.martingeisse.guiserver.xml.element.BindComponentElement;
+import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextField;
@@ -104,6 +108,17 @@ public final class TextFieldConfiguration extends AbstractComponentConfiguration
 		return metadata;
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#assemble(name.martingeisse.guiserver.xml.result.ConfigurationAssembler)
+	 */
+	@Override
+	public void assemble(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+		super.assemble(assembler);
+		assembler.getMarkupWriter().writeEmptyElement("input");
+		assembler.getMarkupWriter().writeAttribute("type", "text");
+		assembler.getMarkupWriter().writeAttribute("wicket:id", getId());
+	}
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.configuration.content.ComponentConfiguration#buildComponent()
 	 */

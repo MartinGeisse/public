@@ -16,7 +16,7 @@ import com.google.common.collect.ImmutableMap;
  * This element-to-object binding selects one of several bindings based on
  * the element name.
  */
-public final class ElementNameSelectedObjectBinding<T> implements ElementObjectBinding<T> {
+public class ElementNameSelectedObjectBinding<T> implements ElementObjectBinding<T> {
 
 	/**
 	 * the bindings
@@ -35,7 +35,7 @@ public final class ElementNameSelectedObjectBinding<T> implements ElementObjectB
 	 * @see name.martingeisse.guiserver.xmlbind.element.ElementObjectBinding#parse(name.martingeisse.guiserver.xmlbind.DatabindingXmlStreamReader)
 	 */
 	@Override
-	public T parse(DatabindingXmlStreamReader reader) throws XMLStreamException {
+	public final T parse(DatabindingXmlStreamReader reader) throws XMLStreamException {
 		ElementObjectBinding<? extends T> selectedBinding = bindings.get(reader.getLocalName());
 		if (selectedBinding == null) {
 			throw new RuntimeException("unknown special element: " + reader.getLocalName());

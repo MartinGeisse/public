@@ -13,6 +13,7 @@ import name.martingeisse.guiserver.configuration.content.LazyLoadContainerConfig
 import name.martingeisse.guiserver.configuration.content.LinkConfiguration;
 import name.martingeisse.guiserver.configuration.content.PieChartConfiguration;
 import name.martingeisse.guiserver.configuration.content.TabPanelConfiguration;
+import name.martingeisse.guiserver.configuration.content.form.CheckboxConfiguration;
 import name.martingeisse.guiserver.configuration.content.form.FieldPathFeedbackPanelConfiguration;
 import name.martingeisse.guiserver.configuration.content.form.FormConfiguration;
 import name.martingeisse.guiserver.configuration.content.form.FormFieldModifier;
@@ -27,6 +28,7 @@ import name.martingeisse.guiserver.xml.content.XmlContentObjectBinding;
 import name.martingeisse.guiserver.xml.element.ElementClassInstanceBinding;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 import name.martingeisse.guiserver.xml.value.TextBooleanBinding;
+import name.martingeisse.guiserver.xml.value.TextIntegerBinding;
 import name.martingeisse.guiserver.xml.value.TextStringBinding;
 
 /**
@@ -55,6 +57,8 @@ public final class StandardMarkupContentBinding implements XmlContentObjectBindi
 		builder.addAttributeTextValueBinding(String.class, TextStringBinding.INSTANCE);
 		builder.addAttributeTextValueBinding(Boolean.class, TextBooleanBinding.INSTANCE);
 		builder.addAttributeTextValueBinding(Boolean.TYPE, TextBooleanBinding.INSTANCE);
+		builder.addAttributeTextValueBinding(Integer.class, TextIntegerBinding.INSTANCE);
+		builder.addAttributeTextValueBinding(Integer.TYPE, TextIntegerBinding.INSTANCE);
 		
 		// known child object classes
 		{
@@ -77,6 +81,7 @@ public final class StandardMarkupContentBinding implements XmlContentObjectBindi
 		builder.addComponentConfigurationClass(SubmitButtonConfiguration.class);
 		builder.addComponentConfigurationClass(TabPanelConfiguration.class);
 		builder.addComponentConfigurationClass(TextFieldConfiguration.class);
+		builder.addComponentConfigurationClass(CheckboxConfiguration.class);
 		
 		binding = builder.build();
 	}
