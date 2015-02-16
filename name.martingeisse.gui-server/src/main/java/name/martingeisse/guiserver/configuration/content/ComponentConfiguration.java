@@ -4,7 +4,7 @@
 
 package name.martingeisse.guiserver.configuration.content;
 
-import name.martingeisse.guiserver.xmlbind.ConfigurationAssemblerAcceptor;
+import name.martingeisse.guiserver.xml.ConfigurationAssemblerAcceptor;
 
 import org.apache.wicket.Component;
 

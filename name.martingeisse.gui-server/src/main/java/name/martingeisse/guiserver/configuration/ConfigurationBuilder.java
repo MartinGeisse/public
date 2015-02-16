@@ -28,10 +28,10 @@ import name.martingeisse.guiserver.configuration.elements.ConfigurationElementCo
 import name.martingeisse.guiserver.configuration.elements.FormUrlConfiguration;
 import name.martingeisse.guiserver.configuration.elements.PageConfiguration;
 import name.martingeisse.guiserver.configuration.elements.PanelConfiguration;
-import name.martingeisse.guiserver.xmlbind.DatabindingXmlStreamReader;
-import name.martingeisse.guiserver.xmlbind.content.XmlContentObjectBinding;
-import name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler;
-import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
+import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
+import name.martingeisse.guiserver.xml.content.XmlContentObjectBinding;
+import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
+import name.martingeisse.guiserver.xml.result.MarkupContent;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

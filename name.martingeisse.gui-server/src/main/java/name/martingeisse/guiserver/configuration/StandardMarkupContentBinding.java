@@ -16,15 +16,15 @@ import name.martingeisse.guiserver.configuration.content.LinkConfiguration;
 import name.martingeisse.guiserver.configuration.content.PieChartConfiguration;
 import name.martingeisse.guiserver.configuration.content.SubmitButtonConfiguration;
 import name.martingeisse.guiserver.configuration.content.TabPanelConfiguration;
-import name.martingeisse.guiserver.xmlbind.DatabindingXmlStreamReader;
-import name.martingeisse.guiserver.xmlbind.attribute.AttributeValueBinding;
-import name.martingeisse.guiserver.xmlbind.attribute.DefaultAttributeValueBinding;
-import name.martingeisse.guiserver.xmlbind.builder.XmlBindingBuilder;
-import name.martingeisse.guiserver.xmlbind.content.XmlContentObjectBinding;
-import name.martingeisse.guiserver.xmlbind.element.ElementClassInstanceBinding;
-import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
-import name.martingeisse.guiserver.xmlbind.value.TextBooleanBinding;
-import name.martingeisse.guiserver.xmlbind.value.TextStringBinding;
+import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
+import name.martingeisse.guiserver.xml.attribute.AttributeValueBinding;
+import name.martingeisse.guiserver.xml.attribute.DefaultAttributeValueBinding;
+import name.martingeisse.guiserver.xml.builder.XmlBindingBuilder;
+import name.martingeisse.guiserver.xml.content.XmlContentObjectBinding;
+import name.martingeisse.guiserver.xml.element.ElementClassInstanceBinding;
+import name.martingeisse.guiserver.xml.result.MarkupContent;
+import name.martingeisse.guiserver.xml.value.TextBooleanBinding;
+import name.martingeisse.guiserver.xml.value.TextStringBinding;
 
 /**
  * For now, the markup content binding is fixed, and expressed as

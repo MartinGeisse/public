@@ -7,8 +7,8 @@ package name.martingeisse.guiserver.configuration.content;
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
-import name.martingeisse.guiserver.xmlbind.element.BindComponentElement;
-import name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler;
+import name.martingeisse.guiserver.xml.element.BindComponentElement;
+import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;
 

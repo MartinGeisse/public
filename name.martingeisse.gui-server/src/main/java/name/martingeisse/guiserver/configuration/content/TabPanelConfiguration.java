@@ -11,11 +11,11 @@ import javax.xml.stream.XMLStreamWriter;
 
 import name.martingeisse.common.terms.Multiplicity;
 import name.martingeisse.guiserver.configuration.Configuration;
-import name.martingeisse.guiserver.xmlbind.attribute.AttributeValueBindingOptionality;
-import name.martingeisse.guiserver.xmlbind.attribute.BindAttribute;
-import name.martingeisse.guiserver.xmlbind.element.BindComponentElement;
-import name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler;
-import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
+import name.martingeisse.guiserver.xml.attribute.AttributeValueBindingOptionality;
+import name.martingeisse.guiserver.xml.attribute.BindAttribute;
+import name.martingeisse.guiserver.xml.element.BindComponentElement;
+import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
+import name.martingeisse.guiserver.xml.result.MarkupContent;
 import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel;
 
 import org.apache.wicket.Component;

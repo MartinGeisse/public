@@ -9,9 +9,9 @@ import javax.xml.stream.XMLStreamException;
 import name.martingeisse.guiserver.gui.DisappearingFeedbackPanel;
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
 import name.martingeisse.guiserver.gui.FieldPathFeedbackMessageFilter;
-import name.martingeisse.guiserver.xmlbind.attribute.BindAttribute;
-import name.martingeisse.guiserver.xmlbind.element.BindComponentElement;
-import name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler;
+import name.martingeisse.guiserver.xml.attribute.BindAttribute;
+import name.martingeisse.guiserver.xml.element.BindComponentElement;
+import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;
 

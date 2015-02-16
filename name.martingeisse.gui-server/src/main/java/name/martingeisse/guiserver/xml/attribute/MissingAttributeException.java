@@ -1,7 +1,6 @@
 /**
  * Copyright (c) 2013 Shopgate GmbH
  */
-
 package name.martingeisse.guiserver.xml.attribute;
 
 /**
@@ -22,7 +21,7 @@ public final class MissingAttributeException extends RuntimeException {
 		super("attribute '" + attributeName + "' is missing");
 		this.attributeName = attributeName;
 	}
-	
+
 	/**
 	 * Getter method for the attributeName.
 	 * @return the attributeName
@@ -30,5 +29,5 @@ public final class MissingAttributeException extends RuntimeException {
 	public String getAttributeName() {
 		return attributeName;
 	}
-	
+
 }

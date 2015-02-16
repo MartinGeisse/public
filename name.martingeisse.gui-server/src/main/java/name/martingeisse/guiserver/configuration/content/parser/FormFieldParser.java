@@ -1,32 +1,3 @@
-/////**
-// * Copyright (c) 2013 Shopgate GmbH
-// */
-//
-//package name.martingeisse.guiserver.configuration.content.parser;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//import javax.xml.stream.XMLStreamConstants;
-//import javax.xml.stream.XMLStreamException;
-//import javax.xml.stream.XMLStreamReader;
-//import javax.xml.stream.XMLStreamWriter;
-//
-//import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
-//import name.martingeisse.guiserver.configuration.content.FormFieldMetadata;
-//import name.martingeisse.guiserver.xml.ContentStreams;
-//import name.martingeisse.guiserver.xml.IElementParser;
-//import name.martingeisse.guiserver.xml.InvalidSpecialElementException;
-//import name.martingeisse.guiserver.xml.ObjectListParser;
-//import name.martingeisse.guiserver.xml.XmlReflectionUtil;
-//import name.martingeisse.guiserver.xml.attribute.AttributeSpecification;
-//import name.martingeisse.guiserver.xml.attribute.BooleanAttributeParser;
-//import name.martingeisse.guiserver.xml.attribute.TextAttributeParser;
-//
-//import org.apache.wicket.validation.IValidator;
-//import org.apache.wicket.validation.validator.PatternValidator;
-//import org.apache.wicket.validation.validator.StringValidator;
-//
 ///**
 // * The base class for parses for all kinds of form fields. This
 // * class handles parsing the validation rules.
@@ -62,9 +33,6 @@
 //		this.configurationClass = configurationClass;
 //	}
 //
-//	/* (non-Javadoc)
-//	 * @see name.martingeisse.guiserver.xml.IElementParser#parse(name.martingeisse.guiserver.xml.ContentStreams)
-//	 */
 //	@Override
 //	public void parse(ContentStreams<ComponentConfiguration> streams) throws XMLStreamException {
 //		XMLStreamReader reader = streams.getReader();

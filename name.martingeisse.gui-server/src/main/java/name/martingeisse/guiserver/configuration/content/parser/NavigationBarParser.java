@@ -1,28 +1,8 @@
 ///**
-// * Copyright (c) 2013 Shopgate GmbH
-// */
-//
-//package name.martingeisse.guiserver.configuration.content.parser;
-//
-//import javax.xml.stream.XMLStreamException;
-//import javax.xml.stream.XMLStreamReader;
-//import javax.xml.stream.XMLStreamWriter;
-//
-//import com.google.common.collect.ImmutableList;
-//
-//import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
-//import name.martingeisse.guiserver.configuration.content.NavigationBarConfiguration;
-//import name.martingeisse.guiserver.xml.ContentStreams;
-//import name.martingeisse.guiserver.xml.IElementParser;
-//
-///**
 // * The parser for a {@link NavigationBarConfiguration}.
 // */
 //public final class NavigationBarParser implements IElementParser<ComponentConfiguration> {
 //
-//	/* (non-Javadoc)
-//	 * @see name.martingeisse.guiserver.xml.IElementParser#parse(name.martingeisse.guiserver.xml.ContentStreams)
-//	 */
 //	@Override
 //	public void parse(ContentStreams<ComponentConfiguration> streams) throws XMLStreamException {
 //		XMLStreamWriter writer = streams.getWriter();

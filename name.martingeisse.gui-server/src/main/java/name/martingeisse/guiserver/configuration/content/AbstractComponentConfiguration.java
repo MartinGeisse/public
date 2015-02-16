@@ -6,7 +6,7 @@ package name.martingeisse.guiserver.configuration.content;
 
 import javax.xml.stream.XMLStreamException;
 
-import name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler;
+import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 /**
  * Base class for component configurations.

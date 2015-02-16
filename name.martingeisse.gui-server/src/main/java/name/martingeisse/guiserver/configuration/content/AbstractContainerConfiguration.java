@@ -9,8 +9,8 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
-import name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler;
-import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
+import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
+import name.martingeisse.guiserver.xml.result.MarkupContent;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;

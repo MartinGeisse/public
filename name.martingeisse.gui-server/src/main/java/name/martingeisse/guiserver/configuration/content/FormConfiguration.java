@@ -11,10 +11,10 @@ import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.gui.ConfigurationDefinedForm;
 import name.martingeisse.guiserver.gui.FormDataModel;
-import name.martingeisse.guiserver.xmlbind.attribute.BindAttribute;
-import name.martingeisse.guiserver.xmlbind.element.BindComponentElement;
-import name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler;
-import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
+import name.martingeisse.guiserver.xml.attribute.BindAttribute;
+import name.martingeisse.guiserver.xml.element.BindComponentElement;
+import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
+import name.martingeisse.guiserver.xml.result.MarkupContent;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.model.IModel;

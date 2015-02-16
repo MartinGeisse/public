@@ -5,8 +5,8 @@
 package name.martingeisse.guiserver.configuration.content;
 
 import name.martingeisse.guiserver.gui.FirstChildEnclosureContainer;
-import name.martingeisse.guiserver.xmlbind.element.BindComponentElement;
-import name.martingeisse.guiserver.xmlbind.result.MarkupContent;
+import name.martingeisse.guiserver.xml.element.BindComponentElement;
+import name.martingeisse.guiserver.xml.result.MarkupContent;
 
 import org.apache.wicket.MarkupContainer;
 
