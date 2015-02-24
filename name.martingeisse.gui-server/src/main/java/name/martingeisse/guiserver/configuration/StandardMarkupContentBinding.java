@@ -4,6 +4,8 @@
 
 package name.martingeisse.guiserver.configuration;
 
+import java.lang.reflect.Constructor;
+
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
@@ -20,6 +22,7 @@ import name.martingeisse.guiserver.configuration.content.form.FormFieldModifier;
 import name.martingeisse.guiserver.configuration.content.form.FormFieldModifierBinding;
 import name.martingeisse.guiserver.configuration.content.form.SubmitButtonConfiguration;
 import name.martingeisse.guiserver.configuration.content.form.TextFieldConfiguration;
+import name.martingeisse.guiserver.configuration.content.navbar.NavigationBarBinding;
 import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
 import name.martingeisse.guiserver.xml.attribute.AttributeValueBinding;
 import name.martingeisse.guiserver.xml.attribute.DefaultAttributeValueBinding;
@@ -51,39 +54,45 @@ public final class StandardMarkupContentBinding implements XmlContentObjectBindi
 	 * Constructor.
 	 */
 	public StandardMarkupContentBinding() {
-		XmlBindingBuilder<ComponentConfiguration> builder = new XmlBindingBuilder<>();
-
-		// known attribute-to-constructor-parameter bindings
-		builder.addAttributeTextValueBinding(String.class, TextStringBinding.INSTANCE);
-		builder.addAttributeTextValueBinding(Boolean.class, TextBooleanBinding.INSTANCE);
-		builder.addAttributeTextValueBinding(Boolean.TYPE, TextBooleanBinding.INSTANCE);
-		builder.addAttributeTextValueBinding(Integer.class, TextIntegerBinding.INSTANCE);
-		builder.addAttributeTextValueBinding(Integer.TYPE, TextIntegerBinding.INSTANCE);
-		
-		// known child object classes
-		{
-			AttributeValueBinding<?>[] attributeBindings = {
-				new DefaultAttributeValueBinding<>("title", TextStringBinding.INSTANCE),
-				new DefaultAttributeValueBinding<>("selector", TextStringBinding.INSTANCE),
-			};
-			builder.addChildElementObjectBinding(TabPanelConfiguration.TabEntry.class, new ElementClassInstanceBinding<>(TabPanelConfiguration.TabEntry.class, attributeBindings, builder.getRecursiveMarkupBinding()));
+		try {
+			XmlBindingBuilder<ComponentConfiguration> builder = new XmlBindingBuilder<>();
+			
+			// known attribute-to-constructor-parameter bindings
+			builder.addAttributeTextValueBinding(String.class, TextStringBinding.INSTANCE);
+			builder.addAttributeTextValueBinding(Boolean.class, TextBooleanBinding.INSTANCE);
+			builder.addAttributeTextValueBinding(Boolean.TYPE, TextBooleanBinding.INSTANCE);
+			builder.addAttributeTextValueBinding(Integer.class, TextIntegerBinding.INSTANCE);
+			builder.addAttributeTextValueBinding(Integer.TYPE, TextIntegerBinding.INSTANCE);
+			
+			// known child object classes
+			{
+				AttributeValueBinding<?>[] attributeBindings = {
+					new DefaultAttributeValueBinding<>("title", TextStringBinding.INSTANCE),
+					new DefaultAttributeValueBinding<>("selector", TextStringBinding.INSTANCE),
+				};
+				Constructor<TabPanelConfiguration.TabEntry> constructor = TabPanelConfiguration.TabEntry.class.getConstructor(String.class, String.class, MarkupContent.class);
+				builder.addChildElementObjectBinding(TabPanelConfiguration.TabEntry.class, new ElementClassInstanceBinding<>(constructor, attributeBindings, builder.getRecursiveMarkupBinding()));
+			}
+			builder.addChildElementObjectBinding(FormFieldModifier.class, new FormFieldModifierBinding());
+			
+			// known component special tags
+			builder.addComponentConfigurationClass(EnclosureConfiguration.class);
+			builder.addComponentConfigurationClass(IncludeBackendConfiguration.class);
+			builder.addComponentConfigurationClass(LazyLoadContainerConfiguration.class);
+			builder.addComponentConfigurationClass(LinkConfiguration.class);
+			builder.addComponentConfigurationClass(FieldPathFeedbackPanelConfiguration.class);
+			builder.addComponentConfigurationClass(FormConfiguration.class);
+			builder.addComponentConfigurationClass(PieChartConfiguration.class);
+			builder.addComponentConfigurationClass(SubmitButtonConfiguration.class);
+			builder.addComponentConfigurationClass(TabPanelConfiguration.class);
+			builder.addComponentConfigurationClass(TextFieldConfiguration.class);
+			builder.addComponentConfigurationClass(CheckboxConfiguration.class);
+			builder.addComponentConfigurationBinding("navbar", new NavigationBarBinding(builder));
+			
+			binding = builder.build();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
-		builder.addChildElementObjectBinding(FormFieldModifier.class, new FormFieldModifierBinding());
-		
-		// known component special tags
-		builder.addComponentConfigurationClass(EnclosureConfiguration.class);
-		builder.addComponentConfigurationClass(IncludeBackendConfiguration.class);
-		builder.addComponentConfigurationClass(LazyLoadContainerConfiguration.class);
-		builder.addComponentConfigurationClass(LinkConfiguration.class);
-		builder.addComponentConfigurationClass(FieldPathFeedbackPanelConfiguration.class);
-		builder.addComponentConfigurationClass(FormConfiguration.class);
-		builder.addComponentConfigurationClass(PieChartConfiguration.class);
-		builder.addComponentConfigurationClass(SubmitButtonConfiguration.class);
-		builder.addComponentConfigurationClass(TabPanelConfiguration.class);
-		builder.addComponentConfigurationClass(TextFieldConfiguration.class);
-		builder.addComponentConfigurationClass(CheckboxConfiguration.class);
-		
-		binding = builder.build();
 	}
 
 	/* (non-Javadoc)

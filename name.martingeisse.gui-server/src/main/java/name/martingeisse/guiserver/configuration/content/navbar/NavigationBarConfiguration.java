@@ -2,13 +2,15 @@
  * Copyright (c) 2015 Martin Geisse
  */
 
-package name.martingeisse.guiserver.configuration.content;
+package name.martingeisse.guiserver.configuration.content.navbar;
 
+import name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.IComponentConfigurationVisitor;
 import name.martingeisse.guiserver.gui.NavigationBar;
+import name.martingeisse.guiserver.xml.result.MarkupContent;
 
 import org.apache.wicket.MarkupContainer;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * The configuration for a navigation bar.
@@ -22,13 +24,11 @@ public final class NavigationBarConfiguration extends AbstractContainerConfigura
 
 	/**
 	 * Constructor.
-	 * @param id the wicket id
-	 * @param children the children
-	 * @param brandLink the brand link, or null for none
+	 * @param contents the contents
 	 */
-	public NavigationBarConfiguration(String id, ImmutableList<ComponentConfiguration> children, ComponentConfiguration brandLink) {
-		super(id, children);
-		this.brandLink = brandLink;
+	public NavigationBarConfiguration(NavigationBarContents contents) {
+		super(new MarkupContent<>(contents.getLinks().getConfigurations()));
+		this.brandLink = contents.getBrandLink();
 	}
 
 	/**
@@ -46,7 +46,7 @@ public final class NavigationBarConfiguration extends AbstractContainerConfigura
 	protected MarkupContainer buildContainer() {
 		return new NavigationBar(getId(), brandLink);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.configuration.content.ComponentConfiguration#accept(name.martingeisse.guiserver.configuration.content.IComponentConfigurationVisitor)
 	 */

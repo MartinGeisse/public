@@ -1,0 +1,20 @@
+
+Nicht brauchbar:
+
+JAXB: codegen, kann aber auch ohne. Sieht aber nicht aus, als könnte das mit arbitrary Markup.
+Apache XMLBeans: zu lowlevel
+Axis Databinding: lowlevel und auf Performance ausgelegt
+MOXy: JAXB implementation, s.o.
+http://hmkcode.com/castor-java-object-xml -- Sieht auch so ähnlich aus, mit XML-spec, aber sehr kompliziert und ich sehe aber nichts, was dem MarkupContent entspricht.
+JIBX: Mapping auf existierende Klassen mittels Mapping-Spec. Das sieht interessant aus.
+	http://jibx.sourceforge.net/
+	http://jibx.sourceforge.net/tutorial/binding-structures.html
+	Sehe aber nichts, was dem MarkupContent entspricht.
+
+
+TODO:
+
+xmappr: Sieht auch so ähnlich wie meins aus -- das ist auch interessant
+	https://code.google.com/p/xmappr/
+	Könnte man vermutlich auch dazu bringen, MarkupContent zu parsen.
+	

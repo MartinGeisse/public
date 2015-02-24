@@ -4,6 +4,8 @@
 
 package name.martingeisse.guiserver.xml.result;
 
+import java.util.List;
+
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.xml.ConfigurationAssemblerAcceptor;
@@ -28,6 +30,26 @@ public final class MarkupContent<C extends ConfigurationAssemblerAcceptor<C>> {
 		this.entries = entries;
 	}
 
+	/**
+	 * Constructor for a list of components without raw markup.
+	 * @param components the components
+	 */
+	@SuppressWarnings("unchecked")
+	public MarkupContent(List<C> components) {
+		this.entries = createArray(components.size());
+		for (int i=0; i<components.size(); i++) {
+			entries[i] = new MarkupContentEntry.Component<C>(components.get(i));
+		}
+	}
+
+	/**
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	private MarkupContentEntry<C>[] createArray(int size) {
+		return (MarkupContentEntry<C>[])(new MarkupContentEntry<?>[size]);
+	}
+	
 	/**
 	 * Assembles the configuration.
 	 * 
