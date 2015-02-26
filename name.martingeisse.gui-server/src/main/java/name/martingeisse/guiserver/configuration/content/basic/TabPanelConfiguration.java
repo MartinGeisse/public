@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.configuration.content;
+package name.martingeisse.guiserver.configuration.content.basic;
 
 import java.util.List;
 
@@ -11,6 +11,12 @@ import javax.xml.stream.XMLStreamWriter;
 
 import name.martingeisse.common.terms.Multiplicity;
 import name.martingeisse.guiserver.configuration.Configuration;
+import name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.IComponentConfigurationVisitor;
+import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
+import name.martingeisse.guiserver.configuration.content.UrlSubpathComponentConfiguration;
 import name.martingeisse.guiserver.xml.attribute.AttributeValueBindingOptionality;
 import name.martingeisse.guiserver.xml.attribute.BindAttribute;
 import name.martingeisse.guiserver.xml.element.BindComponentElement;

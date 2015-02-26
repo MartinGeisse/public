@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.configuration.content.form;
+package name.martingeisse.guiserver.configuration.content.basic.form;
 
 import org.apache.wicket.validation.IValidator;
 

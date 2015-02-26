@@ -2,10 +2,13 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.configuration.content;
+package name.martingeisse.guiserver.configuration.content.basic;
 
 import javax.xml.stream.XMLStreamException;
 
+import name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.gui.PieChartImageResource;
 import name.martingeisse.guiserver.xml.attribute.AttributeValueBindingOptionality;
 import name.martingeisse.guiserver.xml.attribute.BindAttribute;

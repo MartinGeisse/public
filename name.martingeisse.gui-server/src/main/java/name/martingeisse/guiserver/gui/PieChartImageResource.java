@@ -7,7 +7,7 @@ package name.martingeisse.guiserver.gui;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.guiserver.backend.BackendHttpClient;
 import name.martingeisse.guiserver.configuration.Configuration;
-import name.martingeisse.guiserver.configuration.content.PieChartConfiguration;
+import name.martingeisse.guiserver.configuration.content.basic.PieChartConfiguration;
 import name.martingeisse.guiserver.gui.util.ChartImageResource;
 
 import org.jfree.chart.ChartFactory;

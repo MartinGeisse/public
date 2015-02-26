@@ -2,7 +2,7 @@
  * Copyright (c) 2015 Martin Geisse
  */
 
-package name.martingeisse.guiserver.configuration.content.navbar;
+package name.martingeisse.guiserver.configuration.content.bootstrap.navbar;
 
 import name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;

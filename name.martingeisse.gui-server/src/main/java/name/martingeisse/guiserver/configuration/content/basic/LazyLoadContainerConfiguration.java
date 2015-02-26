@@ -2,8 +2,10 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.configuration.content;
+package name.martingeisse.guiserver.configuration.content.basic;
 
+import name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
 import name.martingeisse.guiserver.xml.element.BindComponentElement;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 import name.martingeisse.wicket.component.misc.LongLoadingContainer;

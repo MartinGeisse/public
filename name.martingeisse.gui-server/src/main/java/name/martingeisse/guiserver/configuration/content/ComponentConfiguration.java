@@ -9,7 +9,10 @@ import name.martingeisse.guiserver.xml.ConfigurationAssemblerAcceptor;
 import org.apache.wicket.Component;
 
 /**
- * Common interface for the configuration of a Wicket component.
+ * Common interface for the configuration of a group of Wicket component.
+ * 
+ * The common case for this interface is to contain the configuration for a
+ * single component, but multiple components are possible.
  * 
  * This interface knows how to build the Wicket component. That is,
  * no complex, context-aware logic occurs when building the components.

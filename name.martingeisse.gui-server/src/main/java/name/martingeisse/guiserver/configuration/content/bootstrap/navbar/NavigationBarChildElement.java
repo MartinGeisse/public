@@ -2,9 +2,9 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.configuration.content.navbar;
+package name.martingeisse.guiserver.configuration.content.bootstrap.navbar;
 
-import name.martingeisse.guiserver.configuration.content.LinkConfiguration;
+import name.martingeisse.guiserver.configuration.content.basic.LinkConfiguration;
 
 /**
  * Represents the child elements for a navigation bar. These objects are created

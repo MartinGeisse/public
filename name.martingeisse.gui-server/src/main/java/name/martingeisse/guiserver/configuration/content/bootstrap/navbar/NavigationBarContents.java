@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.configuration.content.navbar;
+package name.martingeisse.guiserver.configuration.content.bootstrap.navbar;
 
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentConfigurationList;

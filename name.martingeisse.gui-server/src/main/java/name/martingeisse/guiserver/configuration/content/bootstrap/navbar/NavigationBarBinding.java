@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.configuration.content.navbar;
+package name.martingeisse.guiserver.configuration.content.bootstrap.navbar;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.Map;
 
 import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentConfigurationList;
-import name.martingeisse.guiserver.configuration.content.LinkConfiguration;
+import name.martingeisse.guiserver.configuration.content.basic.LinkConfiguration;
 import name.martingeisse.guiserver.xml.attribute.AttributeValueBinding;
 import name.martingeisse.guiserver.xml.builder.XmlBindingBuilder;
 import name.martingeisse.guiserver.xml.content.AbstractMultiChildObjectBinding;
