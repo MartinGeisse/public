@@ -38,7 +38,7 @@ public final class MarkupContent<C extends ConfigurationAssemblerAcceptor<C>> {
 	public MarkupContent(List<C> components) {
 		this.entries = createArray(components.size());
 		for (int i=0; i<components.size(); i++) {
-			entries[i] = new MarkupContentEntry.Component<C>(components.get(i));
+			entries[i] = new MarkupContentEntry.ComponentGroup<C>(components.get(i));
 		}
 	}
 

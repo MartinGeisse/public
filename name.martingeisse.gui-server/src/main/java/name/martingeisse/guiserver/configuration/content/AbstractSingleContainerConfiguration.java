@@ -18,25 +18,25 @@ import org.apache.wicket.MarkupContainer;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Base class for {@link MarkupContainer} component configurations.
+ * Base class for component group configurations that correspond to a single {@link MarkupContainer}.
  */
-public abstract class AbstractContainerConfiguration extends AbstractComponentConfiguration {
+public abstract class AbstractSingleContainerConfiguration extends AbstractSingleComponentConfiguration {
 
 	/**
 	 * the markupContent
 	 */
-	private final MarkupContent<ComponentConfiguration> markupContent;
+	private final MarkupContent<ComponentGroupConfiguration> markupContent;
 
 	/**
 	 * the children
 	 */
-	private ComponentConfigurationList children;
+	private ComponentGroupConfigurationList children;
 
 	/**
 	 * Constructor.
 	 * @param markupContent the markup content
 	 */
-	public AbstractContainerConfiguration(MarkupContent<ComponentConfiguration> markupContent) {
+	public AbstractSingleContainerConfiguration(MarkupContent<ComponentGroupConfiguration> markupContent) {
 		this.markupContent = markupContent;
 	}
 
@@ -44,7 +44,7 @@ public abstract class AbstractContainerConfiguration extends AbstractComponentCo
 	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#assemble(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
 	 */
 	@Override
-	public void assemble(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+	public void assemble(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
 		super.assemble(assembler);
 		assembleContainerIntro(assembler);
 		assembleContainerContents(assembler);
@@ -58,13 +58,13 @@ public abstract class AbstractContainerConfiguration extends AbstractComponentCo
 	 * @param assembler the configuration assembler
 	 * @throws XMLStreamException on XML stream processing errors
 	 */
-	protected void assembleContainerIntro(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+	protected void assembleContainerIntro(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
 		writeOpeningComponentTag(assembler, "div");
 	}
 
 	/**
 	 * Writes the opening component tag, using the specified local element name and taking
-	 * the wicket:id attribute from the {@link #getId()} method. This method is useful for
+	 * the wicket:id attribute from the {@link #getComponentId()} method. This method is useful for
 	 * implementing {@link #assembleContainerIntro(ConfigurationAssembler)}.
 	 * 
 	 * Calling this method may be followed by writeAttribute() calls to the XML writer,
@@ -74,24 +74,24 @@ public abstract class AbstractContainerConfiguration extends AbstractComponentCo
 	 * @param localName the local element name
 	 * @throws XMLStreamException on XML stream processing errors
 	 */
-	protected final void writeOpeningComponentTag(ConfigurationAssembler<ComponentConfiguration> assembler, String localName) throws XMLStreamException {
+	protected final void writeOpeningComponentTag(ConfigurationAssembler<ComponentGroupConfiguration> assembler, String localName) throws XMLStreamException {
 		assembler.getMarkupWriter().writeStartElement(localName);
-		assembler.getMarkupWriter().writeAttribute("wicket:id", getId());
+		assembler.getMarkupWriter().writeAttribute("wicket:id", getComponentId());
 	}
 
 	/**
 	 * Assembles the container contents. The default implementation invokes the assemble() method
-	 * on the markup content, collecting all component configurations from that markup in a new
+	 * on the markup content, collecting all component group configurations from that markup in a new
 	 * list, and stores that list as this component's children.
 	 * 
 	 * @param assembler the configuration assembler
 	 * @throws XMLStreamException on XML stream processing errors
 	 */
-	protected void assembleContainerContents(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
-		List<ComponentConfiguration> childrenAccumulator = new ArrayList<ComponentConfiguration>();
-		ConfigurationAssembler<ComponentConfiguration> subAssembler = assembler.withComponentAccumulator(childrenAccumulator);
+	protected void assembleContainerContents(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
+		List<ComponentGroupConfiguration> childrenAccumulator = new ArrayList<ComponentGroupConfiguration>();
+		ConfigurationAssembler<ComponentGroupConfiguration> subAssembler = assembler.withComponentGroupAccumulator(childrenAccumulator);
 		markupContent.assemble(subAssembler);
-		this.children = new ComponentConfigurationList(ImmutableList.copyOf(childrenAccumulator));
+		this.children = new ComponentGroupConfigurationList(ImmutableList.copyOf(childrenAccumulator));
 	}
 	
 	/**
@@ -102,7 +102,7 @@ public abstract class AbstractContainerConfiguration extends AbstractComponentCo
 	 * @param assembler the configuration assembler
 	 * @throws XMLStreamException on XML stream processing errors
 	 */
-	protected void assembleContainerOutro(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+	protected void assembleContainerOutro(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
 		assembler.getMarkupWriter().writeEndElement();
 	}
 	
@@ -110,7 +110,7 @@ public abstract class AbstractContainerConfiguration extends AbstractComponentCo
 	 * Getter method for the children.
 	 * @return the children
 	 */
-	protected final ComponentConfigurationList getChildren() {
+	protected final ComponentGroupConfigurationList getChildren() {
 		return children;
 	}
 
@@ -134,7 +134,7 @@ public abstract class AbstractContainerConfiguration extends AbstractComponentCo
 	 * @see name.martingeisse.guiserver.configuration.content.ComponentConfiguration#accept(name.martingeisse.guiserver.configuration.content.IComponentConfigurationVisitor)
 	 */
 	@Override
-	public void accept(IComponentConfigurationVisitor visitor) {
+	public void accept(IComponentGroupConfigurationVisitor visitor) {
 		if (visitor.beginVisit(this)) {
 			children.accept(visitor);
 			visitor.endVisit(this);

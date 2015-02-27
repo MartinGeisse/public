@@ -1,0 +1,19 @@
+<gui:page xmlns:gui="http://guiserver.martingeisse.name/v1">
+	<div class="container">
+		<h1>Bootstrap Form Page</h1>
+		<div>
+			This is a page with a form that uses Bootstrap form styles.
+		</div>
+		<br />
+		<div>
+			<gui:bsForm backendUrl="http://localhost/geisse/demo-backend/form.php">
+				<gui:bsTextField name="foo" label="Your Name">
+					<gui:validation type="length" min="2" max="10" />
+				</gui:bsTextField>
+				<div>
+					<input type="submit" class="btn btn-default" />
+				</div>
+			</gui:bsForm>
+		</div>
+	</div>
+</gui:page>

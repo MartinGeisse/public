@@ -9,8 +9,8 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
-import name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration;
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.AbstractSingleContainerConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.gui.ConfigurationDefinedForm;
 import name.martingeisse.guiserver.gui.FormDataModel;
@@ -36,7 +36,7 @@ import org.apache.wicket.model.IModel;
  * same models.
  */
 @BindComponentElement(localName = "form", attributes = {@BindAttribute(name = "backendUrl")}, acceptsMarkupContent = true)
-public final class FormConfiguration extends AbstractContainerConfiguration implements IConfigurationSnippet {
+public class FormConfiguration extends AbstractSingleContainerConfiguration implements IConfigurationSnippet {
 
 	/**
 	 * the backendUrl
@@ -53,7 +53,7 @@ public final class FormConfiguration extends AbstractContainerConfiguration impl
 	 * @param backendUrl the backend URL
 	 * @param markupContent the markup content
 	 */
-	public FormConfiguration(String backendUrl, MarkupContent<ComponentConfiguration> markupContent) {
+	public FormConfiguration(String backendUrl, MarkupContent<ComponentGroupConfiguration> markupContent) {
 		super(markupContent);
 		this.backendUrl = backendUrl;
 	}
@@ -86,7 +86,7 @@ public final class FormConfiguration extends AbstractContainerConfiguration impl
 	 * @see name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration#assembleContainerIntro(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
 	 */
 	@Override
-	protected void assembleContainerIntro(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+	protected void assembleContainerIntro(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
 		writeOpeningComponentTag(assembler, "form");
 	}
 	
@@ -97,7 +97,7 @@ public final class FormConfiguration extends AbstractContainerConfiguration impl
 	protected MarkupContainer buildContainer() {
 		HashMap<String, Object> formData = new HashMap<>();
 		IModel<Map<String, Object>> formDataModel = new FormDataModel<Map<String, Object>>(formData);
-		return new ConfigurationDefinedForm(getId(), this, formDataModel);
+		return new ConfigurationDefinedForm(getComponentId(), this, formDataModel);
 	}
 
 }

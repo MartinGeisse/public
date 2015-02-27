@@ -9,9 +9,11 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
 import name.martingeisse.guiserver.xml.attribute.AttributeValueBinding;
 import name.martingeisse.guiserver.xml.attribute.DefaultAttributeValueBinding;
+import name.martingeisse.guiserver.xml.builder.XmlBindingBuilder;
 import name.martingeisse.guiserver.xml.element.ElementAttributeSelectedObjectBinding;
 import name.martingeisse.guiserver.xml.element.ElementClassInstanceBinding;
 import name.martingeisse.guiserver.xml.element.ElementNameSelectedObjectBinding;
@@ -31,14 +33,14 @@ public final class FormFieldModifierBinding extends ElementNameSelectedObjectBin
 	/**
 	 * Constructor.
 	 */
-	public FormFieldModifierBinding() {
-		super(createBindings());
+	public FormFieldModifierBinding(XmlBindingBuilder<ComponentGroupConfiguration> builder) {
+		super(createBindings(builder));
 	}
 
 	/**
 	 * 
 	 */
-	private static Map<String, ElementObjectBinding<? extends FormFieldModifier>> createBindings() {
+	private static Map<String, ElementObjectBinding<? extends FormFieldModifier>> createBindings(XmlBindingBuilder<ComponentGroupConfiguration> builder) {
 		Map<String, ElementObjectBinding<? extends FormFieldModifier>> bindings = new HashMap<>();
 		
 		// add validator bindings

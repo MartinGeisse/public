@@ -4,9 +4,9 @@
 
 package name.martingeisse.guiserver.configuration.content.bootstrap.navbar;
 
-import name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration;
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
-import name.martingeisse.guiserver.configuration.content.IComponentConfigurationVisitor;
+import name.martingeisse.guiserver.configuration.content.AbstractSingleContainerConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
+import name.martingeisse.guiserver.configuration.content.IComponentGroupConfigurationVisitor;
 import name.martingeisse.guiserver.gui.NavigationBar;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 
@@ -15,12 +15,12 @@ import org.apache.wicket.MarkupContainer;
 /**
  * The configuration for a navigation bar.
  */
-public final class NavigationBarConfiguration extends AbstractContainerConfiguration {
+public final class NavigationBarConfiguration extends AbstractSingleContainerConfiguration {
 
 	/**
 	 * the brandLink
 	 */
-	private final ComponentConfiguration brandLink;
+	private final ComponentGroupConfiguration brandLink;
 
 	/**
 	 * Constructor.
@@ -35,7 +35,7 @@ public final class NavigationBarConfiguration extends AbstractContainerConfigura
 	 * Getter method for the brandLink.
 	 * @return the brandLink
 	 */
-	public ComponentConfiguration getBrandLink() {
+	public ComponentGroupConfiguration getBrandLink() {
 		return brandLink;
 	}
 
@@ -44,14 +44,14 @@ public final class NavigationBarConfiguration extends AbstractContainerConfigura
 	 */
 	@Override
 	protected MarkupContainer buildContainer() {
-		return new NavigationBar(getId(), brandLink);
+		return new NavigationBar(getComponentId(), brandLink);
 	}
 	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.configuration.content.ComponentConfiguration#accept(name.martingeisse.guiserver.configuration.content.IComponentConfigurationVisitor)
 	 */
 	@Override
-	public void accept(IComponentConfigurationVisitor visitor) {
+	public void accept(IComponentGroupConfigurationVisitor visitor) {
 		if (visitor.beginVisit(this)) {
 			brandLink.accept(visitor);
 			getChildren().accept(visitor);

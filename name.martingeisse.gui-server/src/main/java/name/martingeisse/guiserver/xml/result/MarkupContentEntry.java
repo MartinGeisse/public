@@ -147,11 +147,11 @@ public abstract class MarkupContentEntry<C extends ConfigurationAssemblerAccepto
 	}
 
 	/**
-	 * Represents a component configuration.
+	 * Represents a component group configuration.
 	 *
 	 * @param <C> the component type
 	 */
-	public static final class Component<C extends ConfigurationAssemblerAcceptor<C>> extends MarkupContentEntry<C> {
+	public static final class ComponentGroup<C extends ConfigurationAssemblerAcceptor<C>> extends MarkupContentEntry<C> {
 
 		/**
 		 * the configuration
@@ -160,9 +160,9 @@ public abstract class MarkupContentEntry<C extends ConfigurationAssemblerAccepto
 
 		/**
 		 * Constructor.
-		 * @param configuration the component configuration
+		 * @param configuration the component group configuration
 		 */
-		public Component(C configuration) {
+		public ComponentGroup(C configuration) {
 			this.configuration = configuration;
 		}
 

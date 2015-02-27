@@ -49,7 +49,7 @@ public final class MarkupContentBinding<C extends ConfigurationAssemblerAcceptor
 			case XMLStreamConstants.START_ELEMENT:
 				if (reader.getNamespaceURI() != null) {
 					C component = specialElementComponentBinding.parse(reader);
-					entries.add(new MarkupContentEntry.Component<C>(component));
+					entries.add(new MarkupContentEntry.ComponentGroup<C>(component));
 				} else {
 					MarkupContentEntry.Attribute[] attributes = new MarkupContentEntry.Attribute[reader.getAttributeCount()];
 					for (int i=0; i<attributes.length; i++) {

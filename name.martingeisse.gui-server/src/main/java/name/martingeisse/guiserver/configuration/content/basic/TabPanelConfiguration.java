@@ -11,12 +11,12 @@ import javax.xml.stream.XMLStreamWriter;
 
 import name.martingeisse.common.terms.Multiplicity;
 import name.martingeisse.guiserver.configuration.Configuration;
-import name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration;
-import name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration;
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
-import name.martingeisse.guiserver.configuration.content.IComponentConfigurationVisitor;
+import name.martingeisse.guiserver.configuration.content.AbstractSingleComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.AbstractSingleContainerConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
+import name.martingeisse.guiserver.configuration.content.IComponentGroupConfigurationVisitor;
 import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
-import name.martingeisse.guiserver.configuration.content.UrlSubpathComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.UrlSubpathComponentGroupConfiguration;
 import name.martingeisse.guiserver.xml.attribute.AttributeValueBindingOptionality;
 import name.martingeisse.guiserver.xml.attribute.BindAttribute;
 import name.martingeisse.guiserver.xml.element.BindComponentElement;
@@ -40,7 +40,7 @@ import org.apache.wicket.markup.html.panel.PanelMarkupSourcingStrategy;
 }, childObjectMultiplicity = Multiplicity.NONZERO, childObjectElementNameFilter = {
 	"tab"
 })
-public final class TabPanelConfiguration extends AbstractComponentConfiguration implements IConfigurationSnippet, UrlSubpathComponentConfiguration {
+public final class TabPanelConfiguration extends AbstractSingleComponentConfiguration implements IConfigurationSnippet, UrlSubpathComponentGroupConfiguration {
 
 	/**
 	 * the parameterName
@@ -72,7 +72,7 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 	 * @return the parameterName
 	 */
 	public String getParameterName() {
-		String id = getId();
+		String id = getComponentId();
 		if (id == null) {
 			throw new IllegalStateException("cannot determine parameter name before an ID has been assigned");
 		}
@@ -83,10 +83,10 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#assemble(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
 	 */
 	@Override
-	public void assemble(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+	public void assemble(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
 		super.assemble(assembler);
 		XMLStreamWriter writer = assembler.getMarkupWriter();
-		String id = getId();
+		String id = getComponentId();
 		writer.writeStartElement("div");
 		writer.writeAttribute("wicket:id", id + "-container");
 		writer.writeEmptyElement("div");
@@ -126,8 +126,8 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 	 */
 	@Override
 	public Component buildComponent() {
-		final WebMarkupContainer tabPanelContainer = new WebMarkupContainer(getId() + "-container");
-		final PageParameterDrivenTabPanel tabPanel = new MyTabPanel(getId(), getParameterName(), this, tabPanelContainer);
+		final WebMarkupContainer tabPanelContainer = new WebMarkupContainer(getComponentId() + "-container");
+		final PageParameterDrivenTabPanel tabPanel = new MyTabPanel(getComponentId(), getParameterName(), this, tabPanelContainer);
 		for (TabEntry tab : tabs) {
 			tabPanel.addTab(tab.getTabInfo());
 		}
@@ -139,7 +139,7 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#accept(name.martingeisse.guiserver.configuration.content.IComponentConfigurationVisitor)
 	 */
 	@Override
-	public void accept(IComponentConfigurationVisitor visitor) {
+	public void accept(IComponentGroupConfigurationVisitor visitor) {
 		if (visitor.beginVisit(this)) {
 			for (TabEntry tab : tabs) {
 				tab.accept(visitor);
@@ -161,7 +161,7 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 	/**
 	 * Represents a tab in the panel.
 	 */
-	public static final class TabEntry extends AbstractContainerConfiguration {
+	public static final class TabEntry extends AbstractSingleContainerConfiguration {
 
 		/**
 		 * the title
@@ -184,7 +184,7 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 		 * @param selector the selector
 		 * @param markupContent the markup content
 		 */
-		public TabEntry(String title, String selector, MarkupContent<ComponentConfiguration> markupContent) {
+		public TabEntry(String title, String selector, MarkupContent<ComponentGroupConfiguration> markupContent) {
 			super(markupContent);
 			this.title = title;
 			this.selector = selector;
@@ -219,7 +219,7 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 		 * @see name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration#assembleContainerIntro(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
 		 */
 		@Override
-		protected void assembleContainerIntro(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+		protected void assembleContainerIntro(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
 			writeOpeningComponentTag(assembler, "wicket:fragment");
 		}
 		
@@ -245,7 +245,7 @@ public final class TabPanelConfiguration extends AbstractComponentConfiguration 
 		 * @return the component
 		 */
 		public MarkupContainer buildTabEntry(String callingMarkupId, MarkupContainer markupProvider) {
-			MarkupContainer container = new Fragment(callingMarkupId, getId(), markupProvider);
+			MarkupContainer container = new Fragment(callingMarkupId, getComponentId(), markupProvider);
 			getChildren().buildAndAddComponents(container);
 			return container;
 		}

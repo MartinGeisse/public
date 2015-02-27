@@ -6,8 +6,8 @@ package name.martingeisse.guiserver.configuration.content.basic;
 
 import javax.xml.stream.XMLStreamException;
 
-import name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration;
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.AbstractSingleComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.gui.PieChartImageResource;
 import name.martingeisse.guiserver.xml.attribute.AttributeValueBindingOptionality;
@@ -24,7 +24,7 @@ import org.apache.wicket.markup.html.image.Image;
 @BindComponentElement(localName = "pieChart", attributes = {
 	@BindAttribute(name = "backendUrl"), @BindAttribute(name = "legend", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "false")
 })
-public final class PieChartConfiguration extends AbstractComponentConfiguration implements IConfigurationSnippet {
+public final class PieChartConfiguration extends AbstractSingleComponentConfiguration implements IConfigurationSnippet {
 
 	/**
 	 * the backendUrl
@@ -71,10 +71,10 @@ public final class PieChartConfiguration extends AbstractComponentConfiguration 
 	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#assemble(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
 	 */
 	@Override
-	public void assemble(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+	public void assemble(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
 		super.assemble(assembler);
 		assembler.getMarkupWriter().writeEmptyElement("img");
-		assembler.getMarkupWriter().writeAttribute("wicket:id", getId());
+		assembler.getMarkupWriter().writeAttribute("wicket:id", getComponentId());
 	}
 	
 	/* (non-Javadoc)
@@ -82,7 +82,7 @@ public final class PieChartConfiguration extends AbstractComponentConfiguration 
 	 */
 	@Override
 	public Component buildComponent() {
-		return new Image(getId(), new PieChartImageResource(500, 300, this));
+		return new Image(getComponentId(), new PieChartImageResource(500, 300, this));
 	}
 
 	/* (non-Javadoc)

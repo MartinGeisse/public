@@ -4,8 +4,8 @@
 
 package name.martingeisse.guiserver.configuration.content.basic;
 
-import name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration;
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.AbstractSingleContainerConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.xml.element.BindComponentElement;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 import name.martingeisse.wicket.component.misc.LongLoadingContainer;
@@ -16,13 +16,13 @@ import org.apache.wicket.MarkupContainer;
  * A lazy-loading container.
  */
 @BindComponentElement(localName = "lazy", acceptsMarkupContent = true)
-public final class LazyLoadContainerConfiguration extends AbstractContainerConfiguration {
+public final class LazyLoadContainerConfiguration extends AbstractSingleContainerConfiguration {
 
 	/**
 	 * Constructor.
 	 * @param markupContent the markup content
 	 */
-	public LazyLoadContainerConfiguration(MarkupContent<ComponentConfiguration> markupContent) {
+	public LazyLoadContainerConfiguration(MarkupContent<ComponentGroupConfiguration> markupContent) {
 		super(markupContent);
 	}
 
@@ -31,7 +31,7 @@ public final class LazyLoadContainerConfiguration extends AbstractContainerConfi
 	 */
 	@Override
 	protected MarkupContainer buildContainer() {
-		return new LongLoadingContainer(getId());
+		return new LongLoadingContainer(getComponentId());
 	}
 
 }

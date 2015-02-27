@@ -20,8 +20,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
-import name.martingeisse.guiserver.configuration.content.ComponentConfigurationList;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigurationList;
 import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.configuration.elements.ConfigurationElement;
 import name.martingeisse.guiserver.configuration.elements.ConfigurationElementContent;
@@ -46,7 +46,7 @@ final class ConfigurationBuilder {
 	/**
 	 * the xmlContentObjectBinding
 	 */
-	private final XmlContentObjectBinding<MarkupContent<ComponentConfiguration>> xmlContentObjectBinding;
+	private final XmlContentObjectBinding<MarkupContent<ComponentGroupConfiguration>> xmlContentObjectBinding;
 
 	/**
 	 * the elements
@@ -67,7 +67,7 @@ final class ConfigurationBuilder {
 	 * Constructor.
 	 * @param xmlContentObjectBinding the XML-content-to-object-binding
 	 */
-	public ConfigurationBuilder(XmlContentObjectBinding<MarkupContent<ComponentConfiguration>> xmlContentObjectBinding) {
+	public ConfigurationBuilder(XmlContentObjectBinding<MarkupContent<ComponentGroupConfiguration>> xmlContentObjectBinding) {
 		this.xmlContentObjectBinding = xmlContentObjectBinding;
 	}
 
@@ -129,7 +129,7 @@ final class ConfigurationBuilder {
 			String path = getPath(PageConfiguration.CONFIGURATION_FILENAME_SUFFIX);
 
 			// parse the file to obtain markup content
-			MarkupContent<ComponentConfiguration> markupContent;
+			MarkupContent<ComponentGroupConfiguration> markupContent;
 			try (FileInputStream fileInputStream = new FileInputStream(file)) {
 				XMLStreamReader xmlStreamReader = XMLInputFactory.newFactory().createXMLStreamReader(fileInputStream);
 				DatabindingXmlStreamReader reader = new DatabindingXmlStreamReader(xmlStreamReader);
@@ -141,21 +141,21 @@ final class ConfigurationBuilder {
 
 			// assemble the final component configuration tree from the markup content
 			String wicketMarkup;
-			ComponentConfigurationList components;
+			ComponentGroupConfigurationList components;
 			try {
 				StringWriter stringWriter = new StringWriter();
 				XMLStreamWriter markupWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(stringWriter);
 				markupWriter.writeStartDocument();
 				markupWriter.writeStartElement("html");
 				markupWriter.writeStartElement("body");
-				List<ComponentConfiguration> componentAccumulator = new ArrayList<>();
-				ConfigurationAssembler<ComponentConfiguration> assembler = new ConfigurationAssembler<>(markupWriter, componentAccumulator, snippets);
+				List<ComponentGroupConfiguration> componentGroupAccumulator = new ArrayList<>();
+				ConfigurationAssembler<ComponentGroupConfiguration> assembler = new ConfigurationAssembler<>(markupWriter, componentGroupAccumulator, snippets);
 				markupContent.assemble(assembler);
 				markupWriter.writeEndElement();
 				markupWriter.writeEndElement();
 				markupWriter.writeEndDocument();
 				wicketMarkup = stringWriter.toString();
-				components = new ComponentConfigurationList(ImmutableList.copyOf(componentAccumulator));
+				components = new ComponentGroupConfigurationList(ImmutableList.copyOf(componentGroupAccumulator));
 			} catch (XMLStreamException e) {
 				throw new RuntimeException(e);
 			}

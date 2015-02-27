@@ -6,8 +6,8 @@ package name.martingeisse.guiserver.configuration.content.basic;
 
 import javax.xml.stream.XMLStreamException;
 
-import name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration;
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.AbstractSingleContainerConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.configuration.elements.PageConfiguration;
 import name.martingeisse.guiserver.gui.ConfigurationDefinedPage;
 import name.martingeisse.guiserver.xml.attribute.BindAttribute;
@@ -26,7 +26,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 @BindComponentElement(localName = "link", attributes = {
 	@BindAttribute(name = "href")
 }, acceptsMarkupContent = true)
-public final class LinkConfiguration extends AbstractContainerConfiguration {
+public final class LinkConfiguration extends AbstractSingleContainerConfiguration {
 
 	/**
 	 * the targetPagePath
@@ -38,7 +38,7 @@ public final class LinkConfiguration extends AbstractContainerConfiguration {
 	 * @param targetPagePath the path of the page to link to
 	 * @param markupContent the markup content
 	 */
-	public LinkConfiguration(String targetPagePath, MarkupContent<ComponentConfiguration> markupContent) {
+	public LinkConfiguration(String targetPagePath, MarkupContent<ComponentGroupConfiguration> markupContent) {
 		super(markupContent);
 		this.targetPagePath = targetPagePath;
 	}
@@ -55,7 +55,7 @@ public final class LinkConfiguration extends AbstractContainerConfiguration {
 	 * @see name.martingeisse.guiserver.configuration.content.AbstractContainerConfiguration#assembleContainerIntro(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
 	 */
 	@Override
-	protected void assembleContainerIntro(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+	protected void assembleContainerIntro(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
 		writeOpeningComponentTag(assembler, "a");
 	}
 
@@ -66,7 +66,7 @@ public final class LinkConfiguration extends AbstractContainerConfiguration {
 	protected MarkupContainer buildContainer() {
 		PageParameters targetPageParameters = new PageParameters();
 		targetPageParameters.add(PageConfiguration.CONFIGURATION_ELEMENT_PATH_PAGE_PARAMETER_NAME, targetPagePath);
-		return new BookmarkablePageLink<>(getId(), ConfigurationDefinedPage.class, targetPageParameters);
+		return new BookmarkablePageLink<>(getComponentId(), ConfigurationDefinedPage.class, targetPageParameters);
 	}
 
 }

@@ -6,19 +6,18 @@ package name.martingeisse.guiserver.configuration.content.basic.form;
 
 import javax.xml.stream.XMLStreamException;
 
-import name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration;
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
-import name.martingeisse.guiserver.gui.FieldPathBehavior;
+import name.martingeisse.guiserver.configuration.content.AbstractSingleComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.xml.element.BindComponentElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;
 
 /**
- * A panel that shows feedback messages for a form component with a {@link FieldPathBehavior}.
+ * This configuration generates a submit button.
  */
 @BindComponentElement(localName = "submit")
-public final class SubmitButtonConfiguration extends AbstractComponentConfiguration {
+public final class SubmitButtonConfiguration extends AbstractSingleComponentConfiguration {
 
 	/**
 	 * Constructor.
@@ -30,7 +29,7 @@ public final class SubmitButtonConfiguration extends AbstractComponentConfigurat
 	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#assemble(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
 	 */
 	@Override
-	public void assemble(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+	public void assemble(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
 		super.assemble(assembler);
 		assembler.getMarkupWriter().writeEmptyElement("input");
 		assembler.getMarkupWriter().writeAttribute("type", "submit");

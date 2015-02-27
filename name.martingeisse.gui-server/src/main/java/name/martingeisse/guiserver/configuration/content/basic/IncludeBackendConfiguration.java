@@ -6,8 +6,8 @@ package name.martingeisse.guiserver.configuration.content.basic;
 
 import javax.xml.stream.XMLStreamException;
 
-import name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration;
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.AbstractSingleComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.gui.HttpModel;
 import name.martingeisse.guiserver.xml.attribute.AttributeValueBindingOptionality;
 import name.martingeisse.guiserver.xml.attribute.BindAttribute;
@@ -23,7 +23,7 @@ import org.apache.wicket.markup.html.basic.Label;
 @BindComponentElement(localName = "includeBackend", attributes = {
 	@BindAttribute(name = "url"), @BindAttribute(name = "escape", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
 })
-public final class IncludeBackendConfiguration extends AbstractComponentConfiguration {
+public final class IncludeBackendConfiguration extends AbstractSingleComponentConfiguration {
 
 	/**
 	 * the url
@@ -49,10 +49,10 @@ public final class IncludeBackendConfiguration extends AbstractComponentConfigur
 	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#assemble(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
 	 */
 	@Override
-	public void assemble(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+	public void assemble(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
 		super.assemble(assembler);
 		assembler.getMarkupWriter().writeEmptyElement("wicket:container");
-		assembler.getMarkupWriter().writeAttribute("wicket:id", getId());
+		assembler.getMarkupWriter().writeAttribute("wicket:id", getComponentId());
 	}
 
 	/* (non-Javadoc)
@@ -60,7 +60,7 @@ public final class IncludeBackendConfiguration extends AbstractComponentConfigur
 	 */
 	@Override
 	public Component buildComponent() {
-		return new Label(getId(), new HttpModel(url)).setEscapeModelStrings(escape);
+		return new Label(getComponentId(), new HttpModel(url)).setEscapeModelStrings(escape);
 	}
 
 }

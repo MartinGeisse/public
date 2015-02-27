@@ -7,11 +7,12 @@
 package name.martingeisse.wicket.component.misc;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.panel.ComponentFeedbackPanel;
 
 /**
  * This feedback panel better adapts to Bootstrap CSS classes.
  */
-public class BootstrapComponentFeedbackPanel extends org.apache.wicket.markup.html.panel.ComponentFeedbackPanel {
+public class BootstrapComponentFeedbackPanel extends ComponentFeedbackPanel {
 
 	/**
 	 * Constructor.

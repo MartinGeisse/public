@@ -4,7 +4,7 @@
 
 package name.martingeisse.guiserver.configuration.elements;
 
-import name.martingeisse.guiserver.configuration.content.ComponentConfigurationList;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigurationList;
 
 
 /**
@@ -24,14 +24,14 @@ public final class ConfigurationElementContent {
 	/**
 	 * the components
 	 */
-	private final ComponentConfigurationList components;
+	private final ComponentGroupConfigurationList components;
 
 	/**
 	 * Constructor.
 	 * @param wicketMarkup the wicket markup
 	 * @param components the components to attach to that markup
 	 */
-	public ConfigurationElementContent(String wicketMarkup, ComponentConfigurationList components) {
+	public ConfigurationElementContent(String wicketMarkup, ComponentGroupConfigurationList components) {
 		this.wicketMarkup = wicketMarkup;
 		this.components = components;
 	}
@@ -48,7 +48,7 @@ public final class ConfigurationElementContent {
 	 * Getter method for the components.
 	 * @return the components
 	 */
-	public ComponentConfigurationList getComponents() {
+	public ComponentGroupConfigurationList getComponents() {
 		return components;
 	}
 

@@ -5,9 +5,9 @@
 package name.martingeisse.guiserver.configuration.content;
 
 /**
- * An interface to implement for visiting the component configuration structure.
+ * An interface to implement for visiting the component group configuration structure.
  */
-public interface IComponentConfigurationVisitorAcceptor {
+public interface IComponentGroupConfigurationVisitorAcceptor {
 	
 	/**
 	 * Accepts the specified visitor, calling its beginVisit(), passing
@@ -16,6 +16,6 @@ public interface IComponentConfigurationVisitorAcceptor {
 	 *  
 	 * @param visitor the visitor to accept
 	 */
-	public void accept(IComponentConfigurationVisitor visitor);
+	public void accept(IComponentGroupConfigurationVisitor visitor);
 	
 }

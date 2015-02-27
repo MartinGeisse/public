@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
-import name.martingeisse.guiserver.configuration.content.IComponentConfigurationVisitor;
-import name.martingeisse.guiserver.configuration.content.IComponentConfigurationVisitorAcceptor;
-import name.martingeisse.guiserver.configuration.content.UrlSubpathComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
+import name.martingeisse.guiserver.configuration.content.IComponentGroupConfigurationVisitor;
+import name.martingeisse.guiserver.configuration.content.IComponentGroupConfigurationVisitorAcceptor;
+import name.martingeisse.guiserver.configuration.content.UrlSubpathComponentGroupConfiguration;
 import name.martingeisse.guiserver.gui.ConfigurationDefinedPage;
 import name.martingeisse.wicket.util.ParameterMountedRequestMapper;
 
@@ -78,16 +78,16 @@ public final class PageConfiguration extends ConfigurationElement {
 	/**
 	 * 
 	 */
-	private void mountComponentUrls(GuiWicketApplication application, String pathPrefix, final IComponentConfigurationVisitorAcceptor acceptor) {
+	private void mountComponentUrls(GuiWicketApplication application, String pathPrefix, final IComponentGroupConfigurationVisitorAcceptor acceptor) {
 		
 		// find the components that want to provide the next URL segment
-		final List<UrlSubpathComponentConfiguration> subpathComponents = new ArrayList<>();
-		acceptor.accept(new IComponentConfigurationVisitor() {
+		final List<UrlSubpathComponentGroupConfiguration> subpathComponents = new ArrayList<>();
+		acceptor.accept(new IComponentGroupConfigurationVisitor() {
 			
 			@Override
-			public boolean beginVisit(ComponentConfiguration componentConfiguration) {
-				if (componentConfiguration != acceptor && componentConfiguration instanceof UrlSubpathComponentConfiguration) {
-					subpathComponents.add((UrlSubpathComponentConfiguration)componentConfiguration);
+			public boolean beginVisit(ComponentGroupConfiguration componentConfiguration) {
+				if (componentConfiguration != acceptor && componentConfiguration instanceof UrlSubpathComponentGroupConfiguration) {
+					subpathComponents.add((UrlSubpathComponentGroupConfiguration)componentConfiguration);
 					return false;
 				} else {
 					return true;
@@ -95,7 +95,7 @@ public final class PageConfiguration extends ConfigurationElement {
 			}
 
 			@Override
-			public void endVisit(ComponentConfiguration componentConfiguration) {
+			public void endVisit(ComponentGroupConfiguration componentConfiguration) {
 			}
 			
 		});
@@ -103,7 +103,7 @@ public final class PageConfiguration extends ConfigurationElement {
 		// find the relevant page parameters (multiple components might use the same),
 		// but try to keep the order intact since it looks nicer
 		final List<String> urlSegments = new ArrayList<>();
-		for (UrlSubpathComponentConfiguration component : subpathComponents) {
+		for (UrlSubpathComponentGroupConfiguration component : subpathComponents) {
 			for (String parameterName : component.getSubpathSegmentParameterNames()) {
 				if (!urlSegments.contains(parameterName)) {
 					urlSegments.add(parameterName);
@@ -128,7 +128,7 @@ public final class PageConfiguration extends ConfigurationElement {
 		application.mount(new ParameterMountedRequestMapper(parameterizedPath, ConfigurationDefinedPage.class, identifyingParameters));
 
 		// allow nested components to contribute their paths too
-		for (UrlSubpathComponentConfiguration component : subpathComponents) {
+		for (UrlSubpathComponentGroupConfiguration component : subpathComponents) {
 			mountComponentUrls(application, parameterizedPath, component);
 		}
 		

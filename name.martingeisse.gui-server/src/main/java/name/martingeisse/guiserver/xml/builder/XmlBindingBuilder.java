@@ -100,26 +100,26 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 	}
 	
 	/**
-	 * Adds a component configuration class to this builder. The class must be annotated
+	 * Adds a component group configuration class to this builder. The class must be annotated
 	 * with {@link BindComponentElement}.
 	 * 
 	 * @param targetClass the class to add
 	 */
-	public void addComponentConfigurationClass(Class<? extends C> targetClass) {
+	public void addComponentGroupConfigurationClass(Class<? extends C> targetClass) {
 		BindComponentElement annotation = targetClass.getAnnotation(BindComponentElement.class);
 		if (annotation == null) {
 			throw new RuntimeException("class " + targetClass + " is not annotated with @BindComponentElement");
 		}
-		addComponentConfigurationBinding(annotation.localName(), newElementClassInstanceBindingBuilder(targetClass).build());
+		addComponentGroupConfigurationBinding(annotation.localName(), newElementClassInstanceBindingBuilder(targetClass).build());
 	}
 
 	/**
-	 * Adds a component configuration binding to this builder.
+	 * Adds a component group configuration binding to this builder.
 	 * 
 	 * @param localElementName the local element name
 	 * @param binding the binding
 	 */
-	public void addComponentConfigurationBinding(String localElementName, ElementObjectBinding<? extends C> binding) {
+	public void addComponentGroupConfigurationBinding(String localElementName, ElementObjectBinding<? extends C> binding) {
 		componentBindings.put(localElementName, binding);
 	}
 	

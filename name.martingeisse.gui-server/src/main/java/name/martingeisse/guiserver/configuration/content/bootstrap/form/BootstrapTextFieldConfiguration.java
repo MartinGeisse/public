@@ -9,19 +9,20 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
+import name.martingeisse.common.terms.IConsumer;
 import name.martingeisse.common.terms.Multiplicity;
-import name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration;
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.AbstractComponentGroupConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.FormFieldMetadata;
 import name.martingeisse.guiserver.configuration.content.basic.form.FormFieldModifier;
 import name.martingeisse.guiserver.configuration.content.basic.form.ValidationFormFieldModifier;
-import name.martingeisse.guiserver.gui.DisappearingFeedbackPanel;
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
 import name.martingeisse.guiserver.gui.FieldPathFeedbackMessageFilter;
 import name.martingeisse.guiserver.xml.attribute.AttributeValueBindingOptionality;
 import name.martingeisse.guiserver.xml.attribute.BindAttribute;
 import name.martingeisse.guiserver.xml.element.BindComponentElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
+import name.martingeisse.wicket.component.misc.BootstrapFeedbackPanel;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
@@ -33,14 +34,19 @@ import org.apache.wicket.validation.IValidator;
  * Represents a text field, including validation errors and the corresponding Bootstrap markup.
  */
 @BindComponentElement(localName = "bsTextField", attributes = {
-	@BindAttribute(name = "name"), @BindAttribute(name = "required", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
+	@BindAttribute(name = "name"), @BindAttribute(name = "label"), @BindAttribute(name = "required", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true"),
 }, childObjectMultiplicity = Multiplicity.ANY, childObjectElementNameFilter = "validation")
-public final class BootstrapTextFieldConfiguration extends AbstractComponentConfiguration {
+public final class BootstrapTextFieldConfiguration extends AbstractComponentGroupConfiguration {
 
 	/**
 	 * the name
 	 */
 	private final String name;
+
+	/**
+	 * the label
+	 */
+	private final String label;
 
 	/**
 	 * the required
@@ -60,13 +66,15 @@ public final class BootstrapTextFieldConfiguration extends AbstractComponentConf
 	/**
 	 * Constructor.
 	 * @param name the field name
+	 * @param label the field label
 	 * @param required whether this is a required field
 	 * @param modifiers field modifiers
 	 */
-	public BootstrapTextFieldConfiguration(String name, boolean required, List<FormFieldModifier> modifiers) {
+	public BootstrapTextFieldConfiguration(String name, String label, boolean required, List<FormFieldModifier> modifiers) {
 
 		// assign basic fields
 		this.name = name;
+		this.label = label;
 		this.required = required;
 		this.modifiers = modifiers;
 
@@ -119,18 +127,18 @@ public final class BootstrapTextFieldConfiguration extends AbstractComponentConf
 	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#assemble(name.martingeisse.guiserver.xml.result.ConfigurationAssembler)
 	 */
 	@Override
-	public void assemble(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+	public void assemble(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
 		super.assemble(assembler);
 		beginFormControlMarkup(assembler);
 		assembler.getMarkupWriter().writeStartElement("input");
 		assembler.getMarkupWriter().writeAttribute("type", "text");
 		assembler.getMarkupWriter().writeAttribute("class", "form-control");
-		assembler.getMarkupWriter().writeAttribute("wicket:id", getId() + "-error");
+		assembler.getMarkupWriter().writeAttribute("wicket:id", getComponentBaseId());
 		endFormControlMarkup(assembler);
 	}
 
 	//
-	private void beginFormControlMarkup(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+	private void beginFormControlMarkup(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
 
 		// start form group
 		assembler.getMarkupWriter().writeStartElement("div");
@@ -140,7 +148,7 @@ public final class BootstrapTextFieldConfiguration extends AbstractComponentConf
 		assembler.getMarkupWriter().writeStartElement("div");
 		{ // label
 			assembler.getMarkupWriter().writeStartElement("label");
-			assembler.getMarkupWriter().writeAttribute("wicket:id", getId() + "-label");
+			assembler.getMarkupWriter().writeAttribute("wicket:id", getComponentBaseId() + "-label");
 			assembler.getMarkupWriter().writeEmptyElement("span");
 			assembler.getMarkupWriter().writeAttribute("wicket:id", "labelText");
 			assembler.getMarkupWriter().writeEndElement();
@@ -152,12 +160,12 @@ public final class BootstrapTextFieldConfiguration extends AbstractComponentConf
 
 		// error message
 		assembler.getMarkupWriter().writeEmptyElement("div");
-		assembler.getMarkupWriter().writeAttribute("wicket:id", getId() + "-error");
+		assembler.getMarkupWriter().writeAttribute("wicket:id", getComponentBaseId() + "-error");
 
 	}
 
 	//
-	private void endFormControlMarkup(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+	private void endFormControlMarkup(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
 
 		// end form group
 		assembler.getMarkupWriter().writeEndElement();
@@ -165,25 +173,25 @@ public final class BootstrapTextFieldConfiguration extends AbstractComponentConf
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.guiserver.configuration.content.ComponentConfiguration#buildComponent()
+	 * @see name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration#buildComponents(name.martingeisse.common.terms.IConsumer)
 	 */
 	@Override
-	public Component buildComponent() {
-		
+	public void buildComponents(IConsumer<Component> consumer) {
+
 		// build the text field itself
-		TextField<?> textField = new TextField<>(getId());
+		TextField<?> textField = new TextField<>(getComponentBaseId());
 		textField.setRequired(metadata.isRequired());
 		textField.add(new FieldPathBehavior(metadata.getName()));
 		for (IValidator<?> validator : metadata.getValidators()) {
 			addValidator(textField, validator);
 		}
-		
-		
-		return textField;
+		consumer.consume(textField);
 
-		wrapperFragment.add(new FormComponentLabel("label", labelTarget).add(new Label("text", label)));
+		// build the label
+		consumer.consume(new FormComponentLabel(getComponentBaseId() + "-label", textField).add(new Label("labelText", label)));
 
-		return new DisappearingFeedbackPanel(getId(), new FieldPathFeedbackMessageFilter(path));
+		// build the error message feedback panel
+		consumer.consume(new BootstrapFeedbackPanel(getComponentBaseId() + "-error", new FieldPathFeedbackMessageFilter(metadata.getName())));
 
 	}
 

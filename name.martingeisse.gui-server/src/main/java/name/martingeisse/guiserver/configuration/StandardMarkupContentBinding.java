@@ -8,7 +8,7 @@ import java.lang.reflect.Constructor;
 
 import javax.xml.stream.XMLStreamException;
 
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.EnclosureConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.IncludeBackendConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.LazyLoadContainerConfiguration;
@@ -22,6 +22,8 @@ import name.martingeisse.guiserver.configuration.content.basic.form.FormFieldMod
 import name.martingeisse.guiserver.configuration.content.basic.form.FormFieldModifierBinding;
 import name.martingeisse.guiserver.configuration.content.basic.form.SubmitButtonConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.TextFieldConfiguration;
+import name.martingeisse.guiserver.configuration.content.bootstrap.form.BootstrapFormConfiguration;
+import name.martingeisse.guiserver.configuration.content.bootstrap.form.BootstrapTextFieldConfiguration;
 import name.martingeisse.guiserver.configuration.content.bootstrap.navbar.NavigationBarBinding;
 import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
 import name.martingeisse.guiserver.xml.attribute.AttributeValueBinding;
@@ -38,7 +40,7 @@ import name.martingeisse.guiserver.xml.value.TextStringBinding;
  * For now, the markup content binding is fixed, and expressed as
  * this singleton class.
  */
-public final class StandardMarkupContentBinding implements XmlContentObjectBinding<MarkupContent<ComponentConfiguration>> {
+public final class StandardMarkupContentBinding implements XmlContentObjectBinding<MarkupContent<ComponentGroupConfiguration>> {
 
 	/**
 	 * the INSTANCE
@@ -48,14 +50,14 @@ public final class StandardMarkupContentBinding implements XmlContentObjectBindi
 	/**
 	 * the binding
 	 */
-	private final XmlContentObjectBinding<MarkupContent<ComponentConfiguration>> binding;
+	private final XmlContentObjectBinding<MarkupContent<ComponentGroupConfiguration>> binding;
 
 	/**
 	 * Constructor.
 	 */
 	public StandardMarkupContentBinding() {
 		try {
-			XmlBindingBuilder<ComponentConfiguration> builder = new XmlBindingBuilder<>();
+			XmlBindingBuilder<ComponentGroupConfiguration> builder = new XmlBindingBuilder<>();
 			
 			// known attribute-to-constructor-parameter bindings
 			builder.addAttributeTextValueBinding(String.class, TextStringBinding.INSTANCE);
@@ -73,21 +75,25 @@ public final class StandardMarkupContentBinding implements XmlContentObjectBindi
 				Constructor<TabPanelConfiguration.TabEntry> constructor = TabPanelConfiguration.TabEntry.class.getConstructor(String.class, String.class, MarkupContent.class);
 				builder.addChildElementObjectBinding(TabPanelConfiguration.TabEntry.class, new ElementClassInstanceBinding<>(constructor, attributeBindings, builder.getRecursiveMarkupBinding()));
 			}
-			builder.addChildElementObjectBinding(FormFieldModifier.class, new FormFieldModifierBinding());
+			builder.addChildElementObjectBinding(FormFieldModifier.class, new FormFieldModifierBinding(builder));
 			
 			// known component special tags
-			builder.addComponentConfigurationClass(EnclosureConfiguration.class);
-			builder.addComponentConfigurationClass(IncludeBackendConfiguration.class);
-			builder.addComponentConfigurationClass(LazyLoadContainerConfiguration.class);
-			builder.addComponentConfigurationClass(LinkConfiguration.class);
-			builder.addComponentConfigurationClass(FieldPathFeedbackPanelConfiguration.class);
-			builder.addComponentConfigurationClass(FormConfiguration.class);
-			builder.addComponentConfigurationClass(PieChartConfiguration.class);
-			builder.addComponentConfigurationClass(SubmitButtonConfiguration.class);
-			builder.addComponentConfigurationClass(TabPanelConfiguration.class);
-			builder.addComponentConfigurationClass(TextFieldConfiguration.class);
-			builder.addComponentConfigurationClass(CheckboxConfiguration.class);
-			builder.addComponentConfigurationBinding("navbar", new NavigationBarBinding(builder));
+			builder.addComponentGroupConfigurationClass(EnclosureConfiguration.class);
+			builder.addComponentGroupConfigurationClass(IncludeBackendConfiguration.class);
+			builder.addComponentGroupConfigurationClass(LazyLoadContainerConfiguration.class);
+			builder.addComponentGroupConfigurationClass(LinkConfiguration.class);
+			builder.addComponentGroupConfigurationClass(FieldPathFeedbackPanelConfiguration.class);
+			builder.addComponentGroupConfigurationClass(FormConfiguration.class);
+			builder.addComponentGroupConfigurationClass(PieChartConfiguration.class);
+			builder.addComponentGroupConfigurationClass(SubmitButtonConfiguration.class);
+			builder.addComponentGroupConfigurationClass(TabPanelConfiguration.class);
+			builder.addComponentGroupConfigurationClass(TextFieldConfiguration.class);
+			builder.addComponentGroupConfigurationClass(CheckboxConfiguration.class);
+			builder.addComponentGroupConfigurationBinding("navbar", new NavigationBarBinding(builder));
+			
+			// Bootstrap-specific tags
+			builder.addComponentGroupConfigurationClass(BootstrapFormConfiguration.class);
+			builder.addComponentGroupConfigurationClass(BootstrapTextFieldConfiguration.class);
 			
 			binding = builder.build();
 		} catch (Exception e) {
@@ -99,7 +105,7 @@ public final class StandardMarkupContentBinding implements XmlContentObjectBindi
 	 * @see name.martingeisse.guiserver.xmlbind.content.XmlContentObjectBinding#parse(name.martingeisse.guiserver.xmlbind.DatabindingXmlStreamReader)
 	 */
 	@Override
-	public MarkupContent<ComponentConfiguration> parse(DatabindingXmlStreamReader reader) throws XMLStreamException {
+	public MarkupContent<ComponentGroupConfiguration> parse(DatabindingXmlStreamReader reader) throws XMLStreamException {
 		return binding.parse(reader);
 	}
 

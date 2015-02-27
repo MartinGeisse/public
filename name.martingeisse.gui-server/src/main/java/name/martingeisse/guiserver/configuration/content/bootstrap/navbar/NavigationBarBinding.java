@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
-import name.martingeisse.guiserver.configuration.content.ComponentConfigurationList;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigurationList;
 import name.martingeisse.guiserver.configuration.content.basic.LinkConfiguration;
 import name.martingeisse.guiserver.xml.attribute.AttributeValueBinding;
 import name.martingeisse.guiserver.xml.builder.XmlBindingBuilder;
@@ -32,7 +32,7 @@ public final class NavigationBarBinding extends ElementClassInstanceBinding<Navi
 	/**
 	 * Constructor.
 	 */
-	public NavigationBarBinding(XmlBindingBuilder<ComponentConfiguration> builder) {
+	public NavigationBarBinding(XmlBindingBuilder<ComponentGroupConfiguration> builder) {
 		super(chooseConstructor(), new AttributeValueBinding<?>[0], createContentBinding(builder));
 	}
 
@@ -50,17 +50,17 @@ public final class NavigationBarBinding extends ElementClassInstanceBinding<Navi
 	/**
 	 * 
 	 */
-	private static XmlContentObjectBinding<NavigationBarContents> createContentBinding(XmlBindingBuilder<ComponentConfiguration> builder) {
+	private static XmlContentObjectBinding<NavigationBarContents> createContentBinding(XmlBindingBuilder<ComponentGroupConfiguration> builder) {
 		Map<String, ElementObjectBinding<? extends NavigationBarChildElement>> childElementObjectBindings = new HashMap<>();
-		childElementObjectBindings.put("brandLink", new ElementObjectBindingWrapper<ComponentConfiguration, NavigationBarChildElement>(builder.getComponentBinding("link")) {
+		childElementObjectBindings.put("brandLink", new ElementObjectBindingWrapper<ComponentGroupConfiguration, NavigationBarChildElement>(builder.getComponentBinding("link")) {
 			@Override
-			protected NavigationBarChildElement wrapResult(ComponentConfiguration original) {
+			protected NavigationBarChildElement wrapResult(ComponentGroupConfiguration original) {
 				return new NavigationBarChildElement.BrandLink((LinkConfiguration)original);
 			}
 		});
-		childElementObjectBindings.put("link", new ElementObjectBindingWrapper<ComponentConfiguration, NavigationBarChildElement>(builder.getComponentBinding("link")) {
+		childElementObjectBindings.put("link", new ElementObjectBindingWrapper<ComponentGroupConfiguration, NavigationBarChildElement>(builder.getComponentBinding("link")) {
 			@Override
-			protected NavigationBarChildElement wrapResult(ComponentConfiguration original) {
+			protected NavigationBarChildElement wrapResult(ComponentGroupConfiguration original) {
 				return new NavigationBarChildElement.NavigationLink((LinkConfiguration)original);
 			}
 		});
@@ -86,8 +86,8 @@ public final class NavigationBarBinding extends ElementClassInstanceBinding<Navi
 						throw new RuntimeException("unknown subclass of NavigationBarChildElement: " + child.getClass());
 					}
 				}
-				ImmutableList<ComponentConfiguration> navigationLinkList = ImmutableList.<ComponentConfiguration> copyOf(navigationLinks);
-				return new NavigationBarContents(brandLink, new ComponentConfigurationList(navigationLinkList));
+				ImmutableList<ComponentGroupConfiguration> navigationLinkList = ImmutableList.<ComponentGroupConfiguration> copyOf(navigationLinks);
+				return new NavigationBarContents(brandLink, new ComponentGroupConfigurationList(navigationLinkList));
 			}
 		};
 	}

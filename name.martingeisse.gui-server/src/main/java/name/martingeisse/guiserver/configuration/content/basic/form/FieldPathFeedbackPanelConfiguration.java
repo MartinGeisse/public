@@ -6,8 +6,8 @@ package name.martingeisse.guiserver.configuration.content.basic.form;
 
 import javax.xml.stream.XMLStreamException;
 
-import name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration;
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.AbstractSingleComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.gui.DisappearingFeedbackPanel;
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
 import name.martingeisse.guiserver.gui.FieldPathFeedbackMessageFilter;
@@ -23,7 +23,7 @@ import org.apache.wicket.Component;
 @BindComponentElement(localName = "feedback", attributes = {
 	@BindAttribute(name = "name")
 })
-public final class FieldPathFeedbackPanelConfiguration extends AbstractComponentConfiguration {
+public final class FieldPathFeedbackPanelConfiguration extends AbstractSingleComponentConfiguration {
 
 	/**
 	 * the path
@@ -42,10 +42,10 @@ public final class FieldPathFeedbackPanelConfiguration extends AbstractComponent
 	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#assemble(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
 	 */
 	@Override
-	public void assemble(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+	public void assemble(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
 		super.assemble(assembler);
 		assembler.getMarkupWriter().writeEmptyElement("div");
-		assembler.getMarkupWriter().writeAttribute("wicket:id", getId());
+		assembler.getMarkupWriter().writeAttribute("wicket:id", getComponentId());
 	}
 	
 	/* (non-Javadoc)
@@ -53,7 +53,7 @@ public final class FieldPathFeedbackPanelConfiguration extends AbstractComponent
 	 */
 	@Override
 	public Component buildComponent() {
-		return new DisappearingFeedbackPanel(getId(), new FieldPathFeedbackMessageFilter(path));
+		return new DisappearingFeedbackPanel(getComponentId(), new FieldPathFeedbackMessageFilter(path));
 	}
 
 }

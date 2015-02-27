@@ -10,8 +10,8 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.common.terms.Multiplicity;
-import name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration;
-import name.martingeisse.guiserver.configuration.content.ComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.AbstractSingleComponentConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
 import name.martingeisse.guiserver.xml.attribute.AttributeValueBindingOptionality;
 import name.martingeisse.guiserver.xml.attribute.BindAttribute;
@@ -28,7 +28,7 @@ import org.apache.wicket.validation.IValidator;
 @BindComponentElement(localName = "textField", attributes = {
 	@BindAttribute(name = "name"), @BindAttribute(name = "required", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
 }, childObjectMultiplicity = Multiplicity.ANY, childObjectElementNameFilter = "validation")
-public final class TextFieldConfiguration extends AbstractComponentConfiguration {
+public final class TextFieldConfiguration extends AbstractSingleComponentConfiguration {
 
 	/**
 	 * the name
@@ -112,11 +112,11 @@ public final class TextFieldConfiguration extends AbstractComponentConfiguration
 	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#assemble(name.martingeisse.guiserver.xml.result.ConfigurationAssembler)
 	 */
 	@Override
-	public void assemble(ConfigurationAssembler<ComponentConfiguration> assembler) throws XMLStreamException {
+	public void assemble(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
 		super.assemble(assembler);
 		assembler.getMarkupWriter().writeEmptyElement("input");
 		assembler.getMarkupWriter().writeAttribute("type", "text");
-		assembler.getMarkupWriter().writeAttribute("wicket:id", getId());
+		assembler.getMarkupWriter().writeAttribute("wicket:id", getComponentId());
 	}
 	
 	/* (non-Javadoc)
@@ -124,7 +124,7 @@ public final class TextFieldConfiguration extends AbstractComponentConfiguration
 	 */
 	@Override
 	public Component buildComponent() {
-		TextField<?> textField = new TextField<>(getId());
+		TextField<?> textField = new TextField<>(getComponentId());
 		textField.setRequired(metadata.isRequired());
 		textField.add(new FieldPathBehavior(metadata.getName()));
 		for (IValidator<?> validator : metadata.getValidators()) {

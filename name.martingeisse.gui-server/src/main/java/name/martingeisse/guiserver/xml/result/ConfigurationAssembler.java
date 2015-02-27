@@ -16,9 +16,9 @@ import name.martingeisse.guiserver.xml.ConfigurationAssemblerAcceptor;
  * creates the final component/markup/snippet configuration from
  * that.
  *
- * @param <C> the component type
+ * @param <CG> the component group type
  */
-public final class ConfigurationAssembler<C extends ConfigurationAssemblerAcceptor<C>> {
+public final class ConfigurationAssembler<CG extends ConfigurationAssemblerAcceptor<CG>> {
 
 	/**
 	 * the markupWriter
@@ -26,9 +26,9 @@ public final class ConfigurationAssembler<C extends ConfigurationAssemblerAccept
 	private final XMLStreamWriter markupWriter;
 
 	/**
-	 * the componentAccumulator
+	 * the componentGroupAccumulator
 	 */
-	private final List<C> componentAccumulator;
+	private final List<CG> componentGroupAccumulator;
 
 	/**
 	 * the snippetAccumulator
@@ -38,12 +38,12 @@ public final class ConfigurationAssembler<C extends ConfigurationAssemblerAccept
 	/**
 	 * Constructor.
 	 * @param markupWriter the object used to write Wicket markup
-	 * @param componentAccumulator a list that accumulates the component configurations
+	 * @param componentGroupAccumulator a list that accumulates the component configurations
 	 * @param snippetAccumulator a list that accumulates globally indexed configuration snippets
 	 */
-	public ConfigurationAssembler(XMLStreamWriter markupWriter, List<C> componentAccumulator, List<IConfigurationSnippet> snippetAccumulator) {
+	public ConfigurationAssembler(XMLStreamWriter markupWriter, List<CG> componentGroupAccumulator, List<IConfigurationSnippet> snippetAccumulator) {
 		this.markupWriter = markupWriter;
-		this.componentAccumulator = componentAccumulator;
+		this.componentGroupAccumulator = componentGroupAccumulator;
 		this.snippetAccumulator = snippetAccumulator;
 	}
 
@@ -56,21 +56,21 @@ public final class ConfigurationAssembler<C extends ConfigurationAssemblerAccept
 	}
 	
 	/**
-	 * Returns the size of the component accumulator, i.e. the number of
+	 * Returns the size of the component group accumulator, i.e. the number of
 	 * components accumulated so far.
 	 * 
-	 * @return the component accumulator size
+	 * @return the component group accumulator size
 	 */
-	public int getComponentAccumulatorSize() {
-		return componentAccumulator.size();
+	public int getComponentGroupAccumulatorSize() {
+		return componentGroupAccumulator.size();
 	}
 	
 	/**
-	 * Adds a component to the component accumulator
+	 * Adds a component to the component group accumulator
 	 * @param component the component to add
 	 */
-	public void addComponent(C component) {
-		componentAccumulator.add(component);
+	public void addComponentGroup(CG component) {
+		componentGroupAccumulator.add(component);
 	}
 
 	/**
@@ -85,13 +85,13 @@ public final class ConfigurationAssembler<C extends ConfigurationAssemblerAccept
 	}
 	
 	/**
-	 * Creates an assembler like this one but with a different component accumulator.
+	 * Creates an assembler like this one but with a different component group accumulator.
 	 * 
-	 * @param componentAccumulator the component accumulator to use
+	 * @param componentGroupAccumulator the component group accumulator to use
 	 * @return the new assembler
 	 */
-	public ConfigurationAssembler<C> withComponentAccumulator(List<C> newComponentAccumulator) {
-		return new ConfigurationAssembler<>(markupWriter, newComponentAccumulator, snippetAccumulator);
+	public ConfigurationAssembler<CG> withComponentGroupAccumulator(List<CG> newComponentGroupAccumulator) {
+		return new ConfigurationAssembler<>(markupWriter, newComponentGroupAccumulator, snippetAccumulator);
 	}
 	
 }
