@@ -7,19 +7,22 @@ package name.martingeisse.guiserver.xml.attribute;
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
-import name.martingeisse.guiserver.xml.value.TextValueBinding;
+import name.martingeisse.guiserver.xml.builder.BindAttribute;
+import name.martingeisse.guiserver.xml.value.ValueParser;
 
 /**
- * The default implementation of {@link AttributeValueBinding}. This class
- * reads an attribute with a fixed name and uses a {@link TextValueBinding}
- * to parse its value.
+ * The default implementation of {@link AttributeParser}. This class
+ * reads a single attribute with a fixed name and uses a
+ * {@link ValueParser} to parse its value.
  * 
  * Note that the default value is specified in the same format as in the
  * XML, that is, the default value gets parsed just as any other value.
+ * This is because of the strongly restricted types that can be used in
+ * the default value property of {@link BindAttribute} annotations.
  *
  * @param <T> the attribute value type
  */
-public final class DefaultAttributeValueBinding<T> implements AttributeValueBinding<T> {
+public final class SimpleAttributeParser<T> implements AttributeParser<T> {
 
 	/**
 	 * the name
@@ -37,9 +40,9 @@ public final class DefaultAttributeValueBinding<T> implements AttributeValueBind
 	private final String defaultValue;
 
 	/**
-	 * the textValueBinding
+	 * the valueParser
 	 */
-	private final TextValueBinding<T> textValueBinding;
+	private final ValueParser<T> valueParser;
 
 	/**
 	 * the parsedDefaultValue
@@ -50,10 +53,10 @@ public final class DefaultAttributeValueBinding<T> implements AttributeValueBind
 	 * Constructor for a mandatory attribute.
 	 * 
 	 * @param name the attribute name
-	 * @param textValueBinding the binding for the attribute value
+	 * @param valueParser the parser for the attribute value
 	 */
-	public DefaultAttributeValueBinding(String name, TextValueBinding<T> textValueBinding) {
-		this(name, false, textValueBinding);
+	public SimpleAttributeParser(String name, ValueParser<T> valueParser) {
+		this(name, false, valueParser);
 	}
 
 	/**
@@ -61,10 +64,10 @@ public final class DefaultAttributeValueBinding<T> implements AttributeValueBind
 	 * .
 	 * @param name the attribute name
 	 * @param optional whether the attribute is optional
-	 * @param textValueBinding the binding for the attribute value
+	 * @param valueParser the parser for the attribute value
 	 */
-	public DefaultAttributeValueBinding(String name, boolean optional, TextValueBinding<T> textValueBinding) {
-		this(name, optional, null, textValueBinding);
+	public SimpleAttributeParser(String name, boolean optional, ValueParser<T> valueParser) {
+		this(name, optional, null, valueParser);
 	}
 
 	/**
@@ -72,24 +75,24 @@ public final class DefaultAttributeValueBinding<T> implements AttributeValueBind
 	 * @param name the attribute name
 	 * @param optional whether the attribute is optional
 	 * @param defaultValue the default value to use if the attribute is optional and absent
-	 * @param textValueBinding the binding for the attribute value
+	 * @param valueParser the parser for the attribute value
 	 */
-	public DefaultAttributeValueBinding(String name, boolean optional, String defaultValue, TextValueBinding<T> textValueBinding) {
+	public SimpleAttributeParser(String name, boolean optional, String defaultValue, ValueParser<T> valueParser) {
 		if (name == null) {
 			throw new IllegalArgumentException("name argument is null");
 		}
-		if (textValueBinding == null) {
-			throw new IllegalArgumentException("textValueBinding argument is null");
+		if (valueParser == null) {
+			throw new IllegalArgumentException("valueParser argument is null");
 		}
 		this.name = name;
 		this.optional = optional;
 		this.defaultValue = defaultValue;
 		try {
-			this.parsedDefaultValue = (defaultValue == null ? null : textValueBinding.parse(defaultValue));
+			this.parsedDefaultValue = (defaultValue == null ? null : valueParser.parse(defaultValue));
 		} catch (Exception e) {
 			throw new RuntimeException("failed to parse default value for attribute " + name, e);
 		}
-		this.textValueBinding = textValueBinding;
+		this.valueParser = valueParser;
 	}
 
 	/**
@@ -117,11 +120,11 @@ public final class DefaultAttributeValueBinding<T> implements AttributeValueBind
 	}
 
 	/**
-	 * Getter method for the textValueBinding.
-	 * @return the textValueBinding
+	 * Getter method for the valueParser.
+	 * @return the valueParser
 	 */
-	public TextValueBinding<T> getTextValueBinding() {
-		return textValueBinding;
+	public ValueParser<T> getValueParser() {
+		return valueParser;
 	}
 
 	/**
@@ -133,7 +136,7 @@ public final class DefaultAttributeValueBinding<T> implements AttributeValueBind
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.guiserver.xmlbind.attribute.AttributeValueBinding#parse(name.martingeisse.guiserver.xmlbind.DatabindingXmlStreamReader)
+	 * @see name.martingeisse.guiserver.xml.attribute.AttributeParser#parse(name.martingeisse.guiserver.xml.DatabindingXmlStreamReader)
 	 */
 	@Override
 	public T parse(DatabindingXmlStreamReader reader) throws XMLStreamException {
@@ -145,7 +148,7 @@ public final class DefaultAttributeValueBinding<T> implements AttributeValueBind
 				throw new MissingAttributeException(name);
 			}
 		} else {
-			return textValueBinding.parse(specifiedValue);
+			return valueParser.parse(specifiedValue);
 		}
 	}
 

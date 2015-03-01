@@ -6,8 +6,8 @@ package name.martingeisse.guiserver.configuration.content.bootstrap.form;
 
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.FormConfiguration;
-import name.martingeisse.guiserver.xml.attribute.BindAttribute;
-import name.martingeisse.guiserver.xml.element.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.BindAttribute;
+import name.martingeisse.guiserver.xml.builder.BindComponentElement;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 
 /**

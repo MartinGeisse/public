@@ -8,7 +8,7 @@ import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.configuration.content.AbstractSingleComponentConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
-import name.martingeisse.guiserver.xml.element.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.BindComponentElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;

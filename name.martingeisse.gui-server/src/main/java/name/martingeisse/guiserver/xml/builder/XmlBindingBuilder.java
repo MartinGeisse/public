@@ -8,15 +8,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import name.martingeisse.guiserver.xml.ConfigurationAssemblerAcceptor;
-import name.martingeisse.guiserver.xml.attribute.BindAttribute;
 import name.martingeisse.guiserver.xml.content.DelegatingXmlContentObjectBinding;
 import name.martingeisse.guiserver.xml.content.MarkupContentBinding;
 import name.martingeisse.guiserver.xml.content.XmlContentObjectBinding;
-import name.martingeisse.guiserver.xml.element.BindComponentElement;
 import name.martingeisse.guiserver.xml.element.ElementNameSelectedObjectBinding;
 import name.martingeisse.guiserver.xml.element.ElementObjectBinding;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
-import name.martingeisse.guiserver.xml.value.TextValueBinding;
+import name.martingeisse.guiserver.xml.value.ValueParserRegistry;
+import name.martingeisse.guiserver.xml.value.ValueParser;
 
 /**
  * This class builds the databinding for the XML format.
@@ -42,7 +41,7 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 	/**
 	 * the attributeTextValueBindingRegistry
 	 */
-	private final AttributeTextValueBindingRegistry attributeTextValueBindingRegistry;
+	private final ValueParserRegistry attributeTextValueBindingRegistry;
 
 	/**
 	 * the childElementObjectBindingRegistry
@@ -55,7 +54,7 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 	public XmlBindingBuilder() {
 		recursiveMarkupBinding = new DelegatingXmlContentObjectBinding<>();
 		componentBindings = new HashMap<>();
-		attributeTextValueBindingRegistry = new AttributeTextValueBindingRegistry();
+		attributeTextValueBindingRegistry = new ValueParserRegistry();
 		childElementObjectBindingRegistry = new ChildElementObjectBindingRegistry();
 	}
 
@@ -66,8 +65,8 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 	 * @param parameterType the constructor parameter type
 	 * @param binding the text-to-value binding that parses the attribute value
 	 */
-	public <T> void addAttributeTextValueBinding(Class<T> parameterType, TextValueBinding<T> binding) {
-		attributeTextValueBindingRegistry.addBinding(parameterType, binding);
+	public <T> void addAttributeTextValueBinding(Class<T> parameterType, ValueParser<T> binding) {
+		attributeTextValueBindingRegistry.addParser(parameterType, binding);
 	}
 
 	/**

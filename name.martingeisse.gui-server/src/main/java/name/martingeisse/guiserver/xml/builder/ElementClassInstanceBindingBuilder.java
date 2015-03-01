@@ -11,17 +11,15 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import name.martingeisse.common.terms.Multiplicity;
-import name.martingeisse.guiserver.xml.attribute.AttributeValueBinding;
-import name.martingeisse.guiserver.xml.attribute.AttributeValueBindingOptionality;
-import name.martingeisse.guiserver.xml.attribute.BindAttribute;
-import name.martingeisse.guiserver.xml.attribute.DefaultAttributeValueBinding;
+import name.martingeisse.guiserver.xml.attribute.AttributeParser;
+import name.martingeisse.guiserver.xml.attribute.SimpleAttributeParser;
 import name.martingeisse.guiserver.xml.content.MultiChildObjectBinding;
 import name.martingeisse.guiserver.xml.content.SingleChildObjectBinding;
 import name.martingeisse.guiserver.xml.content.XmlContentObjectBinding;
-import name.martingeisse.guiserver.xml.element.BindComponentElement;
 import name.martingeisse.guiserver.xml.element.ElementClassInstanceBinding;
 import name.martingeisse.guiserver.xml.element.ElementObjectBinding;
-import name.martingeisse.guiserver.xml.value.TextValueBinding;
+import name.martingeisse.guiserver.xml.value.ValueParserRegistry;
+import name.martingeisse.guiserver.xml.value.ValueParser;
 
 /**
  * Helps build an {@link ElementClassInstanceBinding}.
@@ -36,7 +34,7 @@ public final class ElementClassInstanceBindingBuilder<T> {
 	/**
 	 * the attributeTextValueBindingRegistry
 	 */
-	private final AttributeTextValueBindingRegistry attributeTextValueBindingRegistry;
+	private final ValueParserRegistry attributeTextValueBindingRegistry;
 
 	/**
 	 * the childElementObjectBindingRegistry
@@ -60,7 +58,7 @@ public final class ElementClassInstanceBindingBuilder<T> {
 	 * @param childElementObjectBindingRegistry the child-element-to-object binding registry
 	 * @param markupContentBinding the binding for the element content
 	 */
-	public ElementClassInstanceBindingBuilder(Class<? extends T> targetClass, AttributeTextValueBindingRegistry attributeTextValueBindingRegistry, ChildElementObjectBindingRegistry childElementObjectBindingRegistry, XmlContentObjectBinding<?> markupContentBinding) {
+	public ElementClassInstanceBindingBuilder(Class<? extends T> targetClass, ValueParserRegistry attributeTextValueBindingRegistry, ChildElementObjectBindingRegistry childElementObjectBindingRegistry, XmlContentObjectBinding<?> markupContentBinding) {
 		this.targetClass = targetClass;
 		this.attributeTextValueBindingRegistry = attributeTextValueBindingRegistry;
 		this.childElementObjectBindingRegistry = childElementObjectBindingRegistry;
@@ -118,7 +116,7 @@ public final class ElementClassInstanceBindingBuilder<T> {
 		}
 
 		// handle attribute bindings
-		AttributeValueBinding<?>[] attributeBindings = new AttributeValueBinding<?>[classAnnotation.attributes().length];
+		AttributeParser<?>[] attributeBindings = new AttributeParser<?>[classAnnotation.attributes().length];
 		if (constructor.getParameterCount() < attributeBindings.length) {
 			throw new RuntimeException("constructor for class " + targetClass + " has too few arguments for the attribute bindings specified in @BindComponentElement");
 		}
@@ -150,18 +148,18 @@ public final class ElementClassInstanceBindingBuilder<T> {
 	 * method to allow T (the type of the constructor parameter) to be used as a static
 	 * type variable.
 	 */
-	private <X> AttributeValueBinding<X> createAttributeBinding(Class<X> parameterType, BindAttribute attributeAnnotation) {
+	private <X> AttributeParser<X> createAttributeBinding(Class<X> parameterType, BindAttribute attributeAnnotation) {
 		String name = attributeAnnotation.name();
 		boolean optional = (attributeAnnotation.optionality() != AttributeValueBindingOptionality.MANDATORY);
 		String defaultValue = (attributeAnnotation.optionality() == AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT ? attributeAnnotation.defaultValue() : null);
-		TextValueBinding<X> textValueBinding = attributeTextValueBindingRegistry.getBinding(parameterType);
+		ValueParser<X> textValueBinding = attributeTextValueBindingRegistry.getParser(parameterType);
 		if (textValueBinding == null) {
 			throw new RuntimeException("no attribute text-to-value binding registered for type " + parameterType);
 		}
 		if (attributeAnnotation.optionality() == AttributeValueBindingOptionality.OPTIONAL && parameterType.isPrimitive()) {
 			throw new RuntimeException("cannot bind an optional attribute without default value to a parameter of primitive type. Attribute name: " + name);
 		}
-		return new DefaultAttributeValueBinding<X>(name, optional, defaultValue, textValueBinding);
+		return new SimpleAttributeParser<X>(name, optional, defaultValue, textValueBinding);
 	}
 
 	/**

@@ -26,15 +26,15 @@ import name.martingeisse.guiserver.configuration.content.bootstrap.form.Bootstra
 import name.martingeisse.guiserver.configuration.content.bootstrap.form.BootstrapTextFieldConfiguration;
 import name.martingeisse.guiserver.configuration.content.bootstrap.navbar.NavigationBarBinding;
 import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
-import name.martingeisse.guiserver.xml.attribute.AttributeValueBinding;
-import name.martingeisse.guiserver.xml.attribute.DefaultAttributeValueBinding;
+import name.martingeisse.guiserver.xml.attribute.AttributeParser;
+import name.martingeisse.guiserver.xml.attribute.SimpleAttributeParser;
 import name.martingeisse.guiserver.xml.builder.XmlBindingBuilder;
 import name.martingeisse.guiserver.xml.content.XmlContentObjectBinding;
 import name.martingeisse.guiserver.xml.element.ElementClassInstanceBinding;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
-import name.martingeisse.guiserver.xml.value.TextBooleanBinding;
-import name.martingeisse.guiserver.xml.value.TextIntegerBinding;
-import name.martingeisse.guiserver.xml.value.TextStringBinding;
+import name.martingeisse.guiserver.xml.value.BooleanValueParser;
+import name.martingeisse.guiserver.xml.value.IntegerValueParser;
+import name.martingeisse.guiserver.xml.value.StringValueParser;
 
 /**
  * For now, the markup content binding is fixed, and expressed as
@@ -60,17 +60,17 @@ public final class StandardMarkupContentBinding implements XmlContentObjectBindi
 			XmlBindingBuilder<ComponentGroupConfiguration> builder = new XmlBindingBuilder<>();
 			
 			// known attribute-to-constructor-parameter bindings
-			builder.addAttributeTextValueBinding(String.class, TextStringBinding.INSTANCE);
-			builder.addAttributeTextValueBinding(Boolean.class, TextBooleanBinding.INSTANCE);
-			builder.addAttributeTextValueBinding(Boolean.TYPE, TextBooleanBinding.INSTANCE);
-			builder.addAttributeTextValueBinding(Integer.class, TextIntegerBinding.INSTANCE);
-			builder.addAttributeTextValueBinding(Integer.TYPE, TextIntegerBinding.INSTANCE);
+			builder.addAttributeTextValueBinding(String.class, StringValueParser.INSTANCE);
+			builder.addAttributeTextValueBinding(Boolean.class, BooleanValueParser.INSTANCE);
+			builder.addAttributeTextValueBinding(Boolean.TYPE, BooleanValueParser.INSTANCE);
+			builder.addAttributeTextValueBinding(Integer.class, IntegerValueParser.INSTANCE);
+			builder.addAttributeTextValueBinding(Integer.TYPE, IntegerValueParser.INSTANCE);
 			
 			// known child object classes
 			{
-				AttributeValueBinding<?>[] attributeBindings = {
-					new DefaultAttributeValueBinding<>("title", TextStringBinding.INSTANCE),
-					new DefaultAttributeValueBinding<>("selector", TextStringBinding.INSTANCE),
+				AttributeParser<?>[] attributeBindings = {
+					new SimpleAttributeParser<>("title", StringValueParser.INSTANCE),
+					new SimpleAttributeParser<>("selector", StringValueParser.INSTANCE),
 				};
 				Constructor<TabPanelConfiguration.TabEntry> constructor = TabPanelConfiguration.TabEntry.class.getConstructor(String.class, String.class, MarkupContent.class);
 				builder.addChildElementObjectBinding(TabPanelConfiguration.TabEntry.class, new ElementClassInstanceBinding<>(constructor, attributeBindings, builder.getRecursiveMarkupBinding()));

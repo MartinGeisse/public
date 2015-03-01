@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.xml.attribute;
+package name.martingeisse.guiserver.xml.builder;
 
 /**
  * Specifies whether an attribute is optional, and whether it has

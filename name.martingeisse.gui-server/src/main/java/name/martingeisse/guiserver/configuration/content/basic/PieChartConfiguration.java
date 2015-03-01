@@ -10,9 +10,9 @@ import name.martingeisse.guiserver.configuration.content.AbstractSingleComponent
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.gui.PieChartImageResource;
-import name.martingeisse.guiserver.xml.attribute.AttributeValueBindingOptionality;
-import name.martingeisse.guiserver.xml.attribute.BindAttribute;
-import name.martingeisse.guiserver.xml.element.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.AttributeValueBindingOptionality;
+import name.martingeisse.guiserver.xml.builder.BindAttribute;
+import name.martingeisse.guiserver.xml.builder.BindComponentElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;

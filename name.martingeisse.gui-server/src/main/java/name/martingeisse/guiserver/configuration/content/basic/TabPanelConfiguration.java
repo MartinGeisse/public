@@ -17,9 +17,9 @@ import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigura
 import name.martingeisse.guiserver.configuration.content.IComponentGroupConfigurationVisitor;
 import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.configuration.content.UrlSubpathComponentGroupConfiguration;
-import name.martingeisse.guiserver.xml.attribute.AttributeValueBindingOptionality;
-import name.martingeisse.guiserver.xml.attribute.BindAttribute;
-import name.martingeisse.guiserver.xml.element.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.AttributeValueBindingOptionality;
+import name.martingeisse.guiserver.xml.builder.BindAttribute;
+import name.martingeisse.guiserver.xml.builder.BindComponentElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel;

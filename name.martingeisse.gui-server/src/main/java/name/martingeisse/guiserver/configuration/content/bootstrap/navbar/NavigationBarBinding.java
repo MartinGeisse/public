@@ -13,7 +13,7 @@ import java.util.Map;
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigurationList;
 import name.martingeisse.guiserver.configuration.content.basic.LinkConfiguration;
-import name.martingeisse.guiserver.xml.attribute.AttributeValueBinding;
+import name.martingeisse.guiserver.xml.attribute.AttributeParser;
 import name.martingeisse.guiserver.xml.builder.XmlBindingBuilder;
 import name.martingeisse.guiserver.xml.content.AbstractMultiChildObjectBinding;
 import name.martingeisse.guiserver.xml.content.XmlContentObjectBinding;
@@ -33,7 +33,7 @@ public final class NavigationBarBinding extends ElementClassInstanceBinding<Navi
 	 * Constructor.
 	 */
 	public NavigationBarBinding(XmlBindingBuilder<ComponentGroupConfiguration> builder) {
-		super(chooseConstructor(), new AttributeValueBinding<?>[0], createContentBinding(builder));
+		super(chooseConstructor(), new AttributeParser<?>[0], createContentBinding(builder));
 	}
 
 	/**

@@ -5,15 +5,16 @@
 package name.martingeisse.guiserver.xml.value;
 
 /**
- * This parser allows the textual values "true" and "false" and converts
- * them to their boolean equivalent. Any other value triggers an error.
+ * This parser allows the (lowercase) textual values "true" and "false"
+ * and converts them to their boolean equivalent. Any other value
+ * triggers an error.
  */
-public final class TextBooleanBinding implements TextValueBinding<Boolean> {
+public final class BooleanValueParser implements ValueParser<Boolean> {
 
 	/**
 	 * The shared instance of this class.
 	 */
-	public static final TextBooleanBinding INSTANCE = new TextBooleanBinding();
+	public static final BooleanValueParser INSTANCE = new BooleanValueParser();
 	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.xmlbind.value.TextValueBinding#parse(java.lang.String)

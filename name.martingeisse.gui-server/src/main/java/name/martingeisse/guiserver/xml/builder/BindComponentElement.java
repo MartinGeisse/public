@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.xml.element;
+package name.martingeisse.guiserver.xml.builder;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,7 +10,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import name.martingeisse.common.terms.Multiplicity;
-import name.martingeisse.guiserver.xml.attribute.BindAttribute;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 
 /**

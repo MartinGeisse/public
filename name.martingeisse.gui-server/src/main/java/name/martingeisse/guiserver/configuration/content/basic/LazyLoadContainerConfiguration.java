@@ -6,7 +6,7 @@ package name.martingeisse.guiserver.configuration.content.basic;
 
 import name.martingeisse.guiserver.configuration.content.AbstractSingleContainerConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
-import name.martingeisse.guiserver.xml.element.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.BindComponentElement;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 import name.martingeisse.wicket.component.misc.LongLoadingContainer;
 

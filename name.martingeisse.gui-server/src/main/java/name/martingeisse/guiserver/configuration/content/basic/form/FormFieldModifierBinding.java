@@ -11,15 +11,15 @@ import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
-import name.martingeisse.guiserver.xml.attribute.AttributeValueBinding;
-import name.martingeisse.guiserver.xml.attribute.DefaultAttributeValueBinding;
+import name.martingeisse.guiserver.xml.attribute.AttributeParser;
+import name.martingeisse.guiserver.xml.attribute.SimpleAttributeParser;
 import name.martingeisse.guiserver.xml.builder.XmlBindingBuilder;
 import name.martingeisse.guiserver.xml.element.ElementAttributeSelectedObjectBinding;
 import name.martingeisse.guiserver.xml.element.ElementClassInstanceBinding;
 import name.martingeisse.guiserver.xml.element.ElementNameSelectedObjectBinding;
 import name.martingeisse.guiserver.xml.element.ElementObjectBinding;
-import name.martingeisse.guiserver.xml.value.TextIntegerBinding;
-import name.martingeisse.guiserver.xml.value.TextStringBinding;
+import name.martingeisse.guiserver.xml.value.IntegerValueParser;
+import name.martingeisse.guiserver.xml.value.StringValueParser;
 
 import org.apache.wicket.validation.IValidator;
 import org.apache.wicket.validation.validator.PatternValidator;
@@ -60,14 +60,14 @@ public final class FormFieldModifierBinding extends ElementNameSelectedObjectBin
 			Map<String, ElementObjectBinding<? extends IValidator<?>>> bindings = new HashMap<>();
 			bindings.put("length", new ElementClassInstanceBinding<IValidator<?>>(
 				StringValidator.class.getConstructor(Integer.class, Integer.class),
-				new AttributeValueBinding<?>[] {
-					new DefaultAttributeValueBinding<Integer>("min", true, TextIntegerBinding.INSTANCE),
-					new DefaultAttributeValueBinding<Integer>("max", true, TextIntegerBinding.INSTANCE),
+				new AttributeParser<?>[] {
+					new SimpleAttributeParser<Integer>("min", true, IntegerValueParser.INSTANCE),
+					new SimpleAttributeParser<Integer>("max", true, IntegerValueParser.INSTANCE),
 				}, null));
 			bindings.put("pattern", new ElementClassInstanceBinding<IValidator<?>>(
 				PatternValidator.class.getConstructor(String.class),
-				new AttributeValueBinding<?>[] {
-					new DefaultAttributeValueBinding<String>("pattern", TextStringBinding.INSTANCE),
+				new AttributeParser<?>[] {
+					new SimpleAttributeParser<String>("pattern", StringValueParser.INSTANCE),
 				}, null));
 			return new ElementAttributeSelectedObjectBinding<IValidator<?>>("type", bindings); 
 		} catch (NoSuchMethodException e) {

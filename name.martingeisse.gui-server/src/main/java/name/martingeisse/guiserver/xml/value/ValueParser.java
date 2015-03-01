@@ -10,7 +10,7 @@ package name.martingeisse.guiserver.xml.value;
  *
  * @param <T> the type of parsed values
  */
-public interface TextValueBinding<T> {
+public interface ValueParser<T> {
 
 	/**
 	 * Parses the specified value.

@@ -10,7 +10,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
-import name.martingeisse.guiserver.xml.attribute.AttributeValueBinding;
+import name.martingeisse.guiserver.xml.attribute.AttributeParser;
 import name.martingeisse.guiserver.xml.content.XmlContentObjectBinding;
 
 /**
@@ -26,7 +26,7 @@ public class ElementClassInstanceBinding<T> implements ElementObjectBinding<T> {
 	/**
 	 * the attributeBindings
 	 */
-	private final AttributeValueBinding<?>[] attributeBindings;
+	private final AttributeParser<?>[] attributeBindings;
 
 	/**
 	 * the contentBinding
@@ -39,7 +39,7 @@ public class ElementClassInstanceBinding<T> implements ElementObjectBinding<T> {
 	 * @param attributeBindings the attribute bindings
 	 * @param contentBinding the content binding, or null if no content is allowed for the element
 	 */
-	public ElementClassInstanceBinding(Constructor<? extends T> constructor, AttributeValueBinding<?>[] attributeBindings, XmlContentObjectBinding<?> contentBinding) {
+	public ElementClassInstanceBinding(Constructor<? extends T> constructor, AttributeParser<?>[] attributeBindings, XmlContentObjectBinding<?> contentBinding) {
 
 		// assign fields
 		this.constructor = constructor;

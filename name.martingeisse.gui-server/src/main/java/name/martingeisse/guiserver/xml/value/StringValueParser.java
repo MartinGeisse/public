@@ -8,12 +8,12 @@ package name.martingeisse.guiserver.xml.value;
  * This parser allows arbitrary textual content and just
  * returns it as a string.
  */
-public final class TextStringBinding implements TextValueBinding<String> {
+public final class StringValueParser implements ValueParser<String> {
 
 	/**
 	 * The shared instance of this class.
 	 */
-	public static final TextStringBinding INSTANCE = new TextStringBinding();
+	public static final StringValueParser INSTANCE = new StringValueParser();
 	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.xmlbind.value.TextValueBinding#parse(java.lang.String)

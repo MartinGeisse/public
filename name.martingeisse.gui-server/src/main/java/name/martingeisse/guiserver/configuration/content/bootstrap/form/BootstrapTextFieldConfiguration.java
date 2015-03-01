@@ -18,9 +18,9 @@ import name.martingeisse.guiserver.configuration.content.basic.form.FormFieldMod
 import name.martingeisse.guiserver.configuration.content.basic.form.ValidationFormFieldModifier;
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
 import name.martingeisse.guiserver.gui.FieldPathFeedbackMessageFilter;
-import name.martingeisse.guiserver.xml.attribute.AttributeValueBindingOptionality;
-import name.martingeisse.guiserver.xml.attribute.BindAttribute;
-import name.martingeisse.guiserver.xml.element.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.AttributeValueBindingOptionality;
+import name.martingeisse.guiserver.xml.builder.BindAttribute;
+import name.martingeisse.guiserver.xml.builder.BindComponentElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 import name.martingeisse.wicket.component.misc.BootstrapFeedbackPanel;
 

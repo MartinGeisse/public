@@ -2,14 +2,13 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.xml.attribute;
+package name.martingeisse.guiserver.xml.builder;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import name.martingeisse.guiserver.xml.element.BindComponentElement;
-import name.martingeisse.guiserver.xml.value.TextValueBinding;
+import name.martingeisse.guiserver.xml.value.ValueParser;
 
 /**
  * This annotation can be used to bind an attribute to a constructor parameter.
@@ -17,7 +16,7 @@ import name.martingeisse.guiserver.xml.value.TextValueBinding;
  * 
  * The text-to-value binding that parses the attribute value can be specified
  * explicitly. If not specified (or if specified to the default,
- * {@link TextValueBinding}.class), the type of the constructor parameter is
+ * {@link ValueParser}.class), the type of the constructor parameter is
  * used to infer the binding. 
  */
 @Target({})
@@ -47,6 +46,6 @@ public @interface BindAttribute {
 	 * and that instance will be used as the binding for the value of this attribute.
 	 */
 	@SuppressWarnings("rawtypes")
-	public Class<? extends TextValueBinding> textValueBindingClass() default TextValueBinding.class;
+	public Class<? extends ValueParser> textValueBindingClass() default ValueParser.class;
 	
 }
