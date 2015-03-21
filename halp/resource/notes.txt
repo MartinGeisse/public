@@ -1,0 +1,73 @@
+
+Was ist das Ziel dieses Projekts?
+
+Ein Entwickler soll nicht alle Details selbst mühsam heraussuchen
+müssen. Wenn z.B. ein Entwickler ein Tool für Aufgabe X sucht, dann
+muss er schon die einzelnen Tools durchgehen und entscheiden, welches
+am besten passt. Er soll dann nicht auch noch jedesmal die
+Maven-Coords raussuchen müssen, Beispiele & Doku installieren usw.
+Dafür soll es ein HALP-Tool-Repo geben, wo man das mit einem zentralen
+Tool (HALP) automatisch finden kann.
+
+--> das setzt u.a. voraus, dass das "tool-repo", auch wenn jeder
+sein eigenes repo aufsetzen kann, komplett vernetzt ist. Ansonsten
+muss der User die einzelnen Repos manuell dazuschalten.
+
+-----
+
+Wo ist die Trennlinie zwischen Problem-Parser und Problem-Löser?
+Also: Was genau steht in den Problem-Objekten?
+
+-----
+
+Dieses Projekt hat Ähnlichkeit mit Yeoman, allerdings ist yo vor
+allem ein Projekt-Generator, und wird immer in einem Ordner gestartet,
+also mit diesem Ordner als Target. Das ist so gesehen ein Spezialfall.
+
+Yo lässt den Benutzer ein Command wählen ("yo commandName") und fragt
+danach nach den Details, Dialog-Style. Das ist so vermutlich eine
+gute Idee. Die Wahl des Commands könnte allerdings über eine
+Suchengine laufen, die außerdem das Target mit als Suchkriterium
+benutzt (z.B. ein Ordner, aber auch z.B. eine Java-Klasse) und
+zusätzlich die Suche über Filter einschränken lässt. Nach der Wahl
+des Commands kommt dann der Dialog, das passt so. Also Commands
+statt Parser / Problem / Analyzer / Solver.
+
+Also:
+- Context wählen, s.u.
+- ggf. Target auswählen
+- Suchbegriff eingeben (das Target Filtert ggf. schon vor)
+- Filter wählen
+- Command wählen
+- Dialog durchgehen (das Target gibt ggf. schon Antworten vor)
+- dabei liefert das Command ggf. Antworten und stellt weitere Fragen --
+	ein Analyse-Ergebnis ist also Teil des Dialogs
+
+-----
+
+Viele Dinge, z.B. Dialog-Elemente, müssen extrem wiederverwendbar sein.
+Beispiel: Benutzer will ein Beispiel für DOM in Java. Dafür kann
+man ein Java-Package, Projekt & Source-Folder und Code Style wählen.
+Der Code Style kann wiederum aus verschiedenen Quellen beozgen werden.
+Außerdem kann alles 3 vom Target ermittelt werden, z.B. ein
+Package-Tree-Node in Eclipse. 
+
+All diese Angaben werden genau so für *jedes* Code-Beispiel in Java
+benötigt.
+
+BTW sind Code-Beispiele ein guter Use Case für HALP.
+
+-----
+
+Ein Command wird in einem Context ausgeführt. Beispiel-Contexts
+sind Eclipse oder Command-Line. Der Context trifft teilweise vor-Auswahlen
+in den Dialogen, andererseits agiert er auch wieder als Provider für
+Auswahlmöglichkeiten, und stellt Mechanismen zur Verfügung, die das
+HALP benötigt. Beispielsweise könnte ein Refactoring-Tool
+unterstützung von einem Java-Class-Model wie dem aus Eclipse benötigen.
+Standard-Refactorings werden eh von den IDEs zur Verfügung gestellt
+und sollten als solche von HALP-Plugins aufrufbar sein. Wenn man dann z.B.
+ein Refactoring von der Command Line aus versucht, dann kommt eine
+Fehlermeldung, dass dafür eine IDE benötigt wird (es sei denn, HALP kann
+das irgendwann selbst, wenn auch langsamer, da kein Model vorliegt).
+
