@@ -9,14 +9,14 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.lang3.StringUtils;
 
-import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
-import name.martingeisse.guiserver.xml.element.ElementObjectBinding;
+import name.martingeisse.guiserver.xml.MyXmlStreamReader;
+import name.martingeisse.guiserver.xml.element.ElementParser;
 
 /**
  * Binds XML content to zero or one child of the object to which the enclosing element
  * was bound.
  */
-public final class SingleChildObjectBinding<T> implements XmlContentObjectBinding<T> {
+public final class SingleChildParser<T> implements ContentParser<T> {
 
 	/**
 	 * the optional
@@ -31,7 +31,7 @@ public final class SingleChildObjectBinding<T> implements XmlContentObjectBindin
 	/**
 	 * the childElementObjectBinding
 	 */
-	private final ElementObjectBinding<T> childElementObjectBinding;
+	private final ElementParser<T> childElementObjectBinding;
 
 	/**
 	 * Constructor.
@@ -39,7 +39,7 @@ public final class SingleChildObjectBinding<T> implements XmlContentObjectBindin
 	 * @param childObjectElementNameFilter the name filter for child object elements
 	 * @param childElementObjectBinding the element-to-object binding for the child object 
 	 */
-	public SingleChildObjectBinding(boolean optional, String[] childObjectElementNameFilter, ElementObjectBinding<T> childElementObjectBinding) {
+	public SingleChildParser(boolean optional, String[] childObjectElementNameFilter, ElementParser<T> childElementObjectBinding) {
 		this.optional = optional;
 		this.childObjectElementNameFilter = childObjectElementNameFilter;
 		this.childElementObjectBinding = childElementObjectBinding;
@@ -49,7 +49,7 @@ public final class SingleChildObjectBinding<T> implements XmlContentObjectBindin
 	 * @see name.martingeisse.guiserver.xmlbind.element.ElementObjectBinding#parse(name.martingeisse.guiserver.xmlbind.DatabindingXmlStreamReader)
 	 */
 	@Override
-	public T parse(DatabindingXmlStreamReader reader) throws XMLStreamException {
+	public T parse(MyXmlStreamReader reader) throws XMLStreamException {
 		reader.skipWhitespace();
 		if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
 			if (!isAcceptedByFilter(reader.getLocalName())) {

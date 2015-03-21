@@ -17,7 +17,7 @@ public final class BooleanValueParser implements ValueParser<Boolean> {
 	public static final BooleanValueParser INSTANCE = new BooleanValueParser();
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.guiserver.xmlbind.value.TextValueBinding#parse(java.lang.String)
+	 * @see name.martingeisse.guiserver.xml.value.ValueParser#parse(java.lang.String)
 	 */
 	@Override
 	public Boolean parse(String value) {

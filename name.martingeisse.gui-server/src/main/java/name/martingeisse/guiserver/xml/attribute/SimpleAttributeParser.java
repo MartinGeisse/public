@@ -6,7 +6,7 @@ package name.martingeisse.guiserver.xml.attribute;
 
 import javax.xml.stream.XMLStreamException;
 
-import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
+import name.martingeisse.guiserver.xml.MyXmlStreamReader;
 import name.martingeisse.guiserver.xml.builder.BindAttribute;
 import name.martingeisse.guiserver.xml.value.ValueParser;
 
@@ -136,10 +136,10 @@ public final class SimpleAttributeParser<T> implements AttributeParser<T> {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.guiserver.xml.attribute.AttributeParser#parse(name.martingeisse.guiserver.xml.DatabindingXmlStreamReader)
+	 * @see name.martingeisse.guiserver.xml.attribute.AttributeParser#parse(name.martingeisse.guiserver.xml.MyXmlStreamReader)
 	 */
 	@Override
-	public T parse(DatabindingXmlStreamReader reader) throws XMLStreamException {
+	public T parse(MyXmlStreamReader reader) throws XMLStreamException {
 		String specifiedValue = reader.getAttributeValue(null, name);
 		if (specifiedValue == null) {
 			if (optional) {

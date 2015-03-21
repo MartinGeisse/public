@@ -6,7 +6,7 @@ package name.martingeisse.guiserver.xml.content;
 
 import javax.xml.stream.XMLStreamException;
 
-import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
+import name.martingeisse.guiserver.xml.MyXmlStreamReader;
 
 /**
  * This binding parses properly nested XML content and creates an object of
@@ -17,7 +17,7 @@ import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
  *
  * @param <T> the type of parsed objects
  */
-public interface XmlContentObjectBinding<T> {
+public interface ContentParser<T> {
 
 	/**
 	 * Parses an object from properly nested XML content and returns it.
@@ -29,6 +29,6 @@ public interface XmlContentObjectBinding<T> {
 	 * @return the parsed object
 	 * @throws XMLStreamException on XML processing errors
 	 */
-	public T parse(DatabindingXmlStreamReader reader) throws XMLStreamException;
+	public T parse(MyXmlStreamReader reader) throws XMLStreamException;
 
 }

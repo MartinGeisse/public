@@ -31,7 +31,7 @@ import name.martingeisse.guiserver.xml.result.MarkupContent;
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BindComponentElement {
+public @interface BindElement {
 
 	/**
 	 * @return the local element name

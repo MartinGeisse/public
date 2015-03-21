@@ -88,7 +88,7 @@ public abstract class MarkupContentEntry<C extends ConfigurationAssemblerAccepto
 		}
 
 		/* (non-Javadoc)
-		 * @see name.martingeisse.guiserver.xmlbind.result.MarkupContentEntry#assemble(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
+		 * @see name.martingeisse.guiserver.xml.result.MarkupContentEntry#assemble(name.martingeisse.guiserver.xml.result.ConfigurationAssembler)
 		 */
 		@Override
 		public void assemble(ConfigurationAssembler<C> assembler) throws XMLStreamException {
@@ -107,7 +107,7 @@ public abstract class MarkupContentEntry<C extends ConfigurationAssemblerAccepto
 	public static final class RawClosingTag<C extends ConfigurationAssemblerAcceptor<C>> extends MarkupContentEntry<C> {
 
 		/* (non-Javadoc)
-		 * @see name.martingeisse.guiserver.xmlbind.result.MarkupContentEntry#assemble(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
+		 * @see name.martingeisse.guiserver.xml.result.MarkupContentEntry#assemble(name.martingeisse.guiserver.xml.result.ConfigurationAssembler)
 		 */
 		@Override
 		public void assemble(ConfigurationAssembler<C> assembler) throws XMLStreamException {
@@ -137,7 +137,7 @@ public abstract class MarkupContentEntry<C extends ConfigurationAssemblerAccepto
 		}
 
 		/* (non-Javadoc)
-		 * @see name.martingeisse.guiserver.xmlbind.result.MarkupContentEntry#assemble(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
+		 * @see name.martingeisse.guiserver.xml.result.MarkupContentEntry#assemble(name.martingeisse.guiserver.xml.result.ConfigurationAssembler)
 		 */
 		@Override
 		public void assemble(ConfigurationAssembler<C> assembler) throws XMLStreamException {
@@ -167,7 +167,7 @@ public abstract class MarkupContentEntry<C extends ConfigurationAssemblerAccepto
 		}
 
 		/* (non-Javadoc)
-		 * @see name.martingeisse.guiserver.xmlbind.result.MarkupContentEntry#assemble(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
+		 * @see name.martingeisse.guiserver.xml.result.MarkupContentEntry#assemble(name.martingeisse.guiserver.xml.result.ConfigurationAssembler)
 		 */
 		@Override
 		public void assemble(ConfigurationAssembler<C> assembler) throws XMLStreamException {

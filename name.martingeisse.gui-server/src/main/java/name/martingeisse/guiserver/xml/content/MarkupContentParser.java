@@ -11,8 +11,8 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.xml.ConfigurationAssemblerAcceptor;
-import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
-import name.martingeisse.guiserver.xml.element.ElementObjectBinding;
+import name.martingeisse.guiserver.xml.MyXmlStreamReader;
+import name.martingeisse.guiserver.xml.element.ElementParser;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 import name.martingeisse.guiserver.xml.result.MarkupContentEntry;
 
@@ -21,18 +21,18 @@ import name.martingeisse.guiserver.xml.result.MarkupContentEntry;
  * 
  * @param <C> the type of components used in markup content
  */
-public final class MarkupContentBinding<C extends ConfigurationAssemblerAcceptor<C>> implements XmlContentObjectBinding<MarkupContent<C>> {
+public final class MarkupContentParser<C extends ConfigurationAssemblerAcceptor<C>> implements ContentParser<MarkupContent<C>> {
 
 	/**
 	 * the specialElementComponentBinding
 	 */
-	private final ElementObjectBinding<C> specialElementComponentBinding;
+	private final ElementParser<C> specialElementComponentBinding;
 
 	/**
 	 * Constructor.
 	 * @param specialElementComponentBinding the special-element-to-component-configuration-binding
 	 */
-	public MarkupContentBinding(ElementObjectBinding<C> specialElementComponentBinding) {
+	public MarkupContentParser(ElementParser<C> specialElementComponentBinding) {
 		this.specialElementComponentBinding = specialElementComponentBinding;
 	}
 
@@ -40,7 +40,7 @@ public final class MarkupContentBinding<C extends ConfigurationAssemblerAcceptor
 	 * @see name.martingeisse.guiserver.xmlbind.element.ElementObjectBinding#parse(name.martingeisse.guiserver.xmlbind.DatabindingXmlStreamReader)
 	 */
 	@Override
-	public MarkupContent<C> parse(DatabindingXmlStreamReader reader) throws XMLStreamException {
+	public MarkupContent<C> parse(MyXmlStreamReader reader) throws XMLStreamException {
 		List<MarkupContentEntry<C>> entries = new ArrayList<MarkupContentEntry<C>>();
 		int nesting = 0;
 		loop: while (true) {

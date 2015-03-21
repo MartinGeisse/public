@@ -14,13 +14,13 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * This class extends {@link XMLStreamReader} with some helper methods.
  */
-public final class DatabindingXmlStreamReader extends StreamReaderDelegate {
+public final class MyXmlStreamReader extends StreamReaderDelegate {
 
 	/**
 	 * Constructor.
 	 * @param reader the wrapped XML stream reader
 	 */
-	public DatabindingXmlStreamReader(XMLStreamReader reader) {
+	public MyXmlStreamReader(XMLStreamReader reader) {
 		super(reader);
 	}
 

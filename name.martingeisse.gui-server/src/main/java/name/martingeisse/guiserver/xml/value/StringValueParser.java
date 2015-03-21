@@ -16,7 +16,7 @@ public final class StringValueParser implements ValueParser<String> {
 	public static final StringValueParser INSTANCE = new StringValueParser();
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.guiserver.xmlbind.value.TextValueBinding#parse(java.lang.String)
+	 * @see name.martingeisse.guiserver.xml.value.ValueParser#parse(java.lang.String)
 	 */
 	@Override
 	public String parse(String value) {

@@ -6,15 +6,14 @@ package name.martingeisse.guiserver.xml.attribute;
 
 import javax.xml.stream.XMLStreamException;
 
-import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
+import name.martingeisse.guiserver.xml.MyXmlStreamReader;
 
 /**
  * This object parses a value from one or more XML attributes.
  * 
  * More formally, this parser is able to obtain a value from an
  * XML stream reader that is at a START_ELEMENT without moving its
- * cursor. This implies that, for example, the element name could
- * be used by this parser too.
+ * cursor.
  *
  * @param <T> the type of created values
  */
@@ -28,6 +27,6 @@ public interface AttributeParser<T> {
 	 * @return the parsed value
 	 * @throws XMLStreamException on XML processing errors
 	 */
-	public T parse(DatabindingXmlStreamReader reader) throws XMLStreamException;
+	public T parse(MyXmlStreamReader reader) throws XMLStreamException;
 	
 }

@@ -15,7 +15,7 @@ public final class IntegerValueParser implements ValueParser<Integer> {
 	public static final IntegerValueParser INSTANCE = new IntegerValueParser();
 	
 	/* (non-Javadoc)
-	 * @see name.martingeisse.guiserver.xmlbind.value.TextValueBinding#parse(java.lang.String)
+	 * @see name.martingeisse.guiserver.xml.value.ValueParser#parse(java.lang.String)
 	 */
 	@Override
 	public Integer parse(String value) {

@@ -25,12 +25,12 @@ import name.martingeisse.guiserver.configuration.content.basic.form.TextFieldCon
 import name.martingeisse.guiserver.configuration.content.bootstrap.form.BootstrapFormConfiguration;
 import name.martingeisse.guiserver.configuration.content.bootstrap.form.BootstrapTextFieldConfiguration;
 import name.martingeisse.guiserver.configuration.content.bootstrap.navbar.NavigationBarBinding;
-import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
+import name.martingeisse.guiserver.xml.MyXmlStreamReader;
 import name.martingeisse.guiserver.xml.attribute.AttributeParser;
 import name.martingeisse.guiserver.xml.attribute.SimpleAttributeParser;
 import name.martingeisse.guiserver.xml.builder.XmlBindingBuilder;
-import name.martingeisse.guiserver.xml.content.XmlContentObjectBinding;
-import name.martingeisse.guiserver.xml.element.ElementClassInstanceBinding;
+import name.martingeisse.guiserver.xml.content.ContentParser;
+import name.martingeisse.guiserver.xml.element.ClassInstanceElementParser;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 import name.martingeisse.guiserver.xml.value.BooleanValueParser;
 import name.martingeisse.guiserver.xml.value.IntegerValueParser;
@@ -40,7 +40,7 @@ import name.martingeisse.guiserver.xml.value.StringValueParser;
  * For now, the markup content binding is fixed, and expressed as
  * this singleton class.
  */
-public final class StandardMarkupContentBinding implements XmlContentObjectBinding<MarkupContent<ComponentGroupConfiguration>> {
+public final class StandardMarkupContentBinding implements ContentParser<MarkupContent<ComponentGroupConfiguration>> {
 
 	/**
 	 * the INSTANCE
@@ -50,7 +50,7 @@ public final class StandardMarkupContentBinding implements XmlContentObjectBindi
 	/**
 	 * the binding
 	 */
-	private final XmlContentObjectBinding<MarkupContent<ComponentGroupConfiguration>> binding;
+	private final ContentParser<MarkupContent<ComponentGroupConfiguration>> binding;
 
 	/**
 	 * Constructor.
@@ -73,7 +73,7 @@ public final class StandardMarkupContentBinding implements XmlContentObjectBindi
 					new SimpleAttributeParser<>("selector", StringValueParser.INSTANCE),
 				};
 				Constructor<TabPanelConfiguration.TabEntry> constructor = TabPanelConfiguration.TabEntry.class.getConstructor(String.class, String.class, MarkupContent.class);
-				builder.addChildElementObjectBinding(TabPanelConfiguration.TabEntry.class, new ElementClassInstanceBinding<>(constructor, attributeBindings, builder.getRecursiveMarkupBinding()));
+				builder.addChildElementObjectBinding(TabPanelConfiguration.TabEntry.class, new ClassInstanceElementParser<>(constructor, attributeBindings, builder.getRecursiveMarkupBinding()));
 			}
 			builder.addChildElementObjectBinding(FormFieldModifier.class, new FormFieldModifierBinding(builder));
 			
@@ -105,7 +105,7 @@ public final class StandardMarkupContentBinding implements XmlContentObjectBindi
 	 * @see name.martingeisse.guiserver.xmlbind.content.XmlContentObjectBinding#parse(name.martingeisse.guiserver.xmlbind.DatabindingXmlStreamReader)
 	 */
 	@Override
-	public MarkupContent<ComponentGroupConfiguration> parse(DatabindingXmlStreamReader reader) throws XMLStreamException {
+	public MarkupContent<ComponentGroupConfiguration> parse(MyXmlStreamReader reader) throws XMLStreamException {
 		return binding.parse(reader);
 	}
 

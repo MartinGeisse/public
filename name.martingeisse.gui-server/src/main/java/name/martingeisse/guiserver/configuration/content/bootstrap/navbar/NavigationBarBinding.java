@@ -15,19 +15,19 @@ import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigura
 import name.martingeisse.guiserver.configuration.content.basic.LinkConfiguration;
 import name.martingeisse.guiserver.xml.attribute.AttributeParser;
 import name.martingeisse.guiserver.xml.builder.XmlBindingBuilder;
-import name.martingeisse.guiserver.xml.content.AbstractMultiChildObjectBinding;
-import name.martingeisse.guiserver.xml.content.XmlContentObjectBinding;
-import name.martingeisse.guiserver.xml.element.ElementClassInstanceBinding;
-import name.martingeisse.guiserver.xml.element.ElementNameSelectedObjectBinding;
-import name.martingeisse.guiserver.xml.element.ElementObjectBinding;
-import name.martingeisse.guiserver.xml.element.ElementObjectBindingWrapper;
+import name.martingeisse.guiserver.xml.content.AbstractMultiChildParser;
+import name.martingeisse.guiserver.xml.content.ContentParser;
+import name.martingeisse.guiserver.xml.element.ClassInstanceElementParser;
+import name.martingeisse.guiserver.xml.element.NameSelectedElementParser;
+import name.martingeisse.guiserver.xml.element.ElementParser;
+import name.martingeisse.guiserver.xml.element.ElementParserWrapper;
 
 import com.google.common.collect.ImmutableList;
 
 /**
  * The XML-element-to-navigation-bar-configuration-binding.
  */
-public final class NavigationBarBinding extends ElementClassInstanceBinding<NavigationBarConfiguration> {
+public final class NavigationBarBinding extends ClassInstanceElementParser<NavigationBarConfiguration> {
 
 	/**
 	 * Constructor.
@@ -50,25 +50,25 @@ public final class NavigationBarBinding extends ElementClassInstanceBinding<Navi
 	/**
 	 * 
 	 */
-	private static XmlContentObjectBinding<NavigationBarContents> createContentBinding(XmlBindingBuilder<ComponentGroupConfiguration> builder) {
-		Map<String, ElementObjectBinding<? extends NavigationBarChildElement>> childElementObjectBindings = new HashMap<>();
-		childElementObjectBindings.put("brandLink", new ElementObjectBindingWrapper<ComponentGroupConfiguration, NavigationBarChildElement>(builder.getComponentBinding("link")) {
+	private static ContentParser<NavigationBarContents> createContentBinding(XmlBindingBuilder<ComponentGroupConfiguration> builder) {
+		Map<String, ElementParser<? extends NavigationBarChildElement>> childElementObjectBindings = new HashMap<>();
+		childElementObjectBindings.put("brandLink", new ElementParserWrapper<ComponentGroupConfiguration, NavigationBarChildElement>(builder.getComponentBinding("link")) {
 			@Override
 			protected NavigationBarChildElement wrapResult(ComponentGroupConfiguration original) {
 				return new NavigationBarChildElement.BrandLink((LinkConfiguration)original);
 			}
 		});
-		childElementObjectBindings.put("link", new ElementObjectBindingWrapper<ComponentGroupConfiguration, NavigationBarChildElement>(builder.getComponentBinding("link")) {
+		childElementObjectBindings.put("link", new ElementParserWrapper<ComponentGroupConfiguration, NavigationBarChildElement>(builder.getComponentBinding("link")) {
 			@Override
 			protected NavigationBarChildElement wrapResult(ComponentGroupConfiguration original) {
 				return new NavigationBarChildElement.NavigationLink((LinkConfiguration)original);
 			}
 		});
-		ElementNameSelectedObjectBinding<NavigationBarChildElement> childElementObjectBinding = new ElementNameSelectedObjectBinding<>(childElementObjectBindings);
+		NameSelectedElementParser<NavigationBarChildElement> childElementObjectBinding = new NameSelectedElementParser<>(childElementObjectBindings);
 		String[] nameFilter = {
 			"brandLink", "link"
 		};
-		return new AbstractMultiChildObjectBinding<NavigationBarChildElement, NavigationBarContents>(true, nameFilter, childElementObjectBinding) {
+		return new AbstractMultiChildParser<NavigationBarChildElement, NavigationBarContents>(true, nameFilter, childElementObjectBinding) {
 			@Override
 			protected NavigationBarContents mapChildrenToResult(List<NavigationBarChildElement> children) {
 				LinkConfiguration brandLink = null;

@@ -15,7 +15,7 @@ import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.gui.ConfigurationDefinedForm;
 import name.martingeisse.guiserver.gui.FormDataModel;
 import name.martingeisse.guiserver.xml.builder.BindAttribute;
-import name.martingeisse.guiserver.xml.builder.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.BindElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 
@@ -35,7 +35,7 @@ import org.apache.wicket.model.IModel;
  * reflected in other components that pull values from the
  * same models.
  */
-@BindComponentElement(localName = "form", attributes = {@BindAttribute(name = "backendUrl")}, acceptsMarkupContent = true)
+@BindElement(localName = "form", attributes = {@BindAttribute(name = "backendUrl")}, acceptsMarkupContent = true)
 public class FormConfiguration extends AbstractSingleContainerConfiguration implements IConfigurationSnippet {
 
 	/**

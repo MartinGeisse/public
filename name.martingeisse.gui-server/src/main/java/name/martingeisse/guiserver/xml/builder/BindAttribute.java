@@ -12,7 +12,7 @@ import name.martingeisse.guiserver.xml.value.ValueParser;
 
 /**
  * This annotation can be used to bind an attribute to a constructor parameter.
- * It should be used inside the 'attributes' section of a {@link BindComponentElement}.
+ * It should be used inside the 'attributes' section of a {@link BindElement}.
  * 
  * The text-to-value binding that parses the attribute value can be specified
  * explicitly. If not specified (or if specified to the default,

@@ -28,8 +28,8 @@ import name.martingeisse.guiserver.configuration.elements.ConfigurationElementCo
 import name.martingeisse.guiserver.configuration.elements.FormUrlConfiguration;
 import name.martingeisse.guiserver.configuration.elements.PageConfiguration;
 import name.martingeisse.guiserver.configuration.elements.PanelConfiguration;
-import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
-import name.martingeisse.guiserver.xml.content.XmlContentObjectBinding;
+import name.martingeisse.guiserver.xml.MyXmlStreamReader;
+import name.martingeisse.guiserver.xml.content.ContentParser;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 
@@ -46,7 +46,7 @@ final class ConfigurationBuilder {
 	/**
 	 * the xmlContentObjectBinding
 	 */
-	private final XmlContentObjectBinding<MarkupContent<ComponentGroupConfiguration>> xmlContentObjectBinding;
+	private final ContentParser<MarkupContent<ComponentGroupConfiguration>> xmlContentObjectBinding;
 
 	/**
 	 * the elements
@@ -67,7 +67,7 @@ final class ConfigurationBuilder {
 	 * Constructor.
 	 * @param xmlContentObjectBinding the XML-content-to-object-binding
 	 */
-	public ConfigurationBuilder(XmlContentObjectBinding<MarkupContent<ComponentGroupConfiguration>> xmlContentObjectBinding) {
+	public ConfigurationBuilder(ContentParser<MarkupContent<ComponentGroupConfiguration>> xmlContentObjectBinding) {
 		this.xmlContentObjectBinding = xmlContentObjectBinding;
 	}
 
@@ -132,7 +132,7 @@ final class ConfigurationBuilder {
 			MarkupContent<ComponentGroupConfiguration> markupContent;
 			try (FileInputStream fileInputStream = new FileInputStream(file)) {
 				XMLStreamReader xmlStreamReader = XMLInputFactory.newFactory().createXMLStreamReader(fileInputStream);
-				DatabindingXmlStreamReader reader = new DatabindingXmlStreamReader(xmlStreamReader);
+				MyXmlStreamReader reader = new MyXmlStreamReader(xmlStreamReader);
 				reader.expectSpecialDocumentElement("page");
 				markupContent = xmlContentObjectBinding.parse(reader);
 			} catch (XMLStreamException e) {

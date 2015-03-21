@@ -5,7 +5,7 @@
 package name.martingeisse.guiserver.xml.value;
 
 /**
- * This binding parses a textual representation of a value of
+ * This parser parses a textual representation of a value of
  * type T and creates an instance of that type from it.
  *
  * @param <T> the type of parsed values

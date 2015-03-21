@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import name.martingeisse.guiserver.xml.ConfigurationAssemblerAcceptor;
-import name.martingeisse.guiserver.xml.content.DelegatingXmlContentObjectBinding;
-import name.martingeisse.guiserver.xml.content.MarkupContentBinding;
-import name.martingeisse.guiserver.xml.content.XmlContentObjectBinding;
-import name.martingeisse.guiserver.xml.element.ElementNameSelectedObjectBinding;
-import name.martingeisse.guiserver.xml.element.ElementObjectBinding;
+import name.martingeisse.guiserver.xml.content.DelegatingContentParser;
+import name.martingeisse.guiserver.xml.content.MarkupContentParser;
+import name.martingeisse.guiserver.xml.content.ContentParser;
+import name.martingeisse.guiserver.xml.element.NameSelectedElementParser;
+import name.martingeisse.guiserver.xml.element.ElementParser;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 import name.martingeisse.guiserver.xml.value.ValueParserRegistry;
 import name.martingeisse.guiserver.xml.value.ValueParser;
@@ -31,12 +31,12 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 	/**
 	 * the recursiveMarkupBinding
 	 */
-	private final DelegatingXmlContentObjectBinding<MarkupContent<C>> recursiveMarkupBinding;
+	private final DelegatingContentParser<MarkupContent<C>> recursiveMarkupBinding;
 
 	/**
 	 * the bindings
 	 */
-	private final Map<String, ElementObjectBinding<? extends C>> componentBindings;
+	private final Map<String, ElementParser<? extends C>> componentBindings;
 
 	/**
 	 * the attributeTextValueBindingRegistry
@@ -52,7 +52,7 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 	 * Constructor.
 	 */
 	public XmlBindingBuilder() {
-		recursiveMarkupBinding = new DelegatingXmlContentObjectBinding<>();
+		recursiveMarkupBinding = new DelegatingContentParser<>();
 		componentBindings = new HashMap<>();
 		attributeTextValueBindingRegistry = new ValueParserRegistry();
 		childElementObjectBindingRegistry = new ChildElementObjectBindingRegistry();
@@ -76,7 +76,7 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 	 * @param childObjectType the constructor parameter child object type
 	 * @param binding the element-to-object binding that parses the child element
 	 */
-	public <T> void addChildElementObjectBinding(Class<T> childObjectType, ElementObjectBinding<T> binding) {
+	public <T> void addChildElementObjectBinding(Class<T> childObjectType, ElementParser<T> binding) {
 		childElementObjectBindingRegistry.addBinding(childObjectType, binding);
 	}
 
@@ -84,7 +84,7 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 	 * Getter method for the recursiveMarkupBinding.
 	 * @return the recursiveMarkupBinding
 	 */
-	public DelegatingXmlContentObjectBinding<MarkupContent<C>> getRecursiveMarkupBinding() {
+	public DelegatingContentParser<MarkupContent<C>> getRecursiveMarkupBinding() {
 		return recursiveMarkupBinding;
 	}
 
@@ -100,12 +100,12 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 	
 	/**
 	 * Adds a component group configuration class to this builder. The class must be annotated
-	 * with {@link BindComponentElement}.
+	 * with {@link BindElement}.
 	 * 
 	 * @param targetClass the class to add
 	 */
 	public void addComponentGroupConfigurationClass(Class<? extends C> targetClass) {
-		BindComponentElement annotation = targetClass.getAnnotation(BindComponentElement.class);
+		BindElement annotation = targetClass.getAnnotation(BindElement.class);
 		if (annotation == null) {
 			throw new RuntimeException("class " + targetClass + " is not annotated with @BindComponentElement");
 		}
@@ -118,7 +118,7 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 	 * @param localElementName the local element name
 	 * @param binding the binding
 	 */
-	public void addComponentGroupConfigurationBinding(String localElementName, ElementObjectBinding<? extends C> binding) {
+	public void addComponentGroupConfigurationBinding(String localElementName, ElementParser<? extends C> binding) {
 		componentBindings.put(localElementName, binding);
 	}
 	
@@ -128,7 +128,7 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 	 * @param localElementName the local element name
 	 * @return the binding
 	 */
-	public ElementObjectBinding<? extends C> getComponentBinding(String localElementName) {
+	public ElementParser<? extends C> getComponentBinding(String localElementName) {
 		return componentBindings.get(localElementName);
 	}
 
@@ -137,9 +137,9 @@ public final class XmlBindingBuilder<C extends ConfigurationAssemblerAcceptor<C>
 	 * 
 	 * @return the databinding
 	 */
-	public XmlContentObjectBinding<MarkupContent<C>> build() {
-		ElementNameSelectedObjectBinding<C> elementObjectBinding = new ElementNameSelectedObjectBinding<>(componentBindings);
-		MarkupContentBinding<C> markupContentBinding = new MarkupContentBinding<C>(elementObjectBinding);
+	public ContentParser<MarkupContent<C>> build() {
+		NameSelectedElementParser<C> elementObjectBinding = new NameSelectedElementParser<>(componentBindings);
+		MarkupContentParser<C> markupContentBinding = new MarkupContentParser<C>(elementObjectBinding);
 		recursiveMarkupBinding.setDelegate(markupContentBinding);
 		return markupContentBinding;
 	}

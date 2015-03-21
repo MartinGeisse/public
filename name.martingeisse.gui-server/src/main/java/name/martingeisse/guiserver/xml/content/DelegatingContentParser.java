@@ -6,26 +6,26 @@ package name.martingeisse.guiserver.xml.content;
 
 import javax.xml.stream.XMLStreamException;
 
-import name.martingeisse.guiserver.xml.DatabindingXmlStreamReader;
+import name.martingeisse.guiserver.xml.MyXmlStreamReader;
 
 /**
- * This implementation of {@link XmlContentObjectBinding} just delegates to
+ * This implementation of {@link ContentParser} just delegates to
  * another implementation, but allows to replace that implementation. This is
  * needed since we cannot create a structure of all-immutable binding objects
  * that contains a cycle.
  */
-public final class DelegatingXmlContentObjectBinding<T> implements XmlContentObjectBinding<T> {
+public final class DelegatingContentParser<T> implements ContentParser<T> {
 
 	/**
 	 * the delegate
 	 */
-	private XmlContentObjectBinding<T> delegate;
+	private ContentParser<T> delegate;
 
 	/**
 	 * Getter method for the delegate.
 	 * @return the delegate
 	 */
-	public XmlContentObjectBinding<T> getDelegate() {
+	public ContentParser<T> getDelegate() {
 		return delegate;
 	}
 
@@ -33,7 +33,7 @@ public final class DelegatingXmlContentObjectBinding<T> implements XmlContentObj
 	 * Setter method for the delegate.
 	 * @param delegate the delegate to set
 	 */
-	public void setDelegate(XmlContentObjectBinding<T> delegate) {
+	public void setDelegate(ContentParser<T> delegate) {
 		this.delegate = delegate;
 	}
 
@@ -41,7 +41,7 @@ public final class DelegatingXmlContentObjectBinding<T> implements XmlContentObj
 	 * @see name.martingeisse.guiserver.xmlbind.content.XmlContentObjectBinding#parse(name.martingeisse.guiserver.xmlbind.DatabindingXmlStreamReader)
 	 */
 	@Override
-	public T parse(DatabindingXmlStreamReader reader) throws XMLStreamException {
+	public T parse(MyXmlStreamReader reader) throws XMLStreamException {
 		return delegate.parse(reader);
 	}
 

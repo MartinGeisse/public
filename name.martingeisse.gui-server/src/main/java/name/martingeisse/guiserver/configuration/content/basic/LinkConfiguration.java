@@ -11,7 +11,7 @@ import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigura
 import name.martingeisse.guiserver.configuration.elements.PageConfiguration;
 import name.martingeisse.guiserver.gui.ConfigurationDefinedPage;
 import name.martingeisse.guiserver.xml.builder.BindAttribute;
-import name.martingeisse.guiserver.xml.builder.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.BindElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 
@@ -23,7 +23,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * Configuration for a link. This class tries to cover only the common
  * cases to keep it simple.
  */
-@BindComponentElement(localName = "link", attributes = {
+@BindElement(localName = "link", attributes = {
 	@BindAttribute(name = "href")
 }, acceptsMarkupContent = true)
 public final class LinkConfiguration extends AbstractSingleContainerConfiguration {

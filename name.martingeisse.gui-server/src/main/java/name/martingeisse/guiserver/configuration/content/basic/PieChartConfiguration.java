@@ -12,7 +12,7 @@ import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.gui.PieChartImageResource;
 import name.martingeisse.guiserver.xml.builder.AttributeValueBindingOptionality;
 import name.martingeisse.guiserver.xml.builder.BindAttribute;
-import name.martingeisse.guiserver.xml.builder.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.BindElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;
@@ -21,7 +21,7 @@ import org.apache.wicket.markup.html.image.Image;
 /**
  * Configuration for a pie chart component.
  */
-@BindComponentElement(localName = "pieChart", attributes = {
+@BindElement(localName = "pieChart", attributes = {
 	@BindAttribute(name = "backendUrl"), @BindAttribute(name = "legend", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "false")
 })
 public final class PieChartConfiguration extends AbstractSingleComponentConfiguration implements IConfigurationSnippet {

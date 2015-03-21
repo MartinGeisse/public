@@ -6,7 +6,7 @@ package name.martingeisse.guiserver.xml.content;
 
 import java.util.List;
 
-import name.martingeisse.guiserver.xml.element.ElementObjectBinding;
+import name.martingeisse.guiserver.xml.element.ElementParser;
 
 /**
  * Parses (potentially) multiple child elements by mapping each child to an object,
@@ -14,7 +14,7 @@ import name.martingeisse.guiserver.xml.element.ElementObjectBinding;
  *
  * @param <T> the child object type
  */
-public final class MultiChildObjectBinding<T> extends AbstractMultiChildObjectBinding<T, List<T>> {
+public final class MultiChildParser<T> extends AbstractMultiChildParser<T, List<T>> {
 
 	/**
 	 * Constructor.
@@ -22,7 +22,7 @@ public final class MultiChildObjectBinding<T> extends AbstractMultiChildObjectBi
 	 * @param childObjectElementNameFilter the name filter for child object elements
 	 * @param childElementObjectBinding the element-to-object binding for the child object 
 	 */
-	public MultiChildObjectBinding(boolean optional, String[] childObjectElementNameFilter, ElementObjectBinding<T> childElementObjectBinding) {
+	public MultiChildParser(boolean optional, String[] childObjectElementNameFilter, ElementParser<T> childElementObjectBinding) {
 		super(optional, childObjectElementNameFilter, childElementObjectBinding);
 	}
 

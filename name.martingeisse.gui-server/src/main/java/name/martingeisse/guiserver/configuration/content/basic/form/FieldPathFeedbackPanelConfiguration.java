@@ -12,7 +12,7 @@ import name.martingeisse.guiserver.gui.DisappearingFeedbackPanel;
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
 import name.martingeisse.guiserver.gui.FieldPathFeedbackMessageFilter;
 import name.martingeisse.guiserver.xml.builder.BindAttribute;
-import name.martingeisse.guiserver.xml.builder.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.BindElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;
@@ -20,7 +20,7 @@ import org.apache.wicket.Component;
 /**
  * A panel that shows feedback messages for a form component with a {@link FieldPathBehavior}.
  */
-@BindComponentElement(localName = "feedback", attributes = {
+@BindElement(localName = "feedback", attributes = {
 	@BindAttribute(name = "name")
 })
 public final class FieldPathFeedbackPanelConfiguration extends AbstractSingleComponentConfiguration {

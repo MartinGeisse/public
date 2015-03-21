@@ -11,7 +11,7 @@ import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigura
 import name.martingeisse.guiserver.gui.HttpModel;
 import name.martingeisse.guiserver.xml.builder.AttributeValueBindingOptionality;
 import name.martingeisse.guiserver.xml.builder.BindAttribute;
-import name.martingeisse.guiserver.xml.builder.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.BindElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;
@@ -20,7 +20,7 @@ import org.apache.wicket.markup.html.basic.Label;
 /**
  * This configuration represents a wicket panel that loads its content from the backend.
  */
-@BindComponentElement(localName = "includeBackend", attributes = {
+@BindElement(localName = "includeBackend", attributes = {
 	@BindAttribute(name = "url"), @BindAttribute(name = "escape", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
 })
 public final class IncludeBackendConfiguration extends AbstractSingleComponentConfiguration {

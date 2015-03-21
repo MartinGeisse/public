@@ -13,16 +13,16 @@ import java.util.List;
 import name.martingeisse.common.terms.Multiplicity;
 import name.martingeisse.guiserver.xml.attribute.AttributeParser;
 import name.martingeisse.guiserver.xml.attribute.SimpleAttributeParser;
-import name.martingeisse.guiserver.xml.content.MultiChildObjectBinding;
-import name.martingeisse.guiserver.xml.content.SingleChildObjectBinding;
-import name.martingeisse.guiserver.xml.content.XmlContentObjectBinding;
-import name.martingeisse.guiserver.xml.element.ElementClassInstanceBinding;
-import name.martingeisse.guiserver.xml.element.ElementObjectBinding;
+import name.martingeisse.guiserver.xml.content.MultiChildParser;
+import name.martingeisse.guiserver.xml.content.SingleChildParser;
+import name.martingeisse.guiserver.xml.content.ContentParser;
+import name.martingeisse.guiserver.xml.element.ClassInstanceElementParser;
+import name.martingeisse.guiserver.xml.element.ElementParser;
 import name.martingeisse.guiserver.xml.value.ValueParserRegistry;
 import name.martingeisse.guiserver.xml.value.ValueParser;
 
 /**
- * Helps build an {@link ElementClassInstanceBinding}.
+ * Helps build an {@link ClassInstanceElementParser}.
  */
 public final class ElementClassInstanceBindingBuilder<T> {
 
@@ -44,7 +44,7 @@ public final class ElementClassInstanceBindingBuilder<T> {
 	/**
 	 * the markupContentBinding
 	 */
-	private final XmlContentObjectBinding<?> markupContentBinding;
+	private final ContentParser<?> markupContentBinding;
 
 	/**
 	 * the constructor
@@ -58,7 +58,7 @@ public final class ElementClassInstanceBindingBuilder<T> {
 	 * @param childElementObjectBindingRegistry the child-element-to-object binding registry
 	 * @param markupContentBinding the binding for the element content
 	 */
-	public ElementClassInstanceBindingBuilder(Class<? extends T> targetClass, ValueParserRegistry attributeTextValueBindingRegistry, ChildElementObjectBindingRegistry childElementObjectBindingRegistry, XmlContentObjectBinding<?> markupContentBinding) {
+	public ElementClassInstanceBindingBuilder(Class<? extends T> targetClass, ValueParserRegistry attributeTextValueBindingRegistry, ChildElementObjectBindingRegistry childElementObjectBindingRegistry, ContentParser<?> markupContentBinding) {
 		this.targetClass = targetClass;
 		this.attributeTextValueBindingRegistry = attributeTextValueBindingRegistry;
 		this.childElementObjectBindingRegistry = childElementObjectBindingRegistry;
@@ -102,7 +102,7 @@ public final class ElementClassInstanceBindingBuilder<T> {
 	/**
 	 * Builds the binding.
 	 */
-	public ElementObjectBinding<T> build() {
+	public ElementParser<T> build() {
 		
 		// automatically choose all non-overridden parameters
 		if (constructor == null) {
@@ -110,7 +110,7 @@ public final class ElementClassInstanceBindingBuilder<T> {
 		}
 
 		// obtain the class annotation
-		BindComponentElement classAnnotation = targetClass.getAnnotation(BindComponentElement.class);
+		BindElement classAnnotation = targetClass.getAnnotation(BindElement.class);
 		if (classAnnotation == null) {
 			throw new IllegalArgumentException("class is not annotated with @BindComponentElement: " + targetClass);
 		}
@@ -127,7 +127,7 @@ public final class ElementClassInstanceBindingBuilder<T> {
 		}
 
 		// handle either child objects or markup content
-		XmlContentObjectBinding<?> contentBinding;
+		ContentParser<?> contentBinding;
 		if (classAnnotation.childObjectMultiplicity() != Multiplicity.ZERO && classAnnotation.acceptsMarkupContent()) {
 			throw new RuntimeException("@BindComponentElement doesn't support child objects AND markup content at the same time: " + targetClass);
 		} else if (classAnnotation.childObjectMultiplicity() != Multiplicity.ZERO) {
@@ -139,7 +139,7 @@ public final class ElementClassInstanceBindingBuilder<T> {
 		}
 
 		// build the binding for the component
-		return new ElementClassInstanceBinding<>(constructor, attributeBindings, contentBinding);
+		return new ClassInstanceElementParser<>(constructor, attributeBindings, contentBinding);
 
 	}
 
@@ -165,7 +165,7 @@ public final class ElementClassInstanceBindingBuilder<T> {
 	/**
 	 * Creates a binding from content to child object(s).
 	 */
-	private XmlContentObjectBinding<?> createContentChildObjectBinding(BindComponentElement classAnnotation, Constructor<?> constructor) {
+	private ContentParser<?> createContentChildObjectBinding(BindElement classAnnotation, Constructor<?> constructor) {
 		if (constructor.getParameterCount() != classAnnotation.attributes().length + 1) {
 			throw new RuntimeException("expected 1 more constructor parameter to class " + constructor.getDeclaringClass() + " than bound attribtues to handle the content argument");
 		}
@@ -191,16 +191,16 @@ public final class ElementClassInstanceBindingBuilder<T> {
 		} else {
 			childObjectClass = contentParameterClass;
 		}
-		ElementObjectBinding<?> childElementObjectBinding = childElementObjectBindingRegistry.getBinding(childObjectClass);
+		ElementParser<?> childElementObjectBinding = childElementObjectBindingRegistry.getBinding(childObjectClass);
 		if (childElementObjectBinding == null) {
 			throw new RuntimeException("no child-element-to-object binding registered for child object class " + childObjectClass);
 		}
 		boolean optional = classAnnotation.childObjectMultiplicity().optional();
 		String[] elementNameFilter = (classAnnotation.childObjectElementNameFilter().length == 0 ? null : classAnnotation.childObjectElementNameFilter());
 		if (multiplicityIndicatesList) {
-			return new MultiChildObjectBinding<>(optional, elementNameFilter, childElementObjectBinding);
+			return new MultiChildParser<>(optional, elementNameFilter, childElementObjectBinding);
 		} else {
-			return new SingleChildObjectBinding<>(optional, elementNameFilter, childElementObjectBinding);
+			return new SingleChildParser<>(optional, elementNameFilter, childElementObjectBinding);
 		}
 	}	
 

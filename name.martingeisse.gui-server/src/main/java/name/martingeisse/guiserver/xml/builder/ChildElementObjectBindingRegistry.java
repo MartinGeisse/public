@@ -7,7 +7,7 @@ package name.martingeisse.guiserver.xml.builder;
 import java.util.HashMap;
 import java.util.Map;
 
-import name.martingeisse.guiserver.xml.element.ElementObjectBinding;
+import name.martingeisse.guiserver.xml.element.ElementParser;
 
 /**
  * This class keeps the known element-to-object bindings for child
@@ -19,7 +19,7 @@ public final class ChildElementObjectBindingRegistry {
 	 * the bindings
 	 */
 	@SuppressWarnings("rawtypes")
-	private final Map<Class, ElementObjectBinding> bindings = new HashMap<>();
+	private final Map<Class, ElementParser> bindings = new HashMap<>();
 
 	/**
 	 * Adds a binding to this registry.
@@ -27,7 +27,7 @@ public final class ChildElementObjectBindingRegistry {
 	 * @param childObjectType the child object type that selects this binding
 	 * @param binding the binding
 	 */
-	public <T> void addBinding(Class<T> childObjectType, ElementObjectBinding<T> binding) {
+	public <T> void addBinding(Class<T> childObjectType, ElementParser<T> binding) {
 		bindings.put(childObjectType, binding);
 	}
 
@@ -38,7 +38,7 @@ public final class ChildElementObjectBindingRegistry {
 	 * @return the binding, or null if no binding exists for that type
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> ElementObjectBinding<T> getBinding(Class<T> childObjectType) {
+	public <T> ElementParser<T> getBinding(Class<T> childObjectType) {
 		return bindings.get(childObjectType);
 	}
 
