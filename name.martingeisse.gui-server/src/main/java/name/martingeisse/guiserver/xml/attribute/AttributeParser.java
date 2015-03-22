@@ -7,6 +7,7 @@ package name.martingeisse.guiserver.xml.attribute;
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
+import name.martingeisse.guiserver.xml.XmlParser;
 
 /**
  * This object parses a value from one or more XML attributes.
@@ -17,7 +18,7 @@ import name.martingeisse.guiserver.xml.MyXmlStreamReader;
  *
  * @param <T> the type of created values
  */
-public interface AttributeParser<T> {
+public interface AttributeParser<T> extends XmlParser<T> {
 
 	/**
 	 * Parses the value from the specified reader. The reader must be located
@@ -27,6 +28,7 @@ public interface AttributeParser<T> {
 	 * @return the parsed value
 	 * @throws XMLStreamException on XML processing errors
 	 */
+	@Override
 	public T parse(MyXmlStreamReader reader) throws XMLStreamException;
 	
 }

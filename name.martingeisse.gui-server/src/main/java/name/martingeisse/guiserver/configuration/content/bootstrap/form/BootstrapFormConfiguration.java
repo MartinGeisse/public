@@ -6,8 +6,8 @@ package name.martingeisse.guiserver.configuration.content.bootstrap.form;
 
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.FormConfiguration;
-import name.martingeisse.guiserver.xml.builder.BindAttribute;
-import name.martingeisse.guiserver.xml.builder.BindElement;
+import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
+import name.martingeisse.guiserver.xml.builder.BindComponentElement;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 
 /**
@@ -16,7 +16,7 @@ import name.martingeisse.guiserver.xml.result.MarkupContent;
  * form at this time, but we want the bootstrap components to be "complete", so we still
  * define a specialized form configuration).
  */
-@BindElement(localName = "bsForm", attributes = {@BindAttribute(name = "backendUrl")}, acceptsMarkupContent = true)
+@BindComponentElement(localName = "bsForm", attributes = {@BindPropertyAttribute(name = "backendUrl")}, acceptsMarkupContent = true)
 public class BootstrapFormConfiguration extends FormConfiguration {
 
 	/**

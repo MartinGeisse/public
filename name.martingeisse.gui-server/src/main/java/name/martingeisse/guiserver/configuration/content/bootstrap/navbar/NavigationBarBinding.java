@@ -14,7 +14,7 @@ import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigura
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigurationList;
 import name.martingeisse.guiserver.configuration.content.basic.LinkConfiguration;
 import name.martingeisse.guiserver.xml.attribute.AttributeParser;
-import name.martingeisse.guiserver.xml.builder.XmlBindingBuilder;
+import name.martingeisse.guiserver.xml.builder.XmlParserBuilder;
 import name.martingeisse.guiserver.xml.content.AbstractMultiChildParser;
 import name.martingeisse.guiserver.xml.content.ContentParser;
 import name.martingeisse.guiserver.xml.element.ClassInstanceElementParser;
@@ -32,7 +32,7 @@ public final class NavigationBarBinding extends ClassInstanceElementParser<Navig
 	/**
 	 * Constructor.
 	 */
-	public NavigationBarBinding(XmlBindingBuilder<ComponentGroupConfiguration> builder) {
+	public NavigationBarBinding(XmlParserBuilder<ComponentGroupConfiguration> builder) {
 		super(chooseConstructor(), new AttributeParser<?>[0], createContentBinding(builder));
 	}
 
@@ -50,7 +50,7 @@ public final class NavigationBarBinding extends ClassInstanceElementParser<Navig
 	/**
 	 * 
 	 */
-	private static ContentParser<NavigationBarContents> createContentBinding(XmlBindingBuilder<ComponentGroupConfiguration> builder) {
+	private static ContentParser<NavigationBarContents> createContentBinding(XmlParserBuilder<ComponentGroupConfiguration> builder) {
 		Map<String, ElementParser<? extends NavigationBarChildElement>> childElementObjectBindings = new HashMap<>();
 		childElementObjectBindings.put("brandLink", new ElementParserWrapper<ComponentGroupConfiguration, NavigationBarChildElement>(builder.getComponentBinding("link")) {
 			@Override

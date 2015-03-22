@@ -14,8 +14,8 @@ import name.martingeisse.guiserver.configuration.content.AbstractSingleComponent
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
 import name.martingeisse.guiserver.xml.builder.AttributeValueBindingOptionality;
-import name.martingeisse.guiserver.xml.builder.BindAttribute;
-import name.martingeisse.guiserver.xml.builder.BindElement;
+import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
+import name.martingeisse.guiserver.xml.builder.BindComponentElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;
@@ -25,8 +25,8 @@ import org.apache.wicket.validation.IValidator;
 /**
  * Represents a text field.
  */
-@BindElement(localName = "textField", attributes = {
-	@BindAttribute(name = "name"), @BindAttribute(name = "required", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
+@BindComponentElement(localName = "textField", attributes = {
+	@BindPropertyAttribute(name = "name"), @BindPropertyAttribute(name = "required", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
 }, childObjectMultiplicity = Multiplicity.ANY, childObjectElementNameFilter = "validation")
 public final class TextFieldConfiguration extends AbstractSingleComponentConfiguration {
 

@@ -7,6 +7,7 @@ package name.martingeisse.guiserver.xml.element;
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
+import name.martingeisse.guiserver.xml.XmlParser;
 
 /**
  * This parser parses an XML element and creates an object of
@@ -14,7 +15,7 @@ import name.martingeisse.guiserver.xml.MyXmlStreamReader;
  *
  * @param <T> the type of parsed objects
  */
-public interface ElementParser<T> {
+public interface ElementParser<T> extends XmlParser<T> {
 
 	/**
 	 * Parses an object from an XML element and returns it. The stream must
@@ -25,6 +26,7 @@ public interface ElementParser<T> {
 	 * @return the parsed object
 	 * @throws XMLStreamException on XML processing errors
 	 */
+	@Override
 	public T parse(MyXmlStreamReader reader) throws XMLStreamException;
 
 }

@@ -18,8 +18,8 @@ import name.martingeisse.guiserver.configuration.content.IComponentGroupConfigur
 import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.configuration.content.UrlSubpathComponentGroupConfiguration;
 import name.martingeisse.guiserver.xml.builder.AttributeValueBindingOptionality;
-import name.martingeisse.guiserver.xml.builder.BindAttribute;
-import name.martingeisse.guiserver.xml.builder.BindElement;
+import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
+import name.martingeisse.guiserver.xml.builder.BindComponentElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel;
@@ -35,8 +35,8 @@ import org.apache.wicket.markup.html.panel.PanelMarkupSourcingStrategy;
 /**
  * Represents a tab panel.
  */
-@BindElement(localName = "tabPanel", attributes = {
-	@BindAttribute(name = "parameter", optionality = AttributeValueBindingOptionality.OPTIONAL),
+@BindComponentElement(localName = "tabPanel", attributes = {
+	@BindPropertyAttribute(name = "parameter", optionality = AttributeValueBindingOptionality.OPTIONAL),
 }, childObjectMultiplicity = Multiplicity.NONZERO, childObjectElementNameFilter = {
 	"tab"
 })

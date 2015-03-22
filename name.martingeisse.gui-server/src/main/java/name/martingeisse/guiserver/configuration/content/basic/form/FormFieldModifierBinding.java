@@ -13,7 +13,7 @@ import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigura
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
 import name.martingeisse.guiserver.xml.attribute.AttributeParser;
 import name.martingeisse.guiserver.xml.attribute.SimpleAttributeParser;
-import name.martingeisse.guiserver.xml.builder.XmlBindingBuilder;
+import name.martingeisse.guiserver.xml.builder.XmlParserBuilder;
 import name.martingeisse.guiserver.xml.element.AttributeSelectedElementParser;
 import name.martingeisse.guiserver.xml.element.ClassInstanceElementParser;
 import name.martingeisse.guiserver.xml.element.NameSelectedElementParser;
@@ -33,14 +33,14 @@ public final class FormFieldModifierBinding extends NameSelectedElementParser<Fo
 	/**
 	 * Constructor.
 	 */
-	public FormFieldModifierBinding(XmlBindingBuilder<ComponentGroupConfiguration> builder) {
+	public FormFieldModifierBinding(XmlParserBuilder<ComponentGroupConfiguration> builder) {
 		super(createBindings(builder));
 	}
 
 	/**
 	 * 
 	 */
-	private static Map<String, ElementParser<? extends FormFieldModifier>> createBindings(XmlBindingBuilder<ComponentGroupConfiguration> builder) {
+	private static Map<String, ElementParser<? extends FormFieldModifier>> createBindings(XmlParserBuilder<ComponentGroupConfiguration> builder) {
 		Map<String, ElementParser<? extends FormFieldModifier>> bindings = new HashMap<>();
 		
 		// add validator bindings

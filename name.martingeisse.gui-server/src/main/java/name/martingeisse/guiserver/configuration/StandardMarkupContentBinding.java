@@ -28,7 +28,7 @@ import name.martingeisse.guiserver.configuration.content.bootstrap.navbar.Naviga
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
 import name.martingeisse.guiserver.xml.attribute.AttributeParser;
 import name.martingeisse.guiserver.xml.attribute.SimpleAttributeParser;
-import name.martingeisse.guiserver.xml.builder.XmlBindingBuilder;
+import name.martingeisse.guiserver.xml.builder.XmlParserBuilder;
 import name.martingeisse.guiserver.xml.content.ContentParser;
 import name.martingeisse.guiserver.xml.element.ClassInstanceElementParser;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
@@ -57,7 +57,7 @@ public final class StandardMarkupContentBinding implements ContentParser<MarkupC
 	 */
 	public StandardMarkupContentBinding() {
 		try {
-			XmlBindingBuilder<ComponentGroupConfiguration> builder = new XmlBindingBuilder<>();
+			XmlParserBuilder<ComponentGroupConfiguration> builder = new XmlParserBuilder<>();
 			
 			// known attribute-to-constructor-parameter bindings
 			builder.addAttributeTextValueBinding(String.class, StringValueParser.INSTANCE);

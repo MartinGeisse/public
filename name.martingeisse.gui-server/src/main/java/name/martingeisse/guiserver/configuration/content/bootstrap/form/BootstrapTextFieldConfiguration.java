@@ -19,8 +19,8 @@ import name.martingeisse.guiserver.configuration.content.basic.form.ValidationFo
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
 import name.martingeisse.guiserver.gui.FieldPathFeedbackMessageFilter;
 import name.martingeisse.guiserver.xml.builder.AttributeValueBindingOptionality;
-import name.martingeisse.guiserver.xml.builder.BindAttribute;
-import name.martingeisse.guiserver.xml.builder.BindElement;
+import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
+import name.martingeisse.guiserver.xml.builder.BindComponentElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 import name.martingeisse.wicket.component.misc.BootstrapFeedbackPanel;
 
@@ -33,8 +33,8 @@ import org.apache.wicket.validation.IValidator;
 /**
  * Represents a text field, including validation errors and the corresponding Bootstrap markup.
  */
-@BindElement(localName = "bsTextField", attributes = {
-	@BindAttribute(name = "name"), @BindAttribute(name = "label"), @BindAttribute(name = "required", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true"),
+@BindComponentElement(localName = "bsTextField", attributes = {
+	@BindPropertyAttribute(name = "name"), @BindPropertyAttribute(name = "label"), @BindPropertyAttribute(name = "required", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true"),
 }, childObjectMultiplicity = Multiplicity.ANY, childObjectElementNameFilter = "validation")
 public final class BootstrapTextFieldConfiguration extends AbstractComponentGroupConfiguration {
 

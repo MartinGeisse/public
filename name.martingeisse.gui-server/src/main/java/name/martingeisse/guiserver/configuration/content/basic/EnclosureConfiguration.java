@@ -7,7 +7,7 @@ package name.martingeisse.guiserver.configuration.content.basic;
 import name.martingeisse.guiserver.configuration.content.AbstractSingleContainerConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.gui.FirstChildEnclosureContainer;
-import name.martingeisse.guiserver.xml.builder.BindElement;
+import name.martingeisse.guiserver.xml.builder.BindComponentElement;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 
 import org.apache.wicket.MarkupContainer;
@@ -15,7 +15,7 @@ import org.apache.wicket.MarkupContainer;
 /**
  * Configuration for a (wicket:enclosure)-like container.
  */
-@BindElement(localName = "enclosure", acceptsMarkupContent = true)
+@BindComponentElement(localName = "enclosure", acceptsMarkupContent = true)
 public final class EnclosureConfiguration extends AbstractSingleContainerConfiguration {
 
 	/**
