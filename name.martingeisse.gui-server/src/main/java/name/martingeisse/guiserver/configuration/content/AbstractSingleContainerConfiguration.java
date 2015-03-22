@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
+import name.martingeisse.guiserver.xml.builder.BindPropertyContent;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 
@@ -25,7 +26,7 @@ public abstract class AbstractSingleContainerConfiguration extends AbstractSingl
 	/**
 	 * the markupContent
 	 */
-	private final MarkupContent<ComponentGroupConfiguration> markupContent;
+	private MarkupContent<ComponentGroupConfiguration> markupContent;
 
 	/**
 	 * the children
@@ -33,13 +34,14 @@ public abstract class AbstractSingleContainerConfiguration extends AbstractSingl
 	private ComponentGroupConfigurationList children;
 
 	/**
-	 * Constructor.
-	 * @param markupContent the markup content
+	 * Setter method for the markupContent.
+	 * @param markupContent the markupContent to set
 	 */
-	public AbstractSingleContainerConfiguration(MarkupContent<ComponentGroupConfiguration> markupContent) {
+	@BindPropertyContent
+	public final void setMarkupContent(MarkupContent<ComponentGroupConfiguration> markupContent) {
 		this.markupContent = markupContent;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#assemble(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
 	 */

@@ -20,31 +20,37 @@ import org.apache.wicket.markup.html.basic.Label;
 /**
  * This configuration represents a wicket panel that loads its content from the backend.
  */
-@BindComponentElement(localName = "includeBackend", attributes = {
-	@BindPropertyAttribute(name = "url"), @BindPropertyAttribute(name = "escape", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
-})
+@BindComponentElement(localName = "includeBackend")
 public final class IncludeBackendConfiguration extends AbstractSingleComponentConfiguration {
 
 	/**
 	 * the url
 	 */
-	private final String url;
+	private String url;
 
 	/**
 	 * the escape
 	 */
-	private final boolean escape;
+	private boolean escape;
 
 	/**
-	 * Constructor.
-	 * @param url the URL to load from
-	 * @param escape whether to escape HTML special characters
+	 * Setter method for the url.
+	 * @param url the url to set
 	 */
-	public IncludeBackendConfiguration(String url, boolean escape) {
+	@BindPropertyAttribute(name = "url")
+	public void setUrl(String url) {
 		this.url = url;
+	}
+	
+	/**
+	 * Setter method for the escape.
+	 * @param escape the escape to set
+	 */
+	@BindPropertyAttribute(name = "escape", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
+	public void setEscape(boolean escape) {
 		this.escape = escape;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#assemble(name.martingeisse.guiserver.xmlbind.result.ConfigurationAssembler)
 	 */

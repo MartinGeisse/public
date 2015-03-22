@@ -60,22 +60,22 @@ public final class StandardMarkupContentBinding implements ContentParser<MarkupC
 			XmlParserBuilder<ComponentGroupConfiguration> builder = new XmlParserBuilder<>();
 			
 			// known attribute-to-constructor-parameter bindings
-			builder.addAttributeTextValueBinding(String.class, StringValueParser.INSTANCE);
-			builder.addAttributeTextValueBinding(Boolean.class, BooleanValueParser.INSTANCE);
-			builder.addAttributeTextValueBinding(Boolean.TYPE, BooleanValueParser.INSTANCE);
-			builder.addAttributeTextValueBinding(Integer.class, IntegerValueParser.INSTANCE);
-			builder.addAttributeTextValueBinding(Integer.TYPE, IntegerValueParser.INSTANCE);
+			builder.addValueParser(String.class, StringValueParser.INSTANCE);
+			builder.addValueParser(Boolean.class, BooleanValueParser.INSTANCE);
+			builder.addValueParser(Boolean.TYPE, BooleanValueParser.INSTANCE);
+			builder.addValueParser(Integer.class, IntegerValueParser.INSTANCE);
+			builder.addValueParser(Integer.TYPE, IntegerValueParser.INSTANCE);
 			
 			// known child object classes
-			{
-				AttributeParser<?>[] attributeBindings = {
-					new SimpleAttributeParser<>("title", StringValueParser.INSTANCE),
-					new SimpleAttributeParser<>("selector", StringValueParser.INSTANCE),
-				};
-				Constructor<TabPanelConfiguration.TabEntry> constructor = TabPanelConfiguration.TabEntry.class.getConstructor(String.class, String.class, MarkupContent.class);
-				builder.addChildElementObjectBinding(TabPanelConfiguration.TabEntry.class, new ClassInstanceElementParser<>(constructor, attributeBindings, builder.getRecursiveMarkupBinding()));
-			}
-			builder.addChildElementObjectBinding(FormFieldModifier.class, new FormFieldModifierBinding(builder));
+//			{
+//				AttributeParser<?>[] attributeBindings = {
+//					new SimpleAttributeParser<>("title", StringValueParser.INSTANCE),
+//					new SimpleAttributeParser<>("selector", StringValueParser.INSTANCE),
+//				};
+//				Constructor<TabPanelConfiguration.TabEntry> constructor = TabPanelConfiguration.TabEntry.class.getConstructor(String.class, String.class, MarkupContent.class);
+//				builder.addChildElementObjectBinding(TabPanelConfiguration.TabEntry.class, new ClassInstanceElementParser<>(constructor, attributeBindings, builder.getRecursiveMarkupBinding()));
+//			}
+//			builder.addChildElementObjectBinding(FormFieldModifier.class, new FormFieldModifierBinding(builder));
 			
 			// known component special tags
 			builder.addComponentGroupConfigurationClass(EnclosureConfiguration.class);
@@ -89,11 +89,11 @@ public final class StandardMarkupContentBinding implements ContentParser<MarkupC
 			builder.addComponentGroupConfigurationClass(TabPanelConfiguration.class);
 			builder.addComponentGroupConfigurationClass(TextFieldConfiguration.class);
 			builder.addComponentGroupConfigurationClass(CheckboxConfiguration.class);
-			builder.addComponentGroupConfigurationBinding("navbar", new NavigationBarBinding(builder));
+//			builder.addComponentGroupConfigurationBinding("navbar", new NavigationBarBinding(builder));
 			
 			// Bootstrap-specific tags
-			builder.addComponentGroupConfigurationClass(BootstrapFormConfiguration.class);
-			builder.addComponentGroupConfigurationClass(BootstrapTextFieldConfiguration.class);
+//			builder.addComponentGroupConfigurationClass(BootstrapFormConfiguration.class);
+//			builder.addComponentGroupConfigurationClass(BootstrapTextFieldConfiguration.class);
 			
 			binding = builder.build();
 		} catch (Exception e) {
