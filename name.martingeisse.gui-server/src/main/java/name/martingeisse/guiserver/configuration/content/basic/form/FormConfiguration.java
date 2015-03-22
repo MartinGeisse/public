@@ -14,10 +14,9 @@ import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigura
 import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.gui.ConfigurationDefinedForm;
 import name.martingeisse.guiserver.gui.FormDataModel;
-import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
 import name.martingeisse.guiserver.xml.builder.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
-import name.martingeisse.guiserver.xml.result.MarkupContent;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.model.IModel;
@@ -35,13 +34,13 @@ import org.apache.wicket.model.IModel;
  * reflected in other components that pull values from the
  * same models.
  */
-@BindComponentElement(localName = "form", attributes = {@BindPropertyAttribute(name = "backendUrl")}, acceptsMarkupContent = true)
+@BindComponentElement(localName = "form")
 public class FormConfiguration extends AbstractSingleContainerConfiguration implements IConfigurationSnippet {
 
 	/**
 	 * the backendUrl
 	 */
-	private final String backendUrl;
+	private String backendUrl;
 
 	/**
 	 * the snippetHandle
@@ -49,21 +48,20 @@ public class FormConfiguration extends AbstractSingleContainerConfiguration impl
 	private int snippetHandle;
 
 	/**
-	 * Constructor.
-	 * @param backendUrl the backend URL
-	 * @param markupContent the markup content
-	 */
-	public FormConfiguration(String backendUrl, MarkupContent<ComponentGroupConfiguration> markupContent) {
-		super(markupContent);
-		this.backendUrl = backendUrl;
-	}
-
-	/**
 	 * Getter method for the backendUrl.
 	 * @return the backendUrl
 	 */
 	public String getBackendUrl() {
 		return backendUrl;
+	}
+	
+	/**
+	 * Setter method for the backendUrl.
+	 * @param backendUrl the backendUrl to set
+	 */
+	@BindPropertyAttribute(name = "backendUrl")
+	public void setBackendUrl(String backendUrl) {
+		this.backendUrl = backendUrl;
 	}
 
 	/* (non-Javadoc)

@@ -35,37 +35,26 @@ import org.apache.wicket.markup.html.panel.PanelMarkupSourcingStrategy;
 /**
  * Represents a tab panel.
  */
-@BindComponentElement(localName = "tabPanel", attributes = {
-	@BindPropertyAttribute(name = "parameter", optionality = AttributeValueBindingOptionality.OPTIONAL),
-}, childObjectMultiplicity = Multiplicity.NONZERO, childObjectElementNameFilter = {
-	"tab"
+@BindComponentElement(localName = "tabPanel", 
+	childObjectMultiplicity = Multiplicity.NONZERO, childObjectElementNameFilter = {
+		"tab"
 })
 public final class TabPanelConfiguration extends AbstractSingleComponentConfiguration implements IConfigurationSnippet, UrlSubpathComponentGroupConfiguration {
 
 	/**
 	 * the parameterName
 	 */
-	private final String parameterName;
+	private String parameterName;
 
 	/**
 	 * the tabs
 	 */
-	private final List<TabEntry> tabs;
+	private List<TabEntry> tabs;
 
 	/**
 	 * the snippetHandle
 	 */
 	private int snippetHandle;
-
-	/**
-	 * Constructor.
-	 * @param parameterName the name of the tab-selecting parameter
-	 * @param tabs the tabs
-	 */
-	public TabPanelConfiguration(String parameterName, List<TabEntry> tabs) {
-		this.parameterName = parameterName;
-		this.tabs = tabs;
-	}
 
 	/**
 	 * Getter method for the parameterName.
@@ -77,6 +66,15 @@ public final class TabPanelConfiguration extends AbstractSingleComponentConfigur
 			throw new IllegalStateException("cannot determine parameter name before an ID has been assigned");
 		}
 		return (parameterName == null ? id : parameterName);
+	}
+	
+	/**
+	 * Setter method for the parameterName.
+	 * @param parameterName the parameterName to set
+	 */
+	@BindPropertyAttribute(name = "parameter", optionality = AttributeValueBindingOptionality.OPTIONAL)
+	public void setParameterName(String parameterName) {
+		this.parameterName = parameterName;
 	}
 
 	/* (non-Javadoc)

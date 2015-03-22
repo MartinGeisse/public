@@ -10,10 +10,9 @@ import name.martingeisse.guiserver.configuration.content.AbstractSingleContainer
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.configuration.elements.PageConfiguration;
 import name.martingeisse.guiserver.gui.ConfigurationDefinedPage;
-import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
 import name.martingeisse.guiserver.xml.builder.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
-import name.martingeisse.guiserver.xml.result.MarkupContent;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -23,25 +22,13 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * Configuration for a link. This class tries to cover only the common
  * cases to keep it simple.
  */
-@BindComponentElement(localName = "link", attributes = {
-	@BindPropertyAttribute(name = "href")
-}, acceptsMarkupContent = true)
+@BindComponentElement(localName = "link")
 public final class LinkConfiguration extends AbstractSingleContainerConfiguration {
 
 	/**
 	 * the targetPagePath
 	 */
-	private final String targetPagePath;
-
-	/**
-	 * Constructor.
-	 * @param targetPagePath the path of the page to link to
-	 * @param markupContent the markup content
-	 */
-	public LinkConfiguration(String targetPagePath, MarkupContent<ComponentGroupConfiguration> markupContent) {
-		super(markupContent);
-		this.targetPagePath = targetPagePath;
-	}
+	private String targetPagePath;
 
 	/**
 	 * Getter method for the targetPagePath.
@@ -49,6 +36,15 @@ public final class LinkConfiguration extends AbstractSingleContainerConfiguratio
 	 */
 	public String getTargetPagePath() {
 		return targetPagePath;
+	}
+
+	/**
+	 * Setter method for the targetPagePath.
+	 * @param targetPagePath the targetPagePath to set
+	 */
+	@BindPropertyAttribute(name = "href")
+	public void setTargetPagePath(String targetPagePath) {
+		this.targetPagePath = targetPagePath;
 	}
 
 	/* (non-Javadoc)

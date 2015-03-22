@@ -21,35 +21,23 @@ import org.apache.wicket.markup.html.image.Image;
 /**
  * Configuration for a pie chart component.
  */
-@BindComponentElement(localName = "pieChart", attributes = {
-	@BindPropertyAttribute(name = "backendUrl"), @BindPropertyAttribute(name = "legend", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "false")
-})
+@BindComponentElement(localName = "pieChart")
 public final class PieChartConfiguration extends AbstractSingleComponentConfiguration implements IConfigurationSnippet {
 
 	/**
 	 * the backendUrl
 	 */
-	private final String backendUrl;
+	private String backendUrl;
 
 	/**
 	 * the legend
 	 */
-	private final boolean legend;
+	private boolean legend;
 
 	/**
 	 * the snippetHandle
 	 */
 	private int snippetHandle;
-
-	/**
-	 * Constructor.
-	 * @param backendUrl the URL to load chart data from
-	 * @param legend whether to draw a legend
-	 */
-	public PieChartConfiguration(String backendUrl, boolean legend) {
-		this.backendUrl = backendUrl;
-		this.legend = legend;
-	}
 
 	/**
 	 * Getter method for the backendUrl.
@@ -60,11 +48,29 @@ public final class PieChartConfiguration extends AbstractSingleComponentConfigur
 	}
 
 	/**
+	 * Setter method for the backendUrl.
+	 * @param backendUrl the backendUrl to set
+	 */
+	@BindPropertyAttribute(name = "backendUrl")
+	public void setBackendUrl(String backendUrl) {
+		this.backendUrl = backendUrl;
+	}
+	
+	/**
 	 * Getter method for the legend.
 	 * @return the legend
 	 */
 	public boolean isLegend() {
 		return legend;
+	}
+	
+	/**
+	 * Setter method for the legend.
+	 * @param legend the legend to set
+	 */
+	@BindPropertyAttribute(name = "legend", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "false")
+	public void setLegend(boolean legend) {
+		this.legend = legend;
 	}
 
 	/* (non-Javadoc)
