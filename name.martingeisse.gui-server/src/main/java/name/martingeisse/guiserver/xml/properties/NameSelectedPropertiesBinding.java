@@ -9,7 +9,7 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
-import name.martingeisse.guiserver.xml.XmlParser;
+import name.martingeisse.guiserver.xml.element.ElementParser;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -17,18 +17,18 @@ import com.google.common.collect.ImmutableMap;
  * This binding selects one of several bindings based on
  * the element name.
  */
-public final class NameSelectedPropertiesBinding<C, P extends XmlParser<?>> implements PropertiesBinding<C, P> {
+public final class NameSelectedPropertiesBinding<C, P extends ElementParser<?>> implements PropertiesBinding<C, P> {
 
 	/**
 	 * the bindings
 	 */
-	private final Map<String, PropertiesBinding<C, P>> bindings;
+	private final Map<String, PropertiesBinding<C, ? extends P>> bindings;
 
 	/**
 	 * Constructor.
 	 * @param bindings the bindings
 	 */
-	public NameSelectedPropertiesBinding(Map<String, PropertiesBinding<C, P>> bindings) {
+	public NameSelectedPropertiesBinding(Map<String, ? extends PropertiesBinding<C, ? extends P>> bindings) {
 		this.bindings = ImmutableMap.copyOf(bindings);
 	}
 
@@ -37,7 +37,7 @@ public final class NameSelectedPropertiesBinding<C, P extends XmlParser<?>> impl
 	 */
 	@Override
 	public void bind(MyXmlStreamReader reader, C target) throws XMLStreamException {
-		PropertiesBinding<C, P> selectedBinding = bindings.get(reader.getLocalName());
+		PropertiesBinding<C, ? extends P> selectedBinding = bindings.get(reader.getLocalName());
 		if (selectedBinding == null) {
 			throw new RuntimeException("unknown property element: " + reader.getLocalName());
 		}

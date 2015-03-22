@@ -20,6 +20,8 @@ import name.martingeisse.guiserver.xml.content.ContentParserRegistry;
 import name.martingeisse.guiserver.xml.element.ClassInstanceElementParser;
 import name.martingeisse.guiserver.xml.element.ElementParser;
 import name.martingeisse.guiserver.xml.element.ElementParserRegistry;
+import name.martingeisse.guiserver.xml.properties.ContentPropertiesBinding;
+import name.martingeisse.guiserver.xml.properties.NameSelectedPropertiesBinding;
 import name.martingeisse.guiserver.xml.properties.ParserToMethodBinding;
 import name.martingeisse.guiserver.xml.properties.PropertiesBinding;
 import name.martingeisse.guiserver.xml.value.ValueParser;
@@ -83,12 +85,17 @@ public final class ElementParserBuilder {
 					contentBinding = createContentBinding(method);
 				}
 			}
-			if (!elementBindings.isEmpty() && contentBinding != null) {
-				throw new RuntimeException("class " + targetClass + " has both child-element-to-property-binding(s) and a content-to-property-binding");
-			}
 			@SuppressWarnings("unchecked")
 			PropertiesBinding<T, ? extends AttributeParser<?>>[] attributeBindingsArray = (PropertiesBinding<T, ? extends AttributeParser<?>>[])(new PropertiesBinding<?, ?>[attributeBindings.size()]);
 			attributeBindingsArray = attributeBindings.toArray(attributeBindingsArray);
+			if (!elementBindings.isEmpty()) {
+				if (contentBinding != null) {
+					throw new RuntimeException("class " + targetClass + " has both child-element-to-property-binding(s) and a content-to-property-binding");
+				} else {
+					NameSelectedPropertiesBinding<T, ElementParser<?>> nameSelectedPropertiesBinding = new NameSelectedPropertiesBinding<T, ElementParser<?>>(elementBindings);
+					contentBinding = new ContentPropertiesBinding<>(nameSelectedPropertiesBinding);
+				}
+			}
 			return new ClassInstanceElementParser<T>(constructor, attributeBindingsArray, contentBinding);			
 		} catch (Exception e) {
 			throw new RuntimeException(e);
