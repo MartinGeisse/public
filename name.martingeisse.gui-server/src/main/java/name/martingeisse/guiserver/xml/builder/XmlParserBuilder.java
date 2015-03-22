@@ -8,15 +8,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import name.martingeisse.guiserver.xml.ConfigurationAssemblerAcceptor;
+import name.martingeisse.guiserver.xml.content.ContentParser;
+import name.martingeisse.guiserver.xml.content.ContentParserRegistry;
 import name.martingeisse.guiserver.xml.content.DelegatingContentParser;
 import name.martingeisse.guiserver.xml.content.MarkupContentParser;
-import name.martingeisse.guiserver.xml.content.ContentParser;
+import name.martingeisse.guiserver.xml.element.ElementParser;
 import name.martingeisse.guiserver.xml.element.ElementParserRegistry;
 import name.martingeisse.guiserver.xml.element.NameSelectedElementParser;
-import name.martingeisse.guiserver.xml.element.ElementParser;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
-import name.martingeisse.guiserver.xml.value.ValueParserRegistry;
 import name.martingeisse.guiserver.xml.value.ValueParser;
+import name.martingeisse.guiserver.xml.value.ValueParserRegistry;
 
 /**
  * This class builds the parser for the XML format.
@@ -50,6 +51,16 @@ public final class XmlParserBuilder<C extends ConfigurationAssemblerAcceptor<C>>
 	private final ElementParserRegistry elementParserRegistry;
 	
 	/**
+	 * the contentParserRegistry
+	 */
+	private final ContentParserRegistry contentParserRegistry;
+	
+	/**
+	 * the elementParserBuilder
+	 */
+	private final ElementParserBuilder elementParserBuilder;
+	
+	/**
 	 * Constructor.
 	 */
 	public XmlParserBuilder() {
@@ -57,6 +68,8 @@ public final class XmlParserBuilder<C extends ConfigurationAssemblerAcceptor<C>>
 		componentElementParsers = new HashMap<>();
 		valueParserRegistry = new ValueParserRegistry();
 		elementParserRegistry = new ElementParserRegistry();
+		contentParserRegistry = new ContentParserRegistry();
+		elementParserBuilder = new ElementParserBuilder(valueParserRegistry, elementParserRegistry, contentParserRegistry);
 	}
 
 	/**
@@ -78,6 +91,16 @@ public final class XmlParserBuilder<C extends ConfigurationAssemblerAcceptor<C>>
 	public <T> void addElementParser(Class<T> type, ElementParser<T> parser) {
 		elementParserRegistry.addParser(type, parser);
 	}
+	
+	/**
+	 * Adds an content parser that can be used for {@link BindPropertyContent} annotations.
+	 * 
+	 * @param type the parsed type
+	 * @param parser the content parser
+	 */
+	public <T> void addContentParser(Class<T> type, ContentParser<T> parser) {
+		contentParserRegistry.addParser(type, parser);
+	}
 
 	/**
 	 * Getter method for the recursiveMarkupParser.
@@ -88,13 +111,11 @@ public final class XmlParserBuilder<C extends ConfigurationAssemblerAcceptor<C>>
 	}
 
 	/**
-	 * Creates a new {@link ElementParserBuilder} for the specified target class.
-	 * 
-	 * @param targetClass the target class
-	 * @return the builder
+	 * Getter method for the elementParserBuilder.
+	 * @return the elementParserBuilder
 	 */
-	public <T> ElementParserBuilder<T> newElementParserBuilder(Class<? extends T> targetClass) {
-		return new ElementParserBuilder<>(targetClass, attributeTextValueBindingRegistry, childElementObjectBindingRegistry, recursiveMarkupParser);
+	public ElementParserBuilder getElementParserBuilder() {
+		return elementParserBuilder;
 	}
 	
 	/**
@@ -108,7 +129,7 @@ public final class XmlParserBuilder<C extends ConfigurationAssemblerAcceptor<C>>
 		if (annotation == null) {
 			throw new RuntimeException("class " + targetClass + " is not annotated with @BindComponentElement");
 		}
-		addComponentGroupConfigurationBinding(annotation.localName(), newElementClassInstanceBindingBuilder(targetClass).build());
+		addComponentGroupConfigurationParser(annotation.localName(), elementParserBuilder.build(targetClass));
 	}
 
 	/**

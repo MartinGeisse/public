@@ -28,12 +28,7 @@ import name.martingeisse.guiserver.xml.value.ValueParserRegistry;
 /**
  * Helps build an {@link ClassInstanceElementParser}.
  */
-public final class ElementParserBuilder<T> {
-
-	/**
-	 * the targetClass
-	 */
-	private final Class<? extends T> targetClass;
+public final class ElementParserBuilder {
 
 	/**
 	 * the valueParserRegistry
@@ -41,9 +36,9 @@ public final class ElementParserBuilder<T> {
 	private final ValueParserRegistry valueParserRegistry;
 
 	/**
-	 * the childElementParserRegistry
+	 * the elementParserRegistry
 	 */
-	private final ElementParserRegistry childElementParserRegistry;
+	private final ElementParserRegistry elementParserRegistry;
 	
 	/**
 	 * the contentParserRegistry
@@ -52,28 +47,24 @@ public final class ElementParserBuilder<T> {
 	
 	/**
 	 * Constructor.
-	 * TODO remove the targetClass and make it a parameter to build(), so this builder can be re-used
-	 * 
-	 * @param targetClass the target class
 	 * @param valueParserRegistry the value parser registry
-	 * @param childElementParserRegistry the child-element parser registry
+	 * @param elementParserRegistry the child-element parser registry
 	 * @param contentParserRegistry the content parser registry
 	 */
-	public ElementParserBuilder(Class<? extends T> targetClass, ValueParserRegistry valueParserRegistry, ElementParserRegistry childElementParserRegistry, ContentParserRegistry contentParserRegistry) {
-		this.targetClass = targetClass;
+	public ElementParserBuilder(ValueParserRegistry valueParserRegistry, ElementParserRegistry elementParserRegistry, ContentParserRegistry contentParserRegistry) {
 		this.valueParserRegistry = valueParserRegistry;
-		this.childElementParserRegistry = childElementParserRegistry;
+		this.elementParserRegistry = elementParserRegistry;
 		this.contentParserRegistry = contentParserRegistry;
 	}
 
 	/**
 	 * Builds the binding.
 	 */
-	public ElementParser<T> build() {
+	public <T> ElementParser<T> build(Class<? extends T> targetClass) {
 		try {
 			Constructor<? extends T> constructor = targetClass.getConstructor();
 			List<PropertiesBinding<T, ? extends AttributeParser<?>>> attributeBindings = new ArrayList<>();
-			Map<String, PropertiesBinding<T, ? extends ElementParser<?>>> childElementBindings = new HashMap<>();
+			Map<String, PropertiesBinding<T, ? extends ElementParser<?>>> elementBindings = new HashMap<>();
 			PropertiesBinding<T, ? extends ContentParser<?>> contentBinding = null;
 			for (Method method : targetClass.getMethods()) {
 				BindPropertyAttribute attributeAnnotation = method.getAnnotation(BindPropertyAttribute.class);
@@ -84,7 +75,7 @@ public final class ElementParserBuilder<T> {
 				} else if (attributeAnnotation != null) {
 					attributeBindings.add(createAttributeBinding(method));
 				} else if (elementAnnotation != null) {
-					childElementBindings.put(elementAnnotation.localName(), createElementBinding(method));
+					elementBindings.put(elementAnnotation.localName(), createElementBinding(method));
 				} else if (contentAnnotation != null) {
 					if (contentBinding != null) {
 						throw new RuntimeException("multiple content bindings for class " + targetClass);
@@ -92,7 +83,7 @@ public final class ElementParserBuilder<T> {
 					contentBinding = createContentBinding(method);
 				}
 			}
-			if (!childElementBindings.isEmpty() && contentBinding != null) {
+			if (!elementBindings.isEmpty() && contentBinding != null) {
 				throw new RuntimeException("class " + targetClass + " has both child-element-to-property-binding(s) and a content-to-property-binding");
 			}
 			@SuppressWarnings("unchecked")
@@ -116,7 +107,7 @@ public final class ElementParserBuilder<T> {
 	 * 
 	 * @throws Exception on errors
 	 */
-	private <P> PropertiesBinding<T, AttributeParser<P>> createAttributeBinding(Method method) throws Exception {
+	private <T, P> PropertiesBinding<T, AttributeParser<P>> createAttributeBinding(Method method) throws Exception {
 		Class<?> parameterType = determineParameterType(BindPropertyAttribute.class, method);
 		
 		// extract data from the annotation
@@ -147,14 +138,14 @@ public final class ElementParserBuilder<T> {
 	 * 
 	 * @throws Exception on errors
 	 */
-	private <P> PropertiesBinding<T, ElementParser<P>> createElementBinding(Method method) throws Exception {
+	private <T, P> PropertiesBinding<T, ElementParser<P>> createElementBinding(Method method) throws Exception {
 		Class<?> parameterType = determineParameterType(BindPropertyElement.class, method);
 		
 		// extract data from the annotation
 		BindPropertyElement annotation = method.getAnnotation(BindPropertyElement.class);
 		
 		// determine the element parser
-		ElementParser<?> untypedElementParser = determineParser(method, annotation.elementParserClass(), ElementParser.class, annotation.type(), parameterType, t -> childElementParserRegistry.getParser(t));
+		ElementParser<?> untypedElementParser = determineParser(method, annotation.elementParserClass(), ElementParser.class, annotation.type(), parameterType, t -> elementParserRegistry.getParser(t));
 		@SuppressWarnings("unchecked")
 		ElementParser<P> elementParser = (ElementParser<P>)untypedElementParser;
 
@@ -171,7 +162,7 @@ public final class ElementParserBuilder<T> {
 	 * 
 	 * @throws Exception on errors
 	 */
-	private <P> PropertiesBinding<T, ContentParser<P>> createContentBinding(Method method) throws Exception {
+	private <T, P> PropertiesBinding<T, ContentParser<P>> createContentBinding(Method method) throws Exception {
 		Class<?> parameterType = determineParameterType(BindPropertyContent.class, method);
 		
 		// extract data from the annotation
