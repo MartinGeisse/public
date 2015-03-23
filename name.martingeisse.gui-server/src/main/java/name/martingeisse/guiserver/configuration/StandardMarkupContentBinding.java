@@ -4,8 +4,6 @@
 
 package name.martingeisse.guiserver.configuration;
 
-import java.lang.reflect.Constructor;
-
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
@@ -18,19 +16,11 @@ import name.martingeisse.guiserver.configuration.content.basic.TabPanelConfigura
 import name.martingeisse.guiserver.configuration.content.basic.form.CheckboxConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.FieldPathFeedbackPanelConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.FormConfiguration;
-import name.martingeisse.guiserver.configuration.content.basic.form.FormFieldModifier;
-import name.martingeisse.guiserver.configuration.content.basic.form.FormFieldModifierBinding;
 import name.martingeisse.guiserver.configuration.content.basic.form.SubmitButtonConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.TextFieldConfiguration;
-import name.martingeisse.guiserver.configuration.content.bootstrap.form.BootstrapFormConfiguration;
-import name.martingeisse.guiserver.configuration.content.bootstrap.form.BootstrapTextFieldConfiguration;
-import name.martingeisse.guiserver.configuration.content.bootstrap.navbar.NavigationBarBinding;
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
-import name.martingeisse.guiserver.xml.attribute.AttributeParser;
-import name.martingeisse.guiserver.xml.attribute.SimpleAttributeParser;
 import name.martingeisse.guiserver.xml.builder.XmlParserBuilder;
 import name.martingeisse.guiserver.xml.content.ContentParser;
-import name.martingeisse.guiserver.xml.element.ClassInstanceElementParser;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 import name.martingeisse.guiserver.xml.value.BooleanValueParser;
 import name.martingeisse.guiserver.xml.value.IntegerValueParser;
@@ -58,6 +48,9 @@ public final class StandardMarkupContentBinding implements ContentParser<MarkupC
 	public StandardMarkupContentBinding() {
 		try {
 			XmlParserBuilder<ComponentGroupConfiguration> builder = new XmlParserBuilder<>();
+			@SuppressWarnings("unchecked")
+			Class<MarkupContent<ComponentGroupConfiguration>> markupContentClass = (Class<MarkupContent<ComponentGroupConfiguration>>)(Class<?>)MarkupContent.class;
+			builder.addContentParser(markupContentClass, builder.getRecursiveMarkupParser());
 			
 			// known attribute-to-constructor-parameter bindings
 			builder.addValueParser(String.class, StringValueParser.INSTANCE);
@@ -86,9 +79,9 @@ public final class StandardMarkupContentBinding implements ContentParser<MarkupC
 			builder.addComponentGroupConfigurationClass(FormConfiguration.class);
 			builder.addComponentGroupConfigurationClass(PieChartConfiguration.class);
 			builder.addComponentGroupConfigurationClass(SubmitButtonConfiguration.class);
-			builder.addComponentGroupConfigurationClass(TabPanelConfiguration.class);
-			builder.addComponentGroupConfigurationClass(TextFieldConfiguration.class);
-			builder.addComponentGroupConfigurationClass(CheckboxConfiguration.class);
+//			builder.addComponentGroupConfigurationClass(TabPanelConfiguration.class);
+//			builder.addComponentGroupConfigurationClass(TextFieldConfiguration.class);
+//			builder.addComponentGroupConfigurationClass(CheckboxConfiguration.class);
 //			builder.addComponentGroupConfigurationBinding("navbar", new NavigationBarBinding(builder));
 			
 			// Bootstrap-specific tags
