@@ -10,17 +10,14 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.common.terms.IConsumer;
-import name.martingeisse.common.terms.Multiplicity;
 import name.martingeisse.guiserver.configuration.content.AbstractComponentGroupConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
-import name.martingeisse.guiserver.configuration.content.basic.form.FormFieldMetadata;
-import name.martingeisse.guiserver.configuration.content.basic.form.FormFieldModifier;
-import name.martingeisse.guiserver.configuration.content.basic.form.ValidationFormFieldModifier;
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
 import name.martingeisse.guiserver.gui.FieldPathFeedbackMessageFilter;
 import name.martingeisse.guiserver.xml.builder.AttributeValueBindingOptionality;
-import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
 import name.martingeisse.guiserver.xml.builder.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
+import name.martingeisse.guiserver.xml.builder.BindPropertyElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 import name.martingeisse.wicket.component.misc.BootstrapFeedbackPanel;
 
@@ -33,63 +30,28 @@ import org.apache.wicket.validation.IValidator;
 /**
  * Represents a text field, including validation errors and the corresponding Bootstrap markup.
  */
-@BindComponentElement(localName = "bsTextField", attributes = {
-	@BindPropertyAttribute(name = "name"), @BindPropertyAttribute(name = "label"), @BindPropertyAttribute(name = "required", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true"),
-}, childObjectMultiplicity = Multiplicity.ANY, childObjectElementNameFilter = "validation")
+@BindComponentElement(localName = "bsTextField")
 public final class BootstrapTextFieldConfiguration extends AbstractComponentGroupConfiguration {
 
 	/**
 	 * the name
 	 */
-	private final String name;
+	private String name;
 
 	/**
 	 * the label
 	 */
-	private final String label;
+	private String label;
 
 	/**
 	 * the required
 	 */
-	private final boolean required;
+	private boolean required;
 
 	/**
-	 * the modifiers
+	 * the validators
 	 */
-	private final List<FormFieldModifier> modifiers;
-
-	/**
-	 * the metadata
-	 */
-	private final FormFieldMetadata metadata;
-
-	/**
-	 * Constructor.
-	 * @param name the field name
-	 * @param label the field label
-	 * @param required whether this is a required field
-	 * @param modifiers field modifiers
-	 */
-	public BootstrapTextFieldConfiguration(String name, String label, boolean required, List<FormFieldModifier> modifiers) {
-
-		// assign basic fields
-		this.name = name;
-		this.label = label;
-		this.required = required;
-		this.modifiers = modifiers;
-
-		// extract validators
-		List<IValidator<?>> validators = new ArrayList<IValidator<?>>();
-		for (FormFieldModifier modifier : modifiers) {
-			if (modifier instanceof ValidationFormFieldModifier) {
-				validators.add(((ValidationFormFieldModifier)modifier).getValidator());
-			}
-		}
-
-		// build the form field meta-data
-		this.metadata = new FormFieldMetadata(name, required, validators);
-
-	}
+	private List<IValidator<?>> validators = new ArrayList<>();
 
 	/**
 	 * Getter method for the name.
@@ -98,7 +60,33 @@ public final class BootstrapTextFieldConfiguration extends AbstractComponentGrou
 	public String getName() {
 		return name;
 	}
+	
+	/**
+	 * Setter method for the name.
+	 * @param name the name to set
+	 */
+	@BindPropertyAttribute(name = "name")
+	public void setName(String name) {
+		this.name = name;
+	}
 
+	/**
+	 * Getter method for the label.
+	 * @return the label
+	 */
+	public String getLabel() {
+		return label;
+	}
+	
+	/**
+	 * Setter method for the label.
+	 * @param label the label to set
+	 */
+	@BindPropertyAttribute(name = "label")
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
 	/**
 	 * Getter method for the required.
 	 * @return the required
@@ -106,23 +94,25 @@ public final class BootstrapTextFieldConfiguration extends AbstractComponentGrou
 	public boolean isRequired() {
 		return required;
 	}
-
+	
 	/**
-	 * Getter method for the modifiers.
-	 * @return the modifiers
+	 * Setter method for the required.
+	 * @param required the required to set
 	 */
-	public List<FormFieldModifier> getModifiers() {
-		return modifiers;
+	@BindPropertyAttribute(name = "required", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
+	public void setRequired(boolean required) {
+		this.required = required;
 	}
 
 	/**
-	 * Getter method for the metadata.
-	 * @return the metadata
+	 * Adds a validator to this form field.
+	 * @param validator the validator to add
 	 */
-	public FormFieldMetadata getMetadata() {
-		return metadata;
+	@BindPropertyElement(localName = "validation")
+	public void addValidator(IValidator<?> validator) {
+		validators.add(validator);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.configuration.content.AbstractComponentConfiguration#assemble(name.martingeisse.guiserver.xml.result.ConfigurationAssembler)
 	 */
@@ -180,9 +170,9 @@ public final class BootstrapTextFieldConfiguration extends AbstractComponentGrou
 
 		// build the text field itself
 		TextField<?> textField = new TextField<>(getComponentBaseId());
-		textField.setRequired(metadata.isRequired());
-		textField.add(new FieldPathBehavior(metadata.getName()));
-		for (IValidator<?> validator : metadata.getValidators()) {
+		textField.setRequired(required);
+		textField.add(new FieldPathBehavior(name));
+		for (IValidator<?> validator : validators) {
 			addValidator(textField, validator);
 		}
 		consumer.consume(textField);
@@ -191,7 +181,7 @@ public final class BootstrapTextFieldConfiguration extends AbstractComponentGrou
 		consumer.consume(new FormComponentLabel(getComponentBaseId() + "-label", textField).add(new Label("labelText", label)));
 
 		// build the error message feedback panel
-		consumer.consume(new BootstrapFeedbackPanel(getComponentBaseId() + "-error", new FieldPathFeedbackMessageFilter(metadata.getName())));
+		consumer.consume(new BootstrapFeedbackPanel(getComponentBaseId() + "-error", new FieldPathFeedbackMessageFilter(name)));
 
 	}
 

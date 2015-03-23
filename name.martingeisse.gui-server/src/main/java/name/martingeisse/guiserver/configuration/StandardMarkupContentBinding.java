@@ -18,6 +18,8 @@ import name.martingeisse.guiserver.configuration.content.basic.form.FormConfigur
 import name.martingeisse.guiserver.configuration.content.basic.form.SubmitButtonConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.TextFieldConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.VaildatorParser;
+import name.martingeisse.guiserver.configuration.content.bootstrap.form.BootstrapFormConfiguration;
+import name.martingeisse.guiserver.configuration.content.bootstrap.form.BootstrapTextFieldConfiguration;
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
 import name.martingeisse.guiserver.xml.builder.XmlParserBuilder;
 import name.martingeisse.guiserver.xml.content.ContentParser;
@@ -81,7 +83,6 @@ public final class StandardMarkupContentBinding implements ContentParser<MarkupC
 //				Constructor<TabPanelConfiguration.TabEntry> constructor = TabPanelConfiguration.TabEntry.class.getConstructor(String.class, String.class, MarkupContent.class);
 //				builder.addChildElementObjectBinding(TabPanelConfiguration.TabEntry.class, new ClassInstanceElementParser<>(constructor, attributeBindings, builder.getRecursiveMarkupBinding()));
 //			}
-//			builder.addChildElementObjectBinding(FormFieldModifier.class, new FormFieldModifierBinding(builder));
 			
 			// known component special tags
 			builder.addComponentGroupConfigurationClass(EnclosureConfiguration.class);
@@ -98,8 +99,8 @@ public final class StandardMarkupContentBinding implements ContentParser<MarkupC
 //			builder.addComponentGroupConfigurationBinding("navbar", new NavigationBarBinding(builder));
 			
 			// Bootstrap-specific tags
-//			builder.addComponentGroupConfigurationClass(BootstrapFormConfiguration.class);
-//			builder.addComponentGroupConfigurationClass(BootstrapTextFieldConfiguration.class);
+			builder.addComponentGroupConfigurationClass(BootstrapFormConfiguration.class);
+			builder.addComponentGroupConfigurationClass(BootstrapTextFieldConfiguration.class);
 			
 			binding = builder.build();
 		} catch (Exception e) {
