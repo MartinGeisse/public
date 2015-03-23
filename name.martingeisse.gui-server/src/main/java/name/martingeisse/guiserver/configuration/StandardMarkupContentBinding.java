@@ -12,12 +12,12 @@ import name.martingeisse.guiserver.configuration.content.basic.IncludeBackendCon
 import name.martingeisse.guiserver.configuration.content.basic.LazyLoadContainerConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.LinkConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.PieChartConfiguration;
-import name.martingeisse.guiserver.configuration.content.basic.TabPanelConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.CheckboxConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.FieldPathFeedbackPanelConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.FormConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.SubmitButtonConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.TextFieldConfiguration;
+import name.martingeisse.guiserver.configuration.content.basic.form.VaildatorParser;
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
 import name.martingeisse.guiserver.xml.builder.XmlParserBuilder;
 import name.martingeisse.guiserver.xml.content.ContentParser;
@@ -25,6 +25,8 @@ import name.martingeisse.guiserver.xml.result.MarkupContent;
 import name.martingeisse.guiserver.xml.value.BooleanValueParser;
 import name.martingeisse.guiserver.xml.value.IntegerValueParser;
 import name.martingeisse.guiserver.xml.value.StringValueParser;
+
+import org.apache.wicket.validation.IValidator;
 
 /**
  * For now, the markup content binding is fixed, and expressed as
@@ -48,16 +50,27 @@ public final class StandardMarkupContentBinding implements ContentParser<MarkupC
 	public StandardMarkupContentBinding() {
 		try {
 			XmlParserBuilder<ComponentGroupConfiguration> builder = new XmlParserBuilder<>();
-			@SuppressWarnings("unchecked")
-			Class<MarkupContent<ComponentGroupConfiguration>> markupContentClass = (Class<MarkupContent<ComponentGroupConfiguration>>)(Class<?>)MarkupContent.class;
-			builder.addContentParser(markupContentClass, builder.getRecursiveMarkupParser());
 			
-			// known attribute-to-constructor-parameter bindings
+			// register known value parsers
 			builder.addValueParser(String.class, StringValueParser.INSTANCE);
 			builder.addValueParser(Boolean.class, BooleanValueParser.INSTANCE);
 			builder.addValueParser(Boolean.TYPE, BooleanValueParser.INSTANCE);
 			builder.addValueParser(Integer.class, IntegerValueParser.INSTANCE);
 			builder.addValueParser(Integer.TYPE, IntegerValueParser.INSTANCE);
+			
+			// register known element parsers
+			@SuppressWarnings("unchecked")
+			Class<IValidator<?>> validatorClass = (Class<IValidator<?>>)(Class<?>)IValidator.class;
+			builder.addElementParser(validatorClass, new VaildatorParser(builder));
+			
+			// register known content parsers
+			@SuppressWarnings("unchecked")
+			Class<MarkupContent<ComponentGroupConfiguration>> markupContentClass = (Class<MarkupContent<ComponentGroupConfiguration>>)(Class<?>)MarkupContent.class;
+			builder.addContentParser(markupContentClass, builder.getRecursiveMarkupParser());
+
+			
+			
+			
 			
 			// known child object classes
 //			{
@@ -80,8 +93,8 @@ public final class StandardMarkupContentBinding implements ContentParser<MarkupC
 			builder.addComponentGroupConfigurationClass(PieChartConfiguration.class);
 			builder.addComponentGroupConfigurationClass(SubmitButtonConfiguration.class);
 //			builder.addComponentGroupConfigurationClass(TabPanelConfiguration.class);
-//			builder.addComponentGroupConfigurationClass(TextFieldConfiguration.class);
-//			builder.addComponentGroupConfigurationClass(CheckboxConfiguration.class);
+			builder.addComponentGroupConfigurationClass(TextFieldConfiguration.class);
+			builder.addComponentGroupConfigurationClass(CheckboxConfiguration.class);
 //			builder.addComponentGroupConfigurationBinding("navbar", new NavigationBarBinding(builder));
 			
 			// Bootstrap-specific tags

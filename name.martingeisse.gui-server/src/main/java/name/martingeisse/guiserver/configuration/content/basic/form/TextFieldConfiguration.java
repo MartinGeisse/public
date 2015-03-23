@@ -9,13 +9,13 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
-import name.martingeisse.common.terms.Multiplicity;
 import name.martingeisse.guiserver.configuration.content.AbstractSingleComponentConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
 import name.martingeisse.guiserver.xml.builder.AttributeValueBindingOptionality;
-import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
 import name.martingeisse.guiserver.xml.builder.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
+import name.martingeisse.guiserver.xml.builder.BindPropertyElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;
@@ -25,56 +25,23 @@ import org.apache.wicket.validation.IValidator;
 /**
  * Represents a text field.
  */
-@BindComponentElement(localName = "textField", attributes = {
-	@BindPropertyAttribute(name = "name"), @BindPropertyAttribute(name = "required", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
-}, childObjectMultiplicity = Multiplicity.ANY, childObjectElementNameFilter = "validation")
+@BindComponentElement(localName = "textField")
 public final class TextFieldConfiguration extends AbstractSingleComponentConfiguration {
 
 	/**
 	 * the name
 	 */
-	private final String name;
+	private String name;
 
 	/**
 	 * the required
 	 */
-	private final boolean required;
+	private boolean required;
 
 	/**
-	 * the modifiers
+	 * the validators
 	 */
-	private final List<FormFieldModifier> modifiers;
-
-	/**
-	 * the metadata
-	 */
-	private final FormFieldMetadata metadata;
-
-	/**
-	 * Constructor.
-	 * @param name the field name
-	 * @param required whether this is a required field
-	 * @param modifiers field modifiers
-	 */
-	public TextFieldConfiguration(String name, boolean required, List<FormFieldModifier> modifiers) {
-
-		// assign basic fields
-		this.name = name;
-		this.required = required;
-		this.modifiers = modifiers;
-
-		// extract validators
-		List<IValidator<?>> validators = new ArrayList<IValidator<?>>();
-		for (FormFieldModifier modifier : modifiers) {
-			if (modifier instanceof ValidationFormFieldModifier) {
-				validators.add(((ValidationFormFieldModifier)modifier).getValidator());
-			}
-		}
-
-		// build the form field meta-data
-		this.metadata = new FormFieldMetadata(name, required, validators);
-
-	}
+	private List<IValidator<?>> validators = new ArrayList<>();
 
 	/**
 	 * Getter method for the name.
@@ -82,6 +49,15 @@ public final class TextFieldConfiguration extends AbstractSingleComponentConfigu
 	 */
 	public String getName() {
 		return name;
+	}
+
+	/**
+	 * Setter method for the name.
+	 * @param name the name to set
+	 */
+	@BindPropertyAttribute(name = "name")
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
@@ -93,19 +69,21 @@ public final class TextFieldConfiguration extends AbstractSingleComponentConfigu
 	}
 
 	/**
-	 * Getter method for the modifiers.
-	 * @return the modifiers
+	 * Setter method for the required.
+	 * @param required the required to set
 	 */
-	public List<FormFieldModifier> getModifiers() {
-		return modifiers;
+	@BindPropertyAttribute(name = "required", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
+	public void setRequired(boolean required) {
+		this.required = required;
 	}
 
 	/**
-	 * Getter method for the metadata.
-	 * @return the metadata
+	 * Adds a validator to this form field.
+	 * @param validator the validator to add
 	 */
-	public FormFieldMetadata getMetadata() {
-		return metadata;
+	@BindPropertyElement(localName = "validation")
+	public void addValidator(IValidator<?> validator) {
+		validators.add(validator);
 	}
 
 	/* (non-Javadoc)
@@ -118,16 +96,16 @@ public final class TextFieldConfiguration extends AbstractSingleComponentConfigu
 		assembler.getMarkupWriter().writeAttribute("type", "text");
 		assembler.getMarkupWriter().writeAttribute("wicket:id", getComponentId());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.configuration.content.ComponentConfiguration#buildComponent()
 	 */
 	@Override
 	public Component buildComponent() {
 		TextField<?> textField = new TextField<>(getComponentId());
-		textField.setRequired(metadata.isRequired());
-		textField.add(new FieldPathBehavior(metadata.getName()));
-		for (IValidator<?> validator : metadata.getValidators()) {
+		textField.setRequired(required);
+		textField.add(new FieldPathBehavior(name));
+		for (IValidator<?> validator : validators) {
 			addValidator(textField, validator);
 		}
 		return textField;
