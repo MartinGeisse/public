@@ -11,8 +11,9 @@ import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigura
 import name.martingeisse.guiserver.gui.DisappearingFeedbackPanel;
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
 import name.martingeisse.guiserver.gui.FieldPathFeedbackMessageFilter;
-import name.martingeisse.guiserver.xml.builder.BindComponentElement;
-import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
+import name.martingeisse.guiserver.xml.builder.BindAttribute;
+import name.martingeisse.guiserver.xml.builder.RegisterComponentElement;
+import name.martingeisse.guiserver.xml.builder.StructuredElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;
@@ -20,7 +21,8 @@ import org.apache.wicket.Component;
 /**
  * A panel that shows feedback messages for a form component with a {@link FieldPathBehavior}.
  */
-@BindComponentElement(localName = "feedback")
+@StructuredElement
+@RegisterComponentElement(localName = "feedback")
 public final class FieldPathFeedbackPanelConfiguration extends AbstractSingleComponentConfiguration {
 
 	/**
@@ -32,7 +34,7 @@ public final class FieldPathFeedbackPanelConfiguration extends AbstractSingleCom
 	 * Setter method for the path.
 	 * @param path the path to set
 	 */
-	@BindPropertyAttribute(name = "name")
+	@BindAttribute(name = "name")
 	public void setPath(String path) {
 		this.path = path;
 	}

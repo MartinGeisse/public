@@ -10,12 +10,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation can be used to bind a component element to the
- * annotated component configuration class.
+ * This annotation can be used to register a component element, using the
+ * annotated class as the configuration class.
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BindComponentElement {
+public @interface RegisterComponentElement {
 
 	/**
 	 * @return the local element name

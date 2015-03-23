@@ -4,12 +4,12 @@
 
 package name.martingeisse.guiserver.configuration.content.basic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import name.martingeisse.common.terms.Multiplicity;
 import name.martingeisse.guiserver.configuration.Configuration;
 import name.martingeisse.guiserver.configuration.content.AbstractSingleComponentConfiguration;
 import name.martingeisse.guiserver.configuration.content.AbstractSingleContainerConfiguration;
@@ -18,10 +18,11 @@ import name.martingeisse.guiserver.configuration.content.IComponentGroupConfigur
 import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.configuration.content.UrlSubpathComponentGroupConfiguration;
 import name.martingeisse.guiserver.xml.builder.AttributeValueBindingOptionality;
-import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
-import name.martingeisse.guiserver.xml.builder.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.BindAttribute;
+import name.martingeisse.guiserver.xml.builder.BindElement;
+import name.martingeisse.guiserver.xml.builder.RegisterComponentElement;
+import name.martingeisse.guiserver.xml.builder.StructuredElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
-import name.martingeisse.guiserver.xml.result.MarkupContent;
 import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel;
 
 import org.apache.wicket.Component;
@@ -35,10 +36,8 @@ import org.apache.wicket.markup.html.panel.PanelMarkupSourcingStrategy;
 /**
  * Represents a tab panel.
  */
-@BindComponentElement(localName = "tabPanel", 
-	childObjectMultiplicity = Multiplicity.NONZERO, childObjectElementNameFilter = {
-		"tab"
-})
+@StructuredElement
+@RegisterComponentElement(localName = "tabPanel")
 public final class TabPanelConfiguration extends AbstractSingleComponentConfiguration implements IConfigurationSnippet, UrlSubpathComponentGroupConfiguration {
 
 	/**
@@ -49,7 +48,7 @@ public final class TabPanelConfiguration extends AbstractSingleComponentConfigur
 	/**
 	 * the tabs
 	 */
-	private List<TabEntry> tabs;
+	private List<TabEntry> tabs = new ArrayList<TabEntry>();
 
 	/**
 	 * the snippetHandle
@@ -72,9 +71,18 @@ public final class TabPanelConfiguration extends AbstractSingleComponentConfigur
 	 * Setter method for the parameterName.
 	 * @param parameterName the parameterName to set
 	 */
-	@BindPropertyAttribute(name = "parameter", optionality = AttributeValueBindingOptionality.OPTIONAL)
+	@BindAttribute(name = "parameter", optionality = AttributeValueBindingOptionality.OPTIONAL)
 	public void setParameterName(String parameterName) {
 		this.parameterName = parameterName;
+	}
+	
+	/**
+	 * Adds a tab.
+	 * @param tab the tab to add
+	 */
+	@BindElement(localName = "tab")
+	public void addTab(TabEntry tab) {
+		tabs.add(tab);
 	}
 
 	/* (non-Javadoc)
@@ -159,35 +167,23 @@ public final class TabPanelConfiguration extends AbstractSingleComponentConfigur
 	/**
 	 * Represents a tab in the panel.
 	 */
+	@StructuredElement
 	public static final class TabEntry extends AbstractSingleContainerConfiguration {
 
 		/**
 		 * the title
 		 */
-		private final String title;
+		private String title;
 		
 		/**
 		 * the selector
 		 */
-		private final String selector;
+		private String selector;
 
 		/**
 		 * the tabInfo
 		 */
-		private final PageParameterDrivenTabPanel.AbstractTabInfo tabInfo;
-
-		/**
-		 * Constructor.
-		 * @param title the title text
-		 * @param selector the selector
-		 * @param markupContent the markup content
-		 */
-		public TabEntry(String title, String selector, MarkupContent<ComponentGroupConfiguration> markupContent) {
-			super(markupContent);
-			this.title = title;
-			this.selector = selector;
-			this.tabInfo = new PageParameterDrivenTabPanel.TabInfo(title, selector);
-		}
+		private PageParameterDrivenTabPanel.AbstractTabInfo tabInfo;
 
 		/**
 		 * Getter method for the title.
@@ -195,6 +191,15 @@ public final class TabPanelConfiguration extends AbstractSingleComponentConfigur
 		 */
 		public String getTitle() {
 			return title;
+		}
+		
+		/**
+		 * Setter method for the title.
+		 * @param title the title to set
+		 */
+		@BindAttribute(name = "title")
+		public void setTitle(String title) {
+			this.title = title;
 		}
 		
 		/**
@@ -206,10 +211,22 @@ public final class TabPanelConfiguration extends AbstractSingleComponentConfigur
 		}
 		
 		/**
+		 * Setter method for the selector.
+		 * @param selector the selector to set
+		 */
+		@BindAttribute(name = "selector")
+		public void setSelector(String selector) {
+			this.selector = selector;
+		}
+		
+		/**
 		 * Getter method for the tabInfo.
 		 * @return the tabInfo
 		 */
 		public PageParameterDrivenTabPanel.AbstractTabInfo getTabInfo() {
+			if (tabInfo == null) {
+				tabInfo = new PageParameterDrivenTabPanel.TabInfo(title, selector);
+			}
 			return tabInfo;
 		}
 

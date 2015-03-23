@@ -9,7 +9,7 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
-import name.martingeisse.guiserver.xml.builder.BindPropertyContent;
+import name.martingeisse.guiserver.xml.builder.BindContent;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 import name.martingeisse.guiserver.xml.result.MarkupContent;
 
@@ -37,7 +37,7 @@ public abstract class AbstractSingleContainerConfiguration extends AbstractSingl
 	 * Setter method for the markupContent.
 	 * @param markupContent the markupContent to set
 	 */
-	@BindPropertyContent
+	@BindContent
 	public final void setMarkupContent(MarkupContent<ComponentGroupConfiguration> markupContent) {
 		this.markupContent = markupContent;
 	}

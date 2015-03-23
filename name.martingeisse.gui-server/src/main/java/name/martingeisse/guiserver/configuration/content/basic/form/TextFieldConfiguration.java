@@ -13,9 +13,10 @@ import name.martingeisse.guiserver.configuration.content.AbstractSingleComponent
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
 import name.martingeisse.guiserver.xml.builder.AttributeValueBindingOptionality;
-import name.martingeisse.guiserver.xml.builder.BindComponentElement;
-import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
-import name.martingeisse.guiserver.xml.builder.BindPropertyElement;
+import name.martingeisse.guiserver.xml.builder.BindAttribute;
+import name.martingeisse.guiserver.xml.builder.BindElement;
+import name.martingeisse.guiserver.xml.builder.RegisterComponentElement;
+import name.martingeisse.guiserver.xml.builder.StructuredElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;
@@ -25,7 +26,8 @@ import org.apache.wicket.validation.IValidator;
 /**
  * Represents a text field.
  */
-@BindComponentElement(localName = "textField")
+@StructuredElement
+@RegisterComponentElement(localName = "textField")
 public final class TextFieldConfiguration extends AbstractSingleComponentConfiguration {
 
 	/**
@@ -55,7 +57,7 @@ public final class TextFieldConfiguration extends AbstractSingleComponentConfigu
 	 * Setter method for the name.
 	 * @param name the name to set
 	 */
-	@BindPropertyAttribute(name = "name")
+	@BindAttribute(name = "name")
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -72,7 +74,7 @@ public final class TextFieldConfiguration extends AbstractSingleComponentConfigu
 	 * Setter method for the required.
 	 * @param required the required to set
 	 */
-	@BindPropertyAttribute(name = "required", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
+	@BindAttribute(name = "required", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
 	public void setRequired(boolean required) {
 		this.required = required;
 	}
@@ -81,7 +83,7 @@ public final class TextFieldConfiguration extends AbstractSingleComponentConfigu
 	 * Adds a validator to this form field.
 	 * @param validator the validator to add
 	 */
-	@BindPropertyElement(localName = "validation")
+	@BindElement(localName = "validation")
 	public void addValidator(IValidator<?> validator) {
 		validators.add(validator);
 	}

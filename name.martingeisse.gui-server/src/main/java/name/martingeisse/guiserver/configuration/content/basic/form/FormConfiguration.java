@@ -14,8 +14,9 @@ import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigura
 import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.gui.ConfigurationDefinedForm;
 import name.martingeisse.guiserver.gui.FormDataModel;
-import name.martingeisse.guiserver.xml.builder.BindComponentElement;
-import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
+import name.martingeisse.guiserver.xml.builder.BindAttribute;
+import name.martingeisse.guiserver.xml.builder.RegisterComponentElement;
+import name.martingeisse.guiserver.xml.builder.StructuredElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.MarkupContainer;
@@ -34,7 +35,8 @@ import org.apache.wicket.model.IModel;
  * reflected in other components that pull values from the
  * same models.
  */
-@BindComponentElement(localName = "form")
+@StructuredElement
+@RegisterComponentElement(localName = "form")
 public class FormConfiguration extends AbstractSingleContainerConfiguration implements IConfigurationSnippet {
 
 	/**
@@ -59,7 +61,7 @@ public class FormConfiguration extends AbstractSingleContainerConfiguration impl
 	 * Setter method for the backendUrl.
 	 * @param backendUrl the backendUrl to set
 	 */
-	@BindPropertyAttribute(name = "backendUrl")
+	@BindAttribute(name = "backendUrl")
 	public void setBackendUrl(String backendUrl) {
 		this.backendUrl = backendUrl;
 	}

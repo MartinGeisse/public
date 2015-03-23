@@ -10,8 +10,9 @@ import name.martingeisse.guiserver.configuration.content.AbstractSingleComponent
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.gui.HttpModel;
 import name.martingeisse.guiserver.xml.builder.AttributeValueBindingOptionality;
-import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
-import name.martingeisse.guiserver.xml.builder.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.BindAttribute;
+import name.martingeisse.guiserver.xml.builder.RegisterComponentElement;
+import name.martingeisse.guiserver.xml.builder.StructuredElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;
@@ -20,7 +21,8 @@ import org.apache.wicket.markup.html.basic.Label;
 /**
  * This configuration represents a wicket panel that loads its content from the backend.
  */
-@BindComponentElement(localName = "includeBackend")
+@StructuredElement
+@RegisterComponentElement(localName = "includeBackend")
 public final class IncludeBackendConfiguration extends AbstractSingleComponentConfiguration {
 
 	/**
@@ -37,7 +39,7 @@ public final class IncludeBackendConfiguration extends AbstractSingleComponentCo
 	 * Setter method for the url.
 	 * @param url the url to set
 	 */
-	@BindPropertyAttribute(name = "url")
+	@BindAttribute(name = "url")
 	public void setUrl(String url) {
 		this.url = url;
 	}
@@ -46,7 +48,7 @@ public final class IncludeBackendConfiguration extends AbstractSingleComponentCo
 	 * Setter method for the escape.
 	 * @param escape the escape to set
 	 */
-	@BindPropertyAttribute(name = "escape", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
+	@BindAttribute(name = "escape", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
 	public void setEscape(boolean escape) {
 		this.escape = escape;
 	}

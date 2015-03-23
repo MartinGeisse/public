@@ -15,9 +15,10 @@ import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigura
 import name.martingeisse.guiserver.gui.FieldPathBehavior;
 import name.martingeisse.guiserver.gui.FieldPathFeedbackMessageFilter;
 import name.martingeisse.guiserver.xml.builder.AttributeValueBindingOptionality;
-import name.martingeisse.guiserver.xml.builder.BindComponentElement;
-import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
-import name.martingeisse.guiserver.xml.builder.BindPropertyElement;
+import name.martingeisse.guiserver.xml.builder.BindAttribute;
+import name.martingeisse.guiserver.xml.builder.BindElement;
+import name.martingeisse.guiserver.xml.builder.RegisterComponentElement;
+import name.martingeisse.guiserver.xml.builder.StructuredElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 import name.martingeisse.wicket.component.misc.BootstrapFeedbackPanel;
 
@@ -30,7 +31,8 @@ import org.apache.wicket.validation.IValidator;
 /**
  * Represents a text field, including validation errors and the corresponding Bootstrap markup.
  */
-@BindComponentElement(localName = "bsTextField")
+@StructuredElement
+@RegisterComponentElement(localName = "bsTextField")
 public final class BootstrapTextFieldConfiguration extends AbstractComponentGroupConfiguration {
 
 	/**
@@ -65,7 +67,7 @@ public final class BootstrapTextFieldConfiguration extends AbstractComponentGrou
 	 * Setter method for the name.
 	 * @param name the name to set
 	 */
-	@BindPropertyAttribute(name = "name")
+	@BindAttribute(name = "name")
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -82,7 +84,7 @@ public final class BootstrapTextFieldConfiguration extends AbstractComponentGrou
 	 * Setter method for the label.
 	 * @param label the label to set
 	 */
-	@BindPropertyAttribute(name = "label")
+	@BindAttribute(name = "label")
 	public void setLabel(String label) {
 		this.label = label;
 	}
@@ -99,7 +101,7 @@ public final class BootstrapTextFieldConfiguration extends AbstractComponentGrou
 	 * Setter method for the required.
 	 * @param required the required to set
 	 */
-	@BindPropertyAttribute(name = "required", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
+	@BindAttribute(name = "required", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "true")
 	public void setRequired(boolean required) {
 		this.required = required;
 	}
@@ -108,7 +110,7 @@ public final class BootstrapTextFieldConfiguration extends AbstractComponentGrou
 	 * Adds a validator to this form field.
 	 * @param validator the validator to add
 	 */
-	@BindPropertyElement(localName = "validation")
+	@BindElement(localName = "validation")
 	public void addValidator(IValidator<?> validator) {
 		validators.add(validator);
 	}

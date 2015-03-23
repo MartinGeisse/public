@@ -22,7 +22,7 @@ import name.martingeisse.guiserver.xml.content.ContentParser;
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BindPropertyContent {
+public @interface BindContent {
 
 	/**
 	 * Allows to specify the parsed type directly, overriding the parameter type of

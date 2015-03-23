@@ -24,7 +24,7 @@ import name.martingeisse.guiserver.xml.value.ValueParser;
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BindPropertyAttribute {
+public @interface BindAttribute {
 
 	/**
 	 * @return the attribute name

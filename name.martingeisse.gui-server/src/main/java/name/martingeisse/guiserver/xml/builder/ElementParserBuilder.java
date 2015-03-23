@@ -63,17 +63,20 @@ public final class ElementParserBuilder {
 	 * Builds the binding.
 	 */
 	public <T> ElementParser<T> build(Class<? extends T> targetClass) {
+		if (targetClass.getAnnotation(StructuredElement.class) == null) {
+			throw new IllegalArgumentException("class is not annotated with " + StructuredElement.class.getSimpleName() + ": " + targetClass);
+		}
 		try {
 			Constructor<? extends T> constructor = targetClass.getConstructor();
 			List<PropertiesBinding<T, ? extends AttributeParser<?>>> attributeBindings = new ArrayList<>();
 			Map<String, PropertiesBinding<T, ? extends ElementParser<?>>> elementBindings = new HashMap<>();
 			PropertiesBinding<T, ? extends ContentParser<?>> contentBinding = null;
 			for (Method method : targetClass.getMethods()) {
-				BindPropertyAttribute attributeAnnotation = method.getAnnotation(BindPropertyAttribute.class);
-				BindPropertyElement elementAnnotation = method.getAnnotation(BindPropertyElement.class);
-				BindPropertyContent contentAnnotation = method.getAnnotation(BindPropertyContent.class);
+				BindAttribute attributeAnnotation = method.getAnnotation(BindAttribute.class);
+				BindElement elementAnnotation = method.getAnnotation(BindElement.class);
+				BindContent contentAnnotation = method.getAnnotation(BindContent.class);
 				if (count(attributeAnnotation) + count(elementAnnotation) + count(contentAnnotation) > 1) {
-					throw new RuntimeException("cannot use more than one of " + BindPropertyAttribute.class + ", " + BindPropertyElement.class + ", " + BindPropertyContent.class + " for method " + method.getName() + " of class " + targetClass);
+					throw new RuntimeException("cannot use more than one of " + BindAttribute.class + ", " + BindElement.class + ", " + BindContent.class + " for method " + method.getName() + " of class " + targetClass);
 				} else if (attributeAnnotation != null) {
 					attributeBindings.add(createAttributeBinding(method));
 				} else if (elementAnnotation != null) {
@@ -115,10 +118,10 @@ public final class ElementParserBuilder {
 	 * @throws Exception on errors
 	 */
 	private <T, P> PropertiesBinding<T, AttributeParser<P>> createAttributeBinding(Method method) throws Exception {
-		Class<?> parameterType = determineParameterType(BindPropertyAttribute.class, method);
+		Class<?> parameterType = determineParameterType(BindAttribute.class, method);
 		
 		// extract data from the annotation
-		BindPropertyAttribute annotation = method.getAnnotation(BindPropertyAttribute.class);
+		BindAttribute annotation = method.getAnnotation(BindAttribute.class);
 		String name = annotation.name();
 		boolean optional = (annotation.optionality() != AttributeValueBindingOptionality.MANDATORY);
 		String defaultValue = (annotation.optionality() == AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT ? annotation.defaultValue() : null);
@@ -146,13 +149,14 @@ public final class ElementParserBuilder {
 	 * @throws Exception on errors
 	 */
 	private <T, P> PropertiesBinding<T, ElementParser<P>> createElementBinding(Method method) throws Exception {
-		Class<?> parameterType = determineParameterType(BindPropertyElement.class, method);
+		Class<?> parameterType = determineParameterType(BindElement.class, method);
 		
 		// extract data from the annotation
-		BindPropertyElement annotation = method.getAnnotation(BindPropertyElement.class);
+		BindElement annotation = method.getAnnotation(BindElement.class);
 		
 		// determine the element parser
-		ElementParser<?> untypedElementParser = determineParser(method, annotation.elementParserClass(), ElementParser.class, annotation.type(), parameterType, t -> elementParserRegistry.getParser(t));
+		Function<Class<?>, ? extends ElementParser<P>> parserProvider = this::getOrCreateElementParser;
+		ElementParser<?> untypedElementParser = determineParser(method, annotation.elementParserClass(), ElementParser.class, annotation.type(), parameterType, parserProvider);
 		@SuppressWarnings("unchecked")
 		ElementParser<P> elementParser = (ElementParser<P>)untypedElementParser;
 
@@ -160,6 +164,24 @@ public final class ElementParserBuilder {
 		PropertiesBinding<T, ElementParser<P>> binding = new ParserToMethodBinding<T, P, ElementParser<P>>(elementParser, method);
 		return binding;
 		
+	}
+	
+	/**
+	 * 
+	 */
+	private <T> ElementParser<T> getOrCreateElementParser(Class<?> targetClass) {
+		@SuppressWarnings("unchecked")
+		Class<T> targetClassTyped = (Class<T>)targetClass;
+		ElementParser<T> parser = elementParserRegistry.getParser(targetClassTyped);
+		if (parser != null) {
+			return parser;
+		}
+		if (targetClass.getAnnotation(StructuredElement.class) == null) {
+			throw new RuntimeException("cannot find parser for this class, and no @StructuredElement annotation is present: " + targetClass);
+		}
+		parser = build(targetClassTyped);
+		elementParserRegistry.addParser(targetClassTyped, parser);
+		return parser;
 	}
 
 	/**
@@ -170,10 +192,10 @@ public final class ElementParserBuilder {
 	 * @throws Exception on errors
 	 */
 	private <T, P> PropertiesBinding<T, ContentParser<P>> createContentBinding(Method method) throws Exception {
-		Class<?> parameterType = determineParameterType(BindPropertyContent.class, method);
+		Class<?> parameterType = determineParameterType(BindContent.class, method);
 		
 		// extract data from the annotation
-		BindPropertyContent annotation = method.getAnnotation(BindPropertyContent.class);
+		BindContent annotation = method.getAnnotation(BindContent.class);
 		
 		// determine the content parser
 		ContentParser<?> untypedContentParser = determineParser(method, annotation.contentParserClass(), ContentParser.class, annotation.type(), parameterType, t -> contentParserRegistry.getParser(t));

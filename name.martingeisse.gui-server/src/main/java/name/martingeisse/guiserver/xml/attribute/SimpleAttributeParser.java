@@ -7,7 +7,7 @@ package name.martingeisse.guiserver.xml.attribute;
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
-import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
+import name.martingeisse.guiserver.xml.builder.BindAttribute;
 import name.martingeisse.guiserver.xml.value.ValueParser;
 
 /**
@@ -18,7 +18,7 @@ import name.martingeisse.guiserver.xml.value.ValueParser;
  * Note that the default value is specified in the same format as in the
  * XML, that is, the default value gets parsed just as any other value.
  * This is because of the strongly restricted types that can be used in
- * the default value property of {@link BindPropertyAttribute} annotations.
+ * the default value property of {@link BindAttribute} annotations.
  *
  * @param <T> the attribute value type
  */

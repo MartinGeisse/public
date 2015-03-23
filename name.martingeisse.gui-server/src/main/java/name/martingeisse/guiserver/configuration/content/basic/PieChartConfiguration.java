@@ -11,8 +11,9 @@ import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigura
 import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.gui.PieChartImageResource;
 import name.martingeisse.guiserver.xml.builder.AttributeValueBindingOptionality;
-import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
-import name.martingeisse.guiserver.xml.builder.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.BindAttribute;
+import name.martingeisse.guiserver.xml.builder.RegisterComponentElement;
+import name.martingeisse.guiserver.xml.builder.StructuredElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.Component;
@@ -21,7 +22,8 @@ import org.apache.wicket.markup.html.image.Image;
 /**
  * Configuration for a pie chart component.
  */
-@BindComponentElement(localName = "pieChart")
+@StructuredElement
+@RegisterComponentElement(localName = "pieChart")
 public final class PieChartConfiguration extends AbstractSingleComponentConfiguration implements IConfigurationSnippet {
 
 	/**
@@ -51,7 +53,7 @@ public final class PieChartConfiguration extends AbstractSingleComponentConfigur
 	 * Setter method for the backendUrl.
 	 * @param backendUrl the backendUrl to set
 	 */
-	@BindPropertyAttribute(name = "backendUrl")
+	@BindAttribute(name = "backendUrl")
 	public void setBackendUrl(String backendUrl) {
 		this.backendUrl = backendUrl;
 	}
@@ -68,7 +70,7 @@ public final class PieChartConfiguration extends AbstractSingleComponentConfigur
 	 * Setter method for the legend.
 	 * @param legend the legend to set
 	 */
-	@BindPropertyAttribute(name = "legend", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "false")
+	@BindAttribute(name = "legend", optionality = AttributeValueBindingOptionality.OPTIONAL_WITH_DEFAULT, defaultValue = "false")
 	public void setLegend(boolean legend) {
 		this.legend = legend;
 	}

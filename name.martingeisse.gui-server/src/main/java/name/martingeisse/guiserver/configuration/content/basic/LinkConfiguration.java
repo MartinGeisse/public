@@ -10,8 +10,9 @@ import name.martingeisse.guiserver.configuration.content.AbstractSingleContainer
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.configuration.elements.PageConfiguration;
 import name.martingeisse.guiserver.gui.ConfigurationDefinedPage;
-import name.martingeisse.guiserver.xml.builder.BindComponentElement;
-import name.martingeisse.guiserver.xml.builder.BindPropertyAttribute;
+import name.martingeisse.guiserver.xml.builder.BindAttribute;
+import name.martingeisse.guiserver.xml.builder.RegisterComponentElement;
+import name.martingeisse.guiserver.xml.builder.StructuredElement;
 import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.MarkupContainer;
@@ -22,7 +23,8 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * Configuration for a link. This class tries to cover only the common
  * cases to keep it simple.
  */
-@BindComponentElement(localName = "link")
+@StructuredElement
+@RegisterComponentElement(localName = "link")
 public final class LinkConfiguration extends AbstractSingleContainerConfiguration {
 
 	/**
@@ -42,7 +44,7 @@ public final class LinkConfiguration extends AbstractSingleContainerConfiguratio
 	 * Setter method for the targetPagePath.
 	 * @param targetPagePath the targetPagePath to set
 	 */
-	@BindPropertyAttribute(name = "href")
+	@BindAttribute(name = "href")
 	public void setTargetPagePath(String targetPagePath) {
 		this.targetPagePath = targetPagePath;
 	}

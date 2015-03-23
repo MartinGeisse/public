@@ -6,14 +6,16 @@ package name.martingeisse.guiserver.configuration.content.basic;
 
 import name.martingeisse.guiserver.configuration.content.AbstractSingleContainerConfiguration;
 import name.martingeisse.guiserver.gui.FirstChildEnclosureContainer;
-import name.martingeisse.guiserver.xml.builder.BindComponentElement;
+import name.martingeisse.guiserver.xml.builder.RegisterComponentElement;
+import name.martingeisse.guiserver.xml.builder.StructuredElement;
 
 import org.apache.wicket.MarkupContainer;
 
 /**
  * Configuration for a (wicket:enclosure)-like container.
  */
-@BindComponentElement(localName = "enclosure")
+@StructuredElement
+@RegisterComponentElement(localName = "enclosure")
 public final class EnclosureConfiguration extends AbstractSingleContainerConfiguration {
 
 	/* (non-Javadoc)

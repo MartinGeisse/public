@@ -73,7 +73,7 @@ public final class XmlParserBuilder<C extends ConfigurationAssemblerAcceptor<C>>
 	}
 
 	/**
-	 * Adds a value parser that can be used for {@link BindPropertyAttribute} annotations.
+	 * Adds a value parser that can be used for {@link BindAttribute} annotations.
 	 * 
 	 * @param type the parsed type
 	 * @param parser the value parser
@@ -83,7 +83,7 @@ public final class XmlParserBuilder<C extends ConfigurationAssemblerAcceptor<C>>
 	}
 
 	/**
-	 * Adds an element parser that can be used for {@link BindPropertyElement} annotations.
+	 * Adds an element parser that can be used for {@link BindElement} annotations.
 	 * 
 	 * @param type the parsed type
 	 * @param parser the element parser
@@ -93,7 +93,7 @@ public final class XmlParserBuilder<C extends ConfigurationAssemblerAcceptor<C>>
 	}
 	
 	/**
-	 * Adds an content parser that can be used for {@link BindPropertyContent} annotations.
+	 * Adds an content parser that can be used for {@link BindContent} annotations.
 	 * 
 	 * @param type the parsed type
 	 * @param parser the content parser
@@ -120,14 +120,14 @@ public final class XmlParserBuilder<C extends ConfigurationAssemblerAcceptor<C>>
 	
 	/**
 	 * Adds a component group configuration class to this builder. The class must be annotated
-	 * with {@link BindComponentElement}.
+	 * with {@link RegisterComponentElement}.
 	 * 
 	 * @param targetClass the class to add
 	 */
-	public void addComponentGroupConfigurationClass(Class<? extends C> targetClass) {
-		BindComponentElement annotation = targetClass.getAnnotation(BindComponentElement.class);
+	public void autoAddComponentGroupConfigurationClass(Class<? extends C> targetClass) {
+		RegisterComponentElement annotation = targetClass.getAnnotation(RegisterComponentElement.class);
 		if (annotation == null) {
-			throw new RuntimeException("class " + targetClass + " is not annotated with @BindComponentElement");
+			throw new RuntimeException("class " + targetClass + " is not annotated with @RegisterComponentElement");
 		}
 		addComponentGroupConfigurationParser(annotation.localName(), elementParserBuilder.build(targetClass));
 	}

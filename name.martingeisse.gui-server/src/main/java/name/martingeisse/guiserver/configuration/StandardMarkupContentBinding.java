@@ -12,6 +12,7 @@ import name.martingeisse.guiserver.configuration.content.basic.IncludeBackendCon
 import name.martingeisse.guiserver.configuration.content.basic.LazyLoadContainerConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.LinkConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.PieChartConfiguration;
+import name.martingeisse.guiserver.configuration.content.basic.TabPanelConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.CheckboxConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.FieldPathFeedbackPanelConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.form.FormConfiguration;
@@ -76,31 +77,27 @@ public final class StandardMarkupContentBinding implements ContentParser<MarkupC
 			
 			// known child object classes
 //			{
-//				AttributeParser<?>[] attributeBindings = {
-//					new SimpleAttributeParser<>("title", StringValueParser.INSTANCE),
-//					new SimpleAttributeParser<>("selector", StringValueParser.INSTANCE),
-//				};
 //				Constructor<TabPanelConfiguration.TabEntry> constructor = TabPanelConfiguration.TabEntry.class.getConstructor(String.class, String.class, MarkupContent.class);
 //				builder.addChildElementObjectBinding(TabPanelConfiguration.TabEntry.class, new ClassInstanceElementParser<>(constructor, attributeBindings, builder.getRecursiveMarkupBinding()));
 //			}
 			
 			// known component special tags
-			builder.addComponentGroupConfigurationClass(EnclosureConfiguration.class);
-			builder.addComponentGroupConfigurationClass(IncludeBackendConfiguration.class);
-			builder.addComponentGroupConfigurationClass(LazyLoadContainerConfiguration.class);
-			builder.addComponentGroupConfigurationClass(LinkConfiguration.class);
-			builder.addComponentGroupConfigurationClass(FieldPathFeedbackPanelConfiguration.class);
-			builder.addComponentGroupConfigurationClass(FormConfiguration.class);
-			builder.addComponentGroupConfigurationClass(PieChartConfiguration.class);
-			builder.addComponentGroupConfigurationClass(SubmitButtonConfiguration.class);
-//			builder.addComponentGroupConfigurationClass(TabPanelConfiguration.class);
-			builder.addComponentGroupConfigurationClass(TextFieldConfiguration.class);
-			builder.addComponentGroupConfigurationClass(CheckboxConfiguration.class);
+			builder.autoAddComponentGroupConfigurationClass(EnclosureConfiguration.class);
+			builder.autoAddComponentGroupConfigurationClass(IncludeBackendConfiguration.class);
+			builder.autoAddComponentGroupConfigurationClass(LazyLoadContainerConfiguration.class);
+			builder.autoAddComponentGroupConfigurationClass(LinkConfiguration.class);
+			builder.autoAddComponentGroupConfigurationClass(FieldPathFeedbackPanelConfiguration.class);
+			builder.autoAddComponentGroupConfigurationClass(FormConfiguration.class);
+			builder.autoAddComponentGroupConfigurationClass(PieChartConfiguration.class);
+			builder.autoAddComponentGroupConfigurationClass(SubmitButtonConfiguration.class);
+			builder.autoAddComponentGroupConfigurationClass(TabPanelConfiguration.class);
+			builder.autoAddComponentGroupConfigurationClass(TextFieldConfiguration.class);
+			builder.autoAddComponentGroupConfigurationClass(CheckboxConfiguration.class);
 //			builder.addComponentGroupConfigurationBinding("navbar", new NavigationBarBinding(builder));
 			
 			// Bootstrap-specific tags
-			builder.addComponentGroupConfigurationClass(BootstrapFormConfiguration.class);
-			builder.addComponentGroupConfigurationClass(BootstrapTextFieldConfiguration.class);
+			builder.autoAddComponentGroupConfigurationClass(BootstrapFormConfiguration.class);
+			builder.autoAddComponentGroupConfigurationClass(BootstrapTextFieldConfiguration.class);
 			
 			binding = builder.build();
 		} catch (Exception e) {

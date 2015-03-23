@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 import name.martingeisse.guiserver.xml.element.ElementParser;
 
 /**
- * This annotation can be used to bind a special element to a method that
+ * This annotation can be used to bind a nested element to a method that
  * takes the parsed type of the attribute as its parameter type, such as
  * a setter method.
  * 
@@ -23,7 +23,7 @@ import name.martingeisse.guiserver.xml.element.ElementParser;
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BindPropertyElement {
+public @interface BindElement {
 
 	/**
 	 * @return the local element name
