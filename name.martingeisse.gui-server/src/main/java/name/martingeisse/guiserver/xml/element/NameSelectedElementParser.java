@@ -4,13 +4,12 @@
 
 package name.martingeisse.guiserver.xml.element;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * This element parser selects one of several parsers based on
@@ -21,14 +20,16 @@ public class NameSelectedElementParser<T> implements ElementParser<T> {
 	/**
 	 * the parsers
 	 */
-	private final Map<String, ElementParser<? extends T>> parsers;
+	private final Map<String, ElementParser<? extends T>> parsers = new HashMap<String, ElementParser<? extends T>>();
 
 	/**
-	 * Constructor.
-	 * @param parsers the parsers
+	 * Adds a sub-parser to this parser.
+	 * 
+	 * @param localElementName the local element name that selects the specified parser
+	 * @param parser the parser to invoke for that element name
 	 */
-	public NameSelectedElementParser(Map<String, ElementParser<? extends T>> parsers) {
-		this.parsers = ImmutableMap.copyOf(parsers);
+	public void addParser(String localElementName, ElementParser<? extends T> parser) {
+		parsers.put(localElementName, parser);
 	}
 
 	/* (non-Javadoc)

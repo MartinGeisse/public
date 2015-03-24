@@ -8,9 +8,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 import name.martingeisse.guiserver.xml.attribute.AttributeParser;
@@ -18,6 +16,7 @@ import name.martingeisse.guiserver.xml.attribute.SimpleAttributeParser;
 import name.martingeisse.guiserver.xml.content.ContentParser;
 import name.martingeisse.guiserver.xml.content.ContentParserRegistry;
 import name.martingeisse.guiserver.xml.element.ClassInstanceElementParser;
+import name.martingeisse.guiserver.xml.element.ContentParserWrapper;
 import name.martingeisse.guiserver.xml.element.ElementParser;
 import name.martingeisse.guiserver.xml.element.ElementParserRegistry;
 import name.martingeisse.guiserver.xml.properties.ContentPropertiesBinding;
@@ -29,6 +28,9 @@ import name.martingeisse.guiserver.xml.value.ValueParserRegistry;
 
 /**
  * Helps build an {@link ClassInstanceElementParser}.
+ * 
+ * This object is constructed with reference to existing attribute/element/parser registries. Changes to those registries
+ * (such as newly registered parsers) will be visible through this builder!
  */
 public final class ElementParserBuilder {
 
@@ -69,7 +71,8 @@ public final class ElementParserBuilder {
 		try {
 			Constructor<? extends T> constructor = targetClass.getConstructor();
 			List<PropertiesBinding<T, ? extends AttributeParser<?>>> attributeBindings = new ArrayList<>();
-			Map<String, PropertiesBinding<T, ? extends ElementParser<?>>> elementBindings = new HashMap<>();
+			NameSelectedPropertiesBinding<T, ElementParser<?>> elementBinding = new NameSelectedPropertiesBinding<T, ElementParser<?>>();
+			boolean hasElementBinding = false;
 			PropertiesBinding<T, ? extends ContentParser<?>> contentBinding = null;
 			for (Method method : targetClass.getMethods()) {
 				BindAttribute attributeAnnotation = method.getAnnotation(BindAttribute.class);
@@ -80,7 +83,8 @@ public final class ElementParserBuilder {
 				} else if (attributeAnnotation != null) {
 					attributeBindings.add(createAttributeBinding(method));
 				} else if (elementAnnotation != null) {
-					elementBindings.put(elementAnnotation.localName(), createElementBinding(method));
+					elementBinding.addBinding(elementAnnotation.localName(), createElementBinding(method));
+					hasElementBinding = true;
 				} else if (contentAnnotation != null) {
 					if (contentBinding != null) {
 						throw new RuntimeException("multiple content bindings for class " + targetClass);
@@ -91,12 +95,11 @@ public final class ElementParserBuilder {
 			@SuppressWarnings("unchecked")
 			PropertiesBinding<T, ? extends AttributeParser<?>>[] attributeBindingsArray = (PropertiesBinding<T, ? extends AttributeParser<?>>[])(new PropertiesBinding<?, ?>[attributeBindings.size()]);
 			attributeBindingsArray = attributeBindings.toArray(attributeBindingsArray);
-			if (!elementBindings.isEmpty()) {
+			if (hasElementBinding) {
 				if (contentBinding != null) {
 					throw new RuntimeException("class " + targetClass + " has both child-element-to-property-binding(s) and a content-to-property-binding");
 				} else {
-					NameSelectedPropertiesBinding<T, ElementParser<?>> nameSelectedPropertiesBinding = new NameSelectedPropertiesBinding<T, ElementParser<?>>(elementBindings);
-					contentBinding = new ContentPropertiesBinding<>(nameSelectedPropertiesBinding);
+					contentBinding = new ContentPropertiesBinding<>(elementBinding);
 				}
 			}
 			return new ClassInstanceElementParser<T>(constructor, attributeBindingsArray, contentBinding);			
@@ -172,16 +175,29 @@ public final class ElementParserBuilder {
 	private <T> ElementParser<T> getOrCreateElementParser(Class<?> targetClass) {
 		@SuppressWarnings("unchecked")
 		Class<T> targetClassTyped = (Class<T>)targetClass;
+		
+		// check for a pre-registered or previously created parser
 		ElementParser<T> parser = elementParserRegistry.getParser(targetClassTyped);
 		if (parser != null) {
 			return parser;
 		}
-		if (targetClass.getAnnotation(StructuredElement.class) == null) {
-			throw new RuntimeException("cannot find parser for this class, and no @StructuredElement annotation is present: " + targetClass);
+		
+		// check if a structured-element parser can be created automatically
+		if (targetClass.getAnnotation(StructuredElement.class) != null) {
+			parser = build(targetClassTyped);
+			elementParserRegistry.addParser(targetClassTyped, parser);
+			return parser;
 		}
-		parser = build(targetClassTyped);
-		elementParserRegistry.addParser(targetClassTyped, parser);
-		return parser;
+		
+		// check if we can create a parser by wrapping a content parser
+		ContentParser<T> contentParser = contentParserRegistry.getParser(targetClassTyped);
+		if (contentParser != null) {
+			parser = new ContentParserWrapper<>(contentParser);
+			elementParserRegistry.addParser(targetClassTyped, parser);
+			return parser;
+		}
+		
+		throw new RuntimeException("cannot find parser for this class, and no @StructuredElement annotation is present: " + targetClass);
 	}
 
 	/**

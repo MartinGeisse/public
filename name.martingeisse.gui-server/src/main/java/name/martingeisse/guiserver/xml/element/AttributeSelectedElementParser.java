@@ -4,6 +4,7 @@
 
 package name.martingeisse.guiserver.xml.element;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
@@ -19,21 +20,37 @@ public class AttributeSelectedElementParser<T> implements ElementParser<T> {
 	/**
 	 * the attributeName
 	 */
-	private final String attributeName;
+	private String attributeName;
 
 	/**
 	 * the parsers
 	 */
-	private final Map<String, ElementParser<? extends T>> parsers;
+	private final Map<String, ElementParser<? extends T>> parsers = new HashMap<>();
 
 	/**
-	 * Constructor.
-	 * @param attributeName the name of the attribute
-	 * @param parsers the parsers
+	 * Getter method for the attributeName.
+	 * @return the attributeName
 	 */
-	public AttributeSelectedElementParser(String attributeName, Map<String, ElementParser<? extends T>> parsers) {
+	public String getAttributeName() {
+		return attributeName;
+	}
+
+	/**
+	 * Setter method for the attributeName.
+	 * @param attributeName the attributeName to set
+	 */
+	public void setAttributeName(String attributeName) {
 		this.attributeName = attributeName;
-		this.parsers = parsers;
+	}
+	
+	/**
+	 * Adds a sub-parser to this parser.
+	 * 
+	 * @param attributeValue the attribute value that selects the specified parser
+	 * @param parser the parser to invoke for that attribute value
+	 */
+	public void addParser(String attributeValue, ElementParser<? extends T> parser) {
+		parsers.put(attributeValue, parser);
 	}
 
 	/* (non-Javadoc)

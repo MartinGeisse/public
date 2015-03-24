@@ -38,7 +38,7 @@ public abstract class AbstractSingleContainerConfiguration extends AbstractSingl
 	 * @param markupContent the markupContent to set
 	 */
 	@BindContent
-	public final void setMarkupContent(MarkupContent<ComponentGroupConfiguration> markupContent) {
+	public void setMarkupContent(MarkupContent<ComponentGroupConfiguration> markupContent) {
 		this.markupContent = markupContent;
 	}
 	

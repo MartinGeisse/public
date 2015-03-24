@@ -10,9 +10,7 @@ import name.martingeisse.guiserver.xml.MyXmlStreamReader;
 
 /**
  * This implementation of {@link ContentParser} just delegates to
- * another implementation, but allows to replace that implementation. This is
- * needed since we cannot create a structure of all-immutable binding objects
- * that contains a cycle.
+ * another implementation, but allows to replace that implementation.
  */
 public final class DelegatingContentParser<T> implements ContentParser<T> {
 

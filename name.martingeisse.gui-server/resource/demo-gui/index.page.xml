@@ -1,12 +1,4 @@
 <gui:page xmlns:gui="http://guiserver.martingeisse.name/v1">
-	<!-- 
-	<gui:navbar>
-		<gui:brandLink>
-			<gui:link href="/">BRAND</gui:link>
-		</gui:brandLink>
-		<li><a href="/">Link</a></li>
-	</gui:navbar>
-	 -->
 	<h1>Hello World!</h1>
 	<div>
 		This is a page using the new XML format. <gui:link href="/other">Link to the <b>other</b> page</gui:link>

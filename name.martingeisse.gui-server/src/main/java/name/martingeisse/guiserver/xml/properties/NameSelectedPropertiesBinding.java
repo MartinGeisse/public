@@ -4,14 +4,13 @@
 
 package name.martingeisse.guiserver.xml.properties;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
 import name.martingeisse.guiserver.xml.element.ElementParser;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * This binding selects one of several bindings based on
@@ -22,14 +21,16 @@ public final class NameSelectedPropertiesBinding<C, P extends ElementParser<?>> 
 	/**
 	 * the bindings
 	 */
-	private final Map<String, PropertiesBinding<C, ? extends P>> bindings;
+	private final Map<String, PropertiesBinding<C, ? extends P>> bindings = new HashMap<>();
 
 	/**
-	 * Constructor.
-	 * @param bindings the bindings
+	 * Adds a properties binding.
+	 * 
+	 * @param localElementName the local element name that selects the specified binding
+	 * @param binding the binding to invoke for that element name
 	 */
-	public NameSelectedPropertiesBinding(Map<String, ? extends PropertiesBinding<C, ? extends P>> bindings) {
-		this.bindings = ImmutableMap.copyOf(bindings);
+	public void addBinding(String localElementName, PropertiesBinding<C, ? extends P> binding) {
+		bindings.put(localElementName, binding);
 	}
 
 	/* (non-Javadoc)

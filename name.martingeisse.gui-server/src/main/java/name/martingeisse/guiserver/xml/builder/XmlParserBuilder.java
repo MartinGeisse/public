@@ -4,9 +4,6 @@
 
 package name.martingeisse.guiserver.xml.builder;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import name.martingeisse.guiserver.xml.ConfigurationAssemblerAcceptor;
 import name.martingeisse.guiserver.xml.content.ContentParser;
 import name.martingeisse.guiserver.xml.content.ContentParserRegistry;
@@ -25,26 +22,20 @@ import name.martingeisse.guiserver.xml.value.ValueParserRegistry;
  * Calling code can obtain a recursive markup parser from this class. This parser
  * can be used to parse nested markup content. Note that at the time this builder
  * is used, this parser is not fully functional yet.
+ * 
+ * This class also allows to obtain the unfinished component element parser being
+ * built to parse component elements, to use it while building parser loops. Like
+ * the markup content parser, this parser is not fully functional yet.
  *
  * @param <C> the type of components used in markup content
  */
 public final class XmlParserBuilder<C extends ConfigurationAssemblerAcceptor<C>> {
-
-	/**
-	 * the recursiveMarkupParser
-	 */
-	private final DelegatingContentParser<MarkupContent<C>> recursiveMarkupParser;
-
-	/**
-	 * the componentElementParsers
-	 */
-	private final Map<String, ElementParser<? extends C>> componentElementParsers;
-
+	
 	/**
 	 * the valueParserRegistry
 	 */
 	private final ValueParserRegistry valueParserRegistry;
-
+	
 	/**
 	 * the elementParserRegistry
 	 */
@@ -54,22 +45,32 @@ public final class XmlParserBuilder<C extends ConfigurationAssemblerAcceptor<C>>
 	 * the contentParserRegistry
 	 */
 	private final ContentParserRegistry contentParserRegistry;
+
+	/**
+	 * the recursiveMarkupParser
+	 */
+	private final DelegatingContentParser<MarkupContent<C>> recursiveMarkupParser;
 	
 	/**
 	 * the elementParserBuilder
 	 */
 	private final ElementParserBuilder elementParserBuilder;
+
+	/**
+	 * the componentElementParser
+	 */
+	private final NameSelectedElementParser<C> componentElementParser;
 	
 	/**
 	 * Constructor.
 	 */
 	public XmlParserBuilder() {
-		recursiveMarkupParser = new DelegatingContentParser<>();
-		componentElementParsers = new HashMap<>();
 		valueParserRegistry = new ValueParserRegistry();
 		elementParserRegistry = new ElementParserRegistry();
 		contentParserRegistry = new ContentParserRegistry();
+		recursiveMarkupParser = new DelegatingContentParser<>();
 		elementParserBuilder = new ElementParserBuilder(valueParserRegistry, elementParserRegistry, contentParserRegistry);
+		componentElementParser = new NameSelectedElementParser<>();
 	}
 
 	/**
@@ -139,27 +140,24 @@ public final class XmlParserBuilder<C extends ConfigurationAssemblerAcceptor<C>>
 	 * @param parser the parser
 	 */
 	public void addComponentGroupConfigurationParser(String localElementName, ElementParser<? extends C> parser) {
-		componentElementParsers.put(localElementName, parser);
-	}
-	
-	/**
-	 * Returns the component parser for the specified local element name.
-	 * 
-	 * @param localElementName the local element name
-	 * @return the parser
-	 */
-	public ElementParser<? extends C> getComponentParser(String localElementName) {
-		return componentElementParsers.get(localElementName);
+		componentElementParser.addParser(localElementName, parser);
 	}
 
+	/**
+	 * Getter method for the componentElementParser.
+	 * @return the componentElementParser
+	 */
+	public NameSelectedElementParser<C> getComponentElementParser() {
+		return componentElementParser;
+	}
+	
 	/**
 	 * Builds the parser for the XML format.
 	 * 
 	 * @return the parser
 	 */
 	public ContentParser<MarkupContent<C>> build() {
-		NameSelectedElementParser<C> elementParser = new NameSelectedElementParser<>(componentElementParsers);
-		MarkupContentParser<C> markupContentParser = new MarkupContentParser<C>(elementParser);
+		MarkupContentParser<C> markupContentParser = new MarkupContentParser<C>(componentElementParser);
 		recursiveMarkupParser.setDelegate(markupContentParser);
 		return markupContentParser;
 	}

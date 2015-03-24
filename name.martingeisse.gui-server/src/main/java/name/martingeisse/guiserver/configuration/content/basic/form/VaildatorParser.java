@@ -4,9 +4,6 @@
 
 package name.martingeisse.guiserver.configuration.content.basic.form;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
@@ -15,7 +12,6 @@ import name.martingeisse.guiserver.xml.attribute.SimpleAttributeParser;
 import name.martingeisse.guiserver.xml.builder.XmlParserBuilder;
 import name.martingeisse.guiserver.xml.element.AbstractEmptyElementParser;
 import name.martingeisse.guiserver.xml.element.AttributeSelectedElementParser;
-import name.martingeisse.guiserver.xml.element.ElementParser;
 import name.martingeisse.guiserver.xml.value.IntegerValueParser;
 import name.martingeisse.guiserver.xml.value.StringValueParser;
 
@@ -32,15 +28,8 @@ public final class VaildatorParser extends AttributeSelectedElementParser<IValid
 	 * Constructor.
 	 */
 	public VaildatorParser(XmlParserBuilder<ComponentGroupConfiguration> builder) {
-		super("type", createBindings(builder));
-	}
-
-	/**
-	 * 
-	 */
-	private static Map<String, ElementParser<? extends IValidator<?>>> createBindings(XmlParserBuilder<ComponentGroupConfiguration> builder) {
-		Map<String, ElementParser<? extends IValidator<?>>> bindings = new HashMap<>();
-		bindings.put("length", new AbstractEmptyElementParser<IValidator<?>>() {
+		setAttributeName("type");
+		addParser("length", new AbstractEmptyElementParser<IValidator<?>>() {
 			private final SimpleAttributeParser<Integer> minParser = new SimpleAttributeParser<Integer>("min", true, IntegerValueParser.INSTANCE);
 			private final SimpleAttributeParser<Integer> maxParser = new SimpleAttributeParser<Integer>("max", true, IntegerValueParser.INSTANCE);
 			@Override
@@ -48,14 +37,13 @@ public final class VaildatorParser extends AttributeSelectedElementParser<IValid
 				return new StringValidator(minParser.parse(reader), maxParser.parse(reader));
 			}
 		});
-		bindings.put("pattern", new AbstractEmptyElementParser<IValidator<?>>() {
+		addParser("pattern", new AbstractEmptyElementParser<IValidator<?>>() {
 			private final SimpleAttributeParser<String> patternParser = new SimpleAttributeParser<String>("pattern", StringValueParser.INSTANCE);
 			@Override
 			protected IValidator<?> createResult(MyXmlStreamReader reader) throws XMLStreamException {
 				return new PatternValidator(patternParser.parse(reader));
 			}
 		});
-		return bindings;
 	}
 
 }
