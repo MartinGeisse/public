@@ -2,11 +2,9 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.xml;
+package name.martingeisse.guiserver.configuration.content;
 
 import javax.xml.stream.XMLStreamException;
-
-import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 /**
  * This interface is implemented by objects which are able to assemble (parts of)

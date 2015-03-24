@@ -8,12 +8,12 @@ import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.configuration.content.AbstractSingleContainerConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
+import name.martingeisse.guiserver.configuration.content.ConfigurationAssembler;
 import name.martingeisse.guiserver.configuration.elements.PageConfiguration;
 import name.martingeisse.guiserver.gui.ConfigurationDefinedPage;
 import name.martingeisse.guiserver.xml.builder.BindAttribute;
 import name.martingeisse.guiserver.xml.builder.RegisterComponentElement;
 import name.martingeisse.guiserver.xml.builder.StructuredElement;
-import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;

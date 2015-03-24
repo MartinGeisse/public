@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.xml.content;
+package name.martingeisse.guiserver.configuration.content;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,11 +10,9 @@ import java.util.List;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 
-import name.martingeisse.guiserver.xml.ConfigurationAssemblerAcceptor;
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
+import name.martingeisse.guiserver.xml.content.ContentParser;
 import name.martingeisse.guiserver.xml.element.ElementParser;
-import name.martingeisse.guiserver.xml.result.MarkupContent;
-import name.martingeisse.guiserver.xml.result.MarkupContentEntry;
 
 /**
  * Parses XML content to produce mixed raw/component markup.

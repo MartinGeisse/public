@@ -133,7 +133,7 @@ public final class ElementParserBuilder {
 		}
 		
 		// determine the value parser
-		ValueParser<?> untypedValueParser = determineParser(method, annotation.valueParserClass(), ValueParser.class, annotation.type(), parameterType, t -> valueParserRegistry.getParser(t));
+		ValueParser<?> untypedValueParser = determineParser(method, annotation.type(), parameterType, t -> valueParserRegistry.getParser(t));
 		@SuppressWarnings("unchecked")
 		ValueParser<P> valueParser = (ValueParser<P>)untypedValueParser;
 
@@ -159,7 +159,7 @@ public final class ElementParserBuilder {
 		
 		// determine the element parser
 		Function<Class<?>, ? extends ElementParser<P>> parserProvider = this::getOrCreateElementParser;
-		ElementParser<?> untypedElementParser = determineParser(method, annotation.elementParserClass(), ElementParser.class, annotation.type(), parameterType, parserProvider);
+		ElementParser<?> untypedElementParser = determineParser(method, annotation.type(), parameterType, parserProvider);
 		@SuppressWarnings("unchecked")
 		ElementParser<P> elementParser = (ElementParser<P>)untypedElementParser;
 
@@ -214,7 +214,7 @@ public final class ElementParserBuilder {
 		BindContent annotation = method.getAnnotation(BindContent.class);
 		
 		// determine the content parser
-		ContentParser<?> untypedContentParser = determineParser(method, annotation.contentParserClass(), ContentParser.class, annotation.type(), parameterType, t -> contentParserRegistry.getParser(t));
+		ContentParser<?> untypedContentParser = determineParser(method, annotation.type(), parameterType, t -> contentParserRegistry.getParser(t));
 		@SuppressWarnings("unchecked")
 		ContentParser<P> contentParser = (ContentParser<P>)untypedContentParser;
 
@@ -233,10 +233,7 @@ public final class ElementParserBuilder {
 	}
 	
 	//
-	private <P> P determineParser(Method method, Class<? extends P> specifiedParserClass, Class<? extends P> dummyParserClass, Class<?> specifiedType, Class<?> parameterType, Function<Class<?>, ? extends P> parserRegistry) throws Exception {
-		if (specifiedParserClass != dummyParserClass) {
-			return specifiedParserClass.newInstance();
-		}
+	private <P> P determineParser(Method method, Class<?> specifiedType, Class<?> parameterType, Function<Class<?>, ? extends P> parserRegistry) throws Exception {
 		Class<?> conversionType = (specifiedType == void.class ? parameterType : specifiedType);
 		if (!parameterType.isAssignableFrom(conversionType)) {
 			throw new RuntimeException("incompatible conversion type " + conversionType + " for method " + method);

@@ -9,7 +9,7 @@ import javax.xml.stream.XMLStreamException;
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
 import name.martingeisse.guiserver.xml.attribute.SimpleAttributeParser;
-import name.martingeisse.guiserver.xml.builder.XmlParserBuilder;
+import name.martingeisse.guiserver.xml.builder.RecursiveContentParserBuilder;
 import name.martingeisse.guiserver.xml.element.AbstractEmptyElementParser;
 import name.martingeisse.guiserver.xml.element.AttributeSelectedElementParser;
 import name.martingeisse.guiserver.xml.value.IntegerValueParser;
@@ -22,12 +22,12 @@ import org.apache.wicket.validation.validator.StringValidator;
 /**
  * Parses {@link IValidator} objects.
  */
-public final class VaildatorParser extends AttributeSelectedElementParser<IValidator<?>> {
+public final class ValidatorParser extends AttributeSelectedElementParser<IValidator<?>> {
 
 	/**
 	 * Constructor.
 	 */
-	public VaildatorParser(XmlParserBuilder<ComponentGroupConfiguration> builder) {
+	public ValidatorParser(RecursiveContentParserBuilder<ComponentGroupConfiguration> builder) {
 		setAttributeName("type");
 		addParser("length", new AbstractEmptyElementParser<IValidator<?>>() {
 			private final SimpleAttributeParser<Integer> minParser = new SimpleAttributeParser<Integer>("min", true, IntegerValueParser.INSTANCE);

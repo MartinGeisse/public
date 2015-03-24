@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation can be used to register a component element, using the
- * annotated class as the configuration class.
+ * annotated class to represent the component.
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

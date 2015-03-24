@@ -5,7 +5,6 @@
 package name.martingeisse.guiserver.configuration.content;
 
 import name.martingeisse.common.terms.IConsumer;
-import name.martingeisse.guiserver.xml.ConfigurationAssemblerAcceptor;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebMarkupContainer;

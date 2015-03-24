@@ -14,6 +14,7 @@ import name.martingeisse.guiserver.configuration.Configuration;
 import name.martingeisse.guiserver.configuration.content.AbstractSingleComponentConfiguration;
 import name.martingeisse.guiserver.configuration.content.AbstractSingleContainerConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
+import name.martingeisse.guiserver.configuration.content.ConfigurationAssembler;
 import name.martingeisse.guiserver.configuration.content.IComponentGroupConfigurationVisitor;
 import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
 import name.martingeisse.guiserver.configuration.content.UrlSubpathComponentGroupConfiguration;
@@ -22,7 +23,6 @@ import name.martingeisse.guiserver.xml.builder.BindAttribute;
 import name.martingeisse.guiserver.xml.builder.BindElement;
 import name.martingeisse.guiserver.xml.builder.RegisterComponentElement;
 import name.martingeisse.guiserver.xml.builder.StructuredElement;
-import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
 import name.martingeisse.wicket.component.misc.PageParameterDrivenTabPanel;
 
 import org.apache.wicket.Component;

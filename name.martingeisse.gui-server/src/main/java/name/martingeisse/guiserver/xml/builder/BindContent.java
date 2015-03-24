@@ -9,16 +9,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import name.martingeisse.guiserver.xml.content.ContentParser;
-
 /**
  * This annotation can be used to bind element content to a method that
  * takes the parsed type of the element content as its parameter type, such as
  * a setter method.
  * 
- * The element parser that parses the element can be specified explicitly.
- * If not specified (or if specified to the default, {@link ContentParser}.class),
- * the {@link #type()} property of this annotation is used to infer the parser. 
+ * The {@link #type()} property of this annotation (if present) or the type of
+ * the method parameter is used to infer the parser. 
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -33,13 +30,5 @@ public @interface BindContent {
 	 * signature.
 	 */
 	public Class<?> type() default void.class;
-
-	/**
-	 * Allows to specify the element parser directly. The specified parser
-	 * class must have a no-arg constructor to allow creating an instance of it,
-	 * and that instance will be used as the parser for the element.
-	 */
-	@SuppressWarnings("rawtypes")
-	public Class<? extends ContentParser> contentParserClass() default ContentParser.class;
 
 }

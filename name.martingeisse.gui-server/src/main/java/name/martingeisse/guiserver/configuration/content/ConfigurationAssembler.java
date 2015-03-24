@@ -2,14 +2,11 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.xml.result;
+package name.martingeisse.guiserver.configuration.content;
 
 import java.util.List;
 
 import javax.xml.stream.XMLStreamWriter;
-
-import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
-import name.martingeisse.guiserver.xml.ConfigurationAssemblerAcceptor;
 
 /**
  * Helper class that takes component-enhanced markup and

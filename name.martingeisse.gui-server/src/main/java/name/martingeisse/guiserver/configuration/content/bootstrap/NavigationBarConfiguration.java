@@ -8,13 +8,13 @@ import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.configuration.content.AbstractSingleContainerConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
+import name.martingeisse.guiserver.configuration.content.ConfigurationAssembler;
 import name.martingeisse.guiserver.configuration.content.IComponentGroupConfigurationVisitor;
+import name.martingeisse.guiserver.configuration.content.MarkupContent;
 import name.martingeisse.guiserver.gui.NavigationBar;
 import name.martingeisse.guiserver.xml.builder.BindElement;
 import name.martingeisse.guiserver.xml.builder.RegisterComponentElement;
 import name.martingeisse.guiserver.xml.builder.StructuredElement;
-import name.martingeisse.guiserver.xml.result.ConfigurationAssembler;
-import name.martingeisse.guiserver.xml.result.MarkupContent;
 
 import org.apache.wicket.MarkupContainer;
 

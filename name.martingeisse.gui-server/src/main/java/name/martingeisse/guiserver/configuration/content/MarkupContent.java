@@ -2,13 +2,11 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.xml.result;
+package name.martingeisse.guiserver.configuration.content;
 
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
-
-import name.martingeisse.guiserver.xml.ConfigurationAssemblerAcceptor;
 
 /**
  * A piece of properly nested markup that may contain components of type C.

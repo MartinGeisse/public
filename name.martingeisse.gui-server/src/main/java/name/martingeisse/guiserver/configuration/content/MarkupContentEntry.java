@@ -2,12 +2,10 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.xml.result;
+package name.martingeisse.guiserver.configuration.content;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
-import name.martingeisse.guiserver.xml.ConfigurationAssemblerAcceptor;
 
 /**
  * Used to represent the actual contents of a {@link MarkupContent} object.
