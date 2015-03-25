@@ -2,8 +2,13 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.xml.builder;
+package name.martingeisse.guiserver.configuration.content;
 
+import name.martingeisse.guiserver.xml.builder.BindAttribute;
+import name.martingeisse.guiserver.xml.builder.BindContent;
+import name.martingeisse.guiserver.xml.builder.BindElement;
+import name.martingeisse.guiserver.xml.builder.ElementParserBuilder;
+import name.martingeisse.guiserver.xml.builder.RegisterComponentElement;
 import name.martingeisse.guiserver.xml.content.ContentParser;
 import name.martingeisse.guiserver.xml.content.ContentParserRegistry;
 import name.martingeisse.guiserver.xml.element.ElementParser;

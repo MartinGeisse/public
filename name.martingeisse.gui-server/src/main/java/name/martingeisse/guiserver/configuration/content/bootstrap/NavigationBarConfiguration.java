@@ -4,10 +4,14 @@
 
 package name.martingeisse.guiserver.configuration.content.bootstrap;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.configuration.content.AbstractSingleContainerConfiguration;
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
+import name.martingeisse.guiserver.configuration.content.ComponentGroupConfigurationList;
 import name.martingeisse.guiserver.configuration.content.ConfigurationAssembler;
 import name.martingeisse.guiserver.configuration.content.IComponentGroupConfigurationVisitor;
 import name.martingeisse.guiserver.configuration.content.MarkupContent;
@@ -17,6 +21,10 @@ import name.martingeisse.guiserver.xml.builder.RegisterComponentElement;
 import name.martingeisse.guiserver.xml.builder.StructuredElement;
 
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.panel.Fragment;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * The configuration for a navigation bar.
@@ -57,19 +65,33 @@ public final class NavigationBarConfiguration extends AbstractSingleContainerCon
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.guiserver.configurationNew.content.AbstractContainerConfiguration#buildContainer()
-	 */
-	@Override
-	protected MarkupContainer buildContainer() {
-		return new NavigationBar(getComponentId(), brandLink.getConfiguration());
-	}
-
-	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.configuration.content.AbstractSingleContainerConfiguration#assemble(name.martingeisse.guiserver.xml.result.ConfigurationAssembler)
 	 */
 	@Override
 	public void assemble(ConfigurationAssembler<ComponentGroupConfiguration> assembler) throws XMLStreamException {
+		assembler.getMarkupWriter().writeStartElement("div");
+		assembler.getMarkupWriter().writeAttribute("wicket:id", getComponentId() + "-container");
 		super.assemble(assembler);
+		if (brandLink != null) {
+			assembler.getMarkupWriter().writeStartElement("div");
+			assembler.getMarkupWriter().writeAttribute("wicket:id", "brandLinkFragment");
+			
+			
+			
+			brandLink.getConfiguration().assemble(assembler);
+			
+			
+			List<ComponentGroupConfiguration> childrenAccumulator = new ArrayList<ComponentGroupConfiguration>();
+			ConfigurationAssembler<ComponentGroupConfiguration> subAssembler = assembler.withComponentGroupAccumulator(childrenAccumulator);
+			markupContent.assemble(subAssembler);
+			this.children = new ComponentGroupConfigurationList(ImmutableList.copyOf(childrenAccumulator));
+			
+			
+			
+			
+			assembler.getMarkupWriter().writeEndElement();
+		}
+		assembler.getMarkupWriter().writeEndElement();
 	}
 	
 	/* (non-Javadoc)
@@ -78,10 +100,29 @@ public final class NavigationBarConfiguration extends AbstractSingleContainerCon
 	@Override
 	public void accept(IComponentGroupConfigurationVisitor visitor) {
 		if (visitor.beginVisit(this)) {
-			brandLink.getConfiguration().accept(visitor);
+			if (brandLink != null) {
+				brandLink.getConfiguration().accept(visitor);
+			}
 			getChildren().accept(visitor);
 			visitor.endVisit(this);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.configurationNew.content.AbstractContainerConfiguration#buildContainer()
+	 */
+	@Override
+	protected MarkupContainer buildContainer() {
+		WebMarkupContainer container = new WebMarkupContainer(getComponentId() + "-container");
+		Fragment brandLinkFragment;
+		if (brandLink == null) {
+			brandLinkFragment = null;
+		} else {
+			brandLinkFragment = new Fragment(NavigationBar.BRAND_LINK_WICKET_ID, "brandLinkFragment", container);
+			// TODO add children
+		}
+		container.add(new NavigationBar(getComponentId(), brandLinkFragment));
+		return container;
 	}
 
 	/**

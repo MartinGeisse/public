@@ -10,6 +10,7 @@ import javax.xml.stream.XMLStreamException;
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.configuration.content.MarkupContent;
 import name.martingeisse.guiserver.configuration.content.MarkupContentParser;
+import name.martingeisse.guiserver.configuration.content.RecursiveContentParserBuilder;
 import name.martingeisse.guiserver.configuration.content.basic.EnclosureConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.IncludeBackendConfiguration;
 import name.martingeisse.guiserver.configuration.content.basic.LazyLoadContainerConfiguration;
@@ -26,7 +27,6 @@ import name.martingeisse.guiserver.configuration.content.bootstrap.NavigationBar
 import name.martingeisse.guiserver.configuration.content.bootstrap.form.BootstrapFormConfiguration;
 import name.martingeisse.guiserver.configuration.content.bootstrap.form.BootstrapTextFieldConfiguration;
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
-import name.martingeisse.guiserver.xml.builder.RecursiveContentParserBuilder;
 import name.martingeisse.guiserver.xml.content.ContentParser;
 import name.martingeisse.guiserver.xml.content.DelegatingContentParser;
 import name.martingeisse.guiserver.xml.element.ElementParser;
@@ -79,14 +79,10 @@ public final class StandardMarkupContentBinding implements ContentParser<MarkupC
 			@SuppressWarnings("unchecked")
 			Class<IValidator<?>> validatorClass = (Class<IValidator<?>>)(Class<?>)IValidator.class;
 			builder.addElementParser(validatorClass, new ValidatorParser(builder));
-
-			// TODO couldn't specify the brand link parser class directly in the annotation since then we'd only have a
-			// class, not an instance. The instance would need references to other objects from the parser builder. Thus,
-			// specifying the parser class in the annotation isn't useful except maybe for value parsers.
 			builder.addElementParser(NavigationBarConfiguration.BrandLinkWrapper.class, new BrandLinkParser(builder.getComponentElementParser()));
 
 			// register known content parsers
-			// ...
+			// (none right now)
 
 			// known component special tags
 			builder.autoAddComponentElementParser(EnclosureConfiguration.class);

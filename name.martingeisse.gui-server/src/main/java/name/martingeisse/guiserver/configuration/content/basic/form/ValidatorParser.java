@@ -7,9 +7,9 @@ package name.martingeisse.guiserver.configuration.content.basic.form;
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
+import name.martingeisse.guiserver.configuration.content.RecursiveContentParserBuilder;
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
 import name.martingeisse.guiserver.xml.attribute.SimpleAttributeParser;
-import name.martingeisse.guiserver.xml.builder.RecursiveContentParserBuilder;
 import name.martingeisse.guiserver.xml.element.AbstractEmptyElementParser;
 import name.martingeisse.guiserver.xml.element.AttributeSelectedElementParser;
 import name.martingeisse.guiserver.xml.value.IntegerValueParser;

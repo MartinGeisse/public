@@ -1,5 +1,4 @@
 <gui:page xmlns:gui="http://guiserver.martingeisse.name/v1">
-<!-- 
 	<gui:navbar>
 		<gui:brandLink>
 			<gui:link href="/">BRAND</gui:link>
@@ -8,7 +7,6 @@
 			<li><a href="/other">Link</a></li>
 		</gui:main>
 	</gui:navbar>
- -->
 	<h1>Hello World!</h1>
 	<div>
 		This is a page with a navigation bar.

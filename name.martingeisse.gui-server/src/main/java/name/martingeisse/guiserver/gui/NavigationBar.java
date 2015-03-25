@@ -4,10 +4,9 @@
 
 package name.martingeisse.guiserver.gui;
 
-import name.martingeisse.guiserver.configuration.content.BorderChildrenConsumer;
-import name.martingeisse.guiserver.configuration.content.ComponentGroupConfiguration;
 import name.martingeisse.wicket.component.misc.InvisibleWebMarkupContainer;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.border.Border;
 
 /**
@@ -16,18 +15,19 @@ import org.apache.wicket.markup.html.border.Border;
 public class NavigationBar extends Border {
 
 	/**
+	 * the BRAND_LINK_WICKET_ID
+	 */
+	public static final String BRAND_LINK_WICKET_ID = "brandLink";
+	
+	/**
 	 * Constructor.
 	 * 
 	 * @param id the wicket id
 	 * @param brandLinkConfiguration the configuration for the brand link, or null for none
 	 */
-	public NavigationBar(String id, ComponentGroupConfiguration brandLinkConfiguration) {
+	public NavigationBar(String id, Component brandLinkComponent) {
 		super(id);
-		if (brandLinkConfiguration == null) {
-			addToBorder(new InvisibleWebMarkupContainer("brandLink"));
-		} else {
-			brandLinkConfiguration.buildComponents(new BorderChildrenConsumer(this));
-		}
+		addToBorder(brandLinkComponent == null ? new InvisibleWebMarkupContainer(BRAND_LINK_WICKET_ID) : brandLinkComponent);
 	}
 	
 }
