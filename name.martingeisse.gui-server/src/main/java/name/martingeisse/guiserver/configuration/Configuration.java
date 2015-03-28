@@ -11,8 +11,8 @@ import java.util.Map;
 
 import name.martingeisse.guiserver.application.ServerConfiguration;
 import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
-import name.martingeisse.guiserver.configuration.content.IConfigurationSnippet;
-import name.martingeisse.guiserver.configuration.elements.ConfigurationElement;
+import name.martingeisse.guiserver.template.IConfigurationSnippet;
+import name.martingeisse.guiserver.template.TemplateParser;
 
 /**
  * This singleton class provides the data from the configuration.
@@ -27,7 +27,9 @@ public final class Configuration {
 	//
 	static {
 		try {
-			instance = new Configuration();
+			File configurationRoot = new File(ServerConfiguration.configurationRoot.getMandatoryValue());
+			Builder builder = new Builder(configurationRoot, TemplateParser.INSTANCE);
+			instance = builder.build(configurationRoot);
 		} catch (Exception e) {
 			throw new RuntimeException("could not load configuration", e);
 		}
@@ -44,7 +46,7 @@ public final class Configuration {
 	/**
 	 * the elements
 	 */
-	private final Map<Class<? extends ConfigurationElement>, Map<String, ConfigurationElement>> elements;
+	private final Map<String, ConfigurationElement> elements;
 	
 	/**
 	 * the snippets
@@ -57,12 +59,9 @@ public final class Configuration {
 	 * @throws IOException on I/O errors
 	 * @throws ConfigurationException on errors in a configuration file
 	 */
-	public Configuration() throws IOException, ConfigurationException {
-		File configurationRoot = new File(ServerConfiguration.configurationRoot.getMandatoryValue());
-		ConfigurationBuilder builder = new ConfigurationBuilder(StandardMarkupContentBinding.INSTANCE);
-		builder.build(configurationRoot);
-		elements = builder.getElements();
-		snippets = builder.getSnippets();
+	public Configuration(Map<String, ConfigurationElement> elements, List<IConfigurationSnippet> snippets) throws IOException, ConfigurationException {
+		this.elements = elements;
+		this.snippets = snippets;
 	}
 	
 	/**
@@ -71,10 +70,8 @@ public final class Configuration {
 	 * @param application the Wicket application
 	 */
 	public void mountWicketUrls(GuiWicketApplication application) {
-		for (Map<String, ConfigurationElement> subMap : elements.values()) {
-			for (ConfigurationElement element : subMap.values()) {
-				element.mountWicketUrls(application);
-			}
+		for (ConfigurationElement element : elements.values()) {
+			element.mountWicketUrls(application);
 		}
 	}
 
@@ -102,10 +99,37 @@ public final class Configuration {
 	 * @return the configuration element
 	 */
 	public <T extends ConfigurationElement> T getElementOrNull(Class<T> type, String path) {
-		Map<String, ConfigurationElement> subMap = elements.get(type);
-		return (subMap == null ? null : type.cast(subMap.get(path)));
+		ConfigurationElement element = getElement(path);
+		return (type.isInstance(element) ? type.cast(element) : null);
 	}
 
+	/**
+	 * Obtains a specific configuration element. Throws an exception if the element
+	 * doesn't exist.
+	 * 
+	 * @param type the type of configuration element to obtain
+	 * @param path the path to the element
+	 * @return the configuration element
+	 */
+	public ConfigurationElement getElement(String path) {
+		ConfigurationElement element = getElementOrNull(path);
+		if (element == null) {
+			throw new RuntimeException("configuration element with path " + path + " doesn't exist");
+		}
+		return element;
+	}
+	
+	/**
+	 * Obtains a specific configuration element. Returns null if the element doesn't exist.
+	 * 
+	 * @param type the type of configuration element to obtain
+	 * @param path the path to the element
+	 * @return the configuration element
+	 */
+	public ConfigurationElement getElementOrNull(String path) {
+		return elements.get(path);
+	}
+	
 	/**
 	 * Obtains a configuration snippet.
 	 * 

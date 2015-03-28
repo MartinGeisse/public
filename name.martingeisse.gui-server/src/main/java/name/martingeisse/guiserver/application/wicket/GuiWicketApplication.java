@@ -5,8 +5,8 @@
 package name.martingeisse.guiserver.application.wicket;
 
 import name.martingeisse.guiserver.application.page.AbstractApplicationPage;
+import name.martingeisse.guiserver.component.HelloWorldPage;
 import name.martingeisse.guiserver.configuration.Configuration;
-import name.martingeisse.guiserver.gui.HelloWorldPage;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
 
 import org.apache.log4j.Logger;
