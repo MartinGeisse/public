@@ -10,6 +10,7 @@ import name.martingeisse.guiserver.template.basic.EnclosureConfiguration;
 import name.martingeisse.guiserver.template.basic.IncludeBackendConfiguration;
 import name.martingeisse.guiserver.template.basic.LazyLoadContainerConfiguration;
 import name.martingeisse.guiserver.template.basic.LinkConfiguration;
+import name.martingeisse.guiserver.template.basic.PanelReferenceConfiguration;
 import name.martingeisse.guiserver.template.basic.PieChartConfiguration;
 import name.martingeisse.guiserver.template.basic.TabPanelConfiguration;
 import name.martingeisse.guiserver.template.basic.form.CheckboxConfiguration;
@@ -87,6 +88,7 @@ public final class TemplateParser implements ContentParser<MarkupContent<Compone
 			builder.autoAddComponentElementParser(TabPanelConfiguration.class);
 			builder.autoAddComponentElementParser(TextFieldConfiguration.class);
 			builder.autoAddComponentElementParser(CheckboxConfiguration.class);
+			builder.autoAddComponentElementParser(PanelReferenceConfiguration.class);
 
 			// Bootstrap-specific tags
 			builder.autoAddComponentElementParser(BootstrapFormConfiguration.class);

@@ -102,15 +102,31 @@ final class Builder {
 	 */
 	private String getCurrentPath() {
 		if (pathSegments.isEmpty()) {
-			return "/";
+			throw new IllegalStateException();
 		}
+		int remainingPrefixSegments = pathSegments.size() - 1;
 		StringBuilder builder = new StringBuilder();
-		for (String segment : pathSegments) {
-			int dotIndex = segment.indexOf('.');
-			if (dotIndex != -1) {
-				segment = segment.substring(0, dotIndex);
+		for (final String segment : pathSegments) {
+			if (remainingPrefixSegments > 0) {
+				builder.append('/').append(segment);
+			} else {
+				int dotIndex = segment.indexOf('.');
+				if (dotIndex == -1) {
+					throw new RuntimeException("invalid configuration element path (missing filename extension): " + segment);
+				}
+				String baseName = segment.substring(0, dotIndex);
+				if (baseName.isEmpty()) {
+					throw new RuntimeException("invalid configuration element path (empty base name): " + segment);
+				}
+				if (baseName.equals("_")) {
+					if (pathSegments.size() == 1) {
+						builder.append('/');
+					}
+				} else {
+					builder.append('/').append(baseName);
+				}
 			}
-			builder.append('/').append(segment);
+			remainingPrefixSegments--;
 		}
 		return builder.toString();
 	}

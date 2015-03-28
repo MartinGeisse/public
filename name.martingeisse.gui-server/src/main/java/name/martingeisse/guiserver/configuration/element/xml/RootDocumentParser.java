@@ -27,6 +27,11 @@ public class RootDocumentParser implements DocumentParser {
 	 * the pageParser
 	 */
 	private final PageParser pageParser;
+	
+	/**
+	 * the panelParser
+	 */
+	private final PanelParser panelParser;
 
 	/**
 	 * Constructor.
@@ -34,6 +39,7 @@ public class RootDocumentParser implements DocumentParser {
 	 */
 	public RootDocumentParser(ContentParser<MarkupContent<ComponentGroupConfiguration>> templateParser) {
 		this.pageParser = new PageParser(templateParser);
+		this.panelParser = new PanelParser(templateParser);
 	}
 
 	/* (non-Javadoc)
@@ -47,6 +53,8 @@ public class RootDocumentParser implements DocumentParser {
 		String localName = reader.getLocalName();
 		if (localName.equals("page")) {
 			return pageParser.parse(reader, path, snippetAccumulator);
+		} else if (localName.equals("panel")) {
+			return panelParser.parse(reader, path, snippetAccumulator);
 		} else {
 			throw new ConfigurationException("invalid document element -- unknown configuration element type: " + localName);
 		}

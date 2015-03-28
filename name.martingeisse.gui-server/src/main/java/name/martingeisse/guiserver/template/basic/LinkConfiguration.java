@@ -7,7 +7,7 @@ package name.martingeisse.guiserver.template.basic;
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.component.ConfigurationDefinedPage;
-import name.martingeisse.guiserver.configuration.PageConfiguration;
+import name.martingeisse.guiserver.configuration.element.xml.PageConfiguration;
 import name.martingeisse.guiserver.template.AbstractSingleContainerConfiguration;
 import name.martingeisse.guiserver.template.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.template.ConfigurationAssembler;

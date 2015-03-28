@@ -14,15 +14,15 @@ import name.martingeisse.guiserver.template.Template;
 import name.martingeisse.guiserver.xml.content.ContentParser;
 
 /**
- * Parses a page template.
+ * Parses a panel template.
  */
-public class PageParser extends TemplateBasedElementParser {
+public class PanelParser extends TemplateBasedElementParser {
 
 	/**
 	 * Constructor.
 	 * @param templateParser the template parser
 	 */
-	public PageParser(ContentParser<MarkupContent<ComponentGroupConfiguration>> templateParser) {
+	public PanelParser(ContentParser<MarkupContent<ComponentGroupConfiguration>> templateParser) {
 		super(templateParser);
 	}
 
@@ -33,6 +33,7 @@ public class PageParser extends TemplateBasedElementParser {
 	protected void writeWicketMarkupIntro(XMLStreamWriter markupWriter) throws XMLStreamException {
 		markupWriter.writeStartElement("html");
 		markupWriter.writeStartElement("body");
+		markupWriter.writeStartElement("wicket:panel");
 	}
 
 	/* (non-Javadoc)
@@ -42,6 +43,7 @@ public class PageParser extends TemplateBasedElementParser {
 	protected void writeWicketMarkupOutro(XMLStreamWriter markupWriter) throws XMLStreamException {
 		markupWriter.writeEndElement();
 		markupWriter.writeEndElement();
+		markupWriter.writeEndElement();
 	}
 
 	/* (non-Javadoc)
@@ -49,7 +51,7 @@ public class PageParser extends TemplateBasedElementParser {
 	 */
 	@Override
 	protected Element createConfigurationElement(String path, Template template) {
-		return new PageConfiguration(path, template);
+		return new PanelConfiguration(path, template);
 	}
 
 }

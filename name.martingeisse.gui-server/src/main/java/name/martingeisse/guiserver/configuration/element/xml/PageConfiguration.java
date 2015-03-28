@@ -2,7 +2,7 @@
  * Copyright (c) 2015 Martin Geisse
  */
 
-package name.martingeisse.guiserver.configuration;
+package name.martingeisse.guiserver.configuration.element.xml;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,26 +31,26 @@ public final class PageConfiguration extends Element {
 	public static final String CONFIGURATION_ELEMENT_PATH_PAGE_PARAMETER_NAME = "__INTERNAL_CONFIGURATION_ELEMENT_PATH__";
 	
 	/**
-	 * the content
+	 * the template
 	 */
-	private Template content;
+	private Template template;
 	
 	/**
 	 * Constructor.
 	 * @param path the path to this page
 	 * @param markupSourceCode the source code for the page's markup
 	 */
-	public PageConfiguration(String path, Template content) {
+	public PageConfiguration(String path, Template template) {
 		super(path);
-		this.content = content;
+		this.template = template;
 	}
 
 	/**
-	 * Getter method for the content.
-	 * @return the content
+	 * Getter method for the template.
+	 * @return the template
 	 */
-	public Template getContent() {
-		return content;
+	public Template getTemplate() {
+		return template;
 	}
 
 	/* (non-Javadoc)
@@ -60,8 +60,10 @@ public final class PageConfiguration extends Element {
 	public void mountWicketUrls(GuiWicketApplication application) {
 		PageParameters identifyingParameters = new PageParameters();
 		identifyingParameters.add(CONFIGURATION_ELEMENT_PATH_PAGE_PARAMETER_NAME, getPath());
-		application.mount(new ParameterMountedRequestMapper(getPath(), ConfigurationDefinedPage.class, identifyingParameters));
-		mountComponentUrls(application, getPath(), content.getComponents());
+		if (!getPath().equals("/")) {
+			application.mount(new ParameterMountedRequestMapper(getPath(), ConfigurationDefinedPage.class, identifyingParameters));
+		}
+		mountComponentUrls(application, getPath(), template.getComponents());
 	}
 
 	/**
@@ -99,6 +101,9 @@ public final class PageConfiguration extends Element {
 				}
 			}
 		}
+		if (urlSegments.isEmpty()) {
+			return;
+		}
 		
 		// TODO detect if two *nested* components want to use the same parameter and throw an error!
 		// That Only works for siblings!
@@ -113,7 +118,6 @@ public final class PageConfiguration extends Element {
 		identifyingParameters.add(CONFIGURATION_ELEMENT_PATH_PAGE_PARAMETER_NAME, getPath());
 
 		// mount the current URL first to give it less priority when generating URLs
-		System.out.println(parameterizedPath);
 		application.mount(new ParameterMountedRequestMapper(parameterizedPath, ConfigurationDefinedPage.class, identifyingParameters));
 
 		// allow nested components to contribute their paths too

@@ -5,7 +5,7 @@
 package name.martingeisse.guiserver.application.wicket;
 
 import name.martingeisse.guiserver.application.page.AbstractApplicationPage;
-import name.martingeisse.guiserver.component.HelloWorldPage;
+import name.martingeisse.guiserver.component.ConfigurationDefinedHomePage;
 import name.martingeisse.guiserver.configuration.Configuration;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
 
@@ -159,7 +159,7 @@ public class GuiWicketApplication extends AbstractMyWicketApplication {
 	 */
 	@Override
 	public Class<? extends Page> getHomePage() {
-		return HelloWorldPage.class;
+		return ConfigurationDefinedHomePage.class;
 	}
 
 	/* (non-Javadoc)

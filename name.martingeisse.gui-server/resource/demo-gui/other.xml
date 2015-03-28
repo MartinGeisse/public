@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<gui:page xmlns:gui="http://guiserver.martingeisse.name/v1">
+	<div class="container">
+		<gui:panel src="/navbar" />
+		<h1>Hello Again!</h1>
+		<div>
+			This is a another page using the new XML format.
+		</div>
+		<div>
+			<gui:includeBackend url="http://localhost/geisse/demo-backend/html-snippet.php" escape="false" />
+		</div>
+		<div>
+			<gui:lazy>
+				<gui:includeBackend url="http://localhost/geisse/demo-backend/html-snippet-slow.php" escape="false" />
+			</gui:lazy>
+		</div>
+	</div>
+</gui:page>
