@@ -4,16 +4,13 @@
 
 package name.martingeisse.guiserver.configuration;
 
+import name.martingeisse.guiserver.configuration.element.Element;
+
 
 /**
  * The configuration for a panel.
  */
-public final class PanelConfiguration extends ConfigurationElement {
-
-	/**
-	 * the CONFIGURATION_FILENAME_SUFFIX
-	 */
-	public static final String CONFIGURATION_FILENAME_SUFFIX = ".panel.xml";
+public final class PanelConfiguration extends Element {
 	
 	/**
 	 * Constructor.
@@ -21,14 +18,6 @@ public final class PanelConfiguration extends ConfigurationElement {
 	 */
 	public PanelConfiguration(String path) {
 		super(path);
-	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.guiserver.configurationNew.ConfigurationElement#getBackendUriPath()
-	 */
-	@Override
-	public String getBackendUriPath() {
-		return getPath() + CONFIGURATION_FILENAME_SUFFIX;
 	}
 
 }

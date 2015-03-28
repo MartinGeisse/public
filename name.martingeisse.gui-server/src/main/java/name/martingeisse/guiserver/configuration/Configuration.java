@@ -11,6 +11,7 @@ import java.util.Map;
 
 import name.martingeisse.guiserver.application.ServerConfiguration;
 import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
+import name.martingeisse.guiserver.configuration.element.Element;
 import name.martingeisse.guiserver.template.IConfigurationSnippet;
 import name.martingeisse.guiserver.template.TemplateParser;
 
@@ -46,7 +47,7 @@ public final class Configuration {
 	/**
 	 * the elements
 	 */
-	private final Map<String, ConfigurationElement> elements;
+	private final Map<String, Element> elements;
 	
 	/**
 	 * the snippets
@@ -59,7 +60,7 @@ public final class Configuration {
 	 * @throws IOException on I/O errors
 	 * @throws ConfigurationException on errors in a configuration file
 	 */
-	public Configuration(Map<String, ConfigurationElement> elements, List<IConfigurationSnippet> snippets) throws IOException, ConfigurationException {
+	public Configuration(Map<String, Element> elements, List<IConfigurationSnippet> snippets) throws IOException, ConfigurationException {
 		this.elements = elements;
 		this.snippets = snippets;
 	}
@@ -70,7 +71,7 @@ public final class Configuration {
 	 * @param application the Wicket application
 	 */
 	public void mountWicketUrls(GuiWicketApplication application) {
-		for (ConfigurationElement element : elements.values()) {
+		for (Element element : elements.values()) {
 			element.mountWicketUrls(application);
 		}
 	}
@@ -83,7 +84,7 @@ public final class Configuration {
 	 * @param path the path to the element
 	 * @return the configuration element
 	 */
-	public <T extends ConfigurationElement> T getElement(Class<T> type, String path) {
+	public <T extends Element> T getElement(Class<T> type, String path) {
 		T element = getElementOrNull(type, path);
 		if (element == null) {
 			throw new RuntimeException("configuration element with type " + type + " and path " + path + " doesn't exist");
@@ -98,8 +99,8 @@ public final class Configuration {
 	 * @param path the path to the element
 	 * @return the configuration element
 	 */
-	public <T extends ConfigurationElement> T getElementOrNull(Class<T> type, String path) {
-		ConfigurationElement element = getElement(path);
+	public <T extends Element> T getElementOrNull(Class<T> type, String path) {
+		Element element = getElement(path);
 		return (type.isInstance(element) ? type.cast(element) : null);
 	}
 
@@ -111,8 +112,8 @@ public final class Configuration {
 	 * @param path the path to the element
 	 * @return the configuration element
 	 */
-	public ConfigurationElement getElement(String path) {
-		ConfigurationElement element = getElementOrNull(path);
+	public Element getElement(String path) {
+		Element element = getElementOrNull(path);
 		if (element == null) {
 			throw new RuntimeException("configuration element with path " + path + " doesn't exist");
 		}
@@ -126,7 +127,7 @@ public final class Configuration {
 	 * @param path the path to the element
 	 * @return the configuration element
 	 */
-	public ConfigurationElement getElementOrNull(String path) {
+	public Element getElementOrNull(String path) {
 		return elements.get(path);
 	}
 	

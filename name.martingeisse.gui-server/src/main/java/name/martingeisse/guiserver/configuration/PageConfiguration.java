@@ -9,6 +9,7 @@ import java.util.List;
 
 import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
 import name.martingeisse.guiserver.component.ConfigurationDefinedPage;
+import name.martingeisse.guiserver.configuration.element.Element;
 import name.martingeisse.guiserver.template.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.template.IComponentGroupConfigurationVisitor;
 import name.martingeisse.guiserver.template.IComponentGroupConfigurationVisitorAcceptor;
@@ -22,17 +23,12 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 /**
  * The configuration for a page.
  */
-public final class PageConfiguration extends ConfigurationElement {
+public final class PageConfiguration extends Element {
 
 	/**
 	 * the CONFIGURATION_ELEMENT_PATH_PAGE_PARAMETER_NAME
 	 */
 	public static final String CONFIGURATION_ELEMENT_PATH_PAGE_PARAMETER_NAME = "__INTERNAL_CONFIGURATION_ELEMENT_PATH__";
-	
-	/**
-	 * the CONFIGURATION_FILENAME_SUFFIX
-	 */
-	public static final String CONFIGURATION_FILENAME_SUFFIX = ".page.xml";
 	
 	/**
 	 * the content
@@ -55,14 +51,6 @@ public final class PageConfiguration extends ConfigurationElement {
 	 */
 	public Template getContent() {
 		return content;
-	}
-	
-	/* (non-Javadoc)
-	 * @see name.martingeisse.guiserver.configurationNew.ConfigurationElement#getBackendUriPath()
-	 */
-	@Override
-	public String getBackendUriPath() {
-		return getPath() + CONFIGURATION_FILENAME_SUFFIX;
 	}
 
 	/* (non-Javadoc)

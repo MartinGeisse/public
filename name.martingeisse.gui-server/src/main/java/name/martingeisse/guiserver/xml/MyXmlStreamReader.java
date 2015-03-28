@@ -25,24 +25,6 @@ public final class MyXmlStreamReader extends StreamReaderDelegate {
 	}
 
 	/**
-	 * This method should only be called directly after creating the reader. It checks that
-	 * the document element is a special element with the specified local name and skips over
-	 * the opening tag, otherwise throws an exception.
-	 * 
-	 * @param expectedLocalName the expected local name
-	 */
-	public void expectSpecialDocumentElement(String expectedLocalName) throws XMLStreamException {
-		if (getEventType() != XMLStreamConstants.START_DOCUMENT) {
-			throw new IllegalStateException("reader is not at the START_DOCUMENT");
-		}
-		next();
-		if (getNamespaceURI() == null || !getLocalName().equals(expectedLocalName)) {
-			throw new RuntimeException("invalid document element, expected special element " + expectedLocalName);
-		}
-		next();
-	}
-	
-	/**
 	 * Skips all pure-whitespace events. If any non-whitespace text events are encountered, this
 	 * method throws an exception.
 	 * 

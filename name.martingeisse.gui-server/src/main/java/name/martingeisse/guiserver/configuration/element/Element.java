@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.configuration;
+package name.martingeisse.guiserver.configuration.element;
 
 import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
 
@@ -17,7 +17,7 @@ import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
  * Each element has a backend URL that is used to access it in the
  * backend server. This URL is built from the element's path and type.
  */
-public abstract class ConfigurationElement {
+public abstract class Element {
 
 	/**
 	 * the path
@@ -28,7 +28,7 @@ public abstract class ConfigurationElement {
 	 * Constructor.
 	 * @param path the path to this element
 	 */
-	public ConfigurationElement(String path) {
+	public Element(String path) {
 		this.path = path;
 	}
 
@@ -36,15 +36,9 @@ public abstract class ConfigurationElement {
 	 * Getter method for the path.
 	 * @return the path
 	 */
-	public String getPath() {
+	public final String getPath() {
 		return path;
 	}
-
-	/**
-	 * Returns the path for the backend URI.
-	 * @return the path for the backend URI.
-	 */
-	public abstract String getBackendUriPath();
 
 	/**
 	 * Mounts all Wicket URLs needed by this element.
