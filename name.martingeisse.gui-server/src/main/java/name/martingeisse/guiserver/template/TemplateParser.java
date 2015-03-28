@@ -21,6 +21,9 @@ import name.martingeisse.guiserver.template.basic.form.TextFieldConfiguration;
 import name.martingeisse.guiserver.template.basic.form.ValidatorParser;
 import name.martingeisse.guiserver.template.bootstrap.form.BootstrapFormConfiguration;
 import name.martingeisse.guiserver.template.bootstrap.form.BootstrapTextFieldConfiguration;
+import name.martingeisse.guiserver.template.demo.ComponentDemoConfiguration;
+import name.martingeisse.guiserver.template.demo.MarkupContentAndSourceCode;
+import name.martingeisse.guiserver.template.demo.MarkupContentAndSourceCodeParser;
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
 import name.martingeisse.guiserver.xml.content.ContentParser;
 import name.martingeisse.guiserver.xml.content.DelegatingContentParser;
@@ -74,7 +77,7 @@ public final class TemplateParser implements ContentParser<MarkupContent<Compone
 			builder.addElementParser(validatorClass, new ValidatorParser(builder));
 
 			// register known content parsers
-			// (none right now)
+			builder.addContentParser(MarkupContentAndSourceCode.class, new MarkupContentAndSourceCodeParser(recursiveMarkupParser));
 
 			// known component special tags
 			builder.autoAddComponentElementParser(EnclosureConfiguration.class);
@@ -89,6 +92,7 @@ public final class TemplateParser implements ContentParser<MarkupContent<Compone
 			builder.autoAddComponentElementParser(TextFieldConfiguration.class);
 			builder.autoAddComponentElementParser(CheckboxConfiguration.class);
 			builder.autoAddComponentElementParser(PanelReferenceConfiguration.class);
+			builder.autoAddComponentElementParser(ComponentDemoConfiguration.class);
 
 			// Bootstrap-specific tags
 			builder.autoAddComponentElementParser(BootstrapFormConfiguration.class);
