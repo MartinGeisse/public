@@ -4,8 +4,6 @@
 
 package name.martingeisse.guiserver.configuration;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +11,13 @@ import java.util.Map;
 import java.util.Stack;
 
 import name.martingeisse.guiserver.configuration.element.Element;
-import name.martingeisse.guiserver.configuration.element.FileParser;
-import name.martingeisse.guiserver.configuration.element.RootFileParser;
+import name.martingeisse.guiserver.configuration.element.StorageElementParser;
+import name.martingeisse.guiserver.configuration.element.StorageElementParserSwitch;
+import name.martingeisse.guiserver.configuration.storage.StorageElement;
+import name.martingeisse.guiserver.configuration.storage.StorageException;
+import name.martingeisse.guiserver.configuration.storage.StorageFolder;
+import name.martingeisse.guiserver.configuration.storage.StorageFolderEntry;
+import name.martingeisse.guiserver.configuration.storage.UniverseStorage;
 import name.martingeisse.guiserver.template.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.template.IConfigurationSnippet;
 import name.martingeisse.guiserver.template.MarkupContent;
@@ -30,7 +33,7 @@ final class Builder {
 	/**
 	 * the fileParser
 	 */
-	private final FileParser fileParser;
+	private final StorageElementParser fileParser;
 
 	/**
 	 * the elements
@@ -51,39 +54,36 @@ final class Builder {
 	 * Constructor.
 	 * @param templateParser the XML-content-to-object-binding
 	 */
-	public Builder(File configurationRoot, ContentParser<MarkupContent<ComponentGroupConfiguration>> templateParser) {
-		this.fileParser = new RootFileParser(templateParser);
+	public Builder(ContentParser<MarkupContent<ComponentGroupConfiguration>> templateParser) {
+		this.fileParser = new StorageElementParserSwitch(templateParser);
 	}
 
 	/**
 	 * Builds the configuration using the files in the specified root folder and its subfolders.
-	 * @param rootFolder the root folder
+	 * @param storage the configuration storage
 	 * @return the configuration elements
-	 * @throws IOException on I/O errors
+	 * @throws StorageException on errors in the storage system
 	 */
-	public Configuration build(File rootFolder) throws IOException, ConfigurationException {
+	public Configuration build(UniverseStorage storage) throws StorageException, ConfigurationException {
 		elements.clear();
 		pathSegments.clear();
 		snippets.clear();
-		if (!rootFolder.isDirectory()) {
-			throw new RuntimeException("root configuration folder " + rootFolder + " doesn't exist or is not a folder");
-		}
-		handleFolder(rootFolder);
+		handleFolder(storage.getRootFolder());
 		return new Configuration(elements, snippets);
 	}
 
 	/**
 	 * 
 	 */
-	private void handleFolder(File folder) throws IOException, ConfigurationException {
-		for (File element : folder.listFiles()) {
-			pathSegments.push(element.getName());
-			if (element.isDirectory()) {
-				handleFolder(element);
-			} else if (element.isFile()) {
-				handleFile(element);
+	private void handleFolder(StorageFolder folder) throws StorageException, ConfigurationException {
+		for (StorageFolderEntry entry : folder.list()) {
+			pathSegments.push(entry.getName());
+			if (entry instanceof StorageFolder) {
+				handleFolder((StorageFolder)entry);
+			} else if (entry instanceof StorageElement) {
+				handleElement((StorageElement)entry);
 			} else {
-				throw new RuntimeException("configuration folder contains non-file, non-folder element: " + getCurrentPath());
+				throw new RuntimeException("configuration folder contains non-element, non-folder entry: " + getCurrentPath());
 			}
 			pathSegments.pop();
 		}
@@ -92,13 +92,14 @@ final class Builder {
 	/**
 	 * 
 	 */
-	private void handleFile(File file) throws IOException, ConfigurationException {
+	private void handleElement(StorageElement element) throws StorageException, ConfigurationException {
 		String path = getCurrentPath();
-		elements.put(path, fileParser.parse(file, path, snippets));
+		elements.put(path, fileParser.parse(element, path, snippets));
 	}
 
 	/**
-	 * 
+	 * TODO clean up the vagueness between this method, the folder's configuration path
+	 * and the folder's HTTP path
 	 */
 	private String getCurrentPath() {
 		if (pathSegments.isEmpty()) {

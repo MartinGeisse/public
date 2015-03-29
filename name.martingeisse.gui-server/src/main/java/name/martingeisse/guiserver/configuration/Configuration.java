@@ -4,14 +4,17 @@
 
 package name.martingeisse.guiserver.configuration;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import name.martingeisse.guiserver.application.ServerConfiguration;
 import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
 import name.martingeisse.guiserver.configuration.element.Element;
+import name.martingeisse.guiserver.configuration.storage.SimpleUniverseStorage;
+import name.martingeisse.guiserver.configuration.storage.StorageException;
+import name.martingeisse.guiserver.configuration.storage.UniverseStorage;
+import name.martingeisse.guiserver.configuration.storage.http.ApacheHttpdStorageEngine;
+import name.martingeisse.guiserver.configuration.storage.http.HttpFolder;
+import name.martingeisse.guiserver.configuration.storage.http.HttpStorageEngine;
 import name.martingeisse.guiserver.template.IConfigurationSnippet;
 import name.martingeisse.guiserver.template.TemplateParser;
 
@@ -28,9 +31,14 @@ public final class Configuration {
 	//
 	static {
 		try {
-			File configurationRoot = new File(ServerConfiguration.configurationRoot.getMandatoryValue());
-			Builder builder = new Builder(configurationRoot, TemplateParser.INSTANCE);
-			instance = builder.build(configurationRoot);
+			
+			// TODO remove that option from the server config once everything works
+			// File configurationRoot = new File(ServerConfiguration.configurationRoot.getMandatoryValue());
+			
+			HttpStorageEngine engine = new ApacheHttpdStorageEngine("http://localhost/geisse/demo-gui");
+			UniverseStorage storage = new SimpleUniverseStorage(new HttpFolder(engine, "/", "/"));
+			Builder builder = new Builder(TemplateParser.INSTANCE);
+			instance = builder.build(storage);
 		} catch (Exception e) {
 			throw new RuntimeException("could not load configuration", e);
 		}
@@ -57,10 +65,10 @@ public final class Configuration {
 	/**
 	 * Constructor.
 	 * 
-	 * @throws IOException on I/O errors
+	 * @throws StorageException on errors in the storage system
 	 * @throws ConfigurationException on errors in a configuration file
 	 */
-	public Configuration(Map<String, Element> elements, List<IConfigurationSnippet> snippets) throws IOException, ConfigurationException {
+	public Configuration(Map<String, Element> elements, List<IConfigurationSnippet> snippets) throws StorageException, ConfigurationException {
 		this.elements = elements;
 		this.snippets = snippets;
 	}
