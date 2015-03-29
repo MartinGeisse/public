@@ -18,6 +18,8 @@ import name.martingeisse.guiserver.configuration.storage.http.HttpStorageEngine;
 import name.martingeisse.guiserver.template.IConfigurationSnippet;
 import name.martingeisse.guiserver.template.TemplateParser;
 
+import org.apache.wicket.request.mapper.ICompoundRequestMapper;
+
 /**
  * This singleton class provides the data from the configuration.
  */
@@ -26,22 +28,21 @@ public final class Configuration {
 	/**
 	 * the instance
 	 */
-	private static final Configuration instance;
+	private static Configuration instance;
 	
-	//
-	static {
-		try {
-			
-			// TODO remove that option from the server config once everything works
-			// File configurationRoot = new File(ServerConfiguration.configurationRoot.getMandatoryValue());
-			
-			HttpStorageEngine engine = new ApacheHttpdStorageEngine("http://localhost/geisse/demo-gui");
-			UniverseStorage storage = new SimpleUniverseStorage(new HttpFolder(engine, "/", "/"));
-			Builder builder = new Builder(TemplateParser.INSTANCE);
-			instance = builder.build(storage);
-		} catch (Exception e) {
-			throw new RuntimeException("could not load configuration", e);
-		}
+	/**
+	 * Reloads the configuration.
+	 * 
+	 * @throws StorageException on configuration storage errors
+	 * @throws ConfigurationException on errors in the configuration
+	 */
+	public static void reload() throws StorageException, ConfigurationException {
+		HttpStorageEngine engine = new ApacheHttpdStorageEngine("http://localhost/geisse/demo-gui");
+		UniverseStorage storage = new SimpleUniverseStorage(new HttpFolder(engine, "/", "/"));
+		Builder builder = new Builder(TemplateParser.INSTANCE);
+		instance = builder.build(storage);
+		GuiWicketApplication.get().resetConfigurationDefinedRequestMapper();
+		instance.mountWicketUrls(GuiWicketApplication.get().getConfigurationDefinedRequestMapper());
 	}
 	
 	/**
@@ -49,6 +50,9 @@ public final class Configuration {
 	 * @return the instance
 	 */
 	public static Configuration getInstance() {
+		if (instance == null) {
+			throw new IllegalStateException("configuration not yet loaded");
+		}
 		return instance;
 	}
 		
@@ -76,11 +80,11 @@ public final class Configuration {
 	/**
 	 * Mounts the Wicket URLs needed by this configuration.
 	 * 
-	 * @param application the Wicket application
+	 * @param compoundRequestMapper the compount request mapper to register with
 	 */
-	public void mountWicketUrls(GuiWicketApplication application) {
+	public void mountWicketUrls(ICompoundRequestMapper compoundRequestMapper) {
 		for (Element element : elements.values()) {
-			element.mountWicketUrls(application);
+			element.mountWicketUrls(compoundRequestMapper);
 		}
 	}
 

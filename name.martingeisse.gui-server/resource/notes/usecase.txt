@@ -24,7 +24,7 @@ Forms
 [ok] forms mit backend processing
 [ok] required
 [ok] GUI-side validation rules
-[..] Bootstrap core replacement + form markup
+[ok] Bootstrap core replacement + form markup
 
 ------------------------------------------------------------------------------------------------
 Core Plugins

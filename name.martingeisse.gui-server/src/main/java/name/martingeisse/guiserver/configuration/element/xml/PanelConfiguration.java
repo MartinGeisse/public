@@ -4,7 +4,6 @@
 
 package name.martingeisse.guiserver.configuration.element.xml;
 
-import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
 import name.martingeisse.guiserver.configuration.element.Element;
 import name.martingeisse.guiserver.template.Template;
 
@@ -35,12 +34,5 @@ public final class PanelConfiguration extends Element {
 	public Template getTemplate() {
 		return template;
 	}
-
-	/* (non-Javadoc)
-	 * @see name.martingeisse.guiserver.configurationNew.ConfigurationElement#mountWicketUrls(name.martingeisse.guiserver.application.wicket.GuiWicketApplication)
-	 */
-	@Override
-	public void mountWicketUrls(GuiWicketApplication application) {
-	}
-
+	
 }

@@ -1,0 +1,14 @@
+
+MultiverseConfiguration contains:
+	Nx UniverseConfiguration
+	1x HyperspaceConfiguration
+-> this exists as a singleton
+
+UniverseConfiguration == current "Configuration"
+-> gets replaced in the MvC on reload
+
+HyperspaceConfiguration: configures the "hyperspace" between
+"universes". Not reloaded from anywhere, but later on this
+might be modified at runtime using an API.
+- contains universe configuration storage configs
+- contains Host header to universe mapping

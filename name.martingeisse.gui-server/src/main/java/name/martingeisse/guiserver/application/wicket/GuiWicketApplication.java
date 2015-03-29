@@ -18,8 +18,15 @@ import org.apache.wicket.markup.html.internal.HtmlHeaderItemsContainer;
 import org.apache.wicket.markup.resolver.HtmlHeaderResolver;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IExceptionMapper;
+import org.apache.wicket.request.IRequestCycle;
+import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.IRequestMapper;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.flow.RedirectToUrlException;
+import org.apache.wicket.request.mapper.CompoundRequestMapper;
+import org.apache.wicket.request.mapper.ICompoundRequestMapper;
+import org.apache.wicket.request.mapper.mount.MountMapper;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.IProvider;
 
@@ -29,6 +36,13 @@ import org.apache.wicket.util.IProvider;
 public class GuiWicketApplication extends AbstractMyWicketApplication {
 
 	/**
+	 * @return the shared application instance
+	 */
+	public static GuiWicketApplication get() {
+		return (GuiWicketApplication)AbstractMyWicketApplication.get();
+	}
+	
+	/**
 	 * the logger
 	 */
 	private static Logger logger = Logger.getLogger(GuiWicketApplication.class);
@@ -37,7 +51,29 @@ public class GuiWicketApplication extends AbstractMyWicketApplication {
 	 * the RENDER_PROFILING
 	 */
 	public static final boolean RENDER_PROFILING = false;
+	
+	/**
+	 * the configurationDefinedRequestMapper
+	 */
+	private final CompoundRequestMapper configurationDefinedRequestMapper = new CompoundRequestMapper();
 
+	/**
+	 * Getter method for the configurationDefinedRequestMapper.
+	 * @return the configurationDefinedRequestMapper
+	 */
+	public ICompoundRequestMapper getConfigurationDefinedRequestMapper() {
+		return configurationDefinedRequestMapper;
+	}
+
+	/**
+	 * Resets all mounted URLs in the configuration-defined mapper.
+	 */
+	public void resetConfigurationDefinedRequestMapper() {
+		for (IRequestMapper mapper : configurationDefinedRequestMapper) {
+			configurationDefinedRequestMapper.remove(mapper);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.apache.wicket.protocol.http.WebApplication#init()
 	 */
@@ -45,6 +81,13 @@ public class GuiWicketApplication extends AbstractMyWicketApplication {
 	protected void init() {
 		super.init();
 
+		// load the GUI configuration
+		try {
+			Configuration.reload();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		
 		// settings
 		getMarkupSettings().setStripWicketTags(true);
 		getMarkupSettings().setDefaultMarkupEncoding("utf-8");
@@ -91,7 +134,24 @@ public class GuiWicketApplication extends AbstractMyWicketApplication {
 		//		);
 
 		// --- mount pages ---
-		Configuration.getInstance().mountWicketUrls(this);
+		mount(configurationDefinedRequestMapper);
+		mount(new MountMapper("/reload-configuration", new IRequestHandler() {
+			
+			@Override
+			public void respond(IRequestCycle requestCycle) {
+				try {
+					Configuration.reload();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+				throw new RedirectToUrlException("/");
+			}
+			
+			@Override
+			public void detach(IRequestCycle requestCycle) {
+			}
+			
+		}));
 		
 		// main pages
 		//		mountPage("foo", FooPage.class);

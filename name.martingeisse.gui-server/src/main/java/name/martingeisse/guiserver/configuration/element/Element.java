@@ -4,7 +4,7 @@
 
 package name.martingeisse.guiserver.configuration.element;
 
-import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
+import org.apache.wicket.request.mapper.ICompoundRequestMapper;
 
 /**
  * The base class for configuration elements.
@@ -44,7 +44,7 @@ public abstract class Element {
 	 * Mounts all Wicket URLs needed by this element.
 	 * @param application the application used to mount URLs
 	 */
-	public void mountWicketUrls(GuiWicketApplication application) {		
+	public void mountWicketUrls(ICompoundRequestMapper compoundRequestMapper) {		
 	}
 	
 }

@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 
 import name.martingeisse.common.config.ConfigurationPropertiesFile;
-import name.martingeisse.common.config.StringProperty;
 
 /**
  * This class provides access to the configuration .properties
@@ -19,13 +18,9 @@ public final class ServerConfiguration {
 	/**
 	 * the configurationProperties
 	 */
+	@SuppressWarnings("unused")
 	private static ConfigurationPropertiesFile configurationProperties;
 
-	/**
-	 * the configurationRoot
-	 */
-	public static StringProperty configurationRoot;
-	
 	/**
 	 * Initializes this class from the specified .properties file.
 	 * @param configFilePath the path of the configuration file
@@ -33,7 +28,6 @@ public final class ServerConfiguration {
 	 */
 	public static void initialize(String configFilePath) throws IOException {
 		configurationProperties = new ConfigurationPropertiesFile(new File(configFilePath));
-		configurationRoot = new StringProperty(configurationProperties, "configurationRoot");
 	}
 
 }

@@ -7,7 +7,6 @@ package name.martingeisse.guiserver.configuration.element.xml;
 import java.util.ArrayList;
 import java.util.List;
 
-import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
 import name.martingeisse.guiserver.component.ConfigurationDefinedPage;
 import name.martingeisse.guiserver.configuration.element.Element;
 import name.martingeisse.guiserver.template.ComponentGroupConfiguration;
@@ -17,6 +16,7 @@ import name.martingeisse.guiserver.template.Template;
 import name.martingeisse.guiserver.template.UrlSubpathComponentGroupConfiguration;
 import name.martingeisse.wicket.util.ParameterMountedRequestMapper;
 
+import org.apache.wicket.request.mapper.ICompoundRequestMapper;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 
@@ -54,22 +54,22 @@ public final class PageConfiguration extends Element {
 	}
 
 	/* (non-Javadoc)
-	 * @see name.martingeisse.guiserver.configurationNew.ConfigurationElement#mountWicketUrls(name.martingeisse.guiserver.application.wicket.GuiWicketApplication)
+	 * @see name.martingeisse.guiserver.configuration.element.Element#mountWicketUrls(org.apache.wicket.request.mapper.ICompoundRequestMapper)
 	 */
 	@Override
-	public void mountWicketUrls(GuiWicketApplication application) {
+	public void mountWicketUrls(ICompoundRequestMapper configurationDefinedRequestMapper) {
 		PageParameters identifyingParameters = new PageParameters();
 		identifyingParameters.add(CONFIGURATION_ELEMENT_PATH_PAGE_PARAMETER_NAME, getPath());
 		if (!getPath().equals("/")) {
-			application.mount(new ParameterMountedRequestMapper(getPath(), ConfigurationDefinedPage.class, identifyingParameters));
+			configurationDefinedRequestMapper.add(new ParameterMountedRequestMapper(getPath(), ConfigurationDefinedPage.class, identifyingParameters));
 		}
-		mountComponentUrls(application, getPath(), template.getComponents());
+		mountComponentUrls(configurationDefinedRequestMapper, getPath(), template.getComponents());
 	}
 
 	/**
 	 * 
 	 */
-	private void mountComponentUrls(GuiWicketApplication application, String pathPrefix, final IComponentGroupConfigurationVisitorAcceptor acceptor) {
+	private void mountComponentUrls(ICompoundRequestMapper configurationDefinedRequestMapper, String pathPrefix, final IComponentGroupConfigurationVisitorAcceptor acceptor) {
 		
 		// find the components that want to provide the next URL segment
 		final List<UrlSubpathComponentGroupConfiguration> subpathComponents = new ArrayList<>();
@@ -118,11 +118,11 @@ public final class PageConfiguration extends Element {
 		identifyingParameters.add(CONFIGURATION_ELEMENT_PATH_PAGE_PARAMETER_NAME, getPath());
 
 		// mount the current URL first to give it less priority when generating URLs
-		application.mount(new ParameterMountedRequestMapper(parameterizedPath, ConfigurationDefinedPage.class, identifyingParameters));
+		configurationDefinedRequestMapper.add(new ParameterMountedRequestMapper(parameterizedPath, ConfigurationDefinedPage.class, identifyingParameters));
 
 		// allow nested components to contribute their paths too
 		for (UrlSubpathComponentGroupConfiguration component : subpathComponents) {
-			mountComponentUrls(application, parameterizedPath, component);
+			mountComponentUrls(configurationDefinedRequestMapper, parameterizedPath, component);
 		}
 		
 	}
