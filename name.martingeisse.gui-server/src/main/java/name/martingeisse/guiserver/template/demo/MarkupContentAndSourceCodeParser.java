@@ -45,7 +45,7 @@ public class MarkupContentAndSourceCodeParser implements ContentParser<MarkupCon
 	public MarkupContentAndSourceCode parse(MyXmlStreamReader reader) throws XMLStreamException {
 		StringWriter stringWriter = new StringWriter();
 		XMLStreamWriter writer = buildXmlStreamWriter(stringWriter);
-		MarkupContent<ComponentGroupConfiguration> markupContent = wrappedParser.parse(new MyXmlStreamReader(new XmlStreamReaderTee(reader, writer)));
+		MarkupContent<ComponentGroupConfiguration> markupContent = wrappedParser.parse(new MyXmlStreamReader(new XmlStreamReaderTee(reader, writer, true)));
 		String result = stringWriter.toString().replace(" xmlns:gui=\"http://guiserver.martingeisse.name/v1\"", "").trim();
 		
 		// unfortunately, XMLStreamWriter doesn't generate empty elements automatically, and we cannot easily

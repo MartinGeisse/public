@@ -6,10 +6,13 @@ package name.martingeisse.guiserver.component;
 
 import name.martingeisse.guiserver.configuration.Configuration;
 import name.martingeisse.guiserver.template.demo.ComponentDemoConfiguration;
+import name.martingeisse.wicket.component.codemirror.CodeMirrorBehavior;
+import name.martingeisse.wicket.component.codemirror.modes.CodeMirrorModes;
 
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.border.Border;
+import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
 
 /**
  * Shows a "source code" section below one or more components.
@@ -35,12 +38,19 @@ public class ComponentDemoBorder extends Border {
 		super(id);
 		this.configurationHandle = configuration.getSnippetHandle();
 		this.cachedConfiguration = configuration;
-		addToBorder(new Label("sourceCode", new AbstractReadOnlyModel<String>() {
+		IModel<String> sourceCodeModel = new AbstractReadOnlyModel<String>() {
 			@Override
 			public String getObject() {
 				return getConfiguration().getSourceCode();
 			}
-		}));
+		};
+		final CodeMirrorBehavior codeMirrorBehavior = new CodeMirrorBehavior(CodeMirrorModes.XML) {
+			@Override
+			protected void renderOptionsArgument(StringBuilder builder) {
+				builder.append("{readOnly: true}");
+			}
+		};
+		addToBorder(new TextArea<>("sourceCode", sourceCodeModel).add(codeMirrorBehavior));
 	}
 
 	/**

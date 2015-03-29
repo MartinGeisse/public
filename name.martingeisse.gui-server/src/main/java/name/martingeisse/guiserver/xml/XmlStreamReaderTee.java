@@ -33,6 +33,11 @@ public final class XmlStreamReaderTee extends StreamReaderDelegate {
 	private final XMLStreamWriter writer;
 	
 	/**
+	 * the trim
+	 */
+	private final boolean trim;
+	
+	/**
 	 * the skipNext
 	 */
 	private boolean skipNext;
@@ -41,11 +46,13 @@ public final class XmlStreamReaderTee extends StreamReaderDelegate {
 	 * Constructor.
 	 * @param reader the reader to read from
 	 * @param writer the writer to write to
+	 * @param trim whether to trim character content
 	 * @throws XMLStreamException on XML processing errors
 	 */
-	public XmlStreamReaderTee(XMLStreamReader reader, XMLStreamWriter writer) throws XMLStreamException {
+	public XmlStreamReaderTee(XMLStreamReader reader, XMLStreamWriter writer, boolean trim) throws XMLStreamException {
 		super(reader);
 		this.writer = writer;
+		this.trim = trim;
 		this.skipNext = false;
 	}
 	
@@ -84,7 +91,6 @@ public final class XmlStreamReaderTee extends StreamReaderDelegate {
 			case XMLStreamConstants.ENTITY_DECLARATION:
 			case XMLStreamConstants.NAMESPACE:
 			case XMLStreamConstants.NOTATION_DECLARATION:
-				System.out.println("# " + event);
 				break;
 				
 			case XMLStreamConstants.START_ELEMENT:
@@ -113,15 +119,15 @@ public final class XmlStreamReaderTee extends StreamReaderDelegate {
 				
 			case XMLStreamConstants.CHARACTERS:
 			case XMLStreamConstants.SPACE:
-				writer.writeCharacters(getText());
+				writer.writeCharacters(getAutotrimmedText());
 				break;
 				
 			case XMLStreamConstants.CDATA:
-				writer.writeCData(getText());
+				writer.writeCData(getAutotrimmedText());
 				break;
 				
 			case XMLStreamConstants.COMMENT:
-				writer.writeComment(getText());
+				writer.writeComment(getAutotrimmedText());
 				break;
 				
 			case XMLStreamConstants.PROCESSING_INSTRUCTION:
@@ -139,6 +145,13 @@ public final class XmlStreamReaderTee extends StreamReaderDelegate {
 			}
 		}
 		return super.next();
+	}
+	
+	/**
+	 * 
+	 */
+	private String getAutotrimmedText() {
+		return (trim ? StringUtils.strip(getText(), " \t") : getText());
 	}
 
 	/* (non-Javadoc)

@@ -66,9 +66,19 @@ public class CodeMirrorBehavior extends Behavior {
 		builder.append("var q = $('#").append(textArea.getMarkupId()).append("'); \n");
 		builder.append("var codeMirror = q.createCodeMirrorForTextArea(");
 		mode.renderModeParameter(builder);
-		builder.append(", {}); \n");
+		builder.append(", ");
+		renderOptionsArgument(builder);
+		builder.append("); \n");
 		builder.append("q.data('codeMirrorInstance', codeMirror); ");
 		response.render(OnDomReadyHeaderItem.forScript(builder.toString()));
+	}
+	
+	/**
+	 * Renders an additional options argument for the call to createCodeMirrorForTextArea().
+	 * @param builder the string builder to render to
+	 */
+	protected void renderOptionsArgument(StringBuilder builder) {
+		builder.append("{}");
 	}
 	
 }

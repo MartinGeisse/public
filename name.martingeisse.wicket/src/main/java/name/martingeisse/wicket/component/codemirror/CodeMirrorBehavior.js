@@ -16,6 +16,7 @@ $.fn.createCodeMirrorForTextArea = function(mode, options) {
 				'Cmd-S': function() {},
 			},
 			autocompileDelay: 1000,
+			// viewportMargin: parseFloat('Infinity'),
 		}, options);
 		
 		// create the CodeMirror instance

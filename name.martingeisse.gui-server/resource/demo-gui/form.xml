@@ -7,35 +7,37 @@
 			This is a page with a form.
 		</div>
 		<div>
-			<gui:form backendUrl="http://localhost/geisse/demo-backend/form.php">
-				<div>
-					<gui:enclosure>
-						<div style="color: red; background-color: #fcc; border: 1px solid #faa">
-							ERROR: <gui:feedback name="foo" />
-						</div>
-					</gui:enclosure>
+			<gui:demo>
+				<gui:form backendUrl="http://localhost/geisse/demo-backend/form.php">
 					<div>
-						Name:
-						<gui:textField name="foo">
-							<gui:validation type="length" min="2" max="10" />
-						</gui:textField>
-					</div>
-				</div>
-				<div>
-					<gui:enclosure>
-						<div style="color: red; background-color: #fcc; border: 1px solid #faa">
-							ERROR: <gui:feedback name="bar" />
+						<gui:enclosure>
+							<div style="color: red; background-color: #fcc; border: 1px solid #faa">
+								ERROR: <gui:feedback name="foo" />
+							</div>
+						</gui:enclosure>
+						<div>
+							Name:
+							<gui:textField name="foo">
+								<gui:validation type="length" min="2" max="10" />
+							</gui:textField>
 						</div>
-					</gui:enclosure>
-					<div>
-						<gui:checkbox name="bar" /> I agree to the terms and conditions.
 					</div>
-				</div>
-				<br />
-				<div>
-					<gui:submit />
-				</div>
-			</gui:form>
+					<div>
+						<gui:enclosure>
+							<div style="color: red; background-color: #fcc; border: 1px solid #faa">
+								ERROR: <gui:feedback name="bar" />
+							</div>
+						</gui:enclosure>
+						<div>
+							<gui:checkbox name="bar" /> I agree to the terms and conditions.
+						</div>
+					</div>
+					<br />
+					<div>
+						<gui:submit />
+					</div>
+				</gui:form>
+			</gui:demo>
 		</div>
 	</div>
 </gui:page>

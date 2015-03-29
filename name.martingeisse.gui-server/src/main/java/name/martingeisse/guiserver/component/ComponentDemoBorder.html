@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <html>
+	<wicket:head>
+		<style type="text/css">
+	
+			.CodeMirror {
+				border: 1px solid #444;
+				height: auto;
+			}
+			
+			.CodeMirror-scroll {
+				height: auto;
+			}
+			
+		</style>
+	</wicket:head>
 	<body>
 		<wicket:border>
 			<wicket:body />
 			<div>Source Code:</div>
-			<pre wicket:id="sourceCode" />
+			<div>
+				<textarea wicket:id="sourceCode" />
+			</div>
+			<br />
 		</wicket:border>
 	</body>
 </html>

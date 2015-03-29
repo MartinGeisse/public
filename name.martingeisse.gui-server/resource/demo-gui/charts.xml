@@ -7,7 +7,7 @@
 			Here's a pie chart:
 		</div>
 		<div>
-			<gui:demo code="foobar&#10;fupp">
+			<gui:demo>
 				<gui:pieChart backendUrl="http://localhost/geisse/demo-backend/pie-chart.php" legend="false" />
 			</gui:demo>
 		</div>
