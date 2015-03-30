@@ -6,6 +6,7 @@ package name.martingeisse.guiserver.template;
 
 import javax.xml.stream.XMLStreamException;
 
+import name.martingeisse.guiserver.template.basic.EchoTextConfiguration;
 import name.martingeisse.guiserver.template.basic.EnclosureConfiguration;
 import name.martingeisse.guiserver.template.basic.IncludeBackendConfiguration;
 import name.martingeisse.guiserver.template.basic.LazyLoadContainerConfiguration;
@@ -24,6 +25,7 @@ import name.martingeisse.guiserver.template.bootstrap.form.BootstrapTextFieldCon
 import name.martingeisse.guiserver.template.demo.ComponentDemoConfiguration;
 import name.martingeisse.guiserver.template.demo.MarkupContentAndSourceCode;
 import name.martingeisse.guiserver.template.demo.MarkupContentAndSourceCodeParser;
+import name.martingeisse.guiserver.template.model.BackendJsonModelConfiguration;
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
 import name.martingeisse.guiserver.xml.content.ContentParser;
 import name.martingeisse.guiserver.xml.content.DelegatingContentParser;
@@ -80,6 +82,7 @@ public final class TemplateParser implements ContentParser<MarkupContent<Compone
 			builder.addContentParser(MarkupContentAndSourceCode.class, new MarkupContentAndSourceCodeParser(recursiveMarkupParser));
 
 			// known component special tags
+			builder.autoAddComponentElementParser(EchoTextConfiguration.class);
 			builder.autoAddComponentElementParser(EnclosureConfiguration.class);
 			builder.autoAddComponentElementParser(IncludeBackendConfiguration.class);
 			builder.autoAddComponentElementParser(LazyLoadContainerConfiguration.class);
@@ -97,6 +100,9 @@ public final class TemplateParser implements ContentParser<MarkupContent<Compone
 			// Bootstrap-specific tags
 			builder.autoAddComponentElementParser(BootstrapFormConfiguration.class);
 			builder.autoAddComponentElementParser(BootstrapTextFieldConfiguration.class);
+			
+			// models
+			builder.autoAddComponentElementParser(BackendJsonModelConfiguration.class);
 
 			// close the parsing loop
 			recursiveMarkupParser.setDelegate(new MarkupContentParser<>(builder.getComponentElementParser()));

@@ -152,6 +152,9 @@ public final class BackendHttpClient {
 	 * @return the response
 	 */
 	public static HttpResponse get(String url) {
+		if (url == null) {
+			throw new IllegalArgumentException("url cannot be null");
+		}
 		final HttpGet httpGet = new HttpGet(url);
 		final HttpResponse response;
 		try {
