@@ -4,7 +4,7 @@
 
 package name.martingeisse.guiserver.component;
 
-import name.martingeisse.guiserver.configuration.Configuration;
+import name.martingeisse.guiserver.configuration.ConfigurationHolder;
 import name.martingeisse.guiserver.template.basic.PanelReferenceConfiguration;
 
 import org.apache.wicket.MarkupContainer;
@@ -49,7 +49,7 @@ public class UserDefinedPanel extends Panel implements IMarkupCacheKeyProvider, 
 	 */
 	public final PanelReferenceConfiguration getPanelReferenceConfiguration() {
 		if (cachedPanelReferenceConfiguration == null) {
-			cachedPanelReferenceConfiguration = (PanelReferenceConfiguration)Configuration.getInstance().getSnippet(panelReferenceConfigurationHandle);
+			cachedPanelReferenceConfiguration = (PanelReferenceConfiguration)ConfigurationHolder.needRequestUniverseConfiguration().getSnippet(panelReferenceConfigurationHandle);
 		}
 		return cachedPanelReferenceConfiguration;
 	}
@@ -62,7 +62,7 @@ public class UserDefinedPanel extends Panel implements IMarkupCacheKeyProvider, 
 		if (container != this) {
 			throw new IllegalArgumentException("a UserDefinedPanel cannot be used to provide a markup cache key for other components than itself");
 		}
-		return getClass().getName() + ':' + getPanelReferenceConfiguration().getPanelConfiguration();
+		return ConfigurationHolder.needRequestUniverseConfiguration().getSerialNumber() + ':' + getClass().getName() + ':' + getPanelReferenceConfiguration().getPanelConfiguration();
 	}
 
 	/* (non-Javadoc)

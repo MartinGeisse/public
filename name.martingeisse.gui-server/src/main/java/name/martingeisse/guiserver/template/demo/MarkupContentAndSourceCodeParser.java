@@ -48,6 +48,8 @@ public class MarkupContentAndSourceCodeParser implements ContentParser<MarkupCon
 		MarkupContent<ComponentGroupConfiguration> markupContent = wrappedParser.parse(new MyXmlStreamReader(new XmlStreamReaderTee(reader, writer, true)));
 		String result = stringWriter.toString().replace(" xmlns:gui=\"http://guiserver.martingeisse.name/v1\"", "").trim();
 		
+		// TODO write cleaning-up XML writer
+		
 		// unfortunately, XMLStreamWriter doesn't generate empty elements automatically, and we cannot easily
 		// detect them while copying from a reader...
 		result = result.replaceAll("(\\<[^\\<\\>\\/\\\"]+(?:\\\"[^\\\"]*\\\"[^\\<\\>\\/\\\"]*)*)\\>\\<\\/[^\\<\\>\\/]+\\>", "$1/>");
@@ -63,16 +65,5 @@ public class MarkupContentAndSourceCodeParser implements ContentParser<MarkupCon
 		xmlOutputFactory.setProperty("javax.xml.stream.isRepairingNamespaces", true);
 		return new IndentingXMLStreamWriter(xmlOutputFactory.createXMLStreamWriter(w));
 	}
-	
-	/*
-	private XMLStreamWriter buildXmlStreamWriter(Writer w) {
-		Processor p = new net.sf.saxon.s9api.Processor();
-		Serializer s = p.newSerializer();
-		s.setOutputProperty(Property.METHOD, "xml");
-		s.setOutputProperty(Property.INDENT, "yes");
-		s.setOutputStream(....);
-		XMLStreamWriter writer = s.getXMLStreamWriter();
-	}
-	*/
 
 }

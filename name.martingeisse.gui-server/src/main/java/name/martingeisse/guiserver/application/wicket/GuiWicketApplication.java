@@ -6,7 +6,7 @@ package name.martingeisse.guiserver.application.wicket;
 
 import name.martingeisse.guiserver.application.page.AbstractApplicationPage;
 import name.martingeisse.guiserver.component.ConfigurationDefinedHomePage;
-import name.martingeisse.guiserver.configuration.Configuration;
+import name.martingeisse.guiserver.configuration.ConfigurationHolder;
 import name.martingeisse.wicket.application.AbstractMyWicketApplication;
 
 import org.apache.log4j.Logger;
@@ -18,15 +18,11 @@ import org.apache.wicket.markup.html.internal.HtmlHeaderItemsContainer;
 import org.apache.wicket.markup.resolver.HtmlHeaderResolver;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IExceptionMapper;
-import org.apache.wicket.request.IRequestCycle;
-import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.IRequestMapper;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
-import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.apache.wicket.request.mapper.CompoundRequestMapper;
 import org.apache.wicket.request.mapper.ICompoundRequestMapper;
-import org.apache.wicket.request.mapper.mount.MountMapper;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.IProvider;
 
@@ -81,13 +77,6 @@ public class GuiWicketApplication extends AbstractMyWicketApplication {
 	protected void init() {
 		super.init();
 
-		// load the GUI configuration
-		try {
-			Configuration.reload();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		
 		// settings
 		getMarkupSettings().setStripWicketTags(true);
 		getMarkupSettings().setDefaultMarkupEncoding("utf-8");
@@ -135,23 +124,23 @@ public class GuiWicketApplication extends AbstractMyWicketApplication {
 
 		// --- mount pages ---
 		mount(configurationDefinedRequestMapper);
-		mount(new MountMapper("/reload-configuration", new IRequestHandler() {
-			
-			@Override
-			public void respond(IRequestCycle requestCycle) {
-				try {
-					Configuration.reload();
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-				throw new RedirectToUrlException("/");
-			}
-			
-			@Override
-			public void detach(IRequestCycle requestCycle) {
-			}
-			
-		}));
+//		mount(new MountMapper("/reload-configuration", new IRequestHandler() {
+//			
+//			@Override
+//			public void respond(IRequestCycle requestCycle) {
+//				try {
+//					DefaultUniverseConfiguration.reload();
+//				} catch (Exception e) {
+//					throw new RuntimeException(e);
+//				}
+//				throw new RedirectToUrlException("/");
+//			}
+//			
+//			@Override
+//			public void detach(IRequestCycle requestCycle) {
+//			}
+//			
+//		}));
 		
 		// main pages
 		//		mountPage("foo", FooPage.class);
@@ -211,6 +200,9 @@ public class GuiWicketApplication extends AbstractMyWicketApplication {
 
 			});
 		}
+		
+		// load universes
+		ConfigurationHolder.initialize();
 
 	}
 

@@ -7,7 +7,7 @@ package name.martingeisse.guiserver.component;
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.guiserver.backend.BackendHttpClient;
 import name.martingeisse.guiserver.component.util.ChartImageResource;
-import name.martingeisse.guiserver.configuration.Configuration;
+import name.martingeisse.guiserver.configuration.ConfigurationHolder;
 import name.martingeisse.guiserver.template.basic.PieChartConfiguration;
 
 import org.jfree.chart.ChartFactory;
@@ -49,7 +49,7 @@ public final class PieChartImageResource extends ChartImageResource {
 	 */
 	public final PieChartConfiguration getConfiguration() {
 		if (cachedConfiguration == null) {
-			cachedConfiguration = (PieChartConfiguration)Configuration.getInstance().getSnippet(snippetHandle);
+			cachedConfiguration = (PieChartConfiguration)ConfigurationHolder.needRequestUniverseConfiguration().getSnippet(snippetHandle);
 		}
 		return cachedConfiguration;
 	}

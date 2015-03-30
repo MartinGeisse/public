@@ -7,7 +7,7 @@ package name.martingeisse.guiserver.template.basic;
 import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.component.UserDefinedPanel;
-import name.martingeisse.guiserver.configuration.Configuration;
+import name.martingeisse.guiserver.configuration.ConfigurationHolder;
 import name.martingeisse.guiserver.configuration.element.xml.PanelConfiguration;
 import name.martingeisse.guiserver.template.AbstractSingleComponentConfiguration;
 import name.martingeisse.guiserver.template.ComponentGroupConfiguration;
@@ -71,7 +71,7 @@ public class PanelReferenceConfiguration extends AbstractSingleComponentConfigur
 	 */
 	public PanelConfiguration getPanelConfiguration() {
 		if (panelConfiguration == null) {
-			panelConfiguration = Configuration.getInstance().getElementOrNull(PanelConfiguration.class, sourcePath);
+			panelConfiguration = ConfigurationHolder.needRequestUniverseConfiguration().getElementOrNull(PanelConfiguration.class, sourcePath);
 			if (panelConfiguration == null) {
 				throw new RuntimeException("no such panel configuration: " + sourcePath);
 			}

@@ -8,7 +8,7 @@ import java.util.Map;
 
 import name.martingeisse.common.javascript.analyze.JsonAnalyzer;
 import name.martingeisse.guiserver.backend.BackendHttpClient;
-import name.martingeisse.guiserver.configuration.Configuration;
+import name.martingeisse.guiserver.configuration.ConfigurationHolder;
 import name.martingeisse.guiserver.configuration.element.xml.PageConfiguration;
 import name.martingeisse.guiserver.template.basic.form.FormConfiguration;
 
@@ -53,7 +53,7 @@ public final class ConfigurationDefinedForm extends Form<Map<String, Object>> {
 	 */
 	public final FormConfiguration getFormConfiguration() {
 		if (cachedFormConfiguration == null) {
-			cachedFormConfiguration = (FormConfiguration)Configuration.getInstance().getSnippet(formConfigurationHandle);
+			cachedFormConfiguration = (FormConfiguration)ConfigurationHolder.needRequestUniverseConfiguration().getSnippet(formConfigurationHandle);
 		}
 		return cachedFormConfiguration;
 	}

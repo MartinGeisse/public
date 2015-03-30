@@ -4,7 +4,7 @@
 
 package name.martingeisse.guiserver.component;
 
-import name.martingeisse.guiserver.configuration.Configuration;
+import name.martingeisse.guiserver.configuration.ConfigurationHolder;
 import name.martingeisse.guiserver.template.demo.ComponentDemoConfiguration;
 import name.martingeisse.wicket.component.codemirror.CodeMirrorBehavior;
 import name.martingeisse.wicket.component.codemirror.modes.CodeMirrorModes;
@@ -59,7 +59,7 @@ public class ComponentDemoBorder extends Border {
 	 */
 	public final ComponentDemoConfiguration getConfiguration() {
 		if (cachedConfiguration == null) {
-			cachedConfiguration = (ComponentDemoConfiguration)Configuration.getInstance().getSnippet(configurationHandle);
+			cachedConfiguration = (ComponentDemoConfiguration)ConfigurationHolder.needRequestUniverseConfiguration().getSnippet(configurationHandle);
 		}
 		return cachedConfiguration;
 	}

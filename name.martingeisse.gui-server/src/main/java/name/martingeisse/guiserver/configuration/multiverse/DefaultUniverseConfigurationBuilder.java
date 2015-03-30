@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.configuration;
+package name.martingeisse.guiserver.configuration.multiverse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import name.martingeisse.guiserver.configuration.ConfigurationException;
 import name.martingeisse.guiserver.configuration.element.Element;
 import name.martingeisse.guiserver.configuration.element.StorageElementParser;
 import name.martingeisse.guiserver.configuration.element.StorageElementParserSwitch;
@@ -28,7 +29,7 @@ import name.martingeisse.guiserver.xml.content.ContentParser;
  * 
  * Instances of this class should not be used by two callers at the same time.
  */
-final class Builder {
+final class DefaultUniverseConfigurationBuilder {
 	
 	/**
 	 * the fileParser
@@ -54,22 +55,23 @@ final class Builder {
 	 * Constructor.
 	 * @param templateParser the XML-content-to-object-binding
 	 */
-	public Builder(ContentParser<MarkupContent<ComponentGroupConfiguration>> templateParser) {
+	public DefaultUniverseConfigurationBuilder(ContentParser<MarkupContent<ComponentGroupConfiguration>> templateParser) {
 		this.fileParser = new StorageElementParserSwitch(templateParser);
 	}
 
 	/**
 	 * Builds the configuration using the files in the specified root folder and its subfolders.
 	 * @param storage the configuration storage
+	 * @param serialNumber the serial number for the configuration to build
 	 * @return the configuration elements
 	 * @throws StorageException on errors in the storage system
 	 */
-	public Configuration build(UniverseStorage storage) throws StorageException, ConfigurationException {
+	public DefaultUniverseConfiguration build(UniverseStorage storage, int serialNumber) throws StorageException, ConfigurationException {
 		elements.clear();
 		pathSegments.clear();
 		snippets.clear();
 		handleFolder(storage.getRootFolder());
-		return new Configuration(elements, snippets);
+		return new DefaultUniverseConfiguration(serialNumber, elements, snippets);
 	}
 
 	/**

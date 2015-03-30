@@ -10,7 +10,7 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import name.martingeisse.guiserver.configuration.Configuration;
+import name.martingeisse.guiserver.configuration.ConfigurationHolder;
 import name.martingeisse.guiserver.template.AbstractSingleComponentConfiguration;
 import name.martingeisse.guiserver.template.AbstractSingleContainerConfiguration;
 import name.martingeisse.guiserver.template.ComponentGroupConfiguration;
@@ -307,7 +307,7 @@ public final class TabPanelConfiguration extends AbstractSingleComponentConfigur
 		 */
 		public final TabPanelConfiguration getTabPanelConfiguration() {
 			if (cachedTabPanelConfiguration == null) {
-				cachedTabPanelConfiguration = (TabPanelConfiguration)Configuration.getInstance().getSnippet(snippetHandle);
+				cachedTabPanelConfiguration = (TabPanelConfiguration)ConfigurationHolder.needRequestUniverseConfiguration().getSnippet(snippetHandle);
 			}
 			return cachedTabPanelConfiguration;
 		}

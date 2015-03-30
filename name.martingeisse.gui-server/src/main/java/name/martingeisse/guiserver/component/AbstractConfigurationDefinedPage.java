@@ -5,7 +5,7 @@
 package name.martingeisse.guiserver.component;
 
 import name.martingeisse.guiserver.application.page.AbstractApplicationPage;
-import name.martingeisse.guiserver.configuration.Configuration;
+import name.martingeisse.guiserver.configuration.ConfigurationHolder;
 import name.martingeisse.guiserver.configuration.element.xml.PageConfiguration;
 
 import org.apache.wicket.MarkupContainer;
@@ -49,7 +49,7 @@ public abstract class AbstractConfigurationDefinedPage extends AbstractApplicati
 	 */
 	public final PageConfiguration getPageConfiguration() {
 		if (cachedPageConfiguration == null) {
-			cachedPageConfiguration = Configuration.getInstance().getElement(PageConfiguration.class, pageConfigurationPath);
+			cachedPageConfiguration = ConfigurationHolder.needRequestUniverseConfiguration().getElement(PageConfiguration.class, pageConfigurationPath);
 		}
 		return cachedPageConfiguration;
 	}
@@ -62,7 +62,7 @@ public abstract class AbstractConfigurationDefinedPage extends AbstractApplicati
 		if (container != this) {
 			throw new IllegalArgumentException("a ConfigurationDefinedPage cannot be used to provide a markup cache key for other components than itself");
 		}
-		return getClass().getName() + ':' + getPageConfiguration().getPath();
+		return ConfigurationHolder.needRequestUniverseConfiguration().getSerialNumber() + ':' + getClass().getName() + ':' + getPageConfiguration().getPath();
 	}
 
 	/* (non-Javadoc)
