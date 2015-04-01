@@ -77,6 +77,14 @@ public class ComponentDemoConfiguration extends AbstractSingleContainerConfigura
 	}
 
 	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.template.AbstractComponentGroupConfiguration#getBaseIdPrefix()
+	 */
+	@Override
+	protected String getBaseIdPrefix() {
+		return "demo";
+	}
+	
+	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.template.AbstractSingleContainerConfiguration#buildContainer()
 	 */
 	@Override

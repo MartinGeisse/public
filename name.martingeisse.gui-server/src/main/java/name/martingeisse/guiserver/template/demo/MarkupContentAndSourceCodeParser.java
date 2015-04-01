@@ -14,10 +14,9 @@ import javax.xml.stream.XMLStreamWriter;
 import name.martingeisse.guiserver.template.ComponentGroupConfiguration;
 import name.martingeisse.guiserver.template.MarkupContent;
 import name.martingeisse.guiserver.xml.MyXmlStreamReader;
+import name.martingeisse.guiserver.xml.PrettyPrintXmlStreamWriter;
 import name.martingeisse.guiserver.xml.XmlStreamReaderTee;
 import name.martingeisse.guiserver.xml.content.ContentParser;
-
-import com.sun.xml.internal.txw2.output.IndentingXMLStreamWriter;
 
 /**
  * A parser for {@link MarkupContentAndSourceCode} that wraps a parser for
@@ -48,8 +47,7 @@ public class MarkupContentAndSourceCodeParser implements ContentParser<MarkupCon
 		MarkupContent<ComponentGroupConfiguration> markupContent = wrappedParser.parse(new MyXmlStreamReader(new XmlStreamReaderTee(reader, writer, true)));
 		String result = stringWriter.toString().replace(" xmlns:gui=\"http://guiserver.martingeisse.name/v1\"", "").trim();
 		
-		// TODO write cleaning-up XML writer
-		
+		// TODO handle empty elements in the PrettyPrintXmlStreamWriter
 		// unfortunately, XMLStreamWriter doesn't generate empty elements automatically, and we cannot easily
 		// detect them while copying from a reader...
 		result = result.replaceAll("(\\<[^\\<\\>\\/\\\"]+(?:\\\"[^\\\"]*\\\"[^\\<\\>\\/\\\"]*)*)\\>\\<\\/[^\\<\\>\\/]+\\>", "$1/>");
@@ -63,7 +61,7 @@ public class MarkupContentAndSourceCodeParser implements ContentParser<MarkupCon
 	private XMLStreamWriter buildXmlStreamWriter(Writer w) throws XMLStreamException {
 		XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
 		xmlOutputFactory.setProperty("javax.xml.stream.isRepairingNamespaces", true);
-		return new IndentingXMLStreamWriter(xmlOutputFactory.createXMLStreamWriter(w));
+		return new PrettyPrintXmlStreamWriter(xmlOutputFactory.createXMLStreamWriter(w), "    ");
 	}
 
 }

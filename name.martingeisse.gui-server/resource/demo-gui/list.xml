@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<gui:page xmlns:gui="http://guiserver.martingeisse.name/v1">
+	<div class="container">
+		<gui:panel src="/navbar" />
+		<h1>Models</h1>
+		<div>
+			This example shows how to load a piece of text from the backend using a model
+			and to display it using a text component.
+		</div>
+		<br />
+		<div>
+			<gui:demo>
+				<ul>
+					<gui:backendJsonModel name="people" url="http://localhost/geisse/demo-backend/list.php">
+						<gui:list model="people" itemModel="person">
+							<li>
+								<gui:text model="person.name" /> (age: <gui:text model="person.age" />)
+							</li>
+						</gui:list>
+					</gui:backendJsonModel>
+				</ul>
+			</gui:demo>
+		</div>
+	</div>
+</gui:page>

@@ -23,8 +23,6 @@ import name.martingeisse.guiserver.xml.value.ValueParserRegistry;
  * This class also allows to obtain the unfinished component element parser being
  * built to parse component elements, to use it while building parser loops. Like
  * the markup content parser, this parser is not fully functional yet.
- * 
- * TODO this class is ugly. Move to the configuration package?
  *
  * @param <C> the type of components used in markup content
  */

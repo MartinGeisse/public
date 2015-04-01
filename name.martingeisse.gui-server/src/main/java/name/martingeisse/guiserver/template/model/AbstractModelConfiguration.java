@@ -4,7 +4,8 @@
 
 package name.martingeisse.guiserver.template.model;
 
-import name.martingeisse.guiserver.component.ModelProvidingContainer;
+import name.martingeisse.guiserver.component.model.ModelProvider;
+import name.martingeisse.guiserver.component.model.SimpleModelProvidingContainer;
 import name.martingeisse.guiserver.template.AbstractSingleContainerConfiguration;
 import name.martingeisse.guiserver.xml.builder.BindAttribute;
 
@@ -13,7 +14,7 @@ import org.apache.wicket.model.IModel;
 
 /**
  * Base class for container configurations that provide a model through
- * a {@link ModelProvidingContainer}.
+ * a {@link ModelProvider}.
  */
 public abstract class AbstractModelConfiguration extends AbstractSingleContainerConfiguration {
 
@@ -37,9 +38,17 @@ public abstract class AbstractModelConfiguration extends AbstractSingleContainer
 	 */
 	@Override
 	protected MarkupContainer buildContainer() {
-		return new ModelProvidingContainer(getComponentId(), buildModel(), modelName);
+		return new SimpleModelProvidingContainer(getComponentId(), buildModel(), modelName);
 	}
 
+	/* (non-Javadoc)
+	 * @see name.martingeisse.guiserver.template.AbstractComponentGroupConfiguration#getBaseIdPrefix()
+	 */
+	@Override
+	protected String getBaseIdPrefix() {
+		return "model";
+	}
+	
 	/**
 	 * Builds the model for a component.
 	 * @return the model

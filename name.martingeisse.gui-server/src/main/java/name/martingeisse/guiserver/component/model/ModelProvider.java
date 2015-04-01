@@ -2,43 +2,27 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package name.martingeisse.guiserver.component;
+package name.martingeisse.guiserver.component.model;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 
 /**
  * Provides a named model to inner components.
  */
-public class ModelProvidingContainer extends WebMarkupContainer {
+public interface ModelProvider {
 
 	/**
-	 * the modelName
+	 * Getter method for the name of the provided model.
+	 * @return the name of the provided model
 	 */
-	private String modelName;
-
+	public String getProvidedModelName();
+	
 	/**
-	 * Constructor.
-	 * @param id the wicket id
-	 * @param model the model
-	 * @param modelName the name used by inner components to access the model
+	 * Getter method for the provided model.
+	 * @return the provided model
 	 */
-	public ModelProvidingContainer(String id, IModel<?> model, String modelName) {
-		super(id, model);
-		if (modelName == null) {
-			throw new IllegalArgumentException("modelName cannot be null");
-		}
-		this.modelName = modelName;
-	}
-
-	/**
-	 * Getter method for the modelName.
-	 * @return the modelName
-	 */
-	public String getModelName() {
-		return modelName;
-	}
+	public IModel<?> getProvidedModel();
 
 	/**
 	 * Resolves the model with the specified name, starting at the origin component,
@@ -65,10 +49,10 @@ public class ModelProvidingContainer extends WebMarkupContainer {
 	 */
 	public static IModel<?> tryResolveModel(Component origin, String name) {
 		while (origin != null) {
-			if (origin instanceof ModelProvidingContainer) {
-				ModelProvidingContainer modelProvidingContainer = (ModelProvidingContainer)origin;
-				if (modelProvidingContainer.getModelName().equals(name)) {
-					return modelProvidingContainer.getDefaultModel();
+			if (origin instanceof ModelProvider) {
+				ModelProvider modelProvider = (ModelProvider)origin;
+				if (modelProvider.getProvidedModelName().equals(name)) {
+					return modelProvider.getProvidedModel();
 				}
 			}
 			origin = origin.getParent();

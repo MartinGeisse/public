@@ -4,7 +4,7 @@
 
 package name.martingeisse.guiserver.template.model;
 
-import name.martingeisse.guiserver.component.ModelProvidingContainer;
+import name.martingeisse.guiserver.component.model.ModelProvider;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
@@ -39,11 +39,11 @@ public final class NamedModelReferenceBehavior extends Behavior {
 		super.onConfigure(component);
 		int dotIndex = specification.indexOf(".");
 		if (dotIndex == -1) {
-			component.setDefaultModel(ModelProvidingContainer.resolveModel(component, specification));
+			component.setDefaultModel(ModelProvider.resolveModel(component, specification));
 		} else {
 			String modelName = specification.substring(0, dotIndex);
 			String expression = specification.substring(dotIndex + 1);
-			component.setDefaultModel(new PropertyModel<>(ModelProvidingContainer.resolveModel(component, modelName), expression));
+			component.setDefaultModel(new PropertyModel<>(ModelProvider.resolveModel(component, modelName), expression));
 		}
 	}
 	
