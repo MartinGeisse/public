@@ -1,56 +1,18 @@
 
-<gui:with-models>
-
-	<!-- define the models that are valid in this context -->
-	<!-- data is loaded from a URL and parsed as JSON -->
-	<!-- the URL may refer to variables, such as page parameters -->
-	<!-- the JSON defines conversion rules for parameters->variables to avoid
-		accidental collisions like with PHP's parameter auto-import and
-		the security implications -->
-	<!-- the id is used to refer to the model in the content below -->
+Parameterized model URLs (using old syntax here):
 	<gui:model id="customerData" src="/api/customer/${customerId}/data" type="json">
-	<gui:model id="customerOrders" src="/api/customer/${customerId}/orders" type="json">
-	<gui:model id="adminUser" src="/api/adminUser/${adminId}" type="json">
-	
-	<!-- now comes the content (indicated by the first non-MODEL XML element) -->
-	<h1>
-		Customer:
-		<gui:insert model="customerData" field="personal.firstName" />
-		<gui:insert model="customerData" field="personal.lastName" />
-	</h1>
-	
-	<!-- the same again, this time with a re-usable, client-defined panel -->
-	<!-- the panel's XML file is just like this one for the page -->
-	<gui:panel src="/gui/customer-name-panel.xml" model="customerData" />
-	
-	<!-- and a third time, now with that panel defined in code by a plugin called "shop" -->
-	<!-- (actually, "shop" here is an XML namespace identifier and the namespace URL selects the plugin -->
-	<!-- Note that for the job of a simple panel, a plugin-defined component isn't very impressive... -->
-	<shop:customerName model="customerData" />
 
-	<!-- let's see a repeater for the orders -->
-	<h1>Orders:</h1>
-	<ul>
-	
-		<!-- which one looks best? I like the 3rd one most because it separates the control / markup info -->
-		<!-- Note that the 3rd one doesn't need a wicket:container -- it could still place a wicket:id on the LI. -->
-		<!-- It only needs a container if there's more than one child element -->
-		<!-- This component is like a foreach, and the elementModel defines the iteration variable -->
-		<li gui:repeatForModel="customerOrders" elementModel="order">
-			...
-		</li>
-		<gui:repeat element="li" model="customerOrders" elementModel="order">
-			...
-		</gui:repeat>
-		<gui:repeat model="customerOrders" elementModel="order">
-			<li class="foo">
-				<b><gui:insert model="order" field="orderNumber" /></b>
-				<gui:insert model="order" field="date" />
-			</li>
-		</gui:repeat>
-		
-	</ul>
-	
+HTML include (currently: only text)
+
+Panels with models (using old syntax here):
+	<gui:panel src="/gui/customer-name-panel.xml" model="customerData" />
+
+use own namespace for model providers with model: prefix (?)
+	-> depends on how many different providers there actually are
+
+---------------------------------------------------------------------------------
+forms:
+
 	<!-- and finally, a form! -->
 	<!-- This GUI server system defines that fields are *read* from models, but changing data
 		happens by sending forms / commands without touching models. Internally, the system
@@ -95,5 +57,3 @@
 		</gui:form.textarea> 
 	
 	</gui:form>
-	
-</gui:with-models>

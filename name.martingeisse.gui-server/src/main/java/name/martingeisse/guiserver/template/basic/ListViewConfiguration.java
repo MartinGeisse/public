@@ -25,6 +25,8 @@ import org.apache.wicket.model.IModel;
 
 /**
  * Creates a {@link ListView} based on a list in a model.
+ * 
+ * TODO rename to gui:foreach? Probably more intuitive to the average developer (has PHP experience, no Wicket experience)
  */
 @StructuredElement
 @RegisterComponentElement(localName = "list")

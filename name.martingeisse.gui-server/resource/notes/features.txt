@@ -1,7 +1,4 @@
 
-- downloaded config files should be cached on a file-by-file basis
-	(multiple files possible using includes)
-
 Handle things like auto-generated configuration pages:
 don't dynamically generate the GUI configuration. Use a fixed GUI configuration
 that behaves differently based on the data.
