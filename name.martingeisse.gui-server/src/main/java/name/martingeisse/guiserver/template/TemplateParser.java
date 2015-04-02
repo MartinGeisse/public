@@ -8,6 +8,7 @@ import javax.xml.stream.XMLStreamException;
 
 import name.martingeisse.guiserver.template.basic.EchoTextConfiguration;
 import name.martingeisse.guiserver.template.basic.EnclosureConfiguration;
+import name.martingeisse.guiserver.template.basic.IfConfiguration;
 import name.martingeisse.guiserver.template.basic.IncludeBackendConfiguration;
 import name.martingeisse.guiserver.template.basic.LazyLoadContainerConfiguration;
 import name.martingeisse.guiserver.template.basic.LinkConfiguration;
@@ -98,6 +99,7 @@ public final class TemplateParser implements ContentParser<MarkupContent<Compone
 			builder.autoAddComponentElementParser(PanelReferenceConfiguration.class);
 			builder.autoAddComponentElementParser(ComponentDemoConfiguration.class);
 			builder.autoAddComponentElementParser(ListViewConfiguration.class);
+			builder.autoAddComponentElementParser(IfConfiguration.class);
 
 			// Bootstrap-specific tags
 			builder.autoAddComponentElementParser(BootstrapFormConfiguration.class);

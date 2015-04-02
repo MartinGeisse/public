@@ -57,3 +57,11 @@ forms:
 		</gui:form.textarea> 
 	
 	</gui:form>
+
+	
+------------------------------------------------------------------------------------
+	
+Handle things like auto-generated configuration pages:
+don't dynamically generate the GUI configuration. Use a fixed GUI configuration
+that behaves differently based on the data.
+	

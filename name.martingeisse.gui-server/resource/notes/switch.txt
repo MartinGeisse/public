@@ -1,0 +1,26 @@
+
+Idee #1: "if" ist separat, weil in JS ein bool-cast was anderes ist als Vergleich mit true
+Idee #2: keine type coercion, sondern "lockere" Vergleichsregeln genau wie "switch" in JS, analog zu "if"
+Idee #3: kein "model"-Attribut am Switch. Model paths wie bisher reichen völlig.
+"multi" Attribut weiterhin sinnvoll 
+
+
+
+
+<switch value="x">
+    <case value="y">
+        Visible if x == y
+    </case>
+    <case value="z">
+        Visible if the first case didn't match and x == z
+    </case>
+    <default>
+        Visible if none of the previous cases match. Similar to value="true",
+        but also works when the input value is different (see below)
+    </default>
+</switch>
+
+<switch model="m1" multi="true">
+    ...
+    multiple cases may apply, not just the first matching one
+    default case still applies if no other case does

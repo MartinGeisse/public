@@ -16,7 +16,7 @@ import org.apache.wicket.model.PropertyModel;
  * as a behavior because the model needs to be resolved after
  * construction.
  */
-public final class NamedModelReferenceBehavior extends Behavior {
+public class NamedModelReferenceBehavior extends Behavior {
 
 	/**
 	 * the specification

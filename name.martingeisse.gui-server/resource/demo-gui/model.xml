@@ -17,6 +17,10 @@
 					<div class="well">
 						<gui:text model="myModel.lorem" />
 					</div>
+					<div class="well">
+						<gui:if condition="myModel.trueValue"><div>This gets shown if the trueValue is true.</div></gui:if>
+						<gui:if condition="myModel.falseValue"><div>This gets shown if the falseValue is false.</div></gui:if>
+					</div>
 				</gui:backendJsonModel>
 			</gui:demo>
 		</div>
