@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<gui:page xmlns:gui="http://guiserver.martingeisse.name/v1">
+	<div class="container">
+		<gui:panel src="/navbar" />
+		<h1>Administration Panel</h1>
+		<div>
+			This panel can be used to configure stuff.
+		</div>
+	</div>
+</gui:page>

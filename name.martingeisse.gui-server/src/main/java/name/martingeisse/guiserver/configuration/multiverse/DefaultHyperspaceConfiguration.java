@@ -21,6 +21,9 @@ public class DefaultHyperspaceConfiguration implements HyperspaceConfiguration {
 	 * @param multiverseStorage the storage implementation for multiverse configurations
 	 */
 	public DefaultHyperspaceConfiguration(MultiverseStorage multiverseStorage) {
+		if (multiverseStorage == null) {
+			throw new IllegalArgumentException("multiverseStorage cannot be null");
+		}
 		this.multiverseStorage = multiverseStorage;
 	}
 

@@ -31,4 +31,13 @@ public class HttpFolder extends HttpFolderEntry implements StorageFolder {
 		return getEngine().list(getHttpPath());
 	}
 
+	/**
+	 * Creates the root folder for the specified engine.
+	 * @param engine the engine
+	 * @return the root folder
+	 */
+	public static HttpFolder createRootFolder(HttpStorageEngine engine) {
+		return new HttpFolder(engine, "/", "/");
+	}
+
 }

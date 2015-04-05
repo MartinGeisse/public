@@ -67,6 +67,9 @@ final class DefaultUniverseConfigurationBuilder {
 	 * @throws StorageException on errors in the storage system
 	 */
 	public DefaultUniverseConfiguration build(UniverseStorage storage, int serialNumber) throws StorageException, ConfigurationException {
+		if (storage == null) {
+			throw new IllegalArgumentException("storage cannot be null");
+		}
 		elements.clear();
 		pathSegments.clear();
 		snippets.clear();

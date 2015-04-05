@@ -1,0 +1,30 @@
+
+Konflikt zwischen Backend- und Frontend-URLs: Das Backend erzeugt HTML, welches
+URLs enthält, die aber im Frontend gültig sein sollen. Das Frontend kann diese
+auch schlecht nachträglich im HTML anpassen: Teilweise werden die URLs erst im
+Javascript gebaut; außerdem kann es zu einer Backend-URL keine oder mehrere
+Frontend-URLs geben. Also bleibt es beim Entwickler der Backend-Actions, diesen
+Konflikt zu lösen. Das ist unschön, aber die saubere Lösung ist es schlicht
+und einfach, weniger HTML aus dem Backend durchzuschleifen. Das ist und bleibt
+eine Notlösung.
+
+*Seiten* vom Backend durchzuschleifen ist selten direkt sinnvoll. Meistens
+muss eine Navbar, Footer, usw. mit dazu, und dann ist es schon kein
+Durchschleifen mehr sondern eine Guiserver-Seite mit Backend-Include, und
+das ist genau so schon vorgesehen. Einziger Punkt, den man beachten
+muss, ist der Konflikt zwischen Backend- und Frontend-URLs.
+
+Formular-URLs vom Backend durchschleifen ist interessanter, da nicht schon
+automatisch mit gelöst. U.a. aus Sicherheitsgründen und mehrdeutigkeiten zwischen
+Frontend und Backend macht es keinen Sinn, pauschal Requests ans Backend
+durchzuschleifen. Sondern es muss je Backend-Formular-URL oder Gruppe derselben
+auch ein ConfigurationElement im Frontend angelegt werden. Dieses kann dann
+Punkte festlegen und ausführen wie:
+- ConfigurationElement wird durch ein JSON definiert; benutzt XML-Namespace-URLs als
+	Key eines zentralen JSON-Objektes um Kollisionen zwischen Plugins zu vermeiden.
+- durchgeschleifte Felder (Whitelist)
+- implizit mit übergebene Felder (Sinn: mehrere Frontend-URLs auf eine Backend-URL mappen)
+- CSRF-Tokens prüfen
+- authorization prüfen; nötige Berechtigungen können angegeben werden
+
+

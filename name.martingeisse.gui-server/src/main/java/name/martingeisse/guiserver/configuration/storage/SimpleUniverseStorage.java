@@ -22,7 +22,7 @@ public final class SimpleUniverseStorage implements UniverseStorage {
 	public SimpleUniverseStorage(StorageFolder rootFolder) {
 		this.rootFolder = rootFolder;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see name.martingeisse.guiserver.configuration.storage.UniverseStorage#getRootFolder()
 	 */

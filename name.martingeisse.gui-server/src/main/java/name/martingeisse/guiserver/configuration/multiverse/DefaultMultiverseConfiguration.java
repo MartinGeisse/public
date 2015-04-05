@@ -9,13 +9,12 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
-import name.martingeisse.guiserver.configuration.storage.MultiverseStorage;
 import name.martingeisse.guiserver.configuration.storage.SimpleUniverseStorage;
 import name.martingeisse.guiserver.configuration.storage.UniverseStorage;
 import name.martingeisse.guiserver.configuration.storage.http.ApacheHttpdStorageEngine;
 import name.martingeisse.guiserver.configuration.storage.http.HttpFolder;
 import name.martingeisse.guiserver.configuration.storage.http.HttpStorageEngine;
-import name.martingeisse.guiserver.configuration.storage.multiverse.SingularMultiverseStorage;
+import name.martingeisse.guiserver.configuration.storage.multiverse.SimpleMultiverseStorage;
 import name.martingeisse.guiserver.template.TemplateParser;
 
 /**
@@ -47,15 +46,23 @@ public class DefaultMultiverseConfiguration implements MultiverseConfiguration {
 		serialNumberAllocator = new AtomicInteger();
 		
 		// initialize hyperspace
-		HttpStorageEngine httpStorageEngine = new ApacheHttpdStorageEngine("http://localhost/geisse/demo-gui");
-		UniverseStorage universeStorage = new SimpleUniverseStorage(new HttpFolder(httpStorageEngine, "/", "/"));
-		MultiverseStorage multiverseStorage = new SingularMultiverseStorage(universeStorage);
+		SimpleMultiverseStorage multiverseStorage = new SimpleMultiverseStorage();
+		{
+			HttpStorageEngine httpStorageEngine = new ApacheHttpdStorageEngine("http://localhost/geisse/demo-gui/gallery");
+			UniverseStorage universeStorage = new SimpleUniverseStorage(HttpFolder.createRootFolder(httpStorageEngine));
+			multiverseStorage.addUniverse("gallery", universeStorage);
+		}
+		{
+			HttpStorageEngine httpStorageEngine = new ApacheHttpdStorageEngine("http://localhost/geisse/demo-gui/admin");
+			UniverseStorage universeStorage = new SimpleUniverseStorage(HttpFolder.createRootFolder(httpStorageEngine));
+			multiverseStorage.addUniverse("admin", universeStorage);
+		}
 		hyperspaceConfiguration = new DefaultHyperspaceConfiguration(multiverseStorage);
 		
 		// initialize universes
 		universeConfigurations = new HashMap<>();
-		loadUniverseConfiguration("foo", false);
-		loadUniverseConfiguration("bar", false);
+		loadUniverseConfiguration("gallery", false);
+		loadUniverseConfiguration("admin", false);
 		
 	}
 	
@@ -92,6 +99,9 @@ public class DefaultMultiverseConfiguration implements MultiverseConfiguration {
 		}
 		DefaultUniverseConfigurationBuilder builder = new DefaultUniverseConfigurationBuilder(TemplateParser.INSTANCE);
 		UniverseStorage universeStorage = hyperspaceConfiguration.getMultiverseStorage().getUniverseStorage(id);
+		if (universeStorage == null) {
+			throw new IllegalArgumentException("no such universe: " + id);
+		}
 		int serialNumber = serialNumberAllocator.incrementAndGet();
 		UniverseConfiguration universeConfiguration;
 		try {
