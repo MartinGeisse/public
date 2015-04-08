@@ -1,0 +1,16 @@
+
+PaginatedView statt ListView
+- attribute: url (pagination will add GET / querystring parameter for current page and page size) 
+- attribute: modelName
+	-> this model gets bound to returned data
+
+Bootstrap Component: Page selection palette
+
+Backend:
+in: pageSize, currentPage
+out: number of pages; items for current page
+future input: arbitrary parameters from models
+future output: output is arbitrary data; specify path for pagination data
+
+If the backend cannot handle arbitrary page sizes, the front-end still sends the size.
+The backend should return an error if it cannot handle the page size.

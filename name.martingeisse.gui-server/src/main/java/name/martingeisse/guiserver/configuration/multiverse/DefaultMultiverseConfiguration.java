@@ -8,7 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.wicket.request.mapper.CompoundRequestMapper;
+
 import name.martingeisse.guiserver.application.wicket.GuiWicketApplication;
+import name.martingeisse.guiserver.application.wicket.MultiverseRequestMapper;
 import name.martingeisse.guiserver.configuration.storage.SimpleUniverseStorage;
 import name.martingeisse.guiserver.configuration.storage.UniverseStorage;
 import name.martingeisse.guiserver.configuration.storage.http.ApacheHttpdStorageEngine;
@@ -109,8 +112,10 @@ public class DefaultMultiverseConfiguration implements MultiverseConfiguration {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		GuiWicketApplication.get().resetConfigurationDefinedRequestMapper();
-		universeConfiguration.mountWicketUrls(GuiWicketApplication.get().getConfigurationDefinedRequestMapper());
+		MultiverseRequestMapper multiverseRequestMapper = GuiWicketApplication.get().getMultiverseRequestMapper();
+		CompoundRequestMapper universeRequestMapper = new CompoundRequestMapper();
+		universeConfiguration.mountWicketUrls(universeRequestMapper);
+		multiverseRequestMapper.setUniverseMapper(id, universeRequestMapper);
 		universeConfigurations.put(id, universeConfiguration);
 	}
 	

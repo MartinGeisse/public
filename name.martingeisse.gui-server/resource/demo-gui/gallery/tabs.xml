@@ -20,12 +20,12 @@
 					</gui:tab>
 					<gui:tab selector="tab4" title="Four">
 						This is a tab with long-loading content:
-						<gui:includeBackend url="http://localhost/geisse/demo-backend/html-snippet-slow.php" escape="false" />
+						<gui:includeBackend url="http://localhost/geisse/demo-backend/gallery/html-snippet-slow.php" escape="false" />
 					</gui:tab>
 					<gui:tab selector="tab5" title="Five">
 						This is a tab with lazy loading content:
 						<gui:lazy>
-							<gui:includeBackend url="http://localhost/geisse/demo-backend/html-snippet-slow.php" escape="false" />
+							<gui:includeBackend url="http://localhost/geisse/demo-backend/gallery/html-snippet-slow.php" escape="false" />
 						</gui:lazy>
 					</gui:tab>
 					<gui:tab selector="tab6" title="Subtabs">

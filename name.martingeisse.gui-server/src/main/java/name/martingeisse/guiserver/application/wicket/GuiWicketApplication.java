@@ -18,11 +18,8 @@ import org.apache.wicket.markup.html.internal.HtmlHeaderItemsContainer;
 import org.apache.wicket.markup.resolver.HtmlHeaderResolver;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IExceptionMapper;
-import org.apache.wicket.request.IRequestMapper;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
-import org.apache.wicket.request.mapper.CompoundRequestMapper;
-import org.apache.wicket.request.mapper.ICompoundRequestMapper;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.IProvider;
 
@@ -49,25 +46,16 @@ public class GuiWicketApplication extends AbstractMyWicketApplication {
 	public static final boolean RENDER_PROFILING = false;
 	
 	/**
-	 * the configurationDefinedRequestMapper
+	 * the multiverseRequestMapper
 	 */
-	private final CompoundRequestMapper configurationDefinedRequestMapper = new CompoundRequestMapper();
+	private final MultiverseRequestMapper multiverseRequestMapper = new MultiverseRequestMapper();
 
 	/**
-	 * Getter method for the configurationDefinedRequestMapper.
-	 * @return the configurationDefinedRequestMapper
+	 * Getter method for the multiverseRequestMapper.
+	 * @return the multiverseRequestMapper
 	 */
-	public ICompoundRequestMapper getConfigurationDefinedRequestMapper() {
-		return configurationDefinedRequestMapper;
-	}
-
-	/**
-	 * Resets all mounted URLs in the configuration-defined mapper.
-	 */
-	public void resetConfigurationDefinedRequestMapper() {
-		for (IRequestMapper mapper : configurationDefinedRequestMapper) {
-			configurationDefinedRequestMapper.remove(mapper);
-		}
+	public MultiverseRequestMapper getMultiverseRequestMapper() {
+		return multiverseRequestMapper;
 	}
 	
 	/* (non-Javadoc)
@@ -123,7 +111,7 @@ public class GuiWicketApplication extends AbstractMyWicketApplication {
 		//		);
 
 		// --- mount pages ---
-		mount(configurationDefinedRequestMapper);
+		mount(multiverseRequestMapper);
 //		mount(new MountMapper("/reload-configuration", new IRequestHandler() {
 //			
 //			@Override
@@ -203,6 +191,7 @@ public class GuiWicketApplication extends AbstractMyWicketApplication {
 		
 		// load universes
 		ConfigurationHolder.initialize();
+		multiverseRequestMapper.setHyperspaceConfiguration(ConfigurationHolder.getMultiverseConfiguration().getHyperspaceConfiguration());
 
 	}
 

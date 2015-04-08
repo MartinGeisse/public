@@ -1,0 +1,21 @@
+
+// with metadata
+Response<JsonAnalyzer> jsonResponse = BackendClient.newGetRequest(url).addUrlParameter("foo", "bar").send().expectJsonResponse();
+
+// just the body
+JsonAnalyzer json = BackendClient.newGetRequest(url).addUrlParameter("foo", "bar").send().expectJson();
+
+// POSTing form data
+JsonAnalyzer json = BackendClient.newFormPostRequest(url).addUrlParameter("foo", "bar").addPostParameter("blupp", "flubber").send().expectJson();
+
+// POSTing JSON data
+JsonAnalyzer json = BackendClient.newBodyPostRequest(url).addUrlParameter("foo", "bar").writeBody(body).send().expectJson();
+
+
+---
+
+newGetRequest --> GetRequest
+.send() --> Response; checks HTTP code
+.expectJsonResponse() -- checks Content-Type, decodes body
+.expectJson() -- .expectJsonResponse(), then returns just the body
+

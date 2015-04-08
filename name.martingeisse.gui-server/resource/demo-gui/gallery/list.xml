@@ -11,7 +11,7 @@
 		<div>
 			<gui:demo>
 				<ul>
-					<gui:backendJsonModel name="people" url="http://localhost/geisse/demo-backend/list.php">
+					<gui:backendJsonModel name="people" url="http://localhost/geisse/demo-backend/gallery/list.php">
 						<gui:list model="people" itemModel="person">
 							<li>
 								<gui:text model="person.name" /> (age: <gui:text model="person.age" />)

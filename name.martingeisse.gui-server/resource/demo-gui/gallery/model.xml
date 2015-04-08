@@ -10,7 +10,7 @@
 		<br />
 		<div>
 			<gui:demo>
-				<gui:backendJsonModel name="myModel" url="http://localhost/geisse/demo-backend/model.php">
+				<gui:backendJsonModel name="myModel" url="http://localhost/geisse/demo-backend/gallery/model.php">
 					<div class="well">
 						<gui:text model="myModel" />
 					</div>

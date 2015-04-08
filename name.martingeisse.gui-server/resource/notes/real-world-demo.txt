@@ -1,0 +1,71 @@
+
+Warum nicht ein Forum oder ein Blog? 
+- weil es zu "einfach" ist? Ist es nicht, sonst könnte ich das ja schnell machen.
+- weil man dafür Planen muss, wie das Blog/Forum überhaupt funktionieren soll!
+--> selbst mit geschenkter GUI ist das halt noch ein Projekt!
+
+Hier haben CMSs es einfacher, *weil sie z.B. ein Blog als fertiges Subsystem
+liefern*!!! Da steckt dann nicht nur die GUI drin, sondern auch die Denkarbeit
+dahinter.
+
+Außerdem sind Foren nicht mehr aktuell. Ein Kontakt- oder Feedbackformular
+schon eher.
+
+Mal angenommen, die GUI wäre fertig da. Was sind denn die Bausteine für heutige
+Webanwendungen?
+
+Lowlevel:
+- Formulare
+- Pagination
+- Zusammenklapp-Boxen
+- Kalender-View
+- LESS / SASS
+- JS-precompile
+
+Highlevel:
+- Userverwaltung; Registrierung; Login (authentication); eingeloggt bleiben;
+	Zugriffsrechte (authorization)
+- SEO-Unterstützung
+- Analytics-Unterstützung
+- Firmensoftware:
+	- Kundenverwaltung
+	- Auftragsverwaltung
+	- Accounting
+	- Schriftverkehr
+	- Payment
+- Support
+	- Content & Suche
+	- Kontaktformular
+		- Möglicherweise passende Antworten finden
+			-> KI-unterstützt!
+	- Anbindung an Ticketsystem
+		- Tools zum aussortieren von Quatsch-Tickets (ggf. mit schnell-Antwort)
+	- chat with an expert
+		- show browse history on support site to expert for faster support
+- "work together with X", siehe Mailchimp (womit die alles zusammenarbeiten)
+
+Pre-made Content (vor allem für lokale Firmen interessant, da "Standardlook" egal)
+- Hintergrundbilder
+- Icons, die über Glyphicon / FA hinausgehen
+
+*** Was ist die Zukunft? Es geht auch darum, jetzt schon an das zu denken, was
+	in 5 Jahren aktuell sein wird!
+
+*** Man baut sich im GUI-Server keine Applikation aus fertigen Bausteinen zusammen!
+	Dafür gibt es bessere Tools, z.B. CMSs und SaaS. Man baut im GUI-Server die
+	Module an, wo der Standard nicht ausreicht. Von daher sind in o.g. Liste die
+	"Lowlevel"-Module *wichtiger*, nur die "work together with" sollten auch da sein.
+	Dinge wie eine Auftragsverwaltung hat man im Zweifel schon.
+	-->
+	Viel eher passen Bausteine, mit denen man Backend-Logik im Frontend
+	*zusammenbauen* kann:
+	- DB-Support (MySQL, MongoDB, ...)
+		- Model für eine Query ---> Frontend greift direkt auf die DB zu
+		- Form-Success-Commands für insert / update / delete
+	- S3-Support (Model, Success-Commands)
+	- XML-customizable in-page image editor
+		In den meisten Fällen braucht man nur wenige Funktionen, aber welche genau
+		ist vom Anwendungsfall abhängig: scale, crop, image-overlay, text-overlay,
+		fixed-icon-overlay, colorize, ...
+	- render document (XML-config: to SVG, to PNG, to PDF)
+

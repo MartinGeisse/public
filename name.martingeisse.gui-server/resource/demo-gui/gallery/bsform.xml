@@ -9,7 +9,7 @@
 		<br />
 		<div>
 			<gui:demo>
-				<gui:bsForm backendUrl="http://localhost/geisse/demo-backend/form.php">
+				<gui:bsForm backendUrl="http://localhost/geisse/demo-backend/gallery/form.php">
 					<gui:bsTextField name="foo" label="Your Name">
 						<gui:validation type="length" min="2" max="10" />
 					</gui:bsTextField>

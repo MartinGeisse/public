@@ -8,7 +8,7 @@
 		</div>
 		<div>
 			<gui:demo>
-				<gui:form backendUrl="http://localhost/geisse/demo-backend/form.php">
+				<gui:form backendUrl="http://localhost/geisse/demo-backend/gallery/form.php">
 					<div>
 						<gui:enclosure>
 							<div style="color: red; background-color: #fcc; border: 1px solid #faa">
