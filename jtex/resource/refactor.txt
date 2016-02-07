@@ -1,0 +1,8 @@
+
+Sicher:
+- Wenn String-Pool-File-Behandlung aufgeräumt ist, kann alphafile weg (ersetzt durch LineNumberReader
+	bzw Line-Reader-Lambda)
+
+Selector-Variable (hält nur den Zustand des Selektors)
+MultiplexedOutput (selector + streams)
+
