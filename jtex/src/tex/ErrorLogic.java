@@ -173,7 +173,8 @@ public final class ErrorLogic {
 	/**
 	 * Stops with a fatal error about capacity quantity s (string pool index) being n, which is too large.
 	 */
-	void overflow(final int s, final int n) {
+	@SuppressWarnings("javadoc")
+	public void overflow(final int s, final int n) {
 		tex.normalizeselector();
 		tex.errorReporter.fatal("!TeX capacity exceeded, sorry [" + tex.getStringFromPool(s) + '=' + n + "]. If you really absolutely need more capacity, you can ask a wizard to enlarge me.");
 	}
