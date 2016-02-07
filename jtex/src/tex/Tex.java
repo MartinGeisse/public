@@ -1031,8 +1031,8 @@ public final class Tex {
 		return Result;
 	}
 
-	boolean getstringsstarted() {
-		/* 30 10 */boolean Result;
+	void getstringsstarted() {
+		boolean Result;
 		int k, l;
 		char m, n;
 		int a;
@@ -1096,11 +1096,7 @@ public final class Tex {
 			do {
 				{
 					if (poolfile.eof) {
-						;
-						termout.print("! tex.pool has no check sum." + '\n');
-						poolfile.close();
-						Result = false;
-						return Result /* lab10 */;
+						throw new RuntimeException("missing checksum in tex.pool");
 					}
 					ch = poolfile.read();
 					m = (char)ch;
@@ -1111,11 +1107,7 @@ public final class Tex {
 						k = 1;
 						while (true) {
 							if ((n < 48) || (n > 57)) {
-								;
-								termout.print("! tex.pool check sum doesn't have nine digits." + '\n');
-								poolfile.close();
-								Result = false;
-								return Result /* lab10 */;
+								throw new RuntimeException("tex.pool check sum doesn't have nine digits.");
 							}
 							a = 10 * a + n - 48;
 							if (k == 9) {
@@ -1125,29 +1117,17 @@ public final class Tex {
 							ch = poolfile.read();
 							n = (char)(ch);
 						}
-						/* lab30: */if (a != 270280812) {
-							;
-							termout.print("! tex.pool doesn't match; tangle me again (or fix the path)." + '\n');
-							poolfile.close();
-							Result = false;
-							return Result /* lab10 */;
+						if (a != 270280812) {
+							throw new RuntimeException("tex.pool doesn't match; tangle me again (or fix the path)");
 						}
 						c = true;
 					} else {
 						if ((m < 48) || (m > 57) || (n < 48) || (n > 57)) {
-							;
-							termout.print("! tex.pool line doesn't begin with two digits." + '\n');
-							poolfile.close();
-							Result = false;
-							return Result /* lab10 */;
+							throw new RuntimeException("tex.pool line doesn't begin with two digits");
 						}
 						l = m * 10 + n - 48 * 11;
 						if (poolptr + l + stringvacancies > poolsize) {
-							;
-							termout.print("! You have to increase POOLSIZE." + '\n');
-							poolfile.close();
-							Result = false;
-							return Result /* lab10 */;
+							throw new RuntimeException("You have to increase POOLSIZE");
 						}
 						for (k = 1; k <= l; k++) {
 							if (poolfile.eoln()) {
@@ -1172,13 +1152,8 @@ public final class Tex {
 			poolfile.close();
 			Result = true;
 		} else {
-			;
-			termout.print("! I can't read tex.pool." + '\n');
-			poolfile.close();
-			Result = false;
-			return Result /* lab10 */;
+			throw new RuntimeException("I can't read tex.pool");
 		}
-		return Result;
 	}
 
 	String getStringFromPool(int n) {
@@ -18290,9 +18265,7 @@ public final class Tex {
 		this.errorReporter = new ErrorReporter(logfile);
 		this.errorLogic = new ErrorLogic(this);
 		if (initex) {
-			if (!getstringsstarted()) {
-				throw new RuntimeException("getstringsstarted() failed");
-			}
+			getstringsstarted();
 			initprim();
 			initstrptr = strptr;
 			initpoolptr = poolptr;
