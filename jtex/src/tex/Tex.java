@@ -89,8 +89,6 @@ public final class Tex {
 
 	public int strptr;
 
-	public int initpoolptr;
-
 	public int initstrptr;
 
 	public PrintWriter logfile;
@@ -17139,7 +17137,6 @@ public final class Tex {
 				strpool[k + 2] = w.b2;
 				strpool[k + 3] = w.b3;
 				initstrptr = strptr;
-				initpoolptr = poolptr;
 				x = fmtfile.readInt();
 				if ((x < 1019) || (x > memtop - 14)) {
 					break lab125;
@@ -18033,7 +18030,6 @@ public final class Tex {
 			getstringsstarted();
 			initprim();
 			initstrptr = strptr;
-			initpoolptr = poolptr;
 			setDummyDateTime();
 		}
 		selector = 17;
