@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * Wraps a reader to convert exceptions and provide line reading.
  */
-public class Input implements Closeable {
+public final class Input implements Closeable {
 
 	private final String name;
 	private final LineNumberReader reader;

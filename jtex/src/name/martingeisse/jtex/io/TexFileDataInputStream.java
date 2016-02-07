@@ -14,7 +14,7 @@ import java.io.IOException;
 /**
  * Specialized {@link DataInputStream} for files.
  */
-public class TexFileDataInputStream extends DataInputStream {
+public final class TexFileDataInputStream extends DataInputStream {
 
 	/**
 	 * the file

@@ -15,7 +15,7 @@ import java.io.PrintWriter;
 /**
  * Specialized {@link PrintWriter} for files.
  */
-public class TexFilePrintWriter extends PrintWriter {
+public final class TexFilePrintWriter extends PrintWriter {
 
 	/**
 	 * the file

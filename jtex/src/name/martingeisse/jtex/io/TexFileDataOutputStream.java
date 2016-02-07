@@ -14,7 +14,7 @@ import java.io.IOException;
 /**
  * Specialized {@link DataOutputStream} for files.
  */
-public class TexFileDataOutputStream extends DataOutputStream {
+public final class TexFileDataOutputStream extends DataOutputStream {
 
 	/**
 	 * the file

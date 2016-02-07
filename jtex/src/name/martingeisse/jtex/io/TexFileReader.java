@@ -15,7 +15,7 @@ import java.io.Reader;
 /**
  * Specialized {@link Reader} for files.
  */
-public class TexFileReader extends InputStreamReader {
+public final class TexFileReader extends InputStreamReader {
 
 	/**
 	 * the file
