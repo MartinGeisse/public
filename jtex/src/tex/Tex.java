@@ -1026,10 +1026,8 @@ public final class Tex {
 	}
 	
 	boolean streqbuf(final int s, int k) {
-		/* 45 */boolean Result;
-		int j;
 		boolean result;
-		j = strstart[s];
+		int j = strstart[s];
 		result = false;
 		while (j < strstart[s + 1]) {
 			result = true;
@@ -1040,8 +1038,7 @@ public final class Tex {
 			j = j + 1;
 			k = k + 1;
 		}
-		/* lab45: */Result = result;
-		return Result;
+		return result;
 	}
 
 	boolean streqstr(final int s, final int t) {
@@ -16998,7 +16995,6 @@ public final class Tex {
 	}
 
 	boolean openfmtfile() throws IOException {
-		/* 40 10 */boolean Result;
 		int j;
 		j = curinput.getLoc();
 		lab40: while (true) {
@@ -17049,14 +17045,12 @@ public final class Tex {
 			} else {
 				;
 				termout.println("I can't find the PLAIN format file!");
-				Result = false;
-				return Result /* lab10 */;
+				return false;
 			}
 			break;
 		}
 		/* lab40: */curinput.setLoc(j);
-		Result = true;
-		return Result;
+		return true;
 	}
 
 	boolean loadfmtfile() {
