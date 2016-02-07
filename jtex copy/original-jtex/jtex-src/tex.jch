@@ -1,0 +1,3141 @@
+@x l.83
+  \def\?##1]{\hbox to 1in{\hfil##1.\ }}
+  }
+@y
+  \def\?##1]{\hbox{Changes to \hbox to 1em{\hfil##1}.\ }}
+  }
+\let\maybe=\iffalse
+@z
+
+@x l.242
+program TEX; {all file names are defined dynamically}
+label @<Labels in the outer block@>@/
+const @<Constants in the outer block@>@/
+mtype @<Types in the outer block@>@/
+@y
+mtype @<Types in the outer block@>@/
+init
+program initex; {we pass the command line to ini\TeX}
+tini
+vir
+program virtex; {we pass the command line to \TeX}
+riv
+const @<Constants in the outer block@>@/
+@z
+
+@x l.270
+@d start_of_TEX=1 {go here when \TeX's variables are initialized}
+@d end_of_TEX=9998 {go here to close files and terminate gracefully}
+@d final_end=9999 {this label marks the ending of the program}
+
+@<Labels in the out...@>=
+start_of_TEX@t\hskip-2pt@>, end_of_TEX@t\hskip-2pt@>,@,final_end;
+  {key control points}
+@y
+@d start_of_TEX=1 {go here when \TeX's variables are initialized}
+@d end_of_TEX=126 {go here to close files and terminate gracefully}
+@d final_end=127 {this label marks the ending of the program}
+@d Java_banner=='[Java version A]'
+@z
+
+@x l.292
+@d debug==@{ {change this to `$\\{debug}\equiv\null$' when debugging}
+@d gubed==@t@>@} {change this to `$\\{gubed}\equiv\null$' when debugging}
+@y
+@d debug==
+@d gubed==
+@z
+@d debug==@{ {change this to `$\\{debug}\equiv\null$' when debugging}
+@d gubed==@t@>@} {change this to `$\\{gubed}\equiv\null$' when debugging}
+
+@x l.297
+@d stat==@{ {change this to `$\\{stat}\equiv\null$' when gathering
+  usage statistics}
+@d tats==@t@>@} {change this to `$\\{tats}\equiv\null$' when gathering
+  usage statistics}
+@y
+@d stat==@{ {change this to `$\\{stat}\equiv\null$' when gathering
+  usage statistics}
+@d tats==@t@>@} {change this to `$\\{tats}\equiv\null$' when gathering
+  usage statistics}
+@z
+
+@x l.310
+@d init== {change this to `$\\{init}\equiv\.{@@\{}$' in the production version}
+@d tini== {change this to `$\\{tini}\equiv\.{@@\}}$' in the production version}
+@y
+@d init== @{
+@d tini== @}
+@d vir== @{tini
+@d riv== init@}
+@z
+@d init== {change this to `$\\{init}\equiv\.{@@\{}$' in the production version}
+@d tini== {change this to `$\\{tini}\equiv\.{@@\}}$' in the production version}
+@d init== @{
+@d tini== @}
+
+@x
+@<Constants...@>=
+@!mem_max=30000; {greatest index in \TeX's internal |mem| array;
+  must be strictly less than |max_halfword|;
+  must be equal to |mem_top| in \.{INITEX}, otherwise |>=mem_top|}
+@!mem_min=0; {smallest index in \TeX's internal |mem| array;
+  must be |min_halfword| or more;
+  must be equal to |mem_bot| in \.{INITEX}, otherwise |<=mem_bot|}
+@!buf_size=500; {maximum number of characters simultaneously present in
+  current lines of open files and in control sequences between
+  \.{\\csname} and \.{\\endcsname}; must not exceed |max_halfword|}
+@!error_line=72; {width of context lines on terminal error messages}
+@!half_error_line=42; {width of first lines of contexts in terminal
+  error messages; should be between 30 and |error_line-15|}
+@!max_print_line=79; {width of longest text lines output; should be at least 60}
+@!stack_size=200; {maximum number of simultaneous input sources}
+@!max_in_open=6; {maximum number of input files and error insertions that
+  can be going on simultaneously}
+@!font_max=75; {maximum internal font number; must not exceed |max_quarterword|
+  and must be at most |font_base+256|}
+@!font_mem_size=20000; {number of words of |font_info| for all fonts}
+@!param_size=60; {maximum number of simultaneous macro parameters}
+@!nest_size=40; {maximum number of semantic levels simultaneously active}
+@!max_strings=3000; {maximum number of strings; must not exceed |max_halfword|}
+@!string_vacancies=8000; {the minimum number of characters that should be
+  available for the user's control sequences and font names,
+  after \TeX's own error messages are stored}
+@!pool_size=32000; {maximum number of characters in strings, including all
+  error messages and help texts, and the names of all fonts and
+  control sequences; must exceed |string_vacancies| by the total
+  length of \TeX's own strings, which is currently about 23000}
+@!save_size=600; {space for saving values outside of current group; must be
+  at most |max_halfword|}
+@!trie_size=8000; {space for hyphenation patterns; should be larger for
+  \.{INITEX} than it is in production versions of \TeX}
+@!trie_op_size=500; {space for ``opcodes'' in the hyphenation patterns}
+@!dvi_buf_size=800; {size of the output buffer; must be a multiple of 8}
+@!file_name_size=40; {file names shouldn't be longer than this}
+@!pool_name='TeXformats:TEX.POOL                     ';
+  {string of length |file_name_size|; tells where the string pool appears}
+@y
+@d mem_min=0 {smallest index in \TeX's internal |mem| array;
+  must be |min_halfword| or more;
+  must be equal to |mem_bot| in \.{INITEX}, otherwise |<=mem_bot|}
+@d trie_op_size=751 {space for ``opcodes'' in the hyphenation patterns}
+@d pool_name=='tex.pool';
+  {String tells where the string pool appears}
+@.TeXformats@>
+
+@<Constants...@>=
+@!mem_max=65500; {greatest index in \TeX's internal |mem| array;
+  must be strictly less than |max_halfword|;
+  must be equal to |mem_top| in \.{INITEX}, otherwise |>=mem_top|}
+@!mem_top=65500; {largest index in the |mem| array dumped by \.{INITEX};
+  must be substantially larger than |mem_bot|
+  and not greater than |mem_max|}
+@!buf_size=500; {maximum number of characters simultaneously present in
+  current lines of open files and in control sequences between
+  \.{\\csname} and \.{\\endcsname}; must not exceed |max_halfword|}
+@!error_line=72; {width of context lines on terminal error messages}
+@!half_error_line=42; {width of first lines of contexts in terminal
+  error messages; should be between 30 and |error_line-15|}
+@!max_print_line=79; {width of longest text lines output; should be at least 60}
+@!stack_size=200; {maximum number of simultaneous input sources}
+@!max_in_open=6; {maximum number of input files and error insertions that
+  can be going on simultaneously}
+@!font_max=75; {maximum internal font number; must not exceed |max_quarterword|
+  and must be at most |font_base+256|}
+@!font_mem_size=50000; {number of words of |font_info| for all fonts}
+@!param_size=60; {maximum number of simultaneous macro parameters}
+@!nest_size=40; {maximum number of semantic levels simultaneously active}
+@!max_strings=6000; {maximum number of strings; must not exceed |max_halfword|}
+@!string_vacancies=16000; {the minimum number of characters that should be
+  available for the user's control sequences and font names,
+  after \TeX's own error messages are stored}
+@!pool_size=65500; {maximum number of characters in strings, including all
+  error messages and help texts, and the names of all fonts and
+  control sequences; must exceed |string_vacancies| by the total
+  length of \TeX's own strings, which is currently about 23000}
+@!save_size=1800; {space for saving values outside of current group; must be
+  at most |max_halfword|}
+@!trie_size=24000; {space for hyphenation patterns; should be larger for
+  \.{INITEX} than it is in production versions of \TeX}
+@!dvi_buf_size=800; {size of the output buffer; must be a multiple of 8}
+@!file_name_size=80; {file names shouldn't be longer than this}
+@z
+@!max_halfword=65535; {largest allowable value in a |halfword|}
+
+@x l.429
+@d mem_top==30000 {largest index in the |mem| array dumped by \.{INITEX};
+  must be substantially larger than |mem_bot|
+  and not greater than |mem_max|}
+@d font_base=0 {smallest internal font number; must not be less
+  than |min_quarterword|}
+@d hash_size=2100 {maximum number of control sequences; it should be at most
+  about |(mem_max-mem_min)/10|}
+@d hash_prime=1777 {a prime number equal to about 85\pct! of |hash_size|}
+@d hyph_size=307 {another prime; the number of \.{\\hyphenation} exceptions}
+@y
+@d font_base=0 {smallest internal font number; must not be less
+  than |min_quarterword|}
+@d hash_size=6400 {maximum number of control sequences; it should be at most
+  about |(mem_max-mem_min)/10|}
+@d hash_prime=5437 {a prime number equal to about 85\pct! of |hash_size|}
+@d hyph_size=607 {another prime; the number of \.{\\hyphenation} exceptions}
+@z
+
+@x l.479
+@d exit=10 {go here to leave a procedure}
+@y
+@d no_exit=0 {omit return at end of routine}
+@d exit=10 {go here to leave a procedure}
+@z
+
+@x l.536
+@<Types...@>=
+@!ASCII_code=0..255; {eight-bit numbers}
+@y
+@d integer == in@&t
+@d gr == g@&r.glue
+@d abs  ==  Math.a@&bs
+@d chr(#) == cast(char,#)
+@d reset(#) ==
+@d rewrite(#) ==
+@d write_ln(#) == write(#,'\n')
+@d ASCII_code == 0..255 {eight-bit numbers, a subrange of the integers}
+@d packed ==
+@d odd(#) == ((#) mod 2 = 1)
+@d get(#) == #.ge@&t
+@d eof(#) == #.eo@&f
+@d eoln(#) == #.eo@&ln
+@d real == double
+@d package == Package
+@d print == Print
+@d print_ln == Print_ln
+@d round(#) == cast(integer,Math.rou@&nd(#))
+@d write == pri@&nt
+@d begin_loop == rest loop begin
+@d end_loop == break; rest end
+@d End_loop == rest end
+@d free == Free
+@d start == Start
+@d int == INT.Int
+@z
+@d int == Int
+@d int == INT.Int
+@d memory_word == bigmem_word
+
+@x l.557
+@!xord: array [text_char] of ASCII_code;
+@y
+@!xord: array [0..255] of ASCII_code;
+@z
+
+@x l.723
+for i:=0 to @'37 do xchr[i]:=' ';
+for i:=@'177 to @'377 do xchr[i]:=' ';
+@y
+for i:=0 to @'37 do xchr[i]:=chr(i);
+for i:=@'177 to @'377 do xchr[i]:=chr(i);
+@z
+
+@x l.771
+@<Types...@>=
+@!eight_bits=0..255; {unsigned one-byte quantity}
+@!alpha_file=packed file of text_char; {files that contain textual data}
+@!byte_file=packed file of eight_bits; {files that contain binary data}
+@y
+@d eight_bits==0..255 {unsigned one-byte quantity}
+@z
+
+@x l.789
+@!name_of_file:packed array[1..file_name_size] of char;@;@/
+@y
+@!name_of_file:String;@;@/
+@!this_file:dont_make TeXFile;
+@z
+
+@x l.794
+@ The \ph\ compiler with which the present version of \TeX\ was prepared has
+extended the rules of \PASCAL\ in a very convenient way. To open file~|f|,
+we can write
+$$\vbox{\halign{#\hfil\qquad&#\hfil\cr
+|reset(f,@t\\{name}@>,'/O')|&for input;\cr
+|rewrite(f,@t\\{name}@>,'/O')|&for output.\cr}}$$
+The `\\{name}' parameter, which is of type `{\bf packed array
+$[\langle\\{any}\rangle]$ of \\{char}}', stands for the name of
+the external file that is being opened for input or output.
+Blank spaces that might appear in \\{name} are ignored.
+
+The `\.{/O}' parameter tells the operating system not to issue its own
+error messages if something goes wrong. If a file of the specified name
+cannot be found, or if such a file cannot be opened for some other reason
+(e.g., someone may already be trying to write the same file), we will have
+|@!erstat(f)<>0| after an unsuccessful |reset| or |rewrite|.  This allows
+\TeX\ to undertake appropriate corrective action.
+@:PASCAL H}{\ph@>
+@^system dependencies@>
+
+\TeX's file-opening procedures return |false| if no file identified by
+|name_of_file| could be opened.
+
+@d reset_OK(#)==erstat(#)=0
+@d rewrite_OK(#)==erstat(#)=0
+
+@p function a_open_in(var f:alpha_file):boolean;
+  {open a text file for input}
+begin reset(f,name_of_file,'/O'); a_open_in:=reset_OK(f);
+end;
+@#
+function a_open_out(var f:alpha_file):boolean;
+  {open a text file for output}
+begin rewrite(f,name_of_file,'/O'); a_open_out:=rewrite_OK(f);
+end;
+@#
+function b_open_in(var f:byte_file):boolean;
+  {open a binary file for input}
+begin reset(f,name_of_file,'/O'); b_open_in:=reset_OK(f);
+end;
+@#
+function b_open_out(var f:byte_file):boolean;
+  {open a binary file for output}
+begin rewrite(f,name_of_file,'/O'); b_open_out:=rewrite_OK(f);
+end;
+@#
+function w_open_in(var f:word_file):boolean;
+  {open a word file for input}
+begin reset(f,name_of_file,'/O'); w_open_in:=reset_OK(f);
+end;
+@#
+function w_open_out(var f:word_file):boolean;
+  {open a word file for output}
+begin rewrite(f,name_of_file,'/O'); w_open_out:=rewrite_OK(f);
+end;
+@y
+@ Java uses different types for input and output.
+
+@d catch_no_file(#) == catch(ex: FileNotFoundException) 
+  begin wterm_cr; wterm('Cannot open '); wterm(name_of_file); end
+
+@d a_open_in(#) == try begin #:=new alpha_file(this_file); end;
+  catch_no_file(#);
+@d a_open_out(#) == try begin #:=new alpha_out(name_of_file); end;
+  catch_no_file(#);
+  catch(ex: IOException) begin end; 
+@d b_open_in(#) == try begin #:=new byte_file(this_file); end;
+  catch_no_file(#);
+@d b_open_out(#) == try begin #:=new byte_out(name_of_file); end;
+  catch_no_file(#);
+  catch(ex: IOException) begin end;
+@d w_open_in(#) == try begin #:=new word_file(this_file); end;
+  catch_no_file(#);
+@d w_open_out(#) == try begin #:=new word_out(name_of_file); end;
+  catch_no_file(#);
+  catch(ex: IOException) begin end;
+@z
+
+@x l.850
+@ Files can be closed with the \ph\ routine `|close(f)|', which
+@^system dependencies@>
+should be used when all input or output with respect to |f| has been completed.
+This makes |f| available to be opened again, if desired; and if |f| was used for
+output, the |close| operation makes the corresponding external file appear
+on the user's area, ready to be read.
+
+These procedures should not generate error messages if a file is
+being closed before it has been successfully opened.
+
+@p procedure a_close(var f:alpha_file); {close a text file}
+begin close(f);
+end;
+@#
+procedure b_close(var f:byte_file); {close a binary file}
+begin close(f);
+end;
+@#
+procedure w_close(var f:word_file); {close a word file}
+begin close(f);
+end;
+@y
+@ Since we are using buffered I/O we must formally close files.
+
+@d a_close(#) == #.close
+@d b_close(#) == #.close
+@d w_close(#) == #.close
+@z
+
+@x l.933
+@p function input_ln(var f:alpha_file;@!bypass_eoln:boolean):boolean;
+  {inputs the next line or returns |false|}
+var last_nonblank:0..buf_size; {|last| with trailing blanks removed}
+begin if bypass_eoln then if not eof(f) then get(f);
+  {input the first character of the line into |f^|}
+last:=first; {cf.\ Matthew 19\thinspace:\thinspace30}
+if eof(f) then input_ln:=false
+else  begin last_nonblank:=first;
+  while not eoln(f) do
+    begin if last>=max_buf_stack then
+      begin max_buf_stack:=last+1;
+      if max_buf_stack=buf_size then
+        @<Report overflow of the input buffer, and abort@>;
+      end;
+    buffer[last]:=xord[f^]; get(f); incr(last);
+    if buffer[last-1]<>" " then last_nonblank:=last;
+    end;
+  last:=last_nonblank; input_ln:=true;
+  end;
+end;
+@y
+@p function input_ln(var f:alpha_file;@!bypass_eoln:boolean):boolean;
+  {inputs the next line or returns |false|}
+label done;
+var last_nonblank:0..buf_size; {|last| with trailing blanks removed}
+@!ch:integer;
+begin if bypass_eoln then if not eof(f) then get(f);
+  {input the first character of the line into |f^|}
+last:=first; {cf.\ Matthew 19\thinspace:\thinspace30}
+if eof(f) then input_ln:=false
+else  begin last_nonblank:=first;
+  done: while not eoln(f) do
+    begin if last>=max_buf_stack then
+      begin max_buf_stack:=last+1;
+      if max_buf_stack=buf_size then
+        @<Report overflow of the input buffer, and abort@>;
+      end;
+    read(f,ch); 
+    if not eof(f) then begin
+      buffer[last]:=xord[ch]; incr(last);
+      if buffer[last-1]<>" " then last_nonblank:=last;
+      end;
+    end;
+  last:=last_nonblank; input_ln:=true;
+  end;
+end;
+@z
+
+@p function input_ln(var f:alpha_file;@!bypass_eoln:boolean):boolean;
+  {inputs the next line or returns |false|}
+var final_limit:0..buf_size; {|limit| without trailing blanks}
+c: integer;
+begin limit:=0; final_limit:=0; c:=0;
+try begin
+  read(f,c);
+  while (c >= 0) and (c <> '\n') do
+  begin
+    buffer[limit]:=xord[cast(char,c)];
+    incr(limit);
+    if buffer[limit-1]<>" " then final_limit:=limit;
+    if limit=buf_size then begin
+      while (c >= 0) and (c <> '\n') do begin read(f,c) end;
+      decr(limit); {keep |buffer[buf_size]| empty}
+      if final_limit>limit then final_limit:=limit;
+      wterm_ln('! Input line too long'); loc:=0; error;
+@.Input line too long@>
+      end;
+    read(f,c);
+    end;
+  end;
+  catch (ex: IOException) begin end;
+  limit:=final_limit;
+  if c < 0 then input_ln := false
+  else input_ln := true;
+end;
+
+@x l.960
+@<Glob...@>=
+@!term_in:alpha_file; {the terminal as an input file}
+@!term_out:alpha_file; {the terminal as an output file}
+@y
+@<Glob...@>=
+@!term_in:dont_make alpha_file; {the terminal as an input file}
+@!term_out:dont_make alpha_out; {the terminal as an output file}
+@z
+
+@x l.964
+@ Here is how to open the terminal files
+in \ph. The `\.{/I}' switch suppresses the first |get|.
+@^system dependencies@>
+
+@d t_open_in==reset(term_in,'TTY:','/O/I') {open the terminal for text input}
+@d t_open_out==rewrite(term_out,'TTY:','/O') {open the terminal for text output}
+@y
+@ We attach |term_in| and |term_out| to standard input and output.
+
+@d t_open_in == term_in:=new alpha_file(System.in) 
+@d t_open_out == term_out:=new alpha_out(System.out)
+@z
+
+@x l.982
+these operations can be specified in \ph:
+@^system dependencies@>
+
+@d update_terminal == break(term_out) {empty the terminal output buffer}
+@d clear_terminal == break_in(term_in,true) {clear the terminal input buffer}
+@y
+these operations can be specified in {\mc Java}.
+|update_terminal| does a |flush|.
+|clear_terminal| is redefined to do nothing, 
+since the user should control the terminal.
+@^system dependencies@>
+
+@d update_terminal == term_out.flush
+@d clear_terminal == do_nothing
+@z
+
+@x l.1019
+  begin write_ln(term_out,'Buffer size exceeded!'); goto final_end;
+@y
+  begin write_ln(term_out,'Buffer size exceeded!'); do_final_end;
+@z
+
+@x l.1063
+begin t_open_in;
+@y
+var @!buf_ptr:integer;
+begin last:=first;
+for buf_ptr:=0 to cmd_line_buf.leng@&th-1 do begin
+  buffer[last]:=xord[cmd_line_buf.charAt(buf_ptr)];
+  incr(last);
+end;
+t_open_in;
+if last > first then
+  begin loc := first;
+  while (loc < last) and (buffer[loc]=' ') do incr(loc);
+  if loc < last then
+    begin init_terminal := true; goto exit;
+    end;
+  end;
+@z
+
+@x l.1080
+exit:end;
+@y
+no_exit:end;
+@z
+
+@x l.1125
+@<Types...@>=
+@!pool_pointer = 0..pool_size; {for variables that point into |str_pool|}
+@!str_number = 0..max_strings; {for variables that point into |str_start|}
+@!packed_ASCII_code = 0..255; {elements of |str_pool| array}
+@y
+@d pool_pointer == 0..pool_size {for variables that point into |str_pool|}
+@d str_number == 0..max_strings {for variables that point into |str_start|}
+@d packed_ASCII_code == 0..255 {elements of |str_pool| array}
+@z
+
+@x l.1202
+while j<str_start[s+1] do
+  begin if so(str_pool[j])<>buffer[k] then
+    begin result:=false; goto not_found;
+    end;
+  incr(j); incr(k);
+  end;
+result:=true;
+not_found: str_eq_buf:=result;
+@y
+result:=false;
+while j<str_start[s+1] do
+  begin result:=true;
+  if so(str_pool[j])<>buffer[k] then
+    begin result:=false; goto not_found;
+    end;
+  incr(j); incr(k);
+  end;
+not_found: str_eq_buf:=result;
+@z
+
+@x l.1221
+if length(s)<>length(t) then goto not_found;
+@y
+not_found: begin_loop;
+if length(s)<>length(t) then goto not_found;
+@z
+
+@x l.1228
+not_found: str_eq_str:=result;
+@y
+end_loop; {|not_found|}
+not_found: str_eq_str:=result;
+@z
+
+@x l.1247
+begin pool_ptr:=0; str_ptr:=0; str_start[0]:=0;
+@<Make the first 256 strings@>;
+@<Read the other strings from the \.{TEX.POOL} file and return |true|,
+  or give an error message and return |false|@>;
+@y
+ch: integer;
+begin pool_ptr:=0; str_ptr:=0; str_start[0]:=0;
+@<Make the first 256 strings@>;
+get_strings_started:=false;
+try begin
+@<Read the other strings from the \.{TEX.POOL} file and return |true|,
+  or give an error message and return |false|@>;
+end;@/
+catch(ex:IOException) begin end;
+@z
+
+@x l.1307
+@!init @!pool_file:alpha_file; {the string-pool file output by \.{TANGLE}}
+@y
+@!init @!pool_file:dont_make alpha_file; {the string-pool file output by \.{TANGLE}}
+@z
+
+@x l.1315
+if a_open_in(pool_file) then
+  begin c:=false;
+@y
+this_file:=new TeXFile(name_of_file);
+if this_file.exists then 
+  begin a_open_in(pool_file); 
+  c:=false;
+@z
+
+@x l.1322
+else  bad_pool('! I can''t read TEX.POOL.')
+@y
+else  bad_pool('! I can''t read tex.pool.')
+@z
+
+@x l.1326
+begin if eof(pool_file) then bad_pool('! TEX.POOL has no check sum.');
+@.TEX.POOL has no check sum@>
+read(pool_file,m,n); {read two digits of string length}
+@y
+begin if eof(pool_file) then bad_pool('! tex.pool has no check sum.');
+@.TEX.POOL has no check sum@>
+read(pool_file,ch); m:=xchr[ch]; read(pool_file,ch); n:=xchr[ch]; 
+{read two digits of string length}
+@z
+
+@x l.1332
+    bad_pool('! TEX.POOL line doesn''t begin with two digits.');
+@y
+    bad_pool('! tex.pool line doesn''t begin with two digits.');
+@z
+
+@x l.1339
+    begin if eoln(pool_file) then m:=' '@+else read(pool_file,m);
+@y
+    begin if eoln(pool_file) then m:=' '@+else 
+    begin read(pool_file,ch); m:=xchr[ch]; end;
+@z
+
+@x l.1342
+  read_ln(pool_file); g:=make_string;
+@y
+  repeat read(pool_file,ch); m:=xchr[ch]; until m = '\n'; g:=make_string;
+@z
+
+@x l.1354
+  bad_pool('! TEX.POOL check sum doesn''t have nine digits.');
+@y
+  bad_pool('! tex.pool check sum doesn''t have nine digits.');
+@z
+
+@x l.1358
+  incr(k); read(pool_file,n);
+@y
+  incr(k); read(pool_file,ch); n:=xchr[ch];
+@z
+
+@x l.1360
+done: if a<>@$ then bad_pool('! TEX.POOL doesn''t match; TANGLE me again.');
+@y
+done: if a<>@$ then
+  bad_pool('! tex.pool doesn''t match; tangle me again (or fix the path).');
+@z
+
+@x l.1414
+@!log_file : alpha_file; {transcript of \TeX\ session}
+@y
+@!log_file : dont_make alpha_out; {transcript of \TeX\ session}
+@z
+
+@x l.1436
+@d wterm(#)==write(term_out,#)
+@d wterm_ln(#)==write_ln(term_out,#)
+@d wterm_cr==write_ln(term_out)
+@d wlog(#)==write(log_file,#)
+@d wlog_ln(#)==write_ln(log_file,#)
+@d wlog_cr==write_ln(log_file)
+@y
+@d wterm(#)==pri@&nt(term_out,#)
+@d wterm_ln(#)==pri@&nt_ln(term_out,#)
+@d wterm_cr==pri@&nt_ln(term_out)
+@d wlog(#)==pri@&nt(log_file,#)
+@d wlog_ln(#)==pri@&nt_ln(log_file,#)
+@d wlog_cr==pri@&nt_ln(log_file)
+@z
+
+@x l.1557
+if format_ident=0 then wterm_ln(' (no format preloaded)')
+else  begin slow_print(format_ident); print_ln;
+@y
+if format_ident=0 then wterm(' (no format preloaded)')
+else  begin slow_print(format_ident);
+wterm(' '); wterm_ln(Java_banner);
+@z
+
+@x l.1852
+@<Error hand...@>=
+procedure jump_out;
+begin goto end_of_TEX;
+end;
+@y
+@d do_final_end==begin
+   wterm_cr;
+   update_terminal;
+   ready_already:=0;
+   if (history <> spotless) and (history <> warning_issued) then
+       System.ex@&it(1)
+   else
+       System.ex@&it(0);
+   end
+
+@<Error hand...@>=
+procedure jump_out;
+begin
+close_files_and_terminate;
+do_final_end;
+end;
+@z
+
+@x l.1878
+loop@+begin continue: clear_for_error_prompt; prompt_input("? ");
+@y
+continue: loop@+begin clear_for_error_prompt; prompt_input("? ");
+@z
+
+@x l.2159
+@<Types...@>=
+@!scaled = integer; {this type is used for scaled integers}
+@!nonnegative_integer=0..@'17777777777; {$0\L x<2^{31}$}
+@!small_number=0..63; {this type is self-explanatory}
+@y
+@d scaled == integer {this type is used for scaled integers}
+@d nonnegative_integer==0..@'17777777777 {$0\L x<2^{31}$}
+@d small_number==0..63 {this type is self-explanatory}
+@z
+
+@x l.2351
+@<Types...@>=
+@!glue_ratio=real; {one-word representation of a glue expansion factor}
+@y
+@d glue_ratio==flo_at {one-word representation of a glue expansion factor}
+@z
+
+@x l.2408
+@d max_halfword==65535 {largest allowable value in a |halfword|}
+@y
+@z
+@d max_halfword==262143 {largest allowable value in a |halfword|}
+@d max_halfword==memory_word.max_half@&word {largest allowable value in a |halfword|}
+
+@x l.2435
+macros are simplified in the obvious way when |min_quarterword=0|.
+@^inner loop@>@^system dependencies@>
+
+@d qi(#)==#+min_quarterword
+  {to put an |eight_bits| item into a quarterword}
+@d qo(#)==#-min_quarterword
+  {to take an |eight_bits| item out of a quarterword}
+@d hi(#)==#+min_halfword
+  {to put a sixteen-bit item into a halfword}
+@d ho(#)==#-min_halfword
+  {to take a sixteen-bit item from a halfword}
+@y
+macros are simplified in the obvious way when |min_quarterword=0|.
+So they have been simplified here in the obvious way.
+@^inner loop@>@^system dependencies@>
+
+@d qi(#)==# {to put an |eight_bits| item into a quarterword}
+@d qo(#)==# {to take an |eight_bits| item from a quarterword}
+@d hi(#)==# {to put a sixteen-bit item into a halfword}
+@d ho(#)==# {to take a sixteen-bit item from a halfword}
+@z
+
+@x l.2452
+@<Types...@>=
+@!quarterword = min_quarterword..max_quarterword; {1/4 of a word}
+@!halfword=min_halfword..max_halfword; {1/2 of a word}
+@!two_choices = 1..2; {used when there are two variants in a record}
+@!four_choices = 1..4; {used when there are four variants in a record}
+@!two_halves = packed record@;@/
+  @!rh:halfword;
+  case two_choices of
+  1: (@!lh:halfword);
+  2: (@!b0:quarterword; @!b1:quarterword);
+  end;
+@!four_quarters = packed record@;@/
+  @!b0:quarterword;
+  @!b1:quarterword;
+  @!b2:quarterword;
+  @!b3:quarterword;
+  end;
+@!memory_word = record@;@/
+  case four_choices of
+  1: (@!int:integer);
+  2: (@!gr:glue_ratio);
+  3: (@!hh:two_halves);
+  4: (@!qqqq:four_quarters);
+  end;
+@!word_file = file of memory_word;
+@y
+@d quarterword == min_quarterword..max_quarterword {1/4 of a word}
+@d halfword==min_halfword..max_halfword {1/2 of a word}
+@d two_choices == 1..2 {used when there are two variants in a record}
+@d four_choices == 1..4 {used when there are four variants in a record}
+
+@<Types...@>=
+@!two_halves = packed record@;@/
+  @!rh:halfword;
+  @!lh:halfword;
+  end;
+@!four_quarters = packed record@;@/
+  @!b0:quarterword;
+  @!b1:quarterword;
+  @!b2:quarterword;
+  @!b3:quarterword;
+  end;
+@z
+
+@x l.2510
+@d null==min_halfword {the null pointer}
+@y
+@d Null==min_halfword {the null pointer}
+@d null==Null
+@z
+
+@x l.2687
+begin restart: p:=rover; {start at some free node in the ring}
+@y
+begin restart: begin_loop p:=rover; {start at some free node in the ring}
+found: begin_loop
+@z
+
+@x l.2701
+found: link(r):=null; {this node is now nonempty}
+@y
+end_loop; {|found|}
+found: link(r):=null; {this node is now nonempty}
+end_loop; {|restart|}
+@z
+
+@x l.3150
+@<Types...@>=
+@!glue_ord=normal..filll; {infinity to the 0, 1, 2, or 3 power}
+@y
+@d glue_ord==normal..filll {infinity to the 0, 1, 2, or 3 power}
+@z
+
+@x l.3160
+mem[q]:=mem[p]; glue_ref_count(q):=null;@/
+@y
+mem[q].int:=mem[p].int; glue_ref_count(q):=null;@/
+@z
+
+@x l.3349
+  mem[k]:=mem[lo_mem_max]; {clear list heads}
+@y
+  mem[k].int:=mem[lo_mem_max].int; {clear list heads}
+@z
+
+@x l.3908
+  else  begin case type(p) of
+@y
+  else begin 
+  done: begin_loop case type(p) of
+@z
+@x
+    done:end;
+@y
+    end_loop; {|done|}
+    done:end;
+@z
+
+@x l.3969
+begin h:=get_avail; q:=h;
+@y
+begin r:=0; h:=get_avail; q:=h;
+@z
+
+@x l.5435
+@!eqtb:array[active_base..eqtb_size] of memory_word;
+@y
+@!eqtb:array[0..eqtb_size] of memory_word;
+@z
+
+@x l.5492
+for k:=hash_base+1 to undefined_control_sequence-1 do hash[k]:=hash[hash_base];
+@y
+for k:=hash_base+1 to undefined_control_sequence-1 do 
+  begin hash[k].lh:=hash[hash_base].lh; hash[k].rh:=hash[hash_base].rh end;
+@z
+
+@x l.5517
+loop@+begin if text(p)>0 then if length(text(p))=l then
+@y
+found: loop@+begin if text(p)>0 then if length(text(p))=l then
+@z
+
+@x l.5584
+else if (text(p)<0)or(text(p)>=str_ptr) then print_esc("NONEXISTENT.")
+@y
+else if (text(p)>=str_ptr) then print_esc("NONEXISTENT.")
+@z
+
+@x l.5862
+@<Types...@>=
+@!group_code=0..max_group_code; {|save_level| for a level boundary}
+@y
+@d group_code==0..max_group_code {|save_level| for a level boundary}
+@z
+
+@x l.6019
+@!t:halfword; {saved value of |cur_tok|}
+begin if cur_level>level_one then
+@y
+@!t:halfword; {saved value of |cur_tok|}
+begin l:=0; if cur_level>level_one then
+@z
+
+@x l.6444
+@d start==cur_input.start_field {starting position in |buffer|}
+@y
+@d Start==cur_input.start_field {starting position in |buffer|}
+@z
+
+@x l.6587
+begin if scanner_status>skipping then
+@y
+begin p:=0; if scanner_status>skipping then
+@z
+
+@x l.7073
+if not init_terminal then goto final_end;
+@y
+if not init_terminal then do_final_end;
+@z
+
+@x l.7221
+begin restart: cur_cs:=0;
+@y
+begin cc:=0; restart: begin_loop cur_cs:=0;
+@z
+
+@x l.7227
+exit:end;
+@y
+end_loop; {|restart|}
+exit:end;
+@z
+
+@x l.7243
+begin switch: if loc<=limit then {current line not yet finished}
+  begin cur_chr:=buffer[loc]; incr(loc);
+  reswitch: cur_cmd:=cat_code(cur_chr);
+@y
+begin switch: begin_loop if loc<=limit then {current line not yet finished}
+  begin cur_chr:=buffer[loc]; incr(loc);
+  reswitch: begin_loop cur_cmd:=cat_code(cur_chr);
+@z
+
+@x l.7248
+  end
+@y
+  end_loop {|reswitch|}
+  end
+@z
+
+@x l.7256
+end
+@y
+end_loop {|switch|}
+end
+@z
+
+@x l.7390
+else  begin start_cs: k:=loc; cur_chr:=buffer[k]; cat:=cat_code(cur_chr);
+@y
+else found: begin_loop 
+start_cs: begin_loop k:=loc; cur_chr:=buffer[k]; cat:=cat_code(cur_chr);
+@z
+@x
+  end;
+@y
+  end_loop; {|start_cs|}
+  end_loop; {|found|}
+@z
+
+@x l.7802
+begin restart: get_next;
+@y
+begin loop begin get_next;
+@z
+
+@x l.7811
+goto restart;
+@y
+end;
+@z
+
+@x l.7942
+begin save_scanner_status:=scanner_status; save_warning_index:=warning_index;
+@y
+begin save_scanner_status:=scanner_status; save_warning_index:=warning_index;
+p:=0; m:=0; rbrace_ptr:=0; match_chr:=0;
+@z
+
+@x l.8001
+continue: get_token; {set |cur_tok| to the next token of input}
+@y
+continue: begin_loop get_token; {set |cur_tok| to the next token of input}
+found: begin_loop
+@z
+
+@x l.8019
+found: if s<>null then @<Tidy up the parameter just scanned, and tuck it away@>
+@y
+end_loop; {|found|}
+end_loop; {|continue|}
+found: if s<>null then @<Tidy up the parameter just scanned, and tuck it away@>
+@z
+
+@x l.8825
+if not shortcut then
+@y
+attach_sign: begin_loop if not shortcut then
+@z
+@x
+attach_sign: if arith_error or(abs(cur_val)>=@'10000000000) then
+@y
+end_loop; {|attach_sign|}
+attach_sign: if arith_error or(abs(cur_val)>=@'10000000000) then
+@z
+
+@x l.8885
+loop@+  begin get_x_token;
+@y
+done1: loop@+  begin get_x_token;
+@z
+
+@x l.8907
+if inf then @<Scan for \(f)\.{fil} units; |goto attach_fraction| if found@>;
+@<Scan for \(u)units that are internal dimensions;
+  |goto attach_sign| with |cur_val| set if found@>;
+if mu then @<Scan for \(m)\.{mu} units and |goto attach_fraction|@>;
+if scan_keyword("true") then @<Adjust \(f)for the magnification ratio@>;
+@.true@>
+if scan_keyword("pt") then goto attach_fraction; {the easy case}
+@.pt@>
+@<Scan for \(a)all other units and adjust |cur_val| and |f| accordingly;
+  |goto done| in the case of scaled points@>;
+attach_fraction: if cur_val>=@'40000 then arith_error:=true
+else cur_val:=cur_val*unity+f;
+done:
+@y
+done: begin_loop
+attach_fraction: begin_loop
+if inf then @<Scan for \(f)\.{fil} units; |goto attach_fraction| if found@>;
+@<Scan for \(u)units that are internal dimensions;
+  |goto attach_sign| with |cur_val| set if found@>;
+if mu then @<Scan for \(m)\.{mu} units and |goto attach_fraction|@>;
+if scan_keyword("true") then @<Adjust \(f)for the magnification ratio@>;
+@.true@>
+if scan_keyword("pt") then goto attach_fraction; {the easy case}
+@.pt@>
+@<Scan for \(a)all other units and adjust |cur_val| and |f| accordingly;
+  |goto done| in the case of scaled points@>;
+end_loop; {|attach_fraction|}
+if cur_val>=@'40000 then arith_error:=true
+else cur_val:=cur_val*unity+f;
+end_loop; {|done|}
+done:
+@z
+
+@x l.8943
+if (cur_cmd<min_internal)or(cur_cmd>max_internal) then back_input
+@y
+not_found: begin_loop;
+found: begin_loop;
+if (cur_cmd<min_internal)or(cur_cmd>max_internal) then back_input
+@z
+
+@x l.8958
+found:cur_val:=nx_plus_y(save_cur_val,v,xn_over_d(v,f,@'200000));
+goto attach_sign;
+not_found:
+@y
+end_loop; {|found|}
+found:cur_val:=nx_plus_y(save_cur_val,v,xn_over_d(v,f,@'200000));
+goto attach_sign;
+end; {|not_found|}
+not_found:
+@z
+
+@x l.8995
+if scan_keyword("in") then set_conversion(7227)(100)
+@y
+done2: begin_loop if scan_keyword("in") then set_conversion(7227)(100)
+@z
+@x
+done2:
+@y
+end_loop; {|done2|}
+done2:
+@z
+
+@x l.9102
+reswitch: if scan_keyword("width") then
+@y
+reswitch: begin_loop if scan_keyword("width") then
+@z
+
+@x l.9115
+end;
+@y
+end_loop {|reswitch|}
+end;
+@z
+
+@x l.9305
+if macro_def then @<Scan and build the parameter part of the macro definition@>
+else scan_left_brace; {remove the compulsory left brace}
+@<Scan and build the body of the token list; |goto found| when finished@>;
+@y
+found: begin_loop
+if macro_def then @<Scan and build the parameter part of the macro definition@>
+else scan_left_brace; {remove the compulsory left brace}
+@<Scan and build the body of the token list; |goto found| when finished@>;
+end; {|found|}
+@z
+
+@x l.9312
+begin loop begin get_token; {set |cur_cmd|, |cur_chr|, |cur_tok|}
+@y
+done: begin_loop
+begin loop begin get_token; {set |cur_cmd|, |cur_chr|, |cur_tok|}
+@z
+@x
+done: end
+@y
+end_loop; {|done|}
+done: end
+@z
+
+@x l.9700
+begin @<Push the condition stack@>;@+save_cond_ptr:=cond_ptr;this_if:=cur_chr;@/
+@<Either process \.{\\ifcase} or set |b| to the value of a boolean condition@>;
+@y
+begin b:=false;
+@<Push the condition stack@>;@+save_cond_ptr:=cond_ptr;this_if:=cur_chr;@/
+common_ending: begin_loop
+@<Either process \.{\\ifcase} or set |b| to the value of a boolean condition@>;
+@z
+@x
+common_ending: if cur_chr=fi_code then @<Pop the condition stack@>
+@y
+end; {common_ending}
+common_ending: if cur_chr=fi_code then @<Pop the condition stack@>
+@z
+
+@x l.9973
+@d TEX_area=="TeXinputs:"
+@.TeXinputs@>
+@d TEX_font_area=="TeXfonts:"
+@.TeXfonts@>
+@y
+@d TEX_area=="TEXINPUTS:"
+@.TeXinputs@>
+@d TEX_font_area=="TFMFONTS:"
+@.TeXfonts@>
+@z
+
+@x l.10038
+@d append_to_name(#)==begin c:=#; incr(k);
+  if k<=file_name_size then name_of_file[k]:=xchr[c];
+  end
+
+@p procedure pack_file_name(@!n,@!a,@!e:str_number);
+var k:integer; {number of positions filled in |name_of_file|}
+@!c: ASCII_code; {character being packed}
+@!j:pool_pointer; {index into |str_pool|}
+begin k:=0;
+for j:=str_start[a] to str_start[a+1]-1 do append_to_name(so(str_pool[j]));
+for j:=str_start[n] to str_start[n+1]-1 do append_to_name(so(str_pool[j]));
+for j:=str_start[e] to str_start[e+1]-1 do append_to_name(so(str_pool[j]));
+if k<=file_name_size then name_length:=k@+else name_length:=file_name_size;
+for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
+end;
+@y
+@d append_to_name(#)==begin incr(name_length); str_buf.append(xchr[#]); 
+  end
+
+@p procedure pack_file_name(@!n,@!a,@!e:str_number);
+var @!str_buf: StringBuffer;
+@!c: ASCII_code; {character being packed}
+@!j:pool_pointer; {index into |str_pool|}
+begin name_length:=0;
+for j:=str_start[a] to str_start[a+1]-1 do append_to_name(so(str_pool[j]));
+for j:=str_start[n] to str_start[n+1]-1 do append_to_name(so(str_pool[j]));
+for j:=str_start[e] to str_start[e+1]-1 do append_to_name(so(str_pool[j]));
+name_of_file:=str_buf.toString;
+end;
+@z
+
+@x l.10063
+@d format_extension=".fmt" {the extension, as a \.{WEB} constant}
+@y
+@d format_extension=".fmt" {the extension, as a \.{WEB} constant}
+@d mem_dump_extension=".mem" {the extension, as a \.{WEB} constant}
+@z
+
+@x l.10066
+@!TEX_format_default:packed array[1..format_default_length] of char;
+@y
+@!TEX_format_default:String;
+@z
+
+@x l.10069
+TEX_format_default:='TeXformats:plain.fmt';
+@y
+TEX_format_default:='TEXFORMATS:plain.fmt';
+@z
+
+@x l.10088
+@p procedure pack_buffered_name(@!n:small_number;@!a,@!b:integer);
+var k:integer; {number of positions filled in |name_of_file|}
+@!c: ASCII_code; {character being packed}
+@!j:integer; {index into |buffer| or |TEX_format_default|}
+begin if n+b-a+1+format_ext_length>file_name_size then
+  b:=a+file_name_size-n-1-format_ext_length;
+k:=0;
+for j:=1 to n do append_to_name(xord[TEX_format_default[j]]);
+for j:=a to b do append_to_name(buffer[j]);
+for j:=format_default_length-format_ext_length+1 to format_default_length do
+  append_to_name(xord[TEX_format_default[j]]);
+if k<=file_name_size then name_length:=k@+else name_length:=file_name_size;
+for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
+end;
+@y
+@p procedure pack_buffered_name(@!n:small_number;@!a,@!b:integer);
+var c: ASCII_code; {character being packed}
+@!j:integer; {index into |buffer| or |TEX_format_default|}
+@!str_buf: StringBuffer;
+@!TEX_buf: dont_make StringBuffer;
+begin TEX_buf:=new StringBuffer(TEX_format_default);
+if n+b-a+1+format_ext_length>file_name_size then
+  b:=a+file_name_size-n-1-format_ext_length;
+name_length:=0;
+for j:=0 to n-1 do append_to_name(xord[TEX_buf.charAt(j)]);
+for j:=a to b do append_to_name(buffer[j]);
+for j:=format_default_length-format_ext_length to format_default_length-1 do
+  append_to_name(xord[TEX_buf.charAt(j)]);
+name_of_file:=str_buf.toString;
+end;
+@z
+
+@x l.10115
+if buffer[loc]="&" then
+@y
+found: begin_loop
+if buffer[loc]="&" then
+@z
+
+@x l.10119
+  if w_open_in(fmt_file) then goto found;
+@y
+  this_file:=new TeXFile(name_of_file);
+  if this_file.exists 
+  then begin w_open_in(fmt_file); goto found; end;
+@z
+@x l.10122
+  if w_open_in(fmt_file) then goto found;
+@y
+  this_file:=new TeXFile(name_of_file);
+  if this_file.exists 
+  then begin w_open_in(fmt_file); goto found end;
+@z
+@x l.10130
+if not w_open_in(fmt_file) then
+@y
+this_file:=new TeXFile(name_of_file);
+if this_file.exists 
+then begin w_open_in(fmt_file) end else
+@z
+
+@x l.10137
+found:loc:=j; open_fmt_file:=true;
+@y
+end_loop; {|found|}
+found:loc:=j; open_fmt_file:=true;
+@z
+
+@x l.10155
+begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
+ (cur_length>0) then
+  make_name_string:="?"
+else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
+  make_name_string:=make_string;
+  end;
+end;
+@y
+@!str_buf:StringBuffer;
+begin str_buf:=new StringBuffer(name_of_file);
+if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
+ (cur_length>0) then
+  make_name_string:="?"
+else  begin for k:=0 to name_length-1 do append_char(xord[str_buf.charAt(k)]);
+  make_name_string:=make_string;
+  end;
+end;
+@z
+
+@x l.10165
+function w_make_name_string(var f:word_file):str_number;
+begin w_make_name_string:=make_name_string;
+end;
+@y
+function w_make_name_string(var f:word_file):str_number;
+begin w_make_name_string:=make_name_string;
+end;
+function A_make_name_string(var f:alpha_out):str_number;
+begin a_make_name_string:=make_name_string;
+end;
+function B_make_name_string(var f:byte_out):str_number;
+begin b_make_name_string:=make_name_string;
+end;
+function W_make_name_string(var f:word_out):str_number;
+begin w_make_name_string:=make_name_string;
+end;
+@z
+
+@x l.10266
+  while not b_open_out(dvi_file) do
+    prompt_file_name("file name for output",".dvi");
+  output_file_name:=b_make_name_string(dvi_file);
+@y
+  done1: loop begin b_open_out(dvi_file);
+    if dvi_file<>nul@&l then goto done1;
+    prompt_file_name("file name for output",".dvi")
+    end;
+  output_file_name:=B_make_name_string(dvi_file);
+@z
+
+@x l.10272
+@!dvi_file: byte_file; {the device-independent output goes here}
+@y
+@!dvi_file: dont_make byte_out; {the device-independent output goes here}
+@z
+
+@x l.10285
+@!months:packed array [1..36] of char; {abbreviations of month names}
+@y
+@!months:String; {abbreviations of month names}
+@!str_buf:StringBuffer;
+@z
+
+@x l.10290
+while not a_open_out(log_file) do @<Try to get a different log file name@>;
+log_name:=a_make_name_string(log_file);
+@y
+done1: loop begin
+a_open_out(log_file); if log_file<>nul@&l then goto done1;
+@<Try to get a different log file name@> end;
+log_name:=A_make_name_string(log_file);
+@z
+
+@x l.10327
+months:='JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC';
+for k:=3*month-2 to 3*month do wlog(months[k]);
+@y
+months := 'JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC';
+str_buf:=new StringBuffer(months);
+for k:=3*month-3 to 3*month-1 do wlog(str_buf.charAt(k));
+@z
+
+@x l.10342
+  if a_open_in(cur_file) then goto done;
+@y
+  this_file:=new TeXFile(name_of_file);
+  if this_file.exists 
+  then begin a_open_in(cur_file); goto done; end;
+@z
+@x l.10345
+    if a_open_in(cur_file) then goto done;
+@y
+  this_file:=new TeXFile(name_of_file);
+  if this_file.exists 
+  then begin a_open_in(cur_file); goto done; end;
+@z
+
+@x l.10396
+@!tfm_file:byte_file;
+@y
+@!tfm_file:dont_make byte_file;
+@z
+
+@x l.10672
+@<Types...@>=
+@!internal_font_number=font_base..font_max; {|font| in a |char_node|}
+@!font_index=0..font_mem_size; {index into |font_info|}
+@y
+@d internal_font_number==font_base..font_max {|font| in a |char_node|}
+@d font_index==0..font_mem_size {index into |font_info|}
+@z
+
+@x l.10893
+@<Read and check the font data; |abort| if the \.{TFM} file is
+  malformed; if there's no room for this font, say so and |goto
+  done|; otherwise |incr(font_ptr)| and |goto done|@>;
+bad_tfm: @<Report that the font won't be loaded@>;
+@y
+np:=0; f:=0; bch_label:=0; bchar:=0; bc:=0; ec:=0; lf:=0; nl:=0;
+file_opened:=false; qw:=null_character;
+done: begin_loop
+bad_tfm: begin_loop
+@<Read and check the font data; |abort| if the \.{TFM} file is
+  malformed; if there's no room for this font, say so and |goto
+  done|; otherwise |incr(font_ptr)| and |goto done|@>;
+end; {bad_fmt}
+@<Report that the font won't be loaded@>;
+end_loop; {|done|}
+@z
+
+@x l.10930
+@<Open |tfm_file| for input@>;
+@<Read the {\.{TFM}} size fields@>;
+@<Use size fields to allocate font information@>;
+@<Read the {\.{TFM}} header@>;
+@<Read character data@>;
+@<Read box dimensions@>;
+@<Read ligature/kern program@>;
+@<Read extensible character recipes@>;
+@<Read font parameters@>;
+@y
+try begin
+@<Open |tfm_file| for input@>;
+@<Read the {\.{TFM}} size fields@>;
+@<Use size fields to allocate font information@>;
+@<Read the {\.{TFM}} header@>;
+@<Read character data@>;
+@<Read box dimensions@>;
+@<Read ligature/kern program@>;
+@<Read extensible character recipes@>;
+@<Read font parameters@>;
+end;@/
+catch(ex:IOException) begin end;
+@z
+
+@x l.10945
+if not b_open_in(tfm_file) then abort;
+@y
+this_file:=new TeXFile(name_of_file);
+if this_file.exists then tfm_file:=new byte_file(this_file)
+else abort;
+@z
+
+@x l.10956
+@d fbyte==tfm_file^
+@y
+@d fbyte==tfm_file.file_buf
+@z
+
+@x l.11063
+while d<current_character_being_worked_on do
+@y
+not_found: begin_loop
+while d<current_character_being_worked_on do
+@z
+
+@x l.11070
+not_found:end
+@y
+end_loop; {|not_found|}
+not_found:end
+@z
+
+@x l.11852
+@<Types...@>=
+@!dvi_index=0..dvi_buf_size; {an index into the output buffer}
+@y
+@d dvi_index==0..dvi_buf_size {an index into the output buffer}
+@z
+
+@x l.11888
+begin for k:=a to b do write(dvi_file,dvi_buf[k]);
+@y
+begin try begin
+  for k:=a to b do wri@&te(dvi_file,dvi_buf[k]);
+end;
+catch(ex:IOException) begin end;
+@z
+
+@x l.12048
+@<Look at the other stack entries until deciding what sort of \.{DVI} command
+  to generate; |goto found| if node |p| is a ``hit''@>;
+@<Generate a |down| or |right| command for |w| and |return|@>;
+found: @<Generate a |y0| or |z0| command in order to reuse a previous
+@y
+found: begin_loop
+@<Look at the other stack entries until deciding what sort of \.{DVI} command
+  to generate; |goto found| if node |p| is a ``hit''@>;
+@<Generate a |down| or |right| command for |w| and |return|@>;
+End_loop; {|found|}
+found: @<Generate a |y0| or |z0| command in order to reuse a previous
+@z
+
+@x l.12125
+if abs(w)>=@'100000 then
+  begin dvi_out(o+2); {|down3| or |right3|}
+  if w<0 then w:=w+@'100000000;
+  dvi_out(w div @'200000); w:=w mod @'200000; goto 2;
+  end;
+if abs(w)>=@'200 then
+  begin dvi_out(o+1); {|down2| or |right2|}
+  if w<0 then w:=w+@'200000;
+  goto 2;
+  end;
+dvi_out(o); {|down1| or |right1|}
+if w<0 then w:=w+@'400;
+goto 1;
+2: dvi_out(w div @'400);
+1: dvi_out(w mod @'400); return
+@y
+1: begin_loop
+if abs(w)>=@'100000 then
+  begin dvi_out(o+2); {|down3| or |right3|}
+  if w<0 then w:=w+@'100000000;
+  dvi_out(w div @'200000); w:=w mod @'200000;
+  dvi_out(w div @'400); goto 1;
+  end;
+if abs(w)>=@'200 then
+  begin dvi_out(o+1); {|down2| or |right2|}
+  if w<0 then w:=w+@'200000;
+  dvi_out(w div @'400); goto 1;
+  end;
+dvi_out(o); {|down1| or |right1|}
+if w<0 then w:=w+@'400;
+end_loop; {|1|}
+1: dvi_out(w mod @'400); return
+@z
+
+@x l.12154
+while p<>null do
+@y
+not_found: while p<>null do
+@z
+
+@x l.12330
+reswitch: if is_char_node(p) then
+@y
+reswitch: begin_loop if is_char_node(p) then
+@z
+
+@x l.12341
+else @<Output the non-|char_node| |p| for |hlist_out|
+    and move to the next node@>
+@y
+else @<Output the non-|char_node| |p| for |hlist_out|
+    and move to the next node@>;
+end_loop; {|reswitch|}
+@z
+
+@x l.12355
+begin case type(p) of
+@y
+begin 
+next_p: begin_loop 
+move_past: begin_loop
+fin_rule: begin_loop
+case type(p) of
+@z
+@x
+fin_rule: @<Output a rule in an hlist@>;
+move_past: cur_h:=cur_h+rule_wd;
+next_p:p:=link(p);
+@y
+End_loop; {fin_rule}
+fin_rule: @<Output a rule in an hlist@>;
+end_loop; {|move_past|}
+move_past: cur_h:=cur_h+rule_wd;
+end_loop; {|next_p|}
+next_p:p:=link(p);
+@z
+
+@x l.12514
+begin if is_char_node(p) then confusion("vlistout")
+@:this can't happen vlistout}{\quad vlistout@>
+else @<Output the non-|char_node| |p| for |vlist_out|@>;
+next_p:p:=link(p);
+@y
+begin 
+next_p: begin_loop if is_char_node(p) then confusion("vlistout")
+@:this can't happen vlistout}{\quad vlistout@>
+else @<Output the non-|char_node| |p| for |vlist_out|@>;
+end_loop; {|next_p|}
+next_p:p:=link(p);
+@z
+
+@x l.12521
+begin case type(p) of
+@y
+begin 
+move_past: begin_loop
+fin_rule: begin_loop
+case type(p) of
+@z
+
+@x l.12532
+fin_rule: @<Output a rule in a vlist, |goto next_p|@>;
+move_past: cur_v:=cur_v+rule_ht;
+@y
+End_loop; {fin_rule}
+fin_rule: @<Output a rule in a vlist, |goto next_p|@>;
+End_loop; {move_past}
+move_past: cur_v:=cur_v+rule_ht;
+@z
+
+@x l.12681
+@<Update the values of |max_h| and |max_v|; but if the page is too large,
+@y
+done: begin_loop
+@<Update the values of |max_h| and |max_v|; but if the page is too large,
+@z
+@x
+done:
+@y
+end_loop; {|done|}
+done:
+@z
+
+@x l.12812
+begin if three_codes then s:=saved(0);
+if scan_keyword("to") then spec_code:=exactly
+@.to@>
+else if scan_keyword("spread") then spec_code:=additional
+@.spread@>
+else  begin spec_code:=additional; cur_val:=0;
+  goto found;
+  end;
+scan_normal_dimen;
+found: if three_codes then
+@y
+begin if three_codes then s:=saved(0)
+else s:=0;
+found: begin_loop
+if scan_keyword("to") then spec_code:=exactly
+@.to@>
+else if scan_keyword("spread") then spec_code:=additional
+@.spread@>
+else  begin spec_code:=additional; cur_val:=0;
+  goto found;
+  end;
+scan_normal_dimen;
+end_loop; {|found|}
+found: if three_codes then
+@z
+
+@x l.12882
+@<Determine the value of |width(r)| and the appropriate glue setting;
+  then |return| or |goto common_ending|@>;
+@y
+common_ending: begin_loop
+@<Determine the value of |width(r)| and the appropriate glue setting;
+  then |return| or |goto common_ending|@>;
+End_loop; {common_ending}
+@z
+
+@x l.12898
+begin reswitch: while is_char_node(p) do
+@y
+begin reswitch: begin_loop while is_char_node(p) do
+@z
+
+@x l.12917
+end
+@y
+end_loop {|reswitch|}
+end
+@z
+
+@x l.12987
+  return;
+@y
+  hpack:=r;
+  return;
+@z
+
+@x l.13005
+return;
+@y
+hpack:=r;
+return;
+@z
+
+@x l.13070
+return;
+@y
+hpack:=r;
+return;
+@z
+
+@x 13129
+@<Determine the value of |height(r)| and the appropriate glue setting;
+  then |return| or |goto common_ending|@>;
+@y
+common_ending: begin_loop
+@<Determine the value of |height(r)| and the appropriate glue setting;
+  then |return| or |goto common_ending|@>;
+End_loop; {common_ending}
+@z
+
+@x l.13178
+  return;
+@y
+  vpackage:=r;
+  return;
+@z
+
+@x l.13196
+return;
+@y
+vpackage:=r;
+return;
+@z
+
+@x l.13241
+return;
+@y
+vpackage:=r;
+return;
+@z
+
+@x l.13870
+loop@+  begin @<Look at the variants of |(z,x)|; set |f| and |c| whenever
+@y
+c:=0; q:=null_character;
+found: loop@+  begin @<Look at the variants of |(z,x)|; set |f| and |c| whenever
+@z
+
+@x l.13904
+  begin continue: q:=char_info(g)(y);
+@y
+  continue: begin_loop q:=char_info(g)(y);
+@z
+
+@x l.13919
+  end;
+@y
+  end_loop; {|continue|}
+@z
+
+@x l.14128
+begin case math_type(p) of
+@y
+begin
+found: begin_loop
+case math_type(p) of
+@z
+
+@x l.14141
+found: if is_char_node(q)or(q=null) then x:=hpack(q,natural)
+@y
+end_loop; {|found|}
+found: if is_char_node(q)or(q=null) then x:=hpack(q,natural)
+@z
+
+@x l.14244
+begin mlist:=cur_mlist; penalties:=mlist_penalties;
+@y
+begin x:=0; p:=null; mlist:=cur_mlist; penalties:=mlist_penalties;
+@z
+
+@x l.14260
+begin @<Do first-pass processing based on |type(q)|; |goto done_with_noad|
+  if a noad has been fully processed, |goto check_dimensions| if it
+  has been translated into |new_hlist(q)|, or |goto done_with_node|
+  if a node has been fully processed@>;
+check_dimensions: z:=hpack(new_hlist(q),natural);
+if height(z)>max_h then max_h:=height(z);
+if depth(z)>max_d then max_d:=depth(z);
+free_node(z,box_node_size);
+done_with_noad: r:=q; r_type:=type(r);
+done_with_node: q:=link(q);
+@y
+begin 
+done_with_node: begin_loop
+done_with_noad: begin_loop
+check_dimensions: begin_loop
+@<Do first-pass processing based on |type(q)|; |goto done_with_noad|
+  if a noad has been fully processed, |goto check_dimensions| if it
+  has been translated into |new_hlist(q)|, or |goto done_with_node|
+  if a node has been fully processed@>;
+end_loop; {|check_dimensions|}
+check_dimensions: z:=hpack(new_hlist(q),natural);
+if height(z)>max_h then max_h:=height(z);
+if depth(z)>max_d then max_d:=depth(z);
+free_node(z,box_node_size);
+end_loop; {|done_with_noad|}
+done_with_noad: r:=q; r_type:=type(r);
+end_loop; {|done_with_node|}
+done_with_node: q:=link(q);
+@z
+
+@x l.14277
+reswitch: delta:=0;
+@y
+reswitch: begin_loop delta:=0;
+@z
+
+@x l.14294
+endcases;@/
+@y
+endcases;@/
+end_loop; {|reswitch|}
+@z
+
+@x l.14496
+  begin fetch(nucleus(q));
+@y
+  done1: begin_loop fetch(nucleus(q));
+@z
+@x
+  end;
+done1:
+@y
+  end_loop; {|done1|}
+done1:
+@z
+
+@x l.14712
+begin restart:@t@>@;@/
+@y
+begin restart:loop begin @t@>@;@/
+@z
+
+@x l.14740
+exit:end;
+@y
+break; end; exit:end;
+@z
+
+@x l.14921
+while q<>null do
+  begin @<If node |q| is a style node, change the style and |goto delete_q|;
+@y
+done: while q<>null do begin
+  delete_q: begin_loop
+  @<If node |q| is a style node, change the style and |goto delete_q|;
+@z
+@x
+  delete_q: r:=q; q:=link(q); free_node(r,s);
+  done: end
+@y
+  end_loop; {|delete_q|}
+  delete_q: r:=q; q:=link(q); free_node(r,s);
+  done: end
+@z
+
+@x l.15390
+begin restart: get_token;
+@y
+begin restart: loop begin get_token;
+@z
+
+@x l.15406
+end;
+@y
+break; end end;
+@z
+
+@x l.15432
+loop@+  begin continue: get_preamble_token;
+@y
+continue: loop@+  begin get_preamble_token;
+@z
+
+@x l.15461
+begin restart: align_state:=1000000; @<Get the next non-blank non-call token@>;
+@y
+begin restart: loop begin align_state:=1000000;
+  @<Get the next non-blank non-call token@>;
+@z
+
+@x l.15472
+end;
+@y
+break; end end;
+@z
+
+@x l.16307
+@d deactivate=60 {go here when node |r| should be deactivated}
+@y
+@d deactivate=61 {go here when node |r| should be deactivated}
+@z
+
+@x l.16320
+loop@+  begin continue: r:=link(prev_r);
+@y
+line_width:=0; prev_prev_r:=null;
+continue: loop@+  begin r:=link(prev_r);
+@z
+
+@x l.16467
+  @<Compute the discretionary |break_width| values@>;
+while s<>null do
+@y
+  @<Compute the discretionary |break_width| values@>;
+done: while s<>null do
+@z
+
+@x l.16715
+if (b>inf_bad)or(pi=eject_penalty) then
+@y
+deactivate: begin_loop if (b>inf_bad)or(pi=eject_penalty) then
+@z
+@x
+deactivate: @<Deactivate node |r|@>;
+@y
+end_loop; {|deactivate|}
+deactivate: @<Deactivate node |r|@>;
+@z
+
+@x l.16741
+else  begin if shortfall>7230584 then if cur_active_width[2]<1663497 then
+@y
+else  begin 
+done1: begin_loop if shortfall>7230584 then if cur_active_width[2]<1663497 then
+@z
+@x
+  done1:
+@y
+  end_loop; {|done1|}
+  done1:
+@z
+
+@x l.16943
+loop@+  begin if threshold>inf_bad then threshold:=inf_bad;
+@y
+done: loop@+  begin if threshold>inf_bad then threshold:=inf_bad;
+@z
+
+@x l.17016
+case type(cur_p) of
+@y
+done5: begin_loop
+case type(cur_p) of
+@z
+@x
+done5:end
+@y
+end_loop; {|done5|}
+done5:end
+@z
+
+@x l.17289
+if q<>null then {|q| cannot be a |char_node|}
+@y
+done: begin_loop
+if q<>null then {|q| cannot be a |char_node|}
+@z
+@x
+done:
+@y
+end_loop; {|done|}
+done:
+@z
+
+@x l.17491
+  begin @<Skip to node |ha|, or |goto done1| if no hyphenation
+@y
+  done1: begin_loop @<Skip to node |ha|, or |goto done1| if no hyphenation
+@z
+@x
+  end;
+@y
+  end_loop; {|done1|}
+@z
+
+@x l.17516
+loop@+  begin if is_char_node(s) then
+    begin c:=qo(character(s)); hf:=font(s);
+    end
+  else if type(s)=ligature_node then
+    if lig_ptr(s)=null then goto continue
+    else begin q:=lig_ptr(s); c:=qo(character(q)); hf:=font(q);
+      end
+  else if (type(s)=kern_node)and(subtype(s)=normal) then goto continue
+  else if type(s)=whatsit_node then
+    begin @<Advance \(p)past a whatsit node in the \(p)pre-hyphenation loop@>;
+    goto continue;
+    end
+@y
+continue: loop@+  begin if is_char_node(s) then
+    begin c:=qo(character(s)); hf:=font(s);
+    end
+  else if type(s)=ligature_node then
+    if lig_ptr(s)=null 
+    then begin prev_s:=s; s:=link(prev_s); goto continue; end
+    else begin q:=lig_ptr(s); c:=qo(character(q)); hf:=font(q);
+      end
+  else if (type(s)=kern_node)and(subtype(s)=normal) 
+  then begin prev_s:=s; s:=link(prev_s); goto continue; end
+  else if type(s)=whatsit_node then
+    begin @<Advance \(p)past a whatsit node in the \(p)pre-hyphenation loop@>;
+    prev_s:=s; s:=link(prev_s); goto continue;
+    end
+@z
+
+@x l.17543
+loop@+  begin if is_char_node(s) then
+@y
+done3: loop@+  begin if is_char_node(s) then
+@z
+
+@x l.17583
+loop@+  begin if not(is_char_node(s)) then
+@y
+done4: loop@+  begin if not(is_char_node(s)) then
+@z
+
+@x l.17622
+for j:=l_hyf to hn-r_hyf do if odd(hyf[j]) then goto found1;
+return;
+found1:
+@y
+found1: begin_loop
+for j:=l_hyf to hn-r_hyf do if odd(hyf[j]) then goto found1;
+return;
+end; {found1}
+found1:
+@z
+
+@x l.17639
+if is_char_node(ha) then
+@y
+common_ending: begin_loop
+found2: begin_loop
+if is_char_node(ha) then
+@z
+@x
+found2: s:=ha; j:=0; hu[0]:=256; init_lig:=false; init_list:=null;
+common_ending: flush_node_list(r);
+@y
+End_loop; {found2}
+found2: s:=ha; j:=0; hu[0]:=256; init_lig:=false; init_list:=null;
+end_loop; {|common_ending|}
+common_ending: flush_node_list(r);
+@z
+
+@x l.17744
+continue:@<If there's a ligature or kern at the cursor position, update the data
+  structures, possibly advancing~|j|; continue until the cursor moves@>;
+@<Append a ligature and/or kern to the translation;
+  |goto continue| if the stack of inserted ligatures is nonempty@>;
+@y
+continue: begin_loop
+@<If there's a ligature or kern at the cursor position, update the data
+  structures, possibly advancing~|j|; continue until the cursor moves@>;
+@<Append a ligature and/or kern to the translation;
+  |goto continue| if the stack of inserted ligatures is nonempty@>;
+end_loop; {|continue|}
+@z
+
+@x l.17799
+if cur_l=non_char then
+@y
+done: begin_loop
+if cur_l=non_char then
+@z
+@x
+done:
+@y
+End_loop; {|done|}
+done:
+@z
+
+@x l.18067
+@<Types...@>=
+@!trie_pointer=0..trie_size; {an index into |trie|}
+
+@ @d trie_link(#)==trie[#].rh {``downward'' link in a trie}
+@d trie_char(#)==trie[#].b1 {character matched at this trie location}
+@d trie_op(#)==trie[#].b0 {program for hyphenation at this trie location}
+@y
+@d trie_pointer==0..trie_size {an index into |trie|}
+
+@ @d trie_link(#)==trie[#].rh {``downward'' link in a trie}
+@d trie_char(#)==(trie[#].lh div 256)
+  {character matched at this trie location}
+@d set_trie_char(#)==
+  trie[#].lh:=trie[#].lh - (trie[#].lh mod 256) + trie_char_set
+@d trie_char_set(#)==#
+@d trie_op(#)==(trie[#].lh mod 256)
+  {program for hyphenation at this trie location}
+@d set_trie_op(#)==
+  trie[#].lh:=(trie[#].lh mod 256) + trie_op_set
+@d trie_op_set(#)==(# * 256)
+@z
+
+@x l.18092
+@<Look for the word |hc[1..hn]| in the exception table, and |goto found| (with
+  |hyf| containing the hyphens) if an entry is found@>;
+@y
+c:= 0; found: begin_loop
+@<Look for the word |hc[1..hn]| in the exception table, and |goto found| (with
+  |hyf| containing the hyphens) if an entry is found@>;
+@z
+
+@x l.18104
+found: for j:=0 to l_hyf-1 do hyf[j]:=0;
+@y
+end_loop; {|found|}
+found: for j:=0 to l_hyf-1 do hyf[j]:=0;
+@z
+
+@x l.18133
+@<Types...@>=
+@!hyph_pointer=0..hyph_size; {an index into the ordered hash table}
+@y
+@d hyph_pointer==0..hyph_size {an index into the ordered hash table}
+@z
+
+@x l.18165
+loop@+  begin @<If the string |hyph_word[h]| is less than \(hc)|hc[1..hn]|,
+@y
+not_found: loop@+  begin @<If the string |hyph_word[h]| is less than \(hc)|hc[1..hn]|,
+@z
+
+@x l.18175
+if length(k)=hn then
+@y
+done: begin_loop
+if length(k)=hn then
+@z
+@x
+done:
+@y
+end_loop; {|done|}
+done:
+@z
+
+@x l.18229
+  reswitch: case cur_cmd of
+@y
+  reswitch: begin_loop case cur_cmd of
+@z
+
+@x l.18239
+  endcases;
+@y
+  endcases;
+  end_loop; {|reswitch|}
+@z
+
+@x l.18294
+if length(k)<length(s) then goto found;
+@y
+not_found: begin_loop
+found: begin_loop
+if length(k)<length(s) then goto found;
+@z
+
+@x l.18301
+found:q:=hyph_list[h]; hyph_list[h]:=p; p:=q;@/
+t:=hyph_word[h]; hyph_word[h]:=s; s:=t;
+not_found:
+@y
+end_loop; {|found|}
+found:q:=hyph_list[h]; hyph_list[h]:=p; p:=q;@/
+t:=hyph_word[h]; hyph_word[h]:=s; s:=t;
+end_loop; {|not_found|}
+not_found:
+@z
+
+@x l.18392
+exit:end;
+@y
+no_exit:end;
+@z
+
+@x l.18483
+exit:end;
+@y
+no_exit:end;
+@z
+
+@x l.18572
+loop@+  begin h:=z-c;@/
+  @<Ensure that |trie_max>=h+256|@>;
+  if trie_taken[h] then goto not_found;
+  @<If all characters of the family fit relative to |h|, then
+    |goto found|,\30\ otherwise |goto not_found|@>;
+  not_found: z:=trie_link(z); {move to the next hole}
+  end;
+found: @<Pack the family into |trie| relative to |h|@>;
+@y
+found: loop@+  begin h:=z-c;@/
+  @<Ensure that |trie_max>=h+256|@>;
+  not_found: begin_loop
+  if trie_taken[h] then goto not_found;
+  @<If all characters of the family fit relative to |h|, then
+    |goto found|,\30\ otherwise |goto not_found|@>;
+  End_loop; {|not_found|}
+  not_found: z:=trie_link(z); {move to the next hole}
+  end;
+found: @<Pack the family into |trie| relative to |h|@>;
+@z
+
+@x l.18635
+h.rh:=0; h.b0:=min_quarterword; h.b1:=min_quarterword; {|trie_link:=0|,
+  |trie_op:=min_quarterword|, |trie_char:=qi(0)|}
+@y
+h:=new two_halves;
+h.rh:=0; h.lh:=min_quarterword + (min_quarterword * 256);
+{|trie_link:=0|, |trie_op:=min_quarterword|, |trie_char:=qi(0)|}
+@z
+
+@x l.18646
+trie_char(0):=qi("?"); {make |trie_char(c)<>c| for all |c|}
+@y
+set_trie_char(0)(qi("?")); {make |trie_char(c)<>c| for all |c|}
+@z
+
+@x l.18661
+trie_link(z+c):=trie_ref[q]; trie_char(z+c):=qi(c); trie_op(z+c):=trie_o[p];
+@y
+trie_link(z+c):=trie_ref[q]; 
+set_trie_char(z+c)(qi(c)); set_trie_op(z+c)(trie_o[p]);
+@z
+
+@x l.18698
+loop@+  begin get_x_token;
+@y
+done: loop@+  begin get_x_token;
+@z
+
+@x l.18873
+loop@+  begin @<If node |p| is a legal breakpoint, check if this break is
+@y
+best_place:=null; pi:=0;
+done: loop@+  begin @<If node |p| is a legal breakpoint, check if this break is
+@z
+
+@x l.18894
+if p=null then pi:=eject_penalty
+@y
+not_found: begin_loop
+update_heights: begin_loop
+if p=null then pi:=eject_penalty
+@z
+@x l.18904
+update_heights: @<Update the current height and depth measurements with
+  respect to a glue or kern node~|p|@>;
+not_found: if prev_dp>d then
+@y
+end_loop; {|update_heights|}
+update_heights: @<Update the current height and depth measurements with
+  respect to a glue or kern node~|p|@>;
+end_loop; {|not_found|}
+not_found: if prev_dp>d then
+@z
+
+@x l.19367
+repeat continue: p:=link(contrib_head);@/
+@y
+pi:=0;
+continue: repeat p:=link(contrib_head);@/
+@z
+
+@x l.19400
+@<If the current page is empty and node |p| is to be deleted, |goto done1|;
+@y
+done: begin_loop
+done1: begin_loop
+contribute: begin_loop
+update_heights: begin_loop
+@<If the current page is empty and node |p| is to be deleted, |goto done1|;
+@z
+@x
+update_heights:@<Update the current page measurements with respect to the
+  glue or kern specified by node~|p|@>;
+contribute: @<Make sure that |page_max_depth| is not exceeded@>;
+@<Link node |p| into the current page and |goto done|@>;
+done1:@<Recycle node |p|@>;
+done:
+@y
+end_loop; {|update_heights|}
+update_heights:@<Update the current page measurements with respect to the
+  glue or kern specified by node~|p|@>;
+end_loop; {|contribute|}
+contribute: @<Make sure that |page_max_depth| is not exceeded@>;
+@<Link node |p| into the current page and |goto done|@>;
+End_loop; {done1}
+done1:@<Recycle node |p|@>;
+end_loop; {|done|}
+done:
+@z
+
+@x l.19971
+@d append_normal_space=120 {go here to append a normal space between words}
+@y
+@d append_normal_space=120 {go here to append a normal space between words}
+@d Goto(#) == begin j_case:=#; goto continue; end
+@z
+
+@x l.19975
+procedure main_control; {governs \TeX's activities}
+label big_switch,reswitch,main_loop,main_loop_wrapup,
+  main_loop_move,main_loop_move+1,main_loop_move+2,main_loop_move_lig,
+  main_loop_lookahead,main_loop_lookahead+1,
+  main_lig_loop,main_lig_loop+1,main_lig_loop+2,
+  append_normal_space,exit;
+var@!t:integer; {general-purpose temporary variable}
+@y
+procedure main_control; {governs \TeX's activities}
+label big_switch,reswitch,append_normal_space,exit;
+var@!t:integer; {general-purpose temporary variable}
+@!j_case:integer;
+@z
+
+@x l.19983
+big_switch: get_x_token;@/
+reswitch: @<Give diagnostic information, if requested@>;
+case abs(mode)+cur_cmd of
+hmode+letter,hmode+other_char,hmode+char_given: goto main_loop;
+hmode+char_num: begin scan_char_num; cur_chr:=cur_val; goto main_loop;@+end;
+hmode+no_boundary: begin get_x_token;
+  if (cur_cmd=letter)or(cur_cmd=other_char)or(cur_cmd=char_given)or
+   (cur_cmd=char_num) then cancel_boundary:=true;
+  goto reswitch;
+  end;
+hmode+spacer: if space_factor=1000 then goto append_normal_space
+  else app_space;
+hmode+ex_space,mmode+ex_space: goto append_normal_space;
+@t\4@>@<Cases of |main_control| that are not part of the inner loop@>@;
+end; {of the big |case| statement}
+goto big_switch;
+main_loop:@<Append character |cur_chr| and the following characters (if~any)
+  to the current hlist in the current font; |goto reswitch| when
+  a non-character has been fetched@>;
+append_normal_space:@<Append a normal inter-word space to the current list,
+  then |goto big_switch|@>;
+@y
+big_switch: begin_loop; get_x_token;@/
+reswitch: begin_loop @<Give diagnostic information, if requested@>;
+append_normal_space: begin_loop
+main_loop: begin_loop
+case abs(mode)+cur_cmd of
+hmode+letter,hmode+other_char,hmode+char_given: goto main_loop;
+hmode+char_num: begin scan_char_num; cur_chr:=cur_val; goto main_loop;@+end;
+hmode+no_boundary: begin get_x_token;
+  if (cur_cmd=letter)or(cur_cmd=other_char)or(cur_cmd=char_given)or
+   (cur_cmd=char_num) then cancel_boundary:=true;
+  goto reswitch;
+  end;
+hmode+spacer: if space_factor=1000 then goto append_normal_space
+  else app_space;
+hmode+ex_space,mmode+ex_space: goto append_normal_space;
+@t\4@>@<Cases of |main_control| that are not part of the inner loop@>@;
+end; {of the big |case| statement}
+goto big_switch;
+End_loop; {|main_loop|}
+main_loop:@<Append character |cur_chr| and the following characters (if~any)
+  to the current hlist in the current font; |goto reswitch| when
+  a non-character has been fetched@>;
+End_loop; {|append_normal_space|}
+end_loop; {|reswitch|}
+append_normal_space:@<Append a normal inter-word space to the current list,
+  then |goto big_switch|@>;
+End_loop; {|big_switch|}
+@z
+
+@x l.20084
+if main_k=non_address then goto main_loop_move+2; {no left boundary processing}
+cur_r:=cur_l; cur_l:=non_char;
+goto main_lig_loop+1; {begin with cursor after left boundary}
+@#
+main_loop_wrapup:@<Make a ligature node, if |ligature_present|;
+  insert a null discretionary, if appropriate@>;
+main_loop_move:@<If the cursor is immediately followed by the right boundary,
+  |goto reswitch|; if it's followed by an invalid character, |goto big_switch|;
+  otherwise move the cursor one step to the right and |goto main_lig_loop|@>;
+main_loop_lookahead:@<Look ahead for another character, or leave |lig_stack|
+  empty if there's none there@>;
+main_lig_loop:@<If there's a ligature/kern command relevant to |cur_l| and
+  |cur_r|, adjust the text appropriately; exit to |main_loop_wrapup|@>;
+main_loop_move_lig:@<Move the cursor past a pseudo-ligature, then
+  |goto main_loop_lookahead| or |main_lig_loop|@>
+@y
+if main_k=non_address then j_case:=main_loop_move+2
+  {no left boundary processing}
+else begin
+cur_r:=cur_l; cur_l:=non_char;
+j_case:=main_lig_loop+1; {begin with cursor after left boundary}
+end;
+@#
+continue: begin_loop case j_case of
+main_loop_wrapup:begin 
+  @<Make a ligature node, if |ligature_present|;
+  insert a null discretionary, if appropriate@>; 
+  no_exit: end;
+main_loop_move: begin 
+  @<If the cursor is immediately followed by the right boundary,
+  |goto reswitch|; if it's followed by an invalid character, |goto big_switch|;
+  otherwise move the cursor one step to the right and |goto main_lig_loop|@>;
+  no_exit: end;
+main_loop_lookahead: begin
+  @<Look ahead for another character, or leave |lig_stack|
+  empty if there's none there@>;
+  no_exit: end;
+main_lig_loop: begin
+  @<If there's a ligature/kern command relevant to |cur_l| and
+  |cur_r|, adjust the text appropriately; exit to |main_loop_wrapup|@>;
+  no_exit: end;
+main_loop_move_lig:begin 
+  @<Move the cursor past a pseudo-ligature, then
+  |goto main_loop_lookahead| or |main_lig_loop|@>;
+  no_exit: end;
+endcases; End_loop; {continue}
+@z
+
+@x l.20137
+main_loop_move+1:if not is_char_node(lig_stack) then goto main_loop_move_lig;
+main_loop_move+2:if(cur_chr<font_bc[main_f])or(cur_chr>font_ec[main_f]) then
+@y
+  no_exit: end;
+main_loop_move+1: begin
+  if not is_char_node(lig_stack) then Goto(main_loop_move_lig);
+  no_exit: end;
+main_loop_move+2: begin
+  if(cur_chr<font_bc[main_f])or(cur_chr>font_ec[main_f]) then
+@z
+
+@x l.20157
+  if main_p>null then goto main_loop_lookahead
+  else cur_r:=bchar
+else cur_r:=character(lig_stack);
+goto main_lig_loop
+@y
+  if main_p>null then Goto(main_loop_lookahead)
+  else cur_r:=bchar
+else cur_r:=character(lig_stack);
+Goto(main_lig_loop)
+@z
+
+@x l.20167
+if cur_cmd=letter then goto main_loop_lookahead+1;
+if cur_cmd=other_char then goto main_loop_lookahead+1;
+if cur_cmd=char_given then goto main_loop_lookahead+1;
+x_token; {now expand and set |cur_cmd|, |cur_chr|, |cur_tok|}
+if cur_cmd=letter then goto main_loop_lookahead+1;
+if cur_cmd=other_char then goto main_loop_lookahead+1;
+if cur_cmd=char_given then goto main_loop_lookahead+1;
+if cur_cmd=char_num then
+  begin scan_char_num; cur_chr:=cur_val; goto main_loop_lookahead+1;
+  end;
+if cur_cmd=no_boundary then bchar:=non_char;
+cur_r:=bchar; lig_stack:=null; goto main_lig_loop;
+main_loop_lookahead+1: adjust_space_factor;
+@y
+if (cur_cmd=letter) or (cur_cmd=other_char) or (cur_cmd=char_given)
+then Goto(main_loop_lookahead+1);
+x_token; {now expand and set |cur_cmd|, |cur_chr|, |cur_tok|}
+if (cur_cmd=letter) or (cur_cmd=other_char) or (cur_cmd=char_given)
+then Goto(main_loop_lookahead+1);
+if cur_cmd=char_num then
+  begin scan_char_num; cur_chr:=cur_val; Goto(main_loop_lookahead+1);
+  end;
+if cur_cmd=no_boundary then bchar:=non_char;
+cur_r:=bchar; lig_stack:=null; Goto(main_lig_loop); 
+no_exit: end;
+main_loop_lookahead+1: begin adjust_space_factor;
+@z
+
+@x l.20194
+if char_tag(main_i)<>lig_tag then goto main_loop_wrapup;
+main_k:=lig_kern_start(main_f)(main_i); main_j:=font_info[main_k].qqqq;
+if skip_byte(main_j)<=stop_flag then goto main_lig_loop+2;
+main_k:=lig_kern_restart(main_f)(main_j);
+main_lig_loop+1:main_j:=font_info[main_k].qqqq;
+main_lig_loop+2:if next_char(main_j)=cur_r then
+ if skip_byte(main_j)<=stop_flag then
+  @<Do ligature or kern command, returning to |main_lig_loop|
+  or |main_loop_wrapup| or |main_loop_move|@>;
+if skip_byte(main_j)=qi(0) then incr(main_k)
+else begin if skip_byte(main_j)>=stop_flag then goto main_loop_wrapup;
+  main_k:=main_k+qo(skip_byte(main_j))+1;
+  end;
+goto main_lig_loop+1
+@y
+if char_tag(main_i)<>lig_tag then Goto(main_loop_wrapup);
+main_k:=lig_kern_start(main_f)(main_i); main_j:=font_info[main_k].qqqq;
+if skip_byte(main_j)<=stop_flag then Goto(main_lig_loop+2);
+main_k:=lig_kern_restart(main_f)(main_j);
+no_exit: end;
+main_lig_loop+1: begin
+main_j:=font_info[main_k].qqqq;
+no_exit: end;
+main_lig_loop+2: begin if next_char(main_j)=cur_r then
+ if skip_byte(main_j)<=stop_flag then
+  @<Do ligature or kern command, returning to |main_lig_loop|
+  or |main_loop_wrapup| or |main_loop_move|@>;
+if skip_byte(main_j)=qi(0) then incr(main_k)
+else begin if skip_byte(main_j)>=stop_flag then Goto(main_loop_wrapup);
+  main_k:=main_k+qo(skip_byte(main_j))+1;
+  end;
+Goto(main_lig_loop+1)
+@z
+
+@x l.20221
+  tail_append(new_kern(char_kern(main_f)(main_j))); goto main_loop_move;
+@y
+  tail_append(new_kern(char_kern(main_f)(main_j))); Goto(main_loop_move);
+@z
+
+@x l.20249
+  if lig_stack=null then goto main_loop_wrapup
+  else goto main_loop_move+1;
+  end
+endcases;
+if op_byte(main_j)>qi(4) then
+  if op_byte(main_j)<>qi(7) then goto main_loop_wrapup;
+if cur_l<non_char then goto main_lig_loop;
+main_k:=bchar_label[main_f]; goto main_lig_loop+1;
+@y
+  if lig_stack=null then Goto(main_loop_wrapup)
+  else Goto(main_loop_move+1);
+  end
+endcases;
+if op_byte(main_j)>qi(4) then
+  if op_byte(main_j)<>qi(7) then Goto(main_loop_wrapup);
+if cur_l<non_char then Goto(main_lig_loop);
+main_k:=bchar_label[main_f]; Goto(main_lig_loop+1);
+@z
+
+@x l.20921
+repeat p:=q;
+@y
+done: begin_loop
+repeat p:=q;
+@z
+@x
+done:end
+@y
+end_loop; {|done|}
+done:end
+@z
+
+@x l.21709
+p:=list_ptr(just_box);
+while p<>null do
+  begin @<Let |d| be the natural width of node |p|;
+    if the node is ``visible,'' |goto found|;
+    if the node is glue that stretches or shrinks, set |v:=max_dimen|@>;
+  if v<max_dimen then v:=v+d;
+  goto not_found;
+  found: if v<max_dimen then
+    begin v:=v+d; w:=v;
+    end
+  else  begin w:=max_dimen; goto done;
+    end;
+  not_found: p:=link(p);
+  end;
+done:
+@y
+p:=list_ptr(just_box);
+done: while p<>null do begin 
+  not_found: begin_loop
+  found: begin_loop
+  @<Let |d| be the natural width of node |p|;
+    if the node is ``visible,'' |goto found|;
+    if the node is glue that stretches or shrinks, set |v:=max_dimen|@>;
+  if v<max_dimen then v:=v+d;
+  goto not_found;
+  end; {|found|}
+  found: if v<max_dimen then
+    begin v:=v+d; w:=v;
+    end
+  else  begin w:=max_dimen; goto done;
+    end;
+  end_loop; {|not_found|}
+  not_found: p:=link(p);
+  end;
+done:
+@z
+
+@x l.21726
+reswitch: if is_char_node(p) then
+@y
+reswitch: begin_loop if is_char_node(p) then
+@z
+
+@x l.21739
+endcases
+@y
+endcases;
+end_loop {|reswitch|}
+@z
+
+@x l.21813
+begin restart:@<Get the next non-blank non-relax...@>;
+@y
+begin restart:loop begin @<Get the next non-blank non-relax...@>;
+@z
+
+@x l.21814
+reswitch:case cur_cmd of
+@y
+reswitch: begin_loop case cur_cmd of
+@z
+
+@x l.21830
+endcases;@/
+@y
+endcases;@/
+end_loop; {|reswitch|}
+@z
+
+@x l.21834
+exit:end;
+@y
+end_loop; {|restart|}
+exit:end;
+@z
+
+@x l.22669
+case cur_cmd of
+@y
+done: begin_loop case cur_cmd of
+@z
+@x
+done: @<Insert a token saved by \.{\\afterassignment}, if any@>;
+@y
+end_loop; {|done|}
+done: @<Insert a token saved by \.{\\afterassignment}, if any@>;
+@z
+
+@x l.22717
+begin restart: repeat get_token;
+@y
+begin restart: loop begin repeat get_token;
+@z
+
+@x l.22731
+end;
+@y
+break; end end;
+@z
+
+@x l.23009
+begin q:=cur_cmd;
+@y
+begin l:=0; q:=cur_cmd;
+@z
+
+@x l.23033
+begin if q<>register then
+@y
+found: begin_loop
+begin if q<>register then
+@z
+
+@x l.23054
+found:
+@y
+end_loop; {|found|}
+found:
+@z
+
+@x l.23232
+    print_err("Patterns can be loaded only by INITEX");
+@y
+    vir print_err("Patterns can be loaded only by INITEX");
+@z
+@x
+    return;
+@y
+    return; riv
+@z
+
+@x l.23291
+@<If this font has already been loaded, set |f| to the internal
+  font number and |goto common_ending|@>;
+f:=read_font_info(u,cur_name,cur_area,s);
+common_ending: equiv(u):=f; eqtb[font_id_base+f]:=eqtb[u]; font_id_text(f):=t;
+@y
+common_ending: begin_loop
+@<If this font has already been loaded, set |f| to the internal
+  font number and |goto common_ending|@>;
+f:=read_font_info(u,cur_name,cur_area,s);
+end_loop; {|common_ending|}
+common_ending: equiv(u):=f; eqtb[font_id_base+f]:=eqtb[u]; font_id_text(f):=t;
+@z
+
+@x l.23443
+  if a_open_in(read_file[n]) then read_open[n]:=just_open;
+@y
+  this_file:=new TeXFile(name_of_file);
+  if this_file.exists then 
+    begin a_open_in(read_file[n]); read_open[n]:=just_open; end;
+@z
+
+@x l.23589
+begin case cur_chr of
+@y
+begin 
+common_ending: begin_loop case cur_chr of
+@z
+@x
+common_ending: if interaction<error_stop_mode then
+@y
+end_loop; {|common_ending|}
+common_ending: if interaction<error_stop_mode then
+@z
+
+@x l.23694
+begin @<If dumping is not allowed, abort@>;
+@<Create the |format_ident|, open the format file,
+  and inform the user that dumping has begun@>;
+@<Dump constants for consistency check@>;
+@<Dump the string pool@>;
+@<Dump the dynamic memory@>;
+@<Dump the table of equivalents@>;
+@<Dump the font information@>;
+@<Dump the hyphenation tables@>;
+@<Dump a couple more things and the closing check word@>;
+@y
+@!fmt_file:dont_make word_out; {for output of format information}
+@!m:memory_word;
+begin fmt_file:=nul@&l;
+@<If dumping is not allowed, abort@>;
+@<Create the |format_ident|, open the format file,
+  and inform the user that dumping has begun@>;
+try begin
+@<Dump constants for consistency check@>;
+@<Dump the string pool@>;
+@<Dump the dynamic memory@>;
+@<Dump the table of equivalents@>;
+@<Dump the font information@>;
+@<Dump the hyphenation tables@>;
+@<Dump a couple more things and the closing check word@>;
+end;
+catch(ex:IOException) begin end;
+@z
+
+@x l.23709
+@d bad_fmt=6666 {go here if the format file is unacceptable}
+@y
+@d bad_fmt=125 {go here if the format file is unacceptable}
+@z
+
+@x l.23723
+begin @<Undump constants for consistency check@>;
+@<Undump the string pool@>;
+@<Undump the dynamic memory@>;
+@<Undump the table of equivalents@>;
+@<Undump the font information@>;
+@<Undump the hyphenation tables@>;
+@<Undump a couple more things and the closing check word@>;
+load_fmt_file:=true; return; {it worked!}
+@y
+@!m:memory_word;
+begin m:=new memory_word;
+try begin
+bad_fmt: begin_loop
+@<Undump constants for consistency check@>;
+@<Undump the string pool@>;
+@<Undump the dynamic memory@>;
+@<Undump the table of equivalents@>;
+@<Undump the font information@>;
+@<Undump the hyphenation tables@>;
+@<Undump a couple more things and the closing check word@>;
+load_fmt_file:=true; return; {it worked!}
+end end;
+catch(ex:IOException) begin end;
+@z
+
+@x l.23751
+@d dump_wd(#)==begin fmt_file^:=#; put(fmt_file);@+end
+@d dump_int(#)==begin fmt_file^.int:=#; put(fmt_file);@+end
+@d dump_hh(#)==begin fmt_file^.hh:=#; put(fmt_file);@+end
+@d dump_qqqq(#)==begin fmt_file^.qqqq:=#; put(fmt_file);@+end
+@y
+@d dump_wd(#)==#.mem_dump(fmt_file)
+@d dump_int(#)==fmt_file.write_Int(#)
+@d dump_hh(#)==begin fmt_file.write_Short(#.lh); fmt_file.write_Short(#.rh);
+  @+end
+@d dump_qqqq(#)==begin fmt_file.write_Byte(#.b0); fmt_file.write_Byte(#.b1);
+  fmt_file.write_Byte(#.b2); fmt_file.write_Byte(#.b3);@+end
+@z
+@d dump_wd(#)==fmt_file.write_Int(#.int)
+@d dump_wd(#)==fmt_file.write_Long(#.Long)
+
+@x l.23757
+@!fmt_file:word_file; {for input or output of format information}
+@y
+@!fmt_file:dont_make word_file; {for input or output of format information}
+@z
+
+@x l.23763
+@d undump_wd(#)==begin get(fmt_file); #:=fmt_file^;@+end
+@d undump_int(#)==begin get(fmt_file); #:=fmt_file^.int;@+end
+@d undump_hh(#)==begin get(fmt_file); #:=fmt_file^.hh;@+end
+@d undump_qqqq(#)==begin get(fmt_file); #:=fmt_file^.qqqq;@+end
+@y
+@d undump_wd(#)==#.mem_undump(fmt_file)
+@d undump_int(#)==#:=fmt_file.read_Int
+@d undump_hh(#)==begin #.lh:=fmt_file.read_Short; #.rh:=fmt_file.read_Short;
+  @+end
+@d undump_qqqq(#)==begin #.b0:=fmt_file.read_Byte; #.b1:=fmt_file.read_Byte;
+  #.b2:=fmt_file.read_Byte; #.b3:=fmt_file.read_Byte;@+end
+@z
+@d undump_wd(#)==#.int:=fmt_file.read_Int
+@d undump_wd(#)==#.Long:=fmt_file.read_Long
+
+@x l.23793
+x:=fmt_file^.int;
+@y
+x:=fmt_file.read_Int;
+@z
+
+@x l.23821
+print_int(pool_ptr)
+@y
+print_int(pool_ptr);
+update_terminal
+@z
+
+@x l.23867
+print_int(var_used); print_char("&"); print_int(dyn_used)
+@y
+print_int(var_used); print_char("&"); print_int(dyn_used);
+update_terminal
+@z
+
+@x l.23879 -- guavac thinks 0 < -2
+if mem_min<mem_bot-2 then {make more low memory available}
+  begin p:=llink(rover); q:=mem_min+1;
+  link(mem_min):=null; info(mem_min):=null; {we don't use the bottom word}
+  rlink(p):=q; llink(rover):=q;@/
+  rlink(q):=rover; llink(q):=p; link(q):=empty_flag;
+  node_size(q):=mem_bot-q;
+  end;
+@y
+@z
+
+@x l.23912
+while j<int_base-1 do
+@y
+done1: begin_loop
+found1: begin_loop
+while j<int_base-1 do
+@z
+@x
+found1: incr(j); l:=j;
+@y
+End_loop; {found1}
+found1: incr(j); l:=j;
+@z
+@x
+done1:dump_int(l-k);
+@y
+end_loop; {|done1|}
+done1:dump_int(l-k);
+@z
+
+@x l.23933
+while j<eqtb_size do
+@y
+done2: begin_loop
+found2: begin_loop
+while j<eqtb_size do
+@z
+@x
+found2: incr(j); l:=j;
+@y
+End_loop; {found2}
+found2: incr(j); l:=j;
+@z
+@x
+done2:dump_int(l-k);
+@y
+end_loop; {|done2|}
+done2:dump_int(l-k);
+@z
+
+@x l.23974
+print_ln; print_int(cs_count); print(" multiletter control sequences")
+@y
+print_ln; print_int(cs_count); print(" multiletter control sequences");
+update_terminal
+@z
+
+@x l.23991
+if font_ptr<>font_base+1 then print_char("s")
+@y
+if font_ptr<>font_base+1 then print_char("s");
+update_terminal
+@z
+
+@x l.24027
+  begin print(" at "); print_scaled(font_size[k]); print("pt");
+  end;
+@y
+  begin print(" at "); print_scaled(font_size[k]); print("pt");
+  end;
+update_terminal;
+@z
+
+@x l.24081
+  dump_int(k); dump_int(qo(trie_used[k]));
+  end
+@y
+  dump_int(k); dump_int(qo(trie_used[k]));
+  end;
+update_terminal
+@z
+
+@x l.24132
+while not w_open_out(fmt_file) do
+  prompt_file_name("format file name",format_extension);
+@y
+done3: loop begin w_open_out(fmt_file); 
+  if fmt_file<>nul@&l then goto done3;
+  prompt_file_name("format file name",format_extension) 
+  end;
+@z
+
+@x l.24136
+slow_print(w_make_name_string(fmt_file)); flush_string;
+print_nl(""); slow_print(format_ident)
+@y
+slow_print(W_make_name_string(fmt_file)); flush_string;
+print_nl(""); slow_print(format_ident);
+update_terminal
+@z
+
+@x l.24206
+if ready_already=314159 then goto start_of_TEX;
+@<Check the ``constant'' values...@>@;
+@y
+begin_loop {start_of_TEX}
+if ready_already=314159 then goto start_of_TEX;
+@<Check the ``constant'' values...@>@;
+@z
+
+@x l.24212
+  goto final_end;
+@y
+  do_final_end;
+@z
+
+@x l.24215
+@!init if not get_strings_started then goto final_end;
+@y
+@!init if not get_strings_started then do_final_end;
+@z
+
+@x l.24220
+start_of_TEX: @<Initialize the output routines@>;
+@y
+end_loop; {|start_of_TEX|}
+start_of_TEX: @<Initialize the output routines@>;
+@z
+
+@x l.24225
+end_of_TEX: close_files_and_terminate;
+final_end: ready_already:=0;
+end.
+@y
+close_files_and_terminate;
+do_final_end;
+final_end: ready_already:=0;
+end.
+@z
+
+@x 24338
+  print_nl("(\dump is performed only by INITEX)"); return;
+@y
+  vir print_nl("(\dump is performed only by INITEX)"); return; riv
+@z
+
+@x l.24362
+  if not open_fmt_file then goto final_end;
+  if not load_fmt_file then
+    begin w_close(fmt_file); goto final_end;
+@y
+  if not open_fmt_file then do_final_end;
+  if not load_fmt_file then
+    begin w_close(fmt_file); do_final_end;
+@z
+
+@x l.24399
+@d breakpoint=888 {place where a breakpoint is desirable}
+@y
+@d breakpoint=127 {place where a breakpoint is desirable}
+@z
+
+@x l.24405
+@!debug procedure debug_help; {routine to display various things}
+label breakpoint,exit;
+var k,@!l,@!m,@!n:integer;
+begin loop begin wake_up_terminal;
+  print_nl("debug # (-1 to exit):"); update_terminal;
+@.debug \#@>
+  read(term_in,m);
+  if m<0 then return
+  else if m=0 then
+    begin goto breakpoint;@\ {go to every label at least once}
+    breakpoint: m:=0; @{'BREAKPOINT'@}@\
+    end
+  else  begin read(term_in,n);
+@y
+@!debug @<Declare the procedure called |dump_mem|@>@;
+procedure debug_help; {routine to display various things}
+label breakpoint,exit;
+var k,@!l,@!m,@!n:integer;
+@!str: String;
+begin loop begin wake_up_terminal;
+  print_nl("debug # (0 to continue, -1 to abort):"); update_terminal;
+@.debug \#@>
+  m:=0; n:=0; l:=0;
+  try begin str:=term_in.readLine;
+    m:=Integer.parseInt(str); end;
+  catch(ex: IOException) begin error; end;
+  catch(ex: NumberFormatException) begin error; end;
+  if m<0 then do_final_end
+  else if m=0 then return
+  else  begin 
+  try begin str:=term_in.readLine;
+    n:=Integer.parseInt(str); end;
+  catch(ex: IOException) begin error; end;
+@z
+
+@x l.24440
+13: begin read(term_in,l); print_cmd_chr(n,l);
+@y
+13: begin 
+  try begin str:=term_in.readLine;
+    l:=Integer.parseInt(str); end;
+  catch(ex: IOException) begin error; end;
+  print_cmd_chr(n,l);
+@z
+
+@x l.24445
+16: panicking:=not panicking;
+@y
+16: panicking:=not panicking;
+17: begin dump_mem(n); end;
+@z
+
+@x l.24522
+@!write_file:array[0..15] of alpha_file;
+@y
+@!write_file:array[0..15] of alpha_out;
+@z
+
+@x l.24848
+      while not a_open_out(write_file[j]) do
+        prompt_file_name("output file name",".tex");
+@y
+      done1: loop begin a_open_out(write_file[j]);
+        if write_file[j]<>nul@&l then goto done1;
+        prompt_file_name("output file name",".tex") end;
+@z
+
+@x l.24903
+@* \[54] System-dependent changes.
+This section should be replaced, if necessary, by any special
+modifications of the program
+that are necessary to make \TeX\ work at a particular installation.
+It is usually best to design your change file so that all changes to
+previous sections preserve the section numbering; then everybody's version
+will be consistent with the published program. More extensive changes,
+which introduce new sections, can be inserted here; then only the index
+itself will get a new section number.
+@y
+@* \[54] System-dependent changes.
+Here are extra variables for Web2Java.
+
+@<Glob...@>=
+@!tfm_temp: ASCII_code;
+@!cmd_line_buf: StringBuffer;
+@!max_halfword: integer; {largest allowable value in a |halfword|}
+
+@ @!debug @<Declare the procedure called |dump_mem|@>=
+procedure dump_mem(@!n:integer);
+var j,@!k,@!l:integer; {all-purpose indices}
+@!p,@!q: pointer; {all-purpose pointers}
+@!x: integer; {something to dump}
+@!w: four_quarters; {four ASCII codes}
+@!fmt_file: dont_make word_out;
+begin
+if job_name=0 then begin
+  job_name:="texput";
+  pack_job_name(mem_dump_extension);
+  job_name:=0;
+end else pack_job_name(mem_dump_extension);
+fmt_file:=nul@&l;
+w_open_out(fmt_file); 
+try begin
+  for k:=0 to mem_max - 1 do dump_wd(mem[k]);
+end;
+catch(ex: IOException) begin
+  error;
+end;
+try begin
+fmt_file.flush;
+end;
+catch(ex: IOException) begin
+end;
+end;
+@!gubed
+
+@ @<Last-minute...@>=
+public static procedure main(args: ^String);
+var i: integer;
+@!str_buf: StringBuffer;
+init @!prog: initex; tini
+vir @!prog: virtex; riv
+begin
+i:=0;
+while i < args.arraylength do
+begin
+  if i > 0 then prog.cmd_line_buf.append(' ');
+  prog.cmd_line_buf.append(args[i]);
+  incr(i);
+end;
+prog.star@&t;
+end;
+
+@ @<Last-minute...@>=
+init
+procedure initex; {we pass the command line to ini\TeX}
+tini
+vir
+procedure virtex; {we pass the command line to \TeX}
+riv
+begin
+max_halfword:=memory_word.maxHalfword;
+@<Construct the objects \TeX\ uses@>@;
+end;
+
+@ 
+@d construct(#)==for c:=# to part_construct
+@d part_construct(#) == # do more_construct
+@d more_construct(#)==#[c]:=new end_construct
+@d end_construct(#)==#
+
+@<Construct the objects...@>=
+construct(mem_min)(mem_max)(mem)(memory_word);
+construct(active_base)(eqtb_size)(eqtb)(memory_word);
+construct(0)(save_size)(save_stack)(memory_word);
+construct(0)(font_mem_size)(font_info)(memory_word);
+construct(hash_base)(undefined_control_sequence-1)(hash)(two_halves);
+construct(0)(trie_size)(trie)(two_halves);
+construct(0)(font_max)(font_check)(four_quarters);
+construct(0)(nest_size)(nest)(list_state_record);
+construct(0)(stack_size)(input_stack)(in_state_record);
+@z
+
