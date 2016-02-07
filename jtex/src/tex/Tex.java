@@ -1,5 +1,6 @@
 package tex;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -70,7 +71,7 @@ public final class Tex {
 
 	String nameoffile;
 
-	TeXFile thisfile;
+	File thisfile;
 
 	int namelength;
 
@@ -1078,7 +1079,7 @@ public final class Tex {
 			g = makestring();
 		}
 		nameoffile = "tex.pool";
-		thisfile = new TeXFile(nameoffile);
+		thisfile = new File(nameoffile);
 		if (!thisfile.exists()) {
 			throw new RuntimeException("I can't read tex.pool");
 		}
@@ -5410,14 +5411,14 @@ public final class Tex {
 		packfilename(curname, curarea, curext);
 		while (true) {
 			beginfilereading();
-			thisfile = new TeXFile(nameoffile);
+			thisfile = new File(nameoffile);
 			if (thisfile.exists()) {
 				inputfile[curinput.getIndex()] = Input.from(thisfile);
 				break;
 			}
 			if (curarea == 338) {
 				packfilename(curname, 783, curext);
-				thisfile = new TeXFile(nameoffile);
+				thisfile = new File(nameoffile);
 				if (thisfile.exists()) {
 					inputfile[curinput.getIndex()] = Input.from(thisfile);
 					break;
@@ -5498,7 +5499,7 @@ public final class Tex {
 					} else {
 						packfilename(nom, aire, 811);
 					}
-					thisfile = new TeXFile(nameoffile);
+					thisfile = new File(nameoffile);
 					if (thisfile.exists()) {
 						tfmfile = new TexFileDataInputStream(thisfile);
 					} else {
@@ -15357,7 +15358,7 @@ public final class Tex {
 				curext = 791;
 			}
 			packfilename(curname, curarea, curext);
-			thisfile = new TeXFile(nameoffile);
+			thisfile = new File(nameoffile);
 			if (thisfile.exists()) {
 				readfile[n] = Input.from(thisfile);
 				readopen[n] = 1;
@@ -17095,7 +17096,7 @@ public final class Tex {
 					j = j + 1;
 				}
 				packbufferedname(0, curinput.getLoc(), j - 1);
-				thisfile = new TeXFile(nameoffile);
+				thisfile = new File(nameoffile);
 				if (thisfile.exists()) {
 					try {
 						fmtfile = new TexFileDataInputStream(thisfile);
@@ -17107,7 +17108,7 @@ public final class Tex {
 					break lab40;
 				}
 				packbufferedname(11, curinput.getLoc(), j - 1);
-				thisfile = new TeXFile(nameoffile);
+				thisfile = new File(nameoffile);
 				if (thisfile.exists()) {
 					try {
 						fmtfile = new TexFileDataInputStream(thisfile);
@@ -17122,7 +17123,7 @@ public final class Tex {
 				termout.flush();
 			}
 			packbufferedname(16, 1, 0);
-			thisfile = new TeXFile(nameoffile);
+			thisfile = new File(nameoffile);
 			if (thisfile.exists()) {
 				try {
 					fmtfile = new TexFileDataInputStream(thisfile);
