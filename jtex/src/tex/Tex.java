@@ -6357,7 +6357,7 @@ public final class Tex {
 		}
 		oldsetting = selector;
 		selector = 21;
-		showtokenlist(mem[mem[p + 1].getrh()].getrh(), 0, poolsize - poolptr);
+		showtokenlist(mem[mem[p + 1].getrh()].getrh(), 0, Integer.MAX_VALUE);
 		selector = oldsetting;
 		if ((poolptr - strstart[strptr]) < 256) {
 			{
