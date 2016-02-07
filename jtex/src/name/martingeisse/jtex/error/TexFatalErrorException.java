@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package tex;
+package name.martingeisse.jtex.error;
 
 /**
  * This exception type is thrown on fatal errors during TeX processing.

@@ -2,7 +2,7 @@
  * Copyright (c) 2013 Shopgate GmbH
  */
 
-package tex;
+package name.martingeisse.jtex.error;
 
 import java.io.PrintWriter;
 

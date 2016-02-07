@@ -3,12 +3,12 @@ package tex;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import name.martingeisse.jtex.error.ErrorReporter;
+import name.martingeisse.jtex.error.ErrorReporter.Level;
 import name.martingeisse.jtex.io.TexFileDataInputStream;
 import name.martingeisse.jtex.io.TexFileDataOutputStream;
 import name.martingeisse.jtex.io.TexFilePrintWriter;
 import name.martingeisse.jtex.parser.TexTokenizer;
-import tex.ErrorReporter.Level;
 
 /**
  * The complete TeX engine.

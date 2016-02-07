@@ -6,7 +6,8 @@
 
 package tex;
 
-import tex.ErrorReporter.Level;
+import name.martingeisse.jtex.error.ErrorReporter;
+import name.martingeisse.jtex.error.ErrorReporter.Level;
 
 /**
  * Contains high-level error reporting logic and convenience methods.
