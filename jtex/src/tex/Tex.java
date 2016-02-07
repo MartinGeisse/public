@@ -1032,12 +1032,9 @@ public final class Tex {
 	}
 
 	void getstringsstarted() {
-		boolean Result;
 		int k, l;
-		char m, n;
+		char m;
 		int a;
-		boolean c;
-		int ch;
 		poolptr = 0;
 		strptr = 0;
 		strstart[0] = 0;
@@ -1081,79 +1078,58 @@ public final class Tex {
 			}
 			g = makestring();
 		}
-		Result = false;
 		nameoffile = "tex.pool";
 		thisfile = new TeXFile(nameoffile);
-		if (thisfile.exists()) {
-			try {
-				poolfile = new alphafile(thisfile);
-			} catch (final FileNotFoundException ex) {
-				termout.println();
-				termout.print("Cannot open ");
-				termout.print(nameoffile);
-			}
-			c = false;
-			do {
-				{
-					if (poolfile.eof) {
-						throw new RuntimeException("missing checksum in tex.pool");
-					}
-					ch = poolfile.read();
-					m = (char)ch;
-					ch = poolfile.read();
-					n = (char)ch;
-					if (m == '*') {
-						a = 0;
-						k = 1;
-						while (true) {
-							if ((n < 48) || (n > 57)) {
-								throw new RuntimeException("tex.pool check sum doesn't have nine digits.");
-							}
-							a = 10 * a + n - 48;
-							if (k == 9) {
-								break /* lab30 */;
-							}
-							k = k + 1;
-							ch = poolfile.read();
-							n = (char)(ch);
-						}
-						if (a != 270280812) {
-							throw new RuntimeException("tex.pool doesn't match; tangle me again (or fix the path)");
-						}
-						c = true;
-					} else {
-						if ((m < 48) || (m > 57) || (n < 48) || (n > 57)) {
-							throw new RuntimeException("tex.pool line doesn't begin with two digits");
-						}
-						l = m * 10 + n - 48 * 11;
-						if (poolptr + l + stringvacancies > poolsize) {
-							throw new RuntimeException("You have to increase POOLSIZE");
-						}
-						for (k = 1; k <= l; k++) {
-							if (poolfile.eoln()) {
-								m = ' ';
-							} else {
-								ch = poolfile.read();
-								m = (char)(ch);
-							}
-							{
-								strpool[poolptr] = m;
-								poolptr = poolptr + 1;
-							}
-						}
-						do {
-							ch = poolfile.read();
-							m = (char)(ch);
-						} while (!(m == '\n'));
-						g = makestring();
-					}
-				}
-			} while (!(c));
-			poolfile.close();
-			Result = true;
-		} else {
+		if (!thisfile.exists()) {
 			throw new RuntimeException("I can't read tex.pool");
 		}
+		try {
+			poolfile = new alphafile(thisfile);
+		} catch (final FileNotFoundException e) {
+			throw new RuntimeException("cannot open " + nameoffile, e);
+		}
+		while(true) {
+			int initialCharacter = poolfile.read();
+			if (initialCharacter < 0) {
+				throw new RuntimeException("missing checksum in tex.pool");
+			} else if (initialCharacter == '*') {
+				// the initial value for x is the reversed expected checksum
+				for (int x = 218082072; x != 0; x >>>= 1) {
+					if (poolfile.read() != (x % 10)) {
+						throw new RuntimeException("tex.pool has invalid checksum");
+					}
+				}
+				break;
+			} else {
+				int secondaryCharacter = poolfile.read();
+				if (initialCharacter < '0' || initialCharacter > '9' || secondaryCharacter < '0' || secondaryCharacter > '9') {
+					throw new RuntimeException("tex.pool line doesn't begin with two digits");
+				}
+				int desiredLength = (initialCharacter - '0') * 10 + (secondaryCharacter - '0');
+				if (poolptr + desiredLength + stringvacancies > poolsize) {
+					throw new RuntimeException("You have to increase POOLSIZE");
+				}
+				int builtLength = 0;
+				while (true) {
+					int c = poolfile.read();
+					if (c == '\n' || c == '\r' || c == -1) {
+						break;
+					}
+					if (builtLength < desiredLength) {
+						strpool[poolptr] = c;
+						poolptr = poolptr + 1;
+						builtLength++;
+					}
+				}
+				while (builtLength < desiredLength) {
+					strpool[poolptr] = ' ';
+					poolptr = poolptr + 1;
+					builtLength++;
+				}
+				g = makestring();
+			}
+		}
+		poolfile.close();
 	}
 
 	String getStringFromPool(int n) {
