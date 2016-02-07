@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import name.martingeisse.jtex.engine.StringPool;
 import name.martingeisse.jtex.error.ErrorReporter;
 import name.martingeisse.jtex.error.ErrorReporter.Level;
 import name.martingeisse.jtex.io.Input;
@@ -16,629 +17,678 @@ import name.martingeisse.jtex.parser.TexTokenizer;
 /**
  * The complete TeX engine.
  */
+@SuppressWarnings("javadoc")
 public final class Tex {
 
-	static final int TOKENIZER_STATE_TOKEN_LIST = 0;
+	public static final int TOKENIZER_STATE_TOKEN_LIST = 0;
 
-	static final int TOKENIZER_STATE_NEW_LINE = 33;
+	public static final int TOKENIZER_STATE_NEW_LINE = 33;
 
-	static final int TOKENIZER_STATE_MID_LINE = 1;
+	public static final int TOKENIZER_STATE_MID_LINE = 1;
 
-	static final int TOKENIZER_STATE_SKIP_BLANKS = 17;
+	public static final int TOKENIZER_STATE_SKIP_BLANKS = 17;
 
-	static final int memmax = 65500;
+	public static final int memmax = 65500;
 
-	static final int memtop = 65500;
+	public static final int memtop = 65500;
 
-	static final int errorline = 72;
+	public static final int errorline = 72;
 
-	static final int halferrorline = 42;
+	public static final int halferrorline = 42;
 
-	static final int maxinopen = 6;
+	public static final int maxinopen = 6;
 
-	static final int fontmax = 75;
+	public static final int fontmax = 75;
 
-	static final int fontmemsize = 50000;
+	public static final int fontmemsize = 50000;
 
-	static final int paramsize = 60;
+	public static final int paramsize = 60;
 
-	static final int nestsize = 40;
+	public static final int nestsize = 40;
 
-	static final int maxstrings = 6000;
+	public static final int maxstrings = 6000;
 
-	static final int stringvacancies = 16000;
+	public static final int savesize = 1800;
 
-	static final int poolsize = 65500;
+	public static final int triesize = 24000;
 
-	static final int savesize = 1800;
+	public static final int dvibufsize = 800;
 
-	static final int triesize = 24000;
-
-	static final int dvibufsize = 800;
-
-	static final int filenamesize = 80;
+	public static final int filenamesize = 80;
 
 	// ------------------------------------------------------------
 
 	/**
 	 * the inputBuffer
 	 */
-	final PrelimInputBuffer inputBuffer;
+	public final PrelimInputBuffer inputBuffer;
 
-	final boolean initex;
+	public final boolean initex;
 
-	int bad;
+	public int bad;
 
-	String nameoffile;
+	public String nameoffile;
 
-	File thisfile;
+	public File thisfile;
 
-	int namelength;
+	public int namelength;
 
-	int buffer[] = new int[500000];
+	public int buffer[] = new int[500000];
 
-	int first;
+	public int first;
 
-	int last;
+	public int last;
 
-	PrintWriter termout;
+	public PrintWriter termout;
 
-	int strpool[] = new int[poolsize + 1];
+	public int strpool[] = new int[1024 * 1024];
 
-	int strstart[] = new int[maxstrings + 1];
+	public int strstart[] = new int[maxstrings + 1];
 
-	int poolptr;
+	public int poolptr;
 
-	int strptr;
+	public int strptr;
 
-	int initpoolptr;
+	public int initpoolptr;
 
-	int initstrptr;
+	public int initstrptr;
 
-	Input poolfile;
-
-	PrintWriter logfile;
+	public PrintWriter logfile;
 	
-	ErrorReporter errorReporter;
+	public ErrorReporter errorReporter;
 	
-	ErrorLogic errorLogic;
+	public ErrorLogic errorLogic;
 
-	int selector;
+	public int selector;
 
-	int dig[] = new int[23];
+	public int dig[] = new int[23];
 
-	int tally;
+	public int tally;
 
-	int termoffset;
+	public int termoffset;
 
-	int fileoffset;
+	public int fileoffset;
 
-	int trickbuf[] = new int[errorline + 1];
+	public int trickbuf[] = new int[errorline + 1];
 
-	int trickcount;
+	public int trickcount;
 
-	int firstcount;
+	public int firstcount;
 
-	boolean setboxallowed;
+	public boolean setboxallowed;
 
-	int helpline[] = new int[6];
+	public int helpline[] = new int[6];
 
-	int helpptr;
+	public int helpptr;
 
-	boolean aritherror;
+	public boolean aritherror;
 
-	int remainder;
+	public int remainder;
 
-	int tempptr;
+	public int tempptr;
 
-	memoryword mem[] = new memoryword[memmax + 1];
+	public memoryword mem[] = new memoryword[memmax + 1];
 
-	int lomemmax;
+	public int lomemmax;
 
-	int himemmin;
+	public int himemmin;
 
-	int varused, dynused;
+	public int varused, dynused;
 
-	int avail;
+	public int avail;
 
-	int memend;
+	public int memend;
 
-	int rover;
+	public int rover;
 
-	boolean Free[] = new boolean[memmax + 1];
+	public boolean Free[] = new boolean[memmax + 1];
 
-	boolean wasfree[] = new boolean[memmax + 1];
+	public boolean wasfree[] = new boolean[memmax + 1];
 
-	int wasmemend, waslomax, washimin;
+	public int wasmemend, waslomax, washimin;
 
-	boolean panicking;
+	public boolean panicking;
 
-	int fontinshortdisplay;
+	public int fontinshortdisplay;
 
-	int depththreshold;
+	public int depththreshold;
 
-	int breadthmax;
+	public int breadthmax;
 
-	liststaterecord nest[] = new liststaterecord[nestsize + 1];
+	public liststaterecord nest[] = new liststaterecord[nestsize + 1];
 
-	int nestptr;
+	public int nestptr;
 
-	int maxneststack;
+	public int maxneststack;
 
-	liststaterecord curlist = new liststaterecord();
+	public liststaterecord curlist = new liststaterecord();
 
-	int shownmode;
+	public int shownmode;
 
-	int oldsetting;
+	public int oldsetting;
 
-	memoryword eqtb[] = new memoryword[10407];
+	public memoryword eqtb[] = new memoryword[10407];
 
-	int xeqlevel[] = new int[844];
+	public int xeqlevel[] = new int[844];
 
-	twohalves hash[] = new twohalves[6667];
+	public twohalves hash[] = new twohalves[6667];
 
-	int hashused;
+	public int hashused;
 
-	boolean nonewcontrolsequence;
+	public boolean nonewcontrolsequence;
 
-	int cscount;
+	public int cscount;
 
-	memoryword savestack[] = new memoryword[savesize + 1];
+	public memoryword savestack[] = new memoryword[savesize + 1];
 
-	int saveptr;
+	public int saveptr;
 
-	int maxsavestack;
+	public int maxsavestack;
 
-	int curlevel;
+	public int curlevel;
 
-	int curgroup;
+	public int curgroup;
 
-	int curboundary;
+	public int curboundary;
 
-	int magset;
+	public int magset;
 
-	int curcmd;
+	public int curcmd;
 
-	int curchr;
+	public int curchr;
 
-	int curcs;
+	public int curcs;
 
-	int curtok;
+	public int curtok;
 
-	TexTokenizer inputStackBackingArray[] = new TexTokenizer[InputStack.STACK_SIZE + 1];
+	public TexTokenizer inputStackBackingArray[] = new TexTokenizer[InputStack.STACK_SIZE + 1];
 
-	int inputptr;
+	public int inputptr;
 	
-	InputStack inputStack;
+	public InputStack inputStack;
 
-	TexTokenizer curinput = new TexTokenizer();
+	public TexTokenizer curinput = new TexTokenizer();
 
-	int inopen;
+	public int inopen;
 
-	int openparens;
+	public int openparens;
 
-	Input inputfile[] = new Input[maxinopen + 1];
+	public Input inputfile[] = new Input[maxinopen + 1];
 
-	int line;
+	public int line;
 
-	int linestack[] = new int[maxinopen + 1];
+	public int linestack[] = new int[maxinopen + 1];
 
-	int scannerstatus;
+	public int scannerstatus;
 
-	int warningindex;
+	public int warningindex;
 
-	int defref;
+	public int defref;
 
-	int paramstack[] = new int[paramsize + 1];
+	public int paramstack[] = new int[paramsize + 1];
 
-	int paramptr;
+	public int paramptr;
 
-	int maxparamstack;
+	public int maxparamstack;
 
-	int alignstate;
+	public int alignstate;
 
-	int baseptr;
+	public int baseptr;
 
-	int parloc;
+	public int parloc;
 
-	int partoken;
+	public int partoken;
 
-	boolean forceeof;
+	public boolean forceeof;
 
-	int curmark[] = new int[5];
+	public int curmark[] = new int[5];
 
-	int longstate;
+	public int longstate;
 
-	int pstack[] = new int[9];
+	public int pstack[] = new int[9];
 
-	int curval;
+	public int curval;
 
-	int curvallevel;
+	public int curvallevel;
 
-	int radix;
+	public int radix;
 
-	int curorder;
+	public int curorder;
 
-	Input readfile[] = new Input[16];
+	public Input readfile[] = new Input[16];
 
-	int readopen[] = new int[17];
+	public int readopen[] = new int[17];
 
-	int condptr;
+	public int condptr;
 
-	int iflimit;
+	public int iflimit;
 
-	int curif;
+	public int curif;
 
-	int ifline;
+	public int ifline;
 
-	int skipline;
+	public int skipline;
 
-	int curname;
+	public int curname;
 
-	int curarea;
+	public int curarea;
 
-	int curext;
+	public int curext;
 
-	int areadelimiter;
+	public int areadelimiter;
 
-	int extdelimiter;
+	public int extdelimiter;
 
-	String TEXformatdefault;
+	public String TEXformatdefault;
 
-	boolean nameinprogress;
+	public boolean nameinprogress;
 
-	int jobname;
+	public int jobname;
 
-	TexFileDataOutputStream dvifile;
+	public TexFileDataOutputStream dvifile;
 
-	int outputfilename;
+	public int outputfilename;
 
-	TexFileDataInputStream tfmfile;
+	public TexFileDataInputStream tfmfile;
 
-	memoryword fontinfo[] = new memoryword[fontmemsize + 1];
+	public memoryword fontinfo[] = new memoryword[fontmemsize + 1];
 
-	int fmemptr;
+	public int fmemptr;
 
-	int fontptr;
+	public int fontptr;
 
-	fourquarters fontcheck[] = new fourquarters[fontmax + 1];
+	public fourquarters fontcheck[] = new fourquarters[fontmax + 1];
 
-	int fontsize[] = new int[fontmax + 1];
+	public int fontsize[] = new int[fontmax + 1];
 
-	int fontdsize[] = new int[fontmax + 1];
+	public int fontdsize[] = new int[fontmax + 1];
 
-	int fontparams[] = new int[fontmax + 1];
+	public int fontparams[] = new int[fontmax + 1];
 
-	int fontname[] = new int[fontmax + 1];
+	public int fontname[] = new int[fontmax + 1];
 
-	int fontarea[] = new int[fontmax + 1];
+	public int fontarea[] = new int[fontmax + 1];
 
-	int fontbc[] = new int[fontmax + 1];
+	public int fontbc[] = new int[fontmax + 1];
 
-	int fontec[] = new int[fontmax + 1];
+	public int fontec[] = new int[fontmax + 1];
 
-	int fontglue[] = new int[fontmax + 1];
+	public int fontglue[] = new int[fontmax + 1];
 
-	boolean fontused[] = new boolean[fontmax + 1];
+	public boolean fontused[] = new boolean[fontmax + 1];
 
-	int hyphenchar[] = new int[fontmax + 1];
+	public int hyphenchar[] = new int[fontmax + 1];
 
-	int skewchar[] = new int[fontmax + 1];
+	public int skewchar[] = new int[fontmax + 1];
 
-	int bcharlabel[] = new int[fontmax + 1];
+	public int bcharlabel[] = new int[fontmax + 1];
 
-	int fontbchar[] = new int[fontmax + 1];
+	public int fontbchar[] = new int[fontmax + 1];
 
-	int fontfalsebchar[] = new int[fontmax + 1];
+	public int fontfalsebchar[] = new int[fontmax + 1];
 
-	int charbase[] = new int[fontmax + 1];
+	public int charbase[] = new int[fontmax + 1];
 
-	int widthbase[] = new int[fontmax + 1];
+	public int widthbase[] = new int[fontmax + 1];
 
-	int heightbase[] = new int[fontmax + 1];
+	public int heightbase[] = new int[fontmax + 1];
 
-	int depthbase[] = new int[fontmax + 1];
+	public int depthbase[] = new int[fontmax + 1];
 
-	int italicbase[] = new int[fontmax + 1];
+	public int italicbase[] = new int[fontmax + 1];
 
-	int ligkernbase[] = new int[fontmax + 1];
+	public int ligkernbase[] = new int[fontmax + 1];
 
-	int kernbase[] = new int[fontmax + 1];
+	public int kernbase[] = new int[fontmax + 1];
 
-	int extenbase[] = new int[fontmax + 1];
+	public int extenbase[] = new int[fontmax + 1];
 
-	int parambase[] = new int[fontmax + 1];
+	public int parambase[] = new int[fontmax + 1];
 
-	fourquarters nullcharacter = new fourquarters();
+	public fourquarters nullcharacter = new fourquarters();
 
-	int totalpages;
+	public int totalpages;
 
-	int maxv;
+	public int maxv;
 
-	int maxh;
+	public int maxh;
 
-	int maxpush;
+	public int maxpush;
 
-	int lastbop;
+	public int lastbop;
 
-	int deadcycles;
+	public int deadcycles;
 
-	boolean doingleaders;
+	public boolean doingleaders;
 
-	int f;
+	public int f;
 
-	int ruleht, ruledp, rulewd;
+	public int ruleht, ruledp, rulewd;
 
-	int g;
+	public int lq, lr;
 
-	int lq, lr;
+	public int dvibuf[] = new int[dvibufsize + 1];
 
-	int dvibuf[] = new int[dvibufsize + 1];
+	public int halfbuf;
 
-	int halfbuf;
+	public int dvilimit;
 
-	int dvilimit;
+	public int dviptr;
 
-	int dviptr;
+	public int dvioffset;
 
-	int dvioffset;
+	public int dvigone;
 
-	int dvigone;
+	public int downptr, rightptr;
 
-	int downptr, rightptr;
+	public int dvih, dviv;
 
-	int dvih, dviv;
+	public int curh, curv;
 
-	int curh, curv;
+	public int dvif;
 
-	int dvif;
+	public int curs;
 
-	int curs;
+	public int totalstretch[] = new int[4], totalshrink[] = new int[4];
 
-	int totalstretch[] = new int[4], totalshrink[] = new int[4];
+	public int lastbadness;
 
-	int lastbadness;
+	public int adjusttail;
 
-	int adjusttail;
+	public int packbeginline;
 
-	int packbeginline;
+	public twohalves emptyfield = new twohalves();
 
-	twohalves emptyfield = new twohalves();
+	public fourquarters nulldelimiter = new fourquarters();
 
-	fourquarters nulldelimiter = new fourquarters();
+	public int curmlist;
 
-	int curmlist;
+	public int curstyle;
 
-	int curstyle;
+	public int cursize;
 
-	int cursize;
+	public int curmu;
 
-	int curmu;
+	public boolean mlistpenalties;
 
-	boolean mlistpenalties;
+	public int curf;
 
-	int curf;
+	public int curc;
 
-	int curc;
+	public fourquarters curi = new fourquarters();
 
-	fourquarters curi = new fourquarters();
+	public int magicoffset;
 
-	int magicoffset;
+	public int curalign;
 
-	int curalign;
+	public int curspan;
 
-	int curspan;
+	public int curloop;
 
-	int curloop;
+	public int alignptr;
 
-	int alignptr;
+	public int curhead, curtail;
 
-	int curhead, curtail;
+	public int justbox;
 
-	int justbox;
+	public int passive;
 
-	int passive;
+	public int activewidth[] = new int[7];
 
-	int activewidth[] = new int[7];
+	public int curactivewidth[] = new int[7];
 
-	int curactivewidth[] = new int[7];
+	public int background[] = new int[7];
 
-	int background[] = new int[7];
+	public int breakwidth[] = new int[7];
 
-	int breakwidth[] = new int[7];
+	public boolean noshrinkerroryet;
 
-	boolean noshrinkerroryet;
+	public int curp;
 
-	int curp;
+	public boolean secondpass;
 
-	boolean secondpass;
+	public boolean finalpass;
 
-	boolean finalpass;
+	public int threshold;
 
-	int threshold;
+	public int minimaldemerits[] = new int[4];
 
-	int minimaldemerits[] = new int[4];
+	public int minimumdemerits;
 
-	int minimumdemerits;
+	public int bestplace[] = new int[4];
 
-	int bestplace[] = new int[4];
+	public int bestplline[] = new int[4];
 
-	int bestplline[] = new int[4];
+	public int discwidth;
 
-	int discwidth;
+	public int easyline;
 
-	int easyline;
+	public int lastspecialline;
 
-	int lastspecialline;
+	public int firstwidth;
 
-	int firstwidth;
+	public int secondwidth;
 
-	int secondwidth;
+	public int firstindent;
 
-	int firstindent;
+	public int secondindent;
 
-	int secondindent;
+	public int bestbet;
 
-	int bestbet;
+	public int fewestdemerits;
 
-	int fewestdemerits;
+	public int bestline;
 
-	int bestline;
+	public int actuallooseness;
 
-	int actuallooseness;
+	public int linediff;
 
-	int linediff;
+	public int hc[] = new int[66];
 
-	int hc[] = new int[66];
+	public int hn;
 
-	int hn;
+	public int ha, hb;
 
-	int ha, hb;
+	public int hf;
 
-	int hf;
+	public int hu[] = new int[64];
 
-	int hu[] = new int[64];
+	public int hyfchar;
 
-	int hyfchar;
+	public int curlang, initcurlang;
 
-	int curlang, initcurlang;
+	public int lhyf, rhyf, initlhyf, initrhyf;
 
-	int lhyf, rhyf, initlhyf, initrhyf;
+	public int hyfbchar;
 
-	int hyfbchar;
+	public int hyf[] = new int[65];
 
-	int hyf[] = new int[65];
+	public int initlist;
 
-	int initlist;
+	public boolean initlig;
 
-	boolean initlig;
+	public boolean initlft;
 
-	boolean initlft;
+	public int hyphenpassed;
 
-	int hyphenpassed;
+	public int curl, curr;
 
-	int curl, curr;
+	public int curq;
 
-	int curq;
+	public int ligstack;
 
-	int ligstack;
+	public boolean ligaturepresent;
 
-	boolean ligaturepresent;
+	public boolean lfthit, rthit;
 
-	boolean lfthit, rthit;
+	public twohalves trie[] = new twohalves[triesize + 1];
 
-	twohalves trie[] = new twohalves[triesize + 1];
+	public int hyfdistance[] = new int[752];
 
-	int hyfdistance[] = new int[752];
+	public int hyfnum[] = new int[752];
 
-	int hyfnum[] = new int[752];
+	public int hyfnext[] = new int[752];
 
-	int hyfnext[] = new int[752];
+	public int opstart[] = new int[256];
 
-	int opstart[] = new int[256];
+	public int hyphword[] = new int[608];
 
-	int hyphword[] = new int[608];
+	public int hyphlist[] = new int[608];
 
-	int hyphlist[] = new int[608];
+	public int hyphcount;
 
-	int hyphcount;
+	public int trieophash[] = new int[1503];
 
-	int trieophash[] = new int[1503];
+	public int trieused[] = new int[256];
 
-	int trieused[] = new int[256];
+	public int trieoplang[] = new int[752];
 
-	int trieoplang[] = new int[752];
+	public int trieopval[] = new int[752];
 
-	int trieopval[] = new int[752];
+	public int trieopptr;
 
-	int trieopptr;
+	public int triec[] = new int[triesize + 1];
 
-	int triec[] = new int[triesize + 1];
+	public int trieo[] = new int[triesize + 1];
 
-	int trieo[] = new int[triesize + 1];
+	public int triel[] = new int[triesize + 1];
 
-	int triel[] = new int[triesize + 1];
+	public int trier[] = new int[triesize + 1];
 
-	int trier[] = new int[triesize + 1];
+	public int trieptr;
 
-	int trieptr;
+	public int triehash[] = new int[triesize + 1];
 
-	int triehash[] = new int[triesize + 1];
+	public boolean trietaken[] = new boolean[triesize + 1];
 
-	boolean trietaken[] = new boolean[triesize + 1];
+	public int triemin[] = new int[256];
 
-	int triemin[] = new int[256];
+	public int triemax;
 
-	int triemax;
+	public boolean trienotready;
 
-	boolean trienotready;
+	public int bestheightplusdepth;
 
-	int bestheightplusdepth;
+	public int pagetail;
 
-	int pagetail;
+	public int pagecontents;
 
-	int pagecontents;
+	public int pagemaxdepth;
 
-	int pagemaxdepth;
+	public int bestpagebreak;
 
-	int bestpagebreak;
+	public int leastpagecost;
 
-	int leastpagecost;
+	public int bestsize;
 
-	int bestsize;
+	public int pagesofar[] = new int[8];
 
-	int pagesofar[] = new int[8];
+	public int lastglue;
 
-	int lastglue;
+	public int lastpenalty;
 
-	int lastpenalty;
+	public int lastkern;
 
-	int lastkern;
+	public int insertpenalties;
 
-	int insertpenalties;
+	public boolean outputactive;
 
-	boolean outputactive;
+	public int mainf;
 
-	int mainf;
+	public fourquarters maini = new fourquarters();
 
-	fourquarters maini = new fourquarters();
+	public fourquarters mainj = new fourquarters();
 
-	fourquarters mainj = new fourquarters();
+	public int maink;
 
-	int maink;
+	public int mainp;
 
-	int mainp;
+	public int mains;
 
-	int mains;
+	public int bchar;
 
-	int bchar;
+	public int falsebchar;
 
-	int falsebchar;
+	public boolean cancelboundary;
 
-	boolean cancelboundary;
+	public boolean insdisc;
 
-	boolean insdisc;
+	public int curbox;
 
-	int curbox;
+	public int aftertoken;
 
-	int aftertoken;
+	public boolean longhelpseen;
 
-	boolean longhelpseen;
+	public int formatident;
 
-	int formatident;
+	public TexFileDataInputStream fmtfile;
 
-	TexFileDataInputStream fmtfile;
+	public PrintWriter writefile[] = new PrintWriter[16];
 
-	PrintWriter writefile[] = new PrintWriter[16];
+	public boolean writeopen[] = new boolean[18];
 
-	boolean writeopen[] = new boolean[18];
+	public int writeloc;
 
-	int writeloc;
+	public StringBuffer cmdlinebuf = new StringBuffer();
 
-	StringBuffer cmdlinebuf = new StringBuffer();
+	public int maxhalfword;
+	
+	private final StringPool stringPool = new StringPool(this);
 
-	int maxhalfword;
+	/**
+	 * Constructor.
+	 * @param initex whether this is INITEX
+	 * @param args command-line arguments
+	 */
+	public Tex(final boolean initex, final String[] args) {
+		this(initex);
+		int i = 0;
+		while (i < args.length) {
+			if (i > 0) {
+				cmdlinebuf.append(' ');
+			}
+			cmdlinebuf.append(args[i]);
+			i = i + 1;
+		}
+	}
 
+	/**
+	 * Constructor.
+	 * @param initex whether this is INITEX
+	 */
+	public Tex(final boolean initex) {
+		this.initex = initex;
+		this.inputBuffer = new PrelimInputBuffer(this);
+		maxhalfword = memoryword.maxHalfword;
+		for (int c = 0; c <= memmax; c++) {
+			mem[c] = new memoryword();
+		}
+		for (int c = 1; c <= 10406; c++) {
+			eqtb[c] = new memoryword();
+		}
+		for (int c = 0; c <= savesize; c++) {
+			savestack[c] = new memoryword();
+		}
+		for (int c = 0; c <= fontmemsize; c++) {
+			fontinfo[c] = new memoryword();
+		}
+		for (int c = 514; c <= 7180; c++) {
+			hash[c - 514] = new twohalves();
+		}
+		for (int c = 0; c <= triesize; c++) {
+			trie[c] = new twohalves();
+		}
+		for (int c = 0; c <= fontmax; c++) {
+			fontcheck[c] = new fourquarters();
+		}
+		for (int c = 0; c <= nestsize; c++) {
+			nest[c] = new liststaterecord();
+		}
+		for (int c = 0; c <= InputStack.STACK_SIZE; c++) {
+			inputStackBackingArray[c] = new TexTokenizer();
+		}
+	}
+	
 	void initialize() {
 		int k;
 		int z;
@@ -977,17 +1027,6 @@ public final class Tex {
 		return ok;
 	}
 	
-	int makestring() {
-		int Result;
-		if (strptr == maxstrings) {
-			errorLogic.overflow(258, maxstrings - initstrptr);
-		}
-		strptr = strptr + 1;
-		strstart[strptr] = poolptr;
-		Result = strptr - 1;
-		return Result;
-	}
-
 	boolean streqbuf(final int s, int k) {
 		/* 45 */boolean Result;
 		int j;
@@ -1034,98 +1073,11 @@ public final class Tex {
 	}
 
 	void getstringsstarted() {
-		int k, l;
-		poolptr = 0;
-		strptr = 0;
-		strstart[0] = 0;
-		for (k = 0; k <= 255; k++) {
-			if (((k < 32) || (k > 126))) {
-				{
-					strpool[poolptr] = 94;
-					poolptr = poolptr + 1;
-				}
-				{
-					strpool[poolptr] = 94;
-					poolptr = poolptr + 1;
-				}
-				if (k < 64) {
-					strpool[poolptr] = k + 64;
-					poolptr = poolptr + 1;
-				} else if (k < 128) {
-					strpool[poolptr] = k - 64;
-					poolptr = poolptr + 1;
-				} else {
-					l = k / 16;
-					if (l < 10) {
-						strpool[poolptr] = l + 48;
-						poolptr = poolptr + 1;
-					} else {
-						strpool[poolptr] = l + 87;
-						poolptr = poolptr + 1;
-					}
-					l = k % 16;
-					if (l < 10) {
-						strpool[poolptr] = l + 48;
-						poolptr = poolptr + 1;
-					} else {
-						strpool[poolptr] = l + 87;
-						poolptr = poolptr + 1;
-					}
-				}
-			} else {
-				strpool[poolptr] = k;
-				poolptr = poolptr + 1;
-			}
-			g = makestring();
-		}
+		stringPool.reset();
+		stringPool.createCharacterStrings();
 		nameoffile = "tex.pool";
 		thisfile = new File(nameoffile);
-		if (!thisfile.exists()) {
-			throw new RuntimeException("I can't read tex.pool");
-		}
-		poolfile = Input.from(thisfile);
-		while(true) {
-			int initialCharacter = poolfile.readCharacter();
-			if (initialCharacter < 0) {
-				throw new RuntimeException("missing checksum in tex.pool");
-			} else if (initialCharacter == '*') {
-				// the initial value for x is the reversed expected checksum
-				for (int x = 218082072; x != 0; x >>>= 1) {
-					if (poolfile.readCharacter() != (x % 10)) {
-						throw new RuntimeException("tex.pool has invalid checksum");
-					}
-				}
-				break;
-			} else {
-				int secondaryCharacter = poolfile.readCharacter();
-				if (initialCharacter < '0' || initialCharacter > '9' || secondaryCharacter < '0' || secondaryCharacter > '9') {
-					throw new RuntimeException("tex.pool line doesn't begin with two digits");
-				}
-				int desiredLength = (initialCharacter - '0') * 10 + (secondaryCharacter - '0');
-				if (poolptr + desiredLength + stringvacancies > poolsize) {
-					throw new RuntimeException("You have to increase POOLSIZE");
-				}
-				int builtLength = 0;
-				while (true) {
-					int c = poolfile.readCharacter();
-					if (c == '\n' || c == '\r' || c == -1) {
-						break;
-					}
-					if (builtLength < desiredLength) {
-						strpool[poolptr] = c;
-						poolptr = poolptr + 1;
-						builtLength++;
-					}
-				}
-				while (builtLength < desiredLength) {
-					strpool[poolptr] = ' ';
-					poolptr = poolptr + 1;
-					builtLength++;
-				}
-				g = makestring();
-			}
-		}
-		poolfile.close();
+		stringPool.loadPoolFile(thisfile);
 	}
 
 	String getStringFromPool(int n) {
@@ -2075,11 +2027,6 @@ public final class Tex {
 						hash[p - 514].lh = hashused;
 						p = hashused;
 					}
-					{
-						if (poolptr + l > poolsize) {
-							errorLogic.overflow(257, poolsize - initpoolptr);
-						}
-					}
 					d = (poolptr - strstart[strptr]);
 					while (poolptr > strstart[strptr]) {
 						poolptr = poolptr - 1;
@@ -2089,7 +2036,7 @@ public final class Tex {
 						strpool[poolptr] = buffer[k];
 						poolptr = poolptr + 1;
 					}
-					hash[p - 514].rh = makestring();
+					hash[p - 514].rh = stringPool.makeString();
 					poolptr = poolptr + d;
 				}
 				break lab40;
@@ -4469,11 +4416,6 @@ public final class Tex {
 		int q;
 		int t;
 		int k;
-		{
-			if (poolptr + 1 > poolsize) {
-				errorLogic.overflow(257, poolsize - initpoolptr);
-			}
-		}
 		p = memtop - 3;
 		mem[p].setrh(0);
 		k = b;
@@ -5232,11 +5174,6 @@ public final class Tex {
 			Result = false;
 		} else {
 			{
-				if (poolptr + 1 > poolsize) {
-					errorLogic.overflow(257, poolsize - initpoolptr);
-				}
-			}
-			{
 				strpool[poolptr] = c;
 				poolptr = poolptr + 1;
 			}
@@ -5264,12 +5201,12 @@ public final class Tex {
 		}
 		if (extdelimiter == 0) {
 			curext = 338;
-			curname = makestring();
+			curname = stringPool.makeString();
 		} else {
 			curname = strptr;
 			strstart[strptr + 1] = strstart[strptr] + extdelimiter - areadelimiter - 1;
 			strptr = strptr + 1;
-			curext = makestring();
+			curext = stringPool.makeString();
 		}
 	}
 
@@ -5321,14 +5258,14 @@ public final class Tex {
 		int k;
 		StringBuffer strbuf = new StringBuffer();
 		strbuf = new StringBuffer(nameoffile);
-		if ((poolptr + namelength > poolsize) || (strptr == maxstrings) || ((poolptr - strstart[strptr]) > 0)) {
+		if ((strptr == maxstrings) || ((poolptr - strstart[strptr]) > 0)) {
 			Result = 63;
 		} else {
 			for (k = 0; k <= namelength - 1; k++) {
 				strpool[poolptr] = strbuf.charAt(k);
 				poolptr = poolptr + 1;
 			}
-			Result = makestring();
+			Result = stringPool.makeString();
 		}
 		return Result;
 	}
@@ -6422,11 +6359,6 @@ public final class Tex {
 		selector = 21;
 		showtokenlist(mem[mem[p + 1].getrh()].getrh(), 0, poolsize - poolptr);
 		selector = oldsetting;
-		{
-			if (poolptr + 1 > poolsize) {
-				errorLogic.overflow(257, poolsize - initpoolptr);
-			}
-		}
 		if ((poolptr - strstart[strptr]) < 256) {
 			{
 				dvibuf[dviptr] = 239;
@@ -6691,7 +6623,7 @@ public final class Tex {
 									outwhat(p);
 									break;
 								case 10: {
-									g = mem[p + 1].getlh();
+									int g = mem[p + 1].getlh();
 									rulewd = mem[g + 1].getInt();
 									if (gsign != 0) {
 										if (gsign == 1) {
@@ -6913,7 +6845,7 @@ public final class Tex {
 								outwhat(p);
 								break;
 							case 10: {
-								g = mem[p + 1].getlh();
+								int g = mem[p + 1].getlh();
 								ruleht = mem[g + 1].getInt();
 								if (gsign != 0) {
 									if (gsign == 1) {
@@ -11888,11 +11820,6 @@ public final class Tex {
 					if (n > 1) {
 						n = n + 1;
 						hc[n] = curlang;
-						{
-							if (poolptr + n > poolsize) {
-								errorLogic.overflow(257, poolsize - initpoolptr);
-							}
-						}
 						h = 0;
 						for (j = 1; j <= n; j++) {
 							h = (h + h + hc[j]) % 607;
@@ -11901,7 +11828,7 @@ public final class Tex {
 								poolptr = poolptr + 1;
 							}
 						}
-						s = makestring();
+						s = stringPool.makeString();
 						if (hyphcount == 607) {
 							errorLogic.overflow(948, 607);
 						}
@@ -14726,12 +14653,7 @@ public final class Tex {
 			print(1219);
 			print(u - 1);
 			selector = oldsetting;
-			{
-				if (poolptr + 1 > poolsize) {
-					errorLogic.overflow(257, poolsize - initpoolptr);
-				}
-			}
-			t = makestring();
+			t = stringPool.makeString();
 		}
 		if ((a >= 4)) {
 			geqdefine(u, 87, 0);
@@ -15377,10 +15299,7 @@ public final class Tex {
 		tokenshow(defref);
 		selector = oldsetting;
 		flushlist(defref);
-		if (poolptr + 1 > poolsize) {
-			errorLogic.overflow(257, poolsize - initpoolptr);
-		}
-		s = makestring();
+		s = stringPool.makeString();
 		if (c == 0) {
 			if ((termoffset > 0) || (fileoffset > 0)) {
 				printchar(32);
@@ -15478,10 +15397,7 @@ public final class Tex {
 		printInt(eqtb[9584].getInt());
 		printchar(41);
 		selector = 19;
-		if (poolptr + 1 > poolsize) {
-			errorLogic.overflow(257, poolsize - initpoolptr);
-		}
-		formatident = makestring();
+		formatident = stringPool.makeString();
 		packjobname(785);
 		try {
 			fmtfile = new TexFileDataOutputStream(nameoffile);
@@ -17181,13 +17097,7 @@ public final class Tex {
 				if (x < 0) {
 					break lab125;
 				}
-				if (x > poolsize) {
-					;
-					termout.println("---! Must increase the " + "string pool size");
-					break lab125;
-				} else {
-					poolptr = x;
-				}
+				poolptr = x;
 				x = fmtfile.readInt();
 				if (x < 0) {
 					break lab125;
@@ -18088,60 +17998,6 @@ public final class Tex {
 	}
 
 	/**
-	 * Constructor.
-	 * @param initex whether this is INITEX
-	 * @param args command-line arguments
-	 */
-	public Tex(final boolean initex, final String[] args) {
-		this(initex);
-		int i = 0;
-		while (i < args.length) {
-			if (i > 0) {
-				cmdlinebuf.append(' ');
-			}
-			cmdlinebuf.append(args[i]);
-			i = i + 1;
-		}
-	}
-
-	/**
-	 * Constructor.
-	 * @param initex whether this is INITEX
-	 */
-	public Tex(final boolean initex) {
-		this.initex = initex;
-		this.inputBuffer = new PrelimInputBuffer(this);
-		maxhalfword = memoryword.maxHalfword;
-		for (int c = 0; c <= memmax; c++) {
-			mem[c] = new memoryword();
-		}
-		for (int c = 1; c <= 10406; c++) {
-			eqtb[c] = new memoryword();
-		}
-		for (int c = 0; c <= savesize; c++) {
-			savestack[c] = new memoryword();
-		}
-		for (int c = 0; c <= fontmemsize; c++) {
-			fontinfo[c] = new memoryword();
-		}
-		for (int c = 514; c <= 7180; c++) {
-			hash[c - 514] = new twohalves();
-		}
-		for (int c = 0; c <= triesize; c++) {
-			trie[c] = new twohalves();
-		}
-		for (int c = 0; c <= fontmax; c++) {
-			fontcheck[c] = new fourquarters();
-		}
-		for (int c = 0; c <= nestsize; c++) {
-			nest[c] = new liststaterecord();
-		}
-		for (int c = 0; c <= InputStack.STACK_SIZE; c++) {
-			inputStackBackingArray[c] = new TexTokenizer();
-		}
-	}
-
-	/**
 	 * Runs the tex engine.
 	 */
 	public void run() {
@@ -18351,10 +18207,8 @@ public final class Tex {
 		}
 			
 		case 21: {
-			if (poolptr < poolsize) {
-				strpool[poolptr] = c;
-				poolptr = poolptr + 1;
-			}
+			strpool[poolptr] = c;
+			poolptr = poolptr + 1;
 			break;
 		}
 		
@@ -20471,9 +20325,6 @@ public final class Tex {
 		breadthmax = eqtb[9587].getInt();
 		if (breadthmax <= 0) {
 			breadthmax = 5;
-		}
-		if (poolptr + depththreshold >= poolsize) {
-			depththreshold = poolsize - poolptr - 1;
 		}
 		shownodelist(p);
 		println();
