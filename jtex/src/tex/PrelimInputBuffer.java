@@ -7,6 +7,7 @@
 package tex;
 
 import java.util.Arrays;
+import name.martingeisse.jtex.io.Input;
 
 /**
  * TeX's input buffer handling, moved to its own class to clean things up.
@@ -53,26 +54,23 @@ public final class PrelimInputBuffer {
 	 * this, only end-of-line spaces actually read from the file during
 	 * this call are.
 	 * 
-	 * @param file the file to read from
+	 * @param input the input to read from
 	 * @return true if successful, false on EOF
 	 */
-	public boolean appendRightTrimmedLineFromFile(final alphafile file) {
+	public boolean appendRightTrimmedLineFromFile(final Input input) {
 		tex.last = tex.first;
-		if (file.eof) {
+		String line = input.readLine();
+		if (line == null) {
 			return false;
 		}
-		int firstBlankLocation = tex.first;
-		while (!file.eoln()) {
-			int c = file.read();
-			if (!file.eof) {
-				tex.buffer[tex.last] = c;
-				tex.last++;
-				if (c != 32) {
-					firstBlankLocation = tex.last;
-				}
-			}
+		// TODO use StringUtils to right-trim
+		while (line.endsWith(" ")) {
+			line = line.substring(0, line.length() - 1);
 		}
-		tex.last = firstBlankLocation;
+		for (int i=0; i<line.length(); i++) {
+			tex.buffer[tex.last] = line.charAt(i);
+			tex.last++;
+		}
 		return true;
 	}
 

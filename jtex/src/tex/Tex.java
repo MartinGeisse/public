@@ -2,9 +2,11 @@ package tex;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import name.martingeisse.jtex.error.ErrorReporter;
 import name.martingeisse.jtex.error.ErrorReporter.Level;
+import name.martingeisse.jtex.io.Input;
 import name.martingeisse.jtex.io.TexFileDataInputStream;
 import name.martingeisse.jtex.io.TexFileDataOutputStream;
 import name.martingeisse.jtex.io.TexFilePrintWriter;
@@ -92,7 +94,7 @@ public final class Tex {
 
 	int initstrptr;
 
-	alphafile poolfile;
+	Input poolfile;
 
 	PrintWriter logfile;
 	
@@ -214,7 +216,7 @@ public final class Tex {
 
 	int openparens;
 
-	alphafile inputfile[] = new alphafile[maxinopen + 1];
+	Input inputfile[] = new Input[maxinopen + 1];
 
 	int line;
 
@@ -256,7 +258,7 @@ public final class Tex {
 
 	int curorder;
 
-	alphafile readfile[] = new alphafile[16];
+	Input readfile[] = new Input[16];
 
 	int readopen[] = new int[17];
 
@@ -927,18 +929,17 @@ public final class Tex {
 		}
 	}
 
-	boolean inputln(final alphafile f, final boolean bypasseoln) {
-		if (bypasseoln && !f.eof) {
-			f.get();
+	boolean inputln(final Input f, final boolean bypasseoln) {
+		if (bypasseoln) {
+			f.readCharacter();
 		}
 		return inputBuffer.appendRightTrimmedLineFromFile(f);
 	}
 
 	boolean initterminal() {
-		alphafile termin;
-		boolean Result;
+		Input termin;
 		inputBuffer.appendLine(cmdlinebuf);
-		termin = new alphafile(System.in);
+		termin = Input.from("(System.in)", new InputStreamReader(System.in));
 		if (!inputBuffer.isEmpty()) {
 			curinput.setLoc(first);
 			while ((curinput.getLoc() < last) && (buffer[curinput.getLoc()] == ' ')) {
@@ -1033,8 +1034,6 @@ public final class Tex {
 
 	void getstringsstarted() {
 		int k, l;
-		char m;
-		int a;
 		poolptr = 0;
 		strptr = 0;
 		strstart[0] = 0;
@@ -1083,25 +1082,21 @@ public final class Tex {
 		if (!thisfile.exists()) {
 			throw new RuntimeException("I can't read tex.pool");
 		}
-		try {
-			poolfile = new alphafile(thisfile);
-		} catch (final FileNotFoundException e) {
-			throw new RuntimeException("cannot open " + nameoffile, e);
-		}
+		poolfile = Input.from(thisfile);
 		while(true) {
-			int initialCharacter = poolfile.read();
+			int initialCharacter = poolfile.readCharacter();
 			if (initialCharacter < 0) {
 				throw new RuntimeException("missing checksum in tex.pool");
 			} else if (initialCharacter == '*') {
 				// the initial value for x is the reversed expected checksum
 				for (int x = 218082072; x != 0; x >>>= 1) {
-					if (poolfile.read() != (x % 10)) {
+					if (poolfile.readCharacter() != (x % 10)) {
 						throw new RuntimeException("tex.pool has invalid checksum");
 					}
 				}
 				break;
 			} else {
-				int secondaryCharacter = poolfile.read();
+				int secondaryCharacter = poolfile.readCharacter();
 				if (initialCharacter < '0' || initialCharacter > '9' || secondaryCharacter < '0' || secondaryCharacter > '9') {
 					throw new RuntimeException("tex.pool line doesn't begin with two digits");
 				}
@@ -1111,7 +1106,7 @@ public final class Tex {
 				}
 				int builtLength = 0;
 				while (true) {
-					int c = poolfile.read();
+					int c = poolfile.readCharacter();
 					if (c == '\n' || c == '\r' || c == -1) {
 						break;
 					}
@@ -5368,7 +5363,7 @@ public final class Tex {
 		int oldsetting;
 		int k;
 		int l;
-		String months;
+		// String months;
 		oldsetting = selector;
 		packjobname(797);
 		try {
@@ -5383,7 +5378,7 @@ public final class Tex {
 		print(800);
 		printInt(eqtb[9584].getInt());
 		printchar(32);
-		months = "JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
+		// months = "JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
 		// StringBuffer strbuf = new StringBuffer(months);
 		//			for (k = 3 * eqtb[9585].getInt() - 3; k <= 3 * eqtb[9585].getInt() - 1; k++) {
 		//				logfile.print(strbuf.charAt(k));
@@ -5417,27 +5412,15 @@ public final class Tex {
 			beginfilereading();
 			thisfile = new TeXFile(nameoffile);
 			if (thisfile.exists()) {
-				try {
-					inputfile[curinput.getIndex()] = new alphafile(thisfile);
-				} catch (final FileNotFoundException ex) {
-					termout.println();
-					termout.print("Cannot open ");
-					termout.print(nameoffile);
-				}
-				break /* lab30 */;
+				inputfile[curinput.getIndex()] = Input.from(thisfile);
+				break;
 			}
 			if (curarea == 338) {
 				packfilename(curname, 783, curext);
 				thisfile = new TeXFile(nameoffile);
 				if (thisfile.exists()) {
-					try {
-						inputfile[curinput.getIndex()] = new alphafile(thisfile);
-					} catch (final FileNotFoundException ex) {
-						termout.println();
-						termout.print("Cannot open ");
-						termout.print(nameoffile);
-					}
-					break /* lab30 */;
+					inputfile[curinput.getIndex()] = Input.from(thisfile);
+					break;
 				}
 			}
 			endfilereading();
@@ -10525,12 +10508,6 @@ public final class Tex {
 												mem[p].setb1(2);
 												lfthit = false;
 											}
-											if (false) {
-												if (ligstack == 0) {
-													mem[p].setb1(mem[p].getb1() + 1);
-													rthit = false;
-												}
-											}
 											mem[curq].setrh(p);
 											t = p;
 											ligaturepresent = false;
@@ -15382,13 +15359,7 @@ public final class Tex {
 			packfilename(curname, curarea, curext);
 			thisfile = new TeXFile(nameoffile);
 			if (thisfile.exists()) {
-				try {
-					readfile[n] = new alphafile(thisfile);
-				} catch (final FileNotFoundException ex) {
-					termout.println();
-					termout.print("Cannot open ");
-					termout.print(nameoffile);
-				}
+				readfile[n] = Input.from(thisfile);
 				readopen[n] = 1;
 			}
 		}
@@ -16998,12 +16969,6 @@ public final class Tex {
 													mem[mainp].setb1(2);
 													lfthit = false;
 												}
-												if (false) {
-													if (ligstack == 0) {
-														mem[mainp].setb1(mem[mainp].getb1() + 1);
-														rthit = false;
-													}
-												}
 												mem[curq].setrh(mainp);
 												curlist.tailfield = mainp;
 												ligaturepresent = false;
@@ -18181,30 +18146,6 @@ public final class Tex {
 	public void run() {
 		termout = new PrintWriter(System.out);
 		bad = 0;
-		if ((halferrorline < 30) || (halferrorline > errorline - 15)) {
-			bad = 1;
-		}
-		if (dvibufsize % 8 != 0) {
-			bad = 3;
-		}
-		if (1100 > memtop) {
-			bad = 4;
-		}
-		if (5437 > 6400) {
-			bad = 5;
-		}
-		if (maxinopen >= 128) {
-			bad = 6;
-		}
-		if (memtop < 267) {
-			bad = 7;
-		}
-		if (initex && memmax != memtop) {
-			bad = 10;
-		}
-		if ((memmax < memtop)) {
-			bad = 10;
-		}
 		if ((maxhalfword < 32767)) {
 			bad = 12;
 		}
@@ -18214,20 +18155,11 @@ public final class Tex {
 		if ((memmax >= maxhalfword) || (-0 > maxhalfword + 1)) {
 			bad = 14;
 		}
-		if (fontmax > 255) {
-			bad = 15;
-		}
-		if (fontmax > 256) {
-			bad = 16;
-		}
 		if ((savesize > maxhalfword) || (maxstrings > maxhalfword)) {
 			bad = 17;
 		}
 		if (11276 > maxhalfword) {
 			bad = 21;
-		}
-		if (20 > filenamesize) {
-			bad = 31;
 		}
 		if (2 * maxhalfword < memtop - 0) {
 			bad = 41;
