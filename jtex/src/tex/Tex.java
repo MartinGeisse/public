@@ -1048,32 +1048,6 @@ public final class Tex {
 		return true;
 	}
 
-	boolean streqstr(final int s, final int t) {
-		/* 45 */boolean Result;
-		int j, k;
-		boolean result;
-		result = false;
-		lab45: while (true) {
-			;
-			if ((strstart[s + 1] - strstart[s]) != (strstart[t + 1] - strstart[t])) {
-				break lab45;
-			}
-			j = strstart[s];
-			k = strstart[t];
-			while (j < strstart[s + 1]) {
-				if (strpool[j] != strpool[k]) {
-					break lab45;
-				}
-				j = j + 1;
-				k = k + 1;
-			}
-			result = true;
-			break;
-		}
-		/* lab45: */Result = result;
-		return Result;
-	}
-
 	void getstringsstarted() {
 		stringPool.reset();
 		stringPool.createCharacterStrings();
@@ -1082,15 +1056,6 @@ public final class Tex {
 		stringPool.loadPoolFile(thisfile);
 	}
 
-	String getStringFromPool(int n) {
-		StringBuilder builder = new StringBuilder();
-		int start = strstart[n], end = strstart[n + 1];
-		for (int i=start; i<end; i++) {
-			builder.append((char)strpool[i]);
-		}
-		return builder.toString();
-	}
-	
 	void normalizeselector() {
 		selector = 19;
 	}
@@ -2029,6 +1994,12 @@ public final class Tex {
 						hash[p - 514].lh = hashused;
 						p = hashused;
 					}
+					
+					/*
+					 * This code is probably less weird than it looks. It just wants to
+					 * build a string in the string pool but preserve whatever partially
+					 * built string was already there.
+					 */
 					d = (poolptr - strstart[strptr]);
 					while (poolptr > strstart[strptr]) {
 						poolptr = poolptr - 1;
@@ -2040,6 +2011,7 @@ public final class Tex {
 					}
 					hash[p - 514].rh = stringPool.makeString();
 					poolptr = poolptr + d;
+					
 				}
 				break lab40;
 			}
@@ -2053,12 +2025,15 @@ public final class Tex {
 		if (s < 256) {
 			curval = s + 257;
 		} else {
-			int stringStart = strstart[s];
-			int stringLength = (strstart[s + 1] - stringStart);
-			inputBuffer.copyToInternalBuffer(strpool, stringStart, 0, stringLength);
-			curval = idlookup(0, stringLength);
+			String string = stringPool.getString(s);
+			inputBuffer.copyToInternalBuffer(string, 0);
+			curval = idlookup(0, string.length());
+			
+			// this looks weird. It removes the last-added string.
+			// I should have a look if this is always (s) or can be different.
 			strptr = strptr - 1;
 			poolptr = strstart[strptr];
+			
 			hash[curval - 514].rh = s;
 		}
 		eqtb[curval].setb1(1);
@@ -3416,36 +3391,31 @@ public final class Tex {
 		}
 	}
 
-	boolean scankeyword(final int s) {
-		/* 10 */boolean Result;
+	boolean scankeyword(final int stringId) {
 		int p;
 		int q;
-		int k;
 		p = memtop - 13;
 		mem[p].setrh(0);
-		k = strstart[s];
-		while (k < strstart[s + 1]) {
+		String s = stringPool.getString(stringId);
+		int i = 0;
+		while (i < s.length()) {
 			getxtoken();
-			if ((curcs == 0) && ((curchr == strpool[k]) || (curchr == strpool[k] - 32))) {
-				{
-					q = allocateMemoryWord();
-					mem[p].setrh(q);
-					mem[q].setlh(curtok);
-					p = q;
-				}
-				k = k + 1;
+			if ((curcs == 0) && ((curchr == s.charAt(i)) || (curchr == s.charAt(i) - 32))) {
+				q = allocateMemoryWord();
+				mem[p].setrh(q);
+				mem[q].setlh(curtok);
+				p = q;
+				i++;
 			} else if ((curcmd != 10) || (p != memtop - 13)) {
 				unreadToken();
 				if (p != memtop - 13) {
 					begintokenlist(mem[memtop - 13].getrh(), 3);
 				}
-				Result = false;
-				return Result /* lab10 */;
+				return false;
 			}
 		}
 		flushlist(mem[memtop - 13].getrh());
-		Result = true;
-		return Result;
+		return true;
 	}
 
 	void scaneightbitint() {
@@ -14633,7 +14603,7 @@ public final class Tex {
 	}
 
 	void newfont(final int a) {
-		/* 50 */int u;
+		int u;
 		int s;
 		int f;
 		int t;
@@ -14705,12 +14675,10 @@ public final class Tex {
 		lab50: while (true) {
 			flushablestring = strptr - 1;
 			for (f = 1; f <= fontptr; f++) {
-				if (streqstr(fontname[f], curname) && streqstr(fontarea[f], curarea)) {
+				if (stringPool.getString(fontname[f]).equals(stringPool.getString(curname)) && stringPool.getString(fontarea[f]).equals(stringPool.getString(curarea))) {
 					if (curname == flushablestring) {
-						{
-							strptr = strptr - 1;
-							poolptr = strstart[strptr];
-						}
+						strptr = strptr - 1;
+						poolptr = strstart[strptr];
 						curname = fontname[f];
 					}
 					if (s > 0) {
@@ -14731,7 +14699,7 @@ public final class Tex {
 	}
 
 	void prefixedcommand() {
-		/* 30 10 */int a;
+		int a;
 		int f;
 		int j;
 		int k;
