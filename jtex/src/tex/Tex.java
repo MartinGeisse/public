@@ -5293,9 +5293,6 @@ public final class Tex {
 			print(788);
 			printfilename(curname, curarea, curext);
 			print(790);
-			showcontext();
-			printnl(792);
-			print(787);
 			errorLogic.fatalError("*** (job aborted, file error in nonstop mode)");
 		}
 		curinput.setName(makenamestring());
@@ -16216,8 +16213,7 @@ public final class Tex {
 							case 20:
 							case 121:
 							case 222:
-								showwhatever();
-								break;
+								throw new RuntimeException("\\show* commands not supported");
 							case 60:
 							case 161:
 							case 262:
@@ -19736,64 +19732,6 @@ public final class Tex {
 			baseptr = baseptr - 1;
 		}
 		/* lab30: */curinput.copyFrom(inputStackBackingArray[inputptr]);
-	}
-
-	void showwhatever() {
-		lab50: while (true) {
-			switch (curchr) {
-				case 3: {
-					begindiagnostic();
-					showactivities();
-				}
-					break;
-				case 1: {
-					scaneightbitint();
-					begindiagnostic();
-					printnl(1254);
-					printInt(curval);
-					printchar(61);
-					if (eqtb[7978 + curval].getrh() == 0) {
-						print(410);
-					} else {
-						// removed: showbox(eqtb[7978 + curval].getrh());
-					}
-				}
-					break;
-				case 0: {
-					gettoken();
-					printnl(1248);
-					if (curcs != 0) {
-						sprintcs(curcs);
-						printchar(61);
-					}
-					printmeaning();
-					break lab50;
-				}
-				default: {
-					thetoks();
-					printnl(1248);
-					tokenshow(memtop - 3);
-					flushlist(mem[memtop - 3].getrh());
-					break lab50;
-				}
-			}
-			enddiagnostic(true);
-			{
-				printnl(262);
-				print(1255);
-			}
-			if (selector == 19) {
-				if (eqtb[9592].getInt() <= 0) {
-					selector = 17;
-					print(1256);
-					selector = 19;
-				}
-			}
-			break;
-		}
-		helpptr = 0;
-		errorReporter.decrementErrorCount();
-		errorLogic.error();
 	}
 
 	// ------------------------------------------------------------------------------------------------
