@@ -141,7 +141,6 @@ public final class ErrorLogic {
 	 */
 	void errorWithStringHelpLines(String... helpLines) {
 		tex.printchar('.');
-		tex.showcontext();
 		for (String helpLine : helpLines) {
 			tex.printnl(helpLine);
 		}
@@ -154,7 +153,6 @@ public final class ErrorLogic {
 	 */
 	void error() {
 		tex.printchar('.');
-		tex.showcontext();
 		while (tex.helpptr > 0) {
 			tex.helpptr = tex.helpptr - 1;
 			tex.printnl(tex.helpline[tex.helpptr]);

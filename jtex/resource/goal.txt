@@ -1,0 +1,10 @@
+The goal of this project is to build a typesetting library in Java, using the algorithms from TeX.
+
+The goal is NOT:
+- to implement TeX's macro language
+- to be as fast or memory efficient
+
+Further consequences:
+- any error causes typesetting to stop
+- problems such as overfull boxes should be reported through some error reporting interface,
+	but not cause error output on a console
