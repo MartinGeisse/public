@@ -163,8 +163,6 @@ public final class Tex {
 
 	public liststaterecord curlist = new liststaterecord();
 
-	public int shownmode;
-
 	public int oldsetting;
 
 	public memoryword eqtb[] = new memoryword[10407];
@@ -706,7 +704,6 @@ public final class Tex {
 		curlist.auxfield.setInt(-65536000);
 		curlist.mlfield = 0;
 		curlist.pgfield = 0;
-		shownmode = 0;
 		pagecontents = 0;
 		pagetail = memtop - 2;
 		mem[memtop - 2].setrh(0);
@@ -2322,7 +2319,6 @@ public final class Tex {
 
 	void checkoutervalidity() {
 		int p;
-		int q;
 		if (scannerstatus != 0) {
 			if (curcs != 0) {
 				if ((curinput.getState() == TOKENIZER_STATE_TOKEN_LIST) || (curinput.getName() < 1) || (curinput.getName() > 17)) {
@@ -2334,79 +2330,9 @@ public final class Tex {
 				curchr = 32;
 			}
 			if (scannerstatus > 1) {
-				runaway();
-				if (curcs == 0) {
-					printnl(262);
-					print(604);
-				} else {
-					curcs = 0;
-					{
-						printnl(262);
-						print(605);
-					}
-				}
-				print(606);
-				p = allocateMemoryWord();
-				switch (scannerstatus) {
-					case 2: {
-						print(570);
-						mem[p].setlh(637);
-					}
-						break;
-					case 3: {
-						print(612);
-						mem[p].setlh(partoken);
-						longstate = 113;
-					}
-						break;
-					case 4: {
-						print(572);
-						mem[p].setlh(637);
-						q = p;
-						p = allocateMemoryWord();
-						mem[p].setrh(q);
-						mem[p].setlh(11010);
-						alignstate = -1000000;
-					}
-						break;
-					case 5: {
-						print(573);
-						mem[p].setlh(637);
-					}
-						break;
-				}
-				begintokenlist(p, 4);
-				print(607);
-				sprintcs(warningindex);
-				{
-					helpptr = 4;
-					helpline[3] = 608;
-					helpline[2] = 609;
-					helpline[1] = 610;
-					helpline[0] = 611;
-				}
-				errorLogic.error();
+				throw new RuntimeException("File ended or forbidden control sequence found. I suspect you have forgotten a `}', causing me to read past where you wanted me to stop.");
 			} else {
-				{
-					printnl(262);
-					print(598);
-				}
-				printcmdchr(105, curif);
-				print(599);
-				printInt(skipline);
-				{
-					helpptr = 3;
-					helpline[2] = 600;
-					helpline[1] = 601;
-					helpline[0] = 602;
-				}
-				if (curcs != 0) {
-					curcs = 0;
-				} else {
-					helpline[2] = 603;
-				}
-				insertToken(11013);
-				errorLogic.error();
+				throw new RuntimeException("A forbidden control sequence occurred in skipped text. This kind of error happens when you say `\\if...' and forget the matching `\\fi'.");
 			}
 		}
 	}
@@ -18888,19 +18814,6 @@ public final class Tex {
 		if (p != 0) {
 			showtokenlist(mem[p].getrh(), 0, 10000000);
 		}
-	}
-
-	void showcurcmdchr() {
-		begindiagnostic();
-		printnl(123);
-		if (curlist.modefield != shownmode) {
-			printmode(curlist.modefield);
-			print(568);
-			shownmode = curlist.modefield;
-		}
-		printcmdchr(curcmd, curchr);
-		printchar(125);
-		enddiagnostic(false);
 	}
 
 	// ------------------------------------------------------------------------------------------------
