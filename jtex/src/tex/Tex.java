@@ -4382,34 +4382,17 @@ public final class Tex {
 		return Result;
 	}
 
-	/*
-	 * This function is probably abusing the string pool's building mechanism
-	 * as a StringBuilder for other purposes than building a pooled string.
-	 * 
-	 * This assumption must be confirmed: The functions calling this function store
-	 * the poolptr in b, add characters to the pool, then call this function. This
-	 * function eventually resets the poolptr to b. This is equivalent to using
-	 * an out-of-pool StringBuilder IF no makeString() is called in between. On
-	 * the other hand, if makeString() gets called, weird stuff will happen anyway:
-	 * The makeString() result would be a not-yet-allocated string ID using a
-	 * not-yet-allocated string pool region.
-	 */
-	int strtoks(final int b) {
-		int p;
-		int q;
-		int t;
-		int k;
-		p = memtop - 3;
+	int strtoks(String s) {
+		int p = memtop - 3;
 		mem[p].setrh(0);
-		k = b;
-		while (k < poolptr) {
-			t = strpool[k];
+		for (int i=0; i<s.length(); i++) {
+			int t = s.charAt(i);
 			if (t == 32) {
 				t = 2592;
 			} else {
 				t = 3072 + t;
 			}
-			q = avail;
+			int q = avail;
 			if (q == 0) {
 				q = allocateMemoryWord();
 			} else {
@@ -4419,17 +4402,13 @@ public final class Tex {
 			mem[p].setrh(q);
 			mem[q].setlh(t);
 			p = q;
-			k = k + 1;
 		}
-		poolptr = b;
 		return p;
-	}
-
+	}	
+	
 	int thetoks() {
-		int Result;
 		int oldsetting;
 		int p, q, r;
-		int b;
 		getxtoken();
 		scansomethinginternal(5, false);
 		if (curvallevel >= 4) {
@@ -4460,11 +4439,12 @@ public final class Tex {
 					r = mem[r].getrh();
 				}
 			}
-			Result = p;
+			return p;
 		} else {
 			oldsetting = selector;
 			selector = 21;
-			b = poolptr;
+			StringBuilder builder = new StringBuilder();
+			stringPool.setInterceptingStringBuilder(builder);
 			switch (curvallevel) {
 			case 0:
 				printInt(curval);
@@ -4486,9 +4466,9 @@ public final class Tex {
 				break;
 			}
 			selector = oldsetting;
-			Result = strtoks(b);
+			stringPool.setInterceptingStringBuilder(null);
+			return strtoks(builder.toString());
 		}
-		return Result;
 	}
 
 	void insthetoks() {
@@ -4500,7 +4480,6 @@ public final class Tex {
 		int oldsetting;
 		int c;
 		int savescannerstatus;
-		int b;
 		c = curchr;
 		switch (c) {
 		case 0:
@@ -4523,7 +4502,8 @@ public final class Tex {
 		}
 		oldsetting = selector;
 		selector = 21;
-		b = poolptr;
+		StringBuilder builder = new StringBuilder();
+		stringPool.setInterceptingStringBuilder(builder);
 		switch (c) {
 		case 0:
 			printInt(curval);
@@ -4555,7 +4535,8 @@ public final class Tex {
 			break;
 		}
 		selector = oldsetting;
-		mem[memtop - 12].setrh(strtoks(b));
+		stringPool.setInterceptingStringBuilder(null);
+		mem[memtop - 12].setrh(strtoks(builder.toString()));
 		begintokenlist(mem[memtop - 3].getrh(), 4);
 	}
 
