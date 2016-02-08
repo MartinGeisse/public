@@ -5128,23 +5128,17 @@ public final class Tex {
 	}
 
 	boolean morename(final int c) {
-		boolean Result;
 		if (c == 32) {
-			Result = false;
-		} else {
-			{
-				strpool[poolptr] = c;
-				poolptr = poolptr + 1;
-			}
-			if ((c == 62) || (c == 58)) {
-				areadelimiter = (poolptr - strstart[strptr]);
-				extdelimiter = 0;
-			} else if ((c == 46) && (extdelimiter == 0)) {
-				extdelimiter = (poolptr - strstart[strptr]);
-			}
-			Result = true;
+			return false;
 		}
-		return Result;
+		stringPool.append((char)c);
+		if (c == '>' || c == ':') {
+			areadelimiter = stringPool.getBuiltLength();
+			extdelimiter = 0;
+		} else if (c == '.' && extdelimiter == 0) {
+			extdelimiter = stringPool.getBuiltLength();
+		}
+		return true;
 	}
 
 	void endname() {
@@ -5170,22 +5164,8 @@ public final class Tex {
 	}
 
 	void packfilename(final int n, final int a, final int e) {
-		final StringBuffer strbuf = new StringBuffer();
-		int j;
-		namelength = 0;
-		for (j = strstart[a]; j <= strstart[a + 1] - 1; j++) {
-			namelength = namelength + 1;
-			strbuf.append((char)(strpool[j]));
-		}
-		for (j = strstart[n]; j <= strstart[n + 1] - 1; j++) {
-			namelength = namelength + 1;
-			strbuf.append((char)(strpool[j]));
-		}
-		for (j = strstart[e]; j <= strstart[e + 1] - 1; j++) {
-			namelength = namelength + 1;
-			strbuf.append((char)(strpool[j]));
-		}
-		nameoffile = strbuf.toString();
+		nameoffile = stringPool.getString(a) + stringPool.getString(n) + stringPool.getString(e);
+		namelength = nameoffile.length();
 	}
 
 	void packbufferedname(final int n, final int a, int b) {

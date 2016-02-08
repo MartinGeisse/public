@@ -196,4 +196,18 @@ public final class StringPool {
 		return tex.strptr - 1;
 	}
 
+	/**
+	 * Obtains the length of the string being built to far.
+	 * 
+	 * In the case of an intercepting builder, this is the sum of the builder's
+	 * length and the length that has been built before the builder was set.
+	 * This exactly reproduces TeX's behavior.
+	 * 
+	 * @return the length of the string being built to far.
+	 */
+	public int getBuiltLength() {
+		int intercepted = (interceptingStringBuilder == null ? 0 : interceptingStringBuilder.length());
+		return (tex.poolptr - tex.strstart[tex.strptr]) + intercepted;
+	}
+	
 }
