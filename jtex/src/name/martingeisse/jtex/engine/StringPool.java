@@ -195,6 +195,15 @@ public final class StringPool {
 		tex.strstart[tex.strptr] = tex.poolptr;
 		return tex.strptr - 1;
 	}
+	
+	/**
+	 * Removes the string most recently built via {@link #makeString()}, and also
+	 * any partially built string (if present).
+	 */
+	public void unmakeString() {
+		tex.strptr--;
+		tex.poolptr = tex.strstart[tex.strptr];
+	}
 
 	/**
 	 * Obtains the length of the string being built to far.
@@ -208,6 +217,33 @@ public final class StringPool {
 	public int getBuiltLength() {
 		int intercepted = (interceptingStringBuilder == null ? 0 : interceptingStringBuilder.length());
 		return (tex.poolptr - tex.strstart[tex.strptr]) + intercepted;
+	}
+	
+	/**
+	 * Extracts any partially built string and returns it. If the 'remove' parameter is true, this method
+	 * also removes the string from the building process.
+	 * 
+	 * If an intercepting string builder was set, then this method returns its contents, prepended by whatever
+	 * was built before the builder was set. This also clears the builder contents if the 'remove' flag is true.
+	 * 
+	 * @param remove whether to remove the string from the building process
+	 * @return the partially built string
+	 */
+	public String extractPartiallyBuiltString(boolean remove) {
+		StringBuilder resultBuilder = new StringBuilder();
+		for (int k=tex.strstart[tex.strptr]; k < tex.poolptr; k++) {
+			resultBuilder.append((char)tex.strpool[k]);
+		}
+		if (remove) {
+			tex.poolptr = tex.strstart[tex.strptr];
+		}
+		if (interceptingStringBuilder != null) {
+			resultBuilder.append(interceptingStringBuilder);
+			if (remove) {
+				interceptingStringBuilder.setLength(0);
+			}
+		}
+		return resultBuilder.toString();
 	}
 	
 }

@@ -93,9 +93,9 @@ public final class Tex {
 	public int initstrptr;
 
 	public PrintWriter logfile;
-	
+
 	public ErrorReporter errorReporter;
-	
+
 	public ErrorLogic errorLogic;
 
 	public int selector;
@@ -203,7 +203,7 @@ public final class Tex {
 	public TexTokenizer inputStackBackingArray[] = new TexTokenizer[InputStack.STACK_SIZE + 1];
 
 	public int inputptr;
-	
+
 	public InputStack inputStack;
 
 	public TexTokenizer curinput = new TexTokenizer();
@@ -629,11 +629,11 @@ public final class Tex {
 	public StringBuffer cmdlinebuf = new StringBuffer();
 
 	public int maxhalfword;
-	
+
 	public final StringPool stringPool = new StringPool(this);
 
 	public final DviWriter dviWriter = new DviWriter(this);
-	
+
 	/**
 	 * Constructor.
 	 * @param initex whether this is INITEX
@@ -687,7 +687,7 @@ public final class Tex {
 			inputStackBackingArray[c] = new TexTokenizer();
 		}
 	}
-	
+
 	void initialize() {
 		int k;
 		int z;
@@ -1018,29 +1018,29 @@ public final class Tex {
 	}
 
 	boolean privileged() {
-		boolean ok = (curlist.modefield > 0);
+		final boolean ok = (curlist.modefield > 0);
 		if (!ok) {
 			errorLogic.reportillegalcase();
 		}
 		return ok;
 	}
-	
+
 	/**
 	 * Tests if the specified string is found in the buffer at the specified position.
-	 * 
+	 *
 	 * As a special rule, this function returns false if the string to look for is empty,
 	 * even though the empty string can be found anywhere.
-	 * 
+	 *
 	 * @param stringId the ID of the string to look for
 	 * @param bufferStart the bufer position to look at
 	 * @return whether the string was found at that position
 	 */
-	boolean streqbuf(final int stringId, int bufferStart) {
-		String s = stringPool.getString(stringId);
+	boolean streqbuf(final int stringId, final int bufferStart) {
+		final String s = stringPool.getString(stringId);
 		if (s.isEmpty()) {
 			return false;
 		}
-		for (int i=0; i<s.length(); i++) {
+		for (int i = 0; i < s.length(); i++) {
 			if (s.charAt(i) != buffer[bufferStart + i]) {
 				return false;
 			}
@@ -1597,44 +1597,44 @@ public final class Tex {
 				}
 			} else {
 				switch (mem[p].getb0()) {
-				case 0:
-				case 1:
-				case 3:
-				case 8:
-				case 4:
-				case 5:
-				case 13:
-					print(308);
-					break;
-				case 2:
-					printchar(124);
-					break;
-				case 10:
-					if (mem[p + 1].getlh() != 0) {
-						printchar(32);
-					}
-					break;
-				case 9:
-					printchar(36);
-					break;
-				case 6:
-					shortdisplay(mem[p + 1].getrh());
-					break;
-				case 7: {
-					shortdisplay(mem[p + 1].getlh());
-					shortdisplay(mem[p + 1].getrh());
-					n = mem[p].getb1();
-					while (n > 0) {
-						if (mem[p].getrh() != 0) {
-							p = mem[p].getrh();
+					case 0:
+					case 1:
+					case 3:
+					case 8:
+					case 4:
+					case 5:
+					case 13:
+						print(308);
+						break;
+					case 2:
+						printchar(124);
+						break;
+					case 10:
+						if (mem[p + 1].getlh() != 0) {
+							printchar(32);
 						}
-						n = n - 1;
+						break;
+					case 9:
+						printchar(36);
+						break;
+					case 6:
+						shortdisplay(mem[p + 1].getrh());
+						break;
+					case 7: {
+						shortdisplay(mem[p + 1].getlh());
+						shortdisplay(mem[p + 1].getrh());
+						n = mem[p].getb1();
+						while (n > 0) {
+							if (mem[p].getrh() != 0) {
+								p = mem[p].getrh();
+							}
+							n = n - 1;
+						}
 					}
-				}
-					break;
-				default:
-					;
-					break;
+						break;
+					default:
+						;
+						break;
 				}
 			}
 			p = mem[p].getrh();
@@ -1667,133 +1667,133 @@ public final class Tex {
 			} else {
 				lab30: while (true) {
 					switch (mem[p].getb0()) {
-					case 0:
-					case 1:
-					case 13: {
-						flushnodelist(mem[p + 5].getrh());
-						freenode(p, 7);
-						break lab30;
-					}
-					case 2: {
-						freenode(p, 4);
-						break lab30;
-					}
-					case 3: {
-						flushnodelist(mem[p + 4].getlh());
-						deleteglueref(mem[p + 4].getrh());
-						freenode(p, 5);
-						break lab30;
-					}
-					case 8: {
-						switch (mem[p].getb1()) {
 						case 0:
-							freenode(p, 3);
-							break;
 						case 1:
-						case 3: {
-							deletetokenref(mem[p + 1].getrh());
-							freenode(p, 2);
+						case 13: {
+							flushnodelist(mem[p + 5].getrh());
+							freenode(p, 7);
 							break lab30;
 						}
-						case 2:
-						case 4:
-							freenode(p, 2);
-							break;
-						default:
-							errorLogic.confusion(1295);
-							break;
+						case 2: {
+							freenode(p, 4);
+							break lab30;
 						}
-						break lab30;
-					}
-					case 10: {
-						{
-							if (mem[mem[p + 1].getlh()].getrh() == 0) {
-								freenode(mem[p + 1].getlh(), 4);
-							} else {
-								mem[mem[p + 1].getlh()].setrh(mem[mem[p + 1].getlh()].getrh() - 1);
+						case 3: {
+							flushnodelist(mem[p + 4].getlh());
+							deleteglueref(mem[p + 4].getrh());
+							freenode(p, 5);
+							break lab30;
+						}
+						case 8: {
+							switch (mem[p].getb1()) {
+								case 0:
+									freenode(p, 3);
+									break;
+								case 1:
+								case 3: {
+									deletetokenref(mem[p + 1].getrh());
+									freenode(p, 2);
+									break lab30;
+								}
+								case 2:
+								case 4:
+									freenode(p, 2);
+									break;
+								default:
+									errorLogic.confusion(1295);
+									break;
+							}
+							break lab30;
+						}
+						case 10: {
+							{
+								if (mem[mem[p + 1].getlh()].getrh() == 0) {
+									freenode(mem[p + 1].getlh(), 4);
+								} else {
+									mem[mem[p + 1].getlh()].setrh(mem[mem[p + 1].getlh()].getrh() - 1);
+								}
+							}
+							if (mem[p + 1].getrh() != 0) {
+								flushnodelist(mem[p + 1].getrh());
 							}
 						}
-						if (mem[p + 1].getrh() != 0) {
+							break;
+						case 11:
+						case 9:
+						case 12:
+							;
+							break;
+						case 6:
+							flushnodelist(mem[p + 1].getrh());
+							break;
+						case 4:
+							deletetokenref(mem[p + 1].getInt());
+							break;
+						case 7: {
+							flushnodelist(mem[p + 1].getlh());
 							flushnodelist(mem[p + 1].getrh());
 						}
-					}
-						break;
-					case 11:
-					case 9:
-					case 12:
-						;
-						break;
-					case 6:
-						flushnodelist(mem[p + 1].getrh());
-						break;
-					case 4:
-						deletetokenref(mem[p + 1].getInt());
-						break;
-					case 7: {
-						flushnodelist(mem[p + 1].getlh());
-						flushnodelist(mem[p + 1].getrh());
-					}
-						break;
-					case 5:
-						flushnodelist(mem[p + 1].getInt());
-						break;
-					case 14: {
-						freenode(p, 3);
-						break lab30;
-					}
-					case 15: {
-						flushnodelist(mem[p + 1].getlh());
-						flushnodelist(mem[p + 1].getrh());
-						flushnodelist(mem[p + 2].getlh());
-						flushnodelist(mem[p + 2].getrh());
-						freenode(p, 3);
-						break lab30;
-					}
-					case 16:
-					case 17:
-					case 18:
-					case 19:
-					case 20:
-					case 21:
-					case 22:
-					case 23:
-					case 24:
-					case 27:
-					case 26:
-					case 29:
-					case 28: {
-						if (mem[p + 1].getrh() >= 2) {
+							break;
+						case 5:
+							flushnodelist(mem[p + 1].getInt());
+							break;
+						case 14: {
+							freenode(p, 3);
+							break lab30;
+						}
+						case 15: {
 							flushnodelist(mem[p + 1].getlh());
-						}
-						if (mem[p + 2].getrh() >= 2) {
+							flushnodelist(mem[p + 1].getrh());
 							flushnodelist(mem[p + 2].getlh());
+							flushnodelist(mem[p + 2].getrh());
+							freenode(p, 3);
+							break lab30;
 						}
-						if (mem[p + 3].getrh() >= 2) {
-							flushnodelist(mem[p + 3].getlh());
+						case 16:
+						case 17:
+						case 18:
+						case 19:
+						case 20:
+						case 21:
+						case 22:
+						case 23:
+						case 24:
+						case 27:
+						case 26:
+						case 29:
+						case 28: {
+							if (mem[p + 1].getrh() >= 2) {
+								flushnodelist(mem[p + 1].getlh());
+							}
+							if (mem[p + 2].getrh() >= 2) {
+								flushnodelist(mem[p + 2].getlh());
+							}
+							if (mem[p + 3].getrh() >= 2) {
+								flushnodelist(mem[p + 3].getlh());
+							}
+							if (mem[p].getb0() == 24) {
+								freenode(p, 5);
+							} else if (mem[p].getb0() == 28) {
+								freenode(p, 5);
+							} else {
+								freenode(p, 4);
+							}
+							break lab30;
 						}
-						if (mem[p].getb0() == 24) {
-							freenode(p, 5);
-						} else if (mem[p].getb0() == 28) {
-							freenode(p, 5);
-						} else {
+						case 30:
+						case 31: {
 							freenode(p, 4);
+							break lab30;
 						}
-						break lab30;
-					}
-					case 30:
-					case 31: {
-						freenode(p, 4);
-						break lab30;
-					}
-					case 25: {
-						flushnodelist(mem[p + 2].getlh());
-						flushnodelist(mem[p + 3].getlh());
-						freenode(p, 6);
-						break lab30;
-					}
-					default:
-						errorLogic.confusion(353);
-						break;
+						case 25: {
+							flushnodelist(mem[p + 2].getlh());
+							flushnodelist(mem[p + 3].getlh());
+							freenode(p, 6);
+							break lab30;
+						}
+						default:
+							errorLogic.confusion(353);
+							break;
 					}
 					freenode(p, 2);
 					break;
@@ -1818,94 +1818,94 @@ public final class Tex {
 				r = allocateMemoryWord();
 			} else {
 				switch (mem[p].getb0()) {
-				case 0:
-				case 1:
-				case 13: {
-					r = getnode(7);
-					mem[r + 6].copy(mem[p + 6]);
-					mem[r + 5].copy(mem[p + 5]);
-					mem[r + 5].setrh(copynodelist(mem[p + 5].getrh()));
-					words = 5;
-				}
-					break;
-				case 2: {
-					r = getnode(4);
-					words = 4;
-				}
-					break;
-				case 3: {
-					r = getnode(5);
-					mem[r + 4].copy(mem[p + 4]);
-					mem[mem[p + 4].getrh()].setrh(mem[mem[p + 4].getrh()].getrh() + 1);
-					mem[r + 4].setlh(copynodelist(mem[p + 4].getlh()));
-					words = 4;
-				}
-					break;
-				case 8:
-					switch (mem[p].getb1()) {
-					case 0: {
-						r = getnode(3);
-						words = 3;
+					case 0:
+					case 1:
+					case 13: {
+						r = getnode(7);
+						mem[r + 6].copy(mem[p + 6]);
+						mem[r + 5].copy(mem[p + 5]);
+						mem[r + 5].setrh(copynodelist(mem[p + 5].getrh()));
+						words = 5;
 					}
 						break;
-					case 1:
+					case 2: {
+						r = getnode(4);
+						words = 4;
+					}
+						break;
 					case 3: {
+						r = getnode(5);
+						mem[r + 4].copy(mem[p + 4]);
+						mem[mem[p + 4].getrh()].setrh(mem[mem[p + 4].getrh()].getrh() + 1);
+						mem[r + 4].setlh(copynodelist(mem[p + 4].getlh()));
+						words = 4;
+					}
+						break;
+					case 8:
+						switch (mem[p].getb1()) {
+							case 0: {
+								r = getnode(3);
+								words = 3;
+							}
+								break;
+							case 1:
+							case 3: {
+								r = getnode(2);
+								mem[mem[p + 1].getrh()].setlh(mem[mem[p + 1].getrh()].getlh() + 1);
+								words = 2;
+							}
+								break;
+							case 2:
+							case 4: {
+								r = getnode(2);
+								words = 2;
+							}
+								break;
+							default:
+								errorLogic.confusion(1294);
+								break;
+						}
+						break;
+					case 10: {
 						r = getnode(2);
-						mem[mem[p + 1].getrh()].setlh(mem[mem[p + 1].getrh()].getlh() + 1);
+						mem[mem[p + 1].getlh()].setrh(mem[mem[p + 1].getlh()].getrh() + 1);
+						mem[r + 1].setlh(mem[p + 1].getlh());
+						mem[r + 1].setrh(copynodelist(mem[p + 1].getrh()));
+					}
+						break;
+					case 11:
+					case 9:
+					case 12: {
+						r = getnode(2);
 						words = 2;
 					}
 						break;
-					case 2:
+					case 6: {
+						r = getnode(2);
+						mem[r + 1].copy(mem[p + 1]);
+						mem[r + 1].setrh(copynodelist(mem[p + 1].getrh()));
+					}
+						break;
+					case 7: {
+						r = getnode(2);
+						mem[r + 1].setlh(copynodelist(mem[p + 1].getlh()));
+						mem[r + 1].setrh(copynodelist(mem[p + 1].getrh()));
+					}
+						break;
 					case 4: {
 						r = getnode(2);
+						mem[mem[p + 1].getInt()].setlh(mem[mem[p + 1].getInt()].getlh() + 1);
 						words = 2;
+					}
+						break;
+					case 5: {
+						r = getnode(2);
+						mem[r + 1].setInt(copynodelist(mem[p + 1].getInt()));
 					}
 						break;
 					default:
-						errorLogic.confusion(1294);
+						errorLogic.confusion(354);
 						break;
-					}
-					break;
-				case 10: {
-					r = getnode(2);
-					mem[mem[p + 1].getlh()].setrh(mem[mem[p + 1].getlh()].getrh() + 1);
-					mem[r + 1].setlh(mem[p + 1].getlh());
-					mem[r + 1].setrh(copynodelist(mem[p + 1].getrh()));
-				}
-					break;
-				case 11:
-				case 9:
-				case 12: {
-					r = getnode(2);
-					words = 2;
-				}
-					break;
-				case 6: {
-					r = getnode(2);
-					mem[r + 1].copy(mem[p + 1]);
-					mem[r + 1].setrh(copynodelist(mem[p + 1].getrh()));
-				}
-					break;
-				case 7: {
-					r = getnode(2);
-					mem[r + 1].setlh(copynodelist(mem[p + 1].getlh()));
-					mem[r + 1].setrh(copynodelist(mem[p + 1].getrh()));
-				}
-					break;
-				case 4: {
-					r = getnode(2);
-					mem[mem[p + 1].getInt()].setlh(mem[mem[p + 1].getInt()].getlh() + 1);
-					words = 2;
-				}
-					break;
-				case 5: {
-					r = getnode(2);
-					mem[r + 1].setInt(copynodelist(mem[p + 1].getInt()));
-				}
-					break;
-				default:
-					errorLogic.confusion(354);
-					break;
 				}
 			}
 			while (words > 0) {
@@ -1994,7 +1994,7 @@ public final class Tex {
 						hash[p - 514].lh = hashused;
 						p = hashused;
 					}
-					
+
 					/*
 					 * This code is probably less weird than it looks. It just wants to
 					 * build a string in the string pool but preserve whatever partially
@@ -2011,7 +2011,7 @@ public final class Tex {
 					}
 					hash[p - 514].rh = stringPool.makeString();
 					poolptr = poolptr + d;
-					
+
 				}
 				break lab40;
 			}
@@ -2025,15 +2025,15 @@ public final class Tex {
 		if (s < 256) {
 			curval = s + 257;
 		} else {
-			String string = stringPool.getString(s);
+			final String string = stringPool.getString(s);
 			inputBuffer.copyToInternalBuffer(string, 0);
 			curval = idlookup(0, string.length());
-			
+
 			// this looks weird. It removes the last-added string.
 			// I should have a look if this is always (s) or can be different.
 			strptr = strptr - 1;
 			poolptr = strstart[strptr];
-			
+
 			hash[curval - 514].rh = s;
 		}
 		eqtb[curval].setb1(1);
@@ -2063,28 +2063,28 @@ public final class Tex {
 	void eqdestroy(final memoryword w) {
 		int q;
 		switch (w.getb0()) {
-		case 111:
-		case 112:
-		case 113:
-		case 114:
-			deletetokenref(w.getrh());
-			break;
-		case 117:
-			deleteglueref(w.getrh());
-			break;
-		case 118: {
-			q = w.getrh();
-			if (q != 0) {
-				freenode(q, mem[q].getlh() + mem[q].getlh() + 1);
+			case 111:
+			case 112:
+			case 113:
+			case 114:
+				deletetokenref(w.getrh());
+				break;
+			case 117:
+				deleteglueref(w.getrh());
+				break;
+			case 118: {
+				q = w.getrh();
+				if (q != 0) {
+					freenode(q, mem[q].getlh() + mem[q].getlh() + 1);
+				}
 			}
-		}
-			break;
-		case 119:
-			flushnodelist(w.getrh());
-			break;
-		default:
-			;
-			break;
+				break;
+			case 119:
+				flushnodelist(w.getrh());
+				break;
+			default:
+				;
+				break;
 		}
 	}
 
@@ -2216,7 +2216,7 @@ public final class Tex {
 		}
 		magset = eqtb[9580].getInt();
 	}
-	
+
 	void begintokenlist(final int p, final int t) {
 		inputStack.duplicate();
 		curinput.setState(TOKENIZER_STATE_TOKEN_LIST);
@@ -2232,15 +2232,15 @@ public final class Tex {
 					begindiagnostic();
 					printnl(338);
 					switch (t) {
-					case 14:
-						printEscapeSequence(351);
-						break;
-					case 15:
-						printEscapeSequence(594);
-						break;
-					default:
-						printcmdchr(72, t + 7707);
-						break;
+						case 14:
+							printEscapeSequence(351);
+							break;
+						case 15:
+							printEscapeSequence(594);
+							break;
+						default:
+							printcmdchr(72, t + 7707);
+							break;
 					}
 					print(556);
 					tokenshow(p);
@@ -2278,15 +2278,15 @@ public final class Tex {
 	void unreadToken() {
 		insertToken(curtok, 3);
 	}
-	
-	void insertToken(int token) {
+
+	void insertToken(final int token) {
 		insertToken(token, 4);
 		curtok = token;
 	}
-	
-	void insertToken(int token, int type) {
+
+	void insertToken(final int token, final int type) {
 		inputStack.popFinishedTokenLists();
-		int p = allocateMemoryWord();
+		final int p = allocateMemoryWord();
 		mem[p].setlh(token);
 		if (token < 768) {
 			if (token < 512) {
@@ -2353,32 +2353,32 @@ public final class Tex {
 				print(606);
 				p = allocateMemoryWord();
 				switch (scannerstatus) {
-				case 2: {
-					print(570);
-					mem[p].setlh(637);
-				}
-					break;
-				case 3: {
-					print(612);
-					mem[p].setlh(partoken);
-					longstate = 113;
-				}
-					break;
-				case 4: {
-					print(572);
-					mem[p].setlh(637);
-					q = p;
-					p = allocateMemoryWord();
-					mem[p].setrh(q);
-					mem[p].setlh(11010);
-					alignstate = -1000000;
-				}
-					break;
-				case 5: {
-					print(573);
-					mem[p].setlh(637);
-				}
-					break;
+					case 2: {
+						print(570);
+						mem[p].setlh(637);
+					}
+						break;
+					case 3: {
+						print(612);
+						mem[p].setlh(partoken);
+						longstate = 113;
+					}
+						break;
+					case 4: {
+						print(572);
+						mem[p].setlh(637);
+						q = p;
+						p = allocateMemoryWord();
+						mem[p].setrh(q);
+						mem[p].setlh(11010);
+						alignstate = -1000000;
+					}
+						break;
+					case 5: {
+						print(573);
+						mem[p].setlh(637);
+					}
+						break;
 				}
 				begintokenlist(p, 4);
 				print(607);
@@ -2433,38 +2433,90 @@ public final class Tex {
 						lab21: while (true) {
 							curcmd = eqtb[8283 + curchr].getrh();
 							switch (curinput.getState() + curcmd) {
-							case 10:
-							case 26:
-							case 42:
-							case 27:
-							case 43:
-								continue lab25;
-							case 1:
-							case 17:
-							case 33: {
-								if (curinput.getLoc() > curinput.getLimit()) {
-									curcs = 513;
-								} else {
-									lab40: while (true) {
-										lab26: while (true) {
-											k = curinput.getLoc();
-											curchr = buffer[k];
-											cat = eqtb[8283 + curchr].getrh();
-											k = k + 1;
-											if (cat == 11) {
-												curinput.setState(TOKENIZER_STATE_SKIP_BLANKS);
-											} else if (cat == 10) {
-												curinput.setState(TOKENIZER_STATE_SKIP_BLANKS);
-											} else {
-												curinput.setState(TOKENIZER_STATE_MID_LINE);
-											}
-											if ((cat == 11) && (k <= curinput.getLimit())) {
-												do {
-													curchr = buffer[k];
-													cat = eqtb[8283 + curchr].getrh();
-													k = k + 1;
-												} while (!((cat != 11) || (k > curinput.getLimit())));
-												{
+								case 10:
+								case 26:
+								case 42:
+								case 27:
+								case 43:
+									continue lab25;
+								case 1:
+								case 17:
+								case 33: {
+									if (curinput.getLoc() > curinput.getLimit()) {
+										curcs = 513;
+									} else {
+										lab40: while (true) {
+											lab26: while (true) {
+												k = curinput.getLoc();
+												curchr = buffer[k];
+												cat = eqtb[8283 + curchr].getrh();
+												k = k + 1;
+												if (cat == 11) {
+													curinput.setState(TOKENIZER_STATE_SKIP_BLANKS);
+												} else if (cat == 10) {
+													curinput.setState(TOKENIZER_STATE_SKIP_BLANKS);
+												} else {
+													curinput.setState(TOKENIZER_STATE_MID_LINE);
+												}
+												if ((cat == 11) && (k <= curinput.getLimit())) {
+													do {
+														curchr = buffer[k];
+														cat = eqtb[8283 + curchr].getrh();
+														k = k + 1;
+													} while (!((cat != 11) || (k > curinput.getLimit())));
+													{
+														if (buffer[k] == curchr) {
+															if (cat == 7) {
+																if (k < curinput.getLimit()) {
+																	c = buffer[k + 1];
+																	if (c < 128) {
+																		d = 2;
+																		if ((((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102)))) {
+																			if (k + 2 <= curinput.getLimit()) {
+																				cc = buffer[k + 2];
+																				if ((((cc >= 48) && (cc <= 57)) || ((cc >= 97) && (cc <= 102)))) {
+																					d = d + 1;
+																				}
+																			}
+																		}
+																		if (d > 2) {
+																			if (c <= 57) {
+																				curchr = c - 48;
+																			} else {
+																				curchr = c - 87;
+																			}
+																			if (cc <= 57) {
+																				curchr = 16 * curchr + cc - 48;
+																			} else {
+																				curchr = 16 * curchr + cc - 87;
+																			}
+																			buffer[k - 1] = curchr;
+																		} else if (c < 64) {
+																			buffer[k - 1] = c + 64;
+																		} else {
+																			buffer[k - 1] = c - 64;
+																		}
+																		curinput.setLimit(curinput.getLimit() - d);
+																		first = first - d;
+																		while (k <= curinput.getLimit()) {
+																			buffer[k] = buffer[k + d];
+																			k = k + 1;
+																		}
+																		continue lab26;
+																	}
+																}
+															}
+														}
+													}
+													if (cat != 11) {
+														k = k - 1;
+													}
+													if (k > curinput.getLoc() + 1) {
+														curcs = idlookup(curinput.getLoc(), k - curinput.getLoc());
+														curinput.setLoc(k);
+														break lab40;
+													}
+												} else {
 													if (buffer[k] == curchr) {
 														if (cat == 7) {
 															if (k < curinput.getLimit()) {
@@ -2508,201 +2560,149 @@ public final class Tex {
 														}
 													}
 												}
-												if (cat != 11) {
-													k = k - 1;
-												}
-												if (k > curinput.getLoc() + 1) {
-													curcs = idlookup(curinput.getLoc(), k - curinput.getLoc());
-													curinput.setLoc(k);
-													break lab40;
-												}
-											} else {
-												if (buffer[k] == curchr) {
-													if (cat == 7) {
-														if (k < curinput.getLimit()) {
-															c = buffer[k + 1];
-															if (c < 128) {
-																d = 2;
-																if ((((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102)))) {
-																	if (k + 2 <= curinput.getLimit()) {
-																		cc = buffer[k + 2];
-																		if ((((cc >= 48) && (cc <= 57)) || ((cc >= 97) && (cc <= 102)))) {
-																			d = d + 1;
-																		}
-																	}
-																}
-																if (d > 2) {
-																	if (c <= 57) {
-																		curchr = c - 48;
-																	} else {
-																		curchr = c - 87;
-																	}
-																	if (cc <= 57) {
-																		curchr = 16 * curchr + cc - 48;
-																	} else {
-																		curchr = 16 * curchr + cc - 87;
-																	}
-																	buffer[k - 1] = curchr;
-																} else if (c < 64) {
-																	buffer[k - 1] = c + 64;
-																} else {
-																	buffer[k - 1] = c - 64;
-																}
-																curinput.setLimit(curinput.getLimit() - d);
-																first = first - d;
-																while (k <= curinput.getLimit()) {
-																	buffer[k] = buffer[k + d];
-																	k = k + 1;
-																}
-																continue lab26;
-															}
-														}
-													}
-												}
+												curcs = 257 + buffer[curinput.getLoc()];
+												curinput.setLoc(curinput.getLoc() + 1);
+												break;
 											}
-											curcs = 257 + buffer[curinput.getLoc()];
-											curinput.setLoc(curinput.getLoc() + 1);
 											break;
 										}
-										break;
+									}
+									/* lab40: */curcmd = eqtb[curcs].getb0();
+									curchr = eqtb[curcs].getrh();
+									if (curcmd >= 113) {
+										checkoutervalidity();
 									}
 								}
-								/* lab40: */curcmd = eqtb[curcs].getb0();
-								curchr = eqtb[curcs].getrh();
-								if (curcmd >= 113) {
-									checkoutervalidity();
+									break;
+								case 14:
+								case 30:
+								case 46: {
+									curcs = curchr + 1;
+									curcmd = eqtb[curcs].getb0();
+									curchr = eqtb[curcs].getrh();
+									curinput.setState(TOKENIZER_STATE_MID_LINE);
+									if (curcmd >= 113) {
+										checkoutervalidity();
+									}
 								}
-							}
-								break;
-							case 14:
-							case 30:
-							case 46: {
-								curcs = curchr + 1;
-								curcmd = eqtb[curcs].getb0();
-								curchr = eqtb[curcs].getrh();
-								curinput.setState(TOKENIZER_STATE_MID_LINE);
-								if (curcmd >= 113) {
-									checkoutervalidity();
-								}
-							}
-								break;
-							case 8:
-							case 24:
-							case 40: {
-								if (curchr == buffer[curinput.getLoc()]) {
-									if (curinput.getLoc() < curinput.getLimit()) {
-										c = buffer[curinput.getLoc() + 1];
-										if (c < 128) {
-											curinput.setLoc(curinput.getLoc() + 2);
-											if ((((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102)))) {
-												if (curinput.getLoc() <= curinput.getLimit()) {
-													cc = buffer[curinput.getLoc()];
-													if ((((cc >= 48) && (cc <= 57)) || ((cc >= 97) && (cc <= 102)))) {
-														curinput.setLoc(curinput.getLoc() + 1);
-														if (c <= 57) {
-															curchr = c - 48;
-														} else {
-															curchr = c - 87;
+									break;
+								case 8:
+								case 24:
+								case 40: {
+									if (curchr == buffer[curinput.getLoc()]) {
+										if (curinput.getLoc() < curinput.getLimit()) {
+											c = buffer[curinput.getLoc() + 1];
+											if (c < 128) {
+												curinput.setLoc(curinput.getLoc() + 2);
+												if ((((c >= 48) && (c <= 57)) || ((c >= 97) && (c <= 102)))) {
+													if (curinput.getLoc() <= curinput.getLimit()) {
+														cc = buffer[curinput.getLoc()];
+														if ((((cc >= 48) && (cc <= 57)) || ((cc >= 97) && (cc <= 102)))) {
+															curinput.setLoc(curinput.getLoc() + 1);
+															if (c <= 57) {
+																curchr = c - 48;
+															} else {
+																curchr = c - 87;
+															}
+															if (cc <= 57) {
+																curchr = 16 * curchr + cc - 48;
+															} else {
+																curchr = 16 * curchr + cc - 87;
+															}
+															continue lab21;
 														}
-														if (cc <= 57) {
-															curchr = 16 * curchr + cc - 48;
-														} else {
-															curchr = 16 * curchr + cc - 87;
-														}
-														continue lab21;
 													}
 												}
+												if (c < 64) {
+													curchr = c + 64;
+												} else {
+													curchr = c - 64;
+												}
+												continue lab21;
 											}
-											if (c < 64) {
-												curchr = c + 64;
-											} else {
-												curchr = c - 64;
-											}
-											continue lab21;
 										}
 									}
+									curinput.setState(TOKENIZER_STATE_MID_LINE);
 								}
-								curinput.setState(TOKENIZER_STATE_MID_LINE);
-							}
-								break;
-							case 16:
-							case 32:
-							case 48: {
-								{
-									printnl(262);
-									print(613);
+									break;
+								case 16:
+								case 32:
+								case 48: {
+									{
+										printnl(262);
+										print(613);
+									}
+									{
+										helpptr = 2;
+										helpline[1] = 614;
+										helpline[0] = 615;
+									}
+									errorLogic.error();
+									continue lab20;
 								}
-								{
-									helpptr = 2;
-									helpline[1] = 614;
-									helpline[0] = 615;
+								case 11: {
+									curinput.setState(TOKENIZER_STATE_SKIP_BLANKS);
+									curchr = 32;
 								}
-								errorLogic.error();
-								continue lab20;
-							}
-							case 11: {
-								curinput.setState(TOKENIZER_STATE_SKIP_BLANKS);
-								curchr = 32;
-							}
-								break;
-							case 6: {
-								curinput.setLoc(curinput.getLimit() + 1);
-								curcmd = 10;
-								curchr = 32;
-							}
-								break;
-							case 22:
-							case 15:
-							case 31:
-							case 47: {
-								curinput.setLoc(curinput.getLimit() + 1);
-								continue lab25;
-							}
-							case 38: {
-								curinput.setLoc(curinput.getLimit() + 1);
-								curcs = parloc;
-								curcmd = eqtb[curcs].getb0();
-								curchr = eqtb[curcs].getrh();
-								if (curcmd >= 113) {
-									checkoutervalidity();
+									break;
+								case 6: {
+									curinput.setLoc(curinput.getLimit() + 1);
+									curcmd = 10;
+									curchr = 32;
 								}
-							}
-								break;
-							case 2:
-								alignstate = alignstate + 1;
-								break;
-							case 18:
-							case 34: {
-								curinput.setState(TOKENIZER_STATE_MID_LINE);
-								alignstate = alignstate + 1;
-							}
-								break;
-							case 3:
-								alignstate = alignstate - 1;
-								break;
-							case 19:
-							case 35: {
-								curinput.setState(TOKENIZER_STATE_MID_LINE);
-								alignstate = alignstate - 1;
-							}
-								break;
-							case 20:
-							case 21:
-							case 23:
-							case 25:
-							case 28:
-							case 29:
-							case 36:
-							case 37:
-							case 39:
-							case 41:
-							case 44:
-							case 45:
-								curinput.setState(TOKENIZER_STATE_MID_LINE);
-								break;
-							default:
-								;
-								break;
+									break;
+								case 22:
+								case 15:
+								case 31:
+								case 47: {
+									curinput.setLoc(curinput.getLimit() + 1);
+									continue lab25;
+								}
+								case 38: {
+									curinput.setLoc(curinput.getLimit() + 1);
+									curcs = parloc;
+									curcmd = eqtb[curcs].getb0();
+									curchr = eqtb[curcs].getrh();
+									if (curcmd >= 113) {
+										checkoutervalidity();
+									}
+								}
+									break;
+								case 2:
+									alignstate = alignstate + 1;
+									break;
+								case 18:
+								case 34: {
+									curinput.setState(TOKENIZER_STATE_MID_LINE);
+									alignstate = alignstate + 1;
+								}
+									break;
+								case 3:
+									alignstate = alignstate - 1;
+									break;
+								case 19:
+								case 35: {
+									curinput.setState(TOKENIZER_STATE_MID_LINE);
+									alignstate = alignstate - 1;
+								}
+									break;
+								case 20:
+								case 21:
+								case 23:
+								case 25:
+								case 28:
+								case 29:
+								case 36:
+								case 37:
+								case 39:
+								case 41:
+								case 44:
+								case 45:
+									curinput.setState(TOKENIZER_STATE_MID_LINE);
+									break;
+								default:
+									;
+									break;
 							}
 							break;
 						}
@@ -2778,19 +2778,19 @@ public final class Tex {
 					curcmd = t / 256;
 					curchr = t % 256;
 					switch (curcmd) {
-					case 1:
-						alignstate = alignstate + 1;
-						break;
-					case 2:
-						alignstate = alignstate - 1;
-						break;
-					case 5: {
-						begintokenlist(paramstack[curinput.getLimit() + curchr - 1], 0);
-						continue lab20;
-					}
-					default:
-						;
-						break;
+						case 1:
+							alignstate = alignstate + 1;
+							break;
+						case 2:
+							alignstate = alignstate - 1;
+							break;
+						case 5: {
+							begintokenlist(paramstack[curinput.getLimit() + curchr - 1], 0);
+							continue lab20;
+						}
+						default:
+							;
+							break;
 					}
 				}
 			} else {
@@ -3158,155 +3158,155 @@ public final class Tex {
 				showcurcmdchr();
 			}
 			switch (curcmd) {
-			case 110: {
-				if (curmark[curchr] != 0) {
-					begintokenlist(curmark[curchr], 14);
+				case 110: {
+					if (curmark[curchr] != 0) {
+						begintokenlist(curmark[curchr], 14);
+					}
 				}
-			}
-				break;
-			case 102: {
-				gettoken();
-				t = curtok;
-				gettoken();
-				if (curcmd > 100) {
-					expand();
-				} else {
+					break;
+				case 102: {
+					gettoken();
+					t = curtok;
+					gettoken();
+					if (curcmd > 100) {
+						expand();
+					} else {
+						unreadToken();
+					}
+					curtok = t;
 					unreadToken();
 				}
-				curtok = t;
-				unreadToken();
-			}
-				break;
-			case 103: {
-				savescannerstatus = scannerstatus;
-				scannerstatus = 0;
-				gettoken();
-				scannerstatus = savescannerstatus;
-				t = curtok;
-				unreadToken();
-				if (t >= 4095) {
-					p = allocateMemoryWord();
-					mem[p].setlh(11018);
-					mem[p].setrh(curinput.getLoc());
-					curinput.setStart(p);
-					curinput.setLoc(p);
-				}
-			}
-				break;
-			case 107: {
-				r = allocateMemoryWord();
-				p = r;
-				do {
-					getxtoken();
-					if (curcs == 0) {
-						q = allocateMemoryWord();
-						mem[p].setrh(q);
-						mem[q].setlh(curtok);
-						p = q;
+					break;
+				case 103: {
+					savescannerstatus = scannerstatus;
+					scannerstatus = 0;
+					gettoken();
+					scannerstatus = savescannerstatus;
+					t = curtok;
+					unreadToken();
+					if (t >= 4095) {
+						p = allocateMemoryWord();
+						mem[p].setlh(11018);
+						mem[p].setrh(curinput.getLoc());
+						curinput.setStart(p);
+						curinput.setLoc(p);
 					}
-				} while (!(curcs != 0));
-				if (curcmd != 67) {
-					{
-						printnl(262);
-						print(625);
-					}
-					printEscapeSequence(505);
-					print(626);
-					{
-						helpptr = 2;
-						helpline[1] = 627;
-						helpline[0] = 628;
-					}
-					errorLogic.backerror();
 				}
-				j = first;
-				p = mem[r].getrh();
-				while (p != 0) {
-					buffer[j] = mem[p].getlh() % 256;
-					j = j + 1;
-					p = mem[p].getrh();
-				}
-				if (j > first + 1) {
-					nonewcontrolsequence = false;
-					curcs = idlookup(first, j - first);
-					nonewcontrolsequence = true;
-				} else if (j == first) {
-					curcs = 513;
-				} else {
-					curcs = 257 + buffer[first];
-				}
-				flushlist(r);
-				if (eqtb[curcs].getb0() == 101) {
-					eqdefine(curcs, 0, 256);
-				}
-				curtok = curcs + 4095;
-				unreadToken();
-			}
-				break;
-			case 108:
-				convtoks();
-				break;
-			case 109:
-				insthetoks();
-				break;
-			case 105:
-				conditional();
-				break;
-			case 106:
-				if (curchr > iflimit) {
-					if (iflimit == 1) {
-						insertrelax();
-					} else {
+					break;
+				case 107: {
+					r = allocateMemoryWord();
+					p = r;
+					do {
+						getxtoken();
+						if (curcs == 0) {
+							q = allocateMemoryWord();
+							mem[p].setrh(q);
+							mem[q].setlh(curtok);
+							p = q;
+						}
+					} while (!(curcs != 0));
+					if (curcmd != 67) {
 						{
 							printnl(262);
-							print(776);
+							print(625);
 						}
-						printcmdchr(106, curchr);
+						printEscapeSequence(505);
+						print(626);
 						{
-							helpptr = 1;
-							helpline[0] = 777;
+							helpptr = 2;
+							helpline[1] = 627;
+							helpline[0] = 628;
 						}
-						errorLogic.error();
+						errorLogic.backerror();
 					}
-				} else {
-					while (curchr != 2) {
-						passtext();
+					j = first;
+					p = mem[r].getrh();
+					while (p != 0) {
+						buffer[j] = mem[p].getlh() % 256;
+						j = j + 1;
+						p = mem[p].getrh();
+					}
+					if (j > first + 1) {
+						nonewcontrolsequence = false;
+						curcs = idlookup(first, j - first);
+						nonewcontrolsequence = true;
+					} else if (j == first) {
+						curcs = 513;
+					} else {
+						curcs = 257 + buffer[first];
+					}
+					flushlist(r);
+					if (eqtb[curcs].getb0() == 101) {
+						eqdefine(curcs, 0, 256);
+					}
+					curtok = curcs + 4095;
+					unreadToken();
+				}
+					break;
+				case 108:
+					convtoks();
+					break;
+				case 109:
+					insthetoks();
+					break;
+				case 105:
+					conditional();
+					break;
+				case 106:
+					if (curchr > iflimit) {
+						if (iflimit == 1) {
+							insertrelax();
+						} else {
+							{
+								printnl(262);
+								print(776);
+							}
+							printcmdchr(106, curchr);
+							{
+								helpptr = 1;
+								helpline[0] = 777;
+							}
+							errorLogic.error();
+						}
+					} else {
+						while (curchr != 2) {
+							passtext();
+						}
+						{
+							p = condptr;
+							ifline = mem[p + 1].getInt();
+							curif = mem[p].getb1();
+							iflimit = mem[p].getb0();
+							condptr = mem[p].getrh();
+							freenode(p, 2);
+						}
+					}
+					break;
+				case 104:
+					if (curchr > 0) {
+						forceeof = true;
+					} else if (nameinprogress) {
+						insertrelax();
+					} else {
+						startinput();
+					}
+					break;
+				default: {
+					{
+						printnl(262);
+						print(619);
 					}
 					{
-						p = condptr;
-						ifline = mem[p + 1].getInt();
-						curif = mem[p].getb1();
-						iflimit = mem[p].getb0();
-						condptr = mem[p].getrh();
-						freenode(p, 2);
+						helpptr = 5;
+						helpline[4] = 620;
+						helpline[3] = 621;
+						helpline[2] = 622;
+						helpline[1] = 623;
+						helpline[0] = 624;
 					}
+					errorLogic.error();
 				}
-				break;
-			case 104:
-				if (curchr > 0) {
-					forceeof = true;
-				} else if (nameinprogress) {
-					insertrelax();
-				} else {
-					startinput();
-				}
-				break;
-			default: {
-				{
-					printnl(262);
-					print(619);
-				}
-				{
-					helpptr = 5;
-					helpline[4] = 620;
-					helpline[3] = 621;
-					helpline[2] = 622;
-					helpline[1] = 623;
-					helpline[0] = 624;
-				}
-				errorLogic.error();
-			}
-				break;
+					break;
 			}
 		} else if (curcmd < 115) {
 			macrocall();
@@ -3396,7 +3396,7 @@ public final class Tex {
 		int q;
 		p = memtop - 13;
 		mem[p].setrh(0);
-		String s = stringPool.getString(stringId);
+		final String s = stringPool.getString(stringId);
 		int i = 0;
 		while (i < s.length()) {
 			getxtoken();
@@ -3588,91 +3588,274 @@ public final class Tex {
 		int p;
 		m = curchr;
 		switch (curcmd) {
-		case 85: {
-			scancharnum();
-			if (m == 9307) {
-				curval = eqtb[9307 + curval].getrh();
-				curvallevel = 0;
-			} else if (m < 9307) {
-				curval = eqtb[m + curval].getrh();
-				curvallevel = 0;
-			} else {
-				curval = eqtb[m + curval].getInt();
+			case 85: {
+				scancharnum();
+				if (m == 9307) {
+					curval = eqtb[9307 + curval].getrh();
+					curvallevel = 0;
+				} else if (m < 9307) {
+					curval = eqtb[m + curval].getrh();
+					curvallevel = 0;
+				} else {
+					curval = eqtb[m + curval].getInt();
+					curvallevel = 0;
+				}
+			}
+				break;
+			case 71:
+			case 72:
+			case 86:
+			case 87:
+			case 88:
+				if (level != 5) {
+					{
+						printnl(262);
+						print(664);
+					}
+					{
+						helpptr = 3;
+						helpline[2] = 665;
+						helpline[1] = 666;
+						helpline[0] = 667;
+					}
+					errorLogic.backerror();
+					{
+						curval = 0;
+						curvallevel = 1;
+					}
+				} else if (curcmd <= 72) {
+					if (curcmd < 72) {
+						scaneightbitint();
+						m = 7722 + curval;
+					}
+					{
+						curval = eqtb[m].getrh();
+						curvallevel = 5;
+					}
+				} else {
+					unreadToken();
+					scanfontident();
+					{
+						curval = 6924 + curval;
+						curvallevel = 4;
+					}
+				}
+				break;
+			case 73: {
+				curval = eqtb[m].getInt();
 				curvallevel = 0;
 			}
-		}
-			break;
-		case 71:
-		case 72:
-		case 86:
-		case 87:
-		case 88:
-			if (level != 5) {
-				{
-					printnl(262);
-					print(664);
+				break;
+			case 74: {
+				curval = eqtb[m].getInt();
+				curvallevel = 1;
+			}
+				break;
+			case 75: {
+				curval = eqtb[m].getrh();
+				curvallevel = 2;
+			}
+				break;
+			case 76: {
+				curval = eqtb[m].getrh();
+				curvallevel = 3;
+			}
+				break;
+			case 79:
+				if (Math.abs(curlist.modefield) != m) {
+					{
+						printnl(262);
+						print(680);
+					}
+					printcmdchr(79, m);
+					{
+						helpptr = 4;
+						helpline[3] = 681;
+						helpline[2] = 682;
+						helpline[1] = 683;
+						helpline[0] = 684;
+					}
+					errorLogic.error();
+					if (level != 5) {
+						curval = 0;
+						curvallevel = 1;
+					} else {
+						curval = 0;
+						curvallevel = 0;
+					}
+				} else if (m == 1) {
+					curval = curlist.auxfield.getInt();
+					curvallevel = 1;
+				} else {
+					curval = curlist.auxfield.getlh();
+					curvallevel = 0;
 				}
-				{
-					helpptr = 3;
-					helpline[2] = 665;
-					helpline[1] = 666;
-					helpline[0] = 667;
-				}
-				errorLogic.backerror();
-				{
+				break;
+			case 80:
+				if (curlist.modefield == 0) {
 					curval = 0;
+					curvallevel = 0;
+				} else {
+					nest[nestptr].copy(curlist);
+					p = nestptr;
+					while (Math.abs(nest[p].modefield) != 1) {
+						p = p - 1;
+					}
+					{
+						curval = nest[p].pgfield;
+						curvallevel = 0;
+					}
+				}
+				break;
+			case 82: {
+				if (m == 0) {
+					curval = deadcycles;
+				} else {
+					curval = insertpenalties;
+				}
+				curvallevel = 0;
+			}
+				break;
+			case 81: {
+				if ((pagecontents == 0) && (!outputactive)) {
+					if (m == 0) {
+						curval = 1073741823;
+					} else {
+						curval = 0;
+					}
+				} else {
+					curval = pagesofar[m];
+				}
+				curvallevel = 1;
+			}
+				break;
+			case 84: {
+				if (eqtb[7712].getrh() == 0) {
+					curval = 0;
+				} else {
+					curval = mem[eqtb[7712].getrh()].getlh();
+				}
+				curvallevel = 0;
+			}
+				break;
+			case 83: {
+				scaneightbitint();
+				if (eqtb[7978 + curval].getrh() == 0) {
+					curval = 0;
+				} else {
+					curval = mem[eqtb[7978 + curval].getrh() + m].getInt();
+				}
+				curvallevel = 1;
+			}
+				break;
+			case 68:
+			case 69: {
+				curval = curchr;
+				curvallevel = 0;
+			}
+				break;
+			case 77: {
+				findfontdimen(false);
+				fontinfo[fmemptr].setInt(0);
+				{
+					curval = fontinfo[curval].getInt();
 					curvallevel = 1;
 				}
-			} else if (curcmd <= 72) {
-				if (curcmd < 72) {
-					scaneightbitint();
-					m = 7722 + curval;
-				}
-				{
-					curval = eqtb[m].getrh();
-					curvallevel = 5;
-				}
-			} else {
-				unreadToken();
+			}
+				break;
+			case 78: {
 				scanfontident();
-				{
-					curval = 6924 + curval;
-					curvallevel = 4;
+				if (m == 0) {
+					curval = hyphenchar[curval];
+					curvallevel = 0;
+				} else {
+					curval = skewchar[curval];
+					curvallevel = 0;
 				}
 			}
-			break;
-		case 73: {
-			curval = eqtb[m].getInt();
-			curvallevel = 0;
-		}
-			break;
-		case 74: {
-			curval = eqtb[m].getInt();
-			curvallevel = 1;
-		}
-			break;
-		case 75: {
-			curval = eqtb[m].getrh();
-			curvallevel = 2;
-		}
-			break;
-		case 76: {
-			curval = eqtb[m].getrh();
-			curvallevel = 3;
-		}
-			break;
-		case 79:
-			if (Math.abs(curlist.modefield) != m) {
+				break;
+			case 89: {
+				scaneightbitint();
+				switch (m) {
+					case 0:
+						curval = eqtb[9618 + curval].getInt();
+						break;
+					case 1:
+						curval = eqtb[10151 + curval].getInt();
+						break;
+					case 2:
+						curval = eqtb[7200 + curval].getrh();
+						break;
+					case 3:
+						curval = eqtb[7456 + curval].getrh();
+						break;
+				}
+				curvallevel = m;
+			}
+				break;
+			case 70:
+				if (curchr > 2) {
+					if (curchr == 3) {
+						curval = line;
+					} else {
+						curval = lastbadness;
+					}
+					curvallevel = 0;
+				} else {
+					if (curchr == 2) {
+						curval = 0;
+					} else {
+						curval = 0;
+					}
+					curvallevel = curchr;
+					if (!(curlist.tailfield >= himemmin) && (curlist.modefield != 0)) {
+						switch (curchr) {
+							case 0:
+								if (mem[curlist.tailfield].getb0() == 12) {
+									curval = mem[curlist.tailfield + 1].getInt();
+								}
+								break;
+							case 1:
+								if (mem[curlist.tailfield].getb0() == 11) {
+									curval = mem[curlist.tailfield + 1].getInt();
+								}
+								break;
+							case 2:
+								if (mem[curlist.tailfield].getb0() == 10) {
+									curval = mem[curlist.tailfield + 1].getlh();
+									if (mem[curlist.tailfield].getb1() == 99) {
+										curvallevel = 3;
+									}
+								}
+								break;
+						}
+					} else if ((curlist.modefield == 1) && (curlist.tailfield == curlist.headfield)) {
+						switch (curchr) {
+							case 0:
+								curval = lastpenalty;
+								break;
+							case 1:
+								curval = lastkern;
+								break;
+							case 2:
+								if (lastglue != maxhalfword) {
+									curval = lastglue;
+								}
+								break;
+						}
+					}
+				}
+				break;
+			default: {
 				{
 					printnl(262);
-					print(680);
+					print(685);
 				}
-				printcmdchr(79, m);
+				printcmdchr(curcmd, curchr);
+				print(686);
+				printEscapeSequence(537);
 				{
-					helpptr = 4;
-					helpline[3] = 681;
-					helpline[2] = 682;
-					helpline[1] = 683;
+					helpptr = 1;
 					helpline[0] = 684;
 				}
 				errorLogic.error();
@@ -3683,191 +3866,8 @@ public final class Tex {
 					curval = 0;
 					curvallevel = 0;
 				}
-			} else if (m == 1) {
-				curval = curlist.auxfield.getInt();
-				curvallevel = 1;
-			} else {
-				curval = curlist.auxfield.getlh();
-				curvallevel = 0;
 			}
-			break;
-		case 80:
-			if (curlist.modefield == 0) {
-				curval = 0;
-				curvallevel = 0;
-			} else {
-				nest[nestptr].copy(curlist);
-				p = nestptr;
-				while (Math.abs(nest[p].modefield) != 1) {
-					p = p - 1;
-				}
-				{
-					curval = nest[p].pgfield;
-					curvallevel = 0;
-				}
-			}
-			break;
-		case 82: {
-			if (m == 0) {
-				curval = deadcycles;
-			} else {
-				curval = insertpenalties;
-			}
-			curvallevel = 0;
-		}
-			break;
-		case 81: {
-			if ((pagecontents == 0) && (!outputactive)) {
-				if (m == 0) {
-					curval = 1073741823;
-				} else {
-					curval = 0;
-				}
-			} else {
-				curval = pagesofar[m];
-			}
-			curvallevel = 1;
-		}
-			break;
-		case 84: {
-			if (eqtb[7712].getrh() == 0) {
-				curval = 0;
-			} else {
-				curval = mem[eqtb[7712].getrh()].getlh();
-			}
-			curvallevel = 0;
-		}
-			break;
-		case 83: {
-			scaneightbitint();
-			if (eqtb[7978 + curval].getrh() == 0) {
-				curval = 0;
-			} else {
-				curval = mem[eqtb[7978 + curval].getrh() + m].getInt();
-			}
-			curvallevel = 1;
-		}
-			break;
-		case 68:
-		case 69: {
-			curval = curchr;
-			curvallevel = 0;
-		}
-			break;
-		case 77: {
-			findfontdimen(false);
-			fontinfo[fmemptr].setInt(0);
-			{
-				curval = fontinfo[curval].getInt();
-				curvallevel = 1;
-			}
-		}
-			break;
-		case 78: {
-			scanfontident();
-			if (m == 0) {
-				curval = hyphenchar[curval];
-				curvallevel = 0;
-			} else {
-				curval = skewchar[curval];
-				curvallevel = 0;
-			}
-		}
-			break;
-		case 89: {
-			scaneightbitint();
-			switch (m) {
-			case 0:
-				curval = eqtb[9618 + curval].getInt();
 				break;
-			case 1:
-				curval = eqtb[10151 + curval].getInt();
-				break;
-			case 2:
-				curval = eqtb[7200 + curval].getrh();
-				break;
-			case 3:
-				curval = eqtb[7456 + curval].getrh();
-				break;
-			}
-			curvallevel = m;
-		}
-			break;
-		case 70:
-			if (curchr > 2) {
-				if (curchr == 3) {
-					curval = line;
-				} else {
-					curval = lastbadness;
-				}
-				curvallevel = 0;
-			} else {
-				if (curchr == 2) {
-					curval = 0;
-				} else {
-					curval = 0;
-				}
-				curvallevel = curchr;
-				if (!(curlist.tailfield >= himemmin) && (curlist.modefield != 0)) {
-					switch (curchr) {
-					case 0:
-						if (mem[curlist.tailfield].getb0() == 12) {
-							curval = mem[curlist.tailfield + 1].getInt();
-						}
-						break;
-					case 1:
-						if (mem[curlist.tailfield].getb0() == 11) {
-							curval = mem[curlist.tailfield + 1].getInt();
-						}
-						break;
-					case 2:
-						if (mem[curlist.tailfield].getb0() == 10) {
-							curval = mem[curlist.tailfield + 1].getlh();
-							if (mem[curlist.tailfield].getb1() == 99) {
-								curvallevel = 3;
-							}
-						}
-						break;
-					}
-				} else if ((curlist.modefield == 1) && (curlist.tailfield == curlist.headfield)) {
-					switch (curchr) {
-					case 0:
-						curval = lastpenalty;
-						break;
-					case 1:
-						curval = lastkern;
-						break;
-					case 2:
-						if (lastglue != maxhalfword) {
-							curval = lastglue;
-						}
-						break;
-					}
-				}
-			}
-			break;
-		default: {
-			{
-				printnl(262);
-				print(685);
-			}
-			printcmdchr(curcmd, curchr);
-			print(686);
-			printEscapeSequence(537);
-			{
-				helpptr = 1;
-				helpline[0] = 684;
-			}
-			errorLogic.error();
-			if (level != 5) {
-				curval = 0;
-				curvallevel = 1;
-			} else {
-				curval = 0;
-				curvallevel = 0;
-			}
-		}
-			break;
 		}
 		while (curvallevel > level) {
 			if (curvallevel == 2) {
@@ -4273,7 +4273,7 @@ public final class Tex {
 				}
 				break;
 			}
-			/* lab30: */{
+			/* lab30: */ {
 				getxtoken();
 				if (curcmd != 10) {
 					unreadToken();
@@ -4382,10 +4382,10 @@ public final class Tex {
 		return Result;
 	}
 
-	int strtoks(String s) {
+	int strtoks(final String s) {
 		int p = memtop - 3;
 		mem[p].setrh(0);
-		for (int i=0; i<s.length(); i++) {
+		for (int i = 0; i < s.length(); i++) {
 			int t = s.charAt(i);
 			if (t == 32) {
 				t = 2592;
@@ -4404,8 +4404,8 @@ public final class Tex {
 			p = q;
 		}
 		return p;
-	}	
-	
+	}
+
 	int thetoks() {
 		int oldsetting;
 		int p, q, r;
@@ -4443,27 +4443,27 @@ public final class Tex {
 		} else {
 			oldsetting = selector;
 			selector = 21;
-			StringBuilder builder = new StringBuilder();
+			final StringBuilder builder = new StringBuilder();
 			stringPool.setInterceptingStringBuilder(builder);
 			switch (curvallevel) {
-			case 0:
-				printInt(curval);
-				break;
-			case 1: {
-				printFixed(curval);
-				print(397);
-			}
-				break;
-			case 2: {
-				printspec(curval, 397);
-				deleteglueref(curval);
-			}
-				break;
-			case 3: {
-				printspec(curval, 337);
-				deleteglueref(curval);
-			}
-				break;
+				case 0:
+					printInt(curval);
+					break;
+				case 1: {
+					printFixed(curval);
+					print(397);
+				}
+					break;
+				case 2: {
+					printspec(curval, 397);
+					deleteglueref(curval);
+				}
+					break;
+				case 3: {
+					printspec(curval, 337);
+					deleteglueref(curval);
+				}
+					break;
 			}
 			selector = oldsetting;
 			stringPool.setInterceptingStringBuilder(null);
@@ -4482,57 +4482,57 @@ public final class Tex {
 		int savescannerstatus;
 		c = curchr;
 		switch (c) {
-		case 0:
-		case 1:
-			scanint();
-			break;
-		case 2:
-		case 3: {
-			savescannerstatus = scannerstatus;
-			scannerstatus = 0;
-			gettoken();
-			scannerstatus = savescannerstatus;
-		}
-			break;
-		case 4:
-			scanfontident();
-			break;
-		case 5:
-			break;
+			case 0:
+			case 1:
+				scanint();
+				break;
+			case 2:
+			case 3: {
+				savescannerstatus = scannerstatus;
+				scannerstatus = 0;
+				gettoken();
+				scannerstatus = savescannerstatus;
+			}
+				break;
+			case 4:
+				scanfontident();
+				break;
+			case 5:
+				break;
 		}
 		oldsetting = selector;
 		selector = 21;
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		stringPool.setInterceptingStringBuilder(builder);
 		switch (c) {
-		case 0:
-			printInt(curval);
-			break;
-		case 1:
-			printromanint(curval);
-			break;
-		case 2:
-			if (curcs != 0) {
-				sprintcs(curcs);
-			} else {
-				printchar(curchr);
+			case 0:
+				printInt(curval);
+				break;
+			case 1:
+				printromanint(curval);
+				break;
+			case 2:
+				if (curcs != 0) {
+					sprintcs(curcs);
+				} else {
+					printchar(curchr);
+				}
+				break;
+			case 3:
+				printmeaning();
+				break;
+			case 4: {
+				print(fontname[curval]);
+				if (fontsize[curval] != fontdsize[curval]) {
+					print(741);
+					printFixed(fontsize[curval]);
+					print(397);
+				}
 			}
-			break;
-		case 3:
-			printmeaning();
-			break;
-		case 4: {
-			print(fontname[curval]);
-			if (fontsize[curval] != fontdsize[curval]) {
-				print(741);
-				printFixed(fontsize[curval]);
-				print(397);
-			}
-		}
-			break;
-		case 5:
-			print(jobname);
-			break;
+				break;
+			case 5:
+				print(jobname);
+				break;
 		}
 		selector = oldsetting;
 		stringPool.setInterceptingStringBuilder(null);
@@ -4621,7 +4621,7 @@ public final class Tex {
 								p = q;
 							}
 						}
-						/* lab31: */{
+						/* lab31: */ {
 							q = allocateMemoryWord();
 							mem[p].setrh(q);
 							mem[q].setlh(3584);
@@ -4882,194 +4882,194 @@ public final class Tex {
 		thisif = curchr;
 		lab50: while (true) {
 			switch (thisif) {
-			case 0:
-			case 1: {
-				{
-					getxtoken();
-					if (curcmd == 0) {
-						if (curchr == 257) {
-							curcmd = 13;
-							curchr = curtok - 4096;
-						}
-					}
-				}
-				if ((curcmd > 13) || (curchr > 255)) {
-					m = 0;
-					n = 256;
-				} else {
-					m = curcmd;
-					n = curchr;
-				}
-				{
-					getxtoken();
-					if (curcmd == 0) {
-						if (curchr == 257) {
-							curcmd = 13;
-							curchr = curtok - 4096;
-						}
-					}
-				}
-				if ((curcmd > 13) || (curchr > 255)) {
-					curcmd = 0;
-					curchr = 256;
-				}
-				if (thisif == 0) {
-					b = (n == curchr);
-				} else {
-					b = (m == curcmd);
-				}
-			}
-				break;
-			case 2:
-			case 3: {
-				if (thisif == 2) {
-					scanint();
-				} else {
-					scandimen(false, false, false);
-				}
-				n = curval;
-				do {
-					getxtoken();
-				} while (!(curcmd != 10));
-				if ((curtok >= 3132) && (curtok <= 3134)) {
-					r = curtok - 3072;
-				} else {
+				case 0:
+				case 1: {
 					{
-						printnl(262);
-						print(780);
-					}
-					printcmdchr(105, thisif);
-					{
-						helpptr = 1;
-						helpline[0] = 781;
-					}
-					errorLogic.backerror();
-					r = 61;
-				}
-				if (thisif == 2) {
-					scanint();
-				} else {
-					scandimen(false, false, false);
-				}
-				switch (r) {
-				case 60:
-					b = (n < curval);
-					break;
-				case 61:
-					b = (n == curval);
-					break;
-				case 62:
-					b = (n > curval);
-					break;
-				}
-			}
-				break;
-			case 4: {
-				scanint();
-				b = ((curval) % 2 == 1);
-			}
-				break;
-			case 5:
-				b = (Math.abs(curlist.modefield) == 1);
-				break;
-			case 6:
-				b = (Math.abs(curlist.modefield) == 102);
-				break;
-			case 7:
-				b = (Math.abs(curlist.modefield) == 203);
-				break;
-			case 8:
-				b = (curlist.modefield < 0);
-				break;
-			case 9:
-			case 10:
-			case 11: {
-				scaneightbitint();
-				p = eqtb[7978 + curval].getrh();
-				if (thisif == 9) {
-					b = (p == 0);
-				} else if (p == 0) {
-					b = false;
-				} else if (thisif == 10) {
-					b = (mem[p].getb0() == 0);
-				} else {
-					b = (mem[p].getb0() == 1);
-				}
-			}
-				break;
-			case 12: {
-				savescannerstatus = scannerstatus;
-				scannerstatus = 0;
-				getnext();
-				n = curcs;
-				p = curcmd;
-				q = curchr;
-				getnext();
-				if (curcmd != p) {
-					b = false;
-				} else if (curcmd < 111) {
-					b = (curchr == q);
-				} else {
-					p = mem[curchr].getrh();
-					q = mem[eqtb[n].getrh()].getrh();
-					if (p == q) {
-						b = true;
-					} else {
-						while ((p != 0) && (q != 0)) {
-							if (mem[p].getlh() != mem[q].getlh()) {
-								p = 0;
-							} else {
-								p = mem[p].getrh();
-								q = mem[q].getrh();
+						getxtoken();
+						if (curcmd == 0) {
+							if (curchr == 257) {
+								curcmd = 13;
+								curchr = curtok - 4096;
 							}
 						}
-						b = ((p == 0) && (q == 0));
 					}
-				}
-				scannerstatus = savescannerstatus;
-			}
-				break;
-			case 13: {
-				scanfourbitint();
-				b = (readopen[curval] == 2);
-			}
-				break;
-			case 14:
-				b = true;
-				break;
-			case 15:
-				b = false;
-				break;
-			case 16: {
-				scanint();
-				n = curval;
-				if (eqtb[9599].getInt() > 1) {
-					begindiagnostic();
-					print(782);
-					printInt(n);
-					printchar(125);
-					enddiagnostic(false);
-				}
-				while (n != 0) {
-					passtext();
-					if (condptr == savecondptr) {
-						if (curchr == 4) {
-							n = n - 1;
-						} else {
-							break lab50;
+					if ((curcmd > 13) || (curchr > 255)) {
+						m = 0;
+						n = 256;
+					} else {
+						m = curcmd;
+						n = curchr;
+					}
+					{
+						getxtoken();
+						if (curcmd == 0) {
+							if (curchr == 257) {
+								curcmd = 13;
+								curchr = curtok - 4096;
+							}
 						}
-					} else if (curchr == 2) {
-						p = condptr;
-						ifline = mem[p + 1].getInt();
-						curif = mem[p].getb1();
-						iflimit = mem[p].getb0();
-						condptr = mem[p].getrh();
-						freenode(p, 2);
+					}
+					if ((curcmd > 13) || (curchr > 255)) {
+						curcmd = 0;
+						curchr = 256;
+					}
+					if (thisif == 0) {
+						b = (n == curchr);
+					} else {
+						b = (m == curcmd);
 					}
 				}
-				changeiflimit(4, savecondptr);
-				return /* lab10 */;
-			}
+					break;
+				case 2:
+				case 3: {
+					if (thisif == 2) {
+						scanint();
+					} else {
+						scandimen(false, false, false);
+					}
+					n = curval;
+					do {
+						getxtoken();
+					} while (!(curcmd != 10));
+					if ((curtok >= 3132) && (curtok <= 3134)) {
+						r = curtok - 3072;
+					} else {
+						{
+							printnl(262);
+							print(780);
+						}
+						printcmdchr(105, thisif);
+						{
+							helpptr = 1;
+							helpline[0] = 781;
+						}
+						errorLogic.backerror();
+						r = 61;
+					}
+					if (thisif == 2) {
+						scanint();
+					} else {
+						scandimen(false, false, false);
+					}
+					switch (r) {
+						case 60:
+							b = (n < curval);
+							break;
+						case 61:
+							b = (n == curval);
+							break;
+						case 62:
+							b = (n > curval);
+							break;
+					}
+				}
+					break;
+				case 4: {
+					scanint();
+					b = ((curval) % 2 == 1);
+				}
+					break;
+				case 5:
+					b = (Math.abs(curlist.modefield) == 1);
+					break;
+				case 6:
+					b = (Math.abs(curlist.modefield) == 102);
+					break;
+				case 7:
+					b = (Math.abs(curlist.modefield) == 203);
+					break;
+				case 8:
+					b = (curlist.modefield < 0);
+					break;
+				case 9:
+				case 10:
+				case 11: {
+					scaneightbitint();
+					p = eqtb[7978 + curval].getrh();
+					if (thisif == 9) {
+						b = (p == 0);
+					} else if (p == 0) {
+						b = false;
+					} else if (thisif == 10) {
+						b = (mem[p].getb0() == 0);
+					} else {
+						b = (mem[p].getb0() == 1);
+					}
+				}
+					break;
+				case 12: {
+					savescannerstatus = scannerstatus;
+					scannerstatus = 0;
+					getnext();
+					n = curcs;
+					p = curcmd;
+					q = curchr;
+					getnext();
+					if (curcmd != p) {
+						b = false;
+					} else if (curcmd < 111) {
+						b = (curchr == q);
+					} else {
+						p = mem[curchr].getrh();
+						q = mem[eqtb[n].getrh()].getrh();
+						if (p == q) {
+							b = true;
+						} else {
+							while ((p != 0) && (q != 0)) {
+								if (mem[p].getlh() != mem[q].getlh()) {
+									p = 0;
+								} else {
+									p = mem[p].getrh();
+									q = mem[q].getrh();
+								}
+							}
+							b = ((p == 0) && (q == 0));
+						}
+					}
+					scannerstatus = savescannerstatus;
+				}
+					break;
+				case 13: {
+					scanfourbitint();
+					b = (readopen[curval] == 2);
+				}
+					break;
+				case 14:
+					b = true;
+					break;
+				case 15:
+					b = false;
+					break;
+				case 16: {
+					scanint();
+					n = curval;
+					if (eqtb[9599].getInt() > 1) {
+						begindiagnostic();
+						print(782);
+						printInt(n);
+						printchar(125);
+						enddiagnostic(false);
+					}
+					while (n != 0) {
+						passtext();
+						if (condptr == savecondptr) {
+							if (curchr == 4) {
+								n = n - 1;
+							} else {
+								break lab50;
+							}
+						} else if (curchr == 2) {
+							p = condptr;
+							ifline = mem[p + 1].getInt();
+							curif = mem[p].getb1();
+							iflimit = mem[p].getb0();
+							condptr = mem[p].getrh();
+							freenode(p, 2);
+						}
+					}
+					changeiflimit(4, savecondptr);
+					return /* lab10 */;
+				}
 			}
 			if (eqtb[9599].getInt() > 1) {
 				begindiagnostic();
@@ -5171,7 +5171,7 @@ public final class Tex {
 	void packbufferedname(final int n, final int a, int b) {
 		int j;
 		final StringBuilder strbuf = new StringBuilder();
-		String plainFmt = "TEXFORMATS:plain.fmt";
+		final String plainFmt = "TEXFORMATS:plain.fmt";
 		if (n + b - a + 5 > filenamesize) {
 			b = a + filenamesize - n - 5;
 		}
@@ -5187,7 +5187,7 @@ public final class Tex {
 	}
 
 	int makenamestring() {
-		if ((strptr == maxstrings) || ((poolptr - strstart[strptr]) > 0)) {
+		if (strptr == maxstrings || stringPool.getBuiltLength() > 0) {
 			return 63;
 		} else {
 			for (int k = 0; k <= namelength - 1; k++) {
@@ -5308,10 +5308,7 @@ public final class Tex {
 		termout.flush();
 		curinput.setState(TOKENIZER_STATE_NEW_LINE);
 		if (curinput.getName() == strptr - 1) {
-			{
-				strptr = strptr - 1;
-				poolptr = strstart[strptr];
-			}
+			stringPool.unmakeString();
 			curinput.setName(curname);
 		}
 		{
@@ -5541,40 +5538,40 @@ public final class Tex {
 							break lab11;
 						}
 						switch (c % 4) {
-						case 1:
-							if (d >= nl) {
-								break lab11;
-							}
-							break;
-						case 3:
-							if (d >= ne) {
-								break lab11;
-							}
-							break;
-						case 2: {
-							{
-								if ((d < bc) || (d > ec)) {
-									break lab11;
-								}
-							}
-							lab45: while (true) {
-								while (d < k + bc - fmemptr) {
-									qw.copy(fontinfo[charbase[f] + d].qqqq());
-									if (((qw.b2) % 4) != 2) {
-										break lab45;
-									}
-									d = qw.b3;
-								}
-								if (d == k + bc - fmemptr) {
+							case 1:
+								if (d >= nl) {
 									break lab11;
 								}
 								break;
-							}
-							/* lab45: */}
-							break;
-						default:
-							;
-							break;
+							case 3:
+								if (d >= ne) {
+									break lab11;
+								}
+								break;
+							case 2: {
+								{
+									if ((d < bc) || (d > ec)) {
+										break lab11;
+									}
+								}
+								lab45: while (true) {
+									while (d < k + bc - fmemptr) {
+										qw.copy(fontinfo[charbase[f] + d].qqqq());
+										if (((qw.b2) % 4) != 2) {
+											break lab45;
+										}
+										d = qw.b3;
+									}
+									if (d == k + bc - fmemptr) {
+										break lab11;
+									}
+									break;
+								}
+								/* lab45: */}
+								break;
+							default:
+								;
+								break;
 						}
 					}
 					{
@@ -5915,11 +5912,13 @@ public final class Tex {
 		dviWriter.writeInt(fontdsize[f]);
 		dviWriter.writeByte(strstart[fontarea[f] + 1] - strstart[fontarea[f]]);
 		dviWriter.writeByte(strstart[fontname[f] + 1] - strstart[fontname[f]]);
-		for (int k = strstart[fontarea[f]]; k <= strstart[fontarea[f] + 1] - 1; k++) {
-			dviWriter.writeByte(strpool[k]);
-		}
-		for (int k = strstart[fontname[f]]; k <= strstart[fontname[f] + 1] - 1; k++) {
-			dviWriter.writeByte(strpool[k]);
+		dviWriteStringBytes(stringPool.getString(fontarea[f]));
+		dviWriteStringBytes(stringPool.getString(fontname[f]));
+	}
+
+	void dviWriteStringBytes(final String s) {
+		for (int i = 0; i < s.length(); i++) {
+			dviWriter.writeByte(s.charAt(i));
 		}
 	}
 
@@ -5943,58 +5942,58 @@ public final class Tex {
 			lab45: while (p != 0) {
 				if (mem[p + 1].getInt() == w) {
 					switch (mstate + mem[p].getlh()) {
-					case 3:
-					case 4:
-					case 15:
-					case 16:
-						if (mem[p + 2].getInt() < dvigone) {
-							break lab45;
-						} else {
-							k = mem[p + 2].getInt() - dvioffset;
-							if (k < 0) {
-								k = k + dvibufsize;
+						case 3:
+						case 4:
+						case 15:
+						case 16:
+							if (mem[p + 2].getInt() < dvigone) {
+								break lab45;
+							} else {
+								k = mem[p + 2].getInt() - dvioffset;
+								if (k < 0) {
+									k = k + dvibufsize;
+								}
+								dvibuf[k] = dvibuf[k] + 5;
+								mem[p].setlh(1);
+								break lab40;
 							}
-							dvibuf[k] = dvibuf[k] + 5;
-							mem[p].setlh(1);
-							break lab40;
-						}
-					case 5:
-					case 9:
-					case 11:
-						if (mem[p + 2].getInt() < dvigone) {
-							break lab45;
-						} else {
-							k = mem[p + 2].getInt() - dvioffset;
-							if (k < 0) {
-								k = k + dvibufsize;
+						case 5:
+						case 9:
+						case 11:
+							if (mem[p + 2].getInt() < dvigone) {
+								break lab45;
+							} else {
+								k = mem[p + 2].getInt() - dvioffset;
+								if (k < 0) {
+									k = k + dvibufsize;
+								}
+								dvibuf[k] = dvibuf[k] + 10;
+								mem[p].setlh(2);
+								break lab40;
 							}
-							dvibuf[k] = dvibuf[k] + 10;
-							mem[p].setlh(2);
+						case 1:
+						case 2:
+						case 8:
+						case 13:
 							break lab40;
-						}
-					case 1:
-					case 2:
-					case 8:
-					case 13:
-						break lab40;
-					default:
-						;
-						break;
+						default:
+							;
+							break;
 					}
 				} else {
 					switch (mstate + mem[p].getlh()) {
-					case 1:
-						mstate = 6;
-						break;
-					case 2:
-						mstate = 12;
-						break;
-					case 8:
-					case 13:
-						break lab45;
-					default:
-						;
-						break;
+						case 1:
+							mstate = 6;
+							break;
+						case 2:
+							mstate = 12;
+							break;
+						case 8:
+						case 13:
+							break lab45;
+						default:
+							;
+							break;
 					}
 				}
 				p = mem[p].getrh();
@@ -6039,15 +6038,15 @@ public final class Tex {
 			while (mem[q].getrh() != p) {
 				q = mem[q].getrh();
 				switch (mem[q].getlh()) {
-				case 3:
-					mem[q].setlh(5);
-					break;
-				case 4:
-					mem[q].setlh(6);
-					break;
-				default:
-					;
-					break;
+					case 3:
+						mem[q].setlh(5);
+						break;
+					case 4:
+						mem[q].setlh(6);
+						break;
+					default:
+						;
+						break;
 				}
 			}
 		} else {
@@ -6055,15 +6054,15 @@ public final class Tex {
 			while (mem[q].getrh() != p) {
 				q = mem[q].getrh();
 				switch (mem[q].getlh()) {
-				case 3:
-					mem[q].setlh(4);
-					break;
-				case 5:
-					mem[q].setlh(6);
-					break;
-				default:
-					;
-					break;
+					case 3:
+						mem[q].setlh(4);
+						break;
+					case 5:
+						mem[q].setlh(6);
+						break;
+					default:
+						;
+						break;
 				}
 			}
 		}
@@ -6091,7 +6090,6 @@ public final class Tex {
 
 	void specialout(final int p) {
 		int oldsetting;
-		int k;
 		if (curh != dvih) {
 			movement(curh - dvih, 143);
 			dvih = curh;
@@ -6104,17 +6102,17 @@ public final class Tex {
 		selector = 21;
 		showtokenlist(mem[mem[p + 1].getrh()].getrh(), 0, Integer.MAX_VALUE);
 		selector = oldsetting;
-		if ((poolptr - strstart[strptr]) < 256) {
+		final String s = stringPool.extractPartiallyBuiltString(true);
+		if (s.length() < 256) {
 			dviWriter.writeByte(239);
-			dviWriter.writeByte(poolptr - strstart[strptr]);
+			dviWriter.writeByte(s.length());
 		} else {
 			dviWriter.writeByte(242);
-			dviWriter.writeInt((poolptr - strstart[strptr]));
+			dviWriter.writeInt(s.length());
 		}
-		for (k = strstart[strptr]; k <= poolptr - 1; k++) {
-			dviWriter.writeByte(strpool[k]);
+		for (int i = 0; i < s.length(); i++) {
+			dviWriter.writeByte(s.charAt(i));
 		}
-		poolptr = strstart[strptr];
 	}
 
 	void writeout(final int p) {
@@ -6173,46 +6171,46 @@ public final class Tex {
 	void outwhat(final int p) {
 		int j;
 		switch (mem[p].getb1()) {
-		case 0:
-		case 1:
-		case 2:
-			if (!doingleaders) {
-				j = mem[p + 1].getlh();
-				if (mem[p].getb1() == 1) {
-					writeout(p);
-				} else {
-					if (writeopen[j]) {
-						writefile[j].close();
-					}
-					if (mem[p].getb1() == 2) {
-						writeopen[j] = false;
-					} else if (j < 16) {
-						curname = mem[p + 1].getrh();
-						curarea = mem[p + 2].getlh();
-						curext = mem[p + 2].getrh();
-						if (curext == 338) {
-							curext = 791;
+			case 0:
+			case 1:
+			case 2:
+				if (!doingleaders) {
+					j = mem[p + 1].getlh();
+					if (mem[p].getb1() == 1) {
+						writeout(p);
+					} else {
+						if (writeopen[j]) {
+							writefile[j].close();
 						}
-						packfilename(curname, curarea, curext);
-						try {
-							writefile[j] = new TexFilePrintWriter(nameoffile);
-						} catch (final IOException e) {
-							throw new RuntimeException(e);
+						if (mem[p].getb1() == 2) {
+							writeopen[j] = false;
+						} else if (j < 16) {
+							curname = mem[p + 1].getrh();
+							curarea = mem[p + 2].getlh();
+							curext = mem[p + 2].getrh();
+							if (curext == 338) {
+								curext = 791;
+							}
+							packfilename(curname, curarea, curext);
+							try {
+								writefile[j] = new TexFilePrintWriter(nameoffile);
+							} catch (final IOException e) {
+								throw new RuntimeException(e);
+							}
+							writeopen[j] = true;
 						}
-						writeopen[j] = true;
 					}
 				}
-			}
-			break;
-		case 3:
-			specialout(p);
-			break;
-		case 4:
-			;
-			break;
-		default:
-			errorLogic.confusion(1299);
-			break;
+				break;
+			case 3:
+				specialout(p);
+				break;
+			case 4:
+				;
+				break;
+			default:
+				errorLogic.confusion(1299);
+				break;
 		}
 	}
 
@@ -6285,133 +6283,133 @@ public final class Tex {
 						lab13: while (true) {
 							lab14: while (true) {
 								switch (mem[p].getb0()) {
-								case 0:
-								case 1:
-									if (mem[p + 5].getrh() == 0) {
-										curh = curh + mem[p + 1].getInt();
-									} else {
-										saveh = dvih;
-										savev = dviv;
-										curv = baseline + mem[p + 4].getInt();
-										tempptr = p;
-										edge = curh;
-										if (mem[p].getb0() == 1) {
-											vlistout();
+									case 0:
+									case 1:
+										if (mem[p + 5].getrh() == 0) {
+											curh = curh + mem[p + 1].getInt();
 										} else {
-											hlistout();
+											saveh = dvih;
+											savev = dviv;
+											curv = baseline + mem[p + 4].getInt();
+											tempptr = p;
+											edge = curh;
+											if (mem[p].getb0() == 1) {
+												vlistout();
+											} else {
+												hlistout();
+											}
+											dvih = saveh;
+											dviv = savev;
+											curh = edge + mem[p + 1].getInt();
+											curv = baseline;
 										}
-										dvih = saveh;
-										dviv = savev;
-										curh = edge + mem[p + 1].getInt();
-										curv = baseline;
+										break;
+									case 2: {
+										ruleht = mem[p + 3].getInt();
+										ruledp = mem[p + 2].getInt();
+										rulewd = mem[p + 1].getInt();
+										break lab14;
 									}
-									break;
-								case 2: {
-									ruleht = mem[p + 3].getInt();
-									ruledp = mem[p + 2].getInt();
-									rulewd = mem[p + 1].getInt();
-									break lab14;
-								}
-								case 8:
-									outwhat(p);
-									break;
-								case 10: {
-									int g = mem[p + 1].getlh();
-									rulewd = mem[g + 1].getInt();
-									if (gsign != 0) {
-										if (gsign == 1) {
-											if (mem[g].getb0() == gorder) {
-												gluetemp = mem[thisbox + 6].getglue() * mem[g + 2].getInt();
+									case 8:
+										outwhat(p);
+										break;
+									case 10: {
+										final int g = mem[p + 1].getlh();
+										rulewd = mem[g + 1].getInt();
+										if (gsign != 0) {
+											if (gsign == 1) {
+												if (mem[g].getb0() == gorder) {
+													gluetemp = mem[thisbox + 6].getglue() * mem[g + 2].getInt();
+													if (gluetemp > 1000000000.0) {
+														gluetemp = 1000000000.0;
+													} else if (gluetemp < -1000000000.0) {
+														gluetemp = -1000000000.0;
+													}
+													rulewd = rulewd + (int)Math.round(gluetemp);
+												}
+											} else if (mem[g].getb1() == gorder) {
+												gluetemp = mem[thisbox + 6].getglue() * mem[g + 3].getInt();
 												if (gluetemp > 1000000000.0) {
 													gluetemp = 1000000000.0;
 												} else if (gluetemp < -1000000000.0) {
 													gluetemp = -1000000000.0;
 												}
-												rulewd = rulewd + (int)Math.round(gluetemp);
+												rulewd = rulewd - (int)Math.round(gluetemp);
 											}
-										} else if (mem[g].getb1() == gorder) {
-											gluetemp = mem[thisbox + 6].getglue() * mem[g + 3].getInt();
-											if (gluetemp > 1000000000.0) {
-												gluetemp = 1000000000.0;
-											} else if (gluetemp < -1000000000.0) {
-												gluetemp = -1000000000.0;
+										}
+										if (mem[p].getb1() >= 100) {
+											leaderbox = mem[p + 1].getrh();
+											if (mem[leaderbox].getb0() == 2) {
+												ruleht = mem[leaderbox + 3].getInt();
+												ruledp = mem[leaderbox + 2].getInt();
+												break lab14;
 											}
-											rulewd = rulewd - (int)Math.round(gluetemp);
-										}
-									}
-									if (mem[p].getb1() >= 100) {
-										leaderbox = mem[p + 1].getrh();
-										if (mem[leaderbox].getb0() == 2) {
-											ruleht = mem[leaderbox + 3].getInt();
-											ruledp = mem[leaderbox + 2].getInt();
-											break lab14;
-										}
-										leaderwd = mem[leaderbox + 1].getInt();
-										if ((leaderwd > 0) && (rulewd > 0)) {
-											rulewd = rulewd + 10;
-											edge = curh + rulewd;
-											lx = 0;
-											if (mem[p].getb1() == 100) {
-												saveh = curh;
-												curh = leftedge + leaderwd * ((curh - leftedge) / leaderwd);
-												if (curh < saveh) {
-													curh = curh + leaderwd;
-												}
-											} else {
-												lq = rulewd / leaderwd;
-												lr = rulewd % leaderwd;
-												if (mem[p].getb1() == 101) {
-													curh = curh + (lr / 2);
+											leaderwd = mem[leaderbox + 1].getInt();
+											if ((leaderwd > 0) && (rulewd > 0)) {
+												rulewd = rulewd + 10;
+												edge = curh + rulewd;
+												lx = 0;
+												if (mem[p].getb1() == 100) {
+													saveh = curh;
+													curh = leftedge + leaderwd * ((curh - leftedge) / leaderwd);
+													if (curh < saveh) {
+														curh = curh + leaderwd;
+													}
 												} else {
-													lx = (2 * lr + lq + 1) / (2 * lq + 2);
-													curh = curh + ((lr - (lq - 1) * lx) / 2);
+													lq = rulewd / leaderwd;
+													lr = rulewd % leaderwd;
+													if (mem[p].getb1() == 101) {
+														curh = curh + (lr / 2);
+													} else {
+														lx = (2 * lr + lq + 1) / (2 * lq + 2);
+														curh = curh + ((lr - (lq - 1) * lx) / 2);
+													}
 												}
+												while (curh + leaderwd <= edge) {
+													curv = baseline + mem[leaderbox + 4].getInt();
+													if (curv != dviv) {
+														movement(curv - dviv, 157);
+														dviv = curv;
+													}
+													savev = dviv;
+													if (curh != dvih) {
+														movement(curh - dvih, 143);
+														dvih = curh;
+													}
+													saveh = dvih;
+													tempptr = leaderbox;
+													outerdoingleaders = doingleaders;
+													doingleaders = true;
+													if (mem[leaderbox].getb0() == 1) {
+														vlistout();
+													} else {
+														hlistout();
+													}
+													doingleaders = outerdoingleaders;
+													dviv = savev;
+													dvih = saveh;
+													curv = baseline;
+													curh = saveh + leaderwd + lx;
+												}
+												curh = edge - 10;
+												break lab15;
 											}
-											while (curh + leaderwd <= edge) {
-												curv = baseline + mem[leaderbox + 4].getInt();
-												if (curv != dviv) {
-													movement(curv - dviv, 157);
-													dviv = curv;
-												}
-												savev = dviv;
-												if (curh != dvih) {
-													movement(curh - dvih, 143);
-													dvih = curh;
-												}
-												saveh = dvih;
-												tempptr = leaderbox;
-												outerdoingleaders = doingleaders;
-												doingleaders = true;
-												if (mem[leaderbox].getb0() == 1) {
-													vlistout();
-												} else {
-													hlistout();
-												}
-												doingleaders = outerdoingleaders;
-												dviv = savev;
-												dvih = saveh;
-												curv = baseline;
-												curh = saveh + leaderwd + lx;
-											}
-											curh = edge - 10;
-											break lab15;
 										}
+										break lab13;
 									}
-									break lab13;
-								}
-								case 11:
-								case 9:
-									curh = curh + mem[p + 1].getInt();
-									break;
-								case 6: {
-									mem[memtop - 12].copy(mem[p + 1]);
-									mem[memtop - 12].setrh(mem[p].getrh());
-									p = memtop - 12;
-									continue lab21;
-								}
-								default:
-									;
-									break;
+									case 11:
+									case 9:
+										curh = curh + mem[p + 1].getInt();
+										break;
+									case 6: {
+										mem[memtop - 12].copy(mem[p + 1]);
+										mem[memtop - 12].setrh(mem[p].getrh());
+										p = memtop - 12;
+										continue lab21;
+									}
+									default:
+										;
+										break;
 								}
 								break lab15;
 							}
@@ -6493,131 +6491,131 @@ public final class Tex {
 					lab13: while (true) {
 						lab14: while (true) {
 							switch (mem[p].getb0()) {
-							case 0:
-							case 1:
-								if (mem[p + 5].getrh() == 0) {
-									curv = curv + mem[p + 3].getInt() + mem[p + 2].getInt();
-								} else {
-									curv = curv + mem[p + 3].getInt();
-									if (curv != dviv) {
-										movement(curv - dviv, 157);
-										dviv = curv;
-									}
-									saveh = dvih;
-									savev = dviv;
-									curh = leftedge + mem[p + 4].getInt();
-									tempptr = p;
-									if (mem[p].getb0() == 1) {
-										vlistout();
+								case 0:
+								case 1:
+									if (mem[p + 5].getrh() == 0) {
+										curv = curv + mem[p + 3].getInt() + mem[p + 2].getInt();
 									} else {
-										hlistout();
+										curv = curv + mem[p + 3].getInt();
+										if (curv != dviv) {
+											movement(curv - dviv, 157);
+											dviv = curv;
+										}
+										saveh = dvih;
+										savev = dviv;
+										curh = leftedge + mem[p + 4].getInt();
+										tempptr = p;
+										if (mem[p].getb0() == 1) {
+											vlistout();
+										} else {
+											hlistout();
+										}
+										dvih = saveh;
+										dviv = savev;
+										curv = savev + mem[p + 2].getInt();
+										curh = leftedge;
 									}
-									dvih = saveh;
-									dviv = savev;
-									curv = savev + mem[p + 2].getInt();
-									curh = leftedge;
+									break;
+								case 2: {
+									ruleht = mem[p + 3].getInt();
+									ruledp = mem[p + 2].getInt();
+									rulewd = mem[p + 1].getInt();
+									break lab14;
 								}
-								break;
-							case 2: {
-								ruleht = mem[p + 3].getInt();
-								ruledp = mem[p + 2].getInt();
-								rulewd = mem[p + 1].getInt();
-								break lab14;
-							}
-							case 8:
-								outwhat(p);
-								break;
-							case 10: {
-								int g = mem[p + 1].getlh();
-								ruleht = mem[g + 1].getInt();
-								if (gsign != 0) {
-									if (gsign == 1) {
-										if (mem[g].getb0() == gorder) {
-											gluetemp = mem[thisbox + 6].getglue() * mem[g + 2].getInt();
+								case 8:
+									outwhat(p);
+									break;
+								case 10: {
+									final int g = mem[p + 1].getlh();
+									ruleht = mem[g + 1].getInt();
+									if (gsign != 0) {
+										if (gsign == 1) {
+											if (mem[g].getb0() == gorder) {
+												gluetemp = mem[thisbox + 6].getglue() * mem[g + 2].getInt();
+												if (gluetemp > 1000000000.0) {
+													gluetemp = 1000000000.0;
+												} else if (gluetemp < -1000000000.0) {
+													gluetemp = -1000000000.0;
+												}
+												ruleht = ruleht + (int)Math.round(gluetemp);
+											}
+										} else if (mem[g].getb1() == gorder) {
+											gluetemp = mem[thisbox + 6].getglue() * mem[g + 3].getInt();
 											if (gluetemp > 1000000000.0) {
 												gluetemp = 1000000000.0;
 											} else if (gluetemp < -1000000000.0) {
 												gluetemp = -1000000000.0;
 											}
-											ruleht = ruleht + (int)Math.round(gluetemp);
+											ruleht = ruleht - (int)Math.round(gluetemp);
 										}
-									} else if (mem[g].getb1() == gorder) {
-										gluetemp = mem[thisbox + 6].getglue() * mem[g + 3].getInt();
-										if (gluetemp > 1000000000.0) {
-											gluetemp = 1000000000.0;
-										} else if (gluetemp < -1000000000.0) {
-											gluetemp = -1000000000.0;
+									}
+									if (mem[p].getb1() >= 100) {
+										leaderbox = mem[p + 1].getrh();
+										if (mem[leaderbox].getb0() == 2) {
+											rulewd = mem[leaderbox + 1].getInt();
+											ruledp = 0;
+											break lab14;
 										}
-										ruleht = ruleht - (int)Math.round(gluetemp);
-									}
-								}
-								if (mem[p].getb1() >= 100) {
-									leaderbox = mem[p + 1].getrh();
-									if (mem[leaderbox].getb0() == 2) {
-										rulewd = mem[leaderbox + 1].getInt();
-										ruledp = 0;
-										break lab14;
-									}
-									leaderht = mem[leaderbox + 3].getInt() + mem[leaderbox + 2].getInt();
-									if ((leaderht > 0) && (ruleht > 0)) {
-										ruleht = ruleht + 10;
-										edge = curv + ruleht;
-										lx = 0;
-										if (mem[p].getb1() == 100) {
-											savev = curv;
-											curv = topedge + leaderht * ((curv - topedge) / leaderht);
-											if (curv < savev) {
-												curv = curv + leaderht;
-											}
-										} else {
-											lq = ruleht / leaderht;
-											lr = ruleht % leaderht;
-											if (mem[p].getb1() == 101) {
-												curv = curv + (lr / 2);
+										leaderht = mem[leaderbox + 3].getInt() + mem[leaderbox + 2].getInt();
+										if ((leaderht > 0) && (ruleht > 0)) {
+											ruleht = ruleht + 10;
+											edge = curv + ruleht;
+											lx = 0;
+											if (mem[p].getb1() == 100) {
+												savev = curv;
+												curv = topedge + leaderht * ((curv - topedge) / leaderht);
+												if (curv < savev) {
+													curv = curv + leaderht;
+												}
 											} else {
-												lx = (2 * lr + lq + 1) / (2 * lq + 2);
-												curv = curv + ((lr - (lq - 1) * lx) / 2);
+												lq = ruleht / leaderht;
+												lr = ruleht % leaderht;
+												if (mem[p].getb1() == 101) {
+													curv = curv + (lr / 2);
+												} else {
+													lx = (2 * lr + lq + 1) / (2 * lq + 2);
+													curv = curv + ((lr - (lq - 1) * lx) / 2);
+												}
 											}
+											while (curv + leaderht <= edge) {
+												curh = leftedge + mem[leaderbox + 4].getInt();
+												if (curh != dvih) {
+													movement(curh - dvih, 143);
+													dvih = curh;
+												}
+												saveh = dvih;
+												curv = curv + mem[leaderbox + 3].getInt();
+												if (curv != dviv) {
+													movement(curv - dviv, 157);
+													dviv = curv;
+												}
+												savev = dviv;
+												tempptr = leaderbox;
+												outerdoingleaders = doingleaders;
+												doingleaders = true;
+												if (mem[leaderbox].getb0() == 1) {
+													vlistout();
+												} else {
+													hlistout();
+												}
+												doingleaders = outerdoingleaders;
+												dviv = savev;
+												dvih = saveh;
+												curh = leftedge;
+												curv = savev - mem[leaderbox + 3].getInt() + leaderht + lx;
+											}
+											curv = edge - 10;
+											break lab15;
 										}
-										while (curv + leaderht <= edge) {
-											curh = leftedge + mem[leaderbox + 4].getInt();
-											if (curh != dvih) {
-												movement(curh - dvih, 143);
-												dvih = curh;
-											}
-											saveh = dvih;
-											curv = curv + mem[leaderbox + 3].getInt();
-											if (curv != dviv) {
-												movement(curv - dviv, 157);
-												dviv = curv;
-											}
-											savev = dviv;
-											tempptr = leaderbox;
-											outerdoingleaders = doingleaders;
-											doingleaders = true;
-											if (mem[leaderbox].getb0() == 1) {
-												vlistout();
-											} else {
-												hlistout();
-											}
-											doingleaders = outerdoingleaders;
-											dviv = savev;
-											dvih = saveh;
-											curh = leftedge;
-											curv = savev - mem[leaderbox + 3].getInt() + leaderht + lx;
-										}
-										curv = edge - 10;
-										break lab15;
 									}
+									break lab13;
 								}
-								break lab13;
-							}
-							case 11:
-								curv = curv + mem[p + 1].getInt();
-								break;
-							default:
-								;
-								break;
+								case 11:
+									curv = curv + mem[p + 1].getInt();
+									break;
+								default:
+									;
+									break;
 							}
 							break lab15;
 						}
@@ -6661,9 +6659,8 @@ public final class Tex {
 	}
 
 	void shipout(final int p) {
-		/* 30 */int pageloc;
+		int pageloc;
 		int j, k;
-		int s;
 		int oldsetting;
 		if (eqtb[9597].getInt() > 0) {
 			printnl(338);
@@ -6745,11 +6742,11 @@ public final class Tex {
 				printTwoDigits(eqtb[9583].getInt() / 60);
 				printTwoDigits(eqtb[9583].getInt() % 60);
 				selector = oldsetting;
-				dviWriter.writeByte(poolptr - strstart[strptr]);
-				for (s = strstart[strptr]; s <= poolptr - 1; s++) {
-					dviWriter.writeByte(strpool[s]);
+				final String s = stringPool.extractPartiallyBuiltString(true);
+				dviWriter.writeByte(s.length());
+				for (int i = 0; i < s.length(); i++) {
+					dviWriter.writeByte(s.charAt(i));
 				}
-				poolptr = strstart[strptr];
 			}
 			pageloc = dvioffset + dviptr;
 			dviWriter.writeByte(139);
@@ -6858,81 +6855,81 @@ public final class Tex {
 				}
 				if (p != 0) {
 					switch (mem[p].getb0()) {
-					case 0:
-					case 1:
-					case 2:
-					case 13: {
-						x = x + mem[p + 1].getInt();
-						if (mem[p].getb0() >= 2) {
-							s = 0;
-						} else {
-							s = mem[p + 4].getInt();
-						}
-						if (mem[p + 3].getInt() - s > h) {
-							h = mem[p + 3].getInt() - s;
-						}
-						if (mem[p + 2].getInt() + s > d) {
-							d = mem[p + 2].getInt() + s;
-						}
-					}
-						break;
-					case 3:
-					case 4:
-					case 5:
-						if (adjusttail != 0) {
-							while (mem[q].getrh() != p) {
-								q = mem[q].getrh();
-							}
-							if (mem[p].getb0() == 5) {
-								mem[adjusttail].setrh(mem[p + 1].getInt());
-								while (mem[adjusttail].getrh() != 0) {
-									adjusttail = mem[adjusttail].getrh();
-								}
-								p = mem[p].getrh();
-								freenode(mem[q].getrh(), 2);
+						case 0:
+						case 1:
+						case 2:
+						case 13: {
+							x = x + mem[p + 1].getInt();
+							if (mem[p].getb0() >= 2) {
+								s = 0;
 							} else {
-								mem[adjusttail].setrh(p);
-								adjusttail = p;
-								p = mem[p].getrh();
+								s = mem[p + 4].getInt();
 							}
-							mem[q].setrh(p);
-							p = q;
-						}
-						break;
-					case 8:
-						;
-						break;
-					case 10: {
-						g = mem[p + 1].getlh();
-						x = x + mem[g + 1].getInt();
-						o = mem[g].getb0();
-						totalstretch[o] = totalstretch[o] + mem[g + 2].getInt();
-						o = mem[g].getb1();
-						totalshrink[o] = totalshrink[o] + mem[g + 3].getInt();
-						if (mem[p].getb1() >= 100) {
-							g = mem[p + 1].getrh();
-							if (mem[g + 3].getInt() > h) {
-								h = mem[g + 3].getInt();
+							if (mem[p + 3].getInt() - s > h) {
+								h = mem[p + 3].getInt() - s;
 							}
-							if (mem[g + 2].getInt() > d) {
-								d = mem[g + 2].getInt();
+							if (mem[p + 2].getInt() + s > d) {
+								d = mem[p + 2].getInt() + s;
 							}
 						}
-					}
-						break;
-					case 11:
-					case 9:
-						x = x + mem[p + 1].getInt();
-						break;
-					case 6: {
-						mem[memtop - 12].copy(mem[p + 1]);
-						mem[memtop - 12].setrh(mem[p].getrh());
-						p = memtop - 12;
-						continue lab21;
-					}
-					default:
-						;
-						break;
+							break;
+						case 3:
+						case 4:
+						case 5:
+							if (adjusttail != 0) {
+								while (mem[q].getrh() != p) {
+									q = mem[q].getrh();
+								}
+								if (mem[p].getb0() == 5) {
+									mem[adjusttail].setrh(mem[p + 1].getInt());
+									while (mem[adjusttail].getrh() != 0) {
+										adjusttail = mem[adjusttail].getrh();
+									}
+									p = mem[p].getrh();
+									freenode(mem[q].getrh(), 2);
+								} else {
+									mem[adjusttail].setrh(p);
+									adjusttail = p;
+									p = mem[p].getrh();
+								}
+								mem[q].setrh(p);
+								p = q;
+							}
+							break;
+						case 8:
+							;
+							break;
+						case 10: {
+							g = mem[p + 1].getlh();
+							x = x + mem[g + 1].getInt();
+							o = mem[g].getb0();
+							totalstretch[o] = totalstretch[o] + mem[g + 2].getInt();
+							o = mem[g].getb1();
+							totalshrink[o] = totalshrink[o] + mem[g + 3].getInt();
+							if (mem[p].getb1() >= 100) {
+								g = mem[p + 1].getrh();
+								if (mem[g + 3].getInt() > h) {
+									h = mem[g + 3].getInt();
+								}
+								if (mem[g + 2].getInt() > d) {
+									d = mem[g + 2].getInt();
+								}
+							}
+						}
+							break;
+						case 11:
+						case 9:
+							x = x + mem[p + 1].getInt();
+							break;
+						case 6: {
+							mem[memtop - 12].copy(mem[p + 1]);
+							mem[memtop - 12].setrh(mem[p].getrh());
+							p = memtop - 12;
+							continue lab21;
+						}
+						default:
+							;
+							break;
 					}
 					p = mem[p].getrh();
 				}
@@ -7098,50 +7095,50 @@ public final class Tex {
 				errorLogic.confusion(855);
 			} else {
 				switch (mem[p].getb0()) {
-				case 0:
-				case 1:
-				case 2:
-				case 13: {
-					x = x + d + mem[p + 3].getInt();
-					d = mem[p + 2].getInt();
-					if (mem[p].getb0() >= 2) {
-						s = 0;
-					} else {
-						s = mem[p + 4].getInt();
-					}
-					if (mem[p + 1].getInt() + s > w) {
-						w = mem[p + 1].getInt() + s;
-					}
-				}
-					break;
-				case 8:
-					;
-					break;
-				case 10: {
-					x = x + d;
-					d = 0;
-					g = mem[p + 1].getlh();
-					x = x + mem[g + 1].getInt();
-					o = mem[g].getb0();
-					totalstretch[o] = totalstretch[o] + mem[g + 2].getInt();
-					o = mem[g].getb1();
-					totalshrink[o] = totalshrink[o] + mem[g + 3].getInt();
-					if (mem[p].getb1() >= 100) {
-						g = mem[p + 1].getrh();
-						if (mem[g + 1].getInt() > w) {
-							w = mem[g + 1].getInt();
+					case 0:
+					case 1:
+					case 2:
+					case 13: {
+						x = x + d + mem[p + 3].getInt();
+						d = mem[p + 2].getInt();
+						if (mem[p].getb0() >= 2) {
+							s = 0;
+						} else {
+							s = mem[p + 4].getInt();
+						}
+						if (mem[p + 1].getInt() + s > w) {
+							w = mem[p + 1].getInt() + s;
 						}
 					}
-				}
-					break;
-				case 11: {
-					x = x + d + mem[p + 1].getInt();
-					d = 0;
-				}
-					break;
-				default:
-					;
-					break;
+						break;
+					case 8:
+						;
+						break;
+					case 10: {
+						x = x + d;
+						d = 0;
+						g = mem[p + 1].getlh();
+						x = x + mem[g + 1].getInt();
+						o = mem[g].getb0();
+						totalstretch[o] = totalstretch[o] + mem[g + 2].getInt();
+						o = mem[g].getb1();
+						totalshrink[o] = totalshrink[o] + mem[g + 3].getInt();
+						if (mem[p].getb1() >= 100) {
+							g = mem[p + 1].getrh();
+							if (mem[g + 1].getInt() > w) {
+								w = mem[g + 1].getInt();
+							}
+						}
+					}
+						break;
+					case 11: {
+						x = x + d + mem[p + 1].getInt();
+						d = 0;
+					}
+						break;
+					default:
+						;
+						break;
 				}
 			}
 			p = mem[p].getrh();
@@ -7604,22 +7601,22 @@ public final class Tex {
 		int r;
 		lab40: while (true) {
 			switch (mem[p].getrh()) {
-			case 1: {
-				curmlist = newnoad();
-				mem[curmlist + 1].copy(mem[p]);
-			}
-				break;
-			case 2: {
-				q = mem[p].getlh();
-				break lab40;
-			}
-			case 3:
-				curmlist = mem[p].getlh();
-				break;
-			default: {
-				q = newnullbox();
-				break lab40;
-			}
+				case 1: {
+					curmlist = newnoad();
+					mem[curmlist + 1].copy(mem[p]);
+				}
+					break;
+				case 2: {
+					q = mem[p].getlh();
+					break lab40;
+				}
+				case 3:
+					curmlist = mem[p].getlh();
+					break;
+				default: {
+					q = newnullbox();
+					break lab40;
+				}
 			}
 			savestyle = curstyle;
 			curstyle = s;
@@ -8055,37 +8052,37 @@ public final class Tex {
 															return /* lab10 */;
 														} else {
 															switch (curi.b2) {
-															case 1:
-															case 5:
-																mem[q + 1].setb1(curi.b3);
-																break;
-															case 2:
-															case 6:
-																mem[p + 1].setb1(curi.b3);
-																break;
-															case 3:
-															case 7:
-															case 11: {
-																r = newnoad();
-																mem[r + 1].setb1(curi.b3);
-																mem[r + 1].setb0(mem[q + 1].getb0());
-																mem[q].setrh(r);
-																mem[r].setrh(p);
-																if (curi.b2 < 11) {
-																	mem[r + 1].setrh(1);
-																} else {
-																	mem[r + 1].setrh(4);
+																case 1:
+																case 5:
+																	mem[q + 1].setb1(curi.b3);
+																	break;
+																case 2:
+																case 6:
+																	mem[p + 1].setb1(curi.b3);
+																	break;
+																case 3:
+																case 7:
+																case 11: {
+																	r = newnoad();
+																	mem[r + 1].setb1(curi.b3);
+																	mem[r + 1].setb0(mem[q + 1].getb0());
+																	mem[q].setrh(r);
+																	mem[r].setrh(p);
+																	if (curi.b2 < 11) {
+																		mem[r + 1].setrh(1);
+																	} else {
+																		mem[r + 1].setrh(4);
+																	}
 																}
-															}
-																break;
-															default: {
-																mem[q].setrh(mem[p].getrh());
-																mem[q + 1].setb1(curi.b3);
-																mem[q + 3].copy(mem[p + 3]);
-																mem[q + 2].copy(mem[p + 2]);
-																freenode(p, 4);
-															}
-																break;
+																	break;
+																default: {
+																	mem[q].setrh(mem[p].getrh());
+																	mem[q + 1].setb1(curi.b3);
+																	mem[q + 3].copy(mem[p + 3]);
+																	mem[q + 2].copy(mem[p + 2]);
+																	freenode(p, 4);
+																}
+																	break;
 															}
 															if (curi.b2 > 3) {
 																return /* lab10 */;
@@ -8260,71 +8257,198 @@ public final class Tex {
 						lab21: while (true) {
 							delta = 0;
 							switch (mem[q].getb0()) {
-							case 18:
-								switch (rtype) {
 								case 18:
-								case 17:
-								case 19:
-								case 20:
-								case 22:
-								case 30: {
-									mem[q].setb0(16);
-									continue lab21;
-								}
-								default:
-									;
+									switch (rtype) {
+										case 18:
+										case 17:
+										case 19:
+										case 20:
+										case 22:
+										case 30: {
+											mem[q].setb0(16);
+											continue lab21;
+										}
+										default:
+											;
+											break;
+									}
 									break;
+								case 19:
+								case 21:
+								case 22:
+								case 31: {
+									if (rtype == 18) {
+										mem[r].setb0(16);
+									}
+									if (mem[q].getb0() == 31) {
+										break lab80;
+									}
 								}
-								break;
-							case 19:
-							case 21:
-							case 22:
-							case 31: {
-								if (rtype == 18) {
-									mem[r].setb0(16);
-								}
-								if (mem[q].getb0() == 31) {
+									break;
+								case 30:
 									break lab80;
-								}
-							}
-								break;
-							case 30:
-								break lab80;
-							case 25: {
-								makefraction(q);
-								break lab82;
-							}
-							case 17: {
-								delta = makeop(q);
-								if (mem[q].getb1() == 1) {
+								case 25: {
+									makefraction(q);
 									break lab82;
 								}
+								case 17: {
+									delta = makeop(q);
+									if (mem[q].getb1() == 1) {
+										break lab82;
+									}
+								}
+									break;
+								case 16:
+									makeord(q);
+									break;
+								case 20:
+								case 23:
+									;
+									break;
+								case 24:
+									makeradical(q);
+									break;
+								case 27:
+									makeover(q);
+									break;
+								case 26:
+									makeunder(q);
+									break;
+								case 28:
+									makemathaccent(q);
+									break;
+								case 29:
+									makevcenter(q);
+									break;
+								case 14: {
+									curstyle = mem[q].getb1();
+									{
+										if (curstyle < 4) {
+											cursize = 0;
+										} else {
+											cursize = 16 * ((curstyle - 2) / 2);
+										}
+										curmu = xovern(fontinfo[6 + parambase[eqtb[8237 + cursize].getrh()]].getInt(), 18);
+									}
+									break lab81;
+								}
+								case 15: {
+									switch (curstyle / 2) {
+										case 0: {
+											p = mem[q + 1].getlh();
+											mem[q + 1].setlh(0);
+										}
+											break;
+										case 1: {
+											p = mem[q + 1].getrh();
+											mem[q + 1].setrh(0);
+										}
+											break;
+										case 2: {
+											p = mem[q + 2].getlh();
+											mem[q + 2].setlh(0);
+										}
+											break;
+										case 3: {
+											p = mem[q + 2].getrh();
+											mem[q + 2].setrh(0);
+										}
+											break;
+									}
+									flushnodelist(mem[q + 1].getlh());
+									flushnodelist(mem[q + 1].getrh());
+									flushnodelist(mem[q + 2].getlh());
+									flushnodelist(mem[q + 2].getrh());
+									mem[q].setb0(14);
+									mem[q].setb1(curstyle);
+									mem[q + 1].setInt(0);
+									mem[q + 2].setInt(0);
+									if (p != 0) {
+										z = mem[q].getrh();
+										mem[q].setrh(p);
+										while (mem[p].getrh() != 0) {
+											p = mem[p].getrh();
+										}
+										mem[p].setrh(z);
+									}
+									break lab81;
+								}
+								case 3:
+								case 4:
+								case 5:
+								case 8:
+								case 12:
+								case 7:
+									break lab81;
+								case 2: {
+									if (mem[q + 3].getInt() > maxh) {
+										maxh = mem[q + 3].getInt();
+									}
+									if (mem[q + 2].getInt() > maxd) {
+										maxd = mem[q + 2].getInt();
+									}
+									break lab81;
+								}
+								case 10: {
+									if (mem[q].getb1() == 99) {
+										x = mem[q + 1].getlh();
+										y = mathglue(x, curmu);
+										deleteglueref(x);
+										mem[q + 1].setlh(y);
+										mem[q].setb1(0);
+									} else if ((cursize != 0) && (mem[q].getb1() == 98)) {
+										p = mem[q].getrh();
+										if (p != 0) {
+											if ((mem[p].getb0() == 10) || (mem[p].getb0() == 11)) {
+												mem[q].setrh(mem[p].getrh());
+												mem[p].setrh(0);
+												flushnodelist(p);
+											}
+										}
+									}
+									break lab81;
+								}
+								case 11: {
+									mathkern(q, curmu);
+									break lab81;
+								}
+								default:
+									errorLogic.confusion(889);
+									break;
+							}
+							break;
+						}
+						switch (mem[q + 1].getrh()) {
+							case 1:
+							case 4: {
+								fetch(q + 1);
+								if ((curi.b0 > 0)) {
+									delta = fontinfo[italicbase[curf] + (curi.b2) / 4].getInt();
+									p = newcharacter(curf, curc);
+									if ((mem[q + 1].getrh() == 4) && (fontinfo[2 + parambase[curf]].getInt() != 0)) {
+										delta = 0;
+									}
+									if ((mem[q + 3].getrh() == 0) && (delta != 0)) {
+										mem[p].setrh(newkern(delta));
+										delta = 0;
+									}
+								} else {
+									p = 0;
+								}
 							}
 								break;
-							case 16:
-								makeord(q);
+							case 0:
+								p = 0;
 								break;
-							case 20:
-							case 23:
-								;
+							case 2:
+								p = mem[q + 1].getlh();
 								break;
-							case 24:
-								makeradical(q);
-								break;
-							case 27:
-								makeover(q);
-								break;
-							case 26:
-								makeunder(q);
-								break;
-							case 28:
-								makemathaccent(q);
-								break;
-							case 29:
-								makevcenter(q);
-								break;
-							case 14: {
-								curstyle = mem[q].getb1();
+							case 3: {
+								curmlist = mem[q + 1].getlh();
+								savestyle = curstyle;
+								mlistpenalties = false;
+								mlisttohlist();
+								curstyle = savestyle;
 								{
 									if (curstyle < 4) {
 										cursize = 0;
@@ -8333,139 +8457,12 @@ public final class Tex {
 									}
 									curmu = xovern(fontinfo[6 + parambase[eqtb[8237 + cursize].getrh()]].getInt(), 18);
 								}
-								break lab81;
+								p = hpack(mem[memtop - 3].getrh(), 0, 1);
 							}
-							case 15: {
-								switch (curstyle / 2) {
-								case 0: {
-									p = mem[q + 1].getlh();
-									mem[q + 1].setlh(0);
-								}
-									break;
-								case 1: {
-									p = mem[q + 1].getrh();
-									mem[q + 1].setrh(0);
-								}
-									break;
-								case 2: {
-									p = mem[q + 2].getlh();
-									mem[q + 2].setlh(0);
-								}
-									break;
-								case 3: {
-									p = mem[q + 2].getrh();
-									mem[q + 2].setrh(0);
-								}
-									break;
-								}
-								flushnodelist(mem[q + 1].getlh());
-								flushnodelist(mem[q + 1].getrh());
-								flushnodelist(mem[q + 2].getlh());
-								flushnodelist(mem[q + 2].getrh());
-								mem[q].setb0(14);
-								mem[q].setb1(curstyle);
-								mem[q + 1].setInt(0);
-								mem[q + 2].setInt(0);
-								if (p != 0) {
-									z = mem[q].getrh();
-									mem[q].setrh(p);
-									while (mem[p].getrh() != 0) {
-										p = mem[p].getrh();
-									}
-									mem[p].setrh(z);
-								}
-								break lab81;
-							}
-							case 3:
-							case 4:
-							case 5:
-							case 8:
-							case 12:
-							case 7:
-								break lab81;
-							case 2: {
-								if (mem[q + 3].getInt() > maxh) {
-									maxh = mem[q + 3].getInt();
-								}
-								if (mem[q + 2].getInt() > maxd) {
-									maxd = mem[q + 2].getInt();
-								}
-								break lab81;
-							}
-							case 10: {
-								if (mem[q].getb1() == 99) {
-									x = mem[q + 1].getlh();
-									y = mathglue(x, curmu);
-									deleteglueref(x);
-									mem[q + 1].setlh(y);
-									mem[q].setb1(0);
-								} else if ((cursize != 0) && (mem[q].getb1() == 98)) {
-									p = mem[q].getrh();
-									if (p != 0) {
-										if ((mem[p].getb0() == 10) || (mem[p].getb0() == 11)) {
-											mem[q].setrh(mem[p].getrh());
-											mem[p].setrh(0);
-											flushnodelist(p);
-										}
-									}
-								}
-								break lab81;
-							}
-							case 11: {
-								mathkern(q, curmu);
-								break lab81;
-							}
-							default:
-								errorLogic.confusion(889);
 								break;
-							}
-							break;
-						}
-						switch (mem[q + 1].getrh()) {
-						case 1:
-						case 4: {
-							fetch(q + 1);
-							if ((curi.b0 > 0)) {
-								delta = fontinfo[italicbase[curf] + (curi.b2) / 4].getInt();
-								p = newcharacter(curf, curc);
-								if ((mem[q + 1].getrh() == 4) && (fontinfo[2 + parambase[curf]].getInt() != 0)) {
-									delta = 0;
-								}
-								if ((mem[q + 3].getrh() == 0) && (delta != 0)) {
-									mem[p].setrh(newkern(delta));
-									delta = 0;
-								}
-							} else {
-								p = 0;
-							}
-						}
-							break;
-						case 0:
-							p = 0;
-							break;
-						case 2:
-							p = mem[q + 1].getlh();
-							break;
-						case 3: {
-							curmlist = mem[q + 1].getlh();
-							savestyle = curstyle;
-							mlistpenalties = false;
-							mlisttohlist();
-							curstyle = savestyle;
-							{
-								if (curstyle < 4) {
-									cursize = 0;
-								} else {
-									cursize = 16 * ((curstyle - 2) / 2);
-								}
-								curmu = xovern(fontinfo[6 + parambase[eqtb[8237 + cursize].getrh()]].getInt(), 18);
-							}
-							p = hpack(mem[memtop - 3].getrh(), 0, 1);
-						}
-							break;
-						default:
-							errorLogic.confusion(890);
-							break;
+							default:
+								errorLogic.confusion(890);
+								break;
 						}
 						mem[q + 1].setInt(p);
 						if ((mem[q + 3].getrh() == 0) && (mem[q + 2].getrh() == 0)) {
@@ -8512,108 +8509,108 @@ public final class Tex {
 				s = 4;
 				pen = 10000;
 				switch (mem[q].getb0()) {
-				case 17:
-				case 20:
-				case 21:
-				case 22:
-				case 23:
-					t = mem[q].getb0();
-					break;
-				case 18: {
-					t = 18;
-					pen = eqtb[9572].getInt();
-				}
-					break;
-				case 19: {
-					t = 19;
-					pen = eqtb[9573].getInt();
-				}
-					break;
-				case 16:
-				case 29:
-				case 27:
-				case 26:
-					;
-					break;
-				case 24:
-					s = 5;
-					break;
-				case 28:
-					s = 5;
-					break;
-				case 25: {
-					t = 23;
-					s = 6;
-				}
-					break;
-				case 30:
-				case 31:
-					t = makeleftright(q, style, maxd, maxh);
-					break;
-				case 14: {
-					curstyle = mem[q].getb1();
-					s = 3;
-					{
-						if (curstyle < 4) {
-							cursize = 0;
-						} else {
-							cursize = 16 * ((curstyle - 2) / 2);
-						}
-						curmu = xovern(fontinfo[6 + parambase[eqtb[8237 + cursize].getrh()]].getInt(), 18);
+					case 17:
+					case 20:
+					case 21:
+					case 22:
+					case 23:
+						t = mem[q].getb0();
+						break;
+					case 18: {
+						t = 18;
+						pen = eqtb[9572].getInt();
 					}
-					break lab83;
-				}
-				case 8:
-				case 12:
-				case 2:
-				case 7:
-				case 5:
-				case 3:
-				case 4:
-				case 10:
-				case 11: {
-					mem[p].setrh(q);
-					p = q;
-					q = mem[q].getrh();
-					mem[p].setrh(0);
-					break lab30;
-				}
-				default:
-					errorLogic.confusion(891);
-					break;
+						break;
+					case 19: {
+						t = 19;
+						pen = eqtb[9573].getInt();
+					}
+						break;
+					case 16:
+					case 29:
+					case 27:
+					case 26:
+						;
+						break;
+					case 24:
+						s = 5;
+						break;
+					case 28:
+						s = 5;
+						break;
+					case 25: {
+						t = 23;
+						s = 6;
+					}
+						break;
+					case 30:
+					case 31:
+						t = makeleftright(q, style, maxd, maxh);
+						break;
+					case 14: {
+						curstyle = mem[q].getb1();
+						s = 3;
+						{
+							if (curstyle < 4) {
+								cursize = 0;
+							} else {
+								cursize = 16 * ((curstyle - 2) / 2);
+							}
+							curmu = xovern(fontinfo[6 + parambase[eqtb[8237 + cursize].getrh()]].getInt(), 18);
+						}
+						break lab83;
+					}
+					case 8:
+					case 12:
+					case 2:
+					case 7:
+					case 5:
+					case 3:
+					case 4:
+					case 10:
+					case 11: {
+						mem[p].setrh(q);
+						p = q;
+						q = mem[q].getrh();
+						mem[p].setrh(0);
+						break lab30;
+					}
+					default:
+						errorLogic.confusion(891);
+						break;
 				}
 				if (rtype > 0) {
 					switch (strpool[rtype * 8 + t + magicoffset]) {
-					case 48:
-						x = 0;
-						break;
-					case 49:
-						if (curstyle < 4) {
+						case 48:
+							x = 0;
+							break;
+						case 49:
+							if (curstyle < 4) {
+								x = 15;
+							} else {
+								x = 0;
+							}
+							break;
+						case 50:
 							x = 15;
-						} else {
-							x = 0;
-						}
-						break;
-					case 50:
-						x = 15;
-						break;
-					case 51:
-						if (curstyle < 4) {
-							x = 16;
-						} else {
-							x = 0;
-						}
-						break;
-					case 52:
-						if (curstyle < 4) {
-							x = 17;
-						} else {
-							x = 0;
-						}
-						break;
-					default:
-						errorLogic.confusion(893);
-						break;
+							break;
+						case 51:
+							if (curstyle < 4) {
+								x = 16;
+							} else {
+								x = 0;
+							}
+							break;
+						case 52:
+							if (curstyle < 4) {
+								x = 17;
+							} else {
+								x = 0;
+							}
+							break;
+						default:
+							errorLogic.confusion(893);
+							break;
 					}
 					if (x != 0) {
 						y = mathglue(eqtb[7182 + x].getrh(), curmu);
@@ -9473,20 +9470,20 @@ public final class Tex {
 											breakwidth[1] = breakwidth[1] - fontinfo[widthbase[f] + fontinfo[charbase[f] + mem[v].getb1()].getb0()].getInt();
 										} else {
 											switch (mem[v].getb0()) {
-											case 6: {
-												f = mem[v + 1].getb0();
-												breakwidth[1] = breakwidth[1] - fontinfo[widthbase[f] + fontinfo[charbase[f] + mem[v + 1].getb1()].getb0()].getInt();
-											}
-												break;
-											case 0:
-											case 1:
-											case 2:
-											case 11:
-												breakwidth[1] = breakwidth[1] - mem[v + 1].getInt();
-												break;
-											default:
-												errorLogic.confusion(923);
-												break;
+												case 6: {
+													f = mem[v + 1].getb0();
+													breakwidth[1] = breakwidth[1] - fontinfo[widthbase[f] + fontinfo[charbase[f] + mem[v + 1].getb1()].getb0()].getInt();
+												}
+													break;
+												case 0:
+												case 1:
+												case 2:
+												case 11:
+													breakwidth[1] = breakwidth[1] - mem[v + 1].getInt();
+													break;
+												default:
+													errorLogic.confusion(923);
+													break;
 											}
 										}
 									}
@@ -9496,20 +9493,20 @@ public final class Tex {
 											breakwidth[1] = breakwidth[1] + fontinfo[widthbase[f] + fontinfo[charbase[f] + mem[s].getb1()].getb0()].getInt();
 										} else {
 											switch (mem[s].getb0()) {
-											case 6: {
-												f = mem[s + 1].getb0();
-												breakwidth[1] = breakwidth[1] + fontinfo[widthbase[f] + fontinfo[charbase[f] + mem[s + 1].getb1()].getb0()].getInt();
-											}
-												break;
-											case 0:
-											case 1:
-											case 2:
-											case 11:
-												breakwidth[1] = breakwidth[1] + mem[s + 1].getInt();
-												break;
-											default:
-												errorLogic.confusion(924);
-												break;
+												case 6: {
+													f = mem[s + 1].getb0();
+													breakwidth[1] = breakwidth[1] + fontinfo[widthbase[f] + fontinfo[charbase[f] + mem[s + 1].getb1()].getb0()].getInt();
+												}
+													break;
+												case 0:
+												case 1:
+												case 2:
+												case 11:
+													breakwidth[1] = breakwidth[1] + mem[s + 1].getInt();
+													break;
+												default:
+													errorLogic.confusion(924);
+													break;
 											}
 										}
 										s = mem[s].getrh();
@@ -9525,28 +9522,28 @@ public final class Tex {
 									break lab30;
 								}
 								switch (mem[s].getb0()) {
-								case 10: {
-									v = mem[s + 1].getlh();
-									breakwidth[1] = breakwidth[1] - mem[v + 1].getInt();
-									breakwidth[2 + mem[v].getb0()] = breakwidth[2 + mem[v].getb0()] - mem[v + 2].getInt();
-									breakwidth[6] = breakwidth[6] - mem[v + 3].getInt();
-								}
-									break;
-								case 12:
-									;
-									break;
-								case 9:
-									breakwidth[1] = breakwidth[1] - mem[s + 1].getInt();
-									break;
-								case 11:
-									if (mem[s].getb1() != 1) {
-										break lab30;
-									} else {
-										breakwidth[1] = breakwidth[1] - mem[s + 1].getInt();
+									case 10: {
+										v = mem[s + 1].getlh();
+										breakwidth[1] = breakwidth[1] - mem[v + 1].getInt();
+										breakwidth[2 + mem[v].getb0()] = breakwidth[2 + mem[v].getb0()] - mem[v + 2].getInt();
+										breakwidth[6] = breakwidth[6] - mem[v + 3].getInt();
 									}
-									break;
-								default:
-									break lab30;
+										break;
+									case 12:
+										;
+										break;
+									case 9:
+										breakwidth[1] = breakwidth[1] - mem[s + 1].getInt();
+										break;
+									case 11:
+										if (mem[s].getb1() != 1) {
+											break lab30;
+										} else {
+											breakwidth[1] = breakwidth[1] - mem[s + 1].getInt();
+										}
+										break;
+									default:
+										break lab30;
 								}
 								s = mem[s].getrh();
 							}
@@ -10055,105 +10052,105 @@ public final class Tex {
 										}
 									}
 									switch (q.b2) {
-									case 1:
-									case 5: {
-										curl = q.b3;
-										ligaturepresent = true;
-									}
-										break;
-									case 2:
-									case 6: {
-										curr = q.b3;
-										if (ligstack > 0) {
-											mem[ligstack].setb1(curr);
-										} else {
-											ligstack = newligitem(curr);
-											if (j == n) {
-												bchar = 256;
+										case 1:
+										case 5: {
+											curl = q.b3;
+											ligaturepresent = true;
+										}
+											break;
+										case 2:
+										case 6: {
+											curr = q.b3;
+											if (ligstack > 0) {
+												mem[ligstack].setb1(curr);
 											} else {
-												p = allocateMemoryWord();
-												mem[ligstack + 1].setrh(p);
-												mem[p].setb1(hu[j + 1]);
-												mem[p].setb0(hf);
+												ligstack = newligitem(curr);
+												if (j == n) {
+													bchar = 256;
+												} else {
+													p = allocateMemoryWord();
+													mem[ligstack + 1].setrh(p);
+													mem[p].setb1(hu[j + 1]);
+													mem[p].setb0(hf);
+												}
 											}
 										}
-									}
-										break;
-									case 3: {
-										curr = q.b3;
-										p = ligstack;
-										ligstack = newligitem(curr);
-										mem[ligstack].setrh(p);
-									}
-										break;
-									case 7:
-									case 11: {
-										if (ligaturepresent) {
-											p = newligature(hf, curl, mem[curq].getrh());
-											if (lfthit) {
-												mem[p].setb1(2);
-												lfthit = false;
-											}
-											mem[curq].setrh(p);
-											t = p;
-											ligaturepresent = false;
-										}
-										curq = t;
-										curl = q.b3;
-										ligaturepresent = true;
-									}
-										break;
-									default: {
-										curl = q.b3;
-										ligaturepresent = true;
-										if (ligstack > 0) {
-											if (mem[ligstack + 1].getrh() > 0) {
-												mem[t].setrh(mem[ligstack + 1].getrh());
-												t = mem[t].getrh();
-												j = j + 1;
-											}
+											break;
+										case 3: {
+											curr = q.b3;
 											p = ligstack;
-											ligstack = mem[p].getrh();
-											freenode(p, 2);
-											if (ligstack == 0) {
-												if (j < n) {
-													curr = hu[j + 1];
-												} else {
-													curr = bchar;
+											ligstack = newligitem(curr);
+											mem[ligstack].setrh(p);
+										}
+											break;
+										case 7:
+										case 11: {
+											if (ligaturepresent) {
+												p = newligature(hf, curl, mem[curq].getrh());
+												if (lfthit) {
+													mem[p].setb1(2);
+													lfthit = false;
 												}
-												if (((hyf[j]) % 2 == 1)) {
-													currh = hchar;
-												} else {
-													currh = 256;
+												mem[curq].setrh(p);
+												t = p;
+												ligaturepresent = false;
+											}
+											curq = t;
+											curl = q.b3;
+											ligaturepresent = true;
+										}
+											break;
+										default: {
+											curl = q.b3;
+											ligaturepresent = true;
+											if (ligstack > 0) {
+												if (mem[ligstack + 1].getrh() > 0) {
+													mem[t].setrh(mem[ligstack + 1].getrh());
+													t = mem[t].getrh();
+													j = j + 1;
 												}
+												p = ligstack;
+												ligstack = mem[p].getrh();
+												freenode(p, 2);
+												if (ligstack == 0) {
+													if (j < n) {
+														curr = hu[j + 1];
+													} else {
+														curr = bchar;
+													}
+													if (((hyf[j]) % 2 == 1)) {
+														currh = hchar;
+													} else {
+														currh = 256;
+													}
+												} else {
+													curr = mem[ligstack].getb1();
+												}
+											} else if (j == n) {
+												break lab30;
 											} else {
-												curr = mem[ligstack].getb1();
-											}
-										} else if (j == n) {
-											break lab30;
-										} else {
-											{
-												mem[t].setrh(allocateMemoryWord());
-												t = mem[t].getrh();
-												mem[t].setb0(hf);
-												mem[t].setb1(curr);
-											}
-											j = j + 1;
-											{
-												if (j < n) {
-													curr = hu[j + 1];
-												} else {
-													curr = bchar;
+												{
+													mem[t].setrh(allocateMemoryWord());
+													t = mem[t].getrh();
+													mem[t].setb0(hf);
+													mem[t].setb1(curr);
 												}
-												if (((hyf[j]) % 2 == 1)) {
-													currh = hchar;
-												} else {
-													currh = 256;
+												j = j + 1;
+												{
+													if (j < n) {
+														curr = hu[j + 1];
+													} else {
+														curr = bchar;
+													}
+													if (((hyf[j]) % 2 == 1)) {
+														currh = hchar;
+													} else {
+														currh = 256;
+													}
 												}
 											}
 										}
-									}
-										break;
+											break;
 									}
 									if (q.b2 > 4) {
 										if (q.b2 != 7) {
@@ -10703,17 +10700,91 @@ public final class Tex {
 			lab30: while (true) {
 				getxtoken();
 				switch (curcmd) {
-				case 11:
-				case 12:
-					if (digitsensed || (curchr < 48) || (curchr > 57)) {
-						if (curchr == 46) {
-							curchr = 0;
-						} else {
-							curchr = eqtb[8539 + curchr].getrh();
-							if (curchr == 0) {
+					case 11:
+					case 12:
+						if (digitsensed || (curchr < 48) || (curchr > 57)) {
+							if (curchr == 46) {
+								curchr = 0;
+							} else {
+								curchr = eqtb[8539 + curchr].getrh();
+								if (curchr == 0) {
+									{
+										printnl(262);
+										print(957);
+									}
+									{
+										helpptr = 1;
+										helpline[0] = 956;
+									}
+									errorLogic.error();
+								}
+							}
+							if (k < 63) {
+								k = k + 1;
+								hc[k] = curchr;
+								hyf[k] = 0;
+								digitsensed = false;
+							}
+						} else if (k < 63) {
+							hyf[k] = curchr - 48;
+							digitsensed = true;
+						}
+						break;
+					case 10:
+					case 2: {
+						if (k > 0) {
+							if (hc[1] == 0) {
+								hyf[0] = 0;
+							}
+							if (hc[k] == 0) {
+								hyf[k] = 0;
+							}
+							l = k;
+							v = 0;
+							while (true) {
+								if (hyf[l] != 0) {
+									v = newtrieop(k - l, hyf[l], v);
+								}
+								if (l > 0) {
+									l = l - 1;
+								} else {
+									break /* lab31 */;
+								}
+							}
+							/* lab31: */q = 0;
+							hc[0] = curlang;
+							while (l <= k) {
+								c = hc[l];
+								l = l + 1;
+								p = triel[q];
+								firstchild = true;
+								while ((p > 0) && (c > triec[p])) {
+									q = p;
+									p = trier[q];
+									firstchild = false;
+								}
+								if ((p == 0) || (c < triec[p])) {
+									if (trieptr == triesize) {
+										errorLogic.overflow(951, triesize);
+									}
+									trieptr = trieptr + 1;
+									trier[trieptr] = p;
+									p = trieptr;
+									triel[p] = 0;
+									if (firstchild) {
+										triel[q] = p;
+									} else {
+										trier[q] = p;
+									}
+									triec[p] = c;
+									trieo[p] = 0;
+								}
+								q = p;
+							}
+							if (trieo[q] != 0) {
 								{
 									printnl(262);
-									print(957);
+									print(958);
 								}
 								{
 									helpptr = 1;
@@ -10721,103 +10792,29 @@ public final class Tex {
 								}
 								errorLogic.error();
 							}
+							trieo[q] = v;
 						}
-						if (k < 63) {
-							k = k + 1;
-							hc[k] = curchr;
-							hyf[k] = 0;
-							digitsensed = false;
+						if (curcmd == 2) {
+							break lab30;
 						}
-					} else if (k < 63) {
-						hyf[k] = curchr - 48;
-						digitsensed = true;
+						k = 0;
+						hyf[0] = 0;
+						digitsensed = false;
 					}
-					break;
-				case 10:
-				case 2: {
-					if (k > 0) {
-						if (hc[1] == 0) {
-							hyf[0] = 0;
+						break;
+					default: {
+						{
+							printnl(262);
+							print(955);
 						}
-						if (hc[k] == 0) {
-							hyf[k] = 0;
+						printEscapeSequence(953);
+						{
+							helpptr = 1;
+							helpline[0] = 956;
 						}
-						l = k;
-						v = 0;
-						while (true) {
-							if (hyf[l] != 0) {
-								v = newtrieop(k - l, hyf[l], v);
-							}
-							if (l > 0) {
-								l = l - 1;
-							} else {
-								break /* lab31 */;
-							}
-						}
-						/* lab31: */q = 0;
-						hc[0] = curlang;
-						while (l <= k) {
-							c = hc[l];
-							l = l + 1;
-							p = triel[q];
-							firstchild = true;
-							while ((p > 0) && (c > triec[p])) {
-								q = p;
-								p = trier[q];
-								firstchild = false;
-							}
-							if ((p == 0) || (c < triec[p])) {
-								if (trieptr == triesize) {
-									errorLogic.overflow(951, triesize);
-								}
-								trieptr = trieptr + 1;
-								trier[trieptr] = p;
-								p = trieptr;
-								triel[p] = 0;
-								if (firstchild) {
-									triel[q] = p;
-								} else {
-									trier[q] = p;
-								}
-								triec[p] = c;
-								trieo[p] = 0;
-							}
-							q = p;
-						}
-						if (trieo[q] != 0) {
-							{
-								printnl(262);
-								print(958);
-							}
-							{
-								helpptr = 1;
-								helpline[0] = 956;
-							}
-							errorLogic.error();
-						}
-						trieo[q] = v;
+						errorLogic.error();
 					}
-					if (curcmd == 2) {
-						break lab30;
-					}
-					k = 0;
-					hyf[0] = 0;
-					digitsensed = false;
-				}
-					break;
-				default: {
-					{
-						printnl(262);
-						print(955);
-					}
-					printEscapeSequence(953);
-					{
-						helpptr = 1;
-						helpline[0] = 956;
-					}
-					errorLogic.error();
-				}
-					break;
+						break;
 				}
 			}
 			/* lab30: */} else {
@@ -11037,287 +11034,287 @@ public final class Tex {
 				}
 				lab35: while (true) {
 					switch (mem[curp].getb0()) {
-					case 0:
-					case 1:
-					case 2:
-						activewidth[1] = activewidth[1] + mem[curp + 1].getInt();
-						break;
-					case 8:
-						if (mem[curp].getb1() == 4) {
-							curlang = mem[curp + 1].getrh();
-							lhyf = mem[curp + 1].getb0();
-							rhyf = mem[curp + 1].getb1();
-						}
-						break;
-					case 10: {
-						if (autobreaking) {
-							if ((prevp >= himemmin)) {
-								trybreak(0, 0);
-							} else if ((mem[prevp].getb0() < 9)) {
-								trybreak(0, 0);
-							} else if ((mem[prevp].getb0() == 11) && (mem[prevp].getb1() != 1)) {
-								trybreak(0, 0);
+						case 0:
+						case 1:
+						case 2:
+							activewidth[1] = activewidth[1] + mem[curp + 1].getInt();
+							break;
+						case 8:
+							if (mem[curp].getb1() == 4) {
+								curlang = mem[curp + 1].getrh();
+								lhyf = mem[curp + 1].getb0();
+								rhyf = mem[curp + 1].getb1();
 							}
-						}
-						if ((mem[mem[curp + 1].getlh()].getb1() != 0) && (mem[mem[curp + 1].getlh() + 3].getInt() != 0)) {
-							mem[curp + 1].setlh(finiteshrink(mem[curp + 1].getlh()));
-						}
-						q = mem[curp + 1].getlh();
-						activewidth[1] = activewidth[1] + mem[q + 1].getInt();
-						activewidth[2 + mem[q].getb0()] = activewidth[2 + mem[q].getb0()] + mem[q + 2].getInt();
-						activewidth[6] = activewidth[6] + mem[q + 3].getInt();
-						if (secondpass && autobreaking) {
-							prevs = curp;
-							s = mem[prevs].getrh();
-							if (s != 0) {
-								lab31: while (true) {
-									lab22: while (true) {
-										if ((s >= himemmin)) {
-											c = mem[s].getb1();
-											hf = mem[s].getb0();
-										} else if (mem[s].getb0() == 6) {
-											if (mem[s + 1].getrh() == 0) {
+							break;
+						case 10: {
+							if (autobreaking) {
+								if ((prevp >= himemmin)) {
+									trybreak(0, 0);
+								} else if ((mem[prevp].getb0() < 9)) {
+									trybreak(0, 0);
+								} else if ((mem[prevp].getb0() == 11) && (mem[prevp].getb1() != 1)) {
+									trybreak(0, 0);
+								}
+							}
+							if ((mem[mem[curp + 1].getlh()].getb1() != 0) && (mem[mem[curp + 1].getlh() + 3].getInt() != 0)) {
+								mem[curp + 1].setlh(finiteshrink(mem[curp + 1].getlh()));
+							}
+							q = mem[curp + 1].getlh();
+							activewidth[1] = activewidth[1] + mem[q + 1].getInt();
+							activewidth[2 + mem[q].getb0()] = activewidth[2 + mem[q].getb0()] + mem[q + 2].getInt();
+							activewidth[6] = activewidth[6] + mem[q + 3].getInt();
+							if (secondpass && autobreaking) {
+								prevs = curp;
+								s = mem[prevs].getrh();
+								if (s != 0) {
+									lab31: while (true) {
+										lab22: while (true) {
+											if ((s >= himemmin)) {
+												c = mem[s].getb1();
+												hf = mem[s].getb0();
+											} else if (mem[s].getb0() == 6) {
+												if (mem[s + 1].getrh() == 0) {
+													prevs = s;
+													s = mem[prevs].getrh();
+													continue lab22;
+												} else {
+													q = mem[s + 1].getrh();
+													c = mem[q].getb1();
+													hf = mem[q].getb0();
+												}
+											} else if ((mem[s].getb0() == 11) && (mem[s].getb1() == 0)) {
+												prevs = s;
+												s = mem[prevs].getrh();
+												continue lab22;
+											} else if (mem[s].getb0() == 8) {
+												if (mem[s].getb1() == 4) {
+													curlang = mem[s + 1].getrh();
+													lhyf = mem[s + 1].getb0();
+													rhyf = mem[s + 1].getb1();
+												}
 												prevs = s;
 												s = mem[prevs].getrh();
 												continue lab22;
 											} else {
-												q = mem[s + 1].getrh();
-												c = mem[q].getb1();
-												hf = mem[q].getb0();
-											}
-										} else if ((mem[s].getb0() == 11) && (mem[s].getb1() == 0)) {
-											prevs = s;
-											s = mem[prevs].getrh();
-											continue lab22;
-										} else if (mem[s].getb0() == 8) {
-											if (mem[s].getb1() == 4) {
-												curlang = mem[s + 1].getrh();
-												lhyf = mem[s + 1].getb0();
-												rhyf = mem[s + 1].getb1();
-											}
-											prevs = s;
-											s = mem[prevs].getrh();
-											continue lab22;
-										} else {
-											break lab31;
-										}
-										if (eqtb[8539 + c].getrh() != 0) {
-											if ((eqtb[8539 + c].getrh() == c) || (eqtb[9601].getInt() > 0)) {
-												break /* lab32 */;
-											} else {
 												break lab31;
 											}
+											if (eqtb[8539 + c].getrh() != 0) {
+												if ((eqtb[8539 + c].getrh() == c) || (eqtb[9601].getInt() > 0)) {
+													break /* lab32 */;
+												} else {
+													break lab31;
+												}
+											}
+											/* lab22: */prevs = s;
+											s = mem[prevs].getrh();
 										}
-										/* lab22: */prevs = s;
-										s = mem[prevs].getrh();
-									}
-									/* lab32: */hyfchar = hyphenchar[hf];
-									if (hyfchar < 0) {
-										break lab31;
-									}
-									if (hyfchar > 255) {
-										break lab31;
-									}
-									ha = prevs;
-									if (lhyf + rhyf > 63) {
-										break lab31;
-									}
-									hn = 0;
-									lab33: while (true) {
-										if ((s >= himemmin)) {
-											if (mem[s].getb0() != hf) {
-												break lab33;
-											}
-											hyfbchar = mem[s].getb1();
-											c = hyfbchar;
-											if (eqtb[8539 + c].getrh() == 0) {
-												break lab33;
-											}
-											if (hn == 63) {
-												break lab33;
-											}
-											hb = s;
-											hn = hn + 1;
-											hu[hn] = c;
-											hc[hn] = eqtb[8539 + c].getrh();
-											hyfbchar = 256;
-										} else if (mem[s].getb0() == 6) {
-											if (mem[s + 1].getb0() != hf) {
-												break lab33;
-											}
-											j = hn;
-											q = mem[s + 1].getrh();
-											if (q > 0) {
-												hyfbchar = mem[q].getb1();
-											}
-											while (q > 0) {
-												c = mem[q].getb1();
+										/* lab32: */hyfchar = hyphenchar[hf];
+										if (hyfchar < 0) {
+											break lab31;
+										}
+										if (hyfchar > 255) {
+											break lab31;
+										}
+										ha = prevs;
+										if (lhyf + rhyf > 63) {
+											break lab31;
+										}
+										hn = 0;
+										lab33: while (true) {
+											if ((s >= himemmin)) {
+												if (mem[s].getb0() != hf) {
+													break lab33;
+												}
+												hyfbchar = mem[s].getb1();
+												c = hyfbchar;
 												if (eqtb[8539 + c].getrh() == 0) {
 													break lab33;
 												}
-												if (j == 63) {
+												if (hn == 63) {
 													break lab33;
 												}
-												j = j + 1;
-												hu[j] = c;
-												hc[j] = eqtb[8539 + c].getrh();
-												q = mem[q].getrh();
-											}
-											hb = s;
-											hn = j;
-											if (((mem[s].getb1()) % 2 == 1)) {
+												hb = s;
+												hn = hn + 1;
+												hu[hn] = c;
+												hc[hn] = eqtb[8539 + c].getrh();
+												hyfbchar = 256;
+											} else if (mem[s].getb0() == 6) {
+												if (mem[s + 1].getb0() != hf) {
+													break lab33;
+												}
+												j = hn;
+												q = mem[s + 1].getrh();
+												if (q > 0) {
+													hyfbchar = mem[q].getb1();
+												}
+												while (q > 0) {
+													c = mem[q].getb1();
+													if (eqtb[8539 + c].getrh() == 0) {
+														break lab33;
+													}
+													if (j == 63) {
+														break lab33;
+													}
+													j = j + 1;
+													hu[j] = c;
+													hc[j] = eqtb[8539 + c].getrh();
+													q = mem[q].getrh();
+												}
+												hb = s;
+												hn = j;
+												if (((mem[s].getb1()) % 2 == 1)) {
+													hyfbchar = fontbchar[hf];
+												} else {
+													hyfbchar = 256;
+												}
+											} else if ((mem[s].getb0() == 11) && (mem[s].getb1() == 0)) {
+												hb = s;
 												hyfbchar = fontbchar[hf];
 											} else {
-												hyfbchar = 256;
+												break lab33;
 											}
-										} else if ((mem[s].getb0() == 11) && (mem[s].getb1() == 0)) {
-											hb = s;
-											hyfbchar = fontbchar[hf];
-										} else {
-											break lab33;
+											s = mem[s].getrh();
 										}
-										s = mem[s].getrh();
-									}
-									/* lab33: */if (hn < lhyf + rhyf) {
-										break lab31;
-									}
-									lab34: while (true) {
-										if (!((s >= himemmin))) {
-											switch (mem[s].getb0()) {
-											case 6:
-												;
-												break;
-											case 11:
-												if (mem[s].getb1() != 0) {
-													break lab34;
+										/* lab33: */if (hn < lhyf + rhyf) {
+											break lab31;
+										}
+										lab34: while (true) {
+											if (!((s >= himemmin))) {
+												switch (mem[s].getb0()) {
+													case 6:
+														;
+														break;
+													case 11:
+														if (mem[s].getb1() != 0) {
+															break lab34;
+														}
+														break;
+													case 8:
+													case 10:
+													case 12:
+													case 3:
+													case 5:
+													case 4:
+														break lab34;
+													default:
+														break lab31;
 												}
-												break;
-											case 8:
-											case 10:
-											case 12:
-											case 3:
-											case 5:
-											case 4:
-												break lab34;
-											default:
-												break lab31;
 											}
+											s = mem[s].getrh();
 										}
-										s = mem[s].getrh();
+										/* lab34: */hyphenate();
+										break;
 									}
-									/* lab34: */hyphenate();
-									break;
-								}
-								/* lab31: */
-							}
-						}
-					}
-						break;
-					case 11:
-						if (mem[curp].getb1() == 1) {
-							if (!(mem[curp].getrh() >= himemmin) && autobreaking) {
-								if (mem[mem[curp].getrh()].getb0() == 10) {
-									trybreak(0, 0);
+									/* lab31: */
 								}
 							}
-							activewidth[1] = activewidth[1] + mem[curp + 1].getInt();
-						} else {
-							activewidth[1] = activewidth[1] + mem[curp + 1].getInt();
 						}
-						break;
-					case 6: {
-						f = mem[curp + 1].getb0();
-						activewidth[1] = activewidth[1] + fontinfo[widthbase[f] + fontinfo[charbase[f] + mem[curp + 1].getb1()].getb0()].getInt();
-					}
-						break;
-					case 7: {
-						s = mem[curp + 1].getlh();
-						discwidth = 0;
-						if (s == 0) {
-							trybreak(eqtb[9567].getInt(), 1);
-						} else {
-							do {
+							break;
+						case 11:
+							if (mem[curp].getb1() == 1) {
+								if (!(mem[curp].getrh() >= himemmin) && autobreaking) {
+									if (mem[mem[curp].getrh()].getb0() == 10) {
+										trybreak(0, 0);
+									}
+								}
+								activewidth[1] = activewidth[1] + mem[curp + 1].getInt();
+							} else {
+								activewidth[1] = activewidth[1] + mem[curp + 1].getInt();
+							}
+							break;
+						case 6: {
+							f = mem[curp + 1].getb0();
+							activewidth[1] = activewidth[1] + fontinfo[widthbase[f] + fontinfo[charbase[f] + mem[curp + 1].getb1()].getb0()].getInt();
+						}
+							break;
+						case 7: {
+							s = mem[curp + 1].getlh();
+							discwidth = 0;
+							if (s == 0) {
+								trybreak(eqtb[9567].getInt(), 1);
+							} else {
+								do {
+									if ((s >= himemmin)) {
+										f = mem[s].getb0();
+										discwidth = discwidth + fontinfo[widthbase[f] + fontinfo[charbase[f] + mem[s].getb1()].getb0()].getInt();
+									} else {
+										switch (mem[s].getb0()) {
+											case 6: {
+												f = mem[s + 1].getb0();
+												discwidth = discwidth + fontinfo[widthbase[f] + fontinfo[charbase[f] + mem[s + 1].getb1()].getb0()].getInt();
+											}
+												break;
+											case 0:
+											case 1:
+											case 2:
+											case 11:
+												discwidth = discwidth + mem[s + 1].getInt();
+												break;
+											default:
+												errorLogic.confusion(937);
+												break;
+										}
+									}
+									s = mem[s].getrh();
+								} while (!(s == 0));
+								activewidth[1] = activewidth[1] + discwidth;
+								trybreak(eqtb[9566].getInt(), 1);
+								activewidth[1] = activewidth[1] - discwidth;
+							}
+							r = mem[curp].getb1();
+							s = mem[curp].getrh();
+							while (r > 0) {
 								if ((s >= himemmin)) {
 									f = mem[s].getb0();
-									discwidth = discwidth + fontinfo[widthbase[f] + fontinfo[charbase[f] + mem[s].getb1()].getb0()].getInt();
+									activewidth[1] = activewidth[1] + fontinfo[widthbase[f] + fontinfo[charbase[f] + mem[s].getb1()].getb0()].getInt();
 								} else {
 									switch (mem[s].getb0()) {
-									case 6: {
-										f = mem[s + 1].getb0();
-										discwidth = discwidth + fontinfo[widthbase[f] + fontinfo[charbase[f] + mem[s + 1].getb1()].getb0()].getInt();
-									}
-										break;
-									case 0:
-									case 1:
-									case 2:
-									case 11:
-										discwidth = discwidth + mem[s + 1].getInt();
-										break;
-									default:
-										errorLogic.confusion(937);
-										break;
+										case 6: {
+											f = mem[s + 1].getb0();
+											activewidth[1] = activewidth[1] + fontinfo[widthbase[f] + fontinfo[charbase[f] + mem[s + 1].getb1()].getb0()].getInt();
+										}
+											break;
+										case 0:
+										case 1:
+										case 2:
+										case 11:
+											activewidth[1] = activewidth[1] + mem[s + 1].getInt();
+											break;
+										default:
+											errorLogic.confusion(938);
+											break;
 									}
 								}
+								r = r - 1;
 								s = mem[s].getrh();
-							} while (!(s == 0));
-							activewidth[1] = activewidth[1] + discwidth;
-							trybreak(eqtb[9566].getInt(), 1);
-							activewidth[1] = activewidth[1] - discwidth;
-						}
-						r = mem[curp].getb1();
-						s = mem[curp].getrh();
-						while (r > 0) {
-							if ((s >= himemmin)) {
-								f = mem[s].getb0();
-								activewidth[1] = activewidth[1] + fontinfo[widthbase[f] + fontinfo[charbase[f] + mem[s].getb1()].getb0()].getInt();
-							} else {
-								switch (mem[s].getb0()) {
-								case 6: {
-									f = mem[s + 1].getb0();
-									activewidth[1] = activewidth[1] + fontinfo[widthbase[f] + fontinfo[charbase[f] + mem[s + 1].getb1()].getb0()].getInt();
-								}
-									break;
-								case 0:
-								case 1:
-								case 2:
-								case 11:
-									activewidth[1] = activewidth[1] + mem[s + 1].getInt();
-									break;
-								default:
-									errorLogic.confusion(938);
-									break;
-								}
 							}
-							r = r - 1;
-							s = mem[s].getrh();
+							prevp = curp;
+							curp = s;
+							break lab35;
 						}
-						prevp = curp;
-						curp = s;
-						break lab35;
-					}
-					case 9: {
-						autobreaking = (mem[curp].getb1() == 1);
-						{
-							if (!(mem[curp].getrh() >= himemmin) && autobreaking) {
-								if (mem[mem[curp].getrh()].getb0() == 10) {
-									trybreak(0, 0);
+						case 9: {
+							autobreaking = (mem[curp].getb1() == 1);
+							{
+								if (!(mem[curp].getrh() >= himemmin) && autobreaking) {
+									if (mem[mem[curp].getrh()].getb0() == 10) {
+										trybreak(0, 0);
+									}
 								}
+								activewidth[1] = activewidth[1] + mem[curp + 1].getInt();
 							}
-							activewidth[1] = activewidth[1] + mem[curp + 1].getInt();
 						}
-					}
-						break;
-					case 12:
-						trybreak(mem[curp + 1].getInt(), 0);
-						break;
-					case 4:
-					case 3:
-					case 5:
-						;
-						break;
-					default:
-						errorLogic.confusion(936);
-						break;
+							break;
+						case 12:
+							trybreak(mem[curp + 1].getInt(), 0);
+							break;
+						case 4:
+						case 3:
+						case 5:
+							;
+							break;
+						default:
+							errorLogic.confusion(936);
+							break;
 					}
 					prevp = curp;
 					curp = mem[curp].getrh();
@@ -11419,7 +11416,6 @@ public final class Tex {
 		int p;
 		int q;
 		int s, t;
-		int u, v;
 		scanleftbrace();
 		if (eqtb[9613].getInt() <= 0) {
 			curlang = 0;
@@ -11434,121 +11430,113 @@ public final class Tex {
 			getxtoken();
 			lab21: while (true) {
 				switch (curcmd) {
-				case 11:
-				case 12:
-				case 68:
-					if (curchr == 45) {
-						if (n < 63) {
-							q = allocateMemoryWord();
-							mem[q].setrh(p);
-							mem[q].setlh(n);
-							p = q;
-						}
-					} else {
-						if (eqtb[8539 + curchr].getrh() == 0) {
-							{
-								printnl(262);
-								print(945);
+					case 11:
+					case 12:
+					case 68:
+						if (curchr == 45) {
+							if (n < 63) {
+								q = allocateMemoryWord();
+								mem[q].setrh(p);
+								mem[q].setlh(n);
+								p = q;
 							}
-							{
-								helpptr = 2;
-								helpline[1] = 946;
-								helpline[0] = 947;
+						} else {
+							if (eqtb[8539 + curchr].getrh() == 0) {
+								{
+									printnl(262);
+									print(945);
+								}
+								{
+									helpptr = 2;
+									helpline[1] = 946;
+									helpline[0] = 947;
+								}
+								errorLogic.error();
+							} else if (n < 63) {
+								n = n + 1;
+								hc[n] = eqtb[8539 + curchr].getrh();
 							}
-							errorLogic.error();
-						} else if (n < 63) {
-							n = n + 1;
-							hc[n] = eqtb[8539 + curchr].getrh();
 						}
+						break;
+					case 16: {
+						scancharnum();
+						curchr = curval;
+						curcmd = 68;
+						continue lab21;
 					}
-					break;
-				case 16: {
-					scancharnum();
-					curchr = curval;
-					curcmd = 68;
-					continue lab21;
-				}
-				case 10:
-				case 2: {
-					if (n > 1) {
-						n = n + 1;
-						hc[n] = curlang;
-						h = 0;
-						for (j = 1; j <= n; j++) {
-							h = (h + h + hc[j]) % 607;
-							{
-								strpool[poolptr] = hc[j];
-								poolptr = poolptr + 1;
+					case 10:
+					case 2: {
+						if (n > 1) {
+							n = n + 1;
+							hc[n] = curlang;
+							h = 0;
+							for (j = 1; j <= n; j++) {
+								h = (h + h + hc[j]) % 607;
+								stringPool.append((char)hc[j]);
 							}
-						}
-						s = stringPool.makeString();
-						if (hyphcount == 607) {
-							errorLogic.overflow(948, 607);
-						}
-						hyphcount = hyphcount + 1;
-						while (hyphword[h] != 0) {
-							k = hyphword[h];
-							lab45: while (true) {
-								lab40: while (true) {
-									if ((strstart[k + 1] - strstart[k]) < (strstart[s + 1] - strstart[s])) {
-										break lab40;
-									}
-									if ((strstart[k + 1] - strstart[k]) > (strstart[s + 1] - strstart[s])) {
-										break lab45;
-									}
-									u = strstart[k];
-									v = strstart[s];
-									do {
-										if (strpool[u] < strpool[v]) {
+							s = stringPool.makeString();
+							if (hyphcount == 607) {
+								errorLogic.overflow(948, 607);
+							}
+							hyphcount = hyphcount + 1;
+							while (hyphword[h] != 0) {
+								k = hyphword[h];
+								lab45: while (true) {
+									lab40: while (true) {
+										if ((strstart[k + 1] - strstart[k]) < (strstart[s + 1] - strstart[s])) {
 											break lab40;
 										}
-										if (strpool[u] > strpool[v]) {
+										if ((strstart[k + 1] - strstart[k]) > (strstart[s + 1] - strstart[s])) {
 											break lab45;
 										}
-										u = u + 1;
-										v = v + 1;
-									} while (!(u == strstart[k + 1]));
+										final int order = stringPool.getString(k).compareTo(stringPool.getString(s));
+										if (order < 0) {
+											break lab40;
+										} else if (order > 0) {
+											break lab45;
+										} else {
+											break;
+										}
+									}
+									/* lab40: */q = hyphlist[h];
+									hyphlist[h] = p;
+									p = q;
+									t = hyphword[h];
+									hyphword[h] = s;
+									s = t;
 									break;
 								}
-								/* lab40: */q = hyphlist[h];
-								hyphlist[h] = p;
-								p = q;
-								t = hyphword[h];
-								hyphword[h] = s;
-								s = t;
-								break;
+								/* lab45: */if (h > 0) {
+									h = h - 1;
+								} else {
+									h = 607;
+								}
 							}
-							/* lab45: */if (h > 0) {
-								h = h - 1;
-							} else {
-								h = 607;
-							}
+							hyphword[h] = s;
+							hyphlist[h] = p;
 						}
-						hyphword[h] = s;
-						hyphlist[h] = p;
+						if (curcmd == 2) {
+							return /* lab10 */;
+						}
+						n = 0;
+						p = 0;
 					}
-					if (curcmd == 2) {
-						return /* lab10 */;
+						break;
+					default: {
+						{
+							printnl(262);
+							print(680);
+						}
+						printEscapeSequence(941);
+						print(942);
+						{
+							helpptr = 2;
+							helpline[1] = 943;
+							helpline[0] = 944;
+						}
+						errorLogic.error();
 					}
-					n = 0;
-					p = 0;
-				}
-					break;
-				default: {
-					{
-						printnl(262);
-						print(680);
-					}
-					printEscapeSequence(941);
-					print(942);
-					{
-						helpptr = 2;
-						helpline[1] = 943;
-						helpline[0] = 944;
-					}
-					errorLogic.error();
-				}
-					break;
+						break;
 				}
 				break;
 			}
@@ -11563,40 +11551,40 @@ public final class Tex {
 		mem[memtop - 3].setrh(p);
 		while (p != 0) {
 			switch (mem[p].getb0()) {
-			case 0:
-			case 1:
-			case 2: {
-				q = newskipparam(10);
-				mem[prevp].setrh(q);
-				mem[q].setrh(p);
-				if (mem[tempptr + 1].getInt() > mem[p + 3].getInt()) {
-					mem[tempptr + 1].setInt(mem[tempptr + 1].getInt() - mem[p + 3].getInt());
-				} else {
-					mem[tempptr + 1].setInt(0);
+				case 0:
+				case 1:
+				case 2: {
+					q = newskipparam(10);
+					mem[prevp].setrh(q);
+					mem[q].setrh(p);
+					if (mem[tempptr + 1].getInt() > mem[p + 3].getInt()) {
+						mem[tempptr + 1].setInt(mem[tempptr + 1].getInt() - mem[p + 3].getInt());
+					} else {
+						mem[tempptr + 1].setInt(0);
+					}
+					p = 0;
 				}
-				p = 0;
-			}
-				break;
-			case 8:
-			case 4:
-			case 3: {
-				prevp = p;
-				p = mem[prevp].getrh();
-			}
-				break;
-			case 10:
-			case 11:
-			case 12: {
-				q = p;
-				p = mem[q].getrh();
-				mem[q].setrh(0);
-				mem[prevp].setrh(p);
-				flushnodelist(q);
-			}
-				break;
-			default:
-				errorLogic.confusion(959);
-				break;
+					break;
+				case 8:
+				case 4:
+				case 3: {
+					prevp = p;
+					p = mem[prevp].getrh();
+				}
+					break;
+				case 10:
+				case 11:
+				case 12: {
+					q = p;
+					p = mem[q].getrh();
+					mem[q].setrh(0);
+					mem[prevp].setrh(p);
+					flushnodelist(q);
+				}
+					break;
+				default:
+					errorLogic.confusion(959);
+					break;
 			}
 		}
 		Result = mem[memtop - 3].getrh();
@@ -11631,44 +11619,44 @@ public final class Tex {
 						pi = -10000;
 					} else {
 						switch (mem[p].getb0()) {
-						case 0:
-						case 1:
-						case 2: {
-							activewidth[1] = activewidth[1] + prevdp + mem[p + 3].getInt();
-							prevdp = mem[p + 2].getInt();
-							break lab45;
-						}
-						case 8:
-							break lab45;
-						case 10:
-							if ((mem[prevp].getb0() < 9)) {
-								pi = 0;
-							} else {
-								break lab90;
+							case 0:
+							case 1:
+							case 2: {
+								activewidth[1] = activewidth[1] + prevdp + mem[p + 3].getInt();
+								prevdp = mem[p + 2].getInt();
+								break lab45;
 							}
-							break;
-						case 11: {
-							if (mem[p].getrh() == 0) {
-								t = 12;
-							} else {
-								t = mem[mem[p].getrh()].getb0();
+							case 8:
+								break lab45;
+							case 10:
+								if ((mem[prevp].getb0() < 9)) {
+									pi = 0;
+								} else {
+									break lab90;
+								}
+								break;
+							case 11: {
+								if (mem[p].getrh() == 0) {
+									t = 12;
+								} else {
+									t = mem[mem[p].getrh()].getb0();
+								}
+								if (t == 10) {
+									pi = 0;
+								} else {
+									break lab90;
+								}
 							}
-							if (t == 10) {
-								pi = 0;
-							} else {
-								break lab90;
-							}
-						}
-							break;
-						case 12:
-							pi = mem[p + 1].getInt();
-							break;
-						case 4:
-						case 3:
-							break lab45;
-						default:
-							errorLogic.confusion(960);
-							break;
+								break;
+							case 12:
+								pi = mem[p + 1].getInt();
+								break;
+							case 4:
+							case 3:
+								break lab45;
+							default:
+								errorLogic.confusion(960);
+								break;
 						}
 					}
 					if (pi < 10000) {
@@ -12097,153 +12085,153 @@ public final class Tex {
 					lab80: while (true) {
 						lab90: while (true) {
 							switch (mem[p].getb0()) {
-							case 0:
-							case 1:
-							case 2:
-								if (pagecontents < 2) {
-									if (pagecontents == 0) {
-										freezepagespecs(2);
-									} else {
-										pagecontents = 2;
-									}
-									q = newskipparam(9);
-									if (mem[tempptr + 1].getInt() > mem[p + 3].getInt()) {
-										mem[tempptr + 1].setInt(mem[tempptr + 1].getInt() - mem[p + 3].getInt());
-									} else {
-										mem[tempptr + 1].setInt(0);
-									}
-									mem[q].setrh(p);
-									mem[memtop - 1].setrh(q);
-									continue lab22;
-								} else {
-									pagesofar[1] = pagesofar[1] + pagesofar[7] + mem[p + 3].getInt();
-									pagesofar[7] = mem[p + 2].getInt();
-									break lab80;
-								}
-							case 8:
-								break lab80;
-							case 10:
-								if (pagecontents < 2) {
-									break lab31;
-								} else if ((mem[pagetail].getb0() < 9)) {
-									pi = 0;
-								} else {
-									break lab90;
-								}
-								break;
-							case 11:
-								if (pagecontents < 2) {
-									break lab31;
-								} else if (mem[p].getrh() == 0) {
-									return /* lab10 */;
-								} else if (mem[mem[p].getrh()].getb0() == 10) {
-									pi = 0;
-								} else {
-									break lab90;
-								}
-							case 12:
-								if (pagecontents < 2) {
-									break lab31;
-								} else {
-									pi = mem[p + 1].getInt();
-								}
-								break;
-							case 4:
-								break lab80;
-							case 3: {
-								if (pagecontents == 0) {
-									freezepagespecs(1);
-								}
-								n = mem[p].getb1();
-								r = memtop;
-								while (n >= mem[mem[r].getrh()].getb1()) {
-									r = mem[r].getrh();
-								}
-								if (mem[r].getb1() != n) {
-									q = getnode(4);
-									mem[q].setrh(mem[r].getrh());
-									mem[r].setrh(q);
-									r = q;
-									mem[r].setb1(n);
-									mem[r].setb0(0);
-									ensurevbox(n);
-									if (eqtb[7978 + n].getrh() == 0) {
-										mem[r + 3].setInt(0);
-									} else {
-										mem[r + 3].setInt(mem[eqtb[7978 + n].getrh() + 3].getInt() + mem[eqtb[7978 + n].getrh() + 2].getInt());
-									}
-									mem[r + 2].setlh(0);
-									q = eqtb[7200 + n].getrh();
-									if (eqtb[9618 + n].getInt() == 1000) {
-										h = mem[r + 3].getInt();
-									} else {
-										h = xovern(mem[r + 3].getInt(), 1000) * eqtb[9618 + n].getInt();
-									}
-									pagesofar[0] = pagesofar[0] - h - mem[q + 1].getInt();
-									pagesofar[2 + mem[q].getb0()] = pagesofar[2 + mem[q].getb0()] + mem[q + 2].getInt();
-									pagesofar[6] = pagesofar[6] + mem[q + 3].getInt();
-									if ((mem[q].getb1() != 0) && (mem[q + 3].getInt() != 0)) {
-										{
-											printnl(262);
-											print(998);
-										}
-										printEscapeSequence(395);
-										printInt(n);
-										{
-											helpptr = 3;
-											helpline[2] = 999;
-											helpline[1] = 1000;
-											helpline[0] = 922;
-										}
-										errorLogic.error();
-									}
-								}
-								if (mem[r].getb0() == 1) {
-									insertpenalties = insertpenalties + mem[p + 1].getInt();
-								} else {
-									mem[r + 2].setrh(p);
-									delta = pagesofar[0] - pagesofar[1] - pagesofar[7] + pagesofar[6];
-									if (eqtb[9618 + n].getInt() == 1000) {
-										h = mem[p + 3].getInt();
-									} else {
-										h = xovern(mem[p + 3].getInt(), 1000) * eqtb[9618 + n].getInt();
-									}
-									if (((h <= 0) || (h <= delta)) && (mem[p + 3].getInt() + mem[r + 3].getInt() <= eqtb[10151 + n].getInt())) {
-										pagesofar[0] = pagesofar[0] - h;
-										mem[r + 3].setInt(mem[r + 3].getInt() + mem[p + 3].getInt());
-									} else {
-										if (eqtb[9618 + n].getInt() <= 0) {
-											w = 1073741823;
+								case 0:
+								case 1:
+								case 2:
+									if (pagecontents < 2) {
+										if (pagecontents == 0) {
+											freezepagespecs(2);
 										} else {
-											w = pagesofar[0] - pagesofar[1] - pagesofar[7];
+											pagecontents = 2;
+										}
+										q = newskipparam(9);
+										if (mem[tempptr + 1].getInt() > mem[p + 3].getInt()) {
+											mem[tempptr + 1].setInt(mem[tempptr + 1].getInt() - mem[p + 3].getInt());
+										} else {
+											mem[tempptr + 1].setInt(0);
+										}
+										mem[q].setrh(p);
+										mem[memtop - 1].setrh(q);
+										continue lab22;
+									} else {
+										pagesofar[1] = pagesofar[1] + pagesofar[7] + mem[p + 3].getInt();
+										pagesofar[7] = mem[p + 2].getInt();
+										break lab80;
+									}
+								case 8:
+									break lab80;
+								case 10:
+									if (pagecontents < 2) {
+										break lab31;
+									} else if ((mem[pagetail].getb0() < 9)) {
+										pi = 0;
+									} else {
+										break lab90;
+									}
+									break;
+								case 11:
+									if (pagecontents < 2) {
+										break lab31;
+									} else if (mem[p].getrh() == 0) {
+										return /* lab10 */;
+									} else if (mem[mem[p].getrh()].getb0() == 10) {
+										pi = 0;
+									} else {
+										break lab90;
+									}
+								case 12:
+									if (pagecontents < 2) {
+										break lab31;
+									} else {
+										pi = mem[p + 1].getInt();
+									}
+									break;
+								case 4:
+									break lab80;
+								case 3: {
+									if (pagecontents == 0) {
+										freezepagespecs(1);
+									}
+									n = mem[p].getb1();
+									r = memtop;
+									while (n >= mem[mem[r].getrh()].getb1()) {
+										r = mem[r].getrh();
+									}
+									if (mem[r].getb1() != n) {
+										q = getnode(4);
+										mem[q].setrh(mem[r].getrh());
+										mem[r].setrh(q);
+										r = q;
+										mem[r].setb1(n);
+										mem[r].setb0(0);
+										ensurevbox(n);
+										if (eqtb[7978 + n].getrh() == 0) {
+											mem[r + 3].setInt(0);
+										} else {
+											mem[r + 3].setInt(mem[eqtb[7978 + n].getrh() + 3].getInt() + mem[eqtb[7978 + n].getrh() + 2].getInt());
+										}
+										mem[r + 2].setlh(0);
+										q = eqtb[7200 + n].getrh();
+										if (eqtb[9618 + n].getInt() == 1000) {
+											h = mem[r + 3].getInt();
+										} else {
+											h = xovern(mem[r + 3].getInt(), 1000) * eqtb[9618 + n].getInt();
+										}
+										pagesofar[0] = pagesofar[0] - h - mem[q + 1].getInt();
+										pagesofar[2 + mem[q].getb0()] = pagesofar[2 + mem[q].getb0()] + mem[q + 2].getInt();
+										pagesofar[6] = pagesofar[6] + mem[q + 3].getInt();
+										if ((mem[q].getb1() != 0) && (mem[q + 3].getInt() != 0)) {
+											{
+												printnl(262);
+												print(998);
+											}
+											printEscapeSequence(395);
+											printInt(n);
+											{
+												helpptr = 3;
+												helpline[2] = 999;
+												helpline[1] = 1000;
+												helpline[0] = 922;
+											}
+											errorLogic.error();
+										}
+									}
+									if (mem[r].getb0() == 1) {
+										insertpenalties = insertpenalties + mem[p + 1].getInt();
+									} else {
+										mem[r + 2].setrh(p);
+										delta = pagesofar[0] - pagesofar[1] - pagesofar[7] + pagesofar[6];
+										if (eqtb[9618 + n].getInt() == 1000) {
+											h = mem[p + 3].getInt();
+										} else {
+											h = xovern(mem[p + 3].getInt(), 1000) * eqtb[9618 + n].getInt();
+										}
+										if (((h <= 0) || (h <= delta)) && (mem[p + 3].getInt() + mem[r + 3].getInt() <= eqtb[10151 + n].getInt())) {
+											pagesofar[0] = pagesofar[0] - h;
+											mem[r + 3].setInt(mem[r + 3].getInt() + mem[p + 3].getInt());
+										} else {
+											if (eqtb[9618 + n].getInt() <= 0) {
+												w = 1073741823;
+											} else {
+												w = pagesofar[0] - pagesofar[1] - pagesofar[7];
+												if (eqtb[9618 + n].getInt() != 1000) {
+													w = xovern(w, eqtb[9618 + n].getInt()) * 1000;
+												}
+											}
+											if (w > eqtb[10151 + n].getInt() - mem[r + 3].getInt()) {
+												w = eqtb[10151 + n].getInt() - mem[r + 3].getInt();
+											}
+											q = vertbreak(mem[p + 4].getlh(), w, mem[p + 2].getInt());
+											mem[r + 3].setInt(mem[r + 3].getInt() + bestheightplusdepth);
 											if (eqtb[9618 + n].getInt() != 1000) {
-												w = xovern(w, eqtb[9618 + n].getInt()) * 1000;
+												bestheightplusdepth = xovern(bestheightplusdepth, 1000) * eqtb[9618 + n].getInt();
+											}
+											pagesofar[0] = pagesofar[0] - bestheightplusdepth;
+											mem[r].setb0(1);
+											mem[r + 1].setrh(q);
+											mem[r + 1].setlh(p);
+											if (q == 0) {
+												insertpenalties = insertpenalties - 10000;
+											} else if (mem[q].getb0() == 12) {
+												insertpenalties = insertpenalties + mem[q + 1].getInt();
 											}
 										}
-										if (w > eqtb[10151 + n].getInt() - mem[r + 3].getInt()) {
-											w = eqtb[10151 + n].getInt() - mem[r + 3].getInt();
-										}
-										q = vertbreak(mem[p + 4].getlh(), w, mem[p + 2].getInt());
-										mem[r + 3].setInt(mem[r + 3].getInt() + bestheightplusdepth);
-										if (eqtb[9618 + n].getInt() != 1000) {
-											bestheightplusdepth = xovern(bestheightplusdepth, 1000) * eqtb[9618 + n].getInt();
-										}
-										pagesofar[0] = pagesofar[0] - bestheightplusdepth;
-										mem[r].setb0(1);
-										mem[r + 1].setrh(q);
-										mem[r + 1].setlh(p);
-										if (q == 0) {
-											insertpenalties = insertpenalties - 10000;
-										} else if (mem[q].getb0() == 12) {
-											insertpenalties = insertpenalties + mem[q + 1].getInt();
-										}
 									}
+									break lab80;
 								}
-								break lab80;
-							}
-							default:
-								errorLogic.confusion(993);
-								break;
+								default:
+									errorLogic.confusion(993);
+									break;
 							}
 							if (pi < 10000) {
 								if (pagesofar[1] < pagesofar[0]) {
@@ -12409,24 +12397,24 @@ public final class Tex {
 		int s;
 		s = curchr;
 		switch (s) {
-		case 0:
-			curval = 4;
-			break;
-		case 1:
-			curval = 8;
-			break;
-		case 2:
-			curval = 12;
-			break;
-		case 3:
-			curval = 16;
-			break;
-		case 4:
-			scanglue(2);
-			break;
-		case 5:
-			scanglue(3);
-			break;
+			case 0:
+				curval = 4;
+				break;
+			case 1:
+				curval = 8;
+				break;
+			case 2:
+				curval = 12;
+				break;
+			case 3:
+				curval = 16;
+				break;
+			case 4:
+				scanglue(2);
+				break;
+			case 5:
+				scanglue(3);
+				break;
 		}
 		{
 			mem[curlist.tailfield].setrh(newglue(curval));
@@ -12473,29 +12461,29 @@ public final class Tex {
 				print(625);
 			}
 			switch (curgroup) {
-			case 14: {
-				mem[p].setlh(11011);
-				printEscapeSequence(516);
-			}
-				break;
-			case 15: {
-				mem[p].setlh(804);
-				printchar(36);
-			}
-				break;
-			case 16: {
-				mem[p].setlh(11012);
-				mem[p].setrh(allocateMemoryWord());
-				p = mem[p].getrh();
-				mem[p].setlh(3118);
-				printEscapeSequence(1042);
-			}
-				break;
-			default: {
-				mem[p].setlh(637);
-				printchar(125);
-			}
-				break;
+				case 14: {
+					mem[p].setlh(11011);
+					printEscapeSequence(516);
+				}
+					break;
+				case 15: {
+					mem[p].setlh(804);
+					printchar(36);
+				}
+					break;
+				case 16: {
+					mem[p].setlh(11012);
+					mem[p].setrh(allocateMemoryWord());
+					p = mem[p].getrh();
+					mem[p].setlh(3118);
+					printEscapeSequence(1042);
+				}
+					break;
+				default: {
+					mem[p].setlh(637);
+					printchar(125);
+				}
+					break;
 			}
 			print(626);
 			begintokenlist(mem[memtop - 3].getrh(), 4);
@@ -12597,105 +12585,105 @@ public final class Tex {
 		int k;
 		int n;
 		switch (curchr) {
-		case 0: {
-			scaneightbitint();
-			curbox = eqtb[7978 + curval].getrh();
-			eqtb[7978 + curval].setrh(0);
-		}
-			break;
-		case 1: {
-			scaneightbitint();
-			curbox = copynodelist(eqtb[7978 + curval].getrh());
-		}
-			break;
-		case 2: {
-			curbox = 0;
-			if (Math.abs(curlist.modefield) == 203) {
-				errorLogic.youCantUse("Sorry; this \\lastbox will be void.");
-			} else if ((curlist.modefield == 1) && (curlist.headfield == curlist.tailfield)) {
-				errorLogic.youCantUse("Sorry...I usually can't take things from the current page.", "This \\lastbox will therefore be void.");
-			} else {
-				if (!(curlist.tailfield >= himemmin)) {
-					if ((mem[curlist.tailfield].getb0() == 0) || (mem[curlist.tailfield].getb0() == 1)) {
-						q = curlist.headfield;
-						lab30: while (true) {
-							do {
-								p = q;
-								if (!(q >= himemmin)) {
-									if (mem[q].getb0() == 7) {
-										for (m = 1; m <= mem[q].getb1(); m++) {
-											p = mem[p].getrh();
-										}
-										if (p == curlist.tailfield) {
-											break lab30;
+			case 0: {
+				scaneightbitint();
+				curbox = eqtb[7978 + curval].getrh();
+				eqtb[7978 + curval].setrh(0);
+			}
+				break;
+			case 1: {
+				scaneightbitint();
+				curbox = copynodelist(eqtb[7978 + curval].getrh());
+			}
+				break;
+			case 2: {
+				curbox = 0;
+				if (Math.abs(curlist.modefield) == 203) {
+					errorLogic.youCantUse("Sorry; this \\lastbox will be void.");
+				} else if ((curlist.modefield == 1) && (curlist.headfield == curlist.tailfield)) {
+					errorLogic.youCantUse("Sorry...I usually can't take things from the current page.", "This \\lastbox will therefore be void.");
+				} else {
+					if (!(curlist.tailfield >= himemmin)) {
+						if ((mem[curlist.tailfield].getb0() == 0) || (mem[curlist.tailfield].getb0() == 1)) {
+							q = curlist.headfield;
+							lab30: while (true) {
+								do {
+									p = q;
+									if (!(q >= himemmin)) {
+										if (mem[q].getb0() == 7) {
+											for (m = 1; m <= mem[q].getb1(); m++) {
+												p = mem[p].getrh();
+											}
+											if (p == curlist.tailfield) {
+												break lab30;
+											}
 										}
 									}
-								}
-								q = mem[p].getrh();
-							} while (!(q == curlist.tailfield));
-							curbox = curlist.tailfield;
-							mem[curbox + 4].setInt(0);
-							curlist.tailfield = p;
-							mem[p].setrh(0);
-							break;
-						}
-						/* lab30: */}
+									q = mem[p].getrh();
+								} while (!(q == curlist.tailfield));
+								curbox = curlist.tailfield;
+								mem[curbox + 4].setInt(0);
+								curlist.tailfield = p;
+								mem[p].setrh(0);
+								break;
+							}
+							/* lab30: */}
+					}
 				}
 			}
-		}
-			break;
-		case 3: {
-			scaneightbitint();
-			n = curval;
-			if (!scankeyword(842)) {
-				{
-					printnl(262);
-					print(1073);
+				break;
+			case 3: {
+				scaneightbitint();
+				n = curval;
+				if (!scankeyword(842)) {
+					{
+						printnl(262);
+						print(1073);
+					}
+					{
+						helpptr = 2;
+						helpline[1] = 1074;
+						helpline[0] = 1075;
+					}
+					errorLogic.error();
 				}
-				{
-					helpptr = 2;
-					helpline[1] = 1074;
-					helpline[0] = 1075;
-				}
-				errorLogic.error();
+				scandimen(false, false, false);
+				curbox = vsplit(n, curval);
 			}
-			scandimen(false, false, false);
-			curbox = vsplit(n, curval);
-		}
-			break;
-		default: {
-			k = curchr - 4;
-			savestack[saveptr + 0].setInt(boxcontext);
-			if (k == 102) {
-				if ((boxcontext < 1073741824) && (Math.abs(curlist.modefield) == 1)) {
-					scanspec(3, true);
+				break;
+			default: {
+				k = curchr - 4;
+				savestack[saveptr + 0].setInt(boxcontext);
+				if (k == 102) {
+					if ((boxcontext < 1073741824) && (Math.abs(curlist.modefield) == 1)) {
+						scanspec(3, true);
+					} else {
+						scanspec(2, true);
+					}
 				} else {
-					scanspec(2, true);
+					if (k == 1) {
+						scanspec(4, true);
+					} else {
+						scanspec(5, true);
+						k = 1;
+					}
+					normalparagraph();
 				}
-			} else {
+				pushnest();
+				curlist.modefield = -k;
 				if (k == 1) {
-					scanspec(4, true);
+					curlist.auxfield.setInt(-65536000);
+					if (eqtb[7718].getrh() != 0) {
+						begintokenlist(eqtb[7718].getrh(), 11);
+					}
 				} else {
-					scanspec(5, true);
-					k = 1;
+					curlist.auxfield.setlh(1000);
+					if (eqtb[7717].getrh() != 0) {
+						begintokenlist(eqtb[7717].getrh(), 10);
+					}
 				}
-				normalparagraph();
+				return /* lab10 */;
 			}
-			pushnest();
-			curlist.modefield = -k;
-			if (k == 1) {
-				curlist.auxfield.setInt(-65536000);
-				if (eqtb[7718].getrh() != 0) {
-					begintokenlist(eqtb[7718].getrh(), 11);
-				}
-			} else {
-				curlist.auxfield.setlh(1000);
-				if (eqtb[7717].getrh() != 0) {
-					begintokenlist(eqtb[7717].getrh(), 10);
-				}
-			}
-			return /* lab10 */;
-		}
 		}
 		boxend(boxcontext);
 	}
@@ -13061,50 +13049,50 @@ public final class Tex {
 		/* lab30: */p = mem[curlist.headfield].getrh();
 		popnest();
 		switch (savestack[saveptr - 1].getInt()) {
-		case 0:
-			mem[curlist.tailfield + 1].setlh(p);
-			break;
-		case 1:
-			mem[curlist.tailfield + 1].setrh(p);
-			break;
-		case 2: {
-			if ((n > 0) && (Math.abs(curlist.modefield) == 203)) {
-				{
-					printnl(262);
-					print(1101);
+			case 0:
+				mem[curlist.tailfield + 1].setlh(p);
+				break;
+			case 1:
+				mem[curlist.tailfield + 1].setrh(p);
+				break;
+			case 2: {
+				if ((n > 0) && (Math.abs(curlist.modefield) == 203)) {
+					{
+						printnl(262);
+						print(1101);
+					}
+					printEscapeSequence(349);
+					{
+						helpptr = 2;
+						helpline[1] = 1102;
+						helpline[0] = 1103;
+					}
+					flushnodelist(p);
+					n = 0;
+					errorLogic.error();
+				} else {
+					mem[curlist.tailfield].setrh(p);
 				}
-				printEscapeSequence(349);
-				{
-					helpptr = 2;
-					helpline[1] = 1102;
-					helpline[0] = 1103;
+				if (n <= 255) {
+					mem[curlist.tailfield].setb1(n);
+				} else {
+					{
+						printnl(262);
+						print(1104);
+					}
+					{
+						helpptr = 2;
+						helpline[1] = 1105;
+						helpline[0] = 1106;
+					}
+					errorLogic.error();
 				}
-				flushnodelist(p);
-				n = 0;
-				errorLogic.error();
-			} else {
-				mem[curlist.tailfield].setrh(p);
+				if (n > 0) {
+					curlist.tailfield = q;
+				}
+				saveptr = saveptr - 1;
+				return /* lab10 */;
 			}
-			if (n <= 255) {
-				mem[curlist.tailfield].setb1(n);
-			} else {
-				{
-					printnl(262);
-					print(1104);
-				}
-				{
-					helpptr = 2;
-					helpline[1] = 1105;
-					helpline[0] = 1106;
-				}
-				errorLogic.error();
-			}
-			if (n > 0) {
-				curlist.tailfield = q;
-			}
-			saveptr = saveptr - 1;
-			return /* lab10 */;
-		}
 		}
 		savestack[saveptr - 1].setInt(savestack[saveptr - 1].getInt() + 1);
 		newsavelevel(10);
@@ -13211,45 +13199,45 @@ public final class Tex {
 									break lab40;
 								}
 								switch (mem[p].getb0()) {
-								case 0:
-								case 1:
-								case 2: {
-									d = mem[p + 1].getInt();
-									break lab40;
-								}
-								case 6: {
-									mem[memtop - 12].copy(mem[p + 1]);
-									mem[memtop - 12].setrh(mem[p].getrh());
-									p = memtop - 12;
-									continue lab21;
-								}
-								case 11:
-								case 9:
-									d = mem[p + 1].getInt();
-									break;
-								case 10: {
-									q = mem[p + 1].getlh();
-									d = mem[q + 1].getInt();
-									if (mem[justbox + 5].getb0() == 1) {
-										if ((mem[justbox + 5].getb1() == mem[q].getb0()) && (mem[q + 2].getInt() != 0)) {
-											v = 1073741823;
-										}
-									} else if (mem[justbox + 5].getb0() == 2) {
-										if ((mem[justbox + 5].getb1() == mem[q].getb1()) && (mem[q + 3].getInt() != 0)) {
-											v = 1073741823;
-										}
-									}
-									if (mem[p].getb1() >= 100) {
+									case 0:
+									case 1:
+									case 2: {
+										d = mem[p + 1].getInt();
 										break lab40;
 									}
-								}
-									break;
-								case 8:
-									d = 0;
-									break;
-								default:
-									d = 0;
-									break;
+									case 6: {
+										mem[memtop - 12].copy(mem[p + 1]);
+										mem[memtop - 12].setrh(mem[p].getrh());
+										p = memtop - 12;
+										continue lab21;
+									}
+									case 11:
+									case 9:
+										d = mem[p + 1].getInt();
+										break;
+									case 10: {
+										q = mem[p + 1].getlh();
+										d = mem[q + 1].getInt();
+										if (mem[justbox + 5].getb0() == 1) {
+											if ((mem[justbox + 5].getb1() == mem[q].getb0()) && (mem[q + 2].getInt() != 0)) {
+												v = 1073741823;
+											}
+										} else if (mem[justbox + 5].getb0() == 2) {
+											if ((mem[justbox + 5].getb1() == mem[q].getb1()) && (mem[q + 3].getInt() != 0)) {
+												v = 1073741823;
+											}
+										}
+										if (mem[p].getb1() >= 100) {
+											break lab40;
+										}
+									}
+										break;
+									case 8:
+										d = 0;
+										break;
+									default:
+										d = 0;
+										break;
 								}
 								break;
 							}
@@ -13336,49 +13324,49 @@ public final class Tex {
 			} while (!((curcmd != 10) && (curcmd != 0)));
 			lab21: while (true) {
 				switch (curcmd) {
-				case 11:
-				case 12:
-				case 68: {
-					c = eqtb[9307 + curchr].getrh();
-					if (c == 32768) {
-						{
-							curcs = curchr + 1;
-							curcmd = eqtb[curcs].getb0();
-							curchr = eqtb[curcs].getrh();
-							xtoken();
-							unreadToken();
+					case 11:
+					case 12:
+					case 68: {
+						c = eqtb[9307 + curchr].getrh();
+						if (c == 32768) {
+							{
+								curcs = curchr + 1;
+								curcmd = eqtb[curcs].getb0();
+								curchr = eqtb[curcs].getrh();
+								xtoken();
+								unreadToken();
+							}
+							continue lab20;
 						}
-						continue lab20;
 					}
-				}
-					break;
-				case 16: {
-					scancharnum();
-					curchr = curval;
-					curcmd = 68;
-					continue lab21;
-				}
-				case 17: {
-					scanfifteenbitint();
-					c = curval;
-				}
-					break;
-				case 69:
-					c = curchr;
-					break;
-				case 15: {
-					scantwentysevenbitint();
-					c = curval / 4096;
-				}
-					break;
-				default: {
-					unreadToken();
-					scanleftbrace();
-					savestack[saveptr + 0].setInt(p);
-					saveptr = saveptr + 1;
-					pushmath(9);
-					return /* lab10 */;
-				}
+						break;
+					case 16: {
+						scancharnum();
+						curchr = curval;
+						curcmd = 68;
+						continue lab21;
+					}
+					case 17: {
+						scanfifteenbitint();
+						c = curval;
+					}
+						break;
+					case 69:
+						c = curchr;
+						break;
+					case 15: {
+						scantwentysevenbitint();
+						c = curval / 4096;
+					}
+						break;
+					default: {
+						unreadToken();
+						scanleftbrace();
+						savestack[saveptr + 0].setInt(p);
+						saveptr = saveptr + 1;
+						pushmath(9);
+						return /* lab10 */;
+					}
 				}
 				break;
 			}
@@ -13445,16 +13433,16 @@ public final class Tex {
 				getxtoken();
 			} while (!((curcmd != 10) && (curcmd != 0)));
 			switch (curcmd) {
-			case 11:
-			case 12:
-				curval = eqtb[9874 + curchr].getInt();
-				break;
-			case 15:
-				scantwentysevenbitint();
-				break;
-			default:
-				curval = -1;
-				break;
+				case 11:
+				case 12:
+					curval = eqtb[9874 + curchr].getInt();
+					break;
+				case 15:
+					scantwentysevenbitint();
+					break;
+				default:
+					curval = -1;
+					break;
 			}
 		}
 		if (curval < 0) {
@@ -13571,20 +13559,20 @@ public final class Tex {
 		unsave();
 		p = finmlist(0);
 		switch (savestack[saveptr - 1].getInt()) {
-		case 0:
-			mem[curlist.tailfield + 1].setlh(p);
-			break;
-		case 1:
-			mem[curlist.tailfield + 1].setrh(p);
-			break;
-		case 2:
-			mem[curlist.tailfield + 2].setlh(p);
-			break;
-		case 3: {
-			mem[curlist.tailfield + 2].setrh(p);
-			saveptr = saveptr - 1;
-			return /* lab10 */;
-		}
+			case 0:
+				mem[curlist.tailfield + 1].setlh(p);
+				break;
+			case 1:
+				mem[curlist.tailfield + 1].setrh(p);
+				break;
+			case 2:
+				mem[curlist.tailfield + 2].setlh(p);
+				break;
+			case 3: {
+				mem[curlist.tailfield + 2].setrh(p);
+				saveptr = saveptr - 1;
+				return /* lab10 */;
+			}
 		}
 		savestack[saveptr - 1].setInt(savestack[saveptr - 1].getInt() + 1);
 		pushmath(13);
@@ -13672,17 +13660,17 @@ public final class Tex {
 				scandelimiter(curlist.auxfield.getInt() + 5, false);
 			}
 			switch (c % 3) {
-			case 0: {
-				scandimen(false, false, false);
-				mem[curlist.auxfield.getInt() + 1].setInt(curval);
-			}
-				break;
-			case 1:
-				mem[curlist.auxfield.getInt() + 1].setInt(1073741824);
-				break;
-			case 2:
-				mem[curlist.auxfield.getInt() + 1].setInt(0);
-				break;
+				case 0: {
+					scandimen(false, false, false);
+					mem[curlist.auxfield.getInt() + 1].setInt(curval);
+				}
+					break;
+				case 1:
+					mem[curlist.auxfield.getInt() + 1].setInt(1073741824);
+					break;
+				case 2:
+					mem[curlist.auxfield.getInt() + 1].setInt(0);
+					break;
 			}
 		}
 	}
@@ -14079,18 +14067,18 @@ public final class Tex {
 				p = curchr;
 				scaneightbitint();
 				switch (p) {
-				case 0:
-					l = curval + 9618;
-					break;
-				case 1:
-					l = curval + 10151;
-					break;
-				case 2:
-					l = curval + 7200;
-					break;
-				case 3:
-					l = curval + 7456;
-					break;
+					case 0:
+						l = curval + 9618;
+						break;
+					case 1:
+						l = curval + 10151;
+						break;
+					case 2:
+						l = curval + 7200;
+						break;
+					case 3:
+						l = curval + 7456;
+						break;
 				}
 			}
 			break;
@@ -14358,8 +14346,7 @@ public final class Tex {
 			for (f = 1; f <= fontptr; f++) {
 				if (stringPool.getString(fontname[f]).equals(stringPool.getString(curname)) && stringPool.getString(fontarea[f]).equals(stringPool.getString(curarea))) {
 					if (curname == flushablestring) {
-						strptr = strptr - 1;
-						poolptr = strstart[strptr];
+						stringPool.unmakeString();
 						curname = fontname[f];
 					}
 					if (s > 0) {
@@ -14440,456 +14427,456 @@ public final class Tex {
 		}
 		lab30: while (true) {
 			switch (curcmd) {
-			case 87:
-				if ((a >= 4)) {
-					geqdefine(8234, 120, curchr);
-				} else {
-					eqdefine(8234, 120, curchr);
+				case 87:
+					if ((a >= 4)) {
+						geqdefine(8234, 120, curchr);
+					} else {
+						eqdefine(8234, 120, curchr);
+					}
+					break;
+				case 97: {
+					if (((curchr) % 2 == 1) && !(a >= 4) && (eqtb[9606].getInt() >= 0)) {
+						a = a + 4;
+					}
+					e = (curchr >= 2);
+					getrtoken();
+					p = curcs;
+					q = scantoks(true, e);
+					if ((a >= 4)) {
+						geqdefine(p, 111 + (a % 4), defref);
+					} else {
+						eqdefine(p, 111 + (a % 4), defref);
+					}
 				}
-				break;
-			case 97: {
-				if (((curchr) % 2 == 1) && !(a >= 4) && (eqtb[9606].getInt() >= 0)) {
-					a = a + 4;
-				}
-				e = (curchr >= 2);
-				getrtoken();
-				p = curcs;
-				q = scantoks(true, e);
-				if ((a >= 4)) {
-					geqdefine(p, 111 + (a % 4), defref);
-				} else {
-					eqdefine(p, 111 + (a % 4), defref);
-				}
-			}
-				break;
-			case 94: {
-				n = curchr;
-				getrtoken();
-				p = curcs;
-				if (n == 0) {
-					do {
-						gettoken();
-					} while (!(curcmd != 10));
-					if (curtok == 3133) {
-						gettoken();
-						if (curcmd == 10) {
+					break;
+				case 94: {
+					n = curchr;
+					getrtoken();
+					p = curcs;
+					if (n == 0) {
+						do {
 							gettoken();
+						} while (!(curcmd != 10));
+						if (curtok == 3133) {
+							gettoken();
+							if (curcmd == 10) {
+								gettoken();
+							}
 						}
-					}
-				} else {
-					gettoken();
-					q = curtok;
-					gettoken();
-					unreadToken();
-					curtok = q;
-					unreadToken();
-				}
-				if (curcmd >= 111) {
-					mem[curchr].setlh(mem[curchr].getlh() + 1);
-				}
-				if ((a >= 4)) {
-					geqdefine(p, curcmd, curchr);
-				} else {
-					eqdefine(p, curcmd, curchr);
-				}
-			}
-				break;
-			case 95: {
-				n = curchr;
-				getrtoken();
-				p = curcs;
-				if ((a >= 4)) {
-					geqdefine(p, 0, 256);
-				} else {
-					eqdefine(p, 0, 256);
-				}
-				scanoptionalequals();
-				switch (n) {
-				case 0: {
-					scancharnum();
-					if ((a >= 4)) {
-						geqdefine(p, 68, curval);
 					} else {
-						eqdefine(p, 68, curval);
+						gettoken();
+						q = curtok;
+						gettoken();
+						unreadToken();
+						curtok = q;
+						unreadToken();
+					}
+					if (curcmd >= 111) {
+						mem[curchr].setlh(mem[curchr].getlh() + 1);
+					}
+					if ((a >= 4)) {
+						geqdefine(p, curcmd, curchr);
+					} else {
+						eqdefine(p, curcmd, curchr);
 					}
 				}
 					break;
-				case 1: {
-					scanfifteenbitint();
+				case 95: {
+					n = curchr;
+					getrtoken();
+					p = curcs;
 					if ((a >= 4)) {
-						geqdefine(p, 69, curval);
+						geqdefine(p, 0, 256);
 					} else {
-						eqdefine(p, 69, curval);
+						eqdefine(p, 0, 256);
 					}
-				}
-					break;
-				default: {
-					scaneightbitint();
+					scanoptionalequals();
 					switch (n) {
-					case 2:
-						if ((a >= 4)) {
-							geqdefine(p, 73, 9618 + curval);
-						} else {
-							eqdefine(p, 73, 9618 + curval);
+						case 0: {
+							scancharnum();
+							if ((a >= 4)) {
+								geqdefine(p, 68, curval);
+							} else {
+								eqdefine(p, 68, curval);
+							}
 						}
-						break;
-					case 3:
-						if ((a >= 4)) {
-							geqdefine(p, 74, 10151 + curval);
-						} else {
-							eqdefine(p, 74, 10151 + curval);
+							break;
+						case 1: {
+							scanfifteenbitint();
+							if ((a >= 4)) {
+								geqdefine(p, 69, curval);
+							} else {
+								eqdefine(p, 69, curval);
+							}
 						}
-						break;
-					case 4:
-						if ((a >= 4)) {
-							geqdefine(p, 75, 7200 + curval);
-						} else {
-							eqdefine(p, 75, 7200 + curval);
+							break;
+						default: {
+							scaneightbitint();
+							switch (n) {
+								case 2:
+									if ((a >= 4)) {
+										geqdefine(p, 73, 9618 + curval);
+									} else {
+										eqdefine(p, 73, 9618 + curval);
+									}
+									break;
+								case 3:
+									if ((a >= 4)) {
+										geqdefine(p, 74, 10151 + curval);
+									} else {
+										eqdefine(p, 74, 10151 + curval);
+									}
+									break;
+								case 4:
+									if ((a >= 4)) {
+										geqdefine(p, 75, 7200 + curval);
+									} else {
+										eqdefine(p, 75, 7200 + curval);
+									}
+									break;
+								case 5:
+									if ((a >= 4)) {
+										geqdefine(p, 76, 7456 + curval);
+									} else {
+										eqdefine(p, 76, 7456 + curval);
+									}
+									break;
+								case 6:
+									if ((a >= 4)) {
+										geqdefine(p, 72, 7722 + curval);
+									} else {
+										eqdefine(p, 72, 7722 + curval);
+									}
+									break;
+							}
 						}
-						break;
-					case 5:
-						if ((a >= 4)) {
-							geqdefine(p, 76, 7456 + curval);
-						} else {
-							eqdefine(p, 76, 7456 + curval);
-						}
-						break;
-					case 6:
-						if ((a >= 4)) {
-							geqdefine(p, 72, 7722 + curval);
-						} else {
-							eqdefine(p, 72, 7722 + curval);
-						}
-						break;
+							break;
 					}
 				}
 					break;
-				}
-			}
-				break;
-			case 96: {
-				scanint();
-				n = curval;
-				if (!scankeyword(842)) {
-					{
-						printnl(262);
-						print(1073);
+				case 96: {
+					scanint();
+					n = curval;
+					if (!scankeyword(842)) {
+						{
+							printnl(262);
+							print(1073);
+						}
+						{
+							helpptr = 2;
+							helpline[1] = 1200;
+							helpline[0] = 1201;
+						}
+						errorLogic.error();
 					}
-					{
-						helpptr = 2;
-						helpline[1] = 1200;
-						helpline[0] = 1201;
+					getrtoken();
+					p = curcs;
+					readtoks(n, p);
+					if ((a >= 4)) {
+						geqdefine(p, 111, curval);
+					} else {
+						eqdefine(p, 111, curval);
 					}
-					errorLogic.error();
 				}
-				getrtoken();
-				p = curcs;
-				readtoks(n, p);
-				if ((a >= 4)) {
-					geqdefine(p, 111, curval);
-				} else {
-					eqdefine(p, 111, curval);
-				}
-			}
-				break;
-			case 71:
-			case 72: {
-				q = curcs;
-				if (curcmd == 71) {
-					scaneightbitint();
-					p = 7722 + curval;
-				} else {
-					p = curchr;
-				}
-				scanoptionalequals();
-				do {
-					getxtoken();
-				} while (!((curcmd != 10) && (curcmd != 0)));
-				if (curcmd != 1) {
+					break;
+				case 71:
+				case 72: {
+					q = curcs;
 					if (curcmd == 71) {
 						scaneightbitint();
-						curcmd = 72;
-						curchr = 7722 + curval;
+						p = 7722 + curval;
+					} else {
+						p = curchr;
 					}
-					if (curcmd == 72) {
-						q = eqtb[curchr].getrh();
-						if (q == 0) {
-							if ((a >= 4)) {
-								geqdefine(p, 101, 0);
-							} else {
-								eqdefine(p, 101, 0);
-							}
-						} else {
-							mem[q].setlh(mem[q].getlh() + 1);
-							if ((a >= 4)) {
-								geqdefine(p, 111, q);
-							} else {
-								eqdefine(p, 111, q);
-							}
+					scanoptionalequals();
+					do {
+						getxtoken();
+					} while (!((curcmd != 10) && (curcmd != 0)));
+					if (curcmd != 1) {
+						if (curcmd == 71) {
+							scaneightbitint();
+							curcmd = 72;
+							curchr = 7722 + curval;
 						}
-						break lab30;
+						if (curcmd == 72) {
+							q = eqtb[curchr].getrh();
+							if (q == 0) {
+								if ((a >= 4)) {
+									geqdefine(p, 101, 0);
+								} else {
+									eqdefine(p, 101, 0);
+								}
+							} else {
+								mem[q].setlh(mem[q].getlh() + 1);
+								if ((a >= 4)) {
+									geqdefine(p, 111, q);
+								} else {
+									eqdefine(p, 111, q);
+								}
+							}
+							break lab30;
+						}
+					}
+					unreadToken();
+					curcs = q;
+					q = scantoks(false, false);
+					if (mem[defref].getrh() == 0) {
+						if ((a >= 4)) {
+							geqdefine(p, 101, 0);
+						} else {
+							eqdefine(p, 101, 0);
+						}
+						{
+							mem[defref].setrh(avail);
+							avail = defref;
+						}
+					} else {
+						if (p == 7713) {
+							mem[q].setrh(allocateMemoryWord());
+							q = mem[q].getrh();
+							mem[q].setlh(637);
+							q = allocateMemoryWord();
+							mem[q].setlh(379);
+							mem[q].setrh(mem[defref].getrh());
+							mem[defref].setrh(q);
+						}
+						if ((a >= 4)) {
+							geqdefine(p, 111, defref);
+						} else {
+							eqdefine(p, 111, defref);
+						}
 					}
 				}
-				unreadToken();
-				curcs = q;
-				q = scantoks(false, false);
-				if (mem[defref].getrh() == 0) {
+					break;
+				case 73: {
+					p = curchr;
+					scanoptionalequals();
+					scanint();
 					if ((a >= 4)) {
-						geqdefine(p, 101, 0);
+						geqworddefine(p, curval);
 					} else {
-						eqdefine(p, 101, 0);
+						eqworddefine(p, curval);
 					}
-					{
-						mem[defref].setrh(avail);
-						avail = defref;
-					}
-				} else {
-					if (p == 7713) {
-						mem[q].setrh(allocateMemoryWord());
-						q = mem[q].getrh();
-						mem[q].setlh(637);
-						q = allocateMemoryWord();
-						mem[q].setlh(379);
-						mem[q].setrh(mem[defref].getrh());
-						mem[defref].setrh(q);
-					}
+				}
+					break;
+				case 74: {
+					p = curchr;
+					scanoptionalequals();
+					scandimen(false, false, false);
 					if ((a >= 4)) {
-						geqdefine(p, 111, defref);
+						geqworddefine(p, curval);
 					} else {
-						eqdefine(p, 111, defref);
+						eqworddefine(p, curval);
 					}
 				}
-			}
-				break;
-			case 73: {
-				p = curchr;
-				scanoptionalequals();
-				scanint();
-				if ((a >= 4)) {
-					geqworddefine(p, curval);
-				} else {
-					eqworddefine(p, curval);
-				}
-			}
-				break;
-			case 74: {
-				p = curchr;
-				scanoptionalequals();
-				scandimen(false, false, false);
-				if ((a >= 4)) {
-					geqworddefine(p, curval);
-				} else {
-					eqworddefine(p, curval);
-				}
-			}
-				break;
-			case 75:
-			case 76: {
-				p = curchr;
-				n = curcmd;
-				scanoptionalequals();
-				if (n == 76) {
-					scanglue(3);
-				} else {
-					scanglue(2);
-				}
-				trapzeroglue();
-				if ((a >= 4)) {
-					geqdefine(p, 117, curval);
-				} else {
-					eqdefine(p, 117, curval);
-				}
-			}
-				break;
-			case 85: {
-				if (curchr == 8283) {
-					n = 15;
-				} else if (curchr == 9307) {
-					n = 32768;
-				} else if (curchr == 9051) {
-					n = 32767;
-				} else if (curchr == 9874) {
-					n = 16777215;
-				} else {
-					n = 255;
-				}
-				p = curchr;
-				scancharnum();
-				p = p + curval;
-				scanoptionalequals();
-				scanint();
-				if (((curval < 0) && (p < 9874)) || (curval > n)) {
-					{
-						printnl(262);
-						print(1202);
-					}
-					printInt(curval);
-					if (p < 9874) {
-						print(1203);
+					break;
+				case 75:
+				case 76: {
+					p = curchr;
+					n = curcmd;
+					scanoptionalequals();
+					if (n == 76) {
+						scanglue(3);
 					} else {
-						print(1204);
+						scanglue(2);
 					}
-					printInt(n);
-					{
-						helpptr = 1;
-						helpline[0] = 1205;
+					trapzeroglue();
+					if ((a >= 4)) {
+						geqdefine(p, 117, curval);
+					} else {
+						eqdefine(p, 117, curval);
 					}
-					errorLogic.error();
-					curval = 0;
 				}
-				if (p < 9307) {
+					break;
+				case 85: {
+					if (curchr == 8283) {
+						n = 15;
+					} else if (curchr == 9307) {
+						n = 32768;
+					} else if (curchr == 9051) {
+						n = 32767;
+					} else if (curchr == 9874) {
+						n = 16777215;
+					} else {
+						n = 255;
+					}
+					p = curchr;
+					scancharnum();
+					p = p + curval;
+					scanoptionalequals();
+					scanint();
+					if (((curval < 0) && (p < 9874)) || (curval > n)) {
+						{
+							printnl(262);
+							print(1202);
+						}
+						printInt(curval);
+						if (p < 9874) {
+							print(1203);
+						} else {
+							print(1204);
+						}
+						printInt(n);
+						{
+							helpptr = 1;
+							helpline[0] = 1205;
+						}
+						errorLogic.error();
+						curval = 0;
+					}
+					if (p < 9307) {
+						if ((a >= 4)) {
+							geqdefine(p, 120, curval);
+						} else {
+							eqdefine(p, 120, curval);
+						}
+					} else if (p < 9874) {
+						if ((a >= 4)) {
+							geqdefine(p, 120, curval);
+						} else {
+							eqdefine(p, 120, curval);
+						}
+					} else if ((a >= 4)) {
+						geqworddefine(p, curval);
+					} else {
+						eqworddefine(p, curval);
+					}
+				}
+					break;
+				case 86: {
+					p = curchr;
+					scanfourbitint();
+					p = p + curval;
+					scanoptionalequals();
+					scanfontident();
 					if ((a >= 4)) {
 						geqdefine(p, 120, curval);
 					} else {
 						eqdefine(p, 120, curval);
 					}
-				} else if (p < 9874) {
+				}
+					break;
+				case 89:
+				case 90:
+				case 91:
+				case 92:
+					doregistercommand(a);
+					break;
+				case 98: {
+					scaneightbitint();
 					if ((a >= 4)) {
-						geqdefine(p, 120, curval);
+						n = 256 + curval;
 					} else {
-						eqdefine(p, 120, curval);
+						n = curval;
 					}
-				} else if ((a >= 4)) {
-					geqworddefine(p, curval);
-				} else {
-					eqworddefine(p, curval);
-				}
-			}
-				break;
-			case 86: {
-				p = curchr;
-				scanfourbitint();
-				p = p + curval;
-				scanoptionalequals();
-				scanfontident();
-				if ((a >= 4)) {
-					geqdefine(p, 120, curval);
-				} else {
-					eqdefine(p, 120, curval);
-				}
-			}
-				break;
-			case 89:
-			case 90:
-			case 91:
-			case 92:
-				doregistercommand(a);
-				break;
-			case 98: {
-				scaneightbitint();
-				if ((a >= 4)) {
-					n = 256 + curval;
-				} else {
-					n = curval;
-				}
-				scanoptionalequals();
-				if (setboxallowed) {
-					scanbox(1073741824 + n);
-				} else {
-					{
-						printnl(262);
-						print(680);
-					}
-					printEscapeSequence(536);
-					{
-						helpptr = 2;
-						helpline[1] = 1211;
-						helpline[0] = 1212;
-					}
-					errorLogic.error();
-				}
-			}
-				break;
-			case 79:
-				alteraux();
-				break;
-			case 80:
-				alterprevgraf();
-				break;
-			case 81:
-				alterpagesofar();
-				break;
-			case 82:
-				alterinteger();
-				break;
-			case 83:
-				alterboxdimen();
-				break;
-			case 84: {
-				scanoptionalequals();
-				scanint();
-				n = curval;
-				if (n <= 0) {
-					p = 0;
-				} else {
-					p = getnode(2 * n + 1);
-					mem[p].setlh(n);
-					for (j = 1; j <= n; j++) {
-						scandimen(false, false, false);
-						mem[p + 2 * j - 1].setInt(curval);
-						scandimen(false, false, false);
-						mem[p + 2 * j].setInt(curval);
-					}
-				}
-				if ((a >= 4)) {
-					geqdefine(7712, 118, p);
-				} else {
-					eqdefine(7712, 118, p);
-				}
-			}
-				break;
-			case 99:
-				if (curchr == 1) {
-					if (initex) {
-						newpatterns();
-						break lab30;
+					scanoptionalequals();
+					if (setboxallowed) {
+						scanbox(1073741824 + n);
 					} else {
 						{
 							printnl(262);
-							print(1216);
+							print(680);
 						}
-						helpptr = 0;
+						printEscapeSequence(536);
+						{
+							helpptr = 2;
+							helpline[1] = 1211;
+							helpline[0] = 1212;
+						}
 						errorLogic.error();
-						do {
-							gettoken();
-						} while (!(curcmd == 2));
-						return /* lab10 */;
 					}
-				} else {
-					newhyphexceptions();
-					break lab30;
 				}
-			case 77: {
-				findfontdimen(true);
-				k = curval;
-				scanoptionalequals();
-				scandimen(false, false, false);
-				fontinfo[k].setInt(curval);
-			}
-				break;
-			case 78: {
-				n = curchr;
-				scanfontident();
-				f = curval;
-				scanoptionalequals();
-				scanint();
-				if (n == 0) {
-					hyphenchar[f] = curval;
-				} else {
-					skewchar[f] = curval;
+					break;
+				case 79:
+					alteraux();
+					break;
+				case 80:
+					alterprevgraf();
+					break;
+				case 81:
+					alterpagesofar();
+					break;
+				case 82:
+					alterinteger();
+					break;
+				case 83:
+					alterboxdimen();
+					break;
+				case 84: {
+					scanoptionalequals();
+					scanint();
+					n = curval;
+					if (n <= 0) {
+						p = 0;
+					} else {
+						p = getnode(2 * n + 1);
+						mem[p].setlh(n);
+						for (j = 1; j <= n; j++) {
+							scandimen(false, false, false);
+							mem[p + 2 * j - 1].setInt(curval);
+							scandimen(false, false, false);
+							mem[p + 2 * j].setInt(curval);
+						}
+					}
+					if ((a >= 4)) {
+						geqdefine(7712, 118, p);
+					} else {
+						eqdefine(7712, 118, p);
+					}
 				}
-			}
-				break;
-			case 88:
-				newfont(a);
-				break;
-			case 100:
-				// TODO error: cannot change interaction level
-				// should log this as an error but continue processing
-				break;
-			default:
-				errorLogic.confusion(1178);
-				break;
+					break;
+				case 99:
+					if (curchr == 1) {
+						if (initex) {
+							newpatterns();
+							break lab30;
+						} else {
+							{
+								printnl(262);
+								print(1216);
+							}
+							helpptr = 0;
+							errorLogic.error();
+							do {
+								gettoken();
+							} while (!(curcmd == 2));
+							return /* lab10 */;
+						}
+					} else {
+						newhyphexceptions();
+						break lab30;
+					}
+				case 77: {
+					findfontdimen(true);
+					k = curval;
+					scanoptionalequals();
+					scandimen(false, false, false);
+					fontinfo[k].setInt(curval);
+				}
+					break;
+				case 78: {
+					n = curchr;
+					scanfontident();
+					f = curval;
+					scanoptionalequals();
+					scanint();
+					if (n == 0) {
+						hyphenchar[f] = curval;
+					} else {
+						skewchar[f] = curval;
+					}
+				}
+					break;
+				case 88:
+					newfont(a);
+					break;
+				case 100:
+					// TODO error: cannot change interaction level
+					// should log this as an error but continue processing
+					break;
+				default:
+					errorLogic.confusion(1178);
+					break;
 			}
 			break;
 		}
@@ -14977,7 +14964,7 @@ public final class Tex {
 				helpline[1] = 1235;
 				helpline[0] = 1236;
 			}
-			
+
 			printchar(46);
 			showcontext();
 			selector = selector - 1;
@@ -14993,8 +14980,7 @@ public final class Tex {
 			selector = selector + 1;
 			errorReporter.error("ERROR"); // TODO dirty: sets the "worst error level so far" and stops on 100+ errors
 		}
-		strptr = strptr - 1;
-		poolptr = strstart[strptr];
+		stringPool.unmakeString();
 	}
 
 	void shiftcase() {
@@ -15027,7 +15013,6 @@ public final class Tex {
 		int p, q;
 		int x;
 		final fourquarters w = new fourquarters();
-		TexFileDataOutputStream fmtfile;
 		fmtfile = null;
 		if (saveptr != 0) {
 			printnl(262);
@@ -15050,21 +15035,13 @@ public final class Tex {
 		selector = 19;
 		formatident = stringPool.makeString();
 		packjobname(785);
-		try {
-			fmtfile = new TexFileDataOutputStream(nameoffile);
-		} catch (final IOException e) {
-			throw new RuntimeException(e);
-		}
-		printnl(1274);
-		print(makenamestring());
-		{
-			strptr = strptr - 1;
-			poolptr = strstart[strptr];
-		}
-		printnl(338);
-		print(formatident);
-		termout.flush();
-		try {
+		try (TexFileDataOutputStream fmtfile = new TexFileDataOutputStream(nameoffile)) {
+			printnl(1274);
+			print(makenamestring());
+			stringPool.unmakeString();
+			printnl(338);
+			print(formatident);
+			termout.flush();
 			fmtfile.writeInt(270280812);
 			fmtfile.writeInt(0);
 			fmtfile.writeInt(memtop);
@@ -15341,10 +15318,9 @@ public final class Tex {
 			fmtfile.writeInt(formatident);
 			fmtfile.writeInt(69069);
 			eqtb[9594].setInt(0);
-		} catch (final IOException ex) {
-			;
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
 		}
-		fmtfile.close();
 	}
 
 	void newwhatsit(final int s, final int w) {
@@ -15375,70 +15351,70 @@ public final class Tex {
 		int k;
 		int p;
 		switch (curchr) {
-		case 0: {
-			newwritewhatsit(3);
-			scanoptionalequals();
-			scanfilename();
-			mem[curlist.tailfield + 1].setrh(curname);
-			mem[curlist.tailfield + 2].setlh(curarea);
-			mem[curlist.tailfield + 2].setrh(curext);
-		}
-			break;
-		case 1: {
-			k = curcs;
-			newwritewhatsit(2);
-			curcs = k;
-			p = scantoks(false, false);
-			mem[curlist.tailfield + 1].setrh(defref);
-		}
-			break;
-		case 2: {
-			newwritewhatsit(2);
-			mem[curlist.tailfield + 1].setrh(0);
-		}
-			break;
-		case 3: {
-			newwhatsit(3, 2);
-			mem[curlist.tailfield + 1].setlh(0);
-			p = scantoks(false, true);
-			mem[curlist.tailfield + 1].setrh(defref);
-		}
-			break;
-		case 4: {
-			getxtoken();
-			if ((curcmd == 59) && (curchr <= 2)) {
-				p = curlist.tailfield;
-				doextension();
-				outwhat(curlist.tailfield);
-				flushnodelist(curlist.tailfield);
-				curlist.tailfield = p;
-				mem[p].setrh(0);
-			} else {
-				unreadToken();
+			case 0: {
+				newwritewhatsit(3);
+				scanoptionalequals();
+				scanfilename();
+				mem[curlist.tailfield + 1].setrh(curname);
+				mem[curlist.tailfield + 2].setlh(curarea);
+				mem[curlist.tailfield + 2].setrh(curext);
 			}
-		}
-			break;
-		case 5:
-			if (Math.abs(curlist.modefield) != 102) {
-				errorLogic.reportillegalcase();
-			} else {
-				newwhatsit(4, 2);
-				scanint();
-				if (curval <= 0) {
-					curlist.auxfield.setrh(0);
-				} else if (curval > 255) {
-					curlist.auxfield.setrh(0);
+				break;
+			case 1: {
+				k = curcs;
+				newwritewhatsit(2);
+				curcs = k;
+				p = scantoks(false, false);
+				mem[curlist.tailfield + 1].setrh(defref);
+			}
+				break;
+			case 2: {
+				newwritewhatsit(2);
+				mem[curlist.tailfield + 1].setrh(0);
+			}
+				break;
+			case 3: {
+				newwhatsit(3, 2);
+				mem[curlist.tailfield + 1].setlh(0);
+				p = scantoks(false, true);
+				mem[curlist.tailfield + 1].setrh(defref);
+			}
+				break;
+			case 4: {
+				getxtoken();
+				if ((curcmd == 59) && (curchr <= 2)) {
+					p = curlist.tailfield;
+					doextension();
+					outwhat(curlist.tailfield);
+					flushnodelist(curlist.tailfield);
+					curlist.tailfield = p;
+					mem[p].setrh(0);
 				} else {
-					curlist.auxfield.setrh(curval);
+					unreadToken();
 				}
-				mem[curlist.tailfield + 1].setrh(curlist.auxfield.getrh());
-				mem[curlist.tailfield + 1].setb0(normmin(eqtb[9614].getInt()));
-				mem[curlist.tailfield + 1].setb1(normmin(eqtb[9615].getInt()));
 			}
-			break;
-		default:
-			errorLogic.confusion(1291);
-			break;
+				break;
+			case 5:
+				if (Math.abs(curlist.modefield) != 102) {
+					errorLogic.reportillegalcase();
+				} else {
+					newwhatsit(4, 2);
+					scanint();
+					if (curval <= 0) {
+						curlist.auxfield.setrh(0);
+					} else if (curval > 255) {
+						curlist.auxfield.setrh(0);
+					} else {
+						curlist.auxfield.setrh(curval);
+					}
+					mem[curlist.tailfield + 1].setrh(curlist.auxfield.getrh());
+					mem[curlist.tailfield + 1].setb0(normmin(eqtb[9614].getInt()));
+					mem[curlist.tailfield + 1].setb1(normmin(eqtb[9615].getInt()));
+				}
+				break;
+			default:
+				errorLogic.confusion(1291);
+				break;
 		}
 	}
 
@@ -15465,230 +15441,224 @@ public final class Tex {
 		int d;
 		int f;
 		switch (curgroup) {
-		case 1:
-			unsave();
-			break;
-		case 0: {
-			{
-				printnl(262);
-				print(1044);
-			}
-			{
-				helpptr = 2;
-				helpline[1] = 1045;
-				helpline[0] = 1046;
-			}
-			errorLogic.error();
-		}
-			break;
-		case 14:
-		case 15:
-		case 16: {
-			String message = "!Extra }, or forgotten ";
-			switch (curgroup) {
-			case 14:
-				message += getCurrentEscapeCharacter() + "endgroup";
+			case 1:
+				unsave();
 				break;
-			case 15:
-				message += '$';
-				break;
-			case 16:
-				message += getCurrentEscapeCharacter() + "right";
-				break;
-			}
-			errorLogic.error(message,
-				"I've deleted a group-closing symbol because it seems to be",
-				"spurious, as in `$x}$'. But perhaps the } is legitimate and",
-				"you forgot something else, as in `\\hbox{$x}'. In such cases",
-				"the way to recover is to insert both the forgotten and the",
-				"deleted material, e.g., by typing `I$}'."
-			);
-			alignstate = alignstate + 1;
-			break;
-		}
-		case 2:
-			Package(0);
-			break;
-		case 3: {
-			adjusttail = memtop - 5;
-			Package(0);
-		}
-			break;
-		case 4: {
-			endgraf();
-			Package(0);
-		}
-			break;
-		case 5: {
-			endgraf();
-			Package(4);
-		}
-			break;
-		case 11: {
-			endgraf();
-			q = eqtb[7192].getrh();
-			mem[q].setrh(mem[q].getrh() + 1);
-			d = eqtb[10136].getInt();
-			f = eqtb[9605].getInt();
-			unsave();
-			saveptr = saveptr - 1;
-			p = vpackage(mem[curlist.headfield].getrh(), 0, 1, 1073741823);
-			popnest();
-			if (savestack[saveptr + 0].getInt() < 255) {
-				{
-					mem[curlist.tailfield].setrh(getnode(5));
-					curlist.tailfield = mem[curlist.tailfield].getrh();
-				}
-				mem[curlist.tailfield].setb0(3);
-				mem[curlist.tailfield].setb1(savestack[saveptr + 0].getInt());
-				mem[curlist.tailfield + 3].setInt(mem[p + 3].getInt() + mem[p + 2].getInt());
-				mem[curlist.tailfield + 4].setlh(mem[p + 5].getrh());
-				mem[curlist.tailfield + 4].setrh(q);
-				mem[curlist.tailfield + 2].setInt(d);
-				mem[curlist.tailfield + 1].setInt(f);
-			} else {
-				{
-					mem[curlist.tailfield].setrh(getnode(2));
-					curlist.tailfield = mem[curlist.tailfield].getrh();
-				}
-				mem[curlist.tailfield].setb0(5);
-				mem[curlist.tailfield].setb1(0);
-				mem[curlist.tailfield + 1].setInt(mem[p + 5].getrh());
-				deleteglueref(q);
-			}
-			freenode(p, 7);
-			if (nestptr == 0) {
-				buildpage();
-			}
-		}
-			break;
-		case 8: {
-			if ((curinput.getLoc() != 0) || ((curinput.getIndex() != 6) && (curinput.getIndex() != 3))) {
+			case 0: {
 				{
 					printnl(262);
-					print(1010);
+					print(1044);
 				}
 				{
 					helpptr = 2;
-					helpline[1] = 1011;
-					helpline[0] = 1012;
+					helpline[1] = 1045;
+					helpline[0] = 1046;
 				}
 				errorLogic.error();
-				do {
-					gettoken();
-				} while (!(curinput.getLoc() == 0));
 			}
-			endtokenlist();
-			endgraf();
-			unsave();
-			outputactive = false;
-			insertpenalties = 0;
-			if (eqtb[8233].getrh() != 0) {
+				break;
+			case 14:
+			case 15:
+			case 16: {
+				String message = "!Extra }, or forgotten ";
+				switch (curgroup) {
+					case 14:
+						message += getCurrentEscapeCharacter() + "endgroup";
+						break;
+					case 15:
+						message += '$';
+						break;
+					case 16:
+						message += getCurrentEscapeCharacter() + "right";
+						break;
+				}
+				errorLogic.error(message, "I've deleted a group-closing symbol because it seems to be", "spurious, as in `$x}$'. But perhaps the } is legitimate and", "you forgot something else, as in `\\hbox{$x}'. In such cases", "the way to recover is to insert both the forgotten and the", "deleted material, e.g., by typing `I$}'.");
+				alignstate = alignstate + 1;
+				break;
+			}
+			case 2:
+				Package(0);
+				break;
+			case 3: {
+				adjusttail = memtop - 5;
+				Package(0);
+			}
+				break;
+			case 4: {
+				endgraf();
+				Package(0);
+			}
+				break;
+			case 5: {
+				endgraf();
+				Package(4);
+			}
+				break;
+			case 11: {
+				endgraf();
+				q = eqtb[7192].getrh();
+				mem[q].setrh(mem[q].getrh() + 1);
+				d = eqtb[10136].getInt();
+				f = eqtb[9605].getInt();
+				unsave();
+				saveptr = saveptr - 1;
+				p = vpackage(mem[curlist.headfield].getrh(), 0, 1, 1073741823);
+				popnest();
+				if (savestack[saveptr + 0].getInt() < 255) {
+					{
+						mem[curlist.tailfield].setrh(getnode(5));
+						curlist.tailfield = mem[curlist.tailfield].getrh();
+					}
+					mem[curlist.tailfield].setb0(3);
+					mem[curlist.tailfield].setb1(savestack[saveptr + 0].getInt());
+					mem[curlist.tailfield + 3].setInt(mem[p + 3].getInt() + mem[p + 2].getInt());
+					mem[curlist.tailfield + 4].setlh(mem[p + 5].getrh());
+					mem[curlist.tailfield + 4].setrh(q);
+					mem[curlist.tailfield + 2].setInt(d);
+					mem[curlist.tailfield + 1].setInt(f);
+				} else {
+					{
+						mem[curlist.tailfield].setrh(getnode(2));
+						curlist.tailfield = mem[curlist.tailfield].getrh();
+					}
+					mem[curlist.tailfield].setb0(5);
+					mem[curlist.tailfield].setb1(0);
+					mem[curlist.tailfield + 1].setInt(mem[p + 5].getrh());
+					deleteglueref(q);
+				}
+				freenode(p, 7);
+				if (nestptr == 0) {
+					buildpage();
+				}
+			}
+				break;
+			case 8: {
+				if ((curinput.getLoc() != 0) || ((curinput.getIndex() != 6) && (curinput.getIndex() != 3))) {
+					{
+						printnl(262);
+						print(1010);
+					}
+					{
+						helpptr = 2;
+						helpline[1] = 1011;
+						helpline[0] = 1012;
+					}
+					errorLogic.error();
+					do {
+						gettoken();
+					} while (!(curinput.getLoc() == 0));
+				}
+				endtokenlist();
+				endgraf();
+				unsave();
+				outputactive = false;
+				insertpenalties = 0;
+				if (eqtb[8233].getrh() != 0) {
+					{
+						printnl(262);
+						print(1013);
+					}
+					printEscapeSequence(409);
+					printInt(255);
+					{
+						helpptr = 3;
+						helpline[2] = 1014;
+						helpline[1] = 1015;
+						helpline[0] = 1016;
+					}
+					boxerror(255);
+				}
+				if (curlist.tailfield != curlist.headfield) {
+					mem[pagetail].setrh(mem[curlist.headfield].getrh());
+					pagetail = curlist.tailfield;
+				}
+				if (mem[memtop - 2].getrh() != 0) {
+					if (mem[memtop - 1].getrh() == 0) {
+						nest[0].tailfield = pagetail;
+					}
+					mem[pagetail].setrh(mem[memtop - 1].getrh());
+					mem[memtop - 1].setrh(mem[memtop - 2].getrh());
+					mem[memtop - 2].setrh(0);
+					pagetail = memtop - 2;
+				}
+				popnest();
+				buildpage();
+			}
+				break;
+			case 10:
+				builddiscretionary();
+				break;
+			case 6: {
+				unreadToken();
+				printnl(262);
+				print(625);
+				printEscapeSequence(899);
+				print(626);
+				helpptr = 1;
+				helpline[0] = 1125;
+				insertToken(11010);
+				errorLogic.error();
+				break;
+			}
+			case 7: {
+				endgraf();
+				unsave();
+				alignpeek();
+			}
+				break;
+			case 12: {
+				endgraf();
+				unsave();
+				saveptr = saveptr - 2;
+				p = vpackage(mem[curlist.headfield].getrh(), savestack[saveptr + 1].getInt(), savestack[saveptr + 0].getInt(), 1073741823);
+				popnest();
 				{
-					printnl(262);
-					print(1013);
+					mem[curlist.tailfield].setrh(newnoad());
+					curlist.tailfield = mem[curlist.tailfield].getrh();
 				}
-				printEscapeSequence(409);
-				printInt(255);
-				{
-					helpptr = 3;
-					helpline[2] = 1014;
-					helpline[1] = 1015;
-					helpline[0] = 1016;
-				}
-				boxerror(255);
+				mem[curlist.tailfield].setb0(29);
+				mem[curlist.tailfield + 1].setrh(2);
+				mem[curlist.tailfield + 1].setlh(p);
 			}
-			if (curlist.tailfield != curlist.headfield) {
-				mem[pagetail].setrh(mem[curlist.headfield].getrh());
-				pagetail = curlist.tailfield;
-			}
-			if (mem[memtop - 2].getrh() != 0) {
-				if (mem[memtop - 1].getrh() == 0) {
-					nest[0].tailfield = pagetail;
-				}
-				mem[pagetail].setrh(mem[memtop - 1].getrh());
-				mem[memtop - 1].setrh(mem[memtop - 2].getrh());
-				mem[memtop - 2].setrh(0);
-				pagetail = memtop - 2;
-			}
-			popnest();
-			buildpage();
-		}
-			break;
-		case 10:
-			builddiscretionary();
-			break;
-		case 6: {
-			unreadToken();
-			printnl(262);
-			print(625);
-			printEscapeSequence(899);
-			print(626);
-			helpptr = 1;
-			helpline[0] = 1125;
-			insertToken(11010);
-			errorLogic.error();
-			break;
-		}
-		case 7: {
-			endgraf();
-			unsave();
-			alignpeek();
-		}
-			break;
-		case 12: {
-			endgraf();
-			unsave();
-			saveptr = saveptr - 2;
-			p = vpackage(mem[curlist.headfield].getrh(), savestack[saveptr + 1].getInt(), savestack[saveptr + 0].getInt(), 1073741823);
-			popnest();
-			{
-				mem[curlist.tailfield].setrh(newnoad());
-				curlist.tailfield = mem[curlist.tailfield].getrh();
-			}
-			mem[curlist.tailfield].setb0(29);
-			mem[curlist.tailfield + 1].setrh(2);
-			mem[curlist.tailfield + 1].setlh(p);
-		}
-			break;
-		case 13:
-			buildchoices();
-			break;
-		case 9: {
-			unsave();
-			saveptr = saveptr - 1;
-			mem[savestack[saveptr + 0].getInt()].setrh(3);
-			p = finmlist(0);
-			mem[savestack[saveptr + 0].getInt()].setlh(p);
-			if (p != 0) {
-				if (mem[p].getrh() == 0) {
-					if (mem[p].getb0() == 16) {
-						if (mem[p + 3].getrh() == 0) {
-							if (mem[p + 2].getrh() == 0) {
-								mem[savestack[saveptr + 0].getInt()].sethh(mem[p + 1].hh());
-								freenode(p, 4);
-							}
-						}
-					} else if (mem[p].getb0() == 28) {
-						if (savestack[saveptr + 0].getInt() == curlist.tailfield + 1) {
-							if (mem[curlist.tailfield].getb0() == 16) {
-								q = curlist.headfield;
-								while (mem[q].getrh() != curlist.tailfield) {
-									q = mem[q].getrh();
+				break;
+			case 13:
+				buildchoices();
+				break;
+			case 9: {
+				unsave();
+				saveptr = saveptr - 1;
+				mem[savestack[saveptr + 0].getInt()].setrh(3);
+				p = finmlist(0);
+				mem[savestack[saveptr + 0].getInt()].setlh(p);
+				if (p != 0) {
+					if (mem[p].getrh() == 0) {
+						if (mem[p].getb0() == 16) {
+							if (mem[p + 3].getrh() == 0) {
+								if (mem[p + 2].getrh() == 0) {
+									mem[savestack[saveptr + 0].getInt()].sethh(mem[p + 1].hh());
+									freenode(p, 4);
 								}
-								mem[q].setrh(p);
-								freenode(curlist.tailfield, 4);
-								curlist.tailfield = p;
+							}
+						} else if (mem[p].getb0() == 28) {
+							if (savestack[saveptr + 0].getInt() == curlist.tailfield + 1) {
+								if (mem[curlist.tailfield].getb0() == 16) {
+									q = curlist.headfield;
+									while (mem[q].getrh() != curlist.tailfield) {
+										q = mem[q].getrh();
+									}
+									mem[q].setrh(p);
+									freenode(curlist.tailfield, 4);
+									curlist.tailfield = p;
+								}
 							}
 						}
 					}
 				}
 			}
-		}
-			break;
-		default:
-			errorLogic.confusion(1047);
-			break;
+				break;
+			default:
+				errorLogic.confusion(1047);
+				break;
 		}
 	}
 
@@ -15711,553 +15681,553 @@ public final class Tex {
 				lab120: while (true) {
 					lab70: while (true) {
 						switch (Math.abs(curlist.modefield) + curcmd) {
-						case 113:
-						case 114:
-						case 170:
-							break lab70;
-						case 118: {
-							scancharnum();
-							curchr = curval;
-							break lab70;
-						}
-						case 167: {
-							getxtoken();
-							if ((curcmd == 11) || (curcmd == 12) || (curcmd == 68) || (curcmd == 16)) {
-								cancelboundary = true;
+							case 113:
+							case 114:
+							case 170:
+								break lab70;
+							case 118: {
+								scancharnum();
+								curchr = curval;
+								break lab70;
 							}
-							continue lab21;
-						}
-						case 112:
-							if (curlist.auxfield.getlh() == 1000) {
-								break lab120;
-							} else {
-								appspace();
-							}
-							break;
-						case 166:
-						case 267:
-							break lab120;
-						case 1:
-						case 102:
-						case 203:
-						case 11:
-						case 213:
-						case 268:
-							;
-							break;
-						case 40:
-						case 141:
-						case 242: {
-							do {
+							case 167: {
 								getxtoken();
-							} while (!(curcmd != 10));
-							continue lab21;
-						}
-						case 15:
-							if (itsallover()) {
-								return /* lab10 */;
+								if ((curcmd == 11) || (curcmd == 12) || (curcmd == 68) || (curcmd == 16)) {
+									cancelboundary = true;
+								}
+								continue lab21;
 							}
-							break;
-						case 23:
-						case 123:
-						case 224:
-						case 71:
-						case 172:
-						case 273:
-						case 39:
-						case 45:
-						case 49:
-						case 150:
-						case 7:
-						case 108:
-						case 209:
-							errorLogic.reportillegalcase();
-							break;
-						case 8:
-						case 109:
-						case 9:
-						case 110:
-						case 18:
-						case 119:
-						case 70:
-						case 171:
-						case 51:
-						case 152:
-						case 16:
-						case 117:
-						case 50:
-						case 151:
-						case 53:
-						case 154:
-						case 67:
-						case 168:
-						case 54:
-						case 155:
-						case 55:
-						case 156:
-						case 57:
-						case 158:
-						case 56:
-						case 157:
-						case 31:
-						case 132:
-						case 52:
-						case 153:
-						case 29:
-						case 130:
-						case 47:
-						case 148:
-						case 212:
-						case 216:
-						case 217:
-						case 230:
-						case 227:
-						case 236:
-						case 239:
-							unreadToken();
-							insertToken(804);
-							errorLogic.error("!Missing $ inserted", "I've inserted a begin-math/end-math symbol since I think", "you left one out. Proceed, with fingers crossed.");
-							break;
-						case 37:
-						case 137:
-						case 238: {
-							{
-								mem[curlist.tailfield].setrh(scanrulespec());
+							case 112:
+								if (curlist.auxfield.getlh() == 1000) {
+									break lab120;
+								} else {
+									appspace();
+								}
+								break;
+							case 166:
+							case 267:
+								break lab120;
+							case 1:
+							case 102:
+							case 203:
+							case 11:
+							case 213:
+							case 268:
+								;
+								break;
+							case 40:
+							case 141:
+							case 242: {
+								do {
+									getxtoken();
+								} while (!(curcmd != 10));
+								continue lab21;
+							}
+							case 15:
+								if (itsallover()) {
+									return /* lab10 */;
+								}
+								break;
+							case 23:
+							case 123:
+							case 224:
+							case 71:
+							case 172:
+							case 273:
+							case 39:
+							case 45:
+							case 49:
+							case 150:
+							case 7:
+							case 108:
+							case 209:
+								errorLogic.reportillegalcase();
+								break;
+							case 8:
+							case 109:
+							case 9:
+							case 110:
+							case 18:
+							case 119:
+							case 70:
+							case 171:
+							case 51:
+							case 152:
+							case 16:
+							case 117:
+							case 50:
+							case 151:
+							case 53:
+							case 154:
+							case 67:
+							case 168:
+							case 54:
+							case 155:
+							case 55:
+							case 156:
+							case 57:
+							case 158:
+							case 56:
+							case 157:
+							case 31:
+							case 132:
+							case 52:
+							case 153:
+							case 29:
+							case 130:
+							case 47:
+							case 148:
+							case 212:
+							case 216:
+							case 217:
+							case 230:
+							case 227:
+							case 236:
+							case 239:
+								unreadToken();
+								insertToken(804);
+								errorLogic.error("!Missing $ inserted", "I've inserted a begin-math/end-math symbol since I think", "you left one out. Proceed, with fingers crossed.");
+								break;
+							case 37:
+							case 137:
+							case 238: {
+								{
+									mem[curlist.tailfield].setrh(scanrulespec());
+									curlist.tailfield = mem[curlist.tailfield].getrh();
+								}
+								if (Math.abs(curlist.modefield) == 1) {
+									curlist.auxfield.setInt(-65536000);
+								} else if (Math.abs(curlist.modefield) == 102) {
+									curlist.auxfield.setlh(1000);
+								}
+							}
+								break;
+							case 28:
+							case 128:
+							case 229:
+							case 231:
+								appendglue();
+								break;
+							case 30:
+							case 131:
+							case 232:
+							case 233:
+								appendkern();
+								break;
+							case 2:
+							case 103:
+								newsavelevel(1);
+								break;
+							case 62:
+							case 163:
+							case 264:
+								newsavelevel(14);
+								break;
+							case 63:
+							case 164:
+							case 265:
+								if (curgroup == 14) {
+									unsave();
+								} else {
+									offsave();
+								}
+								break;
+							case 3:
+							case 104:
+							case 205:
+								handlerightbrace();
+								break;
+							case 22:
+							case 124:
+							case 225: {
+								t = curchr;
+								scandimen(false, false, false);
+								if (t == 0) {
+									scanbox(curval);
+								} else {
+									scanbox(-curval);
+								}
+							}
+								break;
+							case 32:
+							case 133:
+							case 234:
+								scanbox(1073742237 + curchr);
+								break;
+							case 21:
+							case 122:
+							case 223:
+								beginbox(0);
+								break;
+							case 44:
+								newgraf(curchr > 0);
+								break;
+							case 12:
+							case 13:
+							case 17:
+							case 69:
+							case 4:
+							case 24:
+							case 36:
+							case 46:
+							case 48:
+							case 27:
+							case 34:
+							case 65:
+							case 66: {
+								unreadToken();
+								newgraf(true);
+							}
+								break;
+							case 145:
+							case 246:
+								indentinhmode();
+								break;
+							case 14: {
+								normalparagraph();
+								if (curlist.modefield > 0) {
+									buildpage();
+								}
+							}
+								break;
+							case 115: {
+								if (alignstate < 0) {
+									offsave();
+								}
+								endgraf();
+								if (curlist.modefield == 1) {
+									buildpage();
+								}
+							}
+								break;
+							case 116:
+							case 129:
+							case 138:
+							case 126:
+							case 134:
+								headforvmode();
+								break;
+							case 38:
+							case 139:
+							case 240:
+							case 140:
+							case 241:
+								begininsertoradjust();
+								break;
+							case 19:
+							case 120:
+							case 221:
+								makemark();
+								break;
+							case 43:
+							case 144:
+							case 245:
+								appendpenalty();
+								break;
+							case 26:
+							case 127:
+							case 228:
+								deletelast();
+								break;
+							case 25:
+							case 125:
+							case 226:
+								unpackage();
+								break;
+							case 146:
+								appenditaliccorrection();
+								break;
+							case 247: {
+								mem[curlist.tailfield].setrh(newkern(0));
 								curlist.tailfield = mem[curlist.tailfield].getrh();
 							}
-							if (Math.abs(curlist.modefield) == 1) {
+								break;
+							case 149:
+							case 250:
+								appenddiscretionary();
+								break;
+							case 147:
+								makeaccent();
+								break;
+							case 6:
+							case 107:
+							case 208:
+							case 5:
+							case 106:
+							case 207:
+								errorLogic.alignError();
+								break;
+							case 35:
+							case 136:
+							case 237:
+								errorLogic.error("!Misplaced " + getCurrentEscapeCharacter() + "noalign", "I expect to see \\noalign only after the \\cr of", "an alignment. Proceed, and I'll ignore this case.");
+								break;
+							case 64:
+							case 165:
+							case 266:
+								errorLogic.error("!Misplaced " + getCurrentEscapeCharacter() + "omit", "I expect to see \\omit only after tab marks or the \\cr of", "an alignment. Proceed, and I'll ignore this case.");
+								break;
+							case 33:
+							case 135:
+								initalign();
+								break;
+							case 235:
+								if (privileged()) {
+									if (curgroup == 15) {
+										initalign();
+									} else {
+										offsave();
+									}
+								}
+								break;
+							case 10:
+							case 111:
+								doendv();
+								break;
+							case 68:
+							case 169:
+							case 270:
+								errorLogic.error("!Extra " + getCurrentEscapeCharacter() + "endcsname", "I'm ignoring this, since I wasn't doing a \\csname.");
+								break;
+							case 105:
+								initmath();
+								break;
+							case 251:
+								if (privileged()) {
+									if (curgroup == 15) {
+										starteqno();
+									} else {
+										offsave();
+									}
+								}
+								break;
+							case 204: {
+								{
+									mem[curlist.tailfield].setrh(newnoad());
+									curlist.tailfield = mem[curlist.tailfield].getrh();
+								}
+								unreadToken();
+								scanmath(curlist.tailfield + 1);
+							}
+								break;
+							case 214:
+							case 215:
+							case 271:
+								setmathchar(eqtb[9307 + curchr].getrh());
+								break;
+							case 219: {
+								scancharnum();
+								curchr = curval;
+								setmathchar(eqtb[9307 + curchr].getrh());
+							}
+								break;
+							case 220: {
+								scanfifteenbitint();
+								setmathchar(curval);
+							}
+								break;
+							case 272:
+								setmathchar(curchr);
+								break;
+							case 218: {
+								scantwentysevenbitint();
+								setmathchar(curval / 4096);
+							}
+								break;
+							case 253: {
+								{
+									mem[curlist.tailfield].setrh(newnoad());
+									curlist.tailfield = mem[curlist.tailfield].getrh();
+								}
+								mem[curlist.tailfield].setb0(curchr);
+								scanmath(curlist.tailfield + 1);
+							}
+								break;
+							case 254:
+								mathlimitswitch();
+								break;
+							case 269:
+								mathradical();
+								break;
+							case 248:
+							case 249:
+								mathac();
+								break;
+							case 259: {
+								scanspec(12, false);
+								normalparagraph();
+								pushnest();
+								curlist.modefield = -1;
 								curlist.auxfield.setInt(-65536000);
-							} else if (Math.abs(curlist.modefield) == 102) {
-								curlist.auxfield.setlh(1000);
+								if (eqtb[7718].getrh() != 0) {
+									begintokenlist(eqtb[7718].getrh(), 11);
+								}
 							}
-						}
-							break;
-						case 28:
-						case 128:
-						case 229:
-						case 231:
-							appendglue();
-							break;
-						case 30:
-						case 131:
-						case 232:
-						case 233:
-							appendkern();
-							break;
-						case 2:
-						case 103:
-							newsavelevel(1);
-							break;
-						case 62:
-						case 163:
-						case 264:
-							newsavelevel(14);
-							break;
-						case 63:
-						case 164:
-						case 265:
-							if (curgroup == 14) {
-								unsave();
-							} else {
-								offsave();
+								break;
+							case 256: {
+								mem[curlist.tailfield].setrh(newstyle(curchr));
+								curlist.tailfield = mem[curlist.tailfield].getrh();
 							}
-							break;
-						case 3:
-						case 104:
-						case 205:
-							handlerightbrace();
-							break;
-						case 22:
-						case 124:
-						case 225: {
-							t = curchr;
-							scandimen(false, false, false);
-							if (t == 0) {
-								scanbox(curval);
-							} else {
-								scanbox(-curval);
+								break;
+							case 258: {
+								{
+									mem[curlist.tailfield].setrh(newglue(0));
+									curlist.tailfield = mem[curlist.tailfield].getrh();
+								}
+								mem[curlist.tailfield].setb1(98);
 							}
-						}
-							break;
-						case 32:
-						case 133:
-						case 234:
-							scanbox(1073742237 + curchr);
-							break;
-						case 21:
-						case 122:
-						case 223:
-							beginbox(0);
-							break;
-						case 44:
-							newgraf(curchr > 0);
-							break;
-						case 12:
-						case 13:
-						case 17:
-						case 69:
-						case 4:
-						case 24:
-						case 36:
-						case 46:
-						case 48:
-						case 27:
-						case 34:
-						case 65:
-						case 66: {
-							unreadToken();
-							newgraf(true);
-						}
-							break;
-						case 145:
-						case 246:
-							indentinhmode();
-							break;
-						case 14: {
-							normalparagraph();
-							if (curlist.modefield > 0) {
-								buildpage();
-							}
-						}
-							break;
-						case 115: {
-							if (alignstate < 0) {
-								offsave();
-							}
-							endgraf();
-							if (curlist.modefield == 1) {
-								buildpage();
-							}
-						}
-							break;
-						case 116:
-						case 129:
-						case 138:
-						case 126:
-						case 134:
-							headforvmode();
-							break;
-						case 38:
-						case 139:
-						case 240:
-						case 140:
-						case 241:
-							begininsertoradjust();
-							break;
-						case 19:
-						case 120:
-						case 221:
-							makemark();
-							break;
-						case 43:
-						case 144:
-						case 245:
-							appendpenalty();
-							break;
-						case 26:
-						case 127:
-						case 228:
-							deletelast();
-							break;
-						case 25:
-						case 125:
-						case 226:
-							unpackage();
-							break;
-						case 146:
-							appenditaliccorrection();
-							break;
-						case 247: {
-							mem[curlist.tailfield].setrh(newkern(0));
-							curlist.tailfield = mem[curlist.tailfield].getrh();
-						}
-							break;
-						case 149:
-						case 250:
-							appenddiscretionary();
-							break;
-						case 147:
-							makeaccent();
-							break;
-						case 6:
-						case 107:
-						case 208:
-						case 5:
-						case 106:
-						case 207:
-							errorLogic.alignError();
-							break;
-						case 35:
-						case 136:
-						case 237:
-							errorLogic.error("!Misplaced " + getCurrentEscapeCharacter() + "noalign", "I expect to see \\noalign only after the \\cr of", "an alignment. Proceed, and I'll ignore this case.");
-							break;
-						case 64:
-						case 165:
-						case 266:
-							errorLogic.error("!Misplaced " + getCurrentEscapeCharacter() + "omit", "I expect to see \\omit only after tab marks or the \\cr of", "an alignment. Proceed, and I'll ignore this case.");
-							break;
-						case 33:
-						case 135:
-							initalign();
-							break;
-						case 235:
-							if (privileged()) {
+								break;
+							case 257:
+								appendchoices();
+								break;
+							case 211:
+							case 210:
+								subsup();
+								break;
+							case 255:
+								mathfraction();
+								break;
+							case 252:
+								mathleftright();
+								break;
+							case 206:
 								if (curgroup == 15) {
-									initalign();
+									aftermath();
 								} else {
 									offsave();
 								}
+								break;
+							case 72:
+							case 173:
+							case 274:
+							case 73:
+							case 174:
+							case 275:
+							case 74:
+							case 175:
+							case 276:
+							case 75:
+							case 176:
+							case 277:
+							case 76:
+							case 177:
+							case 278:
+							case 77:
+							case 178:
+							case 279:
+							case 78:
+							case 179:
+							case 280:
+							case 79:
+							case 180:
+							case 281:
+							case 80:
+							case 181:
+							case 282:
+							case 81:
+							case 182:
+							case 283:
+							case 82:
+							case 183:
+							case 284:
+							case 83:
+							case 184:
+							case 285:
+							case 84:
+							case 185:
+							case 286:
+							case 85:
+							case 186:
+							case 287:
+							case 86:
+							case 187:
+							case 288:
+							case 87:
+							case 188:
+							case 289:
+							case 88:
+							case 189:
+							case 290:
+							case 89:
+							case 190:
+							case 291:
+							case 90:
+							case 191:
+							case 292:
+							case 91:
+							case 192:
+							case 293:
+							case 92:
+							case 193:
+							case 294:
+							case 93:
+							case 194:
+							case 295:
+							case 94:
+							case 195:
+							case 296:
+							case 95:
+							case 196:
+							case 297:
+							case 96:
+							case 197:
+							case 298:
+							case 97:
+							case 198:
+							case 299:
+							case 98:
+							case 199:
+							case 300:
+							case 99:
+							case 200:
+							case 301:
+							case 100:
+							case 201:
+							case 302:
+							case 101:
+							case 202:
+							case 303:
+								prefixedcommand();
+								break;
+							case 41:
+							case 142:
+							case 243: {
+								gettoken();
+								aftertoken = curtok;
 							}
-							break;
-						case 10:
-						case 111:
-							doendv();
-							break;
-						case 68:
-						case 169:
-						case 270:
-							errorLogic.error("!Extra " + getCurrentEscapeCharacter() + "endcsname", "I'm ignoring this, since I wasn't doing a \\csname.");
-							break;
-						case 105:
-							initmath();
-							break;
-						case 251:
-							if (privileged()) {
-								if (curgroup == 15) {
-									starteqno();
-								} else {
-									offsave();
-								}
+								break;
+							case 42:
+							case 143:
+							case 244: {
+								gettoken();
+								saveforafter(curtok);
 							}
-							break;
-						case 204: {
-							{
-								mem[curlist.tailfield].setrh(newnoad());
-								curlist.tailfield = mem[curlist.tailfield].getrh();
-							}
-							unreadToken();
-							scanmath(curlist.tailfield + 1);
-						}
-							break;
-						case 214:
-						case 215:
-						case 271:
-							setmathchar(eqtb[9307 + curchr].getrh());
-							break;
-						case 219: {
-							scancharnum();
-							curchr = curval;
-							setmathchar(eqtb[9307 + curchr].getrh());
-						}
-							break;
-						case 220: {
-							scanfifteenbitint();
-							setmathchar(curval);
-						}
-							break;
-						case 272:
-							setmathchar(curchr);
-							break;
-						case 218: {
-							scantwentysevenbitint();
-							setmathchar(curval / 4096);
-						}
-							break;
-						case 253: {
-							{
-								mem[curlist.tailfield].setrh(newnoad());
-								curlist.tailfield = mem[curlist.tailfield].getrh();
-							}
-							mem[curlist.tailfield].setb0(curchr);
-							scanmath(curlist.tailfield + 1);
-						}
-							break;
-						case 254:
-							mathlimitswitch();
-							break;
-						case 269:
-							mathradical();
-							break;
-						case 248:
-						case 249:
-							mathac();
-							break;
-						case 259: {
-							scanspec(12, false);
-							normalparagraph();
-							pushnest();
-							curlist.modefield = -1;
-							curlist.auxfield.setInt(-65536000);
-							if (eqtb[7718].getrh() != 0) {
-								begintokenlist(eqtb[7718].getrh(), 11);
-							}
-						}
-							break;
-						case 256: {
-							mem[curlist.tailfield].setrh(newstyle(curchr));
-							curlist.tailfield = mem[curlist.tailfield].getrh();
-						}
-							break;
-						case 258: {
-							{
-								mem[curlist.tailfield].setrh(newglue(0));
-								curlist.tailfield = mem[curlist.tailfield].getrh();
-							}
-							mem[curlist.tailfield].setb1(98);
-						}
-							break;
-						case 257:
-							appendchoices();
-							break;
-						case 211:
-						case 210:
-							subsup();
-							break;
-						case 255:
-							mathfraction();
-							break;
-						case 252:
-							mathleftright();
-							break;
-						case 206:
-							if (curgroup == 15) {
-								aftermath();
-							} else {
-								offsave();
-							}
-							break;
-						case 72:
-						case 173:
-						case 274:
-						case 73:
-						case 174:
-						case 275:
-						case 74:
-						case 175:
-						case 276:
-						case 75:
-						case 176:
-						case 277:
-						case 76:
-						case 177:
-						case 278:
-						case 77:
-						case 178:
-						case 279:
-						case 78:
-						case 179:
-						case 280:
-						case 79:
-						case 180:
-						case 281:
-						case 80:
-						case 181:
-						case 282:
-						case 81:
-						case 182:
-						case 283:
-						case 82:
-						case 183:
-						case 284:
-						case 83:
-						case 184:
-						case 285:
-						case 84:
-						case 185:
-						case 286:
-						case 85:
-						case 186:
-						case 287:
-						case 86:
-						case 187:
-						case 288:
-						case 87:
-						case 188:
-						case 289:
-						case 88:
-						case 189:
-						case 290:
-						case 89:
-						case 190:
-						case 291:
-						case 90:
-						case 191:
-						case 292:
-						case 91:
-						case 192:
-						case 293:
-						case 92:
-						case 193:
-						case 294:
-						case 93:
-						case 194:
-						case 295:
-						case 94:
-						case 195:
-						case 296:
-						case 95:
-						case 196:
-						case 297:
-						case 96:
-						case 197:
-						case 298:
-						case 97:
-						case 198:
-						case 299:
-						case 98:
-						case 199:
-						case 300:
-						case 99:
-						case 200:
-						case 301:
-						case 100:
-						case 201:
-						case 302:
-						case 101:
-						case 202:
-						case 303:
-							prefixedcommand();
-							break;
-						case 41:
-						case 142:
-						case 243: {
-							gettoken();
-							aftertoken = curtok;
-						}
-							break;
-						case 42:
-						case 143:
-						case 244: {
-							gettoken();
-							saveforafter(curtok);
-						}
-							break;
-						case 61:
-						case 162:
-						case 263:
-							openorclosein();
-							break;
-						case 59:
-						case 160:
-						case 261:
-							issuemessage();
-							break;
-						case 58:
-						case 159:
-						case 260:
-							shiftcase();
-							break;
-						case 20:
-						case 121:
-						case 222:
-							showwhatever();
-							break;
-						case 60:
-						case 161:
-						case 262:
-							doextension();
-							break;
+								break;
+							case 61:
+							case 162:
+							case 263:
+								openorclosein();
+								break;
+							case 59:
+							case 160:
+							case 261:
+								issuemessage();
+								break;
+							case 58:
+							case 159:
+							case 260:
+								shiftcase();
+								break;
+							case 20:
+							case 121:
+							case 222:
+								showwhatever();
+								break;
+							case 60:
+							case 161:
+							case 262:
+								doextension();
+								break;
 						}
 						continue lab60;
 					}
@@ -16309,321 +16279,321 @@ public final class Tex {
 					}
 					lab22: while (true) {
 						switch (jcase) {
-						case 80: {
-							if (curl < 256) {
-								if (mem[curlist.tailfield].getb1() == hyphenchar[mainf]) {
-									if (mem[curq].getrh() > 0) {
-										insdisc = true;
-									}
-								}
-								if (ligaturepresent) {
-									mainp = newligature(mainf, curl, mem[curq].getrh());
-									if (lfthit) {
-										mem[mainp].setb1(2);
-										lfthit = false;
-									}
-									if (rthit) {
-										if (ligstack == 0) {
-											mem[mainp].setb1(mem[mainp].getb1() + 1);
-											rthit = false;
+							case 80: {
+								if (curl < 256) {
+									if (mem[curlist.tailfield].getb1() == hyphenchar[mainf]) {
+										if (mem[curq].getrh() > 0) {
+											insdisc = true;
 										}
 									}
-									mem[curq].setrh(mainp);
-									curlist.tailfield = mainp;
-									ligaturepresent = false;
-								}
-								if (insdisc) {
-									insdisc = false;
-									if (curlist.modefield > 0) {
-										mem[curlist.tailfield].setrh(newdisc());
-										curlist.tailfield = mem[curlist.tailfield].getrh();
+									if (ligaturepresent) {
+										mainp = newligature(mainf, curl, mem[curq].getrh());
+										if (lfthit) {
+											mem[mainp].setb1(2);
+											lfthit = false;
+										}
+										if (rthit) {
+											if (ligstack == 0) {
+												mem[mainp].setb1(mem[mainp].getb1() + 1);
+												rthit = false;
+											}
+										}
+										mem[curq].setrh(mainp);
+										curlist.tailfield = mainp;
+										ligaturepresent = false;
+									}
+									if (insdisc) {
+										insdisc = false;
+										if (curlist.modefield > 0) {
+											mem[curlist.tailfield].setrh(newdisc());
+											curlist.tailfield = mem[curlist.tailfield].getrh();
+										}
 									}
 								}
 							}
-						}
-						case 90: {
-							if (ligstack == 0) {
-								continue lab21;
+							case 90: {
+								if (ligstack == 0) {
+									continue lab21;
+								}
+								curq = curlist.tailfield;
+								curl = mem[ligstack].getb1();
 							}
-							curq = curlist.tailfield;
-							curl = mem[ligstack].getb1();
-						}
-						case 91: {
-							if (!(ligstack >= himemmin)) {
-								jcase = 95;
-								continue lab22;
+							case 91: {
+								if (!(ligstack >= himemmin)) {
+									jcase = 95;
+									continue lab22;
+								}
 							}
-						}
-						case 92: {
-							if ((curchr < fontbc[mainf]) || (curchr > fontec[mainf])) {
-								errorLogic.charwarning(mainf, curchr);
-								mem[ligstack].setrh(avail);
-								avail = ligstack;
-								continue lab60;
+							case 92: {
+								if ((curchr < fontbc[mainf]) || (curchr > fontec[mainf])) {
+									errorLogic.charwarning(mainf, curchr);
+									mem[ligstack].setrh(avail);
+									avail = ligstack;
+									continue lab60;
+								}
+								maini.copy(fontinfo[charbase[mainf] + curl].qqqq());
+								if (!(maini.b0 > 0)) {
+									errorLogic.charwarning(mainf, curchr);
+									mem[ligstack].setrh(avail);
+									avail = ligstack;
+									continue lab60;
+								}
+								mem[curlist.tailfield].setrh(ligstack);
+								curlist.tailfield = mem[curlist.tailfield].getrh();
 							}
-							maini.copy(fontinfo[charbase[mainf] + curl].qqqq());
-							if (!(maini.b0 > 0)) {
-								errorLogic.charwarning(mainf, curchr);
-								mem[ligstack].setrh(avail);
-								avail = ligstack;
-								continue lab60;
-							}
-							mem[curlist.tailfield].setrh(ligstack);
-							curlist.tailfield = mem[curlist.tailfield].getrh();
-						}
-						case 100: {
-							getnext();
-							if ((curcmd == 11) || (curcmd == 12) || (curcmd == 68)) {
-								jcase = 101;
-								continue lab22;
-							}
-							xtoken();
-							if ((curcmd == 11) || (curcmd == 12) || (curcmd == 68)) {
-								jcase = 101;
-								continue lab22;
-							}
-							if (curcmd == 16) {
-								scancharnum();
-								curchr = curval;
-								{
+							case 100: {
+								getnext();
+								if ((curcmd == 11) || (curcmd == 12) || (curcmd == 68)) {
 									jcase = 101;
 									continue lab22;
 								}
+								xtoken();
+								if ((curcmd == 11) || (curcmd == 12) || (curcmd == 68)) {
+									jcase = 101;
+									continue lab22;
+								}
+								if (curcmd == 16) {
+									scancharnum();
+									curchr = curval;
+									{
+										jcase = 101;
+										continue lab22;
+									}
+								}
+								if (curcmd == 65) {
+									bchar = 256;
+								}
+								curr = bchar;
+								ligstack = 0;
+								{
+									jcase = 110;
+									continue lab22;
+								}
 							}
-							if (curcmd == 65) {
-								bchar = 256;
-							}
-							curr = bchar;
-							ligstack = 0;
-							{
-								jcase = 110;
-								continue lab22;
-							}
-						}
-						case 101: {
-							mains = eqtb[9051 + curchr].getrh();
-							if (mains == 1000) {
-								curlist.auxfield.setlh(1000);
-							} else if (mains < 1000) {
-								if (mains > 0) {
+							case 101: {
+								mains = eqtb[9051 + curchr].getrh();
+								if (mains == 1000) {
+									curlist.auxfield.setlh(1000);
+								} else if (mains < 1000) {
+									if (mains > 0) {
+										curlist.auxfield.setlh(mains);
+									}
+								} else if (curlist.auxfield.getlh() < 1000) {
+									curlist.auxfield.setlh(1000);
+								} else {
 									curlist.auxfield.setlh(mains);
 								}
-							} else if (curlist.auxfield.getlh() < 1000) {
-								curlist.auxfield.setlh(1000);
-							} else {
-								curlist.auxfield.setlh(mains);
-							}
-							{
-								ligstack = avail;
-								if (ligstack == 0) {
-									ligstack = allocateMemoryWord();
-								} else {
-									avail = mem[ligstack].getrh();
-									mem[ligstack].setrh(0);
-								}
-							}
-							mem[ligstack].setb0(mainf);
-							curr = curchr;
-							mem[ligstack].setb1(curr);
-							if (curr == falsebchar) {
-								curr = 256;
-							}
-						}
-						case 110: {
-							if (((maini.b2) % 4) != 1) {
-								jcase = 80;
-								continue lab22;
-							}
-							maink = ligkernbase[mainf] + maini.b3;
-							mainj.copy(fontinfo[maink].qqqq());
-							if (mainj.b0 <= 128) {
-								jcase = 112;
-								continue lab22;
-							}
-							maink = ligkernbase[mainf] + 256 * mainj.b2 + mainj.b3 + 32768 - 256 * (128);
-						}
-						case 111: {
-							mainj.copy(fontinfo[maink].qqqq());
-						}
-						case 112: {
-							if (mainj.b1 == curr) {
-								if (mainj.b0 <= 128) {
-									if (mainj.b2 >= 128) {
-										if (curl < 256) {
-											if (mem[curlist.tailfield].getb1() == hyphenchar[mainf]) {
-												if (mem[curq].getrh() > 0) {
-													insdisc = true;
-												}
-											}
-											if (ligaturepresent) {
-												mainp = newligature(mainf, curl, mem[curq].getrh());
-												if (lfthit) {
-													mem[mainp].setb1(2);
-													lfthit = false;
-												}
-												if (rthit) {
-													if (ligstack == 0) {
-														mem[mainp].setb1(mem[mainp].getb1() + 1);
-														rthit = false;
-													}
-												}
-												mem[curq].setrh(mainp);
-												curlist.tailfield = mainp;
-												ligaturepresent = false;
-											}
-											if (insdisc) {
-												insdisc = false;
-												if (curlist.modefield > 0) {
-													mem[curlist.tailfield].setrh(newdisc());
-													curlist.tailfield = mem[curlist.tailfield].getrh();
-												}
-											}
-										}
-										{
-											mem[curlist.tailfield].setrh(newkern(fontinfo[kernbase[mainf] + 256 * mainj.b2 + mainj.b3].getInt()));
-											curlist.tailfield = mem[curlist.tailfield].getrh();
-										}
-										{
-											jcase = 90;
-											continue lab22;
-										}
-									}
-									if (curl == 256) {
-										lfthit = true;
-									} else if (ligstack == 0) {
-										rthit = true;
-									}
-									switch (mainj.b2) {
-									case 1:
-									case 5: {
-										curl = mainj.b3;
-										maini.copy(fontinfo[charbase[mainf] + curl].qqqq());
-										ligaturepresent = true;
-									}
-										break;
-									case 2:
-									case 6: {
-										curr = mainj.b3;
-										if (ligstack == 0) {
-											ligstack = newligitem(curr);
-											bchar = 256;
-										} else if ((ligstack >= himemmin)) {
-											mainp = ligstack;
-											ligstack = newligitem(curr);
-											mem[ligstack + 1].setrh(mainp);
-										} else {
-											mem[ligstack].setb1(curr);
-										}
-									}
-										break;
-									case 3: {
-										curr = mainj.b3;
-										mainp = ligstack;
-										ligstack = newligitem(curr);
-										mem[ligstack].setrh(mainp);
-									}
-										break;
-									case 7:
-									case 11: {
-										if (curl < 256) {
-											if (mem[curlist.tailfield].getb1() == hyphenchar[mainf]) {
-												if (mem[curq].getrh() > 0) {
-													insdisc = true;
-												}
-											}
-											if (ligaturepresent) {
-												mainp = newligature(mainf, curl, mem[curq].getrh());
-												if (lfthit) {
-													mem[mainp].setb1(2);
-													lfthit = false;
-												}
-												mem[curq].setrh(mainp);
-												curlist.tailfield = mainp;
-												ligaturepresent = false;
-											}
-											if (insdisc) {
-												insdisc = false;
-												if (curlist.modefield > 0) {
-													mem[curlist.tailfield].setrh(newdisc());
-													curlist.tailfield = mem[curlist.tailfield].getrh();
-												}
-											}
-										}
-										curq = curlist.tailfield;
-										curl = mainj.b3;
-										maini.copy(fontinfo[charbase[mainf] + curl].qqqq());
-										ligaturepresent = true;
-									}
-										break;
-									default: {
-										curl = mainj.b3;
-										ligaturepresent = true;
-										if (ligstack == 0) {
-											jcase = 80;
-											continue lab22;
-										} else {
-											jcase = 91;
-											continue lab22;
-										}
-									}
-									}
-									if (mainj.b2 > 4) {
-										if (mainj.b2 != 7) {
-											jcase = 80;
-											continue lab22;
-										}
-									}
-									if (curl < 256) {
-										jcase = 110;
-										continue lab22;
-									}
-									maink = bcharlabel[mainf];
-									{
-										jcase = 111;
-										continue lab22;
+								{
+									ligstack = avail;
+									if (ligstack == 0) {
+										ligstack = allocateMemoryWord();
+									} else {
+										avail = mem[ligstack].getrh();
+										mem[ligstack].setrh(0);
 									}
 								}
+								mem[ligstack].setb0(mainf);
+								curr = curchr;
+								mem[ligstack].setb1(curr);
+								if (curr == falsebchar) {
+									curr = 256;
+								}
 							}
-							if (mainj.b0 == 0) {
-								maink = maink + 1;
-							} else {
-								if (mainj.b0 >= 128) {
+							case 110: {
+								if (((maini.b2) % 4) != 1) {
 									jcase = 80;
 									continue lab22;
 								}
-								maink = maink + mainj.b0 + 1;
-							}
-							{
-								jcase = 111;
-								continue lab22;
-							}
-						}
-						case 95: {
-							mainp = mem[ligstack + 1].getrh();
-							if (mainp > 0) {
-								mem[curlist.tailfield].setrh(mainp);
-								curlist.tailfield = mem[curlist.tailfield].getrh();
-							}
-							tempptr = ligstack;
-							ligstack = mem[tempptr].getrh();
-							freenode(tempptr, 2);
-							maini.copy(fontinfo[charbase[mainf] + curl].qqqq());
-							ligaturepresent = true;
-							if (ligstack == 0) {
-								if (mainp > 0) {
-									jcase = 100;
+								maink = ligkernbase[mainf] + maini.b3;
+								mainj.copy(fontinfo[maink].qqqq());
+								if (mainj.b0 <= 128) {
+									jcase = 112;
 									continue lab22;
-								} else {
-									curr = bchar;
 								}
-							} else {
-								curr = mem[ligstack].getb1();
+								maink = ligkernbase[mainf] + 256 * mainj.b2 + mainj.b3 + 32768 - 256 * (128);
 							}
-							{
-								jcase = 110;
-								continue lab22;
+							case 111: {
+								mainj.copy(fontinfo[maink].qqqq());
 							}
-						}
+							case 112: {
+								if (mainj.b1 == curr) {
+									if (mainj.b0 <= 128) {
+										if (mainj.b2 >= 128) {
+											if (curl < 256) {
+												if (mem[curlist.tailfield].getb1() == hyphenchar[mainf]) {
+													if (mem[curq].getrh() > 0) {
+														insdisc = true;
+													}
+												}
+												if (ligaturepresent) {
+													mainp = newligature(mainf, curl, mem[curq].getrh());
+													if (lfthit) {
+														mem[mainp].setb1(2);
+														lfthit = false;
+													}
+													if (rthit) {
+														if (ligstack == 0) {
+															mem[mainp].setb1(mem[mainp].getb1() + 1);
+															rthit = false;
+														}
+													}
+													mem[curq].setrh(mainp);
+													curlist.tailfield = mainp;
+													ligaturepresent = false;
+												}
+												if (insdisc) {
+													insdisc = false;
+													if (curlist.modefield > 0) {
+														mem[curlist.tailfield].setrh(newdisc());
+														curlist.tailfield = mem[curlist.tailfield].getrh();
+													}
+												}
+											}
+											{
+												mem[curlist.tailfield].setrh(newkern(fontinfo[kernbase[mainf] + 256 * mainj.b2 + mainj.b3].getInt()));
+												curlist.tailfield = mem[curlist.tailfield].getrh();
+											}
+											{
+												jcase = 90;
+												continue lab22;
+											}
+										}
+										if (curl == 256) {
+											lfthit = true;
+										} else if (ligstack == 0) {
+											rthit = true;
+										}
+										switch (mainj.b2) {
+											case 1:
+											case 5: {
+												curl = mainj.b3;
+												maini.copy(fontinfo[charbase[mainf] + curl].qqqq());
+												ligaturepresent = true;
+											}
+												break;
+											case 2:
+											case 6: {
+												curr = mainj.b3;
+												if (ligstack == 0) {
+													ligstack = newligitem(curr);
+													bchar = 256;
+												} else if ((ligstack >= himemmin)) {
+													mainp = ligstack;
+													ligstack = newligitem(curr);
+													mem[ligstack + 1].setrh(mainp);
+												} else {
+													mem[ligstack].setb1(curr);
+												}
+											}
+												break;
+											case 3: {
+												curr = mainj.b3;
+												mainp = ligstack;
+												ligstack = newligitem(curr);
+												mem[ligstack].setrh(mainp);
+											}
+												break;
+											case 7:
+											case 11: {
+												if (curl < 256) {
+													if (mem[curlist.tailfield].getb1() == hyphenchar[mainf]) {
+														if (mem[curq].getrh() > 0) {
+															insdisc = true;
+														}
+													}
+													if (ligaturepresent) {
+														mainp = newligature(mainf, curl, mem[curq].getrh());
+														if (lfthit) {
+															mem[mainp].setb1(2);
+															lfthit = false;
+														}
+														mem[curq].setrh(mainp);
+														curlist.tailfield = mainp;
+														ligaturepresent = false;
+													}
+													if (insdisc) {
+														insdisc = false;
+														if (curlist.modefield > 0) {
+															mem[curlist.tailfield].setrh(newdisc());
+															curlist.tailfield = mem[curlist.tailfield].getrh();
+														}
+													}
+												}
+												curq = curlist.tailfield;
+												curl = mainj.b3;
+												maini.copy(fontinfo[charbase[mainf] + curl].qqqq());
+												ligaturepresent = true;
+											}
+												break;
+											default: {
+												curl = mainj.b3;
+												ligaturepresent = true;
+												if (ligstack == 0) {
+													jcase = 80;
+													continue lab22;
+												} else {
+													jcase = 91;
+													continue lab22;
+												}
+											}
+										}
+										if (mainj.b2 > 4) {
+											if (mainj.b2 != 7) {
+												jcase = 80;
+												continue lab22;
+											}
+										}
+										if (curl < 256) {
+											jcase = 110;
+											continue lab22;
+										}
+										maink = bcharlabel[mainf];
+										{
+											jcase = 111;
+											continue lab22;
+										}
+									}
+								}
+								if (mainj.b0 == 0) {
+									maink = maink + 1;
+								} else {
+									if (mainj.b0 >= 128) {
+										jcase = 80;
+										continue lab22;
+									}
+									maink = maink + mainj.b0 + 1;
+								}
+								{
+									jcase = 111;
+									continue lab22;
+								}
+							}
+							case 95: {
+								mainp = mem[ligstack + 1].getrh();
+								if (mainp > 0) {
+									mem[curlist.tailfield].setrh(mainp);
+									curlist.tailfield = mem[curlist.tailfield].getrh();
+								}
+								tempptr = ligstack;
+								ligstack = mem[tempptr].getrh();
+								freenode(tempptr, 2);
+								maini.copy(fontinfo[charbase[mainf] + curl].qqqq());
+								ligaturepresent = true;
+								if (ligstack == 0) {
+									if (mainp > 0) {
+										jcase = 100;
+										continue lab22;
+									} else {
+										curr = bchar;
+									}
+								} else {
+									curr = mem[ligstack].getb1();
+								}
+								{
+									jcase = 110;
+									continue lab22;
+								}
+							}
 						}
 					}
 				}
@@ -17701,18 +17671,18 @@ public final class Tex {
 
 	/*
 	 * Selectors:
-	 * 
+	 *
 	 * define no_print = 16 { selector setting that makes data disappear }
 	 * define term_only = 17 { printing is destined for the terminal only }
 	 * define log_only = 18 { printing is destined for the transcript file only }
 	 * define term_and_log = 19 { normal selector setting }
 	 * define pseudo = 20 { special selector setting for show context }
 	 * define new_string = 21 { printing is deflected to the string pool }
-	 * 
+	 *
 	 * define max selector = 21 { highest selector setting }
-	 * 
+	 *
 	 */
-	
+
 	/**
 	 * Returns the "current newline character" used for printing.
 	 * @return the current newline character
@@ -17720,12 +17690,12 @@ public final class Tex {
 	int getCurrentNewlineCharacter() {
 		return eqtb[9612].getInt();
 	}
-	
+
 	/**
 	 * Prints a newline character to the currently selected output.
 	 */
 	void println() {
-		
+
 		// output streams
 		if (selector < 16) {
 			writefile[selector].print('\n');
@@ -17735,7 +17705,7 @@ public final class Tex {
 		if (selector == 17 || selector == 19) {
 			termout.println();
 			termoffset = 0;
-			
+
 		}
 
 		// logfile
@@ -17751,57 +17721,57 @@ public final class Tex {
 	 * @param c the character to print
 	 */
 	void printchar(final int c) {
-		
+
 		// replace the "current newline character" by a real newline character except for show_context and new_string
 		if (selector < 20 && c == getCurrentNewlineCharacter()) {
 			println();
 			return;
 		}
-		
+
 		// selector-dependent printing code
 		switch (selector) {
-		
-		case 19: {
-			termout.print((char)(c));
-			logfile.print((char)(c));
-			termoffset++;
-			fileoffset++;
-			break;
-		}
-		
-		case 18: {
-			logfile.print((char)(c));
-			fileoffset++;
-			break;
-		}
-		
-		case 17: {
-			termout.print((char)(c));
-			termoffset++;
-			break;
-		}
-		
-		case 16: {
-			break;
-		}
-			
-		case 20: {
-			if (tally < trickcount) {
-				trickbuf[tally % errorline] = c;
+
+			case 19: {
+				termout.print((char)(c));
+				logfile.print((char)(c));
+				termoffset++;
+				fileoffset++;
+				break;
 			}
-			break;
-		}
-			
-		case 21: {
-			stringPool.append((char)c);
-			break;
-		}
-		
-		default: {
-			writefile[selector].print((char)(c));
-			break;
-		}
-		
+
+			case 18: {
+				logfile.print((char)(c));
+				fileoffset++;
+				break;
+			}
+
+			case 17: {
+				termout.print((char)(c));
+				termoffset++;
+				break;
+			}
+
+			case 16: {
+				break;
+			}
+
+			case 20: {
+				if (tally < trickcount) {
+					trickbuf[tally % errorline] = c;
+				}
+				break;
+			}
+
+			case 21: {
+				stringPool.append((char)c);
+				break;
+			}
+
+			default: {
+				writefile[selector].print((char)(c));
+				break;
+			}
+
 		}
 		tally = tally + 1;
 	}
@@ -17810,8 +17780,8 @@ public final class Tex {
 	 * Prints the specified string to the current output
 	 * @param s the string to print
 	 */
-	void print(String s) {
-		for (int i=0; i<s.length(); i++) {
+	void print(final String s) {
+		for (int i = 0; i < s.length(); i++) {
 			printchar(s.charAt(i));
 		}
 	}
@@ -17820,7 +17790,7 @@ public final class Tex {
 	 * Prints the specified string from the string pool to the current output.
 	 * @param stringId the string ID for the string to print
 	 */
-	void print(int stringId) {
+	void print(final int stringId) {
 		if (stringId < 0 || stringId >= stringPool.getStringCount()) {
 			print("???");
 		} else if (stringId < 256) {
@@ -17835,13 +17805,13 @@ public final class Tex {
 	 * detected for the terminal or log file), then prints the specified string.
 	 * @param s the string to print
 	 */
-	void printnl(String s) {
+	void printnl(final String s) {
 		if (((termoffset > 0) && (((selector) % 2 == 1))) || ((fileoffset > 0) && (selector >= 18))) {
 			println();
 		}
 		print(s);
 	}
-	
+
 	/**
 	 * Starts a new line in case the current one contains any output (this can only be
 	 * detected for the terminal or log file), then prints the specified string.
@@ -17857,71 +17827,71 @@ public final class Tex {
 	// ------------------------------------------------------------------------------------------------
 	// level-2 printing routines (formatting of various values)
 	// ------------------------------------------------------------------------------------------------
-	
+
 	/**
 	 * Returns the current escape character (usually a backslash). Also returns a backslash
 	 * if the current escape character is invalid.
 	 */
 	int getCurrentEscapeCharacter() {
-		int c = eqtb[9608].getInt();
+		final int c = eqtb[9608].getInt();
 		if (c >= 0 && c < 256) {
 			return c;
 		} else {
 			return '\\';
 		}
 	}
-	
+
 	/**
 	 * Prints the current escape character (usually a backslash), or nothing if
 	 * that character is set to an invalid code.
 	 */
 	void printCurrentEscapeCharacter() {
-		int c = eqtb[9608].getInt();
+		final int c = eqtb[9608].getInt();
 		if (c >= 0 && c < 256) {
 			printchar(c);
 		}
 	}
-	
+
 	/**
 	 * Prints the specified string, prefixed by the current escape character (usually a
 	 * backslash.
-	 * 
+	 *
 	 * @param s the string to print
 	 */
 	void printEscapeSequence(final String s) {
 		printCurrentEscapeCharacter();
 		print(s);
 	}
-	
+
 	/**
 	 * Prints the specified string, prefixed by the current escape character (usually a
 	 * backslash.
-	 * 
+	 *
 	 * @param s the string pool selector for the string to print
 	 */
 	void printEscapeSequence(final int s) {
 		printCurrentEscapeCharacter();
 		print(s);
 	}
-	
+
 	/**
 	 * Prints a decimal integer to the currently selected output.
 	 * @param n the integer to print
 	 */
-	void printInt(int n) {
+	void printInt(final int n) {
 		print(Integer.toString(n));
 	}
-	
+
 	/**
 	 * Prints a hexadecimal integer to the currently selected output, prefixed by a double-quote
 	 * (used by TeX to denote hexadecimal integers).
 	 * @param n the integer to print
 	 */
-	void printHex(int n) {
+	void printHex(final int n) {
 		printchar(34);
 		print(Integer.toString(n, 16));
 	}
-	
+
 	/**
 	 * Prints the two lowest-order decimal digits of the specified integer.
 	 * @param n the integer to print
@@ -17931,7 +17901,7 @@ public final class Tex {
 		printchar(48 + (n / 10));
 		printchar(48 + (n % 10));
 	}
-	
+
 	/**
 	 * Prints a fixed-point number.
 	 * @param n the number to print
@@ -17939,7 +17909,7 @@ public final class Tex {
 	void printFixed(int n) {
 		printInt(n >> 16);
 		printchar(46);
-		
+
 		int delta;
 		n = 10 * (n % 65536) + 5;
 		delta = 10;
@@ -17956,7 +17926,6 @@ public final class Tex {
 	// ------------------------------------------------------------------------------------------------
 	// high-level printing routines
 	// ------------------------------------------------------------------------------------------------
-	
 
 	void printcs(final int p) {
 		if (p < 514) {
@@ -18027,46 +17996,37 @@ public final class Tex {
 		}
 	}
 
-
-
 	void printromanint(int n) {
-		/* 10 */int j, k;
-		int u, v;
-		j = strstart[260];
-		v = 1000;
+		String s = stringPool.getString(260);
+		int j = 0;
+		int v = 1000;
 		while (true) {
 			while (n >= v) {
-				printchar(strpool[j]);
+				printchar(s.charAt(j));
 				n = n - v;
 			}
 			if (n <= 0) {
 				return /* lab10 */;
 			}
-			k = j + 2;
-			u = v / (strpool[k - 1] - 48);
-			if (strpool[k - 1] == 50) {
+			int k = j + 2;
+			int u = v / (s.charAt(k - 1) - 48);
+			if (s.charAt(k - 1) == 50) {
 				k = k + 2;
-				u = u / (strpool[k - 1] - 48);
+				u = u / (s.charAt(k - 1) - 48);
 			}
 			if (n + u >= v) {
-				printchar(strpool[k]);
+				printchar(s.charAt(k));
 				n = n + u;
 			} else {
 				j = j + 2;
-				v = v / (strpool[j - 1] - 48);
+				v = v / (s.charAt(j - 1) - 48);
 			}
 		}
 	}
 
 	void printcurrentstring() {
-		int j;
-		j = strstart[strptr];
-		while (j < poolptr) {
-			printchar(strpool[j]);
-			j = j + 1;
-		}
+		print(stringPool.extractPartiallyBuiltString(false));
 	}
-	
 
 	void printfontandchar(final int p) {
 		if (p > memend) {
@@ -18153,38 +18113,35 @@ public final class Tex {
 	}
 
 	void printsubsidiarydata(final int p, final int c) {
-		if ((poolptr - strstart[strptr]) >= depththreshold) {
+		if (stringPool.getBuiltLength() >= depththreshold) {
 			if (mem[p].getrh() != 0) {
 				print(314);
 			}
 		} else {
-			{
-				strpool[poolptr] = c;
-				poolptr = poolptr + 1;
-			}
+			stringPool.append((char)c);
 			tempptr = p;
 			switch (mem[p].getrh()) {
-			case 1: {
-				println();
-				printcurrentstring();
-				printfamandchar(p);
-			}
-				break;
-			case 2:
-				showinfo();
-				break;
-			case 3:
-				if (mem[p].getlh() == 0) {
+				case 1: {
 					println();
 					printcurrentstring();
-					print(860);
-				} else {
-					showinfo();
+					printfamandchar(p);
 				}
-				break;
-			default:
-				;
-				break;
+					break;
+				case 2:
+					showinfo();
+					break;
+				case 3:
+					if (mem[p].getlh() == 0) {
+						println();
+						printcurrentstring();
+						print(860);
+					} else {
+						showinfo();
+					}
+					break;
+				default:
+					;
+					break;
 			}
 			poolptr = poolptr - 1;
 		}
@@ -18192,112 +18149,112 @@ public final class Tex {
 
 	void printstyle(final int c) {
 		switch (c / 2) {
-		case 0:
-			printEscapeSequence(861);
-			break;
-		case 1:
-			printEscapeSequence(862);
-			break;
-		case 2:
-			printEscapeSequence(863);
-			break;
-		case 3:
-			printEscapeSequence(864);
-			break;
-		default:
-			print(865);
-			break;
+			case 0:
+				printEscapeSequence(861);
+				break;
+			case 1:
+				printEscapeSequence(862);
+				break;
+			case 2:
+				printEscapeSequence(863);
+				break;
+			case 3:
+				printEscapeSequence(864);
+				break;
+			default:
+				print(865);
+				break;
 		}
 	}
 
 	void printskipparam(final int n) {
 		switch (n) {
-		case 0:
-			printEscapeSequence(376);
-			break;
-		case 1:
-			printEscapeSequence(377);
-			break;
-		case 2:
-			printEscapeSequence(378);
-			break;
-		case 3:
-			printEscapeSequence(379);
-			break;
-		case 4:
-			printEscapeSequence(380);
-			break;
-		case 5:
-			printEscapeSequence(381);
-			break;
-		case 6:
-			printEscapeSequence(382);
-			break;
-		case 7:
-			printEscapeSequence(383);
-			break;
-		case 8:
-			printEscapeSequence(384);
-			break;
-		case 9:
-			printEscapeSequence(385);
-			break;
-		case 10:
-			printEscapeSequence(386);
-			break;
-		case 11:
-			printEscapeSequence(387);
-			break;
-		case 12:
-			printEscapeSequence(388);
-			break;
-		case 13:
-			printEscapeSequence(389);
-			break;
-		case 14:
-			printEscapeSequence(390);
-			break;
-		case 15:
-			printEscapeSequence(391);
-			break;
-		case 16:
-			printEscapeSequence(392);
-			break;
-		case 17:
-			printEscapeSequence(393);
-			break;
-		default:
-			print(394);
-			break;
+			case 0:
+				printEscapeSequence(376);
+				break;
+			case 1:
+				printEscapeSequence(377);
+				break;
+			case 2:
+				printEscapeSequence(378);
+				break;
+			case 3:
+				printEscapeSequence(379);
+				break;
+			case 4:
+				printEscapeSequence(380);
+				break;
+			case 5:
+				printEscapeSequence(381);
+				break;
+			case 6:
+				printEscapeSequence(382);
+				break;
+			case 7:
+				printEscapeSequence(383);
+				break;
+			case 8:
+				printEscapeSequence(384);
+				break;
+			case 9:
+				printEscapeSequence(385);
+				break;
+			case 10:
+				printEscapeSequence(386);
+				break;
+			case 11:
+				printEscapeSequence(387);
+				break;
+			case 12:
+				printEscapeSequence(388);
+				break;
+			case 13:
+				printEscapeSequence(389);
+				break;
+			case 14:
+				printEscapeSequence(390);
+				break;
+			case 15:
+				printEscapeSequence(391);
+				break;
+			case 16:
+				printEscapeSequence(392);
+				break;
+			case 17:
+				printEscapeSequence(393);
+				break;
+			default:
+				print(394);
+				break;
 		}
 	}
 
 	void printmode(final int m) {
 		if (m > 0) {
 			switch (m / (101)) {
-			case 0:
-				print(355);
-				break;
-			case 1:
-				print(356);
-				break;
-			case 2:
-				print(357);
-				break;
+				case 0:
+					print(355);
+					break;
+				case 1:
+					print(356);
+					break;
+				case 2:
+					print(357);
+					break;
 			}
 		} else if (m == 0) {
 			print(358);
 		} else {
 			switch ((-m) / (101)) {
-			case 0:
-				print(359);
-				break;
-			case 1:
-				print(360);
-				break;
-			case 2:
-				print(343);
-				break;
+				case 0:
+					print(359);
+					break;
+				case 1:
+					print(360);
+					break;
+				case 2:
+					print(343);
+					break;
 			}
 		}
 		print(361);
@@ -18305,1133 +18262,1133 @@ public final class Tex {
 
 	void printparam(final int n) {
 		switch (n) {
-		case 0:
-			printEscapeSequence(420);
-			break;
-		case 1:
-			printEscapeSequence(421);
-			break;
-		case 2:
-			printEscapeSequence(422);
-			break;
-		case 3:
-			printEscapeSequence(423);
-			break;
-		case 4:
-			printEscapeSequence(424);
-			break;
-		case 5:
-			printEscapeSequence(425);
-			break;
-		case 6:
-			printEscapeSequence(426);
-			break;
-		case 7:
-			printEscapeSequence(427);
-			break;
-		case 8:
-			printEscapeSequence(428);
-			break;
-		case 9:
-			printEscapeSequence(429);
-			break;
-		case 10:
-			printEscapeSequence(430);
-			break;
-		case 11:
-			printEscapeSequence(431);
-			break;
-		case 12:
-			printEscapeSequence(432);
-			break;
-		case 13:
-			printEscapeSequence(433);
-			break;
-		case 14:
-			printEscapeSequence(434);
-			break;
-		case 15:
-			printEscapeSequence(435);
-			break;
-		case 16:
-			printEscapeSequence(436);
-			break;
-		case 17:
-			printEscapeSequence(437);
-			break;
-		case 18:
-			printEscapeSequence(438);
-			break;
-		case 19:
-			printEscapeSequence(439);
-			break;
-		case 20:
-			printEscapeSequence(440);
-			break;
-		case 21:
-			printEscapeSequence(441);
-			break;
-		case 22:
-			printEscapeSequence(442);
-			break;
-		case 23:
-			printEscapeSequence(443);
-			break;
-		case 24:
-			printEscapeSequence(444);
-			break;
-		case 25:
-			printEscapeSequence(445);
-			break;
-		case 26:
-			printEscapeSequence(446);
-			break;
-		case 27:
-			printEscapeSequence(447);
-			break;
-		case 28:
-			printEscapeSequence(448);
-			break;
-		case 29:
-			printEscapeSequence(449);
-			break;
-		case 30:
-			printEscapeSequence(450);
-			break;
-		case 31:
-			printEscapeSequence(451);
-			break;
-		case 32:
-			printEscapeSequence(452);
-			break;
-		case 33:
-			printEscapeSequence(453);
-			break;
-		case 34:
-			printEscapeSequence(454);
-			break;
-		case 35:
-			printEscapeSequence(455);
-			break;
-		case 36:
-			printEscapeSequence(456);
-			break;
-		case 37:
-			printEscapeSequence(457);
-			break;
-		case 38:
-			printEscapeSequence(458);
-			break;
-		case 39:
-			printEscapeSequence(459);
-			break;
-		case 40:
-			printEscapeSequence(460);
-			break;
-		case 41:
-			printEscapeSequence(461);
-			break;
-		case 42:
-			printEscapeSequence(462);
-			break;
-		case 43:
-			printEscapeSequence(463);
-			break;
-		case 44:
-			printEscapeSequence(464);
-			break;
-		case 45:
-			printEscapeSequence(465);
-			break;
-		case 46:
-			printEscapeSequence(466);
-			break;
-		case 47:
-			printEscapeSequence(467);
-			break;
-		case 48:
-			printEscapeSequence(468);
-			break;
-		case 49:
-			printEscapeSequence(469);
-			break;
-		case 50:
-			printEscapeSequence(470);
-			break;
-		case 51:
-			printEscapeSequence(471);
-			break;
-		case 52:
-			printEscapeSequence(472);
-			break;
-		case 53:
-			printEscapeSequence(473);
-			break;
-		case 54:
-			printEscapeSequence(474);
-			break;
-		default:
-			print(475);
-			break;
+			case 0:
+				printEscapeSequence(420);
+				break;
+			case 1:
+				printEscapeSequence(421);
+				break;
+			case 2:
+				printEscapeSequence(422);
+				break;
+			case 3:
+				printEscapeSequence(423);
+				break;
+			case 4:
+				printEscapeSequence(424);
+				break;
+			case 5:
+				printEscapeSequence(425);
+				break;
+			case 6:
+				printEscapeSequence(426);
+				break;
+			case 7:
+				printEscapeSequence(427);
+				break;
+			case 8:
+				printEscapeSequence(428);
+				break;
+			case 9:
+				printEscapeSequence(429);
+				break;
+			case 10:
+				printEscapeSequence(430);
+				break;
+			case 11:
+				printEscapeSequence(431);
+				break;
+			case 12:
+				printEscapeSequence(432);
+				break;
+			case 13:
+				printEscapeSequence(433);
+				break;
+			case 14:
+				printEscapeSequence(434);
+				break;
+			case 15:
+				printEscapeSequence(435);
+				break;
+			case 16:
+				printEscapeSequence(436);
+				break;
+			case 17:
+				printEscapeSequence(437);
+				break;
+			case 18:
+				printEscapeSequence(438);
+				break;
+			case 19:
+				printEscapeSequence(439);
+				break;
+			case 20:
+				printEscapeSequence(440);
+				break;
+			case 21:
+				printEscapeSequence(441);
+				break;
+			case 22:
+				printEscapeSequence(442);
+				break;
+			case 23:
+				printEscapeSequence(443);
+				break;
+			case 24:
+				printEscapeSequence(444);
+				break;
+			case 25:
+				printEscapeSequence(445);
+				break;
+			case 26:
+				printEscapeSequence(446);
+				break;
+			case 27:
+				printEscapeSequence(447);
+				break;
+			case 28:
+				printEscapeSequence(448);
+				break;
+			case 29:
+				printEscapeSequence(449);
+				break;
+			case 30:
+				printEscapeSequence(450);
+				break;
+			case 31:
+				printEscapeSequence(451);
+				break;
+			case 32:
+				printEscapeSequence(452);
+				break;
+			case 33:
+				printEscapeSequence(453);
+				break;
+			case 34:
+				printEscapeSequence(454);
+				break;
+			case 35:
+				printEscapeSequence(455);
+				break;
+			case 36:
+				printEscapeSequence(456);
+				break;
+			case 37:
+				printEscapeSequence(457);
+				break;
+			case 38:
+				printEscapeSequence(458);
+				break;
+			case 39:
+				printEscapeSequence(459);
+				break;
+			case 40:
+				printEscapeSequence(460);
+				break;
+			case 41:
+				printEscapeSequence(461);
+				break;
+			case 42:
+				printEscapeSequence(462);
+				break;
+			case 43:
+				printEscapeSequence(463);
+				break;
+			case 44:
+				printEscapeSequence(464);
+				break;
+			case 45:
+				printEscapeSequence(465);
+				break;
+			case 46:
+				printEscapeSequence(466);
+				break;
+			case 47:
+				printEscapeSequence(467);
+				break;
+			case 48:
+				printEscapeSequence(468);
+				break;
+			case 49:
+				printEscapeSequence(469);
+				break;
+			case 50:
+				printEscapeSequence(470);
+				break;
+			case 51:
+				printEscapeSequence(471);
+				break;
+			case 52:
+				printEscapeSequence(472);
+				break;
+			case 53:
+				printEscapeSequence(473);
+				break;
+			case 54:
+				printEscapeSequence(474);
+				break;
+			default:
+				print(475);
+				break;
 		}
 	}
-	
+
 	void printlengthparam(final int n) {
 		switch (n) {
-		case 0:
-			printEscapeSequence(478);
-			break;
-		case 1:
-			printEscapeSequence(479);
-			break;
-		case 2:
-			printEscapeSequence(480);
-			break;
-		case 3:
-			printEscapeSequence(481);
-			break;
-		case 4:
-			printEscapeSequence(482);
-			break;
-		case 5:
-			printEscapeSequence(483);
-			break;
-		case 6:
-			printEscapeSequence(484);
-			break;
-		case 7:
-			printEscapeSequence(485);
-			break;
-		case 8:
-			printEscapeSequence(486);
-			break;
-		case 9:
-			printEscapeSequence(487);
-			break;
-		case 10:
-			printEscapeSequence(488);
-			break;
-		case 11:
-			printEscapeSequence(489);
-			break;
-		case 12:
-			printEscapeSequence(490);
-			break;
-		case 13:
-			printEscapeSequence(491);
-			break;
-		case 14:
-			printEscapeSequence(492);
-			break;
-		case 15:
-			printEscapeSequence(493);
-			break;
-		case 16:
-			printEscapeSequence(494);
-			break;
-		case 17:
-			printEscapeSequence(495);
-			break;
-		case 18:
-			printEscapeSequence(496);
-			break;
-		case 19:
-			printEscapeSequence(497);
-			break;
-		case 20:
-			printEscapeSequence(498);
-			break;
-		default:
-			print(499);
-			break;
+			case 0:
+				printEscapeSequence(478);
+				break;
+			case 1:
+				printEscapeSequence(479);
+				break;
+			case 2:
+				printEscapeSequence(480);
+				break;
+			case 3:
+				printEscapeSequence(481);
+				break;
+			case 4:
+				printEscapeSequence(482);
+				break;
+			case 5:
+				printEscapeSequence(483);
+				break;
+			case 6:
+				printEscapeSequence(484);
+				break;
+			case 7:
+				printEscapeSequence(485);
+				break;
+			case 8:
+				printEscapeSequence(486);
+				break;
+			case 9:
+				printEscapeSequence(487);
+				break;
+			case 10:
+				printEscapeSequence(488);
+				break;
+			case 11:
+				printEscapeSequence(489);
+				break;
+			case 12:
+				printEscapeSequence(490);
+				break;
+			case 13:
+				printEscapeSequence(491);
+				break;
+			case 14:
+				printEscapeSequence(492);
+				break;
+			case 15:
+				printEscapeSequence(493);
+				break;
+			case 16:
+				printEscapeSequence(494);
+				break;
+			case 17:
+				printEscapeSequence(495);
+				break;
+			case 18:
+				printEscapeSequence(496);
+				break;
+			case 19:
+				printEscapeSequence(497);
+				break;
+			case 20:
+				printEscapeSequence(498);
+				break;
+			default:
+				print(499);
+				break;
 		}
 	}
 
 	void printcmdchr(final int cmd, final int chrcode) {
 		switch (cmd) {
-		case 1: {
-			print(557);
-			print(chrcode);
-		}
-			break;
-		case 2: {
-			print(558);
-			print(chrcode);
-		}
-			break;
-		case 3: {
-			print(559);
-			print(chrcode);
-		}
-			break;
-		case 6: {
-			print(560);
-			print(chrcode);
-		}
-			break;
-		case 7: {
-			print(561);
-			print(chrcode);
-		}
-			break;
-		case 8: {
-			print(562);
-			print(chrcode);
-		}
-			break;
-		case 9:
-			print(563);
-			break;
-		case 10: {
-			print(564);
-			print(chrcode);
-		}
-			break;
-		case 11: {
-			print(565);
-			print(chrcode);
-		}
-			break;
-		case 12: {
-			print(566);
-			print(chrcode);
-		}
-			break;
-		case 75:
-		case 76:
-			if (chrcode < 7200) {
-				printskipparam(chrcode - 7182);
-			} else if (chrcode < 7456) {
-				printEscapeSequence(395);
-				printInt(chrcode - 7200);
-			} else {
-				printEscapeSequence(396);
-				printInt(chrcode - 7456);
-			}
-			break;
-		case 72:
-			if (chrcode >= 7722) {
-				printEscapeSequence(407);
-				printInt(chrcode - 7722);
-			} else {
-				switch (chrcode) {
-				case 7713:
-					printEscapeSequence(398);
-					break;
-				case 7714:
-					printEscapeSequence(399);
-					break;
-				case 7715:
-					printEscapeSequence(400);
-					break;
-				case 7716:
-					printEscapeSequence(401);
-					break;
-				case 7717:
-					printEscapeSequence(402);
-					break;
-				case 7718:
-					printEscapeSequence(403);
-					break;
-				case 7719:
-					printEscapeSequence(404);
-					break;
-				case 7720:
-					printEscapeSequence(405);
-					break;
-				default:
-					printEscapeSequence(406);
-					break;
-				}
-			}
-			break;
-		case 73:
-			if (chrcode < 9618) {
-				printparam(chrcode - 9563);
-			} else {
-				printEscapeSequence(476);
-				printInt(chrcode - 9618);
-			}
-			break;
-		case 74:
-			if (chrcode < 10151) {
-				printlengthparam(chrcode - 10130);
-			} else {
-				printEscapeSequence(500);
-				printInt(chrcode - 10151);
-			}
-			break;
-		case 45:
-			printEscapeSequence(508);
-			break;
-		case 90:
-			printEscapeSequence(509);
-			break;
-		case 40:
-			printEscapeSequence(510);
-			break;
-		case 41:
-			printEscapeSequence(511);
-			break;
-		case 77:
-			printEscapeSequence(519);
-			break;
-		case 61:
-			printEscapeSequence(512);
-			break;
-		case 42:
-			printEscapeSequence(531);
-			break;
-		case 16:
-			printEscapeSequence(513);
-			break;
-		case 107:
-			printEscapeSequence(504);
-			break;
-		case 88:
-			printEscapeSequence(518);
-			break;
-		case 15:
-			printEscapeSequence(514);
-			break;
-		case 92:
-			printEscapeSequence(515);
-			break;
-		case 67:
-			printEscapeSequence(505);
-			break;
-		case 62:
-			printEscapeSequence(516);
-			break;
-		case 64:
-			printEscapeSequence(32);
-			break;
-		case 102:
-			printEscapeSequence(517);
-			break;
-		case 32:
-			printEscapeSequence(520);
-			break;
-		case 36:
-			printEscapeSequence(521);
-			break;
-		case 39:
-			printEscapeSequence(522);
-			break;
-		case 37:
-			printEscapeSequence(330);
-			break;
-		case 44:
-			printEscapeSequence(47);
-			break;
-		case 18:
-			printEscapeSequence(351);
-			break;
-		case 46:
-			printEscapeSequence(523);
-			break;
-		case 17:
-			printEscapeSequence(524);
-			break;
-		case 54:
-			printEscapeSequence(525);
-			break;
-		case 91:
-			printEscapeSequence(526);
-			break;
-		case 34:
-			printEscapeSequence(527);
-			break;
-		case 65:
-			printEscapeSequence(528);
-			break;
-		case 103:
-			printEscapeSequence(529);
-			break;
-		case 55:
-			printEscapeSequence(335);
-			break;
-		case 63:
-			printEscapeSequence(530);
-			break;
-		case 66:
-			printEscapeSequence(533);
-			break;
-		case 96:
-			printEscapeSequence(534);
-			break;
-		case 0:
-			printEscapeSequence(535);
-			break;
-		case 98:
-			printEscapeSequence(536);
-			break;
-		case 80:
-			printEscapeSequence(532);
-			break;
-		case 84:
-			printEscapeSequence(408);
-			break;
-		case 109:
-			printEscapeSequence(537);
-			break;
-		case 71:
-			printEscapeSequence(407);
-			break;
-		case 38:
-			printEscapeSequence(352);
-			break;
-		case 33:
-			printEscapeSequence(538);
-			break;
-		case 56:
-			printEscapeSequence(539);
-			break;
-		case 35:
-			printEscapeSequence(540);
-			break;
-		case 13:
-			printEscapeSequence(597);
-			break;
-		case 104:
-			if (chrcode == 0) {
-				printEscapeSequence(629);
-			} else {
-				printEscapeSequence(630);
-			}
-			break;
-		case 110:
-			switch (chrcode) {
-			case 1:
-				printEscapeSequence(632);
-				break;
-			case 2:
-				printEscapeSequence(633);
-				break;
-			case 3:
-				printEscapeSequence(634);
-				break;
-			case 4:
-				printEscapeSequence(635);
-				break;
-			default:
-				printEscapeSequence(631);
-				break;
-			}
-			break;
-		case 89:
-			if (chrcode == 0) {
-				printEscapeSequence(476);
-			} else if (chrcode == 1) {
-				printEscapeSequence(500);
-			} else if (chrcode == 2) {
-				printEscapeSequence(395);
-			} else {
-				printEscapeSequence(396);
-			}
-			break;
-		case 79:
-			if (chrcode == 1) {
-				printEscapeSequence(669);
-			} else {
-				printEscapeSequence(668);
-			}
-			break;
-		case 82:
-			if (chrcode == 0) {
-				printEscapeSequence(670);
-			} else {
-				printEscapeSequence(671);
-			}
-			break;
-		case 83:
-			if (chrcode == 1) {
-				printEscapeSequence(672);
-			} else if (chrcode == 3) {
-				printEscapeSequence(673);
-			} else {
-				printEscapeSequence(674);
-			}
-			break;
-		case 70:
-			switch (chrcode) {
-			case 0:
-				printEscapeSequence(675);
-				break;
-			case 1:
-				printEscapeSequence(676);
-				break;
-			case 2:
-				printEscapeSequence(677);
-				break;
-			case 3:
-				printEscapeSequence(678);
-				break;
-			default:
-				printEscapeSequence(679);
-				break;
-			}
-			break;
-		case 108:
-			switch (chrcode) {
-			case 0:
-				printEscapeSequence(735);
-				break;
-			case 1:
-				printEscapeSequence(736);
-				break;
-			case 2:
-				printEscapeSequence(737);
-				break;
-			case 3:
-				printEscapeSequence(738);
-				break;
-			case 4:
-				printEscapeSequence(739);
-				break;
-			default:
-				printEscapeSequence(740);
-				break;
-			}
-			break;
-		case 105:
-			switch (chrcode) {
-			case 1:
-				printEscapeSequence(757);
-				break;
-			case 2:
-				printEscapeSequence(758);
-				break;
-			case 3:
-				printEscapeSequence(759);
-				break;
-			case 4:
-				printEscapeSequence(760);
-				break;
-			case 5:
-				printEscapeSequence(761);
-				break;
-			case 6:
-				printEscapeSequence(762);
-				break;
-			case 7:
-				printEscapeSequence(763);
-				break;
-			case 8:
-				printEscapeSequence(764);
-				break;
-			case 9:
-				printEscapeSequence(765);
-				break;
-			case 10:
-				printEscapeSequence(766);
-				break;
-			case 11:
-				printEscapeSequence(767);
-				break;
-			case 12:
-				printEscapeSequence(768);
-				break;
-			case 13:
-				printEscapeSequence(769);
-				break;
-			case 14:
-				printEscapeSequence(770);
-				break;
-			case 15:
-				printEscapeSequence(771);
-				break;
-			case 16:
-				printEscapeSequence(772);
-				break;
-			default:
-				printEscapeSequence(756);
-				break;
-			}
-			break;
-		case 106:
-			if (chrcode == 2) {
-				printEscapeSequence(773);
-			} else if (chrcode == 4) {
-				printEscapeSequence(774);
-			} else {
-				printEscapeSequence(775);
-			}
-			break;
-		case 4:
-			if (chrcode == 256) {
-				printEscapeSequence(898);
-			} else {
-				print(902);
+			case 1: {
+				print(557);
 				print(chrcode);
 			}
-			break;
-		case 5:
-			if (chrcode == 257) {
-				printEscapeSequence(899);
-			} else {
-				printEscapeSequence(900);
+				break;
+			case 2: {
+				print(558);
+				print(chrcode);
 			}
-			break;
-		case 81:
-			switch (chrcode) {
-			case 0:
-				printEscapeSequence(970);
 				break;
-			case 1:
-				printEscapeSequence(971);
-				break;
-			case 2:
-				printEscapeSequence(972);
-				break;
-			case 3:
-				printEscapeSequence(973);
-				break;
-			case 4:
-				printEscapeSequence(974);
-				break;
-			case 5:
-				printEscapeSequence(975);
-				break;
-			case 6:
-				printEscapeSequence(976);
-				break;
-			default:
-				printEscapeSequence(977);
-				break;
+			case 3: {
+				print(559);
+				print(chrcode);
 			}
-			break;
-		case 14:
-			if (chrcode == 1) {
-				printEscapeSequence(1026);
-			} else {
-				printEscapeSequence(1025);
+				break;
+			case 6: {
+				print(560);
+				print(chrcode);
 			}
-			break;
-		case 26:
-			switch (chrcode) {
-			case 4:
-				printEscapeSequence(1027);
 				break;
-			case 0:
-				printEscapeSequence(1028);
-				break;
-			case 1:
-				printEscapeSequence(1029);
-				break;
-			case 2:
-				printEscapeSequence(1030);
-				break;
-			default:
-				printEscapeSequence(1031);
-				break;
+			case 7: {
+				print(561);
+				print(chrcode);
 			}
-			break;
-		case 27:
-			switch (chrcode) {
-			case 4:
-				printEscapeSequence(1032);
 				break;
-			case 0:
-				printEscapeSequence(1033);
-				break;
-			case 1:
-				printEscapeSequence(1034);
-				break;
-			case 2:
-				printEscapeSequence(1035);
-				break;
-			default:
-				printEscapeSequence(1036);
-				break;
+			case 8: {
+				print(562);
+				print(chrcode);
 			}
-			break;
-		case 28:
-			printEscapeSequence(336);
-			break;
-		case 29:
-			printEscapeSequence(340);
-			break;
-		case 30:
-			printEscapeSequence(342);
-			break;
-		case 21:
-			if (chrcode == 1) {
-				printEscapeSequence(1054);
-			} else {
-				printEscapeSequence(1055);
-			}
-			break;
-		case 22:
-			if (chrcode == 1) {
-				printEscapeSequence(1056);
-			} else {
-				printEscapeSequence(1057);
-			}
-			break;
-		case 20:
-			switch (chrcode) {
-			case 0:
-				printEscapeSequence(409);
 				break;
-			case 1:
-				printEscapeSequence(1058);
+			case 9:
+				print(563);
 				break;
-			case 2:
-				printEscapeSequence(1059);
+			case 10: {
+				print(564);
+				print(chrcode);
+			}
 				break;
-			case 3:
-				printEscapeSequence(965);
+			case 11: {
+				print(565);
+				print(chrcode);
+			}
 				break;
-			case 4:
-				printEscapeSequence(1060);
+			case 12: {
+				print(566);
+				print(chrcode);
+			}
 				break;
-			case 5:
-				printEscapeSequence(967);
+			case 75:
+			case 76:
+				if (chrcode < 7200) {
+					printskipparam(chrcode - 7182);
+				} else if (chrcode < 7456) {
+					printEscapeSequence(395);
+					printInt(chrcode - 7200);
+				} else {
+					printEscapeSequence(396);
+					printInt(chrcode - 7456);
+				}
 				break;
-			default:
-				printEscapeSequence(1061);
+			case 72:
+				if (chrcode >= 7722) {
+					printEscapeSequence(407);
+					printInt(chrcode - 7722);
+				} else {
+					switch (chrcode) {
+						case 7713:
+							printEscapeSequence(398);
+							break;
+						case 7714:
+							printEscapeSequence(399);
+							break;
+						case 7715:
+							printEscapeSequence(400);
+							break;
+						case 7716:
+							printEscapeSequence(401);
+							break;
+						case 7717:
+							printEscapeSequence(402);
+							break;
+						case 7718:
+							printEscapeSequence(403);
+							break;
+						case 7719:
+							printEscapeSequence(404);
+							break;
+						case 7720:
+							printEscapeSequence(405);
+							break;
+						default:
+							printEscapeSequence(406);
+							break;
+					}
+				}
 				break;
-			}
-			break;
-		case 31:
-			if (chrcode == 100) {
-				printEscapeSequence(1063);
-			} else if (chrcode == 101) {
-				printEscapeSequence(1064);
-			} else if (chrcode == 102) {
-				printEscapeSequence(1065);
-			} else {
-				printEscapeSequence(1062);
-			}
-			break;
-		case 43:
-			if (chrcode == 0) {
-				printEscapeSequence(1081);
-			} else {
-				printEscapeSequence(1080);
-			}
-			break;
-		case 25:
-			if (chrcode == 10) {
-				printEscapeSequence(1092);
-			} else if (chrcode == 11) {
-				printEscapeSequence(1091);
-			} else {
-				printEscapeSequence(1090);
-			}
-			break;
-		case 23:
-			if (chrcode == 1) {
-				printEscapeSequence(1094);
-			} else {
-				printEscapeSequence(1093);
-			}
-			break;
-		case 24:
-			if (chrcode == 1) {
-				printEscapeSequence(1096);
-			} else {
-				printEscapeSequence(1095);
-			}
-			break;
-		case 47:
-			if (chrcode == 1) {
-				printEscapeSequence(45);
-			} else {
-				printEscapeSequence(349);
-			}
-			break;
-		case 48:
-			if (chrcode == 1) {
-				printEscapeSequence(1128);
-			} else {
-				printEscapeSequence(1127);
-			}
-			break;
-		case 50:
-			switch (chrcode) {
+			case 73:
+				if (chrcode < 9618) {
+					printparam(chrcode - 9563);
+				} else {
+					printEscapeSequence(476);
+					printInt(chrcode - 9618);
+				}
+				break;
+			case 74:
+				if (chrcode < 10151) {
+					printlengthparam(chrcode - 10130);
+				} else {
+					printEscapeSequence(500);
+					printInt(chrcode - 10151);
+				}
+				break;
+			case 45:
+				printEscapeSequence(508);
+				break;
+			case 90:
+				printEscapeSequence(509);
+				break;
+			case 40:
+				printEscapeSequence(510);
+				break;
+			case 41:
+				printEscapeSequence(511);
+				break;
+			case 77:
+				printEscapeSequence(519);
+				break;
+			case 61:
+				printEscapeSequence(512);
+				break;
+			case 42:
+				printEscapeSequence(531);
+				break;
 			case 16:
-				printEscapeSequence(866);
+				printEscapeSequence(513);
 				break;
-			case 17:
-				printEscapeSequence(867);
+			case 107:
+				printEscapeSequence(504);
+				break;
+			case 88:
+				printEscapeSequence(518);
+				break;
+			case 15:
+				printEscapeSequence(514);
+				break;
+			case 92:
+				printEscapeSequence(515);
+				break;
+			case 67:
+				printEscapeSequence(505);
+				break;
+			case 62:
+				printEscapeSequence(516);
+				break;
+			case 64:
+				printEscapeSequence(32);
+				break;
+			case 102:
+				printEscapeSequence(517);
+				break;
+			case 32:
+				printEscapeSequence(520);
+				break;
+			case 36:
+				printEscapeSequence(521);
+				break;
+			case 39:
+				printEscapeSequence(522);
+				break;
+			case 37:
+				printEscapeSequence(330);
+				break;
+			case 44:
+				printEscapeSequence(47);
 				break;
 			case 18:
-				printEscapeSequence(868);
+				printEscapeSequence(351);
 				break;
-			case 19:
-				printEscapeSequence(869);
+			case 46:
+				printEscapeSequence(523);
 				break;
-			case 20:
-				printEscapeSequence(870);
+			case 17:
+				printEscapeSequence(524);
 				break;
-			case 21:
-				printEscapeSequence(871);
+			case 54:
+				printEscapeSequence(525);
 				break;
-			case 22:
-				printEscapeSequence(872);
+			case 91:
+				printEscapeSequence(526);
 				break;
-			case 23:
-				printEscapeSequence(873);
+			case 34:
+				printEscapeSequence(527);
+				break;
+			case 65:
+				printEscapeSequence(528);
+				break;
+			case 103:
+				printEscapeSequence(529);
+				break;
+			case 55:
+				printEscapeSequence(335);
+				break;
+			case 63:
+				printEscapeSequence(530);
+				break;
+			case 66:
+				printEscapeSequence(533);
+				break;
+			case 96:
+				printEscapeSequence(534);
+				break;
+			case 0:
+				printEscapeSequence(535);
+				break;
+			case 98:
+				printEscapeSequence(536);
+				break;
+			case 80:
+				printEscapeSequence(532);
+				break;
+			case 84:
+				printEscapeSequence(408);
+				break;
+			case 109:
+				printEscapeSequence(537);
+				break;
+			case 71:
+				printEscapeSequence(407);
+				break;
+			case 38:
+				printEscapeSequence(352);
+				break;
+			case 33:
+				printEscapeSequence(538);
+				break;
+			case 56:
+				printEscapeSequence(539);
+				break;
+			case 35:
+				printEscapeSequence(540);
+				break;
+			case 13:
+				printEscapeSequence(597);
+				break;
+			case 104:
+				if (chrcode == 0) {
+					printEscapeSequence(629);
+				} else {
+					printEscapeSequence(630);
+				}
+				break;
+			case 110:
+				switch (chrcode) {
+					case 1:
+						printEscapeSequence(632);
+						break;
+					case 2:
+						printEscapeSequence(633);
+						break;
+					case 3:
+						printEscapeSequence(634);
+						break;
+					case 4:
+						printEscapeSequence(635);
+						break;
+					default:
+						printEscapeSequence(631);
+						break;
+				}
+				break;
+			case 89:
+				if (chrcode == 0) {
+					printEscapeSequence(476);
+				} else if (chrcode == 1) {
+					printEscapeSequence(500);
+				} else if (chrcode == 2) {
+					printEscapeSequence(395);
+				} else {
+					printEscapeSequence(396);
+				}
+				break;
+			case 79:
+				if (chrcode == 1) {
+					printEscapeSequence(669);
+				} else {
+					printEscapeSequence(668);
+				}
+				break;
+			case 82:
+				if (chrcode == 0) {
+					printEscapeSequence(670);
+				} else {
+					printEscapeSequence(671);
+				}
+				break;
+			case 83:
+				if (chrcode == 1) {
+					printEscapeSequence(672);
+				} else if (chrcode == 3) {
+					printEscapeSequence(673);
+				} else {
+					printEscapeSequence(674);
+				}
+				break;
+			case 70:
+				switch (chrcode) {
+					case 0:
+						printEscapeSequence(675);
+						break;
+					case 1:
+						printEscapeSequence(676);
+						break;
+					case 2:
+						printEscapeSequence(677);
+						break;
+					case 3:
+						printEscapeSequence(678);
+						break;
+					default:
+						printEscapeSequence(679);
+						break;
+				}
+				break;
+			case 108:
+				switch (chrcode) {
+					case 0:
+						printEscapeSequence(735);
+						break;
+					case 1:
+						printEscapeSequence(736);
+						break;
+					case 2:
+						printEscapeSequence(737);
+						break;
+					case 3:
+						printEscapeSequence(738);
+						break;
+					case 4:
+						printEscapeSequence(739);
+						break;
+					default:
+						printEscapeSequence(740);
+						break;
+				}
+				break;
+			case 105:
+				switch (chrcode) {
+					case 1:
+						printEscapeSequence(757);
+						break;
+					case 2:
+						printEscapeSequence(758);
+						break;
+					case 3:
+						printEscapeSequence(759);
+						break;
+					case 4:
+						printEscapeSequence(760);
+						break;
+					case 5:
+						printEscapeSequence(761);
+						break;
+					case 6:
+						printEscapeSequence(762);
+						break;
+					case 7:
+						printEscapeSequence(763);
+						break;
+					case 8:
+						printEscapeSequence(764);
+						break;
+					case 9:
+						printEscapeSequence(765);
+						break;
+					case 10:
+						printEscapeSequence(766);
+						break;
+					case 11:
+						printEscapeSequence(767);
+						break;
+					case 12:
+						printEscapeSequence(768);
+						break;
+					case 13:
+						printEscapeSequence(769);
+						break;
+					case 14:
+						printEscapeSequence(770);
+						break;
+					case 15:
+						printEscapeSequence(771);
+						break;
+					case 16:
+						printEscapeSequence(772);
+						break;
+					default:
+						printEscapeSequence(756);
+						break;
+				}
+				break;
+			case 106:
+				if (chrcode == 2) {
+					printEscapeSequence(773);
+				} else if (chrcode == 4) {
+					printEscapeSequence(774);
+				} else {
+					printEscapeSequence(775);
+				}
+				break;
+			case 4:
+				if (chrcode == 256) {
+					printEscapeSequence(898);
+				} else {
+					print(902);
+					print(chrcode);
+				}
+				break;
+			case 5:
+				if (chrcode == 257) {
+					printEscapeSequence(899);
+				} else {
+					printEscapeSequence(900);
+				}
+				break;
+			case 81:
+				switch (chrcode) {
+					case 0:
+						printEscapeSequence(970);
+						break;
+					case 1:
+						printEscapeSequence(971);
+						break;
+					case 2:
+						printEscapeSequence(972);
+						break;
+					case 3:
+						printEscapeSequence(973);
+						break;
+					case 4:
+						printEscapeSequence(974);
+						break;
+					case 5:
+						printEscapeSequence(975);
+						break;
+					case 6:
+						printEscapeSequence(976);
+						break;
+					default:
+						printEscapeSequence(977);
+						break;
+				}
+				break;
+			case 14:
+				if (chrcode == 1) {
+					printEscapeSequence(1026);
+				} else {
+					printEscapeSequence(1025);
+				}
 				break;
 			case 26:
-				printEscapeSequence(875);
+				switch (chrcode) {
+					case 4:
+						printEscapeSequence(1027);
+						break;
+					case 0:
+						printEscapeSequence(1028);
+						break;
+					case 1:
+						printEscapeSequence(1029);
+						break;
+					case 2:
+						printEscapeSequence(1030);
+						break;
+					default:
+						printEscapeSequence(1031);
+						break;
+				}
 				break;
-			default:
-				printEscapeSequence(874);
+			case 27:
+				switch (chrcode) {
+					case 4:
+						printEscapeSequence(1032);
+						break;
+					case 0:
+						printEscapeSequence(1033);
+						break;
+					case 1:
+						printEscapeSequence(1034);
+						break;
+					case 2:
+						printEscapeSequence(1035);
+						break;
+					default:
+						printEscapeSequence(1036);
+						break;
+				}
 				break;
+			case 28:
+				printEscapeSequence(336);
+				break;
+			case 29:
+				printEscapeSequence(340);
+				break;
+			case 30:
+				printEscapeSequence(342);
+				break;
+			case 21:
+				if (chrcode == 1) {
+					printEscapeSequence(1054);
+				} else {
+					printEscapeSequence(1055);
+				}
+				break;
+			case 22:
+				if (chrcode == 1) {
+					printEscapeSequence(1056);
+				} else {
+					printEscapeSequence(1057);
+				}
+				break;
+			case 20:
+				switch (chrcode) {
+					case 0:
+						printEscapeSequence(409);
+						break;
+					case 1:
+						printEscapeSequence(1058);
+						break;
+					case 2:
+						printEscapeSequence(1059);
+						break;
+					case 3:
+						printEscapeSequence(965);
+						break;
+					case 4:
+						printEscapeSequence(1060);
+						break;
+					case 5:
+						printEscapeSequence(967);
+						break;
+					default:
+						printEscapeSequence(1061);
+						break;
+				}
+				break;
+			case 31:
+				if (chrcode == 100) {
+					printEscapeSequence(1063);
+				} else if (chrcode == 101) {
+					printEscapeSequence(1064);
+				} else if (chrcode == 102) {
+					printEscapeSequence(1065);
+				} else {
+					printEscapeSequence(1062);
+				}
+				break;
+			case 43:
+				if (chrcode == 0) {
+					printEscapeSequence(1081);
+				} else {
+					printEscapeSequence(1080);
+				}
+				break;
+			case 25:
+				if (chrcode == 10) {
+					printEscapeSequence(1092);
+				} else if (chrcode == 11) {
+					printEscapeSequence(1091);
+				} else {
+					printEscapeSequence(1090);
+				}
+				break;
+			case 23:
+				if (chrcode == 1) {
+					printEscapeSequence(1094);
+				} else {
+					printEscapeSequence(1093);
+				}
+				break;
+			case 24:
+				if (chrcode == 1) {
+					printEscapeSequence(1096);
+				} else {
+					printEscapeSequence(1095);
+				}
+				break;
+			case 47:
+				if (chrcode == 1) {
+					printEscapeSequence(45);
+				} else {
+					printEscapeSequence(349);
+				}
+				break;
+			case 48:
+				if (chrcode == 1) {
+					printEscapeSequence(1128);
+				} else {
+					printEscapeSequence(1127);
+				}
+				break;
+			case 50:
+				switch (chrcode) {
+					case 16:
+						printEscapeSequence(866);
+						break;
+					case 17:
+						printEscapeSequence(867);
+						break;
+					case 18:
+						printEscapeSequence(868);
+						break;
+					case 19:
+						printEscapeSequence(869);
+						break;
+					case 20:
+						printEscapeSequence(870);
+						break;
+					case 21:
+						printEscapeSequence(871);
+						break;
+					case 22:
+						printEscapeSequence(872);
+						break;
+					case 23:
+						printEscapeSequence(873);
+						break;
+					case 26:
+						printEscapeSequence(875);
+						break;
+					default:
+						printEscapeSequence(874);
+						break;
+				}
+				break;
+			case 51:
+				if (chrcode == 1) {
+					printEscapeSequence(878);
+				} else if (chrcode == 2) {
+					printEscapeSequence(879);
+				} else {
+					printEscapeSequence(1129);
+				}
+				break;
+			case 53:
+				printstyle(chrcode);
+				break;
+			case 52:
+				switch (chrcode) {
+					case 1:
+						printEscapeSequence(1148);
+						break;
+					case 2:
+						printEscapeSequence(1149);
+						break;
+					case 3:
+						printEscapeSequence(1150);
+						break;
+					case 4:
+						printEscapeSequence(1151);
+						break;
+					case 5:
+						printEscapeSequence(1152);
+						break;
+					default:
+						printEscapeSequence(1147);
+						break;
+				}
+				break;
+			case 49:
+				if (chrcode == 30) {
+					printEscapeSequence(876);
+				} else {
+					printEscapeSequence(877);
+				}
+				break;
+			case 93:
+				if (chrcode == 1) {
+					printEscapeSequence(1171);
+				} else if (chrcode == 2) {
+					printEscapeSequence(1172);
+				} else {
+					printEscapeSequence(1173);
+				}
+				break;
+			case 97:
+				if (chrcode == 0) {
+					printEscapeSequence(1174);
+				} else if (chrcode == 1) {
+					printEscapeSequence(1175);
+				} else if (chrcode == 2) {
+					printEscapeSequence(1176);
+				} else {
+					printEscapeSequence(1177);
+				}
+				break;
+			case 94:
+				if (chrcode != 0) {
+					printEscapeSequence(1192);
+				} else {
+					printEscapeSequence(1191);
+				}
+				break;
+			case 95:
+				switch (chrcode) {
+					case 0:
+						printEscapeSequence(1193);
+						break;
+					case 1:
+						printEscapeSequence(1194);
+						break;
+					case 2:
+						printEscapeSequence(1195);
+						break;
+					case 3:
+						printEscapeSequence(1196);
+						break;
+					case 4:
+						printEscapeSequence(1197);
+						break;
+					case 5:
+						printEscapeSequence(1198);
+						break;
+					default:
+						printEscapeSequence(1199);
+						break;
+				}
+				break;
+			case 68: {
+				printEscapeSequence(513);
+				printHex(chrcode);
 			}
-			break;
-		case 51:
-			if (chrcode == 1) {
-				printEscapeSequence(878);
-			} else if (chrcode == 2) {
-				printEscapeSequence(879);
-			} else {
-				printEscapeSequence(1129);
+				break;
+			case 69: {
+				printEscapeSequence(524);
+				printHex(chrcode);
 			}
-			break;
-		case 53:
-			printstyle(chrcode);
-			break;
-		case 52:
-			switch (chrcode) {
-			case 1:
-				printEscapeSequence(1148);
 				break;
-			case 2:
-				printEscapeSequence(1149);
+			case 85:
+				if (chrcode == 8283) {
+					printEscapeSequence(415);
+				} else if (chrcode == 9307) {
+					printEscapeSequence(419);
+				} else if (chrcode == 8539) {
+					printEscapeSequence(416);
+				} else if (chrcode == 8795) {
+					printEscapeSequence(417);
+				} else if (chrcode == 9051) {
+					printEscapeSequence(418);
+				} else {
+					printEscapeSequence(477);
+				}
 				break;
-			case 3:
-				printEscapeSequence(1150);
+			case 86:
+				printsize(chrcode - 8235);
 				break;
-			case 4:
-				printEscapeSequence(1151);
+			case 99:
+				if (chrcode == 1) {
+					printEscapeSequence(953);
+				} else {
+					printEscapeSequence(941);
+				}
 				break;
-			case 5:
-				printEscapeSequence(1152);
+			case 78:
+				if (chrcode == 0) {
+					printEscapeSequence(1217);
+				} else {
+					printEscapeSequence(1218);
+				}
 				break;
-			default:
-				printEscapeSequence(1147);
-				break;
+			case 87: {
+				print(1226);
+				print(fontname[chrcode]);
+				if (fontsize[chrcode] != fontdsize[chrcode]) {
+					print(741);
+					printFixed(fontsize[chrcode]);
+					print(397);
+				}
 			}
-			break;
-		case 49:
-			if (chrcode == 30) {
-				printEscapeSequence(876);
-			} else {
-				printEscapeSequence(877);
-			}
-			break;
-		case 93:
-			if (chrcode == 1) {
+				break;
+			case 100:
+				switch (chrcode) {
+					case 0:
+						printEscapeSequence(274);
+						break;
+					case 1:
+						printEscapeSequence(275);
+						break;
+					case 2:
+						printEscapeSequence(276);
+						break;
+					default:
+						printEscapeSequence(1227);
+						break;
+				}
+				break;
+			case 60:
+				if (chrcode == 0) {
+					printEscapeSequence(1229);
+				} else {
+					printEscapeSequence(1228);
+				}
+				break;
+			case 58:
+				if (chrcode == 0) {
+					printEscapeSequence(1230);
+				} else {
+					printEscapeSequence(1231);
+				}
+				break;
+			case 57:
+				if (chrcode == 8539) {
+					printEscapeSequence(1237);
+				} else {
+					printEscapeSequence(1238);
+				}
+				break;
+			case 19:
+				switch (chrcode) {
+					case 1:
+						printEscapeSequence(1240);
+						break;
+					case 2:
+						printEscapeSequence(1241);
+						break;
+					case 3:
+						printEscapeSequence(1242);
+						break;
+					default:
+						printEscapeSequence(1239);
+						break;
+				}
+				break;
+			case 101:
+				print(1249);
+				break;
+			case 111:
+				print(1250);
+				break;
+			case 112:
+				printEscapeSequence(1251);
+				break;
+			case 113:
+				printEscapeSequence(1252);
+				break;
+			case 114: {
 				printEscapeSequence(1171);
-			} else if (chrcode == 2) {
-				printEscapeSequence(1172);
-			} else {
-				printEscapeSequence(1173);
+				printEscapeSequence(1252);
 			}
-			break;
-		case 97:
-			if (chrcode == 0) {
-				printEscapeSequence(1174);
-			} else if (chrcode == 1) {
-				printEscapeSequence(1175);
-			} else if (chrcode == 2) {
-				printEscapeSequence(1176);
-			} else {
-				printEscapeSequence(1177);
-			}
-			break;
-		case 94:
-			if (chrcode != 0) {
-				printEscapeSequence(1192);
-			} else {
-				printEscapeSequence(1191);
-			}
-			break;
-		case 95:
-			switch (chrcode) {
-			case 0:
-				printEscapeSequence(1193);
 				break;
-			case 1:
-				printEscapeSequence(1194);
+			case 115:
+				printEscapeSequence(1253);
 				break;
-			case 2:
-				printEscapeSequence(1195);
-				break;
-			case 3:
-				printEscapeSequence(1196);
-				break;
-			case 4:
-				printEscapeSequence(1197);
-				break;
-			case 5:
-				printEscapeSequence(1198);
+			case 59:
+				switch (chrcode) {
+					case 0:
+						printEscapeSequence(1285);
+						break;
+					case 1:
+						printEscapeSequence(594);
+						break;
+					case 2:
+						printEscapeSequence(1286);
+						break;
+					case 3:
+						printEscapeSequence(1287);
+						break;
+					case 4:
+						printEscapeSequence(1288);
+						break;
+					case 5:
+						printEscapeSequence(1289);
+						break;
+					default:
+						print(1290);
+						break;
+				}
 				break;
 			default:
-				printEscapeSequence(1199);
+				print(567);
 				break;
-			}
-			break;
-		case 68: {
-			printEscapeSequence(513);
-			printHex(chrcode);
-		}
-			break;
-		case 69: {
-			printEscapeSequence(524);
-			printHex(chrcode);
-		}
-			break;
-		case 85:
-			if (chrcode == 8283) {
-				printEscapeSequence(415);
-			} else if (chrcode == 9307) {
-				printEscapeSequence(419);
-			} else if (chrcode == 8539) {
-				printEscapeSequence(416);
-			} else if (chrcode == 8795) {
-				printEscapeSequence(417);
-			} else if (chrcode == 9051) {
-				printEscapeSequence(418);
-			} else {
-				printEscapeSequence(477);
-			}
-			break;
-		case 86:
-			printsize(chrcode - 8235);
-			break;
-		case 99:
-			if (chrcode == 1) {
-				printEscapeSequence(953);
-			} else {
-				printEscapeSequence(941);
-			}
-			break;
-		case 78:
-			if (chrcode == 0) {
-				printEscapeSequence(1217);
-			} else {
-				printEscapeSequence(1218);
-			}
-			break;
-		case 87: {
-			print(1226);
-			print(fontname[chrcode]);
-			if (fontsize[chrcode] != fontdsize[chrcode]) {
-				print(741);
-				printFixed(fontsize[chrcode]);
-				print(397);
-			}
-		}
-			break;
-		case 100:
-			switch (chrcode) {
-			case 0:
-				printEscapeSequence(274);
-				break;
-			case 1:
-				printEscapeSequence(275);
-				break;
-			case 2:
-				printEscapeSequence(276);
-				break;
-			default:
-				printEscapeSequence(1227);
-				break;
-			}
-			break;
-		case 60:
-			if (chrcode == 0) {
-				printEscapeSequence(1229);
-			} else {
-				printEscapeSequence(1228);
-			}
-			break;
-		case 58:
-			if (chrcode == 0) {
-				printEscapeSequence(1230);
-			} else {
-				printEscapeSequence(1231);
-			}
-			break;
-		case 57:
-			if (chrcode == 8539) {
-				printEscapeSequence(1237);
-			} else {
-				printEscapeSequence(1238);
-			}
-			break;
-		case 19:
-			switch (chrcode) {
-			case 1:
-				printEscapeSequence(1240);
-				break;
-			case 2:
-				printEscapeSequence(1241);
-				break;
-			case 3:
-				printEscapeSequence(1242);
-				break;
-			default:
-				printEscapeSequence(1239);
-				break;
-			}
-			break;
-		case 101:
-			print(1249);
-			break;
-		case 111:
-			print(1250);
-			break;
-		case 112:
-			printEscapeSequence(1251);
-			break;
-		case 113:
-			printEscapeSequence(1252);
-			break;
-		case 114: {
-			printEscapeSequence(1171);
-			printEscapeSequence(1252);
-		}
-			break;
-		case 115:
-			printEscapeSequence(1253);
-			break;
-		case 59:
-			switch (chrcode) {
-			case 0:
-				printEscapeSequence(1285);
-				break;
-			case 1:
-				printEscapeSequence(594);
-				break;
-			case 2:
-				printEscapeSequence(1286);
-				break;
-			case 3:
-				printEscapeSequence(1287);
-				break;
-			case 4:
-				printEscapeSequence(1288);
-				break;
-			case 5:
-				printEscapeSequence(1289);
-				break;
-			default:
-				print(1290);
-				break;
-			}
-			break;
-		default:
-			print(567);
-			break;
 		}
 	}
-	
+
 	void printmeaning() {
 		printcmdchr(curcmd, curchr);
 		if (curcmd >= 111) {
@@ -19474,9 +19431,9 @@ public final class Tex {
 	}
 
 	void shownodelist(int p) {
-		/* 10 */int n;
+		int n;
 		double g;
-		if ((poolptr - strstart[strptr]) > depththreshold) {
+		if (stringPool.getBuiltLength() > depththreshold) {
 			if (p > 0) {
 				print(314);
 			}
@@ -19499,402 +19456,362 @@ public final class Tex {
 				printfontandchar(p);
 			} else {
 				switch (mem[p].getb0()) {
-				case 0:
-				case 1:
-				case 13: {
-					if (mem[p].getb0() == 0) {
-						printEscapeSequence(104);
-					} else if (mem[p].getb0() == 1) {
-						printEscapeSequence(118);
-					} else {
-						printEscapeSequence(318);
-					}
-					print(319);
-					printFixed(mem[p + 3].getInt());
-					printchar(43);
-					printFixed(mem[p + 2].getInt());
-					print(320);
-					printFixed(mem[p + 1].getInt());
-					if (mem[p].getb0() == 13) {
-						if (mem[p].getb1() != 0) {
-							print(286);
-							printInt(mem[p].getb1() + 1);
-							print(322);
+					case 0:
+					case 1:
+					case 13: {
+						if (mem[p].getb0() == 0) {
+							printEscapeSequence(104);
+						} else if (mem[p].getb0() == 1) {
+							printEscapeSequence(118);
+						} else {
+							printEscapeSequence(318);
 						}
-						if (mem[p + 6].getInt() != 0) {
-							print(323);
-							printglue(mem[p + 6].getInt(), mem[p + 5].getb1(), 0);
-						}
-						if (mem[p + 4].getInt() != 0) {
-							print(324);
-							printglue(mem[p + 4].getInt(), mem[p + 5].getb0(), 0);
-						}
-					} else {
-						g = mem[p + 6].getglue();
-						if ((g != 0.0) && (mem[p + 5].getb0() != 0)) {
-							print(325);
-							if (mem[p + 5].getb0() == 2) {
-								print(326);
+						print(319);
+						printFixed(mem[p + 3].getInt());
+						printchar(43);
+						printFixed(mem[p + 2].getInt());
+						print(320);
+						printFixed(mem[p + 1].getInt());
+						if (mem[p].getb0() == 13) {
+							if (mem[p].getb1() != 0) {
+								print(286);
+								printInt(mem[p].getb1() + 1);
+								print(322);
 							}
-							if (Math.abs(mem[p + 6].getInt()) < 1048576) {
-								print(327);
-							} else if (Math.abs(g) > 20000.0) {
-								if (g > 0.0) {
-									printchar(62);
-								} else {
-									print(328);
+							if (mem[p + 6].getInt() != 0) {
+								print(323);
+								printglue(mem[p + 6].getInt(), mem[p + 5].getb1(), 0);
+							}
+							if (mem[p + 4].getInt() != 0) {
+								print(324);
+								printglue(mem[p + 4].getInt(), mem[p + 5].getb0(), 0);
+							}
+						} else {
+							g = mem[p + 6].getglue();
+							if ((g != 0.0) && (mem[p + 5].getb0() != 0)) {
+								print(325);
+								if (mem[p + 5].getb0() == 2) {
+									print(326);
 								}
-								printglue(20000 * 65536, mem[p + 5].getb1(), 0);
-							} else {
-								printglue((int)Math.round(65536 * g), mem[p + 5].getb1(), 0);
+								if (Math.abs(mem[p + 6].getInt()) < 1048576) {
+									print(327);
+								} else if (Math.abs(g) > 20000.0) {
+									if (g > 0.0) {
+										printchar(62);
+									} else {
+										print(328);
+									}
+									printglue(20000 * 65536, mem[p + 5].getb1(), 0);
+								} else {
+									printglue((int)Math.round(65536 * g), mem[p + 5].getb1(), 0);
+								}
+							}
+							if (mem[p + 4].getInt() != 0) {
+								print(321);
+								printFixed(mem[p + 4].getInt());
 							}
 						}
-						if (mem[p + 4].getInt() != 0) {
-							print(321);
-							printFixed(mem[p + 4].getInt());
-						}
-					}
-					{
-						{
-							strpool[poolptr] = 46;
-							poolptr = poolptr + 1;
-						}
+						stringPool.append((char)46);
 						shownodelist(mem[p + 5].getrh());
 						poolptr = poolptr - 1;
 					}
-				}
-					break;
-				case 2: {
-					printEscapeSequence(329);
-					printruledimen(mem[p + 3].getInt());
-					printchar(43);
-					printruledimen(mem[p + 2].getInt());
-					print(320);
-					printruledimen(mem[p + 1].getInt());
-				}
-					break;
-				case 3: {
-					printEscapeSequence(330);
-					printInt(mem[p].getb1());
-					print(331);
-					printFixed(mem[p + 3].getInt());
-					print(332);
-					printspec(mem[p + 4].getrh(), 0);
-					printchar(44);
-					printFixed(mem[p + 2].getInt());
-					print(333);
-					printInt(mem[p + 1].getInt());
-					{
-						{
-							strpool[poolptr] = 46;
-							poolptr = poolptr + 1;
-						}
+						break;
+					case 2: {
+						printEscapeSequence(329);
+						printruledimen(mem[p + 3].getInt());
+						printchar(43);
+						printruledimen(mem[p + 2].getInt());
+						print(320);
+						printruledimen(mem[p + 1].getInt());
+					}
+						break;
+					case 3: {
+						printEscapeSequence(330);
+						printInt(mem[p].getb1());
+						print(331);
+						printFixed(mem[p + 3].getInt());
+						print(332);
+						printspec(mem[p + 4].getrh(), 0);
+						printchar(44);
+						printFixed(mem[p + 2].getInt());
+						print(333);
+						printInt(mem[p + 1].getInt());
+						stringPool.append((char)46);
 						shownodelist(mem[p + 4].getlh());
 						poolptr = poolptr - 1;
 					}
-				}
-					break;
-				case 8:
-					switch (mem[p].getb1()) {
-					case 0: {
-						printwritewhatsit(1285, p);
-						printchar(61);
-						printfilename(mem[p + 1].getrh(), mem[p + 2].getlh(), mem[p + 2].getrh());
+						break;
+					case 8:
+						switch (mem[p].getb1()) {
+							case 0: {
+								printwritewhatsit(1285, p);
+								printchar(61);
+								printfilename(mem[p + 1].getrh(), mem[p + 2].getlh(), mem[p + 2].getrh());
+							}
+								break;
+							case 1: {
+								printwritewhatsit(594, p);
+								printmark(mem[p + 1].getrh());
+							}
+								break;
+							case 2:
+								printwritewhatsit(1286, p);
+								break;
+							case 3: {
+								printEscapeSequence(1287);
+								printmark(mem[p + 1].getrh());
+							}
+								break;
+							case 4: {
+								printEscapeSequence(1289);
+								printInt(mem[p + 1].getrh());
+								print(1292);
+								printInt(mem[p + 1].getb0());
+								printchar(44);
+								printInt(mem[p + 1].getb1());
+								printchar(41);
+							}
+								break;
+							default:
+								print(1293);
+								break;
+						}
+						break;
+					case 10:
+						if (mem[p].getb1() >= 100) {
+							printEscapeSequence(338);
+							if (mem[p].getb1() == 101) {
+								printchar(99);
+							} else if (mem[p].getb1() == 102) {
+								printchar(120);
+							}
+							print(339);
+							printspec(mem[p + 1].getlh(), 0);
+							stringPool.append((char)46);
+							shownodelist(mem[p + 1].getrh());
+							poolptr = poolptr - 1;
+						} else {
+							printEscapeSequence(334);
+							if (mem[p].getb1() != 0) {
+								printchar(40);
+								if (mem[p].getb1() < 98) {
+									printskipparam(mem[p].getb1() - 1);
+								} else if (mem[p].getb1() == 98) {
+									printEscapeSequence(335);
+								} else {
+									printEscapeSequence(336);
+								}
+								printchar(41);
+							}
+							if (mem[p].getb1() != 98) {
+								printchar(32);
+								if (mem[p].getb1() < 98) {
+									printspec(mem[p + 1].getlh(), 0);
+								} else {
+									printspec(mem[p + 1].getlh(), 337);
+								}
+							}
+						}
+						break;
+					case 11:
+						if (mem[p].getb1() != 99) {
+							printEscapeSequence(340);
+							if (mem[p].getb1() != 0) {
+								printchar(32);
+							}
+							printFixed(mem[p + 1].getInt());
+							if (mem[p].getb1() == 2) {
+								print(341);
+							}
+						} else {
+							printEscapeSequence(342);
+							printFixed(mem[p + 1].getInt());
+							print(337);
+						}
+						break;
+					case 9: {
+						printEscapeSequence(343);
+						if (mem[p].getb1() == 0) {
+							print(344);
+						} else {
+							print(345);
+						}
+						if (mem[p + 1].getInt() != 0) {
+							print(346);
+							printFixed(mem[p + 1].getInt());
+						}
 					}
 						break;
-					case 1: {
-						printwritewhatsit(594, p);
-						printmark(mem[p + 1].getrh());
-					}
-						break;
-					case 2:
-						printwritewhatsit(1286, p);
-						break;
-					case 3: {
-						printEscapeSequence(1287);
-						printmark(mem[p + 1].getrh());
-					}
-						break;
-					case 4: {
-						printEscapeSequence(1289);
-						printInt(mem[p + 1].getrh());
-						print(1292);
-						printInt(mem[p + 1].getb0());
-						printchar(44);
-						printInt(mem[p + 1].getb1());
+					case 6: {
+						printfontandchar(p + 1);
+						print(347);
+						if (mem[p].getb1() > 1) {
+							printchar(124);
+						}
+						fontinshortdisplay = mem[p + 1].getb0();
+						shortdisplay(mem[p + 1].getrh());
+						if (((mem[p].getb1()) % 2 == 1)) {
+							printchar(124);
+						}
 						printchar(41);
 					}
 						break;
-					default:
-						print(1293);
+					case 12: {
+						printEscapeSequence(348);
+						printInt(mem[p + 1].getInt());
+					}
 						break;
-					}
-					break;
-				case 10:
-					if (mem[p].getb1() >= 100) {
-						printEscapeSequence(338);
-						if (mem[p].getb1() == 101) {
-							printchar(99);
-						} else if (mem[p].getb1() == 102) {
-							printchar(120);
+					case 7: {
+						printEscapeSequence(349);
+						if (mem[p].getb1() > 0) {
+							print(350);
+							printInt(mem[p].getb1());
 						}
-						print(339);
-						printspec(mem[p + 1].getlh(), 0);
-						{
-							{
-								strpool[poolptr] = 46;
-								poolptr = poolptr + 1;
-							}
-							shownodelist(mem[p + 1].getrh());
-							poolptr = poolptr - 1;
-						}
-					} else {
-						printEscapeSequence(334);
-						if (mem[p].getb1() != 0) {
-							printchar(40);
-							if (mem[p].getb1() < 98) {
-								printskipparam(mem[p].getb1() - 1);
-							} else if (mem[p].getb1() == 98) {
-								printEscapeSequence(335);
-							} else {
-								printEscapeSequence(336);
-							}
-							printchar(41);
-						}
-						if (mem[p].getb1() != 98) {
-							printchar(32);
-							if (mem[p].getb1() < 98) {
-								printspec(mem[p + 1].getlh(), 0);
-							} else {
-								printspec(mem[p + 1].getlh(), 337);
-							}
-						}
-					}
-					break;
-				case 11:
-					if (mem[p].getb1() != 99) {
-						printEscapeSequence(340);
-						if (mem[p].getb1() != 0) {
-							printchar(32);
-						}
-						printFixed(mem[p + 1].getInt());
-						if (mem[p].getb1() == 2) {
-							print(341);
-						}
-					} else {
-						printEscapeSequence(342);
-						printFixed(mem[p + 1].getInt());
-						print(337);
-					}
-					break;
-				case 9: {
-					printEscapeSequence(343);
-					if (mem[p].getb1() == 0) {
-						print(344);
-					} else {
-						print(345);
-					}
-					if (mem[p + 1].getInt() != 0) {
-						print(346);
-						printFixed(mem[p + 1].getInt());
-					}
-				}
-					break;
-				case 6: {
-					printfontandchar(p + 1);
-					print(347);
-					if (mem[p].getb1() > 1) {
-						printchar(124);
-					}
-					fontinshortdisplay = mem[p + 1].getb0();
-					shortdisplay(mem[p + 1].getrh());
-					if (((mem[p].getb1()) % 2 == 1)) {
-						printchar(124);
-					}
-					printchar(41);
-				}
-					break;
-				case 12: {
-					printEscapeSequence(348);
-					printInt(mem[p + 1].getInt());
-				}
-					break;
-				case 7: {
-					printEscapeSequence(349);
-					if (mem[p].getb1() > 0) {
-						print(350);
-						printInt(mem[p].getb1());
-					}
-					{
-						{
-							strpool[poolptr] = 46;
-							poolptr = poolptr + 1;
-						}
+						stringPool.append((char)46);
 						shownodelist(mem[p + 1].getlh());
 						poolptr = poolptr - 1;
+						stringPool.append((char)124);
+						shownodelist(mem[p + 1].getrh());
+						poolptr = poolptr - 1;
 					}
-					{
-						strpool[poolptr] = 124;
-						poolptr = poolptr + 1;
+						break;
+					case 4: {
+						printEscapeSequence(351);
+						printmark(mem[p + 1].getInt());
 					}
-					shownodelist(mem[p + 1].getrh());
-					poolptr = poolptr - 1;
-				}
-					break;
-				case 4: {
-					printEscapeSequence(351);
-					printmark(mem[p + 1].getInt());
-				}
-					break;
-				case 5: {
-					printEscapeSequence(352);
-					{
-						{
-							strpool[poolptr] = 46;
-							poolptr = poolptr + 1;
-						}
+						break;
+					case 5: {
+						printEscapeSequence(352);
+						stringPool.append((char)46);
 						shownodelist(mem[p + 1].getInt());
 						poolptr = poolptr - 1;
 					}
-				}
-					break;
-				case 14:
-					printstyle(mem[p].getb1());
-					break;
-				case 15: {
-					printEscapeSequence(525);
-					{
-						strpool[poolptr] = 68;
-						poolptr = poolptr + 1;
+						break;
+					case 14:
+						printstyle(mem[p].getb1());
+						break;
+					case 15: {
+						printEscapeSequence(525);
+						stringPool.append((char)68);
+						shownodelist(mem[p + 1].getlh());
+						poolptr = poolptr - 1;
+						stringPool.append((char)84);
+						shownodelist(mem[p + 1].getrh());
+						poolptr = poolptr - 1;
+						stringPool.append((char)83);
+						shownodelist(mem[p + 2].getlh());
+						poolptr = poolptr - 1;
+						stringPool.append((char)115);
+						shownodelist(mem[p + 2].getrh());
+						poolptr = poolptr - 1;
 					}
-					shownodelist(mem[p + 1].getlh());
-					poolptr = poolptr - 1;
-					{
-						strpool[poolptr] = 84;
-						poolptr = poolptr + 1;
-					}
-					shownodelist(mem[p + 1].getrh());
-					poolptr = poolptr - 1;
-					{
-						strpool[poolptr] = 83;
-						poolptr = poolptr + 1;
-					}
-					shownodelist(mem[p + 2].getlh());
-					poolptr = poolptr - 1;
-					{
-						strpool[poolptr] = 115;
-						poolptr = poolptr + 1;
-					}
-					shownodelist(mem[p + 2].getrh());
-					poolptr = poolptr - 1;
-				}
-					break;
-				case 16:
-				case 17:
-				case 18:
-				case 19:
-				case 20:
-				case 21:
-				case 22:
-				case 23:
-				case 24:
-				case 27:
-				case 26:
-				case 29:
-				case 28:
-				case 30:
-				case 31: {
-					switch (mem[p].getb0()) {
+						break;
 					case 16:
-						printEscapeSequence(866);
-						break;
 					case 17:
-						printEscapeSequence(867);
-						break;
 					case 18:
-						printEscapeSequence(868);
-						break;
 					case 19:
-						printEscapeSequence(869);
-						break;
 					case 20:
-						printEscapeSequence(870);
-						break;
 					case 21:
-						printEscapeSequence(871);
-						break;
 					case 22:
-						printEscapeSequence(872);
-						break;
 					case 23:
-						printEscapeSequence(873);
-						break;
+					case 24:
 					case 27:
-						printEscapeSequence(874);
-						break;
 					case 26:
-						printEscapeSequence(875);
-						break;
 					case 29:
-						printEscapeSequence(539);
-						break;
-					case 24: {
-						printEscapeSequence(533);
-						printdelimiter(p + 4);
-					}
-						break;
-					case 28: {
-						printEscapeSequence(508);
-						printfamandchar(p + 4);
-					}
-						break;
-					case 30: {
-						printEscapeSequence(876);
-						printdelimiter(p + 1);
-					}
-						break;
+					case 28:
+					case 30:
 					case 31: {
-						printEscapeSequence(877);
-						printdelimiter(p + 1);
+						switch (mem[p].getb0()) {
+							case 16:
+								printEscapeSequence(866);
+								break;
+							case 17:
+								printEscapeSequence(867);
+								break;
+							case 18:
+								printEscapeSequence(868);
+								break;
+							case 19:
+								printEscapeSequence(869);
+								break;
+							case 20:
+								printEscapeSequence(870);
+								break;
+							case 21:
+								printEscapeSequence(871);
+								break;
+							case 22:
+								printEscapeSequence(872);
+								break;
+							case 23:
+								printEscapeSequence(873);
+								break;
+							case 27:
+								printEscapeSequence(874);
+								break;
+							case 26:
+								printEscapeSequence(875);
+								break;
+							case 29:
+								printEscapeSequence(539);
+								break;
+							case 24: {
+								printEscapeSequence(533);
+								printdelimiter(p + 4);
+							}
+								break;
+							case 28: {
+								printEscapeSequence(508);
+								printfamandchar(p + 4);
+							}
+								break;
+							case 30: {
+								printEscapeSequence(876);
+								printdelimiter(p + 1);
+							}
+								break;
+							case 31: {
+								printEscapeSequence(877);
+								printdelimiter(p + 1);
+							}
+								break;
+						}
+						if (mem[p].getb1() != 0) {
+							if (mem[p].getb1() == 1) {
+								printEscapeSequence(878);
+							} else {
+								printEscapeSequence(879);
+							}
+						}
+						if (mem[p].getb0() < 30) {
+							printsubsidiarydata(p + 1, 46);
+						}
+						printsubsidiarydata(p + 2, 94);
+						printsubsidiarydata(p + 3, 95);
 					}
 						break;
-					}
-					if (mem[p].getb1() != 0) {
-						if (mem[p].getb1() == 1) {
-							printEscapeSequence(878);
+					case 25: {
+						printEscapeSequence(880);
+						if (mem[p + 1].getInt() == 1073741824) {
+							print(881);
 						} else {
-							printEscapeSequence(879);
+							printFixed(mem[p + 1].getInt());
 						}
+						if ((mem[p + 4].getb0() != 0) || (mem[p + 4].getb1() != 0) || (mem[p + 4].getb2() != 0) || (mem[p + 4].getb3() != 0)) {
+							print(882);
+							printdelimiter(p + 4);
+						}
+						if ((mem[p + 5].getb0() != 0) || (mem[p + 5].getb1() != 0) || (mem[p + 5].getb2() != 0) || (mem[p + 5].getb3() != 0)) {
+							print(883);
+							printdelimiter(p + 5);
+						}
+						printsubsidiarydata(p + 2, 92);
+						printsubsidiarydata(p + 3, 47);
 					}
-					if (mem[p].getb0() < 30) {
-						printsubsidiarydata(p + 1, 46);
-					}
-					printsubsidiarydata(p + 2, 94);
-					printsubsidiarydata(p + 3, 95);
-				}
-					break;
-				case 25: {
-					printEscapeSequence(880);
-					if (mem[p + 1].getInt() == 1073741824) {
-						print(881);
-					} else {
-						printFixed(mem[p + 1].getInt());
-					}
-					if ((mem[p + 4].getb0() != 0) || (mem[p + 4].getb1() != 0) || (mem[p + 4].getb2() != 0) || (mem[p + 4].getb3() != 0)) {
-						print(882);
-						printdelimiter(p + 4);
-					}
-					if ((mem[p + 5].getb0() != 0) || (mem[p + 5].getb1() != 0) || (mem[p + 5].getb2() != 0) || (mem[p + 5].getb3() != 0)) {
-						print(883);
-						printdelimiter(p + 5);
-					}
-					printsubsidiarydata(p + 2, 92);
-					printsubsidiarydata(p + 3, 47);
-				}
-					break;
-				default:
-					print(317);
-					break;
+						break;
+					default:
+						print(317);
+						break;
 				}
 			}
 			p = mem[p].getrh();
@@ -19910,7 +19827,7 @@ public final class Tex {
 		shownodelist(p);
 		println();
 	}
-	
+
 	void showactivities() {
 		int p;
 		int m;
@@ -19985,44 +19902,44 @@ public final class Tex {
 			}
 			showbox(mem[nest[p].headfield].getrh());
 			switch (Math.abs(m) / (101)) {
-			case 0: {
-				printnl(369);
-				if (a.getInt() <= -65536000) {
-					print(370);
-				} else {
-					printFixed(a.getInt());
-				}
-				if (nest[p].pgfield != 0) {
-					print(371);
-					printInt(nest[p].pgfield);
-					print(372);
-					if (nest[p].pgfield != 1) {
-						printchar(115);
+				case 0: {
+					printnl(369);
+					if (a.getInt() <= -65536000) {
+						print(370);
+					} else {
+						printFixed(a.getInt());
+					}
+					if (nest[p].pgfield != 0) {
+						print(371);
+						printInt(nest[p].pgfield);
+						print(372);
+						if (nest[p].pgfield != 1) {
+							printchar(115);
+						}
 					}
 				}
-			}
-				break;
-			case 1: {
-				printnl(373);
-				printInt(a.getlh());
-				if (m > 0) {
-					if (a.getrh() > 0) {
-						print(374);
-						printInt(a.getrh());
+					break;
+				case 1: {
+					printnl(373);
+					printInt(a.getlh());
+					if (m > 0) {
+						if (a.getrh() > 0) {
+							print(374);
+							printInt(a.getrh());
+						}
 					}
 				}
-			}
-				break;
-			case 2:
-				if (a.getInt() != 0) {
-					print(375);
-					showbox(a.getInt());
-				}
-				break;
+					break;
+				case 2:
+					if (a.getInt() != 0) {
+						print(375);
+						showbox(a.getInt());
+					}
+					break;
 			}
 		}
 	}
-	
+
 	/**
 	 * TODO: remove this. Sets the error level to WARNING and does selector handling
 	 * for warning output, but the selector should probably be removed altogether.
@@ -20045,7 +19962,7 @@ public final class Tex {
 		}
 		selector = oldsetting;
 	}
-	
+
 	void tokenshow(final int p) {
 		if (p != 0) {
 			showtokenlist(mem[p].getrh(), 0, 10000000);
@@ -20138,61 +20055,61 @@ public final class Tex {
 						}
 					} else {
 						switch (curinput.getIndex()) {
-						case 0:
-							printnl(578);
-							break;
-						case 1:
-						case 2:
-							printnl(579);
-							break;
-						case 3:
-							if (curinput.getLoc() == 0) {
-								printnl(580);
-							} else {
-								printnl(581);
+							case 0:
+								printnl(578);
+								break;
+							case 1:
+							case 2:
+								printnl(579);
+								break;
+							case 3:
+								if (curinput.getLoc() == 0) {
+									printnl(580);
+								} else {
+									printnl(581);
+								}
+								break;
+							case 4:
+								printnl(582);
+								break;
+							case 5: {
+								println();
+								printcs(curinput.getName());
 							}
-							break;
-						case 4:
-							printnl(582);
-							break;
-						case 5: {
-							println();
-							printcs(curinput.getName());
-						}
-							break;
-						case 6:
-							printnl(583);
-							break;
-						case 7:
-							printnl(584);
-							break;
-						case 8:
-							printnl(585);
-							break;
-						case 9:
-							printnl(586);
-							break;
-						case 10:
-							printnl(587);
-							break;
-						case 11:
-							printnl(588);
-							break;
-						case 12:
-							printnl(589);
-							break;
-						case 13:
-							printnl(590);
-							break;
-						case 14:
-							printnl(591);
-							break;
-						case 15:
-							printnl(592);
-							break;
-						default:
-							printnl(63);
-							break;
+								break;
+							case 6:
+								printnl(583);
+								break;
+							case 7:
+								printnl(584);
+								break;
+							case 8:
+								printnl(585);
+								break;
+							case 9:
+								printnl(586);
+								break;
+							case 10:
+								printnl(587);
+								break;
+							case 11:
+								printnl(588);
+								break;
+							case 12:
+								printnl(589);
+								break;
+							case 13:
+								printnl(590);
+								break;
+							case 14:
+								printnl(591);
+								break;
+							case 15:
+								printnl(592);
+								break;
+							default:
+								printnl(63);
+								break;
 						}
 						{
 							l = tally;
@@ -20258,49 +20175,49 @@ public final class Tex {
 		}
 		/* lab30: */curinput.copyFrom(inputStackBackingArray[inputptr]);
 	}
-	
+
 	void showinfo() {
 		shownodelist(mem[tempptr].getlh());
 	}
-	
+
 	void showwhatever() {
 		lab50: while (true) {
 			switch (curchr) {
-			case 3: {
-				begindiagnostic();
-				showactivities();
-			}
-				break;
-			case 1: {
-				scaneightbitint();
-				begindiagnostic();
-				printnl(1254);
-				printInt(curval);
-				printchar(61);
-				if (eqtb[7978 + curval].getrh() == 0) {
-					print(410);
-				} else {
-					showbox(eqtb[7978 + curval].getrh());
+				case 3: {
+					begindiagnostic();
+					showactivities();
 				}
-			}
-				break;
-			case 0: {
-				gettoken();
-				printnl(1248);
-				if (curcs != 0) {
-					sprintcs(curcs);
+					break;
+				case 1: {
+					scaneightbitint();
+					begindiagnostic();
+					printnl(1254);
+					printInt(curval);
 					printchar(61);
+					if (eqtb[7978 + curval].getrh() == 0) {
+						print(410);
+					} else {
+						showbox(eqtb[7978 + curval].getrh());
+					}
 				}
-				printmeaning();
-				break lab50;
-			}
-			default: {
-				thetoks();
-				printnl(1248);
-				tokenshow(memtop - 3);
-				flushlist(mem[memtop - 3].getrh());
-				break lab50;
-			}
+					break;
+				case 0: {
+					gettoken();
+					printnl(1248);
+					if (curcs != 0) {
+						sprintcs(curcs);
+						printchar(61);
+					}
+					printmeaning();
+					break lab50;
+				}
+				default: {
+					thetoks();
+					printnl(1248);
+					tokenshow(memtop - 3);
+					flushlist(mem[memtop - 3].getrh());
+					break lab50;
+				}
 			}
 			enddiagnostic(true);
 			{
@@ -20320,8 +20237,7 @@ public final class Tex {
 		errorReporter.decrementErrorCount();
 		errorLogic.error();
 	}
-	
-	
+
 	// ------------------------------------------------------------------------------------------------
 	// error routines
 	// ------------------------------------------------------------------------------------------------
@@ -20354,48 +20270,48 @@ public final class Tex {
 					printEscapeSequence(555);
 				} else {
 					switch (m) {
-					case 1:
-					case 2:
-					case 3:
-					case 4:
-					case 7:
-					case 8:
-					case 10:
-					case 11:
-					case 12:
-						print(c);
-						break;
-					case 6: {
-						print(c);
-						print(c);
-					}
-						break;
-					case 5: {
-						print(matchchr);
-						if (c <= 9) {
-							printchar(c + 48);
-						} else {
-							printchar(33);
-							return /* lab10 */;
+						case 1:
+						case 2:
+						case 3:
+						case 4:
+						case 7:
+						case 8:
+						case 10:
+						case 11:
+						case 12:
+							print(c);
+							break;
+						case 6: {
+							print(c);
+							print(c);
 						}
-					}
-						break;
-					case 13: {
-						matchchr = c;
-						print(c);
-						n = n + 1;
-						printchar(n);
-						if (n > 57) {
-							return /* lab10 */;
+							break;
+						case 5: {
+							print(matchchr);
+							if (c <= 9) {
+								printchar(c + 48);
+							} else {
+								printchar(33);
+								return /* lab10 */;
+							}
 						}
-					}
-						break;
-					case 14:
-						print(556);
-						break;
-					default:
-						printEscapeSequence(555);
-						break;
+							break;
+						case 13: {
+							matchchr = c;
+							print(c);
+							n = n + 1;
+							printchar(n);
+							if (n > 57) {
+								return /* lab10 */;
+							}
+						}
+							break;
+						case 14:
+							print(556);
+							break;
+						default:
+							printEscapeSequence(555);
+							break;
 					}
 				}
 			}
@@ -20412,33 +20328,32 @@ public final class Tex {
 		if (scannerstatus > 1) {
 			printnl(569);
 			switch (scannerstatus) {
-			case 2: {
-				print(570);
-				p = defref;
-			}
-				break;
-			case 3: {
-				print(571);
-				p = memtop - 3;
-			}
-				break;
-			case 4: {
-				print(572);
-				p = memtop - 4;
-			}
-				break;
-			case 5: {
-				print(573);
-				p = defref;
-			}
-				break;
+				case 2: {
+					print(570);
+					p = defref;
+				}
+					break;
+				case 3: {
+					print(571);
+					p = memtop - 3;
+				}
+					break;
+				case 4: {
+					print(572);
+					p = memtop - 4;
+				}
+					break;
+				case 5: {
+					print(573);
+					p = defref;
+				}
+					break;
 			}
 			printchar(63);
 			println();
 			showtokenlist(mem[p].getrh(), 0, errorline - 10);
 		}
 	}
-
 
 	void boxerror(final int n) {
 		errorLogic.error();
