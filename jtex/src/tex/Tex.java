@@ -3123,9 +3123,6 @@ public final class Tex {
 		cobackup = curorder;
 		backupbackup = mem[memtop - 13].getrh();
 		if (curcmd < 111) {
-			if (eqtb[9599].getInt() > 1) {
-				showcurcmdchr();
-			}
 			switch (curcmd) {
 				case 110: {
 					if (curmark[curchr] != 0) {
@@ -4838,13 +4835,6 @@ public final class Tex {
 				case 16: {
 					scanint();
 					n = curval;
-					if (eqtb[9599].getInt() > 1) {
-						begindiagnostic();
-						print(782);
-						printInt(n);
-						printchar(125);
-						enddiagnostic(false);
-					}
 					while (n != 0) {
 						passtext();
 						if (condptr == savecondptr) {
@@ -4865,15 +4855,6 @@ public final class Tex {
 					changeiflimit(4, savecondptr);
 					return /* lab10 */;
 				}
-			}
-			if (eqtb[9599].getInt() > 1) {
-				begindiagnostic();
-				if (b) {
-					print(778);
-				} else {
-					print(779);
-				}
-				enddiagnostic(false);
 			}
 			if (b) {
 				changeiflimit(3, savecondptr);
@@ -15257,9 +15238,6 @@ public final class Tex {
 				if (panicking) {
 					checkmem(false);
 				}
-				if (eqtb[9599].getInt() > 0) {
-					showcurcmdchr();
-				}
 				lab120: while (true) {
 					lab70: while (true) {
 						switch (Math.abs(curlist.modefield) + curcmd) {
@@ -17566,17 +17544,6 @@ public final class Tex {
 		}
 	}
 
-	void printwritewhatsit(final int s, final int p) {
-		printEscapeSequence(s);
-		if (mem[p + 1].getlh() < 16) {
-			printInt(mem[p + 1].getlh());
-		} else if (mem[p + 1].getlh() == 16) {
-			printchar(42);
-		} else {
-			printchar(45);
-		}
-	}
-
 	void printromanint(int n) {
 		String s = stringPool.getString(260);
 		int j = 0;
@@ -17602,42 +17569,6 @@ public final class Tex {
 				j = j + 2;
 				v = v / (s.charAt(j - 1) - 48);
 			}
-		}
-	}
-
-	void printcurrentstring() {
-		print(stringPool.extractPartiallyBuiltString(false));
-	}
-
-	void printfontandchar(final int p) {
-		if (p > memend) {
-			printEscapeSequence(309);
-		} else {
-			if ((mem[p].getb0() < 0) || (mem[p].getb0() > fontmax)) {
-				printchar(42);
-			} else {
-				printEscapeSequence(hash[6924 + mem[p].getb0() - 514].rh);
-			}
-			printchar(32);
-			print(mem[p].getb1());
-		}
-	}
-
-	void printmark(final int p) {
-		printchar(123);
-		if ((p < himemmin) || (p > memend)) {
-			printEscapeSequence(309);
-		} else {
-			showtokenlist(mem[p].getrh(), 0, 10000000);
-		}
-		printchar(125);
-	}
-
-	void printruledimen(final int d) {
-		if ((d == -1073741824)) {
-			printchar(42);
-		} else {
-			printFixed(d);
 		}
 	}
 
@@ -17672,24 +17603,6 @@ public final class Tex {
 				print(313);
 				printglue(mem[p + 3].getInt(), mem[p].getb1(), s);
 			}
-		}
-	}
-
-	void printfamandchar(final int p) {
-		printEscapeSequence(464);
-		printInt(mem[p].getb0());
-		printchar(32);
-		print(mem[p].getb1());
-	}
-
-	void printdelimiter(final int p) {
-		int a;
-		a = mem[p].getb0() * 256 + mem[p].getb1();
-		a = a * 4096 + mem[p].getb2() * 256 + mem[p].getb3();
-		if (a < 0) {
-			printInt(a);
-		} else {
-			printHex(a);
 		}
 	}
 
