@@ -50,7 +50,7 @@ public final class InputStack {
 	 */
 	public void duplicate() {
 		if (tex.inputptr == STACK_SIZE) {
-			tex.errorLogic.overflow(593, STACK_SIZE);
+			throw new TexResourceOverflowException();
 		}
 		tex.inputStackBackingArray[tex.inputptr].copyFrom(tex.curinput);
 		tex.inputptr++;

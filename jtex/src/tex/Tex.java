@@ -9,6 +9,7 @@ import name.martingeisse.jtex.engine.DviWriter;
 import name.martingeisse.jtex.engine.StringPool;
 import name.martingeisse.jtex.error.ErrorReporter;
 import name.martingeisse.jtex.error.ErrorReporter.Level;
+import name.martingeisse.jtex.error.InternalInconsistencyException;
 import name.martingeisse.jtex.io.Input;
 import name.martingeisse.jtex.io.TexFileDataInputStream;
 import name.martingeisse.jtex.io.TexFileDataOutputStream;
@@ -1192,8 +1193,7 @@ public final class Tex {
 			himemmin = himemmin - 1;
 			p = himemmin;
 			if (himemmin <= lomemmax) {
-				runaway();
-				errorLogic.overflow(300, memmax + 1);
+				throw new TexResourceOverflowException();
 			}
 		}
 		mem[p].setrh(0);
@@ -1281,8 +1281,7 @@ public final class Tex {
 						continue lab20;
 					}
 				}
-				errorLogic.overflow(300, memmax + 1);
-				break;
+				throw new TexResourceOverflowException();
 			}
 			/* lab40: */mem[r].setrh(0);
 			break;
@@ -1700,8 +1699,7 @@ public final class Tex {
 									freenode(p, 2);
 									break;
 								default:
-									errorLogic.confusion(1295);
-									break;
+									throw new InternalInconsistencyException();
 							}
 							break lab30;
 						}
@@ -1792,8 +1790,7 @@ public final class Tex {
 							break lab30;
 						}
 						default:
-							errorLogic.confusion(353);
-							break;
+							throw new InternalInconsistencyException();
 					}
 					freenode(p, 2);
 					break;
@@ -1862,8 +1859,7 @@ public final class Tex {
 							}
 								break;
 							default:
-								errorLogic.confusion(1294);
-								break;
+								throw new InternalInconsistencyException();
 						}
 						break;
 					case 10: {
@@ -1904,8 +1900,7 @@ public final class Tex {
 					}
 						break;
 					default:
-						errorLogic.confusion(354);
-						break;
+						throw new InternalInconsistencyException();
 				}
 			}
 			while (words > 0) {
@@ -1930,7 +1925,7 @@ public final class Tex {
 		if (nestptr > maxneststack) {
 			maxneststack = nestptr;
 			if (nestptr == nestsize) {
-				errorLogic.overflow(362, nestsize);
+				throw new TexResourceOverflowException();
 			}
 		}
 		nest[nestptr].copy(curlist);
@@ -1987,7 +1982,7 @@ public final class Tex {
 					if (hash[p - 514].rh > 0) {
 						do {
 							if ((hashused == 514)) {
-								errorLogic.overflow(503, 6400);
+								throw new TexResourceOverflowException();
 							}
 							hashused = hashused - 1;
 						} while (!(hash[hashused - 514].rh == 0));
@@ -2045,14 +2040,14 @@ public final class Tex {
 		if (saveptr > maxsavestack) {
 			maxsavestack = saveptr;
 			if (maxsavestack > savesize - 6) {
-				errorLogic.overflow(541, savesize);
+				throw new TexResourceOverflowException();
 			}
 		}
 		savestack[saveptr].setb0(3);
 		savestack[saveptr].setb1(curgroup);
 		savestack[saveptr].setrh(curboundary);
 		if (curlevel == 255) {
-			errorLogic.overflow(542, 255);
+			throw new TexResourceOverflowException();
 		}
 		curboundary = saveptr;
 		curlevel = curlevel + 1;
@@ -2092,7 +2087,7 @@ public final class Tex {
 		if (saveptr > maxsavestack) {
 			maxsavestack = saveptr;
 			if (maxsavestack > savesize - 6) {
-				errorLogic.overflow(541, savesize);
+				throw new TexResourceOverflowException();
 			}
 		}
 		if (l == 0) {
@@ -2143,7 +2138,7 @@ public final class Tex {
 			if (saveptr > maxsavestack) {
 				maxsavestack = saveptr;
 				if (maxsavestack > savesize - 6) {
-					errorLogic.overflow(541, savesize);
+					throw new TexResourceOverflowException();
 				}
 			}
 			savestack[saveptr].setb0(2);
@@ -2196,7 +2191,7 @@ public final class Tex {
 			/* lab30: */curgroup = savestack[saveptr].getb1();
 			curboundary = savestack[saveptr].getrh();
 		} else {
-			errorLogic.confusion(543);
+			throw new InternalInconsistencyException();
 		}
 	}
 
@@ -2269,7 +2264,7 @@ public final class Tex {
 			if (alignstate > 500000) {
 				alignstate = 0;
 			} else {
-				errorLogic.fatalError("(interwoven alignment preambles are not allowed)");
+				throw new RuntimeException("interwoven alignment preambles are not allowed");
 			}
 		}
 		inputStack.pop();
@@ -2304,7 +2299,7 @@ public final class Tex {
 
 	void beginfilereading() {
 		if (inopen == maxinopen) {
-			errorLogic.overflow(596, maxinopen);
+			throw new TexResourceOverflowException();
 		}
 		inopen = inopen + 1;
 		inputStack.duplicate();
@@ -2747,7 +2742,7 @@ public final class Tex {
 							if (selector < 18) {
 								openlogfile();
 							}
-							errorLogic.fatalError("*** (job aborted, no legal \\end found)");
+							throw new RuntimeException("job aborted, no legal \\end found");
 						}
 						continue lab25;
 					}
@@ -2801,7 +2796,7 @@ public final class Tex {
 				if (curcmd >= 4) {
 					if (alignstate == 0) {
 						if (scannerstatus == 4) {
-							errorLogic.fatalError("(interwoven alignment preambles are not allowed)");
+							throw new RuntimeException("interwoven alignment preambles are not allowed");
 						}
 						curcmd = mem[curalign + 5].getlh();
 						mem[curalign + 5].setlh(curchr);
@@ -3094,7 +3089,7 @@ public final class Tex {
 			if (paramptr + n > maxparamstack) {
 				maxparamstack = paramptr + n;
 				if (maxparamstack > paramsize) {
-					errorLogic.overflow(636, paramsize);
+					throw new TexResourceOverflowException();
 				}
 			}
 			for (m = 0; m <= n - 1; m++) {
@@ -3418,7 +3413,7 @@ public final class Tex {
 				} else {
 					do {
 						if (fmemptr == fontmemsize) {
-							errorLogic.overflow(824, fontmemsize);
+							throw new TexResourceOverflowException();
 						}
 						fontinfo[fmemptr].setInt(0);
 						fmemptr = fmemptr + 1;
@@ -3724,7 +3719,7 @@ public final class Tex {
 			if (curvallevel == 2) {
 				curval = mem[curval + 1].getInt();
 			} else if (curvallevel == 3) {
-				errorLogic.muerror();
+				throw new RuntimeException("Incompatible glue units");
 			}
 			curvallevel = curvallevel - 1;
 		}
@@ -3884,7 +3879,7 @@ public final class Tex {
 							break lab89;
 						}
 						if (curvallevel != 0) {
-							errorLogic.muerror();
+							throw new RuntimeException("Incompatible glue units");
 						}
 					} else {
 						scansomethinginternal(1, false);
@@ -3986,7 +3981,7 @@ public final class Tex {
 										curval = v;
 									}
 									if (curvallevel != 3) {
-										errorLogic.muerror();
+										throw new RuntimeException("Incompatible glue units");
 									}
 								} else {
 									scansomethinginternal(1, false);
@@ -4150,14 +4145,14 @@ public final class Tex {
 			scansomethinginternal(level, negative);
 			if (curvallevel >= 2) {
 				if (curvallevel != level) {
-					errorLogic.muerror();
+					throw new RuntimeException("Incompatible glue units");
 				}
 				return /* lab10 */;
 			}
 			if (curvallevel == 0) {
 				scandimen(mu, false, true);
 			} else if (level == 3) {
-				errorLogic.muerror();
+				throw new RuntimeException("Incompatible glue units");
 			}
 		} else {
 			unreadToken();
@@ -4563,7 +4558,7 @@ public final class Tex {
 			beginfilereading();
 			curinput.setName(m + 1);
 			if (readopen[m] == 2) {
-				errorLogic.fatalError("*** (cannot \read from terminal in nonstop modes)");
+				throw new RuntimeException("cannot \\read from terminal in nonstop modes");
 			} else if (readopen[m] == 1) {
 				if (inputln(readfile[m], false)) {
 					readopen[m] = 0;
@@ -4657,7 +4652,7 @@ public final class Tex {
 			q = condptr;
 			while (true) {
 				if (q == 0) {
-					errorLogic.confusion(756);
+					throw new InternalInconsistencyException();
 				}
 				if (mem[q].getrh() == p) {
 					mem[q].setb0(l);
@@ -4943,7 +4938,7 @@ public final class Tex {
 
 	void endname() {
 		if (strptr + 3 > maxstrings) {
-			errorLogic.overflow(258, maxstrings - initstrptr);
+			throw new TexResourceOverflowException();
 		}
 		if (areadelimiter == 0) {
 			curarea = 338;
@@ -5093,7 +5088,7 @@ public final class Tex {
 			print(788);
 			printfilename(curname, curarea, curext);
 			print(790);
-			errorLogic.fatalError("*** (job aborted, file error in nonstop mode)");
+			throw new RuntimeException("job aborted, file error in nonstop mode");
 		}
 		curinput.setName(makenamestring());
 		if ((termoffset > 0) || (fileoffset > 0)) {
@@ -6006,8 +6001,7 @@ public final class Tex {
 				;
 				break;
 			default:
-				errorLogic.confusion(1299);
-				break;
+				throw new InternalInconsistencyException();
 		}
 	}
 
@@ -6283,7 +6277,7 @@ public final class Tex {
 		while (p != 0) {
 			lab15: while (true) {
 				if ((p >= himemmin)) {
-					errorLogic.confusion(828);
+					throw new InternalInconsistencyException();
 				} else {
 					lab13: while (true) {
 						lab14: while (true) {
@@ -6886,7 +6880,7 @@ public final class Tex {
 		totalshrink[3] = 0;
 		while (p != 0) {
 			if ((p >= himemmin)) {
-				errorLogic.confusion(855);
+				throw new InternalInconsistencyException();
 			} else {
 				switch (mem[p].getb0()) {
 					case 0:
@@ -7514,7 +7508,7 @@ public final class Tex {
 		int delta;
 		v = mem[q + 1].getlh();
 		if (mem[v].getb0() != 1) {
-			errorLogic.confusion(539);
+			throw new InternalInconsistencyException();
 		}
 		delta = mem[v + 3].getInt() + mem[v + 2].getInt();
 		mem[v + 3].setInt(fontinfo[22 + parambase[eqtb[8237 + cursize].getrh()]].getInt() + half(delta));
@@ -8206,8 +8200,7 @@ public final class Tex {
 									break lab81;
 								}
 								default:
-									errorLogic.confusion(889);
-									break;
+									throw new InternalInconsistencyException();
 							}
 							break;
 						}
@@ -8254,8 +8247,7 @@ public final class Tex {
 							}
 								break;
 							default:
-								errorLogic.confusion(890);
-								break;
+								throw new InternalInconsistencyException();
 						}
 						mem[q + 1].setInt(p);
 						if ((mem[q + 3].getrh() == 0) && (mem[q + 2].getrh() == 0)) {
@@ -8369,8 +8361,7 @@ public final class Tex {
 						break lab30;
 					}
 					default:
-						errorLogic.confusion(891);
-						break;
+						throw new InternalInconsistencyException();
 				}
 				if (rtype > 0) {
 					switch (strpool[rtype * 8 + t + magicoffset]) {
@@ -8402,8 +8393,7 @@ public final class Tex {
 							}
 							break;
 						default:
-							errorLogic.confusion(893);
-							break;
+							throw new InternalInconsistencyException();
 					}
 					if (x != 0) {
 						y = mathglue(eqtb[7182 + x].getrh(), curmu);
@@ -8487,7 +8477,7 @@ public final class Tex {
 				}
 			}
 			if (curcmd == 9) {
-				errorLogic.fatalError("(interwoven alignment preambles are not allowed)");
+				throw new RuntimeException("interwoven alignment preambles are not allowed");
 			}
 			if ((curcmd == 75) && (curchr == 7193)) {
 				scanoptionalequals();
@@ -8656,14 +8646,14 @@ public final class Tex {
 		int o;
 		int n;
 		if (curalign == 0) {
-			errorLogic.confusion(909);
+			throw new InternalInconsistencyException();
 		}
 		q = mem[curalign].getrh();
 		if (q == 0) {
-			errorLogic.confusion(909);
+			throw new InternalInconsistencyException();
 		}
 		if (alignstate < 500000) {
-			errorLogic.fatalError("(interwoven alignment preambles are not allowed)");
+			throw new RuntimeException("interwoven alignment preambles are not allowed");
 		}
 		p = mem[q].getrh();
 		if ((p == 0) && (mem[curalign + 5].getlh() < 257)) {
@@ -8733,7 +8723,7 @@ public final class Tex {
 						q = mem[mem[q].getrh()].getrh();
 					} while (!(q == curalign));
 					if (n > 255) {
-						errorLogic.confusion(914);
+						throw new InternalInconsistencyException();
 					}
 					q = curspan;
 					while (mem[mem[q].getlh()].getrh() < n) {
@@ -8833,11 +8823,11 @@ public final class Tex {
 		int rulesave;
 		final memoryword auxsave = new memoryword();
 		if (curgroup != 6) {
-			errorLogic.confusion(915);
+			throw new InternalInconsistencyException();
 		}
 		unsave();
 		if (curgroup != 6) {
-			errorLogic.confusion(916);
+			throw new InternalInconsistencyException();
 		}
 		unsave();
 		if (nest[nestptr - 1].modefield == 203) {
@@ -9246,8 +9236,7 @@ public final class Tex {
 													breakwidth[1] = breakwidth[1] - mem[v + 1].getInt();
 													break;
 												default:
-													errorLogic.confusion(923);
-													break;
+													throw new InternalInconsistencyException();
 											}
 										}
 									}
@@ -9269,8 +9258,7 @@ public final class Tex {
 													breakwidth[1] = breakwidth[1] + mem[s + 1].getInt();
 													break;
 												default:
-													errorLogic.confusion(924);
-													break;
+													throw new InternalInconsistencyException();
 											}
 										}
 										s = mem[s].getrh();
@@ -9711,7 +9699,7 @@ public final class Tex {
 			}
 		} while (!(curp == 0));
 		if ((curline != bestline) || (mem[memtop - 3].getrh() != 0)) {
-			errorLogic.confusion(939);
+			throw new InternalInconsistencyException();
 		}
 		curlist.pgfield = bestline - 1;
 	}
@@ -10284,11 +10272,11 @@ public final class Tex {
 			l = trieophash[h + 751];
 			if (l == 0) {
 				if (trieopptr == 751) {
-					errorLogic.overflow(949, 751);
+					throw new TexResourceOverflowException();
 				}
 				u = trieused[curlang];
 				if (u == 255) {
-					errorLogic.overflow(950, 255);
+					throw new TexResourceOverflowException();
 				}
 				trieopptr = trieopptr + 1;
 				u = u + 1;
@@ -10363,7 +10351,7 @@ public final class Tex {
 			h = z - c;
 			if (triemax < h + 256) {
 				if (triesize <= h + 256) {
-					errorLogic.overflow(951, triesize);
+					throw new TexResourceOverflowException();
 				}
 				do {
 					triemax = triemax + 1;
@@ -10529,7 +10517,7 @@ public final class Tex {
 								}
 								if ((p == 0) || (c < triec[p])) {
 									if (trieptr == triesize) {
-										errorLogic.overflow(951, triesize);
+										throw new TexResourceOverflowException();
 									}
 									trieptr = trieptr + 1;
 									trier[trieptr] = p;
@@ -11015,8 +11003,7 @@ public final class Tex {
 												discwidth = discwidth + mem[s + 1].getInt();
 												break;
 											default:
-												errorLogic.confusion(937);
-												break;
+												throw new InternalInconsistencyException();
 										}
 									}
 									s = mem[s].getrh();
@@ -11045,8 +11032,7 @@ public final class Tex {
 											activewidth[1] = activewidth[1] + mem[s + 1].getInt();
 											break;
 										default:
-											errorLogic.confusion(938);
-											break;
+											throw new InternalInconsistencyException();
 									}
 								}
 								r = r - 1;
@@ -11077,8 +11063,7 @@ public final class Tex {
 							;
 							break;
 						default:
-							errorLogic.confusion(936);
-							break;
+							throw new InternalInconsistencyException();
 					}
 					prevp = curp;
 					curp = mem[curp].getrh();
@@ -11240,7 +11225,7 @@ public final class Tex {
 							}
 							s = stringPool.makeString();
 							if (hyphcount == 607) {
-								errorLogic.overflow(948, 607);
+								throw new TexResourceOverflowException();
 							}
 							hyphcount = hyphcount + 1;
 							while (hyphword[h] != 0) {
@@ -11347,8 +11332,7 @@ public final class Tex {
 				}
 					break;
 				default:
-					errorLogic.confusion(959);
-					break;
+					throw new InternalInconsistencyException();
 			}
 		}
 		Result = mem[memtop - 3].getrh();
@@ -11419,8 +11403,7 @@ public final class Tex {
 							case 3:
 								break lab45;
 							default:
-								errorLogic.confusion(960);
-								break;
+								throw new InternalInconsistencyException();
 						}
 					}
 					if (pi < 10000) {
@@ -11994,8 +11977,7 @@ public final class Tex {
 									break lab80;
 								}
 								default:
-									errorLogic.confusion(993);
-									break;
+									throw new InternalInconsistencyException();
 							}
 							if (pi < 10000) {
 								if (pagesofar[1] < pagesofar[0]) {
@@ -13267,7 +13249,7 @@ public final class Tex {
 			} else {
 				q = mem[curlist.auxfield.getInt() + 2].getlh();
 				if (mem[q].getb0() != 30) {
-					errorLogic.confusion(877);
+					throw new InternalInconsistencyException();
 				}
 				mem[curlist.auxfield.getInt() + 2].setlh(mem[q].getrh());
 				mem[q].setrh(curlist.auxfield.getInt());
@@ -13631,7 +13613,7 @@ public final class Tex {
 
 	void resumeafterdisplay() {
 		if (curgroup != 15) {
-			errorLogic.confusion(1169);
+			throw new InternalInconsistencyException();
 		}
 		unsave();
 		curlist.pgfield = curlist.pgfield + 3;
@@ -14511,8 +14493,7 @@ public final class Tex {
 					// should log this as an error but continue processing
 					break;
 				default:
-					errorLogic.confusion(1178);
-					break;
+					throw new InternalInconsistencyException();
 			}
 			break;
 		}
@@ -15016,8 +14997,7 @@ public final class Tex {
 				}
 				break;
 			default:
-				errorLogic.confusion(1291);
-				break;
+				throw new InternalInconsistencyException();
 		}
 	}
 
@@ -15260,8 +15240,7 @@ public final class Tex {
 			}
 				break;
 			default:
-				errorLogic.confusion(1047);
-				break;
+				throw new InternalInconsistencyException();
 		}
 	}
 
