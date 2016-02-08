@@ -6,6 +6,12 @@ weil die Codebase dann von einer breiteren Masse genutzt wird, aber
 das eigentliche Ziel ist eine einfachere Macro-Sprache! Trotzdem macht
 es Sinn, auch Benutzer vom "normalen" TeX abzugreifen.
 
+Entscheidung: Die Fehlermeldungen werden extrem verkürzt. Insbesondere werden
+keine Dumps mehr ausgegeben. Die haben bei TeX eh nie viel geholfen, aber sie
+machen das Refactoring kompliziert. Ziel ist es, mit einer stark vereinfachten
+Codebasis auch bessere Dumps ausgeben zu können. Ein weiteres Argument ist, dass
+die Dumps sich immer an der TeX-Makrosprache orientieren, was bei einem Einsatz
+als Bibliothek oder mit einer anderen Makrosprache nichts bringt.
 
 \font\ninerm=cmr9
 	Lädt den Font cmr9 und speichern ihn so, dass die CS \ninerm den Font aktiviert.
