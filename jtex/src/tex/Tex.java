@@ -277,8 +277,6 @@ public final class Tex {
 
 	public int extdelimiter;
 
-	public String TEXformatdefault;
-
 	public boolean nameinprogress;
 
 	public int jobname;
@@ -745,7 +743,6 @@ public final class Tex {
 		iflimit = 0;
 		curif = 0;
 		ifline = 0;
-		TEXformatdefault = "TEXFORMATS:plain.fmt";
 		for (k = 0; k <= fontmax; k++) {
 			fontused[k] = false;
 		}
@@ -5170,26 +5167,20 @@ public final class Tex {
 
 	void packbufferedname(final int n, final int a, int b) {
 		int j;
-		final StringBuffer strbuf = new StringBuffer();
-		StringBuffer TEXbuf;
-		TEXbuf = new StringBuffer(TEXformatdefault);
+		final StringBuilder strbuf = new StringBuilder();
+		String plainFmt = "TEXFORMATS:plain.fmt";
 		if (n + b - a + 5 > filenamesize) {
 			b = a + filenamesize - n - 5;
 		}
-		namelength = 0;
 		for (j = 0; j <= n - 1; j++) {
-			namelength = namelength + 1;
-			strbuf.append((TEXbuf.charAt(j)));
+			strbuf.append((plainFmt.charAt(j)));
 		}
 		for (j = a; j <= b; j++) {
-			namelength = namelength + 1;
 			strbuf.append((char)(buffer[j]));
 		}
-		for (j = 16; j <= 19; j++) {
-			namelength = namelength + 1;
-			strbuf.append((TEXbuf.charAt(j)));
-		}
+		strbuf.append(".fmt");
 		nameoffile = strbuf.toString();
+		namelength = nameoffile.length();
 	}
 
 	int makenamestring() {
