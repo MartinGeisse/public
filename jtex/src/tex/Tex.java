@@ -1025,20 +1025,27 @@ public final class Tex {
 		return ok;
 	}
 	
-	boolean streqbuf(final int s, int k) {
-		boolean result;
-		int j = strstart[s];
-		result = false;
-		while (j < strstart[s + 1]) {
-			result = true;
-			if (strpool[j] != buffer[k]) {
-				result = false;
-				break /* lab45 */;
-			}
-			j = j + 1;
-			k = k + 1;
+	/**
+	 * Tests if the specified string is found in the buffer at the specified position.
+	 * 
+	 * As a special rule, this function returns false if the string to look for is empty,
+	 * even though the empty string can be found anywhere.
+	 * 
+	 * @param stringId the ID of the string to look for
+	 * @param bufferStart the bufer position to look at
+	 * @return whether the string was found at that position
+	 */
+	boolean streqbuf(final int stringId, int bufferStart) {
+		String s = stringPool.getString(stringId);
+		if (s.isEmpty()) {
+			return false;
 		}
-		return result;
+		for (int i=0; i<s.length(); i++) {
+			if (s.charAt(i) != buffer[bufferStart + i]) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	boolean streqstr(final int s, final int t) {
@@ -18197,8 +18204,7 @@ public final class Tex {
 		}
 			
 		case 21: {
-			strpool[poolptr] = c;
-			poolptr = poolptr + 1;
+			stringPool.append((char)c);
 			break;
 		}
 		
@@ -18223,19 +18229,15 @@ public final class Tex {
 
 	/**
 	 * Prints the specified string from the string pool to the current output.
-	 * @param s the string pool selector for the string to print
+	 * @param stringId the string ID for the string to print
 	 */
-	void print(int s) {
-		if (s < 0 || s >= strptr) {
+	void print(int stringId) {
+		if (stringId < 0 || stringId >= stringPool.getStringCount()) {
 			print("???");
-			return;
-		} else if (s < 256) {
-			printchar(s);
+		} else if (stringId < 256) {
+			printchar(stringId);
 		} else {
-			int start = strstart[s], end = strstart[s + 1];
-			for (int i=start; i<end; i++) {
-				printchar(strpool[i]);
-			}
+			print(stringPool.getString(stringId));
 		}
 	}
 
@@ -18254,7 +18256,7 @@ public final class Tex {
 	/**
 	 * Starts a new line in case the current one contains any output (this can only be
 	 * detected for the terminal or log file), then prints the specified string.
-	 * @param s the string pool selector for the string to print
+	 * @param stringId the string ID for the string to print
 	 */
 	void printnl(final int s) {
 		if (((termoffset > 0) && (((selector) % 2 == 1))) || ((fileoffset > 0) && (selector >= 18))) {

@@ -36,6 +36,13 @@ public final class StringPool {
 	}
 
 	/**
+	 * @return the number of strings in the pool
+	 */
+	public int getStringCount() {
+		return tex.strptr;
+	}
+	
+	/**
 	 * Resets the pool to empty.
 	 */
 	public void reset() {
@@ -112,6 +119,9 @@ public final class StringPool {
 	 * @return the string
 	 */
 	public String getString(int stringId) {
+		if (stringId < 0 || stringId >= tex.strptr) {
+			throw new IndexOutOfBoundsException("invalid string ID: " + stringId);
+		}
 		StringBuilder builder = new StringBuilder();
 		int start = tex.strstart[stringId];
 		int end = tex.strstart[stringId + 1];
