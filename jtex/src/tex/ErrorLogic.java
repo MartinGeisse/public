@@ -176,7 +176,7 @@ public final class ErrorLogic {
 	@SuppressWarnings("javadoc")
 	public void overflow(final int s, final int n) {
 		tex.normalizeselector();
-		tex.errorReporter.fatal("!TeX capacity exceeded, sorry [" + tex.getStringFromPool(s) + '=' + n + "]. If you really absolutely need more capacity, you can ask a wizard to enlarge me.");
+		tex.errorReporter.fatal("!TeX capacity exceeded, sorry [" + tex.stringPool.getString(s) + '=' + n + "]. If you really absolutely need more capacity, you can ask a wizard to enlarge me.");
 	}
 
 	/**
@@ -185,7 +185,7 @@ public final class ErrorLogic {
 	void confusion(final int s) {
 		tex.normalizeselector();
 		if (tex.errorReporter.getWorstLevelSoFar().ordinal() < Level.ERROR.ordinal()) {
-			tex.errorReporter.fatal("!This can't happen (" + tex.getStringFromPool(s) + "). I'm broken. Please show this to someone who can fix can fix. ");
+			tex.errorReporter.fatal("!This can't happen (" + tex.stringPool.getString(s) + "). I'm broken. Please show this to someone who can fix can fix. ");
 		} else {
 			tex.errorReporter.fatal("!I can't go on meeting you like this. One of your faux pas seems to have wounded me deeply... in fact, I'm barely conscious. Please fix it and try again.");
 		}

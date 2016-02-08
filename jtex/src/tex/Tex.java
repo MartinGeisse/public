@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import name.martingeisse.jtex.engine.DviWriter;
 import name.martingeisse.jtex.engine.StringPool;
 import name.martingeisse.jtex.error.ErrorReporter;
 import name.martingeisse.jtex.error.ErrorReporter.Level;
@@ -629,8 +630,10 @@ public final class Tex {
 
 	public int maxhalfword;
 	
-	private final StringPool stringPool = new StringPool(this);
+	public final StringPool stringPool = new StringPool(this);
 
+	public final DviWriter dviWriter = new DviWriter(this);
+	
 	/**
 	 * Constructor.
 	 * @param initex whether this is INITEX
@@ -5880,7 +5883,7 @@ public final class Tex {
 		}
 	}
 
-	void dviswap() {
+	public void dviswap() {
 		if (dvilimit == dvibufsize) {
 			writedvi(0, halfbuf - 1);
 			dvilimit = halfbuf;
@@ -5893,139 +5896,35 @@ public final class Tex {
 		dvigone = dvigone + halfbuf;
 	}
 
-	void dvifour(int x) {
-		if (x >= 0) {
-			dvibuf[dviptr] = x / 16777216;
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
-		} else {
-			x = x + 1073741824;
-			x = x + 1073741824;
-			{
-				dvibuf[dviptr] = (x / 16777216) + 128;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-			}
-		}
-		x = x % 16777216;
-		{
-			dvibuf[dviptr] = x / 65536;
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
-		}
-		x = x % 65536;
-		{
-			dvibuf[dviptr] = x / 256;
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
-		}
-		{
-			dvibuf[dviptr] = x % 256;
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
-		}
-	}
-
 	void dvipop(final int l) {
 		if ((l == dvioffset + dviptr) && (dviptr > 0)) {
 			dviptr = dviptr - 1;
 		} else {
-			dvibuf[dviptr] = 142;
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
+			dviWriter.writeByte(142);
 		}
 	}
 
 	void dvifontdef(final int f) {
-		int k;
-		{
-			dvibuf[dviptr] = 243;
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
+		dviWriter.writeByte(243);
+		dviWriter.writeByte(f - 1);
+		dviWriter.writeByte(fontcheck[f].b0);
+		dviWriter.writeByte(fontcheck[f].b1);
+		dviWriter.writeByte(fontcheck[f].b2);
+		dviWriter.writeByte(fontcheck[f].b3);
+		dviWriter.writeInt(fontsize[f]);
+		dviWriter.writeInt(fontdsize[f]);
+		dviWriter.writeByte(strstart[fontarea[f] + 1] - strstart[fontarea[f]]);
+		dviWriter.writeByte(strstart[fontname[f] + 1] - strstart[fontname[f]]);
+		for (int k = strstart[fontarea[f]]; k <= strstart[fontarea[f] + 1] - 1; k++) {
+			dviWriter.writeByte(strpool[k]);
 		}
-		{
-			dvibuf[dviptr] = f - 1;
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
-		}
-		{
-			dvibuf[dviptr] = fontcheck[f].b0;
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
-		}
-		{
-			dvibuf[dviptr] = fontcheck[f].b1;
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
-		}
-		{
-			dvibuf[dviptr] = fontcheck[f].b2;
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
-		}
-		{
-			dvibuf[dviptr] = fontcheck[f].b3;
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
-		}
-		dvifour(fontsize[f]);
-		dvifour(fontdsize[f]);
-		{
-			dvibuf[dviptr] = (strstart[fontarea[f] + 1] - strstart[fontarea[f]]);
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
-		}
-		{
-			dvibuf[dviptr] = (strstart[fontname[f] + 1] - strstart[fontname[f]]);
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
-		}
-		for (k = strstart[fontarea[f]]; k <= strstart[fontarea[f] + 1] - 1; k++) {
-			dvibuf[dviptr] = strpool[k];
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
-		}
-		for (k = strstart[fontname[f]]; k <= strstart[fontname[f] + 1] - 1; k++) {
-			dvibuf[dviptr] = strpool[k];
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
+		for (int k = strstart[fontname[f]]; k <= strstart[fontname[f] + 1] - 1; k++) {
+			dviWriter.writeByte(strpool[k]);
 		}
 	}
 
 	void movement(int w, final int o) {
-		/* 10 40 45 2 1 */int mstate;
+		int mstate;
 		int p, q;
 		int k;
 		q = getnode(3);
@@ -6102,95 +6001,41 @@ public final class Tex {
 			}
 			/* lab45: */mem[q].setlh(3);
 			if (Math.abs(w) >= 8388608) {
-				{
-					dvibuf[dviptr] = o + 3;
-					dviptr = dviptr + 1;
-					if (dviptr == dvilimit) {
-						dviswap();
-					}
-				}
-				dvifour(w);
+				dviWriter.writeByte(o + 3);
+				dviWriter.writeInt(w);
 				return /* lab10 */;
 			}
 			lab1: while (true) {
 				if (Math.abs(w) >= 32768) {
-					{
-						dvibuf[dviptr] = o + 2;
-						dviptr = dviptr + 1;
-						if (dviptr == dvilimit) {
-							dviswap();
-						}
-					}
+					dviWriter.writeByte(o + 2);
 					if (w < 0) {
 						w = w + 16777216;
 					}
-					{
-						dvibuf[dviptr] = w / 65536;
-						dviptr = dviptr + 1;
-						if (dviptr == dvilimit) {
-							dviswap();
-						}
-					}
+					dviWriter.writeByte(w / 65536);
 					w = w % 65536;
-					{
-						dvibuf[dviptr] = w / 256;
-						dviptr = dviptr + 1;
-						if (dviptr == dvilimit) {
-							dviswap();
-						}
-					}
+					dviWriter.writeByte(w / 256);
 					break lab1;
 				}
 				if (Math.abs(w) >= 128) {
-					{
-						dvibuf[dviptr] = o + 1;
-						dviptr = dviptr + 1;
-						if (dviptr == dvilimit) {
-							dviswap();
-						}
-					}
+					dviWriter.writeByte(o + 1);
 					if (w < 0) {
 						w = w + 65536;
 					}
-					{
-						dvibuf[dviptr] = w / 256;
-						dviptr = dviptr + 1;
-						if (dviptr == dvilimit) {
-							dviswap();
-						}
-					}
+					dviWriter.writeByte(w / 256);
 					break lab1;
 				}
-				{
-					dvibuf[dviptr] = o;
-					dviptr = dviptr + 1;
-					if (dviptr == dvilimit) {
-						dviswap();
-					}
-				}
+				dviWriter.writeByte(o);
 				if (w < 0) {
 					w = w + 256;
 				}
 				break;
 			}
-			/* lab1: */{
-				dvibuf[dviptr] = w % 256;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-			}
-			return /* lab10 */;
+			dviWriter.writeByte(w % 256);
+			return;
 		}
-		/* lab40: */mem[q].setlh(mem[p].getlh());
+		mem[q].setlh(mem[p].getlh());
 		if (mem[q].getlh() == 1) {
-			{
-				dvibuf[dviptr] = o + 4;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-			}
+			dviWriter.writeByte(o + 4);
 			while (mem[q].getrh() != p) {
 				q = mem[q].getrh();
 				switch (mem[q].getlh()) {
@@ -6206,13 +6051,7 @@ public final class Tex {
 				}
 			}
 		} else {
-			{
-				dvibuf[dviptr] = o + 9;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-			}
+			dviWriter.writeByte(o + 9);
 			while (mem[q].getrh() != p) {
 				q = mem[q].getrh();
 				switch (mem[q].getlh()) {
@@ -6231,18 +6070,18 @@ public final class Tex {
 	}
 
 	void prunemovements(final int l) {
-		/* 30 10 */int p;
+		int p;
 		while (downptr != 0) {
 			if (mem[downptr + 2].getInt() < l) {
-				break /* lab30 */;
+				break;
 			}
 			p = downptr;
 			downptr = mem[p].getrh();
 			freenode(p, 3);
 		}
-		/* lab30: */while (rightptr != 0) {
+		while (rightptr != 0) {
 			if (mem[rightptr + 2].getInt() < l) {
-				return /* lab10 */;
+				return;
 			}
 			p = rightptr;
 			rightptr = mem[p].getrh();
@@ -6266,36 +6105,14 @@ public final class Tex {
 		showtokenlist(mem[mem[p + 1].getrh()].getrh(), 0, Integer.MAX_VALUE);
 		selector = oldsetting;
 		if ((poolptr - strstart[strptr]) < 256) {
-			{
-				dvibuf[dviptr] = 239;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-			}
-			{
-				dvibuf[dviptr] = (poolptr - strstart[strptr]);
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-			}
+			dviWriter.writeByte(239);
+			dviWriter.writeByte(poolptr - strstart[strptr]);
 		} else {
-			{
-				dvibuf[dviptr] = 242;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-			}
-			dvifour((poolptr - strstart[strptr]));
+			dviWriter.writeByte(242);
+			dviWriter.writeInt((poolptr - strstart[strptr]));
 		}
 		for (k = strstart[strptr]; k <= poolptr - 1; k++) {
-			dvibuf[dviptr] = strpool[k];
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
+			dviWriter.writeByte(strpool[k]);
 		}
 		poolptr = strstart[strptr];
 	}
@@ -6420,11 +6237,7 @@ public final class Tex {
 		p = mem[thisbox + 5].getrh();
 		curs = curs + 1;
 		if (curs > 0) {
-			dvibuf[dviptr] = 141;
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
+			dviWriter.writeByte(141);
 		}
 		if (curs > maxpush) {
 			maxpush = curs;
@@ -6452,43 +6265,17 @@ public final class Tex {
 								fontused[f] = true;
 							}
 							if (f <= 64) {
-								dvibuf[dviptr] = f + 170;
-								dviptr = dviptr + 1;
-								if (dviptr == dvilimit) {
-									dviswap();
-								}
+								dviWriter.writeByte(f + 170);
 							} else {
-								{
-									dvibuf[dviptr] = 235;
-									dviptr = dviptr + 1;
-									if (dviptr == dvilimit) {
-										dviswap();
-									}
-								}
-								{
-									dvibuf[dviptr] = f - 1;
-									dviptr = dviptr + 1;
-									if (dviptr == dvilimit) {
-										dviswap();
-									}
-								}
+								dviWriter.writeByte(235);
+								dviWriter.writeByte(f - 1);
 							}
 							dvif = f;
 						}
 						if (c >= 128) {
-							dvibuf[dviptr] = 128;
-							dviptr = dviptr + 1;
-							if (dviptr == dvilimit) {
-								dviswap();
-							}
+							dviWriter.writeByte(128);
 						}
-						{
-							dvibuf[dviptr] = c;
-							dviptr = dviptr + 1;
-							if (dviptr == dvilimit) {
-								dviswap();
-							}
-						}
+						dviWriter.writeByte(c);
 						curh = curh + fontinfo[widthbase[f] + fontinfo[charbase[f] + c].getb0()].getInt();
 						p = mem[p].getrh();
 					} while (!(!(p >= himemmin)));
@@ -6645,15 +6432,9 @@ public final class Tex {
 									movement(curv - dviv, 157);
 									dviv = curv;
 								}
-								{
-									dvibuf[dviptr] = 132;
-									dviptr = dviptr + 1;
-									if (dviptr == dvilimit) {
-										dviswap();
-									}
-								}
-								dvifour(ruleht);
-								dvifour(rulewd);
+								dviWriter.writeByte(132);
+								dviWriter.writeInt(ruleht);
+								dviWriter.writeInt(rulewd);
 								curv = baseline;
 								dvih = dvih + rulewd;
 							}
@@ -6695,11 +6476,7 @@ public final class Tex {
 		p = mem[thisbox + 5].getrh();
 		curs = curs + 1;
 		if (curs > 0) {
-			dvibuf[dviptr] = 141;
-			dviptr = dviptr + 1;
-			if (dviptr == dvilimit) {
-				dviswap();
-			}
+			dviWriter.writeByte(141);
 		}
 		if (curs > maxpush) {
 			maxpush = curs;
@@ -6865,8 +6642,8 @@ public final class Tex {
 									dviswap();
 								}
 							}
-							dvifour(ruleht);
-							dvifour(rulewd);
+							dviWriter.writeInt(ruleht);
+							dviWriter.writeInt(rulewd);
 						}
 						break lab15;
 					}
@@ -6950,20 +6727,12 @@ public final class Tex {
 				outputfilename = makenamestring();
 			}
 			if (totalpages == 0) {
-				dvibuf[dviptr] = 247;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-				dvibuf[dviptr] = 2;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-				dvifour(25400000);
-				dvifour(473628672);
+				dviWriter.writeByte(247);
+				dviWriter.writeByte(2);
+				dviWriter.writeInt(25400000);
+				dviWriter.writeInt(473628672);
 				preparemag();
-				dvifour(eqtb[9580].getInt());
+				dviWriter.writeInt(eqtb[9580].getInt());
 				oldsetting = selector;
 				selector = 21;
 				print(827);
@@ -6976,34 +6745,18 @@ public final class Tex {
 				printTwoDigits(eqtb[9583].getInt() / 60);
 				printTwoDigits(eqtb[9583].getInt() % 60);
 				selector = oldsetting;
-				{
-					dvibuf[dviptr] = (poolptr - strstart[strptr]);
-					dviptr = dviptr + 1;
-					if (dviptr == dvilimit) {
-						dviswap();
-					}
-				}
+				dviWriter.writeByte(poolptr - strstart[strptr]);
 				for (s = strstart[strptr]; s <= poolptr - 1; s++) {
-					dvibuf[dviptr] = strpool[s];
-					dviptr = dviptr + 1;
-					if (dviptr == dvilimit) {
-						dviswap();
-					}
+					dviWriter.writeByte(strpool[s]);
 				}
 				poolptr = strstart[strptr];
 			}
 			pageloc = dvioffset + dviptr;
-			{
-				dvibuf[dviptr] = 139;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-			}
+			dviWriter.writeByte(139);
 			for (k = 0; k <= 9; k++) {
-				dvifour(eqtb[9618 + k].getInt());
+				dviWriter.writeInt(eqtb[9618 + k].getInt());
 			}
-			dvifour(lastbop);
+			dviWriter.writeInt(lastbop);
 			lastbop = pageloc;
 			curv = mem[p + 3].getInt() + eqtb[10149].getInt();
 			tempptr = p;
@@ -7012,18 +6765,12 @@ public final class Tex {
 			} else {
 				hlistout();
 			}
-			{
-				dvibuf[dviptr] = 140;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-			}
+			dviWriter.writeByte(140);
 			totalpages = totalpages + 1;
 			curs = -1;
 			break;
 		}
-		/* lab30: */if (eqtb[9597].getInt() <= 0) {
+		if (eqtb[9597].getInt() <= 0) {
 			printchar(93);
 		}
 		deadcycles = 0;
@@ -17375,19 +17122,9 @@ public final class Tex {
 		}
 		while (curs > -1) {
 			if (curs > 0) {
-				dvibuf[dviptr] = 142;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
+				dviWriter.writeByte(142);
 			} else {
-				{
-					dvibuf[dviptr] = 140;
-					dviptr = dviptr + 1;
-					if (dviptr == dvilimit) {
-						dviswap();
-					}
-				}
+				dviWriter.writeByte(140);
 				totalpages = totalpages + 1;
 			}
 			curs = curs - 1;
@@ -17395,79 +17132,29 @@ public final class Tex {
 		if (totalpages == 0) {
 			printnl(837);
 		} else {
-			{
-				dvibuf[dviptr] = 248;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-			}
-			dvifour(lastbop);
+			dviWriter.writeByte(248);
+			dviWriter.writeInt(lastbop);
 			lastbop = dvioffset + dviptr - 5;
-			dvifour(25400000);
-			dvifour(473628672);
+			dviWriter.writeInt(25400000);
+			dviWriter.writeInt(473628672);
 			preparemag();
-			dvifour(eqtb[9580].getInt());
-			dvifour(maxv);
-			dvifour(maxh);
-			{
-				dvibuf[dviptr] = maxpush / 256;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-			}
-			{
-				dvibuf[dviptr] = maxpush % 256;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-			}
-			{
-				dvibuf[dviptr] = (totalpages / 256) % 256;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-			}
-			{
-				dvibuf[dviptr] = totalpages % 256;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-			}
+			dviWriter.writeInt(eqtb[9580].getInt());
+			dviWriter.writeInt(maxv);
+			dviWriter.writeInt(maxh);
+			dviWriter.writeShort(maxpush);
+			dviWriter.writeShort(totalpages);
 			while (fontptr > 0) {
 				if (fontused[fontptr]) {
 					dvifontdef(fontptr);
 				}
 				fontptr = fontptr - 1;
 			}
-			{
-				dvibuf[dviptr] = 249;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-			}
-			dvifour(lastbop);
-			{
-				dvibuf[dviptr] = 2;
-				dviptr = dviptr + 1;
-				if (dviptr == dvilimit) {
-					dviswap();
-				}
-			}
+			dviWriter.writeByte(249);
+			dviWriter.writeInt(lastbop);
+			dviWriter.writeByte(2);
 			k = 4 + ((dvibufsize - dviptr) % 4);
 			while (k > 0) {
-				{
-					dvibuf[dviptr] = 223;
-					dviptr = dviptr + 1;
-					if (dviptr == dvilimit) {
-						dviswap();
-					}
-				}
+				dviWriter.writeByte(223);
 				k = k - 1;
 			}
 			if (dvilimit == halfbuf) {
