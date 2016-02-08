@@ -6685,7 +6685,6 @@ public final class Tex {
 		if (eqtb[9597].getInt() > 0) {
 			printchar(93);
 			begindiagnostic();
-			showbox(p);
 			enddiagnostic(true);
 		}
 		lab30: while (true) {
@@ -6699,7 +6698,6 @@ public final class Tex {
 				if (eqtb[9597].getInt() <= 0) {
 					begindiagnostic();
 					printnl(836);
-					showbox(p);
 					enddiagnostic(true);
 				}
 				break lab30;
@@ -7060,7 +7058,6 @@ public final class Tex {
 		shortdisplay(mem[r + 5].getrh());
 		println();
 		begindiagnostic();
-		showbox(r);
 		enddiagnostic(true);
 		Result = r;
 		return Result;
@@ -7255,7 +7252,6 @@ public final class Tex {
 			println();
 		}
 		begindiagnostic();
-		showbox(r);
 		enddiagnostic(true);
 		Result = r;
 		return Result;
@@ -13033,7 +13029,6 @@ public final class Tex {
 							errorLogic.error();
 							begindiagnostic();
 							printnl(1109);
-							showbox(p);
 							enddiagnostic(true);
 							flushnodelist(p);
 							mem[q].setrh(0);
@@ -18112,41 +18107,6 @@ public final class Tex {
 		}
 	}
 
-	void printsubsidiarydata(final int p, final int c) {
-		if (stringPool.getBuiltLength() >= depththreshold) {
-			if (mem[p].getrh() != 0) {
-				print(314);
-			}
-		} else {
-			stringPool.append((char)c);
-			tempptr = p;
-			switch (mem[p].getrh()) {
-				case 1: {
-					println();
-					printcurrentstring();
-					printfamandchar(p);
-				}
-					break;
-				case 2:
-					showinfo();
-					break;
-				case 3:
-					if (mem[p].getlh() == 0) {
-						println();
-						printcurrentstring();
-						print(860);
-					} else {
-						showinfo();
-					}
-					break;
-				default:
-					;
-					break;
-			}
-			poolptr = poolptr - 1;
-		}
-	}
-
 	void printstyle(final int c) {
 		switch (c / 2) {
 			case 0:
@@ -19430,404 +19390,6 @@ public final class Tex {
 		}
 	}
 
-	void shownodelist(int p) {
-		int n;
-		double g;
-		if (stringPool.getBuiltLength() > depththreshold) {
-			if (p > 0) {
-				print(314);
-			}
-			return /* lab10 */;
-		}
-		n = 0;
-		while (p > 0) {
-			println();
-			printcurrentstring();
-			if (p > memend) {
-				print(315);
-				return /* lab10 */;
-			}
-			n = n + 1;
-			if (n > breadthmax) {
-				print(316);
-				return /* lab10 */;
-			}
-			if ((p >= himemmin)) {
-				printfontandchar(p);
-			} else {
-				switch (mem[p].getb0()) {
-					case 0:
-					case 1:
-					case 13: {
-						if (mem[p].getb0() == 0) {
-							printEscapeSequence(104);
-						} else if (mem[p].getb0() == 1) {
-							printEscapeSequence(118);
-						} else {
-							printEscapeSequence(318);
-						}
-						print(319);
-						printFixed(mem[p + 3].getInt());
-						printchar(43);
-						printFixed(mem[p + 2].getInt());
-						print(320);
-						printFixed(mem[p + 1].getInt());
-						if (mem[p].getb0() == 13) {
-							if (mem[p].getb1() != 0) {
-								print(286);
-								printInt(mem[p].getb1() + 1);
-								print(322);
-							}
-							if (mem[p + 6].getInt() != 0) {
-								print(323);
-								printglue(mem[p + 6].getInt(), mem[p + 5].getb1(), 0);
-							}
-							if (mem[p + 4].getInt() != 0) {
-								print(324);
-								printglue(mem[p + 4].getInt(), mem[p + 5].getb0(), 0);
-							}
-						} else {
-							g = mem[p + 6].getglue();
-							if ((g != 0.0) && (mem[p + 5].getb0() != 0)) {
-								print(325);
-								if (mem[p + 5].getb0() == 2) {
-									print(326);
-								}
-								if (Math.abs(mem[p + 6].getInt()) < 1048576) {
-									print(327);
-								} else if (Math.abs(g) > 20000.0) {
-									if (g > 0.0) {
-										printchar(62);
-									} else {
-										print(328);
-									}
-									printglue(20000 * 65536, mem[p + 5].getb1(), 0);
-								} else {
-									printglue((int)Math.round(65536 * g), mem[p + 5].getb1(), 0);
-								}
-							}
-							if (mem[p + 4].getInt() != 0) {
-								print(321);
-								printFixed(mem[p + 4].getInt());
-							}
-						}
-						stringPool.append((char)46);
-						shownodelist(mem[p + 5].getrh());
-						poolptr = poolptr - 1;
-					}
-						break;
-					case 2: {
-						printEscapeSequence(329);
-						printruledimen(mem[p + 3].getInt());
-						printchar(43);
-						printruledimen(mem[p + 2].getInt());
-						print(320);
-						printruledimen(mem[p + 1].getInt());
-					}
-						break;
-					case 3: {
-						printEscapeSequence(330);
-						printInt(mem[p].getb1());
-						print(331);
-						printFixed(mem[p + 3].getInt());
-						print(332);
-						printspec(mem[p + 4].getrh(), 0);
-						printchar(44);
-						printFixed(mem[p + 2].getInt());
-						print(333);
-						printInt(mem[p + 1].getInt());
-						stringPool.append((char)46);
-						shownodelist(mem[p + 4].getlh());
-						poolptr = poolptr - 1;
-					}
-						break;
-					case 8:
-						switch (mem[p].getb1()) {
-							case 0: {
-								printwritewhatsit(1285, p);
-								printchar(61);
-								printfilename(mem[p + 1].getrh(), mem[p + 2].getlh(), mem[p + 2].getrh());
-							}
-								break;
-							case 1: {
-								printwritewhatsit(594, p);
-								printmark(mem[p + 1].getrh());
-							}
-								break;
-							case 2:
-								printwritewhatsit(1286, p);
-								break;
-							case 3: {
-								printEscapeSequence(1287);
-								printmark(mem[p + 1].getrh());
-							}
-								break;
-							case 4: {
-								printEscapeSequence(1289);
-								printInt(mem[p + 1].getrh());
-								print(1292);
-								printInt(mem[p + 1].getb0());
-								printchar(44);
-								printInt(mem[p + 1].getb1());
-								printchar(41);
-							}
-								break;
-							default:
-								print(1293);
-								break;
-						}
-						break;
-					case 10:
-						if (mem[p].getb1() >= 100) {
-							printEscapeSequence(338);
-							if (mem[p].getb1() == 101) {
-								printchar(99);
-							} else if (mem[p].getb1() == 102) {
-								printchar(120);
-							}
-							print(339);
-							printspec(mem[p + 1].getlh(), 0);
-							stringPool.append((char)46);
-							shownodelist(mem[p + 1].getrh());
-							poolptr = poolptr - 1;
-						} else {
-							printEscapeSequence(334);
-							if (mem[p].getb1() != 0) {
-								printchar(40);
-								if (mem[p].getb1() < 98) {
-									printskipparam(mem[p].getb1() - 1);
-								} else if (mem[p].getb1() == 98) {
-									printEscapeSequence(335);
-								} else {
-									printEscapeSequence(336);
-								}
-								printchar(41);
-							}
-							if (mem[p].getb1() != 98) {
-								printchar(32);
-								if (mem[p].getb1() < 98) {
-									printspec(mem[p + 1].getlh(), 0);
-								} else {
-									printspec(mem[p + 1].getlh(), 337);
-								}
-							}
-						}
-						break;
-					case 11:
-						if (mem[p].getb1() != 99) {
-							printEscapeSequence(340);
-							if (mem[p].getb1() != 0) {
-								printchar(32);
-							}
-							printFixed(mem[p + 1].getInt());
-							if (mem[p].getb1() == 2) {
-								print(341);
-							}
-						} else {
-							printEscapeSequence(342);
-							printFixed(mem[p + 1].getInt());
-							print(337);
-						}
-						break;
-					case 9: {
-						printEscapeSequence(343);
-						if (mem[p].getb1() == 0) {
-							print(344);
-						} else {
-							print(345);
-						}
-						if (mem[p + 1].getInt() != 0) {
-							print(346);
-							printFixed(mem[p + 1].getInt());
-						}
-					}
-						break;
-					case 6: {
-						printfontandchar(p + 1);
-						print(347);
-						if (mem[p].getb1() > 1) {
-							printchar(124);
-						}
-						fontinshortdisplay = mem[p + 1].getb0();
-						shortdisplay(mem[p + 1].getrh());
-						if (((mem[p].getb1()) % 2 == 1)) {
-							printchar(124);
-						}
-						printchar(41);
-					}
-						break;
-					case 12: {
-						printEscapeSequence(348);
-						printInt(mem[p + 1].getInt());
-					}
-						break;
-					case 7: {
-						printEscapeSequence(349);
-						if (mem[p].getb1() > 0) {
-							print(350);
-							printInt(mem[p].getb1());
-						}
-						stringPool.append((char)46);
-						shownodelist(mem[p + 1].getlh());
-						poolptr = poolptr - 1;
-						stringPool.append((char)124);
-						shownodelist(mem[p + 1].getrh());
-						poolptr = poolptr - 1;
-					}
-						break;
-					case 4: {
-						printEscapeSequence(351);
-						printmark(mem[p + 1].getInt());
-					}
-						break;
-					case 5: {
-						printEscapeSequence(352);
-						stringPool.append((char)46);
-						shownodelist(mem[p + 1].getInt());
-						poolptr = poolptr - 1;
-					}
-						break;
-					case 14:
-						printstyle(mem[p].getb1());
-						break;
-					case 15: {
-						printEscapeSequence(525);
-						stringPool.append((char)68);
-						shownodelist(mem[p + 1].getlh());
-						poolptr = poolptr - 1;
-						stringPool.append((char)84);
-						shownodelist(mem[p + 1].getrh());
-						poolptr = poolptr - 1;
-						stringPool.append((char)83);
-						shownodelist(mem[p + 2].getlh());
-						poolptr = poolptr - 1;
-						stringPool.append((char)115);
-						shownodelist(mem[p + 2].getrh());
-						poolptr = poolptr - 1;
-					}
-						break;
-					case 16:
-					case 17:
-					case 18:
-					case 19:
-					case 20:
-					case 21:
-					case 22:
-					case 23:
-					case 24:
-					case 27:
-					case 26:
-					case 29:
-					case 28:
-					case 30:
-					case 31: {
-						switch (mem[p].getb0()) {
-							case 16:
-								printEscapeSequence(866);
-								break;
-							case 17:
-								printEscapeSequence(867);
-								break;
-							case 18:
-								printEscapeSequence(868);
-								break;
-							case 19:
-								printEscapeSequence(869);
-								break;
-							case 20:
-								printEscapeSequence(870);
-								break;
-							case 21:
-								printEscapeSequence(871);
-								break;
-							case 22:
-								printEscapeSequence(872);
-								break;
-							case 23:
-								printEscapeSequence(873);
-								break;
-							case 27:
-								printEscapeSequence(874);
-								break;
-							case 26:
-								printEscapeSequence(875);
-								break;
-							case 29:
-								printEscapeSequence(539);
-								break;
-							case 24: {
-								printEscapeSequence(533);
-								printdelimiter(p + 4);
-							}
-								break;
-							case 28: {
-								printEscapeSequence(508);
-								printfamandchar(p + 4);
-							}
-								break;
-							case 30: {
-								printEscapeSequence(876);
-								printdelimiter(p + 1);
-							}
-								break;
-							case 31: {
-								printEscapeSequence(877);
-								printdelimiter(p + 1);
-							}
-								break;
-						}
-						if (mem[p].getb1() != 0) {
-							if (mem[p].getb1() == 1) {
-								printEscapeSequence(878);
-							} else {
-								printEscapeSequence(879);
-							}
-						}
-						if (mem[p].getb0() < 30) {
-							printsubsidiarydata(p + 1, 46);
-						}
-						printsubsidiarydata(p + 2, 94);
-						printsubsidiarydata(p + 3, 95);
-					}
-						break;
-					case 25: {
-						printEscapeSequence(880);
-						if (mem[p + 1].getInt() == 1073741824) {
-							print(881);
-						} else {
-							printFixed(mem[p + 1].getInt());
-						}
-						if ((mem[p + 4].getb0() != 0) || (mem[p + 4].getb1() != 0) || (mem[p + 4].getb2() != 0) || (mem[p + 4].getb3() != 0)) {
-							print(882);
-							printdelimiter(p + 4);
-						}
-						if ((mem[p + 5].getb0() != 0) || (mem[p + 5].getb1() != 0) || (mem[p + 5].getb2() != 0) || (mem[p + 5].getb3() != 0)) {
-							print(883);
-							printdelimiter(p + 5);
-						}
-						printsubsidiarydata(p + 2, 92);
-						printsubsidiarydata(p + 3, 47);
-					}
-						break;
-					default:
-						print(317);
-						break;
-				}
-			}
-			p = mem[p].getrh();
-		}
-	}
-
-	void showbox(final int p) {
-		depththreshold = eqtb[9588].getInt();
-		breadthmax = eqtb[9587].getInt();
-		if (breadthmax <= 0) {
-			breadthmax = 5;
-		}
-		shownodelist(p);
-		println();
-	}
-
 	void showactivities() {
 		int p;
 		int m;
@@ -19864,7 +19426,7 @@ public final class Tex {
 					if (outputactive) {
 						print(981);
 					}
-					showbox(mem[memtop - 2].getrh());
+					// removed: showbox(mem[memtop - 2].getrh());
 					if (pagecontents > 0) {
 						printnl(982);
 						printtotals();
@@ -19900,7 +19462,7 @@ public final class Tex {
 					printnl(368);
 				}
 			}
-			showbox(mem[nest[p].headfield].getrh());
+			// removed: showbox(mem[nest[p].headfield].getrh());
 			switch (Math.abs(m) / (101)) {
 				case 0: {
 					printnl(369);
@@ -19933,7 +19495,7 @@ public final class Tex {
 				case 2:
 					if (a.getInt() != 0) {
 						print(375);
-						showbox(a.getInt());
+						// removed: showbox(a.getInt());
 					}
 					break;
 			}
@@ -20176,10 +19738,6 @@ public final class Tex {
 		/* lab30: */curinput.copyFrom(inputStackBackingArray[inputptr]);
 	}
 
-	void showinfo() {
-		shownodelist(mem[tempptr].getlh());
-	}
-
 	void showwhatever() {
 		lab50: while (true) {
 			switch (curchr) {
@@ -20197,7 +19755,7 @@ public final class Tex {
 					if (eqtb[7978 + curval].getrh() == 0) {
 						print(410);
 					} else {
-						showbox(eqtb[7978 + curval].getrh());
+						// removed: showbox(eqtb[7978 + curval].getrh());
 					}
 				}
 					break;
@@ -20359,7 +19917,6 @@ public final class Tex {
 		errorLogic.error();
 		begindiagnostic();
 		printnl(836);
-		showbox(eqtb[7978 + n].getrh());
 		enddiagnostic(true);
 		flushnodelist(eqtb[7978 + n].getrh());
 		eqtb[7978 + n].setrh(0);
