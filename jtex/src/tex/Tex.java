@@ -2950,20 +2950,7 @@ public final class Tex {
 						if (curtok == partoken) {
 							if (longstate != 112) {
 								if (longstate == 111) {
-									runaway();
-									{
-										printnl(262);
-										print(645);
-									}
-									sprintcs(warningindex);
-									print(646);
-									{
-										helpptr = 3;
-										helpline[2] = 647;
-										helpline[1] = 648;
-										helpline[0] = 649;
-									}
-									errorLogic.backerror();
+									throw new RuntimeException("Paragraph ended before control sequence was complete. I suspect you've forgotten a `}', causing me to apply this control sequence to too much text.");
 								}
 								pstack[n] = mem[memtop - 3].getrh();
 								alignstate = alignstate - unbalance;
@@ -2995,20 +2982,7 @@ public final class Tex {
 									if (curtok == partoken) {
 										if (longstate != 112) {
 											if (longstate == 111) {
-												runaway();
-												{
-													printnl(262);
-													print(645);
-												}
-												sprintcs(warningindex);
-												print(646);
-												{
-													helpptr = 3;
-													helpline[2] = 647;
-													helpline[1] = 648;
-													helpline[0] = 649;
-												}
-												errorLogic.backerror();
+												throw new RuntimeException("Paragraph ended before control sequence was complete. I suspect you've forgotten a `}', causing me to apply this control sequence to too much text.");
 											}
 											pstack[n] = mem[memtop - 3].getrh();
 											alignstate = alignstate - unbalance;
@@ -3206,18 +3180,7 @@ public final class Tex {
 						}
 					} while (!(curcs != 0));
 					if (curcmd != 67) {
-						{
-							printnl(262);
-							print(625);
-						}
-						printEscapeSequence(505);
-						print(626);
-						{
-							helpptr = 2;
-							helpline[1] = 627;
-							helpline[0] = 628;
-						}
-						errorLogic.backerror();
+						throw new RuntimeException("This control sequence should not appear between \\csname and \\endcsname.");
 					}
 					j = first;
 					p = mem[r].getrh();
@@ -3257,16 +3220,7 @@ public final class Tex {
 						if (iflimit == 1) {
 							insertrelax();
 						} else {
-							{
-								printnl(262);
-								print(776);
-							}
-							printcmdchr(106, curchr);
-							{
-								helpptr = 1;
-								helpline[0] = 777;
-							}
-							errorLogic.error();
+							throw new RuntimeException("command doesn't match any \\if");
 						}
 					} else {
 						while (curchr != 2) {
@@ -3291,22 +3245,8 @@ public final class Tex {
 						startinput();
 					}
 					break;
-				default: {
-					{
-						printnl(262);
-						print(619);
-					}
-					{
-						helpptr = 5;
-						helpline[4] = 620;
-						helpline[3] = 621;
-						helpline[2] = 622;
-						helpline[1] = 623;
-						helpline[0] = 624;
-					}
-					errorLogic.error();
-				}
-					break;
+				default:
+					throw new RuntimeException("Undefined control sequence");
 			}
 		} else if (curcmd < 115) {
 			macrocall();
@@ -3363,22 +3303,7 @@ public final class Tex {
 			getxtoken();
 		} while (!((curcmd != 10) && (curcmd != 0)));
 		if (curcmd != 1) {
-			{
-				printnl(262);
-				print(657);
-			}
-			{
-				helpptr = 4;
-				helpline[3] = 658;
-				helpline[2] = 659;
-				helpline[1] = 660;
-				helpline[0] = 661;
-			}
-			errorLogic.backerror();
-			curtok = 379;
-			curcmd = 1;
-			curchr = 123;
-			alignstate = alignstate + 1;
+			throw new RuntimeException("missing left brace");
 		}
 	}
 
@@ -3420,86 +3345,36 @@ public final class Tex {
 
 	void scaneightbitint() {
 		scanint();
-		if ((curval < 0) || (curval > 255)) {
-			{
-				printnl(262);
-				print(687);
-			}
-			{
-				helpptr = 2;
-				helpline[1] = 688;
-				helpline[0] = 689;
-			}
-			errorLogic.interror(curval);
-			curval = 0;
+		if (curval < 0 || curval > 255) {
+			throw new RuntimeException("bad register code: " + curval);
 		}
 	}
 
 	void scancharnum() {
 		scanint();
-		if ((curval < 0) || (curval > 255)) {
-			{
-				printnl(262);
-				print(690);
-			}
-			{
-				helpptr = 2;
-				helpline[1] = 691;
-				helpline[0] = 689;
-			}
-			errorLogic.interror(curval);
-			curval = 0;
+		if (curval < 0 || curval > 255) {
+			throw new RuntimeException("bad character code: " + curval);
 		}
 	}
 
 	void scanfourbitint() {
 		scanint();
-		if ((curval < 0) || (curval > 15)) {
-			{
-				printnl(262);
-				print(692);
-			}
-			{
-				helpptr = 2;
-				helpline[1] = 693;
-				helpline[0] = 689;
-			}
-			errorLogic.interror(curval);
-			curval = 0;
+		if (curval < 0 || curval > 15) {
+			throw new RuntimeException("expected a number in the range 0..15, found: " + curval);
 		}
 	}
 
 	void scanfifteenbitint() {
 		scanint();
-		if ((curval < 0) || (curval > 32767)) {
-			{
-				printnl(262);
-				print(694);
-			}
-			{
-				helpptr = 2;
-				helpline[1] = 695;
-				helpline[0] = 689;
-			}
-			errorLogic.interror(curval);
-			curval = 0;
+		if (curval < 0 || curval > 32767) {
+			throw new RuntimeException("Bad mathchar. A mathchar number must be between 0 and 32767. Found: " + curval);
 		}
 	}
 
 	void scantwentysevenbitint() {
 		scanint();
-		if ((curval < 0) || (curval > 134217727)) {
-			{
-				printnl(262);
-				print(696);
-			}
-			{
-				helpptr = 2;
-				helpline[1] = 697;
-				helpline[0] = 689;
-			}
-			errorLogic.interror(curval);
-			curval = 0;
+		if (curval < 0 || curval > 134217727) {
+			throw new RuntimeException("Bad delimiter code. A numeric delimiter code must be between 0 and 2^{27}-1. Found: " + curval);
 		}
 	}
 
@@ -3518,17 +3393,7 @@ public final class Tex {
 			scanfourbitint();
 			f = eqtb[m + curval].getrh();
 		} else {
-			{
-				printnl(262);
-				print(817);
-			}
-			{
-				helpptr = 2;
-				helpline[1] = 818;
-				helpline[0] = 819;
-			}
-			errorLogic.backerror();
-			f = 0;
+			throw new RuntimeException("Missing font identifier. I was looking for a control sequence whose current meaning has been defined by \\font.");
 		}
 		curval = f;
 	}
@@ -3608,21 +3473,7 @@ public final class Tex {
 			case 87:
 			case 88:
 				if (level != 5) {
-					{
-						printnl(262);
-						print(664);
-					}
-					{
-						helpptr = 3;
-						helpline[2] = 665;
-						helpline[1] = 666;
-						helpline[0] = 667;
-					}
-					errorLogic.backerror();
-					{
-						curval = 0;
-						curvallevel = 1;
-					}
+					throw new RuntimeException("missing number");
 				} else if (curcmd <= 72) {
 					if (curcmd < 72) {
 						scaneightbitint();
@@ -3928,17 +3779,7 @@ public final class Tex {
 				curval = curtok - 4352;
 			}
 			if (curval > 255) {
-				{
-					printnl(262);
-					print(698);
-				}
-				{
-					helpptr = 2;
-					helpline[1] = 699;
-					helpline[0] = 700;
-				}
-				curval = 48;
-				errorLogic.backerror();
+				throw new RuntimeException("Improper alphabetic constant. A one-character control sequence belongs after a ` mark.");
 			} else {
 				getxtoken();
 				if (curcmd != 10) {
@@ -3996,18 +3837,8 @@ public final class Tex {
 				}
 				getxtoken();
 			}
-			/* lab30: */if (vacuous) {
-				{
-					printnl(262);
-					print(664);
-				}
-				{
-					helpptr = 3;
-					helpline[2] = 665;
-					helpline[1] = 666;
-					helpline[0] = 667;
-				}
-				errorLogic.backerror();
+			if (vacuous) {
+				throw new RuntimeException("missing number");
 			} else if (curcmd != 10) {
 				unreadToken();
 			}
@@ -4600,16 +4431,7 @@ public final class Tex {
 								} else {
 									t = t + 1;
 									if (curtok != t) {
-										{
-											printnl(262);
-											print(746);
-										}
-										{
-											helpptr = 2;
-											helpline[1] = 747;
-											helpline[0] = 748;
-										}
-										errorLogic.backerror();
+										throw new RuntimeException("Parameters must be numbered consecutively");
 									}
 									curtok = s;
 								}
@@ -4688,19 +4510,7 @@ public final class Tex {
 						}
 						if (curcmd != 6) {
 							if ((curtok <= 3120) || (curtok > t)) {
-								{
-									printnl(262);
-									print(749);
-								}
-								sprintcs(warningindex);
-								{
-									helpptr = 3;
-									helpline[2] = 750;
-									helpline[1] = 751;
-									helpline[0] = 752;
-								}
-								errorLogic.backerror();
-								curtok = s;
+								throw new RuntimeException("Illegal parameter number in definition. You meant to type ## instead of #, right? Or maybe a } was forgotten somewhere earlier, and things are all screwed up?");
 							} else {
 								curtok = 1232 + curchr;
 							}
@@ -4934,17 +4744,7 @@ public final class Tex {
 					if ((curtok >= 3132) && (curtok <= 3134)) {
 						r = curtok - 3072;
 					} else {
-						{
-							printnl(262);
-							print(780);
-						}
-						printcmdchr(105, thisif);
-						{
-							helpptr = 1;
-							helpline[0] = 781;
-						}
-						errorLogic.backerror();
-						r = 61;
+						throw new RuntimeException("missing equals sign");
 					}
 					if (thisif == 2) {
 						scanint();
@@ -8756,18 +8556,7 @@ public final class Tex {
 					if ((p == memtop - 4) && (curloop == 0) && (curcmd == 4)) {
 						curloop = curalign;
 					} else {
-						{
-							printnl(262);
-							print(903);
-						}
-						{
-							helpptr = 3;
-							helpline[2] = 904;
-							helpline[1] = 905;
-							helpline[0] = 906;
-						}
-						errorLogic.backerror();
-						break /* lab31 */;
+						throw new RuntimeException("Missing # in alignment preamble. There should be exactly one # between &'s, when an \\halign or \\valign is being set up. In this case you had none.");
 					}
 				} else if ((curcmd != 10) || (p != memtop - 4)) {
 					mem[p].setrh(allocateMemoryWord());
@@ -9277,29 +9066,11 @@ public final class Tex {
 		if (curlist.modefield == 203) {
 			doassignments();
 			if (curcmd != 3) {
-				{
-					printnl(262);
-					print(1170);
-				}
-				{
-					helpptr = 2;
-					helpline[1] = 895;
-					helpline[0] = 896;
-				}
-				errorLogic.backerror();
+				throw new RuntimeException("missing $$");
 			} else {
 				getxtoken();
 				if (curcmd != 3) {
-					{
-						printnl(262);
-						print(1166);
-					}
-					{
-						helpptr = 2;
-						helpline[1] = 1167;
-						helpline[0] = 1168;
-					}
-					errorLogic.backerror();
+					throw new RuntimeException("Display math should end with $$");
 				}
 			}
 			popnest();
@@ -12553,18 +12324,7 @@ public final class Tex {
 					mem[curlist.tailfield].setb1(boxcontext - (1073742237));
 					mem[curlist.tailfield + 1].setrh(curbox);
 				} else {
-					{
-						printnl(262);
-						print(1066);
-					}
-					{
-						helpptr = 3;
-						helpline[2] = 1067;
-						helpline[1] = 1068;
-						helpline[0] = 1069;
-					}
-					errorLogic.backerror();
-					flushnodelist(curbox);
+					throw new RuntimeException("Display math should end with $$");
 				}
 			} else {
 				shipout(curbox);
@@ -12691,17 +12451,7 @@ public final class Tex {
 			curbox = scanrulespec();
 			boxend(boxcontext);
 		} else {
-			{
-				printnl(262);
-				print(1076);
-			}
-			{
-				helpptr = 3;
-				helpline[2] = 1077;
-				helpline[1] = 1078;
-				helpline[0] = 1079;
-			}
-			errorLogic.backerror();
+			throw new RuntimeException("A <box> was supposed to be here. I was expecting to see \\hbox or \\vbox or \\copy or \\box or something like that.");
 		}
 	}
 
@@ -13438,21 +13188,7 @@ public final class Tex {
 			}
 		}
 		if (curval < 0) {
-			{
-				printnl(262);
-				print(1132);
-			}
-			{
-				helpptr = 6;
-				helpline[5] = 1133;
-				helpline[4] = 1134;
-				helpline[3] = 1135;
-				helpline[2] = 1136;
-				helpline[1] = 1137;
-				helpline[0] = 1138;
-			}
-			errorLogic.backerror();
-			curval = 0;
+			throw new RuntimeException("Missing delimiter (. inserted). I was expecting to see something like `(' or `\\{' or `\\}' here.");
 		}
 		mem[p].setb0((curval / 1048576) % 16);
 		mem[p].setb1((curval / 4096) % 256);
@@ -13727,34 +13463,9 @@ public final class Tex {
 		int t;
 		danger = false;
 		if ((fontparams[eqtb[8237].getrh()] < 22) || (fontparams[eqtb[8253].getrh()] < 22) || (fontparams[eqtb[8269].getrh()] < 22)) {
-			{
-				printnl(262);
-				print(1158);
-			}
-			{
-				helpptr = 3;
-				helpline[2] = 1159;
-				helpline[1] = 1160;
-				helpline[0] = 1161;
-			}
-			errorLogic.error();
-			flushmath();
-			danger = true;
+			throw new RuntimeException("Insufficient symbol fonts. Sorry, but I can't typeset math unless \\textfont 2 and \\scriptfont 2 and \\scriptscriptfont 2 have all the \fontdimen values needed in math symbol fonts.");
 		} else if ((fontparams[eqtb[8238].getrh()] < 13) || (fontparams[eqtb[8254].getrh()] < 13) || (fontparams[eqtb[8270].getrh()] < 13)) {
-			{
-				printnl(262);
-				print(1162);
-			}
-			{
-				helpptr = 3;
-				helpline[2] = 1163;
-				helpline[1] = 1164;
-				helpline[0] = 1165;
-			}
-			errorLogic.error();
-			flushmath();
-			danger = true;
-		}
+			throw new RuntimeException("Insufficient extension fonts, Sorry, but I can't typeset math unless \\textfont 3 and \\scriptfont 3 and \\scriptscriptfont 3 have all the \\fontdimen values needed in math extension fonts.");		}
 		m = curlist.modefield;
 		l = false;
 		p = finmlist(0);
@@ -13762,16 +13473,7 @@ public final class Tex {
 			{
 				getxtoken();
 				if (curcmd != 3) {
-					{
-						printnl(262);
-						print(1166);
-					}
-					{
-						helpptr = 2;
-						helpline[1] = 1167;
-						helpline[0] = 1168;
-					}
-					errorLogic.backerror();
+					throw new RuntimeException("Display math should end with $$");
 				}
 			}
 			curmlist = p;
@@ -13786,33 +13488,9 @@ public final class Tex {
 			}
 			danger = false;
 			if ((fontparams[eqtb[8237].getrh()] < 22) || (fontparams[eqtb[8253].getrh()] < 22) || (fontparams[eqtb[8269].getrh()] < 22)) {
-				{
-					printnl(262);
-					print(1158);
-				}
-				{
-					helpptr = 3;
-					helpline[2] = 1159;
-					helpline[1] = 1160;
-					helpline[0] = 1161;
-				}
-				errorLogic.error();
-				flushmath();
-				danger = true;
+				throw new RuntimeException("Insufficient symbol fonts. Sorry, but I can't typeset math unless \\textfont 2 and \\scriptfont 2 and \\scriptscriptfont 2 have all the \fontdimen values needed in math symbol fonts.");
 			} else if ((fontparams[eqtb[8238].getrh()] < 13) || (fontparams[eqtb[8254].getrh()] < 13) || (fontparams[eqtb[8270].getrh()] < 13)) {
-				{
-					printnl(262);
-					print(1162);
-				}
-				{
-					helpptr = 3;
-					helpline[2] = 1163;
-					helpline[1] = 1164;
-					helpline[0] = 1165;
-				}
-				errorLogic.error();
-				flushmath();
-				danger = true;
+				throw new RuntimeException("Insufficient extension fonts, Sorry, but I can't typeset math unless \\textfont 3 and \\scriptfont 3 and \\scriptscriptfont 3 have all the \\fontdimen values needed in math extension fonts.");
 			}
 			m = curlist.modefield;
 			p = finmlist(0);
@@ -13842,16 +13520,7 @@ public final class Tex {
 			if (a == 0) {
 				getxtoken();
 				if (curcmd != 3) {
-					{
-						printnl(262);
-						print(1166);
-					}
-					{
-						helpptr = 2;
-						helpline[1] = 1167;
-						helpline[0] = 1168;
-					}
-					errorLogic.backerror();
+					throw new RuntimeException("Display math should end with $$");
 				}
 			}
 			curmlist = p;
@@ -14375,36 +14044,11 @@ public final class Tex {
 				getxtoken();
 			} while (!((curcmd != 10) && (curcmd != 0)));
 			if (curcmd <= 70) {
-				{
-					printnl(262);
-					print(1179);
-				}
-				printcmdchr(curcmd, curchr);
-				printchar(39);
-				{
-					helpptr = 1;
-					helpline[0] = 1180;
-				}
-				errorLogic.backerror();
-				return /* lab10 */;
+				throw new RuntimeException("You can't use a prefix with that");
 			}
 		}
 		if ((curcmd != 97) && (a % 4 != 0)) {
-			{
-				printnl(262);
-				print(685);
-			}
-			printEscapeSequence(1171);
-			print(1181);
-			printEscapeSequence(1172);
-			print(1182);
-			printcmdchr(curcmd, curchr);
-			printchar(39);
-			{
-				helpptr = 1;
-				helpline[0] = 1183;
-			}
-			errorLogic.error();
+			throw new RuntimeException("You can't use that with 'long' or 'outer'");
 		}
 		if (eqtb[9606].getInt() != 0) {
 			if (eqtb[9606].getInt() < 0) {
@@ -19322,146 +18966,6 @@ public final class Tex {
 			printchar(58);
 			println();
 			tokenshow(curmark[curchr]);
-		}
-	}
-
-	void printtotals() {
-		printFixed(pagesofar[1]);
-		if (pagesofar[2] != 0) {
-			print(312);
-			printFixed(pagesofar[2]);
-			print(338);
-		}
-		if (pagesofar[3] != 0) {
-			print(312);
-			printFixed(pagesofar[3]);
-			print(311);
-		}
-		if (pagesofar[4] != 0) {
-			print(312);
-			printFixed(pagesofar[4]);
-			print(978);
-		}
-		if (pagesofar[5] != 0) {
-			print(312);
-			printFixed(pagesofar[5]);
-			print(979);
-		}
-		if (pagesofar[6] != 0) {
-			print(313);
-			printFixed(pagesofar[6]);
-		}
-	}
-
-	void showactivities() {
-		int p;
-		int m;
-		final memoryword a = new memoryword();
-		int q, r;
-		int t;
-		nest[nestptr].copy(curlist);
-		printnl(338);
-		println();
-		for (p = nestptr; p >= 0; p--) {
-			m = nest[p].modefield;
-			a.copy(nest[p].auxfield);
-			printnl(363);
-			printmode(m);
-			print(364);
-			printInt(Math.abs(nest[p].mlfield));
-			if (m == 102) {
-				if (nest[p].pgfield != 8585216) {
-					print(365);
-					printInt(nest[p].pgfield % 65536);
-					print(366);
-					printInt(nest[p].pgfield / 4194304);
-					printchar(44);
-					printInt((nest[p].pgfield / 65536) % 64);
-					printchar(41);
-				}
-			}
-			if (nest[p].mlfield < 0) {
-				print(367);
-			}
-			if (p == 0) {
-				if (memtop - 2 != pagetail) {
-					printnl(980);
-					if (outputactive) {
-						print(981);
-					}
-					// removed: showbox(mem[memtop - 2].getrh());
-					if (pagecontents > 0) {
-						printnl(982);
-						printtotals();
-						printnl(983);
-						printFixed(pagesofar[0]);
-						r = mem[memtop].getrh();
-						while (r != memtop) {
-							println();
-							printEscapeSequence(330);
-							t = mem[r].getb1();
-							printInt(t);
-							print(984);
-							t = xovern(mem[r + 3].getInt(), 1000) * eqtb[9618 + t].getInt();
-							printFixed(t);
-							if (mem[r].getb0() == 1) {
-								q = memtop - 2;
-								t = 0;
-								do {
-									q = mem[q].getrh();
-									if ((mem[q].getb0() == 3) && (mem[q].getb1() == mem[r].getb1())) {
-										t = t + 1;
-									}
-								} while (!(q == mem[r + 1].getlh()));
-								print(985);
-								printInt(t);
-								print(986);
-							}
-							r = mem[r].getrh();
-						}
-					}
-				}
-				if (mem[memtop - 1].getrh() != 0) {
-					printnl(368);
-				}
-			}
-			// removed: showbox(mem[nest[p].headfield].getrh());
-			switch (Math.abs(m) / (101)) {
-				case 0: {
-					printnl(369);
-					if (a.getInt() <= -65536000) {
-						print(370);
-					} else {
-						printFixed(a.getInt());
-					}
-					if (nest[p].pgfield != 0) {
-						print(371);
-						printInt(nest[p].pgfield);
-						print(372);
-						if (nest[p].pgfield != 1) {
-							printchar(115);
-						}
-					}
-				}
-					break;
-				case 1: {
-					printnl(373);
-					printInt(a.getlh());
-					if (m > 0) {
-						if (a.getrh() > 0) {
-							print(374);
-							printInt(a.getrh());
-						}
-					}
-				}
-					break;
-				case 2:
-					if (a.getInt() != 0) {
-						print(375);
-						// removed: showbox(a.getInt());
-					}
-					break;
-			}
 		}
 	}
 
