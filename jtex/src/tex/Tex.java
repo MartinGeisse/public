@@ -4382,8 +4382,19 @@ public final class Tex {
 		return Result;
 	}
 
+	/*
+	 * This function is probably abusing the string pool's building mechanism
+	 * as a StringBuilder for other purposes than building a pooled string.
+	 * 
+	 * This assumption must be confirmed: The functions calling this function store
+	 * the poolptr in b, add characters to the pool, then call this function. This
+	 * function eventually resets the poolptr to b. This is equivalent to using
+	 * an out-of-pool StringBuilder IF no makeString() is called in between. On
+	 * the other hand, if makeString() gets called, weird stuff will happen anyway:
+	 * The makeString() result would be a not-yet-allocated string ID using a
+	 * not-yet-allocated string pool region.
+	 */
 	int strtoks(final int b) {
-		int Result;
 		int p;
 		int q;
 		int t;
@@ -4398,25 +4409,20 @@ public final class Tex {
 			} else {
 				t = 3072 + t;
 			}
-			{
-				{
-					q = avail;
-					if (q == 0) {
-						q = allocateMemoryWord();
-					} else {
-						avail = mem[q].getrh();
-						mem[q].setrh(0);
-					}
-				}
-				mem[p].setrh(q);
-				mem[q].setlh(t);
-				p = q;
+			q = avail;
+			if (q == 0) {
+				q = allocateMemoryWord();
+			} else {
+				avail = mem[q].getrh();
+				mem[q].setrh(0);
 			}
+			mem[p].setrh(q);
+			mem[q].setlh(t);
+			p = q;
 			k = k + 1;
 		}
 		poolptr = b;
-		Result = p;
-		return Result;
+		return p;
 	}
 
 	int thetoks() {

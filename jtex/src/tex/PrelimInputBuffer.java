@@ -101,18 +101,6 @@ public final class PrelimInputBuffer {
 	/**
 	 * Copies characters from the specified source to the internal buffer backing the input buffer.
 	 * 
-	 * @param source the source buffer to copy from
-	 * @param sourceStart the index in the source buffer of the first character to copy
-	 * @param bufferStart the index in the input buffer of the first character to copy
-	 * @param length the number of characters to copy
-	 */
-	public void copyToInternalBuffer(int[] source, int sourceStart, int bufferStart, int length) {
-		System.arraycopy(source, sourceStart, tex.buffer, bufferStart, length);
-	}
-
-	/**
-	 * Copies characters from the specified source to the internal buffer backing the input buffer.
-	 * 
 	 * @param source the source string to copy from
 	 * @param bufferStart the index in the input buffer of the first character to copy
 	 */
