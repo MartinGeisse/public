@@ -5184,24 +5184,18 @@ public final class Tex {
 	}
 
 	int makenamestring() {
-		int Result;
-		int k;
-		StringBuffer strbuf = new StringBuffer();
-		strbuf = new StringBuffer(nameoffile);
 		if ((strptr == maxstrings) || ((poolptr - strstart[strptr]) > 0)) {
-			Result = 63;
+			return 63;
 		} else {
-			for (k = 0; k <= namelength - 1; k++) {
-				strpool[poolptr] = strbuf.charAt(k);
-				poolptr = poolptr + 1;
+			for (int k = 0; k <= namelength - 1; k++) {
+				stringPool.append(nameoffile.charAt(k));
 			}
-			Result = stringPool.makeString();
+			return stringPool.makeString();
 		}
-		return Result;
 	}
 
 	void scanfilename() {
-		/* 30 */nameinprogress = true;
+		nameinprogress = true;
 		beginname();
 		do {
 			getxtoken();
@@ -5209,14 +5203,14 @@ public final class Tex {
 		while (true) {
 			if ((curcmd > 12) || (curchr > 255)) {
 				unreadToken();
-				break /* lab30 */;
+				break;
 			}
 			if (!morename(curchr)) {
-				break /* lab30 */;
+				break;
 			}
 			getxtoken();
 		}
-		/* lab30: */endname();
+		endname();
 		nameinprogress = false;
 	}
 
@@ -5271,7 +5265,7 @@ public final class Tex {
 	}
 
 	void startinput() {
-		/* 30 */scanfilename();
+		scanfilename();
 		if (curext == 338) {
 			curext = 791;
 		}
@@ -5301,7 +5295,7 @@ public final class Tex {
 			print(787);
 			errorLogic.fatalError("*** (job aborted, file error in nonstop mode)");
 		}
-		/* lab30: */curinput.setName(makenamestring());
+		curinput.setName(makenamestring());
 		if ((termoffset > 0) || (fileoffset > 0)) {
 			printchar(32);
 		}
@@ -5401,62 +5395,46 @@ public final class Tex {
 							bc = 1;
 							ec = 0;
 						}
-						{
-							nw = tfmfile.read();
-							if (nw > 127) {
-								break lab11;
-							}
-							nw = nw * 256 + tfmfile.read();
+						nw = tfmfile.read();
+						if (nw > 127) {
+							break lab11;
 						}
-						{
-							nh = tfmfile.read();
-							if (nh > 127) {
-								break lab11;
-							}
-							nh = nh * 256 + tfmfile.read();
+						nw = nw * 256 + tfmfile.read();
+						nh = tfmfile.read();
+						if (nh > 127) {
+							break lab11;
 						}
-						{
-							nd = tfmfile.read();
-							if (nd > 127) {
-								break lab11;
-							}
-							nd = nd * 256 + tfmfile.read();
+						nh = nh * 256 + tfmfile.read();
+						nd = tfmfile.read();
+						if (nd > 127) {
+							break lab11;
 						}
-						{
-							ni = tfmfile.read();
-							if (ni > 127) {
-								break lab11;
-							}
-							ni = ni * 256 + tfmfile.read();
+						nd = nd * 256 + tfmfile.read();
+						ni = tfmfile.read();
+						if (ni > 127) {
+							break lab11;
 						}
-						{
-							nl = tfmfile.read();
-							if (nl > 127) {
-								break lab11;
-							}
-							nl = nl * 256 + tfmfile.read();
+						ni = ni * 256 + tfmfile.read();
+						nl = tfmfile.read();
+						if (nl > 127) {
+							break lab11;
 						}
-						{
-							nk = tfmfile.read();
-							if (nk > 127) {
-								break lab11;
-							}
-							nk = nk * 256 + tfmfile.read();
+						nl = nl * 256 + tfmfile.read();
+						nk = tfmfile.read();
+						if (nk > 127) {
+							break lab11;
 						}
-						{
-							ne = tfmfile.read();
-							if (ne > 127) {
-								break lab11;
-							}
-							ne = ne * 256 + tfmfile.read();
+						nk = nk * 256 + tfmfile.read();
+						ne = tfmfile.read();
+						if (ne > 127) {
+							break lab11;
 						}
-						{
-							np = tfmfile.read();
-							if (np > 127) {
-								break lab11;
-							}
-							np = np * 256 + tfmfile.read();
+						ne = ne * 256 + tfmfile.read();
+						np = tfmfile.read();
+						if (np > 127) {
+							break lab11;
 						}
+						np = np * 256 + tfmfile.read();
 						if (lf != 6 + lh + (ec - bc + 1) + nw + nh + nd + ni + nl + nk + ne + np) {
 							break lab11;
 						}
@@ -5466,10 +5444,8 @@ public final class Tex {
 						lf = lf + 7 - np;
 					}
 					if ((fontptr == fontmax) || (fmemptr + lf > fontmemsize)) {
-						{
-							printnl(262);
-							print(802);
-						}
+						printnl(262);
+						print(802);
 						sprintcs(u);
 						printchar(61);
 						printfilename(nom, aire, 338);
