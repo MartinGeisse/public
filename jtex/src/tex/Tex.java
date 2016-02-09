@@ -12082,29 +12082,17 @@ public final class Tex {
 	}
 
 	void appendkern() {
-		int s;
-		s = curchr;
+		int s = curchr;
 		scandimen(s == 99, false, false);
-		{
-			mem[curlist.tailfield].setrh(newkern(curval));
-			curlist.tailfield = mem[curlist.tailfield].getrh();
-		}
+		mem[curlist.tailfield].setrh(newkern(curval));
+		curlist.tailfield = mem[curlist.tailfield].getrh();
 		mem[curlist.tailfield].setb1(s);
 	}
 
 	void offsave() {
 		int p;
 		if (curgroup == 0) {
-			{
-				printnl(262);
-				print(776);
-			}
-			printcmdchr(curcmd, curchr);
-			{
-				helpptr = 1;
-				helpline[0] = 1043;
-			}
-			errorLogic.error();
+			throw new RuntimeException("unexpected input");
 		} else {
 			unreadToken();
 			p = allocateMemoryWord();

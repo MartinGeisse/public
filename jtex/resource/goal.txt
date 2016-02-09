@@ -8,3 +8,9 @@ Further consequences:
 - any error causes typesetting to stop
 - problems such as overfull boxes should be reported through some error reporting interface,
 	but not cause error output on a console
+
+TODO:
+- support loading format files (probably no)
+	- thus remove "Virtex" altogether -- it's tex with auto-loading a format file
+- support saving format files (probably no)
+- can probably remove all calls to showtokenlist()
