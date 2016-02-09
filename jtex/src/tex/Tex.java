@@ -613,8 +613,6 @@ public final class Tex {
 
 	public boolean longhelpseen;
 
-	public TexFileDataInputStream fmtfile;
-
 	public PrintWriter writefile[] = new PrintWriter[16];
 
 	public boolean writeopen[] = new boolean[18];
@@ -15751,65 +15749,6 @@ public final class Tex {
 			curlist.tailfield = tempptr;
 			continue lab60;
 		}
-	}
-
-	boolean openfmtfile() throws IOException {
-		int j;
-		j = curinput.getLoc();
-		lab40: while (true) {
-			if (buffer[curinput.getLoc()] == 38) {
-				curinput.setLoc(curinput.getLoc() + 1);
-				j = curinput.getLoc();
-				buffer[last] = 32;
-				while (buffer[j] != 32) {
-					j = j + 1;
-				}
-				packbufferedname(0, curinput.getLoc(), j - 1);
-				thisfile = new File(nameoffile);
-				if (thisfile.exists()) {
-					try {
-						fmtfile = new TexFileDataInputStream(thisfile);
-					} catch (final FileNotFoundException ex) {
-						termout.println();
-						termout.print("Cannot open ");
-						termout.print(nameoffile);
-					}
-					break lab40;
-				}
-				packbufferedname(11, curinput.getLoc(), j - 1);
-				thisfile = new File(nameoffile);
-				if (thisfile.exists()) {
-					try {
-						fmtfile = new TexFileDataInputStream(thisfile);
-					} catch (final FileNotFoundException ex) {
-						termout.println();
-						termout.print("Cannot open ");
-						termout.print(nameoffile);
-					}
-					break lab40;
-				}
-				termout.println("Sorry, I can't find that format;" + " will try PLAIN.");
-				termout.flush();
-			}
-			packbufferedname(16, 1, 0);
-			thisfile = new File(nameoffile);
-			if (thisfile.exists()) {
-				try {
-					fmtfile = new TexFileDataInputStream(thisfile);
-				} catch (final FileNotFoundException ex) {
-					termout.println();
-					termout.print("Cannot open ");
-					termout.print(nameoffile);
-				}
-			} else {
-				;
-				termout.println("I can't find the PLAIN format file!");
-				return false;
-			}
-			break;
-		}
-		/* lab40: */curinput.setLoc(j);
-		return true;
 	}
 
 	void closeFiles() {
