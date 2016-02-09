@@ -65,8 +65,6 @@ public final class Tex {
 	 */
 	public final PrelimInputBuffer inputBuffer;
 
-	public final boolean initex;
-
 	public int bad;
 
 	public String nameoffile;
@@ -635,11 +633,10 @@ public final class Tex {
 
 	/**
 	 * Constructor.
-	 * @param initex whether this is INITEX
 	 * @param args command-line arguments
 	 */
-	public Tex(final boolean initex, final String[] args) {
-		this(initex);
+	public Tex(final String[] args) {
+		this();
 		int i = 0;
 		while (i < args.length) {
 			if (i > 0) {
@@ -652,10 +649,8 @@ public final class Tex {
 
 	/**
 	 * Constructor.
-	 * @param initex whether this is INITEX
 	 */
-	public Tex(final boolean initex) {
-		this.initex = initex;
+	public Tex() {
 		this.inputBuffer = new PrelimInputBuffer(this);
 		maxhalfword = memoryword.maxHalfword;
 		for (int c = 0; c <= memmax; c++) {
@@ -799,181 +794,179 @@ public final class Tex {
 		for (k = 0; k <= 17; k++) {
 			writeopen[k] = false;
 		}
-		if (initex) {
-			for (k = 1; k <= 19; k++) {
-				mem[k].setInt(0);
-			}
-			k = 0;
-			while (k <= 19) {
-				mem[k].setrh(1);
-				mem[k].setb0(0);
-				mem[k].setb1(0);
-				k = k + 4;
-			}
-			mem[6].setInt(65536);
-			mem[4].setb0(1);
-			mem[10].setInt(65536);
-			mem[8].setb0(2);
-			mem[14].setInt(65536);
-			mem[12].setb0(1);
-			mem[15].setInt(65536);
-			mem[12].setb1(1);
-			mem[18].setInt(-65536);
-			mem[16].setb0(1);
-			rover = 20;
-			mem[rover].setrh(maxhalfword);
-			mem[rover].setlh(1000);
-			mem[rover + 1].setlh(rover);
-			mem[rover + 1].setrh(rover);
-			lomemmax = rover + 1000;
-			mem[lomemmax].setrh(0);
-			mem[lomemmax].setlh(0);
-			for (k = memtop - 13; k <= memtop; k++) {
-				mem[k].setInt(mem[lomemmax].getInt());
-			}
-			mem[memtop - 10].setlh(11014);
-			mem[memtop - 9].setrh(256);
-			mem[memtop - 9].setlh(0);
-			mem[memtop - 7].setb0(1);
-			mem[memtop - 6].setlh(maxhalfword);
-			mem[memtop - 7].setb1(0);
-			mem[memtop].setb1(255);
-			mem[memtop].setb0(1);
-			mem[memtop].setrh(memtop);
-			mem[memtop - 2].setb0(10);
-			mem[memtop - 2].setb1(0);
-			avail = 0;
-			memend = memtop;
-			himemmin = memtop - 13;
-			varused = 20;
-			dynused = 14;
-			eqtb[7181].setb0(101);
-			eqtb[7181].setrh(0);
-			eqtb[7181].setb1(0);
-			for (k = 1; k <= 7180; k++) {
-				eqtb[k].copy(eqtb[7181]);
-			}
-			eqtb[7182].setrh(0);
-			eqtb[7182].setb1(1);
-			eqtb[7182].setb0(117);
-			for (k = 7183; k <= 7711; k++) {
-				eqtb[k].copy(eqtb[7182]);
-			}
-			mem[0].setrh(mem[0].getrh() + 530);
-			eqtb[7712].setrh(0);
-			eqtb[7712].setb0(118);
-			eqtb[7712].setb1(1);
-			for (k = 7713; k <= 7977; k++) {
-				eqtb[k].copy(eqtb[7181]);
-			}
-			eqtb[7978].setrh(0);
-			eqtb[7978].setb0(119);
-			eqtb[7978].setb1(1);
-			for (k = 7979; k <= 8233; k++) {
-				eqtb[k].copy(eqtb[7978]);
-			}
-			eqtb[8234].setrh(0);
-			eqtb[8234].setb0(120);
-			eqtb[8234].setb1(1);
-			for (k = 8235; k <= 8282; k++) {
-				eqtb[k].copy(eqtb[8234]);
-			}
-			eqtb[8283].setrh(0);
-			eqtb[8283].setb0(120);
-			eqtb[8283].setb1(1);
-			for (k = 8284; k <= 9562; k++) {
-				eqtb[k].copy(eqtb[8283]);
-			}
-			for (k = 0; k <= 255; k++) {
-				eqtb[8283 + k].setrh(12);
-				eqtb[9307 + k].setrh(k);
-				eqtb[9051 + k].setrh(1000);
-			}
-			eqtb[8296].setrh(5);
-			eqtb[8315].setrh(10);
-			eqtb[8375].setrh(0);
-			eqtb[8320].setrh(14);
-			eqtb[8410].setrh(15);
-			eqtb[8283].setrh(9);
-			for (k = 48; k <= 57; k++) {
-				eqtb[9307 + k].setrh(k + 28672);
-			}
-			for (k = 65; k <= 90; k++) {
-				eqtb[8283 + k].setrh(11);
-				eqtb[8283 + k + 32].setrh(11);
-				eqtb[9307 + k].setrh(k + 28928);
-				eqtb[9307 + k + 32].setrh(k + 28960);
-				eqtb[8539 + k].setrh(k + 32);
-				eqtb[8539 + k + 32].setrh(k + 32);
-				eqtb[8795 + k].setrh(k);
-				eqtb[8795 + k + 32].setrh(k);
-				eqtb[9051 + k].setrh(999);
-			}
-			for (k = 9563; k <= 9873; k++) {
-				eqtb[k].setInt(0);
-			}
-			eqtb[9580].setInt(1000);
-			eqtb[9564].setInt(10000);
-			eqtb[9604].setInt(1);
-			eqtb[9603].setInt(25);
-			eqtb[9608].setInt(92);
-			eqtb[9611].setInt(13);
-			for (k = 0; k <= 255; k++) {
-				eqtb[9874 + k].setInt(-1);
-			}
-			eqtb[9920].setInt(0);
-			for (k = 10130; k <= 10406; k++) {
-				eqtb[k].setInt(0);
-			}
-			hashused = 6914;
-			cscount = 0;
-			eqtb[6923].setb0(116);
-			hash[6923 - 514].rh = 502;
-			fontptr = 0;
-			fmemptr = 7;
-			fontname[0] = 801;
-			fontarea[0] = 338;
-			hyphenchar[0] = 45;
-			skewchar[0] = -1;
-			bcharlabel[0] = 0;
-			fontbchar[0] = 256;
-			fontfalsebchar[0] = 256;
-			fontbc[0] = 1;
-			fontec[0] = 0;
-			fontsize[0] = 0;
-			fontdsize[0] = 0;
-			charbase[0] = 0;
-			widthbase[0] = 0;
-			heightbase[0] = 0;
-			depthbase[0] = 0;
-			italicbase[0] = 0;
-			ligkernbase[0] = 0;
-			kernbase[0] = 0;
-			extenbase[0] = 0;
-			fontglue[0] = 0;
-			fontparams[0] = 7;
-			parambase[0] = -1;
-			for (k = 0; k <= 6; k++) {
-				fontinfo[k].setInt(0);
-			}
-			for (k = -751; k <= 751; k++) {
-				trieophash[k + 751] = 0;
-			}
-			for (k = 0; k <= 255; k++) {
-				trieused[k] = 0;
-			}
-			trieopptr = 0;
-			trienotready = true;
-			triel[0] = 0;
-			triec[0] = 0;
-			trieptr = 0;
-			hash[6914 - 514].rh = 1190;
-			formatident = 1257;
-			hash[6922 - 514].rh = 1296;
-			eqtb[6922].setb1(1);
-			eqtb[6922].setb0(113);
-			eqtb[6922].setrh(0);
+		for (k = 1; k <= 19; k++) {
+			mem[k].setInt(0);
 		}
+		k = 0;
+		while (k <= 19) {
+			mem[k].setrh(1);
+			mem[k].setb0(0);
+			mem[k].setb1(0);
+			k = k + 4;
+		}
+		mem[6].setInt(65536);
+		mem[4].setb0(1);
+		mem[10].setInt(65536);
+		mem[8].setb0(2);
+		mem[14].setInt(65536);
+		mem[12].setb0(1);
+		mem[15].setInt(65536);
+		mem[12].setb1(1);
+		mem[18].setInt(-65536);
+		mem[16].setb0(1);
+		rover = 20;
+		mem[rover].setrh(maxhalfword);
+		mem[rover].setlh(1000);
+		mem[rover + 1].setlh(rover);
+		mem[rover + 1].setrh(rover);
+		lomemmax = rover + 1000;
+		mem[lomemmax].setrh(0);
+		mem[lomemmax].setlh(0);
+		for (k = memtop - 13; k <= memtop; k++) {
+			mem[k].setInt(mem[lomemmax].getInt());
+		}
+		mem[memtop - 10].setlh(11014);
+		mem[memtop - 9].setrh(256);
+		mem[memtop - 9].setlh(0);
+		mem[memtop - 7].setb0(1);
+		mem[memtop - 6].setlh(maxhalfword);
+		mem[memtop - 7].setb1(0);
+		mem[memtop].setb1(255);
+		mem[memtop].setb0(1);
+		mem[memtop].setrh(memtop);
+		mem[memtop - 2].setb0(10);
+		mem[memtop - 2].setb1(0);
+		avail = 0;
+		memend = memtop;
+		himemmin = memtop - 13;
+		varused = 20;
+		dynused = 14;
+		eqtb[7181].setb0(101);
+		eqtb[7181].setrh(0);
+		eqtb[7181].setb1(0);
+		for (k = 1; k <= 7180; k++) {
+			eqtb[k].copy(eqtb[7181]);
+		}
+		eqtb[7182].setrh(0);
+		eqtb[7182].setb1(1);
+		eqtb[7182].setb0(117);
+		for (k = 7183; k <= 7711; k++) {
+			eqtb[k].copy(eqtb[7182]);
+		}
+		mem[0].setrh(mem[0].getrh() + 530);
+		eqtb[7712].setrh(0);
+		eqtb[7712].setb0(118);
+		eqtb[7712].setb1(1);
+		for (k = 7713; k <= 7977; k++) {
+			eqtb[k].copy(eqtb[7181]);
+		}
+		eqtb[7978].setrh(0);
+		eqtb[7978].setb0(119);
+		eqtb[7978].setb1(1);
+		for (k = 7979; k <= 8233; k++) {
+			eqtb[k].copy(eqtb[7978]);
+		}
+		eqtb[8234].setrh(0);
+		eqtb[8234].setb0(120);
+		eqtb[8234].setb1(1);
+		for (k = 8235; k <= 8282; k++) {
+			eqtb[k].copy(eqtb[8234]);
+		}
+		eqtb[8283].setrh(0);
+		eqtb[8283].setb0(120);
+		eqtb[8283].setb1(1);
+		for (k = 8284; k <= 9562; k++) {
+			eqtb[k].copy(eqtb[8283]);
+		}
+		for (k = 0; k <= 255; k++) {
+			eqtb[8283 + k].setrh(12);
+			eqtb[9307 + k].setrh(k);
+			eqtb[9051 + k].setrh(1000);
+		}
+		eqtb[8296].setrh(5);
+		eqtb[8315].setrh(10);
+		eqtb[8375].setrh(0);
+		eqtb[8320].setrh(14);
+		eqtb[8410].setrh(15);
+		eqtb[8283].setrh(9);
+		for (k = 48; k <= 57; k++) {
+			eqtb[9307 + k].setrh(k + 28672);
+		}
+		for (k = 65; k <= 90; k++) {
+			eqtb[8283 + k].setrh(11);
+			eqtb[8283 + k + 32].setrh(11);
+			eqtb[9307 + k].setrh(k + 28928);
+			eqtb[9307 + k + 32].setrh(k + 28960);
+			eqtb[8539 + k].setrh(k + 32);
+			eqtb[8539 + k + 32].setrh(k + 32);
+			eqtb[8795 + k].setrh(k);
+			eqtb[8795 + k + 32].setrh(k);
+			eqtb[9051 + k].setrh(999);
+		}
+		for (k = 9563; k <= 9873; k++) {
+			eqtb[k].setInt(0);
+		}
+		eqtb[9580].setInt(1000);
+		eqtb[9564].setInt(10000);
+		eqtb[9604].setInt(1);
+		eqtb[9603].setInt(25);
+		eqtb[9608].setInt(92);
+		eqtb[9611].setInt(13);
+		for (k = 0; k <= 255; k++) {
+			eqtb[9874 + k].setInt(-1);
+		}
+		eqtb[9920].setInt(0);
+		for (k = 10130; k <= 10406; k++) {
+			eqtb[k].setInt(0);
+		}
+		hashused = 6914;
+		cscount = 0;
+		eqtb[6923].setb0(116);
+		hash[6923 - 514].rh = 502;
+		fontptr = 0;
+		fmemptr = 7;
+		fontname[0] = 801;
+		fontarea[0] = 338;
+		hyphenchar[0] = 45;
+		skewchar[0] = -1;
+		bcharlabel[0] = 0;
+		fontbchar[0] = 256;
+		fontfalsebchar[0] = 256;
+		fontbc[0] = 1;
+		fontec[0] = 0;
+		fontsize[0] = 0;
+		fontdsize[0] = 0;
+		charbase[0] = 0;
+		widthbase[0] = 0;
+		heightbase[0] = 0;
+		depthbase[0] = 0;
+		italicbase[0] = 0;
+		ligkernbase[0] = 0;
+		kernbase[0] = 0;
+		extenbase[0] = 0;
+		fontglue[0] = 0;
+		fontparams[0] = 7;
+		parambase[0] = -1;
+		for (k = 0; k <= 6; k++) {
+			fontinfo[k].setInt(0);
+		}
+		for (k = -751; k <= 751; k++) {
+			trieophash[k + 751] = 0;
+		}
+		for (k = 0; k <= 255; k++) {
+			trieused[k] = 0;
+		}
+		trieopptr = 0;
+		trienotready = true;
+		triel[0] = 0;
+		triec[0] = 0;
+		trieptr = 0;
+		hash[6914 - 514].rh = 1190;
+		formatident = 1257;
+		hash[6922 - 514].rh = 1296;
+		eqtb[6922].setb1(1);
+		eqtb[6922].setb0(113);
+		eqtb[6922].setrh(0);
 	}
 
 	boolean inputln(final Input f, final boolean bypasseoln) {
@@ -10656,7 +10649,7 @@ public final class Tex {
 				threshold = 10000;
 			}
 			if (secondpass) {
-				if (initex && trienotready) {
+				if (trienotready) {
 					inittrie();
 				}
 				curlang = initcurlang;
@@ -14340,25 +14333,11 @@ public final class Tex {
 					break;
 				case 99:
 					if (curchr == 1) {
-						if (initex) {
-							newpatterns();
-							break lab30;
-						} else {
-							{
-								printnl(262);
-								print(1216);
-							}
-							helpptr = 0;
-							errorLogic.error();
-							do {
-								gettoken();
-							} while (!(curcmd == 2));
-							return /* lab10 */;
-						}
+						newpatterns();
 					} else {
 						newhyphexceptions();
-						break lab30;
 					}
+					break lab30;
 				case 77: {
 					findfontdimen(true);
 					k = curval;
@@ -16464,9 +16443,7 @@ public final class Tex {
 				} else {
 					j = x;
 				}
-				if (initex) {
-					triemax = j;
-				}
+				triemax = j;
 				for (k = 0; k <= j; k++) {
 					trie[k].lh = fmtfile.readShort();
 					trie[k].rh = fmtfile.readShort();
@@ -16482,9 +16459,7 @@ public final class Tex {
 				} else {
 					j = x;
 				}
-				if (initex) {
-					trieopptr = j;
-				}
+				trieopptr = j;
 				for (k = 1; k <= j; k++) {
 					x = fmtfile.readInt();
 					if ((x < 0) || (x > 63)) {
@@ -16505,10 +16480,8 @@ public final class Tex {
 						hyfnext[k] = x;
 					}
 				}
-				if (initex) {
-					for (k = 0; k <= 255; k++) {
-						trieused[k] = 0;
-					}
+				for (k = 0; k <= 255; k++) {
+					trieused[k] = 0;
 				}
 				k = 256;
 				while (j > 0) {
@@ -16522,15 +16495,11 @@ public final class Tex {
 					if ((x < 1) || (x > j)) {
 						break lab125;
 					}
-					if (initex) {
-						trieused[k] = x;
-					}
+					trieused[k] = x;
 					j = j - x;
 					opstart[k] = j;
 				}
-				if (initex) {
-					trienotready = false;
-				}
+				trienotready = false;
 				x = fmtfile.readInt();
 				if ((x < 0) || (x > 3)) {
 					break lab125;
@@ -16661,17 +16630,12 @@ public final class Tex {
 			}
 		}
 		if (curchr == 1) {
-			if (initex) {
-				for (int c = 0; c <= 4; c++) {
-					if (curmark[c] != 0) {
-						deletetokenref(curmark[c]);
-					}
+			for (int c = 0; c <= 4; c++) {
+				if (curmark[c] != 0) {
+					deletetokenref(curmark[c]);
 				}
-				storefmtfile();
-			} else {
-				printnl(1283);
 			}
-			return /* lab10 */;
+			storefmtfile();
 		}
 	}
 
@@ -17059,12 +17023,10 @@ public final class Tex {
 		openlogfile();
 		this.errorReporter = new ErrorReporter(logfile);
 		this.errorLogic = new ErrorLogic(this);
-		if (initex) {
-			getstringsstarted();
-			initprim();
-			initstrptr = strptr;
-			setDummyDateTime();
-		}
+		getstringsstarted();
+		initprim();
+		initstrptr = strptr;
+		setDummyDateTime();
 		selector = 17;
 		tally = 0;
 		termoffset = 0;

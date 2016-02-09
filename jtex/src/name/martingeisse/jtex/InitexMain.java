@@ -19,7 +19,7 @@ public final class InitexMain {
 	 * @param args command-line arguments
 	 */
 	public static void main(String[] args) {
-		Tex tex = new Tex(true, args);
+		Tex tex = new Tex(args);
 		tex.run();
 	}
 	
