@@ -10,7 +10,4 @@ Further consequences:
 	but not cause error output on a console
 
 TODO:
-- support loading format files (probably no)
-	- thus remove "Virtex" altogether -- it's tex with auto-loading a format file
-- support saving format files (probably no)
 - can probably remove all calls to showtokenlist()

@@ -2181,17 +2181,10 @@ public final class Tex {
 
 	void preparemag() {
 		if ((magset > 0) && (eqtb[9580].getInt() != magset)) {
-			errorLogic.error("!Incompatible magnification (" + eqtb[9580].getInt() + "); the previous value will be retained. I can handle only one magnification ratio per job. So I've reverted to the magnification you used earlier on this run.");
-			geqworddefine(9580, magset);
+			throw new RuntimeException("Incompatible magnification (" + eqtb[9580].getInt() + "). I can handle only one magnification ratio per job. ");
 		}
 		if ((eqtb[9580].getInt() <= 0) || (eqtb[9580].getInt() > 32768)) {
-			// errorLogic.error("!Illegal magnification has been changed to 1000. The magnification ratio must be between 1 and 32768.");
-			printnl(262);
-			print(552);
-			helpptr = 1;
-			helpline[0] = 553;
-			errorLogic.interror(eqtb[9580].getInt());
-			geqworddefine(9580, 1000);
+			throw new RuntimeException("The magnification ratio must be between 1 and 32768");
 		}
 		magset = eqtb[9580].getInt();
 	}
@@ -11464,13 +11457,7 @@ public final class Tex {
 		p = eqtb[7978 + n].getrh();
 		if (p != 0) {
 			if (mem[p].getb0() == 0) {
-				printnl(262);
-				print(989);
-				helpptr = 3;
-				helpline[2] = 990;
-				helpline[1] = 991;
-				helpline[0] = 992;
-				boxerror(n);
+				throw new RuntimeException("Invalid box. Insertions can only be added to a vbox. You're trying to \\insert into a \\box register that now contains an \\hbox.");
 			}
 		}
 	}
@@ -11502,14 +11489,7 @@ public final class Tex {
 			bestpagebreak = 0;
 		}
 		if (eqtb[8233].getrh() != 0) {
-			printnl(262);
-			print(338);
-			printEscapeSequence(409);
-			print(1003);
-			helpptr = 2;
-			helpline[1] = 1004;
-			helpline[0] = 992;
-			boxerror(255);
+			throw new RuntimeException("Invalid box. Box \\box is not void. You shouldn't use \\box255 except in \\output routines.");
 		}
 		insertpenalties = 0;
 		savesplittopskip = eqtb[7192].getrh();
@@ -12253,16 +12233,7 @@ public final class Tex {
 				scaneightbitint();
 				n = curval;
 				if (!scankeyword(842)) {
-					{
-						printnl(262);
-						print(1073);
-					}
-					{
-						helpptr = 2;
-						helpline[1] = 1074;
-						helpline[0] = 1075;
-					}
-					errorLogic.error();
+					throw new RuntimeException("I'm working on `\\vsplit<box number> to <dimen>'");
 				}
 				scandimen(false, false, false);
 				curbox = vsplit(n, curval);
@@ -12453,18 +12424,7 @@ public final class Tex {
 		} else {
 			scaneightbitint();
 			if (curval == 255) {
-				{
-					printnl(262);
-					print(1085);
-				}
-				printEscapeSequence(330);
-				printInt(255);
-				{
-					helpptr = 1;
-					helpline[0] = 1086;
-				}
-				errorLogic.error();
-				curval = 0;
+				throw new RuntimeException("You can't \\insert 255 -- box 255 is special");
 			}
 		}
 		savestack[saveptr + 0].setInt(curval);
@@ -14270,21 +14230,10 @@ public final class Tex {
 						n = curval;
 					}
 					scanoptionalequals();
-					if (setboxallowed) {
-						scanbox(1073741824 + n);
-					} else {
-						{
-							printnl(262);
-							print(680);
-						}
-						printEscapeSequence(536);
-						{
-							helpptr = 2;
-							helpline[1] = 1211;
-							helpline[0] = 1212;
-						}
-						errorLogic.error();
+					if (!setboxallowed) {
+						throw new RuntimeException("Sorry, \\setbox is not allowed after \\halign in a display, or between \\accent and an accented character.");
 					}
+					scanbox(1073741824 + n);
 				}
 					break;
 				case 79:
@@ -14580,38 +14529,12 @@ public final class Tex {
 			case 1:
 				unsave();
 				break;
-			case 0: {
-				{
-					printnl(262);
-					print(1044);
-				}
-				{
-					helpptr = 2;
-					helpline[1] = 1045;
-					helpline[0] = 1046;
-				}
-				errorLogic.error();
-			}
-				break;
+			case 0:
+				throw new RuntimeException("You've closed more groups than you opened.");
 			case 14:
 			case 15:
-			case 16: {
-				String message = "!Extra }, or forgotten ";
-				switch (curgroup) {
-					case 14:
-						message += getCurrentEscapeCharacter() + "endgroup";
-						break;
-					case 15:
-						message += '$';
-						break;
-					case 16:
-						message += getCurrentEscapeCharacter() + "right";
-						break;
-				}
-				errorLogic.error(message, "I've deleted a group-closing symbol because it seems to be", "spurious, as in `$x}$'. But perhaps the } is legitimate and", "you forgot something else, as in `\\hbox{$x}'. In such cases", "the way to recover is to insert both the forgotten and the", "deleted material, e.g., by typing `I$}'.");
-				alignstate = alignstate + 1;
-				break;
-			}
+			case 16:
+				throw new RuntimeException("Extra right brace, or forgotten \\endgroup, $, or \\right");
 			case 2:
 				Package(0);
 				break;
@@ -14690,19 +14613,7 @@ public final class Tex {
 				outputactive = false;
 				insertpenalties = 0;
 				if (eqtb[8233].getrh() != 0) {
-					{
-						printnl(262);
-						print(1013);
-					}
-					printEscapeSequence(409);
-					printInt(255);
-					{
-						helpptr = 3;
-						helpline[2] = 1014;
-						helpline[1] = 1015;
-						helpline[0] = 1016;
-					}
-					boxerror(255);
+					throw new RuntimeException("Invalid box. Output routine didn't use all of \\box. Your \\output commands should empty \\box255, e.g., by saying `\\shipout\\box255'.");
 				}
 				if (curlist.tailfield != curlist.headfield) {
 					mem[pagetail].setrh(mem[curlist.headfield].getrh());
@@ -14916,10 +14827,7 @@ public final class Tex {
 							case 227:
 							case 236:
 							case 239:
-								unreadToken();
-								insertToken(804);
-								errorLogic.error("!Missing $ inserted", "I've inserted a begin-math/end-math symbol since I think", "you left one out. Proceed, with fingers crossed.");
-								break;
+								throw new RuntimeException("missing $");
 							case 37:
 							case 137:
 							case 238: {
@@ -15092,13 +15000,11 @@ public final class Tex {
 							case 35:
 							case 136:
 							case 237:
-								errorLogic.error("!Misplaced " + getCurrentEscapeCharacter() + "noalign", "I expect to see \\noalign only after the \\cr of", "an alignment. Proceed, and I'll ignore this case.");
-								break;
+								throw new RuntimeException("!Misplaced \\noalign. I expect to see \\noalign only after the \\cr of an alignment. ");
 							case 64:
 							case 165:
 							case 266:
-								errorLogic.error("!Misplaced " + getCurrentEscapeCharacter() + "omit", "I expect to see \\omit only after tab marks or the \\cr of", "an alignment. Proceed, and I'll ignore this case.");
-								break;
+								throw new RuntimeException("Misplaced \\omit. I expect to see \\omit only after tab marks or the \\cr of an alignment. ");
 							case 33:
 							case 135:
 								initalign();
@@ -15119,8 +15025,7 @@ public final class Tex {
 							case 68:
 							case 169:
 							case 270:
-								errorLogic.error("!Extra " + getCurrentEscapeCharacter() + "endcsname", "I'm ignoring this, since I wasn't doing a \\csname.");
-								break;
+								throw new RuntimeException("Extra \\endcsname. I'm ignoring this, since I wasn't doing a \\csname.");
 							case 105:
 								initmath();
 								break;
@@ -18078,15 +17983,6 @@ public final class Tex {
 			println();
 			showtokenlist(mem[p].getrh(), 0, errorline - 10);
 		}
-	}
-
-	void boxerror(final int n) {
-		errorLogic.error();
-		begindiagnostic();
-		printnl(836);
-		enddiagnostic(true);
-		flushnodelist(eqtb[7978 + n].getrh());
-		eqtb[7978 + n].setrh(0);
 	}
 
 }
