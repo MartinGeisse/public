@@ -32,9 +32,7 @@ public final class JsonListBuilder<C> extends AbstractJsonBuilder<C> {
 		this.parent = parent;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.shopgate.frontend.experiment.AbstractJsonBuilder#getContinuation()
-	 */
+    // override
 	@Override
 	C getContinuation() {
 		return parent.getContinuation();

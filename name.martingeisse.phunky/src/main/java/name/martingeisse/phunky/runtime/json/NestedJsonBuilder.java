@@ -28,9 +28,7 @@ public final class NestedJsonBuilder<P extends AbstractJsonBuilder<?>> extends J
 		this.parent = parent;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.shopgate.frontend.experiment.AbstractJsonValueBuilder#getContinuation()
-	 */
+    // override
 	@Override
 	P getContinuation() {
 		return parent;

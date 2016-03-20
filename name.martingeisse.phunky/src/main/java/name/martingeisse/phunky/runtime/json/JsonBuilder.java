@@ -18,9 +18,7 @@ public final class JsonBuilder extends JsonValueBuilder<String> {
 		super(new StringBuilder());
 	}
 
-	/* (non-Javadoc)
-	 * @see com.shopgate.frontend.experiment.AbstractJsonBuilder#getContinuation()
-	 */
+    // override
 	@Override
 	String getContinuation() {
 		return getBuilder().toString();
