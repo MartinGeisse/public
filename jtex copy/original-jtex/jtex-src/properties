@@ -1,6 +1,0 @@
-TEXMF=/usr/local/teTeX/texmf
-DviPdf.debugging=true
-DviPdf.fontDeflate=true
-DviPdf.imageDeflate=true
-DviPdf.textDeflate=false
-

@@ -1,5 +1,0 @@
-
-pdftex scheint direkt eine Weiterentwicklung des Quellcodes zu sein,
-kein "Format". Idee: TeX erst mal fertig umsetzen, danach per diff
-des Quellcodes die Änderungen erkennen und übernehmen.
-
